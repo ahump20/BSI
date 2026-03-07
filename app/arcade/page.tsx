@@ -5,6 +5,8 @@ import { Card } from '@/components/ui/Card';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Footer } from '@/components/layout-ds/Footer';
+import { HeroGlow } from '@/components/ui/HeroGlow';
+import { FilterPill } from '@/components/ui/FilterPill';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { withAlpha } from '@/lib/utils/color';
 import {
@@ -42,41 +44,38 @@ export default function ArcadePage() {
 
   return (
     <div className="min-h-screen bg-midnight pt-6">
-      <Section padding="lg" className="pt-8">
+      <Section padding="lg" className="pt-8 relative overflow-hidden">
+        <HeroGlow />
         <Container size="wide">
           {/* Header */}
-          <div className="mb-10">
-            <span className="inline-block mb-3 px-3 py-1 rounded text-xs font-display uppercase tracking-widest bg-burnt-orange/15 text-burnt-orange">
-              Arcade
-            </span>
-            <h1 className="text-4xl md:text-5xl font-display text-text-primary uppercase tracking-tight mb-3">
+          <div className="relative mb-10">
+            <span className="section-label block mb-3">Arcade</span>
+            <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-text-primary mb-3">
               Games Hub
             </h1>
-            <p className="text-text-tertiary max-w-xl">
+            <p className="text-burnt-orange font-serif italic text-lg leading-relaxed max-w-xl">
               Play sports mini-games, compete for high scores, and climb the leaderboard.
             </p>
           </div>
 
           {/* Category Filter */}
           <div className="flex flex-wrap gap-2 mb-8">
-            <button
+            <FilterPill
+              active={category === 'all'}
               onClick={() => setCategory('all')}
-              className={`px-4 py-2 rounded-lg text-xs font-display uppercase tracking-wider transition-colors ${
-                category === 'all' ? 'bg-burnt-orange text-white' : 'bg-surface-light text-text-tertiary hover:text-text-primary'
-              }`}
+              size="sm"
             >
               All Games
-            </button>
+            </FilterPill>
             {ARCADE_CATEGORIES.map((cat) => (
-              <button
+              <FilterPill
                 key={cat.id}
+                active={category === cat.id}
                 onClick={() => setCategory(cat.id)}
-                className={`px-4 py-2 rounded-lg text-xs font-display uppercase tracking-wider transition-colors ${
-                  category === cat.id ? 'bg-burnt-orange text-white' : 'bg-surface-light text-text-tertiary hover:text-text-primary'
-                }`}
+                size="sm"
               >
                 {cat.label}
-              </button>
+              </FilterPill>
             ))}
           </div>
 

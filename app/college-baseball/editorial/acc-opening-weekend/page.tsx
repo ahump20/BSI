@@ -6,6 +6,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'ACC Baseball Opening Weekend 2026: Stanford and Cal Debut | Blaze Sports Intel',
@@ -14,7 +15,8 @@ export const metadata: Metadata = {
     title: 'ACC Baseball Opening Weekend 2026 | Blaze Sports Intel',
     description: 'Conference realignment, day one. Stanford and Cal play their first ACC games. Wake Forest — one win from a national title last year — opens as the prohibitive favorite.',
     type: 'article',
-  },
+  
+    images: ogImage('/images/og/cbb-acc-opening-weekend.png')},
 };
 
 const accTeams = [

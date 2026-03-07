@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'UCF Knights: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'UCF Knights: 2026 Season Preview',
     description:
       'UCF was the AAC\'s most consistent baseball program for the better part of a decade. Two years into the Big 12, Greg Lovelady has the Knights competitive.',
-  },
+  
+    images: ogImage('/images/og/cbb-ucf-2026.png')},
 };
 
 const data: TeamPreviewData = {

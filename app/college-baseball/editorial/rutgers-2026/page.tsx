@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Rutgers Scarlet Knights: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'Rutgers Scarlet Knights: 2026 Season Preview',
     description:
       'Steve Owens has spent eight years building Rutgers baseball into something no one in the Big Ten saw coming — a Northeast program that recruits the Jersey Shore, Long Island, and New England pipeline.',
-  },
+  
+    images: ogImage('/images/og/cbb-rutgers-2026.png')},
 };
 
 const data: TeamPreviewData = {

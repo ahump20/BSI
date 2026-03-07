@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'SEC Baseball: 2026 Conference Preview | Blaze Sports Intel',
@@ -15,7 +16,8 @@ export const metadata: Metadata = {
     title: 'SEC Baseball: 2026 Conference Preview',
     description:
       '16 programs. 13 ranked teams. 4 Omaha Favorites. The deepest conference in college baseball.',
-  },
+  
+    images: ogImage('/images/og/cbb-sec.png')},
 };
 
 // ── Projection tier badge styling ──────────────────────────────────────

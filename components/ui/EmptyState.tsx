@@ -1,12 +1,22 @@
 'use client';
 
+import Link from 'next/link';
 import { Calendar, Search, AlertCircle, Pause, WifiOff } from 'lucide-react';
 
 type EmptyStateType = 'no-games' | 'no-results' | 'error' | 'offseason' | 'source-unavailable';
 
+interface EmptyStateAction {
+  label: string;
+  href: string;
+}
+
 interface EmptyStateProps {
   type: EmptyStateType;
   sport?: string;
+  /** Override the default subtitle message */
+  message?: string;
+  /** Optional link to guide users somewhere useful */
+  action?: EmptyStateAction;
   onRetry?: () => void;
 }
 
@@ -38,7 +48,7 @@ const emptyStateConfig = {
   },
 };
 
-export function EmptyState({ type, sport: _sport, onRetry }: EmptyStateProps) {
+export function EmptyState({ type, sport: _sport, message, action, onRetry }: EmptyStateProps) {
   const config = emptyStateConfig[type];
   const Icon = config.Icon;
 
@@ -51,7 +61,7 @@ export function EmptyState({ type, sport: _sport, onRetry }: EmptyStateProps) {
         {config.title}
       </h3>
       <p className="text-text-secondary text-center max-w-sm mb-6">
-        {config.message}
+        {message || config.message}
       </p>
       {showRetry && (
         <button
@@ -60,6 +70,14 @@ export function EmptyState({ type, sport: _sport, onRetry }: EmptyStateProps) {
         >
           Try Again
         </button>
+      )}
+      {action && (
+        <Link
+          href={action.href}
+          className="mt-2 text-burnt-orange hover:text-ember text-sm font-semibold transition-colors"
+        >
+          {action.label}
+        </Link>
       )}
     </div>
   );

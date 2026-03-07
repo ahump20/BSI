@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Leadership Capital Index | BSI Arcade',
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
     title: 'Leadership Capital Index | BSI Arcade',
     description:
       'Interactive leadership analytics tool mapping 23 intangible metrics to 5 validated academic frameworks.',
-  },
+   images: ogImage() },
 };
 
 export default function LeadershipCapitalLayout({ children }: { children: ReactNode }) {

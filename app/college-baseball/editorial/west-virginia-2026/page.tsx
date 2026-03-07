@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'West Virginia Mountaineers: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'West Virginia Mountaineers: 2026 Season Preview',
     description:
       'Randy Mazey has been at West Virginia for 14 years. He has built a program that is always competitive, occasionally dangerous, and never quite able to break through.',
-  },
+  
+    images: ogImage('/images/og/cbb-west-virginia-2026.png')},
 };
 
 const data: TeamPreviewData = {

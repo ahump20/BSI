@@ -34,10 +34,12 @@ export default function SettingsPage() {
   return (
     <div className="min-h-screen bg-background-primary">
       {/* Header */}
-      <div className="border-b border-background-secondary/50 bg-background-secondary/20">
-        <div className="max-w-4xl mx-auto px-4 py-6">
-          <h1 className="text-3xl font-display text-text-primary">Settings</h1>
-          <p className="text-text-secondary mt-2">
+      <div className="border-b border-border-subtle relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 20%, rgba(191,87,0,0.04) 0%, transparent 70%)' }} />
+        <div className="max-w-4xl mx-auto px-4 py-8 relative">
+          <span className="section-label block mb-3">Preferences</span>
+          <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-text-primary mb-2">Settings</h1>
+          <p className="text-text-secondary text-sm">
             Customize your BSI experience with timezone, favorite teams, and display preferences.
           </p>
 
@@ -54,7 +56,7 @@ export default function SettingsPage() {
         {/* Timezone Settings */}
         <section>
           <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
-            <span className="text-2xl">🕐</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-5 h-5 text-burnt-orange/60"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
             Time & Date
           </h2>
           <TimezoneSelector />
@@ -79,7 +81,7 @@ export default function SettingsPage() {
         {/* Display Preferences */}
         <section>
           <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
-            <span className="text-2xl">🎨</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-5 h-5 text-burnt-orange/60"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
             Display
           </h2>
           <div className="glass-card p-4">

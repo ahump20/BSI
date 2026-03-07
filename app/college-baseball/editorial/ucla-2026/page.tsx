@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'UCLA Bruins: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'UCLA Bruins: 2026 Season Preview',
     description:
       "The Bruins finished 2025 ranked No. 1 nationally and shared the Big Ten crown in the conference's first year of coast-to-coast baseball. John Savage's 18th season in Westwood begins.",
-  },
+  
+    images: ogImage('/images/og/cbb-ucla-2026.png')},
 };
 
 const data: TeamPreviewData = {

@@ -72,7 +72,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-sans font-bold;
+    @apply font-sans font-bold uppercase tracking-wider;
   }
 
   /* Focus states for accessibility */

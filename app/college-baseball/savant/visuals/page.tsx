@@ -13,6 +13,7 @@ import { PlateDisciplineScatter, type ScatterPlayer } from '@/components/analyti
 import { ConferenceHeatmap, type ConferenceHeatmapRow } from '@/components/analytics/ConferenceHeatmap';
 import { PowerVsContact, type PowerContactPlayer } from '@/components/analytics/PowerVsContact';
 import { EraFipGap, type EraFipPitcher } from '@/components/analytics/EraFipGap';
+import { fmt3 } from '@/lib/utils/format';
 import {
   PercentilePlayerCard,
   type StatGroup,
@@ -139,16 +140,16 @@ function computePercentile(
 }
 
 const STAT_DEFS = [
-  { key: 'avg', label: 'AVG', higherIsBetter: true, group: 'Hitting', format: (v: number) => v.toFixed(3).replace(/^0/, '') },
-  { key: 'obp', label: 'OBP', higherIsBetter: true, group: 'Hitting', format: (v: number) => v.toFixed(3).replace(/^0/, '') },
-  { key: 'slg', label: 'SLG', higherIsBetter: true, group: 'Hitting', format: (v: number) => v.toFixed(3).replace(/^0/, '') },
-  { key: 'iso', label: 'ISO', higherIsBetter: true, group: 'Hitting', format: (v: number) => v.toFixed(3).replace(/^0/, '') },
-  { key: 'woba', label: 'wOBA', higherIsBetter: true, group: 'Advanced', format: (v: number) => v.toFixed(3).replace(/^0/, '') },
+  { key: 'avg', label: 'AVG', higherIsBetter: true, group: 'Hitting', format: fmt3 },
+  { key: 'obp', label: 'OBP', higherIsBetter: true, group: 'Hitting', format: fmt3 },
+  { key: 'slg', label: 'SLG', higherIsBetter: true, group: 'Hitting', format: fmt3 },
+  { key: 'iso', label: 'ISO', higherIsBetter: true, group: 'Hitting', format: fmt3 },
+  { key: 'woba', label: 'wOBA', higherIsBetter: true, group: 'Advanced', format: fmt3 },
   { key: 'wrc_plus', label: 'wRC+', higherIsBetter: true, group: 'Advanced', format: (v: number) => Math.round(v).toString() },
   { key: 'ops_plus', label: 'OPS+', higherIsBetter: true, group: 'Advanced', format: (v: number) => Math.round(v).toString() },
   { key: 'k_pct', label: 'K%', higherIsBetter: false, group: 'Discipline', format: (v: number) => `${(v * 100).toFixed(1)}%` },
   { key: 'bb_pct', label: 'BB%', higherIsBetter: true, group: 'Discipline', format: (v: number) => `${(v * 100).toFixed(1)}%` },
-  { key: 'babip', label: 'BABIP', higherIsBetter: true, group: 'Discipline', format: (v: number) => v.toFixed(3).replace(/^0/, '') },
+  { key: 'babip', label: 'BABIP', higherIsBetter: true, group: 'Discipline', format: fmt3 },
 ];
 
 function buildPlayerCard(

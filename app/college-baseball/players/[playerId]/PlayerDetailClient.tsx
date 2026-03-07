@@ -12,6 +12,7 @@ import { DataAttribution } from '@/components/ui/DataAttribution';
 import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
 import { AdvancedStatsCard } from '@/components/analytics/AdvancedStatsCard';
+import { fmt3 } from '@/lib/utils/format';
 import { getPlayerHighlights } from '@/lib/data/player-highlights';
 
 // ---------------------------------------------------------------------------
@@ -353,9 +354,9 @@ export default function PlayerDetailClient() {
                     ? [
                         ...(savant.data.k_pct != null ? [{ label: 'K%', value: savant.data.k_pct, format: (v: number) => `${(v * 100).toFixed(1)}%`, higherIsBetter: false }] : []),
                         ...(savant.data.bb_pct != null ? [{ label: 'BB%', value: savant.data.bb_pct, format: (v: number) => `${(v * 100).toFixed(1)}%` }] : []),
-                        ...(savant.data.iso != null ? [{ label: 'ISO', value: savant.data.iso, format: (v: number) => v.toFixed(3).replace(/^0/, '') }] : []),
-                        ...(savant.data.babip != null ? [{ label: 'BABIP', value: savant.data.babip, format: (v: number) => v.toFixed(3).replace(/^0/, '') }] : []),
-                        ...(savant.data.woba != null ? [{ label: 'wOBA', value: savant.data.woba, format: (v: number) => v.toFixed(3).replace(/^0/, ''), pro: true }] : []),
+                        ...(savant.data.iso != null ? [{ label: 'ISO', value: savant.data.iso, format: fmt3 }] : []),
+                        ...(savant.data.babip != null ? [{ label: 'BABIP', value: savant.data.babip, format: fmt3 }] : []),
+                        ...(savant.data.woba != null ? [{ label: 'wOBA', value: savant.data.woba, format: fmt3, pro: true }] : []),
                         ...(savant.data.wrc_plus != null ? [{ label: 'wRC+', value: savant.data.wrc_plus, format: (v: number) => String(Math.round(v)), pro: true }] : []),
                       ]
                     : [

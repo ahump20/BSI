@@ -8,6 +8,7 @@ import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
 
+import { ogImage } from '@/lib/metadata';
 // ── Metadata ────────────────────────────────────────────────────────
 
 export const metadata: Metadata = {
@@ -21,12 +22,14 @@ export const metadata: Metadata = {
     type: 'profile',
     url: 'https://blazesportsintel.com/college-baseball/editorial/dylan-volantis-2026-draft-profile',
     siteName: 'Blaze Sports Intel',
-  },
+  
+    images: ogImage('/images/og/cbb-dylan-volantis-2026-draft-profile.png')},
   twitter: {
     card: 'summary_large_image',
     title: 'Dylan Volantis — Texas LHP Draft Profile | BSI',
     description: '14 IP. 0 ER. 17 K. The closer-to-starter conversion is working.',
-  },
+  
+    images: ['/images/og/cbb-dylan-volantis-2026-draft-profile.png']},
   alternates: {
     canonical: '/college-baseball/editorial/dylan-volantis-2026-draft-profile',
   },

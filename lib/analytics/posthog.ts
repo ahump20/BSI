@@ -25,10 +25,11 @@ export async function initPostHog(): Promise<typeof posthogLib | null> {
   posthog.init(POSTHOG_KEY, {
     api_host: POSTHOG_HOST,
     person_profiles: 'identified_only',
-    capture_pageview: false,
+    capture_pageview: false, // Manually fired in PostHogProvider on route change
     capture_pageleave: true,
     autocapture: true,
     persistence: 'localStorage+cookie',
+    capture_performance: true, // Web vitals (FCP, LCP, CLS, etc.)
     loaded: (ph) => {
       if (process.env.NODE_ENV === 'development') {
         ph.debug();

@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Utah Utes: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'Utah Utes: 2026 Season Preview',
     description:
       'Utah relaunched its baseball program in 2024 after a 15-year hiatus. Two seasons in, the Utes are exactly where you would expect — overmatched in conference play, competitive in flashes.',
-  },
+  
+    images: ogImage('/images/og/cbb-utah-2026.png')},
 };
 
 const data: TeamPreviewData = {

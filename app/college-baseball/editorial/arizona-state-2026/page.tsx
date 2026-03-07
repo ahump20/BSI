@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Arizona State Sun Devils: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'Arizona State Sun Devils: 2026 Season Preview',
     description:
       'Five national titles. The winningest program now in the Big 12. Willie Bloomquist brings a former big leaguer\'s intensity to a program that owns the most CWS hardware in the conference.',
-  },
+  
+    images: ogImage('/images/og/cbb-arizona-state-2026.png')},
 };
 
 const data: TeamPreviewData = {

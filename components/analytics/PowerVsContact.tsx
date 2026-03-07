@@ -3,6 +3,7 @@
 import { useRef, useEffect, useState, useMemo } from 'react';
 import * as d3 from 'd3';
 import { CONF_COLORS, getConfColor } from '@/lib/data/conference-colors';
+import { fmt3 } from '@/lib/utils/format';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -161,7 +162,7 @@ export function PowerVsContact({
 
     const yAxis = d3.axisLeft(yScale)
       .ticks(5)
-      .tickFormat(d => (d as number).toFixed(3).replace(/^0/, ''));
+      .tickFormat(d => fmt3(d as number));
 
     g.append('g')
       .attr('transform', `translate(0,${innerH})`)
@@ -302,7 +303,7 @@ export function PowerVsContact({
               <div>
                 <span className="text-[9px] text-text-muted font-mono">ISO</span>
                 <span className="block text-xs font-mono font-bold text-text-primary">
-                  {tooltip.player.iso.toFixed(3).replace(/^0/, '')}
+                  {fmt3(tooltip.player.iso)}
                 </span>
               </div>
               <div>
@@ -314,7 +315,7 @@ export function PowerVsContact({
               <div>
                 <span className="text-[9px] text-text-muted font-mono">SLG</span>
                 <span className="block text-xs font-mono font-bold text-text-primary">
-                  {tooltip.player.slg.toFixed(3).replace(/^0/, '')}
+                  {fmt3(tooltip.player.slg)}
                 </span>
               </div>
               {tooltip.player.hr != null && (

@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
+import { fmt3 } from '@/lib/utils/format';
 
 interface Player {
   id: string;
@@ -483,7 +484,7 @@ export default function CollegeBaseballPlayersPage() {
                           <div className="grid grid-cols-4 gap-2 text-center">
                             <div>
                               <div className="text-burnt-orange font-display text-lg font-bold">
-                                {player.battingStats.avg.toFixed(3).replace(/^0/, '')}
+                                {fmt3(player.battingStats.avg)}
                               </div>
                               <div className="text-text-tertiary text-xs">AVG</div>
                             </div>

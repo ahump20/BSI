@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Cincinnati Bearcats: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'Cincinnati Bearcats: 2026 Season Preview',
     description:
       'The Bearcats were an AAC force for a decade. Two years into the Big 12, they are learning a different kind of baseball — deeper rotations, thicker lineups, and no easy weekends.',
-  },
+  
+    images: ogImage('/images/og/cbb-cincinnati-2026.png')},
 };
 
 const data: TeamPreviewData = {

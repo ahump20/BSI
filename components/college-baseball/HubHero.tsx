@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { ScrollReveal } from '@/components/cinematic';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
-import { Badge } from '@/components/ui/Badge';
 import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
+import { HeroGlow } from '@/components/ui/HeroGlow';
 
 interface HubHeroProps {
   searchQuery: string;
@@ -30,17 +30,14 @@ export function HubHero({
 }: HubHeroProps) {
   return (
     <Section padding="lg" className="relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/15 via-transparent to-transparent pointer-events-none" />
+      <HeroGlow shape="70% 60%" position="50% 30%" intensity={0.08} />
       <Container center>
         <ScrollReveal direction="up">
-          <Badge variant="success" className="mb-4">
-            <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse mr-2" />
-            NCAA Division I Baseball
-          </Badge>
+          <span className="section-label block mb-4 text-center">NCAA Division I Baseball</span>
         </ScrollReveal>
         <ScrollReveal direction="up" delay={100}>
-          <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-center uppercase tracking-wide mb-4">
-            NCAA Division I <span className="text-gradient-blaze">Baseball</span>
+          <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-center uppercase tracking-display text-text-primary mb-4">
+            NCAA Division I Baseball
           </h1>
         </ScrollReveal>
         <ScrollReveal direction="up" delay={120}>
@@ -51,7 +48,7 @@ export function HubHero({
           />
         </ScrollReveal>
         <ScrollReveal direction="up" delay={150}>
-          <p className="text-[#C9A227] font-semibold text-lg tracking-wide text-center mb-6">
+          <p className="text-burnt-orange font-serif italic text-lg leading-relaxed text-center mb-6">
             Park-adjusted advanced metrics. Updated every 6 hours. Free.
           </p>
         </ScrollReveal>
@@ -91,25 +88,25 @@ export function HubHero({
           </div>
         </ScrollReveal>
 
-        {/* Stats Bar */}
+        {/* Stats Bar — metric preview with context */}
         <ScrollReveal direction="up" delay={250}>
-          <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4 p-6 bg-surface-light border border-border rounded-2xl">
-            <div className="text-center p-4">
-              <div className="font-display text-3xl font-bold text-burnt-orange">wOBA</div>
-              <div className="text-xs uppercase tracking-wider text-text-muted mt-1">Weighted On-Base</div>
-            </div>
-            <div className="text-center p-4">
-              <div className="font-display text-3xl font-bold text-burnt-orange">wRC+</div>
-              <div className="text-xs uppercase tracking-wider text-text-muted mt-1">Runs Created</div>
-            </div>
-            <div className="text-center p-4">
-              <div className="font-display text-3xl font-bold text-burnt-orange">FIP</div>
-              <div className="text-xs uppercase tracking-wider text-text-muted mt-1">Fielding Indep.</div>
-            </div>
-            <div className="text-center p-4">
-              <div className="font-display text-3xl font-bold text-burnt-orange">PF</div>
-              <div className="text-xs uppercase tracking-wider text-text-muted mt-1">Park Factors</div>
-            </div>
+          <div className="mt-10 flex flex-wrap justify-center gap-x-0 gap-y-4 max-w-3xl mx-auto">
+            {[
+              { abbr: 'wOBA', label: 'Hitting quality, park-adjusted' },
+              { abbr: 'wRC+', label: 'Runs above average, scaled to 100' },
+              { abbr: 'FIP', label: 'What a pitcher actually controls' },
+              { abbr: 'PF', label: 'How the ballpark shifts the numbers' },
+            ].map((metric, i) => (
+              <div
+                key={metric.abbr}
+                className={`flex items-center gap-3 px-5 py-3 ${
+                  i < 3 ? 'border-r border-white/[0.06]' : ''
+                }`}
+              >
+                <span className="font-mono text-burnt-orange text-sm font-bold tracking-wide">{metric.abbr}</span>
+                <span className="text-text-muted text-xs leading-tight max-w-[140px]">{metric.label}</span>
+              </div>
+            ))}
           </div>
         </ScrollReveal>
 

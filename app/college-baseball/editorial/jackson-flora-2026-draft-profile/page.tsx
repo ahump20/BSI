@@ -8,6 +8,7 @@ import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
 
+import { ogImage } from '@/lib/metadata';
 // ── Metadata ────────────────────────────────────────────────────────
 
 export const metadata: Metadata = {
@@ -21,12 +22,14 @@ export const metadata: Metadata = {
     type: 'profile',
     url: 'https://blazesportsintel.com/college-baseball/editorial/jackson-flora-2026-draft-profile',
     siteName: 'Blaze Sports Intel',
-  },
+  
+    images: ogImage('/images/og/cbb-jackson-flora-2026-draft-profile.png')},
   twitter: {
     card: 'summary_large_image',
     title: 'Jackson Flora — UCSB RHP Draft Profile | BSI',
     description: '100 mph. Elite sweeper. No. 14 draft prospect pitching like a top-5 arm.',
-  },
+  
+    images: ['/images/og/cbb-jackson-flora-2026-draft-profile.png']},
   alternates: {
     canonical: '/college-baseball/editorial/jackson-flora-2026-draft-profile',
   },

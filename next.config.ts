@@ -26,6 +26,8 @@ const nextConfig: NextConfig = {
   env: {
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:
       'pk_live_51RlBWILvpRBk20R2K8sqQVkChQNmI2uIplQkXlwzre0a89T0BitfA56d4igyBYLCdbHJ32FNpYuaGBXixWo9nY6t00AROOs9vh',
+    NEXT_PUBLIC_POSTHOG_KEY: 'phc_KirkHATYxmVzlCgyZzXRwpdTvrKBVA4vyZ7b44NTtE5',
+    NEXT_PUBLIC_POSTHOG_HOST: 'https://us.i.posthog.com',
   },
 
 };

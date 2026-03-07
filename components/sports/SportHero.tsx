@@ -3,17 +3,17 @@
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
-import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
+import { HeroGlow } from '@/components/ui/HeroGlow';
 
 interface SportHeroProps {
   sport: string;
   leagueName: string;
   tagline: string;
   description: string;
-  accentColor?: string;
+
   dataSource: string;
   refreshInterval?: number;
   primaryCta: { label: string; href: string };
@@ -26,34 +26,25 @@ export function SportHero({
   leagueName,
   tagline,
   description,
-  accentColor,
+
   dataSource,
   refreshInterval = 30,
   primaryCta,
   secondaryCta,
   stats,
 }: SportHeroProps) {
-  const gradientStyle = accentColor
-    ? `from-[${accentColor}]/20 via-transparent to-transparent`
-    : 'from-burnt-orange/15 via-transparent to-transparent';
-
   return (
     <Section padding="lg" className="relative overflow-hidden">
-      <div
-        className={`absolute inset-0 bg-gradient-radial ${gradientStyle} pointer-events-none`}
-      />
+      <HeroGlow shape="70% 60%" position="50% 30%" intensity={0.08} />
 
       <Container center>
         <ScrollReveal direction="up">
-          <Badge variant="success" className="mb-4">
-            <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse mr-2" />
-            {leagueName}
-          </Badge>
+          <span className="section-label block mb-4 text-center">{leagueName}</span>
         </ScrollReveal>
 
         <ScrollReveal direction="up" delay={100}>
-          <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-center uppercase tracking-display mb-4">
-            {sport} <span className="text-gradient-blaze">Intelligence</span>
+          <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-center uppercase tracking-display text-text-primary mb-4">
+            {sport} Intelligence
           </h1>
         </ScrollReveal>
 
@@ -65,7 +56,7 @@ export function SportHero({
         </ScrollReveal>
 
         <ScrollReveal direction="up" delay={150}>
-          <p className="text-gold font-semibold text-lg tracking-wide text-center mb-4">
+          <p className="text-burnt-orange font-serif italic text-lg leading-relaxed text-center mb-4">
             {tagline}
           </p>
         </ScrollReveal>
@@ -95,7 +86,7 @@ export function SportHero({
           <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 p-6 glass-card rounded-2xl">
             {stats.map((stat) => (
               <div key={stat.label} className="text-center p-4">
-                <div className="font-display text-3xl font-bold text-burnt-orange">
+                <div className="font-mono text-3xl font-bold text-burnt-orange">
                   {stat.value}
                 </div>
                 <div className="text-xs uppercase tracking-wider text-text-tertiary mt-1">

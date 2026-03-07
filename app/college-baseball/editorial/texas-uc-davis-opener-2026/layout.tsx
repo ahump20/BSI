@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Texas 12, UC Davis 2: 2026 Season Opener Recap | Blaze Sports Intel',
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
     description:
       'Volantis dealt. The lineup produced from top to bottom. The 2026 Longhorns answered opening night emphatically.',
     type: 'article',
-  },
+   images: ogImage('/images/og-college-baseball.png') },
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {

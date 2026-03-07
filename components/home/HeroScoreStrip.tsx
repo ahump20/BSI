@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { withAlpha } from '@/lib/utils/color';
 
 interface HeroGame {
@@ -19,6 +19,12 @@ interface HeroScoresData {
   recentFinal: HeroGame | null;
   empty: boolean;
   meta?: { source: string; fetched_at: string; timezone: string };
+}
+
+function statusColorClass(label: string): string {
+  if (label === 'Live') return 'text-green-400';
+  if (label === 'Final') return 'text-text-muted';
+  return 'text-burnt-orange';
 }
 
 function GameCard({ game, label, accent }: { game: HeroGame; label: string; accent: string }) {
@@ -67,11 +73,7 @@ function GameCard({ game, label, accent }: { game: HeroGame; label: string; acce
             <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500" />
           </span>
         )}
-        <span className={`text-[10px] ${
-          label === 'Live' ? 'text-green-400'
-            : label === 'Final' ? 'text-text-muted'
-            : 'text-burnt-orange'
-        }`}>
+        <span className={`text-[10px] ${statusColorClass(label)}`}>
           {game.detail || game.status}
         </span>
       </div>
@@ -81,19 +83,19 @@ function GameCard({ game, label, accent }: { game: HeroGame; label: string; acce
 
 function SkeletonCard() {
   return (
-    <div className="glass-default rounded-xl p-3 sm:p-4 border border-border-subtle flex-1 min-w-0 animate-pulse">
-      <div className="h-3 bg-surface-light rounded w-16 mb-3" />
+    <div className="glass-default rounded-xl p-3 sm:p-4 border border-border-subtle flex-1 min-w-0">
+      <div className="h-3 bsi-shimmer rounded w-16 mb-3" />
       <div className="space-y-1.5">
         <div className="flex justify-between">
-          <div className="h-3 bg-surface-light rounded w-12" />
-          <div className="h-3 bg-surface-light rounded w-6" />
+          <div className="h-3 bsi-shimmer rounded w-12" />
+          <div className="h-3 bsi-shimmer rounded w-6" />
         </div>
         <div className="flex justify-between">
-          <div className="h-3 bg-surface-light rounded w-12" />
-          <div className="h-3 bg-surface-light rounded w-6" />
+          <div className="h-3 bsi-shimmer rounded w-12" />
+          <div className="h-3 bsi-shimmer rounded w-6" />
         </div>
       </div>
-      <div className="h-2 bg-surface-light rounded w-20 mt-2" />
+      <div className="h-2 bsi-shimmer rounded w-20 mt-2" />
     </div>
   );
 }
@@ -103,37 +105,9 @@ function SkeletonCard() {
  * Fetches /api/hero-scores, auto-refreshes every 30s, returns null if no games.
  */
 export function HeroScoreStrip() {
-  const [data, setData] = useState<HeroScoresData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const url = `${process.env.NEXT_PUBLIC_API_BASE || ''}/api/hero-scores`;
+  const { data, loading } = useSportData<HeroScoresData>(url, { refreshInterval: 30_000 });
 
-  useEffect(() => {
-    let cancelled = false;
-
-    async function fetchHeroScores() {
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE || ''}/api/hero-scores`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json() as HeroScoresData;
-        if (!cancelled) {
-          setData(json);
-          setLoading(false);
-        }
-      } catch {
-        if (!cancelled) setLoading(false);
-      }
-    }
-
-    fetchHeroScores();
-    intervalRef.current = setInterval(fetchHeroScores, 30_000);
-
-    return () => {
-      cancelled = true;
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, []);
-
-  // Don't render if no games available
   if (!loading && (!data || data.empty)) return null;
 
   const cards: Array<{ game: HeroGame; label: string; accent: string }> = [];

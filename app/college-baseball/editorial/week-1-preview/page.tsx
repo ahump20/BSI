@@ -6,6 +6,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'College Baseball Week 1 Preview 2026: What to Watch | Blaze Sports Intel',
@@ -14,7 +15,8 @@ export const metadata: Metadata = {
     title: 'College Baseball Week 1 Preview 2026 | Blaze Sports Intel',
     description: 'The matchups, pitching duels, and storylines that matter most in opening weekend of the 2026 college baseball season.',
     type: 'article',
-  },
+  
+    images: ogImage('/images/og/cbb-week-1-preview.png')},
 };
 
 const topMatchups = [

@@ -6,6 +6,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Week 1 Recap: Three Grand Slams. One Record Book. | Blaze Sports Intel',
@@ -15,7 +16,8 @@ export const metadata: Metadata = {
     title: 'Week 1 Recap: Three Grand Slams. One Record Book.',
     description:
       'Opening Weekend separated contenders from pretenders across 118 games. The complete BSI breakdown of college baseball Week 1.',
-  },
+  
+    images: ogImage('/images/og/cbb-week-1-recap.png')},
 };
 
 // ── Rankings data ────────────────────────────────────────────────────

@@ -1,11 +1,12 @@
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
 import { JsonLd } from '@/components/JsonLd';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'About | BSI',
   description: 'The story behind Blaze Sports Intel.',
-  openGraph: { title: 'About | BSI', description: 'The story behind Blaze Sports Intel.' },
+  openGraph: { title: 'About | BSI', description: 'The story behind Blaze Sports Intel.' , images: ogImage() },
 };
 
 export default function AboutLayout({ children }: { children: ReactNode }) {

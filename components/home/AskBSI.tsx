@@ -3,13 +3,17 @@
 import { useState, useRef, useCallback } from 'react';
 import Link from 'next/link';
 
+// ─── Example prompts — cover routing, stats, teams, and multi-sport ──────────
+
 const EXAMPLE_PROMPTS = [
   'Where can I find live scores?',
-  'Tell me about the Texas Longhorns',
-  'What advanced stats does BSI track?',
+  'What is wOBA and who leads the SEC?',
+  'Is Texas a CWS contender this year?',
+  'Show me the best pitching staffs',
+  'What sports does BSI cover?',
 ];
 
-const MAX_FREE_QUESTIONS = 3;
+const MAX_FREE_QUESTIONS = 5;
 const STORAGE_KEY = 'bsi-ask-count';
 
 function getAskCount(): number {
@@ -23,54 +27,116 @@ function incrementAskCount(): number {
   return count;
 }
 
-/** Parse markdown links [text](url) into React elements with Next.js Link */
-function renderWithLinks(text: string): React.ReactNode[] {
-  const parts: React.ReactNode[] = [];
-  const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-  let lastIndex = 0;
-  let match: RegExpExecArray | null;
+// ─── Link parsing — turns [[text|/path]] into clickable elements ─────────────
 
-  while ((match = linkRegex.exec(text)) !== null) {
-    // Text before the link
+interface TextSegment {
+  type: 'text' | 'link';
+  content: string;
+  href?: string;
+}
+
+function parseResponse(text: string): TextSegment[] {
+  const segments: TextSegment[] = [];
+  const linkPattern = /\[\[([^|]+)\|([^\]]+)\]\]/g;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = linkPattern.exec(text)) !== null) {
+    // Text before this link
     if (match.index > lastIndex) {
-      parts.push(text.slice(lastIndex, match.index));
+      segments.push({ type: 'text', content: text.slice(lastIndex, match.index) });
     }
-    const linkText = match[1];
-    const href = match[2];
-    // Only render as Link for internal paths
-    if (href.startsWith('/')) {
-      parts.push(
-        <Link
-          key={`${href}-${match.index}`}
-          href={href}
-          className="text-burnt-orange hover:text-ember underline underline-offset-2 decoration-burnt-orange/40 hover:decoration-ember/60 transition-colors"
-        >
-          {linkText}
-        </Link>
-      );
-    } else {
-      parts.push(
-        <a
-          key={`${href}-${match.index}`}
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-burnt-orange hover:text-ember underline underline-offset-2 decoration-burnt-orange/40 hover:decoration-ember/60 transition-colors"
-        >
-          {linkText}
-        </a>
-      );
-    }
+    // The link itself
+    segments.push({ type: 'link', content: match[1], href: match[2] });
     lastIndex = match.index + match[0].length;
   }
 
   // Remaining text after last link
   if (lastIndex < text.length) {
-    parts.push(text.slice(lastIndex));
+    segments.push({ type: 'text', content: text.slice(lastIndex) });
   }
 
-  return parts.length > 0 ? parts : [text];
+  return segments;
 }
+
+// ─── Extract all links from response for the action strip ────────────────────
+
+function extractLinks(text: string): Array<{ label: string; href: string }> {
+  const links: Array<{ label: string; href: string }> = [];
+  const seen = new Set<string>();
+  const linkPattern = /\[\[([^|]+)\|([^\]]+)\]\]/g;
+  let match;
+
+  while ((match = linkPattern.exec(text)) !== null) {
+    if (!seen.has(match[2])) {
+      seen.add(match[2]);
+      links.push({ label: match[1], href: match[2] });
+    }
+  }
+
+  return links;
+}
+
+// ─── Rendered response with inline links ─────────────────────────────────────
+
+function ResponseBody({ text, isStreaming }: { text: string; isStreaming: boolean }) {
+  const segments = parseResponse(text);
+
+  return (
+    <p className="text-sm leading-relaxed text-text-secondary font-serif">
+      {segments.map((seg, i) =>
+        seg.type === 'link' ? (
+          <Link
+            key={i}
+            href={seg.href!}
+            className="text-burnt-orange underline decoration-burnt-orange/30 underline-offset-2
+              hover:decoration-burnt-orange/60 transition-colors font-semibold"
+          >
+            {seg.content}
+          </Link>
+        ) : (
+          <span key={i}>{seg.content}</span>
+        )
+      )}
+      {isStreaming && (
+        <span className="inline-block w-1.5 h-4 bg-burnt-orange/60 ml-0.5 animate-pulse" />
+      )}
+    </p>
+  );
+}
+
+// ─── Action strip — quick-nav cards from response links ──────────────────────
+
+function ActionStrip({ links }: { links: Array<{ label: string; href: string }> }) {
+  if (links.length === 0) return null;
+
+  return (
+    <div className="mt-3 pt-3 border-t border-[rgba(245,240,235,0.04)]">
+      <p className="text-[9px] uppercase tracking-[0.15em] text-text-muted mb-2 font-mono">
+        Go to
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {links.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className="inline-flex items-center gap-1.5 text-[11px] px-3 py-1.5 rounded-lg
+              bg-burnt-orange/10 border border-burnt-orange/20 text-burnt-orange
+              hover:bg-burnt-orange/20 hover:border-burnt-orange/40
+              transition-all duration-200 font-semibold"
+          >
+            <svg viewBox="0 0 16 16" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M6 3l5 5-5 5" />
+            </svg>
+            {link.label}
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Main component ──────────────────────────────────────────────────────────
 
 export function AskBSI() {
   const [question, setQuestion] = useState('');
@@ -86,7 +152,7 @@ export function AskBSI() {
     // Rate limit check (free tier)
     const count = getAskCount();
     if (count >= MAX_FREE_QUESTIONS) {
-      setError(`You've used your ${MAX_FREE_QUESTIONS} free questions this session. Sign up for unlimited access.`);
+      setError(`You've used your ${MAX_FREE_QUESTIONS} free questions. Refresh the page or sign up for unlimited access.`);
       return;
     }
 
@@ -157,10 +223,13 @@ export function AskBSI() {
     askQuestion(question);
   };
 
+  const responseLinks = response ? extractLinks(response) : [];
+
   return (
     <section className="py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         <div className="rounded-xl bg-[rgba(26,26,26,0.6)] border border-[rgba(245,240,235,0.06)] p-5 sm:p-6">
+          {/* Header */}
           <div className="flex items-center gap-3 mb-4">
             <div className="w-8 h-8 rounded-lg bg-burnt-orange/15 flex items-center justify-center shrink-0">
               <svg viewBox="0 0 24 24" className="w-4 h-4 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -173,7 +242,7 @@ export function AskBSI() {
                 Ask BSI
               </h3>
               <p className="text-[10px] text-text-muted uppercase tracking-wider">
-                AI-powered analysis &amp; site guide
+                AI-powered sports intelligence — ask anything, go anywhere
               </p>
             </div>
           </div>
@@ -201,7 +270,7 @@ export function AskBSI() {
               type="text"
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
-              placeholder="Ask about teams, stats, or where to find anything on BSI..."
+              placeholder="Ask about any sport, stat, team, or feature..."
               disabled={streaming}
               className="flex-1 px-4 py-2.5 rounded-lg bg-[rgba(255,255,255,0.03)] border border-[rgba(245,240,235,0.06)]
                 text-sm text-text-primary placeholder:text-text-muted
@@ -231,12 +300,10 @@ export function AskBSI() {
               {error ? (
                 <p className="text-sm text-red-400">{error}</p>
               ) : (
-                <div className="text-sm leading-relaxed text-text-secondary font-serif">
-                  {renderWithLinks(response)}
-                  {streaming && (
-                    <span className="inline-block w-1.5 h-4 bg-burnt-orange/60 ml-0.5 animate-pulse" />
-                  )}
-                </div>
+                <>
+                  <ResponseBody text={response} isStreaming={streaming} />
+                  {!streaming && <ActionStrip links={responseLinks} />}
+                </>
               )}
             </div>
           )}

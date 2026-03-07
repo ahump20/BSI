@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Maryland Terrapins: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'Maryland Terrapins: 2026 Season Preview',
     description:
       "Maryland went 27-29 in 2025 and finished 12-18 in Big Ten play. But Matt Swope's third year in College Park brings his first full recruiting class, a targeted portal haul.",
-  },
+  
+    images: ogImage('/images/og/cbb-maryland-2026.png')},
 };
 
 const data: TeamPreviewData = {

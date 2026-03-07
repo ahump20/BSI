@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Nebraska Cornhuskers: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'Nebraska Cornhuskers: 2026 Season Preview',
     description:
       'Will Bolt came home to rebuild Nebraska baseball, and after six years the foundation is visible — if not yet the finished product. The Huskers went .500 in Big Ten play in 2025.',
-  },
+  
+    images: ogImage('/images/og/cbb-nebraska-2026.png')},
 };
 
 const data: TeamPreviewData = {

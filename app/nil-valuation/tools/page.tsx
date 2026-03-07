@@ -11,20 +11,28 @@ import { Footer } from '@/components/layout-ds/Footer';
 
 const tools = [
   {
+    title: 'NIL Performance Index',
+    description:
+      'Calculate any college baseball player\'s NIL index using live advanced stats from BSI Savant. FMNV methodology: Performance + Exposure + Market.',
+    status: 'Live',
+    statusVariant: 'success' as const,
+    href: '/nil-valuation/performance-index',
+  },
+  {
     title: 'FMNV Calculator',
     description:
       'Fair Market NIL Value calculator using our proprietary model. Input player stats, social following, and market factors to get an estimated valuation.',
     status: 'Live',
     statusVariant: 'success' as const,
-    href: '/nil-valuation',
+    href: '/nil-valuation/methodology',
   },
   {
     title: 'WAR-to-NIL Converter',
     description:
       'Convert Wins Above Replacement metrics to NIL dollar values. See how on-field performance translates to market value.',
-    status: 'Live',
-    statusVariant: 'success' as const,
-    href: '/nil-valuation',
+    status: 'Coming Soon',
+    statusVariant: 'warning' as const,
+    href: '#',
   },
   {
     title: 'Comparable Analysis',
@@ -147,7 +155,7 @@ export default function NILToolsPage() {
                   consultation with our NIL experts.
                 </p>
                 <Link href="/nil-valuation">
-                  <Button variant="primary">View Enterprise Options</Button>
+                  <Button variant="primary">View Market Intelligence</Button>
                 </Link>
               </Card>
             </ScrollReveal>

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'College Baseball Editorial | 2026 Season Previews | Blaze Sports Intel',
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
     title: 'College Baseball Editorial | 2026 Season Previews',
     description:
       '47 team season previews across the SEC, Big 12, and Big Ten. Conference breakdowns, scouting verdicts, and Omaha projections.',
-  },
+   images: ogImage('/images/og-college-baseball.png') },
 };
 
 export default function EditorialLayout({ children }: { children: ReactNode }) {

@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Iowa Hawkeyes: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'Iowa Hawkeyes: 2026 Season Preview',
     description:
       "Iowa quietly posted a 21-8 conference record in 2025 — one of the best marks in the Big Ten — and Rick Heller's program enters Year 13 with a roster that can challenge anyone.",
-  },
+  
+    images: ogImage('/images/og/cbb-iowa-2026.png')},
 };
 
 const data: TeamPreviewData = {

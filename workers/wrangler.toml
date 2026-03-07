@@ -97,7 +97,8 @@ local_protocol = "http"
 name = "blazesportsintel-worker-prod"
 routes = [
   { pattern = "blazesportsintel.com/*", zone_name = "blazesportsintel.com" },
-  { pattern = "www.blazesportsintel.com/*", zone_name = "blazesportsintel.com" }
+  { pattern = "www.blazesportsintel.com/*", zone_name = "blazesportsintel.com" },
+  { pattern = "wbc.blazesportsintel.com/*", zone_name = "blazesportsintel.com" }
 ]
 
 [env.production.vars]

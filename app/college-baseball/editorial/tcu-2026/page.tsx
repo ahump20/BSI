@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'TCU Horned Frogs: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'TCU Horned Frogs: 2026 Season Preview',
     description:
       'Big 12 regular season champions in 2025, a CWS appearance in 2023, and an ace-led rotation that makes the Horned Frogs the conference\'s team to beat.',
-  },
+  
+    images: ogImage('/images/og/cbb-tcu-2026.png')},
 };
 
 const data: TeamPreviewData = {

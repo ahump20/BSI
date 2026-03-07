@@ -6,6 +6,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'National Opening Weekend Preview: 118 Games, 300+ Programs | Blaze Sports Intel',
@@ -14,7 +15,8 @@ export const metadata: Metadata = {
     title: 'National Opening Weekend Preview 2026 | Blaze Sports Intel',
     description: '118 games. 300+ programs. The college baseball season starts now. Full national preview with conference breakdowns, matchups to watch, and transfer portal grades.',
     type: 'article',
-  },
+  
+    images: ogImage('/images/og/cbb-national-opening-weekend.png')},
 };
 
 const byTheNumbers = [

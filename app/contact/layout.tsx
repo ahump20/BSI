@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Contact | Blaze Sports Intel',
@@ -7,7 +8,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Contact | Blaze Sports Intel',
     description: 'Get in touch with Blaze Sports Intel.',
-  },
+   images: ogImage() },
 };
 
 export default function ContactLayout({ children }: { children: React.ReactNode }) {

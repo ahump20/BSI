@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Purdue Boilermakers: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'Purdue Boilermakers: 2026 Season Preview',
     description:
       'Purdue won 31 games in 2025 and went 11-19 in Big Ten play. That disconnect is the program in a sentence: competitive enough outside the conference, unable to sustain it against Big Ten pitching.',
-  },
+  
+    images: ogImage('/images/og/cbb-purdue-2026.png')},
 };
 
 const data: TeamPreviewData = {

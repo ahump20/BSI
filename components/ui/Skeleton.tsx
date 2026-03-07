@@ -68,7 +68,7 @@ export function ScoreCardSkeletonList({ count = 6 }: { count?: number }) {
 
 export function SkeletonPageHeader() {
   return (
-    <div className="space-y-3 animate-pulse">
+    <div className="space-y-3">
       <Skeleton variant="text" width={200} height={28} />
       <div className="flex gap-2">
         <Skeleton variant="rectangular" width={80} height={32} className="rounded-md" />
@@ -81,7 +81,7 @@ export function SkeletonPageHeader() {
 
 export function SkeletonStandingsTable({ rows = 10, columns = 5 }: { rows?: number; columns?: number }) {
   return (
-    <div className="bg-surface-light rounded-lg p-4 animate-pulse">
+    <div className="bg-surface-light rounded-lg p-4">
       <Skeleton variant="text" width={140} height={20} className="mb-4" />
       <table className="w-full">
         <thead>

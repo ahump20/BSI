@@ -16,6 +16,7 @@ interface ConferenceRow {
 interface ConferenceStrengthChartProps {
   data: ConferenceRow[];
   isPro?: boolean;
+  total?: number;
   className?: string;
 }
 
@@ -34,6 +35,7 @@ function strengthColor(index: number): string {
 export function ConferenceStrengthChart({
   data,
   isPro = false,
+  total,
   className = '',
 }: ConferenceStrengthChartProps) {
   const [expandedConf, setExpandedConf] = useState<string | null>(null);
@@ -177,13 +179,13 @@ export function ConferenceStrengthChart({
         </div>
       )}
 
-      {!isPro && data.length > 5 && (
+      {!isPro && (total ?? data.length) > 5 && (
         <div className="px-5 py-3 border-t border-border-subtle text-center">
           <a
             href="/pricing"
             className="text-xs text-burnt-orange hover:text-ember font-medium transition-colors"
           >
-            Upgrade to Pro for all {data.length} conferences
+            Upgrade to Pro for all {total ?? data.length} conferences
           </a>
         </div>
       )}

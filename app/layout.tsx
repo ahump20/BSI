@@ -10,13 +10,13 @@ import { BottomNavWrapper } from '@/components/layout-ds/BottomNavWrapper';
 import { ScrollProgress } from '@/components/ui/ScrollProgress';
 import { BreadcrumbBar } from '@/components/layout-ds/BreadcrumbBar';
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd';
-import { PageTracker } from '@/components/analytics/PageTracker';
-
 // Lazy-load interaction-triggered components (not visible on initial render)
 const CommandPalette = dynamic(() => import('@/components/layout-ds/CommandPalette').then(m => ({ default: m.CommandPalette })));
 const KonamiCodeWrapper = dynamic(() => import('@/components/easter-eggs').then(m => ({ default: m.KonamiCodeWrapper })));
 const FeedbackButton = dynamic(() => import('@/components/ui/FeedbackModal').then(m => ({ default: m.FeedbackButton })));
 const ScrollToTopButton = dynamic(() => import('@/components/ui/ScrollToTopButton').then(m => ({ default: m.ScrollToTopButton })));
+const PageTracker = dynamic(() => import('@/components/analytics/PageTracker').then(m => ({ default: m.PageTracker })));
+const PostHogProvider = dynamic(() => import('@/components/analytics/PostHogProvider').then(m => ({ default: m.PostHogProvider })));
 
 // 3-font system: Display (Oswald) + Body (Cormorant Garamond) + Mono (JetBrains Mono)
 const cormorant = Cormorant_Garamond({
@@ -98,8 +98,8 @@ export const metadata: Metadata = {
     follow: true,
   },
   icons: {
-    icon: '/images/logo/blaze-logo.png',
-    apple: '/images/logo/blaze-logo.png',
+    icon: '/images/brand/bsi-shield-blaze.png',
+    apple: '/images/brand/bsi-shield-blaze.png',
   },
   manifest: '/manifest.json',
 };
@@ -115,7 +115,7 @@ const jsonLdContent = JSON.stringify({
       '@type': 'Organization',
       name: 'Blaze Sports Intel',
       url: 'https://blazesportsintel.com',
-      logo: 'https://blazesportsintel.com/images/logo/blaze-logo.png',
+      logo: 'https://blazesportsintel.com/images/brand/bsi-logo-primary.png',
       founder: { '@type': 'Person', name: 'Austin Humphrey' },
       description:
         'Free park-adjusted sabermetrics for D1 college baseball. wOBA, wRC+, FIP, park factors, conference strength. Plus live scores across MLB, NFL, NBA, and NCAA.',
@@ -160,6 +160,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <CommandPalette />
                 <KonamiCodeWrapper />
                 <PageTracker />
+                <PostHogProvider />
                 <main id="main-content" className="flex-1 overflow-y-auto pb-20 md:pb-0">
                   <PageTransition>{children}</PageTransition>
                 </main>

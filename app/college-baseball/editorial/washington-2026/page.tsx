@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Washington Huskies: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'Washington Huskies: 2026 Season Preview',
     description:
       'Washington went 29-28 overall in 2025 but was far more competitive in Big Ten play (17-13) than the overall record suggests. Eddie Smith is building something in Seattle.',
-  },
+  
+    images: ogImage('/images/og/cbb-washington-2026.png')},
 };
 
 const data: TeamPreviewData = {

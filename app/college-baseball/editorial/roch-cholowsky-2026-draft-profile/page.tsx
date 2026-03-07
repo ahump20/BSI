@@ -8,6 +8,7 @@ import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
 
+import { ogImage } from '@/lib/metadata';
 // ── Metadata ────────────────────────────────────────────────────────
 
 export const metadata: Metadata = {
@@ -21,12 +22,14 @@ export const metadata: Metadata = {
     type: 'profile',
     url: 'https://blazesportsintel.com/college-baseball/editorial/roch-cholowsky-2026-draft-profile',
     siteName: 'Blaze Sports Intel',
-  },
+  
+    images: ogImage('/images/og/cbb-roch-cholowsky-2026-draft-profile.png')},
   twitter: {
     card: 'summary_large_image',
     title: 'Roch Cholowsky — 2026 Draft No. 1 Pick | BSI',
     description: 'UCLA shortstop. 6 HR in 7 games. The consensus top pick through Weekend 2.',
-  },
+  
+    images: ['/images/og/cbb-roch-cholowsky-2026-draft-profile.png']},
   alternates: {
     canonical: '/college-baseball/editorial/roch-cholowsky-2026-draft-profile',
   },

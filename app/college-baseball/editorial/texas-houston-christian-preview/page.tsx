@@ -7,6 +7,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
 
+import { ogImage } from '@/lib/metadata';
 // ── Metadata ────────────────────────────────────────────────────────
 export const metadata: Metadata = {
   title: 'No. 3 Texas vs. Houston Christian: Tuesday Night at Disch-Falk | Blaze Sports Intel',
@@ -19,12 +20,14 @@ export const metadata: Metadata = {
     type: 'article',
     url: 'https://blazesportsintel.com/college-baseball/editorial/texas-houston-christian-preview',
     siteName: 'Blaze Sports Intel',
-  },
+  
+    images: ogImage('/images/og/cbb-texas-houston-christian-preview.png')},
   twitter: {
     card: 'summary_large_image',
     title: 'No. 3 Texas vs. HCU: Tuesday at Disch-Falk | BSI',
     description: 'Texas (11-0) hosts Houston Christian. Sam Cozart vs. Kenan Elarton. The last midweek tune-up before the final non-conference weekend.',
-  },
+  
+    images: ['/images/og/cbb-texas-houston-christian-preview.png']},
   alternates: { canonical: '/college-baseball/editorial/texas-houston-christian-preview' },
 };
 

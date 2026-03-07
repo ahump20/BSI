@@ -107,11 +107,14 @@ export function BottomNav({ items, className = '' }: { items: BottomNavItem[]; c
             <Link
               key={item.href}
               href={item.href}
-              className={`flex flex-col items-center justify-center gap-0.5 min-w-[48px] min-h-[48px] transition-colors ${
-                active ? 'text-burnt-orange' : 'text-text-muted hover:text-text-primary'
+              className={`relative flex flex-col items-center justify-center gap-0.5 min-w-[48px] min-h-[48px] transition-colors ${
+                active ? 'text-burnt-orange' : 'text-text-muted active:text-text-primary'
               }`}
               aria-current={active ? 'page' : undefined}
             >
+              {active && (
+                <span className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-[2px] rounded-full bg-burnt-orange" aria-hidden="true" />
+              )}
               {Icon && <Icon className="w-5 h-5" />}
               <span className="text-[10px] font-medium leading-tight">{item.label}</span>
             </Link>

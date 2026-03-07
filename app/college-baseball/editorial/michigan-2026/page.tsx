@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Michigan Wolverines: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'Michigan Wolverines: 2026 Season Preview',
     description:
       "Michigan reached the CWS finals in 2019 and has been chasing that standard ever since. Tracy Smith's third season in Ann Arbor begins with a roster that has the pitching to compete.",
-  },
+  
+    images: ogImage('/images/og/cbb-michigan-2026.png')},
 };
 
 const data: TeamPreviewData = {

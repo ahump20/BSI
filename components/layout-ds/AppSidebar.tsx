@@ -140,7 +140,9 @@ const NAV_GROUPS: readonly NavGroup[] = [
   {
     label: 'Tools',
     items: [
+      { href: '/nil-valuation', label: 'NIL Valuation', icon: <IconTarget /> },
       { href: '/models', label: 'Models', icon: <IconChart /> },
+      { href: '/research', label: 'Research', icon: <IconBook /> },
       { href: '/glossary', label: 'Glossary', icon: <IconBook /> },
       { href: '/pricing', label: 'Pricing', icon: <IconTag /> },
     ],
@@ -219,7 +221,7 @@ export function AppSidebar() {
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200 relative ${
                   active
                     ? 'text-[var(--bsi-primary-light)]'
-                    : 'text-[var(--bsi-text-muted)] hover:text-[var(--bsi-text)] hover:bg-white/[0.04]'
+                    : 'text-[var(--bsi-text-muted)] hover:text-[var(--bsi-text)] hover:bg-white/[0.06]'
                 }`}
                 {...extraProps}
               >

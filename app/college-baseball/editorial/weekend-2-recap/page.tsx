@@ -6,6 +6,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Weekend 2 Recap: The No. 1 Showed Up. The Rest Got Sorted. | Blaze Sports Intel',
@@ -15,7 +16,8 @@ export const metadata: Metadata = {
     title: 'Weekend 2 Recap: The No. 1 Showed Up. The Rest Got Sorted.',
     description:
       'UCLA made a statement. TCU dropped 11 spots. Two players hit for the cycle. The complete BSI breakdown of college baseball Weekend 2, plus Weekend 3 matchups to watch.',
-  },
+  
+    images: ogImage('/images/og/cbb-weekend-2-recap.png')},
 };
 
 // ── Rankings data ────────────────────────────────────────────────────

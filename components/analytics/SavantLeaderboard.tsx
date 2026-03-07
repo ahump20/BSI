@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react';
 import { MetricTooltip, METRIC_DEFS } from './MetricTooltip';
 import { getPercentileColor } from './PercentileBar';
 import { withAlpha } from '@/lib/utils/color';
+import { fmt3 } from '@/lib/utils/format';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -40,7 +41,6 @@ type SortDir = 'asc' | 'desc';
 // Format helpers
 // ---------------------------------------------------------------------------
 
-const fmt3 = (v: number) => v.toFixed(3).replace(/^0/, '');
 const fmt2 = (v: number) => v.toFixed(2);
 const fmt1 = (v: number) => v.toFixed(1);
 const fmtPct = (v: number) => `${(v * 100).toFixed(1)}%`;
@@ -191,8 +191,8 @@ export function SavantLeaderboard({
                 >
                   <button
                     onClick={() => handleSort(col.key)}
-                    className={`flex items-center gap-1 text-[10px] font-display uppercase tracking-widest transition-colors mx-auto ${
-                      sortKey === col.key ? 'text-burnt-orange' : 'text-text-muted hover:text-text-muted'
+                    className={`flex items-center gap-1 text-[10px] font-display uppercase tracking-widest transition-colors mx-auto cursor-pointer ${
+                      sortKey === col.key ? 'text-burnt-orange' : 'text-text-muted hover:text-text-secondary'
                     }`}
                   >
                     {col.metricKey && METRIC_DEFS[col.metricKey] ? (
@@ -225,8 +225,8 @@ export function SavantLeaderboard({
                 <tr
                   key={playerId || i}
                   onClick={() => playerId && onPlayerClick?.(playerId)}
-                  className={`border-b border-border-subtle transition-colors ${
-                    onPlayerClick ? 'cursor-pointer hover:bg-surface-light' : ''
+                  className={`border-b border-border-subtle transition-colors hover:bg-surface-light/50 ${
+                    onPlayerClick ? 'cursor-pointer' : ''
                   }`}
                 >
                   <td className="pl-5 pr-2 py-2.5">

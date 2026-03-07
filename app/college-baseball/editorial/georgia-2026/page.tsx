@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Georgia Bulldogs 2026 Season Preview | Blaze Sports Intel',
@@ -9,7 +10,8 @@ export const metadata: Metadata = {
     title: 'Georgia Bulldogs — 2026 Season Preview | BSI',
     description: 'Full scouting report on the Georgia Bulldogs heading into the 2026 college baseball season.',
     type: 'article',
-  },
+  
+    images: ogImage('/images/og/cbb-georgia-2026.png')},
 };
 
 const data: TeamPreviewData = {

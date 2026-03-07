@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { useSportData } from '@/lib/hooks/useSportData';
+import { fmt3 } from '@/lib/utils/format';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -128,7 +129,6 @@ export function SabermetricsPanel({ teamId, espnId, accent = 'var(--bsi-primary)
     );
   }
 
-  const fmt3 = (n: number) => n.toFixed(3).replace(/^0/, '');
   const fmt1 = (n: number) => n.toFixed(1);
   const fmt2 = (n: number) => n.toFixed(2);
   const fmtPct = (n: number) => `${(n * 100).toFixed(1)}%`;

@@ -12,11 +12,13 @@ export const metadata: Metadata = {
     title: 'Big 12 Opening Weekend 2026 | Blaze Sports Intel',
     description: 'Every Big 12 opening series previewed. Pitching matchups, lineup projections, and what to watch for across the conference.',
     type: 'article',
-  },
+  
+    images: ogImage('/images/og/cbb-big-12-opening-weekend.png')},
 };
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 
+import { ogImage } from '@/lib/metadata';
 const big12Matchups = [
   { away: 'Dallas Baptist', at: 'No. 11 TCU', date: 'Feb 14–16', capsule: 'The Horned Frogs are the Big 12 favorite. Pitching depth is elite, the lineup is balanced, and the Fort Worth faithful will be out in force. Kirk Saarloos has this program humming.', watch: 'Friday starter depth' },
   { away: 'Omaha', at: 'No. 17 Kansas', date: 'Feb 14–16', capsule: 'The Jayhawks are a legitimate dark horse for Omaha. Ritch Price has built something real in Lawrence and the roster is deep enough to compete in a loaded Big 12.', watch: 'Kansas as a national contender' },

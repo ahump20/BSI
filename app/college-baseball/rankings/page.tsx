@@ -7,9 +7,11 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { FilterPill } from '@/components/ui/FilterPill';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { HeroGlow } from '@/components/ui/HeroGlow';
 import { teamMetadata } from '@/lib/data/team-metadata';
 import { formatTimestamp } from '@/lib/utils/timezone';
 
@@ -165,7 +167,8 @@ export default function CollegeBaseballRankingsPage() {
   return (
     <>
       <div>
-        <Section padding="lg" className="pt-6">
+        <Section padding="lg" className="pt-6 relative overflow-hidden">
+          <HeroGlow position="50% 15%" spread="65%" />
           <Container>
             {/* Breadcrumb & Header */}
             <ScrollReveal direction="up">
@@ -181,13 +184,12 @@ export default function CollegeBaseballRankingsPage() {
               </div>
 
               <div className="mb-8">
-                <span className="kicker block mb-2">NCAA Division I Baseball</span>
+                <span className="section-label block mb-3">NCAA Division I Baseball</span>
                 <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display">
                   Top 25 <span className="text-gradient-blaze">Rankings</span>
                 </h1>
-                <p className="text-text-secondary mt-2 max-w-2xl">
-                  The definitive college baseball rankings from D1Baseball, USA Today Coaches Poll,
-                  Perfect Game, and the official NCAA RPI.
+                <p className="text-burnt-orange font-serif italic text-lg mt-2 max-w-2xl">
+                  D1Baseball, USA Today Coaches Poll, Perfect Game, and NCAA RPI — all in one place.
                 </p>
               </div>
             </ScrollReveal>
@@ -196,17 +198,13 @@ export default function CollegeBaseballRankingsPage() {
             <ScrollReveal direction="up" delay={100}>
               <div className="flex flex-wrap gap-2 mb-8">
                 {pollOptions.map((poll) => (
-                  <button
+                  <FilterPill
                     key={poll.value}
+                    active={selectedPoll === poll.value}
                     onClick={() => setSelectedPoll(poll.value)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                      selectedPoll === poll.value
-                        ? 'bg-burnt-orange text-white'
-                        : 'bg-background-secondary text-text-secondary hover:text-text-primary hover:bg-slate'
-                    }`}
                   >
                     {poll.label}
-                  </button>
+                  </FilterPill>
                 ))}
               </div>
             </ScrollReveal>
@@ -458,15 +456,10 @@ export default function CollegeBaseballRankingsPage() {
             )}
 
             {/* Data Attribution */}
-            <div className="mt-12 text-center text-xs text-text-tertiary">
-              <p>
-                Rankings sourced from official polls and D1Baseball. Updated weekly during season.
+            <div className="mt-12 pt-4 border-t border-white/[0.06]">
+              <p className="text-[11px] font-mono text-text-muted/50 text-center">
+                Official polls &middot; D1Baseball{rankings && <> &middot; {formatTimestamp(rankings.lastUpdated)}</>} &middot; Updated weekly
               </p>
-              {rankings && (
-                <p className="mt-1">
-                  Source data: {formatTimestamp(rankings.lastUpdated)}
-                </p>
-              )}
             </div>
             </DataErrorBoundary>
           </Container>

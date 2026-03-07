@@ -1,5 +1,7 @@
 'use client';
 
+import { fmt3 } from '@/lib/utils/format';
+
 // =============================================================================
 // Types
 // =============================================================================
@@ -40,7 +42,7 @@ export interface MatchupCardProps {
 
 function formatAvg(avg?: number): string {
   if (avg == null) return '---';
-  return avg.toFixed(3).replace(/^0/, '');
+  return fmt3(avg);
 }
 
 function formatEra(era?: number): string {

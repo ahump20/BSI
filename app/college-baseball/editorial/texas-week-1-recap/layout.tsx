@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Texas Week 1 Recap: 27 Runs, Volantis Dominates | Blaze Sports Intel',
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
     description:
       'The Longhorns scored 27 runs in three games. Volantis allowed one hit in his Sunday start. Michigan State comes to Austin next.',
     type: 'article',
-  },
+   images: ogImage('/images/og-college-baseball.png') },
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {

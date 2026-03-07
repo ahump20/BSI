@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Team Dossiers | BSI Intel',
@@ -8,7 +9,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Team Dossiers | Blaze Sports Intel',
     description: 'Team intelligence dossiers and analytical deep dives.',
-  },
+   images: ogImage() },
 };
 
 export default function TeamDossiersLayout({ children }: { children: ReactNode }) {

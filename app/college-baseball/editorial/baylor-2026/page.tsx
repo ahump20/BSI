@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Baylor Bears: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'Baylor Bears: 2026 Season Preview',
     description:
       'Thirty wins and twenty-seven losses tells the story of a team that couldn\'t find consistency. Mitch Thompson enters Year 4 needing the pitching to match the potential.',
-  },
+  
+    images: ogImage('/images/og/cbb-baylor-2026.png')},
 };
 
 const data: TeamPreviewData = {

@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Texas Tech Red Raiders: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'Texas Tech Red Raiders: 2026 Season Preview',
     description:
       'Twenty wins and thirty-three losses is not Tim Tadlock baseball. The architect of Texas Tech\'s rise from regional afterthought to CWS Finals program had his worst season in 13 years.',
-  },
+  
+    images: ogImage('/images/og/cbb-texas-tech-2026.png')},
 };
 
 const data: TeamPreviewData = {

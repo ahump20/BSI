@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Houston Cougars: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'Houston Cougars: 2026 Season Preview',
     description:
       'Sixteen years. Six CWS appearances in program history but none under Todd Whitting. The Big 12 move has been unkind to a program that dominated the AAC.',
-  },
+  
+    images: ogImage('/images/og/cbb-houston-2026.png')},
 };
 
 const data: TeamPreviewData = {

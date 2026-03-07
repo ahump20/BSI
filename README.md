@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/images/brand/logo-full.webp" alt="Blaze Sports Intel" width="280" />
+  <img src="public/images/brand/bsi-shield-blaze.png" alt="Blaze Sports Intel" width="280" />
 </p>
 
 <h3 align="center">Sports intelligence platform for undercovered programs, plus AI coaching for high-stakes communication.</h3>

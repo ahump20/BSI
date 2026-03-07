@@ -6,6 +6,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'SEC Opening Weekend Preview 2026: 13 Ranked Teams | Blaze Sports Intel',
@@ -14,7 +15,8 @@ export const metadata: Metadata = {
     title: 'SEC Baseball Opening Weekend 2026 | Blaze Sports Intel',
     description: 'No other conference places 13 teams in the preseason top 25. The SEC opens 2026 with the strongest Friday night rotation in a decade.',
     type: 'article',
-  },
+  
+    images: ogImage('/images/og/cbb-sec-opening-weekend.png')},
 };
 
 const secMatchups = [

@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Minnesota Golden Gophers: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'Minnesota Golden Gophers: 2026 Season Preview',
     description:
       'Three national titles. Zero since 1964. Minnesota is a program that once stood at the summit of college baseball and has spent six decades trying to find its way back.',
-  },
+  
+    images: ogImage('/images/og/cbb-minnesota-2026.png')},
 };
 
 const data: TeamPreviewData = {

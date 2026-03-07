@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Big 12 Baseball: 2026 Conference Preview | Blaze Sports Intel',
@@ -15,7 +16,8 @@ export const metadata: Metadata = {
     title: 'Big 12 Baseball: 2026 Conference Preview',
     description:
       '14 programs reshaped by expansion. Full scouting breakdowns for every team.',
-  },
+  
+    images: ogImage('/images/og/cbb-big-12.png')},
 };
 
 // ── Projection tier badge styling ──────────────────────────────────────

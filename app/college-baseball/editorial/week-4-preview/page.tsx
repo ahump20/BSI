@@ -7,6 +7,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
 
+import { ogImage } from '@/lib/metadata';
 // -- Metadata ----------------------------------------------------------------
 
 export const metadata: Metadata = {
@@ -20,12 +21,14 @@ export const metadata: Metadata = {
     type: 'article',
     url: 'https://blazesportsintel.com/college-baseball/editorial/week-4-preview',
     siteName: 'Blaze Sports Intel',
-  },
+  
+    images: ogImage('/images/og/cbb-week-4-preview.png')},
   twitter: {
     card: 'summary_large_image',
     title: 'Week 4 Preview: The Last Non-Conference Weekend | BSI',
     description: 'Virginia at UNC headlines the final tune-up weekend. SEC play opens March 13. The preparation window closes Friday.',
-  },
+  
+    images: ['/images/og/cbb-week-4-preview.png']},
   alternates: {
     canonical: '/college-baseball/editorial/week-4-preview',
   },
@@ -34,7 +37,7 @@ export const metadata: Metadata = {
 // -- Stat data ---------------------------------------------------------------
 
 const STATS = [
-  { label: 'Texas Streak', value: '11-0', helperText: 'One win from matching best start since 2022' },
+  { label: 'Texas Streak', value: '12-0', helperText: 'Beat HCU 16-3 Tuesday — third straight midweek mercy rule' },
   { label: 'Days to SEC', value: '10', helperText: 'Conference play opens March 13 across the league' },
   { label: 'UNC Run Margin', value: '+43', helperText: '49-6 aggregate in Le Moyne sweep last weekend' },
   { label: 'USC Team ERA', value: '1.45', helperText: 'Mason Edwards hasn\u2019t allowed a hit in 18 straight innings' },

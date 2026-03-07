@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Kansas State Wildcats: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'Kansas State Wildcats: 2026 Season Preview',
     description:
       'Pete Hughes came to Manhattan to build something that has rarely existed here — a competitive Big 12 baseball program. Three years in, the foundation is visible.',
-  },
+  
+    images: ogImage('/images/og/cbb-kansas-state-2026.png')},
 };
 
 const data: TeamPreviewData = {

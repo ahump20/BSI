@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Northwestern Wildcats: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'Northwestern Wildcats: 2026 Season Preview',
     description:
       'Northwestern plays baseball the way it does everything — meticulously, with a plan, and against the grain of programs that have more of everything. Ben Greenspan is in year three.',
-  },
+  
+    images: ogImage('/images/og/cbb-northwestern-2026.png')},
 };
 
 const data: TeamPreviewData = {

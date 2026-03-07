@@ -8,6 +8,7 @@ import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
 
+import { ogImage } from '@/lib/metadata';
 // ── Metadata ────────────────────────────────────────────────────────
 
 export const metadata: Metadata = {
@@ -21,12 +22,14 @@ export const metadata: Metadata = {
     type: 'article',
     url: 'https://blazesportsintel.com/college-baseball/editorial/what-two-weekends-told-us',
     siteName: 'Blaze Sports Intel',
-  },
+  
+    images: ogImage('/images/og/cbb-what-two-weekends-told-us.png')},
   twitter: {
     card: 'summary_large_image',
     title: 'What Two Weekends Actually Told Us | BSI',
     description: 'The analytical breakdown of 2026 college baseball through 14 games. Signal vs. noise.',
-  },
+  
+    images: ['/images/og/cbb-what-two-weekends-told-us.png']},
   alternates: {
     canonical: '/college-baseball/editorial/what-two-weekends-told-us',
   },

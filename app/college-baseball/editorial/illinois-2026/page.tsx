@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Illinois Fighting Illini: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'Illinois Fighting Illini: 2026 Season Preview',
     description:
       'Dan Hartleb has kept Illinois competitive for 17 years — a feat that requires equal parts stubbornness and development. The Illini went 30-24 with a 14-16 Big Ten record in 2025.',
-  },
+  
+    images: ogImage('/images/og/cbb-illinois-2026.png')},
 };
 
 const data: TeamPreviewData = {

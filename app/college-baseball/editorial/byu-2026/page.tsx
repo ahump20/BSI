@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'BYU Cougars: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'BYU Cougars: 2026 Season Preview',
     description:
       'Two years into the Big 12 and the Cougars are still searching for a foothold. Trent Pratt inherited a program with no conference infrastructure in the power leagues.',
-  },
+  
+    images: ogImage('/images/og/cbb-byu-2026.png')},
 };
 
 const data: TeamPreviewData = {

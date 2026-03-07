@@ -7,6 +7,8 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { FilterPill } from '@/components/ui/FilterPill';
+import { HeroGlow } from '@/components/ui/HeroGlow';
 import { ScrollReveal } from '@/components/cinematic';
 import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
@@ -69,53 +71,53 @@ interface TeamCard {
 }
 
 const SEC_TEAMS: TeamCard[] = [
-  { name: 'Texas', slug: 'texas', mascot: 'Longhorns', record: '11-0', tier: 'Omaha Favorite' },
+  { name: 'Texas', slug: 'texas', mascot: 'Longhorns', record: '12-0', tier: 'Omaha Favorite' },
   { name: 'LSU', slug: 'lsu', mascot: 'Tigers', record: '11-1', tier: 'Omaha Favorite' },
-  { name: 'Florida', slug: 'florida', mascot: 'Gators', record: '11-1', tier: 'Omaha Favorite' },
-  { name: 'Mississippi State', slug: 'mississippi-state', mascot: 'Bulldogs', record: '11-1', tier: 'Omaha Favorite' },
-  { name: 'Arkansas', slug: 'arkansas', mascot: 'Razorbacks', record: '9-3', tier: 'Contender' },
-  { name: 'Auburn', slug: 'auburn', mascot: 'Tigers', record: '9-2', tier: 'Contender' },
-  { name: 'Georgia', slug: 'georgia', mascot: 'Bulldogs', record: '10-1', tier: 'Contender' },
-  { name: 'Texas A&M', slug: 'texas-am', mascot: 'Aggies', record: '8-3', tier: 'Contender' },
-  { name: 'Oklahoma', slug: 'oklahoma', mascot: 'Sooners', record: '9-2', tier: 'Contender' },
-  { name: 'Tennessee', slug: 'tennessee', mascot: 'Volunteers', record: '7-4', tier: 'Contender' },
-  { name: 'Kentucky', slug: 'kentucky', mascot: 'Wildcats', record: '8-3', tier: 'Dark Horse' },
-  { name: 'South Carolina', slug: 'south-carolina', mascot: 'Gamecocks', record: '7-5', tier: 'Dark Horse' },
-  { name: 'Vanderbilt', slug: 'vanderbilt', mascot: 'Commodores', record: '7-4', tier: 'Dark Horse' },
-  { name: 'Ole Miss', slug: 'ole-miss', mascot: 'Rebels', record: '8-4', tier: 'Bubble' },
-  { name: 'Alabama', slug: 'alabama', mascot: 'Crimson Tide', record: '7-4', tier: 'Bubble' },
+  { name: 'Florida', slug: 'florida', mascot: 'Gators', record: '12-1', tier: 'Omaha Favorite' },
+  { name: 'Mississippi State', slug: 'mississippi-state', mascot: 'Bulldogs', record: '11-2', tier: 'Omaha Favorite' },
+  { name: 'Arkansas', slug: 'arkansas', mascot: 'Razorbacks', record: '10-3', tier: 'Contender' },
+  { name: 'Auburn', slug: 'auburn', mascot: 'Tigers', record: '10-2', tier: 'Contender' },
+  { name: 'Georgia', slug: 'georgia', mascot: 'Bulldogs', record: '11-1', tier: 'Contender' },
+  { name: 'Texas A&M', slug: 'texas-am', mascot: 'Aggies', record: '9-3', tier: 'Contender' },
+  { name: 'Oklahoma', slug: 'oklahoma', mascot: 'Sooners', record: '10-2', tier: 'Contender' },
+  { name: 'Tennessee', slug: 'tennessee', mascot: 'Volunteers', record: '8-4', tier: 'Contender' },
+  { name: 'Kentucky', slug: 'kentucky', mascot: 'Wildcats', record: '9-3', tier: 'Dark Horse' },
+  { name: 'South Carolina', slug: 'south-carolina', mascot: 'Gamecocks', record: '8-5', tier: 'Dark Horse' },
+  { name: 'Vanderbilt', slug: 'vanderbilt', mascot: 'Commodores', record: '7-5', tier: 'Dark Horse' },
+  { name: 'Ole Miss', slug: 'ole-miss', mascot: 'Rebels', record: '9-4', tier: 'Bubble' },
+  { name: 'Alabama', slug: 'alabama', mascot: 'Crimson Tide', record: '8-4', tier: 'Bubble' },
   { name: 'Missouri', slug: 'missouri', mascot: 'Tigers', record: '5-6', tier: 'Rebuilding' },
 ];
 
 const BIG12_TEAMS: TeamCard[] = [
   { name: 'West Virginia', slug: 'west-virginia', mascot: 'Mountaineers', record: '10-2', tier: 'Dark Horse' },
-  { name: 'TCU', slug: 'tcu', mascot: 'Horned Frogs', record: '8-4', tier: 'Dark Horse' },
+  { name: 'TCU', slug: 'tcu', mascot: 'Horned Frogs', record: '9-4', tier: 'Dark Horse' },
   { name: 'Kansas', slug: 'kansas', mascot: 'Jayhawks', record: '7-4', tier: 'Dark Horse' },
-  { name: 'Oklahoma State', slug: 'oklahoma-state', mascot: 'Cowboys', record: '7-4', tier: 'Dark Horse' },
+  { name: 'Oklahoma State', slug: 'oklahoma-state', mascot: 'Cowboys', record: '8-4', tier: 'Dark Horse' },
   { name: 'Arizona', slug: 'arizona', mascot: 'Wildcats', record: '7-4', tier: 'Dark Horse' },
   { name: 'Arizona State', slug: 'arizona-state', mascot: 'Sun Devils', record: '7-5', tier: 'Dark Horse' },
-  { name: 'Baylor', slug: 'baylor', mascot: 'Bears', record: '7-5', tier: 'Bubble' },
+  { name: 'Baylor', slug: 'baylor', mascot: 'Bears', record: '7-6', tier: 'Bubble' },
   { name: 'Houston', slug: 'houston', mascot: 'Cougars', record: '7-5', tier: 'Bubble' },
   { name: 'UCF', slug: 'ucf', mascot: 'Knights', record: '7-5', tier: 'Bubble' },
   { name: 'Texas Tech', slug: 'texas-tech', mascot: 'Red Raiders', record: '6-5', tier: 'Bubble' },
-  { name: 'Cincinnati', slug: 'cincinnati', mascot: 'Bearcats', record: '6-5', tier: 'Rebuilding' },
+  { name: 'Cincinnati', slug: 'cincinnati', mascot: 'Bearcats', record: '6-6', tier: 'Rebuilding' },
   { name: 'BYU', slug: 'byu', mascot: 'Cougars', record: '5-7', tier: 'Rebuilding' },
   { name: 'Kansas State', slug: 'kansas-state', mascot: 'Wildcats', record: '5-6', tier: 'Rebuilding' },
   { name: 'Utah', slug: 'utah', mascot: 'Utes', record: '3-8', tier: 'Rebuilding' },
 ];
 
 const BIGTEN_TEAMS: TeamCard[] = [
-  { name: 'UCLA', slug: 'ucla', mascot: 'Bruins', record: '9-2', tier: 'Omaha Favorite' },
-  { name: 'USC', slug: 'usc', mascot: 'Trojans', record: '11-0', tier: 'Contender' },
-  { name: 'Oregon', slug: 'oregon', mascot: 'Ducks', record: '8-3', tier: 'Contender' },
-  { name: 'Oregon State', slug: 'oregon-state', mascot: 'Beavers', record: '7-4', tier: 'Dark Horse' },
-  { name: 'Nebraska', slug: 'nebraska', mascot: 'Cornhuskers', record: '8-3', tier: 'Dark Horse' },
+  { name: 'UCLA', slug: 'ucla', mascot: 'Bruins', record: '10-2', tier: 'Omaha Favorite' },
+  { name: 'USC', slug: 'usc', mascot: 'Trojans', record: '12-0', tier: 'Contender' },
+  { name: 'Oregon', slug: 'oregon', mascot: 'Ducks', record: '8-4', tier: 'Contender' },
+  { name: 'Oregon State', slug: 'oregon-state', mascot: 'Beavers', record: '8-4', tier: 'Dark Horse' },
+  { name: 'Nebraska', slug: 'nebraska', mascot: 'Cornhuskers', record: '9-3', tier: 'Dark Horse' },
   { name: 'Illinois', slug: 'illinois', mascot: 'Fighting Illini', record: '8-3', tier: 'Bubble' },
-  { name: 'Michigan', slug: 'michigan', mascot: 'Wolverines', record: '6-5', tier: 'Bubble' },
+  { name: 'Michigan', slug: 'michigan', mascot: 'Wolverines', record: '6-6', tier: 'Bubble' },
   { name: 'Indiana', slug: 'indiana', mascot: 'Hoosiers', record: '7-4', tier: 'Bubble' },
   { name: 'Iowa', slug: 'iowa', mascot: 'Hawkeyes', record: '6-5', tier: 'Bubble' },
   { name: 'Penn State', slug: 'penn-state', mascot: 'Nittany Lions', record: '7-4', tier: 'Bubble' },
-  { name: 'Michigan State', slug: 'michigan-state', mascot: 'Spartans', record: '5-6', tier: 'Bubble' },
+  { name: 'Michigan State', slug: 'michigan-state', mascot: 'Spartans', record: '5-7', tier: 'Bubble' },
   { name: 'Purdue', slug: 'purdue', mascot: 'Boilermakers', record: '5-6', tier: 'Bubble' },
   { name: 'Rutgers', slug: 'rutgers', mascot: 'Scarlet Knights', record: '5-6', tier: 'Bubble' },
   { name: 'Washington', slug: 'washington', mascot: 'Huskies', record: '5-7', tier: 'Bubble' },
@@ -142,6 +144,16 @@ interface FeatureArticle {
 export type { FeatureArticle };
 
 export const FEATURE_ARTICLES: FeatureArticle[] = [
+  {
+    title: 'Texas 16, Houston Christian 3: Still Perfect, Still Building.',
+    slug: 'texas-houston-christian-recap',
+    description: 'Cozart struck out 6 in 5 dominant innings. Tinney launched a 355-ft 3-run HR. Texas is 12-0 — one of two unbeaten Top 25 teams alongside USC. Plus: Tuesday night results from around the country.',
+    date: 'March 4, 2026',
+    readTime: '8 min',
+    badge: 'Game Recap',
+    tags: ['SEC'],
+    teams: ['texas'],
+  },
   {
     title: 'Week 4 Preview: The Last Non-Conference Weekend',
     slug: 'week-4-preview',
@@ -429,29 +441,21 @@ const CONFERENCE_SECTIONS: { tag: FilterTag; title: string; tagline: string; tea
 
 function TagFilterBar({ activeTag, onTagChange }: { activeTag: FilterTag; onTagChange: (tag: FilterTag) => void }) {
   return (
-    <Section padding="sm" className="border-b border-border sticky top-0 z-30 bg-background-secondary/95 backdrop-blur-sm">
+    <Section padding="sm" className="border-b border-white/[0.06] sticky top-0 z-30 backdrop-blur-sm" style={{ background: 'rgba(13,13,13,0.92)' }}>
       <Container>
         <nav className="flex items-center gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1 py-1" aria-label="Filter articles by tag">
-          {FILTER_TAGS.map((tag) => {
-            const isActive = tag === activeTag;
-            return (
-              <button
+          {FILTER_TAGS.map((tag) => (
+              <FilterPill
                 key={tag}
+                active={tag === activeTag}
                 onClick={() => onTagChange(tag)}
-                className={`
-                  shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider
-                  border transition-all whitespace-nowrap
-                  ${isActive
-                    ? 'bg-burnt-orange/20 text-burnt-orange border-burnt-orange/40'
-                    : 'bg-surface-light text-text-muted border-border hover:text-text-tertiary hover:border-border-subtle'
-                  }
-                `}
-                aria-pressed={isActive}
+                size="sm"
+                className="shrink-0 whitespace-nowrap"
+                aria-pressed={tag === activeTag}
               >
                 {tag}
-              </button>
-            );
-          })}
+              </FilterPill>
+          ))}
         </nav>
       </Container>
     </Section>
@@ -691,18 +695,18 @@ export default function EditorialHubPage() {
 
         {/* Hero */}
         <Section padding="lg" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-burnt-orange/8 via-transparent to-[#C9A227]/5 pointer-events-none" />
+          <HeroGlow shape="80% 50%" intensity={0.07} />
           <Container>
             <ScrollReveal direction="up">
               <div className="max-w-3xl mb-8">
-                <Badge variant="primary" className="mb-4">2026 Season</Badge>
+                <span className="section-label block mb-4">2026 Season</span>
                 <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-wide mb-4">
                   College Baseball{' '}
                   <span className="text-gradient-blaze">Editorial</span>
                 </h1>
-                <p className="text-text-tertiary text-lg leading-relaxed">
-                  47 team season previews. 3 conference breakdowns. Scouting grades on the 20-80 scale.
-                  Projection tiers from Omaha Favorite to Rebuilding. The depth this sport has always deserved.
+                <p className="text-burnt-orange font-serif italic text-lg md:text-xl leading-relaxed">
+                  47 team previews. 3 conference breakdowns. Scouting grades on the 20-80 scale.
+                  The depth this sport has always deserved.
                 </p>
               </div>
             </ScrollReveal>

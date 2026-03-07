@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Ole Miss Rebels 2026 Season Preview | Blaze Sports Intel',
@@ -9,7 +10,8 @@ export const metadata: Metadata = {
     title: 'Ole Miss Rebels — 2026 Season Preview | BSI',
     description: 'Full scouting report on the Ole Miss Rebels heading into the 2026 college baseball season.',
     type: 'article',
-  },
+  
+    images: ogImage('/images/og/cbb-ole-miss-2026.png')},
 };
 
 const data: TeamPreviewData = {

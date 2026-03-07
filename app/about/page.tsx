@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
+import { HeroGlow } from '@/components/ui/HeroGlow';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 
@@ -12,22 +13,18 @@ export default function AboutPage() {
     <div className="min-h-screen bg-background-primary text-text-primary pt-6">
       {/* Hero — product thesis first */}
       <Section className="pt-6 md:pt-10 pb-20 relative overflow-hidden">
-        {/* Ambient hero glow */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse, rgba(191,87,0,0.08) 0%, transparent 70%)' }} />
+        <HeroGlow />
         <Container size="narrow" center className="relative z-10">
           <ScrollReveal>
-            <p className="text-sm tracking-[0.2em] text-burnt-orange uppercase mb-8 font-medium">
-              About Blaze Sports Intel
-            </p>
+            <span className="section-label block mb-6">About Blaze Sports Intel</span>
             <h1 className="font-display uppercase text-4xl md:text-5xl lg:text-6xl font-bold mb-10 tracking-wide leading-[1.1]">
               Built for Fans Who Follow{' '}
               <span className="text-burnt-orange">the Whole Game</span>
             </h1>
-            <p className="text-xl md:text-2xl text-text-secondary leading-relaxed max-w-2xl mx-auto">
-              Not just the highlights. Not just the playoffs. BSI covers college baseball, MLB,
-              NFL, NBA, and college football with live scores, real analytics, and independent
-              editorial — from a Wednesday night mid-major matchup to Monday Night Football.
-              One platform. One person. Every game.
+            <p className="text-burnt-orange font-serif italic text-xl md:text-2xl leading-relaxed max-w-2xl mx-auto">
+              Not just the highlights. Not just the playoffs. College baseball, MLB,
+              NFL, NBA, and college football — live scores, real analytics, independent
+              editorial. One platform. One person. Every game.
             </p>
           </ScrollReveal>
         </Container>

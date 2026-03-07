@@ -7,6 +7,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
 
+import { ogImage } from '@/lib/metadata';
 // ── Metadata ────────────────────────────────────────────────────────
 
 export const metadata: Metadata = {
@@ -19,12 +20,14 @@ export const metadata: Metadata = {
     type: 'article',
     url: 'https://blazesportsintel.com/college-baseball/editorial/weekend-3-recap',
     siteName: 'Blaze Sports Intel',
-  },
+  
+    images: ogImage('/images/og/cbb-weekend-3-recap.png')},
   twitter: {
     card: 'summary_large_image',
     title: 'Weekend 3 Recap: Three Weeks. One Undefeated. | BSI',
     description: 'Texas is 11-0. UCLA won a 10-inning classic against MSU. The undefeated list just got very short.',
-  },
+  
+    images: ['/images/og/cbb-weekend-3-recap.png']},
   alternates: {
     canonical: '/college-baseball/editorial/weekend-3-recap',
   },

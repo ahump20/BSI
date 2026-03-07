@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Kansas Jayhawks: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'Kansas Jayhawks: 2026 Season Preview',
     description:
       'Forty-two wins. An NCAA Regional host. Big 12 Coach of the Year. Kansas baseball went from afterthought to force in a single season, and Dan Fitzgerald is just getting started.',
-  },
+  
+    images: ogImage('/images/og/cbb-kansas-2026.png')},
 };
 
 const data: TeamPreviewData = {

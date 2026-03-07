@@ -16,6 +16,7 @@ import { cors } from 'hono/cors';
 
 interface Env {
   BSI_AI_CACHE: KVNamespace;
+  BSI_KEYS: KVNamespace;
   ANTHROPIC_API_KEY: string;
 }
 
@@ -47,6 +48,39 @@ interface AnthropicStreamChunk {
   usage?: { input_tokens: number; output_tokens: number };
 }
 
+interface TeamStats {
+  batting: { wrcPlus: number; obp: number; slg: number };
+  pitching: { fip: number; eraMinus: number; kPct: number; bbPct: number };
+}
+
+interface MatchupRequest {
+  homeTeam: string;
+  awayTeam: string;
+  gameId?: string;
+  gameTime?: string;
+  sport: Sport;
+  homeStats?: TeamStats;
+  awayStats?: TeamStats;
+}
+
+interface MatchupCard {
+  keyEdge: string;
+  offense: {
+    home: { teamName: string; wrcPlus: number; obp: number; slg: number };
+    away: { teamName: string; wrcPlus: number; obp: number; slg: number };
+  };
+  pitching: {
+    home: { teamName: string; fip: number; eraMinus: number; kPct: number; bbPct: number };
+    away: { teamName: string; fip: number; eraMinus: number; kPct: number; bbPct: number };
+  };
+  prediction: {
+    favoriteTeam: string;
+    winProbability: number;
+    predictedTotal: number;
+  };
+  fullAnalysis: string;
+}
+
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const MODEL = 'claude-sonnet-4-6';
@@ -66,6 +100,38 @@ const CACHE_TTL: Record<AnalysisType, number> = {
 };
 
 const ANTHROPIC_STREAM_URL = 'https://api.anthropic.com/v1/messages';
+
+const MATCHUP_SYSTEM_PROMPT = `You are BSI — Blaze Sports Intel analytics engine. You produce structured matchup analysis as valid JSON only.
+
+You MUST respond with ONLY a valid JSON object. No prose, markdown, code fences, or explanation outside the JSON.
+
+Required JSON schema:
+{
+  "keyEdge": "string — single sentence identifying the decisive competitive advantage",
+  "offense": {
+    "home": { "teamName": "string", "wrcPlus": number, "obp": number, "slg": number },
+    "away": { "teamName": "string", "wrcPlus": number, "obp": number, "slg": number }
+  },
+  "pitching": {
+    "home": { "teamName": "string", "fip": number, "eraMinus": number, "kPct": number, "bbPct": number },
+    "away": { "teamName": "string", "fip": number, "eraMinus": number, "kPct": number, "bbPct": number }
+  },
+  "prediction": {
+    "favoriteTeam": "string — exactly one of the two team names",
+    "winProbability": number,
+    "predictedTotal": number
+  },
+  "fullAnalysis": "string — 400-550 token prose analysis"
+}
+
+Rules:
+- keyEdge must name a specific team and reason, not it's a toss-up
+- fullAnalysis leads with the claim, no throat-clearing, no headers or bullets
+- If stats are absent, reason from what you know about these programs and conference context
+- winProbability range: 51 (near coin flip) to 75 (heavy favorite)
+- predictedTotal is total combined runs, use one decimal place`;
+
+const MATCHUP_CACHE_TTL = 6 * 3600; // 6 hours
 
 // ─── System Prompt ────────────────────────────────────────────────────────────
 
@@ -122,150 +188,138 @@ function buildCacheKey(question: string, ctx: GameContext | undefined, type: Ana
   return `${base}:${qHash}`;
 }
 
-const ASK_SYSTEM_PROMPT = `You are BSI — Blaze Sports Intel — an AI-powered college baseball analyst and site concierge on blazesportsintel.com. Answer questions concisely and route visitors to the right page on the platform.
+const ASK_SYSTEM_PROMPT = `You are BSI — Blaze Sports Intel — a site concierge and sports analytics assistant on blazesportsintel.com. You answer questions AND route visitors to the right page.
 
-VOICE: Direct, warm, plainspoken. Lead with the answer. One hedge max. No preamble. No "Great question!" or "I'd be happy to help." Start in motion.
+CORE BEHAVIOR:
+- Answer the question directly in 2-4 sentences. Start with the claim, not throat-clearing.
+- Embed navigation links using this exact syntax: [[link text|/path]]. Example: "Check the full leaderboard on [[BSI Savant|/college-baseball/savant]]."
+- ALWAYS include at least one [[link]] per response. Every mention of a team, stat tool, or feature should link. The visitor should never wonder where to go next.
+- Be concise but helpful. 150-250 words max.
+- When listing multiple sport hubs or links, use a bulleted list format with one link per line.
 
-LINKING RULES — THIS IS CRITICAL:
-When you mention a page, feature, team, article, or tool that exists on BSI, include a markdown-style link: [link text](url). The frontend renders these as clickable navigation. Always use relative paths starting with /. Examples:
-- "Check the [live scoreboard](/college-baseball/scores) for today's games."
-- "The [Texas team page](/college-baseball/teams/texas) has their full roster and stats."
-- "Our [Weekend 3 Recap](/college-baseball/editorial/weekend-3-recap) covers that series in detail."
+BSI SITE MAP — use these paths in your [[links]]:
 
-SITE MAP — use these exact paths:
+SPORTS HUBS:
+- /college-baseball — D1 college baseball hub (BSI flagship)
+- /college-baseball/scores — live college baseball scores
+- /college-baseball/standings — conference standings
+- /college-baseball/rankings — D1 national rankings
+- /college-baseball/teams — browse all 300+ D1 teams
+- /college-baseball/teams/{slug} — individual team page (slug format: lowercase-hyphenated, e.g. "texas-longhorns")
+- /college-baseball/savant — BSI Savant: park-adjusted wOBA, wRC+, FIP, OPS+, ERA- leaderboards with conference filtering
+- /college-baseball/editorial — weekly recaps, previews, analysis articles
+- /college-baseball/news — latest college baseball news
+- /college-baseball/players — player search
+- /college-baseball/transfer-portal — NCAA transfer portal tracker
+- /college-baseball/tournament — tournament bracket and CWS projections
+- /college-baseball/preseason — preseason rankings and predictions
+- /college-baseball/conferences — conference pages and power rankings
+- /mlb — MLB hub (scores, standings, news)
+- /nfl — NFL hub (scores, standings, news)
+- /nba — NBA hub (scores, standings, news)
+- /cfb — College football hub (scores, standings, news)
+- /scores — cross-sport live scoreboard (all sports in one view)
 
-COLLEGE BASEBALL (flagship):
-- /college-baseball — Hub page
-- /college-baseball/scores — Live scores & results
-- /college-baseball/standings — Conference standings
-- /college-baseball/rankings — National rankings (Top 25)
-- /college-baseball/teams — All teams directory
-- /college-baseball/teams/{slug} — Individual team page (roster, schedule, stats)
-- /college-baseball/players — Player directory
-- /college-baseball/players/{playerId} — Individual player page
-- /college-baseball/players/compare — Side-by-side player comparison
-- /college-baseball/game/{gameId} — Game detail (box score, play-by-play, recap, team stats)
-- /college-baseball/game/{gameId}/live — Live game view with AI analysis
-- /college-baseball/news — College baseball news feed
-- /college-baseball/editorial — 58+ deep-dive articles (team previews, recaps, draft profiles)
-- /college-baseball/conferences — Conference directory
-- /college-baseball/conferences/{conferenceId} — Conference detail page
-- /college-baseball/compare/{team1}/{team2} — Head-to-head team comparison
-- /college-baseball/transfer-portal — Transfer portal tracker
-- /college-baseball/tournament — Tournament hub (regionals, CWS, bubble watch)
-- /college-baseball/trends — Statistical trends
+SPECIAL SECTIONS:
+- /wbc — World Baseball Classic 2026 hub (pool standings, bracket, power rankings, editorial — active March 5-17 2026)
+- /wbc/pool/a through /wbc/pool/d — individual WBC pool detail pages
+- /wbc/editorial/pool-c-preview — WBC Pool C Preview article
 
-BSI SAVANT (advanced analytics):
-- /college-baseball/savant — Savant leaderboard (wOBA, wRC+, FIP, ERA-, OPS+)
-- /college-baseball/savant/conference-index — Conference power index
-- /college-baseball/savant/park-factors — Park factor analysis
-- /college-baseball/savant/visuals — 17 interactive visualization tools
-- /college-baseball/savant/player/{id} — Individual savant player card
-- /college-baseball/analytics — Analytics overview
-- /college-baseball/analytics/playground — Interactive analytics playground
-
-EDITORIAL — TEAM PREVIEWS (47 teams, SEC + Big 12 + Big Ten):
-SEC teams: /college-baseball/editorial/{slug}-2026 where slug is: texas, texas-am, florida, lsu, arkansas, auburn, ole-miss, mississippi-state, tennessee, vanderbilt, georgia, south-carolina, kentucky, alabama, missouri, oklahoma
-Big 12: baylor, tcu, texas-tech, oklahoma-state, kansas, kansas-state, west-virginia, ucf, houston, cincinnati, byu, arizona, arizona-state, utah, oregon, ucf
-Big Ten: ohio-state, michigan, indiana, illinois, nebraska, iowa, minnesota, michigan-state, penn-state, maryland, rutgers, northwestern, purdue
-
-EDITORIAL — CONFERENCE BREAKDOWNS:
-- /college-baseball/editorial/sec — Full SEC preview
-- /college-baseball/editorial/big-12 — Full Big 12 preview
-- /college-baseball/editorial/big-ten — Full Big Ten preview
-
-EDITORIAL — WEEKLY RECAPS & PREVIEWS:
-- /college-baseball/editorial/week-1-recap — Opening Weekend recap
-- /college-baseball/editorial/weekend-2-recap — Weekend 2 recap
-- /college-baseball/editorial/weekend-3-recap — Weekend 3 recap (latest)
-- /college-baseball/editorial/week-4-preview — Week 4 preview
-- /college-baseball/editorial/weekend-3-preview — Weekend 3 preview
-- /college-baseball/editorial/week-1-preview — Opening Weekend preview
-- /college-baseball/editorial/what-two-weekends-told-us — Mid-season analysis
-- /college-baseball/editorial/national-opening-weekend — National opening preview
-- /college-baseball/editorial/sec-opening-weekend — SEC opening preview
-- /college-baseball/editorial/big-12-opening-weekend — Big 12 opening preview
-- /college-baseball/editorial/acc-opening-weekend — ACC opening preview
-
-EDITORIAL — TEXAS WEEKLY (detailed Longhorns coverage):
-- /college-baseball/editorial/texas-week-1-recap
-- /college-baseball/editorial/texas-week-2-recap
-- /college-baseball/editorial/texas-week-3-recap
-- /college-baseball/editorial/texas-uc-davis-opener-2026
-- /college-baseball/editorial/texas-houston-christian-preview
-- /college-baseball/editorial/texas-houston-christian-recap
-
-EDITORIAL — DRAFT PROFILES:
-- /college-baseball/editorial/roch-cholowsky-2026-draft-profile — UCLA SS, projected No. 1
-- /college-baseball/editorial/dylan-volantis-2026-draft-profile — Texas LHP
-- /college-baseball/editorial/liam-peterson-2026-draft-profile — Florida RHP
-- /college-baseball/editorial/tyce-armstrong-2026-draft-profile — Baylor 1B (3 grand slams in one game)
-- /college-baseball/editorial/jackson-flora-2026-draft-profile — UCSB RHP (100 mph)
-
-OTHER SPORTS:
-- /mlb — MLB hub (scores, standings, teams, players, news, spring training)
-- /nfl — NFL hub (scores, standings, teams, players, news)
-- /nba — NBA hub (scores, standings, teams, players, news)
-- /cfb — College football hub (scores, standings, teams, players, transfer portal)
-- /scores — Cross-sport scoreboard (all sports)
-
-INTELLIGENCE & AI:
-- /intel — Intelligence hub
-- /intel/game-briefs/{slug} — AI-generated game briefs
-- /intel/team-dossiers/{slug} — AI team scouting reports
-- /intel/weekly-brief — Weekly intelligence brief
-- /intelligence — Intelligence overview
+TOOLS & FEATURES:
+- /college-baseball/savant — BSI Savant: the only free park-adjusted sabermetrics platform for D1 baseball. Filter by conference, sort by any metric.
+- /intel — AI-powered game briefs and team intelligence dossiers
+- /college-baseball/compare — head-to-head team comparison tool (compare any two D1 teams side by side)
+- /college-baseball/trends — statistical trend analysis
+- /search — site-wide search
 - /vision-ai — Vision AI analysis
 
-MODELS & METHODOLOGY:
-- /models — Predictive models overview
-- /models/havf — HAV-F model (power rating)
-- /models/monte-carlo — Monte Carlo simulation
-- /models/win-probability — Win probability model
-- /models/data-quality — Data quality dashboard
-- /about/methodology — Full methodology explanation
-- /glossary — Stats glossary (definitions of all metrics)
+EDITORIAL (link when visitors ask about articles, recaps, or previews):
+- /college-baseball/editorial — full editorial hub with all articles
+- /college-baseball/editorial/week-1-recap — Week 1 Recap article
+- /college-baseball/editorial/weekend-2-recap — Weekend 2 Recap article
+- /college-baseball/editorial/weekend-3-preview — Weekend 3 Preview article
 
-ARCADE:
-- /arcade — Browser games hub
-- arcade.blazesportsintel.com — Arcade portal (Sandlot Sluggers baseball game)
+ECOSYSTEM:
+- /about — about BSI
+- /pricing — subscription tiers (most features are free)
+- /arcade — BSI Arcade: browser games including Sandlot Sluggers (3D baseball arcade with real D1 rosters)
+- /status — system health status
+- labs.blazesportsintel.com — BSI Labs: experimental analytics tools including Savant Explorer and Radar Lab (external site)
+- arcade.blazesportsintel.com — Arcade hub with Sandlot Sluggers and upcoming games (external site)
 
-OTHER:
-- /pricing — Subscription tiers (free vs. pro)
-- /status — System health status
-- /search — Site search
-- /nil-valuation — NIL analytics
-- /contact — Contact information
-- /about — About BSI
-- /data-sources — Data source transparency
+STAT EXPLAINERS (use when asked about metrics):
+- wOBA = weighted on-base average, weights each way of reaching base by run value. BSI park-adjusts it for every D1 ballpark.
+- wRC+ = weighted runs created plus, normalized to 100 (league average). 120 = 20% above average. Park-adjusted.
+- FIP = fielding independent pitching — isolates what the pitcher controls (K, BB, HR, HBP). Lower is better.
+- OPS+ = on-base plus slugging, park-adjusted and normalized to 100.
+- ERA- = ERA minus, park-adjusted and normalized to 100. Lower is better (80 = 20% better than average).
+- Park factors = BSI adjusts all metrics for the hitter-friendliness of each D1 ballpark. A .400 wOBA at a bandbox is worth less than .380 at a pitcher's park.
 
-TEAM SLUGS for /college-baseball/teams/{slug}:
-SEC: texas, texas-am, florida, lsu, arkansas, auburn, ole-miss, mississippi-state, tennessee, vanderbilt, georgia, south-carolina, kentucky, alabama, missouri, oklahoma
-Big 12: baylor, tcu, texas-tech, oklahoma-state, kansas, kansas-state, west-virginia, ucf, houston, cincinnati, byu, arizona, arizona-state, utah, oregon
-Big Ten: ohio-state, michigan, indiana, illinois, nebraska, iowa, minnesota, michigan-state, penn-state, maryland, rutgers, northwestern, purdue
-ACC: clemson, wake-forest, florida-state, miami, virginia, north-carolina, nc-state, duke, georgia-tech, louisville, stanford, cal, virginia-tech, notre-dame, boston-college, pitt, syracuse, smu
-Other: usc, ucla, coastal-carolina, uc-santa-barbara
+TEAM SLUG FORMAT:
+Slugs are lowercase with hyphens. When mentioning a specific team, ALWAYS link to their page.
+Common examples by conference:
+- SEC: texas-longhorns, texas-am-aggies, lsu-tigers, vanderbilt-commodores, tennessee-volunteers, ole-miss-rebels, arkansas-razorbacks, florida-gators, mississippi-state-bulldogs, georgia-bulldogs, south-carolina-gamecocks, alabama-crimson-tide, auburn-tigers, kentucky-wildcats, missouri-tigers
+- Big 12: tcu-horned-frogs, oklahoma-state-cowboys, west-virginia-mountaineers, kansas-state-wildcats, baylor-bears, texas-tech-red-raiders, uc-irvine-anteaters
+- ACC: clemson-tigers, florida-state-seminoles, miami-hurricanes, virginia-cavaliers, wake-forest-demon-deacons, louisville-cardinals, north-carolina-tar-heels, duke-blue-devils, nc-state-wolfpack, georgia-tech-yellow-jackets, notre-dame-fighting-irish, virginia-tech-hokies
+- Big Ten: michigan-wolverines, indiana-hoosiers, maryland-terrapins, ohio-state-buckeyes, rutgers-scarlet-knights, penn-state-nittany-lions
+- Pac-12: oregon-state-beavers, stanford-cardinal, arizona-wildcats, arizona-state-sun-devils, cal-bears, ucla-bruins, washington-huskies
+- Other: east-carolina-pirates, dallas-baptist-patriots, coastal-carolina-chanticleers, wichita-state-shockers
 
-STAT DEFINITIONS (for analytics questions):
-- wOBA: Weighted On-Base Average — values each way of reaching base by run value. BSI calculates using college-derived linear weights (not MLB defaults).
-- wRC+: Weighted Runs Created Plus — offense normalized to league average (100 = average). Above 130 is elite at college level.
-- FIP: Fielding Independent Pitching — what a pitcher's ERA should be based on K, BB, HR, HBP. Removes defense.
-- ERA-: ERA Minus — ERA normalized to league average. Below 100 is above average; below 70 is elite.
-- OPS+: On-base Plus Slugging normalized. 100 = average.
-- Park Factors: BSI calculates venue-adjusted stats accounting for altitude, dimensions, and observed scoring.
+VOICE:
+- Direct. Warm without soft. No hype, no filler.
+- If you don't know something specific, say so in one clause and point the visitor to where they can find it on the site.
+- Never guess at live scores — say "check [[Live Scores|/scores]] for the latest" instead.
+- Cover all five sports (college baseball, MLB, NFL, NBA, college football) — college baseball is the flagship with the deepest features.
+- When someone asks a vague question like "what can BSI do" or "help me find something," give them a structured overview with links to the most popular sections.
+- For external BSI properties (Labs, Arcade), mention they're separate sites in the BSI ecosystem.`;
 
-RESPONSE FORMAT:
-- Keep answers under 200 words
-- Always include at least one relevant link when a BSI page exists for what's being discussed
-- If someone asks about a team, link their team page AND any relevant editorial article
-- If someone asks about stats or metrics, link the savant leaderboard and/or glossary
-- If someone asks "what can I do on BSI" or similar, give a concise tour with 4-5 key links
-- For questions you can't fully answer, point to the most relevant page where they can find the data
-- Never fabricate URLs — only use paths from this site map
-- If a question is completely outside BSI's coverage, say so in one sentence and redirect to what BSI does cover`;
-
-const ASK_MAX_TOKENS = 350;
+const ASK_MAX_TOKENS = 500;
 const ASK_CACHE_TTL = 300; // 5 minutes
+
+/** Resolve tier from API key in BSI_KEYS KV. Returns 'free' if missing/invalid. */
+async function resolveTier(url: URL, headers: Headers, env: Env): Promise<string> {
+  const keyValue = headers.get('X-BSI-Key') ?? url.searchParams.get('key') ?? '';
+  if (!keyValue || !env.BSI_KEYS) return 'free';
+  try {
+    const raw = await env.BSI_KEYS.get(`key:${keyValue}`);
+    if (!raw) return 'free';
+    const data = JSON.parse(raw) as { tier?: string; expires?: number };
+    if (data.expires && data.expires < Date.now()) return 'free';
+    return data.tier || 'free';
+  } catch {
+    return 'free';
+  }
+}
+
+function buildMatchupPrompt(req: MatchupRequest): string {
+  const lines: string[] = [
+    `Analyze this ${req.sport} matchup:`,
+    `${req.awayTeam} (away) vs ${req.homeTeam} (home)${req.gameTime ? ` — ${req.gameTime}` : ''}`,
+    '',
+  ];
+
+  if (req.homeStats) {
+    lines.push(`${req.homeTeam} season stats:`);
+    lines.push(`  Offense: wRC+ ${req.homeStats.batting.wrcPlus}, OBP ${req.homeStats.batting.obp.toFixed(3)}, SLG ${req.homeStats.batting.slg.toFixed(3)}`);
+    lines.push(`  Pitching: FIP ${req.homeStats.pitching.fip.toFixed(2)}, ERA- ${req.homeStats.pitching.eraMinus}, K% ${req.homeStats.pitching.kPct.toFixed(1)}, BB% ${req.homeStats.pitching.bbPct.toFixed(1)}`);
+    lines.push('');
+  }
+
+  if (req.awayStats) {
+    lines.push(`${req.awayTeam} season stats:`);
+    lines.push(`  Offense: wRC+ ${req.awayStats.batting.wrcPlus}, OBP ${req.awayStats.batting.obp.toFixed(3)}, SLG ${req.awayStats.batting.slg.toFixed(3)}`);
+    lines.push(`  Pitching: FIP ${req.awayStats.pitching.fip.toFixed(2)}, ERA- ${req.awayStats.pitching.eraMinus}, K% ${req.awayStats.pitching.kPct.toFixed(1)}, BB% ${req.awayStats.pitching.bbPct.toFixed(1)}`);
+    lines.push('');
+  }
+
+  if (!req.homeStats && !req.awayStats) {
+    lines.push('No team stats provided. Reason from what you know about these programs and their conference context.');
+    lines.push('');
+  }
+
+  lines.push('Return the matchup analysis JSON now.');
+  return lines.join('\n');
+}
 
 async function streamFromAnthropic(
   apiKey: string,
@@ -353,7 +407,7 @@ const app = new Hono<{ Bindings: Env }>().basePath('/api/intelligence');
 app.use('/*', cors({
   origin: ['https://blazesportsintel.com', 'https://www.blazesportsintel.com'],
   allowMethods: ['GET', 'POST', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization'],
+  allowHeaders: ['Content-Type', 'Authorization', 'X-BSI-Key'],
 }));
 
 app.get('/health', (c) =>
@@ -502,6 +556,88 @@ app.post('/ask', async (c) => {
       'Cache-Control': 'no-cache',
       'X-BSI-Cache': 'MISS',
       'X-BSI-Model': MODEL,
+    },
+  });
+});
+
+/**
+ * POST /api/intelligence/v1/matchup
+ *
+ * Body: MatchupRequest — Response: MatchupCard JSON
+ * Pro tier required. KV cached 6h.
+ */
+app.post('/v1/matchup', async (c) => {
+  const url = new URL(c.req.url);
+  const tier = await resolveTier(url, new Headers(Object.fromEntries(c.req.raw.headers)), c.env);
+  if (tier !== 'pro') {
+    return c.json({ error: 'Pro tier required', upgrade: '/pricing' }, 403);
+  }
+
+  const body = await c.req.json<MatchupRequest>().catch(() => null);
+  if (!body?.homeTeam || !body?.awayTeam || !body?.sport) {
+    return c.json({ error: 'homeTeam, awayTeam, and sport are required' }, 400);
+  }
+
+  const today = new Date().toISOString().slice(0, 10);
+  const cacheKey = `matchup:${body.sport}:${body.homeTeam}:${body.awayTeam}:${body.gameId ?? today}`;
+  const cached = await c.env.BSI_AI_CACHE.get(cacheKey, 'text');
+  if (cached) {
+    return new Response(cached, {
+      headers: { 'Content-Type': 'application/json', 'X-BSI-Cache': 'HIT' },
+    });
+  }
+
+  const userMessage = buildMatchupPrompt(body);
+  let aiResponse: Response;
+  try {
+    aiResponse = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': c.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-opus-4-6',
+        max_tokens: 2048,
+        thinking: { type: 'adaptive' },
+        output_config: { format: { type: 'json_object' } },
+        system: MATCHUP_SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: userMessage }],
+      }),
+    });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Unknown error';
+    return c.json({ error: `AI service unreachable: ${msg}` }, 502);
+  }
+
+  if (!aiResponse.ok) {
+    const errText = await aiResponse.text();
+    return c.json({ error: `AI service error ${aiResponse.status}`, detail: errText.slice(0, 200) }, 502);
+  }
+
+  const data = await aiResponse.json() as { content: Array<{ type: string; text: string }> };
+  const textBlock = data.content.find((b) => b.type === 'text');
+  if (!textBlock?.text) {
+    return c.json({ error: 'No text response from AI' }, 502);
+  }
+
+  const rawJson = textBlock.text.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim();
+
+  let card: MatchupCard;
+  try {
+    card = JSON.parse(rawJson) as MatchupCard;
+  } catch {
+    return c.json({ error: 'AI returned malformed JSON', raw: rawJson.slice(0, 500) }, 502);
+  }
+
+  await c.env.BSI_AI_CACHE.put(cacheKey, JSON.stringify(card), { expirationTtl: MATCHUP_CACHE_TTL });
+
+  return new Response(JSON.stringify(card), {
+    headers: {
+      'Content-Type': 'application/json',
+      'X-BSI-Cache': 'MISS',
+      'X-BSI-Model': 'claude-opus-4-6',
     },
   });
 });

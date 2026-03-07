@@ -1,6 +1,7 @@
 'use client';
 
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { fmt3 } from '@/lib/utils/format';
 
 interface STStandingsTeam {
   id: string;
@@ -66,7 +67,7 @@ export function SpringTrainingStandingsTable({ title, teams }: SpringTrainingSta
                   <td className="px-4 py-3 text-right font-mono text-text-primary">{team.wins}</td>
                   <td className="px-4 py-3 text-right font-mono text-text-secondary">{team.losses}</td>
                   <td className="px-4 py-3 text-right font-mono text-burnt-orange font-semibold">
-                    {team.winPct.toFixed(3).replace(/^0/, '')}
+                    {fmt3(team.winPct)}
                   </td>
                   <td className="px-4 py-3 text-right font-mono text-text-muted">
                     {team.runsFor ?? '—'}

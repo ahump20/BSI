@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Arizona Wildcats: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'Arizona Wildcats: 2026 Season Preview',
     description:
       'Four national titles. Nineteen trips to Omaha. The richest baseball tradition of any school now playing in the Big 12. Chip Hale enters Year 3 with a program still finding its footing.',
-  },
+  
+    images: ogImage('/images/og/cbb-arizona-2026.png')},
 };
 
 const data: TeamPreviewData = {

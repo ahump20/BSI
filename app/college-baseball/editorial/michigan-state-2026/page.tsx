@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Michigan State Spartans: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'Michigan State Spartans: 2026 Season Preview',
     description:
       'Jake Boss Jr. is in his fifteenth year in East Lansing, and the question is no longer whether he can keep Michigan State competitive — it is whether he can push the Spartans past the line.',
-  },
+  
+    images: ogImage('/images/og/cbb-michigan-state-2026.png')},
 };
 
 const data: TeamPreviewData = {

@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Ohio State Buckeyes: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'Ohio State Buckeyes: 2026 Season Preview',
     description:
       'Thirteen wins. Thirty-seven losses. The 2025 Ohio State baseball season was historically bad. Justin Haire was hired to fix it. Year two of the rebuild begins with an aggressive portal approach.',
-  },
+  
+    images: ogImage('/images/og/cbb-ohio-state-2026.png')},
 };
 
 const data: TeamPreviewData = {

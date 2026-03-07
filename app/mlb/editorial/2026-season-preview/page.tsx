@@ -6,6 +6,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: '2026 MLB Season Preview: The Offseason That Reshuffled Everything | Blaze Sports Intel',
@@ -15,7 +16,8 @@ export const metadata: Metadata = {
     title: '2026 MLB Season Preview: The Offseason That Reshuffled Everything',
     description:
       'Tucker\'s record AAV. Robot umpires. Nine new managers. Division-by-division analysis of every contender, every rebuild, and the mechanisms that will decide October.',
-  },
+  
+    images: ogImage('/images/og/mlb-2026-season-preview.png')},
 };
 
 // ── Stat boxes ───────────────────────────────────────────────────────

@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Penn State Nittany Lions: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'Penn State Nittany Lions: 2026 Season Preview',
     description:
       'Mike Gambino spent a decade building Boston College into a competitive ACC program, and now he is applying the same blueprint to Penn State — a school with every resource imaginable.',
-  },
+  
+    images: ogImage('/images/og/cbb-penn-state-2026.png')},
 };
 
 const data: TeamPreviewData = {

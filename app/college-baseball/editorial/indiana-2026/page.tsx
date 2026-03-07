@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Indiana Hoosiers: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'Indiana Hoosiers: 2026 Season Preview',
     description:
       'Jeff Mercer has turned Indiana into a program that expects to compete for NCAA Tournament bids, not hope for them. The Hoosiers went 32-24 in 2025 with a 16-14 Big Ten mark.',
-  },
+  
+    images: ogImage('/images/og/cbb-indiana-2026.png')},
 };
 
 const data: TeamPreviewData = {

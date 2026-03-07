@@ -14,14 +14,15 @@ import {
   BATTING_COLUMNS,
   type ColumnDef,
 } from '@/components/analytics/SavantLeaderboard';
+import { fmt3 } from '@/lib/utils/format';
 
 // ---------------------------------------------------------------------------
 // Fixtures
 // ---------------------------------------------------------------------------
 
 const SIMPLE_COLS: ColumnDef[] = [
-  { key: 'avg', label: 'AVG', format: (v: number) => v.toFixed(3).replace(/^0/, ''), higherIsBetter: true },
-  { key: 'woba', label: 'wOBA', format: (v: number) => v.toFixed(3).replace(/^0/, ''), pro: true, higherIsBetter: true },
+  { key: 'avg', label: 'AVG', format: fmt3, higherIsBetter: true },
+  { key: 'woba', label: 'wOBA', format: fmt3, pro: true, higherIsBetter: true },
 ];
 
 function makeMockData(count: number) {

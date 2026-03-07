@@ -6,6 +6,8 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Badge } from '@/components/ui/Badge';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
+import { FilterPill } from '@/components/ui/FilterPill';
+import { HeroGlow } from '@/components/ui/HeroGlow';
 import { Footer } from '@/components/layout-ds/Footer';
 import { GLOSSARY_TERMS, getGlossaryLetters, type GlossaryTerm } from '@/lib/data/glossary-terms';
 
@@ -21,7 +23,7 @@ const CATEGORY_LABELS: Record<CategoryFilter, string> = {
 
 function TermCard({ term }: { term: GlossaryTerm }) {
   return (
-    <div className="bg-surface-light border border-border-subtle rounded-xl p-5 sm:p-6">
+    <div className="border-l-2 border-burnt-orange/15 pl-5 sm:pl-6 py-4">
       <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
         <h3 className="font-display text-lg font-bold uppercase tracking-wide text-text-primary">
           {term.term}
@@ -30,7 +32,7 @@ function TermCard({ term }: { term: GlossaryTerm }) {
           {term.sport.map((s) => (
             <span
               key={s}
-              className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-burnt-orange bg-burnt-orange/10 rounded-md"
+              className="px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider text-burnt-orange/70"
             >
               {s}
             </span>
@@ -40,34 +42,34 @@ function TermCard({ term }: { term: GlossaryTerm }) {
 
       <div className="space-y-4 text-sm">
         <div>
-          <span className="text-text-muted text-xs uppercase tracking-wider block mb-1">Definition</span>
+          <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-text-muted/60 block mb-1">Definition</span>
           <p className="text-text-tertiary leading-relaxed">{term.mlbDefinition}</p>
-          <p className="text-text-muted text-xs mt-1">Source: {term.mlbSource}</p>
+          <p className="text-text-muted/50 text-[11px] font-mono mt-1">{term.mlbSource}</p>
         </div>
 
         <div>
-          <span className="text-text-muted text-xs uppercase tracking-wider block mb-1">NCAA Equivalent</span>
+          <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-text-muted/60 block mb-1">NCAA Equivalent</span>
           <p className="text-text-tertiary leading-relaxed">{term.ncaaEquivalent}</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <span className="text-text-muted text-xs uppercase tracking-wider block mb-1">Available Data</span>
+            <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-text-muted/60 block mb-1">Available Data</span>
             <p className="text-text-muted leading-relaxed text-xs">{term.availableData}</p>
           </div>
           <div>
-            <span className="text-text-muted text-xs uppercase tracking-wider block mb-1">Limitations</span>
+            <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-text-muted/60 block mb-1">Limitations</span>
             <p className="text-text-muted leading-relaxed text-xs">{term.limitations}</p>
           </div>
         </div>
 
         {term.bsiLink && (
-          <div className="pt-2 border-t border-border-subtle">
+          <div className="pt-2 border-t border-white/[0.04]">
             <Link
               href={term.bsiLink}
-              className="text-xs text-burnt-orange hover:text-ember font-semibold transition-colors"
+              className="text-xs text-burnt-orange hover:text-ember font-mono transition-colors"
             >
-              {term.bsiLinkLabel || 'Related BSI Model'} &#8594;
+              {term.bsiLinkLabel || 'Related BSI Model'} →
             </Link>
           </div>
         )}
@@ -107,17 +109,17 @@ export default function GlossaryPage() {
           </Container>
         </Section>
 
-        <Section padding="lg">
+        <Section padding="lg" className="relative overflow-hidden">
+          <HeroGlow position="30% 20%" intensity={0.05} spread="60%" />
           <Container>
-            <div className="max-w-3xl mb-8">
-              <Badge variant="primary" className="mb-4">Reference</Badge>
+            <div className="max-w-3xl mb-8 relative">
+              <span className="section-label block mb-4">Reference</span>
               <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-text-primary mb-3">
                 Analytics Glossary
               </h1>
-              <p className="text-text-tertiary text-lg leading-relaxed">
+              <p className="text-burnt-orange font-serif italic text-lg leading-relaxed">
                 Pro-level metrics mapped to college equivalents. What each stat measures, what
-                data actually exists at the college level, and where the gaps are. Honest about
-                what BSI can and cannot measure.
+                data exists, and where the gaps are.
               </p>
             </div>
 
@@ -132,17 +134,15 @@ export default function GlossaryPage() {
               />
               <div className="flex gap-1.5 overflow-x-auto">
                 {(Object.keys(CATEGORY_LABELS) as CategoryFilter[]).map((cat) => (
-                  <button
+                  <FilterPill
                     key={cat}
+                    active={category === cat}
                     onClick={() => setCategory(cat)}
-                    className={`shrink-0 px-3 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider border transition-all ${
-                      category === cat
-                        ? 'bg-burnt-orange/20 text-burnt-orange border-burnt-orange/30'
-                        : 'bg-surface-light text-text-muted border-border hover:text-text-tertiary'
-                    }`}
+                    size="sm"
+                    className="shrink-0 py-2"
                   >
                     {CATEGORY_LABELS[cat]}
-                  </button>
+                  </FilterPill>
                 ))}
               </div>
             </div>
@@ -155,10 +155,10 @@ export default function GlossaryPage() {
                   <a
                     key={letter}
                     href={hasResults ? `#letter-${letter}` : undefined}
-                    className={`w-8 h-8 flex items-center justify-center rounded text-xs font-bold ${
+                    className={`w-8 h-8 flex items-center justify-center rounded text-xs font-mono font-bold border transition-all ${
                       hasResults
-                        ? 'bg-surface-light text-text-tertiary hover:text-burnt-orange hover:bg-burnt-orange/10 transition-all'
-                        : 'bg-surface-light text-text-muted cursor-default'
+                        ? 'text-text-tertiary border-white/[0.06] hover:text-burnt-orange hover:border-burnt-orange/30 hover:bg-burnt-orange/10'
+                        : 'text-text-muted/30 border-transparent cursor-default'
                     }`}
                   >
                     {letter}
@@ -170,7 +170,7 @@ export default function GlossaryPage() {
             {/* Terms */}
             {sortedLetters.map((letter) => (
               <div key={letter} id={`letter-${letter}`} className="mb-10">
-                <h2 className="font-display text-2xl font-bold text-text-muted uppercase mb-4 sticky top-0 bg-background-primary py-2 z-10">
+                <h2 className="font-display text-2xl font-bold text-burnt-orange/30 uppercase mb-4 sticky top-0 py-2 z-10 backdrop-blur-sm" style={{ background: 'linear-gradient(to bottom, rgba(13,13,13,0.9) 0%, rgba(13,13,13,0.7) 100%)' }}>
                   {letter}
                 </h2>
                 <div className="space-y-4">
@@ -194,13 +194,18 @@ export default function GlossaryPage() {
             )}
 
             {/* Footer links */}
-            <div className="mt-12 flex flex-wrap gap-4 text-sm text-text-muted">
-              <Link href="/models" className="hover:text-text-secondary transition-colors">
-                Models & Methodology
-              </Link>
-              <Link href="/models/data-quality" className="hover:text-text-secondary transition-colors">
-                Data Quality
-              </Link>
+            <div className="mt-12 pt-6 border-t border-white/[0.06]">
+              <div className="flex flex-wrap gap-x-6 gap-y-2">
+                <Link href="/models" className="text-sm text-text-muted hover:text-burnt-orange transition-colors">
+                  Models & Methodology
+                </Link>
+                <Link href="/models/data-quality" className="text-sm text-text-muted hover:text-burnt-orange transition-colors">
+                  Data Quality
+                </Link>
+                <Link href="/college-baseball/savant" className="text-sm text-text-muted hover:text-burnt-orange transition-colors">
+                  BSI Savant
+                </Link>
+              </div>
             </div>
           </Container>
         </Section>

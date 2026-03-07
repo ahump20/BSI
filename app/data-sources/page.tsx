@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
+import { HeroGlow } from '@/components/ui/HeroGlow';
 import { Footer } from '@/components/layout-ds/Footer';
 
 export const metadata: Metadata = {
@@ -92,13 +93,15 @@ export default function DataSourcesPage() {
   return (
     <>
       <div>
-        <Section padding="lg" className="pt-6">
+        <Section padding="lg" className="pt-6 relative overflow-hidden">
+          <HeroGlow position="30% 20%" intensity={0.05} spread="60%" />
           <Container>
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-4xl mx-auto relative">
+              <span className="section-label block mb-4">Transparency</span>
               <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-text-primary mb-3">
                 Data Sources
               </h1>
-              <p className="text-text-tertiary text-lg leading-relaxed mb-12 max-w-2xl">
+              <p className="text-burnt-orange font-serif italic text-lg leading-relaxed mb-12 max-w-2xl">
                 Every feed on BSI includes timestamps and source attribution. This page documents
                 exactly where the data comes from, how often it refreshes, and what to expect
                 during edge-case windows like Spring Training and early-season coverage.

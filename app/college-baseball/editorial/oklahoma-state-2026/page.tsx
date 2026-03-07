@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Oklahoma State Cowboys: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'Oklahoma State Cowboys: 2026 Season Preview',
     description:
       'Twenty-one trips to Omaha. Zero national titles. Josh Holliday enters Year 12 knowing what the Cowboys are capable of — and knowing what it takes to get over the hump.',
-  },
+  
+    images: ogImage('/images/og/cbb-oklahoma-state-2026.png')},
 };
 
 const data: TeamPreviewData = {

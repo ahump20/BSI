@@ -6,6 +6,7 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { HeroGlow } from '@/components/ui/HeroGlow';
 import { ScrollReveal } from '@/components/cinematic';
 import { withAlpha } from '@/lib/utils/color';
 // Navbar is rendered by the root layout — no page-level import needed
@@ -120,8 +121,8 @@ const sportsCoverage = [
   },
   {
     name: 'College Football',
-    status: 'Coming Soon',
-    statusColor: '#F59E0B',
+    status: 'Full Coverage',
+    statusColor: '#22C55E',
     href: '/cfb',
     teams: '134 FBS Programs',
     features: [
@@ -129,10 +130,10 @@ const sportsCoverage = [
       'Conference standings',
       'Rankings',
       'Player statistics',
-      'Bowl projections',
+      'Schedule tracking',
     ],
-    sources: ['In Development'],
-    updateFrequency: 'Q1 2025',
+    sources: ['ESPN API', 'SportsDataIO'],
+    updateFrequency: 'Real-time during games',
   },
 ];
 
@@ -181,18 +182,18 @@ export default function CoveragePage() {
       {/* Navbar provided by root layout */}
 
       {/* Hero Section */}
-      <Section className="pt-6 pb-16 bg-gradient-to-b from-background-secondary to-background-primary">
+      <Section className="pt-6 pb-16 relative overflow-hidden">
+        <HeroGlow />
         <Container>
           <ScrollReveal>
             <div className="max-w-4xl mx-auto text-center">
-              <Badge variant="primary" className="mb-4">Data Coverage</Badge>
+              <span className="section-label">Data Coverage</span>
               <h1
-                className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6"
-                style={{ fontFamily: 'Georgia, serif' }}
+                className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display mb-6 text-text-primary"
               >
-                <span className="text-burnt-orange">Complete Coverage</span> Where It Matters
+                Complete Coverage Where It Matters
               </h1>
-              <p className="text-xl text-text-secondary mb-8 max-w-2xl mx-auto">
+              <p className="text-burnt-orange font-serif italic text-lg leading-relaxed mb-8 max-w-2xl mx-auto">
                 Real-time data from official sources. MLB, NFL, NBA, and the most comprehensive college baseball coverage anywhere.
               </p>
             </div>
@@ -206,25 +207,25 @@ export default function CoveragePage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <ScrollReveal>
               <div>
-                <div className="text-3xl md:text-4xl font-bold text-burnt-orange">392+</div>
+                <div className="text-3xl md:text-4xl font-mono font-bold text-burnt-orange">392+</div>
                 <p className="text-text-tertiary mt-1">Teams Tracked</p>
               </div>
             </ScrollReveal>
             <ScrollReveal delay={100}>
               <div>
-                <div className="text-3xl md:text-4xl font-bold text-burnt-orange">30s</div>
+                <div className="text-3xl md:text-4xl font-mono font-bold text-burnt-orange">30s</div>
                 <p className="text-text-tertiary mt-1">Update Frequency</p>
               </div>
             </ScrollReveal>
             <ScrollReveal delay={200}>
               <div>
-                <div className="text-3xl md:text-4xl font-bold text-burnt-orange">6</div>
+                <div className="text-3xl md:text-4xl font-mono font-bold text-burnt-orange">6</div>
                 <p className="text-text-tertiary mt-1">Data Sources</p>
               </div>
             </ScrollReveal>
             <ScrollReveal delay={300}>
               <div>
-                <div className="text-3xl md:text-4xl font-bold text-burnt-orange">99.7%</div>
+                <div className="text-3xl md:text-4xl font-mono font-bold text-burnt-orange">99.7%</div>
                 <p className="text-text-tertiary mt-1">Uptime</p>
               </div>
             </ScrollReveal>
@@ -237,7 +238,7 @@ export default function CoveragePage() {
         <Container>
           <ScrollReveal>
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-text-primary mb-4">Sports Coverage</h2>
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display text-text-primary mb-4">Sports Coverage</h2>
               <p className="text-text-tertiary max-w-2xl mx-auto">
                 Comprehensive coverage across professional and college sports.
               </p>
@@ -315,7 +316,7 @@ export default function CoveragePage() {
         <Container>
           <ScrollReveal>
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-text-primary mb-4">Our Data Sources</h2>
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display text-text-primary mb-4">Our Data Sources</h2>
               <p className="text-text-tertiary max-w-2xl mx-auto">
                 We pull from official APIs and trusted sources. Every stat is verified and timestamped.
               </p>
@@ -347,7 +348,7 @@ export default function CoveragePage() {
           <ScrollReveal>
             <div className="max-w-3xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold text-text-primary mb-4">Our Data Quality Commitment</h2>
+                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display text-text-primary mb-4">Our Data Quality Commitment</h2>
               </div>
 
               <Card className="border-l-4 border-l-burnt-orange">
@@ -403,8 +404,7 @@ export default function CoveragePage() {
           <ScrollReveal>
             <div className="max-w-2xl mx-auto text-center">
               <h2
-                className="text-3xl md:text-4xl font-bold mb-6"
-                style={{ fontFamily: 'Georgia, serif' }}
+                className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display mb-6"
               >
                 See Our <span className="text-burnt-orange">Data in Action</span>
               </h2>

@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Oregon Ducks: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'Oregon Ducks: 2026 Season Preview',
     description:
       "Oregon shared the Big Ten title in 2025, won 42 games, and established themselves as a legitimate national power under Mark Wasikowski. The Ducks enter 2026 with a deep roster.",
-  },
+  
+    images: ogImage('/images/og/cbb-oregon-2026.png')},
 };
 
 const data: TeamPreviewData = {

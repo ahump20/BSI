@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Coverage Map | Blaze Sports Intel',
@@ -8,7 +9,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Coverage Map | Blaze Sports Intel',
     description: 'BSI sport coverage and data availability.',
-  },
+   images: ogImage() },
 };
 
 export default function CoverageLayout({ children }: { children: ReactNode }) {

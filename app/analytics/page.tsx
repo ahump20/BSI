@@ -20,6 +20,8 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { FilterPill } from '@/components/ui/FilterPill';
+import { HeroGlow } from '@/components/ui/HeroGlow';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 
@@ -220,24 +222,23 @@ export default function AnalyticsPage() {
         </Section>
 
         {/* Hero */}
-        <Section padding="lg" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
+        <Section padding="lg" className="pt-6 relative overflow-hidden">
+          <HeroGlow />
 
           <Container>
+            <div className="relative">
             <ScrollReveal direction="up">
-              <Badge variant="primary" className="mb-4">
-                Analytics Hub
-              </Badge>
+              <span className="section-label block mb-4">Analytics Hub</span>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display text-gradient-blaze mb-4">
+              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-text-primary mb-3">
                 Data-Driven Intelligence
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="text-text-secondary text-lg max-w-2xl mb-8">
+              <p className="text-burnt-orange font-serif italic text-lg leading-relaxed mb-10 max-w-2xl">
                 Professional-grade analytics tools for fans who want more than just scores. Win
                 probability, projections, historical analysis, and predictive models.
               </p>
@@ -245,16 +246,17 @@ export default function AnalyticsPage() {
 
             {/* Quick Stats */}
             <ScrollReveal direction="up" delay={200}>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {quickStats.map((stat) => (
-                  <Card key={stat.label} variant="default" padding="md" className="text-center">
-                    <p className="text-2xl md:text-3xl font-bold text-burnt-orange">{stat.value}</p>
-                    <p className="text-sm text-text-primary font-medium">{stat.label}</p>
-                    <p className="text-xs text-text-tertiary">{stat.sublabel}</p>
-                  </Card>
+                  <div key={stat.label} className="bg-surface-light border border-border-subtle rounded-xl p-5 text-center">
+                    <p className="text-2xl md:text-3xl font-mono font-bold text-burnt-orange">{stat.value}</p>
+                    <p className="text-sm text-text-primary font-medium mt-1">{stat.label}</p>
+                    <p className="text-xs text-text-muted mt-0.5">{stat.sublabel}</p>
+                  </div>
                 ))}
               </div>
             </ScrollReveal>
+            </div>
           </Container>
         </Section>
 
@@ -263,17 +265,13 @@ export default function AnalyticsPage() {
           <Container>
             <div className="flex flex-wrap gap-2 mb-8">
               {(['all', 'mlb', 'nfl', 'ncaa'] as const).map((sport) => (
-                <button
+                <FilterPill
                   key={sport}
+                  active={selectedSport === sport}
                   onClick={() => setSelectedSport(sport)}
-                  className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all ${
-                    selectedSport === sport
-                      ? 'bg-burnt-orange text-white'
-                      : 'bg-background-tertiary text-text-secondary hover:bg-surface-light hover:text-text-primary'
-                  }`}
                 >
                   {sport === 'all' ? 'All Sports' : sport.toUpperCase()}
-                </button>
+                </FilterPill>
               ))}
             </div>
 

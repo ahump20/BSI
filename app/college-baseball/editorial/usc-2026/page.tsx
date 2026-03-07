@@ -1,6 +1,7 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'USC Trojans: 2026 Season Preview | Blaze Sports Intel',
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
     title: 'USC Trojans: 2026 Season Preview',
     description:
       "Twelve national titles. The most in college baseball history. USC's 2025 season — 37-23 in their first Big Ten campaign — showed that Andy Stankiewicz's rebuild has accelerated.",
-  },
+  
+    images: ogImage('/images/og/cbb-usc-2026.png')},
 };
 
 const data: TeamPreviewData = {

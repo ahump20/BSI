@@ -1,117 +1,48 @@
-'use client';
-
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { ScrollReveal } from '@/components/cinematic';
+import { HeroGlow } from '@/components/ui/HeroGlow';
 import { Footer } from '@/components/layout-ds/Footer';
+import type { Metadata } from 'next';
+import { NILDashboardClient } from './NILDashboardClient';
 
-// ── SVG Feature Icons ──
-const NilDollarIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M12 6v12M9 9.5C9 8.12 10.34 7 12 7s3 1.12 3 2.5S13.66 12 12 12s-3 1.12-3 2.5S10.34 17 12 17s3-1.12 3-2.5" /></svg>
-);
-const NilChartIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7" stroke="currentColor" strokeWidth={1.5}><rect x="3" y="3" width="7" height="18" rx="1" /><rect x="14" y="8" width="7" height="13" rx="1" /><path d="M6 7v10M17.5 12v5" /></svg>
-);
-const NilPortalIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7" stroke="currentColor" strokeWidth={1.5}><path d="M17 1l4 4-4 4" /><path d="M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4" /><path d="M21 13v2a4 4 0 01-4 4H3" /></svg>
-);
-const NilTrendIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7" stroke="currentColor" strokeWidth={1.5}><path d="M3 17l5-5 4 4 9-11" /><path d="M17 5h4v4" /></svg>
-);
-const NilTargetIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></svg>
-);
-const NilGlobeIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" /></svg>
-);
-
-const NIL_ICONS: Record<string, React.FC> = {
-  'Fair Market Value': NilDollarIcon,
-  'Program Rankings': NilChartIcon,
-  'Transfer Portal Intel': NilPortalIcon,
-  'WAR Calculations': NilTrendIcon,
-  'Roster Optimization': NilTargetIcon,
-  'Market Intelligence': NilGlobeIcon,
+export const metadata: Metadata = {
+  title: 'NIL Market Intelligence | Blaze Sports Intel',
+  description:
+    'Research-backed NIL market data: $2.26B market size, sport distribution, gender equity, and collective growth. Sourced from peer-reviewed research and verified industry reports.',
 };
-
-const features = [
-  {
-    title: 'Fair Market Value',
-    description:
-      'Our proprietary FMNV model calculates what an athlete is actually worth in the NIL marketplace based on performance, exposure, and market demand.',
-  },
-  {
-    title: 'Program Rankings',
-    description:
-      'Total roster NIL value by program. See which schools have built the most valuable collectives and where your program stands.',
-  },
-  {
-    title: 'Transfer Portal Intel',
-    description:
-      'Real-time portal activity with projected NIL values. Identify fits before your competition does.',
-  },
-  {
-    title: 'WAR Calculations',
-    description:
-      'Wins Above Replacement adapted for college athletics. Understand the actual on-field value a player brings to your program.',
-  },
-  {
-    title: 'Roster Optimization',
-    description:
-      'Maximize your NIL budget with data-driven roster construction. Know what positions need investment and where you can find value.',
-  },
-  {
-    title: 'Market Intelligence',
-    description:
-      'Track year-over-year trends, regional variations, and sport-specific dynamics in the NIL marketplace.',
-  },
-];
-
-const topPrograms = [
-  { rank: 1, name: 'Texas', conference: 'SEC', value: '$28.4M', change: '+12%' },
-  { rank: 2, name: 'Ohio State', conference: 'Big Ten', value: '$26.1M', change: '+8%' },
-  { rank: 3, name: 'Georgia', conference: 'SEC', value: '$24.8M', change: '+15%' },
-  { rank: 4, name: 'Alabama', conference: 'SEC', value: '$23.2M', change: '+5%' },
-  { rank: 5, name: 'Oregon', conference: 'Big Ten', value: '$21.7M', change: '+22%' },
-];
-
-const sportBreakdown = [
-  { sport: 'Football', avgValue: '$145K', topValue: '$3.2M', players: '2,400+' },
-  { sport: "Men's Basketball", avgValue: '$98K', topValue: '$2.8M', players: '800+' },
-  { sport: "Women's Basketball", avgValue: '$72K', topValue: '$1.9M', players: '750+' },
-  { sport: 'Baseball', avgValue: '$28K', topValue: '$420K', players: '1,200+' },
-];
 
 export default function NILValuationPage() {
   return (
-    <div className="min-h-screen bg-background-primary text-text-primary">
-      {/* Hero Section */}
-      <Section className="pt-6 pb-16 bg-gradient-to-b from-background-secondary to-background-primary">
-        <Container>
-          <ScrollReveal>
+    <>
+      <div className="min-h-screen bg-background-primary text-text-primary">
+        {/* Hero */}
+        <Section className="pt-6 pb-12 relative overflow-hidden">
+          <HeroGlow />
+          <Container>
             <div className="max-w-4xl mx-auto text-center">
-              <Badge variant="primary" className="mb-4">
-                NIL Intelligence
-              </Badge>
-              <h1
-                className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6"
-                style={{ fontFamily: 'Georgia, serif' }}
-              >
-                <span className="text-burnt-orange">NIL Valuation</span> Engine
+              <span className="section-label">BSI Research</span>
+              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display mb-6 text-text-primary">
+                NIL Market Intelligence
               </h1>
-              <p className="text-xl text-text-secondary mb-8 max-w-2xl mx-auto">
-                Fair Market Value calculations, transfer portal intelligence, and roster
-                optimization tools for the 2025-26 season. Know what athletes are worth before you
-                make offers.
+              <p className="text-burnt-orange font-serif italic text-lg leading-relaxed mb-4 max-w-2xl mx-auto">
+                Real data from the $2.26 billion NIL marketplace. Every figure sourced from
+                peer-reviewed research and verified industry reports.
+              </p>
+              <p className="text-text-muted text-sm max-w-xl mx-auto mb-8">
+                Based on{' '}
+                <Link href="/research/nil-analysis" className="text-burnt-orange hover:underline">
+                  &ldquo;The $1 Billion Experiment&rdquo;
+                </Link>
+                {' '}— BSI Research Division, March 2026.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/pricing">
+                <Link href="/nil-valuation/performance-index">
                   <Button size="lg" className="bg-burnt-orange">
-                    Get Enterprise Access
+                    Calculate a Player&apos;s NIL Index
                   </Button>
                 </Link>
                 <Link href="/nil-valuation/methodology">
@@ -121,263 +52,184 @@ export default function NILValuationPage() {
                 </Link>
               </div>
             </div>
-          </ScrollReveal>
-        </Container>
-      </Section>
+          </Container>
+        </Section>
 
-      {/* Stats Bar */}
-      <div className="bg-background-secondary border-y border-border py-8">
-        <Container>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <ScrollReveal>
+        {/* Key Metrics Bar */}
+        <div className="bg-background-secondary border-y border-border py-8">
+          <Container>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               <div>
-                <div
-                  className="text-3xl md:text-4xl font-bold text-burnt-orange"
-                >
-                  $2.4B
+                <div className="text-3xl md:text-4xl font-mono font-bold text-burnt-orange">
+                  $2.26B
                 </div>
-                <p className="text-text-tertiary mt-1">Total NIL Market</p>
+                <p className="text-text-tertiary mt-1 text-sm">Year 4 Market (Verified)</p>
               </div>
-            </ScrollReveal>
-            <ScrollReveal delay={100}>
               <div>
-                <div
-                  className="text-3xl md:text-4xl font-bold text-burnt-orange"
-                >
-                  5,200+
+                <div className="text-3xl md:text-4xl font-mono font-bold text-burnt-orange">
+                  200+
                 </div>
-                <p className="text-text-tertiary mt-1">Athletes Tracked</p>
+                <p className="text-text-tertiary mt-1 text-sm">Active Collectives</p>
               </div>
-            </ScrollReveal>
-            <ScrollReveal delay={200}>
               <div>
-                <div
-                  className="text-3xl md:text-4xl font-bold text-burnt-orange"
-                >
-                  134
+                <div className="text-3xl md:text-4xl font-mono font-bold text-burnt-orange">
+                  44.5%
                 </div>
-                <p className="text-text-tertiary mt-1">FBS Programs</p>
+                <p className="text-text-tertiary mt-1 text-sm">Football Share</p>
               </div>
-            </ScrollReveal>
-            <ScrollReveal delay={300}>
               <div>
-                <div
-                  className="text-3xl md:text-4xl font-bold text-burnt-orange"
-                >
-                  Daily
+                <div className="text-3xl md:text-4xl font-mono font-bold text-burnt-orange">
+                  43%
                 </div>
-                <p className="text-text-tertiary mt-1">Value Updates</p>
+                <p className="text-text-tertiary mt-1 text-sm">Women&apos;s Deal Share</p>
               </div>
-            </ScrollReveal>
-          </div>
-        </Container>
-      </div>
-
-      {/* Features Grid */}
-      <Section className="py-20">
-        <Container>
-          <ScrollReveal>
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-text-primary mb-4">NIL Intelligence Tools</h2>
-              <p className="text-text-tertiary max-w-2xl mx-auto">
-                Everything programs and agents need to navigate the NIL landscape with confidence.
-              </p>
             </div>
-          </ScrollReveal>
+          </Container>
+        </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature, index) => (
-              <ScrollReveal key={feature.title} delay={index * 100}>
-                <Card className="h-full">
-                  <CardContent className="p-6">
-                    <span className="text-text-secondary mb-4 block">
-                      {(() => { const Icon = NIL_ICONS[feature.title]; return Icon ? <Icon /> : null; })()}
-                    </span>
-                    <h3 className="text-lg font-semibold text-text-primary mb-2">{feature.title}</h3>
-                    <p className="text-text-tertiary text-sm">{feature.description}</p>
-                  </CardContent>
-                </Card>
-              </ScrollReveal>
-            ))}
-          </div>
-        </Container>
-      </Section>
+        {/* Charts Section — client component */}
+        <NILDashboardClient />
 
-      {/* Top Programs Preview */}
-      <Section className="py-20 bg-background-secondary">
-        <Container>
-          <div className="grid md:grid-cols-2 gap-12 items-start">
-            <ScrollReveal>
-              <div>
-                <Badge variant="secondary" className="mb-4">
-                  Program Rankings
-                </Badge>
-                <h2 className="text-3xl font-bold text-text-primary mb-4">Top 5 NIL Programs</h2>
-                <p className="text-text-tertiary mb-6">
-                  Total roster NIL value by program. Updated daily from verified market data and
-                  collective spending reports.
-                </p>
-                <Link href="/pricing">
-                  <Button variant="outline">See Full Rankings →</Button>
-                </Link>
-              </div>
-            </ScrollReveal>
-
-            <ScrollReveal delay={200}>
-              <Card>
-                <CardContent className="p-0">
-                  <div className="divide-y divide-border">
-                    {topPrograms.map((program) => (
-                      <div
-                        key={program.name}
-                        className="flex items-center justify-between p-4 hover:bg-surface-light transition-colors"
-                      >
-                        <div className="flex items-center gap-4">
-                          <span
-                            className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-burnt-orange"
-                          >
-                            {program.rank}
-                          </span>
-                          <div>
-                            <div className="font-semibold text-text-primary">{program.name}</div>
-                            <div className="text-sm text-text-muted">{program.conference}</div>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-bold text-text-primary">{program.value}</div>
-                          <div className="text-sm text-success">{program.change}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </ScrollReveal>
-          </div>
-        </Container>
-      </Section>
-
-      {/* Sport Breakdown */}
-      <Section className="py-20">
-        <Container>
-          <ScrollReveal>
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-text-primary mb-4">NIL by Sport</h2>
-              <p className="text-text-tertiary max-w-2xl mx-auto">
-                How NIL values vary across different sports. Football dominates, but every sport has
-                its market.
-              </p>
-            </div>
-          </ScrollReveal>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {sportBreakdown.map((sport, index) => (
-              <ScrollReveal key={sport.sport} delay={index * 100}>
-                <Card className="text-center">
-                  <CardContent className="p-6">
-                    <h3 className="text-lg font-semibold text-text-primary mb-4">{sport.sport}</h3>
-                    <div className="space-y-3">
-                      <div>
-                        <div className="text-2xl font-bold text-burnt-orange">
-                          {sport.avgValue}
-                        </div>
-                        <div className="text-xs text-text-muted">Average Value</div>
-                      </div>
-                      <div className="border-t border-border pt-3">
-                        <div className="text-lg font-semibold text-text-primary">{sport.topValue}</div>
-                        <div className="text-xs text-text-muted">Top Player</div>
-                      </div>
-                      <div className="border-t border-border pt-3">
-                        <div className="text-sm text-text-tertiary">{sport.players} tracked</div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </ScrollReveal>
-            ))}
-          </div>
-
-          <p className="text-center text-xs text-text-muted mt-8">
-            Illustrative estimates based on public reporting. Live NIL analytics tools are in active development.
-          </p>
-        </Container>
-      </Section>
-
-      {/* Methodology Section */}
-      <Section className="py-20 bg-background-secondary">
-        <Container>
-          <ScrollReveal>
+        {/* FMNV Methodology Preview */}
+        <Section className="py-16 bg-background-secondary">
+          <Container>
             <div className="max-w-3xl mx-auto">
               <Card className="border-l-4 border-l-burnt-orange">
                 <CardContent className="p-8">
                   <Badge variant="secondary" className="mb-4">
-                    Transparency
+                    Methodology
                   </Badge>
-                  <h2 className="text-2xl font-bold text-text-primary mb-4">Our Methodology</h2>
+                  <h2 className="font-display text-2xl font-bold uppercase tracking-display text-text-primary mb-4">
+                    Fair Market NIL Value (FMNV)
+                  </h2>
                   <p className="text-text-tertiary mb-6">
-                    We believe in full transparency. Our Fair Market NIL Value (FMNV) model combines
-                    on-field performance metrics, social media reach, market exposure, and verified
-                    deal data to calculate athlete valuations.
+                    BSI&apos;s FMNV model combines on-field performance data from our Savant compute
+                    pipeline with exposure and market factors to estimate what an athlete&apos;s NIL
+                    is worth. Every input is sourced from live data — no fabricated metrics.
                   </p>
                   <div className="grid grid-cols-3 gap-4 mb-6">
                     <div className="text-center p-4 bg-background-primary rounded-lg">
                       <div className="text-xl font-bold text-text-primary">40%</div>
                       <div className="text-xs text-text-muted">Performance</div>
+                      <div className="text-[10px] text-text-muted/50 mt-1">wOBA, wRC+, FIP</div>
                     </div>
                     <div className="text-center p-4 bg-background-primary rounded-lg">
                       <div className="text-xl font-bold text-text-primary">30%</div>
                       <div className="text-xs text-text-muted">Exposure</div>
+                      <div className="text-[10px] text-text-muted/50 mt-1">Conference, Social</div>
                     </div>
                     <div className="text-center p-4 bg-background-primary rounded-lg">
                       <div className="text-xl font-bold text-text-primary">30%</div>
                       <div className="text-xs text-text-muted">Market</div>
+                      <div className="text-[10px] text-text-muted/50 mt-1">Metro, Program</div>
                     </div>
                   </div>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Link href="/nil-valuation/methodology" className="flex-1">
+                      <Button variant="outline" className="w-full">
+                        Read Full Methodology
+                      </Button>
+                    </Link>
+                    <Link href="/nil-valuation/performance-index" className="flex-1">
+                      <Button className="w-full bg-burnt-orange">
+                        Try the Calculator
+                      </Button>
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </Container>
+        </Section>
+
+        {/* Tools Grid */}
+        <Section className="py-16">
+          <Container>
+            <div className="text-center mb-10">
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display text-text-primary mb-4">
+                NIL Intelligence Tools
+              </h2>
+              <p className="text-text-tertiary max-w-2xl mx-auto">
+                Move beyond guesswork. Data-driven tools for athletes, agents, and programs.
+              </p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+              <Card className="h-full">
+                <CardContent className="p-6 flex flex-col h-full">
+                  <Badge variant="success" className="mb-3 w-fit">Live</Badge>
+                  <h3 className="text-lg font-semibold text-text-primary mb-2">
+                    Performance Index
+                  </h3>
+                  <p className="text-text-tertiary text-sm mb-4 flex-1">
+                    Calculate any college baseball player&apos;s NIL index using live advanced
+                    stats from BSI Savant.
+                  </p>
+                  <Link href="/nil-valuation/performance-index">
+                    <Button variant="outline" className="w-full">
+                      Launch Calculator
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+              <Card className="h-full">
+                <CardContent className="p-6 flex flex-col h-full">
+                  <Badge variant="success" className="mb-3 w-fit">Live</Badge>
+                  <h3 className="text-lg font-semibold text-text-primary mb-2">
+                    Full Methodology
+                  </h3>
+                  <p className="text-text-tertiary text-sm mb-4 flex-1">
+                    How FMNV works: the weights, the inputs, the limitations.
+                    Full transparency on every calculation.
+                  </p>
                   <Link href="/nil-valuation/methodology">
                     <Button variant="outline" className="w-full">
-                      Read Full Methodology →
+                      Read Methodology
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+              <Card className="h-full">
+                <CardContent className="p-6 flex flex-col h-full">
+                  <Badge variant="success" className="mb-3 w-fit">Live</Badge>
+                  <h3 className="text-lg font-semibold text-text-primary mb-2">
+                    All NIL Tools
+                  </h3>
+                  <p className="text-text-tertiary text-sm mb-4 flex-1">
+                    Full catalog of NIL calculators, analyzers, and market intelligence
+                    tools — live and in development.
+                  </p>
+                  <Link href="/nil-valuation/tools">
+                    <Button variant="outline" className="w-full">
+                      View All Tools
                     </Button>
                   </Link>
                 </CardContent>
               </Card>
             </div>
-          </ScrollReveal>
-        </Container>
-      </Section>
+          </Container>
+        </Section>
 
-      {/* CTA Section */}
-      <Section className="py-20 bg-gradient-to-b from-background-primary to-background-secondary">
-        <Container>
-          <ScrollReveal>
-            <div className="max-w-2xl mx-auto text-center">
-              <h2
-                className="text-3xl md:text-4xl font-bold mb-6"
-                style={{ fontFamily: 'Georgia, serif' }}
-              >
-                Ready to Navigate <span className="text-burnt-orange">NIL</span> with Data?
-              </h2>
-              <p className="text-xl text-text-tertiary mb-8">
-                Enterprise access includes full NIL Valuation tools, transfer portal alerts, and API
-                integration for your scouting systems.
+        {/* Research Attribution */}
+        <Section className="py-12 bg-background-secondary border-t border-border">
+          <Container>
+            <div className="max-w-3xl mx-auto text-center">
+              <p className="text-xs text-text-muted/50 font-mono uppercase tracking-wider mb-3">
+                Data Sources
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/pricing">
-                  <Button size="lg" className="bg-burnt-orange">
-                    Get Enterprise Access
-                  </Button>
-                </Link>
-                <Link href="mailto:Austin@blazesportsintel.com?subject=NIL%20Valuation%20Demo">
-                  <Button variant="outline" size="lg">
-                    Schedule Demo
-                  </Button>
-                </Link>
-              </div>
+              <p className="text-sm text-text-tertiary leading-relaxed">
+                All market data sourced from Opendorse NIL reports (2022-2025), SponsorUnited
+                partnership data, 247Sports collective tracking, and peer-reviewed academic
+                research. Player performance metrics from BSI Savant compute pipeline.
+                Full citations in{' '}
+                <Link href="/research/nil-analysis" className="text-burnt-orange hover:underline">
+                  the research paper
+                </Link>.
+              </p>
             </div>
-          </ScrollReveal>
-        </Container>
-      </Section>
-
+          </Container>
+        </Section>
+      </div>
       <Footer />
-    </div>
+    </>
   );
 }

@@ -106,6 +106,9 @@ const MIN_AB_BATTING = 20;       // Minimum AB to qualify for batting
 const MIN_IP_THIRDS_PITCHING = 45; // Minimum IP thirds (15 IP) for pitching
 const WOBA_WEIGHTS = MLB_WOBA_WEIGHTS;
 
+// Power conferences in college baseball (2025-26 landscape post-realignment)
+const POWER_CONFERENCES = new Set(['SEC', 'ACC', 'Big 12', 'Big Ten']);
+
 /**
  * ESPN team_id → conference mapping (244 D1 teams).
  * Generated from lib/data/team-metadata.ts — 2025-26 realignment.
@@ -599,7 +602,7 @@ async function computeConferenceStrength(db: D1Database): Promise<number> {
     FROM cbb_batting_advanced
     WHERE season = ? AND conference IS NOT NULL
     GROUP BY conference
-    HAVING COUNT(*) >= 5
+    HAVING COUNT(*) >= 2
   `).bind(SEASON).all<{ conference: string; avg_woba: number; avg_ops: number; n: number }>();
 
   if (conferences.length === 0) return 0;
@@ -666,7 +669,7 @@ async function computeConferenceStrength(db: D1Database): Promise<number> {
     // RPI stays placeholder — real RPI needs 3-level opponent graph traversal
     const approxRPI = 0.500;
     const strength = calculateConferenceStrength(interConfWinPct, approxRPI, c.avg_woba, avgERA);
-    const isPower = strength >= 65 ? 1 : 0;
+    const isPower = POWER_CONFERENCES.has(c.conference) ? 1 : 0;
 
     return upsert.bind(
       c.conference, SEASON, r1(strength), r2(c.avg_ops + avgERA),
