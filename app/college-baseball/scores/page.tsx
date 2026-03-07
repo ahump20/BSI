@@ -84,6 +84,45 @@ function GameIntelTrigger({ game }: { game: Game }) {
   );
 }
 
+function TeamRow({
+  team,
+  won,
+  isScheduled,
+  fallbackAbbr,
+}: {
+  team: Team;
+  won: boolean;
+  isScheduled: boolean;
+  fallbackAbbr: string;
+}) {
+  const displayName = team.shortName || team.name || fallbackAbbr;
+  const record = `${team.record.wins}-${team.record.losses}`;
+
+  return (
+    <div className="flex items-center gap-3">
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-2">
+          <span className={`truncate font-semibold ${won ? 'text-text-primary' : 'text-text-secondary'}`}>
+            {displayName}
+          </span>
+          {won && (
+            <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-success" fill="currentColor" aria-hidden="true">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+            </svg>
+          )}
+        </div>
+        <p className="text-xs text-text-tertiary">{record}</p>
+      </div>
+      <span
+        className={`font-display text-2xl ${won ? 'text-burnt-orange' : 'text-text-primary'}`}
+        {...(!isScheduled ? { 'aria-live': 'polite' as const } : {})}
+      >
+        {team.score ?? (isScheduled ? '-' : 0)}
+      </span>
+    </div>
+  );
+}
+
 function GameCard({ game }: { game: Game }) {
   const isLive = game.status === 'live';
   const isFinal = game.status === 'final';
