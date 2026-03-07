@@ -37,6 +37,7 @@
     "test:a11y:report": "playwright show-report",
     "typecheck": "tsc --noEmit",
     "typecheck:strict": "tsc --project tsconfig.strict.json",
+    "typecheck:workers": "for d in workers/blaze-field-do workers/blaze-field-site workers/bsi-savant-compute workers/bsi-cbb-analytics workers/bsi-cbb-ingest workers/bsi-college-baseball-daily workers/bsi-live-scores workers/bsi-portal-sync workers/sportradar-ingest workers/synthetic-monitor workers/error-tracker; do echo \"Checking $d...\" && tsc --noEmit -p $d/tsconfig.json || exit 1; done && echo 'All workers pass.'",
     "lint": "eslint app functions lib components --ext .js,.jsx,.ts,.tsx --ignore-pattern 'node_modules/**'",
     "lint:fix": "eslint app functions lib components --ext .js,.jsx,.ts,.tsx --fix --ignore-pattern 'node_modules/**'",
     "format": "prettier --check \"app/**/*.{js,jsx,ts,tsx,json,css,md}\" \"functions/**/*.{js,jsx,ts,tsx,json,css,md}\" \"lib/**/*.{js,jsx,ts,tsx,json,css,md}\" \"hooks/**/*.{js,jsx,ts,tsx,json,css,md}\" \"components/**/*.{js,jsx,ts,tsx,json,css,md}\"",
