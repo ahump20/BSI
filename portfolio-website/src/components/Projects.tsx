@@ -10,6 +10,7 @@ const projects = [
     url: 'https://blazesportsintel.com',
     highlight: 'Flagship',
     featured: true,
+    live: true,
   },
   {
     name: 'A Documented Heritage',
@@ -19,6 +20,7 @@ const projects = [
     url: 'https://dna.austinhumphrey.com',
     highlight: 'Data Viz',
     featured: false,
+    live: false,
   },
   {
     name: 'BSI Radar Lab',
@@ -28,6 +30,7 @@ const projects = [
     url: 'https://labs.blazesportsintel.com',
     highlight: 'Analytics',
     featured: false,
+    live: true,
   },
   {
     name: 'BlazeCraft',
@@ -37,6 +40,7 @@ const projects = [
     url: 'https://blazecraft.app',
     highlight: 'DevOps',
     featured: false,
+    live: true,
   },
   {
     name: 'Sandlot Sluggers',
@@ -46,6 +50,7 @@ const projects = [
     url: 'https://arcade.blazesportsintel.com',
     highlight: 'Game',
     featured: false,
+    live: true,
   },
 ];
 
@@ -78,6 +83,7 @@ export default function Projects() {
               href={featured.url}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => window.posthog?.capture('project_clicked', { project: featured.name })}
               className="block card p-8 md:p-10 mb-8 group relative overflow-hidden gradient-border-hover rounded-lg"
               style={{
                 background: 'linear-gradient(135deg, rgba(26,26,26,0.8) 0%, rgba(191,87,0,0.06) 100%)',
@@ -85,9 +91,20 @@ export default function Projects() {
             >
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <span className="text-[0.6rem] font-mono text-burnt-orange bg-burnt-orange/10 border border-burnt-orange/20 px-3 py-1 rounded-full uppercase tracking-widest">
-                    {featured.highlight}
-                  </span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-[0.6rem] font-mono text-burnt-orange bg-burnt-orange/10 border border-burnt-orange/20 px-3 py-1 rounded-full uppercase tracking-widest">
+                      {featured.highlight}
+                    </span>
+                    {featured.live && (
+                      <span className="flex items-center gap-1.5 text-[0.6rem] font-mono text-emerald-400 uppercase tracking-widest">
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+                        </span>
+                        Live
+                      </span>
+                    )}
+                  </div>
                   <h3 className="font-sans font-bold text-2xl md:text-3xl uppercase tracking-wider text-bone mt-4 group-hover:text-burnt-orange transition-colors duration-300">
                     {featured.name}
                   </h3>
@@ -119,12 +136,24 @@ export default function Projects() {
                 href={project.url}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => window.posthog?.capture('project_clicked', { project: project.name })}
                 className="card p-6 group block gradient-border-hover rounded-lg"
               >
                 <div className="flex items-start justify-between mb-3">
-                  <h3 className="font-sans font-semibold text-lg uppercase tracking-wider text-bone group-hover:text-burnt-orange transition-colors duration-300">
-                    {project.name}
-                  </h3>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="font-sans font-semibold text-lg uppercase tracking-wider text-bone group-hover:text-burnt-orange transition-colors duration-300">
+                      {project.name}
+                    </h3>
+                    {project.live && (
+                      <span className="flex items-center gap-1 text-[0.55rem] font-mono text-emerald-400 uppercase tracking-widest">
+                        <span className="relative flex h-1.5 w-1.5">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
+                        </span>
+                        Live
+                      </span>
+                    )}
+                  </div>
                   <span className="text-[0.6rem] font-mono text-burnt-orange bg-burnt-orange/10 border border-burnt-orange/20 px-2 py-0.5 rounded-full uppercase tracking-widest shrink-0 ml-3">
                     {project.highlight}
                   </span>
