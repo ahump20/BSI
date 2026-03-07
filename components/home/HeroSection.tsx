@@ -9,6 +9,9 @@ import { HeroScoreStrip } from './HeroScoreStrip';
  * Massive Oswald headline with text-stroke "INTEL",
  * Cormorant italic quote, JetBrains Mono section label,
  * editorial button pair, score strip, mono marquee.
+ *
+ * Multi-sport identity: BSI as a five-sport platform
+ * where college baseball is the flagship.
  */
 export function HeroSection() {
   return (
@@ -32,7 +35,7 @@ export function HeroSection() {
         {/* Section label — JetBrains Mono, burnt-orange, tracked */}
         <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-fade-in_0.6s_ease-out_forwards] mb-10">
           <span className="section-label">
-            College Baseball Savant
+            Five Sports. One Standard.
           </span>
         </div>
 
@@ -47,7 +50,8 @@ export function HeroSection() {
 
         {/* Quote — Cormorant italic, muted */}
         <p className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.3s_forwards] font-serif italic text-lg md:text-xl tracking-wide mb-12 text-text-secondary max-w-2xl mx-auto">
-          The only free, park-adjusted sabermetrics platform for D1 college baseball.
+          Analytics for the sports that don&apos;t get the spotlight.
+          Five sports deep. College baseball at the core.
         </p>
 
         {/* CTAs — Oswald uppercase, editorial button style */}
@@ -59,10 +63,10 @@ export function HeroSection() {
             College Baseball
           </Link>
           <Link
-            href="/college-baseball/savant"
+            href="/scores"
             className="hero-btn-outline"
           >
-            BSI Savant
+            Live Scores
           </Link>
         </div>
 
@@ -79,19 +83,21 @@ export function HeroSection() {
             {/* Duplicated for seamless loop */}
             {[0, 1].map((i) => (
               <span key={i} className="inline-flex items-center gap-8 mr-8">
+                <span>5 Sports</span>
+                <span className="text-burnt-orange">&middot;</span>
                 <span>Park-Adjusted wOBA</span>
                 <span className="text-burnt-orange">&middot;</span>
                 <span>wRC+</span>
                 <span className="text-burnt-orange">&middot;</span>
                 <span>FIP</span>
                 <span className="text-burnt-orange">&middot;</span>
-                <span>Park Factors</span>
+                <span>Live Scores</span>
                 <span className="text-burnt-orange">&middot;</span>
-                <span>Conference Strength</span>
-                <span className="text-burnt-orange">&middot;</span>
-                <span>Updated Every 6 Hours</span>
+                <span>Editorial</span>
                 <span className="text-burnt-orange">&middot;</span>
                 <span>300+ D1 Teams</span>
+                <span className="text-burnt-orange">&middot;</span>
+                <span>Free</span>
                 <span className="text-burnt-orange">&middot;</span>
               </span>
             ))}
