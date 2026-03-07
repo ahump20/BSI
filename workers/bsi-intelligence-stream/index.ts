@@ -188,6 +188,11 @@ function buildCacheKey(question: string, ctx: GameContext | undefined, type: Ana
   return `${base}:${qHash}`;
 }
 
+const ASK_SYSTEM_PROMPT = `You are BSI — Blaze Sports Intel — answering a visitor's question about college baseball analytics. Be concise, direct, and grounded. If the question is about specific stats (wOBA, wRC+, FIP, ERA-), explain what they mean and how BSI calculates them. If about a team or player, share what you know and note when data would be needed to be precise. Keep answers under 150 words. Start in motion — no preamble.`;
+
+const ASK_MAX_TOKENS = 200;
+const ASK_CACHE_TTL = 300; // 5 minutes
+
 /** Resolve tier from API key in BSI_KEYS KV. Returns 'free' if missing/invalid. */
 async function resolveTier(url: URL, headers: Headers, env: Env): Promise<string> {
   const keyValue = headers.get('X-BSI-Key') ?? url.searchParams.get('key') ?? '';
@@ -236,7 +241,8 @@ function buildMatchupPrompt(req: MatchupRequest): string {
 async function streamFromAnthropic(
   apiKey: string,
   userMessage: string,
-  maxTokens: number
+  maxTokens: number,
+  systemPrompt: string = SYSTEM_PROMPT
 ): Promise<ReadableStream<Uint8Array>> {
   const response = await fetch(ANTHROPIC_STREAM_URL, {
     method: 'POST',
@@ -249,7 +255,7 @@ async function streamFromAnthropic(
       model: MODEL,
       max_tokens: maxTokens,
       stream: true,
-      system: SYSTEM_PROMPT,
+      system: systemPrompt,
       messages: [{ role: 'user', content: userMessage }],
     }),
   });
@@ -384,6 +390,78 @@ app.post('/v1/analyze', async (c) => {
   const transformStream = buildTransformStream(async (fullText: string) => {
     if (fullText.length > 10) {
       await c.env.BSI_AI_CACHE.put(cacheKey, fullText, { expirationTtl: ttl });
+    }
+  });
+
+  const outputStream = anthropicStream.pipeThrough(transformStream);
+
+  return new Response(outputStream, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'X-BSI-Cache': 'MISS',
+      'X-BSI-Model': MODEL,
+    },
+  });
+});
+
+/**
+ * POST /api/intelligence/ask
+ *
+ * Body: { question: string }
+ * Response: SSE stream — general college baseball questions from homepage
+ *
+ * Cached for 5 min. No game context needed.
+ */
+app.post('/ask', async (c) => {
+  const body = await c.req.json<{ question: string }>().catch(() => null);
+
+  if (!body?.question || body.question.trim().length < 3) {
+    return c.json({ error: 'question is required (min 3 chars)' }, 400);
+  }
+
+  const question = body.question.trim().slice(0, 300); // Cap input length
+  const cacheKey = `ai:ask:${question.slice(0, 48).replace(/\s+/g, '-').toLowerCase()}`;
+
+  // ── Cache check ──
+  const cached = await c.env.BSI_AI_CACHE.get(cacheKey, 'text');
+  if (cached) {
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: cached, cached: true })}\n\n`));
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true })}\n\n`));
+        controller.close();
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'X-BSI-Cache': 'HIT',
+      },
+    });
+  }
+
+  // ── Stream from Anthropic ──
+  let anthropicStream: ReadableStream<Uint8Array>;
+  try {
+    anthropicStream = await streamFromAnthropic(
+      c.env.ANTHROPIC_API_KEY,
+      question,
+      ASK_MAX_TOKENS,
+      ASK_SYSTEM_PROMPT
+    );
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Unknown error';
+    return c.json({ error: msg }, 502);
+  }
+
+  // ── Transform + cache ──
+  const transformStream = buildTransformStream(async (fullText: string) => {
+    if (fullText.length > 10) {
+      await c.env.BSI_AI_CACHE.put(cacheKey, fullText, { expirationTtl: ASK_CACHE_TTL });
     }
   });
 
