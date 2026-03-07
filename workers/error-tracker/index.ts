@@ -64,8 +64,8 @@ export default {
           if (log.message.length === 1 && log.message[0].startsWith('{')) {
             parsed = JSON.parse(log.message[0]);
           }
-        } catch {
-          // Not JSON — store as raw message
+        } catch (err) {
+          console.error('[error-tracker] JSON parse failed:', err instanceof Error ? err.message : err);
         }
 
         errors.push({
@@ -115,8 +115,8 @@ export default {
             errors: errors.slice(0, 5), // First 5 for brevity
           }),
         });
-      } catch {
-        // Alert failure is non-critical — don't let it break error tracking
+      } catch (err) {
+        console.error('[error-tracker] Alert webhook failed:', err instanceof Error ? err.message : err);
       }
     }
   },

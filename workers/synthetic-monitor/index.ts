@@ -150,15 +150,15 @@ async function checkEndpoint(
                   detected_at: checkedAt,
                 },
               },
-            ).catch(() => { /* non-critical */ }),
+            ).catch((err) => { console.error(`[monitor] R2 drift archive failed for ${slug}:`, err instanceof Error ? err.message : err); }),
           );
 
           // Preserve old sig, store new
           await env.MONITOR_KV.put(prevSigKey, storedSig, { expirationTtl: SIG_PREV_TTL });
           await env.MONITOR_KV.put(sigKey, currentSig, { expirationTtl: SIG_TTL });
         }
-      } catch {
-        // Body parse failure — don't block the health check
+      } catch (err) {
+        console.error(`[monitor] Body parse failed for ${ep.name}:`, err instanceof Error ? err.message : err);
       }
     }
 

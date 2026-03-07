@@ -25,6 +25,7 @@ interface PortalEntry {
 
 const KV_KEY = 'portal:college-baseball:entries';
 const KV_TTL = 3600; // 1 hour — cron refreshes every 30 min so stale data auto-expires
+const MAX_PORTAL_ENTRIES = 2000; // Cap to prevent unbounded KV growth
 const ESPN_BASE = 'https://site.api.espn.com';
 const SPORT_PATH = 'baseball/college-baseball';
 const TIMEOUT_MS = 12_000;
@@ -65,7 +66,10 @@ async function fetchHighlightlyPortal(apiKey: string): Promise<PortalEntry[]> {
       signal: controller.signal,
     });
     clearTimeout(timer);
-    if (!res.ok) return [];
+    if (!res.ok) {
+      console.error(`[portal-sync] Highlightly API returned ${res.status}`);
+      return [];
+    }
 
     const raw = await res.json() as Record<string, unknown>;
     const transfers = (raw.data ?? raw.transfers ?? []) as Array<Record<string, unknown>>;
@@ -80,7 +84,8 @@ async function fetchHighlightlyPortal(apiKey: string): Promise<PortalEntry[]> {
       enteredDate: (t.date ?? t.enteredDate ?? undefined) as string | undefined,
       classification: (t.classification ?? t.year ?? undefined) as string | undefined,
     }));
-  } catch {
+  } catch (err) {
+    console.error('[portal-sync] Highlightly fetch failed:', err instanceof Error ? err.message : err);
     return [];
   }
 }
@@ -179,6 +184,11 @@ export default {
       } catch {
         // Corrupt data — overwrite entirely
       }
+    }
+
+    // Cap to prevent unbounded growth — keep most recent entries
+    if (merged.length > MAX_PORTAL_ENTRIES) {
+      merged = merged.slice(-MAX_PORTAL_ENTRIES);
     }
 
     const payload = {

@@ -351,7 +351,7 @@ async function computeBatting(db: D1Database, kv: KVNamespace, league: LeagueCon
 
     const line: BattingLine = { pa, ab, h, doubles, triples, hr, bb, hbp, so, sf };
 
-    const avg = p.on_base_pct > 0 ? (ab > 0 ? h / ab : 0) : (ab > 0 ? h / ab : 0);
+    const avg = ab > 0 ? h / ab : 0;
     const obp = p.on_base_pct > 0 ? p.on_base_pct : (pa > 0 ? (h + bb + hbp) / pa : 0);
     const slg = p.slugging_pct > 0 ? p.slugging_pct : (ab > 0 ? (h - doubles - triples - hr + 2 * doubles + 3 * triples + 4 * hr) / ab : 0);
     const ops = obp + slg;
