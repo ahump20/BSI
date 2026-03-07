@@ -42,13 +42,13 @@ export default function AIChatWidget() {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [streamingText, setStreamingText] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
-
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, loading]);
+  }, [messages, loading, streamingText]);
 
   // Focus input when panel opens + Escape to close
   useEffect(() => {
@@ -71,6 +71,7 @@ export default function AIChatWidget() {
     setMessages((prev) => [...prev, userMsg]);
     setInput('');
     setLoading(true);
+    setStreamingText('');
 
     try {
       // Send last 6 messages for context
@@ -87,16 +88,60 @@ export default function AIChatWidget() {
 
       if (!res.ok) throw new Error('API error');
 
-      const data = await res.json() as { text: string };
-      setMessages((prev) => [...prev, { id: ++msgId, role: 'assistant', text: data.text }]);
+      const contentType = res.headers.get('Content-Type') || '';
+
+      if (contentType.includes('text/event-stream') && res.body) {
+        // SSE streaming response
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let accumulated = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value, { stream: true });
+          const lines = chunk.split('\n');
+
+          for (const line of lines) {
+            if (!line.startsWith('data: ')) continue;
+            try {
+              const parsed = JSON.parse(line.slice(6)) as { text?: string; done?: boolean };
+              if (parsed.text) {
+                accumulated += parsed.text;
+                setStreamingText(accumulated);
+              }
+              if (parsed.done) {
+                // Finalize — move streamed text into messages
+                const finalText = accumulated || 'Sorry, I couldn\'t generate a response.';
+                setMessages((prev) => [...prev, { id: ++msgId, role: 'assistant', text: finalText }]);
+                setStreamingText('');
+              }
+            } catch {
+              // Skip malformed SSE
+            }
+          }
+        }
+
+        // Safety net — if no done event, finalize anyway
+        if (accumulated && streamingText) {
+          setMessages((prev) => [...prev, { id: ++msgId, role: 'assistant', text: accumulated }]);
+          setStreamingText('');
+        }
+      } else {
+        // Batch JSON fallback (backwards compatibility)
+        const data = await res.json() as { text: string };
+        setMessages((prev) => [...prev, { id: ++msgId, role: 'assistant', text: data.text }]);
+      }
     } catch {
       // Fall back to local keyword matching
       const fallback = getFallbackResponse(trimmed);
       setMessages((prev) => [...prev, { id: ++msgId, role: 'assistant', text: fallback }]);
     } finally {
       setLoading(false);
+      setStreamingText('');
     }
-  }, [input, loading, messages]);
+  }, [input, loading, messages, streamingText]);
 
   return (
     <>
@@ -161,8 +206,17 @@ export default function AIChatWidget() {
                 </div>
               ))}
 
-              {/* Typing indicator */}
-              {loading && (
+              {/* Streaming text — shows while response is being generated */}
+              {streamingText && (
+                <div className="text-sm leading-relaxed text-warm-gray mr-8">
+                  <span className="text-burnt-orange font-mono text-xs mr-1">{'>'}</span>
+                  {streamingText}
+                  <span className="inline-block w-1 h-3.5 bg-burnt-orange/60 ml-0.5 animate-pulse" />
+                </div>
+              )}
+
+              {/* Typing indicator — only shows before streaming starts */}
+              {loading && !streamingText && (
                 <div className="text-sm text-warm-gray mr-8 flex items-center gap-1">
                   <span className="text-burnt-orange font-mono text-xs mr-1">{'>'}</span>
                   <span className="inline-flex gap-1">

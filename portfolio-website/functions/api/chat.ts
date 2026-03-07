@@ -1,6 +1,6 @@
 /**
  * Pages Function: /api/chat
- * Proxies chat messages to Claude Haiku for portfolio Q&A.
+ * Streams Claude Haiku responses via SSE for portfolio Q&A.
  *
  * Required secret: ANTHROPIC_API_KEY (set via wrangler pages secret put)
  */
@@ -16,6 +16,11 @@ interface ChatMessage {
 
 interface RequestBody {
   messages: ChatMessage[];
+}
+
+interface AnthropicStreamChunk {
+  type: string;
+  delta?: { type: string; text: string };
 }
 
 const SYSTEM_PROMPT = `You are the AI assistant on Austin Humphrey's personal portfolio website (austinhumphrey.com). Answer questions about Austin concisely and warmly. You speak in a direct, plainspoken tone — no corporate fluff. Here is Austin's background:
@@ -40,7 +45,7 @@ BLAZE SPORTS INTEL (BSI):
 - URL: blazesportsintel.com
 
 OTHER PROJECTS:
-- BlazeCraft (blazecraft.app): Warcraft 3–style system health dashboard for BSI infrastructure
+- BlazeCraft (blazecraft.app): Warcraft 3-style system health dashboard for BSI infrastructure
 - Sandlot Sluggers: Browser-based baseball game in the BSI Arcade
 
 EDUCATION:
@@ -49,9 +54,9 @@ EDUCATION:
 - AI & Machine Learning Postgraduate Certificate, UT Austin McCombs (in progress)
 
 EXPERIENCE:
-- Founder & Builder, Blaze Sports Intel (2023–present)
-- Advertising Account Executive, Spectrum Reach (Nov 2022–Dec 2025) — Austin/San Antonio DMA
-- Financial Representative, Northwestern Mutual (Dec 2020–Aug 2022) — "Power of 10" Award, top 10% nationally
+- Founder & Builder, Blaze Sports Intel (2023-present)
+- Advertising Account Executive, Spectrum Reach (Nov 2022-Dec 2025) — Austin/San Antonio DMA
+- Financial Representative, Northwestern Mutual (Dec 2020-Aug 2022) — "Power of 10" Award, top 10% nationally
 - Rush Captain & Alumni Relations Chair, Alpha Tau Omega at UT Austin (2015-2020)
 
 CONTACT:
@@ -62,15 +67,14 @@ CONTACT:
 
 Keep responses under 3 sentences when possible. Be helpful but concise. If you don't know something specific, say so honestly and suggest they reach out directly.`;
 
+const corsHeaders: Record<string, string> = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
-
-  // CORS headers
-  const corsHeaders: Record<string, string> = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-  };
 
   if (!env.ANTHROPIC_API_KEY) {
     return new Response(
@@ -99,7 +103,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   // Take last 6 messages for context window
   const recentMessages = body.messages.slice(-6).map((m) => ({
     role: m.role,
-    content: m.content.slice(0, 500), // Limit message length
+    content: m.content.slice(0, 500),
   }));
 
   try {
@@ -113,6 +117,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 300,
+        stream: true,
         system: SYSTEM_PROMPT,
         messages: recentMessages,
       }),
@@ -127,15 +132,56 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       );
     }
 
-    const data = await response.json() as {
-      content: Array<{ type: string; text: string }>;
-    };
-    const text = data.content?.[0]?.text || 'Sorry, I couldn\'t generate a response.';
+    if (!response.body) {
+      return new Response(
+        JSON.stringify({ error: 'No response body' }),
+        { status: 502, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+      );
+    }
 
-    return new Response(
-      JSON.stringify({ text }),
-      { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
-    );
+    // Transform Anthropic SSE → client SSE
+    const encoder = new TextEncoder();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    const transformStream = new TransformStream<Uint8Array, Uint8Array>({
+      transform(chunk, controller) {
+        buffer += decoder.decode(chunk, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() ?? '';
+
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const data = line.slice(6).trim();
+          if (data === '[DONE]') continue;
+
+          try {
+            const parsed: AnthropicStreamChunk = JSON.parse(data);
+            if (parsed.type === 'content_block_delta' && parsed.delta?.type === 'text_delta') {
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: parsed.delta.text })}\n\n`));
+            }
+            if (parsed.type === 'message_stop') {
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true })}\n\n`));
+            }
+          } catch {
+            // Skip malformed chunks
+          }
+        }
+      },
+      flush(controller) {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true })}\n\n`));
+      },
+    });
+
+    const outputStream = response.body.pipeThrough(transformStream);
+
+    return new Response(outputStream, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        ...corsHeaders,
+      },
+    });
   } catch (err) {
     console.error('Chat function error:', err);
     return new Response(
@@ -149,10 +195,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 export const onRequestOptions: PagesFunction = async () => {
   return new Response(null, {
     status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
+    headers: corsHeaders,
   });
 };

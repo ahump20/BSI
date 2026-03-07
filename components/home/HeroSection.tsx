@@ -12,26 +12,41 @@ import { HeroScoreStrip } from './HeroScoreStrip';
  */
 export function HeroSection() {
   return (
-    <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[55vh] flex items-center justify-center overflow-hidden">
+      {/* Animated gradient mesh — warm atmosphere */}
+      <div
+        className="absolute inset-0 pointer-events-none hero-gradient-mesh"
+        aria-hidden="true"
+      />
+      {/* Radial glow behind hero — subtle depth */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        aria-hidden="true"
+      >
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-[0.07]"
+          style={{ background: 'radial-gradient(circle, #BF5700 0%, transparent 70%)' }}
+        />
+      </div>
+
       <div className="relative z-10 max-w-5xl mx-auto text-center px-4 sm:px-6 lg:px-8">
         {/* Section label — JetBrains Mono, burnt-orange, tracked */}
-        <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-fade-in_0.6s_ease-out_forwards] mb-8">
+        <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-fade-in_0.6s_ease-out_forwards] mb-10">
           <span className="section-label">
             College Baseball Savant
           </span>
         </div>
 
         {/* H1 — Oswald 700, massive, text-stroke on second line */}
-        <h1 className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.15s_forwards] font-display font-bold uppercase tracking-tight leading-none mb-8 text-text-primary text-[clamp(4rem,12vw,8rem)]">
+        <h1 className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.15s_forwards] font-display font-bold uppercase tracking-tight leading-none mb-6 text-text-primary text-[clamp(4rem,12vw,8rem)]">
           Blaze Sports
           <br />
-          <span className="text-stroke text-burnt-orange">
+          <span className="text-stroke text-burnt-orange text-shadow-glow">
             Intel
           </span>
         </h1>
 
         {/* Quote — Cormorant italic, muted */}
-        <p className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.3s_forwards] font-serif italic text-lg md:text-xl tracking-wide mb-10 text-text-secondary">
+        <p className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.3s_forwards] font-serif italic text-lg md:text-xl tracking-wide mb-12 text-text-secondary max-w-2xl mx-auto">
           The only free, park-adjusted sabermetrics platform for D1 college baseball.
         </p>
 

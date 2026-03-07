@@ -296,6 +296,11 @@ textarea:focus-visible,
     border-top: 2px solid var(--card-accent, var(--bsi-primary));
   }
 
+  /* Sport card icon — picks up hover background from --hover-bg */
+  .group:hover [style*="--hover-bg"] {
+    background-color: var(--hover-bg) !important;
+  }
+
   /* Chart panel — glass card with left accent (from Labs) */
   .chart-panel {
     background: var(--glass-default-bg);
@@ -503,6 +508,13 @@ textarea:focus-visible,
     pointer-events: none;
   }
 
+  /* ---- Editorial pull quote refinement ---- */
+  blockquote.border-l-\[3px\] {
+    position: relative;
+    background: linear-gradient(135deg, rgba(191, 87, 0, 0.04) 0%, transparent 60%);
+    border-radius: 0 0.5rem 0.5rem 0;
+  }
+
   /* ---- Marquee (from portfolio) ---- */
   .marquee-track {
     display: flex;
@@ -568,13 +580,13 @@ textarea:focus-visible,
     animation: gradient-shift 6s ease infinite;
   }
 
-  /* ---- Section label (portfolio — JetBrains Mono, burnt-orange) ---- */
+  /* ---- Section label (JetBrains Mono, burnt-orange/60, 10px tracked) ---- */
   .section-label {
     font-family: var(--font-mono, 'JetBrains Mono', monospace);
-    font-size: 0.65rem;
-    letter-spacing: 0.35em;
+    font-size: 10px;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: var(--color-burnt-orange);
+    color: rgba(191, 87, 0, 0.6);
   }
 
   /* ---- Section title (portfolio — Oswald, clamped, uppercase) ---- */
@@ -607,6 +619,7 @@ textarea:focus-visible,
   .hero-btn-primary:hover {
     filter: brightness(1.1);
     box-shadow: var(--shadow-glow-sm);
+    transform: translateY(-1px);
   }
 
   .hero-btn-outline {
@@ -629,6 +642,19 @@ textarea:focus-visible,
   .hero-btn-outline:hover {
     border-color: var(--color-burnt-orange);
     color: var(--color-burnt-orange);
+    transform: translateY(-1px);
+  }
+
+  /* ---- Shimmer loading animation ---- */
+  .bsi-shimmer {
+    background: linear-gradient(
+      90deg,
+      var(--bsi-surface, #1a1a1a) 0%,
+      var(--bsi-surface-light, #2a2a2a) 40%,
+      var(--bsi-surface, #1a1a1a) 80%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.8s ease-in-out infinite;
   }
 
   /* ---- Hide scrollbar ---- */
@@ -840,6 +866,21 @@ textarea:focus-visible,
 @keyframes bsi-slide-up {
   from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Hero gradient mesh — warm burnt-orange to dark charcoal, slow drift */
+@keyframes hero-mesh {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.hero-gradient-mesh {
+  background: radial-gradient(ellipse at 20% 50%, rgba(191, 87, 0, 0.08) 0%, transparent 50%),
+              radial-gradient(ellipse at 80% 20%, rgba(139, 69, 19, 0.06) 0%, transparent 50%),
+              radial-gradient(ellipse at 50% 80%, rgba(255, 107, 53, 0.04) 0%, transparent 50%);
+  background-size: 200% 200%;
+  animation: hero-mesh 12s ease-in-out infinite;
 }
 
 /* ========================================================================== */
