@@ -150,7 +150,7 @@ interface NavGroup {
 /* WBC nav link visible only during tournament window (Mar 5–17, 2026) */
 const isWBCActive = (() => {
   const now = new Date();
-  return now >= new Date('2026-03-05') && now <= new Date('2026-03-18');
+  return now >= new Date('2026-03-05T00:00:00-06:00') && now <= new Date('2026-03-18T23:59:59-05:00');
 })();
 
 const NAV_GROUPS: readonly NavGroup[] = [
@@ -168,6 +168,10 @@ const NAV_GROUPS: readonly NavGroup[] = [
       { href: '/college-baseball', label: 'College Baseball', icon: <IconBaseball /> },
       { href: '/college-baseball/rankings', label: 'Rankings', icon: <IconList /> },
       { href: '/college-baseball/savant', label: 'Savant / Advanced Stats', icon: <IconTarget /> },
+      { href: '/college-baseball/conferences', label: 'Conferences', icon: <IconGlobe /> },
+      { href: '/college-baseball/compare', label: 'Compare', icon: <IconChart /> },
+      { href: '/college-baseball/analytics', label: 'Analytics', icon: <IconChart /> },
+      { href: '/college-baseball/sabermetrics', label: 'Sabermetrics', icon: <IconFlask /> },
       { href: '/mlb', label: 'MLB', icon: <IconBaseball /> },
       { href: '/nfl', label: 'NFL', icon: <IconFootball /> },
       { href: '/nba', label: 'NBA', icon: <IconBasketball /> },
@@ -186,6 +190,9 @@ const NAV_GROUPS: readonly NavGroup[] = [
     label: 'Tools',
     items: [
       { href: '/nil-valuation', label: 'NIL Valuation', icon: <IconTarget /> },
+      { href: '/nil-valuation/performance-index', label: 'Performance Index', icon: <IconChart /> },
+      { href: '/nil-valuation/tools', label: 'NIL Tools', icon: <IconFlask /> },
+      { href: '/analytics/mmi', label: 'MMI Analytics', icon: <IconChart /> },
       { href: '/models', label: 'Models', icon: <IconChart /> },
       { href: '/research', label: 'Research', icon: <IconBook /> },
       { href: '/glossary', label: 'Glossary', icon: <IconBook /> },

@@ -45,7 +45,7 @@ async function fetchHighlightlyPortal(apiKey: string): Promise<PortalEntry[]> {
     });
     clearTimeout(timer);
     if (!res.ok) {
-      console.error(`[portal-sync] Highlightly API returned ${res.status}`);
+      console.warn(`[portal-sync] Highlightly API returned ${res.status} — falling back to ESPN`);
       return [];
     }
 
@@ -63,7 +63,7 @@ async function fetchHighlightlyPortal(apiKey: string): Promise<PortalEntry[]> {
       classification: (t.classification ?? t.year ?? undefined) as string | undefined,
     }));
   } catch (err) {
-    console.error('[portal-sync] Highlightly fetch failed:', err instanceof Error ? err.message : err);
+    console.warn('[portal-sync] Highlightly fetch failed:', err instanceof Error ? err.message : err);
     return [];
   }
 }

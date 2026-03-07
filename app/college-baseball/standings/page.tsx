@@ -13,6 +13,8 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { HeroGlow } from '@/components/ui/HeroGlow';
+import { SkeletonStandingsTable } from '@/components/ui/Skeleton';
+import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import type { RankingsTeam, RankingsResponse } from '@/lib/types/rankings';
 
 const primaryConferences = [
@@ -121,17 +123,14 @@ export default function CollegeBaseballStandingsPage() {
           <HeroGlow position="50% 15%" spread="65%" />
           <Container>
             <ScrollReveal direction="up">
-              <div className="flex items-center gap-3 mb-2">
-                <Link
-                  href="/college-baseball"
-                  className="text-text-tertiary hover:text-burnt-orange transition-colors"
-                >
-                  College Baseball
-                </Link>
-                <span className="text-text-tertiary">/</span>
-                <span className="text-text-primary">Standings</span>
-              </div>
-
+              <Breadcrumb
+                className="mb-4"
+                items={[
+                  { label: 'Home', href: '/' },
+                  { label: 'College Baseball', href: '/college-baseball' },
+                  { label: 'Standings' },
+                ]}
+              />
               <div className="mb-8">
                 <span className="section-label block mb-3">Conference Standings</span>
                 <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display">
@@ -238,10 +237,7 @@ export default function CollegeBaseballStandingsPage() {
             <DataErrorBoundary name="Standings">
               {/* Loading State */}
               {loading && standings.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-16">
-                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-burnt-orange mb-4"></div>
-                  <p className="text-text-secondary">Loading standings...</p>
-                </div>
+                <SkeletonStandingsTable rows={12} columns={5} />
               )}
 
               {/* Error State */}

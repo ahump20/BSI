@@ -42,7 +42,7 @@ export function getMainNavItems(date?: Date): {
 
   // WBC 2026: featured at top of Leagues dropdown during tournament window (Mar 5–17, 2026)
   const wbcStart = new Date('2026-03-05T00:00:00-06:00');
-  const wbcEnd = new Date('2026-03-17T23:59:59-05:00');
+  const wbcEnd = new Date('2026-03-18T23:59:59-05:00');
   const wbcActive = now >= wbcStart && now <= wbcEnd;
   const wbcEntry: LeagueNavItem = {
     label: 'WBC 2026',

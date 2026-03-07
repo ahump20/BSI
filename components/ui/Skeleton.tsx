@@ -79,6 +79,48 @@ export function SkeletonPageHeader() {
   );
 }
 
+/** Generic card-shaped skeleton — matches Card padding="md" footprint */
+export function SkeletonCard({ className = '' }: { className?: string }) {
+  return (
+    <div className={`bg-surface-light rounded-lg p-4 animate-pulse ${className}`} aria-hidden="true">
+      <div className="flex items-center gap-3 mb-3">
+        <div className="w-8 h-8 rounded-full bg-surface-medium" />
+        <div className="flex-1 space-y-2">
+          <div className="h-4 bg-surface-medium rounded w-3/4" />
+          <div className="h-3 bg-surface-medium rounded w-1/2" />
+        </div>
+      </div>
+      <div className="space-y-2">
+        <div className="h-3 bg-surface-medium rounded" />
+        <div className="h-3 bg-surface-medium rounded w-5/6" />
+        <div className="h-3 bg-surface-medium rounded w-4/6" />
+      </div>
+    </div>
+  );
+}
+
+/** Table skeleton — rows of equally-spaced cells */
+export function SkeletonTable({ rows = 5 }: { rows?: number }) {
+  return (
+    <div className="bg-surface-light rounded-lg overflow-hidden animate-pulse" aria-hidden="true">
+      {/* Header row */}
+      <div className="flex gap-4 px-4 py-3 border-b border-border bg-surface-medium">
+        {[40, 120, 80, 80, 60].map((w, i) => (
+          <div key={i} className="h-3 bg-surface rounded" style={{ width: w }} />
+        ))}
+      </div>
+      {/* Data rows */}
+      {Array.from({ length: rows }).map((_, i) => (
+        <div key={i} className="flex gap-4 px-4 py-3 border-b border-border-subtle last:border-0">
+          {[40, 120, 80, 80, 60].map((w, j) => (
+            <div key={j} className="h-3 bg-surface-medium rounded" style={{ width: w }} />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function SkeletonStandingsTable({ rows = 10, columns = 5 }: { rows?: number; columns?: number }) {
   return (
     <div className="bg-surface-light rounded-lg p-4">

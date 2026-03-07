@@ -21,10 +21,10 @@ interface HeroScoresData {
   meta?: { source: string; fetched_at: string; timezone: string };
 }
 
-function statusColorClass(label: string): string {
-  if (label === 'Live') return 'text-green-400';
-  if (label === 'Final') return 'text-text-muted';
-  return 'text-burnt-orange';
+function statusColor(label: string): string {
+  if (label === 'Live') return '#22c55e';
+  if (label === 'Final') return 'var(--bsi-dust)';
+  return 'var(--bsi-primary)';
 }
 
 function GameCard({ game, label, accent }: { game: HeroGame; label: string; accent: string }) {
@@ -33,34 +33,34 @@ function GameCard({ game, label, accent }: { game: HeroGame; label: string; acce
   return (
     <Link
       href="/scores"
-      className="glass-default rounded-xl p-3 sm:p-4 border border-border-subtle hover:border-border-strong transition-all duration-300 flex-1 min-w-0 group"
+      className="heritage-card p-3 sm:p-4 flex-1 min-w-0 group"
     >
       <div className="flex items-center gap-2 mb-2">
         <span
-          className="px-1.5 py-0.5 text-[10px] font-bold uppercase rounded tracking-wider"
-          style={{ backgroundColor: withAlpha(accent, 0.12), color: accent }}
+          className="heritage-stamp"
+          style={{ padding: '1px 6px', fontSize: '9px', borderColor: withAlpha(accent, 0.4), color: accent }}
         >
           {label}
         </span>
-        <span className="text-[10px] text-text-muted uppercase tracking-wider truncate">
+        <span className="text-[10px] uppercase tracking-wider truncate" style={{ color: 'var(--bsi-dust)' }}>
           {game.sport}
         </span>
       </div>
 
       <div className="space-y-1">
         <div className="flex justify-between items-center">
-          <span className="text-xs sm:text-sm text-text-primary font-medium truncate">
+          <span className="text-xs sm:text-sm font-medium truncate" style={{ color: 'var(--bsi-bone)' }}>
             {abbr(game.away)}
           </span>
-          <span className="text-xs sm:text-sm font-bold text-burnt-orange tabular-nums">
+          <span className="text-xs sm:text-sm font-bold tabular-nums" style={{ color: 'var(--bsi-primary)' }}>
             {game.away.score}
           </span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-xs sm:text-sm text-text-primary font-medium truncate">
+          <span className="text-xs sm:text-sm font-medium truncate" style={{ color: 'var(--bsi-bone)' }}>
             {abbr(game.home)}
           </span>
-          <span className="text-xs sm:text-sm font-bold text-burnt-orange tabular-nums">
+          <span className="text-xs sm:text-sm font-bold tabular-nums" style={{ color: 'var(--bsi-primary)' }}>
             {game.home.score}
           </span>
         </div>
@@ -73,7 +73,7 @@ function GameCard({ game, label, accent }: { game: HeroGame; label: string; acce
             <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500" />
           </span>
         )}
-        <span className={`text-[10px] ${statusColorClass(label)}`}>
+        <span className="text-[10px]" style={{ color: statusColor(label) }}>
           {game.detail || game.status}
         </span>
       </div>
@@ -83,19 +83,19 @@ function GameCard({ game, label, accent }: { game: HeroGame; label: string; acce
 
 function SkeletonCard() {
   return (
-    <div className="glass-default rounded-xl p-3 sm:p-4 border border-border-subtle flex-1 min-w-0">
-      <div className="h-3 bsi-shimmer rounded w-16 mb-3" />
+    <div className="heritage-card p-3 sm:p-4 flex-1 min-w-0">
+      <div className="h-3 skeleton w-16 mb-3" />
       <div className="space-y-1.5">
         <div className="flex justify-between">
-          <div className="h-3 bsi-shimmer rounded w-12" />
-          <div className="h-3 bsi-shimmer rounded w-6" />
+          <div className="h-3 skeleton w-12" />
+          <div className="h-3 skeleton w-6" />
         </div>
         <div className="flex justify-between">
-          <div className="h-3 bsi-shimmer rounded w-12" />
-          <div className="h-3 bsi-shimmer rounded w-6" />
+          <div className="h-3 skeleton w-12" />
+          <div className="h-3 skeleton w-6" />
         </div>
       </div>
-      <div className="h-2 bsi-shimmer rounded w-20 mt-2" />
+      <div className="h-2 skeleton w-20 mt-2" />
     </div>
   );
 }
@@ -132,7 +132,7 @@ export function HeroScoreStrip() {
       </div>
 
       {data?.meta && (
-        <p className="text-[10px] text-text-muted text-center mt-3">
+        <p className="text-[10px] text-center mt-3" style={{ color: 'var(--bsi-dust)' }}>
           Updated {new Date(data.meta.fetched_at).toLocaleTimeString('en-US', {
             hour: 'numeric',
             minute: '2-digit',

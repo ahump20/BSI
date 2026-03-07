@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
@@ -21,6 +22,7 @@ import { SocialIntelFeed } from '@/components/college-baseball/SocialIntelFeed';
 import { EnrichedRankingsTable } from '@/components/college-baseball/EnrichedRankingsTable';
 import { LeagueLeaders } from '@/components/college-baseball/LeagueLeaders';
 import { IntelSignup } from '@/components/home/IntelSignup';
+import { QuickRankings } from '@/components/college-baseball/QuickRankings';
 import { TabBar, TabPanel } from '@/components/ui/TabBar';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ScheduleGameCard } from '@/components/college-baseball/ScheduleGameCard';
@@ -166,8 +168,18 @@ const conferenceList = (() => {
 const INITIAL_CONFERENCES_SHOWN = 9;
 const scheduleConferences = ['All', ...conferenceList.filter(c => c.name !== 'All Conferences').map(c => c.name)];
 
+const VALID_TABS: TabType[] = ['rankings', 'standings', 'schedule', 'teams', 'players'];
+
 export default function CollegeBaseballPage() {
-  const [activeTab, setActiveTab] = useState<TabType>('rankings');
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const initialTab = (): TabType => {
+    const param = searchParams.get('tab');
+    return (VALID_TABS.includes(param as TabType) ? param : 'rankings') as TabType;
+  };
+
+  const [activeTab, setActiveTab] = useState<TabType>(initialTab);
   const [selectedDate, setSelectedDate] = useState(() => getDateOffset(0));
   const [selectedConference, setSelectedConference] = useState('All');
   const [liveGamesDetected, setLiveGamesDetected] = useState(false);
@@ -375,6 +387,9 @@ export default function CollegeBaseballPage() {
         {/* Editorial Feed — dynamic from D1 */}
         <EditorialFeed />
 
+        {/* Quick Rankings — Top 10 always visible */}
+        <QuickRankings />
+
         {/* Social Intelligence Feed — Reddit + Twitter signals */}
         <Section padding="md">
           <Container>
@@ -382,11 +397,35 @@ export default function CollegeBaseballPage() {
           </Container>
         </Section>
 
-        {/* Intel Signup — email capture for roster-market intelligence */}
+        {/* Intel Signup + Feature Grid */}
         <Section padding="md">
           <Container>
-            <div className="max-w-xl mx-auto">
-              <IntelSignup />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+              <div>
+                <IntelSignup />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { label: 'BSI Savant', desc: 'Advanced metrics for every D1 player', href: '/college-baseball/savant', icon: 'M9 19v-6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v6a2 2 0 0 1-2 2h14a2 2 0 0 1-2-2zm0 0V9a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v10m-6 0a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2m0 0V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2z' },
+                  { label: 'Transfer Portal', desc: 'Track every portal entry in real time', href: '/college-baseball/transfer-portal', icon: 'M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4' },
+                  { label: 'Editorial', desc: 'Weekly recaps and previews', href: '/college-baseball/editorial', icon: 'M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 1 2-2V9a2 2 0 0 1-2-2h-2' },
+                  { label: 'Compare', desc: 'Head-to-head team matchups', href: '/college-baseball/compare', icon: 'M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z' },
+                ].map((feature) => (
+                  <a
+                    key={feature.href}
+                    href={feature.href}
+                    className="flex flex-col gap-2 p-3 bg-surface-light border border-border rounded-xl hover:border-burnt-orange/30 transition-all group"
+                  >
+                    <svg viewBox="0 0 24 24" className="w-5 h-5 text-burnt-orange opacity-70" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d={feature.icon} />
+                    </svg>
+                    <div>
+                      <div className="text-xs font-semibold text-text-primary group-hover:text-burnt-orange transition-colors">{feature.label}</div>
+                      <div className="text-[10px] text-text-muted leading-tight mt-0.5">{feature.desc}</div>
+                    </div>
+                  </a>
+                ))}
+              </div>
             </div>
           </Container>
         </Section>
@@ -394,7 +433,18 @@ export default function CollegeBaseballPage() {
         {/* Tabs */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
-            <TabBar tabs={tabs} active={activeTab} onChange={(id) => setActiveTab(id as TabType)} size="sm" />
+            <TabBar
+              tabs={tabs}
+              active={activeTab}
+              onChange={(id) => {
+                const tab = id as TabType;
+                setActiveTab(tab);
+                const params = new URLSearchParams(searchParams.toString());
+                params.set('tab', tab);
+                router.replace(`?${params.toString()}`, { scroll: false });
+              }}
+              size="sm"
+            />
             {/* Secondary nav — editorial monospace strip */}
             <div className="flex gap-1 mb-8 overflow-x-auto pb-1 scrollbar-hide">
               {[

@@ -23,5 +23,8 @@ id = "b7ff9178798d4a238afff79522f651e8"
 pattern = "blazesportsintel.com/api/intelligence/*"
 zone_name = "blazesportsintel.com"
 
+[[tail_consumers]]
+service = "bsi-error-tracker"
+
 [dev]
 port = 8793

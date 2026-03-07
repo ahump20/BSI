@@ -1,7 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { Suspense, useState, useEffect, useCallback, useRef } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { streamAnalysis } from '@/lib/bsi-stream-client';
+import type { Sport } from '@/lib/bsi-stream-client';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -10,6 +13,8 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { SkeletonScoreCard } from '@/components/ui/Skeleton';
+import { Breadcrumb } from '@/components/ui/Breadcrumb';
 
 // ── SVG Sport Icons ──
 
@@ -42,6 +47,14 @@ const SPORT_ICONS: Record<string, React.FC> = {
   nfl: FootballSvg,
   cfb: FootballSvg,
   nba: BasketballSvg,
+};
+
+/** Map page sport ids to the intelligence-stream Sport type. NBA excluded (no intel yet). */
+const INTEL_SPORT_MAP: Record<string, Sport> = {
+  'college-baseball': 'college-baseball',
+  mlb: 'mlb',
+  nfl: 'nfl',
+  cfb: 'ncaa-football',
 };
 
 // ── Game Types ──
@@ -94,52 +107,163 @@ function GameStateBadge({ state, detail }: { state: string; detail: string }) {
 
 // ── Mini Score Card ──
 
-function MiniScoreCard({ game }: { game: FeaturedGame }) {
-  return (
-    <Link href={game.href} className="block">
-      <div className={`p-3 rounded-lg border transition-all hover:border-burnt-orange/50 ${
-        game.state === 'live' ? 'border-success/30 bg-success/5' : 'border-border-subtle bg-background-tertiary'
-      }`}>
-        <div className="flex items-center justify-between mb-1">
-          <GameStateBadge state={game.state} detail={game.detail} />
+function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) {
+  const [intelOpen, setIntelOpen] = useState(false);
+  const [intelText, setIntelText] = useState('');
+  const [intelLoading, setIntelLoading] = useState(false);
+  const [intelCached, setIntelCached] = useState(false);
+  const [intelError, setIntelError] = useState('');
+  const abortRef = useRef<(() => void) | null>(null);
+
+  const intelSport = sport ? INTEL_SPORT_MAP[sport] : undefined;
+  const canShowIntel = game.state === 'upcoming' && !!intelSport;
+
+  function handleIntelToggle(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (intelOpen) {
+      // Close — abort any in-flight stream
+      abortRef.current?.();
+      abortRef.current = null;
+      setIntelOpen(false);
+      setIntelText('');
+      setIntelLoading(false);
+      setIntelCached(false);
+      setIntelError('');
+      return;
+    }
+
+    // Open and start streaming
+    setIntelOpen(true);
+    setIntelText('');
+    setIntelLoading(true);
+    setIntelCached(false);
+    setIntelError('');
+
+    const abort = streamAnalysis({
+      question: `Pregame breakdown: ${game.away.name || game.away.abbreviation} at ${game.home.name || game.home.abbreviation}`,
+      context: {
+        sport: intelSport!,
+        homeTeam: game.home.name || game.home.abbreviation,
+        awayTeam: game.away.name || game.away.abbreviation,
+      },
+      analysisType: 'pregame',
+      onToken: (text) => {
+        setIntelLoading(false);
+        setIntelText(prev => prev + text);
+      },
+      onDone: (meta) => {
+        setIntelLoading(false);
+        setIntelCached(meta.cached);
+      },
+      onError: (err) => {
+        setIntelLoading(false);
+        setIntelError(err.message || 'Failed to load intel');
+      },
+    });
+
+    abortRef.current = abort;
+  }
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => { abortRef.current?.(); };
+  }, []);
+
+  const cardContent = (
+    <div className={`p-3 rounded-lg border transition-all hover:border-burnt-orange/50 ${
+      game.state === 'live' ? 'border-success/30 bg-success/5' : 'border-border-subtle bg-background-tertiary'
+    }`}>
+      <div className="flex items-center justify-between mb-1">
+        <GameStateBadge state={game.state} detail={game.detail} />
+      </div>
+      <div className="space-y-1">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {game.away.logo ? (
+              <img src={game.away.logo} alt="" className="w-4 h-4 object-contain" loading="lazy" />
+            ) : (
+              <span className="text-[10px] font-bold text-text-tertiary w-4">{game.away.abbreviation}</span>
+            )}
+            <span className="text-sm text-text-primary font-medium truncate max-w-[120px]">
+              {game.away.abbreviation}
+            </span>
+          </div>
+          <span className={`font-mono text-sm font-bold ${
+            game.state === 'final' && Number(game.away.score) > Number(game.home.score) ? 'text-text-primary' : 'text-text-secondary'
+          }`}>
+            {game.away.score ?? '-'}
+          </span>
         </div>
-        <div className="space-y-1">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              {game.away.logo ? (
-                <img src={game.away.logo} alt="" className="w-4 h-4 object-contain" loading="lazy" />
-              ) : (
-                <span className="text-[10px] font-bold text-text-tertiary w-4">{game.away.abbreviation}</span>
-              )}
-              <span className="text-sm text-text-primary font-medium truncate max-w-[120px]">
-                {game.away.abbreviation}
-              </span>
-            </div>
-            <span className={`font-mono text-sm font-bold ${
-              game.state === 'final' && Number(game.away.score) > Number(game.home.score) ? 'text-text-primary' : 'text-text-secondary'
-            }`}>
-              {game.away.score ?? '-'}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {game.home.logo ? (
+              <img src={game.home.logo} alt="" className="w-4 h-4 object-contain" loading="lazy" />
+            ) : (
+              <span className="text-[10px] font-bold text-text-tertiary w-4">{game.home.abbreviation}</span>
+            )}
+            <span className="text-sm text-text-primary font-medium truncate max-w-[120px]">
+              {game.home.abbreviation}
             </span>
           </div>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              {game.home.logo ? (
-                <img src={game.home.logo} alt="" className="w-4 h-4 object-contain" loading="lazy" />
-              ) : (
-                <span className="text-[10px] font-bold text-text-tertiary w-4">{game.home.abbreviation}</span>
-              )}
-              <span className="text-sm text-text-primary font-medium truncate max-w-[120px]">
-                {game.home.abbreviation}
-              </span>
-            </div>
-            <span className={`font-mono text-sm font-bold ${
-              game.state === 'final' && Number(game.home.score) > Number(game.away.score) ? 'text-text-primary' : 'text-text-secondary'
-            }`}>
-              {game.home.score ?? '-'}
-            </span>
-          </div>
+          <span className={`font-mono text-sm font-bold ${
+            game.state === 'final' && Number(game.home.score) > Number(game.away.score) ? 'text-text-primary' : 'text-text-secondary'
+          }`}>
+            {game.home.score ?? '-'}
+          </span>
         </div>
       </div>
+
+      {/* Pregame Intel button */}
+      {canShowIntel && (
+        <div className="mt-2 pt-2 border-t border-border-subtle">
+          <button
+            onClick={handleIntelToggle}
+            className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-burnt-orange hover:text-ember transition-colors"
+          >
+            <svg viewBox="0 0 16 16" fill="currentColor" className="w-3 h-3">
+              <path d="M8 1a7 7 0 100 14A7 7 0 008 1zm-.75 3.5a.75.75 0 011.5 0v4a.75.75 0 01-1.5 0v-4zM8 11a.75.75 0 100 1.5.75.75 0 000-1.5z" />
+            </svg>
+            {intelOpen ? 'Close' : 'Intel'}
+          </button>
+
+          {/* Expanded intel panel */}
+          {intelOpen && (
+            <div className="mt-2 max-h-48 overflow-y-auto rounded bg-midnight/50 p-2">
+              {intelLoading && (
+                <div className="flex items-center gap-2 text-text-tertiary text-xs">
+                  <span className="w-1.5 h-1.5 bg-burnt-orange rounded-full animate-pulse" />
+                  Loading pregame intel...
+                </div>
+              )}
+              {intelError && (
+                <p className="text-xs text-red-400">{intelError}</p>
+              )}
+              {intelText && (
+                <p className="text-xs text-text-secondary leading-relaxed whitespace-pre-wrap">{intelText}</p>
+              )}
+              {intelCached && !intelLoading && (
+                <span className="inline-block mt-1.5 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider bg-burnt-orange/20 text-burnt-orange rounded">
+                  Cached
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
+  // When intel is open, don't wrap in a Link (clicks inside the expanded panel
+  // shouldn't navigate away). Otherwise keep the existing Link wrapper.
+  if (intelOpen) {
+    return <div className="block">{cardContent}</div>;
+  }
+
+  return (
+    <Link href={game.href} className="block">
+      {cardContent}
     </Link>
   );
 }
@@ -207,13 +331,13 @@ function extractCBBGames(data: Record<string, unknown>): FeaturedGame[] {
     id: String(g.id || ''),
     away: {
       name: String(g.awayTeam || ''),
-      abbreviation: String(g.awayAbbreviation || (g.awayTeam as string)?.substring(0, 3).toUpperCase() || 'AWY'),
+      abbreviation: String(g.awayAbbreviation || (typeof g.awayTeam === 'string' ? g.awayTeam.substring(0, 3).toUpperCase() : 'AWY')),
       logo: String(g.awayLogo || ''),
       score: String(g.awayScore ?? ''),
     },
     home: {
       name: String(g.homeTeam || ''),
-      abbreviation: String(g.homeAbbreviation || (g.homeTeam as string)?.substring(0, 3).toUpperCase() || 'HME'),
+      abbreviation: String(g.homeAbbreviation || (typeof g.homeTeam === 'string' ? g.homeTeam.substring(0, 3).toUpperCase() : 'HME')),
       logo: String(g.homeLogo || ''),
       score: String(g.homeScore ?? ''),
     },
@@ -223,9 +347,23 @@ function extractCBBGames(data: Record<string, unknown>): FeaturedGame[] {
   }));
 }
 
+// ── Loading Fallback ──
+
+function ScoresLoading() {
+  return (
+    <div className="p-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <SkeletonScoreCard key={i} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ── Main Component ──
 
-export default function ScoresHubPage() {
+function ScoresHubContent() {
   const [sports, setSports] = useState<SportSection[]>([
     {
       id: 'college-baseball', name: 'College Baseball', href: '/college-baseball/scores',
@@ -256,7 +394,10 @@ export default function ScoresHubPage() {
 
   const [totalLive, setTotalLive] = useState(0);
   const [fetchedAt, setFetchedAt] = useState('');
-  const [activeSport, setActiveSport] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const sportParam = searchParams.get('sport');
+  const [activeSport, setActiveSport] = useState<string | null>(sportParam);
 
   const fetchLiveCounts = useCallback(async () => {
     try {
@@ -335,7 +476,20 @@ export default function ScoresHubPage() {
 
   const hasAnyLive = totalLive > 0;
 
-  // Auto-select the sport with the most games
+  // Sync activeSport to URL search params
+  const handleSetActiveSport = useCallback((id: string | null) => {
+    setActiveSport(id);
+    const params = new URLSearchParams(searchParams.toString());
+    if (id && id !== 'all') {
+      params.set('sport', id);
+    } else {
+      params.delete('sport');
+    }
+    const qs = params.toString();
+    router.replace(qs ? `?${qs}` : '/scores/', { scroll: false });
+  }, [searchParams, router]);
+
+  // Auto-select the sport with the most games (only if no URL param was set)
   useEffect(() => {
     if (activeSport) return;
     const loaded = sports.filter(s => s.loaded && s.todayCount > 0);
@@ -345,7 +499,7 @@ export default function ScoresHubPage() {
     }
   }, [sports, activeSport]);
 
-  const activeSportData = sports.find(s => s.id === activeSport);
+  const activeSportData = activeSport === 'all' ? null : sports.find(s => s.id === activeSport);
 
   return (
     <>
@@ -354,6 +508,13 @@ export default function ScoresHubPage() {
         <Section padding="lg" className="relative overflow-hidden pt-6">
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
           <Container>
+            <Breadcrumb
+              className="mb-4"
+              items={[
+                { label: 'Home', href: '/' },
+                { label: 'Scores' },
+              ]}
+            />
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-4">
                 <Badge variant="primary">All Sports</Badge>
@@ -387,13 +548,23 @@ export default function ScoresHubPage() {
         <Section padding="none" background="charcoal" borderTop className="sticky top-0 z-20">
           <Container>
             <div className="flex gap-1 overflow-x-auto py-2">
+              <button
+                onClick={() => handleSetActiveSport('all')}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold font-mono uppercase tracking-wider whitespace-nowrap transition-all ${
+                  activeSport === 'all'
+                    ? 'bg-burnt-orange text-white'
+                    : 'text-text-secondary hover:bg-surface-medium'
+                }`}
+              >
+                All
+              </button>
               {sports.map(sport => {
                 const Icon = SPORT_ICONS[sport.id];
                 return (
                   <button
                     key={sport.id}
-                    onClick={() => setActiveSport(sport.id)}
-                    className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold whitespace-nowrap transition-all ${
+                    onClick={() => handleSetActiveSport(sport.id)}
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold font-mono uppercase tracking-wider whitespace-nowrap transition-all ${
                       activeSport === sport.id
                         ? 'bg-burnt-orange text-white'
                         : 'text-text-secondary hover:bg-surface-medium'
@@ -423,7 +594,46 @@ export default function ScoresHubPage() {
         <Section padding="lg" background="charcoal">
           <Container>
             <DataErrorBoundary name="Scores">
-              {activeSportData && activeSportData.featured.length > 0 ? (
+              {activeSport === 'all' ? (
+                /* All Sports view: show each sport section */
+                <div className="space-y-8">
+                  {sports.map(sport => (
+                    <div key={sport.id}>
+                      <div className="flex items-center justify-between mb-4">
+                        <h2 className="font-display text-xl font-bold uppercase text-text-primary">
+                          {sport.name}
+                        </h2>
+                        <Link
+                          href={sport.href}
+                          className="text-burnt-orange text-sm font-semibold hover:text-ember transition-colors"
+                        >
+                          View All
+                        </Link>
+                      </div>
+                      {!sport.loaded ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                          {Array.from({ length: 4 }).map((_, i) => (
+                            <SkeletonScoreCard key={i} />
+                          ))}
+                        </div>
+                      ) : sport.featured.length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                          {sport.featured.map(game => (
+                            <MiniScoreCard key={game.id} game={game} sport={sport.id} />
+                          ))}
+                        </div>
+                      ) : (
+                        <Card padding="md" className="text-center">
+                          <p className="text-text-secondary text-sm">No {sport.name} games today</p>
+                          <p className="text-text-tertiary text-xs mt-1">
+                            {sport.isActive ? 'Check back later' : `Season: ${sport.season}`}
+                          </p>
+                        </Card>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : activeSportData && activeSportData.featured.length > 0 ? (
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="font-display text-xl font-bold uppercase text-text-primary">
@@ -438,7 +648,7 @@ export default function ScoresHubPage() {
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                     {activeSportData.featured.map(game => (
-                      <MiniScoreCard key={game.id} game={game} />
+                      <MiniScoreCard key={game.id} game={game} sport={activeSportData.id} />
                     ))}
                   </div>
                 </div>
@@ -458,7 +668,7 @@ export default function ScoresHubPage() {
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                   {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} className="h-24 bg-background-tertiary rounded-lg animate-pulse" />
+                    <SkeletonScoreCard key={i} />
                   ))}
                 </div>
               )}
@@ -553,5 +763,15 @@ export default function ScoresHubPage() {
       </div>
       <Footer />
     </>
+  );
+}
+
+// ── Page Export (with Suspense boundary for useSearchParams) ──
+
+export default function ScoresHubPage() {
+  return (
+    <Suspense fallback={<ScoresLoading />}>
+      <ScoresHubContent />
+    </Suspense>
   );
 }

@@ -720,15 +720,16 @@ async function computeMMIForNewGames(env: Env, date: string): Promise<number> {
         const stmts = chunk.map(s =>
           env.DB.prepare(
             `INSERT INTO mmi_snapshots
-             (game_id, inning, inning_half, outs, home_score, away_score,
-              mmi_value, direction, magnitude, components, event_description)
-             VALUES (?, ?, ?, 3, ?, ?, ?, ?, ?, ?, ?)`
+             (game_id, league, inning, inning_half, outs, home_score, away_score,
+              mmi_value, sd_component, rs_component, gp_component, bs_component,
+              runners_on, computed_at)
+             VALUES (?, 'college-baseball', ?, ?, 3, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
           ).bind(
             game.game_id, s.inning, s.inningHalf,
             s.homeScore, s.awayScore,
-            s.value, s.direction, s.magnitude,
-            JSON.stringify(s.components),
-            s.eventDescription ?? null,
+            s.value, s.components.sd, s.components.rs,
+            s.components.gp, s.components.bs,
+            null, s.meta.computed_at,
           )
         );
         await env.DB.batch(stmts);
@@ -748,10 +749,10 @@ async function computeMMIForNewGames(env: Env, date: string): Promise<number> {
 
       await env.DB.prepare(
         `INSERT OR IGNORE INTO mmi_game_summary
-         (game_id, game_date, home_team, away_team, final_home_score, final_away_score,
+         (game_id, league, game_date, home_team, away_team, final_home_score, final_away_score,
           max_mmi, min_mmi, avg_mmi, mmi_volatility, lead_changes, max_swing,
           swing_inning, excitement_rating)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+         VALUES (?, 'college-baseball', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       ).bind(
         game.game_id, game.game_date, game.home_team, game.away_team,
         game.home_score, game.away_score,

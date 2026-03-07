@@ -10,7 +10,7 @@ import { ScrollReveal } from '@/components/cinematic';
  * Auto-hides after tournament ends.
  * ═══════════════════════════════════════════════════════════════════════ */
 
-const TOURNAMENT_END = new Date('2026-03-18T06:00:00-05:00');
+const TOURNAMENT_END = new Date('2026-03-18T23:59:59-05:00');
 
 interface PoolData {
   id: string;

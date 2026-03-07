@@ -29,26 +29,26 @@ export function HubHero({
   dataSource,
 }: HubHeroProps) {
   return (
-    <Section padding="lg" className="relative overflow-hidden">
+    <Section padding="md" className="relative overflow-hidden pb-4">
       <HeroGlow shape="70% 60%" position="50% 30%" intensity={0.08} />
       <Container center>
         <ScrollReveal direction="up">
-          <span className="section-label block mb-4 text-center">NCAA Division I Baseball</span>
+          <span className="section-label block mb-2 text-center">NCAA Division I Baseball</span>
         </ScrollReveal>
-        <ScrollReveal direction="up" delay={100}>
-          <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-center uppercase tracking-display text-text-primary mb-4">
+        <ScrollReveal direction="up" delay={80}>
+          <h1 className="font-display text-2xl md:text-3xl lg:text-4xl font-bold text-center uppercase tracking-display text-text-primary mb-2">
             NCAA Division I Baseball
           </h1>
         </ScrollReveal>
-        <ScrollReveal direction="up" delay={120}>
+        <ScrollReveal direction="up" delay={100}>
           <DataFreshnessIndicator
             lastUpdated={lastUpdated ? new Date(lastUpdated) : undefined}
             source={dataSource}
             refreshInterval={30}
           />
         </ScrollReveal>
-        <ScrollReveal direction="up" delay={150}>
-          <p className="text-burnt-orange font-serif italic text-lg leading-relaxed text-center mb-6">
+        <ScrollReveal direction="up" delay={120}>
+          <p className="text-burnt-orange font-serif italic text-base leading-relaxed text-center mb-4">
             Park-adjusted advanced metrics. Updated every 6 hours. Free.
           </p>
         </ScrollReveal>
@@ -89,8 +89,8 @@ export function HubHero({
         </ScrollReveal>
 
         {/* Stats Bar — metric preview with context */}
-        <ScrollReveal direction="up" delay={250}>
-          <div className="mt-10 flex flex-wrap justify-center gap-x-0 gap-y-4 max-w-3xl mx-auto">
+        <ScrollReveal direction="up" delay={180}>
+          <div className="mt-6 flex flex-wrap justify-center gap-x-0 gap-y-3 max-w-3xl mx-auto">
             {[
               { abbr: 'wOBA', label: 'Hitting quality, park-adjusted' },
               { abbr: 'wRC+', label: 'Runs above average, scaled to 100' },
@@ -111,8 +111,8 @@ export function HubHero({
         </ScrollReveal>
 
         {/* Labs Portal CTA */}
-        <ScrollReveal direction="up" delay={300}>
-          <div className="mt-6 text-center">
+        <ScrollReveal direction="up" delay={200}>
+          <div className="mt-4 text-center">
             <a
               href="https://labs.blazesportsintel.com"
               target="_blank"

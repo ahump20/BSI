@@ -788,6 +788,333 @@ textarea:focus-visible,
 }
 
 /* ========================================================================== */
+/* HERITAGE VINTAGE SYSTEM — homepage broadcast aesthetic                      */
+/* ========================================================================== */
+
+/* Heritage card — solid dugout surface, 2px radius, warm hover */
+.heritage-card {
+  background: var(--surface-dugout);
+  border: 1px solid var(--border-vintage);
+  border-radius: 2px;
+  transition: border-color 200ms ease, box-shadow 300ms ease-out;
+}
+
+.heritage-card:hover {
+  border-color: var(--border-active);
+  box-shadow: 0 0 20px rgba(191, 87, 0, 0.08);
+}
+
+/* Heritage stamp — Oswald branded label */
+.heritage-stamp {
+  display: inline-block;
+  font-family: var(--bsi-font-display);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--bsi-primary);
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--bsi-primary);
+  border-radius: 1px;
+}
+
+/* Heritage divider — bronze gradient fade (wider) */
+.heritage-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--heritage-bronze) 20%, var(--heritage-bronze) 80%, transparent);
+  opacity: 0.25;
+  margin: 1.5rem 0;
+}
+
+/* Section rule — 3px burnt-orange accent bar */
+.section-rule-thick {
+  width: 3rem;
+  height: 3px;
+  background: var(--bsi-primary);
+  border-radius: 1px;
+}
+
+.section-rule {
+  width: 60px;
+  height: 3px;
+  background: var(--bsi-primary);
+  border-radius: 1px;
+  margin-bottom: var(--space-md, 1rem);
+}
+
+/* Score ticker — broadcast crawl styling */
+.score-ticker {
+  background: var(--surface-scoreboard);
+  border-top: 2px solid var(--bsi-primary);
+  border-bottom: 1px solid var(--border-vintage);
+  overflow: hidden;
+  font-family: var(--bsi-font-data);
+  font-size: 1.1rem;
+  letter-spacing: 0.12em;
+  color: var(--bsi-bone);
+  padding: 0.5rem var(--space-md, 1rem);
+}
+
+/* Corner marks — crop-mark decorative corners (inset) */
+.corner-marks {
+  position: relative;
+}
+
+.corner-marks::before,
+.corner-marks::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-color: var(--heritage-bronze);
+  border-style: solid;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.corner-marks::before {
+  top: 8px;
+  left: 8px;
+  border-width: 1px 0 0 1px;
+}
+
+.corner-marks::after {
+  bottom: 8px;
+  right: 8px;
+  border-width: 0 1px 1px 0;
+}
+
+/* Film grain overlay — scoped pseudo-element (parent needs position: relative) */
+.grain-overlay {
+  position: relative;
+}
+
+.grain-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  mix-blend-mode: overlay;
+}
+
+/* Scanlines — horizontal repeating gradient */
+.scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.03;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(255, 255, 255, 0.03) 2px,
+    rgba(255, 255, 255, 0.03) 4px
+  );
+  z-index: 1;
+}
+
+/* Warm vignette — radial darkening at edges */
+.vignette-warm {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.4) 100%);
+  z-index: 1;
+}
+
+.page-vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0, 0, 0, 0.3) 100%);
+  z-index: 9998;
+}
+
+/* Heritage hero background — scoreboard base + additive glows */
+.heritage-hero {
+  position: relative;
+  background-color: var(--surface-scoreboard);
+  background-image:
+    radial-gradient(ellipse at 25% 50%, rgba(191, 87, 0, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 75% 20%, rgba(75, 156, 211, 0.04) 0%, transparent 40%);
+}
+
+/* Heritage buttons — burnt-orange border, fill on hover */
+.btn-heritage {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 1.5rem;
+  background: transparent;
+  border: 1px solid var(--bsi-primary);
+  border-radius: 1px;
+  color: var(--bsi-primary);
+  font-family: var(--bsi-font-display);
+  font-weight: 500;
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition: all 250ms ease;
+  cursor: pointer;
+}
+
+.btn-heritage:hover {
+  background: var(--bsi-primary);
+  color: var(--bsi-midnight);
+}
+
+.btn-heritage:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.btn-heritage-fill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 1.5rem;
+  background: var(--bsi-primary);
+  border: 1px solid var(--bsi-primary);
+  border-radius: 1px;
+  color: var(--bsi-midnight);
+  font-family: var(--bsi-font-display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition: all 250ms ease;
+  cursor: pointer;
+}
+
+.btn-heritage-fill:hover {
+  filter: brightness(1.15);
+  box-shadow: 0 0 20px rgba(191, 87, 0, 0.25);
+}
+
+.btn-heritage-fill:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* LED stat — amber-glowing scoreboard numbers */
+.led-stat {
+  font-family: var(--font-bebas, 'Bebas Neue'), var(--bsi-font-display);
+  color: var(--bsi-bone);
+  text-shadow: 0 0 8px rgba(191, 87, 0, 0.4), 0 0 20px rgba(191, 87, 0, 0.15);
+}
+
+/* Stat table — vintage data table styling */
+.stat-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--bsi-font-data);
+  font-size: 11px;
+}
+
+.stat-table thead {
+  background: var(--surface-press-box);
+  border-bottom: 2px solid var(--bsi-primary);
+}
+
+.stat-table th {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--bsi-dust);
+}
+
+.stat-table td {
+  padding: 0.5rem 0.75rem;
+  color: var(--bsi-bone);
+  border-bottom: 1px solid rgba(140, 98, 57, 0.12);
+}
+
+.stat-table tr:hover td {
+  background: rgba(191, 87, 0, 0.04);
+}
+
+/* Heritage nav — bone on hover, burnt-orange active */
+.heritage-nav a:hover {
+  color: var(--bsi-bone);
+}
+
+.heritage-nav a.active {
+  color: var(--bsi-primary);
+  border-bottom: 2px solid var(--bsi-primary);
+}
+
+.heritage-nav a:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Stat highlight/negative utilities */
+.stat-highlight {
+  color: var(--heritage-columbia-blue);
+  font-weight: 600;
+}
+
+.stat-negative {
+  color: var(--heritage-oiler-red);
+}
+
+/* Stale warning badge */
+.stale-warning {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--heritage-oiler-red);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.25rem 0.5rem;
+  border: 1px dashed var(--heritage-oiler-red);
+  display: inline-block;
+}
+
+/* Heritage skeleton shimmer */
+.skeleton {
+  background: linear-gradient(90deg,
+    var(--surface-dugout) 25%,
+    var(--surface-press-box) 50%,
+    var(--surface-dugout) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+    background: var(--surface-dugout);
+  }
+}
+
+/* Disable grain + scanlines below 768px and for reduced motion */
+@media (max-width: 767px) {
+  .grain-overlay::after,
+  .scanlines,
+  .page-vignette {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain-overlay::after,
+  .scanlines {
+    display: none;
+  }
+}
+
+/* ========================================================================== */
 /* ANIMATIONS                                                                  */
 /* ========================================================================== */
 

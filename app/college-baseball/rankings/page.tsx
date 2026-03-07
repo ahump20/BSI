@@ -12,6 +12,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { HeroGlow } from '@/components/ui/HeroGlow';
+import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { teamMetadata } from '@/lib/data/team-metadata';
 import { formatTimestamp } from '@/lib/utils/timezone';
 
@@ -172,16 +173,14 @@ export default function CollegeBaseballRankingsPage() {
           <Container>
             {/* Breadcrumb & Header */}
             <ScrollReveal direction="up">
-              <div className="flex items-center gap-3 mb-2">
-                <Link
-                  href="/college-baseball"
-                  className="text-text-tertiary hover:text-burnt-orange transition-colors"
-                >
-                  College Baseball
-                </Link>
-                <span className="text-text-tertiary">/</span>
-                <span className="text-text-primary">Rankings</span>
-              </div>
+              <Breadcrumb
+                className="mb-4"
+                items={[
+                  { label: 'Home', href: '/' },
+                  { label: 'College Baseball', href: '/college-baseball' },
+                  { label: 'Rankings' },
+                ]}
+              />
 
               <div className="mb-8">
                 <span className="section-label block mb-3">NCAA Division I Baseball</span>

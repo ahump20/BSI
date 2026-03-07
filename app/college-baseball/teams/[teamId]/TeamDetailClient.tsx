@@ -11,6 +11,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { AITeamPreview } from '@/components/college-baseball/AITeamPreview';
 import { SabermetricsPanel } from '@/components/college-baseball/SabermetricsPanel';
 import { SocialIntelTeamPanel } from '@/components/college-baseball/SocialIntelTeamPanel';
+import { TeamVideoPanel } from '@/components/college-baseball/TeamVideoPanel';
 import { preseason2026, getTierLabel } from '@/lib/data/preseason-2026';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 import { useSportData } from '@/lib/hooks/useSportData';
@@ -903,6 +904,10 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
 
                 <ScrollReveal direction="up" className="mt-6">
                   <SocialIntelTeamPanel teamId={teamId} />
+                </ScrollReveal>
+
+                <ScrollReveal direction="up" className="mt-6">
+                  <TeamVideoPanel teamId={teamId} />
                 </ScrollReveal>
               </>
             )}

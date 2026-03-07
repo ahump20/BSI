@@ -204,7 +204,7 @@ function normalizeBSIScoreboard(
 }
 
 // ────────────────────────────────────────
-// Score card
+// Score card — heritage vintage treatment
 // ────────────────────────────────────────
 
 function CompactGameCard({ game }: { game: NormalizedGame }) {
@@ -212,24 +212,26 @@ function CompactGameCard({ game }: { game: NormalizedGame }) {
   const isFinal = game.status === 'final';
   const awayWon = isFinal && (game.away.score ?? 0) > (game.home.score ?? 0);
   const homeWon = isFinal && (game.home.score ?? 0) > (game.away.score ?? 0);
-  const sportColor = SPORT_COLORS[game.sport] || '#BF5700'; // token: --bsi-primary
+  const sportColor = SPORT_COLORS[game.sport] || '#BF5700';
 
   return (
     <Link
       href={game.href}
-      className="group flex-shrink-0 w-48 sm:w-56 rounded-xl border border-border bg-surface-light hover:bg-surface-light transition-all duration-300 overflow-hidden"
-      style={{ borderColor: isLive ? withAlpha(sportColor, 0.25) : undefined }}
+      className="group flex-shrink-0 w-48 sm:w-56 heritage-card overflow-hidden transition-all duration-300"
+      style={{
+        borderTopWidth: '2px',
+        borderTopColor: sportColor,
+        ...(isLive ? { animation: 'broadcast-pulse 4s ease-in-out infinite' } : {}),
+      }}
     >
       {/* Status bar */}
       <div
-        className={`px-3 py-1.5 flex items-center justify-between text-[10px] font-semibold uppercase tracking-wider ${
-          isLive
-            ? 'text-green-400'
-            : isFinal
-              ? 'bg-surface-light text-text-muted'
-              : 'text-text-muted'
-        }`}
-        style={isLive ? { backgroundColor: withAlpha(sportColor, 0.08) } : undefined}
+        className="px-3 py-1.5 flex items-center justify-between text-[10px] font-semibold uppercase tracking-wider"
+        style={{
+          fontFamily: 'var(--bsi-font-data)',
+          backgroundColor: isLive ? withAlpha(sportColor, 0.08) : 'var(--surface-scoreboard)',
+          color: isLive ? '#22c55e' : isFinal ? 'var(--bsi-dust)' : 'var(--bsi-dust)',
+        }}
       >
         <span className="flex items-center gap-1.5">
           {isLive && (
@@ -240,34 +242,39 @@ function CompactGameCard({ game }: { game: NormalizedGame }) {
           )}
           {isLive ? (game.detail || 'LIVE') : isFinal ? 'Final' : (game.startTime || 'TBD')}
         </span>
-        {/* Sport badge */}
-        <span
-          className="px-1.5 py-0.5 rounded text-[8px] font-bold tracking-wider"
-          style={{ backgroundColor: withAlpha(sportColor, 0.12), color: sportColor }}
-        >
+        {/* Sport badge — heritage stamp style */}
+        <span className="heritage-stamp" style={{ padding: '1px 6px', fontSize: '8px', borderColor: withAlpha(sportColor, 0.3), color: sportColor }}>
           {game.sportLabel}
         </span>
       </div>
 
-      {/* Teams */}
+      {/* Teams — Oswald bold names, Bebas Neue scores */}
       <div className="p-3 space-y-1.5">
         <div className="flex items-center justify-between">
-          <span className={`text-sm font-medium truncate ${awayWon ? 'text-text-primary' : 'text-text-secondary'}`}>
+          <span
+            className={`text-sm font-display font-bold uppercase truncate ${awayWon ? 'text-[var(--bsi-bone)]' : 'text-[var(--bsi-dust)]'}`}
+          >
             {game.away.abbr || game.away.name}
           </span>
-          <span className={`text-sm font-bold font-mono tabular-nums ${
-            isLive ? 'text-text-primary' : awayWon ? 'text-text-primary' : 'text-text-muted'
-          }`}>
+          <span
+            className={`text-base tabular-nums led-stat ${
+              isLive ? 'text-[var(--bsi-bone)]' : awayWon ? 'text-[var(--bsi-bone)]' : 'text-[var(--bsi-dust)]'
+            }`}
+          >
             {game.away.score !== null ? game.away.score : '-'}
           </span>
         </div>
         <div className="flex items-center justify-between">
-          <span className={`text-sm font-medium truncate ${homeWon ? 'text-text-primary' : 'text-text-secondary'}`}>
+          <span
+            className={`text-sm font-display font-bold uppercase truncate ${homeWon ? 'text-[var(--bsi-bone)]' : 'text-[var(--bsi-dust)]'}`}
+          >
             {game.home.abbr || game.home.name}
           </span>
-          <span className={`text-sm font-bold font-mono tabular-nums ${
-            isLive ? 'text-text-primary' : homeWon ? 'text-text-primary' : 'text-text-muted'
-          }`}>
+          <span
+            className={`text-base tabular-nums led-stat ${
+              isLive ? 'text-[var(--bsi-bone)]' : homeWon ? 'text-[var(--bsi-bone)]' : 'text-[var(--bsi-dust)]'
+            }`}
+          >
             {game.home.score !== null ? game.home.score : '-'}
           </span>
         </div>
@@ -282,8 +289,8 @@ function CompactGameCard({ game }: { game: NormalizedGame }) {
 
 /**
  * HomeLiveScores — multi-sport horizontal score strip for the homepage.
- * Fetches all in-season sport endpoints in parallel, normalizes into a common shape,
- * and auto-refreshes (30s when live, 5min otherwise).
+ * Heritage vintage treatment: chyron-style sport tabs, heritage-card score tiles,
+ * LED-glow scores, broadcast-pulse animation on live games.
  */
 interface HomeLiveScoresProps {
   onCountsChange?: (counts: Map<string, { live: number; today: number }>) => void;
@@ -395,25 +402,32 @@ export function HomeLiveScores({ onCountsChange }: HomeLiveScoresProps = {}) {
   // Don't render if no games and done loading
   if (!loading && !error && allGames.length === 0) return null;
 
+  const liveCount = allGames.filter((g) => g.status === 'live').length;
+  const todayCount = allGames.length;
+
   return (
     <section className="py-6 px-4 sm:px-6 lg:px-8" aria-label="Today's live scores">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
+        {/* Header — chyron style */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <h2 className="text-sm font-semibold uppercase tracking-widest text-text-secondary">
+            <h2
+              className="text-sm font-display font-bold uppercase tracking-widest text-[var(--bsi-bone)]"
+            >
               Today&apos;s Games
             </h2>
             {hasLiveGames && <FreshnessBadge isLive fetchedAt={lastFetched?.toISOString()} />}
             {!loading && allGames.length > 0 && (
-              <span className="text-[10px] text-text-muted tabular-nums">
-                {allGames.length} game{allGames.length !== 1 ? 's' : ''}
+              <span className="heritage-stamp" style={{ padding: '2px 8px' }}>
+                {liveCount > 0 && <>{liveCount} Live <span className="text-bsi-dust">//</span> </>}
+                {todayCount} Today
               </span>
             )}
           </div>
           <Link
             href="/scores"
-            className="text-xs font-semibold text-burnt-orange hover:text-ember transition-colors flex items-center gap-1"
+            className="text-xs font-semibold uppercase tracking-wider flex items-center gap-1 transition-colors"
+            style={{ color: 'var(--heritage-columbia-blue)' }}
           >
             All scores
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -422,17 +436,23 @@ export function HomeLiveScores({ onCountsChange }: HomeLiveScoresProps = {}) {
           </Link>
         </div>
 
-        {/* Sport filter pills — only show when multiple sports have games */}
+        {/* Sport filter tabs — chyron-style with sport-color left bar */}
         {sportCounts.size > 1 && (
           <div className="flex gap-2 mb-4 overflow-x-auto scrollbar-hide pb-1">
             <button
               onClick={() => setFilter('all')}
               aria-pressed={filter === 'all'}
-              className={`px-3 py-1 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${
+              className={`px-3 py-1 text-xs font-semibold transition-all whitespace-nowrap uppercase tracking-wider ${
                 filter === 'all'
-                  ? 'bg-surface-medium text-text-primary'
-                  : 'bg-surface-light text-text-muted hover:bg-surface hover:text-text-secondary'
+                  ? 'text-[var(--bsi-bone)]'
+                  : 'text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)]'
               }`}
+              style={{
+                borderRadius: '2px',
+                borderLeft: filter === 'all' ? '3px solid var(--bsi-primary)' : '3px solid transparent',
+                background: filter === 'all' ? 'rgba(191, 87, 0, 0.08)' : 'rgba(255,255,255,0.03)',
+                fontFamily: 'var(--bsi-font-data)',
+              }}
             >
               All ({allGames.length})
             </button>
@@ -443,14 +463,16 @@ export function HomeLiveScores({ onCountsChange }: HomeLiveScoresProps = {}) {
                   key={sport.key}
                   onClick={() => setFilter(sport.key)}
                   aria-pressed={filter === sport.key}
-                  className={`px-3 py-1 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${
+                  className={`px-3 py-1 text-xs font-semibold transition-all whitespace-nowrap uppercase tracking-wider ${
                     filter === sport.key
-                      ? 'text-text-primary'
-                      : 'text-text-muted hover:text-text-secondary'
+                      ? 'text-[var(--bsi-bone)]'
+                      : 'text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)]'
                   }`}
                   style={{
-                    backgroundColor: filter === sport.key ? withAlpha(sport.color, 0.19) : 'rgba(255,255,255,0.05)',
-                    borderColor: filter === sport.key ? withAlpha(sport.color, 0.31) : 'transparent',
+                    borderRadius: '2px',
+                    borderLeft: filter === sport.key ? `3px solid ${sport.color}` : '3px solid transparent',
+                    background: filter === sport.key ? withAlpha(sport.color, 0.08) : 'rgba(255,255,255,0.03)',
+                    fontFamily: 'var(--bsi-font-data)',
                   }}
                 >
                   {sport.label} ({sportCounts.get(sport.key) || 0})
@@ -475,11 +497,11 @@ export function HomeLiveScores({ onCountsChange }: HomeLiveScoresProps = {}) {
               ))}
             </>
           ) : error ? (
-            <div className="text-sm text-text-muted py-4">
+            <div className="text-sm py-4" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
               Scores unavailable — check back during the season.
             </div>
           ) : displayGames.length === 0 ? (
-            <div className="text-sm text-text-muted py-4">
+            <div className="text-sm py-4" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
               No {filter === 'all' ? '' : `${activeSports.find((s) => s.key === filter)?.label || ''} `}games today.
             </div>
           ) : (
@@ -488,7 +510,7 @@ export function HomeLiveScores({ onCountsChange }: HomeLiveScoresProps = {}) {
         </div>
 
         {!loading && allGames.length > 0 && (
-          <p className="text-[10px] text-text-muted mt-2">
+          <p className="text-[10px] mt-2" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
             {hasLiveGames ? 'Auto-refreshing every 30s' : 'Refreshes every 5 min'}
             {lastFetched && (
               <> · Updated {lastFetched.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })} CT</>

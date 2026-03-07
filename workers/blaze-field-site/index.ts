@@ -96,6 +96,11 @@ export default {
       return handleAgentEvents(env);
     }
 
+    // Bug tracker — aggregates monitor failures + recent errors for game overlay
+    if (url.pathname === '/api/bugs') {
+      return handleBugs(env);
+    }
+
     // Infrastructure status — reads synthetic monitor results from KV
     if (url.pathname === '/api/status') {
       const latest = await env.MONITOR_KV.get('summary:latest', 'text');
@@ -267,6 +272,427 @@ async function handleAgentEvents(env: Env): Promise<Response> {
   return new Response(JSON.stringify({ events: capped, count: capped.length }), {
     headers: API_HEADERS_PUBLIC,
   });
+}
+
+// ── Bug Tracker ──────────────────────────────────────────
+
+interface BugEntry {
+  id: string;
+  tier: 1 | 2 | 3 | 4;
+  kind: 'down' | 'drift' | 'exception' | 'error' | 'bad_outcome' | 'latency';
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  source: string;
+  infraRef: string;
+  buildingId: string;
+  message: string;
+  timestamp: string;
+  count?: number;
+  data?: Record<string, unknown>;
+}
+
+interface BugSummary {
+  active: number;
+  byTier: { 1: number; 2: number; 3: number; 4: number };
+  healthyEndpoints: number;
+  totalEndpoints: number;
+  resolved: number;
+}
+
+/** Worker name → infraRef mapping for error grouping. */
+const WORKER_INFRA_MAP: Record<string, string> = {
+  'blazesportsintel-worker-prod': 'blazesportsintel-worker-prod',
+  'bsi-savant-compute': 'bsi-savant-compute',
+  'bsi-cbb-ingest': 'bsi-cbb-ingest',
+  'bsi-live-scores': 'bsi-live-scores',
+  'bsi-intelligence-stream': 'bsi-intelligence-stream',
+  'bsi-college-baseball-daily': 'bsi-college-baseball-daily',
+  'bsi-synthetic-monitor': 'bsi-synthetic-monitor',
+  'bsi-error-tracker': 'bsi-error-tracker',
+  'bsi-prediction-api': 'bsi-prediction-api',
+  'bsi-news-ticker': 'bsi-news-ticker',
+  'bsi-ticker': 'bsi-ticker',
+  'blaze-field-site': 'blaze-field-site',
+  'blaze-field-site-prod': 'blaze-field-site',
+  'blaze-field-do': 'blaze-field-do',
+  'mini-games-api': 'mini-games-api',
+  'college-baseball-mcp': 'college-baseball-mcp',
+  'cbb-api': 'cbb-api',
+  'bsi-sportradar-ingest': 'bsi-sportradar-ingest',
+  'bsi-portal-sync': 'bsi-portal-sync',
+  'bsi-analytics-events': 'bsi-analytics-events',
+  'bsi-cbb-analytics': 'bsi-cbb-analytics',
+};
+
+/** Endpoint name → infraRef + buildingId mapping for monitor results. */
+const ENDPOINT_MAP: Record<string, { infraRef: string; buildingId: string }> = {
+  'Homepage':           { infraRef: 'blazesportsintel-worker-prod', buildingId: 'homepage' },
+  'API Health':         { infraRef: 'blazesportsintel-worker-prod', buildingId: 'api-health' },
+  'System Status':      { infraRef: 'bsi-synthetic-monitor',       buildingId: 'system-status' },
+  'CB Scores':          { infraRef: 'bsi-cbb-ingest',              buildingId: 'cb-scores' },
+  'CB Standings':       { infraRef: 'bsi-cbb-ingest',              buildingId: 'cb-standings' },
+  'Scores Page':        { infraRef: 'blazesportsintel-worker-prod', buildingId: 'scores-page' },
+  'Savant Leaderboard': { infraRef: 'bsi-savant-compute',          buildingId: 'savant-leaderboard' },
+  'Savant Conference':  { infraRef: 'bsi-savant-compute',          buildingId: 'savant-conference' },
+};
+
+const LATENCY_THRESHOLD_MS = 500;
+
+/** Snapshot of active bugs — persisted in KV for issue memory. */
+interface BugSnapshot {
+  bugIds: string[];
+  timestamp: string;
+}
+
+async function handleBugs(env: Env): Promise<Response> {
+  const bugs: BugEntry[] = [];
+  let totalEndpoints = 0;
+  let healthyEndpoints = 0;
+
+  // Source A: Monitor results — failures, schema drift, AND latency
+  try {
+    const monitorRaw = await env.MONITOR_KV.get('summary:latest', 'text');
+    if (monitorRaw) {
+      const summary = JSON.parse(monitorRaw) as {
+        results?: Array<{
+          name: string;
+          url?: string;
+          status: number | string;
+          ok: boolean;
+          latencyMs?: number;
+          schemaDrift?: boolean;
+          error?: string;
+          checkedAt?: string;
+        }>;
+      };
+
+      if (summary.results) {
+        totalEndpoints = summary.results.length;
+
+        for (const result of summary.results) {
+          const mapping = ENDPOINT_MAP[result.name];
+          const infraRef = mapping?.infraRef ?? 'blazesportsintel-worker-prod';
+          const buildingId = mapping?.buildingId ?? result.name.toLowerCase().replace(/\s+/g, '-');
+          const ts = result.checkedAt ?? new Date().toISOString();
+
+          // Endpoint down → Tier 3 (Ogre)
+          if (!result.ok) {
+            bugs.push({
+              id: `monitor:down:${result.name}`,
+              tier: 3,
+              kind: 'down',
+              severity: 'high',
+              source: result.name,
+              infraRef,
+              buildingId,
+              message: result.error ?? `${result.name} returned ${result.status}`,
+              timestamp: ts,
+              data: { status: result.status, error: result.error },
+            });
+          } else {
+            healthyEndpoints++;
+
+            // High latency → Tier 1 (Gnoll)
+            if (result.latencyMs && result.latencyMs > LATENCY_THRESHOLD_MS) {
+              bugs.push({
+                id: `monitor:latency:${result.name}`,
+                tier: 1,
+                kind: 'latency',
+                severity: 'low',
+                source: result.name,
+                infraRef,
+                buildingId,
+                message: `${result.name} responding in ${result.latencyMs}ms (>${LATENCY_THRESHOLD_MS}ms)`,
+                timestamp: ts,
+                data: { latencyMs: result.latencyMs, threshold: LATENCY_THRESHOLD_MS },
+              });
+            }
+          }
+
+          // Schema drift → Tier 2 (Bandit)
+          if ('schemaDrift' in result && result.schemaDrift) {
+            bugs.push({
+              id: `monitor:drift:${result.name}`,
+              tier: 2,
+              kind: 'drift',
+              severity: 'medium',
+              source: result.name,
+              infraRef,
+              buildingId,
+              message: `Schema drift detected on ${result.name}`,
+              timestamp: ts,
+              data: { schemaDrift: true },
+            });
+          }
+        }
+      }
+    }
+  } catch {
+    // Monitor data unavailable — not fatal
+  }
+
+  // Source B: Error clusters from error-tracker (fingerprint-based)
+  // Falls back to legacy individual-key listing if clusters don't exist yet
+  try {
+    let usedClusters = false;
+
+    // Try cluster-based reads first (strongly consistent, no list() ceiling)
+    const indexRaw = await env.ERROR_LOG.get('err-clusters:index', 'text');
+    if (indexRaw) {
+      const fingerprints = JSON.parse(indexRaw) as string[];
+      if (fingerprints.length > 0) {
+        usedClusters = true;
+        const clusterReads = fingerprints.map(fp =>
+          env.ERROR_LOG.get(`err-cluster:${fp}`, 'text'),
+        );
+        const clusterValues = await Promise.all(clusterReads);
+
+        for (const raw of clusterValues) {
+          if (!raw) continue;
+          try {
+            const cluster = JSON.parse(raw) as {
+              fingerprint: string;
+              worker: string;
+              kind: string;
+              message: string;
+              count: number;
+              firstSeen: string;
+              lastSeen: string;
+              sample: string;
+            };
+
+            const kind = cluster.kind === 'exception' ? 'exception'
+              : cluster.kind === 'bad_outcome' ? 'bad_outcome'
+              : 'error';
+
+            const tier: 1 | 2 | 3 | 4 = cluster.count > 10 ? 3 : cluster.count > 3 ? 2 : 1;
+            const severity = tier >= 3 ? 'high' : tier >= 2 ? 'medium' : 'low';
+
+            bugs.push({
+              id: `error:${cluster.worker}:${cluster.fingerprint}`,
+              tier,
+              kind: kind as BugEntry['kind'],
+              severity,
+              source: cluster.worker,
+              infraRef: WORKER_INFRA_MAP[cluster.worker] ?? 'blazesportsintel-worker-prod',
+              buildingId: cluster.worker,
+              message: cluster.sample,
+              timestamp: cluster.lastSeen,
+              count: cluster.count,
+              data: {
+                errorCount: cluster.count,
+                fingerprint: cluster.fingerprint,
+                firstSeen: cluster.firstSeen,
+              },
+            });
+          } catch {
+            // Malformed cluster — skip
+          }
+        }
+      }
+    }
+
+    // Legacy fallback: individual error keys (pre-cluster format)
+    if (!usedClusters) {
+      const today = new Date().toISOString().slice(0, 10);
+      const yesterday = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
+
+      const [todayKeys, yesterdayKeys] = await Promise.all([
+        env.ERROR_LOG.list({ prefix: `err:${today}`, limit: 20 }),
+        env.ERROR_LOG.list({ prefix: `err:${yesterday}`, limit: 10 }),
+      ]);
+
+      const allKeys = [...todayKeys.keys, ...yesterdayKeys.keys].slice(0, 20);
+
+      if (allKeys.length > 0) {
+        const reads = allKeys.map(k => env.ERROR_LOG.get(k.name, 'text'));
+        const values = await Promise.all(reads);
+
+        const workerErrors = new Map<string, {
+          count: number;
+          latestType: string;
+          latestMessage: string;
+          latestTimestamp: string;
+        }>();
+
+        for (const raw of values) {
+          if (!raw) continue;
+          try {
+            const entry = JSON.parse(raw) as {
+              type?: string;
+              worker?: string;
+              message?: string;
+              name?: string;
+              timestamp?: string;
+              logTimestamp?: string;
+            };
+
+            const worker = entry.worker ?? 'unknown';
+            const errType = entry.type ?? 'error';
+            const message = entry.message ?? entry.name ?? 'Unknown error';
+            const ts = entry.timestamp ?? entry.logTimestamp ?? new Date().toISOString();
+
+            const existing = workerErrors.get(worker);
+            if (existing) {
+              existing.count++;
+              if (ts > existing.latestTimestamp) {
+                existing.latestType = errType;
+                existing.latestMessage = message;
+                existing.latestTimestamp = ts;
+              }
+            } else {
+              workerErrors.set(worker, {
+                count: 1,
+                latestType: errType,
+                latestMessage: message,
+                latestTimestamp: ts,
+              });
+            }
+          } catch {
+            // Malformed error entry — skip
+          }
+        }
+
+        for (const [worker, info] of workerErrors) {
+          const kind = info.latestType === 'exception' ? 'exception'
+            : info.latestType === 'bad_outcome' ? 'bad_outcome'
+            : 'error';
+
+          const tier: 1 | 2 | 3 | 4 = info.count > 10 ? 3 : info.count > 3 ? 2 : 1;
+          const severity = tier >= 3 ? 'high' : tier >= 2 ? 'medium' : 'low';
+
+          bugs.push({
+            id: `error:${worker}`,
+            tier,
+            kind: kind as BugEntry['kind'],
+            severity,
+            source: worker,
+            infraRef: WORKER_INFRA_MAP[worker] ?? 'blazesportsintel-worker-prod',
+            buildingId: worker,
+            message: info.latestMessage,
+            timestamp: info.latestTimestamp,
+            count: info.count,
+            data: { errorCount: info.count },
+          });
+        }
+      }
+    }
+  } catch {
+    // Error log unavailable — not fatal
+  }
+
+  // ── Dedup: merge monitor + error bugs that share the same infraRef ──
+  // When a monitor "down" and error-tracker bug point to the same worker,
+  // keep the higher-tier entry and fold the other's data into it.
+  const byInfraRef = new Map<string, BugEntry[]>();
+  for (const bug of bugs) {
+    const group = byInfraRef.get(bug.infraRef) ?? [];
+    group.push(bug);
+    byInfraRef.set(bug.infraRef, group);
+  }
+
+  const dedupedBugs: BugEntry[] = [];
+  for (const [, group] of byInfraRef) {
+    if (group.length <= 1) {
+      dedupedBugs.push(...group);
+      continue;
+    }
+
+    // Separate monitor bugs from error-tracker bugs
+    const monitorBugs = group.filter(b => b.id.startsWith('monitor:'));
+    const errorBugs = group.filter(b => b.id.startsWith('error:'));
+
+    // If there's a monitor:down bug AND error bugs for the same worker → merge
+    const downBug = monitorBugs.find(b => b.kind === 'down');
+    if (downBug && errorBugs.length > 0) {
+      // Roll error details into the monitor bug (higher visibility)
+      const totalErrors = errorBugs.reduce((sum, b) => sum + (b.count ?? 1), 0);
+      downBug.count = (downBug.count ?? 0) + totalErrors;
+      downBug.data = {
+        ...downBug.data,
+        errorCount: totalErrors,
+        mergedErrors: errorBugs.map(b => ({
+          message: b.message,
+          count: b.count,
+          fingerprint: b.data?.fingerprint,
+        })),
+      };
+      // Use highest tier between monitor and error bugs
+      for (const eb of errorBugs) {
+        if (eb.tier > downBug.tier) downBug.tier = eb.tier;
+      }
+      // Keep the monitor:down bug, drop the individual error bugs
+      dedupedBugs.push(downBug);
+      // Keep non-down monitor bugs (latency, drift) separately
+      dedupedBugs.push(...monitorBugs.filter(b => b !== downBug));
+    } else {
+      // No overlap — keep everything
+      dedupedBugs.push(...group);
+    }
+  }
+
+  // ── Issue memory: compare current bugs to previous snapshot ──
+  let resolved = 0;
+  try {
+    const snapshotRaw = await env.MONITOR_KV.get('blazecraft:issues:snapshot', 'text');
+    if (snapshotRaw) {
+      const prevSnapshot = JSON.parse(snapshotRaw) as BugSnapshot;
+      const currentIds = new Set(dedupedBugs.map(b => b.id));
+
+      // Count bugs that were in the previous snapshot but no longer active
+      let newlyResolved = 0;
+      for (const prevId of prevSnapshot.bugIds) {
+        if (!currentIds.has(prevId)) newlyResolved++;
+      }
+
+      // Read running total and increment
+      const totalRaw = await env.MONITOR_KV.get('blazecraft:stats:resolved', 'text');
+      const prevTotal = totalRaw ? parseInt(totalRaw, 10) || 0 : 0;
+      resolved = prevTotal + newlyResolved;
+
+      // Update running total only if new resolutions happened
+      if (newlyResolved > 0) {
+        await env.MONITOR_KV.put('blazecraft:stats:resolved', String(resolved));
+      }
+    } else {
+      // First run — read existing resolved count
+      const totalRaw = await env.MONITOR_KV.get('blazecraft:stats:resolved', 'text');
+      resolved = totalRaw ? parseInt(totalRaw, 10) || 0 : 0;
+    }
+
+    // Write current snapshot for next comparison
+    const snapshot: BugSnapshot = {
+      bugIds: dedupedBugs.map(b => b.id),
+      timestamp: new Date().toISOString(),
+    };
+    await env.MONITOR_KV.put('blazecraft:issues:snapshot', JSON.stringify(snapshot), {
+      expirationTtl: 86400, // 24 hours — snapshot is only useful for recent comparisons
+    });
+  } catch {
+    // Snapshot logic failure — non-fatal, resolved stays at 0
+  }
+
+  // Compute summary
+  const byTier = { 1: 0, 2: 0, 3: 0, 4: 0 };
+  for (const b of dedupedBugs) byTier[b.tier]++;
+
+  const summary: BugSummary = {
+    active: dedupedBugs.length,
+    byTier,
+    healthyEndpoints,
+    totalEndpoints,
+    resolved,
+  };
+
+  return new Response(
+    JSON.stringify({ bugs: dedupedBugs, summary, timestamp: new Date().toISOString() }),
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Cache-Control': 'public, max-age=15',
+      },
+    },
+  );
 }
 
 function buildResponse(object: R2ObjectBody, path: string, immutable: boolean): Response {

@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import dynamic from 'next/dynamic';
-import { Cormorant_Garamond, JetBrains_Mono, Oswald } from 'next/font/google';
+import { Bebas_Neue, Cormorant_Garamond, IBM_Plex_Mono, JetBrains_Mono, Oswald } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
 import { PageTransition, MotionProvider } from '@/components/motion';
@@ -37,6 +37,20 @@ const oswald = Oswald({
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-mono',
+  display: 'swap',
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  weight: ['400', '600'],
+  subsets: ['latin'],
+  variable: '--font-plex-mono',
+  display: 'swap',
+});
+
+const bebasNeue = Bebas_Neue({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-bebas',
   display: 'swap',
 });
 
@@ -137,7 +151,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`dark ${cormorant.variable} ${oswald.variable} ${jetbrainsMono.variable}`}
+      className={`dark ${cormorant.variable} ${oswald.variable} ${jetbrainsMono.variable} ${ibmPlexMono.variable} ${bebasNeue.variable}`}
     >
       <head>
         <link rel="preconnect" href="https://customer-mpdvoybjqct2pzls.cloudflarestream.com" />
