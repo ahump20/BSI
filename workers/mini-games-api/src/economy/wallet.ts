@@ -1,4 +1,3 @@
-import type { Env } from '../types';
 import { levelFromXp, xpToNextLevel } from './leveling';
 
 export async function registerWallet(deviceId: string, env: Env): Promise<Response> {

@@ -4,7 +4,7 @@
 
 name = "bsi-intelligence-stream"
 main = "index.ts"
-compatibility_date = "2025-03-07"
+compatibility_date = "2025-12-01"
 compatibility_flags = ["nodejs_compat"]
 
 [observability]
@@ -14,6 +14,10 @@ head_sampling_rate = 1
 [[kv_namespaces]]
 binding = "BSI_AI_CACHE"
 id = "e5b7cbfb4cc548ca80ec486bff78bfeb"
+
+[[kv_namespaces]]
+binding = "BSI_KEYS"
+id = "b7ff9178798d4a238afff79522f651e8"
 
 [[routes]]
 pattern = "blazesportsintel.com/api/intelligence/*"

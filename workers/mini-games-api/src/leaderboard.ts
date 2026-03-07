@@ -1,4 +1,4 @@
-import type { Env, ScoreSubmission } from './types';
+import type { ScoreSubmission } from './types';
 
 const VALID_GAME_IDS = ['blitz', 'hotdog-dash', 'sandlot-sluggers'];
 const MAX_NAME_LENGTH = 24;

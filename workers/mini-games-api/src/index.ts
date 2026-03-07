@@ -1,4 +1,4 @@
-import type { Env } from './types';
+import type { ScoreSubmission } from './types';
 import { submitScore, getGameLeaderboard, getGlobalLeaderboard } from './leaderboard';
 import { checkRateLimit } from './rate-limiter';
 import { handleEconomyRoute } from './economy/router';
@@ -40,7 +40,7 @@ export default {
       }
 
       try {
-        const body = await request.json();
+        const body = await request.json() as ScoreSubmission;
         return await submitScore(body, ip, env);
       } catch {
         return json({ error: 'Invalid JSON body' }, 400);

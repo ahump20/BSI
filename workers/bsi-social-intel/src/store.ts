@@ -5,7 +5,7 @@
  * and denormalized summaries to KV (fast serving, 15-min TTL).
  */
 
-import type { Env, ClassifiedSignal, SocialIntelSummary } from './types';
+import type { ClassifiedSignal, SocialIntelSummary } from './types';
 
 const KV_TTL = 900; // 15 minutes — matches plan spec
 const TZ = 'America/Chicago';
@@ -147,7 +147,7 @@ function computeSummary(team_slug: string, summary_date: string, signals: Classi
   const sentimentSignals = signals.filter(s => s.signal_type === 'sentiment');
   let sentiment_score: number | null = null;
   if (sentimentSignals.length > 0) {
-    const scores = sentimentSignals.map(s => {
+    const scores: number[] = sentimentSignals.map(s => {
       const lower = s.post_text.toLowerCase();
       if (/huge win|great|impressive|dominant|clutch/.test(lower)) return 1;
       if (/loss|terrible|embarrass|awful|struggle/.test(lower)) return -1;

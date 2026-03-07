@@ -43,8 +43,8 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Link grid — 5 columns */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 mb-12">
+        {/* Link grid — 6 columns */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-8 mb-12">
           <div>
             <h4 className={sectionTitle}>Sports</h4>
             <ul className="space-y-2">
@@ -60,9 +60,22 @@ export function Footer() {
             <ul className="space-y-2">
               <li><Link href="/college-baseball/savant" className={footerLink}>BSI Savant</Link></li>
               <li><Link href="/scores" className={footerLink}>Live Scores</Link></li>
+              <li><Link href="/college-baseball/savant" className={footerLink}>BSI Savant</Link></li>
+              <li><Link href="/intel" className={footerLink}>Intelligence</Link></li>
               <li><Link href="/models" className={footerLink}>Models</Link></li>
               <li><Link href="/glossary" className={footerLink}>Glossary</Link></li>
               <li><Link href="/pricing" className={footerLink}>Pricing</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className={sectionTitle}>Content</h4>
+            <ul className="space-y-2">
+              <li><Link href="/college-baseball/editorial" className={footerLink}>Editorial</Link></li>
+              <li><Link href="/transfer-portal" className={footerLink}>Transfer Portal</Link></li>
+              <li><Link href="/nil-valuation" className={footerLink}>NIL Valuation</Link></li>
+              <li><Link href="/blog-post-feed" className={footerLink}>Blog</Link></li>
+              <li><Link href="/coverage" className={footerLink}>Coverage</Link></li>
+              <li><Link href="/data-sources" className={footerLink}>Data Sources</Link></li>
             </ul>
           </div>
           <div>
@@ -70,7 +83,7 @@ export function Footer() {
             <ul className="space-y-2">
               <li><a href="https://labs.blazesportsintel.com" target="_blank" rel="noopener noreferrer" className={footerLink}>BSI Labs <span className="text-[9px] opacity-40">↗</span></a></li>
               <li><a href="https://blazecraft.app" target="_blank" rel="noopener noreferrer" className={footerLink}>BlazeCraft <span className="text-[9px] opacity-40">↗</span></a></li>
-              <li><Link href="/arcade" className={footerLink}>Arcade</Link></li>
+              <li><a href="https://arcade.blazesportsintel.com" target="_blank" rel="noopener noreferrer" className={footerLink}>Arcade <span className="text-[9px] opacity-40">↗</span></a></li>
               <li><a href="https://austinhumphrey.com" target="_blank" rel="noopener noreferrer" className={footerLink}>Austin Humphrey <span className="text-[9px] opacity-40">↗</span></a></li>
             </ul>
           </div>
@@ -80,6 +93,7 @@ export function Footer() {
               <li><Link href="/about" className={footerLink}>About</Link></li>
               <li><Link href="/about/methodology" className={footerLink}>Methodology</Link></li>
               <li><Link href="/contact" className={footerLink}>Contact</Link></li>
+              <li><Link href="/status" className={footerLink}>Status</Link></li>
             </ul>
           </div>
           <div>

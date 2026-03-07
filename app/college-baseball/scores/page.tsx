@@ -17,6 +17,7 @@ import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { HeroGlow } from '@/components/ui/HeroGlow';
 import { formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
 import type { DataMeta } from '@/lib/types/data-meta';
+import { IntelStreamCard } from '@/components/intel/IntelStreamCard';
 
 interface Team {
   id: string;
@@ -52,50 +53,33 @@ interface ScoresApiResponse {
 
 const conferences = ['All', 'SEC', 'ACC', 'Big 12', 'Big Ten', 'Sun Belt', 'AAC'];
 
-const WIN_CHECK_ICON = (
-  <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
-    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-  </svg>
-);
-
-interface TeamRowProps {
-  team: Team;
-  won: boolean;
-  isScheduled: boolean;
-  fallbackAbbr: string;
-}
-
-function TeamRow({ team, won, isScheduled, fallbackAbbr }: TeamRowProps) {
-  let scoreClass = 'text-text-secondary';
-  if (isScheduled) {
-    scoreClass = 'text-text-tertiary';
-  } else if (won) {
-    scoreClass = 'text-text-primary';
-  }
+function GameIntelTrigger({ game }: { game: Game }) {
+  const [open, setOpen] = useState(false);
+  if (game.status !== 'scheduled') return null;
 
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-3">
-        <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
-          {team.shortName?.slice(0, 3).toUpperCase() || fallbackAbbr}
+    <div className="mt-1">
+      <button
+        onClick={() => setOpen((p) => !p)}
+        className="w-full flex items-center justify-center gap-1.5 py-2 text-xs font-display uppercase tracking-widest text-text-tertiary hover:text-burnt-orange transition-colors"
+      >
+        <span
+          className="w-1 h-1 rounded-full bg-current"
+          style={{ opacity: open ? 1 : 0.5 }}
+        />
+        {open ? 'Hide Intel' : 'Pregame Intel'}
+      </button>
+      {open && (
+        <div className="pb-2">
+          <IntelStreamCard
+            homeTeam={game.homeTeam.name}
+            awayTeam={game.awayTeam.name}
+            sport="college-baseball"
+            gameId={game.id}
+            analysisType="pregame"
+          />
         </div>
-        <div>
-          <p className={`font-semibold ${won ? 'text-text-primary' : 'text-text-secondary'}`}>
-            {team.name}
-          </p>
-          {team.record && (
-            <p className="text-xs text-text-tertiary">
-              {team.record.wins}-{team.record.losses}
-            </p>
-          )}
-        </div>
-      </div>
-      <div className="flex items-center gap-2">
-        {won && WIN_CHECK_ICON}
-        <span className={`text-2xl font-bold font-mono ${scoreClass}`}>
-          {team.score !== null ? team.score : '-'}
-        </span>
-      </div>
+      )}
     </div>
   );
 }
@@ -396,9 +380,59 @@ export default function CollegeBaseballScoresPage() {
               />
             ) : (
               <>
-                <GameSection games={games} status="live" label="Live Games" showPulse className="mb-8" />
-                <GameSection games={games} status="final" label="Final" className="mb-8" />
-                <GameSection games={games} status="scheduled" label="Upcoming" />
+                {/* Live Games Section */}
+                {games.some((g) => g.status === 'live') && (
+                  <div className="mb-8">
+                    <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+                      <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
+                      Live Games
+                    </h2>
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                      {games
+                        .filter((g) => g.status === 'live')
+                        .map((game) => (
+                          <ScrollReveal key={game.id}>
+                            <GameCard game={game} />
+                          </ScrollReveal>
+                        ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Final Games */}
+                {games.some((g) => g.status === 'final') && (
+                  <div className="mb-8">
+                    <h2 className="text-lg font-semibold text-text-primary mb-4">Final</h2>
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                      {games
+                        .filter((g) => g.status === 'final')
+                        .map((game) => (
+                          <ScrollReveal key={game.id}>
+                            <GameCard game={game} />
+                          </ScrollReveal>
+                        ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Scheduled Games */}
+                {games.some((g) => g.status === 'scheduled') && (
+                  <div>
+                    <h2 className="text-lg font-semibold text-text-primary mb-4">Upcoming</h2>
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                      {games
+                        .filter((g) => g.status === 'scheduled')
+                        .map((game) => (
+                          <div key={game.id}>
+                            <ScrollReveal>
+                              <GameCard game={game} />
+                            </ScrollReveal>
+                            <GameIntelTrigger game={game} />
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Data Freshness Footer */}
                 <div className="mt-8 pt-4 border-t border-border-subtle space-y-2">

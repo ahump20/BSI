@@ -1,8 +1,7 @@
-import type { Env } from '../types';
 import { getCatalogItem } from './catalog';
 import { levelFromXp, xpToNextLevel } from './leveling';
 
-interface SpendRequest {
+export interface SpendRequest {
   deviceId: string;
   itemId: string;
 }

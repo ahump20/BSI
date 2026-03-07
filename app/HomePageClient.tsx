@@ -12,14 +12,13 @@ import { AskBSI } from '@/components/home/AskBSI';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { HeroGlow } from '@/components/ui/HeroGlow';
 import { BaseballIcon, FootballIcon, BasketballIcon, StadiumIcon } from '@/components/icons/SportIcons';
-import { useMultiSportCounts } from '@/lib/hooks/useMultiSportCounts';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { fmt3 } from '@/lib/utils/format';
 import { withAlpha } from '@/lib/utils/color';
 import { getPercentileColor } from '@/components/analytics/PercentileBar';
 
 // ────────────────────────────────────────
-// Savant Preview Strip — top 5 wOBA leaders
+// Savant Preview Strip — top 5 OBP leaders
 // ────────────────────────────────────────
 
 interface LeaderboardRow {
@@ -161,6 +160,147 @@ function SavantPreviewStrip() {
             </Link>
           </p>
         </ScrollReveal>
+      </div>
+    </section>
+  );
+}
+
+// ────────────────────────────────────────
+// Feature Showcase — surfaces orphaned features
+// ────────────────────────────────────────
+
+interface FeatureItem {
+  label: string;
+  description: string;
+  href: string;
+  icon: React.ReactNode;
+}
+
+const FEATURES: FeatureItem[] = [
+  {
+    label: 'BSI Savant',
+    description: 'Park-adjusted wOBA, wRC+, FIP across 300+ D1 teams.',
+    href: '/college-baseball/savant',
+    icon: (
+      <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="M3 3v18h18" /><path d="M7 16l4-8 4 4 5-9" />
+      </svg>
+    ),
+  },
+  {
+    label: 'Intelligence',
+    description: 'AI game briefs, team dossiers, weekly situation reports.',
+    href: '/intel',
+    icon: (
+      <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <circle cx="12" cy="12" r="3" /><path d="M12 1v4m0 14v4M4.22 4.22l2.83 2.83m9.9 9.9l2.83 2.83M1 12h4m14 0h4M4.22 19.78l2.83-2.83m9.9-9.9l2.83-2.83" />
+      </svg>
+    ),
+  },
+  {
+    label: 'Editorial',
+    description: 'Weekend recaps, series previews, and conference deep dives.',
+    href: '/college-baseball/editorial',
+    icon: (
+      <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="M4 4h16v16H4z" /><path d="M8 8h8M8 12h5" />
+      </svg>
+    ),
+  },
+  {
+    label: 'Transfer Portal',
+    description: 'Track who is moving, where, and what it means.',
+    href: '/transfer-portal',
+    icon: (
+      <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="M16 3h5v5M14 10l7-7M8 21H3v-5M10 14l-7 7" />
+      </svg>
+    ),
+  },
+  {
+    label: 'NIL Valuation',
+    description: 'Market value analytics for the NIL era.',
+    href: '/nil-valuation',
+    icon: (
+      <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+      </svg>
+    ),
+  },
+  {
+    label: 'Models',
+    description: 'Win probability, Monte Carlo sims, data quality scoring.',
+    href: '/models',
+    icon: (
+      <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+      </svg>
+    ),
+  },
+  {
+    label: 'Arcade',
+    description: 'College baseball browser games. Play as your team.',
+    href: 'https://arcade.blazesportsintel.com',
+    icon: (
+      <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <rect x="2" y="6" width="20" height="12" rx="2" /><path d="M6 12h4m-2-2v4M15 11h.01M18 13h.01" />
+      </svg>
+    ),
+  },
+];
+
+function FeatureShowcase() {
+  return (
+    <section className="py-14 px-4 sm:px-6 lg:px-8 bg-[#1A1A1A] relative">
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full opacity-[0.03]"
+          style={{ background: 'radial-gradient(ellipse, #BF5700, transparent 70%)' }}
+        />
+      </div>
+      <div className="max-w-6xl mx-auto relative z-10">
+        <ScrollReveal direction="up">
+          <span className="section-label block mb-2">Tools &amp; Intel</span>
+          <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary mb-8">
+            Platform
+          </h2>
+        </ScrollReveal>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+          {FEATURES.map((feat, idx) => {
+            const isExternal = feat.href.startsWith('http');
+            const Tag = isExternal ? 'a' : Link;
+            const extra = isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+            return (
+              <ScrollReveal key={feat.label} direction="up" delay={idx * 60}>
+                <Tag
+                  href={feat.href}
+                  {...extra}
+                  className="group flex items-start gap-3 p-4 rounded-xl border border-[rgba(245,240,235,0.04)] bg-[rgba(13,13,13,0.5)] hover:border-burnt-orange/20 hover:bg-burnt-orange/[0.03] transition-all duration-300"
+                >
+                  <div className="mt-0.5 text-text-muted group-hover:text-burnt-orange transition-colors shrink-0">
+                    {feat.icon}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-mono text-xs font-semibold uppercase tracking-wider text-text-primary group-hover:text-burnt-orange transition-colors">
+                        {feat.label}
+                      </span>
+                      {isExternal && (
+                        <span className="text-[9px] text-text-muted opacity-40">&nearr;</span>
+                      )}
+                    </div>
+                    <p className="text-xs text-text-secondary leading-relaxed font-serif">
+                      {feat.description}
+                    </p>
+                  </div>
+                  <span className="text-text-muted/30 group-hover:text-burnt-orange/60 transition-colors shrink-0 mt-1">
+                    &rarr;
+                  </span>
+                </Tag>
+              </ScrollReveal>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
@@ -348,38 +488,23 @@ export function HomePageClient() {
         <HeroSection />
       </DataErrorBoundary>
 
+      {/* ─── 1.5. WBC 2026 — time-boxed Mar 5–17 ─── */}
+      <WBCBanner />
+
       {/* ─── 2. Multi-Sport Live Scores Strip ─── */}
       <DataErrorBoundary name="Live Scores" compact>
         <HomeLiveScores onCountsChange={handleCountsChange} />
       </DataErrorBoundary>
 
-      {/* ─── 3. Savant Preview — wOBA leaders as live proof ─── */}
-      <DataErrorBoundary name="Savant Preview" compact>
-        <SavantPreviewStrip />
-      </DataErrorBoundary>
-
-      {/* ─── 3.5. Ask BSI — AI-powered question card ─── */}
-      <DataErrorBoundary name="Ask BSI" compact>
-        <AskBSI />
-      </DataErrorBoundary>
-
-      {/* ─── 4. Editorial Feed (D1-backed) ─── */}
-      <DataErrorBoundary name="Editorial">
-        <EditorialPreview />
-      </DataErrorBoundary>
-
-      {/* ─── 5. WBC 2026 Feature Banner — tournament window Mar 5–17 ─── */}
-      <WBCBanner />
-
-      {/* ─── 6. Sports Hub ─── */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 relative">
+      {/* ─── 3. Sports Hub — Our Coverage ─── */}
+      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-[#1A1A1A] relative">
         <div className="max-w-6xl mx-auto relative z-10">
           <ScrollReveal direction="up">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <span className="section-label block mb-2">Coverage</span>
                 <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary">
-                  Also Covering
+                  Our Sports
                 </h2>
               </div>
             </div>
@@ -401,9 +526,9 @@ export function HomePageClient() {
                     <div
                       className="relative p-5 rounded-xl h-full flex flex-col items-center text-center
                         transition-all duration-300 hover:-translate-y-1
-                        bg-[rgba(26,26,26,0.6)] border border-[rgba(245,240,235,0.04)]
+                        bg-[rgba(13,13,13,0.6)] border border-[rgba(245,240,235,0.04)]
                         hover:shadow-[0_8px_30px_rgba(0,0,0,0.3)]
-                        backdrop-blur-sm"
+                        backdrop-blur-sm card-accent-line"
                       style={{
                         ['--card-accent' as string]: sport.color,
                       }}
@@ -453,7 +578,25 @@ export function HomePageClient() {
         </div>
       </section>
 
-      {/* ─── 6. Trending Intel Feed ─── */}
+      {/* ─── 4. Feature Showcase — platform tools ─── */}
+      <FeatureShowcase />
+
+      {/* ─── 5. Savant Preview — wOBA leaders as live proof ─── */}
+      <DataErrorBoundary name="Savant Preview" compact>
+        <SavantPreviewStrip />
+      </DataErrorBoundary>
+
+      {/* ─── 5.5. Ask BSI — AI-powered question card ─── */}
+      <DataErrorBoundary name="Ask BSI" compact>
+        <AskBSI />
+      </DataErrorBoundary>
+
+      {/* ─── 6. Editorial Feed (D1-backed) ─── */}
+      <DataErrorBoundary name="Editorial">
+        <EditorialPreview />
+      </DataErrorBoundary>
+
+      {/* ─── 7. Trending Intel Feed ─── */}
       <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
           <ScrollReveal direction="up">
@@ -470,7 +613,7 @@ export function HomePageClient() {
         </div>
       </section>
 
-      {/* ─── 7. Garrido + Austin Quote ─── */}
+      {/* ─── 8. Garrido + Austin Quote ─── */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         <div className="max-w-4xl mx-auto relative z-10">
           <ScrollReveal direction="left">
@@ -489,7 +632,7 @@ export function HomePageClient() {
 
                 {/* Garrido */}
                 <div className="relative">
-                  <blockquote className="font-serif text-xl md:text-2xl leading-relaxed mb-6 text-text-primary/90">
+                  <blockquote className="font-serif text-2xl md:text-3xl leading-relaxed mb-6 text-text-primary/90">
                     &ldquo;Where is that ten-year-old that loved to play baseball? Remember that kid
                     — twelve o&apos;clock game on Saturday morning, sitting on the edge of the bed in
                     uniform at five AM, putting on that glove, can&apos;t wait to get there.&rdquo;
@@ -531,7 +674,7 @@ export function HomePageClient() {
         </div>
       </section>
 
-      {/* ─── 8. CTA ─── */}
+      {/* ─── 9. CTA ─── */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         {/* Subtle radial glow behind CTA */}
         <HeroGlow shape="60% 50%" position="50% 40%" intensity={0.04} />
@@ -540,24 +683,27 @@ export function HomePageClient() {
           <ScrollReveal direction="up">
             <span className="section-label block mb-4">Get Started</span>
             <h2 className="font-display text-3xl md:text-4xl font-bold mb-4 text-text-primary">
-              Start with college baseball. Go from there.
+              Pick Your Sport. Go Deep.
             </h2>
             <p className="text-base mb-10 max-w-2xl mx-auto text-text-secondary">
-              Park-adjusted sabermetrics. Live scores. Free.
+              Live scores across five sports. Park-adjusted sabermetrics. Free.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/college-baseball/savant" className="btn-primary px-8 py-4 text-lg">
-                Explore BSI Savant
-              </Link>
-              <Link href="/college-baseball" className="btn-outline px-8 py-4 text-lg">
+              <Link href="/college-baseball" className="btn-primary px-8 py-4 text-lg">
                 College Baseball Hub
+              </Link>
+              <Link href="/scores" className="btn-outline px-8 py-4 text-lg">
+                Live Scores
+              </Link>
+              <Link href="/college-baseball/savant" className="btn-ghost px-8 py-4 text-lg">
+                BSI Savant
               </Link>
             </div>
           </ScrollReveal>
         </div>
       </section>
 
-      {/* ─── 9. Footer ─── */}
+      {/* ─── 10. Footer ─── */}
       <Footer />
     </div>
   );
