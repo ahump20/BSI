@@ -74,7 +74,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   // Cache check (KV, 5min TTL for identical questions)
   const cacheKey = `intel:v1:${analysisType}:${question.slice(0, 200)}`;
-  let cacheStatus = 'MISS';
+  const cacheStatus = 'MISS';
   if (context.env.BSI_PROD_CACHE) {
     const cached = await context.env.BSI_PROD_CACHE.get(cacheKey);
     if (cached) {
