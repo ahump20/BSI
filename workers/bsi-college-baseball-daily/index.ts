@@ -815,7 +815,7 @@ async function runPipeline(edition: Edition, env: Env): Promise<DailyBundle> {
 // ═══════════════════════════════════════════════════════════════════════════
 
 export default {
-  async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
+  async scheduled(event: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
     const edition = getEdition(event.cron ?? '');
     ctx.waitUntil(
       runPipeline(edition, env).catch(err => {
@@ -888,4 +888,4 @@ export default {
       { status: 404, headers: jsonHeaders },
     );
   },
-};
+} satisfies ExportedHandler<Env>;

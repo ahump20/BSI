@@ -21,43 +21,7 @@ interface Env {
   ALERT_WEBHOOK_URL?: string;
 }
 
-interface TailMessage {
-  readonly scriptName: string | null;
-  readonly event:
-    | { readonly request: { readonly url: string; readonly method: string } }
-    | null;
-  readonly eventTimestamp: number | null;
-  readonly logs: ReadonlyArray<{
-    readonly level: string;
-    readonly message: readonly string[];
-    readonly timestamp: number;
-  }>;
-  readonly exceptions: ReadonlyArray<{
-    readonly name: string;
-    readonly message: string;
-    readonly timestamp: number;
-  }>;
-  readonly outcome: string;
-}
-
-interface TailItem {
-  readonly scriptName: string | null;
-  readonly event:
-    | { readonly request: { readonly url: string; readonly method: string } }
-    | null;
-  readonly eventTimestamp: number | null;
-  readonly logs: ReadonlyArray<{
-    readonly level: string;
-    readonly message: readonly string[];
-    readonly timestamp: number;
-  }>;
-  readonly exceptions: ReadonlyArray<{
-    readonly name: string;
-    readonly message: string;
-    readonly timestamp: number;
-  }>;
-  readonly outcome: string;
-}
+// TraceItem, TraceLog, TraceException provided by @cloudflare/workers-types
 
 const SEVEN_DAYS = 7 * 24 * 60 * 60;
 
@@ -70,12 +34,13 @@ function generateKey(): string {
 }
 
 export default {
-  async tail(events: TailItem[], env: Env): Promise<void> {
+  async tail(events: TraceItem[], env: Env): Promise<void> {
     const errors: Array<Record<string, unknown>> = [];
 
     for (const event of events) {
-      const requestUrl = event.event?.request?.url ?? 'unknown';
-      const requestMethod = event.event?.request?.method ?? 'unknown';
+      const reqInfo = event.event && 'request' in event.event ? event.event.request : null;
+      const requestUrl = reqInfo?.url ?? 'unknown';
+      const requestMethod = reqInfo?.method ?? 'unknown';
       const worker = event.scriptName ?? 'unknown';
 
       // Capture uncaught exceptions
@@ -158,4 +123,4 @@ export default {
       }
     }
   },
-};
+} satisfies ExportedHandler<Env>;

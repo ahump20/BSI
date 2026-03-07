@@ -24,7 +24,7 @@ export default {
     const stub = env.GAME_ROOM.get(id);
     return stub.fetch(request);
   },
-};
+} satisfies ExportedHandler<Env>;
 
 // ── Types ────────────────────────────────────────────────
 

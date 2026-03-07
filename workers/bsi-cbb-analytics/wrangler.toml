@@ -8,6 +8,7 @@
 name = "bsi-cbb-analytics"
 main = "index.ts"
 compatibility_date = "2025-12-01"
+compatibility_flags = ["nodejs_compat"]
 
 # Daily 6 AM CT (11 UTC): full recompute of all advanced metrics
 # Sunday: also recalculates park factors + conference strength (checked in code)

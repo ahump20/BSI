@@ -201,7 +201,7 @@ async function sendAlert(env: Env, message: string): Promise<void> {
 // ---------------------------------------------------------------------------
 
 export default {
-  async scheduled(_event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
+  async scheduled(_event: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
     const results = await Promise.all(
       ENDPOINTS.map((ep) => checkEndpoint(ep, env, ctx)),
     );
@@ -296,4 +296,4 @@ export default {
       headers: { 'Content-Type': 'application/json' },
     });
   },
-};
+} satisfies ExportedHandler<Env>;

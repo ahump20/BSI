@@ -160,7 +160,7 @@ async function fetchPortalEntries(env: Env): Promise<PortalEntry[]> {
 }
 
 export default {
-  async scheduled(_event: ScheduledEvent, env: Env, _ctx: ExecutionContext): Promise<void> {
+  async scheduled(_event: ScheduledController, env: Env, _ctx: ExecutionContext): Promise<void> {
     const entries = await fetchPortalEntries(env);
     const now = new Date().toISOString();
 
@@ -223,7 +223,7 @@ export default {
 
     // Manual trigger
     await this.scheduled(
-      {} as ScheduledEvent,
+      {} as ScheduledController,
       env,
       { waitUntil: () => {}, passThroughOnException: () => {} } as unknown as ExecutionContext
     );
@@ -232,4 +232,4 @@ export default {
       headers: { 'Content-Type': 'application/json' },
     });
   },
-};
+} satisfies ExportedHandler<Env>;

@@ -707,11 +707,11 @@ export default {
     return new Response('BSI CBB Analytics Worker — use /run to trigger manually', { status: 200 });
   },
 
-  async scheduled(_event: ScheduledEvent, env: Env, _ctx: ExecutionContext): Promise<void> {
+  async scheduled(_event: ScheduledController, env: Env, _ctx: ExecutionContext): Promise<void> {
     const isSunday = new Date().getUTCDay() === 0;
     await runAnalytics(env, isSunday);
   },
-};
+} satisfies ExportedHandler<Env>;
 
 async function runAnalytics(env: Env, includeWeekly: boolean) {
   const start = Date.now();

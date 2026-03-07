@@ -919,7 +919,7 @@ export default {
     return new Response('Not found', { status: 404 });
   },
 
-  async scheduled(_event: ScheduledEvent, env: Env, _ctx: ExecutionContext): Promise<void> {
+  async scheduled(_event: ScheduledController, env: Env, _ctx: ExecutionContext): Promise<void> {
     try {
       const result = await compute(env.DB, env.KV);
       console.log(`[savant-compute] Cron complete: ${result.batters} batters, ${result.pitchers} pitchers, ${result.conferences} conferences, ${result.venues} venues`);
@@ -927,4 +927,4 @@ export default {
       console.error(`[savant-compute] Cron failed:`, err);
     }
   },
-};
+} satisfies ExportedHandler<Env>;

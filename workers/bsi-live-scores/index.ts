@@ -529,4 +529,4 @@ export default {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   },
-};
+} satisfies ExportedHandler<Env>;

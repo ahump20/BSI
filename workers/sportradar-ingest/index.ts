@@ -496,7 +496,7 @@ async function ingestDailyGames(env: Env): Promise<{ gamesProcessed: number; pit
 // ---------------------------------------------------------------------------
 
 export default {
-  async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
+  async scheduled(event: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
     if (!env.SPORTRADAR_API_KEY) {
       console.error('SPORTRADAR_API_KEY not configured');
       return;
@@ -574,4 +574,4 @@ export default {
 
     return new Response('BSI Sportradar Ingest Worker', { status: 200 });
   },
-};
+} satisfies ExportedHandler<Env>;

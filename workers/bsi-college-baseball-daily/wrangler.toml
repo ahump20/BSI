@@ -9,6 +9,7 @@
 name = "bsi-college-baseball-daily"
 main = "index.ts"
 compatibility_date = "2025-12-01"
+compatibility_flags = ["nodejs_compat"]
 
 # Two daily cron triggers:
 #   11:00 UTC = 5:00 AM CT (CDT) / 6:00 AM CT (CST) — Morning edition (pregame + recap)

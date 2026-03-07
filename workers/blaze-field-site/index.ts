@@ -144,7 +144,7 @@ export default {
     const isHashed = /[-\.][a-zA-Z0-9]{8,}\.(js|css|wasm|glb|png|jpg|webp)$/.test(path);
     return buildResponse(object, path, isHashed);
   },
-};
+} satisfies ExportedHandler<Env>;
 
 const SESSION_KEY_PREFIX = 'agent:session:';
 const SESSION_INDEX_KEY = 'agent:sessions';

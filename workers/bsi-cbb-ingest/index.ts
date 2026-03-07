@@ -254,7 +254,7 @@ async function ingestTrending(env: Env): Promise<void> {
 // ---------------------------------------------------------------------------
 
 export default {
-  async scheduled(event: ScheduledEvent, env: Env, _ctx: ExecutionContext): Promise<void> {
+  async scheduled(event: ScheduledController, env: Env, _ctx: ExecutionContext): Promise<void> {
     const cronStr = event.cron ?? '';
     const season = isBaseballSeason();
     const now = new Date().toISOString();
@@ -336,4 +336,4 @@ export default {
       headers: { 'Content-Type': 'application/json' },
     });
   },
-};
+} satisfies ExportedHandler<Env>;
