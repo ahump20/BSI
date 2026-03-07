@@ -133,10 +133,8 @@ interface NormalizedGame {
 // Constants
 // ═══════════════════════════════════════════════════════════════════════════
 
-import {
-  ESPN_BASE, CBB_SPORT_PATH as SPORT_PATH,
-  CONFERENCES, isBaseballSeason, safeFetch,
-} from '../cbb-shared';
+import { ESPN_BASE, SPORT_PATH, CONFERENCES } from '../shared/cbb-constants';
+import { safeFetch, isBaseballSeason } from '../shared/cbb-fetch';
 
 const TZ = 'America/Chicago';
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
