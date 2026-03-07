@@ -4,13 +4,13 @@ import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { ScrollReveal } from '@/components/cinematic';
 import { HeroSection } from '@/components/home/HeroSection';
+import { WBCTournamentStrip } from '@/components/home/WBCTournamentStrip';
 import { HomeLiveScores } from '@/components/home/HomeLiveScores';
 import { EditorialPreview } from '@/components/home/EditorialPreview';
 import { TrendingIntelFeed } from '@/components/home/TrendingIntelFeed';
 import { Footer } from '@/components/layout-ds/Footer';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { BaseballIcon, FootballIcon, BasketballIcon, StadiumIcon } from '@/components/icons/SportIcons';
-import { useMultiSportCounts } from '@/lib/hooks/useMultiSportCounts';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { withAlpha } from '@/lib/utils/color';
 
@@ -51,10 +51,10 @@ function SavantPreviewStrip() {
   const fmtWoba = (v: number) => v.toFixed(3).replace(/^0/, '');
 
   return (
-    <section className="py-8 px-4 sm:px-6 lg:px-8">
+    <section className="py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <ScrollReveal direction="up">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-5">
             <div>
               <span className="section-label block mb-1">Live Proof</span>
               <h2 className="font-display text-lg md:text-xl font-bold uppercase tracking-wide text-text-primary">
@@ -76,14 +76,15 @@ function SavantPreviewStrip() {
               return (
                 <div
                   key={name + i}
-                  className="flex sm:flex-col items-center sm:items-center gap-3 sm:gap-1 p-3 rounded-xl bg-[rgba(26,26,26,0.6)] border border-[rgba(245,240,235,0.04)]"
+                  className="flex sm:flex-col items-center sm:items-center gap-3 sm:gap-1.5 p-3 rounded-xl card-accent-line bg-[rgba(26,26,26,0.6)] border border-[rgba(245,240,235,0.04)]"
+                  style={{ ['--card-accent' as string]: '#BF5700' }}
                 >
                   <span className="text-burnt-orange font-mono text-xs font-bold w-5 text-center shrink-0">
                     {i + 1}
                   </span>
                   <div className="flex-1 sm:text-center min-w-0">
                     <div className="text-sm font-semibold text-text-primary truncate">{name}</div>
-                    <div className="text-[10px] uppercase tracking-wider text-text-muted">{row.team || ''}</div>
+                    <div className="text-[10px] uppercase tracking-wider text-text-muted font-mono">{row.team || ''}</div>
                   </div>
                   <span className="font-mono text-lg font-bold text-burnt-orange shrink-0">
                     {fmtWoba(woba)}
@@ -93,6 +94,78 @@ function SavantPreviewStrip() {
             })}
           </div>
         </ScrollReveal>
+      </div>
+    </section>
+  );
+}
+
+// ────────────────────────────────────────
+// Feature Showcase — platform tools & intel
+// ────────────────────────────────────────
+
+interface FeatureItem {
+  label: string;
+  description: string;
+  href: string;
+  external?: boolean;
+}
+
+const FEATURES: FeatureItem[] = [
+  { label: 'BSI Savant', description: 'Park-adjusted sabermetrics leaderboard', href: '/college-baseball/savant' },
+  { label: 'Intelligence', description: 'AI-powered game briefs and team dossiers', href: '/intel' },
+  { label: 'Editorial', description: 'Weekend recaps and team previews', href: '/college-baseball/editorial' },
+  { label: 'Transfer Portal', description: 'D1 portal tracker with impact ratings', href: '/transfer-portal' },
+  { label: 'NIL Valuation', description: 'Name, image, and likeness analytics', href: '/nil-valuation' },
+  { label: 'Models', description: 'Win probability and Monte Carlo simulations', href: '/models' },
+  { label: 'Arcade', description: 'Baseball browser games', href: '/arcade' },
+];
+
+function FeatureShowcase() {
+  return (
+    <section
+      className="py-14 px-4 sm:px-6 lg:px-8 relative"
+      style={{
+        background: 'radial-gradient(ellipse 80% 50% at 50% 50%, rgba(191,87,0,0.03) 0%, transparent 70%)',
+      }}
+    >
+      <div className="max-w-6xl mx-auto">
+        <ScrollReveal direction="up">
+          <span className="section-label block mb-2">Tools &amp; Intel</span>
+          <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary mb-8">
+            Platform
+          </h2>
+        </ScrollReveal>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {FEATURES.map((feat, i) => {
+            const Wrapper = feat.external ? 'a' : Link;
+            const extraProps = feat.external
+              ? { target: '_blank', rel: 'noopener noreferrer' }
+              : {};
+
+            return (
+              <ScrollReveal key={feat.label} direction="up" delay={i * 60}>
+                <Wrapper
+                  href={feat.href}
+                  className="group flex items-start gap-3 p-4 rounded-xl border border-[rgba(245,240,235,0.06)] bg-[rgba(26,26,26,0.4)] hover:border-burnt-orange/30 hover:bg-[rgba(26,26,26,0.7)] transition-all duration-300"
+                  {...extraProps}
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="font-mono text-xs font-bold uppercase tracking-wider text-text-primary group-hover:text-burnt-orange transition-colors mb-1">
+                      {feat.label}
+                    </div>
+                    <div className="text-xs text-text-muted font-serif leading-relaxed">
+                      {feat.description}
+                    </div>
+                  </div>
+                  <span className="text-text-muted group-hover:text-burnt-orange transition-colors shrink-0 mt-0.5" aria-hidden="true">
+                    &rarr;
+                  </span>
+                </Wrapper>
+              </ScrollReveal>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
@@ -116,6 +189,7 @@ interface SportCardData {
   href: string;
   description: string;
   color: string;
+  featured?: boolean;
 }
 
 const sports: SportCardData[] = [
@@ -124,31 +198,32 @@ const sports: SportCardData[] = [
     icon: BaseballIcon,
     href: '/college-baseball',
     description: 'Every D1 team. Live scores, box scores, standings, rankings, portal tracking, and weekly editorial.',
-    color: 'var(--bsi-primary)',
+    color: '#BF5700',
+    featured: true,
   },
   {
     name: 'MLB',
     icon: BaseballIcon,
     href: '/mlb',
-    description: 'Live scores, standings, and the advanced metrics — wOBA, FIP, wRC+ — that tell you what the box score won\u2019t.',
+    description: 'Live scores, standings, and advanced metrics that tell you what the box score won\u2019t.',
     color: '#C41E3A',
   },
   {
     name: 'NFL',
     icon: FootballIcon,
     href: '/nfl',
-    description: 'Live scores, standings, and team coverage built for the fan who watches past the primetime window.',
+    description: 'Live scores, standings, and team coverage built for the fan who watches past primetime.',
     color: '#013369',
   },
   {
     name: 'NBA',
     icon: BasketballIcon,
     href: '/nba',
-    description: 'Live scores, standings, and game analytics across the full league — not just the coasts.',
-    color: 'var(--bsi-accent)',
+    description: 'Live scores, standings, and game analytics across the full league.',
+    color: '#FF6B35',
   },
   {
-    name: 'CFB',
+    name: 'College Football',
     icon: StadiumIcon,
     href: '/cfb',
     description: 'Scores, standings, and conference coverage from the Big 12 to the Sun Belt.',
@@ -213,38 +288,31 @@ export function HomePageClient() {
         <HeroSection />
       </DataErrorBoundary>
 
+      {/* ─── WBC 2026 — time-boxed Mar 5–17 ─── */}
+      <DataErrorBoundary name="WBC Strip" compact>
+        <WBCTournamentStrip />
+      </DataErrorBoundary>
+
       {/* ─── 2. Multi-Sport Live Scores Strip ─── */}
       <DataErrorBoundary name="Live Scores" compact>
         <HomeLiveScores onCountsChange={handleCountsChange} />
       </DataErrorBoundary>
 
-      {/* ─── 3. Savant Preview — wOBA leaders as live proof ─── */}
-      <DataErrorBoundary name="Savant Preview" compact>
-        <SavantPreviewStrip />
-      </DataErrorBoundary>
-
-      {/* ─── 4. Editorial Feed (D1-backed) ─── */}
-      <DataErrorBoundary name="Editorial">
-        <EditorialPreview />
-      </DataErrorBoundary>
-
-      {/* ─── 5. Sports Hub — compact horizontal strip, secondary framing ─── */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 relative">
+      {/* ─── 3. Sports Hub — promoted, featured college baseball ─── */}
+      <section className="py-14 px-4 sm:px-6 lg:px-8 bg-[#1A1A1A] relative">
         <div className="max-w-6xl mx-auto relative z-10">
           <ScrollReveal direction="up">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <span className="section-label block mb-2">Coverage</span>
-                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary">
-                  Also Covering
-                </h2>
-              </div>
+            <div className="mb-8">
+              <span className="section-label block mb-2">Coverage</span>
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary">
+                Our Sports
+              </h2>
             </div>
           </ScrollReveal>
 
-          <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 lg:grid lg:grid-cols-5 lg:overflow-visible">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {sports.map((sport, index) => {
-              const countKey = SPORT_COUNT_KEYS[sport.name];
+              const countKey = SPORT_COUNT_KEYS[sport.name] ?? SPORT_COUNT_KEYS['CFB'];
               const counts = countKey ? sportCounts.get(countKey) : undefined;
 
               return (
@@ -252,15 +320,16 @@ export function HomePageClient() {
                   key={sport.name}
                   direction="up"
                   delay={index * 80}
-                  className="flex-shrink-0 w-56 sm:w-60 lg:w-auto"
+                  className={sport.featured ? 'sm:col-span-2 lg:col-span-1' : ''}
                 >
                   <Link href={sport.href} className="group block h-full">
                     <div
-                      className="relative p-5 rounded-xl h-full flex flex-col items-center text-center
-                        transition-all duration-300 hover:-translate-y-1
+                      className={`relative p-5 rounded-xl h-full flex flex-col items-center text-center
+                        transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03]
+                        card-accent-line
                         bg-[rgba(26,26,26,0.6)] border border-[rgba(245,240,235,0.04)]
-                        hover:border-burnt-orange/30 hover:shadow-[0_8px_30px_rgba(0,0,0,0.3)]
-                        backdrop-blur-sm"
+                        hover:border-burnt-orange/40 hover:shadow-[0_8px_30px_rgba(0,0,0,0.3),0_0_15px_rgba(191,87,0,0.12)]
+                        backdrop-blur-sm`}
                       style={{ ['--card-accent' as string]: sport.color }}
                     >
                       <LiveGameBadge
@@ -276,9 +345,18 @@ export function HomePageClient() {
                       <h3 className="text-base font-semibold mb-1.5 transition-colors group-hover:text-burnt-orange text-text-primary">
                         {sport.name}
                       </h3>
-                      <p className="text-xs leading-relaxed text-text-secondary line-clamp-2">
+                      <p className="text-xs leading-relaxed text-text-secondary line-clamp-2 mb-3">
                         {sport.description}
                       </p>
+                      <div className="flex gap-3 mt-auto">
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted group-hover:text-burnt-orange/70 transition-colors">
+                          Scores
+                        </span>
+                        <span className="text-[10px] text-text-muted/30">|</span>
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted group-hover:text-burnt-orange/70 transition-colors">
+                          Standings
+                        </span>
+                      </div>
                     </div>
                   </Link>
                 </ScrollReveal>
@@ -288,8 +366,25 @@ export function HomePageClient() {
         </div>
       </section>
 
-      {/* ─── 6. Trending Intel Feed ─── */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8">
+      {/* ─── 4. Feature Showcase ─── */}
+      <DataErrorBoundary name="Feature Showcase" compact>
+        <FeatureShowcase />
+      </DataErrorBoundary>
+
+      {/* ─── 5. Savant Preview — wOBA leaders as live proof ─── */}
+      <section className="bg-[#1A1A1A]">
+        <DataErrorBoundary name="Savant Preview" compact>
+          <SavantPreviewStrip />
+        </DataErrorBoundary>
+      </section>
+
+      {/* ─── 6. Editorial Feed (D1-backed) ─── */}
+      <DataErrorBoundary name="Editorial">
+        <EditorialPreview />
+      </DataErrorBoundary>
+
+      {/* ─── 7. Trending Intel Feed ─── */}
+      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-[#1A1A1A]">
         <div className="max-w-5xl mx-auto">
           <ScrollReveal direction="up">
             <div className="mb-6">
@@ -305,16 +400,16 @@ export function HomePageClient() {
         </div>
       </section>
 
-      {/* ─── 7. Garrido + Austin Quote ─── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* ─── 8. Garrido + Austin Quote ─── */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         <div className="max-w-4xl mx-auto relative z-10">
           <ScrollReveal direction="left">
-            <span className="kicker mb-6 block">The Standard</span>
+            <span className="kicker mb-8 block">The Standard</span>
 
             <div className="flex gap-6 md:gap-8">
               <div className="w-1 flex-shrink-0 rounded-full bg-gradient-to-b from-burnt-orange via-burnt-orange/40 to-transparent" />
 
-              <div className="space-y-10 relative">
+              <div className="space-y-12 relative">
                 <span
                   className="absolute -top-6 -left-2 leading-none pointer-events-none select-none font-serif text-[8rem] text-burnt-orange/[0.07]"
                   aria-hidden="true"
@@ -324,7 +419,7 @@ export function HomePageClient() {
 
                 {/* Garrido */}
                 <div className="relative">
-                  <blockquote className="font-serif text-xl md:text-2xl leading-relaxed mb-6 text-text-primary/90">
+                  <blockquote className="font-serif text-2xl md:text-3xl leading-relaxed mb-6 text-text-primary/90">
                     &ldquo;Where is that ten-year-old that loved to play baseball? Remember that kid
                     — twelve o&apos;clock game on Saturday morning, sitting on the edge of the bed in
                     uniform at five AM, putting on that glove, can&apos;t wait to get there.&rdquo;
@@ -345,7 +440,7 @@ export function HomePageClient() {
 
                 {/* Austin */}
                 <div>
-                  <blockquote className="font-serif text-lg md:text-xl leading-relaxed mb-6 text-text-secondary">
+                  <blockquote className="font-serif text-xl md:text-2xl leading-relaxed mb-6 text-text-secondary">
                     &ldquo;That&apos;s who shows up here. The one checking scores at midnight.
                     The one who cares about the Tuesday game as much as the Saturday showcase.&rdquo;
                   </blockquote>
@@ -366,30 +461,33 @@ export function HomePageClient() {
         </div>
       </section>
 
-      {/* ─── 8. CTA ─── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-background-secondary">
+      {/* ─── 9. CTA ─── */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-[#1A1A1A]">
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <ScrollReveal direction="up">
             <span className="section-label block mb-4">Get Started</span>
             <h2 className="font-display text-3xl md:text-4xl font-bold mb-4 text-text-primary">
-              Start with college baseball. Go from there.
+              Pick Your Sport. Go Deep.
             </h2>
             <p className="text-base mb-10 max-w-2xl mx-auto text-text-secondary">
-              Park-adjusted sabermetrics. Live scores. Free.
+              Live scores. Advanced analytics. Editorial depth. All free.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/college-baseball/savant" className="btn-primary px-8 py-4 text-lg">
-                Explore BSI Savant
-              </Link>
-              <Link href="/college-baseball" className="btn-outline px-8 py-4 text-lg">
+              <Link href="/college-baseball" className="btn-primary px-8 py-4 text-lg">
                 College Baseball Hub
+              </Link>
+              <Link href="/scores" className="btn-outline px-8 py-4 text-lg">
+                Live Scores
+              </Link>
+              <Link href="/college-baseball/savant" className="btn-ghost px-8 py-4 text-lg">
+                BSI Savant
               </Link>
             </div>
           </ScrollReveal>
         </div>
       </section>
 
-      {/* ─── 9. Footer ─── */}
+      {/* ─── 10. Footer ─── */}
       <Footer />
     </div>
   );

@@ -9,15 +9,26 @@ import { HeroScoreStrip } from './HeroScoreStrip';
  * Massive Oswald headline with text-stroke "INTEL",
  * Cormorant italic quote, JetBrains Mono section label,
  * editorial button pair, score strip, mono marquee.
+ *
+ * Updated: multi-sport platform identity (college baseball flagship).
  */
 export function HeroSection() {
   return (
     <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
+      {/* Atmospheric radial glow behind INTEL */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse 60% 40% at 50% 45%, rgba(191,87,0,0.04) 0%, transparent 70%)',
+        }}
+        aria-hidden="true"
+      />
+
       <div className="relative z-10 max-w-5xl mx-auto text-center px-4 sm:px-6 lg:px-8">
         {/* Section label — JetBrains Mono, burnt-orange, tracked */}
         <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-fade-in_0.6s_ease-out_forwards] mb-8">
           <span className="section-label">
-            College Baseball Savant
+            Five Sports. One Standard.
           </span>
         </div>
 
@@ -31,8 +42,8 @@ export function HeroSection() {
         </h1>
 
         {/* Quote — Cormorant italic, muted */}
-        <p className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.3s_forwards] font-serif italic text-lg md:text-xl tracking-wide mb-10 text-text-secondary">
-          The only free, park-adjusted sabermetrics platform for D1 college baseball.
+        <p className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.3s_forwards] font-serif italic text-lg md:text-xl tracking-wide mb-10 text-text-secondary max-w-2xl mx-auto">
+          Live scores, advanced analytics, and editorial coverage across college baseball, MLB, NFL, NBA, and college football.
         </p>
 
         {/* CTAs — Oswald uppercase, editorial button style */}
@@ -44,10 +55,10 @@ export function HeroSection() {
             College Baseball
           </Link>
           <Link
-            href="/college-baseball/savant"
+            href="/scores"
             className="hero-btn-outline"
           >
-            BSI Savant
+            Live Scores
           </Link>
         </div>
 
@@ -70,13 +81,15 @@ export function HeroSection() {
                 <span className="text-burnt-orange">&middot;</span>
                 <span>FIP</span>
                 <span className="text-burnt-orange">&middot;</span>
-                <span>Park Factors</span>
+                <span>5 Sports</span>
                 <span className="text-burnt-orange">&middot;</span>
-                <span>Conference Strength</span>
+                <span>Live Scores</span>
                 <span className="text-burnt-orange">&middot;</span>
-                <span>Updated Every 6 Hours</span>
+                <span>Editorial</span>
                 <span className="text-burnt-orange">&middot;</span>
                 <span>300+ D1 Teams</span>
+                <span className="text-burnt-orange">&middot;</span>
+                <span>Free</span>
                 <span className="text-burnt-orange">&middot;</span>
               </span>
             ))}

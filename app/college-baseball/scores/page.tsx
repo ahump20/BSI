@@ -15,6 +15,7 @@ import { SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
 import type { DataMeta } from '@/lib/types/data-meta';
+import { IntelStreamCard } from '@/components/intel/IntelStreamCard';
 
 interface Game {
   id: string;
@@ -55,6 +56,37 @@ interface ScoresApiResponse {
 // formatScheduleDate, getDateOffset imported from lib/utils/timezone
 
 const conferences = ['All', 'SEC', 'ACC', 'Big 12', 'Big Ten', 'Sun Belt', 'AAC'];
+
+function GameIntelTrigger({ game }: { game: Game }) {
+  const [open, setOpen] = useState(false);
+  if (game.status !== 'scheduled') return null;
+
+  return (
+    <div className="mt-1">
+      <button
+        onClick={() => setOpen((p) => !p)}
+        className="w-full flex items-center justify-center gap-1.5 py-2 text-xs font-display uppercase tracking-widest text-text-tertiary hover:text-burnt-orange transition-colors"
+      >
+        <span
+          className="w-1 h-1 rounded-full bg-current"
+          style={{ opacity: open ? 1 : 0.5 }}
+        />
+        {open ? 'Hide Intel' : 'Pregame Intel'}
+      </button>
+      {open && (
+        <div className="pb-2">
+          <IntelStreamCard
+            homeTeam={game.homeTeam.name}
+            awayTeam={game.awayTeam.name}
+            sport="college-baseball"
+            gameId={game.id}
+            analysisType="pregame"
+          />
+        </div>
+      )}
+    </div>
+  );
+}
 
 function GameCard({ game }: { game: Game }) {
   const isLive = game.status === 'live';
@@ -443,9 +475,12 @@ export default function CollegeBaseballScoresPage() {
                       {games
                         .filter((g) => g.status === 'scheduled')
                         .map((game) => (
-                          <ScrollReveal key={game.id}>
-                            <GameCard game={game} />
-                          </ScrollReveal>
+                          <div key={game.id}>
+                            <ScrollReveal>
+                              <GameCard game={game} />
+                            </ScrollReveal>
+                            <GameIntelTrigger game={game} />
+                          </div>
                         ))}
                     </div>
                   </div>

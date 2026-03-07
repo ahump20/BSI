@@ -28,8 +28,13 @@ const MORE_ITEMS = [
   { label: 'College Football', href: '/cfb', icon: Award },
   { label: 'Scores', href: '/scores', icon: BarChart3 },
   { label: 'Editorial', href: '/college-baseball/editorial', icon: BookOpen },
+  { label: 'Transfer Portal', href: '/transfer-portal', icon: Trophy },
+  { label: 'Intel', href: '/intel', icon: Target },
   { label: 'NIL Valuation', href: '/nil-valuation', icon: Trophy },
+  { label: 'Models', href: '/models', icon: BarChart3 },
   { label: 'Arcade', href: '/arcade', icon: Gamepad2 },
+  { label: 'About', href: '/about', icon: BookOpen },
+  { label: 'Status', href: '/status', icon: Circle },
   { label: 'Dashboard', href: '/dashboard', icon: Target },
 ];
 

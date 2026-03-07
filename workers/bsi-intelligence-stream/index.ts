@@ -16,6 +16,7 @@ import { cors } from 'hono/cors';
 
 interface Env {
   BSI_AI_CACHE: KVNamespace;
+  BSI_KEYS: KVNamespace;
   ANTHROPIC_API_KEY: string;
 }
 
@@ -47,6 +48,39 @@ interface AnthropicStreamChunk {
   usage?: { input_tokens: number; output_tokens: number };
 }
 
+interface TeamStats {
+  batting: { wrcPlus: number; obp: number; slg: number };
+  pitching: { fip: number; eraMinus: number; kPct: number; bbPct: number };
+}
+
+interface MatchupRequest {
+  homeTeam: string;
+  awayTeam: string;
+  gameId?: string;
+  gameTime?: string;
+  sport: Sport;
+  homeStats?: TeamStats;
+  awayStats?: TeamStats;
+}
+
+interface MatchupCard {
+  keyEdge: string;
+  offense: {
+    home: { teamName: string; wrcPlus: number; obp: number; slg: number };
+    away: { teamName: string; wrcPlus: number; obp: number; slg: number };
+  };
+  pitching: {
+    home: { teamName: string; fip: number; eraMinus: number; kPct: number; bbPct: number };
+    away: { teamName: string; fip: number; eraMinus: number; kPct: number; bbPct: number };
+  };
+  prediction: {
+    favoriteTeam: string;
+    winProbability: number;
+    predictedTotal: number;
+  };
+  fullAnalysis: string;
+}
+
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const MODEL = 'claude-sonnet-4-6';
@@ -66,6 +100,38 @@ const CACHE_TTL: Record<AnalysisType, number> = {
 };
 
 const ANTHROPIC_STREAM_URL = 'https://api.anthropic.com/v1/messages';
+
+const MATCHUP_SYSTEM_PROMPT = `You are BSI — Blaze Sports Intel analytics engine. You produce structured matchup analysis as valid JSON only.
+
+You MUST respond with ONLY a valid JSON object. No prose, markdown, code fences, or explanation outside the JSON.
+
+Required JSON schema:
+{
+  "keyEdge": "string — single sentence identifying the decisive competitive advantage",
+  "offense": {
+    "home": { "teamName": "string", "wrcPlus": number, "obp": number, "slg": number },
+    "away": { "teamName": "string", "wrcPlus": number, "obp": number, "slg": number }
+  },
+  "pitching": {
+    "home": { "teamName": "string", "fip": number, "eraMinus": number, "kPct": number, "bbPct": number },
+    "away": { "teamName": "string", "fip": number, "eraMinus": number, "kPct": number, "bbPct": number }
+  },
+  "prediction": {
+    "favoriteTeam": "string — exactly one of the two team names",
+    "winProbability": number,
+    "predictedTotal": number
+  },
+  "fullAnalysis": "string — 400-550 token prose analysis"
+}
+
+Rules:
+- keyEdge must name a specific team and reason, not it's a toss-up
+- fullAnalysis leads with the claim, no throat-clearing, no headers or bullets
+- If stats are absent, reason from what you know about these programs and conference context
+- winProbability range: 51 (near coin flip) to 75 (heavy favorite)
+- predictedTotal is total combined runs, use one decimal place`;
+
+const MATCHUP_CACHE_TTL = 6 * 3600; // 6 hours
 
 // ─── System Prompt ────────────────────────────────────────────────────────────
 
@@ -120,6 +186,51 @@ function buildCacheKey(question: string, ctx: GameContext | undefined, type: Ana
   // Short hash of the question to differentiate queries on same game
   const qHash = question.slice(0, 32).replace(/\s+/g, '-').toLowerCase();
   return `${base}:${qHash}`;
+}
+
+/** Resolve tier from API key in BSI_KEYS KV. Returns 'free' if missing/invalid. */
+async function resolveTier(url: URL, headers: Headers, env: Env): Promise<string> {
+  const keyValue = headers.get('X-BSI-Key') ?? url.searchParams.get('key') ?? '';
+  if (!keyValue || !env.BSI_KEYS) return 'free';
+  try {
+    const raw = await env.BSI_KEYS.get(`key:${keyValue}`);
+    if (!raw) return 'free';
+    const data = JSON.parse(raw) as { tier?: string; expires?: number };
+    if (data.expires && data.expires < Date.now()) return 'free';
+    return data.tier || 'free';
+  } catch {
+    return 'free';
+  }
+}
+
+function buildMatchupPrompt(req: MatchupRequest): string {
+  const lines: string[] = [
+    `Analyze this ${req.sport} matchup:`,
+    `${req.awayTeam} (away) vs ${req.homeTeam} (home)${req.gameTime ? ` — ${req.gameTime}` : ''}`,
+    '',
+  ];
+
+  if (req.homeStats) {
+    lines.push(`${req.homeTeam} season stats:`);
+    lines.push(`  Offense: wRC+ ${req.homeStats.batting.wrcPlus}, OBP ${req.homeStats.batting.obp.toFixed(3)}, SLG ${req.homeStats.batting.slg.toFixed(3)}`);
+    lines.push(`  Pitching: FIP ${req.homeStats.pitching.fip.toFixed(2)}, ERA- ${req.homeStats.pitching.eraMinus}, K% ${req.homeStats.pitching.kPct.toFixed(1)}, BB% ${req.homeStats.pitching.bbPct.toFixed(1)}`);
+    lines.push('');
+  }
+
+  if (req.awayStats) {
+    lines.push(`${req.awayTeam} season stats:`);
+    lines.push(`  Offense: wRC+ ${req.awayStats.batting.wrcPlus}, OBP ${req.awayStats.batting.obp.toFixed(3)}, SLG ${req.awayStats.batting.slg.toFixed(3)}`);
+    lines.push(`  Pitching: FIP ${req.awayStats.pitching.fip.toFixed(2)}, ERA- ${req.awayStats.pitching.eraMinus}, K% ${req.awayStats.pitching.kPct.toFixed(1)}, BB% ${req.awayStats.pitching.bbPct.toFixed(1)}`);
+    lines.push('');
+  }
+
+  if (!req.homeStats && !req.awayStats) {
+    lines.push('No team stats provided. Reason from what you know about these programs and their conference context.');
+    lines.push('');
+  }
+
+  lines.push('Return the matchup analysis JSON now.');
+  return lines.join('\n');
 }
 
 async function streamFromAnthropic(
@@ -207,7 +318,7 @@ const app = new Hono<{ Bindings: Env }>().basePath('/api/intelligence');
 app.use('/*', cors({
   origin: ['https://blazesportsintel.com', 'https://www.blazesportsintel.com'],
   allowMethods: ['GET', 'POST', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization'],
+  allowHeaders: ['Content-Type', 'Authorization', 'X-BSI-Key'],
 }));
 
 app.get('/health', (c) =>
@@ -284,6 +395,88 @@ app.post('/v1/analyze', async (c) => {
       'Cache-Control': 'no-cache',
       'X-BSI-Cache': 'MISS',
       'X-BSI-Model': MODEL,
+    },
+  });
+});
+
+/**
+ * POST /api/intelligence/v1/matchup
+ *
+ * Body: MatchupRequest — Response: MatchupCard JSON
+ * Pro tier required. KV cached 6h.
+ */
+app.post('/v1/matchup', async (c) => {
+  const url = new URL(c.req.url);
+  const tier = await resolveTier(url, new Headers(Object.fromEntries(c.req.raw.headers)), c.env);
+  if (tier !== 'pro') {
+    return c.json({ error: 'Pro tier required', upgrade: '/pricing' }, 403);
+  }
+
+  const body = await c.req.json<MatchupRequest>().catch(() => null);
+  if (!body?.homeTeam || !body?.awayTeam || !body?.sport) {
+    return c.json({ error: 'homeTeam, awayTeam, and sport are required' }, 400);
+  }
+
+  const today = new Date().toISOString().slice(0, 10);
+  const cacheKey = `matchup:${body.sport}:${body.homeTeam}:${body.awayTeam}:${body.gameId ?? today}`;
+  const cached = await c.env.BSI_AI_CACHE.get(cacheKey, 'text');
+  if (cached) {
+    return new Response(cached, {
+      headers: { 'Content-Type': 'application/json', 'X-BSI-Cache': 'HIT' },
+    });
+  }
+
+  const userMessage = buildMatchupPrompt(body);
+  let aiResponse: Response;
+  try {
+    aiResponse = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': c.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-opus-4-6',
+        max_tokens: 2048,
+        thinking: { type: 'adaptive' },
+        output_config: { format: { type: 'json_object' } },
+        system: MATCHUP_SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: userMessage }],
+      }),
+    });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Unknown error';
+    return c.json({ error: `AI service unreachable: ${msg}` }, 502);
+  }
+
+  if (!aiResponse.ok) {
+    const errText = await aiResponse.text();
+    return c.json({ error: `AI service error ${aiResponse.status}`, detail: errText.slice(0, 200) }, 502);
+  }
+
+  const data = await aiResponse.json() as { content: Array<{ type: string; text: string }> };
+  const textBlock = data.content.find((b) => b.type === 'text');
+  if (!textBlock?.text) {
+    return c.json({ error: 'No text response from AI' }, 502);
+  }
+
+  const rawJson = textBlock.text.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim();
+
+  let card: MatchupCard;
+  try {
+    card = JSON.parse(rawJson) as MatchupCard;
+  } catch {
+    return c.json({ error: 'AI returned malformed JSON', raw: rawJson.slice(0, 500) }, 502);
+  }
+
+  await c.env.BSI_AI_CACHE.put(cacheKey, JSON.stringify(card), { expirationTtl: MATCHUP_CACHE_TTL });
+
+  return new Response(JSON.stringify(card), {
+    headers: {
+      'Content-Type': 'application/json',
+      'X-BSI-Cache': 'MISS',
+      'X-BSI-Model': 'claude-opus-4-6',
     },
   });
 });

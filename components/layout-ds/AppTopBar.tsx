@@ -10,6 +10,8 @@ const ROUTE_TITLES: Record<string, string> = {
   '/': 'Dashboard',
   '/scores': 'Live Scores',
   '/college-baseball': 'College Baseball',
+  '/college-baseball/editorial': 'Editorial',
+  '/college-baseball/savant': 'BSI Savant',
   '/mlb': 'MLB',
   '/nfl': 'NFL',
   '/nba': 'NBA',
@@ -20,7 +22,17 @@ const ROUTE_TITLES: Record<string, string> = {
   '/analytics': 'Analytics',
   '/search': 'Search',
   '/settings': 'Settings',
-  '/intel': 'Intel',
+  '/intel': 'Intelligence',
+  '/transfer-portal': 'Transfer Portal',
+  '/nil-valuation': 'NIL Valuation',
+  '/about': 'About',
+  '/contact': 'Contact',
+  '/status': 'System Status',
+  '/blog-post-feed': 'Blog',
+  '/coverage': 'Coverage',
+  '/data-sources': 'Data Sources',
+  '/arcade': 'Arcade',
+  '/dashboard/intel': 'Intel Dashboard',
 };
 
 function getPageTitle(pathname: string): string {

@@ -89,6 +89,36 @@ const IconTag = () => (
   </svg>
 );
 
+const IconGlobe = () => (
+  <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="8" cy="8" r="6.5" />
+    <path d="M1.5 8h13" />
+    <path d="M8 1.5c2 2.5 2 5.5 0 13" />
+    <path d="M8 1.5c-2 2.5-2 5.5 0 13" />
+  </svg>
+);
+
+const IconPen = () => (
+  <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M11.5 2.5l2 2-8 8H3.5v-2z" />
+    <path d="M9.5 4.5l2 2" />
+  </svg>
+);
+
+const IconInfo = () => (
+  <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="8" cy="8" r="6.5" />
+    <path d="M8 7v4" />
+    <circle cx="8" cy="5" r="0.5" fill="currentColor" stroke="none" />
+  </svg>
+);
+
+const IconFlask = () => (
+  <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M6 2h4M7 2v4l-4 7h10l-4-7V2" />
+  </svg>
+);
+
 const IconMenu = () => (
   <svg className="w-5 h-5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
     <path d="M2 4h12M2 8h12M2 12h12" />
@@ -117,12 +147,19 @@ interface NavGroup {
   readonly items: readonly NavItem[];
 }
 
+/* WBC nav link visible only during tournament window (Mar 5–17, 2026) */
+const isWBCActive = (() => {
+  const now = new Date();
+  return now >= new Date('2026-03-05') && now <= new Date('2026-03-18');
+})();
+
 const NAV_GROUPS: readonly NavGroup[] = [
   {
     label: 'Overview',
     items: [
       { href: '/', label: 'Dashboard', icon: <IconGrid /> },
       { href: '/scores', label: 'Live Scores', icon: <IconActivity /> },
+      ...(isWBCActive ? [{ href: '/wbc', label: 'WBC 2026', icon: <IconGlobe /> } as const] : []),
     ],
   },
   {
@@ -134,7 +171,15 @@ const NAV_GROUPS: readonly NavGroup[] = [
       { href: '/mlb', label: 'MLB', icon: <IconBaseball /> },
       { href: '/nfl', label: 'NFL', icon: <IconFootball /> },
       { href: '/nba', label: 'NBA', icon: <IconBasketball /> },
-      { href: '/cfb', label: 'CFB', icon: <IconFootball /> },
+      { href: '/cfb', label: 'College Football', icon: <IconFootball /> },
+    ],
+  },
+  {
+    label: 'Content',
+    items: [
+      { href: '/college-baseball/editorial', label: 'Editorial', icon: <IconPen /> },
+      { href: '/intel', label: 'Intel', icon: <IconChart /> },
+      { href: '/transfer-portal', label: 'Transfer Portal', icon: <IconActivity /> },
     ],
   },
   {
@@ -148,8 +193,16 @@ const NAV_GROUPS: readonly NavGroup[] = [
   {
     label: 'Ecosystem',
     items: [
+      { href: 'https://labs.blazesportsintel.com', label: 'Labs / Savant', icon: <IconFlask />, external: true },
       { href: 'https://blazecraft.app', label: 'BlazeCraft', icon: <IconGrid />, external: true },
       { href: '/arcade', label: 'Arcade', icon: <IconActivity /> },
+    ],
+  },
+  {
+    label: 'Company',
+    items: [
+      { href: '/about', label: 'About', icon: <IconInfo /> },
+      { href: '/status', label: 'Status', icon: <IconGlobe /> },
     ],
   },
 ] as const;
