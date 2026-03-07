@@ -205,10 +205,10 @@ export function PerformanceIndexClient() {
                       <p className="text-text-muted text-sm">
                         {selectedPlayer.team}
                         {selectedPlayer.conference &&
-                          ` \u00B7 ${selectedPlayer.conference}`}
+                          ` · ${selectedPlayer.conference}`}
                       </p>
                       <p className="text-xs text-text-muted/60 font-mono mt-1">
-                        BSI Estimate \u00B7{' '}
+                        {'BSI Estimate · '}
                         {result.isPitcher ? 'Pitcher' : 'Position Player'} Profile
                       </p>
                     </div>

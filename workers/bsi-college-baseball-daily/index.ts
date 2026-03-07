@@ -133,16 +133,15 @@ interface NormalizedGame {
 // Constants
 // ═══════════════════════════════════════════════════════════════════════════
 
+import {
+  ESPN_BASE, CBB_SPORT_PATH as SPORT_PATH,
+  CONFERENCES, isBaseballSeason, safeFetch,
+} from '../cbb-shared';
+
 const TZ = 'America/Chicago';
-const ESPN_BASE = 'https://site.api.espn.com';
-const SPORT_PATH = 'baseball/college-baseball';
-const HIGHLIGHTLY_HOST = 'mlb-college-baseball-api.p.rapidapi.com';
-const HIGHLIGHTLY_BASE = `https://${HIGHLIGHTLY_HOST}`;
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
-const CONFERENCES = ['SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12'];
 
 const BUNDLE_TTL = 86_400; // 24 hours
-const FETCH_TIMEOUT = 12_000;
 const MAX_MATCHUP_TAKES = 15;
 const CLAUDE_MODEL = 'claude-sonnet-4-5-20250929';
 
@@ -166,11 +165,6 @@ Rules:
 // ═══════════════════════════════════════════════════════════════════════════
 // Utilities
 // ═══════════════════════════════════════════════════════════════════════════
-
-function isBaseballSeason(): boolean {
-  const month = new Date().getMonth() + 1;
-  return month >= 2 && month <= 6;
-}
 
 function getEdition(cronExpression: string): Edition {
   return cronExpression.includes('11') ? 'morning' : 'evening';
@@ -196,27 +190,6 @@ function dateToEspn(ymd: string): string {
 
 function slugify(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-}
-
-async function safeFetch<T>(
-  url: string,
-  headers?: Record<string, string>,
-): Promise<{ ok: boolean; data?: T; status: number; error?: string; duration_ms: number }> {
-  const start = Date.now();
-  try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
-    const res = await fetch(url, {
-      headers: { 'User-Agent': 'BSI-Daily-Pipeline/1.0', ...headers },
-      signal: controller.signal,
-    });
-    clearTimeout(timer);
-    const duration_ms = Date.now() - start;
-    if (!res.ok) return { ok: false, status: res.status, error: `HTTP ${res.status}`, duration_ms };
-    return { ok: true, data: (await res.json()) as T, status: res.status, duration_ms };
-  } catch (err) {
-    return { ok: false, status: 0, error: err instanceof Error ? err.message : 'Fetch failed', duration_ms: Date.now() - start };
-  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

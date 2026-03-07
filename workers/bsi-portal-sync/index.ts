@@ -106,7 +106,7 @@ async function fetchPortalEntries(env: Env): Promise<PortalEntry[]> {
 
   // Strategy 1: ESPN transfer news → extract player names and schools
   const newsUrl = `${ESPN_BASE}/apis/site/v2/sports/${SPORT_PATH}/news?limit=50`;
-  const newsResult = await espnFetch<Record<string, unknown>>(newsUrl);
+  const newsResult = await safeFetch<Record<string, unknown>>(newsUrl);
 
   if (newsResult.ok && newsResult.data) {
     const articles = (newsResult.data.articles ?? []) as Record<string, unknown>[];
@@ -142,7 +142,7 @@ async function fetchPortalEntries(env: Env): Promise<PortalEntry[]> {
   // Strategy 2: Check ESPN athletes endpoint for teams with recent roster changes
   // ESPN's college baseball teams endpoint can list athletes
   const teamsUrl = `${ESPN_BASE}/apis/site/v2/sports/${SPORT_PATH}/teams?limit=400`;
-  const teamsResult = await espnFetch<Record<string, unknown>>(teamsUrl);
+  const teamsResult = await safeFetch<Record<string, unknown>>(teamsUrl);
 
   if (teamsResult.ok && teamsResult.data) {
     const sports = (teamsResult.data.sports ?? []) as Record<string, unknown>[];
