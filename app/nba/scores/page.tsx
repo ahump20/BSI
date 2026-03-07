@@ -1,14 +1,15 @@
-'use client';
+import type { Metadata } from 'next';
+import NBAGamesPage from '../games/page';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+export const metadata: Metadata = {
+  title: 'NBA Scores | Blaze Sports Intel',
+  description: 'Live NBA scores, game results, and standings on Blaze Sports Intel.',
+  openGraph: {
+    title: 'NBA Scores | Blaze Sports Intel',
+    description: 'Live NBA scores, game results, and standings.',
+  },
+};
 
-export default function NBAScoresRedirect() {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.replace('/nba/games');
-  }, [router]);
-
-  return null;
+export default function NBAScoresPage() {
+  return <NBAGamesPage />;
 }

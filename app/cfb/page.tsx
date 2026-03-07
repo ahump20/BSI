@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
@@ -10,8 +11,10 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
-import { Skeleton, SkeletonTableRow } from '@/components/ui/Skeleton';
+import { Skeleton, SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { TabBar } from '@/components/ui/TabBar';
+import { GameScoreCard } from '@/components/sports/GameScoreCard';
+import { SportInfoCard } from '@/components/sports/SportInfoCard';
 import { formatTimestamp } from '@/lib/utils/timezone';
 import { SportHero } from '@/components/sports/SportHero';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
@@ -33,7 +36,66 @@ interface PortalEntry {
   status?: string;
 }
 
+interface CFBGame {
+  id: string | number;
+  status: string;
+  isLive: boolean;
+  isFinal: boolean;
+  detail?: string;
+  away: { name: string; score: number };
+  home: { name: string; score: number };
+  venue?: string;
+}
+
+interface StandingsTeam {
+  teamName: string;
+  name?: string;
+  wins: number;
+  losses: number;
+  conferenceWins?: number;
+  conferenceLosses?: number;
+  conference?: string;
+}
+
 type TabType = 'rankings' | 'conferences' | 'portal';
+
+const TRACKING_BULLETS = [
+  { bold: 'Catapult GPS', text: '— dominant across SEC and Power 4. Real-time workload, sprint distance, and collision load for every practice and game.' },
+  { bold: 'Hudl IQ:', text: 'CV-based tracking from All-22 coaching film — extracting positional data without dedicated camera arrays.' },
+  { bold: 'SkillCorner:', text: 'broadcast-feed tracking for speed, separation, and get-off time across televised games.' },
+  { bold: 'Sportlogiq', text: '(acquired by Teamworks Jan 2026) — formation recognition and route classification at scale.' },
+];
+
+const cfbFeatures = [
+  {
+    href: '/cfb/scores',
+    title: 'Live Scores',
+    description: 'Real-time scores and game updates for all 134 FBS teams. Box scores, drive charts, and game flow.',
+    badge: 'Live Now',
+    badgeVariant: 'success' as const,
+  },
+  {
+    href: '/cfb/standings',
+    title: 'Conference Standings',
+    description: 'Complete standings for SEC, Big Ten, Big 12, ACC, and all FBS conferences with records and tiebreakers.',
+    badge: 'Updated Weekly',
+    badgeVariant: 'primary' as const,
+  },
+  {
+    href: '/cfb/transfer-portal',
+    title: 'Transfer Portal',
+    description: 'Real-time portal entries, commitments, decommitments, and recruiting intel across all FBS programs.',
+    badge: 'Live',
+    badgeVariant: 'success' as const,
+  },
+  {
+    href: '/cfb/teams',
+    title: 'Team Profiles',
+    description: 'Rosters, schedules, and statistics for all 134 FBS teams across every conference.',
+    badge: '134 Teams',
+    badgeVariant: 'warning' as const,
+  },
+];
 
 const conferences = [
   { name: 'SEC', teams: 16, description: 'Southeastern Conference' },
@@ -54,6 +116,67 @@ export default function CFBPage() {
   const [portalEntries, setPortalEntries] = useState<PortalEntry[]>([]);
   const [portalLoading, setPortalLoading] = useState(false);
   const [portalError, setPortalError] = useState<string | null>(null);
+
+  // Recent scores — always fetched on mount for the preview strip
+  const { data: scoresRaw, loading: scoresLoading } = useSportData<{
+    games?: CFBGame[];
+    scores?: Array<{
+      id?: string | number;
+      homeTeam?: string; awayTeam?: string;
+      homeScore?: number; awayScore?: number;
+      status?: string; state?: string;
+      venue?: string;
+    }>;
+    live?: boolean;
+    meta?: { lastUpdated?: string; dataSource?: string };
+  }>('/api/cfb/scores');
+
+  const recentGames: CFBGame[] = (scoresRaw?.games || (scoresRaw?.scores || []).map((s) => ({
+    id: s.id || Math.random(),
+    status: s.status || s.state || 'Final',
+    isLive: (s.status || s.state || '').toLowerCase().includes('live') || (s.status || s.state || '').toLowerCase().includes('in progress'),
+    isFinal: (s.status || s.state || '').toLowerCase().includes('final'),
+    away: { name: s.awayTeam || 'Away', score: s.awayScore || 0 },
+    home: { name: s.homeTeam || 'Home', score: s.homeScore || 0 },
+    venue: s.venue,
+  }))).slice(0, 6);
+  const hasLiveGames = scoresRaw?.live || recentGames.some((g) => g.isLive);
+
+  // Conference standings snapshot — always fetched on mount
+  const { data: standingsRaw, loading: standingsLoading } = useSportData<{
+    standings?: StandingsTeam[];
+    teams?: StandingsTeam[];
+    conferences?: Array<{ name: string; teams: StandingsTeam[] }>;
+    meta?: { lastUpdated?: string; dataSource?: string };
+  }>('/api/cfb/standings');
+
+  // Extract and group standings by top conferences
+  const standingsSnapshot = (() => {
+    const targetConfs = ['SEC', 'Big Ten', 'Big 12', 'ACC'];
+    const allTeams: StandingsTeam[] = [];
+
+    // Handle different response shapes
+    if (standingsRaw?.conferences) {
+      for (const conf of standingsRaw.conferences) {
+        for (const team of conf.teams) {
+          allTeams.push({ ...team, conference: team.conference || conf.name });
+        }
+      }
+    } else {
+      allTeams.push(...(standingsRaw?.standings || standingsRaw?.teams || []));
+    }
+
+    const grouped: Record<string, StandingsTeam[]> = {};
+    for (const conf of targetConfs) {
+      const confTeams = allTeams
+        .filter((t) => (t.conference || '').toLowerCase() === conf.toLowerCase())
+        .sort((a, b) => b.wins - a.wins || a.losses - b.losses)
+        .slice(0, 4);
+      if (confTeams.length > 0) grouped[conf] = confTeams;
+    }
+    return grouped;
+  })();
+  const hasStandings = Object.keys(standingsSnapshot).length > 0;
 
   const fetchRankings = useCallback(async () => {
     setLoading(true);
@@ -134,9 +257,9 @@ export default function CFBPage() {
           sport="College Football"
           leagueName="NCAA Division I FBS"
           tagline="Longhorns. SEC. Big Ten. Every conference, every rivalry, covered right."
-          description="Conference standings, AP Top 25 rankings, transfer portal tracking, and advanced analytics for all 134 FBS programs."
-          dataSource="ESPN"
-          primaryCta={{ label: 'View Dashboard', href: '/dashboard' }}
+          description="Conference standings, AP Top 25 rankings, transfer portal tracking, and advanced analytics for all 134 FBS programs. From Week 0 through the National Championship."
+          dataSource="SportsDataIO"
+          primaryCta={{ label: 'Live Scores', href: '/cfb/scores' }}
           secondaryCta={{ label: 'Transfer Portal', href: '/cfb/transfer-portal' }}
           stats={[
             { value: '134', label: 'FBS Teams' },
@@ -146,10 +269,247 @@ export default function CFBPage() {
           ]}
         />
 
+        {/* Recent Scores Preview */}
+        <Section padding="md" background="charcoal" borderTop>
+          <Container>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                {hasLiveGames && <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />}
+                <h2 className="font-display text-xl md:text-2xl font-bold uppercase tracking-wide text-text-primary">
+                  {hasLiveGames ? 'Live' : 'Recent'} <span className="text-burnt-orange">Scores</span>
+                </h2>
+              </div>
+              <Link href="/cfb/scores">
+                <Button variant="ghost" size="sm">All Scores &rarr;</Button>
+              </Link>
+            </div>
+            {scoresLoading ? (
+              <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                {[1, 2, 3, 4, 5, 6].map((i) => <SkeletonScoreCard key={i} />)}
+              </div>
+            ) : recentGames.length > 0 ? (
+              <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                {recentGames.map((game) => (
+                  <GameScoreCard
+                    key={game.id}
+                    game={{
+                      id: game.id,
+                      away: game.away,
+                      home: game.home,
+                      status: game.status,
+                      isLive: game.isLive,
+                      isFinal: game.isFinal,
+                      detail: game.detail,
+                      venue: game.venue,
+                    }}
+                  />
+                ))}
+              </div>
+            ) : (
+              <Card variant="default" padding="lg">
+                <div className="text-center py-6">
+                  <p className="text-text-tertiary">No recent games available. Check back during the season for live scores and results.</p>
+                </div>
+              </Card>
+            )}
+            {scoresRaw?.meta && (
+              <div className="mt-4 pt-3 border-t border-border-subtle">
+                <DataSourceBadge source={scoresRaw.meta.dataSource || 'SportsDataIO'} timestamp={formatTimestamp(scoresRaw.meta.lastUpdated)} />
+              </div>
+            )}
+          </Container>
+        </Section>
+
+        {/* Conference Standings Snapshot */}
+        <Section padding="md" background="midnight" borderTop>
+          <Container>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="font-display text-xl md:text-2xl font-bold uppercase tracking-wide text-text-primary">
+                Conference <span className="text-burnt-orange">Standings</span>
+              </h2>
+              <Link href="/cfb/standings">
+                <Button variant="ghost" size="sm">Full Standings &rarr;</Button>
+              </Link>
+            </div>
+            {standingsLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[1, 2, 3, 4].map((i) => (
+                  <Card key={i} variant="default" padding="md">
+                    <Skeleton variant="text" width={120} height={20} />
+                    <div className="mt-3"><table className="w-full"><tbody>{Array.from({ length: 4 }).map((_, j) => <SkeletonTableRow key={j} columns={3} />)}</tbody></table></div>
+                  </Card>
+                ))}
+              </div>
+            ) : hasStandings ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {Object.entries(standingsSnapshot).map(([conf, teams]) => (
+                  <ScrollReveal key={conf}>
+                    <Card variant="default" padding="md">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="font-display text-sm font-bold uppercase tracking-wider text-burnt-orange">{conf}</h3>
+                        <Link href={`/cfb/standings?conference=${conf.toLowerCase().replace(/\s+/g, '-')}`} className="text-xs text-text-muted hover:text-burnt-orange transition-colors">
+                          Full &rarr;
+                        </Link>
+                      </div>
+                      <table className="w-full">
+                        <thead>
+                          <tr className="border-b border-border-subtle">
+                            <th className="text-left pb-2 text-text-muted font-semibold text-[11px] uppercase tracking-wider">Team</th>
+                            <th className="text-center pb-2 text-text-muted font-semibold text-[11px] uppercase tracking-wider w-12">W</th>
+                            <th className="text-center pb-2 text-text-muted font-semibold text-[11px] uppercase tracking-wider w-12">L</th>
+                            {teams[0]?.conferenceWins != null && (
+                              <th className="text-center pb-2 text-text-muted font-semibold text-[11px] uppercase tracking-wider w-16">Conf</th>
+                            )}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {teams.map((team, idx) => (
+                            <tr key={team.teamName || team.name} className="border-b border-border-subtle/50 last:border-0">
+                              <td className="py-2 text-sm">
+                                <span className="text-burnt-orange font-bold mr-2 text-xs">{idx + 1}</span>
+                                <span className="font-semibold text-text-primary">{team.teamName || team.name}</span>
+                              </td>
+                              <td className="py-2 text-center text-sm text-text-secondary">{team.wins}</td>
+                              <td className="py-2 text-center text-sm text-text-secondary">{team.losses}</td>
+                              {team.conferenceWins != null && (
+                                <td className="py-2 text-center text-sm text-text-tertiary">{team.conferenceWins}-{team.conferenceLosses}</td>
+                              )}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </Card>
+                  </ScrollReveal>
+                ))}
+              </div>
+            ) : (
+              <Card variant="default" padding="lg">
+                <div className="text-center py-6">
+                  <p className="text-text-tertiary">Conference standings will populate once the season begins. Browse conferences below for team rosters and schedules.</p>
+                </div>
+              </Card>
+            )}
+            {standingsRaw?.meta && (
+              <div className="mt-4 pt-3 border-t border-border-subtle">
+                <DataSourceBadge source={standingsRaw.meta.dataSource || 'SportsDataIO'} timestamp={formatTimestamp(standingsRaw.meta.lastUpdated)} />
+              </div>
+            )}
+          </Container>
+        </Section>
+
+        {/* This Week in CFB — Editorial Content Cards */}
+        <Section padding="lg" background="charcoal" borderTop>
+          <Container>
+            <ScrollReveal>
+              <div className="text-center mb-8">
+                <span className="text-[11px] font-mono uppercase tracking-widest text-burnt-orange">The Pulse</span>
+                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mt-2 text-text-primary">
+                  This Week in <span className="text-gradient-blaze">CFB</span>
+                </h2>
+                <p className="text-text-secondary mt-3 max-w-xl mx-auto text-sm">
+                  The storylines shaping the season — portal movement, rivalry matchups, and the 12-team playoff picture.
+                </p>
+              </div>
+            </ScrollReveal>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              <ScrollReveal delay={0}>
+                <Link href="/cfb/transfer-portal" className="block group">
+                  <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
+                    <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="w-10 h-10 mb-4 bg-burnt-orange/15 rounded-xl flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
+                        <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5" />
+                      </svg>
+                    </div>
+                    <h3 className="text-base font-semibold text-text-primary mb-2 group-hover:text-burnt-orange transition-colors">Transfer Portal</h3>
+                    <p className="text-text-tertiary text-sm leading-relaxed">
+                      The portal never stops. Track who entered, who committed, and which programs are winning the offseason arms race.
+                    </p>
+                    <Badge variant="success" className="mt-3">Live Tracking</Badge>
+                  </Card>
+                </Link>
+              </ScrollReveal>
+              <ScrollReveal delay={100}>
+                <Link href="/cfb/scores" className="block group">
+                  <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
+                    <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="w-10 h-10 mb-4 bg-burnt-orange/15 rounded-xl flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-base font-semibold text-text-primary mb-2 group-hover:text-burnt-orange transition-colors">Rivalry Watch</h3>
+                    <p className="text-text-tertiary text-sm leading-relaxed">
+                      The matchups that define the sport. Iron Bowl, Red River, The Game — every rivalry result and storyline.
+                    </p>
+                    <Badge variant="primary" className="mt-3">In-Season</Badge>
+                  </Card>
+                </Link>
+              </ScrollReveal>
+              <ScrollReveal delay={200}>
+                <Link href="/cfb/standings" className="block group">
+                  <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
+                    <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="w-10 h-10 mb-4 bg-burnt-orange/15 rounded-xl flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                        <line x1="3" y1="9" x2="21" y2="9" />
+                        <line x1="9" y1="21" x2="9" y2="9" />
+                      </svg>
+                    </div>
+                    <h3 className="text-base font-semibold text-text-primary mb-2 group-hover:text-burnt-orange transition-colors">Playoff Picture</h3>
+                    <p className="text-text-tertiary text-sm leading-relaxed">
+                      12 teams, 4 byes, 2 new conferences in the mix. Who is in, who is on the bubble, and who controls their destiny.
+                    </p>
+                    <Badge variant="warning" className="mt-3">12-Team Playoff</Badge>
+                  </Card>
+                </Link>
+              </ScrollReveal>
+              <ScrollReveal delay={300}>
+                <Link href="/cfb/teams" className="block group">
+                  <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
+                    <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="w-10 h-10 mb-4 bg-burnt-orange/15 rounded-xl flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
+                        <line x1="18" y1="20" x2="18" y2="10" />
+                        <line x1="12" y1="20" x2="12" y2="4" />
+                        <line x1="6" y1="20" x2="6" y2="14" />
+                      </svg>
+                    </div>
+                    <h3 className="text-base font-semibold text-text-primary mb-2 group-hover:text-burnt-orange transition-colors">Conference Power</h3>
+                    <p className="text-text-tertiary text-sm leading-relaxed">
+                      SEC vs. Big Ten is the headliner, but the Big 12 and ACC are deeper than the narratives suggest. Data tells the story.
+                    </p>
+                    <Badge variant="primary" className="mt-3">All 10 Conferences</Badge>
+                  </Card>
+                </Link>
+              </ScrollReveal>
+            </div>
+          </Container>
+        </Section>
+
         {/* Tabs and Content */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <TabBar tabs={tabs} active={activeTab} onChange={(id) => setActiveTab(id as TabType)} size="sm" />
+            {/* Secondary nav — editorial monospace strip */}
+            <div className="flex gap-1 mb-8 overflow-x-auto pb-1 scrollbar-hide">
+              {[
+                { label: 'Scores', href: '/cfb/scores' },
+                { label: 'Standings', href: '/cfb/standings' },
+                { label: 'Portal', href: '/cfb/transfer-portal' },
+                { label: 'Teams', href: '/cfb/teams' },
+                { label: 'Players', href: '/cfb/players' },
+                { label: 'Schedule', href: '/cfb/schedule' },
+              ].map((link, i) => (
+                <Link key={link.href} href={link.href}
+                  className={`px-3 py-1.5 text-[11px] font-mono uppercase tracking-wider text-text-muted hover:text-burnt-orange transition-colors whitespace-nowrap ${
+                    i === 0 ? 'border-l-2 border-burnt-orange/40 pl-3' : ''
+                  }`}>
+                  {link.label}
+                </Link>
+              ))}
+            </div>
 
             <DataErrorBoundary>
             {/* Rankings Tab */}
@@ -215,13 +575,18 @@ export default function CFBPage() {
             {/* Conferences Tab */}
             {activeTab === 'conferences' && (
               <ScrollReveal>
+                <p className="text-text-secondary text-sm mb-6 max-w-2xl">
+                  The 2025-26 FBS landscape: four Power conferences, the rebuilt Pac-12, and five Group of 5 leagues. 134 programs, 10 conferences, all tracked.
+                </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                   {conferences.map((conf) => (
-                    <Card key={conf.name} variant="hover" padding="lg" className="text-center">
-                      <div className="font-semibold text-text-primary text-lg">{conf.name}</div>
-                      <div className="text-sm text-text-muted mt-1">{conf.description}</div>
-                      <div className="text-xs text-burnt-orange mt-2">{conf.teams} Teams</div>
-                    </Card>
+                    <Link key={conf.name} href={`/cfb/standings?conference=${conf.name.toLowerCase().replace(/\s+/g, '-')}`}>
+                      <Card variant="hover" padding="lg" className="text-center h-full group">
+                        <div className="font-display text-lg font-bold uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors">{conf.name}</div>
+                        <div className="text-sm text-text-muted mt-1">{conf.description}</div>
+                        <div className="text-xs text-burnt-orange mt-3 font-semibold">{conf.teams} Teams</div>
+                      </Card>
+                    </Link>
                   ))}
                 </div>
               </ScrollReveal>
@@ -294,101 +659,65 @@ export default function CFBPage() {
 
           </Container>
         </Section>
-        {/* Live Data Hub */}
+        {/* Feature Cards — Data Hub */}
         <Section padding="lg" background="midnight" borderTop>
           <Container>
             <ScrollReveal>
               <div className="text-center mb-12">
-                <Badge variant="primary" className="mb-4">Live Coverage</Badge>
-                <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide mt-2">
-                  CFB <span className="text-gradient-blaze">Data Hub</span>
+                <span className="kicker">All 134 FBS Programs</span>
+                <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display mt-2">
+                  The Data You <span className="text-gradient-blaze">Actually Need</span>
                 </h2>
                 <p className="text-text-secondary mt-4 max-w-2xl mx-auto">
-                  Live scores, conference standings, and rankings powered by ESPN.
+                  Scores, standings, portal intel, and team profiles — straight from the source, no middleman.
                 </p>
               </div>
             </ScrollReveal>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              <ScrollReveal delay={0}>
-                <Link href="/cfb/scores">
-                  <Card variant="hover" padding="lg" className="h-full">
-                    <h3 className="text-lg font-semibold text-text-primary mb-3">Live Scores</h3>
-                    <p className="text-text-muted text-sm leading-relaxed mb-4">
-                      Real-time scores and game updates for all FBS teams.
-                    </p>
-                    <Badge variant="success">Live</Badge>
-                  </Card>
-                </Link>
-              </ScrollReveal>
-              <ScrollReveal delay={100}>
-                <Link href="/cfb/standings">
-                  <Card variant="hover" padding="lg" className="h-full">
-                    <h3 className="text-lg font-semibold text-text-primary mb-3">Conference Standings</h3>
-                    <p className="text-text-muted text-sm leading-relaxed mb-4">
-                      Complete standings for SEC, Big Ten, Big 12, ACC, and all FBS conferences.
-                    </p>
-                    <Badge variant="success">Live</Badge>
-                  </Card>
-                </Link>
-              </ScrollReveal>
-              <ScrollReveal delay={200}>
-                <Link href="/cfb/transfer-portal">
-                  <Card variant="hover" padding="lg" className="h-full">
-                    <h3 className="text-lg font-semibold text-text-primary mb-3">Transfer Portal</h3>
-                    <p className="text-text-muted text-sm leading-relaxed mb-4">
-                      Real-time portal entries, commitments, and recruiting intel.
-                    </p>
-                    <Badge variant="success">Live</Badge>
-                  </Card>
-                </Link>
-              </ScrollReveal>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {cfbFeatures.map((feature, index) => (
+                <ScrollReveal key={feature.title} delay={index * 100}>
+                  <Link href={feature.href} className="block group">
+                    <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
+                      <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <h3 className="text-lg font-semibold text-text-primary mb-3">{feature.title}</h3>
+                      <p className="text-text-tertiary text-sm leading-relaxed mb-4">
+                        {feature.description}
+                      </p>
+                      <div className="flex items-center justify-between pt-4 border-t border-border-subtle">
+                        <Badge variant={feature.badgeVariant}>{feature.badge}</Badge>
+                        <span className="text-burnt-orange text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
+                          View
+                          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                          </svg>
+                        </span>
+                      </div>
+                    </Card>
+                  </Link>
+                </ScrollReveal>
+              ))}
             </div>
           </Container>
         </Section>
 
-        {/* Film & Tracking Section */}
+        {/* Film & Tracking Technology */}
         <Section padding="lg" background="midnight" borderTop>
           <Container>
-            <ScrollReveal>
-              <Card variant="default" padding="lg">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-lg bg-burnt-orange/15 flex items-center justify-center">
-                    <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
-                      <polygon points="23 7 16 12 23 17 23 7" />
-                      <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
-                    </svg>
-                  </div>
-                  <div>
-                    <CardTitle size="md">Film &amp; Tracking Technology</CardTitle>
-                    <p className="text-text-tertiary text-xs mt-0.5">How college football uses tracking data</p>
-                  </div>
-                </div>
-                <ul className="space-y-3 text-sm text-text-secondary">
-                  <li className="flex gap-2">
-                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
-                    <span><strong className="text-text-primary">Catapult GPS</strong> dominant across SEC and Power 4 — real-time workload, sprint distance, and collision load</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
-                    <span><strong className="text-text-primary">Hudl IQ:</strong> CV-based tracking from All-22 coaching film — extracting positional data without dedicated camera arrays</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
-                    <span><strong className="text-text-primary">SkillCorner:</strong> broadcast-feed tracking for speed, separation, and get-off time across televised games</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
-                    <span><strong className="text-text-primary">Sportlogiq</strong> (acquired by Teamworks Jan 2026) — formation recognition and route classification</span>
-                  </li>
-                </ul>
-                <div className="mt-5 pt-4 border-t border-border-subtle">
-                  <Link href="/vision-ai">
-                    <Button variant="ghost" size="sm">Full Vision AI Landscape &rarr;</Button>
-                  </Link>
-                </div>
-              </Card>
-            </ScrollReveal>
+            <SportInfoCard
+              icon={
+                <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
+                  <polygon points="23 7 16 12 23 17 23 7" />
+                  <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+                </svg>
+              }
+              title="Film &amp; Tracking Technology"
+              subtitle="How college football uses tracking data"
+              bullets={TRACKING_BULLETS}
+              actions={[
+                { label: 'Full Vision AI Landscape \u2192', href: '/vision-ai', variant: 'ghost' },
+              ]}
+            />
           </Container>
         </Section>
       </div>

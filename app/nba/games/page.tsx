@@ -85,14 +85,9 @@ export default function NBAGamesPage() {
 
       const data: ScoreboardResponse = await res.json();
 
-      if (data.games) {
-        setGames(data.games);
-        setHasLiveGames(data.games.some((g) => g.status.type.state === 'in'));
-        setMeta(data.meta);
-      } else {
-        setError('No games found');
-        setGames([]);
-      }
+      setGames(data.games || []);
+      setHasLiveGames((data.games || []).some((g) => g.status.type.state === 'in'));
+      setMeta(data.meta);
       setLoading(false);
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';

@@ -176,9 +176,14 @@ const features: SitemapEntry[] = [
   { path: '/nil-valuation/methodology', changeFrequency: 'monthly', priority: 0.5 },
   { path: '/analytics', changeFrequency: 'daily', priority: 0.6 },
   { path: '/college-baseball/analytics/playground', changeFrequency: 'weekly', priority: 0.5 },
-  { path: '/transfer-portal', changeFrequency: 'daily', priority: 0.7 },
+  { path: '/intelligence', changeFrequency: 'daily', priority: 0.7 },
   { path: '/vision-ai-intelligence', changeFrequency: 'weekly', priority: 0.5 },
   { path: '/search', changeFrequency: 'daily', priority: 0.5 },
+  { path: '/college-baseball/tournament', changeFrequency: 'daily', priority: 0.8 },
+  { path: '/college-baseball/tournament/regionals', changeFrequency: 'daily', priority: 0.7 },
+  { path: '/college-baseball/tournament/cws', changeFrequency: 'daily', priority: 0.7 },
+  { path: '/college-baseball/savant/visuals', changeFrequency: 'weekly', priority: 0.6 },
+  { path: '/wbc', changeFrequency: 'daily', priority: 0.6 },
 ];
 
 const arcade: SitemapEntry[] = [
@@ -190,6 +195,11 @@ const arcade: SitemapEntry[] = [
   { path: '/arcade/games/downtown-doggies', changeFrequency: 'monthly', priority: 0.4 },
   { path: '/arcade/games/leadership-capital', changeFrequency: 'monthly', priority: 0.4 },
   { path: '/arcade/wc3-dashboard', changeFrequency: 'monthly', priority: 0.3 },
+];
+
+const research: SitemapEntry[] = [
+  { path: '/research', changeFrequency: 'monthly', priority: 0.7 },
+  { path: '/research/nil-analysis', changeFrequency: 'monthly', priority: 0.8 },
 ];
 
 const marketing: SitemapEntry[] = [
@@ -208,6 +218,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...mlbEditorial,
     ...proSports,
     ...features,
+    ...research,
     ...arcade,
     ...marketing,
   ];

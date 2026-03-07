@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Footer } from '@/components/layout-ds/Footer';
 import { preseason2026, getTierLabel } from '@/lib/data/preseason-2026';
+import CompareStatsClient from './CompareStatsClient';
 
 const rivalries: [string, string][] = [
   ['texas', 'texas-am'],
@@ -213,6 +214,14 @@ export default async function ComparisonPage({ params }: PageProps) {
                 </div>
               </Card>
             </div>
+
+            {/* Live Savant Comparison */}
+            <CompareStatsClient
+              team1Slug={team1}
+              team2Slug={team2}
+              team1Name={nameA}
+              team2Name={nameB}
+            />
 
             {/* Verdict */}
             <Card variant="default" padding="lg" className="mt-8 border-burnt-orange/20">

@@ -7,14 +7,25 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, FreshnessBadge } from '@/components/ui/Badge';
+import { FilterPill } from '@/components/ui/FilterPill';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { HeroGlow } from '@/components/ui/HeroGlow';
 import { formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
 import type { DataMeta } from '@/lib/types/data-meta';
+
+interface Team {
+  id: string;
+  name: string;
+  shortName: string;
+  conference: string;
+  score: number | null;
+  record: { wins: number; losses: number };
+}
 
 interface Game {
   id: string;
@@ -22,22 +33,8 @@ interface Game {
   time: string;
   status: 'scheduled' | 'live' | 'final' | 'postponed' | 'canceled';
   inning?: number;
-  homeTeam: {
-    id: string;
-    name: string;
-    shortName: string;
-    conference: string;
-    score: number | null;
-    record: { wins: number; losses: number };
-  };
-  awayTeam: {
-    id: string;
-    name: string;
-    shortName: string;
-    conference: string;
-    score: number | null;
-    record: { wins: number; losses: number };
-  };
+  homeTeam: Team;
+  awayTeam: Team;
   venue: string;
   tv?: string;
   situation?: string;
@@ -52,9 +49,56 @@ interface ScoresApiResponse {
   message?: string;
   timestamp?: string;
 }
-// formatScheduleDate, getDateOffset imported from lib/utils/timezone
 
 const conferences = ['All', 'SEC', 'ACC', 'Big 12', 'Big Ten', 'Sun Belt', 'AAC'];
+
+const WIN_CHECK_ICON = (
+  <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+  </svg>
+);
+
+interface TeamRowProps {
+  team: Team;
+  won: boolean;
+  isScheduled: boolean;
+  fallbackAbbr: string;
+}
+
+function TeamRow({ team, won, isScheduled, fallbackAbbr }: TeamRowProps) {
+  let scoreClass = 'text-text-secondary';
+  if (isScheduled) {
+    scoreClass = 'text-text-tertiary';
+  } else if (won) {
+    scoreClass = 'text-text-primary';
+  }
+
+  return (
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
+          {team.shortName?.slice(0, 3).toUpperCase() || fallbackAbbr}
+        </div>
+        <div>
+          <p className={`font-semibold ${won ? 'text-text-primary' : 'text-text-secondary'}`}>
+            {team.name}
+          </p>
+          {team.record && (
+            <p className="text-xs text-text-tertiary">
+              {team.record.wins}-{team.record.losses}
+            </p>
+          )}
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        {won && WIN_CHECK_ICON}
+        <span className={`text-2xl font-bold font-mono ${scoreClass}`}>
+          {team.score !== null ? team.score : '-'}
+        </span>
+      </div>
+    </div>
+  );
+}
 
 function GameCard({ game }: { game: Game }) {
   const isLive = game.status === 'live';
@@ -107,79 +151,8 @@ function GameCard({ game }: { game: Game }) {
 
         {/* Teams */}
         <div className="p-4 space-y-3">
-          {/* Away Team */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
-                {game.awayTeam.shortName?.slice(0, 3).toUpperCase() || 'AWY'}
-              </div>
-              <div>
-                <p className={`font-semibold ${awayWon ? 'text-text-primary' : 'text-text-secondary'}`}>
-                  {game.awayTeam.name}
-                </p>
-                {game.awayTeam.record && (
-                  <p className="text-xs text-text-tertiary">
-                    {game.awayTeam.record.wins}-{game.awayTeam.record.losses}
-                  </p>
-                )}
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              {awayWon && (
-                <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                </svg>
-              )}
-              <span
-                className={`text-2xl font-bold font-mono ${
-                  isScheduled
-                    ? 'text-text-tertiary'
-                    : awayWon
-                      ? 'text-text-primary'
-                      : 'text-text-secondary'
-                }`}
-              >
-                {game.awayTeam.score !== null ? game.awayTeam.score : '-'}
-              </span>
-            </div>
-          </div>
-
-          {/* Home Team */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
-                {game.homeTeam.shortName?.slice(0, 3).toUpperCase() || 'HME'}
-              </div>
-              <div>
-                <p className={`font-semibold ${homeWon ? 'text-text-primary' : 'text-text-secondary'}`}>
-                  {game.homeTeam.name}
-                </p>
-                {game.homeTeam.record && (
-                  <p className="text-xs text-text-tertiary">
-                    {game.homeTeam.record.wins}-{game.homeTeam.record.losses}
-                  </p>
-                )}
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              {homeWon && (
-                <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                </svg>
-              )}
-              <span
-                className={`text-2xl font-bold font-mono ${
-                  isScheduled
-                    ? 'text-text-tertiary'
-                    : homeWon
-                      ? 'text-text-primary'
-                      : 'text-text-secondary'
-                }`}
-              >
-                {game.homeTeam.score !== null ? game.homeTeam.score : '-'}
-              </span>
-            </div>
-          </div>
+          <TeamRow team={game.awayTeam} won={awayWon} isScheduled={isScheduled} fallbackAbbr="AWY" />
+          <TeamRow team={game.homeTeam} won={homeWon} isScheduled={isScheduled} fallbackAbbr="HME" />
         </div>
 
         {/* Venue Footer */}
@@ -191,6 +164,35 @@ function GameCard({ game }: { game: Game }) {
         )}
       </div>
     </Link>
+  );
+}
+
+interface GameSectionProps {
+  games: Game[];
+  status: Game['status'];
+  label: string;
+  showPulse?: boolean;
+  className?: string;
+}
+
+function GameSection({ games, status, label, showPulse, className }: GameSectionProps) {
+  const filtered = games.filter((g) => g.status === status);
+  if (filtered.length === 0) return null;
+
+  return (
+    <div className={className}>
+      <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+        {showPulse && <span className="w-2 h-2 bg-success rounded-full animate-pulse" />}
+        {label}
+      </h2>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {filtered.map((game) => (
+          <ScrollReveal key={game.id}>
+            <GameCard game={game} />
+          </ScrollReveal>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -214,15 +216,16 @@ export default function CollegeBaseballScoresPage() {
 
   const games = useMemo(() => rawData?.data || rawData?.games || [], [rawData]);
   const hasLiveGames = useMemo(() => games.some((g) => g.status === 'live'), [games]);
+
   const meta: DataMeta | null = useMemo(() => {
     if (!rawData) return null;
-    const src = rawData.meta?.source || rawData.meta?.dataSource || 'ESPN';
-    const ts = rawData.meta?.fetched_at || rawData.meta?.lastUpdated || rawData.timestamp || new Date().toISOString();
+    const source = rawData.meta?.source || rawData.meta?.dataSource || 'ESPN';
+    const fetchedAt = rawData.meta?.fetched_at || rawData.meta?.lastUpdated || rawData.timestamp || new Date().toISOString();
     return {
-      dataSource: src,
-      lastUpdated: ts,
-      source: src,
-      fetched_at: ts,
+      source,
+      fetched_at: fetchedAt,
+      dataSource: source,
+      lastUpdated: fetchedAt,
       timezone: rawData.meta?.timezone || 'America/Chicago',
       degraded: rawData.meta?.degraded,
       sources: rawData.meta?.sources,
@@ -268,14 +271,14 @@ export default function CollegeBaseballScoresPage() {
 
         {/* Header */}
         <Section padding="md" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
+          <HeroGlow shape="80% 50%" intensity={0.07} />
 
           <Container>
             <div className="flex items-center justify-between flex-wrap gap-4">
               <div>
                 <ScrollReveal direction="up">
                   <div className="flex items-center gap-3 mb-4">
-                    <Badge variant="primary">Live Scores</Badge>
+                    <span className="section-label">Live Scores</span>
                     {hasLiveGames && <FreshnessBadge isLive fetchedAt={meta?.fetched_at} />}
                   </div>
                 </ScrollReveal>
@@ -287,8 +290,8 @@ export default function CollegeBaseballScoresPage() {
                 </ScrollReveal>
 
                 <ScrollReveal direction="up" delay={150}>
-                  <p className="text-text-secondary mt-2">
-                    Live scores for all 300+ D1 programs — the coverage ESPN won&apos;t give you
+                  <p className="text-burnt-orange font-serif italic text-lg mt-2">
+                    All 300+ D1 programs. Updated every 30 seconds during live games.
                   </p>
                 </ScrollReveal>
               </div>
@@ -320,20 +323,17 @@ export default function CollegeBaseballScoresPage() {
 
               {dateOptions.map((option) => {
                 const dateValue = getDateOffset(option.offset);
-                const isSelected = selectedDate === dateValue;
 
                 return (
-                  <button
+                  <FilterPill
                     key={option.offset}
+                    active={selectedDate === dateValue}
                     onClick={() => setSelectedDate(dateValue)}
-                    className={`px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${
-                      isSelected
-                        ? 'bg-burnt-orange text-white'
-                        : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium hover:text-text-primary'
-                    }`}
+                    uppercase={false}
+                    className="whitespace-nowrap"
                   >
                     {option.label}
-                  </button>
+                  </FilterPill>
                 );
               })}
 
@@ -357,18 +357,14 @@ export default function CollegeBaseballScoresPage() {
             {/* Conference Filter */}
             <div className="flex flex-wrap gap-2 mb-8">
               {conferences.map((conf) => (
-                <button
+                <FilterPill
                   key={conf}
+                  active={selectedConference === conf}
                   onClick={() => setSelectedConference(conf)}
                   aria-pressed={selectedConference === conf}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    selectedConference === conf
-                      ? 'bg-burnt-orange text-white'
-                      : 'bg-background-tertiary text-text-secondary hover:text-text-primary hover:bg-slate'
-                  }`}
                 >
                   {conf}
-                </button>
+                </FilterPill>
               ))}
             </div>
 
@@ -400,56 +396,9 @@ export default function CollegeBaseballScoresPage() {
               />
             ) : (
               <>
-                {/* Live Games Section */}
-                {games.some((g) => g.status === 'live') && (
-                  <div className="mb-8">
-                    <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
-                      <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
-                      Live Games
-                    </h2>
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {games
-                        .filter((g) => g.status === 'live')
-                        .map((game) => (
-                          <ScrollReveal key={game.id}>
-                            <GameCard game={game} />
-                          </ScrollReveal>
-                        ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Final Games */}
-                {games.some((g) => g.status === 'final') && (
-                  <div className="mb-8">
-                    <h2 className="text-lg font-semibold text-text-primary mb-4">Final</h2>
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {games
-                        .filter((g) => g.status === 'final')
-                        .map((game) => (
-                          <ScrollReveal key={game.id}>
-                            <GameCard game={game} />
-                          </ScrollReveal>
-                        ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Scheduled Games */}
-                {games.some((g) => g.status === 'scheduled') && (
-                  <div>
-                    <h2 className="text-lg font-semibold text-text-primary mb-4">Upcoming</h2>
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {games
-                        .filter((g) => g.status === 'scheduled')
-                        .map((game) => (
-                          <ScrollReveal key={game.id}>
-                            <GameCard game={game} />
-                          </ScrollReveal>
-                        ))}
-                    </div>
-                  </div>
-                )}
+                <GameSection games={games} status="live" label="Live Games" showPulse className="mb-8" />
+                <GameSection games={games} status="final" label="Final" className="mb-8" />
+                <GameSection games={games} status="scheduled" label="Upcoming" />
 
                 {/* Data Freshness Footer */}
                 <div className="mt-8 pt-4 border-t border-border-subtle space-y-2">
