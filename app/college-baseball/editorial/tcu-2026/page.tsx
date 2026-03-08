@@ -1,19 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
-import { ogImage } from '@/lib/metadata';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'TCU Horned Frogs: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    'Big 12 regular season champions in 2025, a CWS appearance in 2023, and an ace-led rotation that makes the Horned Frogs the conference\'s team to beat.',
-  openGraph: {
-    title: 'TCU Horned Frogs: 2026 Season Preview',
-    description:
-      'Big 12 regular season champions in 2025, a CWS appearance in 2023, and an ace-led rotation that makes the Horned Frogs the conference\'s team to beat.',
-  
-    images: ogImage('/images/og/cbb-tcu-2026.png')},
+const seoConfig = {
+  title: 'TCU Horned Frogs 2026 Season Preview',
+  description: 'TCU Horned Frogs 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big 12 predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/tcu-2026',
+  image: '/images/og/cbb-tcu-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'TCU Horned Frogs — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'TCU',
@@ -183,5 +182,10 @@ const data: TeamPreviewData = {
 };
 
 export default function TCU2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

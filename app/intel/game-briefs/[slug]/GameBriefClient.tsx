@@ -171,12 +171,17 @@ export function GameBriefClient({ slug }: { slug: string }) {
       <JsonLd
         data={{
           '@context': 'https://schema.org',
-          '@type': 'Article',
-          headline: brief.headline,
-          author: { '@type': 'Person', name: 'Austin Humphrey' },
-          publisher: { '@type': 'Organization', name: 'Blaze Sports Intel' },
-          datePublished: brief.date || '2026-02-14',
+          '@type': 'SportsEvent',
+          name: `${brief.awayTeam} vs. ${brief.homeTeam}`,
+          description: brief.headline,
+          startDate: brief.date || '2026-02-14',
+          location: brief.venue
+            ? { '@type': 'Place', name: brief.venue }
+            : undefined,
+          homeTeam: { '@type': 'SportsTeam', name: brief.homeTeam },
+          awayTeam: { '@type': 'SportsTeam', name: brief.awayTeam },
           url: `https://blazesportsintel.com/intel/game-briefs/${brief.slug}`,
+          organizer: { '@type': 'Organization', name: 'Blaze Sports Intel' },
         }}
       />
       <div>

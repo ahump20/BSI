@@ -5,20 +5,18 @@ import { StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
-import type { Metadata } from 'next';
-import { ogImage } from '@/lib/metadata';
+import { editorialMetadata } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Weekend 2 Recap: The No. 1 Showed Up. The Rest Got Sorted. | Blaze Sports Intel',
-  description:
-    'National college baseball Weekend 2 recap and Weekend 3 preview. UCLA sweeps TCU 30-8. Two cycles hit. Auburn emerges at Globe Life. The complete BSI breakdown.',
-  openGraph: {
-    title: 'Weekend 2 Recap: The No. 1 Showed Up. The Rest Got Sorted.',
-    description:
-      'UCLA made a statement. TCU dropped 11 spots. Two players hit for the cycle. The complete BSI breakdown of college baseball Weekend 2, plus Weekend 3 matchups to watch.',
-  
-    images: ogImage('/images/og/cbb-weekend-2-recap.png')},
-};
+export const metadata = editorialMetadata({
+  title: 'Weekend 2 Recap: The No. 1 Showed Up. The Rest Got Sorted.',
+  description: 'National college baseball Weekend 2 recap and Weekend 3 preview. UCLA sweeps TCU 30-8. Two cycles hit. Auburn emerges at Globe Life. The complete BSI breakdown.',
+  datePublished: '2026-02-24',
+  slug: '/college-baseball/editorial/weekend-2-recap',
+  image: '/images/og/cbb-weekend-2-recap.png',
+  sport: 'College Baseball',
+  ogDescription: 'UCLA made a statement. TCU dropped 11 spots. Two players hit for the cycle. The complete BSI breakdown of college baseball Weekend 2, plus Weekend 3 matchups to watch.',
+});
 
 // ── Rankings data ────────────────────────────────────────────────────
 
@@ -80,6 +78,14 @@ const STATS = [
 export default function Weekend2RecapPage() {
   return (
     <>
+      <ArticleJsonLd
+        headline="Weekend 2 Recap: The No. 1 Showed Up. The Rest Got Sorted."
+        description="National college baseball Weekend 2 recap. UCLA sweeps TCU 30-8. Two cycles hit. Auburn emerges at Globe Life. The complete BSI breakdown."
+        datePublished="2026-02-24"
+        url="/college-baseball/editorial/weekend-2-recap"
+        image="/images/og/cbb-weekend-2-recap.png"
+        sport="College Baseball"
+      />
       <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">

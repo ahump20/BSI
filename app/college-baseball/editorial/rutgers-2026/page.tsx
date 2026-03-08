@@ -1,19 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
-import { ogImage } from '@/lib/metadata';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Rutgers Scarlet Knights: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    'Steve Owens has spent eight years building Rutgers baseball into something no one in the Big Ten saw coming — a Northeast program that recruits the Jersey Shore, Long Island, and New England pipeline.',
-  openGraph: {
-    title: 'Rutgers Scarlet Knights: 2026 Season Preview',
-    description:
-      'Steve Owens has spent eight years building Rutgers baseball into something no one in the Big Ten saw coming — a Northeast program that recruits the Jersey Shore, Long Island, and New England pipeline.',
-  
-    images: ogImage('/images/og/cbb-rutgers-2026.png')},
+const seoConfig = {
+  title: 'Rutgers Scarlet Knights 2026 Season Preview',
+  description: 'Rutgers Scarlet Knights 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big Ten predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/rutgers-2026',
+  image: '/images/og/cbb-rutgers-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'Rutgers Scarlet Knights — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'Rutgers',
@@ -185,5 +184,10 @@ const data: TeamPreviewData = {
 };
 
 export default function Rutgers2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

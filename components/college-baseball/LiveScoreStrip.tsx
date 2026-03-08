@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { LiveScoreCard } from '@/components/college-baseball/LiveScoreCard';
@@ -173,9 +173,12 @@ function transformTransformedGameToLiveGame(game: TransformedGame): LiveGame {
 export function LiveScoreStrip() {
   const today = getDateOffset(0);
 
+  // Poll only while games are live or scheduled — stops when all are final
+  const [shouldPoll, setShouldPoll] = useState(true);
+
   const { data, loading, error } = useSportData<ScoresResponse>(
     `/api/college-baseball/scores?date=${today}`,
-    { refreshInterval: 30000, refreshWhen: true },
+    { refreshInterval: 30000, refreshWhen: shouldPoll },
   );
 
   const games = useMemo<LiveGame[]>(() => {
@@ -194,6 +197,13 @@ export function LiveScoreStrip() {
   const liveGames = useMemo(() => games.filter((g) => g.status === 'in'), [games]);
   const liveCount = liveGames.length;
   const hasGames = games.length > 0;
+
+  // Stop polling once all games are final/postponed/cancelled
+  useEffect(() => {
+    if (!data || loading) return;
+    const hasActive = games.some((g) => g.status === 'in' || g.status === 'pre');
+    setShouldPoll(hasActive);
+  }, [data, loading, games]);
 
   // Sort: live first, then scheduled, then final
   const sortedGames = useMemo(() => {

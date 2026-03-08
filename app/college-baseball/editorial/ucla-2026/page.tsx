@@ -1,19 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
-import { ogImage } from '@/lib/metadata';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'UCLA Bruins: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    "The Bruins finished 2025 ranked No. 1 nationally and shared the Big Ten crown in the conference's first year of coast-to-coast baseball. John Savage's 18th season in Westwood begins.",
-  openGraph: {
-    title: 'UCLA Bruins: 2026 Season Preview',
-    description:
-      "The Bruins finished 2025 ranked No. 1 nationally and shared the Big Ten crown in the conference's first year of coast-to-coast baseball. John Savage's 18th season in Westwood begins.",
-  
-    images: ogImage('/images/og/cbb-ucla-2026.png')},
+const seoConfig = {
+  title: 'UCLA Bruins 2026 Season Preview',
+  description: 'UCLA Bruins 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big Ten predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/ucla-2026',
+  image: '/images/og/cbb-ucla-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'UCLA Bruins — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'UCLA',
@@ -191,5 +190,10 @@ const data: TeamPreviewData = {
 };
 
 export default function UCLA2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

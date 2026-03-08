@@ -8,6 +8,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
 
 import { ogImage } from '@/lib/metadata';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 // ── Metadata ────────────────────────────────────────────────────────
 
 export const metadata: Metadata = {
@@ -47,6 +48,14 @@ const STATS = [
 export default function Weekend3RecapPage() {
   return (
     <>
+      <ArticleJsonLd
+        headline="Weekend 3 Recap: Three Weeks. One Undefeated."
+        description="Texas is the last undefeated Top 25 team at 11-0. UCLA goes 3-0 at Globe Life including a 10-inning thriller over No. 4 MSU. Full BSI breakdown."
+        datePublished="2026-03-03"
+        url="/college-baseball/editorial/weekend-3-recap"
+        image="/images/og/cbb-weekend-3-recap.png"
+        sport="College Baseball"
+      />
       <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">

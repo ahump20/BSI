@@ -5,19 +5,20 @@ import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
-import type { Metadata } from 'next';
-import { ogImage } from '@/lib/metadata';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'SEC Opening Weekend Preview 2026: 13 Ranked Teams | Blaze Sports Intel',
-  description: '13 ranked teams. Texas and Oklahoma in year two of the SEC era. Riojas, Schlottman, Johnson, Sullivan lead the Friday night arms. The deepest conference in college baseball opens play.',
-  openGraph: {
-    title: 'SEC Baseball Opening Weekend 2026 | Blaze Sports Intel',
-    description: 'No other conference places 13 teams in the preseason top 25. The SEC opens 2026 with the strongest Friday night rotation in a decade.',
-    type: 'article',
-  
-    images: ogImage('/images/og/cbb-sec-opening-weekend.png')},
+const seoConfig = {
+  title: 'SEC Opening Weekend Preview 2026: 13 Ranked Teams',
+  description: '13 ranked teams. Texas and Oklahoma in year two of the SEC era. The deepest conference in college baseball opens play. Full series-by-series preview.',
+  datePublished: '2026-02-12',
+  slug: '/college-baseball/editorial/sec-opening-weekend',
+  image: '/images/og/cbb-sec-opening-weekend.png',
+  sport: 'College Baseball',
+  ogTitle: 'SEC Baseball Opening Weekend 2026 | Blaze Sports Intel',
 };
+
+export const metadata = editorialMetadata(seoConfig);
 
 const secMatchups = [
   { away: 'UC Davis', at: 'No. 3 Texas', date: 'Feb 13–15', capsule: 'The Longhorns open as Omaha favorites with a retooled roster. Robbins (Notre Dame), Becerra (Stanford), and Tinney fortify a lineup already built around Mendoza and Rodriguez. Riojas gets the Friday start.', watch: 'Transfer portal debuts' },
@@ -40,6 +41,7 @@ const storylines = [
 export default function SECOpeningWeekendPage() {
   return (
     <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
       <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">

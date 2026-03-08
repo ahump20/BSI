@@ -1,19 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
-import { ogImage } from '@/lib/metadata';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'West Virginia Mountaineers: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    'Randy Mazey has been at West Virginia for 14 years. He has built a program that is always competitive, occasionally dangerous, and never quite able to break through.',
-  openGraph: {
-    title: 'West Virginia Mountaineers: 2026 Season Preview',
-    description:
-      'Randy Mazey has been at West Virginia for 14 years. He has built a program that is always competitive, occasionally dangerous, and never quite able to break through.',
-  
-    images: ogImage('/images/og/cbb-west-virginia-2026.png')},
+const seoConfig = {
+  title: 'West Virginia Mountaineers 2026 Season Preview',
+  description: 'West Virginia Mountaineers 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big 12 predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/west-virginia-2026',
+  image: '/images/og/cbb-west-virginia-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'West Virginia Mountaineers — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'West Virginia',
@@ -184,5 +183,10 @@ const data: TeamPreviewData = {
 };
 
 export default function WestVirginia2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

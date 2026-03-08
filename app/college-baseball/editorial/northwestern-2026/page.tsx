@@ -1,19 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
-import { ogImage } from '@/lib/metadata';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Northwestern Wildcats: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    'Northwestern plays baseball the way it does everything — meticulously, with a plan, and against the grain of programs that have more of everything. Ben Greenspan is in year three.',
-  openGraph: {
-    title: 'Northwestern Wildcats: 2026 Season Preview',
-    description:
-      'Northwestern plays baseball the way it does everything — meticulously, with a plan, and against the grain of programs that have more of everything. Ben Greenspan is in year three.',
-  
-    images: ogImage('/images/og/cbb-northwestern-2026.png')},
+const seoConfig = {
+  title: 'Northwestern Wildcats 2026 Season Preview',
+  description: 'Northwestern Wildcats 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big Ten predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/northwestern-2026',
+  image: '/images/og/cbb-northwestern-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'Northwestern Wildcats — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'Northwestern',
@@ -177,5 +176,10 @@ const data: TeamPreviewData = {
 };
 
 export default function Northwestern2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

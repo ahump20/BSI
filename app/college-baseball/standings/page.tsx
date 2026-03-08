@@ -80,6 +80,21 @@ interface StandingsApiResponse {
   };
 }
 
+interface ConferenceStrengthEntry {
+  conference: string;
+  strength_index: number;
+  avg_woba: number;
+  avg_era: number;
+  rpi_avg: number;
+  is_power: number;
+}
+
+interface ConferenceStrengthResponse {
+  data: ConferenceStrengthEntry[];
+  total: number;
+  tier: string;
+}
+
 const seasonYear = new Date().getMonth() >= 8 ? new Date().getFullYear() + 1 : new Date().getFullYear();
 const currentMonth = new Date().getMonth(); // 0-indexed: Jan=0, Feb=1, ..., Jun=5
 const isInSeason = currentMonth >= 1 && currentMonth <= 5; // Feb through June
@@ -110,6 +125,27 @@ export default function CollegeBaseballStandingsPage() {
     }
     return false;
   }), [rankingsData]);
+
+  // Append API key if available so pro-tier users get all conferences
+  const [apiKey] = useState(() =>
+    typeof window !== 'undefined' ? localStorage.getItem('bsi-api-key') ?? '' : ''
+  );
+  const strengthUrl = apiKey
+    ? `/api/savant/conference-strength?key=${apiKey}`
+    : '/api/savant/conference-strength';
+
+  const { data: strengthData } = useSportData<ConferenceStrengthResponse>(
+    strengthUrl,
+    { refreshInterval: 600_000 }
+  );
+
+  const confStrength = useMemo(() => {
+    if (!strengthData?.data) return null;
+    return strengthData.data.find(c =>
+      c.conference.toLowerCase().includes(selectedConference.toLowerCase()) ||
+      selectedConference.toLowerCase().includes(c.conference.toLowerCase())
+    ) || null;
+  }, [strengthData, selectedConference]);
 
   const currentConf = allConferences.find((c) => c.id === selectedConference);
   const hasConferencePlay = standings.some((s) =>
@@ -231,6 +267,27 @@ export default function CollegeBaseballStandingsPage() {
                     <Badge variant="primary">Updated Daily</Badge>
                   )}
                 </div>
+                {confStrength && (
+                  <div className="flex flex-wrap gap-3 mt-3 pt-3 border-t border-border-subtle">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs text-text-tertiary">Strength</span>
+                      <span className={`text-sm font-mono font-semibold ${confStrength.strength_index >= 70 ? 'text-success' : confStrength.strength_index >= 50 ? 'text-burnt-orange' : 'text-text-secondary'}`}>
+                        {confStrength.strength_index.toFixed(1)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs text-text-tertiary">Avg ERA</span>
+                      <span className="text-sm font-mono text-text-primary">{confStrength.avg_era.toFixed(2)}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs text-text-tertiary">Avg wOBA</span>
+                      <span className="text-sm font-mono text-text-primary">{confStrength.avg_woba.toFixed(3)}</span>
+                    </div>
+                    {confStrength.is_power === 1 && (
+                      <Badge variant="primary" size="sm">Power Conference</Badge>
+                    )}
+                  </div>
+                )}
               </Card>
             </ScrollReveal>
 

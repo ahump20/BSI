@@ -7,7 +7,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { SkeletonTableRow } from '@/components/ui/Skeleton';
 import { ScrollReveal } from '@/components/cinematic';
-import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
+import { teamMetadata, getLogoUrl, teamNameToSlug } from '@/lib/data/team-metadata';
 import { formatTimestamp } from '@/lib/utils/timezone';
 
 // ---------------------------------------------------------------------------
@@ -40,15 +40,6 @@ interface EnrichedRankingsTableProps {
   preseasonFallback: RankedTeam[];
 }
 
-// ---------------------------------------------------------------------------
-// Team name → slug reverse-lookup (same as page.tsx)
-// ---------------------------------------------------------------------------
-
-const teamNameToSlug: Record<string, string> = {};
-for (const [slug, meta] of Object.entries(teamMetadata)) {
-  teamNameToSlug[meta.name.toLowerCase()] = slug;
-  teamNameToSlug[meta.shortName.toLowerCase()] = slug;
-}
 
 // ---------------------------------------------------------------------------
 // Rank change indicator

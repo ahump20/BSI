@@ -102,6 +102,14 @@ function getActiveSports(): SportEndpoint[] {
   return sports;
 }
 
+/** Client-only wrapper: returns [] on first render to avoid hydration mismatch,
+ *  then resolves active sports after mount. */
+function useActiveSports(): SportEndpoint[] {
+  const [sports, setSports] = useState<SportEndpoint[]>([]);
+  useEffect(() => { setSports(getActiveSports()); }, []);
+  return sports;
+}
+
 // ────────────────────────────────────────
 // Normalization — handles all response shapes
 // ────────────────────────────────────────
@@ -302,7 +310,7 @@ export function HomeLiveScores({ onCountsChange }: HomeLiveScoresProps = {}) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [filter, setFilter] = useState<SportFilter>('all');
-  const [activeSports] = useState(getActiveSports);
+  const activeSports = useActiveSports();
   const [lastFetched, setLastFetched] = useState<Date | null>(null);
 
   useEffect(() => {

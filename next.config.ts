@@ -9,6 +9,11 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   output: 'export',
 
+  // Turbopack needs explicit root when building from staging dir (iCloud workaround)
+  turbopack: {
+    root: process.cwd(),
+  },
+
   // Static export settings
   images: {
     unoptimized: true,

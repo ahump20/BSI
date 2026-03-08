@@ -14,7 +14,8 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { preseason2026 } from '@/lib/data/preseason-2026';
 import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
-import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
+import { teamMetadata, getLogoUrl, teamNameToSlug } from '@/lib/data/team-metadata';
+import { normalizeRankings, type RankedTeam, type ESPNPoll, type RankingsRawResponse } from '@/lib/utils/rankings';
 import { HubHero } from '@/components/college-baseball/HubHero';
 import { LiveScoreStrip } from '@/components/college-baseball/LiveScoreStrip';
 import { EditorialFeed } from '@/components/college-baseball/EditorialFeed';
@@ -30,20 +31,6 @@ import type { ScheduleGame } from '@/components/college-baseball/ScheduleGameCar
 import { PlayersTabContent } from '@/components/college-baseball/PlayersTabContent';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 
-interface RankedTeam {
-  rank: number;
-  team: string;
-  conference: string;
-  record?: string;
-  slug?: string;
-}
-
-/** Reverse-lookup: team display name → route slug, indexed by both full name and shortName. */
-const teamNameToSlug: Record<string, string> = {};
-for (const [slug, meta] of Object.entries(teamMetadata)) {
-  teamNameToSlug[meta.name.toLowerCase()] = slug;
-  teamNameToSlug[meta.shortName.toLowerCase()] = slug;
-}
 
 interface StandingsTeam {
   teamName: string;
@@ -69,54 +56,6 @@ interface TeamListItem {
 
 type TabType = 'rankings' | 'standings' | 'schedule' | 'teams' | 'players';
 
-/** ESPN poll entry — nested under rankings[0].ranks */
-interface ESPNRankEntry {
-  current: number;
-  team: { name: string; location?: string; nickname?: string };
-  recordSummary?: string;
-}
-
-interface ESPNPoll {
-  name: string;
-  ranks: ESPNRankEntry[];
-}
-
-/** Normalize ESPN poll format OR flat RankedTeam[] into a consistent shape. */
-function normalizeRankings(raw: { rankings?: ESPNPoll[] | RankedTeam[]; meta?: { lastUpdated?: string; dataSource?: string } }): {
-  teams: RankedTeam[];
-  pollName: string;
-} {
-  const rankings = raw?.rankings;
-  if (!rankings?.length) return { teams: [], pollName: '' };
-
-  // ESPN wraps polls in { rankings: [{ name, ranks: [...] }] }
-  const first = rankings[0] as unknown as Record<string, unknown>;
-  if ('ranks' in first && Array.isArray(first.ranks)) {
-    const poll = first as unknown as ESPNPoll;
-    return {
-      pollName: poll.name || '',
-      teams: poll.ranks.map((e) => {
-        const teamName = e.team?.location ? `${e.team.location} ${e.team.name}` : e.team?.nickname || e.team?.name || 'Unknown';
-        return {
-          rank: e.current,
-          team: teamName,
-          conference: '',
-          record: e.recordSummary || '',
-          slug: teamNameToSlug[teamName.toLowerCase()],
-        };
-      }),
-    };
-  }
-
-  // Already flat RankedTeam[] (Highlightly or normalized worker response)
-  return {
-    teams: (rankings as RankedTeam[]).map(t => ({
-      ...t,
-      slug: t.slug || teamNameToSlug[t.team.toLowerCase()],
-    })),
-    pollName: '',
-  };
-}
 
 /** Preseason fallback — derived from preseason-2026.ts, never hardcoded. Top 25 only. */
 const preseasonRankings: RankedTeam[] = Object.entries(preseason2026)
@@ -245,10 +184,9 @@ export default function CollegeBaseballPage() {
 
   useEffect(() => { debouncedApiSearch(searchQuery); }, [searchQuery, debouncedApiSearch]);
 
-  // Rankings — fetched when rankings tab is active
-  const rankingsUrl = activeTab === 'rankings' ? '/api/college-baseball/rankings' : null;
+  // Rankings — always fetched (shared by QuickRankings strip + rankings tab)
   const { data: rankingsRaw, loading: rankingsLoading, error: rankingsError, retry: retryRankings } =
-    useSportData<{ rankings?: ESPNPoll[] | RankedTeam[]; previousRankings?: Record<string, unknown> | null; meta?: { lastUpdated?: string; dataSource?: string } }>(rankingsUrl);
+    useSportData<RankingsRawResponse>('/api/college-baseball/rankings');
   const normalized = useMemo(() => normalizeRankings(rankingsRaw ?? {}), [rankingsRaw]);
   const rankings = normalized.teams.length ? normalized.teams : preseasonRankings;
   const isLiveRankings = normalized.teams.length > 0;
@@ -316,7 +254,7 @@ export default function CollegeBaseballPage() {
     hasAutoAdvanced.current = true;
 
     async function findNextGameDay() {
-      for (let i = 0; i <= 7; i++) {
+      for (let i = 1; i <= 7; i++) {
         const date = getDateOffset(i);
         try {
           const res = await fetch(`/api/college-baseball/schedule?date=${date}`);
@@ -388,7 +326,7 @@ export default function CollegeBaseballPage() {
         <EditorialFeed />
 
         {/* Quick Rankings — Top 10 always visible */}
-        <QuickRankings />
+        <QuickRankings rankings={rankings} loading={rankingsLoading} />
 
         {/* Social Intelligence Feed — Reddit + Twitter signals */}
         <Section padding="md">
@@ -406,12 +344,12 @@ export default function CollegeBaseballPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  { label: 'BSI Savant', desc: 'Advanced metrics for every D1 player', href: '/college-baseball/savant', icon: 'M9 19v-6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v6a2 2 0 0 1-2 2h14a2 2 0 0 1-2-2zm0 0V9a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v10m-6 0a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2m0 0V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2z' },
+                  { label: 'BSI Savant', desc: 'Advanced metrics for every D1 player', href: '/college-baseball/savant', icon: 'M18 20V10M12 20V4M6 20v-6' },
                   { label: 'Transfer Portal', desc: 'Track every portal entry in real time', href: '/college-baseball/transfer-portal', icon: 'M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4' },
                   { label: 'Editorial', desc: 'Weekly recaps and previews', href: '/college-baseball/editorial', icon: 'M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 1 2-2V9a2 2 0 0 1-2-2h-2' },
                   { label: 'Compare', desc: 'Head-to-head team matchups', href: '/college-baseball/compare', icon: 'M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z' },
                 ].map((feature) => (
-                  <a
+                  <Link
                     key={feature.href}
                     href={feature.href}
                     className="flex flex-col gap-2 p-3 bg-surface-light border border-border rounded-xl hover:border-burnt-orange/30 transition-all group"
@@ -423,7 +361,7 @@ export default function CollegeBaseballPage() {
                       <div className="text-xs font-semibold text-text-primary group-hover:text-burnt-orange transition-colors">{feature.label}</div>
                       <div className="text-[10px] text-text-muted leading-tight mt-0.5">{feature.desc}</div>
                     </div>
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>

@@ -1,19 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
-import { ogImage } from '@/lib/metadata';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Washington Huskies: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    'Washington went 29-28 overall in 2025 but was far more competitive in Big Ten play (17-13) than the overall record suggests. Eddie Smith is building something in Seattle.',
-  openGraph: {
-    title: 'Washington Huskies: 2026 Season Preview',
-    description:
-      'Washington went 29-28 overall in 2025 but was far more competitive in Big Ten play (17-13) than the overall record suggests. Eddie Smith is building something in Seattle.',
-  
-    images: ogImage('/images/og/cbb-washington-2026.png')},
+const seoConfig = {
+  title: 'Washington Huskies 2026 Season Preview',
+  description: 'Washington Huskies 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big Ten predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/washington-2026',
+  image: '/images/og/cbb-washington-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'Washington Huskies — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'Washington',
@@ -184,5 +183,10 @@ const data: TeamPreviewData = {
 };
 
 export default function Washington2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

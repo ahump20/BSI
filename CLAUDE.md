@@ -121,7 +121,7 @@ This is what actually exists in Cloudflare right now. Use `wrangler` or the Clou
 
 **Note:** `bsi-savant-compute` and `bsi-cbb-analytics` both write to `cbb_batting_advanced`/`cbb_pitching_advanced`. If metrics change unexpectedly overnight, check both workers.
 
-### D1 Databases (7)
+### D1 Databases (6)
 
 | Name | Size | Purpose |
 |------|------|---------|
@@ -130,7 +130,6 @@ This is what actually exists in Cloudflare right now. Use `wrangler` or the Clou
 | `bsi-game-db` | 3.3 MB | Live/recent game data (sportradar-ingest) |
 | `bsi-events-db` | 1.6 MB | Behavioral analytics (bsi-analytics-events) |
 | `cbb-api-db` | 1.0 MB | College baseball API (cbb-api + cbb-api-sync) |
-| `bsi-fanbase-db` | 197 KB | Fan sentiment |
 | `blazecraft-leaderboards` | 45 KB | Leaderboards (mini-games-api) |
 
 ### KV Namespaces (15)
@@ -176,7 +175,6 @@ app/                    # Next.js App Router pages
   intel/                # Game briefs, team dossiers, weekly brief
   models/               # HAV-F, monte-carlo, win-probability, data-quality
   search/               # Site search
-  transfer-portal/      # Transfer portal tracker
   vision-ai/            # Vision AI analysis
   nil-valuation/        # NIL analytics
   arcade/               # Browser games
@@ -230,7 +228,8 @@ docs/                   # Infrastructure and operations docs
 npm run dev              # Next.js dev server
 npm run dev:worker       # Worker dev server (wrangler)
 npm run dev:hybrid       # Both in parallel
-npm run build            # Static export to out/
+npm run build            # Static export to out/ (builds from /var/tmp to avoid iCloud eviction)
+npm run build:local      # Build in-place (faster but may fail on iCloud Drive)
 npm run test             # Vitest (watch mode)
 npm run test:all         # Vitest run (no watch) — does NOT run Playwright tests
 npm run test:workers     # Vitest targeting tests/workers/ only
@@ -323,11 +322,12 @@ Live scores: 15–30s. Standings: 60s. Final games: 5 min. Rosters: 1 hour.
 ## Gotchas
 
 - Repo lives on iCloud Drive — `git status`, pre-commit hooks, and ripgrep searches may hang. Use `--no-verify` on commits if hooks stall. If git hangs, check for stale `.git/index.lock` and remove it.
+- iCloud evicts `.next/` files mid-build when generating 1500+ pages. `npm run build` uses `scripts/build-safe.sh` which rsyncs to `/var/tmp/bsi-build-staging`, hard-links `node_modules`, builds there, and copies `out/` back. Turbopack ignores `distDir` config, so this is the only reliable workaround.
 - `next.config.ts`: skips TypeScript build errors, sets `trailingSlash: true` (Cloudflare Pages needs this), and `images: { unoptimized: true }` (no Next.js image optimization)
 - `tsconfig.json` excludes `workers/**/*` — workers have their own configs. `functions/` also has its own `tsconfig.functions.json`. A `tsconfig.strict.json` exists for stricter checks.
 - `npm run test:all` (Vitest) does NOT run Playwright tests. Route smoke tests, auth/checkout flows, and accessibility tests are Playwright-only — run them separately with `test:routes`, `test:a11y`, or directly via Playwright.
 - ESPN dates labeled UTC are actually ET — always verify timezone
 - `external/` projects have their own CLAUDE.md and build systems
 - Husky handles git hooks via `prepare` script
-- `deploy:production` goes through an intermediate `deploy:stage` step (rsync to `/tmp/bsi-deploy-out`) before uploading to Cloudflare Pages — this matters if the `/tmp` dir is missing or stale
+- `deploy:production` goes through `build` (safe build) → `deploy:stage` (rsync to `/var/tmp/bsi-deploy-out`) → wrangler upload
 - Two analytics cron workers (`bsi-savant-compute` every 6h, `bsi-cbb-analytics` daily) both write advanced metrics tables — check both when debugging unexpected metric changes

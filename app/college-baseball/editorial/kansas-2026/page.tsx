@@ -1,19 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
-import { ogImage } from '@/lib/metadata';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Kansas Jayhawks: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    'Forty-two wins. An NCAA Regional host. Big 12 Coach of the Year. Kansas baseball went from afterthought to force in a single season, and Dan Fitzgerald is just getting started.',
-  openGraph: {
-    title: 'Kansas Jayhawks: 2026 Season Preview',
-    description:
-      'Forty-two wins. An NCAA Regional host. Big 12 Coach of the Year. Kansas baseball went from afterthought to force in a single season, and Dan Fitzgerald is just getting started.',
-  
-    images: ogImage('/images/og/cbb-kansas-2026.png')},
+const seoConfig = {
+  title: 'Kansas Jayhawks 2026 Season Preview',
+  description: 'Kansas Jayhawks 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big 12 predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/kansas-2026',
+  image: '/images/og/cbb-kansas-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'Kansas Jayhawks — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'Kansas',
@@ -182,5 +181,10 @@ const data: TeamPreviewData = {
 };
 
 export default function Kansas2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

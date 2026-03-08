@@ -1,19 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
-import { ogImage } from '@/lib/metadata';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Cincinnati Bearcats: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    'The Bearcats were an AAC force for a decade. Two years into the Big 12, they are learning a different kind of baseball — deeper rotations, thicker lineups, and no easy weekends.',
-  openGraph: {
-    title: 'Cincinnati Bearcats: 2026 Season Preview',
-    description:
-      'The Bearcats were an AAC force for a decade. Two years into the Big 12, they are learning a different kind of baseball — deeper rotations, thicker lineups, and no easy weekends.',
-  
-    images: ogImage('/images/og/cbb-cincinnati-2026.png')},
+const seoConfig = {
+  title: 'Cincinnati Bearcats 2026 Season Preview',
+  description: 'Cincinnati Bearcats 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big 12 predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/cincinnati-2026',
+  image: '/images/og/cbb-cincinnati-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'Cincinnati Bearcats — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'Cincinnati',
@@ -177,5 +176,10 @@ const data: TeamPreviewData = {
 };
 
 export default function Cincinnati2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

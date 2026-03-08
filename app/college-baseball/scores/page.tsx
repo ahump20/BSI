@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
@@ -224,11 +224,20 @@ export default function CollegeBaseballScoresPage() {
   const [mounted, setMounted] = useState(false);
   const [selectedConference, setSelectedConference] = useState('All');
   const [liveGamesDetected, setLiveGamesDetected] = useState(false);
+  const [isYesterdayFallback, setIsYesterdayFallback] = useState(false);
 
   // Hydration-safe: only compute date-dependent values on the client
   useEffect(() => {
     setMounted(true);
-    setSelectedDate(getDateOffset(0));
+    const initialDate = getDateOffset(0);
+    setSelectedDate(initialDate);
+
+    // Read conference filter from URL param
+    const params = new URLSearchParams(window.location.search);
+    const confParam = params.get('conf');
+    if (confParam && conferences.includes(confParam)) {
+      setSelectedConference(confParam);
+    }
   }, []);
 
   const confParam = selectedConference !== 'All' ? `&conference=${selectedConference}` : '';
@@ -257,6 +266,53 @@ export default function CollegeBaseballScoresPage() {
 
   // Sync live detection to enable auto-refresh
   useEffect(() => { setLiveGamesDetected(hasLiveGames); }, [hasLiveGames]);
+
+  // Yesterday fallback: when today has zero games, show yesterday instead
+  useEffect(() => {
+    if (
+      mounted &&
+      !loading &&
+      !error &&
+      games.length === 0 &&
+      selectedDate === getDateOffset(0) &&
+      !isYesterdayFallback
+    ) {
+      setIsYesterdayFallback(true);
+      setSelectedDate(getDateOffset(-1));
+    }
+  }, [mounted, loading, error, games.length, selectedDate, isYesterdayFallback]);
+
+  // Manual date selection resets fallback
+  const handleDateSelect = useCallback((date: string) => {
+    setIsYesterdayFallback(false);
+    setSelectedDate(date);
+  }, []);
+
+  // Persist conference filter in URL
+  useEffect(() => {
+    if (!mounted) return;
+    const url = new URL(window.location.href);
+    if (selectedConference !== 'All') {
+      url.searchParams.set('conf', selectedConference);
+    } else {
+      url.searchParams.delete('conf');
+    }
+    history.replaceState(null, '', url.toString());
+  }, [selectedConference, mounted]);
+
+  // Count games per conference
+  const conferenceCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const game of games) {
+      const homeConf = game.homeTeam.conference;
+      const awayConf = game.awayTeam.conference;
+      if (homeConf) counts[homeConf] = (counts[homeConf] || 0) + 1;
+      if (awayConf && awayConf !== homeConf) counts[awayConf] = (counts[awayConf] || 0) + 1;
+    }
+    return counts;
+  }, [games]);
+
+  const liveCount = useMemo(() => games.filter((g) => g.status === 'live').length, [games]);
 
   // Date navigation — computed client-side only to avoid hydration mismatch
   const dateOptions = useMemo(() => mounted ? [
@@ -329,7 +385,7 @@ export default function CollegeBaseballScoresPage() {
             {/* Date Selector */}
             <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
               <button
-                onClick={() => setSelectedDate(getDateOffset(-3))}
+                onClick={() => handleDateSelect(getDateOffset(-3))}
                 className="p-2 text-text-tertiary hover:text-text-primary transition-colors"
                 aria-label="Previous days"
               >
@@ -351,7 +407,7 @@ export default function CollegeBaseballScoresPage() {
                   <FilterPill
                     key={option.offset}
                     active={selectedDate === dateValue}
-                    onClick={() => setSelectedDate(dateValue)}
+                    onClick={() => handleDateSelect(dateValue)}
                     uppercase={false}
                     className="whitespace-nowrap"
                   >
@@ -361,7 +417,7 @@ export default function CollegeBaseballScoresPage() {
               })}
 
               <button
-                onClick={() => setSelectedDate(getDateOffset(3))}
+                onClick={() => handleDateSelect(getDateOffset(3))}
                 className="p-2 text-text-tertiary hover:text-text-primary transition-colors"
                 aria-label="Next days"
               >
@@ -379,17 +435,40 @@ export default function CollegeBaseballScoresPage() {
 
             {/* Conference Filter */}
             <div className="flex flex-wrap gap-2 mb-8">
-              {conferences.map((conf) => (
-                <FilterPill
-                  key={conf}
-                  active={selectedConference === conf}
-                  onClick={() => setSelectedConference(conf)}
-                  aria-pressed={selectedConference === conf}
-                >
-                  {conf}
-                </FilterPill>
-              ))}
+              {conferences.map((conf) => {
+                const count = conf === 'All' ? games.length : (conferenceCounts[conf] || 0);
+                return (
+                  <FilterPill
+                    key={conf}
+                    active={selectedConference === conf}
+                    onClick={() => setSelectedConference(conf)}
+                    aria-pressed={selectedConference === conf}
+                  >
+                    {conf}{count > 0 ? ` (${count})` : ''}
+                  </FilterPill>
+                );
+              })}
             </div>
+
+            {/* Game Status Header */}
+            {!loading && !error && games.length > 0 && (
+              <div className="mb-6 flex items-center gap-2 text-sm text-text-secondary">
+                {isYesterdayFallback ? (
+                  <span className="flex items-center gap-2">
+                    <span className="text-text-tertiary">Yesterday&apos;s Results</span>
+                    <span className="text-burnt-orange font-semibold">{games.length} {games.length === 1 ? 'game' : 'games'}</span>
+                  </span>
+                ) : hasLiveGames ? (
+                  <span className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
+                    <span className="text-success font-semibold">{liveCount} live</span>
+                    <span className="text-text-tertiary">&middot; {games.length} total {games.length === 1 ? 'game' : 'games'} today</span>
+                  </span>
+                ) : (
+                  <span>{games.length} {games.length === 1 ? 'game' : 'games'}</span>
+                )}
+              </div>
+            )}
 
             {/* Games Grid */}
             {loading ? (

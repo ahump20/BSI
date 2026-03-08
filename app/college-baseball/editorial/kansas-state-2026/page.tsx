@@ -1,19 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
-import { ogImage } from '@/lib/metadata';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Kansas State Wildcats: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    'Pete Hughes came to Manhattan to build something that has rarely existed here — a competitive Big 12 baseball program. Three years in, the foundation is visible.',
-  openGraph: {
-    title: 'Kansas State Wildcats: 2026 Season Preview',
-    description:
-      'Pete Hughes came to Manhattan to build something that has rarely existed here — a competitive Big 12 baseball program. Three years in, the foundation is visible.',
-  
-    images: ogImage('/images/og/cbb-kansas-state-2026.png')},
+const seoConfig = {
+  title: 'Kansas State Wildcats 2026 Season Preview',
+  description: 'Kansas State Wildcats 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big 12 predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/kansas-state-2026',
+  image: '/images/og/cbb-kansas-state-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'Kansas State Wildcats — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'Kansas State',
@@ -177,5 +176,10 @@ const data: TeamPreviewData = {
 };
 
 export default function KansasState2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

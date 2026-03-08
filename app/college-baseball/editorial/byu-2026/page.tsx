@@ -1,19 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
-import { ogImage } from '@/lib/metadata';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'BYU Cougars: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    'Two years into the Big 12 and the Cougars are still searching for a foothold. Trent Pratt inherited a program with no conference infrastructure in the power leagues.',
-  openGraph: {
-    title: 'BYU Cougars: 2026 Season Preview',
-    description:
-      'Two years into the Big 12 and the Cougars are still searching for a foothold. Trent Pratt inherited a program with no conference infrastructure in the power leagues.',
-  
-    images: ogImage('/images/og/cbb-byu-2026.png')},
+const seoConfig = {
+  title: 'BYU Cougars 2026 Season Preview',
+  description: 'BYU Cougars 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big 12 predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/byu-2026',
+  image: '/images/og/cbb-byu-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'BYU Cougars — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'BYU',
@@ -177,5 +176,10 @@ const data: TeamPreviewData = {
 };
 
 export default function BYU2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

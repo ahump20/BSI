@@ -1,19 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
-import { ogImage } from '@/lib/metadata';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Arizona Wildcats: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    'Four national titles. Nineteen trips to Omaha. The richest baseball tradition of any school now playing in the Big 12. Chip Hale enters Year 3 with a program still finding its footing.',
-  openGraph: {
-    title: 'Arizona Wildcats: 2026 Season Preview',
-    description:
-      'Four national titles. Nineteen trips to Omaha. The richest baseball tradition of any school now playing in the Big 12. Chip Hale enters Year 3 with a program still finding its footing.',
-  
-    images: ogImage('/images/og/cbb-arizona-2026.png')},
+const seoConfig = {
+  title: 'Arizona Wildcats 2026 Season Preview',
+  description: 'Arizona Wildcats 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big 12 predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/arizona-2026',
+  image: '/images/og/cbb-arizona-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'Arizona Wildcats — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'Arizona',
@@ -183,5 +182,10 @@ const data: TeamPreviewData = {
 };
 
 export default function Arizona2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

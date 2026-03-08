@@ -13,9 +13,11 @@ Disallow: /*-demo.html
 Disallow: /*-optimized.html
 Disallow: /offline.html
 Disallow: /api/
+Disallow: /auth/
 Disallow: /checkout/
-Disallow: /dashboard/admin/
+Disallow: /dashboard/
 Disallow: /settings/
+Disallow: /status/
 
 # Allow AI crawlers for AI Search
 User-agent: GPTBot

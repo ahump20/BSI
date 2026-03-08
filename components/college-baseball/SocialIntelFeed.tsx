@@ -9,7 +9,8 @@
  * Data source: GET /api/college-baseball/social-intel (KV-cached, 15 min TTL)
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import Link from 'next/link';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -346,9 +347,9 @@ export function SocialIntelFeed() {
     return data.signals.filter(s => s.signal_type === type).length;
   }, [data]);
 
-  const visibleSignals = data
+  const visibleSignals = useMemo(() => data
     ? (activeTab === 'all' ? data.signals : data.signals.filter(s => s.signal_type === activeTab))
-    : [];
+    : [], [data, activeTab]);
 
   return (
     <div className="rounded-2xl border border-border bg-[#0D0D0D] overflow-hidden">
@@ -427,13 +428,13 @@ export function SocialIntelFeed() {
                 { label: 'Live Scores', href: '/college-baseball/scores' },
                 { label: 'Transfer Portal', href: '/college-baseball/transfer-portal' },
               ].map((link) => (
-                <a
+                <Link
                   key={link.href}
                   href={link.href}
                   className="px-3 py-1.5 text-xs font-medium bg-surface border border-border rounded-lg text-text-secondary hover:text-[#BF5700] hover:border-[#BF5700]/30 transition-all"
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
             </div>
           </div>

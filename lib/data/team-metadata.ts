@@ -2671,3 +2671,10 @@ export const teamMetadata: Record<string, TeamMeta> = {
     location: { stadium: 'Bannerwood Park', city: 'Bellevue', state: 'WA' },
   },
 };
+
+/** Reverse-lookup: team display name → route slug, indexed by both full name and shortName. */
+export const teamNameToSlug: Record<string, string> = {};
+for (const [slug, meta] of Object.entries(teamMetadata)) {
+  teamNameToSlug[meta.name.toLowerCase()] = slug;
+  teamNameToSlug[meta.shortName.toLowerCase()] = slug;
+}
