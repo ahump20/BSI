@@ -39,7 +39,7 @@ rm -rf "$BUILD_DIR/node_modules/.ignored" 2>/dev/null || true
 
 echo "→ Building from $BUILD_DIR"
 cd "$BUILD_DIR"
-npx next build
+./node_modules/.bin/next build
 
 # Post-build: copy functions into output, generate sitemap
 rm -rf "$BUILD_DIR/out/functions"
