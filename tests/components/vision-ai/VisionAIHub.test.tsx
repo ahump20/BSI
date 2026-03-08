@@ -125,7 +125,7 @@ describe('Vision AI Hub Page', () => {
     const hrefs = links.map((a) => a.getAttribute('href'));
 
     expect(hrefs).toContain('/mlb/abs');
-    expect(hrefs).toContain('/vision-ai-intelligence');
+    // /vision-ai-intelligence removed — orphaned TensorFlow experiment deleted
     expect(hrefs).toContain('/college-baseball');
   });
 

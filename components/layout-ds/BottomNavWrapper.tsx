@@ -25,15 +25,15 @@ const MORE_ITEMS = [
   { label: 'Rankings', href: '/college-baseball/rankings', icon: Trophy },
   { label: 'Conferences', href: '/college-baseball/conferences', icon: Award },
   { label: 'Compare', href: '/college-baseball/compare', icon: BarChart3 },
-  { label: 'Transfer Portal', href: '/transfer-portal', icon: Trophy },
+  { label: 'Transfer Portal', href: '/college-baseball/transfer-portal', icon: Trophy },
   { label: 'Intel', href: '/intel', icon: Target },
+  { label: 'Analytics', href: '/analytics', icon: BarChart3 },
   { label: 'NIL Valuation', href: '/nil-valuation', icon: Trophy },
-  { label: 'Research', href: '/research', icon: BookOpen },
   { label: 'Models', href: '/models', icon: BarChart3 },
   { label: 'Arcade', href: '/arcade', icon: Gamepad2 },
+  { label: 'Settings', href: '/settings', icon: Circle },
   { label: 'About', href: '/about', icon: BookOpen },
   { label: 'Status', href: '/status', icon: Circle },
-  { label: 'Dashboard', href: '/dashboard', icon: Target },
 ];
 
 /**

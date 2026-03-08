@@ -183,7 +183,7 @@ const NAV_GROUPS: readonly NavGroup[] = [
     items: [
       { href: '/college-baseball/editorial', label: 'Editorial', icon: <IconPen /> },
       { href: '/intel', label: 'Intel', icon: <IconChart /> },
-      { href: '/transfer-portal', label: 'Transfer Portal', icon: <IconActivity /> },
+      { href: '/college-baseball/transfer-portal', label: 'Transfer Portal', icon: <IconActivity /> },
     ],
   },
   {

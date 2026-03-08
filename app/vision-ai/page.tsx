@@ -721,26 +721,6 @@ export default function VisionAIPage() {
               </ScrollReveal>
 
               <ScrollReveal delay={120}>
-                <Link href="/vision-ai-intelligence" className="block group">
-                  <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
-                    <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <Badge variant="info" size="sm" className="mb-3">Interactive Tool</Badge>
-                    <h3 className="text-text-primary font-semibold mb-2">Real-Time Pose Estimation</h3>
-                    <p className="text-text-tertiary text-sm mb-4">
-                      Try TensorFlow.js pose estimation in your browser — the same class of technology
-                      that powers Hawk-Eye skeletal tracking.
-                    </p>
-                    <span className="text-burnt-orange text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
-                      Launch Tool
-                      <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M5 12h14M12 5l7 7-7 7" />
-                      </svg>
-                    </span>
-                  </Card>
-                </Link>
-              </ScrollReveal>
-
-              <ScrollReveal delay={180}>
                 <Link href="/college-baseball" className="block group">
                   <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
                     <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />

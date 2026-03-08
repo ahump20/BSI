@@ -213,7 +213,7 @@ const FEATURES: FeatureItem[] = [
   {
     label: 'Transfer Portal',
     description: 'Track who is moving, where, and what it means.',
-    href: '/transfer-portal',
+    href: '/college-baseball/transfer-portal',
     icon: (
       <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5">
         <path d="M16 3h5v5M14 10l7-7M8 21H3v-5M10 14l-7 7" />

@@ -60,7 +60,7 @@ export function Footer() {
             <ul className="space-y-2">
               <li><Link href="/college-baseball/savant" className={footerLink}>BSI Savant</Link></li>
               <li><Link href="/scores" className={footerLink}>Live Scores</Link></li>
-              <li><Link href="/college-baseball/savant" className={footerLink}>BSI Savant</Link></li>
+              <li><Link href="/analytics" className={footerLink}>Analytics</Link></li>
               <li><Link href="/intel" className={footerLink}>Intelligence</Link></li>
               <li><Link href="/models" className={footerLink}>Models</Link></li>
               <li><Link href="/glossary" className={footerLink}>Glossary</Link></li>
@@ -71,7 +71,7 @@ export function Footer() {
             <h4 className={sectionTitle}>Content</h4>
             <ul className="space-y-2">
               <li><Link href="/college-baseball/editorial" className={footerLink}>Editorial</Link></li>
-              <li><Link href="/transfer-portal" className={footerLink}>Transfer Portal</Link></li>
+              <li><Link href="/college-baseball/transfer-portal" className={footerLink}>Transfer Portal</Link></li>
               <li><Link href="/nil-valuation" className={footerLink}>NIL Valuation</Link></li>
               <li><Link href="/blog-post-feed" className={footerLink}>Blog</Link></li>
               <li><Link href="/coverage" className={footerLink}>Coverage</Link></li>
