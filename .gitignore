@@ -18,3 +18,4 @@ tests/resume-quality.spec.ts-snapshots/
 playwright-report/
 test-results/
 pnpm-lock.yaml
+var/
