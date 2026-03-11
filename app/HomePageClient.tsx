@@ -295,9 +295,9 @@ function FeatureShowcase() {
   const compactFeatures = FEATURES.filter(f => !f.hero);
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 relative" style={{ background: 'var(--surface-dugout)' }}>
+    <section className="py-16 px-4 sm:px-6 lg:px-8 relative surface-deep accent-glow-warm-right">
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full opacity-[0.03]"
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full opacity-[0.04]"
           style={{ background: 'radial-gradient(ellipse, #BF5700, transparent 70%)' }}
         />
       </div>
@@ -604,10 +604,12 @@ export function HomePageClient() {
         <SavantPreviewStrip />
       </DataErrorBoundary>
 
+      {/* ─── Section Break ─── */}
+      <div className="section-break py-6" aria-hidden="true"><span className="section-break-diamond" /></div>
+
       {/* ─── 4. Sports Hub — Our Coverage (redesigned layout) ─── */}
       <section
-        className="py-16 px-4 sm:px-6 lg:px-8 relative"
-        style={{ borderTop: '1px solid var(--border-vintage)' }}
+        className="py-16 px-4 sm:px-6 lg:px-8 relative surface-lifted accent-glow-warm-left"
       >
         <div className="max-w-6xl mx-auto relative z-10">
           <ScrollReveal direction="up">
@@ -744,26 +746,31 @@ export function HomePageClient() {
         </div>
       </section>
 
+      {/* ─── Section Break ─── */}
+      <div className="section-break py-6" aria-hidden="true"><span className="section-break-diamond" /></div>
+
       {/* ─── 5. Feature Showcase — platform tools ─── */}
       <FeatureShowcase />
 
       {/* ─── 6. Ask BSI — AI-powered question card ─── */}
-      <DataErrorBoundary name="Ask BSI" compact>
-        <AskBSI />
-      </DataErrorBoundary>
+      <div className="surface-lifted">
+        <div className="section-break py-6" aria-hidden="true"><span className="section-break-diamond" /></div>
+        <DataErrorBoundary name="Ask BSI" compact>
+          <AskBSI />
+        </DataErrorBoundary>
+      </div>
 
       {/* ─── 7. Editorial Feed (D1-backed) ─── */}
       <DataErrorBoundary name="Editorial">
         <EditorialPreview />
       </DataErrorBoundary>
 
+      {/* ─── Section Break ─── */}
+      <div className="section-break py-6" aria-hidden="true"><span className="section-break-diamond" /></div>
+
       {/* ─── 8. Trending Intel Feed ─── */}
       <section
-        className="py-14 px-4 sm:px-6 lg:px-8"
-        style={{
-          background: 'var(--surface-scoreboard)',
-          borderTop: '1px solid var(--border-vintage)',
-        }}
+        className="py-14 px-4 sm:px-6 lg:px-8 relative surface-lifted accent-glow-cool-center"
       >
         <div className="max-w-5xl mx-auto">
           <ScrollReveal direction="up">
@@ -782,6 +789,9 @@ export function HomePageClient() {
           </ScrollReveal>
         </div>
       </section>
+
+      {/* ─── Section Break ─── */}
+      <div className="section-break py-6" aria-hidden="true"><span className="section-break-diamond" /></div>
 
       {/* ─── 9. Garrido + Austin Quote — elevated with B watermark ─── */}
       <section
@@ -873,8 +883,11 @@ export function HomePageClient() {
         </div>
       </section>
 
+      {/* ─── Section Break ─── */}
+      <div className="section-break py-6" aria-hidden="true"><span className="section-break-diamond" /></div>
+
       {/* ─── 10. CTA — with shield logo + slogan ─── */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      <section className="surface-lifted py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         <HeroGlow shape="60% 50%" position="50% 40%" intensity={0.04} />
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(191,87,0,0.1)] to-transparent" />
         <div className="max-w-4xl mx-auto text-center relative z-10">

@@ -796,6 +796,69 @@ textarea:focus-visible,
   margin: 1.5rem 0;
 }
 
+/* Section break — decorative diamond divider between homepage sections */
+.section-break {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 0 1rem;
+  max-width: 72rem;
+  margin: 0 auto;
+}
+.section-break::before,
+.section-break::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(191, 87, 0, 0.18) 30%, rgba(191, 87, 0, 0.18) 70%, transparent);
+}
+.section-break .section-break-diamond {
+  width: 6px;
+  height: 6px;
+  transform: rotate(45deg);
+  background: var(--bsi-primary);
+  opacity: 0.35;
+  margin: 0 12px;
+  flex-shrink: 0;
+}
+
+/* Lifted surface — slightly lighter section background for visual rhythm */
+.surface-lifted {
+  background: var(--surface-press-box);
+}
+.surface-deep {
+  background: var(--surface-scoreboard);
+}
+
+/* Section accent glows — atmospheric directional lighting */
+.accent-glow-warm-left::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 40%;
+  background: radial-gradient(ellipse at 0% 50%, rgba(191, 87, 0, 0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+.accent-glow-warm-right::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 40%;
+  background: radial-gradient(ellipse at 100% 50%, rgba(191, 87, 0, 0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+.accent-glow-cool-center::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 30%, rgba(75, 156, 211, 0.03) 0%, transparent 60%);
+  pointer-events: none;
+}
+
 /* Section rule — 3px burnt-orange accent bar */
 .section-rule-thick {
   width: 3rem;
