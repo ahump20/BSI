@@ -29,7 +29,7 @@ import {
   upsertCards,
   upsertMarketData,
 } from '../shared/mlb-the-show-store';
-import { DD_ROSTER_SLOTS, summarizeBuild } from '../../lib/mlb-the-show/roster';
+import { DD_ROSTER_SLOTS, DD_PARALLEL_LEVELS, DD_PARALLEL_MODS, summarizeBuild } from '../../lib/mlb-the-show/roster';
 import type {
   DDBuildCardSelection,
   DDBuildRecord,
@@ -468,9 +468,11 @@ export async function handleShowTeamBuilderReference(env: Env): Promise<Response
 
   const status = await resolveSourceStatus(env);
   const payload = {
-    slots: DD_ROSTER_SLOTS,
+    slots: DD_ROSTER_SLOTS.map((s) => ({ key: s.id, label: s.label, group: s.group, accepts: s.accepts })),
     captains: status.catalogReady ? await listCaptains(env, 30) : [],
     collections: status.collectionsReady ? await listCollections(env, 24) : [],
+    parallelLevels: [...DD_PARALLEL_LEVELS],
+    parallelMods: [...DD_PARALLEL_MODS],
     meta: showMeta(status, 'BSI D1', !status.catalogReady),
   };
   await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.builder);

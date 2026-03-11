@@ -61,6 +61,13 @@ export function DiamondDynastyCollectionsClient() {
                 <p className="text-sm text-[var(--bsi-dust)]">{error}</p>
               </CardContent>
             </Card>
+          ) : collections.length === 0 ? (
+            <Card padding="lg">
+              <CardContent className="space-y-3 px-0 pb-0 pt-0">
+                <CardTitle size="sm">No Collections Yet</CardTitle>
+                <p className="text-sm text-[var(--bsi-dust)]">Collection data is still being ingested. The sync worker builds collection groupings from the card catalog — check back shortly.</p>
+              </CardContent>
+            </Card>
           ) : (
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {collections.map((collection) => (

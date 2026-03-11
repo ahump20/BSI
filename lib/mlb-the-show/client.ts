@@ -147,20 +147,33 @@ export function fetchShowWatchEvents(params?: URLSearchParams) {
   return getJson<ShowWatchEventsResponse>(`/api/mlb/the-show-26/watch-events${suffix}`);
 }
 
-export function fetchTeamBuilderReference() {
-  return getJson<{
+export async function fetchTeamBuilderReference() {
+  const raw = await getJson<{
     slots: Array<{
-      key: string;
+      key?: string;
+      id?: string;
       label: string;
       group: 'lineup' | 'bench' | 'rotation' | 'bullpen' | 'captain';
-      accepts: string[];
+      accepts?: string[];
+      allowedPositions?: string[];
     }>;
     captains: ShowCaptainCard[];
     collections: ShowCollectionSummary[];
-    parallelLevels: number[];
-    parallelMods: string[];
+    parallelLevels?: number[];
+    parallelMods?: string[];
     meta: { source: string; fetched_at: string; timezone: string; degraded?: boolean };
   }>('/api/mlb/the-show-26/team-builder/reference');
+  return {
+    ...raw,
+    slots: raw.slots.map((s) => ({
+      key: s.key ?? s.id ?? '',
+      label: s.label,
+      group: s.group,
+      accepts: s.accepts ?? s.allowedPositions ?? [],
+    })),
+    parallelLevels: raw.parallelLevels ?? [],
+    parallelMods: raw.parallelMods ?? [],
+  };
 }
 
 export function saveBuild(body: { title: string; captainCardId: string | null; cards: unknown[] }) {
