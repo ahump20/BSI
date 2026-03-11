@@ -6,11 +6,11 @@ import Link from 'next/link';
 // ─── Example prompts — cover routing, stats, teams, and multi-sport ──────────
 
 const EXAMPLE_PROMPTS = [
-  'Where can I find live scores?',
-  'What is wOBA and who leads the SEC?',
-  'Is Texas a CWS contender this year?',
-  'Show me the best pitching staffs',
-  'What sports does BSI cover?',
+  "Who's winning right now?",
+  'Best hitters in the SEC',
+  'Is Texas ranked this week?',
+  'When does LSU play next?',
+  "What's the portal tracker?",
 ];
 
 const MAX_FREE_QUESTIONS = 5;
@@ -241,7 +241,7 @@ export function AskBSI() {
                 Ask BSI
               </h3>
               <span className="heritage-stamp" style={{ padding: '1px 6px', fontSize: '8px' }}>
-                AI-Powered
+                Concierge
               </span>
             </div>
           </div>

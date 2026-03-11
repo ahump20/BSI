@@ -7,6 +7,7 @@ import { HomeLiveScores } from '@/components/home/HomeLiveScores';
 import { WhyBSI } from '@/components/home/WhyBSI';
 import { SavantPreviewStrip } from '@/components/home/SavantPreviewStrip';
 import { SportsHub } from '@/components/home/SportsHub';
+import { FlagshipProof } from '@/components/home/FlagshipProof';
 import { FeatureShowcase } from '@/components/home/FeatureShowcase';
 import { EditorialPreview } from '@/components/home/EditorialPreview';
 import { TrendingIntelFeed } from '@/components/home/TrendingIntelFeed';
@@ -16,6 +17,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { AskBSI } from '@/components/home/AskBSI';
 import { PlatformVitals } from '@/components/home/PlatformVitals';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { RecentVisits } from '@/components/home/RecentVisits';
 
 // ────────────────────────────────────────
 // Section Break — decorative diamond divider
@@ -46,6 +48,9 @@ export function HomePageClient() {
         <HeroSection />
       </DataErrorBoundary>
 
+      {/* ─── 1b. Pick up where you left off ─── */}
+      <RecentVisits />
+
       {/* ─── 2. Multi-Sport Live Scores Strip ─── */}
       <DataErrorBoundary name="Live Scores" compact>
         <HomeLiveScores onCountsChange={handleCountsChange} />
@@ -57,12 +62,15 @@ export function HomePageClient() {
       {/* ─── 4. Sports Hub — Our Coverage ─── */}
       <SportsHub sportCounts={sportCounts} />
 
-      {/* ─── 5. Flagship proof — Savant Preview ─── */}
+      {/* ─── 5. College Baseball flagship proof ─── */}
+      <FlagshipProof />
+
+      {/* ─── 5b. Savant live proof ─── */}
       <DataErrorBoundary name="Savant Preview" compact>
         <SavantPreviewStrip />
       </DataErrorBoundary>
 
-      {/* ─── 6. Feature Showcase — platform tools ─── */}
+      {/* ─── 6. Feature Showcase — what you can do here ─── */}
       <FeatureShowcase />
 
       {/* ─── 7. Ask BSI — AI-powered question card ─── */}

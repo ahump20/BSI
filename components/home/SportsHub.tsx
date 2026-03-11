@@ -64,6 +64,45 @@ const sports: SportCardData[] = [
 ];
 
 // ────────────────────────────────────────
+// Actionable context line per sport
+// ────────────────────────────────────────
+
+function SportStatusLine({ counts, color }: { counts?: { live: number; today: number }; color: string }) {
+  if (!counts) return null;
+
+  const { live, today } = counts;
+  let text: string;
+  let accent = false;
+
+  if (live > 0) {
+    text = `${live} game${live > 1 ? 's' : ''} live now`;
+    accent = true;
+  } else if (today > 0) {
+    text = `${today} game${today > 1 ? 's' : ''} today`;
+  } else {
+    text = 'No games today';
+  }
+
+  return (
+    <p
+      className="text-[11px] mt-1.5 font-semibold uppercase tracking-wider flex items-center gap-1.5"
+      style={{
+        fontFamily: 'var(--bsi-font-data)',
+        color: accent ? color : 'var(--bsi-dust)',
+      }}
+    >
+      {accent && (
+        <span className="relative flex h-1.5 w-1.5">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: color }} />
+          <span className="relative inline-flex rounded-full h-1.5 w-1.5" style={{ backgroundColor: color }} />
+        </span>
+      )}
+      {text}
+    </p>
+  );
+}
+
+// ────────────────────────────────────────
 // Live game badge for sport cards
 // ────────────────────────────────────────
 
@@ -180,6 +219,7 @@ export function SportsHub({ sportCounts }: SportsHubProps) {
                   <p className="text-sm leading-relaxed" style={{ color: 'var(--bsi-dust)' }}>
                     {flagship.description}
                   </p>
+                  <SportStatusLine counts={sportCounts.get('college-baseball')} color={flagship.color} />
                 </div>
 
                 <span className="text-sm font-semibold uppercase tracking-wider flex items-center gap-2 group-hover:gap-3 transition-all shrink-0" style={{ color: 'var(--bsi-primary)' }}>
@@ -243,6 +283,7 @@ export function SportsHub({ sportCounts }: SportsHubProps) {
                         <p className="text-xs leading-relaxed line-clamp-2" style={{ color: 'var(--bsi-dust)' }}>
                           {sport.description}
                         </p>
+                        <SportStatusLine counts={counts} color={sport.color} />
                       </div>
                     </div>
                   </Link>

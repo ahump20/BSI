@@ -1,48 +1,30 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import {
-  Circle,
-  X,
-  Gamepad2,
-  Trophy,
-  BarChart3,
-  Award,
-  Target,
-  BookOpen,
-} from 'lucide-react';
 import { MobileBottomNav } from '@/components/layout-ds/MobileBottomNav';
 import { lockScroll, unlockScroll } from '@/lib/utils/scroll-lock';
+import { getMorePanelNav } from '@/lib/navigation';
 
-/** Secondary pages shown in the "More" slide-up panel. */
-const MORE_ITEMS = [
-  { label: 'NBA', href: '/nba', icon: Circle },
-  { label: 'College Football', href: '/cfb', icon: Award },
-  { label: 'Editorial', href: '/college-baseball/editorial', icon: BookOpen },
-  { label: 'Rankings', href: '/college-baseball/rankings', icon: Trophy },
-  { label: 'Conferences', href: '/college-baseball/conferences', icon: Award },
-  { label: 'Compare', href: '/college-baseball/compare', icon: BarChart3 },
-  { label: 'Transfer Portal', href: '/college-baseball/transfer-portal', icon: Trophy },
-  { label: 'Intel', href: '/intel', icon: Target },
-  { label: 'Analytics', href: '/analytics', icon: BarChart3 },
-  { label: 'NIL Valuation', href: '/nil-valuation', icon: Trophy },
-  { label: 'Models', href: '/models', icon: BarChart3 },
-  { label: 'Arcade', href: '/arcade', icon: Gamepad2 },
-  { label: 'Settings', href: '/settings', icon: Circle },
-  { label: 'About', href: '/about', icon: BookOpen },
-  { label: 'Status', href: '/status', icon: Circle },
-];
+/* ── SVG close icon ── */
+
+const IconX = () => (
+  <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+    <path d="M4 4l8 8M12 4l-8 8" />
+  </svg>
+);
 
 /**
  * Fixed bottom nav for mobile with "More" slide-up panel.
- * Shows Home / MLB / NFL / NBA / More — predictable sport-switching pattern.
+ * Shows Home / Scores / CBB / Intel / More.
  */
 export function BottomNavWrapper() {
   const [moreOpen, setMoreOpen] = useState(false);
   const pathname = usePathname();
+
+  const sections = useMemo(() => getMorePanelNav(), []);
 
   const toggleMore = useCallback(() => {
     setMoreOpen((prev) => !prev);
@@ -100,7 +82,7 @@ export function BottomNavWrapper() {
               role="dialog"
               aria-modal="true"
               aria-label="More navigation"
-              className="fixed bottom-0 left-0 right-0 z-50 bg-midnight/95 backdrop-blur-xl border-t border-border rounded-t-2xl"
+              className="fixed bottom-0 left-0 right-0 z-50 bg-[var(--surface-scoreboard,#0A0A0A)]/95 backdrop-blur-xl border-t border-white/[0.06] rounded-t-2xl"
               style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
@@ -109,49 +91,59 @@ export function BottomNavWrapper() {
             >
               {/* Header */}
               <div className="flex items-center justify-between px-4 pt-4 pb-2">
-                <span className="text-xs uppercase tracking-widest text-text-muted font-medium">
+                <span className="text-xs uppercase tracking-widest text-[var(--bsi-dust)] font-medium">
                   More
                 </span>
                 <button
                   onClick={closeMore}
-                  className="p-2 hover:bg-surface rounded-lg transition-colors"
+                  className="p-2 hover:bg-[var(--surface-dugout)] rounded-lg transition-colors"
                   aria-label="Close panel"
                 >
-                  <X className="w-4 h-4 text-text-muted" />
+                  <IconX />
                 </button>
               </div>
 
-              {/* Links */}
-              <nav className="px-4 pb-4 grid grid-cols-3 gap-2">
-                {MORE_ITEMS.map((item) => {
-                  const active = isActive(item.href);
-                  const Icon = item.icon;
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={closeMore}
-                      className={`flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl transition-colors ${
-                        active
-                          ? 'bg-burnt-orange/15 text-burnt-orange'
-                          : 'text-text-muted hover:text-text-primary hover:bg-surface-light'
-                      }`}
-                      aria-current={active ? 'page' : undefined}
-                    >
-                      <Icon className="w-5 h-5" />
-                      <span className="text-[11px] font-medium text-center leading-tight">
-                        {item.label}
-                      </span>
-                    </Link>
-                  );
-                })}
+              {/* Sections */}
+              <nav className="px-4 pb-4 max-h-[60vh] overflow-y-auto">
+                {sections.map((section, si) => (
+                  <div key={section.label}>
+                    {si > 0 && (
+                      <div className="mx-1 my-2 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+                    )}
+                    <p className="text-[9px] uppercase tracking-[0.15em] font-mono text-[var(--bsi-dust)] px-2 mb-1 mt-2">
+                      {section.label}
+                    </p>
+                    <div className="grid grid-cols-3 gap-1.5">
+                      {section.items.map((item) => {
+                        const active = isActive(item.href);
+                        return (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            onClick={closeMore}
+                            className={`flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl transition-colors ${
+                              active
+                                ? 'bg-[var(--bsi-primary)]/15 text-[var(--bsi-primary)]'
+                                : 'text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-dugout)]'
+                            }`}
+                            aria-current={active ? 'page' : undefined}
+                          >
+                            <span className="text-[11px] font-medium text-center leading-tight">
+                              {item.label}
+                            </span>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
               </nav>
             </motion.div>
           </>
         )}
       </AnimatePresence>
 
-      {/* Bottom nav bar — 5 primary tabs */}
+      {/* Bottom nav bar — 4 primary tabs + More */}
       <MobileBottomNav onMorePress={toggleMore} />
     </>
   );

@@ -310,9 +310,23 @@ export function HomeLiveScores({ onCountsChange }: HomeLiveScoresProps = {}) {
   const [allGames, setAllGames] = useState<NormalizedGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [filter, setFilter] = useState<SportFilter>('all');
+  const [filter, setFilter] = useState<SportFilter>(() => {
+    if (typeof window === 'undefined') return 'all';
+    try {
+      const stored = localStorage.getItem('bsi-scores-filter');
+      if (stored && ['all', 'college-baseball', 'mlb', 'nfl', 'nba'].includes(stored)) {
+        return stored as SportFilter;
+      }
+    } catch { /* ignore */ }
+    return 'all';
+  });
   const activeSports = useActiveSports();
   const [lastFetched, setLastFetched] = useState<Date | null>(null);
+
+  // Persist filter selection
+  useEffect(() => {
+    try { localStorage.setItem('bsi-scores-filter', filter); } catch { /* ignore */ }
+  }, [filter]);
 
   useEffect(() => {
     setToday(getDateOffset(0));
@@ -412,7 +426,17 @@ export function HomeLiveScores({ onCountsChange }: HomeLiveScoresProps = {}) {
   if (!loading && !error && allGames.length === 0) return null;
 
   const liveCount = allGames.filter((g) => g.status === 'live').length;
+  const finalCount = allGames.filter((g) => g.status === 'final').length;
   const todayCount = allGames.length;
+
+  // Temporal framing — header varies by time + game states
+  const temporalHeader = useMemo(() => {
+    const hour = new Date().getHours();
+    if (liveCount > 0 && hour >= 17) return 'Tonight\u2019s Action';
+    if (liveCount > 0) return `Live Now (${liveCount})`;
+    if (todayCount > 0 && finalCount === todayCount) return 'Today\u2019s Results';
+    return 'Today\u2019s Games';
+  }, [liveCount, finalCount, todayCount]);
 
   return (
     <section className="py-6 px-4 sm:px-6 lg:px-8" aria-label="Today's live scores">
@@ -423,7 +447,7 @@ export function HomeLiveScores({ onCountsChange }: HomeLiveScoresProps = {}) {
             <h2
               className="text-sm font-display font-bold uppercase tracking-widest text-[var(--bsi-bone)]"
             >
-              Today&apos;s Games
+              {temporalHeader}
             </h2>
             {hasLiveGames && <FreshnessBadge isLive fetchedAt={lastFetched?.toISOString()} />}
             {!loading && allGames.length > 0 && (

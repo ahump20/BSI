@@ -1,14 +1,14 @@
 import Link from 'next/link';
 import { HealthDot } from './HealthDot';
 
-const footerLink = 'text-sm text-text-muted hover:text-burnt-orange transition-colors';
-const sectionTitle = 'text-[10px] font-semibold text-text-secondary uppercase tracking-[0.15em] mb-4 font-mono';
+const footerLink = 'text-sm hover:text-burnt-orange transition-colors';
+const sectionTitle = 'text-[10px] font-semibold uppercase tracking-[0.15em] mb-4 font-mono';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border bg-background-primary pt-14 pb-8">
+    <footer className="border-t pt-14 pb-8" style={{ borderColor: 'var(--border-vintage)', background: 'var(--surface-scoreboard)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Top row — BSI identity + ecosystem callout */}
         <div className="flex flex-col sm:flex-row items-start justify-between gap-8 mb-12">
@@ -16,13 +16,13 @@ export function Footer() {
             <div className="flex items-center gap-3 mb-3">
               <img src="/images/brand/bsi-mascot-200.png" alt="BSI" className="h-10 w-auto opacity-80" loading="lazy" decoding="async" />
               <div>
-                <span className="font-display text-lg font-bold uppercase tracking-wider text-text-primary">BSI</span>
-                <span className="block text-[9px] font-mono uppercase tracking-[0.2em] text-text-muted">
+                <span className="font-display text-lg font-bold uppercase tracking-wider" style={{ color: 'var(--bsi-bone)' }}>BSI</span>
+                <span className="block text-[9px] font-mono uppercase tracking-[0.2em]" style={{ color: 'var(--bsi-dust)' }}>
                   Blaze Sports Intel
                 </span>
               </div>
             </div>
-            <p className="text-xs text-text-muted leading-relaxed font-serif italic">
+            <p className="text-xs leading-relaxed font-serif italic" style={{ color: 'var(--bsi-dust)' }}>
               The only free, park-adjusted sabermetrics platform for D1 college baseball.
               Plus live scores across MLB, NFL, NBA, and NCAA.
             </p>
@@ -33,7 +33,8 @@ export function Footer() {
               href="https://x.com/BlazeSportsHQ"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-text-muted hover:text-burnt-orange transition-colors"
+              className="hover:text-burnt-orange transition-colors"
+              style={{ color: 'var(--bsi-dust)' }}
               aria-label="BSI on X"
             >
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -43,10 +44,20 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Link grid — 6 columns */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-8 mb-12">
+        {/* Link grid — 6 columns, top fan tasks first */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-8 mb-12" style={{ color: 'var(--bsi-dust)' }}>
           <div>
-            <h4 className={sectionTitle}>Sports</h4>
+            <h4 className={sectionTitle} style={{ color: 'var(--heritage-bronze)' }}>Start Here</h4>
+            <ul className="space-y-2">
+              <li><Link href="/scores" className={footerLink}>Live Scores</Link></li>
+              <li><Link href="/college-baseball" className={footerLink}>College Baseball</Link></li>
+              <li><Link href="/college-baseball/savant" className={footerLink}>BSI Savant</Link></li>
+              <li><Link href="/college-baseball/editorial" className={footerLink}>Editorial</Link></li>
+              <li><Link href="/intel" className={footerLink}>Intelligence</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className={sectionTitle} style={{ color: 'var(--heritage-bronze)' }}>Sports</h4>
             <ul className="space-y-2">
               <li><Link href="/college-baseball" className={footerLink}>College Baseball</Link></li>
               <li><Link href="/mlb" className={footerLink}>MLB</Link></li>
@@ -56,48 +67,36 @@ export function Footer() {
             </ul>
           </div>
           <div>
-            <h4 className={sectionTitle}>Tools</h4>
+            <h4 className={sectionTitle} style={{ color: 'var(--heritage-bronze)' }}>Tools</h4>
             <ul className="space-y-2">
-              <li><Link href="/college-baseball/savant" className={footerLink}>BSI Savant</Link></li>
-              <li><Link href="/scores" className={footerLink}>Live Scores</Link></li>
-              <li><Link href="/analytics" className={footerLink}>Analytics</Link></li>
-              <li><Link href="/intel" className={footerLink}>Intelligence</Link></li>
+              <li><Link href="/college-baseball/transfer-portal" className={footerLink}>Transfer Portal</Link></li>
+              <li><Link href="/nil-valuation" className={footerLink}>NIL Valuation</Link></li>
               <li><Link href="/models" className={footerLink}>Models</Link></li>
               <li><Link href="/glossary" className={footerLink}>Glossary</Link></li>
               <li><Link href="/pricing" className={footerLink}>Pricing</Link></li>
             </ul>
           </div>
           <div>
-            <h4 className={sectionTitle}>Content</h4>
-            <ul className="space-y-2">
-              <li><Link href="/college-baseball/editorial" className={footerLink}>Editorial</Link></li>
-              <li><Link href="/college-baseball/transfer-portal" className={footerLink}>Transfer Portal</Link></li>
-              <li><Link href="/nil-valuation" className={footerLink}>NIL Valuation</Link></li>
-              <li><Link href="/blog-post-feed" className={footerLink}>Blog</Link></li>
-              <li><Link href="/coverage" className={footerLink}>Coverage</Link></li>
-              <li><Link href="/data-sources" className={footerLink}>Data Sources</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className={sectionTitle}>Ecosystem</h4>
+            <h4 className={sectionTitle} style={{ color: 'var(--heritage-bronze)' }}>Ecosystem</h4>
             <ul className="space-y-2">
               <li><a href="https://labs.blazesportsintel.com" target="_blank" rel="noopener noreferrer" className={footerLink}>BSI Labs <span className="text-[9px] opacity-40">↗</span></a></li>
-              <li><a href="https://blazecraft.app" target="_blank" rel="noopener noreferrer" className={footerLink}>BlazeCraft <span className="text-[9px] opacity-40">↗</span></a></li>
               <li><a href="https://arcade.blazesportsintel.com" target="_blank" rel="noopener noreferrer" className={footerLink}>Arcade <span className="text-[9px] opacity-40">↗</span></a></li>
+              <li><a href="https://blazecraft.app" target="_blank" rel="noopener noreferrer" className={footerLink}>BlazeCraft <span className="text-[9px] opacity-40">↗</span></a></li>
               <li><a href="https://austinhumphrey.com" target="_blank" rel="noopener noreferrer" className={footerLink}>Austin Humphrey <span className="text-[9px] opacity-40">↗</span></a></li>
             </ul>
           </div>
           <div>
-            <h4 className={sectionTitle}>Company</h4>
+            <h4 className={sectionTitle} style={{ color: 'var(--heritage-bronze)' }}>Company</h4>
             <ul className="space-y-2">
               <li><Link href="/about" className={footerLink}>About</Link></li>
               <li><Link href="/about/methodology" className={footerLink}>Methodology</Link></li>
+              <li><Link href="/data-sources" className={footerLink}>Data Sources</Link></li>
               <li><Link href="/contact" className={footerLink}>Contact</Link></li>
               <li><Link href="/status" className={footerLink}>Status</Link></li>
             </ul>
           </div>
           <div>
-            <h4 className={sectionTitle}>Legal</h4>
+            <h4 className={sectionTitle} style={{ color: 'var(--heritage-bronze)' }}>Legal</h4>
             <ul className="space-y-2">
               <li><Link href="/privacy" className={footerLink}>Privacy Policy</Link></li>
               <li><Link href="/terms" className={footerLink}>Terms of Service</Link></li>
@@ -106,11 +105,11 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-border pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-[10px] text-text-muted font-mono uppercase tracking-wider">
+        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3" style={{ borderTop: '1px solid var(--border-vintage)' }}>
+          <p className="text-[10px] font-mono uppercase tracking-wider" style={{ color: 'var(--bsi-dust)' }}>
             &copy; {currentYear} Blaze Intelligence LLC
           </p>
-          <p className="text-[10px] text-text-muted font-mono uppercase tracking-wider">
+          <p className="text-[10px] font-mono uppercase tracking-wider" style={{ color: 'var(--bsi-dust)' }}>
             Built on Cloudflare &middot; Austin, TX
           </p>
         </div>

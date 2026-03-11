@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { withAlpha } from '@/lib/utils/color';
 import { getReadApiUrl } from '@/lib/utils/public-api';
 
@@ -99,42 +100,77 @@ export function TrendingIntelFeed() {
   }, []);
 
   return (
-    <div className="glass-default rounded-2xl p-6 h-full flex flex-col hover:shadow-glow-sm transition-shadow duration-300">
-      <h3 className="font-display text-lg text-text-primary uppercase tracking-wide mb-4">
-        Trending Intel
-      </h3>
+    <div className="heritage-card p-6 h-full flex flex-col">
+      <div className="flex items-center justify-between mb-4">
+        <h3
+          className="font-display text-lg uppercase tracking-wide"
+          style={{ color: 'var(--bsi-bone)' }}
+        >
+          Trending Intel
+        </h3>
+        <Link
+          href="/intel"
+          className="text-xs font-semibold uppercase tracking-wider flex items-center gap-1 transition-colors"
+          style={{ color: 'var(--heritage-columbia-blue)' }}
+        >
+          All Intel
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </Link>
+      </div>
 
       <div className="flex-1 overflow-y-auto space-y-3 max-h-[400px] lg:max-h-[500px]">
         {loading ? (
           Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="space-y-1.5 animate-pulse">
-              <div className="h-3 bg-surface-light rounded w-16" />
-              <div className="h-4 bg-surface-light rounded w-full" />
+              <div className="h-3 rounded w-16" style={{ backgroundColor: 'var(--surface-press-box)' }} />
+              <div className="h-4 rounded w-full" style={{ backgroundColor: 'var(--surface-press-box)' }} />
             </div>
           ))
         ) : error ? (
-          <p className="text-sm text-text-muted py-4 text-center">Intel feed temporarily unavailable.</p>
+          <p className="text-sm py-4 text-center" style={{ color: 'var(--bsi-dust)' }}>Intel feed temporarily unavailable.</p>
         ) : articles.length === 0 ? (
-          <p className="text-sm text-text-muted py-4 text-center">No intel available right now.</p>
+          <p className="text-sm py-4 text-center" style={{ color: 'var(--bsi-dust)' }}>No intel available right now.</p>
         ) : (
           articles.map((article, i) => {
             const color = SPORT_COLORS[article.sport] || '#BF5700'; // token: --bsi-primary
+            const timeDiff = Date.now() - new Date(article.published).getTime();
+            const isRecent = timeDiff < 3_600_000; // less than 1 hour
             const inner = (
-              <div className="group/item py-2 border-b border-border-subtle last:border-0">
+              <div
+                className="group/item py-2 last:border-0"
+                style={{ borderBottom: '1px solid var(--border-vintage)' }}
+              >
                 <div className="flex items-center gap-2 mb-1">
                   <span
-                    className="px-1.5 py-0.5 text-[10px] font-bold uppercase rounded tracking-wider"
-                    style={{ backgroundColor: withAlpha(color, 0.12), color }}
+                    className="heritage-stamp"
+                    style={{ padding: '1px 6px', fontSize: '9px', backgroundColor: withAlpha(color, 0.12), color, borderColor: withAlpha(color, 0.3) }}
                   >
                     {article.sport}
                   </span>
-                  <span className="text-[10px] text-text-muted">{relativeTime(article.published)}</span>
+                  <span
+                    className="text-[10px]"
+                    style={{
+                      color: isRecent ? 'var(--bsi-primary)' : 'var(--bsi-dust)',
+                      fontFamily: 'var(--bsi-font-data)',
+                      fontWeight: isRecent ? 600 : 400,
+                    }}
+                  >
+                    {relativeTime(article.published)}
+                  </span>
                 </div>
-                <p className="text-sm text-text-primary leading-snug line-clamp-1 group-hover/item:text-text-primary transition-colors">
+                <p
+                  className="text-sm leading-snug line-clamp-1 transition-colors"
+                  style={{ color: 'var(--bsi-bone)' }}
+                >
                   {article.headline}
                 </p>
                 {article.description && (
-                  <p className="text-xs text-text-muted mt-0.5 line-clamp-1 hidden lg:block">
+                  <p
+                    className="text-xs mt-0.5 line-clamp-1 hidden lg:block"
+                    style={{ color: 'var(--bsi-dust)' }}
+                  >
                     {article.description}
                   </p>
                 )}

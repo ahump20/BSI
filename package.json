@@ -59,7 +59,10 @@
     "deploy:all": "npm run deploy:safe && npm run deploy:worker:production",
     "sportsdataio:dry-run": "node scripts/sportsdataio-dry-run.mjs",
     "bundle:build": "tsx tools/build-ncaa-baseball-daily-bundle.ts",
-    "bundle:upload": "tsx tools/build-ncaa-baseball-daily-bundle.ts --upload"
+    "bundle:upload": "tsx tools/build-ncaa-baseball-daily-bundle.ts --upload",
+    "deploy:guarded": "node scripts/guarded-deploy.mjs",
+    "release:preview": "node scripts/guarded-deploy.mjs --preview-only",
+    "smoke:homepage": "npx playwright test tests/smoke/homepage.spec.ts"
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^3.10.0",

@@ -28,7 +28,14 @@ rm -rf "$BUILD_DIR/.next" 2>/dev/null || true
 # Sync only BSI source directories + root config files.
 # Uses --include/--exclude filters: include what we need, exclude everything else.
 # -L follows iCloud deferred file references.
+# Sync BSI source directories, excluding nested node_modules (iCloud-managed
+# subdirectories have transient symlinks that cause rsync failures).
+# The build only needs the root node_modules (hard-linked separately below).
 rsync -aL \
+  --exclude='node_modules' \
+  --exclude='.wrangler' \
+  --exclude='dist' \
+  --exclude='.next' \
   --include='/app/***' \
   --include='/components/***' \
   --include='/lib/***' \

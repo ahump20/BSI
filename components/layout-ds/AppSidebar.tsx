@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getSidebarNav, type NavIconKey } from '@/lib/navigation';
 
 /* ========================================================================== */
 /* SVG ICONS — 16x16 stroke-based, inherits currentColor                      */
@@ -152,99 +153,30 @@ const IconX = () => (
 );
 
 /* ========================================================================== */
-/* NAV STRUCTURE — 5-sport site, rankings under flagship, labs external       */
+/* ICON MAP — resolves NavIconKey → React element                              */
 /* ========================================================================== */
 
-interface NavItem {
-  readonly href: string;
-  readonly label: string;
-  readonly icon: React.ReactNode;
-  readonly external?: boolean;
-}
-
-interface NavGroup {
-  readonly label: string;
-  readonly items: readonly NavItem[];
-}
-
-/* WBC nav link visible only during tournament window (Mar 5–17, 2026) */
-const isWBCActive = (() => {
-  const now = new Date();
-  return now >= new Date('2026-03-05T00:00:00-06:00') && now <= new Date('2026-03-18T23:59:59-05:00');
-})();
-
-const NAV_GROUPS: readonly NavGroup[] = [
-  {
-    label: 'Overview',
-    items: [
-      { href: '/', label: 'Dashboard', icon: <IconGrid /> },
-      { href: '/scores', label: 'Live Scores', icon: <IconActivity /> },
-      { href: '/intel', label: 'Intelligence', icon: <IconBrain /> },
-      ...(isWBCActive ? [{ href: '/wbc', label: 'WBC 2026', icon: <IconGlobe /> } as const] : []),
-    ],
-  },
-  {
-    label: 'Sports',
-    items: [
-      { href: '/college-baseball', label: 'College Baseball', icon: <IconBaseball /> },
-      { href: '/college-baseball/rankings', label: 'Rankings', icon: <IconList /> },
-      { href: '/college-baseball/savant', label: 'Savant / Advanced Stats', icon: <IconTarget /> },
-      { href: '/college-baseball/conferences', label: 'Conferences', icon: <IconGlobe /> },
-      { href: '/college-baseball/compare', label: 'Compare', icon: <IconChart /> },
-      { href: '/college-baseball/analytics', label: 'Analytics', icon: <IconChart /> },
-      { href: '/college-baseball/sabermetrics', label: 'Sabermetrics', icon: <IconFlask /> },
-      { href: '/mlb', label: 'MLB', icon: <IconBaseball /> },
-      { href: '/mlb/the-show-26/diamond-dynasty', label: 'Diamond Dynasty', icon: <IconTarget /> },
-      { href: '/nfl', label: 'NFL', icon: <IconFootball /> },
-      { href: '/nba', label: 'NBA', icon: <IconBasketball /> },
-      { href: '/cfb', label: 'College Football', icon: <IconFootball /> },
-    ],
-  },
-  {
-    label: 'Operations',
-    items: [
-      { href: '/nil-valuation', label: 'NIL Valuation', icon: <IconDollar /> },
-      { href: '/nil-valuation/tools', label: 'NIL Tools', icon: <IconChart /> },
-      { href: '/college-baseball/transfer-portal', label: 'Transfer Portal', icon: <IconActivity /> },
-      { href: '/college-baseball/watchlist', label: 'Watchlist', icon: <IconStar /> },
-    ],
-  },
-  {
-    label: 'Content',
-    items: [
-      { href: '/college-baseball/editorial', label: 'Editorial', icon: <IconPen /> },
-      { href: '/intel', label: 'Intel', icon: <IconChart /> },
-    ],
-  },
-  {
-    label: 'Tools',
-    items: [
-      { href: '/nil-valuation', label: 'NIL Valuation', icon: <IconTarget /> },
-      { href: '/nil-valuation/performance-index', label: 'Performance Index', icon: <IconChart /> },
-      { href: '/nil-valuation/tools', label: 'NIL Tools', icon: <IconFlask /> },
-      { href: '/analytics/mmi', label: 'MMI Analytics', icon: <IconChart /> },
-      { href: '/models', label: 'Models', icon: <IconChart /> },
-      { href: '/research', label: 'Research', icon: <IconBook /> },
-      { href: '/glossary', label: 'Glossary', icon: <IconBook /> },
-      { href: '/pricing', label: 'Pricing', icon: <IconTag /> },
-    ],
-  },
-  {
-    label: 'Ecosystem',
-    items: [
-      { href: 'https://labs.blazesportsintel.com', label: 'Labs / Savant', icon: <IconFlask />, external: true },
-      { href: 'https://blazecraft.app', label: 'BlazeCraft', icon: <IconGrid />, external: true },
-      { href: '/arcade', label: 'Arcade', icon: <IconActivity /> },
-    ],
-  },
-  {
-    label: 'Company',
-    items: [
-      { href: '/about', label: 'About', icon: <IconInfo /> },
-      { href: '/status', label: 'Status', icon: <IconGlobe /> },
-    ],
-  },
-] as const;
+const ICON_MAP: Record<NavIconKey, () => React.JSX.Element> = {
+  grid: IconGrid,
+  activity: IconActivity,
+  baseball: IconBaseball,
+  football: IconFootball,
+  basketball: IconBasketball,
+  chart: IconChart,
+  list: IconList,
+  target: IconTarget,
+  book: IconBook,
+  tag: IconTag,
+  globe: IconGlobe,
+  pen: IconPen,
+  info: IconInfo,
+  flask: IconFlask,
+  dollar: IconDollar,
+  star: IconStar,
+  brain: IconBrain,
+  home: IconGrid,
+  more: IconGrid,
+};
 
 /* ========================================================================== */
 /* COMPONENT                                                                   */
@@ -256,6 +188,8 @@ export function AppSidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const closeMobile = useCallback(() => setMobileOpen(false), []);
+
+  const navGroups = useMemo(() => getSidebarNav(), []);
 
   // Close mobile on route change
   useEffect(() => {
@@ -281,7 +215,7 @@ export function AppSidebar() {
   /* Shared nav content for desktop + mobile */
   const navContent = (
     <nav className="flex flex-col gap-0.5 px-2">
-      {NAV_GROUPS.map((group, gi) => (
+      {navGroups.map((group, gi) => (
         <div key={group.label}>
           {/* Section divider line */}
           {gi > 0 && (
@@ -300,8 +234,9 @@ export function AppSidebar() {
             const active = !item.external && isActive(item.href);
             const Wrapper = item.external ? 'a' : Link;
             const extraProps = item.external
-              ? { target: '_blank', rel: 'noopener noreferrer' }
+              ? { target: '_blank' as const, rel: 'noopener noreferrer' }
               : {};
+            const Icon = ICON_MAP[item.iconKey];
 
             return (
               <Wrapper
@@ -330,7 +265,7 @@ export function AppSidebar() {
                   </>
                 )}
                 <span aria-hidden="true" className="relative w-4 shrink-0 flex items-center justify-center">
-                  {item.icon}
+                  <Icon />
                 </span>
                 {!collapsed && (
                   <span className="relative truncate">

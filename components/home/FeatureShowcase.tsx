@@ -14,7 +14,7 @@ interface FeatureItem {
 const FEATURES: FeatureItem[] = [
   {
     label: 'BSI Savant',
-    description: 'Park-adjusted wOBA, wRC+, FIP across 300+ D1 teams. The analytics engine that powers everything.',
+    description: 'Find the real best hitters and pitchers using park-adjusted wOBA, wRC+, and FIP across 300+ D1 teams.',
     href: '/college-baseball/savant',
     hero: true,
     icon: (
@@ -25,7 +25,7 @@ const FEATURES: FeatureItem[] = [
   },
   {
     label: 'Intelligence',
-    description: 'AI game briefs, team dossiers, weekly situation reports. Every matchup analyzed before first pitch.',
+    description: 'Get AI-generated game briefs and matchup analysis before first pitch — know what to watch for.',
     href: '/intel',
     hero: true,
     icon: (
@@ -36,7 +36,7 @@ const FEATURES: FeatureItem[] = [
   },
   {
     label: 'Editorial',
-    description: 'Weekend recaps, series previews, and conference deep dives written by someone who watches every inning.',
+    description: 'Read weekend recaps, series previews, and conference deep dives written with real scouting context.',
     href: '/college-baseball/editorial',
     hero: true,
     icon: (
@@ -47,7 +47,7 @@ const FEATURES: FeatureItem[] = [
   },
   {
     label: 'Transfer Portal',
-    description: 'Track who is moving, where, and what it means.',
+    description: 'See who entered the portal, where they landed, and what it means for your team.',
     href: '/college-baseball/transfer-portal',
     icon: (
       <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -57,7 +57,7 @@ const FEATURES: FeatureItem[] = [
   },
   {
     label: 'NIL Valuation',
-    description: 'Market value analytics for the NIL era.',
+    description: 'Check what players are worth in the NIL market — data-driven valuations.',
     href: '/nil-valuation',
     icon: (
       <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -67,7 +67,7 @@ const FEATURES: FeatureItem[] = [
   },
   {
     label: 'Models',
-    description: 'Win probability, Monte Carlo sims, data quality scoring.',
+    description: 'Run win probability simulations and see how games are likely to unfold.',
     href: '/models',
     icon: (
       <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -77,7 +77,7 @@ const FEATURES: FeatureItem[] = [
   },
   {
     label: 'Arcade',
-    description: 'College baseball browser games. Play as your team.',
+    description: 'Play college baseball games in the browser. Pick your team, step up to the plate.',
     href: 'https://arcade.blazesportsintel.com',
     icon: (
       <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -95,11 +95,11 @@ export function FeatureShowcase() {
     <section className="py-16 px-4 sm:px-6 lg:px-8 relative surface-deep accent-glow-warm-right">
       <div className="max-w-6xl mx-auto relative z-10">
         <ScrollReveal direction="up">
-          <span className="heritage-stamp mb-2">Tools &amp; Intel</span>
+          <span className="heritage-stamp mb-2">Platform</span>
           <div className="flex items-center gap-3 mt-2 mb-8">
             <div className="section-rule-thick" />
             <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide" style={{ color: 'var(--bsi-bone)' }}>
-              Platform
+              What You Can Do Here
             </h2>
           </div>
         </ScrollReveal>

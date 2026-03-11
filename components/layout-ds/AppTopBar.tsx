@@ -12,19 +12,32 @@ const ROUTE_TITLES: Record<string, string> = {
   '/college-baseball': 'College Baseball',
   '/college-baseball/editorial': 'Editorial',
   '/college-baseball/savant': 'BSI Savant',
+  '/college-baseball/rankings': 'Rankings',
+  '/college-baseball/standings': 'Standings',
+  '/college-baseball/conferences': 'Conferences',
+  '/college-baseball/compare': 'Compare',
+  '/college-baseball/transfer-portal': 'Transfer Portal',
+  '/college-baseball/watchlist': 'Watchlist',
+  '/college-baseball/analytics': 'Analytics',
+  '/college-baseball/sabermetrics': 'Sabermetrics',
   '/mlb': 'MLB',
+  '/mlb/the-show-26/diamond-dynasty': 'Diamond Dynasty',
   '/nfl': 'NFL',
   '/nba': 'NBA',
   '/cfb': 'College Football',
   '/models': 'Models',
+  '/models/havf': 'HAV-F',
+  '/models/data-quality': 'Data Quality',
   '/glossary': 'Glossary',
   '/pricing': 'Pricing',
   '/analytics': 'Analytics',
+  '/analytics/mmi': 'MMI Analytics',
   '/search': 'Search',
   '/settings': 'Settings',
   '/intel': 'Intelligence',
-  '/college-baseball/transfer-portal': 'Transfer Portal',
   '/nil-valuation': 'NIL Valuation',
+  '/nil-valuation/tools': 'NIL Tools',
+  '/nil-valuation/performance-index': 'Performance Index',
   '/about': 'About',
   '/contact': 'Contact',
   '/status': 'System Status',
@@ -32,7 +45,11 @@ const ROUTE_TITLES: Record<string, string> = {
   '/coverage': 'Coverage',
   '/data-sources': 'Data Sources',
   '/arcade': 'Arcade',
+  '/dashboard': 'Dashboard',
   '/dashboard/intel': 'Intel Dashboard',
+  '/research': 'Research',
+  '/vision-ai': 'Vision AI',
+  '/wbc': 'WBC 2026',
 };
 
 function getPageTitle(pathname: string): string {
@@ -51,12 +68,27 @@ function getPageTitle(pathname: string): string {
 }
 
 /* ========================================================================== */
+/* SEARCH ICON                                                                 */
+/* ========================================================================== */
+
+const IconSearch = () => (
+  <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="7" cy="7" r="4.5" />
+    <path d="M10.5 10.5L14 14" />
+  </svg>
+);
+
+/* ========================================================================== */
 /* COMPONENT                                                                   */
 /* ========================================================================== */
 
 export function AppTopBar() {
   const pathname = usePathname();
   const title = getPageTitle(pathname);
+
+  const openSearch = () => {
+    window.dispatchEvent(new CustomEvent('open-command-palette'));
+  };
 
   return (
     <header className="h-14 border-b border-white/[0.05] flex items-center justify-between px-4 md:px-6 shrink-0 relative bg-[color-mix(in_srgb,var(--bsi-surface)_80%,transparent)] backdrop-blur-glass shadow-[0_1px_0_rgba(var(--bsi-primary-rgb),0.06)]">
@@ -67,17 +99,30 @@ export function AppTopBar() {
         </h1>
       </div>
 
-      {/* Right: live indicator + search hint */}
-      <div className="flex items-center gap-4">
+      {/* Right: search button + live indicator */}
+      <div className="flex items-center gap-3">
+        {/* Search trigger — visible, clickable button */}
+        <button
+          onClick={openSearch}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/[0.08] hover:border-[var(--bsi-primary)]/30 hover:bg-white/[0.04] transition-all cursor-pointer group"
+          aria-label="Search (Cmd+K)"
+        >
+          <IconSearch />
+          <span className="hidden sm:inline text-[11px] text-[var(--bsi-dust)] group-hover:text-[var(--bsi-bone)] transition-colors">
+            Search
+          </span>
+          <kbd className="hidden sm:inline text-[10px] text-[var(--bsi-dust)] bg-white/[0.06] px-1.5 py-0.5 rounded font-mono ml-1">
+            ⌘K
+          </kbd>
+        </button>
+
+        <div className="w-px h-4 bg-white/[0.06]" />
+
         <span className="flex items-center gap-1.5">
           <span className="w-2 h-2 rounded-full bg-[var(--bsi-success)] pulse-dot" />
           <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--bsi-text-dim)]">
             Live
           </span>
-        </span>
-        <div className="w-px h-4 bg-white/[0.06]" />
-        <span className="font-mono text-[11px] uppercase tracking-wider hidden sm:inline text-text-muted">
-          ⌘K
         </span>
       </div>
     </header>
