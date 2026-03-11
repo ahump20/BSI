@@ -931,11 +931,49 @@ function scorePerformance(row: Record<string, unknown>, type: 'batter' | 'pitche
   }
 }
 
-/** Score exposure [0-100] from social followers. Without social data, baseline at 15. */
-function scoreExposure(followers: number): number {
-  if (followers <= 0) return 15; // baseline for unknown
-  // Log scale: 1K → ~25, 10K → ~50, 100K → ~75, 1M → ~95
-  return clamp(round(Math.log10(Math.max(1, followers)) * 20 - 15, 1), 5, 98);
+/**
+ * Score exposure [0-100].
+ *
+ * When real follower data exists, uses a log scale (1K → ~25, 10K → ~50,
+ * 100K → ~75, 1M → ~95).
+ *
+ * When followers = 0 (nil_social_profiles empty), builds a proxy from three
+ * signals available at compute time:
+ *   - Program tier  (power/mid-major/low-major → structural visibility floor)
+ *   - Market size   (large/medium/small → media-market amplification)
+ *   - Performance spillover (elite on-field output generates press coverage)
+ *
+ * Proxy range: ~12 (low-major, small market, average stats) to ~58
+ * (power, large market, elite stats). This intentionally stays below the
+ * real-follower ceiling so that actual social data, once seeded, always
+ * produces higher scores.
+ */
+function scoreExposure(
+  followers: number,
+  marketSize?: string | null,
+  programTier?: string | null,
+  perfScore?: number,
+): number {
+  if (followers > 0) {
+    return clamp(round(Math.log10(Math.max(1, followers)) * 20 - 15, 1), 5, 98);
+  }
+
+  // Proxy model — no social data available
+  // Tier floor: structural visibility from conference prestige
+  let base = 12; // low-major default
+  if (programTier === 'power') base = 32;
+  else if (programTier === 'mid-major') base = 20;
+
+  // Market amplifier: large markets generate more regional/national coverage
+  let marketBoost = 0;
+  if (marketSize === 'large') marketBoost = 14;
+  else if (marketSize === 'medium') marketBoost = 7;
+
+  // Performance spillover: top performers attract attention regardless of program
+  // perfScore [0-100]; apply a dampened spillover so elite stats add up to +12
+  const spillover = perfScore != null ? round((perfScore / 100) * 12, 1) : 0;
+
+  return clamp(round(base + marketBoost + spillover, 1), 5, 62);
 }
 
 /** Score market [0-100] from school market data. */
@@ -975,17 +1013,30 @@ async function computeNIL(db: D1Database, kv: KVNamespace): Promise<{ nilScored:
   }
 
   // 3. Read computed batting + pitching advanced stats
+  // LEFT JOIN player_season_stats to recover position data that the advanced tables
+  // often store as 'UN' — prefer the advanced table's position if it's a real value,
+  // otherwise fall back to the source row from player_season_stats.
   const { results: batters } = await db.prepare(
-    `SELECT player_id, player_name, team, conference, position,
-            woba, wrc_plus, ops_plus, pa
-     FROM cbb_batting_advanced WHERE season = ? AND pa >= 20`
-  ).bind(SEASON).all();
+    `SELECT b.player_id, b.player_name, b.team, b.conference,
+            COALESCE(NULLIF(b.position, 'UN'), NULLIF(b.position, ''),
+                     NULLIF(p.position, 'UN'), NULLIF(p.position, ''), 'UN') AS position,
+            b.woba, b.wrc_plus, b.ops_plus, b.pa
+     FROM cbb_batting_advanced b
+     LEFT JOIN player_season_stats p
+       ON b.player_id = p.espn_id AND p.season = ?
+     WHERE b.season = ? AND b.pa >= 20`
+  ).bind(SEASON, SEASON).all();
 
   const { results: pitchers } = await db.prepare(
-    `SELECT player_id, player_name, team, conference, position,
-            fip, era_minus, k_9, ip
-     FROM cbb_pitching_advanced WHERE season = ? AND ip >= 10`
-  ).bind(SEASON).all();
+    `SELECT b.player_id, b.player_name, b.team, b.conference,
+            COALESCE(NULLIF(b.position, 'UN'), NULLIF(b.position, ''),
+                     NULLIF(p.position, 'UN'), NULLIF(p.position, ''), 'P') AS position,
+            b.fip, b.era_minus, b.k_9, b.ip
+     FROM cbb_pitching_advanced b
+     LEFT JOIN player_season_stats p
+       ON b.player_id = p.espn_id AND p.season = ?
+     WHERE b.season = ? AND b.ip >= 10`
+  ).bind(SEASON, SEASON).all();
 
   // 4. Score every qualifying player
   const stmts: D1PreparedStatement[] = [];
@@ -1002,7 +1053,7 @@ async function computeNIL(db: D1Database, kv: KVNamespace): Promise<{ nilScored:
     const followers = socialMap.get(pid) || 0;
 
     const perfScore = scorePerformance(row, type);
-    const expScore = scoreExposure(followers);
+    const expScore = scoreExposure(followers, mkt?.market_size, mkt?.program_tier, perfScore);
     const mktScore = scoreMarket(mkt?.market_size || null, mkt?.program_tier || null);
 
     const indexScore = round(
