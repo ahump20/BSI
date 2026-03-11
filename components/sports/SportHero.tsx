@@ -83,7 +83,7 @@ export function SportHero({
         </ScrollReveal>
 
         <ScrollReveal direction="up" delay={300}>
-          <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 p-6 glass-card rounded-2xl">
+          <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 p-6 heritage-card">
             {stats.map((stat) => (
               <div key={stat.label} className="text-center p-4">
                 <div className="font-mono text-3xl font-bold text-burnt-orange">

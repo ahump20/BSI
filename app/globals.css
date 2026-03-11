@@ -260,37 +260,6 @@ textarea:focus-visible,
 /* ========================================================================== */
 
 @layer components {
-  /* ---- Glass cards (Labs opacity, portfolio hover) ---- */
-  .glass-card {
-    background: var(--glass-default-bg);
-    backdrop-filter: blur(var(--glass-default-blur));
-    -webkit-backdrop-filter: blur(var(--glass-default-blur));
-    border-radius: 0.75rem;
-    border: 1px solid var(--glass-default-border);
-    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  .glass-card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(191, 87, 0, 0.3);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-  }
-
-  .glass-card-hover {
-    background: var(--glass-default-bg);
-    backdrop-filter: blur(var(--glass-default-blur));
-    -webkit-backdrop-filter: blur(var(--glass-default-blur));
-    border-radius: 0.75rem;
-    border: 1px solid var(--glass-default-border);
-    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  .glass-card-hover:hover {
-    transform: translateY(-4px);
-    border-color: rgba(191, 87, 0, 0.3);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-  }
-
   /* Card accent line — thin top border using per-card --card-accent */
   .card-accent-line {
     border-top: 2px solid var(--card-accent, var(--bsi-primary));
@@ -1307,8 +1276,6 @@ body.scroll-locked {
     background: white !important;
     color: #1a1a1a !important;
   }
-  .glass-card,
-  .glass-card-hover,
   .glass-subtle,
   .glass-default,
   .glass-elevated,

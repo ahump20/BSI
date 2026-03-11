@@ -225,14 +225,14 @@ function Skeleton() {
           className="flex gap-4 px-5 py-4 border-b border-border/40 last:border-0"
           style={{ animationDelay: `${i * 50}ms` }}
         >
-          <div className="w-px bg-zinc-800 animate-pulse min-h-[2.5rem]" />
+          <div className="w-px bg-[#1e1e1e] animate-pulse min-h-[2.5rem]" />
           <div className="flex-1 space-y-2">
-            <div className="h-3.5 rounded bg-zinc-800 animate-pulse w-4/5" style={{ animationDelay: `${i * 50 + 80}ms` }} />
-            <div className="h-3.5 rounded bg-zinc-800 animate-pulse w-2/3" style={{ animationDelay: `${i * 50 + 120}ms` }} />
+            <div className="h-3.5 rounded bg-[#1e1e1e] animate-pulse w-4/5" style={{ animationDelay: `${i * 50 + 80}ms` }} />
+            <div className="h-3.5 rounded bg-[#1e1e1e] animate-pulse w-2/3" style={{ animationDelay: `${i * 50 + 120}ms` }} />
             <div className="flex gap-2 mt-1">
-              <div className="h-3 w-8 rounded bg-zinc-800 animate-pulse" />
-              <div className="h-3 w-6 rounded bg-zinc-800 animate-pulse" />
-              <div className="h-3 w-20 rounded bg-zinc-800 animate-pulse" />
+              <div className="h-3 w-8 rounded bg-[#1e1e1e] animate-pulse" />
+              <div className="h-3 w-6 rounded bg-[#1e1e1e] animate-pulse" />
+              <div className="h-3 w-20 rounded bg-[#1e1e1e] animate-pulse" />
             </div>
           </div>
         </div>

@@ -610,7 +610,17 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                     <Card padding="lg">
                       <div className="flex items-center justify-between mb-6">
                         <h2 className="font-display text-xl font-bold text-text-primary uppercase tracking-wide">BSI Scouting Report</h2>
-                        <span className="text-text-muted text-xs">Updated {new Date(featuredInsight.lastUpdated).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                        <div className="text-right">
+                          <span className="text-text-muted text-xs">Updated {new Date(featuredInsight.lastUpdated).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                          {hasLiveRecord && (() => {
+                            const daysSinceUpdate = Math.floor((Date.now() - new Date(featuredInsight.lastUpdated).getTime()) / 86400000);
+                            return daysSinceUpdate > 5 ? (
+                              <div className="text-[10px] mt-0.5" style={{ color: 'var(--bsi-dust)' }}>
+                                Record has updated since this report
+                              </div>
+                            ) : null;
+                          })()}
+                        </div>
                       </div>
 
                       <p className="text-text-tertiary leading-relaxed mb-6">{featuredInsight.snapshot}</p>

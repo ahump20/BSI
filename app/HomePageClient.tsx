@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import { ScrollReveal } from '@/components/cinematic';
 import { HeroSection } from '@/components/home/HeroSection';
@@ -336,15 +336,22 @@ interface SportCardData {
 // WBC 2026 Feature Banner
 // ────────────────────────────────────────
 
-const WBC_START = new Date('2026-03-05T00:00:00-06:00');
-const WBC_END = new Date('2026-03-18T23:59:59-05:00');
+const WBC_START_MS = new Date('2026-03-05T00:00:00-06:00').getTime();
+const WBC_END_MS = new Date('2026-03-18T23:59:59-05:00').getTime();
+const WBC_SHOW_MS = new Date('2026-02-20T00:00:00-06:00').getTime();
 
 function WBCBanner() {
-  const now = new Date();
-  const isWBCPeriod = now >= new Date('2026-02-20') && now <= WBC_END; // Show 2 weeks early
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  // Render nothing on server/first paint to avoid hydration mismatch from new Date()
+  if (!mounted) return null;
+
+  const now = Date.now();
+  const isWBCPeriod = now >= WBC_SHOW_MS && now <= WBC_END_MS;
   if (!isWBCPeriod) return null;
 
-  const isLive = now >= WBC_START && now <= WBC_END;
+  const isLive = now >= WBC_START_MS && now <= WBC_END_MS;
 
   return (
     <section className="px-4 sm:px-6 lg:px-8 py-4">
