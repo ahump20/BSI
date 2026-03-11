@@ -215,14 +215,12 @@ export default function NFLPage() {
   useEffect(() => { setLiveGamesDetected(hasLiveGames); }, [hasLiveGames]);
 
   // Leaders — always fetch for the hub page
-  const { data: leadersRaw, loading: leadersLoading } =
-    useSportData<{ categories?: LeaderCategory[]; meta?: { source?: string; fetched_at?: string } }>('/api/nfl/leaders');
-
-  const leaderCategories = useMemo(() => {
-    const cats = leadersRaw?.categories || [];
-    // Show the first 3 categories with data (typically passing, rushing, receiving)
-    return cats.filter((c) => c.leaders?.length > 0).slice(0, 3);
-  }, [leadersRaw]);
+  const leadersLoading = false;
+  const leaderCategories = useMemo<LeaderCategory[]>(() => {
+    // The deployed NFL leaders endpoint is currently returning a 502 fallback payload.
+    // Keep the hub stable until the backend route is repaired.
+    return [];
+  }, []);
 
   // Derived shared state
   const loading = standingsLoading || scoresLoading;
@@ -349,11 +347,6 @@ export default function NFLPage() {
               </div>
             )}
 
-            {leadersRaw?.meta && (
-              <div className="mt-4">
-                <DataSourceBadge source={leadersRaw.meta.source || 'ESPN'} timestamp={formatTimestamp(leadersRaw.meta.fetched_at)} />
-              </div>
-            )}
           </Container>
         </Section>
 

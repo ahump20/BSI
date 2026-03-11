@@ -4,8 +4,9 @@ test.describe('Homepage', () => {
   test('loads successfully', async ({ page }) => {
     await page.goto('/');
     await expect(page).toHaveTitle(/Blaze Sports Intel/);
-    // Main navigation (page has both main nav and mobile bottom nav)
-    await expect(page.getByRole('navigation', { name: 'Main navigation' })).toBeVisible();
+    await expect(page.getByRole('main')).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Coverage for the sports the spotlight skips\./i })).toBeVisible();
+    await expect(page.getByRole('link', { name: /Start with College Baseball/i })).toBeVisible();
   });
 
   test('has no console errors', async ({ page }) => {

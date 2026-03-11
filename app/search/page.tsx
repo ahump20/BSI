@@ -385,8 +385,8 @@ function SearchContent() {
                     </h2>
 
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {items.map((item) => (
-                        <ScrollReveal key={`${item.type}-${item.id}`}>
+                      {items.map((item, index) => (
+                        <ScrollReveal key={`${item.type}-${item.id}-${item.url}-${index}`}>
                           <Link href={item.url} className="block group">
                             <Card
                               variant="default"

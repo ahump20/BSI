@@ -9,7 +9,9 @@
  * Fire-and-forget via sendBeacon with fetch fallback.
  */
 
-const EVENTS_ENDPOINT = '/api/events';
+import { getAnalyticsApiUrl } from '@/lib/utils/public-api';
+
+const EVENTS_PATH = '/api/events';
 
 // ---------------------------------------------------------------------------
 // Identity
@@ -102,16 +104,18 @@ interface EventData {
 
 function sendEvent(data: EventData): void {
   if (typeof window === 'undefined') return;
+  const endpoint = getAnalyticsApiUrl(EVENTS_PATH);
+  if (!endpoint) return;
 
   const payload = JSON.stringify(data);
 
   // sendBeacon is ideal for analytics — survives page unload
-  if (navigator.sendBeacon?.(EVENTS_ENDPOINT, new Blob([payload], { type: 'application/json' }))) {
+  if (navigator.sendBeacon?.(endpoint, new Blob([payload], { type: 'application/json' }))) {
     return;
   }
 
   // Fallback: fetch with keepalive
-  void fetch(EVENTS_ENDPOINT, {
+  void fetch(endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: payload,

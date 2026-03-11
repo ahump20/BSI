@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { withAlpha } from '@/lib/utils/color';
+import { getReadApiUrl } from '@/lib/utils/public-api';
 
 interface Article {
   headline: string;
@@ -54,7 +55,7 @@ export function TrendingIntelFeed() {
 
     async function fetchIntel() {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE || ''}/api/intel/news?sport=all`);
+        const res = await fetch(getReadApiUrl('/api/intel/news?sport=all'));
         if (!res.ok) throw new Error('Intel fetch failed');
         const raw = await res.json();
         if (cancelled) return;

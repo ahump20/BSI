@@ -7,6 +7,7 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Footer } from '@/components/layout-ds/Footer';
+import { getReadApiUrl } from '@/lib/utils/public-api';
 
 interface EndpointStatus {
   name: string;
@@ -53,7 +54,7 @@ export default function StatusPage() {
 
     async function fetchStatus() {
       try {
-        const res = await fetch('/api/status');
+        const res = await fetch(getReadApiUrl('/api/status'));
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = (await res.json()) as StatusApiRaw;
 

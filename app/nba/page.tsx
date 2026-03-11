@@ -191,58 +191,10 @@ export default function NBAPage() {
   }, []);
 
   const fetchLeaders = useCallback(async () => {
-    setLeadersLoading(true);
-    try {
-      const res = await fetch('/api/nba/players?leaders=true');
-      if (!res.ok) throw new Error('Failed to fetch leaders');
-      const data = await res.json() as {
-        leaders?: Array<{ category?: string; leaders?: Array<{ name?: string; team?: string; value?: number }> }>;
-        players?: Array<Record<string, unknown>>;
-      };
-      if (data.leaders && Array.isArray(data.leaders)) {
-        const mapped: LeaderCategory[] = data.leaders.slice(0, 3).map((cat) => ({
-          label: cat.category || 'Unknown',
-          abbreviation: cat.category === 'Points' ? 'PPG' : cat.category === 'Assists' ? 'APG' : cat.category === 'Rebounds' ? 'RPG' : cat.category?.substring(0, 3).toUpperCase() || '???',
-          unit: '/game',
-          players: (cat.leaders || []).slice(0, 5).map((p) => ({
-            name: p.name || 'Unknown',
-            team: p.team || '',
-            value: p.value || 0,
-          })),
-        }));
-        setLeaderCategories(mapped);
-      } else if (data.players && Array.isArray(data.players)) {
-        // Fallback: sort raw player list into leader categories
-        const players = data.players;
-        const categories: LeaderCategory[] = [
-          { label: 'Points', abbreviation: 'PPG', unit: '/game', players: [] },
-          { label: 'Assists', abbreviation: 'APG', unit: '/game', players: [] },
-          { label: 'Rebounds', abbreviation: 'RPG', unit: '/game', players: [] },
-        ];
-        const sortField = ['points', 'assists', 'rebounds'];
-        categories.forEach((cat, idx) => {
-          const field = sortField[idx];
-          const sorted = [...players]
-            .filter((p) => typeof (p[field] ?? p[field + 'PerGame']) === 'number')
-            .sort((a, b) => {
-              const av = Number(a[field + 'PerGame'] ?? a[field] ?? 0);
-              const bv = Number(b[field + 'PerGame'] ?? b[field] ?? 0);
-              return bv - av;
-            })
-            .slice(0, 5);
-          cat.players = sorted.map((p) => ({
-            name: (p.name as string) || (p.firstName as string || '') + ' ' + (p.lastName as string || ''),
-            team: (p.team as string) || '',
-            value: Number(p[field + 'PerGame'] ?? p[field] ?? 0),
-          }));
-        });
-        setLeaderCategories(categories.filter((c) => c.players.length > 0));
-      }
-    } catch {
-      // Leaders are supplementary — don't block the page
-    } finally {
-      setLeadersLoading(false);
-    }
+    // The deployed NBA data layer does not currently expose a league-leaders endpoint.
+    // Keep the players tab usable without generating repeated 404 noise in local or prod.
+    setLeaderCategories([]);
+    setLeadersLoading(false);
   }, []);
 
   useEffect(() => {

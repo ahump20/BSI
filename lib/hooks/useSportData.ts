@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { getReadApiUrl } from '@/lib/utils/public-api';
 
 interface UseSportDataOptions {
   /** Auto-refresh interval in ms (0 = disabled). Defaults to 0. */
@@ -57,7 +58,7 @@ export function useSportData<T>(
       setError(null);
 
       try {
-        const res = await fetch(url, { signal: controller.signal });
+        const res = await fetch(getReadApiUrl(url), { signal: controller.signal });
         if (!res.ok) {
           throw new Error(`Failed to fetch data (${res.status})`);
         }

@@ -33,7 +33,7 @@ function GameCard({ game, label, accent }: { game: HeroGame; label: string; acce
   return (
     <Link
       href="/scores"
-      className="heritage-card p-3 sm:p-4 flex-1 min-w-0 group"
+      className="heritage-card group block min-w-0 p-3 sm:p-4"
     >
       <div className="flex items-center gap-2 mb-2">
         <span
@@ -105,7 +105,7 @@ function SkeletonCard() {
  * Fetches /api/hero-scores, auto-refreshes every 30s, returns null if no games.
  */
 export function HeroScoreStrip() {
-  const url = `${process.env.NEXT_PUBLIC_API_BASE || ''}/api/hero-scores`;
+  const url = '/api/hero-scores';
   const { data, loading } = useSportData<HeroScoresData>(url, { refreshInterval: 30_000 });
 
   if (!loading && (!data || data.empty)) return null;
@@ -116,8 +116,8 @@ export function HeroScoreStrip() {
   if (data?.recentFinal) cards.push({ game: data.recentFinal, label: 'Final', accent: '#6b7280' });
 
   return (
-    <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.6s_forwards] mt-8">
-      <div className="flex gap-3 sm:gap-4">
+    <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.6s_forwards]">
+      <div className="grid gap-3 md:grid-cols-3">
         {loading ? (
           <>
             <SkeletonCard />
@@ -132,12 +132,12 @@ export function HeroScoreStrip() {
       </div>
 
       {data?.meta && (
-        <p className="text-[10px] text-center mt-3" style={{ color: 'var(--bsi-dust)' }}>
-          Updated {new Date(data.meta.fetched_at).toLocaleTimeString('en-US', {
+        <p className="mt-3 text-center text-[10px]" style={{ color: 'var(--bsi-dust)' }}>
+          Live proof updated {new Date(data.meta.fetched_at).toLocaleTimeString('en-US', {
             hour: 'numeric',
             minute: '2-digit',
             timeZone: 'America/Chicago',
-          })} CT · {data.meta.source}
+          })} CT · Source: {data.meta.source}
         </p>
       )}
     </div>

@@ -6,6 +6,7 @@ import { normalizeGames, sortGames, type GameScore } from '@/lib/scores/normaliz
 import { getSeasonPhase, type SportKey } from '@/lib/season';
 import { useLiveScoresAdapter } from '@/lib/hooks/useLiveScoresAdapter';
 import { ConnectionIndicator } from '@/components/ui/ConnectionIndicator';
+import { getReadApiUrl } from '@/lib/utils/public-api';
 
 interface LiveScoresPanelProps {
   sport: Sport;
@@ -176,15 +177,13 @@ function LiveScoresPanelREST({ sport, className = '' }: { sport: Sport; classNam
   const preseasonLabel = seasonPhase?.label;
 
   const buildEndpoint = useCallback((dateParam?: string) => {
-    const origin = process.env.NEXT_PUBLIC_API_BASE || '';
     const apiBase = sport === 'ncaa' ? '/api/college-baseball' : `/api/${sport}`;
-    const endpoint = `${origin}${sport === 'nba' ? `${apiBase}/scoreboard` : `${apiBase}/scores`}`;
-    return dateParam ? `${endpoint}?date=${dateParam}` : endpoint;
+    const endpoint = sport === 'nba' ? `${apiBase}/scoreboard` : `${apiBase}/scores`;
+    return getReadApiUrl(dateParam ? `${endpoint}?date=${dateParam}` : endpoint);
   }, [sport]);
 
   const buildCachedEndpoint = useCallback(() => {
-    const origin = process.env.NEXT_PUBLIC_API_BASE || '';
-    return `${origin}/api/scores/cached?sport=${sport}`;
+    return getReadApiUrl(`/api/scores/cached?sport=${sport}`);
   }, [sport]);
 
   useEffect(() => {

@@ -6,6 +6,7 @@ import { FreshnessBadge } from '@/components/ui/Badge';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { getDateOffset } from '@/lib/utils/timezone';
 import { withAlpha } from '@/lib/utils/color';
+import { getReadApiUrl } from '@/lib/utils/public-api';
 
 // ────────────────────────────────────────
 // Types
@@ -327,8 +328,8 @@ export function HomeLiveScores({ onCountsChange }: HomeLiveScoresProps = {}) {
       const results = await Promise.allSettled(
         activeSports.map(async (sport) => {
           const url = sport.key === 'college-baseball'
-            ? `${sport.endpoint}?date=${today}`
-            : sport.endpoint;
+            ? getReadApiUrl(`${sport.endpoint}?date=${today}`)
+            : getReadApiUrl(sport.endpoint);
           const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
           if (!res.ok) return null;
           const data = await res.json() as Record<string, unknown>;

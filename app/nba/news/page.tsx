@@ -22,13 +22,18 @@ interface NewsItem {
 }
 
 interface NewsResponse {
-  success: boolean;
-  count: number;
-  headlines: NewsItem[];
+  articles?: Array<{
+    headline?: string;
+    description?: string;
+    published?: string;
+    link?: string;
+    source?: string;
+    images?: Array<{ url?: string }>;
+  }>;
   meta: {
-    fetchedAt: string;
-    timezone: string;
-    source: string;
+    fetched_at?: string;
+    timezone?: string;
+    source?: string;
   };
 }
 
@@ -107,14 +112,24 @@ export default function NBANewsPage() {
     setError(null);
 
     try {
-      const res = await fetch('/api/news?sport=nba&limit=20');
+      const res = await fetch('/api/nba/news');
       if (!res.ok) {
         throw new Error(`Failed to fetch news: ${res.status}`);
       }
 
       const data: NewsResponse = await res.json();
-      setNews(data.headlines || []);
-      setLastUpdated(formatTimestamp());
+      const normalized = (data.articles || []).map((article) => ({
+        sport: 'nba',
+        title: article.headline || 'Untitled',
+        description: article.description || '',
+        published: article.published || new Date().toISOString(),
+        link: article.link || '#',
+        source: article.source || data.meta?.source || 'ESPN',
+        image: article.images?.[0]?.url || null,
+      }));
+
+      setNews(normalized.filter((item) => item.link !== '#'));
+      setLastUpdated(formatTimestamp(data.meta?.fetched_at));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load news');
     } finally {

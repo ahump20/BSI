@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import { Menu, X, ChevronDown, Search } from 'lucide-react';
 import { MobileMenuDrawer } from './MobileMenuDrawer';
 import type { LeagueNavItem } from '@/lib/navigation';
+import { getReadApiUrl } from '@/lib/utils/public-api';
 
 export interface NavItem {
   label: string;
@@ -37,7 +38,7 @@ function useNewsTicker(): string {
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE || ''}/api/intel/news`, {
+    fetch(getReadApiUrl('/api/intel/news'), {
       signal: controller.signal,
     })
       .then((r) => (r.ok ? r.json() : null))

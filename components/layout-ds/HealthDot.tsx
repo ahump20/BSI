@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { getReadApiUrl } from '@/lib/utils/public-api';
 
 type HealthLevel = 'healthy' | 'degraded' | 'down' | 'unknown';
 
@@ -35,7 +36,7 @@ export function HealthDot() {
   useEffect(() => {
     let mounted = true;
 
-    fetch('/api/status')
+    fetch(getReadApiUrl('/api/status'))
       .then((res) => {
         if (!res.ok) throw new Error();
         return res.json();

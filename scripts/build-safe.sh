@@ -60,11 +60,14 @@ rsync -aL \
   --exclude='*' \
   "$PROJECT_DIR/" "$BUILD_DIR/"
 
-# Hard-link node_modules (Turbopack rejects symlinks)
+# Link node_modules — hard-link preferred, fall back to rsync (handles iCloud eviction)
 # On re-runs, stale hard-linked node_modules may resist rm -rf — nuke it first
 perl -e 'use File::Path qw(remove_tree); remove_tree("'"$BUILD_DIR/node_modules"'")' 2>/dev/null || true
 rm -rf "$BUILD_DIR/node_modules" 2>/dev/null || true
-cp -al "$PROJECT_DIR/node_modules" "$BUILD_DIR/node_modules"
+if ! cp -al "$PROJECT_DIR/node_modules" "$BUILD_DIR/node_modules" 2>/dev/null; then
+  echo "→ Hard-link failed, using rsync for node_modules"
+  rsync -aL "$PROJECT_DIR/node_modules/" "$BUILD_DIR/node_modules/"
+fi
 # Remove .ignored dir if Turbopack left one — causes build failures on reuse
 rm -rf "$BUILD_DIR/node_modules/.ignored" 2>/dev/null || true
 

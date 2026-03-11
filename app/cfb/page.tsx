@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSportData } from '@/lib/hooks/useSportData';
@@ -45,6 +45,55 @@ interface CFBGame {
   away: { name: string; score: number };
   home: { name: string; score: number };
   venue?: string;
+}
+
+function normalizeCFBGame(raw: Record<string, unknown>, fallbackIndex: number): CFBGame {
+  const statusRaw = raw.status as Record<string, unknown> | string | undefined;
+  const statusType = typeof statusRaw === 'object'
+    ? statusRaw?.type as Record<string, unknown> | undefined
+    : undefined;
+  const teams = (raw.teams as Record<string, unknown>[] | undefined) || [];
+  const homeEntry = teams.find((team) => team.homeAway === 'home');
+  const awayEntry = teams.find((team) => team.homeAway === 'away');
+  const existingHome = raw.home as Record<string, unknown> | undefined;
+  const existingAway = raw.away as Record<string, unknown> | undefined;
+  const homeTeam = existingHome || (homeEntry?.team as Record<string, unknown>) || homeEntry || {};
+  const awayTeam = existingAway || (awayEntry?.team as Record<string, unknown>) || awayEntry || {};
+
+  const status =
+    typeof statusRaw === 'object'
+      ? (statusRaw.detailedState as string) ||
+        (statusType?.description as string) ||
+        (statusType?.detail as string) ||
+        (statusType?.shortDetail as string) ||
+        'Scheduled'
+      : (statusRaw as string) || 'Scheduled';
+
+  const state = statusType?.state as string | undefined;
+  const isLive = state === 'in' || /live|in progress/i.test(status);
+  const isFinal = state === 'post' || statusType?.completed === true || /final/i.test(status);
+
+  return {
+    id: (raw.id as string | number) || fallbackIndex,
+    status,
+    isLive,
+    isFinal,
+    detail: typeof statusRaw === 'object'
+      ? (statusType?.detail as string) || (statusType?.shortDetail as string) || undefined
+      : undefined,
+    away: {
+      name: (awayTeam.displayName as string) || (awayTeam.shortDisplayName as string) || (awayTeam.name as string) || 'Away',
+      score: Number((existingAway?.score ?? awayEntry?.score ?? 0)),
+    },
+    home: {
+      name: (homeTeam.displayName as string) || (homeTeam.shortDisplayName as string) || (homeTeam.name as string) || 'Home',
+      score: Number((existingHome?.score ?? homeEntry?.score ?? 0)),
+    },
+    venue:
+      ((raw.venue as Record<string, unknown> | undefined)?.fullName as string) ||
+      ((raw.venue as Record<string, unknown> | undefined)?.name as string) ||
+      undefined,
+  };
 }
 
 interface StandingsTeam {
@@ -131,15 +180,23 @@ export default function CFBPage() {
     meta?: { lastUpdated?: string; dataSource?: string };
   }>('/api/cfb/scores');
 
-  const recentGames: CFBGame[] = (scoresRaw?.games || (scoresRaw?.scores || []).map((s) => ({
-    id: s.id || Math.random(),
-    status: s.status || s.state || 'Final',
-    isLive: (s.status || s.state || '').toLowerCase().includes('live') || (s.status || s.state || '').toLowerCase().includes('in progress'),
-    isFinal: (s.status || s.state || '').toLowerCase().includes('final'),
-    away: { name: s.awayTeam || 'Away', score: s.awayScore || 0 },
-    home: { name: s.homeTeam || 'Home', score: s.homeScore || 0 },
-    venue: s.venue,
-  }))).slice(0, 6);
+  const recentGames: CFBGame[] = useMemo(() => {
+    if (scoresRaw?.games?.length) {
+      return scoresRaw.games
+        .map((game, index) => normalizeCFBGame(game as unknown as Record<string, unknown>, index))
+        .slice(0, 6);
+    }
+
+    return (scoresRaw?.scores || []).map((score) => ({
+      id: score.id || Math.random(),
+      status: score.status || score.state || 'Final',
+      isLive: (score.status || score.state || '').toLowerCase().includes('live') || (score.status || score.state || '').toLowerCase().includes('in progress'),
+      isFinal: (score.status || score.state || '').toLowerCase().includes('final'),
+      away: { name: score.awayTeam || 'Away', score: score.awayScore || 0 },
+      home: { name: score.homeTeam || 'Home', score: score.homeScore || 0 },
+      venue: score.venue,
+    })).slice(0, 6);
+  }, [scoresRaw]);
   const hasLiveGames = scoresRaw?.live || recentGames.some((g) => g.isLive);
 
   // Conference standings snapshot — always fetched on mount
