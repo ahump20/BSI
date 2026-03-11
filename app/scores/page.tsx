@@ -7,7 +7,6 @@ import { streamAnalysis } from '@/lib/bsi-stream-client';
 import type { Sport } from '@/lib/bsi-stream-client';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
-import { Card } from '@/components/ui/Card';
 import { Badge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
@@ -15,6 +14,7 @@ import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
+import { extractCBBGames, extractESPNGames, extractMLBGames, type FeaturedGame } from '@/lib/scores/featured-games';
 
 // ── SVG Sport Icons ──
 
@@ -59,22 +59,6 @@ const INTEL_SPORT_MAP: Record<string, Sport> = {
 
 // ── Game Types ──
 
-interface GameTeam {
-  name: string;
-  abbreviation: string;
-  logo?: string;
-  score?: string | number;
-}
-
-interface FeaturedGame {
-  id: string;
-  away: GameTeam;
-  home: GameTeam;
-  state: 'live' | 'final' | 'upcoming';
-  detail: string;
-  href: string;
-}
-
 interface SportSection {
   id: string;
   name: string;
@@ -100,7 +84,7 @@ function GameStateBadge({ state, detail }: { state: string; detail: string }) {
     );
   }
   if (state === 'final') {
-    return <span className="text-text-tertiary text-xs font-semibold">FINAL</span>;
+    return <span className="text-bsi-dust/60 text-xs font-semibold">FINAL</span>;
   }
   return <span className="text-burnt-orange text-xs">{detail || 'Upcoming'}</span>;
 }
@@ -173,7 +157,7 @@ function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) 
 
   const cardContent = (
     <div className={`p-3 rounded-lg border transition-all hover:border-burnt-orange/50 ${
-      game.state === 'live' ? 'border-success/30 bg-success/5' : 'border-border-subtle bg-background-tertiary'
+      game.state === 'live' ? 'border-success/30 bg-success/5' : 'border-border-vintage bg-surface-dugout'
     }`}>
       <div className="flex items-center justify-between mb-1">
         <GameStateBadge state={game.state} detail={game.detail} />
@@ -184,14 +168,14 @@ function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) 
             {game.away.logo ? (
               <img src={game.away.logo} alt="" className="w-4 h-4 object-contain" loading="lazy" />
             ) : (
-              <span className="text-[10px] font-bold text-text-tertiary w-4">{game.away.abbreviation}</span>
+              <span className="text-[10px] font-bold text-bsi-dust w-4">{game.away.abbreviation}</span>
             )}
-            <span className="text-sm text-text-primary font-medium truncate max-w-[120px]">
-              {game.away.abbreviation}
+            <span className="text-sm text-bsi-bone font-medium truncate max-w-[120px]">
+              {game.away.name || game.away.abbreviation}
             </span>
           </div>
           <span className={`font-mono text-sm font-bold ${
-            game.state === 'final' && Number(game.away.score) > Number(game.home.score) ? 'text-text-primary' : 'text-text-secondary'
+            game.state === 'final' && Number(game.away.score) > Number(game.home.score) ? 'text-bsi-bone' : 'text-bsi-dust'
           }`}>
             {game.away.score ?? '-'}
           </span>
@@ -201,14 +185,14 @@ function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) 
             {game.home.logo ? (
               <img src={game.home.logo} alt="" className="w-4 h-4 object-contain" loading="lazy" />
             ) : (
-              <span className="text-[10px] font-bold text-text-tertiary w-4">{game.home.abbreviation}</span>
+              <span className="text-[10px] font-bold text-bsi-dust w-4">{game.home.abbreviation}</span>
             )}
-            <span className="text-sm text-text-primary font-medium truncate max-w-[120px]">
-              {game.home.abbreviation}
+            <span className="text-sm text-bsi-bone font-medium truncate max-w-[120px]">
+              {game.home.name || game.home.abbreviation}
             </span>
           </div>
           <span className={`font-mono text-sm font-bold ${
-            game.state === 'final' && Number(game.home.score) > Number(game.away.score) ? 'text-text-primary' : 'text-text-secondary'
+            game.state === 'final' && Number(game.home.score) > Number(game.away.score) ? 'text-bsi-bone' : 'text-bsi-dust'
           }`}>
             {game.home.score ?? '-'}
           </span>
@@ -217,7 +201,7 @@ function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) 
 
       {/* Pregame Intel button */}
       {canShowIntel && (
-        <div className="mt-2 pt-2 border-t border-border-subtle">
+        <div className="mt-2 pt-2 border-t border-border-vintage">
           <button
             onClick={handleIntelToggle}
             className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-burnt-orange hover:text-ember transition-colors"
@@ -232,7 +216,7 @@ function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) 
           {intelOpen && (
             <div className="mt-2 max-h-48 overflow-y-auto rounded bg-midnight/50 p-2">
               {intelLoading && (
-                <div className="flex items-center gap-2 text-text-tertiary text-xs">
+                <div className="flex items-center gap-2 text-bsi-dust/60 text-xs">
                   <span className="w-1.5 h-1.5 bg-burnt-orange rounded-full animate-pulse" />
                   Loading pregame intel...
                 </div>
@@ -241,7 +225,7 @@ function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) 
                 <p className="text-xs text-red-400">{intelError}</p>
               )}
               {intelText && (
-                <p className="text-xs text-text-secondary leading-relaxed whitespace-pre-wrap">{intelText}</p>
+                <p className="text-xs text-bsi-dust leading-relaxed whitespace-pre-wrap">{intelText}</p>
               )}
               {intelCached && !intelLoading && (
                 <span className="inline-block mt-1.5 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider bg-burnt-orange/20 text-burnt-orange rounded">
@@ -266,85 +250,6 @@ function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) 
       {cardContent}
     </Link>
   );
-}
-
-// ── Helpers to extract featured games ──
-
-function extractMLBGames(data: Record<string, unknown>): FeaturedGame[] {
-  const games = (data?.games as Array<Record<string, unknown>>) || [];
-  return games.slice(0, 4).map(g => {
-    const away = (g.teams as Record<string, unknown>)?.away as Record<string, unknown> || {};
-    const home = (g.teams as Record<string, unknown>)?.home as Record<string, unknown> || {};
-    const status = g.status as Record<string, unknown> || {};
-    const isLive = Boolean((status as Record<string, boolean>)?.isLive);
-    const isFinal = Boolean((status as Record<string, unknown>)?.type && ((status as Record<string, Record<string, boolean>>).type?.completed));
-    return {
-      id: String(g.gamePk || g.id || ''),
-      away: { name: String(away.name || ''), abbreviation: String(away.abbreviation || 'AWY'), logo: String(away.logo || ''), score: String(away.score ?? '') },
-      home: { name: String(home.name || ''), abbreviation: String(home.abbreviation || 'HME'), logo: String(home.logo || ''), score: String(home.score ?? '') },
-      state: isLive ? 'live' : isFinal ? 'final' : 'upcoming',
-      detail: String((status as Record<string, string>)?.detailedState || ''),
-      href: `/mlb/game/${g.gamePk || g.id}`,
-    } satisfies FeaturedGame;
-  });
-}
-
-function extractESPNGames(data: Record<string, unknown>, sport: string): FeaturedGame[] {
-  const games = (data?.games as Array<Record<string, unknown>>) || [];
-  return games.slice(0, 4).map(g => {
-    const teams = (g.teams || g.competitors) as Array<Record<string, unknown>> || [];
-    const away = teams.find(t => t.homeAway === 'away') || teams[0] || {};
-    const home = teams.find(t => t.homeAway === 'home') || teams[1] || {};
-    const status = g.status as Record<string, Record<string, unknown>> || {};
-    const state = String(status?.type?.state || 'pre');
-    const completed = Boolean(status?.type?.completed);
-
-    const awayTeam = (away.team || {}) as Record<string, string>;
-    const homeTeam = (home.team || {}) as Record<string, string>;
-    const awayLogos = (awayTeam.logos || []) as Array<Record<string, string>>;
-    const homeLogos = (homeTeam.logos || []) as Array<Record<string, string>>;
-
-    return {
-      id: String(g.id || ''),
-      away: {
-        name: String(awayTeam.displayName || ''),
-        abbreviation: String(awayTeam.abbreviation || 'AWY'),
-        logo: String(awayTeam.logo || awayLogos[0]?.href || ''),
-        score: String((away as Record<string, string>).score ?? ''),
-      },
-      home: {
-        name: String(homeTeam.displayName || ''),
-        abbreviation: String(homeTeam.abbreviation || 'HME'),
-        logo: String(homeTeam.logo || homeLogos[0]?.href || ''),
-        score: String((home as Record<string, string>).score ?? ''),
-      },
-      state: state === 'in' ? 'live' : completed ? 'final' : 'upcoming',
-      detail: String(status?.type?.detail || status?.type?.shortDetail || ''),
-      href: `/${sport}/game/${g.id}`,
-    } satisfies FeaturedGame;
-  });
-}
-
-function extractCBBGames(data: Record<string, unknown>): FeaturedGame[] {
-  const games = ((data?.data || data?.games) as Array<Record<string, unknown>>) || [];
-  return games.slice(0, 4).map(g => ({
-    id: String(g.id || ''),
-    away: {
-      name: String(g.awayTeam || ''),
-      abbreviation: String(g.awayAbbreviation || (typeof g.awayTeam === 'string' ? g.awayTeam.substring(0, 3).toUpperCase() : 'AWY')),
-      logo: String(g.awayLogo || ''),
-      score: String(g.awayScore ?? ''),
-    },
-    home: {
-      name: String(g.homeTeam || ''),
-      abbreviation: String(g.homeAbbreviation || (typeof g.homeTeam === 'string' ? g.homeTeam.substring(0, 3).toUpperCase() : 'HME')),
-      logo: String(g.homeLogo || ''),
-      score: String(g.homeScore ?? ''),
-    },
-    state: g.status === 'live' ? 'live' : g.status === 'final' ? 'final' : 'upcoming',
-    detail: String(g.statusDetail || ''),
-    href: `/college-baseball/game/${g.id}`,
-  }));
 }
 
 // ── Loading Fallback ──
@@ -637,7 +542,7 @@ function ScoresHubContent() {
                   {sports.map(sport => (
                     <div key={sport.id}>
                       <div className="flex items-center justify-between mb-4">
-                        <h2 className="font-display text-xl font-bold uppercase text-text-primary">
+                        <h2 className="font-display text-xl font-bold uppercase text-bsi-bone">
                           {sport.name}
                         </h2>
                         <Link
@@ -660,12 +565,12 @@ function ScoresHubContent() {
                           ))}
                         </div>
                       ) : (
-                        <Card padding="md" className="text-center">
-                          <p className="text-text-secondary text-sm">No {sport.name} games today</p>
-                          <p className="text-text-tertiary text-xs mt-1">
+                        <div className="heritage-card p-4 text-center">
+                          <p className="text-bsi-dust text-sm">No {sport.name} games today</p>
+                          <p className="text-bsi-dust/60 text-xs mt-1">
                             {sport.isActive ? 'Check back later' : `Season: ${sport.season}`}
                           </p>
-                        </Card>
+                        </div>
                       )}
                     </div>
                   ))}
@@ -673,7 +578,7 @@ function ScoresHubContent() {
               ) : activeSportData && activeSportData.featured.length > 0 ? (
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="font-display text-xl font-bold uppercase text-text-primary">
+                    <h2 className="font-display text-xl font-bold uppercase text-bsi-bone">
                       {activeSportData.name} Scores
                     </h2>
                     <Link
@@ -690,9 +595,9 @@ function ScoresHubContent() {
                   </div>
                 </div>
               ) : activeSportData && activeSportData.loaded ? (
-                <Card padding="lg" className="text-center">
-                  <p className="text-text-secondary">No {activeSportData.name} games today</p>
-                  <p className="text-text-tertiary text-sm mt-1">
+                <div className="heritage-card p-6 text-center">
+                  <p className="text-bsi-dust">No {activeSportData.name} games today</p>
+                  <p className="text-bsi-dust/60 text-sm mt-1">
                     {activeSportData.isActive ? 'Check back later' : `Season: ${activeSportData.season}`}
                   </p>
                   <Link
@@ -701,7 +606,7 @@ function ScoresHubContent() {
                   >
                     View {activeSportData.name} Hub
                   </Link>
-                </Card>
+                </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                   {Array.from({ length: 4 }).map((_, i) => (
@@ -712,30 +617,28 @@ function ScoresHubContent() {
 
               {/* All Sports Overview */}
               <div className="mt-10">
-                <h2 className="font-display text-lg font-bold uppercase text-text-primary mb-4">
+                <h2 className="font-display text-lg font-bold uppercase text-bsi-bone mb-4">
                   All Sports
                 </h2>
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {sports.map((sport, index) => (
                     <ScrollReveal key={sport.id} direction="up" delay={index * 60}>
                       <Link href={sport.href} className="block h-full">
-                        <Card
-                          variant="hover"
-                          padding="md"
-                          className={`h-full transition-all ${
+                        <div
+                          className={`heritage-card p-4 h-full transition-all ${
                             sport.liveCount > 0 ? 'border-success/50 bg-success/5' : ''
                           }`}
                         >
                           <div className="flex items-start justify-between mb-3">
                             <div className="flex items-center gap-2.5">
-                              <span className="text-text-secondary">
+                              <span className="text-bsi-dust">
                                 {(() => { const Icon = SPORT_ICONS[sport.id]; return Icon ? <Icon /> : null; })()}
                               </span>
                               <div>
-                                <h3 className="text-base font-display font-bold text-text-primary">
+                                <h3 className="text-base font-display font-bold text-bsi-bone">
                                   {sport.name}
                                 </h3>
-                                <p className="text-[11px] text-text-tertiary">Season: {sport.season}</p>
+                                <p className="text-[11px] text-bsi-dust/60">Season: {sport.season}</p>
                               </div>
                             </div>
                             {sport.liveCount > 0 ? (
@@ -746,13 +649,13 @@ function ScoresHubContent() {
                             ) : sport.todayCount > 0 ? (
                               <Badge variant="primary">{sport.todayCount} Today</Badge>
                             ) : !sport.loaded ? (
-                              <span className="text-xs text-text-tertiary">Loading...</span>
+                              <span className="text-xs text-bsi-dust/60">Loading...</span>
                             ) : (
                               <Badge variant="default">{sport.isActive ? 'No games' : 'Off-season'}</Badge>
                             )}
                           </div>
-                          <p className="text-text-secondary text-xs">{sport.description}</p>
-                        </Card>
+                          <p className="text-bsi-dust text-xs">{sport.description}</p>
+                        </div>
                       </Link>
                     </ScrollReveal>
                   ))}
@@ -761,8 +664,8 @@ function ScoresHubContent() {
 
               {/* Quick Links */}
               <ScrollReveal direction="up" delay={300}>
-                <div className="mt-10 p-5 bg-background-tertiary rounded-lg border border-border-subtle">
-                  <h3 className="text-sm font-semibold text-text-primary mb-3">Quick Access</h3>
+                <div className="mt-10 p-5 bg-surface-press-box rounded-lg border border-border-vintage">
+                  <h3 className="text-sm font-semibold text-bsi-bone mb-3">Quick Access</h3>
                   <div className="flex flex-wrap gap-2">
                     {[
                       { href: '/college-baseball/scores', label: 'College Baseball Scores' },
@@ -777,7 +680,7 @@ function ScoresHubContent() {
                       <Link
                         key={link.href}
                         href={link.href}
-                        className="px-3 py-1.5 bg-charcoal hover:bg-burnt-orange/20 text-text-secondary hover:text-burnt-orange rounded-lg text-xs font-medium transition-colors"
+                        className="px-3 py-1.5 bg-surface-dugout hover:bg-burnt-orange/20 text-bsi-dust hover:text-burnt-orange rounded-lg text-xs font-medium transition-colors"
                       >
                         {link.label}
                       </Link>
@@ -787,7 +690,7 @@ function ScoresHubContent() {
               </ScrollReveal>
 
               {/* Data Freshness */}
-              <div className="mt-8 pt-4 border-t border-border-subtle">
+              <div className="mt-8 pt-4 border-t border-border-vintage">
                 <DataFreshnessIndicator
                   lastUpdated={fetchedAt ? new Date(fetchedAt) : undefined}
                   source="BSI Multi-Source"

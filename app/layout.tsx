@@ -62,9 +62,9 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'Blaze Sports Intel | College Baseball Sabermetrics',
+  title: 'Blaze Sports Intel | Live Scores, Analytics, and Editorial Across Five Sports',
   description:
-    'Free park-adjusted sabermetrics for D1 college baseball — wOBA, wRC+, FIP, park factors, conference strength. Updated every 6 hours. Plus live scores across MLB, NFL, NBA, and NCAA.',
+    'Live scores, editorial, and advanced analytics across college baseball, MLB, NFL, NBA, and college football — with park-adjusted sabermetrics at the core.',
   keywords: [
     'college baseball',
     'college baseball analytics',
@@ -84,9 +84,9 @@ export const metadata: Metadata = {
   publisher: 'Blaze Sports Intel',
   metadataBase: new URL('https://blazesportsintel.com'),
   openGraph: {
-    title: 'Blaze Sports Intel | College Baseball Sabermetrics',
+    title: 'Blaze Sports Intel | Live Scores, Analytics, and Editorial Across Five Sports',
     description:
-      'Free park-adjusted sabermetrics for D1 college baseball — wOBA, wRC+, FIP, park factors, conference strength. Updated every 6 hours.',
+      'Live scores, editorial, and advanced analytics across college baseball, MLB, NFL, NBA, and college football — with park-adjusted sabermetrics at the core.',
     type: 'website',
     locale: 'en_US',
     url: 'https://blazesportsintel.com',
@@ -96,14 +96,14 @@ export const metadata: Metadata = {
         url: '/images/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Blaze Sports Intel - College Baseball Sabermetrics',
+        alt: 'Blaze Sports Intel - Live Scores, Analytics, and Editorial Across Five Sports',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Blaze Sports Intel',
-    description: 'Free park-adjusted sabermetrics for D1 college baseball. wOBA, wRC+, FIP, park factors. Updated every 6 hours.',
+    description: 'Live scores, editorial, and advanced analytics across college baseball, MLB, NFL, NBA, and college football.',
     images: ['/images/og-image.png'],
   },
   alternates: { canonical: '/' },
@@ -132,7 +132,7 @@ const jsonLdContent = JSON.stringify({
       logo: 'https://blazesportsintel.com/images/brand/bsi-mascot-shield.png',
       founder: { '@type': 'Person', name: 'Austin Humphrey' },
       description:
-        'Free park-adjusted sabermetrics for D1 college baseball. wOBA, wRC+, FIP, park factors, conference strength. Plus live scores across MLB, NFL, NBA, and NCAA.',
+        'Live scores, editorial, and advanced analytics across college baseball, MLB, NFL, NBA, and college football — with park-adjusted sabermetrics at the core.',
     },
     {
       '@type': 'WebSite',

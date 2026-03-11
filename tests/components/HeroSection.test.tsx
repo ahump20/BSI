@@ -20,21 +20,32 @@ vi.mock('@/components/home/HeroScoreStrip', () => ({
 }));
 
 describe('HeroSection', () => {
-  it('renders the new product-first homepage message', () => {
+  it('renders the current homepage hero message', () => {
     render(<HeroSection />);
 
-    expect(screen.getByRole('heading', { name: /Coverage for the sports the spotlight skips\./i })).toBeTruthy();
-    expect(screen.getByText(/Blaze Sports Intel brings live scores, editorial, and park-adjusted analytics/i)).toBeTruthy();
-    expect(screen.getByText(/College baseball is the flagship\. The rest of the board still matters\./i)).toBeTruthy();
+    expect(screen.getByText(/Est\. 2024/i)).toBeTruthy();
+    expect(screen.getByRole('heading', { name: /Blaze Sports/i })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: /Intel/i })).toBeTruthy();
+    expect(screen.getByText(/Analytics for the sports that don't get the spotlight\./i)).toBeTruthy();
     expect(screen.getAllByText(/Born to Blaze the Path Beaten Less/i).length).toBeGreaterThan(0);
   });
 
   it('keeps the primary homepage routes visible in the hero', () => {
     render(<HeroSection />);
 
-    expect(screen.getByRole('link', { name: /Start with College Baseball/i }).getAttribute('href')).toBe('/college-baseball');
-    expect(screen.getByRole('link', { name: /Check Live Scores/i }).getAttribute('href')).toBe('/scores');
-    expect(screen.getByRole('link', { name: /Open BSI Savant/i }).getAttribute('href')).toBe('/college-baseball/savant');
+    expect(screen.getByRole('link', { name: /^College Baseball$/i }).getAttribute('href')).toBe('/college-baseball');
+    expect(screen.getByRole('link', { name: /^Live Scores$/i }).getAttribute('href')).toBe('/scores');
+    expect(screen.getByRole('link', { name: /^BSI Savant$/i }).getAttribute('href')).toBe('/college-baseball/savant');
     expect(screen.getByTestId('hero-score-strip')).toBeTruthy();
+  });
+
+  it('keeps the hero wrapper shrinkable on mobile', () => {
+    render(<HeroSection />);
+
+    const heroHeading = screen.getByRole('heading', { name: /Blaze Sports/i });
+    const wrapper = heroHeading.parentElement;
+
+    expect(wrapper?.className).toContain('w-full');
+    expect(wrapper?.className).toContain('min-w-0');
   });
 });

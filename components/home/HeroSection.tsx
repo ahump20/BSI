@@ -27,7 +27,7 @@ export function HeroSection() {
         aria-hidden="true"
       />
 
-      <div className="relative z-10 max-w-5xl mx-auto text-center px-4 sm:px-6 lg:px-8 corner-marks py-16 sm:py-24">
+      <div className="relative z-10 w-full min-w-0 max-w-5xl mx-auto text-center px-4 sm:px-6 lg:px-8 corner-marks py-16 sm:py-24">
         {/* Heritage stamp kicker */}
         <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-fade-in_0.6s_ease-out_forwards] mb-6">
           <span className="heritage-stamp">
@@ -75,13 +75,14 @@ export function HeroSection() {
         </h1>
 
         {/* Slogan — front and center */}
-        <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.4s_forwards] mb-6">
+        <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.4s_forwards] mb-5 sm:mb-6">
           <p
             className="font-serif italic tracking-wide leading-none"
             style={{
-              fontSize: 'clamp(1rem, 2.5vw, 1.5rem)',
+              fontSize: 'clamp(1.05rem, 3vw, 1.5rem)',
               color: 'var(--bsi-primary)',
-              textShadow: '0 0 30px rgba(191, 87, 0, 0.2)',
+              textShadow: '0 0 30px rgba(191, 87, 0, 0.22)',
+              opacity: 0.92,
             }}
           >
             Born to Blaze the Path Beaten Less
@@ -89,8 +90,14 @@ export function HeroSection() {
         </div>
 
         {/* Cormorant italic subhead — broadcast chyron style */}
-        <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.5s_forwards] max-w-2xl mx-auto mb-8 px-6 sm:px-4">
-          <p className="font-serif italic text-base sm:text-lg md:text-xl tracking-wide text-[var(--bsi-dust)] leading-relaxed">
+        <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.5s_forwards] max-w-[22rem] sm:max-w-2xl mx-auto mb-8 px-4 sm:px-4">
+          <p
+            className="font-serif italic text-[15px] sm:text-lg md:text-xl tracking-[0.04em] leading-7 sm:leading-relaxed"
+            style={{
+              color: 'rgba(245, 240, 235, 0.82)',
+              textShadow: '0 1px 12px rgba(0, 0, 0, 0.28)',
+            }}
+          >
             <span className="text-[var(--heritage-bronze)]">&mdash;</span>{' '}
             Analytics for the sports that don&apos;t get the spotlight.
             Five sports deep. College baseball at the core.{' '}
