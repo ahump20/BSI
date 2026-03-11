@@ -41,8 +41,8 @@ import type {
 } from '../../lib/mlb-the-show/types';
 
 const SHOW_CACHE_TTL = {
-  status: 30,
-  overview: 30,
+  status: 60,
+  overview: 60,
   cards: 60,
   card: 60,
   history: 300,
