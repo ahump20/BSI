@@ -4,6 +4,10 @@
 # iCloud's storage optimization can evict .next/ files mid-build when generating
 # 1500+ static pages. This script copies the project to /var/tmp, builds there,
 # then copies the output back.
+#
+# Because the repo root is ~/ (home directory), we use an include-list approach
+# to only sync BSI source directories. This keeps the rsync under 30 seconds
+# instead of 10+ minutes copying screenshots, game repos, etc.
 
 set -euo pipefail
 
@@ -21,12 +25,39 @@ mkdir -p "$BUILD_DIR"
 # Clear stale .next from prior builds (prevents Turbopack invariant errors)
 rm -rf "$BUILD_DIR/.next" 2>/dev/null || true
 
-# Sync source files — use -L to follow iCloud deferred file references
+# Sync only BSI source directories + root config files.
+# Uses --include/--exclude filters: include what we need, exclude everything else.
+# -L follows iCloud deferred file references.
 rsync -aL \
-  --exclude='.next' \
-  --exclude='node_modules' \
-  --exclude='out' \
-  --exclude='.git' \
+  --include='/app/***' \
+  --include='/components/***' \
+  --include='/lib/***' \
+  --include='/workers/***' \
+  --include='/functions/***' \
+  --include='/scripts/***' \
+  --include='/tests/***' \
+  --include='/games/***' \
+  --include='/docs/***' \
+  --include='/public/***' \
+  --include='/external/***' \
+  --include='/migrations/***' \
+  --include='/styles/***' \
+  --include='package.json' \
+  --include='package-lock.json' \
+  --include='tsconfig.json' \
+  --include='tsconfig.*.json' \
+  --include='next.config.*' \
+  --include='next-env.d.ts' \
+  --include='tailwind.config.*' \
+  --include='postcss.config.*' \
+  --include='wrangler.toml' \
+  --include='vitest.config.*' \
+  --include='playwright.config.*' \
+  --include='.gitignore' \
+  --include='_headers' \
+  --include='_redirects' \
+  --include='_routes.json' \
+  --exclude='*' \
   "$PROJECT_DIR/" "$BUILD_DIR/"
 
 # Hard-link node_modules (Turbopack rejects symlinks)
