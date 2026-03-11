@@ -254,7 +254,7 @@ export function Navbar({ primary, leagues, secondary }: NavbarProps) {
             {/* Left: Logo */}
             <Link href="/" className="flex items-center gap-3 shrink-0">
               <Image
-                src="/images/brand/bsi-shield-blaze.png"
+                src="/images/brand/bsi-lettermark-square.png"
                 alt="Blaze Sports Intel"
                 width={32}
                 height={32}

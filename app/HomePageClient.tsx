@@ -896,7 +896,7 @@ export function HomePageClient() {
             <div className="flex justify-center mb-6">
               <div className="relative w-[64px] h-[64px]">
                 <Image
-                  src="/images/brand/bsi-shield-mascot.png"
+                  src="/images/brand/bsi-mascot-200.png"
                   alt="Blaze Sports Intel"
                   fill
                   className="object-contain opacity-80"

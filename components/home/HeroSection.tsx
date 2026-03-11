@@ -39,7 +39,7 @@ export function HeroSection() {
         <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-scale-in_0.8s_ease-out_0.1s_forwards] mb-8 flex justify-center">
           <div className="relative w-[140px] h-[140px] sm:w-[180px] sm:h-[180px] md:w-[200px] md:h-[200px]">
             <Image
-              src="/images/brand/bsi-shield-mascot.png"
+              src="/images/brand/bsi-mascot-400.png"
               alt="Blaze Sports Intel"
               fill
               className="object-contain drop-shadow-[0_0_40px_rgba(191,87,0,0.3)]"

@@ -112,8 +112,8 @@ export const metadata: Metadata = {
     follow: true,
   },
   icons: {
-    icon: '/images/brand/bsi-shield-blaze.png',
-    apple: '/images/brand/bsi-shield-blaze.png',
+    icon: '/images/brand/bsi-lettermark-square.png',
+    apple: '/apple-touch-icon.png',
   },
   manifest: '/manifest.json',
 };
@@ -129,7 +129,7 @@ const jsonLdContent = JSON.stringify({
       '@type': 'Organization',
       name: 'Blaze Sports Intel',
       url: 'https://blazesportsintel.com',
-      logo: 'https://blazesportsintel.com/images/brand/bsi-logo-primary.png',
+      logo: 'https://blazesportsintel.com/images/brand/bsi-mascot-shield.png',
       founder: { '@type': 'Person', name: 'Austin Humphrey' },
       description:
         'Free park-adjusted sabermetrics for D1 college baseball. wOBA, wRC+, FIP, park factors, conference strength. Plus live scores across MLB, NFL, NBA, and NCAA.',

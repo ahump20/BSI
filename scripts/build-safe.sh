@@ -38,7 +38,7 @@ rsync -aL \
   --include='/tests/***' \
   --include='/games/***' \
   --include='/docs/***' \
-  --include='/public/***' \
+  --include='/[Pp]ublic/***' \
   --include='/external/***' \
   --include='/migrations/***' \
   --include='/styles/***' \
@@ -59,6 +59,13 @@ rsync -aL \
   --include='_routes.json' \
   --exclude='*' \
   "$PROJECT_DIR/" "$BUILD_DIR/"
+
+# Ensure public/ is lowercase — macOS APFS stores it as 'Public' (case-insensitive)
+# but Next.js requires lowercase 'public/' for static asset copying.
+if [ -d "$BUILD_DIR/Public" ] && [ ! -d "$BUILD_DIR/public" ]; then
+  mv "$BUILD_DIR/Public" "$BUILD_DIR/public"
+  echo "→ Renamed Public → public for Next.js compatibility"
+fi
 
 # Link node_modules — hard-link preferred, fall back to rsync (handles iCloud eviction)
 # On re-runs, stale hard-linked node_modules may resist rm -rf — nuke it first
