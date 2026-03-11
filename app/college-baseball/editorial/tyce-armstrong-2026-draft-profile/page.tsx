@@ -4,6 +4,7 @@ import { Section } from '@/components/ui/Section';
 import { StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
+import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
@@ -321,25 +322,14 @@ export default function ArmstrongDraftProfilePage() {
         </Section>
 
         {/* ── BSI Verdict ── */}
-        <Section padding="lg" background="charcoal">
-          <Container size="narrow">
-            <ScrollReveal direction="up">
-              <div className="relative border border-burnt-orange/20 rounded-lg p-6 md:p-8">
-                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-charcoal text-burnt-orange px-3">
-                  BSI Verdict
-                </div>
-                <div className="font-serif text-lg leading-relaxed text-[#FAF7F2] space-y-4">
-                  <p>
-                    Three grand slams in one game is the kind of stat line that defies explanation and resists projection. The power is real &mdash; you don&rsquo;t clear the bases three times in three innings on accident. The question is everything around it: can Armstrong maintain a hitting approach that lets the power play against pitching staffs that won&rsquo;t load the bases and leave fastballs over the middle of the plate?
-                  </p>
-                  <p>
-                    The draft projection right now sits in the Day 2 to Day 3 range &mdash; rounds 3 through 10 &mdash; with significant upside if the hit tool develops. First basemen need to produce. The positional bar is high. But Armstrong&rsquo;s raw power is plus-plus, and in an era where college programs are increasingly developing power hitters rather than drafting them, a breakout sophomore season at Baylor could move him substantially up the board. The next 30 games will determine whether Opening Weekend was the beginning of something or the peak of it.
-                  </p>
-                </div>
-              </div>
-            </ScrollReveal>
-          </Container>
-        </Section>
+        <BSIVerdict>
+          <p>
+            Three grand slams in one game is the kind of stat line that defies explanation and resists projection. The power is real &mdash; you don&rsquo;t clear the bases three times in three innings on accident. The question is everything around it: can Armstrong maintain a hitting approach that lets the power play against pitching staffs that won&rsquo;t load the bases and leave fastballs over the middle of the plate?
+          </p>
+          <p>
+            The draft projection right now sits in the Day 2 to Day 3 range &mdash; rounds 3 through 10 &mdash; with significant upside if the hit tool develops. First basemen need to produce. The positional bar is high. But Armstrong&rsquo;s raw power is plus-plus, and in an era where college programs are increasingly developing power hitters rather than drafting them, a breakout sophomore season at Baylor could move him substantially up the board. The next 30 games will determine whether Opening Weekend was the beginning of something or the peak of it.
+          </p>
+        </BSIVerdict>
 
         {/* ── Related + CTA ── */}
         <Section padding="lg">

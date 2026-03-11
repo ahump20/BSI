@@ -11,6 +11,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { GameRecapToolbar } from '@/components/editorial/GameRecapToolbar';
 import { AIAnalysisPanel } from '@/components/editorial/AIAnalysisPanel';
 import { NotebookLMExport } from '@/components/editorial/NotebookLMExport';
+import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 
 /* ────────────────────────────────────────────
    Types
@@ -500,14 +501,7 @@ export default function TexasWeek3RecapPage() {
         </Section>
 
         {/* ── BSI Verdict — Week 3 ── */}
-        <Section padding="lg" background="charcoal">
-          <Container size="narrow">
-            <ScrollReveal direction="up">
-              <div className="relative bg-gradient-to-br from-burnt-orange/8 to-texas-soil/5 border border-burnt-orange/15 rounded p-8 sm:p-10">
-                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-charcoal text-burnt-orange px-3">
-                  BSI Verdict &mdash; Week 3
-                </div>
-                <div className="font-serif text-lg sm:text-xl leading-relaxed text-[#FAF7F2] space-y-4">
+        <BSIVerdict>
                   <p>
                     The BRUCE BOLT Classic answered the one remaining question: what happens when Texas faces real arms? Coastal Carolina brought a top-10 ranking and the institutional weight of a 56-14 season that ended in the CWS finals. Texas scored eight, struck out seventeen batters as a staff, played error-free defense, and made the Chanticleers look overmatched. That&rsquo;s not a close win against a good team. That&rsquo;s a statement that the first two weekends of home-field dominance weren&rsquo;t an artifact of the schedule.
                   </p>
@@ -520,11 +514,7 @@ export default function TexasWeek3RecapPage() {
                   <p className="text-text-secondary">
                     But 11-0 against the current strength of schedule is a foundation, not a conclusion. The SEC opens March 13 at Ole Miss. That&rsquo;s when the foundation bears weight &mdash; when the weekend rotation faces conference arms in hostile parks, when the bullpen gets tested in close games against ranked opponents four weekends in a row. Everything so far says Texas is built for it. Nothing so far has proven it.
                   </p>
-                </div>
-              </div>
-            </ScrollReveal>
-          </Container>
-        </Section>
+        </BSIVerdict>
 
         {/* ── Pull Quote ── */}
         <Section padding="lg">

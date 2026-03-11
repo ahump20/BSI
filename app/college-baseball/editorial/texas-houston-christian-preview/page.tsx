@@ -4,6 +4,7 @@ import { Section } from '@/components/ui/Section';
 import { StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
+import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
 
@@ -215,35 +216,22 @@ export default function TexasHoustonChristianPreviewPage() {
         </Section>
 
         {/* BSI Verdict */}
-        <Section background="charcoal" padding="lg">
-          <Container>
-            <ScrollReveal>
-              <div className="max-w-3xl mx-auto relative">
-                <div className="absolute -top-3 left-6">
-                  <span className="bg-burnt-orange text-white text-xs font-display uppercase tracking-widest px-3 py-1 rounded">BSI Verdict</span>
-                </div>
-                <div className="bg-gradient-to-br from-burnt-orange/8 to-texas-soil/5 border border-burnt-orange/15 rounded-lg p-8 pt-10">
-                  <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
-                    <p>
-                      Texas should win this game comfortably. The only question is whether the Longhorns use the
-                      night to test things they will need in March, or whether they just pile on early and coast.
-                      Schlossnagle has managed the roster carefully all season &mdash; eleven games, eleven wins,
-                      no blowup innings from the staff, no wasted arms in garbage time. This is the kind of
-                      Tuesday night that keeps that going.
-                    </p>
-                    <p>
-                      For HCU, the game is simple: compete, make Texas earn it, and take whatever you can back to
-                      the Southland. A conference champion playing on the road against a top-three team in the country
-                      is not a loss on the r&eacute;sum&eacute; &mdash; it is a line that says you belonged on the
-                      field. The gap between the programs is real, but the gap between the competitors on a given
-                      Tuesday night is always smaller than the ranking suggests.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </ScrollReveal>
-          </Container>
-        </Section>
+        <BSIVerdict>
+          <p>
+            Texas should win this game comfortably. The only question is whether the Longhorns use the
+            night to test things they will need in March, or whether they just pile on early and coast.
+            Schlossnagle has managed the roster carefully all season &mdash; eleven games, eleven wins,
+            no blowup innings from the staff, no wasted arms in garbage time. This is the kind of
+            Tuesday night that keeps that going.
+          </p>
+          <p>
+            For HCU, the game is simple: compete, make Texas earn it, and take whatever you can back to
+            the Southland. A conference champion playing on the road against a top-three team in the country
+            is not a loss on the r&eacute;sum&eacute; &mdash; it is a line that says you belonged on the
+            field. The gap between the programs is real, but the gap between the competitors on a given
+            Tuesday night is always smaller than the ranking suggests.
+          </p>
+        </BSIVerdict>
 
         {/* Attribution */}
         <Section padding="md" className="border-t border-border">

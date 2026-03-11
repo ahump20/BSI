@@ -11,6 +11,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { GameRecapToolbar } from '@/components/editorial/GameRecapToolbar';
 import { AIAnalysisPanel } from '@/components/editorial/AIAnalysisPanel';
 import { NotebookLMExport } from '@/components/editorial/NotebookLMExport';
+import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 
 /* ────────────────────────────────────────────
    Types
@@ -601,14 +602,7 @@ export default function TexasWeek1RecapPage() {
         </Section>
 
         {/* ── BSI Verdict ── */}
-        <Section padding="lg" background="charcoal">
-          <Container size="narrow">
-            <ScrollReveal direction="up">
-              <div className="relative bg-gradient-to-br from-burnt-orange/8 to-texas-soil/5 border border-burnt-orange/15 rounded p-8 sm:p-10">
-                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-charcoal text-burnt-orange px-3">
-                  BSI Verdict &mdash; Week 1
-                </div>
-                <div className="font-serif text-lg sm:text-xl leading-relaxed text-[#FAF7F2] space-y-4">
+        <BSIVerdict>
                   <p>
                     Texas did what an elite team is supposed to do in Week 1: dominate the controllables, bank three wins, and reveal a clear identity. The walk edge, the starter WHIP, the 1-through-9 production &mdash; these are repeatable traits, not small-sample noise.
                   </p>
@@ -618,11 +612,7 @@ export default function TexasWeek1RecapPage() {
                   <p>
                     Now the calendar starts asking harder questions. Tuesday&rsquo;s Lamar game is about maintaining standards. Weekend 2 against Michigan State is about validating them.
                   </p>
-                </div>
-              </div>
-            </ScrollReveal>
-          </Container>
-        </Section>
+        </BSIVerdict>
 
         {/* ── Lamar Preview ── */}
         <Section padding="lg">

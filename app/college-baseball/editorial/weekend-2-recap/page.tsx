@@ -4,7 +4,10 @@ import { Section } from '@/components/ui/Section';
 import { StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
+import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { Footer } from '@/components/layout-ds/Footer';
+import { RankingsTable } from '@/components/editorial/RankingsTable';
+import type { RankingEntry } from '@/components/editorial/types';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -19,15 +22,6 @@ export const metadata: Metadata = {
 };
 
 // ── Rankings data ────────────────────────────────────────────────────
-
-interface RankingEntry {
-  rank: number;
-  team: string;
-  record: string;
-  change: string;
-  prev: string;
-  headline: string;
-}
 
 const RANKINGS: RankingEntry[] = [
   { rank: 1, team: 'UCLA', record: '6-1', change: '—', prev: '1', headline: 'Swept No. 7 TCU 30-8; Cholowsky 3 HR, 5 RBI in G1' },
@@ -56,13 +50,6 @@ const RANKINGS: RankingEntry[] = [
   { rank: 24, team: 'West Virginia', record: '5-1', change: '↑1', prev: '25', headline: 'Lost G3 at Liberty; otherwise dominant' },
   { rank: 25, team: 'Ole Miss', record: '8-0', change: 'NEW', prev: 'NR', headline: 'Swept Missouri State; best start since 2018' },
 ];
-
-function movementClass(change: string) {
-  if (change === 'NEW') return 'text-ember font-semibold';
-  if (change.includes('↑')) return 'text-success';
-  if (change.includes('↓')) return 'text-error';
-  return 'text-text-muted';
-}
 
 // ── Stat boxes ───────────────────────────────────────────────────────
 
@@ -245,51 +232,12 @@ export default function Weekend2RecapPage() {
         </Section>
 
         {/* Rankings Table */}
-        <Section padding="lg">
-          <Container size="narrow">
-            <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-2 pb-2 border-b border-burnt-orange/15">
-                The Post-Weekend 2 Top 25
-              </h2>
-              <p className="font-serif text-base text-text-tertiary mb-6">
-                The D1Baseball Top 25 as of February 23, 2026. Ole Miss enters at No. 25 after an 8&ndash;0 start. Louisville drops out entirely. TCU&rsquo;s 11-spot fall was the largest. Southern Miss and Oklahoma each climbed 8 spots &mdash; the biggest rises.
-              </p>
-            </ScrollReveal>
-          </Container>
-          <Container>
-            <ScrollReveal direction="up" delay={50}>
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse text-sm">
-                  <thead>
-                    <tr>
-                      <th className="font-display text-[11px] tracking-[0.15em] uppercase text-burnt-orange bg-charcoal px-3 py-3 text-left border-b-2 border-burnt-orange w-10">Rk</th>
-                      <th className="font-display text-[11px] tracking-[0.15em] uppercase text-burnt-orange bg-charcoal px-3 py-3 text-left border-b-2 border-burnt-orange">Team</th>
-                      <th className="font-display text-[11px] tracking-[0.15em] uppercase text-burnt-orange bg-charcoal px-3 py-3 text-left border-b-2 border-burnt-orange">Record</th>
-                      <th className="font-display text-[11px] tracking-[0.15em] uppercase text-burnt-orange bg-charcoal px-3 py-3 text-left border-b-2 border-burnt-orange">Chg</th>
-                      <th className="font-display text-[11px] tracking-[0.15em] uppercase text-burnt-orange bg-charcoal px-3 py-3 text-left border-b-2 border-burnt-orange">Prev</th>
-                      <th className="font-display text-[11px] tracking-[0.15em] uppercase text-burnt-orange bg-charcoal px-3 py-3 text-left border-b-2 border-burnt-orange">Weekend Headline</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {RANKINGS.map((r) => (
-                      <tr key={r.rank} className="hover:bg-burnt-orange/5 transition-colors">
-                        <td className="font-display font-bold text-text-primary text-center px-3 py-2.5 border-b border-border-subtle">{r.rank}</td>
-                        <td className="font-serif font-semibold text-text-primary px-3 py-2.5 border-b border-border-subtle">{r.team}</td>
-                        <td className="font-mono text-xs tracking-wide text-text-tertiary px-3 py-2.5 border-b border-border-subtle">{r.record}</td>
-                        <td className={`font-mono text-xs px-3 py-2.5 border-b border-border-subtle ${movementClass(r.change)}`}>{r.change}</td>
-                        <td className="font-serif text-text-tertiary px-3 py-2.5 border-b border-border-subtle">{r.prev}</td>
-                        <td className="font-serif italic text-text-tertiary text-[13px] px-3 py-2.5 border-b border-border-subtle">{r.headline}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <p className="font-mono text-[10px] tracking-wider uppercase text-text-muted mt-3">
-                Dropped out: Louisville (prev. 15) &middot; Virginia &middot; Arizona
-              </p>
-            </ScrollReveal>
-          </Container>
-        </Section>
+        <RankingsTable
+          title="The Post-Weekend 2 Top 25"
+          subtitle="The D1Baseball Top 25 as of February 23, 2026. Ole Miss enters at No. 25 after an 8-0 start. Louisville drops out entirely. TCU's 11-spot fall was the largest. Southern Miss and Oklahoma each climbed 8 spots — the biggest rises."
+          rankings={RANKINGS}
+          movement="Dropped out: Louisville (prev. 15) · Virginia · Arizona"
+        />
 
         {/* Texas at 7-0 */}
         <Section padding="lg" background="charcoal">
@@ -376,25 +324,14 @@ export default function Weekend2RecapPage() {
         </Section>
 
         {/* BSI Verdict */}
-        <Section padding="lg">
-          <Container size="narrow">
-            <ScrollReveal direction="up">
-              <div className="relative bg-gradient-to-br from-burnt-orange/8 to-texas-soil/5 border border-burnt-orange/15 rounded p-8 sm:p-10">
-                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-midnight text-burnt-orange px-3">
-                  BSI Verdict
-                </div>
-                <div className="font-serif text-lg leading-relaxed text-[#FAF7F2] space-y-4">
-                  <p>
-                    Weekend 2 separated the teams playing to a standard from the teams playing to a schedule. UCLA didn&rsquo;t just sweep TCU &mdash; it eliminated ambiguity about who owns the No. 1 ranking and why. Cholowsky and Gasparino combining for 6 home runs and 16 RBI against a ranked opponent is the kind of lineup performance that resets how the No. 1 ranking is evaluated. Auburn&rsquo;s 3&ndash;0 run through Globe Life, built on Marciano&rsquo;s dominance and Carter&rsquo;s manufacturing, announced a team that can win in multiple shapes. And two cycles &mdash; Kozeal in a walk-off, Robbins in a tight game &mdash; reminded everyone that the best individual performances in college baseball happen when they matter, not when the scoreboard has already decided the outcome.
-                  </p>
-                  <p>
-                    Weekend 3 brings the question that February can only ask but never fully answer: when the best teams face each other at a neutral site with real stakes, does the depth that won non-conference series hold up? Globe Life will tell us. And the answer will shape the national picture from March through Omaha.
-                  </p>
-                </div>
-              </div>
-            </ScrollReveal>
-          </Container>
-        </Section>
+        <BSIVerdict>
+          <p>
+            Weekend 2 separated the teams playing to a standard from the teams playing to a schedule. UCLA didn&rsquo;t just sweep TCU &mdash; it eliminated ambiguity about who owns the No. 1 ranking and why. Cholowsky and Gasparino combining for 6 home runs and 16 RBI against a ranked opponent is the kind of lineup performance that resets how the No. 1 ranking is evaluated. Auburn&rsquo;s 3&ndash;0 run through Globe Life, built on Marciano&rsquo;s dominance and Carter&rsquo;s manufacturing, announced a team that can win in multiple shapes. And two cycles &mdash; Kozeal in a walk-off, Robbins in a tight game &mdash; reminded everyone that the best individual performances in college baseball happen when they matter, not when the scoreboard has already decided the outcome.
+          </p>
+          <p>
+            Weekend 3 brings the question that February can only ask but never fully answer: when the best teams face each other at a neutral site with real stakes, does the depth that won non-conference series hold up? Globe Life will tell us. And the answer will shape the national picture from March through Omaha.
+          </p>
+        </BSIVerdict>
 
         {/* Attribution */}
         <Section padding="md" className="border-t border-burnt-orange/10">

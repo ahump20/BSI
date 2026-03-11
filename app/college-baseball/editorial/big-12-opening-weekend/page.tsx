@@ -15,6 +15,7 @@ export const metadata: Metadata = {
   },
 };
 import { ScrollReveal } from '@/components/cinematic';
+import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { Footer } from '@/components/layout-ds/Footer';
 
 const big12Matchups = [
@@ -142,22 +143,11 @@ export default function Big12OpeningWeekendPage() {
         </Section>
 
         {/* BSI Verdict */}
-        <Section padding="lg">
-          <Container size="narrow">
-            <ScrollReveal direction="up">
-              <div className="relative bg-gradient-to-br from-burnt-orange/8 to-texas-soil/5 border border-burnt-orange/15 rounded p-8 sm:p-10">
-                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-midnight text-burnt-orange px-3">
-                  BSI Verdict
-                </div>
-                <div className="font-serif text-lg leading-relaxed text-[#FAF7F2] space-y-4">
-                  <p>
-                    The Big 12 is not the SEC. It doesn&rsquo;t need to be. What it is: a 14-team conference with a genuine Omaha contender at the top, three or four programs capable of hosting regionals, and enough depth in the middle to make every weekend series competitive. TCU is the team to beat. Kansas is the team nobody wants to face. And the rest of the conference is better than you think.
-                  </p>
-                </div>
-              </div>
-            </ScrollReveal>
-          </Container>
-        </Section>
+        <BSIVerdict>
+          <p>
+            The Big 12 is not the SEC. It doesn&rsquo;t need to be. What it is: a 14-team conference with a genuine Omaha contender at the top, three or four programs capable of hosting regionals, and enough depth in the middle to make every weekend series competitive. TCU is the team to beat. Kansas is the team nobody wants to face. And the rest of the conference is better than you think.
+          </p>
+        </BSIVerdict>
 
         {/* Attribution */}
         <Section padding="md" className="border-t border-burnt-orange/10">

@@ -5,6 +5,7 @@ import { Card, StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -175,25 +176,14 @@ export default function NationalOpeningWeekendPage() {
         </Section>
 
         {/* BSI Verdict */}
-        <Section padding="lg">
-          <Container size="narrow">
-            <ScrollReveal direction="up">
-              <div className="relative bg-gradient-to-br from-burnt-orange/8 to-texas-soil/5 border border-burnt-orange/15 rounded p-8 sm:p-10">
-                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-midnight text-burnt-orange px-3">
-                  BSI Verdict
-                </div>
-                <div className="font-serif text-lg leading-relaxed text-[#FAF7F2] space-y-4">
+        <BSIVerdict>
                   <p>
                     The preseason polls are noise. The portal grades are projections. The rotation depth charts are guesses. Opening weekend is where all of it meets reality — and reality has a way of rewriting every narrative in the sport.
                   </p>
                   <p>
                     Watch the Friday starters. Watch the nine-hole hitters. Watch the bullpens. The teams that win opening weekend with all three clicking are the ones that will still be playing in June. And the ones that don&rsquo;t? The season is 56 games long. There&rsquo;s time. But the clock starts now.
                   </p>
-                </div>
-              </div>
-            </ScrollReveal>
-          </Container>
-        </Section>
+        </BSIVerdict>
 
         {/* Attribution */}
         <Section padding="md" className="border-t border-burnt-orange/10">

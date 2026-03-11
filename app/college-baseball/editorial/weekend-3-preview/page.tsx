@@ -4,6 +4,7 @@ import { Section } from '@/components/ui/Section';
 import { StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
+import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
 
@@ -416,39 +417,24 @@ export default function Weekend3PreviewPage() {
         </Section>
 
         {/* BSI Verdict */}
-        <Section background="charcoal" padding="lg">
-          <Container>
-            <ScrollReveal>
-              <div className="max-w-3xl mx-auto relative">
-                <div className="absolute -top-3 left-6">
-                  <span className="bg-burnt-orange text-white text-xs font-display uppercase tracking-widest px-3 py-1 rounded">
-                    BSI Verdict
-                  </span>
-                </div>
-                <div className="bg-gradient-to-br from-burnt-orange/8 to-texas-soil/5 border border-burnt-orange/15 rounded-lg p-8 pt-10">
-                  <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
-                    <p>
-                      Weekend 3 is the weekend that separates record from identity. Eight undefeated Top 25
-                      teams sounds like parity; it is actually a measurement problem. The first two weekends
-                      told us who could beat weak schedules convincingly. This weekend &mdash; with Globe Life
-                      stacking UCLA, Mississippi State, Tennessee, and Texas A&amp;M into a four-day bracket,
-                      and Georgia Tech potentially meeting the Bruins on Sunday &mdash; tells us who can
-                      beat teams that punch back.
-                    </p>
-                    <p>
-                      The biggest question is not which team wins the Amegy Bank series. It is what
-                      Tennessee looks like losing. A team that dropped seven spots in one week and then faces
-                      No. 1 UCLA on Saturday either finds the version of itself that earned a preseason
-                      ranking or confirms that the Weekend 2 slide was a correction, not a blip. Conference
-                      play starts March 13. The teams that arrive in March with an identity &mdash; not just
-                      a record &mdash; are the ones still playing in June.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </ScrollReveal>
-          </Container>
-        </Section>
+        <BSIVerdict>
+          <p>
+            Weekend 3 is the weekend that separates record from identity. Eight undefeated Top 25
+            teams sounds like parity; it is actually a measurement problem. The first two weekends
+            told us who could beat weak schedules convincingly. This weekend &mdash; with Globe Life
+            stacking UCLA, Mississippi State, Tennessee, and Texas A&amp;M into a four-day bracket,
+            and Georgia Tech potentially meeting the Bruins on Sunday &mdash; tells us who can
+            beat teams that punch back.
+          </p>
+          <p>
+            The biggest question is not which team wins the Amegy Bank series. It is what
+            Tennessee looks like losing. A team that dropped seven spots in one week and then faces
+            No. 1 UCLA on Saturday either finds the version of itself that earned a preseason
+            ranking or confirms that the Weekend 2 slide was a correction, not a blip. Conference
+            play starts March 13. The teams that arrive in March with an identity &mdash; not just
+            a record &mdash; are the ones still playing in June.
+          </p>
+        </BSIVerdict>
 
         {/* Attribution */}
         <Section padding="md" className="border-t border-border">

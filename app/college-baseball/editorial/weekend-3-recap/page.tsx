@@ -4,6 +4,7 @@ import { Section } from '@/components/ui/Section';
 import { StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
+import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
 
@@ -379,43 +380,28 @@ export default function Weekend3RecapPage() {
         </Section>
 
         {/* BSI Verdict */}
-        <Section background="charcoal" padding="lg">
-          <Container>
-            <ScrollReveal>
-              <div className="max-w-3xl mx-auto relative">
-                <div className="absolute -top-3 left-6">
-                  <span className="bg-burnt-orange text-white text-xs font-display uppercase tracking-widest px-3 py-1 rounded">
-                    BSI Verdict
-                  </span>
-                </div>
-                <div className="bg-gradient-to-br from-burnt-orange/8 to-texas-soil/5 border border-burnt-orange/15 rounded-lg p-8 pt-10">
-                  <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
-                    <p>
-                      Weekend 3 separated record from identity. Texas is the last undefeated Top 25
-                      team because it played three opponents in Houston and beat all of them without
-                      being challenged past the fifth inning. The Longhorns are winning boring games,
-                      which is a better predictor of April than any walk-off.
-                    </p>
-                    <p>
-                      UCLA is the best team in the country because it played three ranked opponents in
-                      three days and won all three, including a 10-inning classic against the nation&rsquo;s
-                      No. 4 team. Gasparino&rsquo;s 10 home runs and Cholowsky&rsquo;s ninth-inning
-                      game-tying blast are performances that only happen inside a lineup deep enough
-                      to support them. Two losses on the record and the best r&eacute;sum&eacute; in
-                      the sport. That is the difference between record and identity.
-                    </p>
-                    <p>
-                      The teams that arrived in Week 3 with something to prove &mdash; Tennessee, Texas
-                      A&amp;M, Ole Miss &mdash; left with more questions than answers. Conference play
-                      starts March 13. The next ten days are the last window to fix what Weekend 3
-                      exposed. For the programs still searching for an identity, that window is closing.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </ScrollReveal>
-          </Container>
-        </Section>
+        <BSIVerdict>
+          <p>
+            Weekend 3 separated record from identity. Texas is the last undefeated Top 25
+            team because it played three opponents in Houston and beat all of them without
+            being challenged past the fifth inning. The Longhorns are winning boring games,
+            which is a better predictor of April than any walk-off.
+          </p>
+          <p>
+            UCLA is the best team in the country because it played three ranked opponents in
+            three days and won all three, including a 10-inning classic against the nation&rsquo;s
+            No. 4 team. Gasparino&rsquo;s 10 home runs and Cholowsky&rsquo;s ninth-inning
+            game-tying blast are performances that only happen inside a lineup deep enough
+            to support them. Two losses on the record and the best r&eacute;sum&eacute; in
+            the sport. That is the difference between record and identity.
+          </p>
+          <p>
+            The teams that arrived in Week 3 with something to prove &mdash; Tennessee, Texas
+            A&amp;M, Ole Miss &mdash; left with more questions than answers. Conference play
+            starts March 13. The next ten days are the last window to fix what Weekend 3
+            exposed. For the programs still searching for an identity, that window is closing.
+          </p>
+        </BSIVerdict>
 
         {/* Attribution */}
         <Section padding="md" className="border-t border-border">

@@ -4,6 +4,7 @@ import { Section } from '@/components/ui/Section';
 import { StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
+import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
@@ -250,25 +251,14 @@ export default function FloraDraftProfilePage() {
         </Section>
 
         {/* ── BSI Verdict ── */}
-        <Section padding="lg">
-          <Container size="narrow">
-            <ScrollReveal direction="up">
-              <div className="relative border border-burnt-orange/20 rounded-lg p-6 md:p-8">
-                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-midnight text-burnt-orange px-3">
-                  BSI Verdict
-                </div>
-                <div className="font-serif text-lg leading-relaxed text-[#FAF7F2] space-y-4">
-                  <p>
-                    One start. That&rsquo;s the sample. And that&rsquo;s the honest caveat before everything else: Flora&rsquo;s 2026 evaluation is built on a single Friday night against Southern Miss and the fall development reports that preceded it. The fastball velocity is confirmed. The sweeper is confirmed. The new pitches exist. Everything beyond that is projection.
-                  </p>
-                  <p>
-                    What makes Flora worth watching &mdash; and worth this profile at No. 14 rather than waiting for a larger sample &mdash; is the trajectory. A pitcher who adds two pitches in one offseason and immediately deploys them against a ranked opponent isn&rsquo;t just adding tools. He&rsquo;s signaling that he understands what the next level requires and is willing to go through the uncomfortable process of throwing pitches he doesn&rsquo;t fully command yet to develop them for when he will. That&rsquo;s the kind of development bet that moves draft boards. If the curveball and changeup show continued progress through March, Flora&rsquo;s No. 14 ranking is the floor, not the ceiling.
-                  </p>
-                </div>
-              </div>
-            </ScrollReveal>
-          </Container>
-        </Section>
+        <BSIVerdict>
+          <p>
+            One start. That&rsquo;s the sample. And that&rsquo;s the honest caveat before everything else: Flora&rsquo;s 2026 evaluation is built on a single Friday night against Southern Miss and the fall development reports that preceded it. The fastball velocity is confirmed. The sweeper is confirmed. The new pitches exist. Everything beyond that is projection.
+          </p>
+          <p>
+            What makes Flora worth watching &mdash; and worth this profile at No. 14 rather than waiting for a larger sample &mdash; is the trajectory. A pitcher who adds two pitches in one offseason and immediately deploys them against a ranked opponent isn&rsquo;t just adding tools. He&rsquo;s signaling that he understands what the next level requires and is willing to go through the uncomfortable process of throwing pitches he doesn&rsquo;t fully command yet to develop them for when he will. That&rsquo;s the kind of development bet that moves draft boards. If the curveball and changeup show continued progress through March, Flora&rsquo;s No. 14 ranking is the floor, not the ceiling.
+          </p>
+        </BSIVerdict>
 
         {/* ── Related + CTA ── */}
         <Section padding="lg" background="charcoal">

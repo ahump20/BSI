@@ -6,6 +6,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
+import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import type { Metadata } from 'next';
 
 // ── Metadata ────────────────────────────────────────────────────────
@@ -335,25 +336,14 @@ export default function WhatTwoWeekendsToldUsPage() {
         </Section>
 
         {/* ── BSI Verdict ── */}
-        <Section padding="lg" background="charcoal">
-          <Container size="narrow">
-            <ScrollReveal direction="up">
-              <div className="relative border border-burnt-orange/20 rounded-lg p-6 md:p-8">
-                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-charcoal text-burnt-orange px-3">
-                  BSI Verdict
-                </div>
-                <div className="font-serif text-lg leading-relaxed text-[#FAF7F2] space-y-4">
+        <BSIVerdict>
                   <p>
                     Two weekends of college baseball gave us one reliable conclusion and a series of interesting questions. The conclusion: UCLA is the best team in the country and has proven it against the best opposition anyone has faced. The interesting questions: whether Texas&rsquo;s pitching depth (1.53 staff ERA) survives SEC play, whether the portal-loaded rosters maintain production against advance scouting, and whether the 8 undefeated teams are building something or just haven&rsquo;t been tested yet.
                   </p>
                   <p>
                     The analytical instinct in February is to project forward &mdash; to take two weekends of data and extrapolate to June. Resist it. The data is real but the sample is small. The teams that look dominant now are operating against schedules that haven&rsquo;t asked their hardest questions. Conference play is the asking. Everything before it is the preface. Read it carefully, but don&rsquo;t confuse the preface for the book.
                   </p>
-                </div>
-              </div>
-            </ScrollReveal>
-          </Container>
-        </Section>
+        </BSIVerdict>
 
         {/* ── Related + CTA ── */}
         <Section padding="lg">

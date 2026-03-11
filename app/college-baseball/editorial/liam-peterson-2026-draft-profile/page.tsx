@@ -4,6 +4,7 @@ import { Section } from '@/components/ui/Section';
 import { StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
+import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
@@ -287,25 +288,14 @@ export default function PetersonDraftProfilePage() {
         </Section>
 
         {/* ── BSI Verdict ── */}
-        <Section padding="lg" background="charcoal">
-          <Container size="narrow">
-            <ScrollReveal direction="up">
-              <div className="relative border border-burnt-orange/20 rounded-lg p-6 md:p-8">
-                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-charcoal text-burnt-orange px-3">
-                  BSI Verdict
-                </div>
-                <div className="font-serif text-lg leading-relaxed text-[#FAF7F2] space-y-4">
-                  <p>
-                    Peterson&rsquo;s draft stock hasn&rsquo;t moved because of Opening Day. Not yet. One start against UAB doesn&rsquo;t override a body of work that earned him No. 9 on MLB Pipeline and No. 3 among college arms on Baseball America&rsquo;s draft board. The scouting consensus is built on fall evaluations, summer showcases, and a track record that predates one bad Friday. But the consensus is now conditional in a way it wasn&rsquo;t before.
-                  </p>
-                  <p>
-                    The next three Friday starts are the evaluation window. If Peterson throws 6-plus innings with two or fewer walks in each, the Opening Day performance gets filed under &ldquo;first-start adrenaline&rdquo; and disappears from the conversation. If the walk numbers stay elevated &mdash; 4-plus walks in any start, or a pattern of falling behind in counts that forces him to groove pitches &mdash; teams in the 8&ndash;15 range will start asking whether Peterson is a starter or a reliever. That distinction, for an arm with his velocity and secondary arsenal, is the difference between pick No. 9 and pick No. 35. BSI will update this profile after the next two Friday outings.
-                  </p>
-                </div>
-              </div>
-            </ScrollReveal>
-          </Container>
-        </Section>
+        <BSIVerdict>
+          <p>
+            Peterson&rsquo;s draft stock hasn&rsquo;t moved because of Opening Day. Not yet. One start against UAB doesn&rsquo;t override a body of work that earned him No. 9 on MLB Pipeline and No. 3 among college arms on Baseball America&rsquo;s draft board. The scouting consensus is built on fall evaluations, summer showcases, and a track record that predates one bad Friday. But the consensus is now conditional in a way it wasn&rsquo;t before.
+          </p>
+          <p>
+            The next three Friday starts are the evaluation window. If Peterson throws 6-plus innings with two or fewer walks in each, the Opening Day performance gets filed under &ldquo;first-start adrenaline&rdquo; and disappears from the conversation. If the walk numbers stay elevated &mdash; 4-plus walks in any start, or a pattern of falling behind in counts that forces him to groove pitches &mdash; teams in the 8&ndash;15 range will start asking whether Peterson is a starter or a reliever. That distinction, for an arm with his velocity and secondary arsenal, is the difference between pick No. 9 and pick No. 35. BSI will update this profile after the next two Friday outings.
+          </p>
+        </BSIVerdict>
 
         {/* ── Related + CTA ── */}
         <Section padding="lg">

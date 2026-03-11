@@ -4,6 +4,7 @@ import { Section } from '@/components/ui/Section';
 import { StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
+import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
 
@@ -361,44 +362,29 @@ export default function Week4PreviewPage() {
         </Section>
 
         {/* BSI Verdict */}
-        <Section padding="lg">
-          <Container>
-            <ScrollReveal>
-              <div className="max-w-3xl mx-auto relative">
-                <div className="absolute -top-3 left-6">
-                  <span className="bg-burnt-orange text-white text-xs font-display uppercase tracking-widest px-3 py-1 rounded">
-                    BSI Verdict
-                  </span>
-                </div>
-                <div className="bg-gradient-to-br from-burnt-orange/8 to-texas-soil/5 border border-burnt-orange/15 rounded-lg p-8 pt-10">
-                  <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
-                    <p>
-                      Week 4 is not about the weekend. It is about what comes after. The SEC
-                      schedule that opens March 13 is the most loaded conference slate in college
-                      baseball &mdash; Ole Miss at Texas, Mississippi State at Arkansas, LSU at
-                      Vanderbilt, South Carolina at Florida, Tennessee at Georgia, all in the same
-                      three-day window. Five series that would each headline a standalone weekend
-                      on their own, stacked on top of each other.
-                    </p>
-                    <p>
-                      The teams that use this final non-conference window to lock in their
-                      identity &mdash; rotation order settled, bullpen roles defined, lineup
-                      committed &mdash; arrive in March with an edge that cannot be manufactured
-                      once the conference gauntlet begins. The teams that coast through it arrive
-                      with questions they no longer have time to answer quietly.
-                    </p>
-                    <p>
-                      Ten days. Then the real season begins. And the margins that separate the
-                      teams built for Omaha from the teams built for May will be measured not in
-                      talent but in preparation &mdash; the work that gets done this weekend,
-                      when nobody outside the dugout is paying attention.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </ScrollReveal>
-          </Container>
-        </Section>
+        <BSIVerdict>
+          <p>
+            Week 4 is not about the weekend. It is about what comes after. The SEC
+            schedule that opens March 13 is the most loaded conference slate in college
+            baseball &mdash; Ole Miss at Texas, Mississippi State at Arkansas, LSU at
+            Vanderbilt, South Carolina at Florida, Tennessee at Georgia, all in the same
+            three-day window. Five series that would each headline a standalone weekend
+            on their own, stacked on top of each other.
+          </p>
+          <p>
+            The teams that use this final non-conference window to lock in their
+            identity &mdash; rotation order settled, bullpen roles defined, lineup
+            committed &mdash; arrive in March with an edge that cannot be manufactured
+            once the conference gauntlet begins. The teams that coast through it arrive
+            with questions they no longer have time to answer quietly.
+          </p>
+          <p>
+            Ten days. Then the real season begins. And the margins that separate the
+            teams built for Omaha from the teams built for May will be measured not in
+            talent but in preparation &mdash; the work that gets done this weekend,
+            when nobody outside the dugout is paying attention.
+          </p>
+        </BSIVerdict>
 
         {/* Attribution */}
         <Section padding="md" className="border-t border-border">

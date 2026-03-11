@@ -11,6 +11,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { GameRecapToolbar } from '@/components/editorial/GameRecapToolbar';
 import { AIAnalysisPanel } from '@/components/editorial/AIAnalysisPanel';
 import { NotebookLMExport } from '@/components/editorial/NotebookLMExport';
+import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 
 /* ────────────────────────────────────────────
    Types
@@ -626,14 +627,7 @@ export default function TexasWeek2RecapPage() {
         </Section>
 
         {/* ── BSI Verdict — Week 2 ── */}
-        <Section padding="lg" background="charcoal">
-          <Container size="narrow">
-            <ScrollReveal direction="up">
-              <div className="relative bg-gradient-to-br from-burnt-orange/8 to-texas-soil/5 border border-burnt-orange/15 rounded p-8 sm:p-10">
-                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-charcoal text-burnt-orange px-3">
-                  BSI Verdict &mdash; Week 2
-                </div>
-                <div className="font-serif text-lg sm:text-xl leading-relaxed text-[#FAF7F2] space-y-4">
+        <BSIVerdict>
                   <p>
                     Michigan State came in with Louisville series credibility &mdash; 2-1 at a Top 10 program, the kind of result that earns respect on the road. Texas allowed two total runs. The Spartans&rsquo; Week 1 strength didn&rsquo;t transfer because Texas&rsquo; pitching didn&rsquo;t give them the fastballs to drive or the free bases to manufacture.
                   </p>
@@ -646,11 +640,7 @@ export default function TexasWeek2RecapPage() {
                   <p className="text-text-secondary">
                     But the schedule is about to start asking real questions. Two weekends of home games against overmatched opponents is a foundation, not a verdict. Friday night at Daikin Park &mdash; No. 11 Coastal Carolina, Preseason National Player of the Year Cameron Flukey, a 2025 national runner-up program &mdash; is the first pitch that will tell Texas something about itself.
                   </p>
-                </div>
-              </div>
-            </ScrollReveal>
-          </Container>
-        </Section>
+        </BSIVerdict>
 
         {/* ── UTRGV Tuesday Preview ── */}
         <Section padding="lg">

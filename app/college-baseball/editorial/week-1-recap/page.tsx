@@ -4,7 +4,10 @@ import { Section } from '@/components/ui/Section';
 import { StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
+import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { Footer } from '@/components/layout-ds/Footer';
+import { RankingsTable } from '@/components/editorial/RankingsTable';
+import type { RankingEntry } from '@/components/editorial/types';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -19,15 +22,6 @@ export const metadata: Metadata = {
 };
 
 // ── Rankings data ────────────────────────────────────────────────────
-
-interface RankingEntry {
-  rank: number;
-  team: string;
-  record: string;
-  change: string;
-  prev: string;
-  headline: string;
-}
 
 const RANKINGS: RankingEntry[] = [
   { rank: 1, team: 'UCLA', record: '2-1', change: '—', prev: '1', headline: 'Won series; dropped finale to UCSD 8-7' },
@@ -56,13 +50,6 @@ const RANKINGS: RankingEntry[] = [
   { rank: 24, team: 'Texas A&M', record: '3-0', change: '↑1', prev: '25', headline: '38+ runs in first 2 games; Sorrell SEC POW' },
   { rank: 25, team: 'West Virginia', record: '3-0', change: 'NEW', prev: 'NR', headline: 'Swept Ga. Southern; 31 runs, 13 pitchers used' },
 ];
-
-function movementClass(change: string) {
-  if (change === 'NEW') return 'text-ember font-semibold';
-  if (change.includes('↑')) return 'text-success';
-  if (change.includes('↓')) return 'text-error';
-  return 'text-text-muted';
-}
 
 // ── Stat boxes ───────────────────────────────────────────────────────
 
@@ -221,52 +208,13 @@ export default function Week1RecapPage() {
           </Container>
         </Section>
 
-        {/* Rankings Table — wide container */}
-        <Section padding="lg" background="charcoal">
-          <Container size="narrow">
-            <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-2 pb-2 border-b border-burnt-orange/15">
-                The Post-Week 1 Top 25
-              </h2>
-              <p className="font-serif text-base text-text-tertiary mb-6">
-                The D1Baseball Top 25 as of February 16, 2026. Two new entrants &mdash; Oklahoma and West Virginia &mdash; replaced Vanderbilt and Arizona. Louisville&rsquo;s 7-spot drop was the largest. TCU&rsquo;s 3-spot climb on the strength of two ranked wins was the biggest rise.
-              </p>
-            </ScrollReveal>
-          </Container>
-          <Container>
-            <ScrollReveal direction="up" delay={50}>
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse text-sm">
-                  <thead>
-                    <tr>
-                      <th className="font-display text-[11px] tracking-[0.15em] uppercase text-burnt-orange bg-charcoal px-3 py-3 text-left border-b-2 border-burnt-orange w-10">Rk</th>
-                      <th className="font-display text-[11px] tracking-[0.15em] uppercase text-burnt-orange bg-charcoal px-3 py-3 text-left border-b-2 border-burnt-orange">Team</th>
-                      <th className="font-display text-[11px] tracking-[0.15em] uppercase text-burnt-orange bg-charcoal px-3 py-3 text-left border-b-2 border-burnt-orange">Record</th>
-                      <th className="font-display text-[11px] tracking-[0.15em] uppercase text-burnt-orange bg-charcoal px-3 py-3 text-left border-b-2 border-burnt-orange">Chg</th>
-                      <th className="font-display text-[11px] tracking-[0.15em] uppercase text-burnt-orange bg-charcoal px-3 py-3 text-left border-b-2 border-burnt-orange">Prev</th>
-                      <th className="font-display text-[11px] tracking-[0.15em] uppercase text-burnt-orange bg-charcoal px-3 py-3 text-left border-b-2 border-burnt-orange">Weekend Headline</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {RANKINGS.map((r) => (
-                      <tr key={r.rank} className="hover:bg-burnt-orange/5 transition-colors">
-                        <td className="font-display font-bold text-text-primary text-center px-3 py-2.5 border-b border-border-subtle">{r.rank}</td>
-                        <td className="font-serif font-semibold text-text-primary px-3 py-2.5 border-b border-border-subtle">{r.team}</td>
-                        <td className="font-mono text-xs tracking-wide text-text-tertiary px-3 py-2.5 border-b border-border-subtle">{r.record}</td>
-                        <td className={`font-mono text-xs px-3 py-2.5 border-b border-border-subtle ${movementClass(r.change)}`}>{r.change}</td>
-                        <td className="font-serif text-text-tertiary px-3 py-2.5 border-b border-border-subtle">{r.prev}</td>
-                        <td className="font-serif italic text-text-tertiary text-[13px] px-3 py-2.5 border-b border-border-subtle">{r.headline}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <p className="font-mono text-[10px] tracking-wider uppercase text-text-muted mt-3">
-                Dropped out: Vanderbilt (prev. 23, 1-2) &middot; Arizona (prev. 24, 0-3)
-              </p>
-            </ScrollReveal>
-          </Container>
-        </Section>
+        {/* Rankings Table */}
+        <RankingsTable
+          title="The Post-Week 1 Top 25"
+          subtitle="The D1Baseball Top 25 as of February 16, 2026. Two new entrants — Oklahoma and West Virginia — replaced Vanderbilt and Arizona. Louisville's 7-spot drop was the largest. TCU's 3-spot climb on the strength of two ranked wins was the biggest rise."
+          rankings={RANKINGS}
+          movement="Dropped out: Vanderbilt (prev. 23, 1-2) · Arizona (prev. 24, 0-3)"
+        />
 
         {/* Coaching Debuts */}
         <Section padding="lg">
@@ -451,25 +399,14 @@ export default function Week1RecapPage() {
         </Section>
 
         {/* BSI Verdict */}
-        <Section padding="lg">
-          <Container size="narrow">
-            <ScrollReveal direction="up">
-              <div className="relative bg-gradient-to-br from-burnt-orange/8 to-texas-soil/5 border border-burnt-orange/15 rounded p-8 sm:p-10">
-                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-midnight text-burnt-orange px-3">
-                  BSI Verdict
-                </div>
-                <div className="font-serif text-lg leading-relaxed text-[#FAF7F2] space-y-4">
-                  <p>
-                    Opening Weekend did what it always does &mdash; it separated preparation from prediction. The teams that were ready won in multiple ways: Oklahoma&rsquo;s rotation revealing itself at the Shriners, North Carolina grinding out three wins including a walk-off in the 11th, and Mississippi State&rsquo;s new coaching staff executing a sweep in their first weekend. The teams that weren&rsquo;t ready &mdash; Vanderbilt falling out of the poll entirely, Arizona dropping all three in Surprise, Louisville losing a home series to Michigan State &mdash; exposed the gaps between roster construction and roster execution.
-                  </p>
-                  <p>
-                    The story of the 2026 season won&rsquo;t be written for four more months. But the handwriting is already on the wall, and the teams that can read it are the ones that answered the only question Opening Weekend asks: can you win when your first plan doesn&rsquo;t work?
-                  </p>
-                </div>
-              </div>
-            </ScrollReveal>
-          </Container>
-        </Section>
+        <BSIVerdict>
+          <p>
+            Opening Weekend did what it always does &mdash; it separated preparation from prediction. The teams that were ready won in multiple ways: Oklahoma&rsquo;s rotation revealing itself at the Shriners, North Carolina grinding out three wins including a walk-off in the 11th, and Mississippi State&rsquo;s new coaching staff executing a sweep in their first weekend. The teams that weren&rsquo;t ready &mdash; Vanderbilt falling out of the poll entirely, Arizona dropping all three in Surprise, Louisville losing a home series to Michigan State &mdash; exposed the gaps between roster construction and roster execution.
+          </p>
+          <p>
+            The story of the 2026 season won&rsquo;t be written for four more months. But the handwriting is already on the wall, and the teams that can read it are the ones that answered the only question Opening Weekend asks: can you win when your first plan doesn&rsquo;t work?
+          </p>
+        </BSIVerdict>
 
         {/* Attribution */}
         <Section padding="md" className="border-t border-burnt-orange/10">

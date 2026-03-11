@@ -11,6 +11,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { GameRecapToolbar } from '@/components/editorial/GameRecapToolbar';
 import { AIAnalysisPanel } from '@/components/editorial/AIAnalysisPanel';
 import { NotebookLMExport } from '@/components/editorial/NotebookLMExport';
+import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 
 /* ────────────────────────────────────────────
    Types
@@ -713,14 +714,7 @@ export default function TexasUCDavisOpener2026Page() {
         </Section>
 
         {/* ── BSI Verdict ── */}
-        <Section padding="lg">
-          <Container size="narrow">
-            <ScrollReveal direction="up">
-              <div className="relative bg-gradient-to-br from-burnt-orange/8 to-texas-soil/5 border border-burnt-orange/15 rounded p-8 sm:p-10">
-                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-midnight text-burnt-orange px-3">
-                  BSI Verdict
-                </div>
-                <div className="font-serif text-lg sm:text-xl leading-relaxed text-[#FAF7F2] space-y-4">
+        <BSIVerdict>
                   <p>
                     One game is one game. UC Davis is not Ole Miss, and February is not June. But the things you look for in an opener — energy, depth, competitive at-bats from all nine spots, a starter who recovered after adversity, a bullpen arm who shut the door — were all here. Every one of them.
                   </p>
@@ -730,11 +724,7 @@ export default function TexasUCDavisOpener2026Page() {
                   <p>
                     The runway is short. The schedule is unforgiving. And based on what happened tonight under the lights at Disch-Falk, that&rsquo;s exactly how this team wants it.
                   </p>
-                </div>
-              </div>
-            </ScrollReveal>
-          </Container>
-        </Section>
+        </BSIVerdict>
 
         {/* ── AI Features ── */}
         <Section padding="lg" background="charcoal">

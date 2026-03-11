@@ -4,6 +4,7 @@ import { Section } from '@/components/ui/Section';
 import { StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
+import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
@@ -318,25 +319,14 @@ export default function CholowskyDraftProfilePage() {
         </Section>
 
         {/* ── BSI Verdict ── */}
-        <Section padding="lg" background="charcoal">
-          <Container size="narrow">
-            <ScrollReveal direction="up">
-              <div className="relative border border-burnt-orange/20 rounded-lg p-6 md:p-8">
-                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-charcoal text-burnt-orange px-3">
-                  BSI Verdict
-                </div>
-                <div className="font-serif text-lg leading-relaxed text-[#FAF7F2] space-y-4">
-                  <p>
-                    The draft conversation for the No. 1 pick has been settled since fall. Two weekends of live data haven&rsquo;t introduced doubt &mdash; they&rsquo;ve reinforced it. Cholowsky is a plus-hit, plus-power shortstop who has faced the best pitching UCLA&rsquo;s schedule has offered so far and treated it like batting practice. The grand slam against TCU in Game 1 was the weekend&rsquo;s defining moment &mdash; not because it was dramatic, but because it was inevitable. Every scouting report said he&rsquo;d do exactly this. He did exactly this.
-                  </p>
-                  <p>
-                    The questions that remain are the ones February can&rsquo;t answer. How does he handle a three-week stretch where pitchers won&rsquo;t throw him a strike? How does his swing hold up in June when he&rsquo;s played 50 games in 80 days? Those are real questions. But they&rsquo;re refinement questions, not disqualifying ones. The baseline is a No. 1 overall pick playing like a No. 1 overall pick. Everything else is calibration.
-                  </p>
-                </div>
-              </div>
-            </ScrollReveal>
-          </Container>
-        </Section>
+        <BSIVerdict>
+          <p>
+            The draft conversation for the No. 1 pick has been settled since fall. Two weekends of live data haven&rsquo;t introduced doubt &mdash; they&rsquo;ve reinforced it. Cholowsky is a plus-hit, plus-power shortstop who has faced the best pitching UCLA&rsquo;s schedule has offered so far and treated it like batting practice. The grand slam against TCU in Game 1 was the weekend&rsquo;s defining moment &mdash; not because it was dramatic, but because it was inevitable. Every scouting report said he&rsquo;d do exactly this. He did exactly this.
+          </p>
+          <p>
+            The questions that remain are the ones February can&rsquo;t answer. How does he handle a three-week stretch where pitchers won&rsquo;t throw him a strike? How does his swing hold up in June when he&rsquo;s played 50 games in 80 days? Those are real questions. But they&rsquo;re refinement questions, not disqualifying ones. The baseline is a No. 1 overall pick playing like a No. 1 overall pick. Everything else is calibration.
+          </p>
+        </BSIVerdict>
 
         {/* ── Related + CTA ── */}
         <Section padding="lg">

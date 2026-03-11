@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -146,25 +147,14 @@ export default function SECOpeningWeekendPage() {
         </Section>
 
         {/* BSI Verdict */}
-        <Section padding="lg">
-          <Container size="narrow">
-            <ScrollReveal direction="up">
-              <div className="relative bg-gradient-to-br from-[#C9A227]/8 to-texas-soil/5 border border-[#C9A227]/15 rounded p-8 sm:p-10">
-                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-midnight text-[#C9A227] px-3">
-                  BSI Verdict
-                </div>
-                <div className="font-serif text-lg leading-relaxed text-[#FAF7F2] space-y-4">
+        <BSIVerdict>
                   <p>
                     The SEC isn&rsquo;t the best baseball conference in America because of its top teams. It&rsquo;s the best because of its eighth-best team. When your No. 8 program would be a regional host in any other league, the depth is self-evident. Opening weekend won&rsquo;t tell us who wins the conference — it&rsquo;ll tell us who&rsquo;s ready for the war that comes after.
                   </p>
                   <p>
                     Watch the Friday starters. Watch the portal additions. Watch which teams look like they&rsquo;ve been playing together for years versus which ones are still figuring out the lineup card. February answers are small, but they compound. And in the SEC, compounding is the only way to survive.
                   </p>
-                </div>
-              </div>
-            </ScrollReveal>
-          </Container>
-        </Section>
+        </BSIVerdict>
 
         {/* Attribution */}
         <Section padding="md" className="border-t border-[#C9A227]/10">

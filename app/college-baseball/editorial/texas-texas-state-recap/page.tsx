@@ -7,6 +7,7 @@ import { Section } from '@/components/ui/Section';
 import { Card, StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
+import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { Footer } from '@/components/layout-ds/Footer';
 import { GameRecapToolbar } from '@/components/editorial/GameRecapToolbar';
 import { AIAnalysisPanel } from '@/components/editorial/AIAnalysisPanel';
@@ -386,28 +387,17 @@ export default function TexasTexasStateRecapPage() {
         </Section>
 
         {/* ── BSI Verdict ── */}
-        <Section padding="lg">
-          <Container size="narrow">
-            <ScrollReveal direction="up">
-              <div className="relative bg-gradient-to-br from-burnt-orange/8 to-texas-soil/5 border border-burnt-orange/15 rounded p-8 sm:p-10">
-                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-surface-default text-burnt-orange px-3">
-                  BSI Verdict
-                </div>
-                <div className="font-serif text-lg sm:text-xl leading-relaxed text-[#FAF7F2] space-y-4">
-                  <p>
-                    Sixteen-and-oh means nothing if it doesn&rsquo;t translate to SEC weekends. That caveat has been true since game one and it remains true after game sixteen. But the depth chart is answering every question asked of it &mdash; and the questions are getting harder. Borba&rsquo;s two-homer night, Becerra&rsquo;s ninth-inning bomb, Pack&rsquo;s continued power production from the middle of the order, Cozart&rsquo;s quiet climb to 4&ndash;0 as the midweek starter. This is not a lineup that relies on one bat or a pitching staff that leans on one arm.
-                  </p>
-                  <p>
-                    The lineup flexibility wasn&rsquo;t in the preseason blueprint. Borba was a role player. Becerra was a question mark after the transfer. Livingston and Duplantier were depth pieces. All four contributed RBI tonight. The roster is deeper than it was supposed to be, and the Tuesday-night results across the SEC suggest the conference Texas is about to enter is not as fearsome as three weeks of home-field scheduling made it look.
-                  </p>
-                  <p className="text-text-secondary">
-                    Ole Miss arrives at Disch-Falk in three days. The Rebels have been inconsistent &mdash; in and out of the Top 25, looking for an identity that three weeks of non-conference play haven&rsquo;t provided. Texas has an identity. It was built across sixteen games, five run-rule wins, a 133-run differential, and a Tuesday night in someone else&rsquo;s ballpark where they hung 15 on the board without breaking a sweat. The foundation has been poured. Thursday night tells us whether the concrete has set.
-                  </p>
-                </div>
-              </div>
-            </ScrollReveal>
-          </Container>
-        </Section>
+        <BSIVerdict>
+          <p>
+            Sixteen-and-oh means nothing if it doesn&rsquo;t translate to SEC weekends. That caveat has been true since game one and it remains true after game sixteen. But the depth chart is answering every question asked of it &mdash; and the questions are getting harder. Borba&rsquo;s two-homer night, Becerra&rsquo;s ninth-inning bomb, Pack&rsquo;s continued power production from the middle of the order, Cozart&rsquo;s quiet climb to 4&ndash;0 as the midweek starter. This is not a lineup that relies on one bat or a pitching staff that leans on one arm.
+          </p>
+          <p>
+            The lineup flexibility wasn&rsquo;t in the preseason blueprint. Borba was a role player. Becerra was a question mark after the transfer. Livingston and Duplantier were depth pieces. All four contributed RBI tonight. The roster is deeper than it was supposed to be, and the Tuesday-night results across the SEC suggest the conference Texas is about to enter is not as fearsome as three weeks of home-field scheduling made it look.
+          </p>
+          <p className="text-text-secondary">
+            Ole Miss arrives at Disch-Falk in three days. The Rebels have been inconsistent &mdash; in and out of the Top 25, looking for an identity that three weeks of non-conference play haven&rsquo;t provided. Texas has an identity. It was built across sixteen games, five run-rule wins, a 133-run differential, and a Tuesday night in someone else&rsquo;s ballpark where they hung 15 on the board without breaking a sweat. The foundation has been poured. Thursday night tells us whether the concrete has set.
+          </p>
+        </BSIVerdict>
 
         {/* ── Pull Quote ── */}
         <Section padding="lg" background="charcoal">

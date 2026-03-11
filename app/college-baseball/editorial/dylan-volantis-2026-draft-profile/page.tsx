@@ -4,6 +4,7 @@ import { Section } from '@/components/ui/Section';
 import { StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
+import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
@@ -313,25 +314,14 @@ export default function VolantisDraftProfilePage() {
         </Section>
 
         {/* ── BSI Verdict ── */}
-        <Section padding="lg" background="charcoal">
-          <Container size="narrow">
-            <ScrollReveal direction="up">
-              <div className="relative border border-burnt-orange/20 rounded-lg p-6 md:p-8">
-                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-charcoal text-burnt-orange px-3">
-                  BSI Verdict
-                </div>
-                <div className="font-serif text-lg leading-relaxed text-[#FAF7F2] space-y-4">
-                  <p>
-                    The closer-to-starter conversion is the most compelling individual narrative in college baseball through two weekends. Volantis has the SEC Freshman of the Year pedigree, the elite K-to-BB ratios, and now two starts that suggest the workload can scale. If this holds through March conference play, he moves from &ldquo;interesting draft-eligible sophomore&rdquo; to &ldquo;first-round starter with a reliever floor&rdquo; &mdash; the best risk-reward profile a team can buy in the 2026 class.
-                  </p>
-                  <p>
-                    The risk is the same risk every converted reliever carries: the arm hasn&rsquo;t thrown 80+ innings in a college season. Schlossnagle will manage the workload, and the bullpen behind him (Crossland, Burns, Grubbs) gives Texas the depth to pull him at pitch 85 without worry. But draft scouts are waiting for the 6th inning of an SEC road start where the lineup has seen his slider twice and the fastball is sitting 90 instead of 93. That start will tell us whether the conversion is real or whether it&rsquo;s February small-sample theater. The first 14 innings say real.
-                  </p>
-                </div>
-              </div>
-            </ScrollReveal>
-          </Container>
-        </Section>
+        <BSIVerdict>
+          <p>
+            The closer-to-starter conversion is the most compelling individual narrative in college baseball through two weekends. Volantis has the SEC Freshman of the Year pedigree, the elite K-to-BB ratios, and now two starts that suggest the workload can scale. If this holds through March conference play, he moves from &ldquo;interesting draft-eligible sophomore&rdquo; to &ldquo;first-round starter with a reliever floor&rdquo; &mdash; the best risk-reward profile a team can buy in the 2026 class.
+          </p>
+          <p>
+            The risk is the same risk every converted reliever carries: the arm hasn&rsquo;t thrown 80+ innings in a college season. Schlossnagle will manage the workload, and the bullpen behind him (Crossland, Burns, Grubbs) gives Texas the depth to pull him at pitch 85 without worry. But draft scouts are waiting for the 6th inning of an SEC road start where the lineup has seen his slider twice and the fastball is sitting 90 instead of 93. That start will tell us whether the conversion is real or whether it&rsquo;s February small-sample theater. The first 14 innings say real.
+          </p>
+        </BSIVerdict>
 
         {/* ── Related + CTA ── */}
         <Section padding="lg">
