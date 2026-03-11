@@ -23,12 +23,14 @@ function readFromStorage(): WatchlistEntry[] {
   }
 }
 
-function writeToStorage(entries: WatchlistEntry[]) {
-  if (typeof window === 'undefined') return;
+function writeToStorage(entries: WatchlistEntry[]): boolean {
+  if (typeof window === 'undefined') return false;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
-  } catch {
-    // Storage full or blocked — fail silently
+    return true;
+  } catch (err) {
+    console.warn('[watchlist] localStorage write failed:', err);
+    return false;
   }
 }
 

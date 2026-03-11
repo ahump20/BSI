@@ -4,8 +4,6 @@ import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
 import { DataAttribution } from '@/components/ui/DataAttribution';
 import { Footer } from '@/components/layout-ds/Footer';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
@@ -73,6 +71,37 @@ function formatDate(iso: string): string {
   }
 }
 
+/** Heritage-styled stat cell for the record strip */
+function StatCell({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
+  return (
+    <div className="heritage-card px-4 py-3 text-center">
+      <div className="text-[10px] font-display uppercase tracking-[0.2em] text-text-muted mb-1">{label}</div>
+      <div className={`font-mono text-xl md:text-2xl font-bold tabular-nums ${accent ? 'text-burnt-orange' : 'text-text-primary'}`}>
+        {value}
+      </div>
+    </div>
+  );
+}
+
+/** Heritage panel with press-box header */
+function Panel({ title, accentHeader, children }: { title: string; accentHeader?: boolean; children: React.ReactNode }) {
+  return (
+    <div className="heritage-card overflow-hidden">
+      <div
+        className="px-4 py-2.5 border-b border-border-vintage"
+        style={{
+          background: accentHeader
+            ? 'linear-gradient(90deg, rgba(191,87,0,0.12), transparent)'
+            : 'var(--surface-press-box)',
+        }}
+      >
+        <h2 className="text-xs font-display uppercase tracking-[0.2em] text-text-muted">{title}</h2>
+      </div>
+      {children}
+    </div>
+  );
+}
+
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
@@ -114,8 +143,8 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
           const sd = await schedRes.json() as { schedule?: ScheduleGame[] };
           setSchedule(sd.schedule || []);
         }
-      } catch {
-        // fail through
+      } catch (err) {
+        console.error(`[readout] Failed to load team ${teamId}:`, err);
       } finally {
         setLoading(false);
       }
@@ -124,10 +153,16 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
   }, [teamId]);
 
   const teamName = teamData?.team?.name || meta?.name || `Team ${teamId}`;
-  const stats = teamData?.team?.stats;
+  const rawStats = teamData?.team?.stats;
   const teamStats = teamData?.teamStats;
   const roster = teamData?.team?.roster || [];
   const conference = teamData?.team?.conference?.name || meta?.conference || '';
+
+  const stats = rawStats ? {
+    ...rawStats,
+    battingAvg: rawStats.battingAvg || teamStats?.batting?.battingAverage || 0,
+    era: rawStats.era || teamStats?.pitching?.era || 0,
+  } : null;
 
   const teamNIL = useMemo(() => {
     if (!nilData.length) return [];
@@ -152,28 +187,27 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
 
   const logoUrl = meta ? getLogoUrl(meta.espnId, meta.logoId) : null;
 
+  const winPct = stats && (stats.wins + stats.losses) > 0
+    ? ((stats.wins / (stats.wins + stats.losses)) * 100).toFixed(0)
+    : null;
+
   if (loading) {
     return (
-      <div className="pt-6">
-        <Section padding="lg">
-          <Container>
-            <div className="flex items-center justify-center py-20">
-              <div className="w-10 h-10 border-4 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
-            </div>
-          </Container>
-        </Section>
+      <div className="min-h-screen bg-background-primary flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
     <>
-      <div className="pt-6">
-        <Section padding="lg" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
+      <div className="min-h-screen bg-background-primary text-text-primary">
+        {/* ═══ Dossier Header ═══ */}
+        <Section className="pt-6 pb-8 relative overflow-hidden grain-overlay">
+          <div className="absolute inset-0 bg-gradient-to-b from-burnt-orange/6 via-transparent to-transparent pointer-events-none" />
           <Container>
             {/* Breadcrumb */}
-            <div className="flex items-center gap-3 mb-4 text-sm">
+            <nav className="flex items-center gap-2 text-xs font-display uppercase tracking-wider mb-6">
               <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
                 College Baseball
               </Link>
@@ -182,125 +216,126 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
                 {teamName}
               </Link>
               <span className="text-text-muted">/</span>
-              <span className="text-text-tertiary">Executive Readout</span>
-            </div>
+              <span className="text-text-tertiary">Readout</span>
+            </nav>
 
-            {/* Header */}
-            <div className="flex items-center gap-4 mb-8">
+            {/* Team Identity */}
+            <div className="flex items-start gap-5 mb-6">
               {logoUrl && (
-                <img src={logoUrl} alt={teamName} className="w-16 h-16 object-contain" />
+                <div className="shrink-0 w-20 h-20 md:w-24 md:h-24 rounded-sm overflow-hidden heritage-card p-2 flex items-center justify-center">
+                  <img src={logoUrl} alt={teamName} className="w-full h-full object-contain" />
+                </div>
               )}
-              <div>
-                <Badge variant="primary" className="mb-2">2-Minute Readout</Badge>
-                <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-text-primary">
+              <div className="min-w-0">
+                <span className="heritage-stamp mb-2 inline-block text-[9px]">Executive Readout</span>
+                <h1
+                  className="font-display font-bold uppercase tracking-display text-text-primary"
+                  style={{ fontSize: 'clamp(1.75rem, 4vw, 3rem)', lineHeight: 1.1 }}
+                >
                   {teamName}
                 </h1>
-                <span className="text-text-muted text-sm">{conference}</span>
+                <div className="flex items-center gap-3 mt-1.5">
+                  <span className="text-sm text-text-muted">{conference}</span>
+                  {winPct && (
+                    <span className="text-xs font-mono text-text-muted">
+                      {winPct}% W
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
 
-            {/* ═══ Record & Performance Strip ═══ */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8">
-              {stats && (
-                <>
-                  <Card padding="md" className="text-center">
-                    <div className="text-xs text-text-muted uppercase tracking-wider">Record</div>
-                    <div className="font-mono text-2xl font-bold text-text-primary mt-1">{stats.wins}-{stats.losses}</div>
-                  </Card>
-                  <Card padding="md" className="text-center">
-                    <div className="text-xs text-text-muted uppercase tracking-wider">Conference</div>
-                    <div className="font-mono text-2xl font-bold text-text-primary mt-1">{stats.confWins}-{stats.confLosses}</div>
-                  </Card>
-                  <Card padding="md" className="text-center">
-                    <div className="text-xs text-text-muted uppercase tracking-wider">Team AVG</div>
-                    <div className="font-mono text-2xl font-bold text-text-primary mt-1">{stats.battingAvg.toFixed(3)}</div>
-                  </Card>
-                  <Card padding="md" className="text-center">
-                    <div className="text-xs text-text-muted uppercase tracking-wider">Team ERA</div>
-                    <div className="font-mono text-2xl font-bold text-text-primary mt-1">{stats.era.toFixed(2)}</div>
-                  </Card>
-                  {stats.streak && (
-                    <Card padding="md" className="text-center">
-                      <div className="text-xs text-text-muted uppercase tracking-wider">Streak</div>
-                      <div className={`font-mono text-2xl font-bold mt-1 ${stats.streak.startsWith('W') ? 'text-green-400' : 'text-red-400'}`}>
-                        {stats.streak}
-                      </div>
-                    </Card>
-                  )}
-                </>
-              )}
-            </div>
-
-            {/* ═══ Main Grid: 2/3 + 1/3 ═══ */}
-            <div className="grid md:grid-cols-3 gap-6">
-              {/* Left column — 2/3 */}
-              <div className="md:col-span-2 space-y-6">
-                {/* Team Stats Snapshot */}
-                {teamStats && (
-                  <Card padding="none" className="overflow-hidden">
-                    <div className="px-4 py-3 bg-charcoal border-b border-border">
-                      <h2 className="font-display text-base font-bold uppercase tracking-wide text-text-primary">Performance Snapshot</h2>
+            {/* ═══ Record Strip ═══ */}
+            {stats && (
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+                <StatCell label="Record" value={`${stats.wins}-${stats.losses}`} />
+                <StatCell label="Conference" value={`${stats.confWins}-${stats.confLosses}`} />
+                <StatCell label="Team AVG" value={stats.battingAvg.toFixed(3)} />
+                <StatCell label="Team ERA" value={stats.era.toFixed(2)} />
+                {stats.streak && (
+                  <div className="heritage-card px-4 py-3 text-center">
+                    <div className="text-[10px] font-display uppercase tracking-[0.2em] text-text-muted mb-1">Streak</div>
+                    <div className={`font-mono text-xl md:text-2xl font-bold ${stats.streak.startsWith('W') ? 'text-green-400' : 'text-red-400'}`}>
+                      {stats.streak}
                     </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </Container>
+        </Section>
+
+        {/* ═══ Main Content ═══ */}
+        <Section className="py-8">
+          <Container>
+            <div className="grid lg:grid-cols-3 gap-5">
+              {/* ── Left Column: Performance + Schedule (2/3) ── */}
+              <div className="lg:col-span-2 space-y-5">
+                {/* Performance Snapshot */}
+                {teamStats && (
+                  <Panel title="Performance Snapshot">
                     <div className="p-4">
                       <div className="grid grid-cols-2 gap-6">
                         {teamStats.batting && (
                           <div>
-                            <span className="text-xs text-text-muted uppercase tracking-widest block mb-2">Batting</span>
-                            <div className="space-y-2">
-                              <div className="flex justify-between text-sm">
-                                <span className="text-text-muted">AVG</span>
-                                <span className="text-text-primary font-mono">{teamStats.batting.battingAverage.toFixed(3)}</span>
-                              </div>
-                              <div className="flex justify-between text-sm">
-                                <span className="text-text-muted">OPS</span>
-                                <span className="text-text-primary font-mono">{teamStats.batting.ops.toFixed(3)}</span>
-                              </div>
-                              <div className="flex justify-between text-sm">
-                                <span className="text-text-muted">HR</span>
-                                <span className="text-text-primary font-mono">{teamStats.batting.homeRuns}</span>
-                              </div>
-                              <div className="flex justify-between text-sm">
-                                <span className="text-text-muted">Runs</span>
-                                <span className="text-text-primary font-mono">{teamStats.batting.runs}</span>
-                              </div>
+                            <div className="section-rule-thick mb-3" />
+                            <span className="text-[10px] font-display uppercase tracking-[0.25em] text-burnt-orange block mb-3">
+                              Batting
+                            </span>
+                            <div className="space-y-2.5">
+                              {([
+                                ['AVG', teamStats.batting.battingAverage.toFixed(3)],
+                                ['OPS', teamStats.batting.ops.toFixed(3)],
+                                ['HR', String(teamStats.batting.homeRuns)],
+                                ['Runs', String(teamStats.batting.runs)],
+                              ] as const).map(([label, val]) => (
+                                <div key={label} className="flex justify-between items-baseline text-sm">
+                                  <span className="text-text-muted">{label}</span>
+                                  <span className="text-text-primary font-mono tabular-nums">{val}</span>
+                                </div>
+                              ))}
                             </div>
                           </div>
                         )}
                         {teamStats.pitching && (
                           <div>
-                            <span className="text-xs text-text-muted uppercase tracking-widest block mb-2">Pitching</span>
-                            <div className="space-y-2">
-                              <div className="flex justify-between text-sm">
-                                <span className="text-text-muted">ERA</span>
-                                <span className="text-text-primary font-mono">{teamStats.pitching.era.toFixed(2)}</span>
-                              </div>
-                              <div className="flex justify-between text-sm">
-                                <span className="text-text-muted">WHIP</span>
-                                <span className="text-text-primary font-mono">{teamStats.pitching.whip.toFixed(2)}</span>
-                              </div>
-                              <div className="flex justify-between text-sm">
-                                <span className="text-text-muted">SO</span>
-                                <span className="text-text-primary font-mono">{teamStats.pitching.strikeouts}</span>
-                              </div>
+                            <div className="section-rule-thick mb-3" />
+                            <span className="text-[10px] font-display uppercase tracking-[0.25em] text-burnt-orange block mb-3">
+                              Pitching
+                            </span>
+                            <div className="space-y-2.5">
+                              {([
+                                ['ERA', teamStats.pitching.era.toFixed(2)],
+                                ['WHIP', teamStats.pitching.whip.toFixed(2)],
+                                ['SO', String(teamStats.pitching.strikeouts)],
+                              ] as const).map(([label, val]) => (
+                                <div key={label} className="flex justify-between items-baseline text-sm">
+                                  <span className="text-text-muted">{label}</span>
+                                  <span className="text-text-primary font-mono tabular-nums">{val}</span>
+                                </div>
+                              ))}
                             </div>
                           </div>
                         )}
                       </div>
                     </div>
-                  </Card>
+                  </Panel>
                 )}
 
                 {/* Recent Results */}
                 {recentResults.length > 0 && (
-                  <Card padding="none" className="overflow-hidden">
-                    <div className="px-4 py-3 bg-charcoal border-b border-border">
-                      <h2 className="font-display text-base font-bold uppercase tracking-wide text-text-primary">Recent Results</h2>
-                    </div>
-                    <div className="divide-y divide-border-subtle">
+                  <Panel title="Recent Results">
+                    <div className="divide-y divide-border-vintage/40">
                       {recentResults.map(g => (
-                        <div key={g.id} className="flex items-center justify-between px-4 py-3">
+                        <div key={g.id} className="flex items-center justify-between px-4 py-2.5">
                           <div className="flex items-center gap-3">
-                            <span className={`text-sm font-bold ${g.result === 'W' ? 'text-green-400' : 'text-red-400'}`}>
+                            <span
+                              className={`w-6 h-6 rounded-sm flex items-center justify-center text-xs font-bold ${
+                                g.result === 'W'
+                                  ? 'bg-green-500/15 text-green-400'
+                                  : 'bg-red-500/15 text-red-400'
+                              }`}
+                            >
                               {g.result}
                             </span>
                             <span className="text-sm text-text-primary">
@@ -309,83 +344,99 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
                           </div>
                           <div className="flex items-center gap-3">
                             {g.score && (
-                              <span className="text-sm font-mono text-text-secondary">
-                                {g.score.team}-{g.score.opponent}
+                              <span className="text-sm font-mono tabular-nums text-text-secondary">
+                                {g.score.team}&ndash;{g.score.opponent}
                               </span>
                             )}
-                            <span className="text-xs text-text-muted">{formatDate(g.date)}</span>
+                            <span className="text-xs text-text-muted font-mono">{formatDate(g.date)}</span>
                           </div>
                         </div>
                       ))}
                     </div>
-                  </Card>
+                  </Panel>
                 )}
 
-                {/* Upcoming Schedule */}
+                {/* Upcoming */}
                 {upcoming.length > 0 && (
-                  <Card padding="none" className="overflow-hidden">
-                    <div className="px-4 py-3 bg-charcoal border-b border-border">
-                      <h2 className="font-display text-base font-bold uppercase tracking-wide text-text-primary">Upcoming</h2>
-                    </div>
-                    <div className="divide-y divide-border-subtle">
+                  <Panel title="Upcoming">
+                    <div className="divide-y divide-border-vintage/40">
                       {upcoming.map(g => (
-                        <div key={g.id} className="flex items-center justify-between px-4 py-3">
+                        <div key={g.id} className="flex items-center justify-between px-4 py-2.5">
                           <span className="text-sm text-text-primary">
                             {g.isHome ? 'vs' : '@'} {g.opponent.name}
                           </span>
-                          <span className="text-xs text-text-muted">{formatDate(g.date)}</span>
+                          <span className="text-xs text-text-muted font-mono">{formatDate(g.date)}</span>
                         </div>
                       ))}
                     </div>
-                  </Card>
+                  </Panel>
                 )}
               </div>
 
-              {/* Right column — 1/3 */}
-              <div className="space-y-6">
+              {/* ── Right Column: NIL + Roster + Links (1/3) ── */}
+              <div className="space-y-5">
                 {/* NIL Position */}
-                <Card padding="none" className="overflow-hidden">
-                  <div className="px-4 py-3 bg-gradient-to-r from-burnt-orange/15 to-transparent border-b border-border">
-                    <h2 className="font-display text-base font-bold uppercase tracking-wide text-text-primary">NIL Position</h2>
-                  </div>
+                <Panel title="NIL Position" accentHeader>
                   <div className="p-4">
                     {teamNIL.length > 0 ? (
                       <>
-                        <div className="text-center mb-4">
-                          <div className="text-xs text-text-muted uppercase tracking-wider">Total Roster Value</div>
-                          <div className="font-display text-3xl font-bold text-burnt-orange mt-1">{formatNIL(nilTotal)}</div>
-                          <div className="text-xs text-text-muted mt-1">{teamNIL.length} players scored</div>
+                        <div className="text-center mb-4 corner-marks py-4">
+                          <div className="text-[10px] font-display uppercase tracking-[0.25em] text-text-muted">
+                            Total Roster Value
+                          </div>
+                          <div
+                            className="font-display font-bold text-burnt-orange mt-1"
+                            style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)' }}
+                          >
+                            {formatNIL(nilTotal)}
+                          </div>
+                          <div className="text-[10px] text-text-muted mt-1 font-mono">
+                            {teamNIL.length} players scored
+                          </div>
                         </div>
-                        <div className="space-y-1">
+
+                        <div className="heritage-divider" />
+
+                        <div className="space-y-0">
                           {teamNIL.slice(0, 5).map((p, i) => (
-                            <div key={p.player_name} className="flex items-center justify-between py-1 text-sm">
-                              <span className="text-text-primary truncate">{i + 1}. {p.player_name}</span>
-                              <span className="text-burnt-orange font-mono font-bold shrink-0 ml-2">{formatNIL(p.estimated_mid)}</span>
+                            <div key={p.player_name} className="flex items-center justify-between py-1.5 text-sm">
+                              <span className="text-text-primary truncate">
+                                <span className="text-text-muted font-mono text-xs mr-1.5">{i + 1}</span>
+                                {p.player_name}
+                              </span>
+                              <span className="text-burnt-orange font-mono font-bold shrink-0 ml-2 tabular-nums">
+                                {formatNIL(p.estimated_mid)}
+                              </span>
                             </div>
                           ))}
                         </div>
-                        <Link href="/nil-valuation" className="block text-center mt-3 text-xs text-text-muted hover:text-burnt-orange transition-colors">
-                          Full NIL Analysis →
+                        <Link
+                          href="/nil-valuation"
+                          className="block text-center mt-3 text-xs font-display uppercase tracking-wider text-text-muted hover:text-burnt-orange transition-colors"
+                        >
+                          Full NIL Analysis &rarr;
                         </Link>
                       </>
                     ) : (
-                      <p className="text-sm text-text-muted text-center py-4">NIL data loading...</p>
+                      <p className="text-sm text-text-muted text-center py-4">
+                        No NIL data available
+                      </p>
                     )}
                   </div>
-                </Card>
+                </Panel>
 
                 {/* Roster Depth */}
-                <Card padding="none" className="overflow-hidden">
-                  <div className="px-4 py-3 bg-charcoal border-b border-border">
-                    <h2 className="font-display text-base font-bold uppercase tracking-wide text-text-primary">Roster Depth</h2>
-                  </div>
+                <Panel title="Roster Depth">
                   <div className="p-4">
                     {roster.length > 0 ? (
                       <>
                         <div className="text-center mb-3">
                           <div className="font-display text-2xl font-bold text-text-primary">{roster.length}</div>
-                          <div className="text-xs text-text-muted">Active Players</div>
+                          <div className="text-[10px] font-display uppercase tracking-[0.2em] text-text-muted">
+                            Active Players
+                          </div>
                         </div>
+                        <div className="heritage-divider" />
                         {(() => {
                           const pitchers = roster.filter(p => ['P', 'SP', 'RP', 'LHP', 'RHP', 'LHSP', 'RHSP', 'LHRP', 'RHRP'].includes((p.position || '').toUpperCase()));
                           const catchers = roster.filter(p => (p.position || '').toUpperCase() === 'C');
@@ -393,37 +444,48 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
                           const outfielders = roster.filter(p => ['LF', 'CF', 'RF', 'OF'].includes((p.position || '').toUpperCase()));
                           return (
                             <div className="space-y-2 text-sm">
-                              <div className="flex justify-between"><span className="text-text-muted">Pitchers</span><span className="text-text-primary font-mono">{pitchers.length}</span></div>
-                              <div className="flex justify-between"><span className="text-text-muted">Catchers</span><span className="text-text-primary font-mono">{catchers.length}</span></div>
-                              <div className="flex justify-between"><span className="text-text-muted">Infielders</span><span className="text-text-primary font-mono">{infielders.length}</span></div>
-                              <div className="flex justify-between"><span className="text-text-muted">Outfielders</span><span className="text-text-primary font-mono">{outfielders.length}</span></div>
+                              {([
+                                ['Pitchers', pitchers.length],
+                                ['Catchers', catchers.length],
+                                ['Infielders', infielders.length],
+                                ['Outfielders', outfielders.length],
+                              ] as const).map(([label, count]) => (
+                                <div key={label} className="flex justify-between items-baseline">
+                                  <span className="text-text-muted">{label}</span>
+                                  <span className="text-text-primary font-mono tabular-nums">{count}</span>
+                                </div>
+                              ))}
                             </div>
                           );
                         })()}
                       </>
                     ) : (
-                      <p className="text-sm text-text-muted text-center py-4">Roster loading...</p>
+                      <p className="text-sm text-text-muted text-center py-4">
+                        No roster data available
+                      </p>
                     )}
                   </div>
-                </Card>
+                </Panel>
 
                 {/* Quick Links */}
-                <Card padding="md">
+                <div className="heritage-card p-4">
                   <div className="space-y-2">
-                    <Link href={`/college-baseball/teams/${teamId}`} className="block text-sm text-text-muted hover:text-burnt-orange transition-colors">
-                      ← Full Team Page
-                    </Link>
-                    <Link href="/college-baseball/transfer-portal" className="block text-sm text-text-muted hover:text-burnt-orange transition-colors">
-                      Transfer Portal →
-                    </Link>
-                    <Link href="/college-baseball/savant" className="block text-sm text-text-muted hover:text-burnt-orange transition-colors">
-                      Savant Explorer →
-                    </Link>
-                    <Link href="/nil-valuation/tools" className="block text-sm text-text-muted hover:text-burnt-orange transition-colors">
-                      NIL Tools →
-                    </Link>
+                    {([
+                      [`/college-baseball/teams/${teamId}`, '\u2190 Full Team Page'],
+                      ['/college-baseball/transfer-portal', 'Transfer Portal \u2192'],
+                      ['/college-baseball/savant', 'Savant Explorer \u2192'],
+                      ['/nil-valuation/tools', 'NIL Tools \u2192'],
+                    ] as const).map(([href, label]) => (
+                      <Link
+                        key={href}
+                        href={href}
+                        className="block text-xs font-display uppercase tracking-wider text-text-muted hover:text-burnt-orange transition-colors"
+                      >
+                        {label}
+                      </Link>
+                    ))}
                   </div>
-                </Card>
+                </div>
               </div>
             </div>
 

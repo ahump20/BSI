@@ -477,6 +477,15 @@ export async function enrichTeamWithD1Stats(
     const teamERA = teamIP > 0 ? Math.round((teamER * 9 / teamIP) * 100) / 100 : 0;
     const teamWHIP = teamIP > 0 ? Math.round(((teamHA + teamPitchBB) / teamIP) * 100) / 100 : 0;
 
+    // Inject battingAvg / era into team.stats so readout hero strip works
+    const teamStatsObj = (payload.team as Record<string, unknown> | undefined);
+    if (teamStatsObj) {
+      const s = (teamStatsObj.stats ?? {}) as Record<string, unknown>;
+      if (!s.battingAvg || s.battingAvg === 0) s.battingAvg = teamAvg;
+      if (!s.era || s.era === 0) s.era = teamERA;
+      teamStatsObj.stats = s;
+    }
+
     payload.teamStats = {
       batting: {
         atBats: teamAB, hits: teamH, homeRuns: teamHR, rbi: teamRBI,
@@ -528,8 +537,14 @@ export function transformTeamSchedule(events: Record<string, unknown>[], teamSho
       : Number(rawAwayScore ?? 0);
     const isFinal = state === 'post';
     const shortLower = teamShortName.toLowerCase();
-    const isHome = (homeTeam.abbreviation as string)?.toLowerCase() === shortLower
-      || (homeTeam.displayName as string)?.toLowerCase().includes(shortLower);
+    // Strict match — previous .includes() caused false positives
+    // ("Texas" matched "Texas State", "Texas Tech", "Texas A&M", etc.)
+    const homeAbbr = ((homeTeam.abbreviation ?? '') as string).toLowerCase();
+    const homeShort = ((homeTeam.shortDisplayName ?? '') as string).toLowerCase();
+    const isHome = shortLower !== '' && (
+      homeAbbr === shortLower
+      || homeShort === shortLower
+    );
 
     const opponent = isHome ? awayTeam : homeTeam;
     const teamScore = isHome ? homeScore : awayScore;

@@ -911,18 +911,19 @@ function nilTier(score: number): { name: string; low: number; mid: number; high:
 /** Score on-field performance [0-100] from savant advanced stats. */
 function scorePerformance(row: Record<string, unknown>, type: 'batter' | 'pitcher'): number {
   if (type === 'batter') {
-    const wrcPlus = (row.wrc_plus as number) || 100;
-    const woba = (row.woba as number) || 0.320;
-    const opsPlus = (row.ops_plus as number) || 100;
+    // ?? preserves real zeros; || would mask 0 wOBA as league-average (.320)
+    const wrcPlus = (row.wrc_plus as number) ?? 100;
+    const woba = (row.woba as number) ?? 0.320;
+    const opsPlus = (row.ops_plus as number) ?? 100;
     // wRC+ of 150 → ~85 pts, 200 → ~100. Weighted blend.
     const wrcScore = clamp((wrcPlus - 70) / 130 * 100, 0, 100);
     const wobaScore = clamp((woba - 0.250) / 0.250 * 100, 0, 100);
     const opsScore = clamp((opsPlus - 70) / 130 * 100, 0, 100);
     return round(wrcScore * 0.45 + wobaScore * 0.35 + opsScore * 0.20, 1);
   } else {
-    const fip = (row.fip as number) || 4.50;
-    const eraMinus = (row.era_minus as number) || 100;
-    const k9 = (row.k_9 as number) || 6;
+    const fip = (row.fip as number) ?? 4.50;
+    const eraMinus = (row.era_minus as number) ?? 100;
+    const k9 = (row.k_9 as number) ?? 6;
     // Lower FIP = better. FIP of 2.0 → ~90 pts, 3.0 → ~65.
     const fipScore = clamp((6 - fip) / 4 * 100, 0, 100);
     const eraMinusScore = clamp((130 - eraMinus) / 80 * 100, 0, 100);
@@ -1020,7 +1021,11 @@ async function computeNIL(db: D1Database, kv: KVNamespace): Promise<{ nilScored:
     `SELECT b.player_id, b.player_name, b.team, b.conference,
             COALESCE(NULLIF(b.position, 'UN'), NULLIF(b.position, ''),
                      NULLIF(p.position, 'UN'), NULLIF(p.position, ''), 'UN') AS position,
-            b.woba, b.wrc_plus, b.ops_plus, b.pa
+            b.woba, b.wrc_plus, b.ops_plus, b.pa,
+            COALESCE(p.stolen_bases, 0) AS sb,
+            COALESCE(p.home_runs, 0) AS hr,
+            COALESCE(p.at_bats, 0) AS ab,
+            COALESCE(p.innings_pitched_thirds, 0) AS ip3
      FROM cbb_batting_advanced b
      LEFT JOIN player_season_stats p
        ON b.player_id = p.espn_id AND p.season = ?
@@ -1037,6 +1042,42 @@ async function computeNIL(db: D1Database, kv: KVNamespace): Promise<{ nilScored:
        ON b.player_id = p.espn_id AND p.season = ?
      WHERE b.season = ? AND b.ip >= 10`
   ).bind(SEASON, SEASON).all();
+
+  // 3b. Stat-based position inference for batters still labeled 'UN'.
+  // Distinguishes: P (pitcher who bats), OF (speed profile), IF (contact/power),
+  // DH (high PA, low speed), UT (utility/unknown).
+  // Pitcher detection: significant IP relative to AB → two-way or pitcher-batter.
+  const pitcherIds = new Set((pitchers || []).map((r: Record<string, unknown>) => r.player_id as string));
+
+  for (const row of (batters || []) as Record<string, unknown>[]) {
+    if (row.position !== 'UN') continue;
+    const pid = row.player_id as string;
+    const ip3 = Number(row.ip3 || 0);
+    const ab = Number(row.ab || 0);
+    const sb = Number(row.sb || 0);
+    const hr = Number(row.hr || 0);
+
+    // Pitcher who also bats: appears in pitching table or has significant IP
+    if (pitcherIds.has(pid) || (ip3 >= 30 && ab < 60)) {
+      row.position = 'TWP'; // two-way player
+      continue;
+    }
+
+    // Speed profile: high SB rate suggests OF
+    if (ab > 0 && sb >= 8) {
+      row.position = 'OF';
+      continue;
+    }
+
+    // Power profile with low speed: likely corner IF or DH
+    if (ab > 0 && hr >= 6 && sb <= 2) {
+      row.position = 'IF/DH';
+      continue;
+    }
+
+    // Default to UT (utility) — better than UN, signals "position player, unspecified"
+    row.position = 'UT';
+  }
 
   // 4. Score every qualifying player
   const stmts: D1PreparedStatement[] = [];
@@ -1094,13 +1135,26 @@ async function computeNIL(db: D1Database, kv: KVNamespace): Promise<{ nilScored:
   for (const row of (batters || []) as Record<string, unknown>[]) processRow(row, 'batter');
   for (const row of (pitchers || []) as Record<string, unknown>[]) processRow(row, 'pitcher');
 
-  // 5. Execute in batches
+  // 5. Execute in batches — log failures per batch so partial writes are visible
   const BATCH_SIZE = 80;
+  let batchErrors = 0;
   for (let i = 0; i < stmts.length; i += BATCH_SIZE) {
-    await db.batch(stmts.slice(i, i + BATCH_SIZE));
+    try {
+      await db.batch(stmts.slice(i, i + BATCH_SIZE));
+    } catch (err) {
+      batchErrors++;
+      console.error(`[nil] Score batch ${Math.floor(i / BATCH_SIZE)} failed:`, err instanceof Error ? err.message : err);
+    }
   }
   for (let i = 0; i < histStmts.length; i += BATCH_SIZE) {
-    await db.batch(histStmts.slice(i, i + BATCH_SIZE));
+    try {
+      await db.batch(histStmts.slice(i, i + BATCH_SIZE));
+    } catch (err) {
+      console.error(`[nil] History batch ${Math.floor(i / BATCH_SIZE)} failed:`, err instanceof Error ? err.message : err);
+    }
+  }
+  if (batchErrors > 0) {
+    console.error(`[nil] ${batchErrors} score batch(es) failed — partial data written`);
   }
 
   // 6. Store NIL compute timestamp

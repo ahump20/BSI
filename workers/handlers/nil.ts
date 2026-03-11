@@ -33,14 +33,19 @@ function nilMeta(source: string, cacheHit: boolean) {
 /** Resolve tier from API key in BSI_KEYS KV. Falls back to 'free'. */
 async function resolveTier(url: URL, headers: Headers, env: Env): Promise<string> {
   const keyValue = headers.get('X-BSI-Key') ?? url.searchParams.get('key') ?? '';
-  if (!keyValue || !env.BSI_KEYS) return 'free';
+  if (!keyValue) return 'free'; // Legitimately no key provided
+  if (!env.BSI_KEYS) {
+    console.error('[nil] BSI_KEYS binding missing — all users downgraded to free');
+    return 'free';
+  }
   try {
     const raw = await env.BSI_KEYS.get(`key:${keyValue}`);
     if (!raw) return 'free';
     const data = JSON.parse(raw) as { tier?: string; expires?: number };
     if (data.expires && data.expires < Date.now()) return 'free';
     return data.tier || 'free';
-  } catch {
+  } catch (err) {
+    console.error('[nil] Tier resolution failed for key:', keyValue.slice(0, 8) + '...', err);
     return 'free';
   }
 }
@@ -336,6 +341,9 @@ export async function handleNILTrends(url: URL, env: Env, headers?: Headers): Pr
  */
 export async function handleWARToNIL(url: URL): Promise<Response> {
   const war = parseFloat(url.searchParams.get('war') || '0');
+  if (isNaN(war) || war < -5 || war > 20) {
+    return json({ error: 'Invalid WAR value. Provide a number between -5 and 20.' }, 400);
+  }
   const sport = url.searchParams.get('sport') || 'baseball';
 
   // College baseball WAR-to-NIL baseline:

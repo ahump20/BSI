@@ -92,14 +92,22 @@ export default function NILValuationPage() {
   const [leaders, setLeaders] = useState<NILPlayer[]>([]);
   const [totalScored, setTotalScored] = useState(0);
 
+  const [fetchError, setFetchError] = useState(false);
+
   useEffect(() => {
     fetch('/api/nil/leaderboard?limit=50')
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error(`Leaderboard API returned ${r.status}`);
+        return r.json();
+      })
       .then((d: { data?: NILPlayer[]; total?: number }) => {
         setLeaders(d.data || []);
         setTotalScored(d.total || 0);
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.error('[NIL] Leaderboard fetch failed:', err);
+        setFetchError(true);
+      });
   }, []);
 
   const topTen = leaders.slice(0, 10);
