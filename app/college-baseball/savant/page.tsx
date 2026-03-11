@@ -166,36 +166,40 @@ export default function SavantHubPage() {
   return (
     <>
       <div>
-        <Section padding="lg" className="pt-6 relative overflow-hidden">
-          {/* Atmospheric gradient */}
-          <HeroGlow shape="60% 40%" position="30% 20%" intensity={0.05} spread="60%" />
-          <Container size="wide" className="relative z-10">
+        <section
+          className="relative overflow-hidden"
+          style={{
+            background: 'radial-gradient(ellipse at 30% 20%, rgba(191, 87, 0, 0.05) 0%, transparent 60%), var(--surface-scoreboard)',
+            padding: 'clamp(2rem, 4vw, 3rem) 0',
+          }}
+        >
+          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[rgba(191,87,0,0.15)] to-transparent" />
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             {/* Breadcrumb */}
-            <nav className="flex items-center gap-2 text-sm mb-6">
-              <Link href="/" className="text-text-muted hover:text-burnt-orange transition-colors">
-                Home
-              </Link>
-              <span className="text-text-muted/40">/</span>
-              <Link
-                href="/college-baseball"
-                className="text-text-muted hover:text-burnt-orange transition-colors"
-              >
-                College Baseball
-              </Link>
-              <span className="text-text-muted/40">/</span>
-              <span className="text-burnt-orange/70 font-medium">Savant</span>
+            <nav className="flex items-center gap-2 text-xs mb-6" style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--bsi-dust)' }}>
+              <Link href="/" className="transition-colors hover:text-[var(--bsi-bone)]">Home</Link>
+              <span>/</span>
+              <Link href="/college-baseball" className="transition-colors hover:text-[var(--bsi-bone)]">College Baseball</Link>
+              <span>/</span>
+              <span style={{ color: 'var(--bsi-primary)' }}>Savant</span>
             </nav>
 
             {/* Hero */}
             <ScrollReveal direction="up" delay={50}>
               <div className="mb-10">
-                <span className="section-label block mb-3">
-                  Advanced Analytics
-                </span>
-                <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-wider text-text-primary mb-4">
-                  College Baseball <span className="text-burnt-orange">Savant</span>
+                <span className="heritage-stamp mb-3">Advanced Analytics</span>
+                <h1
+                  className="mt-3 font-bold uppercase tracking-tight leading-none mb-4"
+                  style={{
+                    fontFamily: 'var(--bsi-font-display-hero)',
+                    fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+                    color: 'var(--bsi-bone)',
+                    textShadow: '1px 1px 0px rgba(0,0,0,0.5)',
+                  }}
+                >
+                  College Baseball <span style={{ color: 'var(--bsi-primary)' }}>Savant</span>
                 </h1>
-                <p className="text-text-secondary mt-3 max-w-2xl text-base leading-relaxed font-serif italic">
+                <p className="mt-3 max-w-2xl text-base leading-relaxed font-serif italic" style={{ color: 'var(--bsi-dust)' }}>
                   The metrics MLB Savant tracks — wOBA, FIP, wRC+, park factors, conference
                   strength indices — applied to 300+ D1 programs. No other public platform
                   does this for the college game.
@@ -203,9 +207,10 @@ export default function SavantHubPage() {
                 <div className="mt-5 flex items-center gap-6 flex-wrap">
                   <Link
                     href="/college-baseball/savant/visuals"
-                    className="inline-flex items-center gap-2 text-sm text-burnt-orange hover:text-ember transition-colors group"
+                    className="inline-flex items-center gap-2 text-sm transition-colors group"
+                    style={{ color: 'var(--bsi-primary)' }}
                   >
-                    <span className="font-display uppercase tracking-wider">Interactive Visuals</span>
+                    <span className="uppercase tracking-wider" style={{ fontFamily: 'var(--bsi-font-display)' }}>Interactive Visuals</span>
                     <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M5 12h14M12 5l7 7-7 7" />
                     </svg>
@@ -214,9 +219,10 @@ export default function SavantHubPage() {
                     href="https://labs.blazesportsintel.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-sm text-text-muted hover:text-text-tertiary transition-colors group"
+                    className="inline-flex items-center gap-2 text-sm transition-colors group"
+                    style={{ color: 'var(--bsi-dust)' }}
                   >
-                    <span className="font-display uppercase tracking-wider">Labs Portal</span>
+                    <span className="uppercase tracking-wider" style={{ fontFamily: 'var(--bsi-font-display)' }}>Labs Portal</span>
                     <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M7 17L17 7M17 7H7M17 7v10" />
                     </svg>
@@ -226,8 +232,8 @@ export default function SavantHubPage() {
             </ScrollReveal>
 
             {/* Data Coverage — inline note, not boxed */}
-            <div className="mb-8 flex items-start gap-3 border-l-2 border-burnt-orange/20 pl-4">
-              <p className="text-[11px] font-mono text-text-muted leading-relaxed">
+            <div className="mb-8 flex items-start gap-3 pl-4" style={{ borderLeft: '2px solid rgba(191, 87, 0, 0.2)' }}>
+              <p className="text-[11px] leading-relaxed" style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--bsi-dust)' }}>
                 {confLoading ? '...' : `${confRes?.total ?? confRes?.data?.length ?? 22} conferences tracked`} · ESPN box scores + Highlightly Pro · Recomputed every 6 hours
               </p>
             </div>
@@ -404,8 +410,8 @@ export default function SavantHubPage() {
               </div>
             )}
             </DataErrorBoundary>
-          </Container>
-        </Section>
+          </div>
+        </section>
       </div>
 
       <Footer />

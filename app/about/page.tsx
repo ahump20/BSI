@@ -2,26 +2,41 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Container } from '@/components/ui/Container';
-import { Section } from '@/components/ui/Section';
-import { HeroGlow } from '@/components/ui/HeroGlow';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-background-primary text-text-primary pt-6">
+    <div className="min-h-screen grain-overlay" style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
       {/* Hero — product thesis first */}
-      <Section className="pt-6 md:pt-10 pb-20 relative overflow-hidden">
-        <HeroGlow />
-        <Container size="narrow" center className="relative z-10">
+      <section className="relative overflow-hidden" style={{ paddingTop: 'clamp(3rem, 6vw, 5rem)', paddingBottom: 'clamp(4rem, 8vw, 6rem)' }}>
+        {/* Ember glow */}
+        <div
+          className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse at 50% 40%, rgba(191, 87, 0, 0.06) 0%, transparent 60%)' }}
+          aria-hidden="true"
+        />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <ScrollReveal>
-            <span className="section-label block mb-6">About Blaze Sports Intel</span>
-            <h1 className="font-display uppercase text-4xl md:text-5xl lg:text-6xl font-bold mb-10 tracking-wide leading-[1.1]">
+            <span className="heritage-stamp mb-6">About Blaze Sports Intel</span>
+            <h1
+              className="mt-4 font-bold uppercase tracking-tight leading-none mb-6"
+              style={{
+                fontFamily: 'var(--bsi-font-display-hero)',
+                fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
+                color: 'var(--bsi-bone)',
+                textShadow: '2px 2px 0px rgba(0,0,0,0.5)',
+              }}
+            >
               The Game Between{' '}
-              <span className="text-burnt-orange">the Poles</span>
+              <span style={{ color: 'var(--bsi-primary)' }}>the Poles</span>
             </h1>
-            <p className="text-burnt-orange font-serif italic text-xl md:text-2xl leading-relaxed max-w-2xl mx-auto">
+
+            <div className="flex justify-center mb-8">
+              <div className="section-rule-thick w-16" />
+            </div>
+
+            <p className="font-serif italic text-lg md:text-xl leading-relaxed max-w-2xl mx-auto" style={{ color: 'var(--bsi-dust)' }}>
               Major platforms paint a black-and-white picture — LeBron vs. MJ,
               Yankees or Dodgers, Cowboys or nothing. BSI exists to leave that
               binary behind. The real game lives in between: college baseball on a
@@ -30,14 +45,18 @@ export default function AboutPage() {
               building what nobody else would.
             </p>
           </ScrollReveal>
-        </Container>
-      </Section>
+        </div>
+      </section>
 
       {/* What BSI does — evidence strip */}
-      <Section className="py-20 border-t border-border-subtle">
-        <Container>
+      <section
+        className="relative surface-lifted"
+        style={{ padding: 'clamp(3rem, 6vw, 5rem) 0' }}
+      >
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(191,87,0,0.15)] to-transparent" />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-3 gap-5">
               {[
                 {
                   stat: 'Every Game',
@@ -57,26 +76,33 @@ export default function AboutPage() {
               ].map((card) => (
                 <div
                   key={card.stat}
-                  className="p-6 rounded-lg bg-background-secondary border border-border-subtle
-                             hover:border-border-accent hover:shadow-glow-sm transition-all duration-300 ease-out-expo"
+                  className="heritage-card p-6 transition-all duration-300 hover:-translate-y-1"
+                  style={{ borderTop: '2px solid var(--bsi-primary)' }}
                 >
-                  <div className="font-display text-3xl font-bold text-burnt-orange mb-2">
+                  <div
+                    className="font-bold text-3xl mb-2"
+                    style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-primary)' }}
+                  >
                     {card.stat}
                   </div>
-                  <p className="text-xs text-text-tertiary uppercase tracking-[0.15em] mb-3 font-medium">
+                  <p className="text-xs uppercase tracking-[0.15em] mb-3 font-medium" style={{ color: 'var(--bsi-dust)' }}>
                     {card.label}
                   </p>
-                  <p className="text-text-secondary text-sm leading-relaxed">{card.desc}</p>
+                  <p className="text-sm leading-relaxed font-serif" style={{ color: 'var(--bsi-dust)' }}>{card.desc}</p>
                 </div>
               ))}
             </div>
           </ScrollReveal>
-        </Container>
-      </Section>
+        </div>
+      </section>
 
       {/* The builder */}
-      <Section className="py-24 border-t border-border-subtle">
-        <Container>
+      <section
+        className="relative"
+        style={{ padding: 'clamp(4rem, 8vw, 6rem) 0', background: 'var(--surface-scoreboard)' }}
+      >
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(191,87,0,0.15)] to-transparent" />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="grid md:grid-cols-5 gap-12 md:gap-16 items-start">
               {/* Headshot */}
@@ -87,14 +113,14 @@ export default function AboutPage() {
                     alt="Austin Humphrey"
                     width={256}
                     height={341}
-                    className="rounded-lg border border-border-subtle"
+                    className="border"
+                    style={{ borderColor: 'var(--border-vintage)' }}
                     priority
                   />
                   <div
-                    className="absolute -inset-px rounded-lg pointer-events-none"
+                    className="absolute -inset-px pointer-events-none"
                     style={{
-                      background:
-                        'linear-gradient(180deg, rgba(191,87,0,0.08) 0%, transparent 40%)',
+                      background: 'linear-gradient(180deg, rgba(191,87,0,0.08) 0%, transparent 40%)',
                     }}
                   />
                 </div>
@@ -102,14 +128,15 @@ export default function AboutPage() {
 
               {/* Story */}
               <div className="md:col-span-3">
-                <p className="text-xs tracking-[0.2em] text-text-muted uppercase mb-3 font-medium">
-                  The Builder
-                </p>
-                <h2 className="font-display uppercase text-2xl md:text-3xl font-bold mb-8 tracking-wide">
+                <span className="heritage-stamp mb-3">The Builder</span>
+                <h2
+                  className="mt-3 font-bold uppercase tracking-wide mb-8"
+                  style={{ fontFamily: 'var(--bsi-font-display)', fontSize: 'clamp(1.5rem, 3vw, 2rem)', color: 'var(--bsi-bone)' }}
+                >
                   Austin Humphrey
                 </h2>
 
-                <div className="space-y-5 text-text-secondary leading-[1.75]">
+                <div className="space-y-5 leading-[1.75] font-serif" style={{ color: 'var(--bsi-dust)' }}>
                   <p>
                     I grew up watching Tuesday night college baseball games that nobody would
                     talk about the next morning. Not because they weren&apos;t worth watching —
@@ -138,9 +165,9 @@ export default function AboutPage() {
                     the same rigor as a Saturday showcase between Tennessee and LSU — because
                     that&apos;s the standard, not the exception.
                   </p>
-                  <p className="text-text-primary">
+                  <p style={{ color: 'var(--bsi-bone)' }}>
                     The name comes from a dachshund. My first baseball team in Bartlett, Texas
-                    was the <span className="text-burnt-orange font-semibold">Blaze</span> —
+                    was the <span style={{ color: 'var(--bsi-primary)', fontWeight: 600 }}>Blaze</span> —
                     when my family got a dog, I named him after it. Years later, when I needed
                     a name for what I&apos;d been building since I first noticed the gap, Blaze
                     was already there. The people who end up here tend to arrive the same way —
@@ -150,14 +177,15 @@ export default function AboutPage() {
                 </div>
 
                 {/* The Story — origin narrative */}
-                <div className="mt-16 pt-12 border-t border-border-subtle">
-                  <p className="text-xs tracking-[0.2em] text-text-muted uppercase mb-3 font-medium">
-                    The Story
-                  </p>
-                  <h3 className="font-display uppercase text-xl md:text-2xl font-bold mb-8 tracking-wide">
-                    Memphis Soil, <span className="text-burnt-orange">Texas Roots</span>
+                <div className="mt-16 pt-12" style={{ borderTop: '1px solid var(--border-vintage)' }}>
+                  <span className="heritage-stamp mb-3">The Story</span>
+                  <h3
+                    className="mt-3 font-bold uppercase tracking-wide mb-8"
+                    style={{ fontFamily: 'var(--bsi-font-display)', fontSize: 'clamp(1.25rem, 2.5vw, 1.75rem)', color: 'var(--bsi-bone)' }}
+                  >
+                    Memphis Soil, <span style={{ color: 'var(--bsi-primary)' }}>Texas Roots</span>
                   </h3>
-                  <div className="space-y-5 text-text-secondary leading-[1.75]">
+                  <div className="space-y-5 leading-[1.75] font-serif" style={{ color: 'var(--bsi-dust)' }}>
                     <p>
                       I was born in Memphis with Texas dirt under the hospital bed. That
                       wasn&apos;t metaphor — my family carried soil from Stephen F. Austin&apos;s
@@ -181,7 +209,7 @@ export default function AboutPage() {
                       wOBA distributions and conference strength indexes at thirty. The data
                       sharpened something the field started.
                     </p>
-                    <p className="text-text-primary">
+                    <p style={{ color: 'var(--bsi-bone)' }}>
                       Ricky Williams breaking the NCAA rushing record in 1998 — I was three years
                       old — is the single best emblem of why BSI exists. The moment where sports
                       transcends box scores and becomes something a family passes down. That&apos;s
@@ -193,43 +221,54 @@ export default function AboutPage() {
               </div>
             </div>
           </ScrollReveal>
-        </Container>
-      </Section>
+        </div>
+      </section>
 
       {/* CTA */}
-      <Section className="py-24 border-t border-border-subtle">
-        <Container size="narrow" center>
+      <section className="relative overflow-hidden" style={{ padding: 'clamp(4rem, 8vw, 6rem) 0', background: 'var(--surface-dugout)' }}>
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(191,87,0,0.15)] to-transparent" />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <ScrollReveal>
-            <h2 className="font-display uppercase text-3xl md:text-4xl font-bold mb-6 tracking-wide">
-              Start with <span className="text-burnt-orange">College Baseball</span>
+            {/* BSI shield */}
+            <div className="flex justify-center mb-6">
+              <div className="relative w-[56px] h-[56px]">
+                <Image
+                  src="/images/brand/bsi-mascot-200.png"
+                  alt="Blaze Sports Intel"
+                  fill
+                  className="object-contain opacity-80"
+                />
+              </div>
+            </div>
+
+            <h2
+              className="font-bold uppercase tracking-wide mb-6"
+              style={{ fontFamily: 'var(--bsi-font-display)', fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', color: 'var(--bsi-bone)' }}
+            >
+              Start with <span style={{ color: 'var(--bsi-primary)' }}>College Baseball</span>
             </h2>
-            <p className="text-lg text-text-tertiary mb-10 max-w-lg mx-auto leading-relaxed">
+            <p className="text-base mb-10 max-w-lg mx-auto leading-relaxed font-serif" style={{ color: 'var(--bsi-dust)' }}>
               The flagship. Live scores, full box scores, standings, analytics, and the
               editorial that covers the games nobody else will.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/college-baseball"
-                className="inline-flex items-center justify-center px-8 py-3.5 rounded-lg
-                           bg-burnt-orange text-white font-medium
-                           hover:bg-burnt-orange-500 hover:shadow-glow-sm
-                           transition-all duration-300 ease-out-expo"
-              >
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+              <Link href="/college-baseball" className="btn-heritage-fill px-8 py-3.5 text-base">
                 College Baseball Hub
               </Link>
               <a
                 href="mailto:Austin@blazesportsintel.com"
-                className="inline-flex items-center justify-center px-8 py-3.5 rounded-lg
-                           border border-border text-text-secondary font-medium
-                           hover:border-border-strong hover:text-text-primary
-                           transition-all duration-300 ease-out-expo"
+                className="btn-heritage px-8 py-3.5 text-base"
               >
                 Austin@blazesportsintel.com
               </a>
             </div>
+
+            <p className="font-serif italic text-sm tracking-wide" style={{ color: 'var(--bsi-primary)', opacity: 0.7 }}>
+              Born to Blaze the Path Beaten Less
+            </p>
           </ScrollReveal>
-        </Container>
-      </Section>
+        </div>
+      </section>
 
       <Footer />
     </div>

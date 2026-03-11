@@ -503,83 +503,120 @@ function ScoresHubContent() {
 
   return (
     <>
-      <div>
+      <div className="grain-overlay" style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
         {/* Header */}
-        <Section padding="lg" className="relative overflow-hidden pt-6">
-          <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
-          <Container>
-            <Breadcrumb
-              className="mb-4"
-              items={[
-                { label: 'Home', href: '/' },
-                { label: 'Scores' },
-              ]}
-            />
+        <section
+          className="relative overflow-hidden"
+          style={{
+            background: 'radial-gradient(ellipse at 50% 20%, rgba(191, 87, 0, 0.06) 0%, transparent 60%), var(--surface-scoreboard)',
+            padding: 'clamp(2rem, 4vw, 3.5rem) 0 clamp(1.5rem, 3vw, 2rem)',
+          }}
+        >
+          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[rgba(191,87,0,0.15)] to-transparent" />
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Breadcrumb */}
+            <div className="flex items-center gap-2 mb-4 text-xs" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
+              <Link href="/" className="transition-colors hover:text-[var(--bsi-bone)]">Home</Link>
+              <span>/</span>
+              <span style={{ color: 'var(--bsi-primary)' }}>Scores</span>
+            </div>
+
             <ScrollReveal direction="up">
-              <div className="flex items-center gap-3 mb-4">
-                <Badge variant="primary">All Sports</Badge>
-                {hasAnyLive && <FreshnessBadge isLive fetchedAt={fetchedAt} />}
+              <div className="flex items-center gap-3 mb-3">
+                <span className="heritage-stamp">All Sports</span>
+                {hasAnyLive && (
+                  <span className="heritage-stamp" style={{ padding: '1px 8px', fontSize: '9px', color: '#22c55e', borderColor: 'rgba(34, 197, 94, 0.3)' }}>
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className="relative flex h-1.5 w-1.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500" />
+                      </span>
+                      LIVE
+                    </span>
+                  </span>
+                )}
               </div>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-4xl md:text-5xl font-bold uppercase tracking-display text-gradient-blaze">
+              <h1
+                className="font-bold uppercase tracking-tight leading-none mb-3"
+                style={{
+                  fontFamily: 'var(--bsi-font-display-hero)',
+                  fontSize: 'clamp(2.5rem, 6vw, 4rem)',
+                  color: 'var(--bsi-bone)',
+                  textShadow: '2px 2px 0px rgba(0,0,0,0.5)',
+                }}
+              >
                 Live Scores
               </h1>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={150}>
-              <p className="text-text-secondary mt-4 text-lg max-w-2xl">
+              <p className="mt-2 text-base max-w-2xl font-serif" style={{ color: 'var(--bsi-dust)' }}>
                 Real-time scores across MLB, NFL, NBA, college football, and 300+ college baseball programs.
               </p>
             </ScrollReveal>
             {hasAnyLive && (
               <ScrollReveal direction="up" delay={200}>
-                <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 bg-success/20 rounded-lg border border-success/30">
-                  <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
-                  <span className="text-success font-semibold">
+                <div className="mt-4 inline-flex items-center gap-2 px-4 py-2" style={{ background: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.25)' }}>
+                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                  <span className="font-semibold text-sm" style={{ color: '#22c55e' }}>
                     {totalLive} game{totalLive !== 1 ? 's' : ''} live now
                   </span>
                 </div>
               </ScrollReveal>
             )}
-          </Container>
-        </Section>
+          </div>
+        </section>
 
         {/* Sport Tabs — sticky */}
-        <Section padding="none" background="charcoal" borderTop className="sticky top-0 z-20">
-          <Container>
+        <nav
+          className="sticky top-0 z-20"
+          style={{
+            background: 'rgba(17,17,17,0.96)',
+            backdropFilter: 'blur(12px)',
+            borderTop: '1px solid var(--border-vintage)',
+            borderBottom: '1px solid var(--border-vintage)',
+          }}
+        >
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex gap-1 overflow-x-auto py-2">
               <button
                 onClick={() => handleSetActiveSport('all')}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold font-mono uppercase tracking-wider whitespace-nowrap transition-all ${
-                  activeSport === 'all'
-                    ? 'bg-burnt-orange text-white'
-                    : 'text-text-secondary hover:bg-surface-medium'
-                }`}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-semibold uppercase tracking-wider whitespace-nowrap transition-all"
+                style={{
+                  fontFamily: 'var(--bsi-font-display)',
+                  background: activeSport === 'all' ? 'rgba(191, 87, 0, 0.2)' : 'transparent',
+                  border: activeSport === 'all' ? '1px solid var(--bsi-primary)' : '1px solid transparent',
+                  color: activeSport === 'all' ? 'var(--bsi-bone)' : 'var(--bsi-dust)',
+                }}
               >
                 All
               </button>
               {sports.map(sport => {
                 const Icon = SPORT_ICONS[sport.id];
+                const isActive = activeSport === sport.id;
                 return (
                   <button
                     key={sport.id}
                     onClick={() => handleSetActiveSport(sport.id)}
-                    className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold font-mono uppercase tracking-wider whitespace-nowrap transition-all ${
-                      activeSport === sport.id
-                        ? 'bg-burnt-orange text-white'
-                        : 'text-text-secondary hover:bg-surface-medium'
-                    }`}
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-semibold uppercase tracking-wider whitespace-nowrap transition-all"
+                    style={{
+                      fontFamily: 'var(--bsi-font-display)',
+                      background: isActive ? 'rgba(191, 87, 0, 0.2)' : 'transparent',
+                      border: isActive ? '1px solid var(--bsi-primary)' : '1px solid transparent',
+                      color: isActive ? 'var(--bsi-bone)' : 'var(--bsi-dust)',
+                    }}
                   >
-                    {Icon && <span className={activeSport === sport.id ? 'text-white' : 'text-text-tertiary'}><Icon /></span>}
+                    {Icon && <span style={{ color: isActive ? 'var(--bsi-bone)' : 'var(--bsi-dust)' }}><Icon /></span>}
                     {sport.name}
                     {sport.liveCount > 0 && (
                       <span className="flex items-center gap-1 ml-1">
-                        <span className="w-1.5 h-1.5 bg-success rounded-full animate-pulse" />
-                        <span className={activeSport === sport.id ? 'text-white/90' : 'text-success'}>{sport.liveCount}</span>
+                        <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                        <span style={{ color: '#22c55e' }}>{sport.liveCount}</span>
                       </span>
                     )}
                     {sport.liveCount === 0 && sport.todayCount > 0 && (
-                      <span className={`ml-1 text-xs ${activeSport === sport.id ? 'text-white/70' : 'text-text-tertiary'}`}>
+                      <span className="ml-1 text-xs" style={{ color: 'var(--bsi-dust)', opacity: 0.6 }}>
                         {sport.todayCount}
                       </span>
                     )}
@@ -587,8 +624,8 @@ function ScoresHubContent() {
                 );
               })}
             </div>
-          </Container>
-        </Section>
+          </div>
+        </nav>
 
         {/* Featured Games for Active Sport */}
         <Section padding="lg" background="charcoal">
