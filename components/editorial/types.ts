@@ -1,9 +1,30 @@
 /**
- * SEC Team 2026 Season Preview — Editorial Data Types
+ * Editorial Data Types
  *
- * Shared interfaces for all 16 SEC team editorial preview pages.
- * Each team's page.tsx defines a TeamPreviewData object conforming to this contract.
+ * Shared interfaces for editorial pages: SEC team previews, weekly recaps,
+ * conference previews, draft profiles. Each page defines data objects
+ * conforming to these contracts.
  */
+
+// ── Weekly Recap Types ──────────────────────────────────────────────
+
+export interface RankingEntry {
+  rank: number;
+  team: string;
+  record: string;
+  change: string;
+  prev: string;
+  headline: string;
+}
+
+export function movementClass(change: string): string {
+  if (change === 'NEW') return 'text-ember font-semibold';
+  if (change.includes('↑')) return 'text-success';
+  if (change.includes('↓')) return 'text-error';
+  return 'text-text-muted';
+}
+
+// ── SEC Team Preview Types ──────────────────────────────────────────
 
 export interface ProgramStats {
   allTimeWins: string;
