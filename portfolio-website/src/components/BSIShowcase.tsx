@@ -28,7 +28,7 @@ const capabilities = [
   },
   {
     title: 'Edge-First Architecture',
-    description: '27 Cloudflare Workers at the edge — sub-50ms response times globally. Data pipelines that fetch, transform, and cache without a traditional server.',
+    description: '23 Cloudflare Workers at the edge — sub-50ms response times globally. Data pipelines that fetch, transform, and cache without a traditional server.',
   },
   {
     title: 'Podcast Export',
@@ -86,7 +86,7 @@ export default function BSIShowcase() {
                 data is the product.
               </p>
               <p>
-                Twenty-seven Workers handle every API call, data transformation, and cache layer.
+                Twenty-three Workers handle every API call, data transformation, and cache layer.
                 Seven databases store historical and live game data. Eighteen storage buckets
                 hold everything from box scores to editorial assets. One person built all of it
                 &mdash; old-school scouting instinct fused with new-school sabermetrics, running
@@ -117,9 +117,9 @@ export default function BSIShowcase() {
             <motion.div variants={staggerItem} className="lg:col-span-2 space-y-8">
               {/* Stat grid */}
               <div className="grid grid-cols-2 gap-6">
-                <StatCard value="27" label="Workers" />
+                <StatCard value="23" label="Workers" />
                 <StatCard value="7" label="D1 Databases" />
-                <StatCard value="15" label="KV Namespaces" />
+                <StatCard value="12" label="KV Namespaces" />
                 <StatCard value="18" label="R2 Buckets" />
               </div>
 
@@ -129,7 +129,7 @@ export default function BSIShowcase() {
                 <div className="space-y-2">
                   {[
                     { label: 'External APIs', sub: 'Highlightly · SportsDataIO · ESPN' },
-                    { label: 'Workers', sub: '27 Hono-powered edge functions' },
+                    { label: 'Workers', sub: '23 Hono-powered edge functions' },
                     { label: 'Storage', sub: 'D1 · KV · R2' },
                     { label: 'UI', sub: 'Next.js static export' },
                   ].map((node, i) => (

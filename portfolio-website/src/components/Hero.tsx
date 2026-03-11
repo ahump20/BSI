@@ -3,11 +3,11 @@ import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import { EASE_OUT_EXPO } from '../utils/animations';
 
 const marqueeItems = [
-  '27 Workers',
+  '23 Workers',
   '6 Leagues',
   '58+ Articles',
   '7 Databases',
-  '15 KV Caches',
+  '12 KV Caches',
   '18 R2 Buckets',
   '558 Tests Passing',
 ];
