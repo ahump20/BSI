@@ -13,6 +13,7 @@ import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
 import { AdvancedStatsCard } from '@/components/analytics/AdvancedStatsCard';
 import { getPlayerHighlights } from '@/lib/data/player-highlights';
+import { useWatchlist } from '@/lib/hooks/useWatchlist';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -31,6 +32,7 @@ interface PlayerData {
     dateOfBirth?: string;
     headshot?: string;
     classYear?: string;
+    portalStatus?: 'entered' | 'committed' | 'withdrawn';
     team?: { id: number; name: string; shortName?: string; conference?: { name: string } };
   } | null;
   statistics: {
@@ -74,6 +76,18 @@ interface SavantData {
     k_9?: number;
     bb_9?: number;
     hr_9?: number;
+  } | null;
+}
+
+interface NILData {
+  player: {
+    index_score: number;
+    estimated_low: number;
+    estimated_mid: number;
+    estimated_high: number;
+    tier: string;
+    player_name: string;
+    [key: string]: unknown;
   } | null;
 }
 
@@ -146,6 +160,24 @@ function HAVFBar({ label, score, color }: { label: string; score: number; color:
 type ProfileTab = 'season' | 'gamelog';
 
 // ---------------------------------------------------------------------------
+// NIL Value Helpers
+// ---------------------------------------------------------------------------
+
+const NIL_TIER_COLORS: Record<string, { bg: string; text: string; label: string }> = {
+  elite:         { bg: 'bg-[#BF5700]/20', text: 'text-[#BF5700]', label: 'Elite' },
+  high:          { bg: 'bg-green-500/15', text: 'text-green-400', label: 'High' },
+  mid:           { bg: 'bg-yellow-500/15', text: 'text-yellow-400', label: 'Mid' },
+  emerging:      { bg: 'bg-blue-500/15', text: 'text-blue-400', label: 'Emerging' },
+  developmental: { bg: 'bg-zinc-500/15', text: 'text-zinc-400', label: 'Developmental' },
+};
+
+function formatNILValue(value: number): string {
+  if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(1)}M`;
+  if (value >= 1_000) return `$${Math.round(value / 1_000)}K`;
+  return `$${value.toLocaleString()}`;
+}
+
+// ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
@@ -155,19 +187,23 @@ export default function PlayerDetailClient() {
   const [data, setData] = useState<PlayerData | null>(null);
   const [havf, setHavf] = useState<HAVFData | null>(null);
   const [savant, setSavant] = useState<SavantData | null>(null);
+  const [nil, setNil] = useState<NILData | null>(null);
   const [gameLog, setGameLog] = useState<GameLogData | null>(null);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState('');
   const [activeTab, setActiveTab] = useState<ProfileTab>('season');
+  const { addPlayer, removePlayer, isWatched } = useWatchlist();
+  const watched = isWatched(playerId);
 
   useEffect(() => {
     async function load() {
       try {
-        const [playerRes, havfRes, savantRes, gameLogRes] = await Promise.all([
+        const [playerRes, havfRes, savantRes, gameLogRes, nilRes] = await Promise.all([
           fetch(`/api/college-baseball/players/${playerId}`),
           fetch(`/api/analytics/havf/player/${playerId}`).catch(() => null),
           fetch(`/api/savant/player/${playerId}`).catch(() => null),
           fetch(`/api/college-baseball/players/${playerId}/game-log`).catch(() => null),
+          fetch(`/api/nil/player/${playerId}`).catch(() => null),
         ]);
 
         const playerJson = await playerRes.json();
@@ -182,6 +218,11 @@ export default function PlayerDetailClient() {
         if (savantRes?.ok) {
           const savantJson = await savantRes.json();
           setSavant(savantJson as SavantData);
+        }
+
+        if (nilRes?.ok) {
+          const nilJson = await nilRes.json();
+          setNil(nilJson as NILData);
         }
 
         if (gameLogRes?.ok) {
@@ -214,6 +255,7 @@ export default function PlayerDetailClient() {
   const player = data?.player;
   const stats = data?.statistics;
   const havfPlayer = havf?.player;
+  const nilPlayer = nil?.player ?? null;
   const draftProfile = player ? findDraftProfile(player.name) : null;
   const highlights = getPlayerHighlights(playerId);
   const gameLogGames = gameLog?.games ?? [];
@@ -276,11 +318,61 @@ export default function PlayerDetailClient() {
                   {player.position && <Badge variant="primary">{player.position}</Badge>}
                   {player.jerseyNumber && <Badge variant="secondary">#{player.jerseyNumber}</Badge>}
                   {player.classYear && <Badge variant="secondary">{player.classYear}</Badge>}
+                  {player.portalStatus && (
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-widest leading-none border ${
+                      player.portalStatus === 'committed'
+                        ? 'bg-green-500/15 border-green-500/30 text-green-400'
+                        : player.portalStatus === 'withdrawn'
+                          ? 'bg-zinc-500/15 border-zinc-500/30 text-zinc-400'
+                          : 'bg-burnt-orange/15 border-burnt-orange/30 text-burnt-orange'
+                    }`}>
+                      <svg className="w-3 h-3" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                        <path d="M8 2v12M2 8h12" />
+                      </svg>
+                      Portal: {player.portalStatus}
+                    </span>
+                  )}
                   {player.team && (
                     <Link href={`/college-baseball/teams/${player.team.id}`} className="text-text-tertiary hover:text-burnt-orange transition-colors text-sm">
                       {player.team.name}
                     </Link>
                   )}
+                  {nilPlayer && nilPlayer.estimated_mid > 0 && (() => {
+                    const tierInfo = NIL_TIER_COLORS[nilPlayer.tier] || NIL_TIER_COLORS.developmental;
+                    return (
+                      <Link
+                        href="/nil-valuation"
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${tierInfo.bg} border border-[#BF5700]/20 hover:border-[#BF5700]/40 transition-colors`}
+                      >
+                        <span className="text-[10px] text-text-muted uppercase tracking-widest leading-none">Est. NIL</span>
+                        <span className="text-sm font-bold text-[#BF5700] font-mono leading-none">
+                          {formatNILValue(nilPlayer.estimated_mid)}
+                        </span>
+                        <span className={`text-[10px] font-semibold uppercase tracking-wide leading-none ${tierInfo.text}`}>
+                          {tierInfo.label}
+                        </span>
+                      </Link>
+                    );
+                  })()}
+                  <button
+                    onClick={() => watched
+                      ? removePlayer(playerId)
+                      : addPlayer({ playerId, playerName: player.name, team: player.team?.name, position: player.position ?? undefined })
+                    }
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border transition-colors cursor-pointer ${
+                      watched
+                        ? 'bg-burnt-orange/15 border-burnt-orange/30 text-burnt-orange'
+                        : 'bg-transparent border-border hover:border-burnt-orange/30 text-text-muted hover:text-burnt-orange'
+                    }`}
+                    aria-label={watched ? 'Remove from watchlist' : 'Add to watchlist'}
+                  >
+                    <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill={watched ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M8 1.5l2 4.5 5 .5-3.5 3.5 1 5L8 12.5 3.5 15l1-5L1 6.5l5-.5z" />
+                    </svg>
+                    <span className="text-[10px] font-semibold uppercase tracking-widest leading-none">
+                      {watched ? 'Watching' : 'Watch'}
+                    </span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -294,6 +386,116 @@ export default function PlayerDetailClient() {
                 {player.team?.conference?.name && <div><span className="text-xs text-text-muted block">Conference</span><span className="text-text-primary font-medium">{player.team.conference.name}</span></div>}
               </div>
             </Card>
+
+            {/* NIL Valuation Card */}
+            {nilPlayer && nilPlayer.estimated_mid > 0 && (() => {
+              const tierInfo = NIL_TIER_COLORS[nilPlayer.tier] || NIL_TIER_COLORS.developmental;
+              return (
+                <Card padding="none" className="mb-6 overflow-hidden">
+                  <div className="px-4 py-3 bg-gradient-to-r from-[#BF5700]/15 to-transparent border-b border-border">
+                    <div className="flex items-center justify-between">
+                      <h2 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide">
+                        NIL Valuation
+                      </h2>
+                      <Link
+                        href="/nil-valuation"
+                        className="text-[10px] text-text-muted hover:text-burnt-orange transition-colors uppercase tracking-widest"
+                      >
+                        Full NIL Hub &rarr;
+                      </Link>
+                    </div>
+                  </div>
+                  <div className="p-4 md:p-6">
+                    <div className="grid grid-cols-3 gap-6">
+                      <div className="text-center">
+                        <span className="text-xs text-text-muted block mb-1">Low Estimate</span>
+                        <span className="font-display text-xl font-bold text-text-secondary font-mono">
+                          {formatNILValue(nilPlayer.estimated_low)}
+                        </span>
+                      </div>
+                      <div className="text-center">
+                        <span className="text-xs text-text-muted block mb-1">Fair Market Value</span>
+                        <span className="font-display text-3xl font-bold text-burnt-orange font-mono">
+                          {formatNILValue(nilPlayer.estimated_mid)}
+                        </span>
+                        <span className={`block text-xs font-semibold mt-1 ${tierInfo.text}`}>
+                          {tierInfo.label} Tier
+                        </span>
+                      </div>
+                      <div className="text-center">
+                        <span className="text-xs text-text-muted block mb-1">High Estimate</span>
+                        <span className="font-display text-xl font-bold text-text-secondary font-mono">
+                          {formatNILValue(nilPlayer.estimated_high)}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="mt-4 pt-3 border-t border-border-subtle flex items-center justify-between">
+                      <span className="text-[10px] text-text-muted">
+                        Index Score: <span className="text-text-secondary font-mono">{nilPlayer.index_score}</span>/100
+                      </span>
+                      <div className="flex gap-3">
+                        <Link href="/nil-valuation/comparables" className="text-[10px] text-text-muted hover:text-burnt-orange transition-colors">
+                          Comparables &rarr;
+                        </Link>
+                        <Link href="/nil-valuation/draft-leverage" className="text-[10px] text-text-muted hover:text-burnt-orange transition-colors">
+                          Draft Leverage &rarr;
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              );
+            })()}
+
+            {/* Draft & Portal Context */}
+            {(() => {
+              const draftEligibleYears = ['junior', 'jr.', 'senior', 'sr.', 'r-jr.', 'r-sr.', 'grad'];
+              const isDraftEligible = player.classYear
+                ? draftEligibleYears.includes(player.classYear.toLowerCase())
+                : false;
+              const showCard = draftProfile || isDraftEligible || player.portalStatus;
+              if (!showCard) return null;
+              return (
+                <Card padding="none" className="mb-6 overflow-hidden">
+                  <div className="px-4 py-3 bg-gradient-to-r from-[#BF5700]/10 to-transparent border-b border-border">
+                    <h2 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide">
+                      Draft &amp; Portal Context
+                    </h2>
+                  </div>
+                  <div className="p-4 flex flex-wrap items-center gap-3">
+                    {isDraftEligible && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-burnt-orange/15 border border-burnt-orange/30 text-burnt-orange text-xs font-semibold uppercase tracking-wider">
+                        <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M8 1v14M4 5l4-4 4 4" />
+                        </svg>
+                        Draft Eligible
+                      </span>
+                    )}
+                    {player.portalStatus && (
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider border ${
+                        player.portalStatus === 'committed'
+                          ? 'bg-green-500/15 border-green-500/30 text-green-400'
+                          : player.portalStatus === 'withdrawn'
+                            ? 'bg-zinc-500/15 border-zinc-500/30 text-zinc-400'
+                            : 'bg-yellow-500/15 border-yellow-500/30 text-yellow-400'
+                      }`}>
+                        In Portal: {player.portalStatus}
+                      </span>
+                    )}
+                    {draftProfile && (
+                      <Link
+                        href={`/college-baseball/editorial/${draftProfile.slug}`}
+                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border hover:border-burnt-orange/40 text-text-secondary hover:text-burnt-orange transition-colors text-xs font-medium group"
+                      >
+                        <span className="text-burnt-orange font-semibold uppercase tracking-wider">Draft Profile</span>
+                        <span className="truncate max-w-[200px]">{draftProfile.title}</span>
+                        <span className="text-text-muted group-hover:text-burnt-orange transition-colors">&rarr;</span>
+                      </Link>
+                    )}
+                  </div>
+                </Card>
+              );
+            })()}
 
             {/* HAV-F Analytics Section */}
             {havfPlayer && (

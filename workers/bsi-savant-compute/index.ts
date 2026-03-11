@@ -878,6 +878,187 @@ async function compute(db: D1Database, kv: KVNamespace): Promise<{ batters: numb
 }
 
 // ---------------------------------------------------------------------------
+// NIL Compute — Second pass after savant metrics
+// ---------------------------------------------------------------------------
+
+// FMNV weight allocation: 40% performance, 30% exposure, 30% market
+const NIL_WEIGHTS = { performance: 0.40, exposure: 0.30, market: 0.30 };
+
+// Dollar ranges by tier (college baseball context — lower than football/basketball)
+const NIL_TIERS: { name: string; min: number; floor: number; ceiling: number }[] = [
+  { name: 'elite',         min: 80, floor: 150000, ceiling: 500000 },
+  { name: 'high',          min: 60, floor: 50000,  ceiling: 200000 },
+  { name: 'mid',           min: 40, floor: 15000,  ceiling: 75000 },
+  { name: 'emerging',      min: 20, floor: 3000,   ceiling: 25000 },
+  { name: 'developmental', min: 0,  floor: 500,    ceiling: 5000 },
+];
+
+function nilTier(score: number): { name: string; low: number; mid: number; high: number } {
+  for (const t of NIL_TIERS) {
+    if (score >= t.min) {
+      // Interpolate within tier based on score position
+      const pct = t.min < 100 ? (score - t.min) / (100 - t.min) : 1;
+      const range = t.ceiling - t.floor;
+      const low = Math.round(t.floor + range * Math.max(0, pct - 0.15));
+      const mid = Math.round(t.floor + range * pct);
+      const high = Math.round(t.floor + range * Math.min(1, pct + 0.15));
+      return { name: t.name, low, mid, high };
+    }
+  }
+  return { name: 'developmental', low: 500, mid: 1500, high: 5000 };
+}
+
+/** Score on-field performance [0-100] from savant advanced stats. */
+function scorePerformance(row: Record<string, unknown>, type: 'batter' | 'pitcher'): number {
+  if (type === 'batter') {
+    const wrcPlus = (row.wrc_plus as number) || 100;
+    const woba = (row.woba as number) || 0.320;
+    const opsPlus = (row.ops_plus as number) || 100;
+    // wRC+ of 150 → ~85 pts, 200 → ~100. Weighted blend.
+    const wrcScore = clamp((wrcPlus - 70) / 130 * 100, 0, 100);
+    const wobaScore = clamp((woba - 0.250) / 0.250 * 100, 0, 100);
+    const opsScore = clamp((opsPlus - 70) / 130 * 100, 0, 100);
+    return round(wrcScore * 0.45 + wobaScore * 0.35 + opsScore * 0.20, 1);
+  } else {
+    const fip = (row.fip as number) || 4.50;
+    const eraMinus = (row.era_minus as number) || 100;
+    const k9 = (row.k_9 as number) || 6;
+    // Lower FIP = better. FIP of 2.0 → ~90 pts, 3.0 → ~65.
+    const fipScore = clamp((6 - fip) / 4 * 100, 0, 100);
+    const eraMinusScore = clamp((130 - eraMinus) / 80 * 100, 0, 100);
+    const kScore = clamp((k9 - 3) / 10 * 100, 0, 100);
+    return round(fipScore * 0.45 + eraMinusScore * 0.35 + kScore * 0.20, 1);
+  }
+}
+
+/** Score exposure [0-100] from social followers. Without social data, baseline at 15. */
+function scoreExposure(followers: number): number {
+  if (followers <= 0) return 15; // baseline for unknown
+  // Log scale: 1K → ~25, 10K → ~50, 100K → ~75, 1M → ~95
+  return clamp(round(Math.log10(Math.max(1, followers)) * 20 - 15, 1), 5, 98);
+}
+
+/** Score market [0-100] from school market data. */
+function scoreMarket(marketSize: string | null, programTier: string | null): number {
+  let base = 30; // default mid-range
+  if (marketSize === 'large') base = 65;
+  else if (marketSize === 'medium') base = 45;
+  else if (marketSize === 'small') base = 25;
+
+  if (programTier === 'power') base += 20;
+  else if (programTier === 'mid-major') base += 8;
+
+  return clamp(base, 0, 100);
+}
+
+async function computeNIL(db: D1Database, kv: KVNamespace): Promise<{ nilScored: number }> {
+  const now = new Date().toISOString();
+
+  // 1. Load school market data
+  const { results: marketRows } = await db.prepare(
+    'SELECT team, market_size, program_tier FROM nil_school_market'
+  ).all() as { results: { team: string; market_size: string; program_tier: string }[] };
+
+  const marketMap = new Map<string, { market_size: string; program_tier: string }>();
+  for (const m of marketRows || []) {
+    marketMap.set(m.team, { market_size: m.market_size, program_tier: m.program_tier });
+  }
+
+  // 2. Load social followers (aggregate per player across platforms)
+  const { results: socialRows } = await db.prepare(
+    'SELECT player_id, SUM(follower_count) as total_followers FROM nil_social_profiles GROUP BY player_id'
+  ).all() as { results: { player_id: string; total_followers: number }[] };
+
+  const socialMap = new Map<string, number>();
+  for (const s of socialRows || []) {
+    socialMap.set(s.player_id, s.total_followers || 0);
+  }
+
+  // 3. Read computed batting + pitching advanced stats
+  const { results: batters } = await db.prepare(
+    `SELECT player_id, player_name, team, conference, position,
+            woba, wrc_plus, ops_plus, pa
+     FROM cbb_batting_advanced WHERE season = ? AND pa >= 20`
+  ).bind(SEASON).all();
+
+  const { results: pitchers } = await db.prepare(
+    `SELECT player_id, player_name, team, conference, position,
+            fip, era_minus, k_9, ip
+     FROM cbb_pitching_advanced WHERE season = ? AND ip >= 10`
+  ).bind(SEASON).all();
+
+  // 4. Score every qualifying player
+  const stmts: D1PreparedStatement[] = [];
+  const histStmts: D1PreparedStatement[] = [];
+  const scored = new Set<string>(); // dedupe two-way players
+
+  const processRow = (row: Record<string, unknown>, type: 'batter' | 'pitcher') => {
+    const pid = row.player_id as string;
+    if (scored.has(pid)) return; // two-way: keep first (batter typically has more PA)
+    scored.add(pid);
+
+    const team = (row.team as string) || '';
+    const mkt = marketMap.get(team);
+    const followers = socialMap.get(pid) || 0;
+
+    const perfScore = scorePerformance(row, type);
+    const expScore = scoreExposure(followers);
+    const mktScore = scoreMarket(mkt?.market_size || null, mkt?.program_tier || null);
+
+    const indexScore = round(
+      perfScore * NIL_WEIGHTS.performance +
+      expScore * NIL_WEIGHTS.exposure +
+      mktScore * NIL_WEIGHTS.market,
+      1
+    );
+
+    const tier = nilTier(indexScore);
+
+    stmts.push(db.prepare(
+      `INSERT INTO nil_player_scores (player_id, season, index_score, performance_score, exposure_score, market_score, estimated_low, estimated_mid, estimated_high, tier, player_name, team, conference, position, social_followers, market_size, computed_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT(player_id, season) DO UPDATE SET
+         index_score=excluded.index_score, performance_score=excluded.performance_score,
+         exposure_score=excluded.exposure_score, market_score=excluded.market_score,
+         estimated_low=excluded.estimated_low, estimated_mid=excluded.estimated_mid,
+         estimated_high=excluded.estimated_high, tier=excluded.tier,
+         player_name=excluded.player_name, team=excluded.team,
+         conference=excluded.conference, position=excluded.position,
+         social_followers=excluded.social_followers, market_size=excluded.market_size,
+         computed_at=excluded.computed_at`
+    ).bind(
+      pid, SEASON, indexScore, perfScore, expScore, mktScore,
+      tier.low, tier.mid, tier.high, tier.name,
+      (row.player_name as string) || '', team,
+      (row.conference as string) || null, (row.position as string) || null,
+      followers, mkt?.market_size || null, now
+    ));
+
+    histStmts.push(db.prepare(
+      `INSERT INTO nil_score_history (player_id, season, index_score, performance_score, estimated_mid, computed_at)
+       VALUES (?, ?, ?, ?, ?, ?)`
+    ).bind(pid, SEASON, indexScore, perfScore, tier.mid, now));
+  };
+
+  for (const row of (batters || []) as Record<string, unknown>[]) processRow(row, 'batter');
+  for (const row of (pitchers || []) as Record<string, unknown>[]) processRow(row, 'pitcher');
+
+  // 5. Execute in batches
+  const BATCH_SIZE = 80;
+  for (let i = 0; i < stmts.length; i += BATCH_SIZE) {
+    await db.batch(stmts.slice(i, i + BATCH_SIZE));
+  }
+  for (let i = 0; i < histStmts.length; i += BATCH_SIZE) {
+    await db.batch(histStmts.slice(i, i + BATCH_SIZE));
+  }
+
+  // 6. Store NIL compute timestamp
+  await kv.put('nil:last-compute', now);
+
+  return { nilScored: scored.size };
+}
+
+// ---------------------------------------------------------------------------
 // Worker entry
 // ---------------------------------------------------------------------------
 
@@ -887,9 +1068,11 @@ export default {
     if (url.pathname === '/compute' || url.pathname === '/') {
       try {
         const result = await compute(env.DB, env.KV);
+        const nilResult = await computeNIL(env.DB, env.KV);
         return new Response(JSON.stringify({
           ok: true,
           ...result,
+          ...nilResult,
           computed_at: new Date().toISOString(),
         }), {
           headers: { 'Content-Type': 'application/json' },
@@ -919,7 +1102,8 @@ export default {
   async scheduled(_event: ScheduledController, env: Env, _ctx: ExecutionContext): Promise<void> {
     try {
       const result = await compute(env.DB, env.KV);
-      console.log(`[savant-compute] Cron complete: ${result.batters} batters, ${result.pitchers} pitchers, ${result.conferences} conferences, ${result.venues} venues`);
+      const nilResult = await computeNIL(env.DB, env.KV);
+      console.log(`[savant-compute] Cron complete: ${result.batters} batters, ${result.pitchers} pitchers, ${result.conferences} conferences, ${result.venues} venues, ${nilResult.nilScored} NIL scored`);
     } catch (err) {
       console.error(`[savant-compute] Cron failed:`, err);
     }

@@ -17,6 +17,7 @@ const tools = [
     status: 'Live',
     statusVariant: 'success' as const,
     href: '/nil-valuation',
+    tier: 'Free',
   },
   {
     title: 'WAR-to-NIL Converter',
@@ -24,38 +25,70 @@ const tools = [
       'Convert Wins Above Replacement metrics to NIL dollar values. See how on-field performance translates to market value.',
     status: 'Live',
     statusVariant: 'success' as const,
-    href: '/nil-valuation',
+    href: '/nil-valuation/war-to-nil',
+    tier: 'Free',
   },
   {
     title: 'Comparable Analysis',
     description:
       'Find similar players and their NIL valuations. Compare across sports, conferences, and market sizes.',
-    status: 'Coming Soon',
-    statusVariant: 'warning' as const,
-    href: '#',
+    status: 'Live',
+    statusVariant: 'success' as const,
+    href: '/nil-valuation/comparables',
+    tier: 'Pro',
   },
   {
     title: 'Market Trend Tracker',
     description:
       'Track NIL market trends by sport, position, and region. See where the money is flowing.',
-    status: 'Coming Soon',
-    statusVariant: 'warning' as const,
-    href: '#',
+    status: 'Live',
+    statusVariant: 'success' as const,
+    href: '/nil-valuation/market-trends',
+    tier: 'Free / Pro',
   },
   {
     title: 'Brand Match Finder',
     description:
       'Match athletes with potential brand partners based on audience alignment and market fit.',
-    status: 'Coming Soon',
-    statusVariant: 'warning' as const,
-    href: '#',
+    status: 'Live',
+    statusVariant: 'success' as const,
+    href: '/nil-valuation/brand-match',
+    tier: 'Free',
   },
   {
     title: 'Deal Analyzer',
     description: 'Analyze proposed NIL deals to determine fair value and identify red flags.',
-    status: 'Coming Soon',
-    statusVariant: 'warning' as const,
-    href: '#',
+    status: 'Live',
+    statusVariant: 'success' as const,
+    href: '/nil-valuation/deal-analyzer',
+    tier: 'Pro',
+  },
+  {
+    title: 'Undervalued Discovery',
+    description:
+      'Find players whose on-field production significantly outpaces their current NIL valuation. The market inefficiencies others miss.',
+    status: 'Live',
+    statusVariant: 'success' as const,
+    href: '/nil-valuation/undervalued',
+    tier: 'Pro',
+  },
+  {
+    title: 'Collective ROI',
+    description:
+      'Model collective spending scenarios with conference benchmarks. See which programs get the most production per NIL dollar.',
+    status: 'Live',
+    statusVariant: 'success' as const,
+    href: '/nil-valuation/collective-roi',
+    tier: 'Pro',
+  },
+  {
+    title: 'Draft Leverage',
+    description:
+      'See how NIL value maps against draft projection. Four-quadrant analysis: premier assets, hidden gems, marketing stars, and development plays.',
+    status: 'Live',
+    statusVariant: 'success' as const,
+    href: '/nil-valuation/draft-leverage',
+    tier: 'Pro',
   },
 ];
 
@@ -114,22 +147,23 @@ export default function NILToolsPage() {
                     <CardHeader>
                       <div className="flex items-start justify-between gap-4">
                         <CardTitle size="sm">{tool.title}</CardTitle>
-                        <Badge variant={tool.statusVariant}>{tool.status}</Badge>
+                        <div className="flex gap-2">
+                          {tool.tier && (
+                            <Badge variant={tool.tier === 'Free' ? 'secondary' : 'primary'} className="text-[10px]">
+                              {tool.tier}
+                            </Badge>
+                          )}
+                          <Badge variant={tool.statusVariant}>{tool.status}</Badge>
+                        </div>
                       </div>
                     </CardHeader>
                     <CardContent className="flex-1 flex flex-col">
                       <p className="text-text-secondary text-sm mb-6 flex-1">{tool.description}</p>
-                      {tool.status === 'Live' ? (
-                        <Link href={tool.href}>
-                          <Button variant="primary" size="sm" className="w-full">
-                            Launch Tool
-                          </Button>
-                        </Link>
-                      ) : (
-                        <Button variant="secondary" size="sm" className="w-full" disabled>
-                          Coming Soon
+                      <Link href={tool.href}>
+                        <Button variant="primary" size="sm" className="w-full">
+                          Launch Tool
                         </Button>
-                      )}
+                      </Link>
                     </CardContent>
                   </Card>
                 </ScrollReveal>
@@ -146,7 +180,7 @@ export default function NILToolsPage() {
                   Our enterprise tier includes custom valuation reports, market analysis, and direct
                   consultation with our NIL experts.
                 </p>
-                <Link href="/nil-valuation">
+                <Link href="/pricing">
                   <Button variant="primary">View Enterprise Options</Button>
                 </Link>
               </Card>
