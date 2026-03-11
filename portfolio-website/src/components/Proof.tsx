@@ -59,7 +59,7 @@ export default function Proof() {
         <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: '-80px' }}
+          viewport={{ once: true, amount: 0.05 }}
           variants={staggerContainer}
           className="space-y-12"
         >

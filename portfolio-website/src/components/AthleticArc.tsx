@@ -35,7 +35,7 @@ const photos = [
 
 export default function AthleticArc() {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: '-60px' });
+  const isInView = useInView(ref, { once: true, amount: 0.05 });
 
   return (
     <section
