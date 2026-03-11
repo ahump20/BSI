@@ -10,6 +10,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { formatTimestamp, getRelativeTime } from '@/lib/utils/timezone';
+import { getReadApiUrl } from '@/lib/utils/public-api';
 
 interface NewsItem {
   id: string;
@@ -23,7 +24,23 @@ interface NewsItem {
 }
 
 interface NewsApiResponse {
-  articles?: NewsItem[];
+  articles?: Array<{
+    headline?: string;
+    description?: string;
+    published?: string;
+    link?: string;
+    source?: string;
+    images?: Array<{ url?: string }>;
+    categories?: Array<{
+      type?: string;
+      description?: string;
+    }>;
+  }>;
+  meta?: {
+    fetched_at?: string;
+    timezone?: string;
+    source?: string;
+  };
 }
 
 const categoryColors: Record<string, string> = {
@@ -34,20 +51,84 @@ const categoryColors: Record<string, string> = {
   general: 'bg-text-tertiary',
 };
 
+function inferMLBCategory(
+  article: NonNullable<NewsApiResponse['articles']>[number],
+): NewsItem['category'] {
+  const categoryText = (article.categories || [])
+    .map((category) => category.description || '')
+    .join(' ');
+  const text = `${article.headline || ''} ${article.description || ''} ${categoryText}`.toLowerCase();
+
+  if (
+    /\binjur|il\b|disabled list|out indefinitely|shut down|rehab assignment|activated from il/.test(
+      text,
+    )
+  ) {
+    return 'injury';
+  }
+
+  if (
+    /\btrade|traded|contract|extension|signs?|signed|signing|deal|acquire|acquired|free agent|waiver|non-tender|opts? out\b/.test(
+      text,
+    )
+  ) {
+    return 'trade';
+  }
+
+  if (
+    /\bbeats?\b|\bbeat\b|defeats?|walk-off|sweep|series|opener|recap|final|game story|wins?\b|loss\b|homers?\b|shutout\b/.test(
+      text,
+    )
+  ) {
+    return 'game';
+  }
+
+  if (
+    /\banalysis|preview|projection|projections|rankings?|fantasy|draft guide|strategy|scouting|breakdown\b/.test(
+      text,
+    )
+  ) {
+    return 'analysis';
+  }
+
+  return 'general';
+}
+
+function getMLBTeam(
+  article: NonNullable<NewsApiResponse['articles']>[number],
+): string | undefined {
+  return article.categories?.find((category) => category.type === 'team')?.description;
+}
+
 export default function MLBNewsPage() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>('all');
+  const [lastUpdated, setLastUpdated] = useState('');
+  const [sourceLabel, setSourceLabel] = useState('ESPN');
 
   useEffect(() => {
     const fetchNews = async () => {
       setLoading(true);
       try {
-        const res = await fetch('/api/mlb/news');
+        const res = await fetch(getReadApiUrl('/api/mlb/news'));
         if (!res.ok) throw new Error('Failed to fetch news');
         const data = (await res.json()) as NewsApiResponse;
-        setNews(data.articles || []);
+        const normalized = (data.articles || []).map((article, index) => ({
+          id: `mlb-news-${index}`,
+          title: article.headline || 'Untitled',
+          summary: article.description || '',
+          source: article.source || data.meta?.source || 'ESPN',
+          url: article.link || '#',
+          publishedAt: article.published || data.meta?.fetched_at || new Date().toISOString(),
+          category: inferMLBCategory(article),
+          team: getMLBTeam(article),
+        }));
+
+        setNews(normalized.filter((item) => item.url !== '#'));
+        setLastUpdated(data.meta?.fetched_at || '');
+        setSourceLabel(data.meta?.source || 'ESPN');
         setLoading(false);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');
@@ -210,8 +291,8 @@ export default function MLBNewsPage() {
             {/* Data Source Footer */}
             <div className="mt-8 pt-4 border-t border-border-subtle">
               <DataSourceBadge
-                source="MLB News API / Official Team Sources"
-                timestamp={formatTimestamp()}
+                source={sourceLabel}
+                timestamp={formatTimestamp(lastUpdated)}
               />
             </div>
           </Container>

@@ -540,7 +540,7 @@ const getOpponent = (game: Game): string => {
 };
 
 export function WC3Dashboard() {
-  const [now, setNow] = useState<Date>(new Date());
+  const [now, setNow] = useState<Date | null>(null);
   const [sport, setSport] = useState<'ALL' | Sport>('ALL');
   const [search, setSearch] = useState('');
   const [hovered, setHovered] = useState<string | null>(null);
@@ -554,6 +554,7 @@ export function WC3Dashboard() {
     link.rel = 'stylesheet';
     document.head.appendChild(link);
 
+    setNow(new Date());
     const timer = window.setInterval(() => setNow(new Date()), 1000);
 
     return () => {
@@ -585,20 +586,24 @@ export function WC3Dashboard() {
     return () => window.removeEventListener('keydown', handler);
   }, [detail, closeDetail]);
 
-  const ts = now.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-    timeZone: 'America/Chicago',
-  });
+  const ts = now
+    ? now.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+        timeZone: 'America/Chicago',
+      })
+    : '--:--:--';
 
-  const ds = now.toLocaleDateString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    timeZone: 'America/Chicago',
-  });
+  const ds = now
+    ? now.toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+        timeZone: 'America/Chicago',
+      })
+    : '--- --';
 
   const accuracyPct = useMemo(() => {
     const total = MODEL_ACC.reduce((acc, point) => acc + point.a, 0);

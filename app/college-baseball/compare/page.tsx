@@ -11,6 +11,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { DataAttribution } from '@/components/ui/DataAttribution';
 import { ConferenceBaseline } from '@/components/analytics/ConferenceBaseline';
 import { ArrowLeftRight, ChevronDown } from 'lucide-react';
+import { getReadApiUrl } from '@/lib/utils/public-api';
 
 /* ── Types ─────────────────────────────────────────────────────────── */
 
@@ -38,6 +39,20 @@ interface SavantEntry {
   fip?: number;
   ops_plus?: number;
   [key: string]: unknown;
+}
+
+interface SavantBattingEntry {
+  team?: string;
+  conference?: string;
+  woba?: number;
+  wrc_plus?: number;
+  ops_plus?: number;
+}
+
+interface SavantPitchingEntry {
+  team?: string;
+  conference?: string;
+  fip?: number;
 }
 
 interface NILEntry {
@@ -92,6 +107,76 @@ function fmtDollars(v?: number): string {
   return `$${v.toFixed(0)}`;
 }
 
+function average(values: Array<number | undefined>): number | undefined {
+  const valid = values.filter((value): value is number => value !== undefined && Number.isFinite(value));
+  if (valid.length === 0) return undefined;
+  return valid.reduce((sum, value) => sum + value, 0) / valid.length;
+}
+
+function aggregateSavantTeamMetrics(
+  battingRows: SavantBattingEntry[],
+  pitchingRows: SavantPitchingEntry[],
+): SavantEntry[] {
+  const teams = new Map<
+    string,
+    {
+      team_name: string;
+      conference?: string;
+      woba: number[];
+      wrc_plus: number[];
+      ops_plus: number[];
+      fip: number[];
+    }
+  >();
+
+  for (const row of battingRows) {
+    const teamName = row.team?.trim();
+    if (!teamName) continue;
+    const key = normalize(teamName);
+    const entry = teams.get(key) || {
+      team_name: teamName,
+      conference: row.conference,
+      woba: [],
+      wrc_plus: [],
+      ops_plus: [],
+      fip: [],
+    };
+
+    if (row.conference && !entry.conference) entry.conference = row.conference;
+    entry.woba.push(row.woba);
+    entry.wrc_plus.push(row.wrc_plus);
+    entry.ops_plus.push(row.ops_plus);
+    teams.set(key, entry);
+  }
+
+  for (const row of pitchingRows) {
+    const teamName = row.team?.trim();
+    if (!teamName) continue;
+    const key = normalize(teamName);
+    const entry = teams.get(key) || {
+      team_name: teamName,
+      conference: row.conference,
+      woba: [],
+      wrc_plus: [],
+      ops_plus: [],
+      fip: [],
+    };
+
+    if (row.conference && !entry.conference) entry.conference = row.conference;
+    entry.fip.push(row.fip);
+    teams.set(key, entry);
+  }
+
+  return Array.from(teams.values()).map((entry) => ({
+    team_name: entry.team_name,
+    conference: entry.conference,
+    woba: average(entry.woba),
+    wrc_plus: average(entry.wrc_plus),
+    ops_plus: average(entry.ops_plus),
+    fip: average(entry.fip),
+  }));
+}
+
 /* ── Component ─────────────────────────────────────────────────────── */
 
 export default function CompareHubPage() {
@@ -109,10 +194,11 @@ export default function CompareHubPage() {
   useEffect(() => {
     async function load() {
       try {
-        const [standingsRes, savantRes, nilRes] = await Promise.all([
-          fetch('/api/college-baseball/standings').catch(() => null),
-          fetch('/api/savant/leaderboard').catch(() => null),
-          fetch('/api/nil/leaderboard?limit=500').catch(() => null),
+        const [standingsRes, battingRes, pitchingRes, nilRes] = await Promise.all([
+          fetch(getReadApiUrl('/api/college-baseball/standings')).catch(() => null),
+          fetch(getReadApiUrl('/api/savant/batting/leaderboard?limit=100')).catch(() => null),
+          fetch(getReadApiUrl('/api/savant/pitching/leaderboard?limit=100')).catch(() => null),
+          fetch(getReadApiUrl('/api/nil/leaderboard?limit=500')).catch(() => null),
         ]);
 
         if (standingsRes?.ok) {
@@ -121,10 +207,14 @@ export default function CompareHubPage() {
           setStandings(Array.isArray(teams) ? teams : []);
           if (data.meta?.fetched_at) setLastUpdated(data.meta.fetched_at);
         }
-        if (savantRes?.ok) {
-          const data = await savantRes.json();
-          setSavant(data.data || data.leaderboard || []);
-        }
+        const battingData = battingRes?.ok ? await battingRes.json() : null;
+        const pitchingData = pitchingRes?.ok ? await pitchingRes.json() : null;
+        setSavant(
+          aggregateSavantTeamMetrics(
+            Array.isArray(battingData?.data) ? battingData.data : [],
+            Array.isArray(pitchingData?.data) ? pitchingData.data : [],
+          ),
+        );
         if (nilRes?.ok) {
           const data = await nilRes.json();
           setNil(data.data || []);

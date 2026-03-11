@@ -76,9 +76,15 @@ function sportApiBase(sport: Exclude<IntelSport, 'all'>): string {
 }
 
 function scoresEndpoint(sport: Exclude<IntelSport, 'all'>): string {
+  if (sport === 'cbb') return ESPN_SCORES_MAP[sport];
   const base = sportApiBase(sport);
   if (sport === 'd1bb') return `${base}/scores`;
-  return sport === 'nba' || sport === 'cbb' ? `${base}/scoreboard` : `${base}/scores`;
+  return sport === 'nba' ? `${base}/scoreboard` : `${base}/scores`;
+}
+
+function standingsEndpoint(sport: Exclude<IntelSport, 'all'>): string {
+  if (sport === 'cbb') return ESPN_STANDINGS_MAP[sport];
+  return `${sportApiBase(sport)}/standings`;
 }
 
 async function fetchJson<T = unknown>(url: string): Promise<T> {
@@ -872,7 +878,7 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
     queryKey: ['intel-standings', standingsSport],
     queryFn: async () => {
       try {
-        return await fetchJson<Record<string, unknown>>(`${sportApiBase(standingsSport)}/standings`);
+        return await fetchJson<Record<string, unknown>>(standingsEndpoint(standingsSport));
       } catch {
         if (standingsSport === 'd1bb') {
           return fetchJson<Record<string, unknown>>(ESPN_STANDINGS_MAP[standingsSport]);

@@ -26,6 +26,7 @@ import {
   Star,
 } from 'lucide-react';
 import { withAlpha } from '@/lib/utils/color';
+import { getReadApiUrl } from '@/lib/utils/public-api';
 
 /* ── Live data types ───────────────────────────────────────────────── */
 
@@ -52,6 +53,15 @@ interface SavantEntry {
   fip?: number;
   ops_plus?: number;
   [key: string]: unknown;
+}
+
+interface SavantBattingEntry {
+  player_name?: string;
+  team?: string;
+  conference?: string;
+  woba?: number;
+  wrc_plus?: number;
+  ops_plus?: number;
 }
 
 interface NILEntry {
@@ -91,10 +101,10 @@ function useConferenceLiveData(confName: string) {
     async function load() {
       try {
         const [standingsRes, savantRes, nilRes, portalRes] = await Promise.all([
-          fetch('/api/college-baseball/standings').catch(() => null),
-          fetch('/api/savant/leaderboard').catch(() => null),
-          fetch('/api/nil/leaderboard?limit=500').catch(() => null),
-          fetch('/api/college-baseball/transfer-portal').catch(() => null),
+          fetch(getReadApiUrl('/api/college-baseball/standings')).catch(() => null),
+          fetch(getReadApiUrl('/api/savant/batting/leaderboard?limit=100')).catch(() => null),
+          fetch(getReadApiUrl('/api/nil/leaderboard?limit=500')).catch(() => null),
+          fetch(getReadApiUrl('/api/college-baseball/transfer-portal')).catch(() => null),
         ]);
 
         const n = normalize(confName);
@@ -108,7 +118,18 @@ function useConferenceLiveData(confName: string) {
         if (savantRes?.ok) {
           const data = await savantRes.json();
           const all = data.data || data.leaderboard || [];
-          setSavantPlayers((Array.isArray(all) ? all : []).filter((s: SavantEntry) => normalize(s.conference || '') === n));
+          setSavantPlayers(
+            (Array.isArray(all) ? all : [])
+              .map((entry: SavantBattingEntry) => ({
+                player_name: entry.player_name,
+                team_name: entry.team,
+                conference: entry.conference,
+                woba: entry.woba,
+                wrc_plus: entry.wrc_plus,
+                ops_plus: entry.ops_plus,
+              }))
+              .filter((s: SavantEntry) => normalize(s.conference || '') === n),
+          );
         }
         if (nilRes?.ok) {
           const data = await nilRes.json();

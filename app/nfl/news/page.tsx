@@ -10,6 +10,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { formatTimestamp, getRelativeTime } from '@/lib/utils/timezone';
+import { getReadApiUrl } from '@/lib/utils/public-api';
 
 interface NewsItem {
   id: string;
@@ -33,20 +34,108 @@ const categoryColors: Record<string, string> = {
   general: 'bg-text-tertiary',
 };
 
+interface NewsApiResponse {
+  articles?: Array<{
+    headline?: string;
+    description?: string;
+    published?: string;
+    link?: string;
+    source?: string;
+    images?: Array<{ url?: string }>;
+    categories?: Array<{
+      type?: string;
+      description?: string;
+    }>;
+  }>;
+  meta?: {
+    fetched_at?: string;
+    timezone?: string;
+    source?: string;
+  };
+}
+
+function inferNFLCategory(
+  article: NonNullable<NewsApiResponse['articles']>[number],
+): NewsItem['category'] {
+  const categoryText = (article.categories || [])
+    .map((category) => category.description || '')
+    .join(' ');
+  const text = `${article.headline || ''} ${article.description || ''} ${categoryText}`.toLowerCase();
+
+  if (/\bfree agency|free agent|franchise tag|re-signs?|re-signed|tender\b/.test(text)) {
+    return 'free-agency';
+  }
+
+  if (/\bdraft|mock draft|combine|pro day|prospect\b/.test(text)) {
+    return 'draft';
+  }
+
+  if (
+    /\binjur|ir\b|pup\b|questionable|out for season|torn|rehab|return timeline|concussion\b/.test(
+      text,
+    )
+  ) {
+    return 'injury';
+  }
+
+  if (
+    /\btrade|traded|contract|extension|signs?|signed|signing|deal|acquire|acquired|waiver|release|released\b/.test(
+      text,
+    )
+  ) {
+    return 'trade';
+  }
+
+  if (
+    /\bbeats?\b|\bbeat\b|defeats?|wins?\b|loss\b|recap|preview|final|week \d+|playoffs?|super bowl|game story\b/.test(
+      text,
+    )
+  ) {
+    return 'game';
+  }
+
+  if (/\banalysis|ranking|power ranking|breakdown|projection|preview|film room\b/.test(text)) {
+    return 'analysis';
+  }
+
+  return 'general';
+}
+
+function getNFLTeam(
+  article: NonNullable<NewsApiResponse['articles']>[number],
+): string | undefined {
+  return article.categories?.find((category) => category.type === 'team')?.description;
+}
+
 export default function NFLNewsPage() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>('all');
+  const [lastUpdated, setLastUpdated] = useState('');
+  const [sourceLabel, setSourceLabel] = useState('ESPN');
 
   useEffect(() => {
     const fetchNews = async () => {
       setLoading(true);
       try {
-        const res = await fetch('/api/nfl/news');
+        const res = await fetch(getReadApiUrl('/api/nfl/news'));
         if (!res.ok) throw new Error('Failed to fetch news');
-        const data = (await res.json()) as { articles?: NewsItem[] };
-        setNews(data.articles || []);
+        const data = (await res.json()) as NewsApiResponse;
+        const normalized = (data.articles || []).map((article, index) => ({
+          id: `nfl-news-${index}`,
+          title: article.headline || 'Untitled',
+          summary: article.description || '',
+          source: article.source || data.meta?.source || 'ESPN',
+          url: article.link || '#',
+          publishedAt: article.published || data.meta?.fetched_at || new Date().toISOString(),
+          category: inferNFLCategory(article),
+          team: getNFLTeam(article),
+        }));
+
+        setNews(normalized.filter((item) => item.url !== '#'));
+        setLastUpdated(data.meta?.fetched_at || '');
+        setSourceLabel(data.meta?.source || 'ESPN');
         setLoading(false);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');
@@ -210,8 +299,8 @@ export default function NFLNewsPage() {
             {/* Data Source Footer */}
             <div className="mt-8 pt-4 border-t border-border-subtle">
               <DataSourceBadge
-                source="NFL News API / Official Team Sources"
-                timestamp={formatTimestamp()}
+                source={sourceLabel}
+                timestamp={formatTimestamp(lastUpdated)}
               />
             </div>
           </Container>

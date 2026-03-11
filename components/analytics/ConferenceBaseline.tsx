@@ -2,11 +2,11 @@
 
 interface ConferenceBaselineProps {
   /** The stat value for this team/player */
-  value: number;
+  value: number | null | undefined;
   /** Label for the stat (e.g. "wRC+") */
   label: string;
   /** Conference average for this stat */
-  confAvg?: number;
+  confAvg?: number | null;
   /** Conference name (e.g. "SEC") */
   confName?: string;
   /** Custom formatter — defaults to 3-decimal for rates, integer otherwise */
@@ -15,7 +15,8 @@ interface ConferenceBaselineProps {
   higherIsBetter?: boolean;
 }
 
-function defaultFormat(v: number): string {
+function defaultFormat(v: number | null | undefined): string {
+  if (v === null || v === undefined || !Number.isFinite(v)) return '—';
   if (Math.abs(v) < 10 && v !== Math.floor(v)) return v.toFixed(3);
   return v.toFixed(1);
 }
@@ -35,7 +36,13 @@ export function ConferenceBaseline({
   higherIsBetter = true,
 }: ConferenceBaselineProps) {
   const formatted = format(value);
-  const hasContext = confAvg !== undefined && confName;
+  const hasValue = value !== null && value !== undefined && Number.isFinite(value);
+  const hasContext =
+    hasValue &&
+    confAvg !== null &&
+    confAvg !== undefined &&
+    Number.isFinite(confAvg) &&
+    Boolean(confName);
 
   let indicatorColor = 'text-bsi-dust';
   if (hasContext) {

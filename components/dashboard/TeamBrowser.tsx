@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
+import { getReadApiUrl } from '@/lib/utils/public-api';
 
 interface TeamItem {
   id: number;
@@ -42,7 +43,7 @@ export function TeamBrowser() {
     setLoading(true);
     setError(null);
 
-    fetch('/api/college-baseball/teams/all')
+    fetch(getReadApiUrl('/api/college-baseball/teams/all'))
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json() as Promise<TeamsAllResponse>;
@@ -177,14 +178,20 @@ export function TeamBrowser() {
               >
                 <div className="flex items-center gap-3">
                   <div className="relative w-10 h-10 flex-shrink-0">
-                    <Image
-                      src={team.logo}
-                      alt={team.name}
-                      width={40}
-                      height={40}
-                      className="object-contain"
-                      unoptimized
-                    />
+                    {team.logo?.trim() ? (
+                      <Image
+                        src={team.logo}
+                        alt={team.name}
+                        width={40}
+                        height={40}
+                        className="object-contain"
+                        unoptimized
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-surface-medium text-text-muted text-xs font-bold flex items-center justify-center">
+                        {team.abbreviation.slice(0, 3)}
+                      </div>
+                    )}
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-text-primary group-hover:text-burnt-orange transition-colors truncate">

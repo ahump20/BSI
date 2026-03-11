@@ -11,6 +11,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { DataAttribution } from '@/components/ui/DataAttribution';
 import { Trophy, Users, TrendingUp, MapPin } from 'lucide-react';
 import { teamMetadata } from '@/lib/data/team-metadata';
+import { getReadApiUrl } from '@/lib/utils/public-api';
 
 /* ── Types ─────────────────────────────────────────────────────────── */
 
@@ -93,9 +94,9 @@ export default function ConferencesHubPage() {
     async function load() {
       try {
         const [standingsRes, savantRes, nilRes] = await Promise.all([
-          fetch('/api/college-baseball/standings').catch(() => null),
-          fetch('/api/savant/leaderboard').catch(() => null),
-          fetch('/api/nil/leaderboard?limit=500').catch(() => null),
+          fetch(getReadApiUrl('/api/college-baseball/standings')).catch(() => null),
+          fetch(getReadApiUrl('/api/savant/batting/leaderboard?limit=100')).catch(() => null),
+          fetch(getReadApiUrl('/api/nil/leaderboard?limit=500')).catch(() => null),
         ]);
 
         if (standingsRes?.ok) {
