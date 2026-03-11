@@ -13,7 +13,6 @@
     ],
     "defaultMode": "plan"
   },
-  "model": "opus",
   "hooks": {
     "PostToolUse": [
       {
@@ -56,6 +55,10 @@
         ]
       }
     ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash /Users/AustinHumphrey/.claude/statusline-command.sh"
   },
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true,
@@ -114,6 +117,7 @@
     "kotlin-lsp@claude-plugins-official": false,
     "asana@claude-plugins-official": false
   },
+  "effortLevel": "medium",
   "autoUpdatesChannel": "latest",
   "skipDangerousModePermissionPrompt": true
 }
