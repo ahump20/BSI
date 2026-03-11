@@ -22,6 +22,13 @@ export interface Env {
   DATA_LAKE?: R2Bucket;
   ADMIN_KEY?: string;
   RATE_LIMIT?: KVNamespace;
+  SHOW_API_HOST?: string;
+  SHOW_MARKET_WEB_HOST?: string;
+  SHOW_PUBLIC_GAME_CODE?: string;
+  SHOW_26_VERIFIED?: string;
+  SHOW_SYNC_CARD_PAGES?: string;
+  SHOW_SYNC_LISTING_PAGES?: string;
+  SHOW_SYNC_CAPTAIN_PAGES?: string;
 }
 
 export interface PredictionPayload {

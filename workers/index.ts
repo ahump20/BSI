@@ -155,6 +155,16 @@ import {
   handleSavantConferenceStrength,
 } from './handlers/savant';
 import {
+  handleNILLeaderboard,
+  handleNILPlayer,
+  handleNILComparables,
+  handleNILUndervalued,
+  handleNILTrends,
+  handleWARToNIL,
+  handleNILCollectiveROI,
+  handleNILDraftLeverage,
+} from './handlers/nil';
+import {
   handleLeaderboard,
   handleLeaderboardSubmit,
   handleGameAsset,
@@ -166,6 +176,19 @@ import { handleTeams, handleModelHealth, handleAnalyticsEvent, handleWeeklyBrief
 import { handleContact, handleLead, handleFeedback, handleCSPReport } from './handlers/lead';
 import { handlePredictionSubmit, handlePredictionAccuracy } from './handlers/predictions';
 import { handleIntelNews, handleESPNNews } from './handlers/news';
+import {
+  handleShowSourceStatus,
+  handleShowMarketOverview,
+  handleShowCards,
+  handleShowCardDetail,
+  handleShowCardHistory,
+  handleShowCollections,
+  handleShowCollectionDetail,
+  handleShowWatchEvents,
+  handleShowTeamBuilderReference,
+  handleShowBuildCreate,
+  handleShowBuildGet,
+} from './handlers/mlb-the-show';
 
 // =============================================================================
 // Hono App
@@ -466,6 +489,19 @@ app.get('/api/mlb/game/:gameId', (c) => safeESPN(() => handleMLBGame(c.req.param
 app.get('/api/mlb/players/:playerId', (c) => safeESPN(() => handleMLBPlayer(c.req.param('playerId'), c.env), 'player', null, c.env));
 app.get('/api/mlb/teams/:teamId', (c) => safeESPN(() => handleMLBTeam(c.req.param('teamId'), c.env), 'team', null, c.env));
 
+// --- MLB The Show 26 / Diamond Dynasty ---
+app.get('/api/mlb/the-show-26/source-status', (c) => handleShowSourceStatus(c.env));
+app.get('/api/mlb/the-show-26/market/overview', (c) => handleShowMarketOverview(c.env));
+app.get('/api/mlb/the-show-26/cards', (c) => handleShowCards(new URL(c.req.url), c.env));
+app.get('/api/mlb/the-show-26/cards/:cardId', (c) => handleShowCardDetail(c.req.param('cardId'), c.env));
+app.get('/api/mlb/the-show-26/cards/:cardId/history', (c) => handleShowCardHistory(c.req.param('cardId'), new URL(c.req.url), c.env));
+app.get('/api/mlb/the-show-26/collections', (c) => handleShowCollections(c.env));
+app.get('/api/mlb/the-show-26/collections/:collectionId', (c) => handleShowCollectionDetail(c.req.param('collectionId'), new URL(c.req.url), c.env));
+app.get('/api/mlb/the-show-26/watch-events', (c) => handleShowWatchEvents(new URL(c.req.url), c.env));
+app.get('/api/mlb/the-show-26/team-builder/reference', (c) => handleShowTeamBuilderReference(c.env));
+app.post('/api/mlb/the-show-26/builds', (c) => handleShowBuildCreate(c.req.raw, c.env));
+app.get('/api/mlb/the-show-26/builds/:buildId', (c) => handleShowBuildGet(c.req.param('buildId'), c.env));
+
 // --- NFL ---
 app.get('/api/nfl/scores', (c) => safeESPN(() => handleNFLScores(new URL(c.req.url), c.env), 'games', [], c.env));
 app.get('/api/nfl/standings', (c) => safeESPN(() => handleNFLStandings(c.env), 'standings', [], c.env));
@@ -516,6 +552,16 @@ app.get('/api/savant/pitching/leaderboard', (c) => handleSavantPitchingLeaderboa
 app.get('/api/savant/player/:id', (c) => handleSavantPlayer(c.req.param('id'), new URL(c.req.url), c.env, c.req.raw.headers));
 app.get('/api/savant/park-factors', (c) => handleSavantParkFactors(new URL(c.req.url), c.env, c.req.raw.headers));
 app.get('/api/savant/conference-strength', (c) => handleSavantConferenceStrength(new URL(c.req.url), c.env, c.req.raw.headers));
+
+// --- NIL Intelligence ---
+app.get('/api/nil/leaderboard', (c) => handleNILLeaderboard(new URL(c.req.url), c.env, c.req.raw.headers));
+app.get('/api/nil/player/:id', (c) => handleNILPlayer(c.req.param('id'), new URL(c.req.url), c.env, c.req.raw.headers));
+app.get('/api/nil/comparables/:id', (c) => handleNILComparables(c.req.param('id'), new URL(c.req.url), c.env, c.req.raw.headers));
+app.get('/api/nil/undervalued', (c) => handleNILUndervalued(new URL(c.req.url), c.env, c.req.raw.headers));
+app.get('/api/nil/trends', (c) => handleNILTrends(new URL(c.req.url), c.env, c.req.raw.headers));
+app.get('/api/nil/war-to-nil', (c) => handleWARToNIL(new URL(c.req.url)));
+app.get('/api/nil/collective-roi', (c) => handleNILCollectiveROI(new URL(c.req.url), c.env, c.req.raw.headers));
+app.get('/api/nil/draft-leverage', (c) => handleNILDraftLeverage(new URL(c.req.url), c.env, c.req.raw.headers));
 
 // --- Cached scores (cron-warmed KV) ---
 app.get('/api/scores/cached', (c) => {

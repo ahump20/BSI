@@ -1,0 +1,34 @@
+name = "bsi-show-dd-sync"
+main = "index.ts"
+compatibility_date = "2025-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[kv_namespaces]]
+binding = "KV"
+id = "e6cb68e815cd45babeee0e10460dbfee"
+preview_id = "abf84a80fa024f43bc62daf786955e2b"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "bsi-prod-db"
+database_id = "6921617f-5351-4df3-aeab-07425e72ec6b"
+
+[[r2_buckets]]
+binding = "DATA_LAKE"
+bucket_name = "blaze-sports-data-lake"
+
+[vars]
+ENVIRONMENT = "production"
+API_VERSION = "1.0.0"
+PAGES_ORIGIN = "https://blazesportsintel.pages.dev"
+SHOW_PUBLIC_GAME_CODE = "MLBTS26"
+SHOW_SYNC_CARD_PAGES = "6"
+SHOW_SYNC_LISTING_PAGES = "6"
+SHOW_SYNC_CAPTAIN_PAGES = "2"
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+[dev]
+port = 8794
+local_protocol = "http"

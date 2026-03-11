@@ -119,6 +119,26 @@ const IconFlask = () => (
   </svg>
 );
 
+const IconDollar = () => (
+  <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="8" cy="8" r="6.5" />
+    <path d="M8 4v8M6 6c0-.83 1-1.5 2-1.5s2 .67 2 1.5-1 1.5-2 1.5-2 .67-2 1.5 1 1.5 2 1.5 2-.67 2-1.5" />
+  </svg>
+);
+
+const IconStar = () => (
+  <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M8 1.5l2 4.5 5 .5-3.5 3.5 1 5L8 12.5 3.5 15l1-5L1 6.5l5-.5z" />
+  </svg>
+);
+
+const IconBrain = () => (
+  <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M8 14V8M5 8c-2 0-3-1.5-3-3s1-3 3-3c.5 0 1 .1 1.5.3C7 1.5 7.5 1 8 1s1 .5 1.5 1.3C10 2.1 10.5 2 11 2c2 0 3 1.5 3 3s-1 3-3 3" />
+    <path d="M5 8c0 2 1.5 3.5 3 6M11 8c0 2-1.5 3.5-3 6" />
+  </svg>
+);
+
 const IconMenu = () => (
   <svg className="w-5 h-5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
     <path d="M2 4h12M2 8h12M2 12h12" />
@@ -159,6 +179,7 @@ const NAV_GROUPS: readonly NavGroup[] = [
     items: [
       { href: '/', label: 'Dashboard', icon: <IconGrid /> },
       { href: '/scores', label: 'Live Scores', icon: <IconActivity /> },
+      { href: '/intel', label: 'Intelligence', icon: <IconBrain /> },
       ...(isWBCActive ? [{ href: '/wbc', label: 'WBC 2026', icon: <IconGlobe /> } as const] : []),
     ],
   },
@@ -169,17 +190,25 @@ const NAV_GROUPS: readonly NavGroup[] = [
       { href: '/college-baseball/rankings', label: 'Rankings', icon: <IconList /> },
       { href: '/college-baseball/savant', label: 'Savant / Advanced Stats', icon: <IconTarget /> },
       { href: '/mlb', label: 'MLB', icon: <IconBaseball /> },
+      { href: '/mlb/the-show-26/diamond-dynasty', label: 'Diamond Dynasty', icon: <IconTarget /> },
       { href: '/nfl', label: 'NFL', icon: <IconFootball /> },
       { href: '/nba', label: 'NBA', icon: <IconBasketball /> },
       { href: '/cfb', label: 'College Football', icon: <IconFootball /> },
     ],
   },
   {
+    label: 'Operations',
+    items: [
+      { href: '/nil-valuation', label: 'NIL Valuation', icon: <IconDollar /> },
+      { href: '/nil-valuation/tools', label: 'NIL Tools', icon: <IconChart /> },
+      { href: '/college-baseball/transfer-portal', label: 'Transfer Portal', icon: <IconActivity /> },
+      { href: '/college-baseball/watchlist', label: 'Watchlist', icon: <IconStar /> },
+    ],
+  },
+  {
     label: 'Content',
     items: [
       { href: '/college-baseball/editorial', label: 'Editorial', icon: <IconPen /> },
-      { href: '/intel', label: 'Intel', icon: <IconChart /> },
-      { href: '/transfer-portal', label: 'Transfer Portal', icon: <IconActivity /> },
     ],
   },
   {
