@@ -34,10 +34,10 @@ export const metadata: Metadata = {
 // -- Stat data ---------------------------------------------------------------
 
 const STATS = [
-  { label: 'Texas Streak', value: '11-0', helperText: 'One win from matching best start since 2022' },
-  { label: 'Days to SEC', value: '10', helperText: 'Conference play opens March 13 across the league' },
+  { label: 'Texas Record', value: '16-0', helperText: 'Swept USC Upstate + road win at Texas State. No. 2 nationally.' },
+  { label: 'Days to SEC', value: '3', helperText: 'Ole Miss at Disch-Falk opens conference play March 13' },
   { label: 'UNC Run Margin', value: '+43', helperText: '49-6 aggregate in Le Moyne sweep last weekend' },
-  { label: 'USC Team ERA', value: '1.45', helperText: 'Mason Edwards hasn\u2019t allowed a hit in 18 straight innings' },
+  { label: 'SEC Tue Losses', value: '9', helperText: 'Nine SEC teams lost to mid-majors on Tuesday night' },
 ];
 
 // -- Component ---------------------------------------------------------------
@@ -109,23 +109,21 @@ export default function Week4PreviewPage() {
               <div className="max-w-3xl mx-auto">
                 <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                   <p>
-                    Three weeks of non-conference play have done their job. The rankings have
-                    stabilized &mdash; UCLA at No. 1, LSU at No. 2, Texas the only undefeated
-                    Top 25 team at No. 3. The pretenders have been exposed: Ole Miss dropped out
-                    of the Top 25 entirely after entering it just two weeks ago. The contenders
-                    have been tested: Mississippi State&rsquo;s first loss came in extra innings
-                    against the nation&rsquo;s best team at Globe Life Field. Now comes Week 4,
-                    the last full weekend of non-conference play before SEC, Big 12, and ACC
-                    schedules take over.
+                    <strong className="text-text-primary font-semibold">[Updated March 10]</strong>{' '}
+                    Four weeks of non-conference play are done. Texas swept USC Upstate 14&ndash;2,
+                    11&ndash;9, 13&ndash;3 at Disch-Falk, climbed to No. 2 nationally, and beat
+                    Texas State 15&ndash;4 on the road Tuesday night to improve to 16&ndash;0.
+                    The last tune-up weekend did exactly what it was supposed to &mdash; confirmed
+                    what was already evident and exposed what wasn&rsquo;t ready. Then Tuesday
+                    night tore the curtain down: nine SEC teams lost to mid-major opponents, some
+                    by margins that would embarrass a fall scrimmage.
                   </p>
                   <p>
-                    The value of this weekend is not in the matchups &mdash; most are mismatches
-                    by design. It&rsquo;s in the preparation. Rotation order gets finalized.
-                    Bullpen roles get locked in. The players who have been platooning learn
-                    whether they have a full-time job or a bench role. For the teams heading into
-                    March with questions &mdash; Tennessee&rsquo;s slide, Texas A&amp;M&rsquo;s
-                    untested roster, TCU&rsquo;s quiet resurgence &mdash; this is the last
-                    weekend to answer them on their own terms.
+                    The preparation window is closed. SEC, Big 12, and ACC conference play opens
+                    March 13. The teams that used the non-conference schedule to lock in their
+                    identity arrive with an edge. The teams that coasted through it &mdash;
+                    Tennessee, Auburn, Vanderbilt, among others &mdash; arrive with questions
+                    they no longer have time to answer quietly.
                   </p>
                 </div>
               </div>
@@ -139,36 +137,31 @@ export default function Week4PreviewPage() {
             <ScrollReveal>
               <div className="max-w-3xl mx-auto">
                 <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-8">
-                  Texas: USC Upstate at Disch-Falk
+                  Texas: Swept USC Upstate, Road Win at Texas State
                 </h2>
                 <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                   <p className="text-sm font-mono text-text-muted">
-                    Friday&ndash;Sunday, March 6&ndash;8 at UFCU Disch-Falk Field<br />
-                    Fri 6:30 PM CT / Sat 2:00 PM CT / Sun 12:00 PM CT (all SEC Network+)
+                    Weekend: Texas 14&ndash;2, 11&ndash;9, 13&ndash;3 vs USC Upstate (Disch-Falk)<br />
+                    Tuesday: Texas 15, Texas State 4 (at Bobcat Ballpark, San Marcos)
                   </p>
                   <p>
-                    Texas (11&ndash;0, No. 3) hosts USC Upstate for the final non-conference
-                    weekend series. The Spartans are a Big South program &mdash; this is not the
-                    test. The test arrives March 13 when Ole Miss comes to Austin to open SEC
-                    play.
+                    Texas (16&ndash;0, No. 2) did exactly what was expected and then some. The
+                    USC Upstate sweep was clinical &mdash; 38&ndash;14 aggregate, three different
+                    starters, three wins. The rotation question from the preview got its answer:
+                    Riojas on Friday, the combination look on Saturday, Volantis on Sunday. Then
+                    Sam Cozart improved to 4&ndash;0 on Tuesday with a road win in San Marcos
+                    where Casey Borba hit two home runs and the lineup scored 15 on 15 hits.
                   </p>
                   <p>
-                    What matters this weekend is whether Schlossnagle sets his weekend rotation.
-                    Riojas has been the Friday ace &mdash; 3&ndash;0 with 11 strikeouts against
-                    Coastal Carolina, the kind of converted reliever who can give you six deep
-                    innings every Friday and lengthen an entire staff behind him. Volantis has the
-                    Sunday role locked: zero earned runs through his starts, 8 strikeouts in the
-                    championship game against Ohio State. The Saturday starter &mdash; likely a
-                    combination start or a look at the next arm in line &mdash; is the remaining
-                    question. That Saturday slot is the last hole in a rotation that otherwise
-                    looks built for SEC weekends.
+                    The depth is no longer a projection &mdash; it is the identity. Borba, Becerra,
+                    Pack Jr., Livingston, and Duplantier all contributed RBI on Tuesday from spots
+                    across the order. The run differential through 16 games is +133 (177&ndash;44).
+                    Six run-rule wins. Zero road losses, though Tuesday was the first time they
+                    played one. The foundation is as solid as a non-conference body of work can be.
                   </p>
-                  <p>
-                    The lineup needs no resolution. Carson Tinney is hitting at a .943 OPS.
-                    Mendoza has reached base in all 11 games (.381 OBP). Robbins is at .395 with
-                    4 home runs. Burns has 2 saves; Crossland earned his first win last weekend.
-                    This series is about maintenance, not discovery &mdash; final calibrations
-                    before the real schedule arrives in 10 days.
+                  <p className="text-text-tertiary">
+                    Ole Miss arrives at Disch-Falk in three days. The Rebels have been inconsistent
+                    all month. Texas has not been. That contrast is the story entering the weekend.
                   </p>
                 </div>
               </div>
@@ -280,6 +273,40 @@ export default function Week4PreviewPage() {
           </Container>
         </Section>
 
+        {/* Tuesday Night Across the SEC */}
+        <Section padding="lg">
+          <Container>
+            <ScrollReveal>
+              <div className="max-w-3xl mx-auto">
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-8">
+                  Tuesday Night Across the SEC
+                </h2>
+                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                  <p>
+                    <strong className="text-text-primary font-semibold">[March 10 results]</strong>{' '}
+                    Nine SEC programs lost on Tuesday night. The carnage reshapes the context for
+                    every opening-weekend series.
+                  </p>
+                  <p>
+                    Tennessee fell 2&ndash;20 to Tennessee Tech. Auburn lost 2&ndash;17 to UAB.
+                    Vanderbilt gave up 14 runs to Indiana State. These are not close losses to
+                    quality mid-majors &mdash; these are blowouts against programs that don&rsquo;t
+                    recruit at the same level. LSU lost to Creighton 4&ndash;8. Alabama fell to Troy
+                    3&ndash;7. Mississippi State dropped one to Tulane 7&ndash;11. Kentucky lost to
+                    Ball State 3&ndash;10. Missouri lost to Southern Indiana 6&ndash;14. Florida lost
+                    to Florida State 3&ndash;6 in the only result that carries real rivalry weight.
+                  </p>
+                  <p className="text-text-tertiary">
+                    The one SEC team that won Tuesday? Texas, 15&ndash;4 on the road. The gap
+                    between the Longhorns and the rest of the conference &mdash; at least on this
+                    particular night &mdash; was not subtle.
+                  </p>
+                </div>
+              </div>
+            </ScrollReveal>
+          </Container>
+        </Section>
+
         {/* SEC Openers Look-Ahead */}
         <Section background="charcoal" padding="lg">
           <Container>
@@ -290,39 +317,42 @@ export default function Week4PreviewPage() {
                 </h2>
                 <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                   <p>
-                    Conference play arrives in 10 days. Here is what&rsquo;s coming &mdash; and
-                    why the opening weekend might be the most loaded three-day slate of the
-                    entire regular season.
+                    Conference play arrives in three days. Tuesday night added fresh data to every
+                    matchup &mdash; and most of it raised more questions than it answered.
                   </p>
                   <p>
                     <strong className="text-text-primary font-semibold">Ole Miss at Texas.</strong>{' '}
-                    The Rebels fell out of the Top 25. Texas is undefeated. Disch-Falk in March,
-                    under the lights. This is the game that tells us whether Texas&rsquo;s
-                    11&ndash;0 record is real or February-inflated &mdash; and whether Ole
-                    Miss&rsquo;s slide is a correction or a collapse.
-                  </p>
-                  <p>
-                    <strong className="text-text-primary font-semibold">Mississippi State at Arkansas.</strong>{' '}
-                    Two top-6 teams. MSU (11&ndash;1) just lost its first game in extras to UCLA.
-                    Arkansas (9&ndash;3) is angry after the UT Arlington loss. Baum-Walker in
-                    March is a different animal than anything either team has faced in February.
+                    The Rebels have been in and out of the Top 25 all month. Texas is 16&ndash;0
+                    with a +133 run differential. Disch-Falk under the lights on Thursday. This is
+                    the series that tells us whether the Longhorns&rsquo; perfect record is real or
+                    February-inflated &mdash; and whether Ole Miss has an identity to bring to Austin.
                   </p>
                   <p>
                     <strong className="text-text-primary font-semibold">LSU at Vanderbilt.</strong>{' '}
-                    Alex Box swagger meets Hawkins Field precision. LSU&rsquo;s bullpen depth
-                    gets its first real multi-game test against a Vanderbilt lineup that can
-                    manufacture runs without swinging for the fences.
+                    LSU lost to Creighton 4&ndash;8 on Tuesday. Vanderbilt gave up 14 runs to Indiana
+                    State. Neither pitching staff showed up for the dress rehearsal. If the arms that
+                    took the mound Tuesday night are the ones that show up Friday, this series could
+                    be an offensive fireworks show for all the wrong reasons.
                   </p>
                   <p>
-                    <strong className="text-text-primary font-semibold">South Carolina at Florida.</strong>{' '}
-                    The Gamecocks (7&ndash;5) need to prove the Palmetto loss was a blip, not a
-                    blueprint. Florida&rsquo;s 11-game streak is the story &mdash; but South
-                    Carolina&rsquo;s backs are against the wall.
+                    <strong className="text-text-primary font-semibold">Mississippi State at Arkansas.</strong>{' '}
+                    Mississippi State lost to Tulane 7&ndash;11 on Tuesday. Arkansas has been
+                    inconsistent since the UT Arlington upset. Baum-Walker in March is a different
+                    animal, but both teams enter the weekend having lost their last midweek game.
                   </p>
                   <p>
                     <strong className="text-text-primary font-semibold">Tennessee at Georgia.</strong>{' '}
-                    Both programs have underperformed relative to preseason expectations. This
-                    series might tell us more about who is not an Omaha team than who is.
+                    Tennessee 2, Tennessee Tech 20. That line will hang over the Volunteers all
+                    weekend. Georgia has been quietly steady at 10&ndash;1, but Vitello&rsquo;s team
+                    needs to prove that Tuesday was an aberration, not a preview of what SEC
+                    lineups will do to this pitching staff.
+                  </p>
+                  <p>
+                    <strong className="text-text-primary font-semibold">South Carolina at Florida.</strong>{' '}
+                    Florida lost to Florida State 3&ndash;6 &mdash; at least that loss carries weight.
+                    South Carolina needs to prove the Palmetto loss was a blip. Both teams enter
+                    conference play with something to prove, which makes this the most volatile
+                    series of the opening weekend.
                   </p>
                 </div>
               </div>

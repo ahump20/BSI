@@ -69,7 +69,7 @@ interface TeamCard {
 }
 
 const SEC_TEAMS: TeamCard[] = [
-  { name: 'Texas', slug: 'texas', mascot: 'Longhorns', record: '11-0', tier: 'Omaha Favorite' },
+  { name: 'Texas', slug: 'texas', mascot: 'Longhorns', record: '16-0', tier: 'Omaha Favorite' },
   { name: 'LSU', slug: 'lsu', mascot: 'Tigers', record: '11-1', tier: 'Omaha Favorite' },
   { name: 'Florida', slug: 'florida', mascot: 'Gators', record: '11-1', tier: 'Omaha Favorite' },
   { name: 'Mississippi State', slug: 'mississippi-state', mascot: 'Bulldogs', record: '11-1', tier: 'Omaha Favorite' },
@@ -143,11 +143,21 @@ export type { FeatureArticle };
 
 export const FEATURE_ARTICLES: FeatureArticle[] = [
   {
-    title: 'Week 4 Preview: The Last Non-Conference Weekend',
+    title: 'No. 2 Texas 15, Texas State 4: First Road Test, Same Answer',
+    slug: 'texas-texas-state-recap',
+    description: 'Casey Borba hit two home runs, Sam Cozart kept rolling, and Texas improved to 16-0 in their first true road game of the season.',
+    date: 'March 10, 2026',
+    readTime: '8 min',
+    badge: 'Game Recap',
+    tags: ['SEC'],
+    teams: ['texas'],
+  },
+  {
+    title: 'Week 4 Preview: The Last Tune-Up (Updated with Results)',
     slug: 'week-4-preview',
-    description: 'Conference play starts March 13. Virginia at North Carolina headlines the final non-conference weekend. Texas hosts USC Upstate. The tune-up window closes Friday.',
-    date: 'March 3, 2026',
-    readTime: '10 min',
+    description: 'Texas swept USC Upstate, climbed to No. 2, and beat Texas State 15-4 on the road. Nine SEC teams lost Tuesday night. Conference play opens in three days.',
+    date: 'March 10, 2026',
+    readTime: '12 min',
     badge: 'Weekly Preview',
     tags: ['National', 'Weekly'],
     teams: ['texas', 'ucla', 'lsu', 'mississippi-state', 'florida'],
