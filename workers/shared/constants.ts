@@ -6,6 +6,7 @@ export const PROD_ORIGINS = new Set([
   'https://www.austinhumphrey.com',
   'https://blazecraft.app',
   'https://arcade.blazesportsintel.com',
+  'https://labs.blazesportsintel.com',
 ]);
 
 export const DEV_ORIGINS = new Set([
@@ -14,7 +15,7 @@ export const DEV_ORIGINS = new Set([
   'http://localhost:5173',
 ]);
 
-export const ALLOWED_PAGES_DOMAINS = ['blazesportsintel.pages.dev', 'blazecraft.pages.dev', 'bsi-arcade.pages.dev', 'austinhumphrey.com'];
+export const ALLOWED_PAGES_DOMAINS = ['blazesportsintel.pages.dev', 'blazecraft.pages.dev', 'bsi-arcade.pages.dev', 'austinhumphrey.com', 'trackman-audit-lab.pages.dev'];
 
 export const SECURITY_HEADERS: Record<string, string> = {
   'X-Content-Type-Options': 'nosniff',
@@ -95,6 +96,8 @@ export const GHOST_REDIRECTS: Record<string, string> = {
   '/nba/daily': '/nba',
   '/cfb/daily': '/cfb',
   '/college-baseball/daily/latest': '/college-baseball',
+  '/transfer-portal': '/college-baseball/transfer-portal',
+  '/transfer-portal/': '/college-baseball/transfer-portal',
   '/scores/daily': '/scores',
   '/baseball/rankings': '/college-baseball/rankings',
   '/baseball/rankings/': '/college-baseball/rankings',
