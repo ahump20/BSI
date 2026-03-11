@@ -20,6 +20,18 @@ import { withAlpha } from '@/lib/utils/color';
 import { getPercentileColor } from '@/components/analytics/PercentileBar';
 
 // ────────────────────────────────────────
+// Section Break — decorative diamond divider
+// ────────────────────────────────────────
+
+function SectionBreak() {
+  return (
+    <div className="section-break" aria-hidden="true">
+      <span className="section-break-diamond" />
+    </div>
+  );
+}
+
+// ────────────────────────────────────────
 // Savant Preview Strip — top 5 OBP leaders
 // ────────────────────────────────────────
 
@@ -296,11 +308,6 @@ function FeatureShowcase() {
 
   return (
     <section className="py-16 px-4 sm:px-6 lg:px-8 relative surface-deep accent-glow-warm-right">
-      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full opacity-[0.04]"
-          style={{ background: 'radial-gradient(ellipse, #BF5700, transparent 70%)' }}
-        />
-      </div>
       <div className="max-w-6xl mx-auto relative z-10">
         <ScrollReveal direction="up">
           <span className="heritage-stamp mb-2">Tools &amp; Intel</span>
@@ -604,8 +611,7 @@ export function HomePageClient() {
         <SavantPreviewStrip />
       </DataErrorBoundary>
 
-      {/* ─── Section Break ─── */}
-      <div className="section-break" aria-hidden="true"><span className="section-break-diamond" /></div>
+      <SectionBreak />
 
       {/* ─── 4. Sports Hub — Our Coverage (redesigned layout) ─── */}
       <section
@@ -746,27 +752,23 @@ export function HomePageClient() {
         </div>
       </section>
 
-      {/* ─── Section Break ─── */}
-      <div className="section-break" aria-hidden="true"><span className="section-break-diamond" /></div>
+      <SectionBreak />
 
       {/* ─── 5. Feature Showcase — platform tools ─── */}
       <FeatureShowcase />
 
       {/* ─── 6. Ask BSI — AI-powered question card ─── */}
-      <div className="surface-lifted">
-        <div className="section-break" aria-hidden="true"><span className="section-break-diamond" /></div>
-        <DataErrorBoundary name="Ask BSI" compact>
-          <AskBSI />
-        </DataErrorBoundary>
-      </div>
+      <SectionBreak />
+      <DataErrorBoundary name="Ask BSI" compact>
+        <AskBSI />
+      </DataErrorBoundary>
 
       {/* ─── 7. Editorial Feed (D1-backed) ─── */}
       <DataErrorBoundary name="Editorial">
         <EditorialPreview />
       </DataErrorBoundary>
 
-      {/* ─── Section Break ─── */}
-      <div className="section-break" aria-hidden="true"><span className="section-break-diamond" /></div>
+      <SectionBreak />
 
       {/* ─── 8. Trending Intel Feed ─── */}
       <section
@@ -790,8 +792,7 @@ export function HomePageClient() {
         </div>
       </section>
 
-      {/* ─── Section Break ─── */}
-      <div className="section-break" aria-hidden="true"><span className="section-break-diamond" /></div>
+      <SectionBreak />
 
       {/* ─── 9. Garrido + Austin Quote — elevated with B watermark ─── */}
       <section
@@ -883,8 +884,7 @@ export function HomePageClient() {
         </div>
       </section>
 
-      {/* ─── Section Break ─── */}
-      <div className="section-break" aria-hidden="true"><span className="section-break-diamond" /></div>
+      <SectionBreak />
 
       {/* ─── 10. CTA — with shield logo + slogan ─── */}
       <section className="surface-lifted py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">

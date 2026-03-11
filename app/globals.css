@@ -833,33 +833,27 @@ textarea:focus-visible,
 }
 
 /* Section accent glows — atmospheric directional lighting.
-   Requires position: relative on the host element. */
-.accent-glow-warm-left::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 40%;
-  background: radial-gradient(ellipse at 0% 50%, rgba(191, 87, 0, 0.04) 0%, transparent 70%);
-  pointer-events: none;
-}
-.accent-glow-warm-right::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 40%;
-  background: radial-gradient(ellipse at 100% 50%, rgba(191, 87, 0, 0.04) 0%, transparent 70%);
-  pointer-events: none;
-}
+   Requires position: relative on the host element.
+   Base pseudo-element shared; modifiers set gradient only. */
+.accent-glow-warm-left::before,
+.accent-glow-warm-right::before,
 .accent-glow-cool-center::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 50% 30%, rgba(75, 156, 211, 0.03) 0%, transparent 60%);
   pointer-events: none;
+}
+.accent-glow-warm-left::before {
+  width: 40%;
+  background: radial-gradient(ellipse at 0% 50%, rgba(191, 87, 0, 0.04) 0%, transparent 70%);
+}
+.accent-glow-warm-right::before {
+  left: auto;
+  width: 40%;
+  background: radial-gradient(ellipse at 100% 50%, rgba(191, 87, 0, 0.04) 0%, transparent 70%);
+}
+.accent-glow-cool-center::before {
+  background: radial-gradient(ellipse at 50% 30%, rgba(75, 156, 211, 0.03) 0%, transparent 60%);
 }
 
 /* Section rule — 3px burnt-orange accent bar */
