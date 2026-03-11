@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -7,6 +8,8 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { DataAttribution } from '@/components/ui/DataAttribution';
+import { ConferenceBaseline } from '@/components/analytics/ConferenceBaseline';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 import { preseason2026 } from '@/lib/data/preseason-2026';
 import {
@@ -18,8 +21,124 @@ import {
   ChevronUp,
   ChevronDown,
   Minus,
+  BarChart3,
+  ArrowRightLeft,
+  Star,
 } from 'lucide-react';
 import { withAlpha } from '@/lib/utils/color';
+
+/* ── Live data types ───────────────────────────────────────────────── */
+
+interface StandingsTeam {
+  team_name: string;
+  conference?: string;
+  overall_wins?: number;
+  overall_losses?: number;
+  conference_wins?: number;
+  conference_losses?: number;
+  batting_avg?: number;
+  era?: number;
+  ops?: number;
+  rpi?: number;
+  [key: string]: unknown;
+}
+
+interface SavantEntry {
+  player_name?: string;
+  team_name?: string;
+  conference?: string;
+  woba?: number;
+  wrc_plus?: number;
+  fip?: number;
+  ops_plus?: number;
+  [key: string]: unknown;
+}
+
+interface NILEntry {
+  player_name?: string;
+  school?: string;
+  team_name?: string;
+  conference?: string;
+  estimated_mid?: number;
+  [key: string]: unknown;
+}
+
+interface PortalEntry {
+  playerName?: string;
+  player_name?: string;
+  fromSchool?: string;
+  from_school?: string;
+  toSchool?: string;
+  to_school?: string;
+  position?: string;
+  [key: string]: unknown;
+}
+
+function normalize(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+/** Hook: fetch live standings, savant, NIL, portal data for a conference */
+function useConferenceLiveData(confName: string) {
+  const [standings, setStandings] = useState<StandingsTeam[]>([]);
+  const [savantPlayers, setSavantPlayers] = useState<SavantEntry[]>([]);
+  const [nilPlayers, setNilPlayers] = useState<NILEntry[]>([]);
+  const [portalEntries, setPortalEntries] = useState<PortalEntry[]>([]);
+  const [lastUpdated, setLastUpdated] = useState('');
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const [standingsRes, savantRes, nilRes, portalRes] = await Promise.all([
+          fetch('/api/college-baseball/standings').catch(() => null),
+          fetch('/api/savant/leaderboard').catch(() => null),
+          fetch('/api/nil/leaderboard?limit=500').catch(() => null),
+          fetch('/api/college-baseball/transfer-portal').catch(() => null),
+        ]);
+
+        const n = normalize(confName);
+
+        if (standingsRes?.ok) {
+          const data = await standingsRes.json();
+          const all = data.standings || data.data || data.teams || [];
+          setStandings((Array.isArray(all) ? all : []).filter((t: StandingsTeam) => normalize(t.conference || '') === n));
+          if (data.meta?.fetched_at) setLastUpdated(data.meta.fetched_at);
+        }
+        if (savantRes?.ok) {
+          const data = await savantRes.json();
+          const all = data.data || data.leaderboard || [];
+          setSavantPlayers((Array.isArray(all) ? all : []).filter((s: SavantEntry) => normalize(s.conference || '') === n));
+        }
+        if (nilRes?.ok) {
+          const data = await nilRes.json();
+          const all = data.data || [];
+          setNilPlayers((Array.isArray(all) ? all : []).filter((e: NILEntry) => normalize(e.conference || '') === n));
+        }
+        if (portalRes?.ok) {
+          const data = await portalRes.json();
+          const entries = data.entries || data.data || [];
+          setPortalEntries(
+            (Array.isArray(entries) ? entries : []).filter((e: PortalEntry) => {
+              const from = normalize(e.fromSchool || e.from_school || '');
+              const to = normalize(e.toSchool || e.to_school || '');
+              // Show portal entries where the player left or arrived at a conference team
+              return standings.some((t) => normalize(t.team_name) === from || normalize(t.team_name) === to);
+            }),
+          );
+        }
+      } catch {
+        /* silent */
+      } finally {
+        setLoaded(true);
+      }
+    }
+    load();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [confName]);
+
+  return { standings, savantPlayers, nilPlayers, portalEntries, lastUpdated, loaded };
+}
 
 // Conference data with full team rosters
 const conferenceData: Record<
@@ -1686,6 +1805,38 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
   const raw = conferenceData[conferenceId];
   const conference = raw ? { ...raw, teams: syncRanks(raw.teams) } : null;
 
+  /* Resolve conference display name for live data lookup */
+  const confDisplayName = conference?.name
+    || conferenceSlugMap[conferenceId]?.name
+    || conferenceId.toUpperCase();
+
+  const { standings: liveStandings, savantPlayers, nilPlayers: _nilPlayers, portalEntries, lastUpdated, loaded } = useConferenceLiveData(confDisplayName);
+
+  /* Power rankings: sort conference teams by wins */
+  const powerRankings = useMemo(() => {
+    return [...liveStandings]
+      .sort((a, b) => (b.overall_wins || 0) - (a.overall_wins || 0))
+      .slice(0, 10);
+  }, [liveStandings]);
+
+  /* Top performers: highest wRC+ players in the conference */
+  const topPerformers = useMemo(() => {
+    return [...savantPlayers]
+      .filter((p) => p.wrc_plus !== undefined)
+      .sort((a, b) => (b.wrc_plus || 0) - (a.wrc_plus || 0))
+      .slice(0, 5);
+  }, [savantPlayers]);
+
+  /* Conference averages for baseline context */
+  const confAvgs = useMemo(() => {
+    const wobaVals = savantPlayers.map((p) => p.woba).filter((v): v is number => v !== undefined);
+    const wrcVals = savantPlayers.map((p) => p.wrc_plus).filter((v): v is number => v !== undefined);
+    return {
+      woba: wobaVals.length ? wobaVals.reduce((a, b) => a + b, 0) / wobaVals.length : undefined,
+      wrc_plus: wrcVals.length ? wrcVals.reduce((a, b) => a + b, 0) / wrcVals.length : undefined,
+    };
+  }, [savantPlayers]);
+
   // Auto-generated hub for conferences without editorial content
   if (!conference) {
     const auto = getAutoConferenceTeams(conferenceId);
@@ -1906,6 +2057,112 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
               </div>
             </ScrollReveal>
 
+            {/* ── Live Data Sections ──────────────────────────────────── */}
+
+            {/* Power Rankings (live standings) */}
+            {loaded && powerRankings.length > 0 && (
+              <ScrollReveal direction="up" delay={130}>
+                <Card padding="lg" className="mb-8">
+                  <div className="flex items-center gap-2 mb-4">
+                    <BarChart3 className="w-5 h-5 text-burnt-orange" />
+                    <h2 className="font-display text-xl font-bold text-bsi-bone">Power Rankings</h2>
+                  </div>
+                  <div className="space-y-2">
+                    {powerRankings.map((team, idx) => {
+                      const totalGames = (team.overall_wins || 0) + (team.overall_losses || 0);
+                      const winPct = totalGames > 0 ? ((team.overall_wins || 0) / totalGames).toFixed(3) : '—';
+                      return (
+                        <div key={team.team_name} className="flex items-center justify-between py-2 border-b border-border-vintage/20 last:border-0">
+                          <div className="flex items-center gap-3">
+                            <span className="text-burnt-orange font-display font-bold text-sm w-6 text-right">{idx + 1}</span>
+                            <span className="text-bsi-bone font-medium">{team.team_name}</span>
+                          </div>
+                          <div className="flex items-center gap-4 text-sm">
+                            <span className="text-bsi-bone font-mono">{team.overall_wins || 0}-{team.overall_losses || 0}</span>
+                            <span className="text-bsi-dust font-mono">{winPct}</span>
+                            {team.era !== undefined && <span className="text-bsi-dust text-xs">{team.era.toFixed(2)} ERA</span>}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </Card>
+              </ScrollReveal>
+            )}
+
+            {/* Top Performers (savant leaderboard) */}
+            {loaded && topPerformers.length > 0 && (
+              <ScrollReveal direction="up" delay={140}>
+                <Card padding="lg" className="mb-8">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Star className="w-5 h-5 text-burnt-orange" />
+                    <h2 className="font-display text-xl font-bold text-bsi-bone">Top Performers</h2>
+                  </div>
+                  <div className="space-y-3">
+                    {topPerformers.map((player) => (
+                      <div key={player.player_name} className="flex items-center justify-between py-2 border-b border-border-vintage/20 last:border-0">
+                        <div>
+                          <span className="text-bsi-bone font-medium">{player.player_name}</span>
+                          <span className="text-bsi-dust text-xs ml-2">{player.team_name}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          {player.wrc_plus !== undefined && (
+                            <ConferenceBaseline
+                              value={player.wrc_plus}
+                              label="wRC+"
+                              confAvg={confAvgs.wrc_plus}
+                              confName={confDisplayName}
+                            />
+                          )}
+                          {player.woba !== undefined && (
+                            <ConferenceBaseline
+                              value={player.woba}
+                              label="wOBA"
+                              confAvg={confAvgs.woba}
+                              confName={confDisplayName}
+                            />
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              </ScrollReveal>
+            )}
+
+            {/* Portal Activity */}
+            {loaded && portalEntries.length > 0 && (
+              <ScrollReveal direction="up" delay={145}>
+                <Card padding="lg" className="mb-8">
+                  <div className="flex items-center gap-2 mb-4">
+                    <ArrowRightLeft className="w-5 h-5 text-burnt-orange" />
+                    <h2 className="font-display text-xl font-bold text-bsi-bone">Portal Activity</h2>
+                    <Badge variant="primary">{portalEntries.length}</Badge>
+                  </div>
+                  <div className="space-y-2">
+                    {portalEntries.slice(0, 8).map((entry, idx) => (
+                      <div key={idx} className="flex items-center justify-between py-2 border-b border-border-vintage/20 last:border-0 text-sm">
+                        <div>
+                          <span className="text-bsi-bone">{entry.playerName || entry.player_name}</span>
+                          {entry.position && <span className="text-bsi-dust text-xs ml-2">{entry.position}</span>}
+                        </div>
+                        <div className="text-bsi-dust text-xs">
+                          {entry.fromSchool || entry.from_school} → {entry.toSchool || entry.to_school || 'Undecided'}
+                        </div>
+                      </div>
+                    ))}
+                    {portalEntries.length > 8 && (
+                      <Link href="/college-baseball/transfer-portal" className="text-burnt-orange text-xs hover:underline">
+                        View all {portalEntries.length} portal entries →
+                      </Link>
+                    )}
+                  </div>
+                </Card>
+              </ScrollReveal>
+            )}
+
+            {/* ── End Live Data Sections ─────────────────────────────── */}
+
             {/* Preseason Storylines */}
             <ScrollReveal direction="up" delay={150}>
               <Card padding="lg" className="mb-10">
@@ -2041,12 +2298,14 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
             )}
 
             {/* Data Attribution */}
-            <div className="mt-10 text-center text-xs text-text-tertiary">
-              <p>Rankings data sourced from D1Baseball preseason poll (2026).</p>
-              <p className="mt-1" suppressHydrationWarning>
-                Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}{' '}
-                CT
-              </p>
+            <div className="mt-10 flex justify-center">
+              {lastUpdated ? (
+                <DataAttribution lastUpdated={lastUpdated} source="BSI Analytics" />
+              ) : (
+                <p className="text-xs text-bsi-dust" suppressHydrationWarning>
+                  Rankings: D1Baseball preseason poll. Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CT
+                </p>
+              )}
             </div>
           </Container>
         </Section>
