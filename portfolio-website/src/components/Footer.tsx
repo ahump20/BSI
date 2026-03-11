@@ -1,8 +1,8 @@
 const quickLinks = [
-  { label: 'Origin', href: '#origin' },
-  { label: 'Experience', href: '#experience' },
-  { label: 'Education', href: '#education' },
   { label: 'BSI', href: '#bsi' },
+  { label: 'Work', href: '#projects' },
+  { label: 'Proof', href: '#proof' },
+  { label: 'Origin', href: '#origin' },
   { label: 'Covenant', href: '#covenant' },
   { label: 'Contact', href: '#contact' },
 ];
@@ -123,6 +123,9 @@ export default function Footer() {
         <div className="pt-8 border-t border-bone/5 text-center">
           <p className="text-sm font-mono text-warm-gray/80">
             &copy; {new Date().getFullYear()} Austin Humphrey. All rights reserved.
+          </p>
+          <p className="text-xs font-mono text-warm-gray/40 mt-3 italic">
+            Born to Blaze the Path Beaten Less
           </p>
         </div>
       </div>

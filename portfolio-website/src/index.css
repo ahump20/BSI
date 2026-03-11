@@ -57,6 +57,10 @@
     --gradient-mesh-1: rgba(191, 87, 0, 0.04);
     --gradient-mesh-2: rgba(139, 69, 19, 0.03);
     --gradient-mesh-3: rgba(255, 107, 53, 0.02);
+    /* Contrast tier surfaces */
+    --surface-deep: #080808;
+    --surface-mid: #0D0D0D;
+    --surface-elevated: #151515;
   }
 
   html {
@@ -130,8 +134,6 @@
 
   .section-padding {
     @apply py-20 px-6 md:py-28 md:px-12 lg:px-16;
-    content-visibility: auto;
-    contain-intrinsic-size: auto 600px;
   }
 
   .container-custom {
@@ -199,6 +201,41 @@
     border-top: 1px solid rgba(245, 240, 235, 0.06);
   }
 
+  /* Section divider — burnt-orange gradient hairline */
+  .section-divider {
+    height: 1px;
+    max-width: 64rem;
+    margin: 0 auto;
+    background: linear-gradient(90deg, transparent 5%, rgba(191, 87, 0, 0.35) 50%, transparent 95%);
+  }
+
+  .section-glow {
+    position: relative;
+    isolation: isolate;
+  }
+  .section-glow::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: min(72rem, calc(100% - 3rem));
+    height: 1px;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, transparent 0%, rgba(191, 87, 0, 0.4) 50%, transparent 100%);
+    opacity: 0.8;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* Editorial lead — large italic Libre Baskerville opener */
+  .editorial-lead {
+    font-family: 'Libre Baskerville', Georgia, serif;
+    font-style: italic;
+    font-size: clamp(1.15rem, 2.5vw, 1.5rem);
+    line-height: 1.6;
+    color: var(--color-text-muted);
+  }
+
   /* Scroll progress bar */
   .scroll-progress {
     position: fixed;
@@ -227,6 +264,18 @@
     background: #F5F0EB;
     padding: 6px 6px 20px 6px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 1px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Section glow — positioned burnt-orange gradient hairline for key boundaries */
+  .section-glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(100%, 64rem);
+    height: 1px;
+    background: linear-gradient(90deg, transparent 5%, rgba(191, 87, 0, 0.35) 50%, transparent 95%);
   }
 
   /* Animated gradient border on hover */
@@ -294,10 +343,4 @@
 @keyframes marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
-}
-
-@keyframes hero-mesh {
-  0% { transform: scale(1) rotate(0deg); }
-  50% { transform: scale(1.05) rotate(0.5deg); }
-  100% { transform: scale(1) rotate(-0.5deg); }
 }

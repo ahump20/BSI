@@ -7,7 +7,7 @@ interface HealthState {
   loading: boolean;
 }
 
-const BSI_HEALTH_URL = 'https://blazesportsintel.com/api/health';
+const BSI_HEALTH_URL = '/api/platform-health';
 const POLL_INTERVAL = 60_000;
 
 // Module-level singleton — shared across all component instances
@@ -18,6 +18,12 @@ let subscriberCount = 0;
 
 function notify() {
   for (const listener of listeners) listener();
+}
+
+function isLocalPreview() {
+  if (typeof window === 'undefined') return false;
+  const { hostname } = window.location;
+  return hostname === 'localhost' || hostname === '127.0.0.1';
 }
 
 async function checkHealth() {
@@ -37,6 +43,15 @@ async function checkHealth() {
 
 function startPolling() {
   if (intervalId !== null) return;
+
+  // Avoid noisy CORS failures during local Vite preview while still rendering
+  // a truthful non-green state for the public platform badge.
+  if (isLocalPreview()) {
+    state = { status: 'degraded', loading: false };
+    notify();
+    return;
+  }
+
   checkHealth();
   intervalId = setInterval(checkHealth, POLL_INTERVAL);
 }

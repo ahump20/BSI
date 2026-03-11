@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useMotionValueEvent, useSpring, AnimatePresence } from 'framer-motion';
-import PlatformStatus from './PlatformStatus';
 
 const navItems = [
-  { id: 'origin', label: 'Origin' },
-  { id: 'experience', label: 'Experience' },
-  { id: 'education', label: 'Education' },
+  { id: 'hero', label: 'Home' },
   { id: 'bsi', label: 'BSI' },
+  { id: 'projects', label: 'Work' },
+  { id: 'proof', label: 'Proof' },
+  { id: 'origin', label: 'Origin' },
   { id: 'covenant', label: 'Covenant' },
   { id: 'contact', label: 'Contact' },
 ];
@@ -24,8 +24,8 @@ export default function Navigation() {
   });
 
   useEffect(() => {
-    const sections = document.querySelectorAll('section[id]');
-    const observer = new IntersectionObserver(
+    const observed = new Set<Element>();
+    const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) setActiveSection(entry.target.id);
@@ -33,8 +33,27 @@ export default function Navigation() {
       },
       { threshold: 0.3, rootMargin: '-80px 0px -60% 0px' }
     );
-    sections.forEach((s) => observer.observe(s));
-    return () => observer.disconnect();
+
+    const attach = () => {
+      document.querySelectorAll('section[id]').forEach((s) => {
+        if (!observed.has(s)) {
+          observed.add(s);
+          io.observe(s);
+        }
+      });
+    };
+
+    // Attach to existing sections
+    attach();
+
+    // Watch for lazy-loaded sections appearing in the DOM
+    const mo = new MutationObserver(attach);
+    mo.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      io.disconnect();
+      mo.disconnect();
+    };
   }, []);
 
   useEffect(() => {
@@ -48,7 +67,6 @@ export default function Navigation() {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setMobileOpen(false);
     };
-    // Focus first menu link when menu opens
     requestAnimationFrame(() => {
       const firstLink = mobileMenuRef.current?.querySelector('a');
       firstLink?.focus();
@@ -78,20 +96,15 @@ export default function Navigation() {
         }`}
       >
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          {/* Logo + Platform Status */}
-          <div className="flex items-center gap-4">
-            <a href="#hero" className="flex items-center gap-3 group">
-              <div className="w-9 h-9 bg-burnt-orange rounded-full flex items-center justify-center font-sans font-bold text-white text-xs group-hover:scale-110 transition-transform duration-300">
-                AH
-              </div>
-              <span className="font-mono text-sm text-bone/70 hidden sm:block group-hover:text-burnt-orange transition-colors duration-300">
-                Austin Humphrey
-              </span>
-            </a>
-            <div className="hidden lg:block">
-              <PlatformStatus />
+          {/* Logo */}
+          <a href="#hero" className="flex items-center gap-3 group">
+            <div className="w-9 h-9 bg-burnt-orange rounded-full flex items-center justify-center font-sans font-bold text-white text-xs group-hover:scale-110 transition-transform duration-300">
+              AH
             </div>
-          </div>
+            <span className="font-mono text-sm text-bone/70 hidden sm:block group-hover:text-burnt-orange transition-colors duration-300">
+              Austin Humphrey
+            </span>
+          </a>
 
           {/* Desktop nav */}
           <ul className="hidden md:flex items-center gap-1">
@@ -110,7 +123,7 @@ export default function Navigation() {
                   {activeSection === item.id && (
                     <motion.div
                       layoutId="nav-indicator"
-                      className="absolute -bottom-1 left-0 right-0 h-px bg-burnt-orange"
+                      className="absolute -bottom-1 left-0 right-0 h-[2px] bg-burnt-orange rounded-full"
                       transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                     />
                   )}

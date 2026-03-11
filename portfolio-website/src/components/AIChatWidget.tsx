@@ -9,21 +9,69 @@ interface Message {
 
 let msgId = 0;
 
-// Fallback keyword responses when API is unavailable
+const SUGGESTED_PROMPTS = [
+  'What is BSI?',
+  'Tell me about the Texas soil',
+  "What's the tech stack?",
+  'How do I reach Austin?',
+];
+
 const FALLBACK_RESPONSES: { keywords: string[]; response: string }[] = [
   {
     keywords: ['bsi', 'blaze', 'sports intel', 'platform'],
-    response: 'Blaze Sports Intel is a production-grade sports analytics platform covering MLB, NFL, NBA, NCAA football, and college baseball. Built on 27 Cloudflare Workers with 7 D1 databases — all maintained by Austin.',
+    response:
+      'Blaze Sports Intel is a production-grade sports analytics platform covering MLB, NFL, NBA, NCAA football, and college baseball. Built on 27 Cloudflare Workers with 7 D1 databases — all maintained by Austin.',
   },
   {
-    keywords: ['contact', 'email', 'hire', 'reach'],
-    response: 'Reach Austin at Austin@BlazeSportsIntel.com, on LinkedIn at linkedin.com/in/ahump20, or on X at @BlazeSportsIntel.',
+    keywords: ['contact', 'email', 'hire', 'reach', 'direct'],
+    response:
+      'Reach Austin at Austin@BlazeSportsIntel.com, on LinkedIn at linkedin.com/in/ahump20, or on X at @BlazeSportsIntel.',
   },
   {
     keywords: ['texas', 'soil', 'origin', 'born'],
-    response: 'Austin was born August 17, 1995 in Memphis. His parents brought Texas soil from West Columbia and placed it beneath his mother before he was born. The El Campo Leader-News ran the headline: "Tennessee Birth Will Be on Texas Soil."',
+    response:
+      'Austin was born August 17, 1995 in Memphis. His parents brought Texas soil from West Columbia and placed it beneath his mother before he was born. The El Campo Leader-News ran the headline: "Tennessee Birth Will Be on Texas Soil."',
+  },
+  {
+    keywords: ['education', 'school', 'ut', 'university', 'degree', 'full sail', 'mccombs'],
+    response:
+      'B.A. International Relations & Global Studies from UT Austin (minors in Economics and European Studies). M.S. Entertainment Business — Sports Management from Full Sail University (GPA 3.56). Currently pursuing an AI & Machine Learning Postgraduate Certificate from UT Austin McCombs.',
+  },
+  {
+    keywords: ['experience', 'work', 'job', 'career', 'spectrum', 'northwestern'],
+    response:
+      'Founder & Builder at BSI (2023-present). Before that: Advertising Account Executive at Spectrum Reach covering Austin/San Antonio DMA (2022-2025), Financial Representative at Northwestern Mutual earning the "Power of 10" Award for top 10% nationally (2020-2022).',
+  },
+  {
+    keywords: ['philosophy', 'covenant', 'believe', 'values'],
+    response:
+      '"For me, personally, I believe Texas is how you choose to treat the best and worst of us." It\'s a covenant with oneself — to never stop dreaming beyond the horizon, regardless of race, ethnicity, religion, or birth soil.',
+  },
+  {
+    keywords: ['project', 'blazecraft', 'arcade', 'sandlot', 'game'],
+    response:
+      'Beyond BSI: BlazeCraft (blazecraft.app) is a Warcraft 3-style system health dashboard. The BSI Arcade features Sandlot Sluggers, a browser-based baseball game with real rosters via the BSI API.',
+  },
+  {
+    keywords: ['stack', 'tech', 'cloudflare', 'worker', 'infrastructure'],
+    response:
+      'Cloudflare everything — 27 Workers, 7 D1 databases, 15 KV namespaces, 18 R2 buckets. Frontend: Next.js 16 (static export), React 19, TypeScript, Tailwind. All maintained solo.',
+  },
+  {
+    keywords: ['bitch', 'idiot', 'stupid', 'trash', 'hood', 'dumb'],
+    response:
+      "I can do better than drive-by nonsense. Ask about Austin, BSI, the build, the Texas soil story, or how to reach him and I'll give you something useful.",
   },
 ];
+
+function sanitizeAssistantText(text: string): string {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/__(.*?)__/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
 
 function getFallbackResponse(input: string): string {
   const lower = input.toLowerCase();
@@ -32,13 +80,23 @@ function getFallbackResponse(input: string): string {
       return entry.response;
     }
   }
-  return 'I can answer questions about Austin, BSI, his projects, editorial work, tech stack, education, or how to get in touch. What would you like to know?';
+  return 'I can help with Austin’s background, Blaze Sports Intel, the Texas soil story, the tech stack, major projects, philosophy, or the fastest way to reach him directly.';
+}
+
+function shouldUseFallbackConcierge() {
+  if (typeof window === 'undefined') return false;
+  const { hostname } = window.location;
+  return hostname === 'localhost' || hostname === '127.0.0.1';
 }
 
 export default function AIChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { id: ++msgId, role: 'assistant', text: 'Hey — ask me anything about Austin or Blaze Sports Intel.' },
+    {
+      id: ++msgId,
+      role: 'assistant',
+      text: 'Austin Humphrey — builder, BSI founder, Texas-born. Ask me anything.',
+    },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -46,11 +104,12 @@ export default function AIChatWidget() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
+  const hasUserMessage = messages.some((m) => m.role === 'user');
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading, streamingText]);
 
-  // Focus input when panel opens + Escape to close
   useEffect(() => {
     if (!open) return;
     requestAnimationFrame(() => {
@@ -63,104 +122,150 @@ export default function AIChatWidget() {
     return () => window.removeEventListener('keydown', handleKey);
   }, [open]);
 
-  const send = useCallback(async () => {
-    const trimmed = input.trim();
-    if (!trimmed || loading) return;
+  const send = useCallback(
+    async (overrideText?: string) => {
+      const trimmed = (overrideText ?? input).trim();
+      if (!trimmed || loading) return;
 
-    const userMsg: Message = { id: ++msgId, role: 'user', text: trimmed };
-    setMessages((prev) => [...prev, userMsg]);
-    setInput('');
-    setLoading(true);
-    setStreamingText('');
+      const userMsg: Message = { id: ++msgId, role: 'user', text: trimmed };
+      setMessages((prev) => [...prev, userMsg]);
+      setInput('');
+      setLoading(true);
+      setStreamingText('');
 
-    try {
-      // Send last 6 messages for context
-      const history = [...messages, userMsg].slice(-6).map((m) => ({
-        role: m.role,
-        content: m.text,
-      }));
+      try {
+        if (shouldUseFallbackConcierge()) {
+          throw new Error('Preview fallback');
+        }
 
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: history }),
-      });
+        const history = [...messages, userMsg].slice(-6).map((m) => ({
+          role: m.role,
+          content: m.text,
+        }));
 
-      if (!res.ok) throw new Error('API error');
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages: history }),
+        });
 
-      const contentType = res.headers.get('Content-Type') || '';
+        if (!res.ok) throw new Error('API error');
 
-      if (contentType.includes('text/event-stream') && res.body) {
-        // SSE streaming response
-        const reader = res.body.getReader();
-        const decoder = new TextDecoder();
-        let accumulated = '';
+        const contentType = res.headers.get('Content-Type') || '';
 
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
+        if (contentType.includes('text/event-stream') && res.body) {
+          const reader = res.body.getReader();
+          const decoder = new TextDecoder();
+          let accumulated = '';
+          let completed = false;
 
-          const chunk = decoder.decode(value, { stream: true });
-          const lines = chunk.split('\n');
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
 
-          for (const line of lines) {
-            if (!line.startsWith('data: ')) continue;
-            try {
-              const parsed = JSON.parse(line.slice(6)) as { text?: string; done?: boolean };
-              if (parsed.text) {
-                accumulated += parsed.text;
-                setStreamingText(accumulated);
+            const chunk = decoder.decode(value, { stream: true });
+            const lines = chunk.split('\n');
+
+            for (const line of lines) {
+              if (!line.startsWith('data: ')) continue;
+              try {
+                const parsed = JSON.parse(line.slice(6)) as {
+                  text?: string;
+                  done?: boolean;
+                };
+                if (parsed.text) {
+                  accumulated += parsed.text;
+                  setStreamingText(accumulated);
+                }
+                if (parsed.done && !completed) {
+                  completed = true;
+                  const finalText = sanitizeAssistantText(
+                    accumulated || "Sorry, I couldn't generate a response."
+                  );
+                  setMessages((prev) => [
+                    ...prev,
+                    { id: ++msgId, role: 'assistant', text: finalText },
+                  ]);
+                  setStreamingText('');
+                }
+              } catch {
+                // Skip malformed SSE
               }
-              if (parsed.done) {
-                // Finalize — move streamed text into messages
-                const finalText = accumulated || 'Sorry, I couldn\'t generate a response.';
-                setMessages((prev) => [...prev, { id: ++msgId, role: 'assistant', text: finalText }]);
-                setStreamingText('');
-              }
-            } catch {
-              // Skip malformed SSE
             }
           }
-        }
 
-        // Safety net — if no done event, finalize anyway
-        if (accumulated && streamingText) {
-          setMessages((prev) => [...prev, { id: ++msgId, role: 'assistant', text: accumulated }]);
-          setStreamingText('');
+          if (!completed && accumulated) {
+            setMessages((prev) => [
+              ...prev,
+              {
+                id: ++msgId,
+                role: 'assistant',
+                text: sanitizeAssistantText(accumulated),
+              },
+            ]);
+            setStreamingText('');
+          }
+        } else {
+          const data = (await res.json()) as { text: string };
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: ++msgId,
+              role: 'assistant',
+              text: sanitizeAssistantText(data.text),
+            },
+          ]);
         }
-      } else {
-        // Batch JSON fallback (backwards compatibility)
-        const data = await res.json() as { text: string };
-        setMessages((prev) => [...prev, { id: ++msgId, role: 'assistant', text: data.text }]);
+      } catch {
+        const fallback = getFallbackResponse(trimmed);
+        setMessages((prev) => [
+          ...prev,
+          { id: ++msgId, role: 'assistant', text: fallback },
+        ]);
+      } finally {
+        setLoading(false);
+        setStreamingText('');
       }
-    } catch {
-      // Fall back to local keyword matching
-      const fallback = getFallbackResponse(trimmed);
-      setMessages((prev) => [...prev, { id: ++msgId, role: 'assistant', text: fallback }]);
-    } finally {
-      setLoading(false);
-      setStreamingText('');
-    }
-  }, [input, loading, messages, streamingText]);
+    },
+    [input, loading, messages]
+  );
 
   return (
     <>
       {/* FAB */}
       <button
-        onClick={() => { if (!open) window.posthog?.capture('chat_opened'); setOpen(!open); }}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-burnt-orange rounded-full flex items-center justify-center shadow-lg hover:brightness-110 transition-all duration-300 cursor-pointer group"
-        aria-label={open ? 'Close chat' : 'Open chat'}
+        onClick={() => {
+          if (!open) window.posthog?.capture('chat_opened');
+          setOpen(!open);
+        }}
+        className={`fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-full border px-3 py-2 backdrop-blur-md transition-all duration-300 cursor-pointer group ${
+          open
+            ? 'border-burnt-orange/40 bg-burnt-orange text-white shadow-lg'
+            : 'border-bone/10 bg-charcoal/80 text-bone/85 hover:border-burnt-orange/30 hover:text-burnt-orange'
+        }`}
+        aria-label={open ? 'Close concierge' : 'Open concierge'}
       >
-        <span className="text-white text-xl group-hover:scale-110 transition-transform duration-200">
-          {open ? (
-            <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
-              <path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" />
-            </svg>
-          ) : (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
-              <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          )}
+        {open ? (
+          <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+            <path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" />
+          </svg>
+        ) : (
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            className="h-4 w-4"
+          >
+            <path
+              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        )}
+        <span className="font-mono text-[0.62rem] uppercase tracking-[0.22em]">
+          {open ? 'Close' : '// Austin'}
         </span>
       </button>
 
@@ -171,25 +276,32 @@ export default function AIChatWidget() {
             ref={panelRef}
             role="dialog"
             aria-modal="true"
-            aria-label="Chat with Austin's AI assistant"
+            aria-label="Austin concierge"
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-24 right-6 z-50 w-80 max-h-[28rem] bg-charcoal border border-bone/10 rounded-lg shadow-2xl flex flex-col overflow-hidden"
+            className="fixed z-50 flex flex-col overflow-hidden border border-bone/10 bg-charcoal shadow-2xl
+              inset-x-0 bottom-0 w-full rounded-t-lg max-h-[70vh]
+              sm:inset-auto sm:bottom-20 sm:right-5 sm:w-[min(24rem,calc(100vw-2.5rem))] sm:max-h-[28rem] sm:rounded-lg"
           >
             {/* Header */}
-            <div className="px-4 py-3 border-b border-bone/5 bg-midnight flex items-center justify-between">
-              <p className="font-sans text-xs uppercase tracking-[0.2em] text-burnt-orange font-medium">
-                Ask About Austin
+            <div className="border-b border-bone/5 bg-midnight px-4 py-4">
+              <p className="font-mono text-xs uppercase tracking-[0.2em] text-burnt-orange font-medium">
+                // Concierge
               </p>
-              <span className="font-mono text-[0.5rem] text-warm-gray/70 uppercase tracking-wider">
-                AI-Powered
-              </span>
+              <p className="mt-2 max-w-xs text-sm leading-6 text-bone/68">
+                Ask about Austin, BSI, the build, the origin story, or how to
+                reach him directly.
+              </p>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0" aria-live="polite" aria-atomic="false">
+            <div
+              className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0"
+              aria-live="polite"
+              aria-atomic="false"
+            >
               {messages.map((msg) => (
                 <div
                   key={msg.id}
@@ -200,29 +312,60 @@ export default function AIChatWidget() {
                   }`}
                 >
                   {msg.role === 'assistant' && (
-                    <span className="text-burnt-orange font-mono text-xs mr-1">{'>'}</span>
+                    <span className="text-burnt-orange font-mono text-xs mr-1">
+                      {'>'}
+                    </span>
                   )}
                   {msg.text}
                 </div>
               ))}
 
-              {/* Streaming text — shows while response is being generated */}
+              {/* Suggested prompt chips — visible only before first user message */}
+              {!hasUserMessage && !loading && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {SUGGESTED_PROMPTS.map((prompt) => (
+                    <button
+                      key={prompt}
+                      type="button"
+                      onClick={() => send(prompt)}
+                      className="font-mono text-[0.6rem] rounded-full border border-bone/10 px-3 py-1.5 text-bone/60 hover:border-burnt-orange/30 hover:text-burnt-orange transition-colors duration-200 cursor-pointer"
+                    >
+                      {prompt}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Streaming text */}
               {streamingText && (
                 <div className="text-sm leading-relaxed text-warm-gray mr-8">
-                  <span className="text-burnt-orange font-mono text-xs mr-1">{'>'}</span>
+                  <span className="text-burnt-orange font-mono text-xs mr-1">
+                    {'>'}
+                  </span>
                   {streamingText}
                   <span className="inline-block w-1 h-3.5 bg-burnt-orange/60 ml-0.5 animate-pulse" />
                 </div>
               )}
 
-              {/* Typing indicator — only shows before streaming starts */}
+              {/* Typing indicator */}
               {loading && !streamingText && (
                 <div className="text-sm text-warm-gray mr-8 flex items-center gap-1">
-                  <span className="text-burnt-orange font-mono text-xs mr-1">{'>'}</span>
+                  <span className="text-burnt-orange font-mono text-xs mr-1">
+                    {'>'}
+                  </span>
                   <span className="inline-flex gap-1">
-                    <span className="w-1.5 h-1.5 bg-burnt-orange/60 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                    <span className="w-1.5 h-1.5 bg-burnt-orange/60 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                    <span className="w-1.5 h-1.5 bg-burnt-orange/60 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                    <span
+                      className="w-1.5 h-1.5 bg-burnt-orange/60 rounded-full animate-bounce"
+                      style={{ animationDelay: '0ms' }}
+                    />
+                    <span
+                      className="w-1.5 h-1.5 bg-burnt-orange/60 rounded-full animate-bounce"
+                      style={{ animationDelay: '150ms' }}
+                    />
+                    <span
+                      className="w-1.5 h-1.5 bg-burnt-orange/60 rounded-full animate-bounce"
+                      style={{ animationDelay: '300ms' }}
+                    />
                   </span>
                 </div>
               )}
@@ -237,14 +380,20 @@ export default function AIChatWidget() {
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && send()}
-                  placeholder="Ask a question..."
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      void send();
+                    }
+                  }}
+                  placeholder="Ask about the work, the origin, or the contact path..."
                   aria-label="Ask a question about Austin"
                   disabled={loading}
                   className="flex-1 bg-midnight border border-bone/10 rounded px-3 py-2 text-sm text-bone placeholder-warm-gray/70 focus:outline-none focus:border-burnt-orange/50 disabled:opacity-50"
                 />
                 <button
-                  onClick={send}
+                  type="button"
+                  onClick={() => void send()}
                   disabled={loading}
                   className="bg-burnt-orange text-white px-3 py-2 rounded text-xs font-sans uppercase tracking-wider hover:brightness-110 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >

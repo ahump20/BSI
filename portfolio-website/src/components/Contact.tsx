@@ -127,96 +127,150 @@ export default function Contact() {
       id="contact"
       aria-labelledby="contact-heading"
       className="section-padding section-border"
+      style={{
+        background:
+          'linear-gradient(180deg, rgba(8,8,8,1) 0%, rgba(13,13,13,1) 38%, rgba(21,21,21,1) 100%)',
+      }}
     >
-      <div className="container-custom max-w-3xl mx-auto text-center">
+      <div className="container-custom">
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: '-80px' }}
           variants={staggerContainer}
         >
-          <motion.div variants={staggerItem}>
-            <p className="section-label">// Connect</p>
-            <h2 id="contact-heading" className="section-title">Get in Touch</h2>
-            <p className="text-warm-gray text-lg mb-12 max-w-2xl mx-auto">
-              Whether you're interested in sports analytics, building platforms that serve
-              underserved markets, or just want to talk about the philosophy of showing up.
-            </p>
-          </motion.div>
-
-          <motion.div variants={staggerItem} className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-12">
-            {links.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                target={link.href.startsWith('mailto') ? undefined : '_blank'}
-                rel={link.href.startsWith('mailto') ? undefined : 'noopener noreferrer'}
-                onClick={() => window.posthog?.capture('contact_link_clicked', { channel: link.label.toLowerCase() })}
-                className="card p-5 text-center group flex flex-col items-center gap-2"
-              >
-                <div className="text-warm-gray group-hover:text-burnt-orange transition-colors duration-300" aria-hidden="true">
-                  {link.icon}
-                </div>
-                <p className="text-xs font-mono text-warm-gray">{link.label}</p>
-                <p className="text-sm font-semibold text-bone group-hover:text-burnt-orange transition-colors duration-300 break-words">
-                  {link.value}
+          <div className="grid gap-12 xl:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] xl:items-start">
+            <motion.div variants={staggerItem} className="space-y-8">
+              <div>
+                <p className="section-label">// Connect</p>
+                <h2 id="contact-heading" className="section-title">Direct Line</h2>
+                <p className="editorial-lead max-w-xl">
+                  This goes straight to Austin. For platform work, sports intelligence, or
+                  partnership conversations — no gatekeepers, no forms-that-go-nowhere.
                 </p>
-              </a>
-            ))}
-          </motion.div>
-
-          {/* Contact form */}
-          <motion.form
-            variants={staggerItem}
-            onSubmit={handleSubmit}
-            className="card p-8 text-left max-w-lg mx-auto mb-12"
-          >
-            <h3 className="font-sans text-sm uppercase tracking-[0.2em] text-burnt-orange font-medium mb-6">
-              Send a Message
-            </h3>
-
-            {/* Honeypot */}
-            <input
-              type="text"
-              name="website"
-              value={website}
-              onChange={(e) => setWebsite(e.target.value)}
-              tabIndex={-1}
-              autoComplete="off"
-              aria-hidden="true"
-              className="absolute opacity-0 h-0 w-0 overflow-hidden pointer-events-none"
-            />
-
-            <div className="space-y-6">
-              <div>
-                <label htmlFor="contact-name" className="text-xs font-mono text-warm-gray block mb-2">
-                  Name
-                </label>
-                <input
-                  id="contact-name"
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-transparent border-0 border-b border-bone/15 px-0 py-2 text-sm text-bone placeholder-warm-gray/70 focus:outline-none focus:border-burnt-orange transition-colors duration-300"
-                  placeholder="Your name"
-                />
               </div>
-              <div>
-                <label htmlFor="contact-email" className="text-xs font-mono text-warm-gray block mb-2">
-                  Email
-                </label>
-                <input
-                  id="contact-email"
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-transparent border-0 border-b border-bone/15 px-0 py-2 text-sm text-bone placeholder-warm-gray/70 focus:outline-none focus:border-burnt-orange transition-colors duration-300"
-                  placeholder="your@email.com"
+
+              {/* Direct Line card — prominent, above link grid */}
+              <div className="relative rounded-sm border border-bone/10 bg-midnight/70 px-6 py-6 overflow-hidden">
+                <div
+                  className="pointer-events-none absolute inset-x-0 top-0 h-px"
+                  style={{
+                    background: 'linear-gradient(90deg, transparent 8%, rgba(191,87,0,0.45) 50%, transparent 92%)',
+                  }}
                 />
+                <p className="section-label mb-3">Direct Line</p>
+                <p className="text-base leading-7 text-bone/75">
+                  Based in San Antonio, Texas. Email is the fastest path for serious inquiries.
+                  If you want context first, LinkedIn and BSI are the better starting points.
+                </p>
+                <div className="mt-6 flex flex-wrap gap-4">
+                  <a
+                    href="/Austin_Humphrey_Resume.pdf"
+                    download
+                    onClick={() => window.posthog?.capture('cta_clicked', { cta: 'resume' })}
+                    className="btn-primary"
+                  >
+                    Download Resume
+                  </a>
+                  <a href="mailto:Austin@BlazeSportsIntel.com" className="btn-outline">
+                    Email Austin
+                  </a>
+                </div>
               </div>
-              <div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                {links.map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    target={link.href.startsWith('mailto') ? undefined : '_blank'}
+                    rel={link.href.startsWith('mailto') ? undefined : 'noopener noreferrer'}
+                    onClick={() =>
+                      window.posthog?.capture('contact_link_clicked', {
+                        channel: link.label.toLowerCase(),
+                      })
+                    }
+                    className="group rounded-sm border border-bone/10 bg-charcoal/35 px-5 py-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-burnt-orange/40 hover:bg-charcoal/60"
+                  >
+                    <div className="mb-4 flex items-center justify-between">
+                      <div className="text-warm-gray group-hover:text-burnt-orange transition-colors duration-300" aria-hidden="true">
+                        {link.icon}
+                      </div>
+                      <span className="font-mono text-[0.6rem] uppercase tracking-[0.22em] text-warm-gray/60">
+                        {link.label}
+                      </span>
+                    </div>
+                    <p className="text-sm font-semibold leading-6 text-bone transition-colors duration-300 group-hover:text-burnt-orange break-words">
+                      {link.value}
+                    </p>
+                  </a>
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.form
+              variants={staggerItem}
+              onSubmit={handleSubmit}
+              className="card relative overflow-hidden p-8 text-left md:p-10"
+            >
+              <div
+                className="pointer-events-none absolute inset-x-0 top-0 h-px"
+                style={{
+                  background:
+                    'linear-gradient(90deg, transparent 8%, rgba(191,87,0,0.45) 50%, transparent 92%)',
+                }}
+              />
+              <h3 className="font-sans text-sm uppercase tracking-[0.2em] text-burnt-orange font-medium mb-3">
+                Send a Message
+              </h3>
+              <p className="mb-8 max-w-lg text-sm leading-7 text-bone/70">
+                Introduce the project, opportunity, or idea. Keep it direct. Austin reads these
+                himself.
+              </p>
+
+              <input
+                type="text"
+                name="website"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                className="absolute opacity-0 h-0 w-0 overflow-hidden pointer-events-none"
+              />
+
+              <div className="grid gap-6 md:grid-cols-2">
+                <div>
+                  <label htmlFor="contact-name" className="text-xs font-mono text-warm-gray block mb-2">
+                    Name
+                  </label>
+                  <input
+                    id="contact-name"
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full bg-transparent border-0 border-b border-bone/15 px-0 py-2 text-sm text-bone placeholder-warm-gray/70 focus:outline-none focus:border-burnt-orange transition-colors duration-300"
+                    placeholder="Your name"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="contact-email" className="text-xs font-mono text-warm-gray block mb-2">
+                    Email
+                  </label>
+                  <input
+                    id="contact-email"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-transparent border-0 border-b border-bone/15 px-0 py-2 text-sm text-bone placeholder-warm-gray/70 focus:outline-none focus:border-burnt-orange transition-colors duration-300"
+                    placeholder="your@email.com"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-6">
                 <label htmlFor="contact-message" className="text-xs font-mono text-warm-gray block mb-2">
                   Message
                 </label>
@@ -230,45 +284,31 @@ export default function Contact() {
                   placeholder="What's on your mind?"
                 />
               </div>
-            </div>
 
-            {TURNSTILE_SITE_KEY && (
-              <div ref={turnstileRef} className="mt-4 flex justify-center" />
-            )}
+              {TURNSTILE_SITE_KEY && (
+                <div ref={turnstileRef} className="mt-6 flex justify-center" />
+              )}
 
-            <button
-              type="submit"
-              disabled={formState === 'sending'}
-              className="btn-primary mt-6 w-full disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {formState === 'sending' ? 'Sending...' : formState === 'sent' ? 'Sent!' : 'Send Message'}
-            </button>
+              <button
+                type="submit"
+                disabled={formState === 'sending'}
+                className="btn-primary mt-8 w-full disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {formState === 'sending' ? 'Sending...' : formState === 'sent' ? 'Sent!' : 'Send Message'}
+              </button>
 
-            {formState === 'sent' && (
-              <p className="text-green-400 text-xs font-mono mt-3 text-center">
-                Message received. Austin will get back to you.
-              </p>
-            )}
-            {formState === 'error' && (
-              <p className="text-orange-400 text-xs font-mono mt-3 text-center">
-                Something went wrong. Try emailing Austin@BlazeSportsIntel.com directly.
-              </p>
-            )}
-          </motion.form>
-
-          <motion.div variants={staggerItem}>
-            <a
-              href="/Austin_Humphrey_Resume.pdf"
-              download
-              onClick={() => window.posthog?.capture('cta_clicked', { cta: 'resume' })}
-              className="btn-primary"
-            >
-              Download Resume
-            </a>
-            <p className="text-sm font-mono text-warm-gray mt-8">
-              Based in San Antonio, <span className="text-burnt-orange">Texas</span>
-            </p>
-          </motion.div>
+              {formState === 'sent' && (
+                <p className="text-green-400 text-xs font-mono mt-3 text-center">
+                  Message received. Austin will get back to you.
+                </p>
+              )}
+              {formState === 'error' && (
+                <p className="text-orange-400 text-xs font-mono mt-3 text-center">
+                  Something went wrong. Try emailing Austin@BlazeSportsIntel.com directly.
+                </p>
+              )}
+            </motion.form>
+          </div>
         </motion.div>
       </div>
     </section>

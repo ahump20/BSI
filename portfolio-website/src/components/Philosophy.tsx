@@ -31,7 +31,7 @@ export default function Philosophy() {
           </motion.div>
 
           <motion.blockquote variants={staggerItem} className="mb-12">
-            <p className="font-display italic text-bone/90 text-3xl md:text-5xl leading-relaxed mb-6 text-gradient" style={{ backgroundSize: '200% 200%' }}>
+            <p className="font-display italic text-bone/90 text-3xl md:text-5xl leading-relaxed mb-6">
               "For me, personally, I believe Texas is how you choose to treat
               the best and worst of us."
             </p>
@@ -69,6 +69,19 @@ export default function Philosophy() {
               <br />
               <span className="text-bone mt-1 block">It's how you show up.</span>
             </p>
+          </motion.div>
+
+          {/* Transition bridge — wider diamond accent signaling the close */}
+          <motion.div
+            aria-hidden="true"
+            variants={staggerItem}
+            className="flex items-center justify-center gap-3 mt-16 opacity-30"
+          >
+            <div className="h-px w-24 bg-gradient-to-r from-transparent to-burnt-orange/40" />
+            <div className="w-1.5 h-1.5 rotate-45 border border-burnt-orange/40" />
+            <div className="h-px w-12 bg-burnt-orange/20" />
+            <div className="w-1.5 h-1.5 rotate-45 border border-burnt-orange/40" />
+            <div className="h-px w-24 bg-gradient-to-l from-transparent to-burnt-orange/40" />
           </motion.div>
         </motion.div>
       </div>

@@ -14,15 +14,36 @@ interface PhotoProps {
   src: string;
   srcSet: string;
   alt: string;
-  rotate?: string;
 }
 
-function PhotoCard({ src, srcSet, alt, rotate = '2deg' }: PhotoProps) {
+const originMoments = [
+  {
+    title: 'The soil came first',
+    text:
+      'Austin was born in Memphis on August 17, 1995, but his parents brought Texas soil from West Columbia and placed it beneath his mother before he was born. That was not a gesture for a story later. It was a family continuation.',
+  },
+  {
+    title: 'Identity was inherited early',
+    text:
+      'The doctor reportedly told the family, “You know you ain’t the first to do this, but they’ve ALL been from Texas.” The next day the El Campo Leader-News ran the headline “Tennessee Birth Will Be on Texas Soil.”',
+  },
+  {
+    title: 'Sports culture was native, not added',
+    text:
+      'Ricky Williams, UT season tickets, youth baseball, Friday night lights, and the Forty Acres all formed the same worldview: Texas was never only geography. It was a standard for how to show up.',
+  },
+  {
+    title: 'BSI came out of lived history',
+    text:
+      'Blaze Sports Intel was named from Bartlett Blaze, Austin’s dachshund, whose name traces back to his first youth baseball team. The brand was not invented in a vacuum. It was remembered into form.',
+  },
+];
+
+function PhotoCard({ src, srcSet, alt }: PhotoProps) {
   return (
     <motion.div
       variants={staggerItem}
-      className="photo-card inline-block my-6"
-      style={{ transform: `rotate(${rotate})`, maxWidth: '260px' }}
+      className="group overflow-hidden rounded-sm border border-bone/10 bg-charcoal/40"
     >
       <img
         src={src}
@@ -31,9 +52,11 @@ function PhotoCard({ src, srcSet, alt, rotate = '2deg' }: PhotoProps) {
         alt={alt}
         loading="lazy"
         decoding="async"
-        className="w-full h-auto block"
+        className="block h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
       />
-      <p className="text-xs text-charcoal/70 text-center mt-1 font-serif italic">{alt}</p>
+      <div className="border-t border-bone/10 px-4 py-3">
+        <p className="text-[0.65rem] font-mono uppercase tracking-[0.22em] text-warm-gray/80">{alt}</p>
+      </div>
     </motion.div>
   );
 }
@@ -44,6 +67,7 @@ export default function About() {
       id="origin"
       aria-labelledby="origin-heading"
       className="section-padding section-border"
+      style={{ paddingTop: 'clamp(2rem, 4vw, 3.5rem)' }}
     >
       <div className="container-custom">
         <motion.div
@@ -57,149 +81,56 @@ export default function About() {
             <h2 id="origin-heading" className="section-title">
               Born in Memphis. Rooted in Texas Soil.
             </h2>
+            <p className="editorial-lead max-w-3xl">
+              Texas was never a backdrop. It was the standard behind the family, the sports, the
+              identity, and eventually the work.
+            </p>
           </motion.div>
 
-          <div className="grid lg:grid-cols-3 gap-12">
-            {/* Narrative column with interspersed photos */}
-            <div className="lg:col-span-2 space-y-6 text-bone/90 text-lg leading-relaxed">
-              <motion.div variants={staggerItem}>
-                <p>
-                  On <strong className="text-bone">August 17, 1995</strong>, I was born in Memphis,
-                  Tennessee — the same day as <strong className="text-bone">Davy Crockett</strong>.
-                  "You may all go to hell, and I will go to Texas." That energy was in the room.
-                </p>
-              </motion.div>
-
-              <motion.div variants={staggerItem} className="flex justify-center lg:justify-start">
-                <PhotoCard
-                  src="/assets/titans-halloween.jpg"
-                  srcSet="/assets/optimized/titans-halloween-640w.webp 640w, /assets/optimized/titans-halloween-1024w.webp 1024w"
-                  alt="Halloween in Memphis — a Titan before a Texan"
-                  rotate="2deg"
-                />
-              </motion.div>
-
-              <motion.div variants={staggerItem} className="flex justify-center lg:justify-end">
-                <PhotoCard
-                  src="/assets/birth-certificate.jpg"
-                  srcSet="/assets/optimized/birth-certificate-640w.webp 640w, /assets/optimized/birth-certificate-1024w.webp 1024w"
-                  alt="Birth certificate"
-                  rotate="-1.5deg"
-                />
-              </motion.div>
-
-              <motion.div variants={staggerItem}>
-                <p>
-                  But my parents had a plan. They brought{' '}
-                  <strong className="text-burnt-orange">Texas soil</strong> from{' '}
-                  <strong className="text-bone">West Columbia</strong> — birthplace
-                  of the Republic of Texas. That soil was placed beneath my mother before I was born.
-                </p>
-              </motion.div>
-
-              <motion.div variants={staggerItem}>
-                <blockquote className="border-l-2 border-burnt-orange pl-6 py-4 my-8 text-warm-gray italic text-xl">
-                  The doctor looked at my parents and said:
-                  <br />
-                  <span className="text-burnt-orange font-semibold not-italic">
-                    "You know you ain't the first to do this, but they've ALL been from Texas."
-                  </span>
-                </blockquote>
-              </motion.div>
-
-              <motion.div variants={staggerItem}>
-                <p>
-                  The next day, the <strong className="text-bone">El Campo Leader-News</strong> ran the headline:{' '}
-                  <span className="font-sans font-bold text-burnt-orange uppercase text-base tracking-wider">
-                    "Tennessee Birth Will Be on Texas Soil"
-                  </span>
-                </p>
-              </motion.div>
-
-              <motion.div variants={staggerItem} className="flex justify-center lg:justify-start">
+          <div className="grid gap-12 lg:grid-cols-[minmax(0,1.35fr)_minmax(300px,0.8fr)]">
+            <div className="space-y-10">
+              <motion.div variants={staggerItem} className="grid gap-6 md:grid-cols-2">
                 <PhotoCard
                   src="/assets/texas-soil.jpg"
                   srcSet="/assets/optimized/texas-soil-640w.webp 640w, /assets/optimized/texas-soil-1024w.webp 1024w"
-                  alt="The article and the soil — West Columbia, TX"
-                  rotate="-2deg"
+                  alt="West Columbia soil, preserved article, and the beginning of the story"
                 />
-              </motion.div>
-
-              <motion.div variants={staggerItem}>
-                <p>
-                  My grandfather <strong className="text-bone">Bill</strong> served in World War II,
-                  then came home and put down roots running banks in{' '}
-                  <strong className="text-bone">El Campo, Texas</strong>. My <strong className="text-bone">Nana</strong> moved
-                  in with our family when I was eight — she's been there for over 20 years. My family has been
-                  in Texas for over <strong className="text-burnt-orange">127 years</strong>. The soil wasn't
-                  a stunt — it was a continuation.
-                </p>
-              </motion.div>
-
-              <motion.div variants={staggerItem} className="flex justify-center lg:justify-start">
                 <PhotoCard
-                  src="/assets/nana-graduation.jpg"
-                  srcSet="/assets/optimized/nana-graduation-640w.webp 640w, /assets/optimized/nana-graduation-1024w.webp 1024w"
-                  alt="With Nana — UT graduation party"
-                  rotate="-2deg"
+                  src="/assets/young-austin-longhorns.jpg"
+                  srcSet="/assets/optimized/young-austin-longhorns-640w.webp 640w, /assets/optimized/young-austin-longhorns-1024w.webp 1024w"
+                  alt="Longhorn allegiance started early and never needed explanation"
                 />
               </motion.div>
 
-              <motion.div variants={staggerItem} className="flex justify-center lg:justify-end">
-                <PhotoCard
-                  src="/assets/baseball-with-father.jpg"
-                  srcSet="/assets/optimized/baseball-with-father-640w.webp 640w, /assets/optimized/baseball-with-father-1024w.webp 1024w"
-                  alt="Baseball with Dad"
-                  rotate="1.5deg"
-                />
-              </motion.div>
+              <div className="space-y-8">
+                {originMoments.map((moment, index) => (
+                  <motion.article
+                    key={moment.title}
+                    variants={staggerItem}
+                    className="grid gap-4 border-t border-bone/10 pt-6 md:grid-cols-[4rem_minmax(0,1fr)]"
+                  >
+                    <div className="font-mono text-xs uppercase tracking-[0.24em] text-burnt-orange/70">
+                      {String(index + 1).padStart(2, '0')}
+                    </div>
+                    <div className="space-y-3">
+                      <h3 className="font-sans text-base font-semibold uppercase tracking-[0.18em] text-bone">
+                        {moment.title}
+                      </h3>
+                      <p className="text-base leading-8 text-bone/85">{moment.text}</p>
+                    </div>
+                  </motion.article>
+                ))}
+              </div>
 
-              <motion.div variants={staggerItem}>
-                <p>
-                  In <strong className="text-bone">1998</strong>, I watched{' '}
-                  <strong className="text-bone">Ricky Williams</strong> break the NCAA rushing record
-                  in burnt orange. My family held UT season tickets for over 40 years.
-                  Texas was never just geography — it was identity.
-                </p>
-              </motion.div>
-
-              <motion.div variants={staggerItem} className="flex justify-center lg:justify-start">
-                <PhotoCard
-                  src="/assets/football-uniform.jpg"
-                  srcSet="/assets/optimized/football-uniform-640w.webp 640w, /assets/optimized/football-uniform-1024w.webp 1024w"
-                  alt="Young Austin in football uniform"
-                  rotate="-1deg"
-                />
-              </motion.div>
-
-              <motion.div variants={staggerItem}>
-                <p>
-                  The name <strong className="text-burnt-orange">Blaze Sports Intel</strong> comes
-                  from my dachshund, <strong className="text-bone">Bartlett Blaze</strong> — who was
-                  named after my first baseball team, the Bartlett Blaze from youth ball.
-                  It is not corporate branding — it is lived history.
-                </p>
-              </motion.div>
-
-              <motion.div variants={staggerItem} className="flex justify-center lg:justify-end">
-                <PhotoCard
-                  src="/assets/blaze-dog.jpg"
-                  srcSet="/assets/optimized/blaze-dog-640w.webp 640w, /assets/optimized/blaze-dog-1024w.webp 1024w"
-                  alt="Bartlett Blaze — the namesake"
-                  rotate="2deg"
-                />
-              </motion.div>
-
-              <motion.div variants={staggerItem}>
-                <p>
-                  That Texas soil still sits in my home today. Not as nostalgia — as
-                  a <strong className="text-burnt-orange">covenant</strong>. A reminder that where
-                  you're from matters less than how you choose to show up.
-                </p>
-              </motion.div>
+              <motion.blockquote
+                variants={staggerItem}
+                className="border-l border-burnt-orange/40 pl-6 text-xl italic leading-relaxed text-bone/85"
+              >
+                Texas isn&apos;t a birthplace here. It&apos;s a covenant with family, effort, and
+                how you choose to carry yourself when nobody is obligated to care.
+              </motion.blockquote>
             </div>
 
-            {/* Sidebar facts — sticky on desktop */}
             <motion.div className="lg:col-span-1" variants={fadeInRight}>
               <div className="lg:sticky lg:top-24 space-y-6">
                 <div className="card p-6">
@@ -217,31 +148,34 @@ export default function About() {
                 <div
                   className="card p-6"
                   style={{
-                    background: 'linear-gradient(135deg, rgba(191,87,0,0.06) 0%, rgba(139,69,19,0.04) 50%, rgba(26,26,26,0.6) 100%)',
+                    background:
+                      'linear-gradient(135deg, rgba(191,87,0,0.10) 0%, rgba(139,69,19,0.05) 45%, rgba(26,26,26,0.78) 100%)',
                   }}
                 >
-                  <p className="text-sm italic text-warm-gray leading-relaxed">
-                    "You may all go to hell, and I will go to Texas."
+                  <p className="text-[0.65rem] font-mono uppercase tracking-[0.22em] text-burnt-orange/80">
+                    The Quote
                   </p>
-                  <p className="text-xs font-mono text-burnt-orange mt-3">— Davy Crockett, 1835</p>
+                  <p className="mt-4 text-lg italic leading-relaxed text-bone/85">
+                    &ldquo;You may all go to hell, and I will go to Texas.&rdquo;
+                  </p>
+                  <p className="mt-3 text-xs font-mono text-warm-gray">Davy Crockett, 1835</p>
                 </div>
 
-                <div className="flex justify-center">
+                <div className="card overflow-hidden border border-bone/10">
                   <PhotoCard
-                    src="/assets/young-austin-longhorns.jpg"
-                    srcSet="/assets/optimized/young-austin-longhorns-640w.webp 640w, /assets/optimized/young-austin-longhorns-1024w.webp 1024w"
-                    alt="Young Austin — Longhorn from day one"
-                    rotate="-2.5deg"
+                    src="/assets/blaze-dog.jpg"
+                    srcSet="/assets/optimized/blaze-dog-640w.webp 640w, /assets/optimized/blaze-dog-1024w.webp 1024w"
+                    alt="Bartlett Blaze, the namesake that turned memory into brand"
                   />
                 </div>
 
-                <div className="flex justify-center">
-                  <PhotoCard
-                    src="/assets/ballpark-kids.jpg"
-                    srcSet="/assets/optimized/ballpark-kids-640w.webp 640w, /assets/optimized/ballpark-kids-1024w.webp 1024w"
-                    alt="At the ballpark"
-                    rotate="1.5deg"
-                  />
+                <div className="card p-6">
+                  <p className="section-label mb-4">Why It Matters</p>
+                  <p className="text-sm leading-7 text-bone/75">
+                    The portfolio is not organized around a personal myth for its own sake. It is
+                    organized around founder-market fit. AustinHumphrey.com works when the origin,
+                    the product, and the standards behind both all read as one line.
+                  </p>
                 </div>
               </div>
             </motion.div>

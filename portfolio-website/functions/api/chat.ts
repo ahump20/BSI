@@ -23,7 +23,7 @@ interface AnthropicStreamChunk {
   delta?: { type: string; text: string };
 }
 
-const SYSTEM_PROMPT = `You are the AI assistant on Austin Humphrey's personal portfolio website (austinhumphrey.com). Answer questions about Austin concisely and warmly. You speak in a direct, plainspoken tone — no corporate fluff. Here is Austin's background:
+const SYSTEM_PROMPT = `You are the concierge on Austin Humphrey's personal portfolio website (austinhumphrey.com). Answer questions about Austin, Blaze Sports Intel, his projects, his origin story, his philosophy, and how to contact him. Keep the tone direct, plainspoken, and concise — no corporate fluff and no generic chatbot phrasing. If a prompt is hostile, immature, or low-signal, respond with one light redirect sentence and steer the user back to useful portfolio topics. Here is Austin's background:
 
 PERSONAL:
 - Born August 17, 1995 in Memphis, Tennessee — shares a birthday with Davy Crockett
@@ -65,7 +65,7 @@ CONTACT:
 - GitHub: github.com/ahump20
 - X: @BlazeSportsIntel
 
-Keep responses under 3 sentences when possible. Be helpful but concise. If you don't know something specific, say so honestly and suggest they reach out directly.`;
+Keep responses under 3 sentences when possible. Be helpful but concise. Write in plain text only: no Markdown, no bullet lists, no bold, no headings. If you don't know something specific, say so honestly and suggest they reach out directly. Do not engage in insults, identity attacks, or off-topic banter.`;
 
 const corsHeaders: Record<string, string> = {
   'Access-Control-Allow-Origin': '*',
@@ -100,10 +100,25 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     );
   }
 
+  const validMessages = body.messages.filter(
+    (message): message is ChatMessage =>
+      !!message &&
+      (message.role === 'user' || message.role === 'assistant') &&
+      typeof message.content === 'string' &&
+      message.content.trim().length > 0
+  );
+
+  if (validMessages.length === 0) {
+    return new Response(
+      JSON.stringify({ error: 'At least one non-empty message is required' }),
+      { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+    );
+  }
+
   // Take last 6 messages for context window
-  const recentMessages = body.messages.slice(-6).map((m) => ({
+  const recentMessages = validMessages.slice(-6).map((m) => ({
     role: m.role,
-    content: m.content.slice(0, 500),
+    content: m.content.trim().slice(0, 500),
   }));
 
   try {
@@ -116,7 +131,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 300,
+        max_tokens: 500,
         stream: true,
         system: SYSTEM_PROMPT,
         messages: recentMessages,
@@ -144,6 +159,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const decoder = new TextDecoder();
     let buffer = '';
 
+    let didSendDone = false;
+
     const transformStream = new TransformStream<Uint8Array, Uint8Array>({
       transform(chunk, controller) {
         buffer += decoder.decode(chunk, { stream: true });
@@ -160,7 +177,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
             if (parsed.type === 'content_block_delta' && parsed.delta?.type === 'text_delta') {
               controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: parsed.delta.text })}\n\n`));
             }
-            if (parsed.type === 'message_stop') {
+            if (parsed.type === 'message_stop' && !didSendDone) {
+              didSendDone = true;
               controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true })}\n\n`));
             }
           } catch {
@@ -169,7 +187,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         }
       },
       flush(controller) {
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true })}\n\n`));
+        if (!didSendDone) {
+          didSendDone = true;
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true })}\n\n`));
+        }
       },
     });
 

@@ -41,7 +41,7 @@ export default function AthleticArc() {
     <section
       id="athletic-arc"
       aria-label="Athletic arc — Friday Night Lights to the Forty Acres"
-      className="relative py-16 overflow-hidden"
+      className="relative pt-8 pb-12 overflow-hidden"
       style={{
         background: 'linear-gradient(180deg, #0D0D0D 0%, rgba(26,26,26,0.4) 50%, #0D0D0D 100%)',
       }}
