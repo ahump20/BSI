@@ -57,7 +57,7 @@ export default function BSIShowcase() {
     >
       <div className="container-custom">
         <motion.div
-          initial="hidden"
+          initial="visible"
           whileInView="visible"
           viewport={{ once: true, amount: 0.05 }}
           variants={staggerContainer}

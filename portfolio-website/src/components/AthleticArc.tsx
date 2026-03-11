@@ -1,5 +1,4 @@
-import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { staggerContainer, staggerItem } from '../utils/animations';
 
 const photos = [
@@ -34,9 +33,6 @@ const photos = [
 ];
 
 export default function AthleticArc() {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, amount: 0.05 });
-
   return (
     <section
       id="athletic-arc"
@@ -54,10 +50,10 @@ export default function AthleticArc() {
         }}
       />
 
-      <div className="max-w-6xl mx-auto px-6" ref={ref}>
+      <div className="max-w-6xl mx-auto px-6">
         <motion.div
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
+          initial="visible"
+          animate='visible'
           variants={staggerContainer}
         >
           <motion.p

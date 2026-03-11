@@ -13,7 +13,7 @@ export default function Philosophy() {
     >
       <div className="container-custom max-w-4xl mx-auto text-center">
         <motion.div
-          initial="hidden"
+          initial="visible"
           whileInView="visible"
           viewport={{ once: true, amount: 0.05 }}
           variants={staggerContainer}
