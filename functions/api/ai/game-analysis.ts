@@ -16,6 +16,18 @@ interface AnalysisPayload {
   gameContext: string;
 }
 
+interface ClaudeMessageResponse {
+  content?: Array<{ type?: string; text?: string }>;
+}
+
+interface GeminiGenerateContentResponse {
+  candidates?: Array<{
+    content?: {
+      parts?: Array<{ text?: string }>;
+    };
+  }>;
+}
+
 const ALLOWED_ORIGINS = new Set([
   'https://blazesportsintel.com',
   'https://www.blazesportsintel.com',
@@ -41,6 +53,8 @@ function checkRateLimit(ip: string): boolean {
 
 const SYSTEM_PROMPT = `You are a college baseball analyst for Blaze Sports Intel. You provide detailed, insightful analysis grounded in the game data provided. Your tone is knowledgeable, direct, and analytical — like a veteran scout writing for a savvy audience. Cite specific stats from the game context. No filler, no generic commentary.`;
 
+const CLAUDE_MODEL = 'claude-sonnet-4-6';
+
 function getCorsHeaders(request: Request): Record<string, string> {
   const origin = request.headers.get('Origin') ?? '';
   return {
@@ -49,6 +63,36 @@ function getCorsHeaders(request: Request): Record<string, string> {
     'Access-Control-Allow-Headers': 'Content-Type',
     'Vary': 'Origin',
   };
+}
+
+export async function parseJsonResponse<T>(res: Response, provider: string): Promise<T> {
+  const raw = await res.text();
+
+  if (!raw.trim()) {
+    throw new Error(`${provider} API returned an empty response body`);
+  }
+
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    throw new Error(`${provider} API returned invalid JSON`);
+  }
+}
+
+export function extractClaudeText(data: ClaudeMessageResponse): string {
+  const textBlock = data.content?.find((block) => block.type === 'text' && block.text?.trim());
+  if (!textBlock?.text) {
+    throw new Error('Claude API returned no text blocks');
+  }
+  return textBlock.text;
+}
+
+export function extractGeminiText(data: GeminiGenerateContentResponse): string {
+  const text = data.candidates?.[0]?.content?.parts?.find((part) => part.text?.trim())?.text;
+  if (!text) {
+    throw new Error('Gemini API returned no text parts');
+  }
+  return text;
 }
 
 async function callClaude(prompt: string, gameContext: string, apiKey: string): Promise<string> {
@@ -60,7 +104,7 @@ async function callClaude(prompt: string, gameContext: string, apiKey: string): 
       'anthropic-version': '2023-06-01',
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-5-20250929',
+      model: CLAUDE_MODEL,
       max_tokens: 512,
       system: SYSTEM_PROMPT,
       messages: [
@@ -77,8 +121,8 @@ async function callClaude(prompt: string, gameContext: string, apiKey: string): 
     throw new Error(`Claude API error: ${res.status} — ${err}`);
   }
 
-  const data = await res.json() as { content: Array<{ text: string }> };
-  return data.content?.[0]?.text ?? 'No response generated.';
+  const data = await parseJsonResponse<ClaudeMessageResponse>(res, 'Claude');
+  return extractClaudeText(data);
 }
 
 async function callGemini(prompt: string, gameContext: string, apiKey: string): Promise<string> {
@@ -103,8 +147,8 @@ async function callGemini(prompt: string, gameContext: string, apiKey: string): 
     throw new Error(`Gemini API error: ${res.status} — ${err}`);
   }
 
-  const data = await res.json() as { candidates: Array<{ content: { parts: Array<{ text: string }> } }> };
-  return data.candidates?.[0]?.content?.parts?.[0]?.text ?? 'No response generated.';
+  const data = await parseJsonResponse<GeminiGenerateContentResponse>(res, 'Gemini');
+  return extractGeminiText(data);
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {

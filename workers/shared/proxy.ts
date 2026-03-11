@@ -5,10 +5,13 @@ export async function proxyToPages(request: Request, env: Env): Promise<Response
   const origin = env.PAGES_ORIGIN || 'https://blazesportsintel.pages.dev';
   const url = new URL(request.url);
   const pagesUrl = `${origin}${url.pathname}${url.search}`;
+  const headers = new Headers(request.headers);
+  headers.delete('host');
 
   const pagesResponse = await fetch(pagesUrl, {
     method: request.method,
-    headers: request.headers,
+    headers,
+    body: request.method === 'GET' || request.method === 'HEAD' ? undefined : request.body,
     redirect: 'follow',
   });
 

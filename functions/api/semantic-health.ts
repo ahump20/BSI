@@ -10,6 +10,9 @@ interface Env {
   KV?: KVNamespace;
   R2?: R2Bucket;
   ADMIN_TOKEN?: string;
+  ADMIN_API_KEY?: string;
+  BLAZE_ADMIN_KEY?: string;
+  ADMIN_KEY?: string;
 }
 
 /** Max items per KV/R2 list call */
@@ -17,17 +20,31 @@ const LIST_PAGE_SIZE = 1000;
 /** Hard cap on pagination rounds to prevent runaway */
 const MAX_LIST_ROUNDS = 10;
 
+function getAdminSecrets(env: Env): string[] {
+  return [
+    env.ADMIN_TOKEN,
+    env.ADMIN_API_KEY,
+    env.BLAZE_ADMIN_KEY,
+    env.ADMIN_KEY,
+  ].filter((value): value is string => typeof value === 'string' && value.length > 0);
+}
+
 function requireAdmin(request: Request, env: Env): Response | null {
-  const token = env.ADMIN_TOKEN;
-  if (!token) {
-    return new Response(JSON.stringify({ error: 'ADMIN_TOKEN not configured' }), {
+  const tokens = getAdminSecrets(env);
+  if (tokens.length === 0) {
+    return new Response(JSON.stringify({ error: 'Admin auth secret not configured' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });
   }
 
   const auth = request.headers.get('Authorization');
-  if (!auth || auth !== `Bearer ${token}`) {
+  const headerKey = request.headers.get('X-Admin-Key');
+  const queryKey = new URL(request.url).searchParams.get('key');
+  const bearer = auth?.startsWith('Bearer ') ? auth.slice('Bearer '.length) : null;
+  const provided = bearer || headerKey || queryKey;
+
+  if (!provided || !tokens.includes(provided)) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,
       headers: { 'Content-Type': 'application/json' },

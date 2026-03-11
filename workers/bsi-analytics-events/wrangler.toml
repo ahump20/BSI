@@ -7,7 +7,7 @@
 # Deploy: wrangler deploy --config workers/bsi-analytics-events/wrangler.toml
 # =============================================================================
 
-name = "bsi-analytics-events"
+name = "bsi-analytics-events-dev"
 main = "index.ts"
 compatibility_date = "2025-12-01"
 compatibility_flags = ["nodejs_compat"]
