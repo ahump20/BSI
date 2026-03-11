@@ -366,6 +366,64 @@ export async function handleMMITrending(env: Env): Promise<Response> {
   }
 }
 
+/**
+ * GET /api/analytics/mmi/team/:teamId
+ *
+ * Returns the last 10 MMI game summaries involving a specific team
+ * (home or away). Uses LIKE for fuzzy matching on team name/slug.
+ * Cached 5 minutes in KV.
+ */
+export async function handleMMITeam(teamId: string, env: Env): Promise<Response> {
+  const cacheKey = `mmi:team:${teamId}`;
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) {
+    return cachedJson(
+      { games: cached, meta: analyticsMeta('bsi-mmi', true) },
+      200,
+      300,
+      { 'X-Cache': 'HIT' },
+    );
+  }
+
+  try {
+    const pattern = `%${teamId}%`;
+    const { results: summaries } = await env.DB.prepare(
+      `SELECT * FROM mmi_game_summary
+       WHERE home_team LIKE ? OR away_team LIKE ?
+       ORDER BY game_date DESC
+       LIMIT 10`,
+    ).bind(pattern, pattern).all();
+
+    const games = [...(summaries || [])];
+
+    // Attach snapshots to the most recent game for Momentum Flow viz
+    if (games.length > 0) {
+      const topGameId = (games[0] as Record<string, unknown>).game_id as string;
+      if (topGameId) {
+        const { results: snaps } = await env.DB.prepare(
+          `SELECT inning, inning_half, mmi_value, direction, magnitude,
+                  event_description, home_score, away_score
+           FROM mmi_snapshots
+           WHERE game_id = ?
+           ORDER BY id ASC`
+        ).bind(topGameId).all();
+        (games[0] as Record<string, unknown>).snapshots = snaps || [];
+      }
+    }
+
+    await kvPut(env.KV, cacheKey, games, 300);
+    return cachedJson(
+      { games, meta: analyticsMeta('bsi-mmi', false) },
+      200,
+      300,
+      { 'X-Cache': 'MISS' },
+    );
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Unknown error';
+    return json({ error: 'Failed to fetch team MMI history', detail: msg }, 500);
+  }
+}
+
 // ==========================================================================
 // Model Example Handlers (Tier 2 — methodology page live examples)
 // ==========================================================================

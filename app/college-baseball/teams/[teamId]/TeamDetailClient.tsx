@@ -275,9 +275,9 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
     { timeout: 10000 },
   );
 
-  // MMI trending games — filtered client-side to this team
-  const { data: mmiTrendingData } = useSportData<MMITrendingResponse>(
-    '/api/analytics/mmi/trending',
+  // MMI history for this team — server-side filtered
+  const { data: mmiTeamData } = useSportData<MMITrendingResponse>(
+    `/api/analytics/mmi/team/${teamId}`,
     { timeout: 10000 },
   );
 
@@ -357,21 +357,11 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
     };
   }, [nilLeaderboardData, meta]);
 
-  // MMI games involving this team
+  // MMI games involving this team (server-filtered)
   const mmiTeamGames = useMemo(() => {
-    if (!mmiTrendingData?.games?.length || !meta) return null;
-    const teamName = meta.name.toLowerCase();
-    const shortName = meta.shortName.toLowerCase();
-    const matches = mmiTrendingData.games.filter((g) => {
-      const home = g.home_team.toLowerCase();
-      const away = g.away_team.toLowerCase();
-      return (
-        home === teamName || home === shortName || home.includes(shortName) || shortName.includes(home) ||
-        away === teamName || away === shortName || away.includes(shortName) || shortName.includes(away)
-      );
-    });
-    return matches.length > 0 ? matches : null;
-  }, [mmiTrendingData, meta]);
+    if (!mmiTeamData?.games?.length) return null;
+    return mmiTeamData.games;
+  }, [mmiTeamData]);
 
   const statsUnavailable = !!statsError;
 
@@ -954,13 +944,13 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   </ScrollReveal>
                 )}
 
-                {/* MMI — Momentum for today's games */}
+                {/* MMI — Momentum history */}
                 {mmiTeamGames && mmiTeamGames.length > 0 && (
                   <ScrollReveal direction="up" className="mt-8">
                     <Card padding="lg">
                       <div className="flex items-center justify-between mb-6">
                         <h2 className="font-display text-xl font-bold text-text-primary uppercase tracking-wide">Game Momentum</h2>
-                        <span className="text-[10px] text-text-muted uppercase tracking-widest font-display">Today</span>
+                        <span className="text-[10px] text-text-muted uppercase tracking-widest font-display">Recent</span>
                       </div>
                       <div className="space-y-6">
                         {mmiTeamGames.map((game) => {

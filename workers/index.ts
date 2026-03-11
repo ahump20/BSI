@@ -144,6 +144,7 @@ import {
   handleMMILive,
   handleMMIGame,
   handleMMITrending,
+  handleMMITeam,
   handleWinProbExample,
   handleMonteCarloExample,
 } from './handlers/analytics';
@@ -545,6 +546,7 @@ app.post('/api/analytics/havf/compute', requireApiKey, (c) => handleHAVFCompute(
 app.get('/api/analytics/mmi/live/:gameId', (c) => handleMMILive(c.req.param('gameId'), c.env));
 app.get('/api/analytics/mmi/game/:gameId', (c) => handleMMIGame(c.req.param('gameId'), c.env));
 app.get('/api/analytics/mmi/trending', (c) => handleMMITrending(c.env));
+app.get('/api/analytics/mmi/team/:teamId', (c) => handleMMITeam(c.req.param('teamId'), c.env));
 
 // --- Savant: College Baseball Advanced Analytics ---
 app.get('/api/savant/batting/leaderboard', (c) => handleSavantBattingLeaderboard(new URL(c.req.url), c.env, c.req.raw.headers));
