@@ -74,8 +74,22 @@ export function HeroSection() {
           Intel
         </h1>
 
+        {/* Slogan — front and center */}
+        <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.4s_forwards] mb-6">
+          <p
+            className="font-serif italic tracking-wide leading-none"
+            style={{
+              fontSize: 'clamp(1rem, 2.5vw, 1.5rem)',
+              color: 'var(--bsi-primary)',
+              textShadow: '0 0 30px rgba(191, 87, 0, 0.2)',
+            }}
+          >
+            Born to Blaze the Path Beaten Less
+          </p>
+        </div>
+
         {/* Cormorant italic subhead — broadcast chyron style */}
-        <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.45s_forwards] max-w-2xl mx-auto mb-8 px-6 sm:px-4">
+        <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.5s_forwards] max-w-2xl mx-auto mb-8 px-6 sm:px-4">
           <p className="font-serif italic text-base sm:text-lg md:text-xl tracking-wide text-[var(--bsi-dust)] leading-relaxed">
             <span className="text-[var(--heritage-bronze)]">&mdash;</span>{' '}
             Analytics for the sports that don&apos;t get the spotlight.
