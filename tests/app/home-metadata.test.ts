@@ -1,0 +1,34 @@
+import { describe, expect, it, vi } from 'vitest';
+
+vi.mock('next/font/google', () => ({
+  Cormorant_Garamond: () => ({ variable: '--font-cormorant' }),
+  Oswald: () => ({ variable: '--font-oswald' }),
+  JetBrains_Mono: () => ({ variable: '--font-jetbrains-mono' }),
+  IBM_Plex_Mono: () => ({ variable: '--font-ibm-plex-mono' }),
+  Bebas_Neue: () => ({ variable: '--font-bebas' }),
+}));
+
+import { metadata as homeMetadata } from '@/app/page';
+import { metadata as layoutMetadata } from '@/app/layout';
+import { websiteJsonLd } from '@/lib/seo/structured-data';
+
+describe('homepage metadata', () => {
+  it('positions the homepage as a multi-sport product', () => {
+    expect(homeMetadata.title).toBe('Blaze Sports Intel | Live Scores, Analytics, and Editorial Across Five Sports');
+    expect(homeMetadata.description).toContain('college football');
+    expect(homeMetadata.description).not.toContain('Free park-adjusted sabermetrics for D1 college baseball');
+  });
+
+  it('keeps site-wide metadata aligned with the homepage positioning', () => {
+    expect(layoutMetadata.title).toBe('Blaze Sports Intel | Live Scores, Analytics, and Editorial Across Five Sports');
+    expect(layoutMetadata.description).toContain('college football');
+  });
+
+  it('publishes multi-sport website structured data', () => {
+    const jsonLd = websiteJsonLd();
+
+    expect(jsonLd.description).toContain('college football');
+    expect(jsonLd.description).toContain('college baseball');
+    expect(jsonLd.description).toContain('advanced analytics');
+  });
+});
