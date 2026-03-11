@@ -11,6 +11,7 @@ import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { IntelSignup } from '@/components/home/IntelSignup';
+import { useWatchlist } from '@/lib/hooks/useWatchlist';
 
 interface PortalEntry {
   id: string;
@@ -21,6 +22,18 @@ interface PortalEntry {
   status: 'entered' | 'committed' | 'withdrawn';
   enteredDate: string;
   classification?: string;
+  nilValue?: number;
+}
+
+interface NILPlayer {
+  player_name: string;
+  estimated_mid: number;
+}
+
+function formatNILValue(value: number): string {
+  if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(1)}M`;
+  if (value >= 1_000) return `$${(value / 1_000).toFixed(0)}K`;
+  return `$${value.toLocaleString()}`;
 }
 
 const VALUE_PROPS = [
@@ -73,15 +86,31 @@ export default function TransferPortalPage() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const perPage = 25;
+  const { addPlayer, removePlayer, isWatched } = useWatchlist();
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | null = null;
     async function fetchPortalEntries() {
       try {
-        const res = await fetch('/api/college-baseball/transfer-portal');
-        if (res.ok) {
-          const data = await res.json() as { entries?: PortalEntry[] };
-          const fetched = data.entries || [];
+        const [portalRes, nilRes] = await Promise.all([
+          fetch('/api/college-baseball/transfer-portal'),
+          fetch('/api/nil/leaderboard?limit=500'),
+        ]);
+
+        const nilMap: Record<string, number> = {};
+        if (nilRes.ok) {
+          const nilData = await nilRes.json() as { data?: NILPlayer[] };
+          for (const p of nilData.data || []) {
+            nilMap[p.player_name.toLowerCase()] = p.estimated_mid;
+          }
+        }
+
+        if (portalRes.ok) {
+          const data = await portalRes.json() as { entries?: PortalEntry[] };
+          const fetched = (data.entries || []).map(e => ({
+            ...e,
+            nilValue: nilMap[e.playerName.toLowerCase()],
+          }));
           setEntries(fetched);
           if (fetched.length > 0 && !interval) {
             interval = setInterval(fetchPortalEntries, 30000);
@@ -252,23 +281,63 @@ export default function TransferPortalPage() {
                           <th className="text-left py-3 px-4 text-xs font-semibold text-text-muted uppercase">Pos</th>
                           <th className="text-left py-3 px-4 text-xs font-semibold text-text-muted uppercase">From</th>
                           <th className="text-left py-3 px-4 text-xs font-semibold text-text-muted uppercase">To</th>
+                          <th className="text-right py-3 px-4 text-xs font-semibold text-text-muted uppercase">Est. NIL</th>
                           <th className="text-center py-3 px-4 text-xs font-semibold text-text-muted uppercase">Status</th>
                           <th className="text-right py-3 px-4 text-xs font-semibold text-text-muted uppercase">When</th>
+                          <th className="text-center py-3 px-2 text-xs font-semibold text-text-muted uppercase w-10">
+                            <svg className="w-3.5 h-3.5 mx-auto text-text-muted" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M8 1.5l2 4.5 5 .5-3.5 3.5 1 5L8 12.5 3.5 15l1-5L1 6.5l5-.5z" />
+                            </svg>
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
                         {displayed.map((entry) => (
                           <tr key={entry.id} className="border-b border-border hover:bg-charcoal/50 transition-colors">
-                            <td className="py-3 px-4 text-text-primary font-medium text-sm">{entry.playerName}</td>
+                            <td className="py-3 px-4 text-sm">
+                              <Link href={`/college-baseball/players/${entry.id}`} className="text-text-primary font-medium hover:text-burnt-orange transition-colors">
+                                {entry.playerName}
+                              </Link>
+                            </td>
                             <td className="py-3 px-4 text-text-tertiary text-sm">{entry.position}</td>
                             <td className="py-3 px-4 text-text-tertiary text-sm">{entry.fromSchool}</td>
                             <td className="py-3 px-4 text-sm">{entry.toSchool ? <span className="text-burnt-orange">{entry.toSchool}</span> : <span className="text-text-muted">TBD</span>}</td>
+                            <td className="py-3 px-4 text-right text-sm">
+                              {entry.nilValue ? (
+                                <span className="text-burnt-orange font-semibold">{formatNILValue(entry.nilValue)}</span>
+                              ) : (
+                                <span className="text-text-muted">—</span>
+                              )}
+                            </td>
                             <td className="py-3 px-4 text-center">
                               <Badge variant={entry.status === 'committed' ? 'success' : entry.status === 'withdrawn' ? 'error' : 'secondary'} size="sm">
                                 {entry.status}
                               </Badge>
                             </td>
                             <td className="py-3 px-4 text-right text-xs text-text-muted">{relativeTime(entry.enteredDate)}</td>
+                            <td className="py-3 px-2 text-center">
+                              {(() => {
+                                const watched = isWatched(entry.id);
+                                return (
+                                  <button
+                                    onClick={() => watched
+                                      ? removePlayer(entry.id)
+                                      : addPlayer({ playerId: entry.id, playerName: entry.playerName, team: entry.fromSchool, position: entry.position })
+                                    }
+                                    className={`p-1.5 rounded-full transition-colors cursor-pointer ${
+                                      watched
+                                        ? 'text-burnt-orange hover:text-ember'
+                                        : 'text-text-muted hover:text-burnt-orange'
+                                    }`}
+                                    aria-label={watched ? `Remove ${entry.playerName} from watchlist` : `Add ${entry.playerName} to watchlist`}
+                                  >
+                                    <svg className="w-4 h-4" viewBox="0 0 16 16" fill={watched ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                      <path d="M8 1.5l2 4.5 5 .5-3.5 3.5 1 5L8 12.5 3.5 15l1-5L1 6.5l5-.5z" />
+                                    </svg>
+                                  </button>
+                                );
+                              })()}
+                            </td>
                           </tr>
                         ))}
                       </tbody>
