@@ -11,6 +11,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { AITeamPreview } from '@/components/college-baseball/AITeamPreview';
 import { SabermetricsPanel } from '@/components/college-baseball/SabermetricsPanel';
 import { SocialIntelTeamPanel } from '@/components/college-baseball/SocialIntelTeamPanel';
+import { MMIGauge } from '@/components/analytics/MMIGauge';
 import { preseason2026, getTierLabel } from '@/lib/data/preseason-2026';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 import { useSportData } from '@/lib/hooks/useSportData';
@@ -90,6 +91,27 @@ interface RosterPlayer {
     ip?: number; ha?: number; ra?: number; er?: number;
     pitchBB?: number; so?: number; hra?: number; gpPitch?: number;
   };
+}
+
+interface MMIGameData {
+  game_id: string;
+  home_team: string;
+  away_team: string;
+  final_home_score: number | null;
+  final_away_score: number | null;
+  game_date: string;
+  max_mmi: number;
+  min_mmi: number;
+  avg_mmi: number;
+  mmi_volatility: number;
+  lead_changes: number;
+  max_swing: number;
+  swing_inning: number | null;
+  excitement_rating: string | null;
+}
+
+interface MMITrendingResponse {
+  games: MMIGameData[];
 }
 
 // ─── Position Grouping ────────────────────────────────────────────────────
@@ -245,6 +267,20 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
     { timeout: 10000 },
   );
 
+  // NIL leaderboard data for this team's conference
+  const { data: nilLeaderboardData } = useSportData<{
+    data: { player_name: string; team: string; conference: string; index_score: number; estimated_mid: number; nil_tier: string }[];
+  }>(
+    meta?.conference ? `/api/nil/leaderboard?conference=${encodeURIComponent(meta.conference)}&limit=20` : null,
+    { timeout: 10000 },
+  );
+
+  // MMI trending games — filtered client-side to this team
+  const { data: mmiTrendingData } = useSportData<MMITrendingResponse>(
+    '/api/analytics/mmi/trending',
+    { timeout: 10000 },
+  );
+
   // ─── Derived state ────────────────────────────────────────────────────────
 
   const liveStats = useMemo(() => {
@@ -293,6 +329,49 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
       (!a.teams?.length && a.tags.some(t => t === meta?.conference))
     );
   }, [teamId, meta?.conference]);
+
+  // NIL data filtered to this team
+  const nilTeamData = useMemo(() => {
+    if (!nilLeaderboardData?.data?.length || !meta) return null;
+    const teamName = meta.name.toLowerCase();
+    const shortName = meta.shortName.toLowerCase();
+    const teamPlayers = nilLeaderboardData.data.filter(p => {
+      const pTeam = p.team.toLowerCase();
+      return pTeam === teamName || pTeam === shortName || teamName.includes(pTeam) || pTeam.includes(shortName);
+    });
+    if (teamPlayers.length === 0) return null;
+    const avgIndex = teamPlayers.reduce((sum, p) => sum + p.index_score, 0) / teamPlayers.length;
+    const topPlayer = teamPlayers.reduce((best, p) => p.estimated_mid > best.estimated_mid ? p : best, teamPlayers[0]);
+    // Conference market tier
+    const largeMarket = new Set(['SEC', 'Big Ten', 'Big 12', 'ACC']);
+    const midMarket = new Set(['Pac-12', 'AAC', 'Mountain West', 'Sun Belt', 'Conference USA']);
+    const conf = meta.conference;
+    const marketTier = largeMarket.has(conf) ? 'Large Market' : midMarket.has(conf) ? 'Mid Market' : 'Small Market';
+    return {
+      conference: conf,
+      marketTier,
+      playerCount: teamPlayers.length,
+      avgIndex: Math.round(avgIndex * 10) / 10,
+      topPlayer: topPlayer.player_name,
+      topValue: topPlayer.estimated_mid,
+    };
+  }, [nilLeaderboardData, meta]);
+
+  // MMI games involving this team
+  const mmiTeamGames = useMemo(() => {
+    if (!mmiTrendingData?.games?.length || !meta) return null;
+    const teamName = meta.name.toLowerCase();
+    const shortName = meta.shortName.toLowerCase();
+    const matches = mmiTrendingData.games.filter((g) => {
+      const home = g.home_team.toLowerCase();
+      const away = g.away_team.toLowerCase();
+      return (
+        home === teamName || home === shortName || home.includes(shortName) || shortName.includes(home) ||
+        away === teamName || away === shortName || away.includes(shortName) || shortName.includes(away)
+      );
+    });
+    return matches.length > 0 ? matches : null;
+  }, [mmiTrendingData, meta]);
 
   const statsUnavailable = !!statsError;
 
@@ -387,6 +466,16 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" /></svg>
                         {meta.location.stadium}
                       </span>
+                      <Link
+                        href={`/college-baseball/teams/${teamId}/readout`}
+                        className="flex items-center gap-1.5 text-burnt-orange hover:text-ember transition-colors font-semibold"
+                      >
+                        <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="2" y="2" width="12" height="12" rx="2" />
+                          <path d="M5 6h6M5 8.5h4M5 11h3" />
+                        </svg>
+                        2-Min Readout
+                      </Link>
                     </div>
                   </div>
 
@@ -865,6 +954,107 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   </ScrollReveal>
                 )}
 
+                {/* MMI — Momentum for today's games */}
+                {mmiTeamGames && mmiTeamGames.length > 0 && (
+                  <ScrollReveal direction="up" className="mt-8">
+                    <Card padding="lg">
+                      <div className="flex items-center justify-between mb-6">
+                        <h2 className="font-display text-xl font-bold text-text-primary uppercase tracking-wide">Game Momentum</h2>
+                        <span className="text-[10px] text-text-muted uppercase tracking-widest font-display">Today</span>
+                      </div>
+                      <div className="space-y-6">
+                        {mmiTeamGames.map((game) => {
+                          const isHome = game.home_team.toLowerCase().includes(meta!.shortName.toLowerCase()) ||
+                            meta!.name.toLowerCase().includes(game.home_team.toLowerCase());
+                          const mmiValue = game.avg_mmi;
+                          const magnitude = Math.abs(mmiValue) >= 75 ? 'extreme' : Math.abs(mmiValue) >= 50 ? 'high' : Math.abs(mmiValue) >= 25 ? 'medium' : 'low';
+                          return (
+                            <div key={game.game_id}>
+                              <MMIGauge
+                                value={mmiValue}
+                                awayTeam={game.away_team}
+                                homeTeam={game.home_team}
+                                magnitude={magnitude}
+                                showValue
+                              />
+                              <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <div className="text-center">
+                                  <div className="text-xs text-text-muted uppercase tracking-wider">Volatility</div>
+                                  <div className="font-mono text-lg font-bold text-text-primary mt-0.5">{game.mmi_volatility.toFixed(1)}</div>
+                                </div>
+                                <div className="text-center">
+                                  <div className="text-xs text-text-muted uppercase tracking-wider">Lead Changes</div>
+                                  <div className="font-mono text-lg font-bold text-text-primary mt-0.5">{game.lead_changes}</div>
+                                </div>
+                                <div className="text-center">
+                                  <div className="text-xs text-text-muted uppercase tracking-wider">Max Swing</div>
+                                  <div className="font-mono text-lg font-bold text-text-primary mt-0.5">{game.max_swing.toFixed(1)}</div>
+                                </div>
+                                <div className="text-center">
+                                  <div className="text-xs text-text-muted uppercase tracking-wider">Rating</div>
+                                  <div className="font-mono text-lg font-bold mt-0.5" style={{
+                                    color: game.excitement_rating === 'instant-classic' || game.excitement_rating === 'extreme'
+                                      ? 'var(--bsi-primary)'
+                                      : game.excitement_rating === 'thriller' || game.excitement_rating === 'high'
+                                        ? 'var(--bsi-accent)'
+                                        : 'var(--text-secondary)',
+                                  }}>
+                                    {(game.excitement_rating || 'routine').replace('-', ' ')}
+                                  </div>
+                                </div>
+                              </div>
+                              {game.final_home_score != null && game.final_away_score != null && (
+                                <div className="mt-2 text-center text-xs text-text-muted">
+                                  Final: {game.away_team} {game.final_away_score}, {game.home_team} {game.final_home_score}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div className="mt-4 pt-3 border-t border-border-subtle text-xs text-text-muted">
+                        Source: BSI Momentum Engine
+                      </div>
+                    </Card>
+                  </ScrollReveal>
+                )}
+
+                {/* NIL Spending Power */}
+                {nilTeamData && (
+                  <ScrollReveal direction="up" className="mt-8">
+                    <Card padding="lg">
+                      <div className="flex items-center justify-between mb-6">
+                        <h2 className="font-display text-xl font-bold text-text-primary uppercase tracking-wide">NIL Spending Power</h2>
+                        <span className="text-xs px-2 py-1 rounded font-semibold" style={{ backgroundColor: 'rgba(191,87,0,0.15)', color: '#BF5700' }}>
+                          {nilTeamData.conference} — {nilTeamData.marketTier}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                        <div>
+                          <div className="text-xs uppercase tracking-wide text-text-muted">Scored Players</div>
+                          <div className="mt-1 font-mono text-2xl font-bold text-text-primary">{nilTeamData.playerCount}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs uppercase tracking-wide text-text-muted">Avg NIL Index</div>
+                          <div className="mt-1 font-mono text-2xl font-bold" style={{ color: '#BF5700' }}>{nilTeamData.avgIndex}</div>
+                        </div>
+                        <div className="col-span-2">
+                          <div className="text-xs uppercase tracking-wide text-text-muted">Top Valued Player</div>
+                          <div className="mt-1 flex items-baseline gap-2">
+                            <span className="text-text-primary font-semibold">{nilTeamData.topPlayer}</span>
+                            <span className="font-mono text-lg font-bold" style={{ color: '#BF5700' }}>
+                              ${nilTeamData.topValue >= 1000 ? `${(nilTeamData.topValue / 1000).toFixed(0)}K` : nilTeamData.topValue.toLocaleString()}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="pt-3 border-t border-border-subtle text-xs text-text-muted">
+                        Source: BSI NIL Intelligence Platform
+                      </div>
+                    </Card>
+                  </ScrollReveal>
+                )}
+
                 {/* Related Articles */}
                 {teamArticles.length > 0 && (
                   <ScrollReveal direction="up" className="mt-8">
@@ -896,6 +1086,63 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                     </Card>
                   </ScrollReveal>
                 )}
+
+                {/* NIL Roster Allocation */}
+                {nilLeaderboardData?.data && nilLeaderboardData.data.filter(p => p.team === meta?.name).length > 0 && (() => {
+                  const teamPlayers = nilLeaderboardData.data.filter(p => p.team === meta?.name);
+                  const totalValue = teamPlayers.reduce((sum, p) => sum + p.estimated_mid, 0);
+                  const formatNIL = (v: number) => v >= 1_000_000 ? `$${(v / 1_000_000).toFixed(1)}M` : v >= 1_000 ? `$${Math.round(v / 1_000)}K` : `$${v}`;
+                  const tierColors: Record<string, string> = { elite: 'text-burnt-orange', high: 'text-green-400', mid: 'text-blue-400', emerging: 'text-yellow-400' };
+                  return (
+                    <ScrollReveal direction="up" className="mt-6">
+                      <Card padding="none" className="overflow-hidden">
+                        <div className="px-4 py-3 border-b border-border flex items-center justify-between" style={{ backgroundColor: withAlpha(accent, 0.08) }}>
+                          <h3 className="font-display text-base font-bold uppercase tracking-wide text-text-primary">
+                            NIL Valuation — Roster
+                          </h3>
+                          <Link href="/nil-valuation" className="text-[10px] text-text-muted hover:text-burnt-orange transition-colors uppercase tracking-widest">
+                            Full NIL Hub &rarr;
+                          </Link>
+                        </div>
+                        <div className="p-4">
+                          <div className="grid grid-cols-3 gap-4 mb-4">
+                            <div className="text-center">
+                              <span className="text-xs text-text-muted block">Scored Players</span>
+                              <span className="font-display text-2xl font-bold" style={{ color: accent }}>{teamPlayers.length}</span>
+                            </div>
+                            <div className="text-center">
+                              <span className="text-xs text-text-muted block">Total Roster Value</span>
+                              <span className="font-display text-2xl font-bold text-burnt-orange">{formatNIL(totalValue)}</span>
+                            </div>
+                            <div className="text-center">
+                              <span className="text-xs text-text-muted block">Avg Per Player</span>
+                              <span className="font-display text-2xl font-bold text-text-primary">{formatNIL(Math.round(totalValue / teamPlayers.length))}</span>
+                            </div>
+                          </div>
+                          <div className="space-y-1">
+                            {teamPlayers.slice(0, 5).map((p, i) => (
+                              <div key={p.player_name} className="flex items-center justify-between py-1.5 px-2 rounded hover:bg-surface-light transition-colors">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs text-text-muted font-mono w-4">{i + 1}</span>
+                                  <span className="text-sm text-text-primary">{p.player_name}</span>
+                                  <span className={`text-[10px] font-semibold uppercase ${tierColors[p.nil_tier] || 'text-text-muted'}`}>{p.nil_tier}</span>
+                                </div>
+                                <span className="text-sm font-bold text-burnt-orange font-mono">{formatNIL(p.estimated_mid)}</span>
+                              </div>
+                            ))}
+                          </div>
+                          {teamPlayers.length > 5 && (
+                            <div className="text-center mt-3">
+                              <Link href="/nil-valuation" className="text-xs text-text-muted hover:text-burnt-orange transition-colors">
+                                {teamPlayers.length - 5} more players scored &rarr;
+                              </Link>
+                            </div>
+                          )}
+                        </div>
+                      </Card>
+                    </ScrollReveal>
+                  );
+                })()}
 
                 <ScrollReveal direction="up" className="mt-8">
                   <AITeamPreview teamId={teamId} teamName={meta.name} stats={liveStats ?? undefined} conference={meta.conference} />
