@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
-import { DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
+import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
@@ -36,6 +36,19 @@ interface Game {
   venue?: string;
 }
 
+interface PlayerLeader {
+  name: string;
+  team: string;
+  value: number;
+}
+
+interface LeaderCategory {
+  label: string;
+  abbreviation: string;
+  unit: string;
+  players: PlayerLeader[];
+}
+
 type TabType = 'standings' | 'scores' | 'teams' | 'players';
 
 const NBA_HERO_STATS = [
@@ -52,6 +65,64 @@ const COURT_VISION_BULLETS = [
   { bold: 'Shot tracking', text: 'with real-time arc, distance, and defender proximity metrics' },
 ];
 
+const STAT_EXPLAINERS = [
+  {
+    stat: 'PER',
+    name: 'Player Efficiency Rating',
+    description: 'John Hollinger\'s all-in-one metric normalizing a player\'s per-minute production. League average is 15.0. Anything above 20 is All-Star caliber; above 25 is MVP-tier.',
+  },
+  {
+    stat: 'TS%',
+    name: 'True Shooting Percentage',
+    description: 'Measures scoring efficiency by accounting for 2-pointers, 3-pointers, and free throws. The league average hovers around 57%. It exposes volume scorers who need 25 shots to get 25 points.',
+  },
+  {
+    stat: 'USG%',
+    name: 'Usage Rate',
+    description: 'Estimates the percentage of team possessions a player uses while on the floor. High usage (30%+) means the offense runs through that player — for better or worse.',
+  },
+  {
+    stat: 'RAPTOR',
+    name: 'Robust Algorithm using Player Tracking and On/Off Ratings',
+    description: 'FiveThirtyEight\'s catch-all metric combining box score, on/off data, and tracking. Measured in points above average per 100 possessions. Splits into offensive and defensive components.',
+  },
+];
+
+const AROUND_THE_LEAGUE = [
+  {
+    category: 'Playoff Picture',
+    headline: 'Western Conference race tightens',
+    description: 'Five teams within two games of each other for the final two playoff spots. The play-in tournament looms for teams seeded 7-10.',
+    badge: 'Postseason',
+    badgeVariant: 'success' as const,
+    href: '/nba/standings',
+  },
+  {
+    category: 'Trade Market',
+    headline: 'Deadline fallout reshaping rosters',
+    description: 'Contenders loaded up at the deadline while rebuilding teams stockpiled draft capital. The ripple effects are showing up in the standings.',
+    badge: 'Analysis',
+    badgeVariant: 'warning' as const,
+    href: '/nba/teams',
+  },
+  {
+    category: 'Injury Watch',
+    headline: 'Star availability driving betting lines',
+    description: 'Load management and late-season injuries are shifting the title odds nightly. Teams with depth are separating from those relying on one or two stars.',
+    badge: 'Health',
+    badgeVariant: 'error' as const,
+    href: '/nba/scores',
+  },
+  {
+    category: 'Rookie Watch',
+    headline: 'First-year players making an impact',
+    description: 'This draft class is producing immediate contributors. Multiple rookies are cracking rotation minutes on playoff-bound teams — a rarity in the modern NBA.',
+    badge: 'Rising',
+    badgeVariant: 'accent' as const,
+    href: '/nba/players',
+  },
+];
+
 export default function NBAPage() {
   const [activeTab, setActiveTab] = useState<TabType>('standings');
   const [standings, setStandings] = useState<NBAStandingsTeam[]>([]);
@@ -60,6 +131,8 @@ export default function NBAPage() {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string>('');
   const [hasLiveGames, setHasLiveGames] = useState(false);
+  const [leaderCategories, setLeaderCategories] = useState<LeaderCategory[]>([]);
+  const [leadersLoading, setLeadersLoading] = useState(false);
 
   const fetchStandings = useCallback(async () => {
     setLoading(true);
@@ -117,10 +190,66 @@ export default function NBAPage() {
     }
   }, []);
 
+  const fetchLeaders = useCallback(async () => {
+    setLeadersLoading(true);
+    try {
+      const res = await fetch('/api/nba/players?leaders=true');
+      if (!res.ok) throw new Error('Failed to fetch leaders');
+      const data = await res.json() as {
+        leaders?: Array<{ category?: string; leaders?: Array<{ name?: string; team?: string; value?: number }> }>;
+        players?: Array<Record<string, unknown>>;
+      };
+      if (data.leaders && Array.isArray(data.leaders)) {
+        const mapped: LeaderCategory[] = data.leaders.slice(0, 3).map((cat) => ({
+          label: cat.category || 'Unknown',
+          abbreviation: cat.category === 'Points' ? 'PPG' : cat.category === 'Assists' ? 'APG' : cat.category === 'Rebounds' ? 'RPG' : cat.category?.substring(0, 3).toUpperCase() || '???',
+          unit: '/game',
+          players: (cat.leaders || []).slice(0, 5).map((p) => ({
+            name: p.name || 'Unknown',
+            team: p.team || '',
+            value: p.value || 0,
+          })),
+        }));
+        setLeaderCategories(mapped);
+      } else if (data.players && Array.isArray(data.players)) {
+        // Fallback: sort raw player list into leader categories
+        const players = data.players;
+        const categories: LeaderCategory[] = [
+          { label: 'Points', abbreviation: 'PPG', unit: '/game', players: [] },
+          { label: 'Assists', abbreviation: 'APG', unit: '/game', players: [] },
+          { label: 'Rebounds', abbreviation: 'RPG', unit: '/game', players: [] },
+        ];
+        const sortField = ['points', 'assists', 'rebounds'];
+        categories.forEach((cat, idx) => {
+          const field = sortField[idx];
+          const sorted = [...players]
+            .filter((p) => typeof (p[field] ?? p[field + 'PerGame']) === 'number')
+            .sort((a, b) => {
+              const av = Number(a[field + 'PerGame'] ?? a[field] ?? 0);
+              const bv = Number(b[field + 'PerGame'] ?? b[field] ?? 0);
+              return bv - av;
+            })
+            .slice(0, 5);
+          cat.players = sorted.map((p) => ({
+            name: (p.name as string) || (p.firstName as string || '') + ' ' + (p.lastName as string || ''),
+            team: (p.team as string) || '',
+            value: Number(p[field + 'PerGame'] ?? p[field] ?? 0),
+          }));
+        });
+        setLeaderCategories(categories.filter((c) => c.players.length > 0));
+      }
+    } catch {
+      // Leaders are supplementary — don't block the page
+    } finally {
+      setLeadersLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (activeTab === 'standings' || activeTab === 'teams') fetchStandings();
     else if (activeTab === 'scores') fetchScores();
-  }, [activeTab, fetchStandings, fetchScores]);
+    else if (activeTab === 'players') fetchLeaders();
+  }, [activeTab, fetchStandings, fetchScores, fetchLeaders]);
 
   useEffect(() => {
     if (activeTab === 'scores' && hasLiveGames) {
@@ -128,6 +257,11 @@ export default function NBAPage() {
       return () => clearInterval(interval);
     }
   }, [activeTab, hasLiveGames, fetchScores]);
+
+  // Fetch leaders on mount for the League Leaders section below tabs
+  useEffect(() => {
+    fetchLeaders();
+  }, [fetchLeaders]);
 
   const { eastern, western } = useMemo(() => splitNBAByConference(standings), [standings]);
 
@@ -148,7 +282,6 @@ export default function NBAPage() {
           leagueName="National Basketball Association"
           tagline="Grizzlies. Mavericks. Thunder. Every game, every stat, no network filter."
           description="Live scores, conference standings, and analytics for all 30 teams."
-          accentColor="#1D428A"
           dataSource="SportsDataIO"
           primaryCta={{ label: 'Live Scores', href: '/nba/games' }}
           secondaryCta={{ label: 'Standings', href: '/nba/standings' }}
@@ -274,57 +407,276 @@ export default function NBAPage() {
             <TabPanel id="teams" activeTab={activeTab}>
               <div className="grid gap-6 md:grid-cols-2">
                 {[{ label: 'Eastern Conference', teams: eastern }, { label: 'Western Conference', teams: western }].map((conf) => (
-                  <div key={conf.label}>
-                    <h3 className="text-xl font-display font-bold text-burnt-orange mb-4">{conf.label}</h3>
-                    <div className="space-y-2">
-                      {conf.teams.sort((a, b) => b.wins - a.wins).map((team) => (
-                        <Link key={team.teamName} href={`/nba/teams/${team.teamName.toLowerCase().replace(/\s+/g, '-')}`}>
-                          <Card variant="hover" padding="sm" className="flex items-center justify-between px-4 py-3">
-                            <span className="font-medium text-text-primary">{team.teamName}</span>
-                            <span className="text-sm text-text-tertiary">{team.wins}-{team.losses}</span>
-                          </Card>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
+                  <ScrollReveal key={conf.label}>
+                    <Card variant="default" padding="lg">
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-3">
+                          <Image src="/icons/basketball.svg" alt="" width={20} height={20} className="opacity-60" />
+                          {conf.label}
+                        </CardTitle>
+                        <p className="text-xs text-text-tertiary mt-1">{conf.teams.length} teams</p>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="divide-y divide-border-subtle">
+                          {conf.teams.sort((a, b) => b.wins - a.wins).map((team, idx) => {
+                            const isPlayoffSeed = idx < 6;
+                            const isPlayIn = idx >= 6 && idx < 10;
+                            return (
+                              <Link key={team.teamName} href={`/nba/teams/${team.teamName.toLowerCase().replace(/\s+/g, '-')}`}>
+                                <div className="flex items-center justify-between py-3 px-2 hover:bg-surface-light rounded-lg transition-colors group">
+                                  <div className="flex items-center gap-3">
+                                    <span className={`text-sm font-bold w-6 text-center ${isPlayoffSeed ? 'text-burnt-orange' : isPlayIn ? 'text-text-secondary' : 'text-text-tertiary'}`}>
+                                      {idx + 1}
+                                    </span>
+                                    <span className="font-medium text-text-primary group-hover:text-burnt-orange transition-colors">
+                                      {team.teamName}
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center gap-3">
+                                    <span className="font-mono text-sm text-text-secondary">{team.wins}-{team.losses}</span>
+                                    <span className="font-mono text-xs text-text-tertiary w-12 text-right">
+                                      {team.winPercentage.toFixed(3).replace('0.', '.')}
+                                    </span>
+                                    {isPlayoffSeed && (
+                                      <Badge variant="success" size="sm">Playoff</Badge>
+                                    )}
+                                    {isPlayIn && (
+                                      <Badge variant="warning" size="sm">Play-In</Badge>
+                                    )}
+                                  </div>
+                                </div>
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </ScrollReveal>
                 ))}
               </div>
             </TabPanel>
 
             {/* Players Tab */}
             <TabPanel id="players" activeTab={activeTab}>
-              <Card variant="default" padding="lg">
-                <CardHeader><CardTitle>Player Statistics</CardTitle></CardHeader>
-                <CardContent>
-                  <p className="text-text-secondary mb-4">Search NBA players for detailed stats and profiles.</p>
-                  <div className="flex flex-wrap gap-3">
-                    <Link href="/nba/players"><Button variant="primary">Browse All Players</Button></Link>
-                    <Link href="/nba/standings"><Button variant="secondary">View Standings</Button></Link>
+              <DataErrorBoundary name="NBA Players">
+                {leadersLoading ? (
+                  <div className="grid gap-6 md:grid-cols-3">
+                    {[1, 2, 3].map((i) => (
+                      <Card key={i} variant="default" padding="lg">
+                        <CardHeader><Skeleton variant="text" width={140} height={20} /></CardHeader>
+                        <CardContent>
+                          {[1, 2, 3, 4, 5].map((j) => (
+                            <div key={j} className="flex justify-between py-2">
+                              <Skeleton variant="text" width={120} height={16} />
+                              <Skeleton variant="text" width={40} height={16} />
+                            </div>
+                          ))}
+                        </CardContent>
+                      </Card>
+                    ))}
                   </div>
-                </CardContent>
-              </Card>
+                ) : leaderCategories.length > 0 ? (
+                  <>
+                    <div className="grid gap-6 md:grid-cols-3">
+                      {leaderCategories.map((cat) => (
+                        <ScrollReveal key={cat.label}>
+                          <Card variant="default" padding="lg">
+                            <CardHeader>
+                              <CardTitle className="flex items-center gap-3">
+                                <span className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-burnt-orange/15 text-burnt-orange font-mono font-bold text-sm">
+                                  {cat.abbreviation}
+                                </span>
+                                {cat.label}
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="divide-y divide-border-subtle">
+                                {cat.players.map((player, idx) => (
+                                  <div key={player.name} className="flex items-center justify-between py-3">
+                                    <div className="flex items-center gap-3">
+                                      <span className={`text-sm font-bold w-6 text-center ${idx === 0 ? 'text-burnt-orange' : 'text-text-tertiary'}`}>
+                                        {idx + 1}
+                                      </span>
+                                      <div>
+                                        <p className={`font-semibold text-sm ${idx === 0 ? 'text-text-primary' : 'text-text-secondary'}`}>
+                                          {player.name}
+                                        </p>
+                                        <p className="text-xs text-text-tertiary">{player.team}</p>
+                                      </div>
+                                    </div>
+                                    <span className={`font-mono font-bold text-sm ${idx === 0 ? 'text-burnt-orange' : 'text-text-primary'}`}>
+                                      {player.value.toFixed(1)}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </ScrollReveal>
+                      ))}
+                    </div>
+                    <div className="mt-6 flex flex-wrap gap-3">
+                      <Link href="/nba/players"><Button variant="primary">Browse All Players</Button></Link>
+                      <Link href="/nba/standings"><Button variant="secondary">View Standings</Button></Link>
+                    </div>
+                  </>
+                ) : (
+                  <Card variant="default" padding="lg">
+                    <CardHeader><CardTitle>Player Statistics</CardTitle></CardHeader>
+                    <CardContent>
+                      <p className="text-text-secondary mb-4">Search NBA players for detailed stats and profiles.</p>
+                      <div className="flex flex-wrap gap-3">
+                        <Link href="/nba/players"><Button variant="primary">Browse All Players</Button></Link>
+                        <Link href="/nba/standings"><Button variant="secondary">View Standings</Button></Link>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+              </DataErrorBoundary>
             </TabPanel>
+          </Container>
+        </Section>
+
+        {/* League Leaders Section */}
+        {leaderCategories.length > 0 && (
+          <Section padding="lg" background="midnight" borderTop>
+            <Container>
+              <ScrollReveal>
+                <div className="mb-8">
+                  <h2 className="font-display text-2xl md:text-3xl font-bold text-text-primary uppercase tracking-wide">
+                    League Leaders
+                  </h2>
+                  <p className="text-text-tertiary text-sm mt-2">Top performers across the NBA this season</p>
+                </div>
+              </ScrollReveal>
+              <div className="grid gap-6 md:grid-cols-3">
+                {leaderCategories.map((cat) => (
+                  <ScrollReveal key={cat.label}>
+                    <Card variant="default" padding="lg" className="h-full">
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-3 text-lg">
+                          <span className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-burnt-orange/15 text-burnt-orange font-mono font-bold text-sm">
+                            {cat.abbreviation}
+                          </span>
+                          {cat.label}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="divide-y divide-border-subtle">
+                          {cat.players.map((player, idx) => (
+                            <div key={player.name} className="flex items-center justify-between py-3">
+                              <div className="flex items-center gap-3">
+                                <span className={`text-sm font-bold w-6 text-center ${idx === 0 ? 'text-burnt-orange' : 'text-text-tertiary'}`}>
+                                  {idx + 1}
+                                </span>
+                                <div>
+                                  <p className={`font-semibold text-sm ${idx === 0 ? 'text-text-primary' : 'text-text-secondary'}`}>
+                                    {player.name}
+                                  </p>
+                                  <p className="text-xs text-text-tertiary">{player.team}</p>
+                                </div>
+                              </div>
+                              <span className={`font-mono font-bold text-sm ${idx === 0 ? 'text-burnt-orange' : 'text-text-primary'}`}>
+                                {player.value.toFixed(1)}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </ScrollReveal>
+                ))}
+              </div>
+            </Container>
+          </Section>
+        )}
+
+        {/* Around the League */}
+        <Section padding="lg" background="charcoal" borderTop>
+          <Container>
+            <ScrollReveal>
+              <div className="mb-8">
+                <h2 className="font-display text-2xl md:text-3xl font-bold text-text-primary uppercase tracking-wide">
+                  Around the League
+                </h2>
+                <p className="text-text-tertiary text-sm mt-2">Storylines shaping the NBA right now</p>
+              </div>
+            </ScrollReveal>
+            <div className="grid gap-6 md:grid-cols-2">
+              {AROUND_THE_LEAGUE.map((item) => (
+                <ScrollReveal key={item.headline}>
+                  <Link href={item.href}>
+                    <Card variant="hover" padding="lg" className="h-full">
+                      <CardContent>
+                        <div className="flex items-center gap-3 mb-3">
+                          <Badge variant={item.badgeVariant} size="sm">{item.badge}</Badge>
+                          <span className="text-xs text-text-tertiary uppercase tracking-wider font-semibold">{item.category}</span>
+                        </div>
+                        <h3 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide mb-2">
+                          {item.headline}
+                        </h3>
+                        <p className="text-sm text-text-secondary leading-relaxed">
+                          {item.description}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                </ScrollReveal>
+              ))}
+            </div>
           </Container>
         </Section>
 
         {/* Court Vision Section */}
         <Section padding="lg" background="midnight" borderTop>
           <Container>
-            <SportInfoCard
-              icon={
-                <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
-                  <rect x="2" y="3" width="20" height="14" rx="2" />
-                  <line x1="8" y1="21" x2="16" y2="21" />
-                  <line x1="12" y1="17" x2="12" y2="21" />
-                </svg>
-              }
-              title="Court Vision"
-              subtitle="How the NBA tracks the game"
-              bullets={COURT_VISION_BULLETS}
-              actions={[
-                { label: 'Full Vision AI Landscape →', href: '/vision-ai', variant: 'ghost' },
-              ]}
-            />
+            <div className="grid gap-8 lg:grid-cols-2">
+              <SportInfoCard
+                icon={
+                  <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
+                    <rect x="2" y="3" width="20" height="14" rx="2" />
+                    <line x1="8" y1="21" x2="16" y2="21" />
+                    <line x1="12" y1="17" x2="12" y2="21" />
+                  </svg>
+                }
+                title="Court Vision"
+                subtitle="How the NBA tracks the game"
+                bullets={COURT_VISION_BULLETS}
+                actions={[
+                  { label: 'Full Vision AI Landscape →', href: '/vision-ai', variant: 'ghost' },
+                ]}
+              />
+              <ScrollReveal>
+                <Card variant="default" padding="lg" className="h-full">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-lg bg-burnt-orange/15 flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
+                        <line x1="18" y1="20" x2="18" y2="10" />
+                        <line x1="12" y1="20" x2="12" y2="4" />
+                        <line x1="6" y1="20" x2="6" y2="14" />
+                      </svg>
+                    </div>
+                    <div>
+                      <CardTitle size="md">Stat Glossary</CardTitle>
+                      <p className="text-text-tertiary text-xs mt-0.5">Advanced metrics decoded</p>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    {STAT_EXPLAINERS.map((item) => (
+                      <div key={item.stat} className="border-l-2 border-burnt-orange/40 pl-4">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-mono font-bold text-burnt-orange text-sm">{item.stat}</span>
+                          <span className="text-xs text-text-tertiary">— {item.name}</span>
+                        </div>
+                        <p className="text-sm text-text-secondary leading-relaxed">
+                          {item.description}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              </ScrollReveal>
+            </div>
           </Container>
         </Section>
       </div>

@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { preseason2026 } from '@/lib/data/preseason-2026';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 import { AllTeamsSearch } from './AllTeamsSearch';
@@ -170,6 +171,14 @@ export default function TeamsPage() {
       <div>
         <Section padding="lg" className="pt-6">
           <Container>
+            <Breadcrumb
+              className="mb-4"
+              items={[
+                { label: 'Home', href: '/' },
+                { label: 'College Baseball', href: '/college-baseball' },
+                { label: 'Teams' },
+              ]}
+            />
             <ScrollReveal direction="up">
               <div className="text-center mb-12">
                 <Badge variant="primary" className="mb-4">

@@ -1,17 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Michigan State Spartans: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    'Jake Boss Jr. is in his fifteenth year in East Lansing, and the question is no longer whether he can keep Michigan State competitive — it is whether he can push the Spartans past the line.',
-  openGraph: {
-    title: 'Michigan State Spartans: 2026 Season Preview',
-    description:
-      'Jake Boss Jr. is in his fifteenth year in East Lansing, and the question is no longer whether he can keep Michigan State competitive — it is whether he can push the Spartans past the line.',
-  },
+const seoConfig = {
+  title: 'Michigan State Spartans 2026 Season Preview',
+  description: 'Michigan State Spartans 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big Ten predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/michigan-state-2026',
+  image: '/images/og/cbb-michigan-state-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'Michigan State Spartans — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'Michigan State',
@@ -175,5 +176,10 @@ const data: TeamPreviewData = {
 };
 
 export default function MichiganState2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

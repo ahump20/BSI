@@ -1,17 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Oregon Ducks: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    "Oregon shared the Big Ten title in 2025, won 42 games, and established themselves as a legitimate national power under Mark Wasikowski. The Ducks enter 2026 with a deep roster.",
-  openGraph: {
-    title: 'Oregon Ducks: 2026 Season Preview',
-    description:
-      "Oregon shared the Big Ten title in 2025, won 42 games, and established themselves as a legitimate national power under Mark Wasikowski. The Ducks enter 2026 with a deep roster.",
-  },
+const seoConfig = {
+  title: 'Oregon Ducks 2026 Season Preview',
+  description: 'Oregon Ducks 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big Ten predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/oregon-2026',
+  image: '/images/og/cbb-oregon-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'Oregon Ducks — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'Oregon',
@@ -182,5 +183,10 @@ const data: TeamPreviewData = {
 };
 
 export default function Oregon2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

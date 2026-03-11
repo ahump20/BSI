@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'NBA Standings | Blaze Sports Intel',
@@ -8,7 +9,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'NBA Standings | Blaze Sports Intel',
     description: 'NBA conference standings and playoff seeding.',
-  },
+   images: ogImage('/images/og-nba.png') },
 };
 
 export default function NBAStandingsLayout({ children }: { children: ReactNode }) {

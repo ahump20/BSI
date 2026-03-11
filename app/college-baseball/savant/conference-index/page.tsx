@@ -21,7 +21,7 @@ interface ConferenceRow {
 }
 
 export default function ConferenceIndexPage() {
-  const { data, loading, error, retry } = useSportData<{ data: ConferenceRow[] }>(
+  const { data, loading, error, retry } = useSportData<{ data: ConferenceRow[]; total?: number }>(
     '/api/savant/conference-strength'
   );
 
@@ -65,8 +65,8 @@ export default function ConferenceIndexPage() {
                 </h1>
                 <p className="text-text-tertiary mt-3 max-w-2xl text-base leading-relaxed">
                   Composite ranking of conference competitiveness. Weighs inter-conference
-                  record, RPI, collective offense (OPS, wOBA), and pitching (ERA). Updated
-                  weekly as the sample size grows.
+                  record, RPI, collective offense (OPS, wOBA), and pitching (ERA). Recomputed
+                  daily at 6 AM CT.
                 </p>
               </div>
             </ScrollReveal>
@@ -86,7 +86,7 @@ export default function ConferenceIndexPage() {
                   </button>
                 </Card>
               ) : (
-                <ConferenceStrengthChart data={data?.data ?? []} isPro={isPro} />
+                <ConferenceStrengthChart data={data?.data ?? []} isPro={isPro} total={data?.total} />
               )}
             </ScrollReveal>
 
@@ -98,9 +98,11 @@ export default function ConferenceIndexPage() {
                 </h3>
                 <p className="text-[11px] text-text-muted leading-relaxed max-w-3xl">
                   The Conference Strength Index is a 0-100 composite. Inter-conference win
-                  percentage contributes 30%, average RPI 25%, collective OPS and wOBA 25%,
-                  and collective ERA 20%. The index stabilizes after approximately 4 weeks
-                  of conference play. Early-season values should be treated as provisional.
+                  percentage contributes 40%, RPI 30%, collective wOBA 15%,
+                  and collective ERA 15%. RPI is placeholder (0.500) until sufficient
+                  opponent data accumulates — rankings are currently driven by inter-conference
+                  record and team offensive/pitching stats. Early-season values should be
+                  treated as provisional, particularly for conferences with thin ESPN coverage.
                 </p>
               </Card>
             </ScrollReveal>

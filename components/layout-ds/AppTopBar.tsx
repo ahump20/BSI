@@ -23,7 +23,7 @@ const ROUTE_TITLES: Record<string, string> = {
   '/search': 'Search',
   '/settings': 'Settings',
   '/intel': 'Intelligence',
-  '/transfer-portal': 'Transfer Portal',
+  '/college-baseball/transfer-portal': 'Transfer Portal',
   '/nil-valuation': 'NIL Valuation',
   '/about': 'About',
   '/contact': 'Contact',

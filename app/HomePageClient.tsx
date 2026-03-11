@@ -9,6 +9,7 @@ import { EditorialPreview } from '@/components/home/EditorialPreview';
 import { TrendingIntelFeed } from '@/components/home/TrendingIntelFeed';
 import { Footer } from '@/components/layout-ds/Footer';
 import { AskBSI } from '@/components/home/AskBSI';
+import { PlatformVitals } from '@/components/home/PlatformVitals';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { HeroGlow } from '@/components/ui/HeroGlow';
 import { BaseballIcon, FootballIcon, BasketballIcon, StadiumIcon } from '@/components/icons/SportIcons';
@@ -49,25 +50,25 @@ function SavantPreviewStrip() {
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-5">
             <div>
-              <div className="h-3 w-16 bg-surface-light rounded animate-pulse mb-2" />
-              <div className="h-5 w-52 bg-surface-light rounded animate-pulse" />
+              <div className="h-3 w-16 skeleton mb-2" />
+              <div className="h-5 w-52 skeleton" />
             </div>
-            <div className="h-3 w-24 bg-surface-light rounded animate-pulse" />
+            <div className="h-3 w-24 skeleton" />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
             {[0, 1, 2, 3, 4].map((i) => (
               <div
                 key={i}
-                className="flex sm:flex-col items-center sm:items-center gap-3 sm:gap-1.5 p-3 rounded-xl bg-[rgba(26,26,26,0.6)] border border-[rgba(245,240,235,0.04)]"
+                className="heritage-card flex sm:flex-col items-center sm:items-center gap-3 sm:gap-1.5 p-3"
               >
-                <div className="h-3 w-3 bg-surface-light rounded animate-pulse shrink-0" />
+                <div className="h-3 w-3 skeleton shrink-0" />
                 <div className="flex-1 sm:text-center space-y-1.5 min-w-0">
-                  <div className="h-3.5 w-20 sm:mx-auto bg-surface-light rounded animate-pulse" />
-                  <div className="h-2 w-12 sm:mx-auto bg-surface-light rounded animate-pulse" />
+                  <div className="h-3.5 w-20 sm:mx-auto skeleton" />
+                  <div className="h-2 w-12 sm:mx-auto skeleton" />
                 </div>
                 <div className="text-right sm:text-center space-y-1 shrink-0">
-                  <div className="h-5 w-10 sm:mx-auto bg-surface-light rounded animate-pulse" />
-                  <div className="h-2 w-6 sm:mx-auto bg-surface-light rounded animate-pulse" />
+                  <div className="h-5 w-10 sm:mx-auto skeleton" />
+                  <div className="h-2 w-6 sm:mx-auto skeleton" />
                 </div>
               </div>
             ))}
@@ -87,14 +88,18 @@ function SavantPreviewStrip() {
         <ScrollReveal direction="up">
           <div className="flex items-center justify-between mb-5">
             <div>
-              <span className="section-label block mb-1">Live Proof</span>
-              <h2 className="font-display text-lg md:text-xl font-bold uppercase tracking-wide text-text-primary">
-                Top Hitters — D1 College Baseball
-              </h2>
+              <span className="heritage-stamp mb-1">Live Proof</span>
+              <div className="flex items-center gap-3 mt-2">
+                <div className="section-rule-thick" />
+                <h2 className="font-display text-lg md:text-xl font-bold uppercase tracking-wide" style={{ color: 'var(--bsi-bone)' }}>
+                  Top Hitters — D1 College Baseball
+                </h2>
+              </div>
             </div>
             <Link
               href="/college-baseball/savant"
-              className="text-burnt-orange text-xs font-semibold uppercase tracking-wider hover:text-ember transition-colors"
+              className="text-xs font-semibold uppercase tracking-wider transition-colors"
+              style={{ color: 'var(--heritage-columbia-blue)' }}
             >
               Full Leaderboard &rarr;
             </Link>
@@ -112,11 +117,8 @@ function SavantPreviewStrip() {
               return (
                 <div
                   key={name + i}
-                  className={`relative flex sm:flex-col items-center sm:items-center gap-3 sm:gap-1.5 p-3 rounded-xl transition-all duration-300 overflow-hidden group ${
-                    isLeader
-                      ? 'bg-burnt-orange/[0.08] border border-burnt-orange/20 shadow-[0_0_20px_rgba(191,87,0,0.06)]'
-                      : 'bg-[rgba(26,26,26,0.6)] border border-[rgba(245,240,235,0.04)]'
-                  }`}
+                  className="heritage-card relative flex sm:flex-col items-center sm:items-center gap-3 sm:gap-1.5 p-3 transition-all duration-300 overflow-hidden group"
+                  style={isLeader ? { borderLeft: '2px solid var(--bsi-primary)' } : undefined}
                 >
                   {/* Percentile color bar — horizontal fill behind content */}
                   <div
@@ -124,12 +126,13 @@ function SavantPreviewStrip() {
                     style={{ width: `${pctile}%`, backgroundColor: barColor }}
                     aria-hidden="true"
                   />
-                  <span className={`relative font-mono text-xs font-bold w-5 text-center shrink-0 ${
-                    isLeader ? 'text-burnt-orange' : 'text-text-muted'
-                  }`}>
+                  <span className="relative text-xs font-bold w-5 text-center shrink-0" style={{
+                    fontFamily: 'var(--bsi-font-data)',
+                    color: isLeader ? 'var(--bsi-primary)' : 'var(--bsi-dust)',
+                  }}>
                     {isLeader ? (
                       <span className="inline-flex flex-col items-center">
-                        <svg viewBox="0 0 16 12" className="w-3.5 h-2.5 text-burnt-orange mb-0.5" fill="currentColor" aria-label="Leader">
+                        <svg viewBox="0 0 16 12" className="w-3.5 h-2.5 mb-0.5" fill="var(--bsi-primary)" aria-label="Leader">
                           <path d="M8 0l2.5 4 5.5 1-4 3.5 1 5.5L8 11l-5 3 1-5.5L0 5l5.5-1z"/>
                         </svg>
                         <span>1</span>
@@ -137,25 +140,25 @@ function SavantPreviewStrip() {
                     ) : i + 1}
                   </span>
                   <div className="relative flex-1 sm:text-center min-w-0">
-                    <div className="text-sm font-semibold truncate text-text-primary">{name}</div>
-                    <div className="text-[10px] uppercase tracking-wider text-text-muted">{row.team || ''}</div>
+                    <div className="text-sm font-semibold truncate" style={{ color: 'var(--bsi-bone)' }}>{name}</div>
+                    <div className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--bsi-dust)' }}>{row.team || ''}</div>
                   </div>
                   <div className="relative text-right sm:text-center shrink-0">
-                    <span className={`font-mono font-bold block ${
-                      isLeader ? 'text-xl text-burnt-orange' : 'text-lg text-burnt-orange/80'
-                    }`}>
+                    <span className="led-stat font-bold block" style={{
+                      fontSize: isLeader ? '1.25rem' : '1.125rem',
+                    }}>
                       {fmt3(obp)}
                     </span>
-                    <span className="text-[9px] uppercase tracking-wider text-text-muted">OBP</span>
+                    <span className="text-[9px] uppercase tracking-wider" style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--bsi-dust)' }}>OBP</span>
                   </div>
                 </div>
               );
             })}
           </div>
 
-          <p className="mt-4 text-center text-xs text-text-muted">
+          <p className="mt-4 text-center text-xs" style={{ color: 'var(--bsi-dust)' }}>
             wOBA, wRC+, FIP, and park factors available on the{' '}
-            <Link href="/college-baseball/savant" className="text-burnt-orange hover:text-ember transition-colors">
+            <Link href="/college-baseball/savant" className="transition-colors" style={{ color: 'var(--heritage-columbia-blue)' }}>
               full Savant leaderboard
             </Link>
           </p>
@@ -210,7 +213,7 @@ const FEATURES: FeatureItem[] = [
   {
     label: 'Transfer Portal',
     description: 'Track who is moving, where, and what it means.',
-    href: '/transfer-portal',
+    href: '/college-baseball/transfer-portal',
     icon: (
       <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5">
         <path d="M16 3h5v5M14 10l7-7M8 21H3v-5M10 14l-7 7" />
@@ -251,7 +254,7 @@ const FEATURES: FeatureItem[] = [
 
 function FeatureShowcase() {
   return (
-    <section className="py-14 px-4 sm:px-6 lg:px-8 bg-[#1A1A1A] relative">
+    <section className="py-14 px-4 sm:px-6 lg:px-8 relative" style={{ background: 'var(--surface-dugout)' }}>
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full opacity-[0.03]"
           style={{ background: 'radial-gradient(ellipse, #BF5700, transparent 70%)' }}
@@ -259,10 +262,13 @@ function FeatureShowcase() {
       </div>
       <div className="max-w-6xl mx-auto relative z-10">
         <ScrollReveal direction="up">
-          <span className="section-label block mb-2">Tools &amp; Intel</span>
-          <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary mb-8">
-            Platform
-          </h2>
+          <span className="heritage-stamp mb-2">Tools &amp; Intel</span>
+          <div className="flex items-center gap-3 mt-2 mb-8">
+            <div className="section-rule-thick" />
+            <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide" style={{ color: 'var(--bsi-bone)' }}>
+              Platform
+            </h2>
+          </div>
         </ScrollReveal>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
@@ -275,25 +281,25 @@ function FeatureShowcase() {
                 <Tag
                   href={feat.href}
                   {...extra}
-                  className="group flex items-start gap-3 p-4 rounded-xl border border-[rgba(245,240,235,0.04)] bg-[rgba(13,13,13,0.5)] hover:border-burnt-orange/20 hover:bg-burnt-orange/[0.03] transition-all duration-300"
+                  className="group heritage-card flex items-start gap-3 p-4 hover:border-[rgba(191,87,0,0.4)] transition-all duration-300"
                 >
-                  <div className="mt-0.5 text-text-muted group-hover:text-burnt-orange transition-colors shrink-0">
+                  <div className="mt-0.5 shrink-0 transition-colors" style={{ color: 'var(--bsi-dust)' }}>
                     {feat.icon}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-mono text-xs font-semibold uppercase tracking-wider text-text-primary group-hover:text-burnt-orange transition-colors">
+                      <span className="text-xs font-semibold uppercase tracking-wider transition-colors" style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--bsi-bone)' }}>
                         {feat.label}
                       </span>
                       {isExternal && (
-                        <span className="text-[9px] text-text-muted opacity-40">&nearr;</span>
+                        <span className="text-[9px] opacity-40" style={{ color: 'var(--bsi-dust)' }}>{'\u2197'}</span>
                       )}
                     </div>
-                    <p className="text-xs text-text-secondary leading-relaxed font-serif">
+                    <p className="text-xs leading-relaxed font-serif" style={{ color: 'var(--bsi-dust)' }}>
                       {feat.description}
                     </p>
                   </div>
-                  <span className="text-text-muted/30 group-hover:text-burnt-orange/60 transition-colors shrink-0 mt-1">
+                  <span className="shrink-0 mt-1 transition-colors" style={{ color: 'rgba(191, 87, 0, 0.3)' }}>
                     &rarr;
                   </span>
                 </Tag>
@@ -331,7 +337,7 @@ interface SportCardData {
 // ────────────────────────────────────────
 
 const WBC_START = new Date('2026-03-05T00:00:00-06:00');
-const WBC_END = new Date('2026-03-17T23:59:59-05:00');
+const WBC_END = new Date('2026-03-18T23:59:59-05:00');
 
 function WBCBanner() {
   const now = new Date();
@@ -344,12 +350,14 @@ function WBCBanner() {
     <section className="px-4 sm:px-6 lg:px-8 py-4">
       <div className="max-w-6xl mx-auto">
         <Link href="/wbc" className="group block">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-burnt-orange/20 via-burnt-orange/10 to-ember/5 border border-burnt-orange/30 hover:border-burnt-orange/60 transition-all p-5 sm:p-6">
-            <div className="absolute inset-0 bg-gradient-to-br from-burnt-orange/5 to-transparent pointer-events-none" />
+          <div
+            className="heritage-card relative overflow-hidden p-5 sm:p-6"
+            style={{ borderLeft: '3px solid var(--bsi-primary)' }}
+          >
             <div className="relative flex items-center justify-between gap-4 flex-wrap">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-burnt-orange/20 rounded-xl flex items-center justify-center shrink-0">
-                  <svg viewBox="0 0 24 24" className="w-5 h-5 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <div className="w-10 h-10 flex items-center justify-center shrink-0" style={{ background: 'rgba(191, 87, 0, 0.12)' }}>
+                  <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="var(--bsi-primary)" strokeWidth="1.5">
                     <circle cx="12" cy="12" r="10" />
                     <path d="M12 2c-2 4-2 8 0 12s2 8 0 12" />
                     <path d="M2 12c4-2 8-2 12 0s8 2 12 0" />
@@ -357,29 +365,31 @@ function WBCBanner() {
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-0.5">
-                    <span className="font-display font-bold text-text-primary text-base sm:text-lg uppercase tracking-wide">
+                    <span className="font-display font-bold text-base sm:text-lg uppercase tracking-wide" style={{ color: 'var(--bsi-bone)' }}>
                       World Baseball Classic 2026
                     </span>
                     {isLive ? (
-                      <span className="flex items-center gap-1.5 text-[10px] font-bold text-green-400 bg-green-400/10 px-2 py-0.5 rounded-full border border-green-400/20">
-                        <span className="relative flex h-1.5 w-1.5">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500" />
+                      <span className="heritage-stamp" style={{ padding: '1px 8px', fontSize: '9px', color: '#22c55e', borderColor: 'rgba(34, 197, 94, 0.3)' }}>
+                        <span className="inline-flex items-center gap-1.5">
+                          <span className="relative flex h-1.5 w-1.5">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500" />
+                          </span>
+                          LIVE
                         </span>
-                        LIVE
                       </span>
                     ) : (
-                      <span className="text-[10px] font-bold text-burnt-orange bg-burnt-orange/10 px-2 py-0.5 rounded-full border border-burnt-orange/20">
-                        MAR 5–17
+                      <span className="heritage-stamp" style={{ padding: '1px 8px', fontSize: '9px' }}>
+                        MAR 5-17
                       </span>
                     )}
                   </div>
-                  <p className="text-text-secondary text-sm">
+                  <p className="text-sm" style={{ color: 'var(--bsi-dust)' }}>
                     20 nations · Power rankings · Pool previews · EdgeBot v3 betting intelligence
                   </p>
                 </div>
               </div>
-              <span className="text-burnt-orange font-semibold text-sm flex items-center gap-2 group-hover:gap-3 transition-all shrink-0">
+              <span className="font-semibold text-sm flex items-center gap-2 group-hover:gap-3 transition-all shrink-0" style={{ color: 'var(--bsi-primary)' }}>
                 Explore WBC
                 <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M5 12h14M12 5l7 7-7 7" />
@@ -405,7 +415,7 @@ const sports: SportCardData[] = [
     name: 'MLB',
     icon: BaseballIcon,
     href: '/mlb',
-    description: 'Live scores, standings, and the advanced metrics — wOBA, FIP, wRC+ — that tell you what the box score won\u2019t.',
+    description: 'Live scores, standings, and the advanced metrics \u2014 wOBA, FIP, wRC+ \u2014 that tell you what the box score won\u2019t.',
     color: '#C41E3A',
   },
   {
@@ -419,7 +429,7 @@ const sports: SportCardData[] = [
     name: 'NBA',
     icon: BasketballIcon,
     href: '/nba',
-    description: 'Live scores, standings, and game analytics across the full league — not just the coasts.',
+    description: 'Live scores, standings, and game analytics across the full league \u2014 not just the coasts.',
     color: 'var(--bsi-accent)',
   },
   {
@@ -439,20 +449,22 @@ function LiveGameBadge({ live, today, color }: { live: number; today: number; co
   if (live > 0) {
     return (
       <span
-        className="absolute top-3 right-3 flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold"
-        style={{ backgroundColor: withAlpha(color, 0.15), color }}
+        className="absolute top-3 right-3 heritage-stamp"
+        style={{ padding: '1px 8px', fontSize: '9px', backgroundColor: withAlpha(color, 0.12), color, borderColor: withAlpha(color, 0.3) }}
       >
-        <span className="relative flex h-1.5 w-1.5">
-          <span
-            className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
-            style={{ backgroundColor: color }}
-          />
-          <span
-            className="relative inline-flex rounded-full h-1.5 w-1.5"
-            style={{ backgroundColor: color }}
-          />
+        <span className="inline-flex items-center gap-1.5">
+          <span className="relative flex h-1.5 w-1.5">
+            <span
+              className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
+              style={{ backgroundColor: color }}
+            />
+            <span
+              className="relative inline-flex rounded-full h-1.5 w-1.5"
+              style={{ backgroundColor: color }}
+            />
+          </span>
+          {live} Live
         </span>
-        {live} Live
       </span>
     );
   }
@@ -460,8 +472,8 @@ function LiveGameBadge({ live, today, color }: { live: number; today: number; co
   if (today > 0) {
     return (
       <span
-        className="absolute top-3 right-3 px-2 py-0.5 rounded-full text-[10px] font-semibold"
-        style={{ backgroundColor: withAlpha(color, 0.08), color }}
+        className="absolute top-3 right-3 heritage-stamp"
+        style={{ padding: '1px 8px', fontSize: '9px', backgroundColor: withAlpha(color, 0.08), color, borderColor: withAlpha(color, 0.2) }}
       >
         {today} Today
       </span>
@@ -482,7 +494,7 @@ export function HomePageClient() {
   }, []);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen grain-overlay">
       {/* ─── 1. Hero ─── */}
       <DataErrorBoundary name="Hero" compact>
         <HeroSection />
@@ -497,15 +509,18 @@ export function HomePageClient() {
       </DataErrorBoundary>
 
       {/* ─── 3. Sports Hub — Our Coverage ─── */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-[#1A1A1A] relative">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 relative" style={{ background: 'var(--surface-dugout)' }}>
         <div className="max-w-6xl mx-auto relative z-10">
           <ScrollReveal direction="up">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <span className="section-label block mb-2">Coverage</span>
-                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary">
-                  Our Sports
-                </h2>
+                <span className="heritage-stamp mb-2">Coverage</span>
+                <div className="flex items-center gap-3 mt-2">
+                  <div className="section-rule-thick" />
+                  <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide" style={{ color: 'var(--bsi-bone)' }}>
+                    Our Sports
+                  </h2>
+                </div>
               </div>
             </div>
           </ScrollReveal>
@@ -524,20 +539,15 @@ export function HomePageClient() {
                 >
                   <Link href={sport.href} className="group block h-full">
                     <div
-                      className="relative p-5 rounded-xl h-full flex flex-col items-center text-center
-                        transition-all duration-300 hover:-translate-y-1
-                        bg-[rgba(13,13,13,0.6)] border border-[rgba(245,240,235,0.04)]
-                        hover:shadow-[0_8px_30px_rgba(0,0,0,0.3)]
-                        backdrop-blur-sm card-accent-line"
-                      style={{
-                        ['--card-accent' as string]: sport.color,
-                      }}
+                      className="heritage-card relative p-5 h-full flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1"
+                      style={{ borderTop: `2px solid ${sport.color}` }}
                     >
                       {/* Accent border glow on hover — uses sport-specific color */}
                       <div
-                        className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
                         style={{
                           border: `1px solid ${withAlpha(sport.color, 0.35)}`,
+                          borderRadius: '2px',
                           boxShadow: `inset 0 1px 0 ${withAlpha(sport.color, 0.1)}, 0 0 20px ${withAlpha(sport.color, 0.06)}`,
                         }}
                         aria-hidden="true"
@@ -550,23 +560,18 @@ export function HomePageClient() {
                       />
 
                       <div
-                        className="w-14 h-14 rounded-xl flex items-center justify-center mb-3 transition-all duration-300 bg-surface-light text-text-secondary group-hover:text-white"
-                        style={{
-                          ['--hover-bg' as string]: withAlpha(sport.color, 0.15),
-                        }}
+                        className="w-14 h-14 flex items-center justify-center mb-3 transition-all duration-300"
+                        style={{ background: 'rgba(255,255,255,0.03)', color: 'var(--bsi-dust)' }}
                       >
                         <sport.icon className="w-10 h-10 transition-transform duration-300 group-hover:scale-110" />
                       </div>
 
-                      <h3
-                        className="text-base font-semibold mb-1.5 transition-colors text-text-primary"
-                        style={{ ['--accent' as string]: sport.color }}
-                      >
-                        <span className="group-hover:text-[var(--card-accent)] transition-colors duration-300">
+                      <h3 className="text-base font-semibold mb-1.5 transition-colors" style={{ color: 'var(--bsi-bone)' }}>
+                        <span className="group-hover:text-[var(--bsi-primary)] transition-colors duration-300">
                           {sport.name}
                         </span>
                       </h3>
-                      <p className="text-xs leading-relaxed text-text-secondary line-clamp-2">
+                      <p className="text-xs leading-relaxed line-clamp-2" style={{ color: 'var(--bsi-dust)' }}>
                         {sport.description}
                       </p>
                     </div>
@@ -601,10 +606,13 @@ export function HomePageClient() {
         <div className="max-w-5xl mx-auto">
           <ScrollReveal direction="up">
             <div className="mb-6">
-              <span className="section-label block mb-2">Cross-Sport Intel</span>
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary">
-                What&apos;s Happening Now
-              </h2>
+              <span className="heritage-stamp mb-2">Cross-Sport Intel</span>
+              <div className="flex items-center gap-3 mt-2">
+                <div className="section-rule-thick" />
+                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide" style={{ color: 'var(--bsi-bone)' }}>
+                  What&apos;s Happening Now
+                </h2>
+              </div>
             </div>
             <DataErrorBoundary name="Intel Feed">
               <TrendingIntelFeed />
@@ -617,14 +625,15 @@ export function HomePageClient() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         <div className="max-w-4xl mx-auto relative z-10">
           <ScrollReveal direction="left">
-            <span className="kicker mb-6 block">The Standard</span>
+            <span className="heritage-stamp mb-6">The Standard</span>
 
-            <div className="flex gap-6 md:gap-8">
-              <div className="w-1 flex-shrink-0 rounded-full bg-gradient-to-b from-burnt-orange via-burnt-orange/40 to-transparent" />
+            <div className="flex gap-6 md:gap-8 mt-4">
+              <div className="w-1 flex-shrink-0 bg-gradient-to-b from-[var(--bsi-primary)] via-[rgba(191,87,0,0.4)] to-transparent" style={{ borderRadius: '1px' }} />
 
               <div className="space-y-10 relative">
                 <span
-                  className="absolute -top-6 -left-2 leading-none pointer-events-none select-none font-serif text-[8rem] text-burnt-orange/[0.07]"
+                  className="absolute -top-6 -left-2 leading-none pointer-events-none select-none font-serif text-[8rem]"
+                  style={{ color: 'rgba(191, 87, 0, 0.07)' }}
                   aria-hidden="true"
                 >
                   &ldquo;
@@ -632,39 +641,45 @@ export function HomePageClient() {
 
                 {/* Garrido */}
                 <div className="relative">
-                  <blockquote className="font-serif text-2xl md:text-3xl leading-relaxed mb-6 text-text-primary/90">
+                  <blockquote className="font-serif text-2xl md:text-3xl leading-relaxed mb-6" style={{ color: 'var(--bsi-bone)' }}>
                     &ldquo;Where is that ten-year-old that loved to play baseball? Remember that kid
                     — twelve o&apos;clock game on Saturday morning, sitting on the edge of the bed in
                     uniform at five AM, putting on that glove, can&apos;t wait to get there.&rdquo;
                   </blockquote>
 
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold gradient-brand">
+                    <div
+                      className="heritage-card w-10 h-10 flex items-center justify-center text-sm font-bold"
+                      style={{ color: 'var(--bsi-bone)', background: 'var(--surface-press-box)' }}
+                    >
                       AG
                     </div>
                     <div>
-                      <div className="font-semibold text-sm text-text-primary">Augie Garrido, 1939&ndash;2018</div>
-                      <div className="text-xs text-text-secondary">Winningest coach in college baseball history</div>
+                      <div className="font-semibold text-sm" style={{ color: 'var(--bsi-bone)' }}>Augie Garrido, 1939&ndash;2018</div>
+                      <div className="text-xs" style={{ color: 'var(--bsi-dust)' }}>Winningest coach in college baseball history</div>
                     </div>
                   </div>
                 </div>
 
-                <div className="divider-accent h-px w-full" />
+                <div className="heritage-divider" />
 
                 {/* Austin */}
                 <div>
-                  <blockquote className="font-serif text-lg md:text-xl leading-relaxed mb-6 text-text-secondary">
+                  <blockquote className="font-serif text-lg md:text-xl leading-relaxed mb-6" style={{ color: 'var(--bsi-dust)' }}>
                     &ldquo;That&apos;s who shows up here. The one checking scores at midnight.
                     The one who cares about the Tuesday game as much as the Saturday showcase.&rdquo;
                   </blockquote>
 
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-burnt-orange to-burnt-orange/70 flex items-center justify-center text-white text-sm font-bold">
+                    <div
+                      className="heritage-card w-10 h-10 flex items-center justify-center text-sm font-bold"
+                      style={{ color: 'var(--bsi-bone)', background: 'var(--bsi-primary)' }}
+                    >
                       AH
                     </div>
                     <div>
-                      <div className="font-semibold text-sm text-text-primary">Austin Humphrey</div>
-                      <div className="text-xs text-text-secondary">Founder, Blaze Sports Intel</div>
+                      <div className="font-semibold text-sm" style={{ color: 'var(--bsi-bone)' }}>Austin Humphrey</div>
+                      <div className="text-xs" style={{ color: 'var(--bsi-dust)' }}>Founder, Blaze Sports Intel</div>
                     </div>
                   </div>
                 </div>
@@ -678,30 +693,33 @@ export function HomePageClient() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         {/* Subtle radial glow behind CTA */}
         <HeroGlow shape="60% 50%" position="50% 40%" intensity={0.04} />
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-burnt-orange/10 to-transparent" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(191,87,0,0.1)] to-transparent" />
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <ScrollReveal direction="up">
-            <span className="section-label block mb-4">Get Started</span>
-            <h2 className="font-display text-3xl md:text-4xl font-bold mb-4 text-text-primary">
+            <span className="heritage-stamp mb-4">Get Started</span>
+            <h2 className="font-display text-3xl md:text-4xl font-bold mb-4 mt-4" style={{ color: 'var(--bsi-bone)' }}>
               Pick Your Sport. Go Deep.
             </h2>
-            <p className="text-base mb-10 max-w-2xl mx-auto text-text-secondary">
+            <p className="text-base mb-10 max-w-2xl mx-auto" style={{ color: 'var(--bsi-dust)' }}>
               Live scores across five sports. Park-adjusted sabermetrics. Free.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/college-baseball" className="btn-primary px-8 py-4 text-lg">
+              <Link href="/college-baseball" className="btn-heritage-fill px-8 py-4 text-lg">
                 College Baseball Hub
               </Link>
-              <Link href="/scores" className="btn-outline px-8 py-4 text-lg">
+              <Link href="/scores" className="btn-heritage px-8 py-4 text-lg">
                 Live Scores
               </Link>
-              <Link href="/college-baseball/savant" className="btn-ghost px-8 py-4 text-lg">
+              <Link href="/college-baseball/savant" className="btn-heritage px-8 py-4 text-lg">
                 BSI Savant
               </Link>
             </div>
           </ScrollReveal>
         </div>
       </section>
+
+      {/* ─── 9.5. Platform Vitals ─── */}
+      <PlatformVitals />
 
       {/* ─── 10. Footer ─── */}
       <Footer />

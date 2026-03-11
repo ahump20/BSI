@@ -6,6 +6,8 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { FilterPill } from '@/components/ui/FilterPill';
+import { HeroGlow } from '@/components/ui/HeroGlow';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { formatDateInTimezone } from '@/lib/utils/timezone';
@@ -216,23 +218,25 @@ export default function BlogPostFeedPage() {
         </Section>
 
         {/* Hero header */}
-        <Section padding="md" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/8 via-transparent to-transparent pointer-events-none" />
+        <Section padding="lg" className="pt-6 relative overflow-hidden">
+          <HeroGlow />
           <Container>
+            <div className="relative">
             <ScrollReveal direction="up">
-              <Badge variant="primary" className="mb-4">Editorial</Badge>
+              <span className="section-label block mb-4">Editorial</span>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={80}>
-              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-gradient-blaze mb-4">
+              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-text-primary mb-3">
                 The Blaze Intel
               </h1>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={150}>
-              <p className="text-text-secondary max-w-xl text-base leading-relaxed">
+              <p className="text-burnt-orange font-serif italic text-lg leading-relaxed max-w-xl">
                 Original analysis on the athletes, programs, and markets that mainstream sports
                 media passes over. Old-school instinct, new-school data.
               </p>
             </ScrollReveal>
+            </div>
           </Container>
         </Section>
 
@@ -241,20 +245,14 @@ export default function BlogPostFeedPage() {
           <Container>
             <div className="flex items-center gap-1 overflow-x-auto py-3 scrollbar-none">
               {CATEGORIES.map((cat) => (
-                <button
+                <FilterPill
                   key={cat.key}
+                  active={activeCategory === cat.key}
                   onClick={() => setActiveCategory(cat.key)}
-                  className={`
-                    flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-150
-                    ${
-                      activeCategory === cat.key
-                        ? 'bg-burnt-orange text-white'
-                        : 'text-text-tertiary hover:text-text-primary hover:bg-surface-light'
-                    }
-                  `}
+                  size="sm"
                 >
                   {cat.label}
-                </button>
+                </FilterPill>
               ))}
             </div>
           </Container>

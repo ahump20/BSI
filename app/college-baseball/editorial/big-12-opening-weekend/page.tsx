@@ -1,23 +1,25 @@
-import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
-
-export const metadata: Metadata = {
-  title: 'Big 12 Opening Weekend 2026: Series Previews & Predictions | Blaze Sports Intel',
-  description: 'Big 12 opening weekend college baseball preview. Series-by-series breakdowns for TCU, Texas Tech, Oklahoma State, and the full conference slate. Feb 14-16, 2026.',
-  openGraph: {
-    title: 'Big 12 Opening Weekend 2026 | Blaze Sports Intel',
-    description: 'Every Big 12 opening series previewed. Pitching matchups, lineup projections, and what to watch for across the conference.',
-    type: 'article',
-  },
-};
 import { ScrollReveal } from '@/components/cinematic';
 import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { Footer } from '@/components/layout-ds/Footer';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
+const seoConfig = {
+  title: 'Big 12 Opening Weekend 2026: Series Previews & Predictions',
+  description: 'Big 12 opening weekend college baseball preview. Series-by-series breakdowns for TCU, Texas Tech, Oklahoma State, and the full conference slate.',
+  datePublished: '2026-02-12',
+  slug: '/college-baseball/editorial/big-12-opening-weekend',
+  image: '/images/og/cbb-big-12-opening-weekend.png',
+  sport: 'College Baseball',
+  ogTitle: 'Big 12 Opening Weekend 2026 | Blaze Sports Intel',
+};
+
+export const metadata = editorialMetadata(seoConfig);
 const big12Matchups = [
   { away: 'Dallas Baptist', at: 'No. 11 TCU', date: 'Feb 14–16', capsule: 'The Horned Frogs are the Big 12 favorite. Pitching depth is elite, the lineup is balanced, and the Fort Worth faithful will be out in force. Kirk Saarloos has this program humming.', watch: 'Friday starter depth' },
   { away: 'Omaha', at: 'No. 17 Kansas', date: 'Feb 14–16', capsule: 'The Jayhawks are a legitimate dark horse for Omaha. Ritch Price has built something real in Lawrence and the roster is deep enough to compete in a loaded Big 12.', watch: 'Kansas as a national contender' },
@@ -37,6 +39,7 @@ const storylines = [
 export default function Big12OpeningWeekendPage() {
   return (
     <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
       <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">

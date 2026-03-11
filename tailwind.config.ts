@@ -145,6 +145,13 @@ const config: Config = {
           DEFAULT: '#5D76A9',
           secondary: '#FDB927',
         },
+        // Heritage Vintage System
+        'heritage-columbia': '#4B9CD3',
+        'heritage-teal': '#00B2A9',
+        'heritage-bronze': '#8C6239',
+        'heritage-cream': '#F0E6D3',
+        'bsi-bone': '#F5F2EB',
+        'bsi-dust': '#C4B8A5',
       },
       fontFamily: {
         sans: ['var(--font-oswald)', 'Oswald', 'Impact', 'Arial Black', 'sans-serif'],

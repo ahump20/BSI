@@ -22,6 +22,7 @@ import { ParkFactorTable } from '@/components/analytics/ParkFactorTable';
 import { ConferenceStrengthChart } from '@/components/analytics/ConferenceStrengthChart';
 import { getPercentileColor } from '@/components/analytics/PercentileBar';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { HeroGlow } from '@/components/ui/HeroGlow';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -118,7 +119,7 @@ export default function SavantHubPage() {
   const { data: parkRes, loading: parkLoading } =
     useSportData<{ data: ParkFactorRow[] }>('/api/savant/park-factors');
   const { data: confRes, loading: confLoading } =
-    useSportData<{ data: ConferenceRow[] }>('/api/savant/conference-strength');
+    useSportData<{ data: ConferenceRow[]; total?: number }>('/api/savant/conference-strength');
 
   // Derive tier from API response — worker sets _tier_gated on free-tier rows
   const isPro = useMemo(() => {
@@ -165,41 +166,41 @@ export default function SavantHubPage() {
   return (
     <>
       <div>
-        <Section padding="lg" className="pt-6">
-          <Container size="wide">
+        <Section padding="lg" className="pt-6 relative overflow-hidden">
+          {/* Atmospheric gradient */}
+          <HeroGlow shape="60% 40%" position="30% 20%" intensity={0.05} spread="60%" />
+          <Container size="wide" className="relative z-10">
             {/* Breadcrumb */}
-            <ScrollReveal direction="up">
-              <nav className="flex items-center gap-2 text-sm mb-6">
-                <Link href="/" className="text-text-muted hover:text-burnt-orange transition-colors">
-                  Home
-                </Link>
-                <span className="text-text-muted">/</span>
-                <Link
-                  href="/college-baseball"
-                  className="text-text-muted hover:text-burnt-orange transition-colors"
-                >
-                  College Baseball
-                </Link>
-                <span className="text-text-muted">/</span>
-                <span className="text-text-secondary">Savant</span>
-              </nav>
-            </ScrollReveal>
+            <nav className="flex items-center gap-2 text-sm mb-6">
+              <Link href="/" className="text-text-muted hover:text-burnt-orange transition-colors">
+                Home
+              </Link>
+              <span className="text-text-muted/40">/</span>
+              <Link
+                href="/college-baseball"
+                className="text-text-muted hover:text-burnt-orange transition-colors"
+              >
+                College Baseball
+              </Link>
+              <span className="text-text-muted/40">/</span>
+              <span className="text-burnt-orange/70 font-medium">Savant</span>
+            </nav>
 
             {/* Hero */}
             <ScrollReveal direction="up" delay={50}>
-              <div className="mb-8">
-                <div className="flex items-center gap-3 mb-3">
-                  <Badge variant="accent" size="sm">ADVANCED ANALYTICS</Badge>
-                </div>
-                <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-wider text-text-primary">
+              <div className="mb-10">
+                <span className="section-label block mb-3">
+                  Advanced Analytics
+                </span>
+                <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-wider text-text-primary mb-4">
                   College Baseball <span className="text-burnt-orange">Savant</span>
                 </h1>
-                <p className="text-text-tertiary mt-3 max-w-2xl text-base leading-relaxed">
+                <p className="text-text-secondary mt-3 max-w-2xl text-base leading-relaxed font-serif italic">
                   The metrics MLB Savant tracks — wOBA, FIP, wRC+, park factors, conference
                   strength indices — applied to 300+ D1 programs. No other public platform
                   does this for the college game.
                 </p>
-                <div className="mt-4 flex items-center gap-6 flex-wrap">
+                <div className="mt-5 flex items-center gap-6 flex-wrap">
                   <Link
                     href="/college-baseball/savant/visuals"
                     className="inline-flex items-center gap-2 text-sm text-burnt-orange hover:text-ember transition-colors group"
@@ -224,15 +225,12 @@ export default function SavantHubPage() {
               </div>
             </ScrollReveal>
 
-            {/* Data Coverage Banner */}
-            <ScrollReveal direction="up" delay={75}>
-              <Card padding="sm" className="mb-8 border-border-subtle">
-                <p className="text-[11px] font-mono text-text-muted leading-relaxed">
-                  Data coverage: SEC, ACC, Big 12, Big Ten — sourced from ESPN box scores (~30% of D1 games).
-                  Full D1 coverage coming via Highlightly Pro integration.
-                </p>
-              </Card>
-            </ScrollReveal>
+            {/* Data Coverage — inline note, not boxed */}
+            <div className="mb-8 flex items-start gap-3 border-l-2 border-burnt-orange/20 pl-4">
+              <p className="text-[11px] font-mono text-text-muted leading-relaxed">
+                {confLoading ? '...' : `${confRes?.total ?? confRes?.data?.length ?? 22} conferences tracked`} · ESPN box scores + Highlightly Pro · Recomputed every 6 hours
+              </p>
+            </div>
 
             <DataErrorBoundary name="Savant Analytics">
             {/* Spotlight cards — dynamic, data-driven */}
@@ -245,52 +243,57 @@ export default function SavantHubPage() {
                   const color = getPercentileColor(pctl, spot.higherIsBetter);
 
                   return (
-                    <Card key={spot.metricKey} padding="md" className="relative overflow-hidden">
-                      <div className="flex items-baseline gap-2 mb-1">
-                        <span className="font-display text-2xl font-bold" style={{ color }}>{spot.abbr}</span>
+                    <div
+                      key={spot.metricKey}
+                      className="relative overflow-hidden rounded-xl bg-[rgba(26,26,26,0.6)] border border-[rgba(245,240,235,0.04)] p-4"
+                      style={{ borderLeftColor: color, borderLeftWidth: '2px' }}
+                    >
+                      <div className="flex items-baseline justify-between mb-2">
+                        <span className="font-mono text-xs font-bold tracking-wide" style={{ color }}>{spot.abbr}</span>
+                        <span className="text-[9px] font-mono text-text-muted uppercase">{spot.tab}</span>
                       </div>
                       <MetricGate isPro={isPro} metricName={spot.label}>
                         {leader ? (
-                          <div className="mb-2">
-                            <span className="text-sm text-text-primary font-medium">{leader.name}</span>
-                            <span className="ml-1.5 text-[10px] text-text-muted">{leader.team}</span>
-                            <span className="block text-lg font-mono font-bold tabular-nums mt-0.5" style={{ color }}>
+                          <div className="mb-2.5">
+                            <span className="block text-2xl font-mono font-bold tabular-nums leading-none" style={{ color }}>
                               {spot.format(leader.value)}
                             </span>
+                            <div className="mt-1.5">
+                              <span className="text-xs text-text-primary font-medium">{leader.name}</span>
+                              <span className="ml-1.5 text-[10px] text-text-muted">{leader.team}</span>
+                            </div>
                           </div>
                         ) : (
-                          <div className="mb-2 h-12 flex items-center">
-                            <span className="text-xs text-text-muted">Loading...</span>
+                          <div className="mb-2.5 h-14 flex items-center">
+                            <div className="h-6 w-16 bg-surface-light rounded animate-pulse" />
                           </div>
                         )}
                       </MetricGate>
-                      <p className="text-[10px] text-text-muted leading-relaxed">
+                      <p className="text-[10px] text-text-muted/70 leading-relaxed">
                         {spot.description}
                       </p>
-                    </Card>
+                    </div>
                   );
                 })}
               </div>
             </ScrollReveal>
 
-            {/* Tab navigation */}
-            <ScrollReveal direction="up" delay={150}>
-              <div className="flex items-center gap-1 border-b border-border mb-4 overflow-x-auto">
-                {TABS.map((tab) => (
-                  <button
-                    key={tab.key}
-                    onClick={() => { setActiveTab(tab.key); setPositionFilter(''); }}
-                    className={`px-4 py-3 text-sm font-display uppercase tracking-wider whitespace-nowrap transition-colors border-b-2 ${
-                      activeTab === tab.key
-                        ? 'text-burnt-orange border-burnt-orange'
-                        : 'text-text-muted border-transparent hover:text-text-tertiary'
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
-            </ScrollReveal>
+            {/* Tab navigation — immediate, no animation */}
+            <div className="flex items-center gap-0.5 border-b border-border mb-4 overflow-x-auto">
+              {TABS.map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => { setActiveTab(tab.key); setPositionFilter(''); }}
+                  className={`px-4 py-3 text-sm font-display uppercase tracking-wider whitespace-nowrap transition-colors border-b-2 ${
+                    activeTab === tab.key
+                      ? 'text-burnt-orange border-burnt-orange bg-burnt-orange/[0.04]'
+                      : 'text-text-muted border-transparent hover:text-text-tertiary hover:bg-white/[0.02]'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
 
             {/* Filters — shown for batting/pitching tabs */}
             {(activeTab === 'batting' || activeTab === 'pitching') && (
@@ -370,6 +373,7 @@ export default function SavantHubPage() {
                   <ConferenceStrengthChart
                     data={confRes?.data ?? []}
                     isPro={isPro}
+                    total={confRes?.total}
                   />
                 )
               )}
@@ -377,23 +381,26 @@ export default function SavantHubPage() {
 
             {/* Data attribution */}
             {battingRes && (
-              <div className="mt-8 text-center text-xs text-text-muted">
-                <p>
-                  Source: BSI College Baseball Savant | Methodology:{' '}
+              <div className="mt-10 pt-6 border-t border-white/[0.06]">
+                <div className="flex items-center justify-center gap-4 flex-wrap">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-muted/50">
+                    Source: BSI Savant
+                  </span>
+                  <span className="text-text-muted/20">&middot;</span>
                   <Link
                     href="/college-baseball/savant/park-factors"
-                    className="text-burnt-orange hover:text-ember transition-colors"
+                    className="font-mono text-[10px] uppercase tracking-[0.12em] text-burnt-orange/50 hover:text-burnt-orange transition-colors"
                   >
-                    Park Factors
+                    Park Factor Methodology
                   </Link>
-                  {' · '}
+                  <span className="text-text-muted/20">&middot;</span>
                   <Link
                     href="/college-baseball/savant/conference-index"
-                    className="text-burnt-orange hover:text-ember transition-colors"
+                    className="font-mono text-[10px] uppercase tracking-[0.12em] text-burnt-orange/50 hover:text-burnt-orange transition-colors"
                   >
-                    Conference Strength
+                    Conference Strength Index
                   </Link>
-                </p>
+                </div>
               </div>
             )}
             </DataErrorBoundary>

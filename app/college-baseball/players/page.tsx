@@ -9,6 +9,8 @@ import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
+import { Breadcrumb } from '@/components/ui/Breadcrumb';
+import { fmt3 } from '@/lib/utils/format';
 
 interface Player {
   id: string;
@@ -205,17 +207,14 @@ export default function CollegeBaseballPlayersPage() {
           <Container>
             {/* Breadcrumb & Header */}
             <ScrollReveal direction="up">
-              <div className="flex items-center gap-3 mb-2">
-                <Link
-                  href="/college-baseball"
-                  className="text-text-tertiary hover:text-burnt-orange transition-colors"
-                >
-                  College Baseball
-                </Link>
-                <span className="text-text-tertiary">/</span>
-                <span className="text-text-primary">Players</span>
-              </div>
-
+              <Breadcrumb
+                className="mb-4"
+                items={[
+                  { label: 'Home', href: '/' },
+                  { label: 'College Baseball', href: '/college-baseball' },
+                  { label: 'Players' },
+                ]}
+              />
               <div className="mb-8">
                 <span className="kicker block mb-2">Player Database and Draft Prospects</span>
                 <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display">
@@ -483,7 +482,7 @@ export default function CollegeBaseballPlayersPage() {
                           <div className="grid grid-cols-4 gap-2 text-center">
                             <div>
                               <div className="text-burnt-orange font-display text-lg font-bold">
-                                {player.battingStats.avg.toFixed(3).replace(/^0/, '')}
+                                {fmt3(player.battingStats.avg)}
                               </div>
                               <div className="text-text-tertiary text-xs">AVG</div>
                             </div>

@@ -5,18 +5,20 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
-import type { Metadata } from 'next';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Big Ten Baseball: 2026 Conference Preview | Blaze Sports Intel',
-  description:
-    '17 programs. UCLA headlines as an Omaha Favorite. Oregon and USC bring West Coast firepower. The traditional Big Ten programs invest to keep up. Full scouting breakdowns.',
-  openGraph: {
-    title: 'Big Ten Baseball: 2026 Conference Preview',
-    description:
-      '17 programs. UCLA headlines. West Coast meets Midwest. Full scouting breakdowns.',
-  },
+const seoConfig = {
+  title: 'Big Ten Baseball: 2026 Conference Preview',
+  description: '17 programs. UCLA headlines as an Omaha Favorite. Oregon and USC bring West Coast firepower. The traditional Big Ten programs invest to keep up. Full scouting breakdowns.',
+  datePublished: '2026-02-14',
+  slug: '/college-baseball/editorial/big-ten',
+  image: '/images/og/cbb-big-ten.png',
+  sport: 'College Baseball',
+  ogDescription: '17 programs. UCLA headlines. West Coast meets Midwest. Full scouting breakdowns.',
 };
+
+export const metadata = editorialMetadata(seoConfig);
 
 // ── Projection tier badge styling ──────────────────────────────────────
 
@@ -132,6 +134,7 @@ function TeamPreviewCard({ team }: { team: TeamCard }) {
 export default function BigTenEditorialPage() {
   return (
     <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
       <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">

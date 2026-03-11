@@ -65,6 +65,79 @@ function buildTeamStats(
   };
 }
 
+// ─── Series context types & helpers ─────────────────────────────────────────
+
+interface SeriesGame {
+  id: string;
+  date: string;
+  status: string;
+  homeTeam: string;
+  awayTeam: string;
+  homeScore: number | null;
+  awayScore: number | null;
+}
+
+function getSeriesWeekend(dateStr: string): string[] {
+  const d = new Date(dateStr + 'T12:00:00');
+  const day = d.getDay(); // 0=Sun, 5=Fri, 6=Sat
+  let friday: Date;
+  if (day === 5) friday = new Date(d);
+  else if (day === 6) { friday = new Date(d); friday.setDate(d.getDate() - 1); }
+  else if (day === 0) { friday = new Date(d); friday.setDate(d.getDate() - 2); }
+  else { friday = new Date(d); friday.setDate(d.getDate() - (day - 5 + 7) % 7); }
+
+  const sat = new Date(friday); sat.setDate(friday.getDate() + 1);
+  const sun = new Date(friday); sun.setDate(friday.getDate() + 2);
+
+  return [friday, sat, sun].map(dt => dt.toISOString().split('T')[0]);
+}
+
+function SeriesStrip({ games, currentGameId }: { games: SeriesGame[]; currentGameId: string }) {
+  if (games.length <= 1) return null;
+
+  return (
+    <Card variant="default" padding="md" className="border-burnt-orange/20">
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-burnt-orange">
+          Weekend Series
+        </span>
+        <span className="text-xs text-text-tertiary">
+          {games.length}-Game Series
+        </span>
+      </div>
+      <div className="flex gap-3 overflow-x-auto">
+        {games.map((g, i) => {
+          const isCurrent = g.id === currentGameId;
+          const isFinal = g.status === 'final';
+          return (
+            <div
+              key={g.id}
+              className={`flex-shrink-0 px-3 py-2 rounded-lg text-sm ${
+                isCurrent
+                  ? 'bg-burnt-orange/15 border border-burnt-orange/30'
+                  : 'bg-background-tertiary'
+              }`}
+            >
+              <div className="text-[10px] text-text-tertiary mb-1">
+                Game {i + 1}
+              </div>
+              {isFinal ? (
+                <div className="font-mono text-text-primary">
+                  {g.awayScore} - {g.homeScore}
+                </div>
+              ) : g.status === 'live' ? (
+                <div className="text-success text-xs font-semibold">Live</div>
+              ) : (
+                <div className="text-text-tertiary text-xs">Scheduled</div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </Card>
+  );
+}
+
 /**
  * College Baseball Game Summary Page
  *
@@ -74,6 +147,7 @@ export default function CollegeGameSummaryClient() {
   const { game, loading, error } = useGameData();
   const [homeStats, setHomeStats] = useState<TeamStats | undefined>(undefined);
   const [awayStats, setAwayStats] = useState<TeamStats | undefined>(undefined);
+  const [seriesGames, setSeriesGames] = useState<SeriesGame[]>([]);
 
   // Fetch savant team stats only for pregame — skip once a boxscore exists
   useEffect(() => {
@@ -96,6 +170,42 @@ export default function CollegeGameSummaryClient() {
         // Stats unavailable — card falls back to contextual analysis
       });
   }, [game?.id]);
+
+  // Fetch series context — find games between the same two teams on Fri/Sat/Sun
+  useEffect(() => {
+    if (!game) return;
+    const dates = getSeriesWeekend(game.date);
+    const homeTeam = game.teams.home.name.toLowerCase();
+    const awayTeam = game.teams.away.name.toLowerCase();
+
+    Promise.all(
+      dates.map(date =>
+        fetch(`/api/college-baseball/scores?date=${date}`)
+          .then(r => r.json())
+          .then((resp: { data?: any[]; games?: any[] }) => {
+            const games = resp?.data || resp?.games || [];
+            return games.filter((g: any) => {
+              const h = (g.homeTeam?.name || '').toLowerCase();
+              const a = (g.awayTeam?.name || '').toLowerCase();
+              return (h.includes(homeTeam) || homeTeam.includes(h) || h.includes(awayTeam) || awayTeam.includes(h)) &&
+                     (a.includes(homeTeam) || homeTeam.includes(a) || a.includes(awayTeam) || awayTeam.includes(a));
+            }).map((g: any) => ({
+              id: g.id,
+              date: g.date || date,
+              status: g.status,
+              homeTeam: g.homeTeam?.name || g.homeTeam?.shortName || '',
+              awayTeam: g.awayTeam?.name || g.awayTeam?.shortName || '',
+              homeScore: g.homeTeam?.score,
+              awayScore: g.awayTeam?.score,
+            }));
+          })
+          .catch(() => [])
+      )
+    ).then(results => {
+      const allGames = results.flat();
+      if (allGames.length > 1) setSeriesGames(allGames);
+    });
+  }, [game?.id, game?.date]);
 
   if (loading || error || !game) {
     return null; // Layout handles loading/error states
@@ -123,6 +233,7 @@ export default function CollegeGameSummaryClient() {
   if (!game.boxscore && !game.status.isLive && !game.status.isFinal) {
     return (
       <div className="space-y-4">
+        {seriesGames.length > 1 && <SeriesStrip games={seriesGames} currentGameId={game.id} />}
         <MatchupIntelCard
           homeTeam={game.teams.home.name}
           awayTeam={game.teams.away.name}
@@ -166,6 +277,7 @@ export default function CollegeGameSummaryClient() {
 
   return (
     <div className="space-y-6">
+      {seriesGames.length > 1 && <SeriesStrip games={seriesGames} currentGameId={game.id} />}
       {/* Live Game Widget - embedded for live games */}
       {game.status.isLive && (
         <div className="mb-6">

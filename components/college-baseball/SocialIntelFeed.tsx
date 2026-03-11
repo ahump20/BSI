@@ -9,7 +9,8 @@
  * Data source: GET /api/college-baseball/social-intel (KV-cached, 15 min TTL)
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import Link from 'next/link';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -346,9 +347,9 @@ export function SocialIntelFeed() {
     return data.signals.filter(s => s.signal_type === type).length;
   }, [data]);
 
-  const visibleSignals = data
+  const visibleSignals = useMemo(() => data
     ? (activeTab === 'all' ? data.signals : data.signals.filter(s => s.signal_type === activeTab))
-    : [];
+    : [], [data, activeTab]);
 
   return (
     <div className="rounded-2xl border border-border bg-[#0D0D0D] overflow-hidden">
@@ -419,16 +420,38 @@ export function SocialIntelFeed() {
         )}
 
         {error && !loading && (
-          <div className="flex items-center justify-center py-12 text-center">
-            <div>
-              <p className="text-sm text-text-muted mb-1">Social signals unavailable</p>
-              <p className="text-xs text-text-muted opacity-60">Data refreshes every 30 minutes</p>
+          <div className="flex flex-col items-center justify-center py-10 text-center">
+            <p className="text-sm text-text-muted mb-4">Social signals are refreshing. Check back during game days for live intel.</p>
+            <div className="flex flex-wrap justify-center gap-2">
+              {[
+                { label: 'Latest Articles', href: '/college-baseball/editorial' },
+                { label: 'Live Scores', href: '/college-baseball/scores' },
+                { label: 'Transfer Portal', href: '/college-baseball/transfer-portal' },
+              ].map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="px-3 py-1.5 text-xs font-medium bg-surface border border-border rounded-lg text-text-secondary hover:text-[#BF5700] hover:border-[#BF5700]/30 transition-all"
+                >
+                  {link.label}
+                </Link>
+              ))}
             </div>
           </div>
         )}
 
         {!loading && !error && visibleSignals.length === 0 && (
-          <EmptyTab label={TABS.find(t => t.id === activeTab)?.label ?? 'Signal'} />
+          <div className="flex flex-col items-center justify-center py-10 text-center">
+            <div className="w-10 h-10 rounded-full bg-surface flex items-center justify-center mb-3">
+              <svg className="w-5 h-5 text-text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+              </svg>
+            </div>
+            <p className="text-sm text-text-muted mb-1">
+              No {(TABS.find(t => t.id === activeTab)?.label ?? 'signal').toLowerCase()} signals right now
+            </p>
+            <p className="text-xs text-text-muted opacity-60">Signals update throughout game days with injury reports, portal news, and recruiting intel</p>
+          </div>
         )}
 
         {!loading && !error && visibleSignals.length > 0 && (

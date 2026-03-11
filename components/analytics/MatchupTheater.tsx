@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { withAlpha } from '@/lib/utils/color';
+import { fmt3 } from '@/lib/utils/format';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -75,12 +76,12 @@ interface StatBarDef {
 }
 
 const BATTER_STATS: StatBarDef[] = [
-  { key: 'avg', label: 'AVG', min: 0.150, max: 0.400, format: v => v.toFixed(3).replace(/^0/, ''), elite: 0.320 },
-  { key: 'obp', label: 'OBP', min: 0.200, max: 0.500, format: v => v.toFixed(3).replace(/^0/, ''), elite: 0.400 },
-  { key: 'slg', label: 'SLG', min: 0.200, max: 0.700, format: v => v.toFixed(3).replace(/^0/, ''), elite: 0.550 },
-  { key: 'woba', label: 'wOBA', min: 0.200, max: 0.500, format: v => v.toFixed(3).replace(/^0/, ''), elite: 0.400 },
+  { key: 'avg', label: 'AVG', min: 0.150, max: 0.400, format: fmt3, elite: 0.320 },
+  { key: 'obp', label: 'OBP', min: 0.200, max: 0.500, format: fmt3, elite: 0.400 },
+  { key: 'slg', label: 'SLG', min: 0.200, max: 0.700, format: fmt3, elite: 0.550 },
+  { key: 'woba', label: 'wOBA', min: 0.200, max: 0.500, format: fmt3, elite: 0.400 },
   { key: 'wrc_plus', label: 'wRC+', min: 50, max: 200, format: v => Math.round(v).toString(), elite: 140 },
-  { key: 'iso', label: 'ISO', min: 0, max: 0.350, format: v => v.toFixed(3).replace(/^0/, ''), elite: 0.220 },
+  { key: 'iso', label: 'ISO', min: 0, max: 0.350, format: fmt3, elite: 0.220 },
   { key: 'k_pct', label: 'K%', min: 0, max: 0.40, format: v => `${(v * 100).toFixed(1)}%`, elite: 0.12, invert: true },
   { key: 'bb_pct', label: 'BB%', min: 0, max: 0.25, format: v => `${(v * 100).toFixed(1)}%`, elite: 0.12 },
 ];

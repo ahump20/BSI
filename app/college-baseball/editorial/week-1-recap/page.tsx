@@ -8,18 +8,18 @@ import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { Footer } from '@/components/layout-ds/Footer';
 import { RankingsTable } from '@/components/editorial/RankingsTable';
 import type { RankingEntry } from '@/components/editorial/types';
-import type { Metadata } from 'next';
+import { editorialMetadata } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Week 1 Recap: Three Grand Slams. One Record Book. | Blaze Sports Intel',
-  description:
-    'Opening Weekend 2026 college baseball recap. Tyce Armstrong ties a 50-year record. Michigan State stuns Louisville. Oklahoma storms the Shriners. The complete BSI breakdown.',
-  openGraph: {
-    title: 'Week 1 Recap: Three Grand Slams. One Record Book.',
-    description:
-      'Opening Weekend separated contenders from pretenders across 118 games. The complete BSI breakdown of college baseball Week 1.',
-  },
-};
+export const metadata = editorialMetadata({
+  title: 'Week 1 Recap: Three Grand Slams. One Record Book.',
+  description: 'Opening Weekend 2026 college baseball recap. Tyce Armstrong ties a 50-year record. Michigan State stuns Louisville. Oklahoma storms the Shriners. The complete BSI breakdown.',
+  datePublished: '2026-02-17',
+  slug: '/college-baseball/editorial/week-1-recap',
+  image: '/images/og/cbb-week-1-recap.png',
+  sport: 'College Baseball',
+  ogDescription: 'Opening Weekend separated contenders from pretenders across 118 games. The complete BSI breakdown of college baseball Week 1.',
+});
 
 // ── Rankings data ────────────────────────────────────────────────────
 
@@ -65,6 +65,14 @@ const STATS = [
 export default function Week1RecapPage() {
   return (
     <>
+      <ArticleJsonLd
+        headline="Week 1 Recap: Three Grand Slams. One Record Book."
+        description="Opening Weekend 2026 college baseball recap. Tyce Armstrong ties a 50-year record. Michigan State stuns Louisville. Oklahoma storms the Shriners."
+        datePublished="2026-02-17"
+        url="/college-baseball/editorial/week-1-recap"
+        image="/images/og/cbb-week-1-recap.png"
+        sport="College Baseball"
+      />
       <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">

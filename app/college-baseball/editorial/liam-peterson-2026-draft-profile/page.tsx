@@ -9,6 +9,7 @@ import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
 
+import { ogImage } from '@/lib/metadata';
 // ── Metadata ────────────────────────────────────────────────────────
 
 export const metadata: Metadata = {
@@ -22,12 +23,14 @@ export const metadata: Metadata = {
     type: 'profile',
     url: 'https://blazesportsintel.com/college-baseball/editorial/liam-peterson-2026-draft-profile',
     siteName: 'Blaze Sports Intel',
-  },
+  
+    images: ogImage('/images/og/cbb-liam-peterson-2026-draft-profile.png')},
   twitter: {
     card: 'summary_large_image',
     title: 'Liam Peterson — No. 9 Pick, 5 Walks on Opening Day | BSI',
     description: 'Florida RHP. No. 3 college arm (BA). The walk problem changes the evaluation.',
-  },
+  
+    images: ['/images/og/cbb-liam-peterson-2026-draft-profile.png']},
   alternates: {
     canonical: '/college-baseball/editorial/liam-peterson-2026-draft-profile',
   },

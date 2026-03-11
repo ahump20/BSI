@@ -23,6 +23,13 @@ interface MobileMenuDrawerProps {
 
 /** Sub-links shown when a league is expanded. */
 const SPORT_SUB_LINKS: Record<string, { label: string; suffix: string }[]> = {
+  '/wbc': [
+    { label: 'Power Rankings', suffix: '#wbc-tabs' },
+    { label: 'Pool A — San Juan', suffix: '/pool/a' },
+    { label: 'Pool B — Houston', suffix: '/pool/b' },
+    { label: 'Pool C — Tokyo', suffix: '/pool/c' },
+    { label: 'Pool D — Miami', suffix: '/pool/d' },
+  ],
   '/mlb': [
     { label: 'Scores', suffix: '/scores' },
     { label: 'Standings', suffix: '/standings' },

@@ -134,10 +134,10 @@ export async function handleSavantBattingLeaderboard(url: URL, env: Env, headers
 
     const { results } = await env.DB.prepare(query).bind(...binds).all();
 
-    // Free tier: strip pro metrics, limit to 10 rows
+    // Free tier: strip pro metrics (row count follows requested limit for both tiers)
     let output = results as Record<string, unknown>[];
     if (tier !== 'pro') {
-      output = output.slice(0, 10).map(stripProFields);
+      output = output.map(stripProFields);
     }
 
     await kvPut(env.KV, cacheKey, { data: output, total: results.length }, 300);

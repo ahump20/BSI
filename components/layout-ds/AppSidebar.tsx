@@ -170,7 +170,7 @@ interface NavGroup {
 /* WBC nav link visible only during tournament window (Mar 5–17, 2026) */
 const isWBCActive = (() => {
   const now = new Date();
-  return now >= new Date('2026-03-05') && now <= new Date('2026-03-18');
+  return now >= new Date('2026-03-05T00:00:00-06:00') && now <= new Date('2026-03-18T23:59:59-05:00');
 })();
 
 const NAV_GROUPS: readonly NavGroup[] = [
@@ -189,6 +189,10 @@ const NAV_GROUPS: readonly NavGroup[] = [
       { href: '/college-baseball', label: 'College Baseball', icon: <IconBaseball /> },
       { href: '/college-baseball/rankings', label: 'Rankings', icon: <IconList /> },
       { href: '/college-baseball/savant', label: 'Savant / Advanced Stats', icon: <IconTarget /> },
+      { href: '/college-baseball/conferences', label: 'Conferences', icon: <IconGlobe /> },
+      { href: '/college-baseball/compare', label: 'Compare', icon: <IconChart /> },
+      { href: '/college-baseball/analytics', label: 'Analytics', icon: <IconChart /> },
+      { href: '/college-baseball/sabermetrics', label: 'Sabermetrics', icon: <IconFlask /> },
       { href: '/mlb', label: 'MLB', icon: <IconBaseball /> },
       { href: '/mlb/the-show-26/diamond-dynasty', label: 'Diamond Dynasty', icon: <IconTarget /> },
       { href: '/nfl', label: 'NFL', icon: <IconFootball /> },
@@ -209,12 +213,18 @@ const NAV_GROUPS: readonly NavGroup[] = [
     label: 'Content',
     items: [
       { href: '/college-baseball/editorial', label: 'Editorial', icon: <IconPen /> },
+      { href: '/intel', label: 'Intel', icon: <IconChart /> },
     ],
   },
   {
     label: 'Tools',
     items: [
+      { href: '/nil-valuation', label: 'NIL Valuation', icon: <IconTarget /> },
+      { href: '/nil-valuation/performance-index', label: 'Performance Index', icon: <IconChart /> },
+      { href: '/nil-valuation/tools', label: 'NIL Tools', icon: <IconFlask /> },
+      { href: '/analytics/mmi', label: 'MMI Analytics', icon: <IconChart /> },
       { href: '/models', label: 'Models', icon: <IconChart /> },
+      { href: '/research', label: 'Research', icon: <IconBook /> },
       { href: '/glossary', label: 'Glossary', icon: <IconBook /> },
       { href: '/pricing', label: 'Pricing', icon: <IconTag /> },
     ],
@@ -301,7 +311,7 @@ export function AppSidebar() {
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200 relative ${
                   active
                     ? 'text-[var(--bsi-primary-light)]'
-                    : 'text-[var(--bsi-text-muted)] hover:text-[var(--bsi-text)] hover:bg-white/[0.04]'
+                    : 'text-[var(--bsi-text-muted)] hover:text-[var(--bsi-text)] hover:bg-white/[0.06]'
                 }`}
                 {...extraProps}
               >

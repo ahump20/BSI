@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Texas Week 2 Recap: The Cycle, The Shutout, The Statement | Blaze Sports Intel',
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
     description:
       'Robbins hit for the cycle. Riojas fanned 10. Volantis threw a shutout. Texas is 8-0. The complete three-game breakdown.',
     type: 'article',
-  },
+   images: ogImage('/images/og-college-baseball.png') },
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {

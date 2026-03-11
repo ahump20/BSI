@@ -1,17 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Penn State Nittany Lions: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    'Mike Gambino spent a decade building Boston College into a competitive ACC program, and now he is applying the same blueprint to Penn State — a school with every resource imaginable.',
-  openGraph: {
-    title: 'Penn State Nittany Lions: 2026 Season Preview',
-    description:
-      'Mike Gambino spent a decade building Boston College into a competitive ACC program, and now he is applying the same blueprint to Penn State — a school with every resource imaginable.',
-  },
+const seoConfig = {
+  title: 'Penn State Nittany Lions 2026 Season Preview',
+  description: 'Penn State Nittany Lions 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big Ten predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/penn-state-2026',
+  image: '/images/og/cbb-penn-state-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'Penn State Nittany Lions — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'Penn State',
@@ -182,5 +183,10 @@ const data: TeamPreviewData = {
 };
 
 export default function PennState2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

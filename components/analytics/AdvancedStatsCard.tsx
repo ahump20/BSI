@@ -3,6 +3,7 @@
 import { PercentileBar } from './PercentileBar';
 import { MetricGate } from './MetricGate';
 import { MetricExplainer } from './MetricExplainer';
+import { fmt3 } from '@/lib/utils/format';
 
 interface StatItem {
   label: string;
@@ -22,7 +23,7 @@ interface AdvancedStatsCardProps {
   className?: string;
 }
 
-const defaultFormat = (v: number) => v.toFixed(3).replace(/^0/, '');
+const defaultFormat = fmt3;
 
 /**
  * AdvancedStatsCard — compact card for embedding advanced stats

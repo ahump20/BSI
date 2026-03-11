@@ -9,6 +9,7 @@ import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
 
+import { ogImage } from '@/lib/metadata';
 // ── Metadata ────────────────────────────────────────────────────────
 
 export const metadata: Metadata = {
@@ -22,12 +23,14 @@ export const metadata: Metadata = {
     type: 'profile',
     url: 'https://blazesportsintel.com/college-baseball/editorial/tyce-armstrong-2026-draft-profile',
     siteName: 'Blaze Sports Intel',
-  },
+  
+    images: ogImage('/images/og/cbb-tyce-armstrong-2026-draft-profile.png')},
   twitter: {
     card: 'summary_large_image',
     title: 'Tyce Armstrong — 3 Grand Slams in One Game | BSI',
     description: 'Baylor 1B. 12 RBI. Only the second player in 50 years to do it.',
-  },
+  
+    images: ['/images/og/cbb-tyce-armstrong-2026-draft-profile.png']},
   alternates: {
     canonical: '/college-baseball/editorial/tyce-armstrong-2026-draft-profile',
   },

@@ -5,18 +5,20 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
-import type { Metadata } from 'next';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Big 12 Baseball: 2026 Conference Preview | Blaze Sports Intel',
-  description:
-    '14 programs. A conference reshaped by expansion. TCU leads the way, Kansas emerges, and the Arizona schools bring Pac-12 pedigree. Full scouting breakdowns.',
-  openGraph: {
-    title: 'Big 12 Baseball: 2026 Conference Preview',
-    description:
-      '14 programs reshaped by expansion. Full scouting breakdowns for every team.',
-  },
+const seoConfig = {
+  title: 'Big 12 Baseball: 2026 Conference Preview',
+  description: '14 programs. A conference reshaped by expansion. TCU leads the way, Kansas emerges, and the Arizona schools bring Pac-12 pedigree. Full scouting breakdowns.',
+  datePublished: '2026-02-14',
+  slug: '/college-baseball/editorial/big-12',
+  image: '/images/og/cbb-big-12.png',
+  sport: 'College Baseball',
+  ogDescription: '14 programs reshaped by expansion. Full scouting breakdowns for every team.',
 };
+
+export const metadata = editorialMetadata(seoConfig);
 
 // ── Projection tier badge styling ──────────────────────────────────────
 
@@ -131,6 +133,7 @@ function TeamPreviewCard({ team }: { team: TeamCard }) {
 export default function Big12EditorialPage() {
   return (
     <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
       <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">

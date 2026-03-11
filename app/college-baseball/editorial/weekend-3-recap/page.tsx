@@ -8,6 +8,8 @@ import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
 
+import { ogImage } from '@/lib/metadata';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 // ── Metadata ────────────────────────────────────────────────────────
 
 export const metadata: Metadata = {
@@ -20,12 +22,14 @@ export const metadata: Metadata = {
     type: 'article',
     url: 'https://blazesportsintel.com/college-baseball/editorial/weekend-3-recap',
     siteName: 'Blaze Sports Intel',
-  },
+  
+    images: ogImage('/images/og/cbb-weekend-3-recap.png')},
   twitter: {
     card: 'summary_large_image',
     title: 'Weekend 3 Recap: Three Weeks. One Undefeated. | BSI',
     description: 'Texas is 11-0. UCLA won a 10-inning classic against MSU. The undefeated list just got very short.',
-  },
+  
+    images: ['/images/og/cbb-weekend-3-recap.png']},
   alternates: {
     canonical: '/college-baseball/editorial/weekend-3-recap',
   },
@@ -45,6 +49,14 @@ const STATS = [
 export default function Weekend3RecapPage() {
   return (
     <>
+      <ArticleJsonLd
+        headline="Weekend 3 Recap: Three Weeks. One Undefeated."
+        description="Texas is the last undefeated Top 25 team at 11-0. UCLA goes 3-0 at Globe Life including a 10-inning thriller over No. 4 MSU. Full BSI breakdown."
+        datePublished="2026-03-03"
+        url="/college-baseball/editorial/weekend-3-recap"
+        image="/images/og/cbb-weekend-3-recap.png"
+        sport="College Baseball"
+      />
       <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">

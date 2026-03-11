@@ -38,6 +38,10 @@ const ENDPOINTS: readonly EndpointConfig[] = [
   { url: 'https://blazesportsintel.com/scores/', name: 'Scores Page', parseBody: false },
   { url: 'https://blazesportsintel.com/api/savant/batting/leaderboard', name: 'Savant Leaderboard', parseBody: true },
   { url: 'https://blazesportsintel.com/api/savant/conference-strength?conference=SEC', name: 'Savant Conference', parseBody: true },
+  { url: 'https://blazesportsintel.com/api/intelligence/health', name: 'Intelligence Health', parseBody: true },
+  { url: 'https://arcade.blazesportsintel.com/', name: 'Arcade', parseBody: false },
+  { url: 'https://live.blazesportsintel.com/', name: 'Live Scores WS', parseBody: false },
+  { url: 'https://sabermetrics.blazesportsintel.com/', name: 'MCP Server', parseBody: false },
 ] as const;
 
 const TIMEOUT_MS = 10_000;

@@ -1,17 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Indiana Hoosiers: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    'Jeff Mercer has turned Indiana into a program that expects to compete for NCAA Tournament bids, not hope for them. The Hoosiers went 32-24 in 2025 with a 16-14 Big Ten mark.',
-  openGraph: {
-    title: 'Indiana Hoosiers: 2026 Season Preview',
-    description:
-      'Jeff Mercer has turned Indiana into a program that expects to compete for NCAA Tournament bids, not hope for them. The Hoosiers went 32-24 in 2025 with a 16-14 Big Ten mark.',
-  },
+const seoConfig = {
+  title: 'Indiana Hoosiers 2026 Season Preview',
+  description: 'Indiana Hoosiers 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big Ten predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/indiana-2026',
+  image: '/images/og/cbb-indiana-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'Indiana Hoosiers — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'Indiana',
@@ -182,5 +183,10 @@ const data: TeamPreviewData = {
 };
 
 export default function Indiana2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

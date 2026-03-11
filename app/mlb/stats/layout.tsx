@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'MLB Stats | Blaze Sports Intel',
@@ -8,7 +9,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'MLB Stats | Blaze Sports Intel',
     description: 'MLB stat leaderboards and advanced metrics.',
-  },
+   images: ogImage('/images/og-mlb.png') },
 };
 
 export default function MLBStatsLayout({ children }: { children: ReactNode }) {

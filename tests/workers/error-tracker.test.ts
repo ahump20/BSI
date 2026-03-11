@@ -2,7 +2,13 @@
  * Error Tracker Tests — Tail Worker
  *
  * Verifies that the tail consumer correctly extracts errors from log events,
- * stores them in KV with proper key format and TTL, and sends webhook alerts.
+ * stores individual entries + fingerprint-based cluster summaries in KV,
+ * and sends webhook alerts.
+ *
+ * KV write pattern per error batch:
+ *   1. Raw entry:    err:{date}:{ts}:{rand}     (7-day TTL)
+ *   2. Cluster:      err-cluster:{fingerprint}   (24h TTL)
+ *   3. Cluster index: err-clusters:index          (24h TTL)
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -52,6 +58,8 @@ describe('bsi-error-tracker', () => {
     vi.restoreAllMocks();
   });
 
+  // ── Individual error storage ──
+
   it('stores uncaught exceptions in KV', async () => {
     const event = makeTailItem({
       exceptions: [{ name: 'TypeError', message: 'x is not a function', timestamp: Date.now() }],
@@ -59,10 +67,13 @@ describe('bsi-error-tracker', () => {
 
     await worker.tail([event], env);
 
-    expect(env.ERROR_LOG.put).toHaveBeenCalledTimes(1);
-    const [key, value] = env.ERROR_LOG.put.mock.calls[0];
-    expect(key).toMatch(/^err:\d{4}-\d{2}-\d{2}:\d+:/);
-    const parsed = JSON.parse(value);
+    // Should write: 1 raw entry + 1 cluster + 1 index = 3 minimum
+    expect(env.ERROR_LOG.put).toHaveBeenCalledTimes(3);
+    const rawCall = env.ERROR_LOG.put.mock.calls.find(
+      ([key]: [string]) => key.startsWith('err:') && !key.startsWith('err-cluster')
+    );
+    expect(rawCall).toBeDefined();
+    const parsed = JSON.parse(rawCall![1]);
     expect(parsed.type).toBe('exception');
     expect(parsed.name).toBe('TypeError');
     expect(parsed.worker).toBe('blazesportsintel-worker-prod');
@@ -78,8 +89,12 @@ describe('bsi-error-tracker', () => {
 
     await worker.tail([event], env);
 
-    expect(env.ERROR_LOG.put).toHaveBeenCalledTimes(1);
-    const parsed = JSON.parse(env.ERROR_LOG.put.mock.calls[0][1]);
+    // 1 raw entry + 1 cluster + 1 index = 3
+    expect(env.ERROR_LOG.put).toHaveBeenCalledTimes(3);
+    const rawCall = env.ERROR_LOG.put.mock.calls.find(
+      ([key]: [string]) => key.startsWith('err:') && !key.startsWith('err-cluster')
+    );
+    const parsed = JSON.parse(rawCall![1]);
     expect(parsed.type).toBe('log_error');
     expect(parsed.message).toBe('Something broke');
   });
@@ -102,8 +117,12 @@ describe('bsi-error-tracker', () => {
 
     await worker.tail([event], env);
 
-    expect(env.ERROR_LOG.put).toHaveBeenCalledTimes(1);
-    const parsed = JSON.parse(env.ERROR_LOG.put.mock.calls[0][1]);
+    // 1 raw + 1 cluster + 1 index = 3
+    expect(env.ERROR_LOG.put).toHaveBeenCalledTimes(3);
+    const rawCall = env.ERROR_LOG.put.mock.calls.find(
+      ([key]: [string]) => key.startsWith('err:') && !key.startsWith('err-cluster')
+    );
+    const parsed = JSON.parse(rawCall![1]);
     expect(parsed.type).toBe('bad_outcome');
     expect(parsed.outcome).toBe('exceededCpu');
   });
@@ -115,15 +134,17 @@ describe('bsi-error-tracker', () => {
     expect(env.ERROR_LOG.put).not.toHaveBeenCalled();
   });
 
-  it('uses 7-day TTL on KV writes', async () => {
+  it('uses 7-day TTL on raw error writes', async () => {
     const event = makeTailItem({
       exceptions: [{ name: 'Error', message: 'test', timestamp: Date.now() }],
     });
 
     await worker.tail([event], env);
 
-    const opts = env.ERROR_LOG.put.mock.calls[0][2];
-    expect(opts.expirationTtl).toBe(7 * 24 * 60 * 60);
+    const rawCall = env.ERROR_LOG.put.mock.calls.find(
+      ([key]: [string]) => key.startsWith('err:') && !key.startsWith('err-cluster')
+    );
+    expect(rawCall![2].expirationTtl).toBe(7 * 24 * 60 * 60);
   });
 
   it('sends webhook alert when ALERT_WEBHOOK_URL is set', async () => {
@@ -138,5 +159,88 @@ describe('bsi-error-tracker', () => {
       'https://hooks.example.com/alert',
       expect.objectContaining({ method: 'POST' }),
     );
+  });
+
+  // ── Clustering behavior ──
+
+  it('writes cluster summary with fingerprint key', async () => {
+    const event = makeTailItem({
+      exceptions: [{ name: 'Error', message: 'timeout connecting to DB', timestamp: Date.now() }],
+    });
+
+    await worker.tail([event], env);
+
+    const clusterCall = env.ERROR_LOG.put.mock.calls.find(
+      ([key]: [string]) => key.startsWith('err-cluster:') && !key.includes('index')
+    );
+    expect(clusterCall).toBeDefined();
+    const cluster = JSON.parse(clusterCall![1]);
+    expect(cluster.fingerprint).toBeTruthy();
+    expect(cluster.worker).toBe('blazesportsintel-worker-prod');
+    expect(cluster.count).toBe(1);
+    expect(cluster.kind).toBe('exception');
+    expect(clusterCall![2].expirationTtl).toBe(24 * 60 * 60);
+  });
+
+  it('writes cluster index listing active fingerprints', async () => {
+    const event = makeTailItem({
+      exceptions: [{ name: 'Error', message: 'crash', timestamp: Date.now() }],
+    });
+
+    await worker.tail([event], env);
+
+    const indexCall = env.ERROR_LOG.put.mock.calls.find(
+      ([key]: [string]) => key === 'err-clusters:index'
+    );
+    expect(indexCall).toBeDefined();
+    const index = JSON.parse(indexCall![1]);
+    expect(Array.isArray(index)).toBe(true);
+    expect(index.length).toBe(1);
+  });
+
+  it('groups same-fingerprint errors within a batch', async () => {
+    const event = makeTailItem({
+      exceptions: [
+        { name: 'Error', message: 'timeout connecting to DB', timestamp: Date.now() },
+        { name: 'Error', message: 'timeout connecting to DB', timestamp: Date.now() },
+      ],
+    });
+
+    await worker.tail([event], env);
+
+    // 2 raw entries + 1 cluster (same fingerprint) + 1 index = 4
+    const rawCalls = env.ERROR_LOG.put.mock.calls.filter(
+      ([key]: [string]) => key.startsWith('err:') && !key.startsWith('err-cluster')
+    );
+    expect(rawCalls.length).toBe(2);
+
+    const clusterCalls = env.ERROR_LOG.put.mock.calls.filter(
+      ([key]: [string]) => key.startsWith('err-cluster:') && !key.includes('index')
+    );
+    expect(clusterCalls.length).toBe(1);
+
+    const cluster = JSON.parse(clusterCalls[0][1]);
+    expect(cluster.count).toBe(2);
+  });
+
+  it('creates separate clusters for different error types', async () => {
+    const event = makeTailItem({
+      outcome: 'exceededCpu',
+      exceptions: [{ name: 'TypeError', message: 'x is not a function', timestamp: Date.now() }],
+    });
+
+    await worker.tail([event], env);
+
+    // 2 raw entries + 2 clusters (different fingerprints) + 1 index = 5
+    const clusterCalls = env.ERROR_LOG.put.mock.calls.filter(
+      ([key]: [string]) => key.startsWith('err-cluster:') && !key.includes('index')
+    );
+    expect(clusterCalls.length).toBe(2);
+
+    const indexCall = env.ERROR_LOG.put.mock.calls.find(
+      ([key]: [string]) => key === 'err-clusters:index'
+    );
+    const index = JSON.parse(indexCall![1]);
+    expect(index.length).toBe(2);
   });
 });

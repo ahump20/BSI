@@ -83,14 +83,14 @@ function ResponseBody({ text, isStreaming }: { text: string; isStreaming: boolea
   const segments = parseResponse(text);
 
   return (
-    <p className="text-sm leading-relaxed text-text-secondary font-serif">
+    <p className="text-sm leading-relaxed font-serif" style={{ color: 'var(--bsi-bone)' }}>
       {segments.map((seg, i) =>
         seg.type === 'link' ? (
           <Link
             key={i}
             href={seg.href!}
-            className="text-burnt-orange underline decoration-burnt-orange/30 underline-offset-2
-              hover:decoration-burnt-orange/60 transition-colors font-semibold"
+            className="underline underline-offset-2 transition-colors font-semibold"
+            style={{ color: 'var(--heritage-columbia-blue)', textDecorationColor: 'rgba(75, 156, 211, 0.3)' }}
           >
             {seg.content}
           </Link>
@@ -111,8 +111,8 @@ function ActionStrip({ links }: { links: Array<{ label: string; href: string }> 
   if (links.length === 0) return null;
 
   return (
-    <div className="mt-3 pt-3 border-t border-[rgba(245,240,235,0.04)]">
-      <p className="text-[9px] uppercase tracking-[0.15em] text-text-muted mb-2 font-mono">
+    <div className="mt-3 pt-3" style={{ borderTop: '1px solid var(--border-vintage)' }}>
+      <p className="text-[9px] uppercase tracking-[0.15em] mb-2" style={{ color: 'var(--heritage-bronze)', fontFamily: 'var(--bsi-font-data)' }}>
         Go to
       </p>
       <div className="flex flex-wrap gap-2">
@@ -120,10 +120,8 @@ function ActionStrip({ links }: { links: Array<{ label: string; href: string }> 
           <Link
             key={link.href}
             href={link.href}
-            className="inline-flex items-center gap-1.5 text-[11px] px-3 py-1.5 rounded-lg
-              bg-burnt-orange/10 border border-burnt-orange/20 text-burnt-orange
-              hover:bg-burnt-orange/20 hover:border-burnt-orange/40
-              transition-all duration-200 font-semibold"
+            className="inline-flex items-center gap-1.5 text-[11px] px-3 py-1.5 transition-all duration-200 font-semibold heritage-stamp"
+            style={{ color: 'var(--heritage-columbia-blue)', borderColor: 'rgba(75, 156, 211, 0.3)' }}
           >
             <svg viewBox="0 0 16 16" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M6 3l5 5-5 5" />
@@ -144,6 +142,7 @@ export function AskBSI() {
   const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState('');
   const abortRef = useRef<AbortController | null>(null);
+  const usageCount = typeof window !== 'undefined' ? getAskCount() : 0;
 
   const askQuestion = useCallback(async (q: string) => {
     const trimmed = q.trim();
@@ -228,26 +227,26 @@ export function AskBSI() {
   return (
     <section className="py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
-        <div className="rounded-xl bg-[rgba(26,26,26,0.6)] border border-[rgba(245,240,235,0.06)] p-5 sm:p-6">
+        <div className="heritage-card p-5 sm:p-6" style={{ borderLeftWidth: '2px', borderLeftColor: 'var(--heritage-bronze)' }}>
           {/* Header */}
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 rounded-lg bg-burnt-orange/15 flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 flex items-center justify-center shrink-0" style={{ border: '1px solid var(--border-vintage)', borderRadius: '2px', background: 'rgba(191, 87, 0, 0.08)' }}>
               <svg viewBox="0 0 24 24" className="w-4 h-4 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
                 <path d="M18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" />
               </svg>
             </div>
             <div>
-              <h3 className="font-display text-sm font-bold uppercase tracking-wide text-text-primary">
+              <h3 className="font-display text-sm font-bold uppercase tracking-wide text-[var(--bsi-bone)]">
                 Ask BSI
               </h3>
-              <p className="text-[10px] text-text-muted uppercase tracking-wider">
-                AI-powered sports intelligence — ask anything, go anywhere
-              </p>
+              <span className="heritage-stamp" style={{ padding: '1px 6px', fontSize: '8px' }}>
+                AI-Powered
+              </span>
             </div>
           </div>
 
-          {/* Example chips */}
+          {/* Example chips — heritage stamp pills */}
           <div className="flex flex-wrap gap-2 mb-4">
             {EXAMPLE_PROMPTS.map((prompt) => (
               <button
@@ -255,16 +254,21 @@ export function AskBSI() {
                 type="button"
                 onClick={() => askQuestion(prompt)}
                 disabled={streaming}
-                className="text-[11px] px-3 py-1.5 rounded-full bg-[rgba(255,255,255,0.03)] border border-[rgba(245,240,235,0.06)]
-                  text-text-secondary hover:text-burnt-orange hover:border-burnt-orange/30
-                  transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="text-[11px] px-3 py-1.5 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                style={{
+                  borderRadius: '2px',
+                  border: '1px solid var(--border-vintage)',
+                  background: 'transparent',
+                  color: 'var(--bsi-dust)',
+                  fontFamily: 'var(--bsi-font-data)',
+                }}
               >
                 {prompt}
               </button>
             ))}
           </div>
 
-          {/* Input */}
+          {/* Input — dark with thin heritage-bronze bottom border */}
           <form onSubmit={handleSubmit} className="flex gap-2">
             <input
               type="text"
@@ -272,16 +276,21 @@ export function AskBSI() {
               onChange={(e) => setQuestion(e.target.value)}
               placeholder="Ask about any sport, stat, team, or feature..."
               disabled={streaming}
-              className="flex-1 px-4 py-2.5 rounded-lg bg-[rgba(255,255,255,0.03)] border border-[rgba(245,240,235,0.06)]
-                text-sm text-text-primary placeholder:text-text-muted
-                focus:outline-none focus:border-burnt-orange/40 focus:ring-1 focus:ring-burnt-orange/20
-                transition-all disabled:opacity-50"
+              className="flex-1 px-4 py-2.5 text-sm transition-all disabled:opacity-50 focus:outline-none"
+              style={{
+                borderRadius: '2px',
+                border: 'none',
+                borderBottom: '1px solid var(--border-vintage)',
+                background: 'rgba(255,255,255,0.02)',
+                color: 'var(--bsi-bone)',
+                fontFamily: 'var(--bsi-font-data)',
+              }}
             />
             <button
               type="submit"
               disabled={streaming || !question.trim()}
-              className="px-4 py-2.5 rounded-lg bg-burnt-orange text-white text-xs font-semibold uppercase tracking-wider
-                hover:brightness-110 transition-all disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+              className="btn-heritage-fill shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
+              style={{ padding: '0.625rem 1rem' }}
             >
               {streaming ? (
                 <span className="inline-flex items-center gap-1.5">
@@ -296,9 +305,9 @@ export function AskBSI() {
 
           {/* Response area */}
           {(response || error) && (
-            <div className="mt-4 pt-4 border-t border-[rgba(245,240,235,0.04)]">
+            <div className="mt-4 pt-4" style={{ borderTop: '1px solid var(--border-vintage)' }}>
               {error ? (
-                <p className="text-sm text-red-400">{error}</p>
+                <p className="text-sm" style={{ color: 'var(--heritage-oiler-red)' }}>{error}</p>
               ) : (
                 <>
                   <ResponseBody text={response} isStreaming={streaming} />
@@ -307,6 +316,13 @@ export function AskBSI() {
               )}
             </div>
           )}
+
+          {/* Usage counter — heritage stamp */}
+          <div className="mt-3 flex justify-end">
+            <span className="heritage-stamp" style={{ padding: '1px 6px', fontSize: '8px', color: 'var(--bsi-dust)' }}>
+              {MAX_FREE_QUESTIONS - usageCount} / {MAX_FREE_QUESTIONS} remaining
+            </span>
+          </div>
         </div>
       </div>
     </section>

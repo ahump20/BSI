@@ -11,6 +11,13 @@ bucket_name = "blaze-field-assets"
 binding = "MONITOR_KV"
 id = "eb5a89bcb6034c97831b358b1a8b2eba"
 
+[[kv_namespaces]]
+binding = "ERROR_LOG"
+id = "7edf894ff9ba4dd08b5433ed76ebc9c6"
+
+[[tail_consumers]]
+service = "bsi-error-tracker"
+
 [dev]
 port = 8791
 local_protocol = "http"
@@ -29,3 +36,7 @@ bucket_name = "blaze-field-assets"
 [[env.production.kv_namespaces]]
 binding = "MONITOR_KV"
 id = "eb5a89bcb6034c97831b358b1a8b2eba"
+
+[[env.production.kv_namespaces]]
+binding = "ERROR_LOG"
+id = "7edf894ff9ba4dd08b5433ed76ebc9c6"

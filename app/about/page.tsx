@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
+import { HeroGlow } from '@/components/ui/HeroGlow';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 
@@ -12,22 +13,21 @@ export default function AboutPage() {
     <div className="min-h-screen bg-background-primary text-text-primary pt-6">
       {/* Hero — product thesis first */}
       <Section className="pt-6 md:pt-10 pb-20 relative overflow-hidden">
-        {/* Ambient hero glow */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse, rgba(191,87,0,0.08) 0%, transparent 70%)' }} />
+        <HeroGlow />
         <Container size="narrow" center className="relative z-10">
           <ScrollReveal>
-            <p className="text-sm tracking-[0.2em] text-burnt-orange uppercase mb-8 font-medium">
-              About Blaze Sports Intel
-            </p>
+            <span className="section-label block mb-6">About Blaze Sports Intel</span>
             <h1 className="font-display uppercase text-4xl md:text-5xl lg:text-6xl font-bold mb-10 tracking-wide leading-[1.1]">
-              Built for Fans Who Follow{' '}
-              <span className="text-burnt-orange">the Whole Game</span>
+              The Game Between{' '}
+              <span className="text-burnt-orange">the Poles</span>
             </h1>
-            <p className="text-xl md:text-2xl text-text-secondary leading-relaxed max-w-2xl mx-auto">
-              Not just the highlights. Not just the playoffs. BSI covers college baseball, MLB,
-              NFL, NBA, and college football with live scores, real analytics, and independent
-              editorial — from a Wednesday night mid-major matchup to Monday Night Football.
-              One platform. One person. Every game.
+            <p className="text-burnt-orange font-serif italic text-xl md:text-2xl leading-relaxed max-w-2xl mx-auto">
+              Major platforms paint a black-and-white picture — LeBron vs. MJ,
+              Yankees or Dodgers, Cowboys or nothing. BSI exists to leave that
+              binary behind. The real game lives in between: college baseball on a
+              Tuesday night, a mid-major pitcher nobody scouted, a conference race
+              no broadcast window will touch. Five sports. Every game. One person
+              building what nobody else would.
             </p>
           </ScrollReveal>
         </Container>
@@ -147,6 +147,48 @@ export default function AboutPage() {
                     they&apos;d been looking for coverage like this. They just didn&apos;t know
                     someone was building it.
                   </p>
+                </div>
+
+                {/* The Story — origin narrative */}
+                <div className="mt-16 pt-12 border-t border-border-subtle">
+                  <p className="text-xs tracking-[0.2em] text-text-muted uppercase mb-3 font-medium">
+                    The Story
+                  </p>
+                  <h3 className="font-display uppercase text-xl md:text-2xl font-bold mb-8 tracking-wide">
+                    Memphis Soil, <span className="text-burnt-orange">Texas Roots</span>
+                  </h3>
+                  <div className="space-y-5 text-text-secondary leading-[1.75]">
+                    <p>
+                      I was born in Memphis with Texas dirt under the hospital bed. That
+                      wasn&apos;t metaphor — my family carried soil from Stephen F. Austin&apos;s
+                      gravesite in West Columbia to Baptist Memorial East, a tradition stretching
+                      back 127 years. The deliberate act kept the moment from tipping into
+                      sentimentality. Heritage chosen rather than accidental.
+                    </p>
+                    <p>
+                      Memphis gave me constraint-based creativity — what happens when resources
+                      are limited, when you build inside boundaries. Texas gave the refusal to
+                      accept those boundaries as permanent. The analytical instinct that runs
+                      through BSI — systems-level thinking, pattern recognition, finding the
+                      hidden lever — emerged from holding both at once.
+                    </p>
+                    <p>
+                      I played varsity baseball and football at Boerne-Champion in the Hill
+                      Country. Private coaching from Danny Graves (two-time All-Star, first
+                      Vietnamese-born MLB player) and Jason Marshall (former UTSA head coach)
+                      shaped the scouting eye before I had a name for it. The way a kid reads
+                      a pitcher&apos;s release point at fifteen is the same instinct that reads
+                      wOBA distributions and conference strength indexes at thirty. The data
+                      sharpened something the field started.
+                    </p>
+                    <p className="text-text-primary">
+                      Ricky Williams breaking the NCAA rushing record in 1998 — I was three years
+                      old — is the single best emblem of why BSI exists. The moment where sports
+                      transcends box scores and becomes something a family passes down. That&apos;s
+                      the gap. The connection between what happens on the field and what it means
+                      to the people watching. BSI fills it.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
@@ -13,7 +14,8 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { preseason2026 } from '@/lib/data/preseason-2026';
 import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
-import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
+import { teamMetadata, getLogoUrl, teamNameToSlug } from '@/lib/data/team-metadata';
+import { normalizeRankings, type RankedTeam, type ESPNPoll, type RankingsRawResponse } from '@/lib/utils/rankings';
 import { HubHero } from '@/components/college-baseball/HubHero';
 import { LiveScoreStrip } from '@/components/college-baseball/LiveScoreStrip';
 import { EditorialFeed } from '@/components/college-baseball/EditorialFeed';
@@ -21,6 +23,7 @@ import { SocialIntelFeed } from '@/components/college-baseball/SocialIntelFeed';
 import { EnrichedRankingsTable } from '@/components/college-baseball/EnrichedRankingsTable';
 import { LeagueLeaders } from '@/components/college-baseball/LeagueLeaders';
 import { IntelSignup } from '@/components/home/IntelSignup';
+import { QuickRankings } from '@/components/college-baseball/QuickRankings';
 import { TabBar, TabPanel } from '@/components/ui/TabBar';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ScheduleGameCard } from '@/components/college-baseball/ScheduleGameCard';
@@ -28,20 +31,6 @@ import type { ScheduleGame } from '@/components/college-baseball/ScheduleGameCar
 import { PlayersTabContent } from '@/components/college-baseball/PlayersTabContent';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 
-interface RankedTeam {
-  rank: number;
-  team: string;
-  conference: string;
-  record?: string;
-  slug?: string;
-}
-
-/** Reverse-lookup: team display name → route slug, indexed by both full name and shortName. */
-const teamNameToSlug: Record<string, string> = {};
-for (const [slug, meta] of Object.entries(teamMetadata)) {
-  teamNameToSlug[meta.name.toLowerCase()] = slug;
-  teamNameToSlug[meta.shortName.toLowerCase()] = slug;
-}
 
 interface StandingsTeam {
   teamName: string;
@@ -67,54 +56,6 @@ interface TeamListItem {
 
 type TabType = 'rankings' | 'standings' | 'schedule' | 'teams' | 'players';
 
-/** ESPN poll entry — nested under rankings[0].ranks */
-interface ESPNRankEntry {
-  current: number;
-  team: { name: string; location?: string; nickname?: string };
-  recordSummary?: string;
-}
-
-interface ESPNPoll {
-  name: string;
-  ranks: ESPNRankEntry[];
-}
-
-/** Normalize ESPN poll format OR flat RankedTeam[] into a consistent shape. */
-function normalizeRankings(raw: { rankings?: ESPNPoll[] | RankedTeam[]; meta?: { lastUpdated?: string; dataSource?: string } }): {
-  teams: RankedTeam[];
-  pollName: string;
-} {
-  const rankings = raw?.rankings;
-  if (!rankings?.length) return { teams: [], pollName: '' };
-
-  // ESPN wraps polls in { rankings: [{ name, ranks: [...] }] }
-  const first = rankings[0] as unknown as Record<string, unknown>;
-  if ('ranks' in first && Array.isArray(first.ranks)) {
-    const poll = first as unknown as ESPNPoll;
-    return {
-      pollName: poll.name || '',
-      teams: poll.ranks.map((e) => {
-        const teamName = e.team?.location ? `${e.team.location} ${e.team.name}` : e.team?.nickname || e.team?.name || 'Unknown';
-        return {
-          rank: e.current,
-          team: teamName,
-          conference: '',
-          record: e.recordSummary || '',
-          slug: teamNameToSlug[teamName.toLowerCase()],
-        };
-      }),
-    };
-  }
-
-  // Already flat RankedTeam[] (Highlightly or normalized worker response)
-  return {
-    teams: (rankings as RankedTeam[]).map(t => ({
-      ...t,
-      slug: t.slug || teamNameToSlug[t.team.toLowerCase()],
-    })),
-    pollName: '',
-  };
-}
 
 /** Preseason fallback — derived from preseason-2026.ts, never hardcoded. Top 25 only. */
 const preseasonRankings: RankedTeam[] = Object.entries(preseason2026)
@@ -166,8 +107,18 @@ const conferenceList = (() => {
 const INITIAL_CONFERENCES_SHOWN = 9;
 const scheduleConferences = ['All', ...conferenceList.filter(c => c.name !== 'All Conferences').map(c => c.name)];
 
+const VALID_TABS: TabType[] = ['rankings', 'standings', 'schedule', 'teams', 'players'];
+
 export default function CollegeBaseballPage() {
-  const [activeTab, setActiveTab] = useState<TabType>('rankings');
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const initialTab = (): TabType => {
+    const param = searchParams.get('tab');
+    return (VALID_TABS.includes(param as TabType) ? param : 'rankings') as TabType;
+  };
+
+  const [activeTab, setActiveTab] = useState<TabType>(initialTab);
   const [selectedDate, setSelectedDate] = useState(() => getDateOffset(0));
   const [selectedConference, setSelectedConference] = useState('All');
   const [liveGamesDetected, setLiveGamesDetected] = useState(false);
@@ -233,10 +184,9 @@ export default function CollegeBaseballPage() {
 
   useEffect(() => { debouncedApiSearch(searchQuery); }, [searchQuery, debouncedApiSearch]);
 
-  // Rankings — fetched when rankings tab is active
-  const rankingsUrl = activeTab === 'rankings' ? '/api/college-baseball/rankings' : null;
+  // Rankings — always fetched (shared by QuickRankings strip + rankings tab)
   const { data: rankingsRaw, loading: rankingsLoading, error: rankingsError, retry: retryRankings } =
-    useSportData<{ rankings?: ESPNPoll[] | RankedTeam[]; previousRankings?: Record<string, unknown> | null; meta?: { lastUpdated?: string; dataSource?: string } }>(rankingsUrl);
+    useSportData<RankingsRawResponse>('/api/college-baseball/rankings');
   const normalized = useMemo(() => normalizeRankings(rankingsRaw ?? {}), [rankingsRaw]);
   const rankings = normalized.teams.length ? normalized.teams : preseasonRankings;
   const isLiveRankings = normalized.teams.length > 0;
@@ -304,7 +254,7 @@ export default function CollegeBaseballPage() {
     hasAutoAdvanced.current = true;
 
     async function findNextGameDay() {
-      for (let i = 0; i <= 7; i++) {
+      for (let i = 1; i <= 7; i++) {
         const date = getDateOffset(i);
         try {
           const res = await fetch(`/api/college-baseball/schedule?date=${date}`);
@@ -375,6 +325,9 @@ export default function CollegeBaseballPage() {
         {/* Editorial Feed — dynamic from D1 */}
         <EditorialFeed />
 
+        {/* Quick Rankings — Top 10 always visible */}
+        <QuickRankings rankings={rankings} loading={rankingsLoading} />
+
         {/* Social Intelligence Feed — Reddit + Twitter signals */}
         <Section padding="md">
           <Container>
@@ -382,11 +335,35 @@ export default function CollegeBaseballPage() {
           </Container>
         </Section>
 
-        {/* Intel Signup — email capture for roster-market intelligence */}
+        {/* Intel Signup + Feature Grid */}
         <Section padding="md">
           <Container>
-            <div className="max-w-xl mx-auto">
-              <IntelSignup />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+              <div>
+                <IntelSignup />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { label: 'BSI Savant', desc: 'Advanced metrics for every D1 player', href: '/college-baseball/savant', icon: 'M18 20V10M12 20V4M6 20v-6' },
+                  { label: 'Transfer Portal', desc: 'Track every portal entry in real time', href: '/college-baseball/transfer-portal', icon: 'M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4' },
+                  { label: 'Editorial', desc: 'Weekly recaps and previews', href: '/college-baseball/editorial', icon: 'M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 1 2-2V9a2 2 0 0 1-2-2h-2' },
+                  { label: 'Compare', desc: 'Head-to-head team matchups', href: '/college-baseball/compare', icon: 'M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z' },
+                ].map((feature) => (
+                  <Link
+                    key={feature.href}
+                    href={feature.href}
+                    className="flex flex-col gap-2 p-3 bg-surface-light border border-border rounded-xl hover:border-burnt-orange/30 transition-all group"
+                  >
+                    <svg viewBox="0 0 24 24" className="w-5 h-5 text-burnt-orange opacity-70" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d={feature.icon} />
+                    </svg>
+                    <div>
+                      <div className="text-xs font-semibold text-text-primary group-hover:text-burnt-orange transition-colors">{feature.label}</div>
+                      <div className="text-[10px] text-text-muted leading-tight mt-0.5">{feature.desc}</div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
             </div>
           </Container>
         </Section>
@@ -394,7 +371,18 @@ export default function CollegeBaseballPage() {
         {/* Tabs */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
-            <TabBar tabs={tabs} active={activeTab} onChange={(id) => setActiveTab(id as TabType)} size="sm" />
+            <TabBar
+              tabs={tabs}
+              active={activeTab}
+              onChange={(id) => {
+                const tab = id as TabType;
+                setActiveTab(tab);
+                const params = new URLSearchParams(searchParams.toString());
+                params.set('tab', tab);
+                router.replace(`?${params.toString()}`, { scroll: false });
+              }}
+              size="sm"
+            />
             {/* Secondary nav — editorial monospace strip */}
             <div className="flex gap-1 mb-8 overflow-x-auto pb-1 scrollbar-hide">
               {[

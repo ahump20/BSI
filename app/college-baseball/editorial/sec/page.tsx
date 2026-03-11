@@ -5,18 +5,20 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
-import type { Metadata } from 'next';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'SEC Baseball: 2026 Conference Preview | Blaze Sports Intel',
-  description:
-    '16 programs. 13 ranked teams. 4 Omaha Favorites. The SEC is the deepest conference in college baseball. Full scouting breakdowns for every program.',
-  openGraph: {
-    title: 'SEC Baseball: 2026 Conference Preview',
-    description:
-      '16 programs. 13 ranked teams. 4 Omaha Favorites. The deepest conference in college baseball.',
-  },
+const seoConfig = {
+  title: 'SEC Baseball: 2026 Conference Preview',
+  description: '16 programs. 13 ranked teams. 4 Omaha Favorites. The SEC is the deepest conference in college baseball. Full scouting breakdowns for every program.',
+  datePublished: '2026-02-14',
+  slug: '/college-baseball/editorial/sec',
+  image: '/images/og/cbb-sec.png',
+  sport: 'College Baseball',
+  ogDescription: '16 programs. 13 ranked teams. 4 Omaha Favorites. The deepest conference in college baseball.',
 };
+
+export const metadata = editorialMetadata(seoConfig);
 
 // ── Projection tier badge styling ──────────────────────────────────────
 
@@ -133,6 +135,7 @@ function TeamPreviewCard({ team }: { team: TeamCard }) {
 export default function SECEditorialPage() {
   return (
     <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
       <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">

@@ -29,5 +29,8 @@ bucket_name = "blaze-sports-data-lake"
 # RAPIDAPI_KEY — Highlightly Pro API (set via wrangler secret put)
 # ANTHROPIC_API_KEY — Claude API for matchup takes (set via wrangler secret put)
 
+[[tail_consumers]]
+service = "bsi-error-tracker"
+
 [dev]
 port = 8792

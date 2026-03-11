@@ -371,7 +371,7 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
             <div className="mb-8 flex items-center justify-between flex-wrap gap-4">
               <div className="flex items-center gap-4">
                 <Image
-                  src="/images/brand/logo-full.webp"
+                  src="/images/brand/bsi-shield-blaze.png"
                   alt="Blaze Sports Intel"
                   width={48}
                   height={48}

@@ -15,10 +15,11 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SearchBar } from '@/components/layout-ds/SearchBar';
+import { HeroGlow } from '@/components/ui/HeroGlow';
+import { FilterPill } from '@/components/ui/FilterPill';
 
 // ============================================================================
 // Types
@@ -182,18 +183,16 @@ function SearchContent() {
       <div>
         {/* Header */}
         <Section padding="md" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
+          <HeroGlow />
 
           <Container>
             <ScrollReveal direction="up">
-              <Badge variant="primary" className="mb-4">
-                Cross-Sport Search
-              </Badge>
+              <span className="section-label block mb-4">Search</span>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-gradient-blaze mb-6">
-                {initialQuery ? `Results for "${initialQuery}"` : 'Search'}
+              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-text-primary mb-6">
+                {initialQuery ? `Results for "${initialQuery}"` : 'Cross-Sport Search'}
               </h1>
             </ScrollReveal>
 
@@ -216,19 +215,16 @@ function SearchContent() {
             {/* Filters */}
             <div className="flex flex-wrap gap-4 mb-8">
               {/* Sport Filter */}
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {SPORT_OPTIONS.map((option) => (
-                  <button
+                  <FilterPill
                     key={option.value}
+                    active={filters.sport === option.value}
                     onClick={() => setFilters((prev) => ({ ...prev, sport: option.value }))}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                      filters.sport === option.value
-                        ? 'bg-burnt-orange text-white'
-                        : 'bg-background-tertiary text-text-secondary hover:bg-surface-light hover:text-text-primary'
-                    }`}
+                    size="sm"
                   >
                     {option.label}
-                  </button>
+                  </FilterPill>
                 ))}
               </div>
             </div>
@@ -266,11 +262,20 @@ function SearchContent() {
               <Card variant="default" padding="lg" className="text-center">
                 <div className="mb-4 flex justify-center"><svg viewBox="0 0 24 24" fill="none" className="w-14 h-14 text-text-muted" stroke="currentColor" strokeWidth={1.5}><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></svg></div>
                 <h2 className="text-xl font-semibold text-text-primary mb-2">No Results Found</h2>
-                <p className="text-text-secondary mb-6">
+                <p className="text-text-secondary mb-4">
                   No matches for &ldquo;{initialQuery}&rdquo;
                   {filters.sport && ` in ${getSportLabel(filters.sport)}`}
                 </p>
+                <p className="text-sm text-text-tertiary mb-6">
+                  Try <Link href="/" className="text-burnt-orange hover:text-ember transition-colors font-medium">Ask BSI</Link> on the homepage — it understands natural language questions like &ldquo;{initialQuery}&rdquo;.
+                </p>
                 <div className="flex flex-wrap justify-center gap-3">
+                  <Link
+                    href="/college-baseball/teams"
+                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-lg hover:bg-surface-light transition-colors"
+                  >
+                    Browse NCAA Baseball
+                  </Link>
                   <Link
                     href="/mlb/teams"
                     className="px-4 py-2 bg-background-tertiary text-text-primary rounded-lg hover:bg-surface-light transition-colors"
@@ -283,51 +288,86 @@ function SearchContent() {
                   >
                     Browse NFL Teams
                   </Link>
-                  <Link
-                    href="/college-baseball/teams"
-                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-lg hover:bg-surface-light transition-colors"
-                  >
-                    Browse NCAA Baseball
-                  </Link>
                 </div>
               </Card>
             )}
 
             {/* Empty State - No Query */}
             {!isLoading && !initialQuery && (
-              <Card variant="default" padding="lg" className="text-center">
-                <div className="mb-4 flex justify-center"><svg viewBox="0 0 24 24" fill="none" className="w-14 h-14 text-text-muted" stroke="currentColor" strokeWidth={1.5}><path d="M3 21V10L12 3L21 10V21" /><path d="M3 14H21" /><rect x="8" y="14" width="8" height="7" /></svg></div>
-                <h2 className="text-xl font-semibold text-text-primary mb-2">Search Across All Sports</h2>
-                <p className="text-text-secondary mb-6">
-                  Find teams, players, and games across MLB, NFL, NBA, and NCAA sports.
-                </p>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 max-w-3xl mx-auto">
-                  <Link
-                    href="/mlb"
-                    className="p-4 bg-background-tertiary rounded-lg hover:bg-surface-light transition-colors"
-                  >
-                    <div className="mb-2 flex justify-center"><svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-text-secondary" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M5 12C5 12 8 9 12 9C16 9 19 12 19 12" /><path d="M5 12C5 12 8 15 12 15C16 15 19 12 19 12" /></svg></div>
-                    <p className="font-medium text-text-primary">MLB</p>
-                    <p className="text-xs text-text-tertiary">Major League Baseball</p>
-                  </Link>
-                  <Link
-                    href="/nfl"
-                    className="p-4 bg-background-tertiary rounded-lg hover:bg-surface-light transition-colors"
-                  >
-                    <div className="mb-2 flex justify-center"><svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-text-secondary" stroke="currentColor" strokeWidth={1.5}><ellipse cx="12" cy="12" rx="10" ry="6" transform="rotate(45 12 12)" /><path d="M12 7L12 17M9 10L15 14M15 10L9 14" /></svg></div>
-                    <p className="font-medium text-text-primary">NFL</p>
-                    <p className="text-xs text-text-tertiary">National Football League</p>
-                  </Link>
-                  <Link
-                    href="/college-baseball"
-                    className="p-4 bg-background-tertiary rounded-lg hover:bg-surface-light transition-colors"
-                  >
-                    <div className="mb-2 flex justify-center"><svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-text-secondary" stroke="currentColor" strokeWidth={1.5}><path d="M2 10L12 5L22 10L12 15L2 10Z" /><path d="M6 12V17C6 17 9 20 12 20C15 20 18 17 18 17V12" /></svg></div>
-                    <p className="font-medium text-text-primary">NCAA Baseball</p>
-                    <p className="text-xs text-text-tertiary">College Baseball</p>
-                  </Link>
+              <div className="space-y-8">
+                {/* Popular Searches */}
+                <div>
+                  <h2 className="font-display text-lg font-bold uppercase tracking-wide text-text-primary mb-4">
+                    Popular Searches
+                  </h2>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      'Texas Longhorns', 'NFL standings', 'wOBA leaders', 'NBA scores',
+                      'College World Series', 'SEC baseball', 'MLB standings',
+                      'transfer portal', 'Big 12 football', 'Savant leaderboard',
+                    ].map((term) => (
+                      <Link
+                        key={term}
+                        href={`/search?q=${encodeURIComponent(term)}`}
+                        className="px-3 py-1.5 text-sm bg-surface-light border border-border-subtle rounded-full text-text-secondary hover:text-burnt-orange hover:border-burnt-orange/30 transition-colors"
+                      >
+                        {term}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
-              </Card>
+
+                {/* Ask BSI Callout */}
+                <Card variant="default" padding="lg" className="border-burnt-orange/20">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-burnt-orange/10 flex items-center justify-center shrink-0">
+                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-burnt-orange" stroke="currentColor" strokeWidth={1.5}>
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" />
+                        <path d="M12 16v-4M12 8h.01" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="font-display text-base font-bold uppercase tracking-wide text-text-primary mb-1">
+                        Try Ask BSI
+                      </h3>
+                      <p className="text-sm text-text-secondary mb-3">
+                        Ask questions in plain English — &ldquo;Is Texas a CWS contender?&rdquo; or &ldquo;Who leads D1 in wOBA?&rdquo; — and get answers with links to the right page.
+                      </p>
+                      <Link
+                        href="/"
+                        className="text-sm text-burnt-orange font-semibold hover:text-ember transition-colors"
+                      >
+                        Ask BSI on the homepage &rarr;
+                      </Link>
+                    </div>
+                  </div>
+                </Card>
+
+                {/* Browse by Sport */}
+                <div>
+                  <h2 className="font-display text-lg font-bold uppercase tracking-wide text-text-primary mb-4">
+                    Browse by Sport
+                  </h2>
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 max-w-3xl">
+                    {[
+                      { href: '/college-baseball', label: 'NCAA Baseball', sub: 'College Baseball' },
+                      { href: '/mlb', label: 'MLB', sub: 'Major League Baseball' },
+                      { href: '/nfl', label: 'NFL', sub: 'National Football League' },
+                      { href: '/nba', label: 'NBA', sub: 'National Basketball Association' },
+                      { href: '/cfb', label: 'CFB', sub: 'College Football' },
+                    ].map((sport) => (
+                      <Link
+                        key={sport.href}
+                        href={sport.href}
+                        className="p-4 bg-background-tertiary rounded-lg hover:bg-surface-light transition-colors"
+                      >
+                        <p className="font-medium text-text-primary">{sport.label}</p>
+                        <p className="text-xs text-text-tertiary">{sport.sub}</p>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
             )}
 
             {/* Results - Grouped by Sport */}

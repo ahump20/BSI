@@ -1,17 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Houston Cougars: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    'Sixteen years. Six CWS appearances in program history but none under Todd Whitting. The Big 12 move has been unkind to a program that dominated the AAC.',
-  openGraph: {
-    title: 'Houston Cougars: 2026 Season Preview',
-    description:
-      'Sixteen years. Six CWS appearances in program history but none under Todd Whitting. The Big 12 move has been unkind to a program that dominated the AAC.',
-  },
+const seoConfig = {
+  title: 'Houston Cougars 2026 Season Preview',
+  description: 'Houston Cougars 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big 12 predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/houston-2026',
+  image: '/images/og/cbb-houston-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'Houston Cougars — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'Houston',
@@ -182,5 +183,10 @@ const data: TeamPreviewData = {
 };
 
 export default function Houston2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

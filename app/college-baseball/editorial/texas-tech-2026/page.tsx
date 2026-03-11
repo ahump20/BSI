@@ -1,17 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Texas Tech Red Raiders: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    'Twenty wins and thirty-three losses is not Tim Tadlock baseball. The architect of Texas Tech\'s rise from regional afterthought to CWS Finals program had his worst season in 13 years.',
-  openGraph: {
-    title: 'Texas Tech Red Raiders: 2026 Season Preview',
-    description:
-      'Twenty wins and thirty-three losses is not Tim Tadlock baseball. The architect of Texas Tech\'s rise from regional afterthought to CWS Finals program had his worst season in 13 years.',
-  },
+const seoConfig = {
+  title: 'Texas Tech Red Raiders 2026 Season Preview',
+  description: 'Texas Tech Red Raiders 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big 12 predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/texas-tech-2026',
+  image: '/images/og/cbb-texas-tech-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'Texas Tech Red Raiders — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'Texas Tech',
@@ -182,5 +183,10 @@ const data: TeamPreviewData = {
 };
 
 export default function TexasTech2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

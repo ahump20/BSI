@@ -10,6 +10,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { formatTimestamp, formatScheduleDate, getDateOffset, formatGameTime } from '@/lib/utils/timezone';
 import type { DataMeta } from '@/lib/types/data-meta';
 
@@ -107,14 +108,9 @@ export default function NFLGamesPage() {
 
       const data: ScoreboardResponse = await res.json();
 
-      if (data.games) {
-        setGames(data.games);
-        setHasLiveGames(data.games.some((g) => g.status.type.state === 'in'));
-        setMeta(data.meta);
-      } else {
-        setError('No games found');
-        setGames([]);
-      }
+      setGames(data.games || []);
+      setHasLiveGames((data.games || []).some((g) => g.status.type.state === 'in'));
+      setMeta(data.meta);
       setLoading(false);
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
@@ -465,15 +461,12 @@ export default function NFLGamesPage() {
                 </button>
               </Card>
             ) : games.length === 0 ? (
-              <Card variant="default" padding="lg">
-                <div className="text-center py-8">
-                  <FootballIcon className="w-16 h-16 text-burnt-orange mx-auto mb-4" />
-                  <p className="text-text-secondary">No games scheduled for this date.</p>
-                  <p className="text-text-tertiary text-sm mt-2">
-                    NFL games run Thursday through Monday when the league is in action.
-                  </p>
-                </div>
-              </Card>
+              <EmptyState
+                type="no-games"
+                sport="NFL"
+                message="NFL games run Thursday through Monday when the league is in action."
+                action={{ label: 'View NFL Standings', href: '/nfl/standings' }}
+              />
             ) : (
               <>
                 {/* Live Games */}

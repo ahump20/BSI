@@ -70,8 +70,9 @@ const FALLBACK_ARTICLES: Editorial[] = [
 
 /**
  * EditorialPreview — D1-backed dynamic editorial feed for the homepage.
- * Fetches /api/college-baseball/editorial/list, shows 1 featured + 3 secondary.
- * Falls back to hardcoded articles if the API is unavailable.
+ * Heritage vintage magazine spread: full-width featured card with corner marks,
+ * Oswald headline, Cormorant excerpt, heritage-stamp category kicker,
+ * supporting articles with sport-color left accent bar.
  */
 export function EditorialPreview() {
   const { data, loading, error } = useSportData<EditorialListResponse>(
@@ -95,17 +96,17 @@ export function EditorialPreview() {
   // Loading skeleton
   if (loading && !articles) {
     return (
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background-secondary to-background-primary">
+      <section className="py-16 px-4 sm:px-6 lg:px-8" style={{ background: 'var(--surface-dugout)' }}>
         <div className="max-w-5xl mx-auto">
           <div className="mb-10">
             <div className="h-3 w-20 bg-surface rounded mb-4 animate-pulse" />
             <div className="h-8 w-48 bg-surface rounded animate-pulse" />
           </div>
           <div className="space-y-4">
-            <div className="h-40 bg-surface-light border border-border rounded-2xl animate-pulse" />
+            <div className="h-40 border animate-pulse" style={{ background: 'var(--surface-press-box)', borderColor: 'var(--border-vintage)', borderRadius: '2px' }} />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-32 bg-surface-light border border-border rounded-2xl animate-pulse" />
+                <div key={i} className="h-32 border animate-pulse" style={{ background: 'var(--surface-press-box)', borderColor: 'var(--border-vintage)', borderRadius: '2px' }} />
               ))}
             </div>
           </div>
@@ -115,16 +116,17 @@ export function EditorialPreview() {
   }
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background-secondary to-background-primary">
+    <section className="py-16 px-4 sm:px-6 lg:px-8" style={{ background: 'var(--surface-dugout)' }}>
       <div className="max-w-5xl mx-auto">
         <ScrollReveal direction="up">
           <div className="flex items-center justify-between mb-10">
             <div>
-              <span className="inline-block text-xs font-semibold uppercase tracking-[0.2em] text-burnt-orange mb-4">
+              <span className="heritage-stamp mb-4">
                 From the Press Box
               </span>
-              <div className="flex items-center gap-3">
-                <h2 className="font-display text-3xl md:text-4xl font-bold text-text-primary uppercase tracking-wide">
+              <div className="flex items-center gap-3 mt-3">
+                <div className="section-rule-thick" />
+                <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-[var(--bsi-bone)]">
                   Editorial
                 </h2>
                 {articleCount !== null && !error && (
@@ -136,7 +138,8 @@ export function EditorialPreview() {
             </div>
             <Link
               href="/college-baseball/editorial"
-              className="text-sm font-semibold text-burnt-orange hover:text-ember transition-colors flex items-center gap-1"
+              className="text-sm font-semibold transition-colors flex items-center gap-1"
+              style={{ color: 'var(--heritage-columbia-blue)' }}
             >
               All Articles
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -146,30 +149,33 @@ export function EditorialPreview() {
           </div>
         </ScrollReveal>
 
-        {/* Featured article */}
+        {/* Featured article — full-width heritage card with corner marks */}
         <ScrollReveal direction="up">
           <Link href={getEditorialHref(featured)} className="group block mb-4">
-            <article className="rounded-2xl border border-burnt-orange/20 bg-gradient-to-r from-burnt-orange/10 to-transparent p-6 md:p-8 transition-all duration-300 hover:border-burnt-orange/50 hover:shadow-[0_0_30px_rgba(191,87,0,0.08)]">
+            <article
+              className="heritage-card corner-marks p-6 md:p-8 transition-all duration-300"
+              style={{ borderLeftWidth: '3px', borderLeftColor: 'var(--bsi-primary)' }}
+            >
               <div className="flex items-center gap-2 mb-3">
                 {featured.teams?.length > 0 && (
                   <Badge variant="primary" size="sm">{featured.teams[0]}</Badge>
                 )}
-                <span className="text-[10px] text-text-muted uppercase tracking-wider">
+                <span className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
                   {formatDate(featured.date)}
                 </span>
                 {featured.wordCount > 0 && (
-                  <span className="text-[10px] text-text-muted">
+                  <span className="text-[10px]" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
                     · {readTime(featured.wordCount)}
                   </span>
                 )}
               </div>
-              <h3 className="font-serif text-xl md:text-2xl font-bold text-text-primary leading-snug mb-3 group-hover:text-burnt-orange transition-colors">
+              <h3 className="font-display text-xl md:text-2xl font-bold uppercase leading-snug mb-3 group-hover:text-burnt-orange transition-colors text-[var(--bsi-bone)]">
                 {featured.title}
               </h3>
-              <p className="text-sm text-text-muted leading-relaxed line-clamp-2 mb-4">
+              <p className="text-sm leading-relaxed line-clamp-2 mb-4 font-serif" style={{ color: 'var(--bsi-dust)' }}>
                 {featured.preview}
               </p>
-              <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-burnt-orange group-hover:gap-2.5 transition-all">
+              <span className="inline-flex items-center gap-1.5 text-sm font-semibold group-hover:gap-2.5 transition-all" style={{ color: 'var(--heritage-columbia-blue)' }}>
                 Read
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
@@ -179,27 +185,33 @@ export function EditorialPreview() {
           </Link>
         </ScrollReveal>
 
-        {/* Secondary articles */}
+        {/* Heritage divider */}
+        <div className="heritage-divider" />
+
+        {/* Secondary articles — compact cards with sport-color left accent bar */}
         {secondary.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {secondary.map((article, i) => (
               <ScrollReveal key={article.id} direction="up" delay={i * 80}>
                 <Link href={getEditorialHref(article)} className="group block h-full">
-                  <article className="h-full rounded-2xl border border-border bg-surface-light p-5 md:p-6 transition-all duration-300 hover:border-burnt-orange/40 hover:bg-surface-light">
+                  <article
+                    className="h-full heritage-card p-5 md:p-6 transition-all duration-300"
+                    style={{ borderLeftWidth: '2px', borderLeftColor: 'var(--bsi-primary)' }}
+                  >
                     <div className="flex items-center gap-2 mb-2">
                       {article.teams?.length > 0 && (
-                        <span className="text-[10px] font-semibold uppercase tracking-wider text-burnt-orange/70">
+                        <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: 'var(--heritage-bronze)' }}>
                           {article.teams[0]}
                         </span>
                       )}
-                      <span className="text-[10px] text-text-muted">
+                      <span className="text-[10px]" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
                         {formatDate(article.date)}
                       </span>
                     </div>
-                    <h3 className="font-serif text-base font-bold text-text-primary leading-snug mb-2 group-hover:text-burnt-orange transition-colors line-clamp-2">
+                    <h3 className="font-display text-base font-bold uppercase leading-snug mb-2 group-hover:text-burnt-orange transition-colors line-clamp-2 text-[var(--bsi-bone)]">
                       {article.title}
                     </h3>
-                    <p className="text-xs text-text-muted leading-relaxed line-clamp-2">
+                    <p className="text-xs leading-relaxed line-clamp-2 font-serif" style={{ color: 'var(--bsi-dust)' }}>
                       {article.preview}
                     </p>
                   </article>
@@ -211,7 +223,7 @@ export function EditorialPreview() {
 
         {/* Attribution */}
         {!loading && (
-          <p className="text-[10px] text-text-muted mt-4">
+          <p className="text-[10px] mt-4" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
             {isUsingFallback ? 'Showing recent highlights' : 'Source: BSI Editorial · D1'}
             {fetchedAt && !isUsingFallback && (
               <> · Updated {new Date(fetchedAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })} CT</>

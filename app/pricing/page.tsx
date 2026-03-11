@@ -104,13 +104,11 @@ export default function PricingPage() {
 
           <Container center className="relative z-10">
             <ScrollReveal direction="up">
-              <Badge variant="primary" className="mb-4">
-                Simple, Transparent Pricing
-              </Badge>
+              <span className="section-label">Simple, Transparent Pricing</span>
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display text-center mb-4">
-                Free to Start. <span className="text-gradient-blaze">Pro</span> When You&apos;re Ready.
+                Free to Start. <span className="text-burnt-orange">Pro</span> When You&apos;re Ready.
               </h1>
-              <p className="text-text-secondary text-center max-w-2xl mx-auto">
+              <p className="text-burnt-orange font-serif italic text-lg leading-relaxed text-center max-w-2xl mx-auto">
                 Scores, standings, and box scores are free — no signup, no paywall. Pro unlocks
                 park-adjusted sabermetrics, conference strength, and the full analytical depth.
               </p>
@@ -213,15 +211,17 @@ export default function PricingPage() {
 
             <ScrollReveal direction="up" delay={100}>
               <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-                <table className="w-full max-w-3xl mx-auto text-sm">
+                <table className="w-full max-w-3xl mx-auto text-sm border-separate border-spacing-0">
                   <thead>
-                    <tr className="border-b border-white/10">
-                      <th className="text-left py-3 px-4 font-display uppercase tracking-wider text-text-muted text-xs" />
+                    <tr>
+                      <th className="text-left py-3 px-4 font-display uppercase tracking-wider text-text-muted text-xs border-b border-white/10" />
                       {COMPETITORS.map((c) => (
                         <th
                           key={c.name}
-                          className={`text-center py-3 px-4 font-display uppercase tracking-wider text-xs ${
-                            c.name === 'BSI Pro' ? 'text-burnt-orange' : 'text-text-muted'
+                          className={`text-center py-3 px-4 font-display uppercase tracking-wider text-xs border-b ${
+                            c.name === 'BSI Pro'
+                              ? 'text-burnt-orange border-burnt-orange/40 bg-burnt-orange/[0.06] first:rounded-tl-lg last:rounded-tr-lg'
+                              : 'text-text-muted border-white/10'
                           }`}
                         >
                           {c.name}
@@ -230,42 +230,36 @@ export default function PricingPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="border-b border-white/5">
-                      <td className="py-3 px-4 text-text-secondary">Price</td>
-                      {COMPETITORS.map((c) => (
-                        <td key={c.name} className="py-3 px-4 text-center text-text-primary font-semibold">{c.price}</td>
-                      ))}
-                    </tr>
-                    <tr className="border-b border-white/5">
-                      <td className="py-3 px-4 text-text-secondary">Park-Adjusted Metrics</td>
-                      {COMPETITORS.map((c) => (
-                        <td key={c.name} className="py-3 px-4 text-center">
-                          {c.parkAdjusted ? (
-                            <span className="text-green-400 font-bold">Yes</span>
-                          ) : (
-                            <span className="text-text-muted">No</span>
-                          )}
+                    {[
+                      { label: 'Price', render: (c: typeof COMPETITORS[0]) => <span className="font-semibold">{c.price}</span> },
+                      { label: 'Park-Adjusted Metrics', render: (c: typeof COMPETITORS[0]) => c.parkAdjusted
+                        ? <svg className="w-5 h-5 text-burnt-orange mx-auto" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                        : <svg className="w-5 h-5 text-text-muted/40 mx-auto" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 10h10" /></svg>
+                      },
+                      { label: 'Update Frequency', render: (c: typeof COMPETITORS[0]) => <span>{c.updateFreq}</span> },
+                      { label: 'Mobile Experience', render: (c: typeof COMPETITORS[0]) => <span>{c.mobile}</span> },
+                      { label: 'Free Access', render: (c: typeof COMPETITORS[0]) => <span>{c.free}</span> },
+                    ].map((row, ri, arr) => (
+                      <tr key={row.label}>
+                        <td className={`py-3 px-4 text-text-secondary ${ri < arr.length - 1 ? 'border-b border-white/5' : ''}`}>
+                          {row.label}
                         </td>
-                      ))}
-                    </tr>
-                    <tr className="border-b border-white/5">
-                      <td className="py-3 px-4 text-text-secondary">Update Frequency</td>
-                      {COMPETITORS.map((c) => (
-                        <td key={c.name} className="py-3 px-4 text-center text-text-primary">{c.updateFreq}</td>
-                      ))}
-                    </tr>
-                    <tr className="border-b border-white/5">
-                      <td className="py-3 px-4 text-text-secondary">Mobile Experience</td>
-                      {COMPETITORS.map((c) => (
-                        <td key={c.name} className="py-3 px-4 text-center text-text-primary">{c.mobile}</td>
-                      ))}
-                    </tr>
-                    <tr>
-                      <td className="py-3 px-4 text-text-secondary">Free Access</td>
-                      {COMPETITORS.map((c) => (
-                        <td key={c.name} className="py-3 px-4 text-center text-text-primary">{c.free}</td>
-                      ))}
-                    </tr>
+                        {COMPETITORS.map((c) => (
+                          <td
+                            key={c.name}
+                            className={`py-3 px-4 text-center text-text-primary ${
+                              ri < arr.length - 1 ? 'border-b border-white/5' : ''
+                            } ${
+                              c.name === 'BSI Pro'
+                                ? `bg-burnt-orange/[0.06] ${ri === arr.length - 1 ? 'rounded-bl-lg rounded-br-lg' : ''}`
+                                : ''
+                            }`}
+                          >
+                            {row.render(c)}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
@@ -282,7 +276,7 @@ export default function PricingPage() {
               </h2>
             </ScrollReveal>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="max-w-3xl mx-auto space-y-0">
               {[
                 {
                   title: 'Park-Adjusted, Not Just Raw',
@@ -300,11 +294,16 @@ export default function PricingPage() {
                     'Created by someone who pitched a perfect game and drove to Austin every Thanksgiving for Longhorn football. This is personal.',
                 },
               ].map((item, index) => (
-                <ScrollReveal key={item.title} direction="up" delay={index * 100}>
-                  <Card padding="lg" className="text-center h-full">
-                    <h3 className="font-semibold text-text-primary text-lg mb-3">{item.title}</h3>
-                    <p className="text-text-tertiary text-sm">{item.description}</p>
-                  </Card>
+                <ScrollReveal key={item.title} direction="up" delay={index * 80}>
+                  <div className="flex gap-5 py-8 border-b border-white/[0.06] last:border-b-0">
+                    <span className="font-mono text-burnt-orange/30 text-3xl font-bold leading-none pt-1 select-none shrink-0 w-8 text-right">
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <div>
+                      <h3 className="font-display text-lg font-bold uppercase tracking-wide text-text-primary mb-2">{item.title}</h3>
+                      <p className="text-text-secondary text-sm leading-relaxed">{item.description}</p>
+                    </div>
+                  </div>
                 </ScrollReveal>
               ))}
             </div>
@@ -316,15 +315,18 @@ export default function PricingPage() {
           <Container center>
             <ScrollReveal direction="up">
               <div className="max-w-xl mx-auto text-center">
-                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display mb-4">
-                  Questions?
-                </h2>
-                <p className="text-text-secondary mb-6">Reach out anytime. I read every email.</p>
+                <div className="w-12 h-[2px] bg-burnt-orange/40 mx-auto mb-8" />
+                <p className="font-serif italic text-lg md:text-xl text-text-secondary mb-6">
+                  Questions? Reach out anytime. I read every email.
+                </p>
                 <a
                   href="mailto:Austin@blazesportsintel.com"
-                  className="text-burnt-orange hover:text-ember transition-colors font-semibold"
+                  className="inline-flex items-center gap-2 text-burnt-orange hover:text-ember transition-colors font-mono text-sm tracking-wide"
                 >
                   Austin@blazesportsintel.com
+                  <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M2 8h12M9 3l5 5-5 5" />
+                  </svg>
                 </a>
               </div>
             </ScrollReveal>

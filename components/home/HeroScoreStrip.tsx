@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { withAlpha } from '@/lib/utils/color';
 
 interface HeroGame {
@@ -21,40 +21,46 @@ interface HeroScoresData {
   meta?: { source: string; fetched_at: string; timezone: string };
 }
 
+function statusColor(label: string): string {
+  if (label === 'Live') return '#22c55e';
+  if (label === 'Final') return 'var(--bsi-dust)';
+  return 'var(--bsi-primary)';
+}
+
 function GameCard({ game, label, accent }: { game: HeroGame; label: string; accent: string }) {
   const abbr = (t: { name: string; abbreviation: string }) => t.abbreviation || t.name.slice(0, 3).toUpperCase();
 
   return (
     <Link
       href="/scores"
-      className="glass-default rounded-xl p-3 sm:p-4 border border-border-subtle hover:border-border-strong transition-all duration-300 flex-1 min-w-0 group"
+      className="heritage-card p-3 sm:p-4 flex-1 min-w-0 group"
     >
       <div className="flex items-center gap-2 mb-2">
         <span
-          className="px-1.5 py-0.5 text-[10px] font-bold uppercase rounded tracking-wider"
-          style={{ backgroundColor: withAlpha(accent, 0.12), color: accent }}
+          className="heritage-stamp"
+          style={{ padding: '1px 6px', fontSize: '9px', borderColor: withAlpha(accent, 0.4), color: accent }}
         >
           {label}
         </span>
-        <span className="text-[10px] text-text-muted uppercase tracking-wider truncate">
+        <span className="text-[10px] uppercase tracking-wider truncate" style={{ color: 'var(--bsi-dust)' }}>
           {game.sport}
         </span>
       </div>
 
       <div className="space-y-1">
         <div className="flex justify-between items-center">
-          <span className="text-xs sm:text-sm text-text-primary font-medium truncate">
+          <span className="text-xs sm:text-sm font-medium truncate" style={{ color: 'var(--bsi-bone)' }}>
             {abbr(game.away)}
           </span>
-          <span className="text-xs sm:text-sm font-bold text-burnt-orange tabular-nums">
+          <span className="text-xs sm:text-sm font-bold tabular-nums" style={{ color: 'var(--bsi-primary)' }}>
             {game.away.score}
           </span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-xs sm:text-sm text-text-primary font-medium truncate">
+          <span className="text-xs sm:text-sm font-medium truncate" style={{ color: 'var(--bsi-bone)' }}>
             {abbr(game.home)}
           </span>
-          <span className="text-xs sm:text-sm font-bold text-burnt-orange tabular-nums">
+          <span className="text-xs sm:text-sm font-bold tabular-nums" style={{ color: 'var(--bsi-primary)' }}>
             {game.home.score}
           </span>
         </div>
@@ -67,11 +73,7 @@ function GameCard({ game, label, accent }: { game: HeroGame; label: string; acce
             <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500" />
           </span>
         )}
-        <span className={`text-[10px] ${
-          label === 'Live' ? 'text-green-400'
-            : label === 'Final' ? 'text-text-muted'
-            : 'text-burnt-orange'
-        }`}>
+        <span className="text-[10px]" style={{ color: statusColor(label) }}>
           {game.detail || game.status}
         </span>
       </div>
@@ -81,19 +83,19 @@ function GameCard({ game, label, accent }: { game: HeroGame; label: string; acce
 
 function SkeletonCard() {
   return (
-    <div className="glass-default rounded-xl p-3 sm:p-4 border border-border-subtle flex-1 min-w-0 animate-pulse">
-      <div className="h-3 bg-surface-light rounded w-16 mb-3" />
+    <div className="heritage-card p-3 sm:p-4 flex-1 min-w-0">
+      <div className="h-3 skeleton w-16 mb-3" />
       <div className="space-y-1.5">
         <div className="flex justify-between">
-          <div className="h-3 bg-surface-light rounded w-12" />
-          <div className="h-3 bg-surface-light rounded w-6" />
+          <div className="h-3 skeleton w-12" />
+          <div className="h-3 skeleton w-6" />
         </div>
         <div className="flex justify-between">
-          <div className="h-3 bg-surface-light rounded w-12" />
-          <div className="h-3 bg-surface-light rounded w-6" />
+          <div className="h-3 skeleton w-12" />
+          <div className="h-3 skeleton w-6" />
         </div>
       </div>
-      <div className="h-2 bg-surface-light rounded w-20 mt-2" />
+      <div className="h-2 skeleton w-20 mt-2" />
     </div>
   );
 }
@@ -103,37 +105,9 @@ function SkeletonCard() {
  * Fetches /api/hero-scores, auto-refreshes every 30s, returns null if no games.
  */
 export function HeroScoreStrip() {
-  const [data, setData] = useState<HeroScoresData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const url = `${process.env.NEXT_PUBLIC_API_BASE || ''}/api/hero-scores`;
+  const { data, loading } = useSportData<HeroScoresData>(url, { refreshInterval: 30_000 });
 
-  useEffect(() => {
-    let cancelled = false;
-
-    async function fetchHeroScores() {
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE || ''}/api/hero-scores`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json() as HeroScoresData;
-        if (!cancelled) {
-          setData(json);
-          setLoading(false);
-        }
-      } catch {
-        if (!cancelled) setLoading(false);
-      }
-    }
-
-    fetchHeroScores();
-    intervalRef.current = setInterval(fetchHeroScores, 30_000);
-
-    return () => {
-      cancelled = true;
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, []);
-
-  // Don't render if no games available
   if (!loading && (!data || data.empty)) return null;
 
   const cards: Array<{ game: HeroGame; label: string; accent: string }> = [];
@@ -158,7 +132,7 @@ export function HeroScoreStrip() {
       </div>
 
       {data?.meta && (
-        <p className="text-[10px] text-text-muted text-center mt-3">
+        <p className="text-[10px] text-center mt-3" style={{ color: 'var(--bsi-dust)' }}>
           Updated {new Date(data.meta.fetched_at).toLocaleTimeString('en-US', {
             hour: 'numeric',
             minute: '2-digit',

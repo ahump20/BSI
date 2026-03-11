@@ -5,37 +5,35 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
-  Home,
-  CircleDot,
-  Hexagon,
   Circle,
-  MoreHorizontal,
   X,
   Gamepad2,
   Trophy,
   BarChart3,
-  Volleyball,
   Award,
   Target,
   BookOpen,
 } from 'lucide-react';
-import { BottomNav, type BottomNavItem } from '@/components/sports';
+import { MobileBottomNav } from '@/components/layout-ds/MobileBottomNav';
 import { lockScroll, unlockScroll } from '@/lib/utils/scroll-lock';
 
 /** Secondary pages shown in the "More" slide-up panel. */
 const MORE_ITEMS = [
   { label: 'NBA', href: '/nba', icon: Circle },
   { label: 'College Football', href: '/cfb', icon: Award },
-  { label: 'Scores', href: '/scores', icon: BarChart3 },
   { label: 'Editorial', href: '/college-baseball/editorial', icon: BookOpen },
-  { label: 'Transfer Portal', href: '/transfer-portal', icon: Trophy },
+  { label: 'Rankings', href: '/college-baseball/rankings', icon: Trophy },
+  { label: 'Conferences', href: '/college-baseball/conferences', icon: Award },
+  { label: 'Compare', href: '/college-baseball/compare', icon: BarChart3 },
+  { label: 'Transfer Portal', href: '/college-baseball/transfer-portal', icon: Trophy },
   { label: 'Intel', href: '/intel', icon: Target },
+  { label: 'Analytics', href: '/analytics', icon: BarChart3 },
   { label: 'NIL Valuation', href: '/nil-valuation', icon: Trophy },
   { label: 'Models', href: '/models', icon: BarChart3 },
   { label: 'Arcade', href: '/arcade', icon: Gamepad2 },
+  { label: 'Settings', href: '/settings', icon: Circle },
   { label: 'About', href: '/about', icon: BookOpen },
   { label: 'Status', href: '/status', icon: Circle },
-  { label: 'Dashboard', href: '/dashboard', icon: Target },
 ];
 
 /**
@@ -74,14 +72,6 @@ export function BottomNavWrapper() {
       document.removeEventListener('keydown', handleKey);
     };
   }, [moreOpen, closeMore]);
-
-  const items: BottomNavItem[] = [
-    { label: 'Home', href: '/', icon: Home },
-    { label: 'CBB', href: '/college-baseball', icon: Volleyball },
-    { label: 'MLB', href: '/mlb', icon: CircleDot },
-    { label: 'NFL', href: '/nfl', icon: Hexagon },
-    { label: 'More', href: '#more', icon: MoreHorizontal, onPress: toggleMore },
-  ];
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/';
@@ -161,8 +151,8 @@ export function BottomNavWrapper() {
         )}
       </AnimatePresence>
 
-      {/* Bottom nav bar */}
-      <BottomNav items={items} className="md:hidden" />
+      {/* Bottom nav bar — 5 primary tabs */}
+      <MobileBottomNav onMorePress={toggleMore} />
     </>
   );
 }

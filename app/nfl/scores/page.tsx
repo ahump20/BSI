@@ -1,14 +1,15 @@
-'use client';
+import type { Metadata } from 'next';
+import NFLGamesPage from '../games/page';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+export const metadata: Metadata = {
+  title: 'NFL Scores | Blaze Sports Intel',
+  description: 'Live NFL scores, game results, and weekly matchups on Blaze Sports Intel.',
+  openGraph: {
+    title: 'NFL Scores | Blaze Sports Intel',
+    description: 'Live NFL scores, game results, and weekly matchups.',
+  },
+};
 
-export default function NFLScoresRedirect() {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.replace('/nfl/games');
-  }, [router]);
-
-  return null;
+export default function NFLScoresPage() {
+  return <NFLGamesPage />;
 }

@@ -205,6 +205,11 @@ app.use('*', async (c, next) => {
     url.hostname = 'blazesportsintel.com';
     return new Response(null, { status: 301, headers: { Location: url.toString() } });
   }
+  // wbc.blazesportsintel.com → blazesportsintel.com/wbc (301 redirect)
+  if (url.hostname === 'wbc.blazesportsintel.com') {
+    const target = `https://blazesportsintel.com/wbc${url.pathname === '/' ? '' : url.pathname}${url.search}`;
+    return new Response(null, { status: 301, headers: { Location: target } });
+  }
   await next();
 });
 

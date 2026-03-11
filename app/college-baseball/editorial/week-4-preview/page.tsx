@@ -8,6 +8,7 @@ import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
 
+import { ogImage } from '@/lib/metadata';
 // -- Metadata ----------------------------------------------------------------
 
 export const metadata: Metadata = {
@@ -21,12 +22,14 @@ export const metadata: Metadata = {
     type: 'article',
     url: 'https://blazesportsintel.com/college-baseball/editorial/week-4-preview',
     siteName: 'Blaze Sports Intel',
-  },
+  
+    images: ogImage('/images/og/cbb-week-4-preview.png')},
   twitter: {
     card: 'summary_large_image',
     title: 'Week 4 Preview: The Last Non-Conference Weekend | BSI',
     description: 'Virginia at UNC headlines the final tune-up weekend. SEC play opens March 13. The preparation window closes Friday.',
-  },
+  
+    images: ['/images/og/cbb-week-4-preview.png']},
   alternates: {
     canonical: '/college-baseball/editorial/week-4-preview',
   },

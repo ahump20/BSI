@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'College Baseball Teams | Blaze Sports Intel',
@@ -8,7 +9,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'College Baseball Teams | Blaze Sports Intel',
     description: 'All D1 baseball team pages with rosters and stats.',
-  },
+   images: ogImage('/images/og-college-baseball.png') },
 };
 
 export default function CollegeBaseballTeamsLayout({ children }: { children: ReactNode }) {

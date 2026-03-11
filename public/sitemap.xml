@@ -475,6 +475,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://blazesportsintel.com/college-baseball/editorial/texas-houston-christian-recap/</loc>
+    <lastmod>2026-03-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://blazesportsintel.com/college-baseball/editorial/texas-tech-2026/</loc>
     <lastmod>2026-03-11</lastmod>
     <changefreq>weekly</changefreq>
@@ -1129,6 +1135,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://blazesportsintel.com/nil-valuation/performance-index/</loc>
+    <lastmod>2026-03-07</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://blazesportsintel.com/nil-valuation/tools/</loc>
     <lastmod>2026-03-11</lastmod>
     <changefreq>daily</changefreq>
@@ -1157,6 +1169,18 @@
     <lastmod>2026-03-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://blazesportsintel.com/research/</loc>
+    <lastmod>2026-03-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://blazesportsintel.com/research/nil-analysis/</loc>
+    <lastmod>2026-03-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://blazesportsintel.com/scores/</loc>

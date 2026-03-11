@@ -1,17 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Utah Utes: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    'Utah relaunched its baseball program in 2024 after a 15-year hiatus. Two seasons in, the Utes are exactly where you would expect — overmatched in conference play, competitive in flashes.',
-  openGraph: {
-    title: 'Utah Utes: 2026 Season Preview',
-    description:
-      'Utah relaunched its baseball program in 2024 after a 15-year hiatus. Two seasons in, the Utes are exactly where you would expect — overmatched in conference play, competitive in flashes.',
-  },
+const seoConfig = {
+  title: 'Utah Utes 2026 Season Preview',
+  description: 'Utah Utes 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big 12 predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/utah-2026',
+  image: '/images/og/cbb-utah-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'Utah Utes — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'Utah',
@@ -175,5 +176,10 @@ const data: TeamPreviewData = {
 };
 
 export default function Utah2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
 import { JsonLd } from '@/components/JsonLd';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Live Scores | Blaze Sports Intel',
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Live Scores | Blaze Sports Intel',
     description: 'Real-time live scores across all sports.',
-  },
+   images: ogImage() },
 };
 
 export default function ScoresLayout({ children }: { children: ReactNode }) {

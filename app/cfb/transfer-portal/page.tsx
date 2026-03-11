@@ -210,7 +210,6 @@ export default function CFBTransferPortalPage() {
         <Section className="relative pt-6 pb-16 overflow-hidden">
           {/* Background gradient - football brown tones */}
           <div className="absolute inset-0 bg-gradient-radial from-football/10 via-transparent to-transparent opacity-50" />
-          <div className="absolute inset-0 bg-[url('/images/grain.png')] opacity-[0.02]" />
 
           <Container className="relative">
             <ScrollReveal>

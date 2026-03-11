@@ -15,6 +15,9 @@ database_id = "f615ffd3-fd23-417f-b7ef-49b6dbbc8563"
 binding = "RATE_LIMIT"
 id = "d0eec42d55aa4c4c87a0dd86b43e4cdb"
 
+[[tail_consumers]]
+service = "bsi-error-tracker"
+
 [[routes]]
 pattern = "blazecraft.app/api/mini-games/*"
 zone_name = "blazecraft.app"

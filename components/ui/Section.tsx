@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 interface SectionProps {
   children: ReactNode;
@@ -7,6 +7,7 @@ interface SectionProps {
   background?: 'default' | 'charcoal' | 'midnight' | 'cream';
   borderTop?: boolean;
   className?: string;
+  style?: CSSProperties;
 }
 
 const paddingClasses: Record<string, string> = {
@@ -31,11 +32,13 @@ export function Section({
   background = 'default',
   borderTop,
   className = '',
+  style,
 }: SectionProps) {
   return (
     <section
       id={id}
       className={`${paddingClasses[padding]} ${bgClasses[background]} ${borderTop ? 'border-t border-border' : ''} ${className}`}
+      style={style}
     >
       {children}
     </section>

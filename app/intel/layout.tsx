@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Oswald, Cormorant_Garamond, IBM_Plex_Mono } from 'next/font/google';
 import './intel-editorial.css';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Intel | Blaze Sports Intel',
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Intel | Blaze Sports Intel',
     description: 'Editorial intelligence and analysis across all sports.',
-  },
+   images: ogImage() },
 };
 
 const oswald = Oswald({

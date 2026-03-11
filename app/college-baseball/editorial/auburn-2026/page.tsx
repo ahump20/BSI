@@ -1,16 +1,18 @@
-import type { Metadata } from 'next';
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Auburn Tigers 2026 Season Preview | Blaze Sports Intel',
-  description: 'Auburn Tigers 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and predictions for the SEC season.',
-  openGraph: {
-    title: 'Auburn Tigers — 2026 Season Preview | BSI',
-    description: 'Full scouting report on the Auburn Tigers heading into the 2026 college baseball season.',
-    type: 'article',
-  },
+const seoConfig = {
+  title: 'Auburn Tigers 2026 Season Preview',
+  description: 'Auburn Tigers 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and SEC predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/auburn-2026',
+  image: '/images/og/cbb-auburn-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'Auburn Tigers — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'Auburn',
@@ -166,5 +168,10 @@ const data: TeamPreviewData = {
 };
 
 export default function Auburn2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

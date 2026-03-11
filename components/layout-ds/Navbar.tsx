@@ -122,37 +122,48 @@ function LeaguesDropdown({ items }: { items: LeagueNavItem[] }) {
           className="absolute top-full left-0 mt-2 w-56 bg-midnight/95 backdrop-blur-xl border border-border rounded-xl shadow-2xl py-1 z-50"
           role="menu"
         >
-          {items.map((item) => {
+          {items.map((item, idx) => {
             const active = pathname === item.href || pathname.startsWith(item.href + '/');
             const isActive = item.phase !== 'offseason';
+            const isFeatured = item.featured;
+
+            // Divider after featured items
+            const prevItem = items[idx - 1];
+            const showDivider = idx > 0 && prevItem?.featured && !isFeatured;
 
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setOpen(false)}
-                role="menuitem"
-                className={`flex items-center justify-between px-4 py-2.5 text-sm transition-colors ${
-                  active
-                    ? 'text-ember bg-surface-light'
-                    : 'text-text-secondary hover:text-text-primary hover:bg-surface-light'
-                }`}
-              >
-                <span>{item.label}</span>
-                <span className="flex items-center gap-2">
-                  {item.phaseLabel && (
-                    <span className="text-[10px] text-text-muted">
-                      {item.phaseLabel}
-                    </span>
-                  )}
-                  {isActive && (
-                    <span className="relative flex h-2 w-2" title="In season">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
-                    </span>
-                  )}
-                </span>
-              </Link>
+              <div key={item.href}>
+                {showDivider && <div className="border-t border-border-subtle my-1" />}
+                <Link
+                  href={item.href}
+                  onClick={() => setOpen(false)}
+                  role="menuitem"
+                  className={`flex items-center justify-between px-4 py-2.5 text-sm transition-colors ${
+                    isFeatured
+                      ? active
+                        ? 'text-ember bg-burnt-orange/10'
+                        : 'text-burnt-orange hover:text-ember hover:bg-burnt-orange/10'
+                      : active
+                        ? 'text-ember bg-surface-light'
+                        : 'text-text-secondary hover:text-text-primary hover:bg-surface-light'
+                  }`}
+                >
+                  <span className={isFeatured ? 'font-semibold' : ''}>{item.label}</span>
+                  <span className="flex items-center gap-2">
+                    {item.phaseLabel && (
+                      <span className={`text-[10px] ${isFeatured ? 'text-burnt-orange/80' : 'text-text-muted'}`}>
+                        {item.phaseLabel}
+                      </span>
+                    )}
+                    {isActive && (
+                      <span className="relative flex h-2 w-2" title="In season">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+                      </span>
+                    )}
+                  </span>
+                </Link>
+              </div>
             );
           })}
         </div>
@@ -242,9 +253,9 @@ export function Navbar({ primary, leagues, secondary }: NavbarProps) {
             {/* Left: Logo */}
             <Link href="/" className="flex items-center gap-3 shrink-0">
               <Image
-                src="/images/brand/logo-full.webp"
+                src="/images/brand/bsi-shield-blaze.png"
                 alt="Blaze Sports Intel"
-                width={120}
+                width={32}
                 height={32}
                 className="h-8 w-auto"
                 priority

@@ -11,6 +11,14 @@ import { Footer } from '@/components/layout-ds/Footer';
 
 const tools = [
   {
+    title: 'NIL Performance Index',
+    description:
+      'Calculate any college baseball player\'s NIL index using live advanced stats from BSI Savant. FMNV methodology: Performance + Exposure + Market.',
+    status: 'Live',
+    statusVariant: 'success' as const,
+    href: '/nil-valuation/performance-index',
+  },
+  {
     title: 'FMNV Calculator',
     description:
       'Fair Market NIL Value calculator using our proprietary model. Input player stats, social following, and market factors to get an estimated valuation.',

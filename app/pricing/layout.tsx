@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Pricing | Blaze Sports Intel',
@@ -7,7 +8,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Pricing | Blaze Sports Intel',
     description: 'Simple, transparent pricing for sports intelligence.',
-  },
+   images: ogImage() },
 };
 
 export default function PricingLayout({ children }: { children: React.ReactNode }) {

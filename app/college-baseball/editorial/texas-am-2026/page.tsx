@@ -1,16 +1,18 @@
-import type { Metadata } from 'next';
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Texas A&M Aggies 2026 Season Preview | Blaze Sports Intel',
-  description: 'Texas A&M Aggies 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and predictions for the SEC season.',
-  openGraph: {
-    title: 'Texas A&M Aggies — 2026 Season Preview | BSI',
-    description: 'Full scouting report on the Texas A&M Aggies heading into the 2026 college baseball season.',
-    type: 'article',
-  },
+const seoConfig = {
+  title: 'Texas A&M Aggies 2026 Season Preview',
+  description: 'Texas A&M Aggies 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and SEC predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/texas-am-2026',
+  image: '/images/og/cbb-texas-am-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'Texas A&M Aggies — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'Texas A&M',
@@ -203,5 +205,10 @@ const data: TeamPreviewData = {
 };
 
 export default function TexasAM2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

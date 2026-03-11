@@ -6,6 +6,7 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
+import { HeroGlow } from '@/components/ui/HeroGlow';
 import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
 
@@ -106,17 +107,14 @@ export default function ModelsHubPage() {
         </Section>
 
         <Section padding="lg" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-burnt-orange/8 via-transparent to-white/[0.02] pointer-events-none" />
+          <HeroGlow />
           <Container>
             <div className="max-w-3xl">
-              <Badge variant="primary" className="mb-4">Methodology</Badge>
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-wide mb-4 text-text-primary">
-                Models &{' '}
-                <span className="bg-gradient-to-r from-burnt-orange to-gold bg-clip-text text-transparent">
-                  Methodology
-                </span>
+              <span className="section-label">Methodology</span>
+              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display mb-4 text-text-primary">
+                Models & Methodology
               </h1>
-              <p className="text-text-tertiary text-lg leading-relaxed">
+              <p className="text-burnt-orange font-serif italic text-lg leading-relaxed">
                 Every BSI model documents its inputs, assumptions, validation approach, and failure
                 modes. No black boxes. If you can&#39;t see how it works, you shouldn&#39;t trust it.
               </p>

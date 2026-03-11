@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'College Football Scores | Blaze Sports Intel',
@@ -8,7 +9,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'College Football Scores | Blaze Sports Intel',
     description: 'Live college football scores with real-time updates.',
-  },
+   images: ogImage('/images/og-cfb.png') },
 };
 
 export default function CFBScoresLayout({ children }: { children: ReactNode }) {

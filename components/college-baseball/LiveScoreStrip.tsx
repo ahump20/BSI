@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { LiveScoreCard } from '@/components/college-baseball/LiveScoreCard';
@@ -173,9 +173,12 @@ function transformTransformedGameToLiveGame(game: TransformedGame): LiveGame {
 export function LiveScoreStrip() {
   const today = getDateOffset(0);
 
+  // Poll only while games are live or scheduled — stops when all are final
+  const [shouldPoll, setShouldPoll] = useState(true);
+
   const { data, loading, error } = useSportData<ScoresResponse>(
     `/api/college-baseball/scores?date=${today}`,
-    { refreshInterval: 30000, refreshWhen: true },
+    { refreshInterval: 30000, refreshWhen: shouldPoll },
   );
 
   const games = useMemo<LiveGame[]>(() => {
@@ -195,23 +198,106 @@ export function LiveScoreStrip() {
   const liveCount = liveGames.length;
   const hasGames = games.length > 0;
 
+  // Stop polling once all games are final/postponed/cancelled
+  useEffect(() => {
+    if (!data || loading) return;
+    const hasActive = games.some((g) => g.status === 'in' || g.status === 'pre');
+    setShouldPoll(hasActive);
+  }, [data, loading, games]);
+
   // Sort: live first, then scheduled, then final
   const sortedGames = useMemo(() => {
     const order: Record<string, number> = { in: 0, pre: 1, post: 2, postponed: 3, cancelled: 4 };
     return [...games].sort((a, b) => (order[a.status] ?? 5) - (order[b.status] ?? 5));
   }, [games]);
 
-  // Don't render anything during initial load if no data yet
+  // Fetch yesterday's results when no games today
+  const yesterday = getDateOffset(-1);
+  const { data: yesterdayData, loading: yesterdayLoading } = useSportData<ScoresResponse>(
+    !loading && !hasGames && !error ? `/api/college-baseball/scores?date=${yesterday}` : null,
+    { refreshInterval: 0 },
+  );
+
+  const yesterdayGames = useMemo<LiveGame[]>(() => {
+    const raw = yesterdayData?.data || yesterdayData?.games || [];
+    if (!raw.length) return [];
+    if (isTransformedGame(raw[0])) {
+      return (raw as TransformedGame[]).map(transformTransformedGameToLiveGame);
+    }
+    return (raw as ESPNEvent[])
+      .map(transformESPNEventToLiveGame)
+      .filter((g): g is LiveGame => g !== null);
+  }, [yesterdayData]);
+
+  // No games today — show yesterday's results or quick navigation
   if (!loading && !hasGames && !error) {
     return (
       <Section padding="sm" className="py-4">
         <Container>
-          <div className="text-center py-6 bg-surface-light border border-border rounded-xl">
-            <p className="text-text-muted text-sm">No games today</p>
-            <Link href="/college-baseball/scores" className="text-burnt-orange text-sm hover:text-ember transition-colors mt-1 inline-block">
-              View full schedule →
-            </Link>
-          </div>
+          {yesterdayLoading ? (
+            <div className="flex gap-4 overflow-x-auto pb-2 -mx-1 px-1">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="flex-shrink-0 w-72">
+                  <SkeletonScoreCard />
+                </div>
+              ))}
+            </div>
+          ) : yesterdayGames.length > 0 ? (
+            <ScrollReveal>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <h2 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide">
+                    Yesterday&apos;s Results
+                  </h2>
+                  <span className="text-[10px] text-text-muted uppercase tracking-wider bg-surface-light px-2 py-0.5 rounded-full border border-border">
+                    No games today
+                  </span>
+                </div>
+                <Link
+                  href="/college-baseball/scores"
+                  className="text-sm text-burnt-orange hover:text-ember transition-colors"
+                >
+                  Full Scoreboard →
+                </Link>
+              </div>
+              <div className="flex gap-4 overflow-x-auto pb-2 -mx-1 px-1 snap-x snap-mandatory">
+                {yesterdayGames.slice(0, 12).map((game) => (
+                  <div key={game.id} className="flex-shrink-0 w-72 snap-start">
+                    <LiveScoreCard game={game} animate={false} />
+                  </div>
+                ))}
+              </div>
+            </ScrollReveal>
+          ) : (
+            <div className="bg-surface-light border border-border rounded-xl p-5">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide">
+                  Today&apos;s Games
+                </h2>
+                <Link href="/college-baseball/scores" className="text-sm text-burnt-orange hover:text-ember transition-colors">
+                  Full Schedule →
+                </Link>
+              </div>
+              <p className="text-text-muted text-sm mb-4">No games scheduled today. Check the schedule for upcoming matchups.</p>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { label: 'Rankings', href: '/college-baseball?tab=rankings' },
+                  { label: 'Standings', href: '/college-baseball?tab=standings' },
+                  { label: 'Savant', href: '/college-baseball/savant' },
+                  { label: 'Editorial', href: '/college-baseball/editorial' },
+                  { label: 'Transfer Portal', href: '/college-baseball/transfer-portal' },
+                ].map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="px-3 py-1.5 text-xs font-medium bg-surface border border-border rounded-lg text-text-secondary hover:text-burnt-orange hover:border-burnt-orange/30 transition-all"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </Container>
       </Section>
     );

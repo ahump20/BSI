@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'MLB | Blaze Sports Intel',
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
     type: 'website',
     url: 'https://blazesportsintel.com/mlb',
     siteName: 'Blaze Sports Intel',
-    images: [{ url: '/images/og-mlb.png', width: 1200, height: 630, alt: 'BSI MLB Coverage' }],
+    images: ogImage('/images/og-mlb.png', 'BSI MLB Coverage'),
   },
   twitter: {
     card: 'summary_large_image',

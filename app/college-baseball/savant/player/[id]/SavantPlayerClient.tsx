@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Footer } from '@/components/layout-ds/Footer';
 import { PercentileBar } from '@/components/analytics/PercentileBar';
 import { MetricGate } from '@/components/analytics/MetricGate';
+import { fmt3 } from '@/lib/utils/format';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -62,7 +63,6 @@ interface SavantPlayerResponse {
 // Helpers
 // ---------------------------------------------------------------------------
 
-const fmt3 = (v: number) => v.toFixed(3).replace(/^0/, '');
 const fmt2 = (v: number) => v.toFixed(2);
 const fmt1 = (v: number) => v.toFixed(1);
 const fmtPct = (v: number) => `${(v * 100).toFixed(1)}%`;

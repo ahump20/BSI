@@ -33,6 +33,7 @@ jobs:
     outputs:
       blazesportsintel: ${{ steps.changes.outputs.blazesportsintel }}
       blazecraft: ${{ steps.changes.outputs.blazecraft }}
+      blazecraft_exists: ${{ steps.changes.outputs.blazecraft_exists }}
       worker: ${{ steps.changes.outputs.worker }}
     steps:
       - name: Checkout
@@ -46,6 +47,12 @@ jobs:
           INPUT_SITE: ${{ inputs.site }}
           EVENT_NAME: ${{ github.event_name }}
         run: |
+          if [ -f "games/blazecraft/package.json" ]; then
+            echo "blazecraft_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "blazecraft_exists=false" >> $GITHUB_OUTPUT
+          fi
+
           if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             if [ "$INPUT_SITE" = "all" ] || [ "$INPUT_SITE" = "blazesportsintel" ]; then
               echo "blazesportsintel=true" >> $GITHUB_OUTPUT
@@ -151,7 +158,9 @@ jobs:
     name: Deploy BlazeCraft
     runs-on: ubuntu-latest
     needs: detect-changes
-    if: (needs.detect-changes.outputs.blazecraft == 'true' || github.event_name == 'pull_request') && hashFiles('games/blazecraft/package.json') != ''
+    if: >-
+      needs.detect-changes.outputs.blazecraft_exists == 'true' &&
+      (needs.detect-changes.outputs.blazecraft == 'true' || github.event_name == 'pull_request')
     defaults:
       run:
         working-directory: games/blazecraft
@@ -186,8 +195,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: detect-changes
     if: >-
-      github.event_name == 'push' && github.ref == 'refs/heads/main' &&
-      needs.detect-changes.outputs.worker == 'true'
+      needs.detect-changes.outputs.worker == 'true' &&
+      (
+        (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
+      )
     steps:
       - name: Checkout
         uses: actions/checkout@v6

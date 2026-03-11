@@ -1,17 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Minnesota Golden Gophers: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    'Three national titles. Zero since 1964. Minnesota is a program that once stood at the summit of college baseball and has spent six decades trying to find its way back.',
-  openGraph: {
-    title: 'Minnesota Golden Gophers: 2026 Season Preview',
-    description:
-      'Three national titles. Zero since 1964. Minnesota is a program that once stood at the summit of college baseball and has spent six decades trying to find its way back.',
-  },
+const seoConfig = {
+  title: 'Minnesota Golden Gophers 2026 Season Preview',
+  description: 'Minnesota Golden Gophers 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big Ten predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/minnesota-2026',
+  image: '/images/og/cbb-minnesota-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'Minnesota Golden Gophers — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'Minnesota',
@@ -175,5 +176,10 @@ const data: TeamPreviewData = {
 };
 
 export default function Minnesota2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

@@ -1,17 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Nebraska Cornhuskers: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    'Will Bolt came home to rebuild Nebraska baseball, and after six years the foundation is visible — if not yet the finished product. The Huskers went .500 in Big Ten play in 2025.',
-  openGraph: {
-    title: 'Nebraska Cornhuskers: 2026 Season Preview',
-    description:
-      'Will Bolt came home to rebuild Nebraska baseball, and after six years the foundation is visible — if not yet the finished product. The Huskers went .500 in Big Ten play in 2025.',
-  },
+const seoConfig = {
+  title: 'Nebraska Cornhuskers 2026 Season Preview',
+  description: 'Nebraska Cornhuskers 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big Ten predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/nebraska-2026',
+  image: '/images/og/cbb-nebraska-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'Nebraska Cornhuskers — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'Nebraska',
@@ -183,5 +184,10 @@ const data: TeamPreviewData = {
 };
 
 export default function Nebraska2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

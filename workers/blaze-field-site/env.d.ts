@@ -6,10 +6,12 @@ declare namespace Cloudflare {
 	}
 	interface ProductionEnv {
 		MONITOR_KV: KVNamespace;
+		ERROR_LOG: KVNamespace;
 		ASSETS: R2Bucket;
 	}
 	interface Env {
 		MONITOR_KV: KVNamespace;
+		ERROR_LOG: KVNamespace;
 		ASSETS: R2Bucket;
 	}
 }

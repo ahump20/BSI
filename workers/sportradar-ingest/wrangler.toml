@@ -35,5 +35,8 @@ bucket_name = "blaze-sports-data-lake"
 # SPORTRADAR_API_KEY must be set via:
 # wrangler secret put SPORTRADAR_API_KEY --config workers/sportradar-ingest/wrangler.toml
 
+[[tail_consumers]]
+service = "bsi-error-tracker"
+
 [dev]
 port = 8795

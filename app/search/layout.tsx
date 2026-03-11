@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'Search | Blaze Sports Intel',
@@ -8,7 +9,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Search | Blaze Sports Intel',
     description: 'Search all BSI sports content and analytics.',
-  },
+   images: ogImage() },
 };
 
 export default function SearchLayout({ children }: { children: ReactNode }) {

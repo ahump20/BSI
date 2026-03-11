@@ -13,9 +13,10 @@ export interface MainNavItem {
 }
 
 export interface LeagueNavItem extends MainNavItem {
-  sport: SportKey;
+  sport?: SportKey;
   phase: SeasonPhase;
   phaseLabel?: string;
+  featured?: boolean; // pinned at top of dropdown with distinct styling
 }
 
 /**
@@ -39,14 +40,29 @@ export function getMainNavItems(date?: Date): {
     { label: 'Pricing', href: '/pricing' },
   ];
 
+  // WBC 2026: featured at top of Leagues dropdown during tournament window (Mar 5–17, 2026)
+  const wbcStart = new Date('2026-03-05T00:00:00-06:00');
+  const wbcEnd = new Date('2026-03-18T23:59:59-05:00');
+  const wbcActive = now >= wbcStart && now <= wbcEnd;
+  const wbcEntry: LeagueNavItem = {
+    label: 'WBC 2026',
+    href: '/wbc',
+    phase: wbcActive ? 'regular' : 'offseason',
+    phaseLabel: wbcActive ? 'Live' : 'Mar 5–17',
+    featured: true,
+  };
+
   // All sports, already sorted by activity (regular > postseason > preseason > offseason)
-  const leagues: LeagueNavItem[] = getActiveSports(now).map(({ sport, phase, label }) => ({
-    label: SPORT_LABELS[sport],
-    href: SPORT_PATHS[sport],
-    sport,
-    phase,
-    phaseLabel: label,
-  }));
+  const leagues: LeagueNavItem[] = [
+    wbcEntry,
+    ...getActiveSports(now).map(({ sport, phase, label }) => ({
+      label: SPORT_LABELS[sport],
+      href: SPORT_PATHS[sport],
+      sport,
+      phase,
+      phaseLabel: label,
+    })),
+  ];
 
   const secondary: MainNavItem[] = [
     { label: 'Savant', href: '/college-baseball/savant' },

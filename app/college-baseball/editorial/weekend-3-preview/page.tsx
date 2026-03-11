@@ -8,6 +8,7 @@ import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
 
+import { ogImage } from '@/lib/metadata';
 // ── Metadata ────────────────────────────────────────────────────────
 
 export const metadata: Metadata = {
@@ -21,12 +22,14 @@ export const metadata: Metadata = {
     type: 'article',
     url: 'https://blazesportsintel.com/college-baseball/editorial/weekend-3-preview',
     siteName: 'Blaze Sports Intel',
-  },
+  
+    images: ogImage('/images/og/cbb-weekend-3-preview.png')},
   twitter: {
     card: 'summary_large_image',
     title: 'Weekend 3 Preview: Globe Life Gets the Real Test | BSI',
     description: 'UCLA, Mississippi State, Tennessee, Texas A&M headline the Amegy Bank series. The undefeated problem gets its first real exam.',
-  },
+  
+    images: ['/images/og/cbb-weekend-3-preview.png']},
   alternates: {
     canonical: '/college-baseball/editorial/weekend-3-preview',
   },

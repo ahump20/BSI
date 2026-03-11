@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { WBCPageClient } from '@/components/wbc/WBCPageClient';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'World Baseball Classic 2026 | Power Rankings, Pools & Betting Intelligence | BSI',
@@ -12,7 +13,10 @@ export const metadata: Metadata = {
     type: 'website',
     url: 'https://blazesportsintel.com/wbc',
     siteName: 'Blaze Sports Intel',
-    images: [{ url: 'https://blazesportsintel.com/images/og-image.png', width: 1200, height: 630, alt: 'WBC 2026 — Blaze Sports Intel' }],
+    images: ogImage(
+      'https://blazesportsintel.com/images/og-image.png',
+      'WBC 2026 — Blaze Sports Intel'
+    ),
   },
   twitter: {
     card: 'summary_large_image',

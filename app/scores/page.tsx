@@ -1,7 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect, useCallback, useRef } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { streamAnalysis } from '@/lib/bsi-stream-client';
+import type { Sport } from '@/lib/bsi-stream-client';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -10,10 +13,13 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { SkeletonScoreCard } from '@/components/ui/Skeleton';
+import { Breadcrumb } from '@/components/ui/Breadcrumb';
+
 // ── SVG Sport Icons ──
 
 const BaseballSvg = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8" stroke="currentColor" strokeWidth={1.5}>
+  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" stroke="currentColor" strokeWidth={1.5}>
     <circle cx="12" cy="12" r="10" />
     <path d="M5 12C5 12 8 9 12 9C16 9 19 12 19 12" />
     <path d="M5 12C5 12 8 15 12 15C16 15 19 12 19 12" />
@@ -21,14 +27,14 @@ const BaseballSvg = () => (
 );
 
 const FootballSvg = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8" stroke="currentColor" strokeWidth={1.5}>
+  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" stroke="currentColor" strokeWidth={1.5}>
     <ellipse cx="12" cy="12" rx="10" ry="6" transform="rotate(45 12 12)" />
     <path d="M12 7L12 17M9 10L15 14M15 10L9 14" />
   </svg>
 );
 
 const BasketballSvg = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8" stroke="currentColor" strokeWidth={1.5}>
+  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" stroke="currentColor" strokeWidth={1.5}>
     <circle cx="12" cy="12" r="10" />
     <path d="M12 2V22M2 12H22" />
     <path d="M4.5 4.5C8 8 8 16 4.5 19.5M19.5 4.5C16 8 16 16 19.5 19.5" />
@@ -39,8 +45,35 @@ const SPORT_ICONS: Record<string, React.FC> = {
   'college-baseball': BaseballSvg,
   mlb: BaseballSvg,
   nfl: FootballSvg,
+  cfb: FootballSvg,
   nba: BasketballSvg,
 };
+
+/** Map page sport ids to the intelligence-stream Sport type. NBA excluded (no intel yet). */
+const INTEL_SPORT_MAP: Record<string, Sport> = {
+  'college-baseball': 'college-baseball',
+  mlb: 'mlb',
+  nfl: 'nfl',
+  cfb: 'ncaa-football',
+};
+
+// ── Game Types ──
+
+interface GameTeam {
+  name: string;
+  abbreviation: string;
+  logo?: string;
+  score?: string | number;
+}
+
+interface FeaturedGame {
+  id: string;
+  away: GameTeam;
+  home: GameTeam;
+  state: 'live' | 'final' | 'upcoming';
+  detail: string;
+  href: string;
+}
 
 interface SportSection {
   id: string;
@@ -52,120 +85,421 @@ interface SportSection {
   season: string;
   isActive: boolean;
   loaded: boolean;
+  featured: FeaturedGame[];
 }
 
-export default function ScoresHubPage() {
+// ── Game State Badge ──
+
+function GameStateBadge({ state, detail }: { state: string; detail: string }) {
+  if (state === 'live') {
+    return (
+      <span className="flex items-center gap-1 text-success text-xs font-semibold">
+        <span className="w-1.5 h-1.5 bg-success rounded-full animate-pulse" />
+        LIVE
+      </span>
+    );
+  }
+  if (state === 'final') {
+    return <span className="text-text-tertiary text-xs font-semibold">FINAL</span>;
+  }
+  return <span className="text-burnt-orange text-xs">{detail || 'Upcoming'}</span>;
+}
+
+// ── Mini Score Card ──
+
+function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) {
+  const [intelOpen, setIntelOpen] = useState(false);
+  const [intelText, setIntelText] = useState('');
+  const [intelLoading, setIntelLoading] = useState(false);
+  const [intelCached, setIntelCached] = useState(false);
+  const [intelError, setIntelError] = useState('');
+  const abortRef = useRef<(() => void) | null>(null);
+
+  const intelSport = sport ? INTEL_SPORT_MAP[sport] : undefined;
+  const canShowIntel = game.state === 'upcoming' && !!intelSport;
+
+  function handleIntelToggle(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (intelOpen) {
+      // Close — abort any in-flight stream
+      abortRef.current?.();
+      abortRef.current = null;
+      setIntelOpen(false);
+      setIntelText('');
+      setIntelLoading(false);
+      setIntelCached(false);
+      setIntelError('');
+      return;
+    }
+
+    // Open and start streaming
+    setIntelOpen(true);
+    setIntelText('');
+    setIntelLoading(true);
+    setIntelCached(false);
+    setIntelError('');
+
+    const abort = streamAnalysis({
+      question: `Pregame breakdown: ${game.away.name || game.away.abbreviation} at ${game.home.name || game.home.abbreviation}`,
+      context: {
+        sport: intelSport!,
+        homeTeam: game.home.name || game.home.abbreviation,
+        awayTeam: game.away.name || game.away.abbreviation,
+      },
+      analysisType: 'pregame',
+      onToken: (text) => {
+        setIntelLoading(false);
+        setIntelText(prev => prev + text);
+      },
+      onDone: (meta) => {
+        setIntelLoading(false);
+        setIntelCached(meta.cached);
+      },
+      onError: (err) => {
+        setIntelLoading(false);
+        setIntelError(err.message || 'Failed to load intel');
+      },
+    });
+
+    abortRef.current = abort;
+  }
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => { abortRef.current?.(); };
+  }, []);
+
+  const cardContent = (
+    <div className={`p-3 rounded-lg border transition-all hover:border-burnt-orange/50 ${
+      game.state === 'live' ? 'border-success/30 bg-success/5' : 'border-border-subtle bg-background-tertiary'
+    }`}>
+      <div className="flex items-center justify-between mb-1">
+        <GameStateBadge state={game.state} detail={game.detail} />
+      </div>
+      <div className="space-y-1">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {game.away.logo ? (
+              <img src={game.away.logo} alt="" className="w-4 h-4 object-contain" loading="lazy" />
+            ) : (
+              <span className="text-[10px] font-bold text-text-tertiary w-4">{game.away.abbreviation}</span>
+            )}
+            <span className="text-sm text-text-primary font-medium truncate max-w-[120px]">
+              {game.away.abbreviation}
+            </span>
+          </div>
+          <span className={`font-mono text-sm font-bold ${
+            game.state === 'final' && Number(game.away.score) > Number(game.home.score) ? 'text-text-primary' : 'text-text-secondary'
+          }`}>
+            {game.away.score ?? '-'}
+          </span>
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {game.home.logo ? (
+              <img src={game.home.logo} alt="" className="w-4 h-4 object-contain" loading="lazy" />
+            ) : (
+              <span className="text-[10px] font-bold text-text-tertiary w-4">{game.home.abbreviation}</span>
+            )}
+            <span className="text-sm text-text-primary font-medium truncate max-w-[120px]">
+              {game.home.abbreviation}
+            </span>
+          </div>
+          <span className={`font-mono text-sm font-bold ${
+            game.state === 'final' && Number(game.home.score) > Number(game.away.score) ? 'text-text-primary' : 'text-text-secondary'
+          }`}>
+            {game.home.score ?? '-'}
+          </span>
+        </div>
+      </div>
+
+      {/* Pregame Intel button */}
+      {canShowIntel && (
+        <div className="mt-2 pt-2 border-t border-border-subtle">
+          <button
+            onClick={handleIntelToggle}
+            className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-burnt-orange hover:text-ember transition-colors"
+          >
+            <svg viewBox="0 0 16 16" fill="currentColor" className="w-3 h-3">
+              <path d="M8 1a7 7 0 100 14A7 7 0 008 1zm-.75 3.5a.75.75 0 011.5 0v4a.75.75 0 01-1.5 0v-4zM8 11a.75.75 0 100 1.5.75.75 0 000-1.5z" />
+            </svg>
+            {intelOpen ? 'Close' : 'Intel'}
+          </button>
+
+          {/* Expanded intel panel */}
+          {intelOpen && (
+            <div className="mt-2 max-h-48 overflow-y-auto rounded bg-midnight/50 p-2">
+              {intelLoading && (
+                <div className="flex items-center gap-2 text-text-tertiary text-xs">
+                  <span className="w-1.5 h-1.5 bg-burnt-orange rounded-full animate-pulse" />
+                  Loading pregame intel...
+                </div>
+              )}
+              {intelError && (
+                <p className="text-xs text-red-400">{intelError}</p>
+              )}
+              {intelText && (
+                <p className="text-xs text-text-secondary leading-relaxed whitespace-pre-wrap">{intelText}</p>
+              )}
+              {intelCached && !intelLoading && (
+                <span className="inline-block mt-1.5 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider bg-burnt-orange/20 text-burnt-orange rounded">
+                  Cached
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
+  // When intel is open, don't wrap in a Link (clicks inside the expanded panel
+  // shouldn't navigate away). Otherwise keep the existing Link wrapper.
+  if (intelOpen) {
+    return <div className="block">{cardContent}</div>;
+  }
+
+  return (
+    <Link href={game.href} className="block">
+      {cardContent}
+    </Link>
+  );
+}
+
+// ── Helpers to extract featured games ──
+
+function extractMLBGames(data: Record<string, unknown>): FeaturedGame[] {
+  const games = (data?.games as Array<Record<string, unknown>>) || [];
+  return games.slice(0, 4).map(g => {
+    const away = (g.teams as Record<string, unknown>)?.away as Record<string, unknown> || {};
+    const home = (g.teams as Record<string, unknown>)?.home as Record<string, unknown> || {};
+    const status = g.status as Record<string, unknown> || {};
+    const isLive = Boolean((status as Record<string, boolean>)?.isLive);
+    const isFinal = Boolean((status as Record<string, unknown>)?.type && ((status as Record<string, Record<string, boolean>>).type?.completed));
+    return {
+      id: String(g.gamePk || g.id || ''),
+      away: { name: String(away.name || ''), abbreviation: String(away.abbreviation || 'AWY'), logo: String(away.logo || ''), score: String(away.score ?? '') },
+      home: { name: String(home.name || ''), abbreviation: String(home.abbreviation || 'HME'), logo: String(home.logo || ''), score: String(home.score ?? '') },
+      state: isLive ? 'live' : isFinal ? 'final' : 'upcoming',
+      detail: String((status as Record<string, string>)?.detailedState || ''),
+      href: `/mlb/game/${g.gamePk || g.id}`,
+    } satisfies FeaturedGame;
+  });
+}
+
+function extractESPNGames(data: Record<string, unknown>, sport: string): FeaturedGame[] {
+  const games = (data?.games as Array<Record<string, unknown>>) || [];
+  return games.slice(0, 4).map(g => {
+    const teams = (g.teams || g.competitors) as Array<Record<string, unknown>> || [];
+    const away = teams.find(t => t.homeAway === 'away') || teams[0] || {};
+    const home = teams.find(t => t.homeAway === 'home') || teams[1] || {};
+    const status = g.status as Record<string, Record<string, unknown>> || {};
+    const state = String(status?.type?.state || 'pre');
+    const completed = Boolean(status?.type?.completed);
+
+    const awayTeam = (away.team || {}) as Record<string, string>;
+    const homeTeam = (home.team || {}) as Record<string, string>;
+    const awayLogos = (awayTeam.logos || []) as Array<Record<string, string>>;
+    const homeLogos = (homeTeam.logos || []) as Array<Record<string, string>>;
+
+    return {
+      id: String(g.id || ''),
+      away: {
+        name: String(awayTeam.displayName || ''),
+        abbreviation: String(awayTeam.abbreviation || 'AWY'),
+        logo: String(awayTeam.logo || awayLogos[0]?.href || ''),
+        score: String((away as Record<string, string>).score ?? ''),
+      },
+      home: {
+        name: String(homeTeam.displayName || ''),
+        abbreviation: String(homeTeam.abbreviation || 'HME'),
+        logo: String(homeTeam.logo || homeLogos[0]?.href || ''),
+        score: String((home as Record<string, string>).score ?? ''),
+      },
+      state: state === 'in' ? 'live' : completed ? 'final' : 'upcoming',
+      detail: String(status?.type?.detail || status?.type?.shortDetail || ''),
+      href: `/${sport}/game/${g.id}`,
+    } satisfies FeaturedGame;
+  });
+}
+
+function extractCBBGames(data: Record<string, unknown>): FeaturedGame[] {
+  const games = ((data?.data || data?.games) as Array<Record<string, unknown>>) || [];
+  return games.slice(0, 4).map(g => ({
+    id: String(g.id || ''),
+    away: {
+      name: String(g.awayTeam || ''),
+      abbreviation: String(g.awayAbbreviation || (typeof g.awayTeam === 'string' ? g.awayTeam.substring(0, 3).toUpperCase() : 'AWY')),
+      logo: String(g.awayLogo || ''),
+      score: String(g.awayScore ?? ''),
+    },
+    home: {
+      name: String(g.homeTeam || ''),
+      abbreviation: String(g.homeAbbreviation || (typeof g.homeTeam === 'string' ? g.homeTeam.substring(0, 3).toUpperCase() : 'HME')),
+      logo: String(g.homeLogo || ''),
+      score: String(g.homeScore ?? ''),
+    },
+    state: g.status === 'live' ? 'live' : g.status === 'final' ? 'final' : 'upcoming',
+    detail: String(g.statusDetail || ''),
+    href: `/college-baseball/game/${g.id}`,
+  }));
+}
+
+// ── Loading Fallback ──
+
+function ScoresLoading() {
+  return (
+    <div className="p-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <SkeletonScoreCard key={i} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Main Component ──
+
+function ScoresHubContent() {
   const [sports, setSports] = useState<SportSection[]>([
     {
-      id: 'college-baseball',
-      name: 'College Baseball',
-      href: '/college-baseball/scores',
+      id: 'college-baseball', name: 'College Baseball', href: '/college-baseball/scores',
       description: 'All 300+ D1 programs — live scores, box scores, and recaps',
-      liveCount: 0,
-      todayCount: 0,
-      season: 'Feb - Jun',
-      isActive: false,
-      loaded: false,
+      liveCount: 0, todayCount: 0, season: 'Feb - Jun', isActive: false, loaded: false, featured: [],
     },
     {
-      id: 'mlb',
-      name: 'MLB',
-      href: '/mlb/scores',
+      id: 'mlb', name: 'MLB', href: '/mlb/scores',
       description: 'Real-time MLB scores from the official Stats API',
-      liveCount: 0,
-      todayCount: 0,
-      season: 'Mar - Oct',
-      isActive: true,
-      loaded: false,
+      liveCount: 0, todayCount: 0, season: 'Mar - Oct', isActive: true, loaded: false, featured: [],
     },
     {
-      id: 'nfl',
-      name: 'NFL',
-      href: '/nfl',
+      id: 'nfl', name: 'NFL', href: '/nfl/games',
       description: 'NFL scores, standings, and game analysis',
-      liveCount: 0,
-      todayCount: 0,
-      season: 'Sep - Feb',
-      isActive: false,
-      loaded: false,
+      liveCount: 0, todayCount: 0, season: 'Sep - Feb', isActive: false, loaded: false, featured: [],
     },
     {
-      id: 'nba',
-      name: 'NBA',
-      href: '/nba',
+      id: 'nba', name: 'NBA', href: '/nba/games',
       description: 'NBA scores and standings',
-      liveCount: 0,
-      todayCount: 0,
-      season: 'Oct - Jun',
-      isActive: false,
-      loaded: false,
+      liveCount: 0, todayCount: 0, season: 'Oct - Jun', isActive: false, loaded: false, featured: [],
+    },
+    {
+      id: 'cfb', name: 'College Football', href: '/cfb/scores',
+      description: 'FBS conference scores and matchups',
+      liveCount: 0, todayCount: 0, season: 'Aug - Jan', isActive: false, loaded: false, featured: [],
     },
   ]);
 
   const [totalLive, setTotalLive] = useState(0);
   const [fetchedAt, setFetchedAt] = useState('');
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const sportParam = searchParams.get('sport');
+  const [activeSport, setActiveSport] = useState<string | null>(sportParam);
 
-  useEffect(() => {
-    async function fetchLiveCounts() {
-      try {
-      const [mlbResult, cbResult, nflResult, nbaResult] = await Promise.allSettled([
-        fetch('/api/mlb/scores').then(r => r.ok ? r.json() as Promise<{ games?: Array<{ status?: { isLive?: boolean } }> }> : null),
-        fetch('/api/college-baseball/schedule').then(r => r.ok ? r.json() as Promise<{ data?: Array<{ status?: string }>; games?: Array<{ status?: string }> }> : null),
-        fetch('/api/nfl/scores').then(r => r.ok ? r.json() as Promise<{ games?: Array<{ status?: { type?: { completed?: boolean }; period?: number } }> }> : null),
-        fetch('/api/nba/scoreboard').then(r => r.ok ? r.json() as Promise<{ games?: Array<{ status?: { type?: { completed?: boolean }; period?: number } }> }> : null),
+  const fetchLiveCounts = useCallback(async () => {
+    try {
+      const [mlbResult, cbResult, nflResult, nbaResult, cfbResult] = await Promise.allSettled([
+        fetch('/api/mlb/scores').then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),
+        fetch('/api/college-baseball/schedule').then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),
+        fetch('/api/nfl/scores').then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),
+        fetch('/api/nba/scoreboard').then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),
+        fetch('/api/cfb/scores').then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),
       ]);
 
       let live = 0;
 
-      setSports((prev) => prev.map((s) => {
+      setSports(prev => prev.map(s => {
         if (s.id === 'mlb' && mlbResult.status === 'fulfilled' && mlbResult.value) {
-          const mlbData = mlbResult.value;
-          const mlbLive = mlbData.games?.filter(g => g.status?.isLive).length || 0;
-          const mlbTotal = mlbData.games?.length || 0;
+          const d = mlbResult.value;
+          const games = (d.games as Array<Record<string, unknown>>) || [];
+          const mlbLive = games.filter(g => (g.status as Record<string, boolean>)?.isLive).length;
           live += mlbLive;
-          return { ...s, liveCount: mlbLive, todayCount: mlbTotal, isActive: mlbTotal > 0, loaded: true };
+          return { ...s, liveCount: mlbLive, todayCount: games.length, isActive: games.length > 0, loaded: true, featured: extractMLBGames(d) };
         }
         if (s.id === 'college-baseball' && cbResult.status === 'fulfilled' && cbResult.value) {
-          const cbData = cbResult.value;
-          const games = cbData.data || cbData.games || [];
+          const d = cbResult.value;
+          const games = ((d.data || d.games) as Array<Record<string, unknown>>) || [];
           const cbLive = games.filter(g => g.status === 'live').length;
-          const cbTotal = games.length;
           live += cbLive;
-          return { ...s, liveCount: cbLive, todayCount: cbTotal, isActive: cbTotal > 0, loaded: true };
+          return { ...s, liveCount: cbLive, todayCount: games.length, isActive: games.length > 0, loaded: true, featured: extractCBBGames(d) };
         }
         if (s.id === 'nfl' && nflResult.status === 'fulfilled' && nflResult.value) {
-          const nflGames = nflResult.value.games || [];
-          const nflLive = nflGames.filter(g => !g.status?.type?.completed && g.status?.period && g.status.period > 0).length;
-          const nflTotal = nflGames.length;
+          const d = nflResult.value;
+          const games = (d.games as Array<Record<string, unknown>>) || [];
+          const nflLive = games.filter(g => {
+            const st = (g.status as Record<string, unknown>) || {};
+            const stType = (st as Record<string, Record<string, unknown>>).type || {};
+            return !stType.completed && Number((st as Record<string, unknown>).period || 0) > 0;
+          }).length;
           live += nflLive;
-          return { ...s, liveCount: nflLive, todayCount: nflTotal, isActive: nflTotal > 0, loaded: true };
+          return { ...s, liveCount: nflLive, todayCount: games.length, isActive: games.length > 0, loaded: true, featured: extractESPNGames(d, 'nfl') };
         }
         if (s.id === 'nba' && nbaResult.status === 'fulfilled' && nbaResult.value) {
-          const nbaGames = nbaResult.value.games || [];
-          const nbaLive = nbaGames.filter(g => !g.status?.type?.completed && g.status?.period && g.status.period > 0).length;
-          const nbaTotal = nbaGames.length;
+          const d = nbaResult.value;
+          const games = (d.games as Array<Record<string, unknown>>) || [];
+          const nbaLive = games.filter(g => {
+            const st = (g.status as Record<string, unknown>) || {};
+            const stType = (st as Record<string, Record<string, unknown>>).type || {};
+            return !stType.completed && Number((st as Record<string, unknown>).period || 0) > 0;
+          }).length;
           live += nbaLive;
-          return { ...s, liveCount: nbaLive, todayCount: nbaTotal, isActive: nbaTotal > 0, loaded: true };
+          return { ...s, liveCount: nbaLive, todayCount: games.length, isActive: games.length > 0, loaded: true, featured: extractESPNGames(d, 'nba') };
+        }
+        if (s.id === 'cfb' && cfbResult.status === 'fulfilled' && cfbResult.value) {
+          const d = cfbResult.value;
+          const games = (d.games as Array<Record<string, unknown>>) || [];
+          const cfbLive = games.filter(g => {
+            const st = (g.status as Record<string, Record<string, unknown>>) || {};
+            return String(st.type?.state) === 'in';
+          }).length;
+          live += cfbLive;
+          return { ...s, liveCount: cfbLive, todayCount: games.length, isActive: games.length > 0, loaded: true, featured: extractESPNGames(d, 'cfb') };
         }
         return { ...s, loaded: true };
       }));
 
       setTotalLive(live);
       setFetchedAt(new Date().toISOString());
-      } catch {
-        // Mark all sports as loaded even on failure to avoid infinite loading state
-        setSports((prev) => prev.map((s) => ({ ...s, loaded: true })));
-      }
+    } catch {
+      setSports(prev => prev.map(s => ({ ...s, loaded: true })));
     }
-
-    fetchLiveCounts();
-
-    // Refresh every 60 seconds
-    const interval = setInterval(fetchLiveCounts, 60000);
-    return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    fetchLiveCounts();
+    const interval = setInterval(fetchLiveCounts, 60000);
+    return () => clearInterval(interval);
+  }, [fetchLiveCounts]);
+
   const hasAnyLive = totalLive > 0;
+
+  // Sync activeSport to URL search params
+  const handleSetActiveSport = useCallback((id: string | null) => {
+    setActiveSport(id);
+    const params = new URLSearchParams(searchParams.toString());
+    if (id && id !== 'all') {
+      params.set('sport', id);
+    } else {
+      params.delete('sport');
+    }
+    const qs = params.toString();
+    router.replace(qs ? `?${qs}` : '/scores/', { scroll: false });
+  }, [searchParams, router]);
+
+  // Auto-select the sport with the most games (only if no URL param was set)
+  useEffect(() => {
+    if (activeSport) return;
+    const loaded = sports.filter(s => s.loaded && s.todayCount > 0);
+    if (loaded.length > 0) {
+      const best = loaded.sort((a, b) => b.liveCount - a.liveCount || b.todayCount - a.todayCount)[0];
+      setActiveSport(best.id);
+    }
+  }, [sports, activeSport]);
+
+  const activeSportData = activeSport === 'all' ? null : sports.find(s => s.id === activeSport);
 
   return (
     <>
@@ -173,28 +507,30 @@ export default function ScoresHubPage() {
         {/* Header */}
         <Section padding="lg" className="relative overflow-hidden pt-6">
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
-
           <Container>
+            <Breadcrumb
+              className="mb-4"
+              items={[
+                { label: 'Home', href: '/' },
+                { label: 'Scores' },
+              ]}
+            />
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-4">
                 <Badge variant="primary">All Sports</Badge>
                 {hasAnyLive && <FreshnessBadge isLive fetchedAt={fetchedAt} />}
               </div>
             </ScrollReveal>
-
             <ScrollReveal direction="up" delay={100}>
               <h1 className="font-display text-4xl md:text-5xl font-bold uppercase tracking-display text-gradient-blaze">
                 Live Scores
               </h1>
             </ScrollReveal>
-
             <ScrollReveal direction="up" delay={150}>
               <p className="text-text-secondary mt-4 text-lg max-w-2xl">
-                Real-time scores across MLB, NFL, NBA, and 300+ college baseball programs. The
-                coverage ESPN won&apos;t give you.
+                Real-time scores across MLB, NFL, NBA, college football, and 300+ college baseball programs.
               </p>
             </ScrollReveal>
-
             {hasAnyLive && (
               <ScrollReveal direction="up" delay={200}>
                 <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 bg-success/20 rounded-lg border border-success/30">
@@ -208,126 +544,234 @@ export default function ScoresHubPage() {
           </Container>
         </Section>
 
-        {/* Sports Grid */}
-        <Section padding="lg" background="charcoal" borderTop>
+        {/* Sport Tabs — sticky */}
+        <Section padding="none" background="charcoal" borderTop className="sticky top-0 z-20">
           <Container>
-            <DataErrorBoundary name="Sports Grid">
-            <div className="grid gap-6 md:grid-cols-2">
-              {sports.map((sport, index) => (
-                <ScrollReveal key={sport.id} direction="up" delay={index * 100}>
-                  <Link href={sport.href} className="block h-full">
-                    <Card
-                      variant="hover"
-                      padding="lg"
-                      className={`h-full transition-all ${
-                        sport.liveCount > 0 ? 'border-success/50 bg-success/5' : ''
-                      }`}
-                    >
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <span className="text-text-secondary">
-                            {(() => { const Icon = SPORT_ICONS[sport.id]; return Icon ? <Icon /> : null; })()}
-                          </span>
-                          <div>
-                            <h2 className="text-xl font-display font-bold text-text-primary">
-                              {sport.name}
-                            </h2>
-                            <p className="text-xs text-text-tertiary">Season: {sport.season}</p>
-                          </div>
-                        </div>
-
-                        {sport.liveCount > 0 ? (
-                          <div className="flex items-center gap-1.5 px-3 py-1 bg-success/20 rounded-full">
-                            <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
-                            <span className="text-success text-sm font-semibold">
-                              {sport.liveCount} Live
-                            </span>
-                          </div>
-                        ) : sport.todayCount > 0 ? (
-                          <Badge variant="primary">{sport.todayCount} Today</Badge>
-                        ) : (
-                          <Badge variant="default">View</Badge>
-                        )}
-                      </div>
-
-                      <p className="text-text-secondary text-sm mb-4">{sport.description}</p>
-
-                      <div className="flex items-center justify-between pt-4 border-t border-border-subtle">
-                        <span className="text-burnt-orange text-sm font-semibold hover:text-ember transition-colors">
-                          View Scores →
-                        </span>
-
-                        {!sport.loaded ? (
-                          <span className="text-xs text-text-tertiary">Loading...</span>
-                        ) : sport.todayCount > 0 ? (
-                          <span className="text-xs text-text-tertiary">
-                            {sport.todayCount} game{sport.todayCount !== 1 ? 's' : ''} today
-                          </span>
-                        ) : (
-                          <span className="text-xs text-text-tertiary">
-                            {sport.isActive ? 'No games today' : 'Off-season'}
-                          </span>
-                        )}
-                      </div>
-                    </Card>
-                  </Link>
-                </ScrollReveal>
-              ))}
+            <div className="flex gap-1 overflow-x-auto py-2">
+              <button
+                onClick={() => handleSetActiveSport('all')}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold font-mono uppercase tracking-wider whitespace-nowrap transition-all ${
+                  activeSport === 'all'
+                    ? 'bg-burnt-orange text-white'
+                    : 'text-text-secondary hover:bg-surface-medium'
+                }`}
+              >
+                All
+              </button>
+              {sports.map(sport => {
+                const Icon = SPORT_ICONS[sport.id];
+                return (
+                  <button
+                    key={sport.id}
+                    onClick={() => handleSetActiveSport(sport.id)}
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold font-mono uppercase tracking-wider whitespace-nowrap transition-all ${
+                      activeSport === sport.id
+                        ? 'bg-burnt-orange text-white'
+                        : 'text-text-secondary hover:bg-surface-medium'
+                    }`}
+                  >
+                    {Icon && <span className={activeSport === sport.id ? 'text-white' : 'text-text-tertiary'}><Icon /></span>}
+                    {sport.name}
+                    {sport.liveCount > 0 && (
+                      <span className="flex items-center gap-1 ml-1">
+                        <span className="w-1.5 h-1.5 bg-success rounded-full animate-pulse" />
+                        <span className={activeSport === sport.id ? 'text-white/90' : 'text-success'}>{sport.liveCount}</span>
+                      </span>
+                    )}
+                    {sport.liveCount === 0 && sport.todayCount > 0 && (
+                      <span className={`ml-1 text-xs ${activeSport === sport.id ? 'text-white/70' : 'text-text-tertiary'}`}>
+                        {sport.todayCount}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
+          </Container>
+        </Section>
 
-            {/* Quick Links */}
-            <ScrollReveal direction="up" delay={400}>
-              <div className="mt-12 p-6 bg-background-tertiary rounded-lg border border-border-subtle">
-                <h3 className="text-lg font-semibold text-text-primary mb-4">Quick Access</h3>
-                <div className="flex flex-wrap gap-3">
+        {/* Featured Games for Active Sport */}
+        <Section padding="lg" background="charcoal">
+          <Container>
+            <DataErrorBoundary name="Scores">
+              {activeSport === 'all' ? (
+                /* All Sports view: show each sport section */
+                <div className="space-y-8">
+                  {sports.map(sport => (
+                    <div key={sport.id}>
+                      <div className="flex items-center justify-between mb-4">
+                        <h2 className="font-display text-xl font-bold uppercase text-text-primary">
+                          {sport.name}
+                        </h2>
+                        <Link
+                          href={sport.href}
+                          className="text-burnt-orange text-sm font-semibold hover:text-ember transition-colors"
+                        >
+                          View All
+                        </Link>
+                      </div>
+                      {!sport.loaded ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                          {Array.from({ length: 4 }).map((_, i) => (
+                            <SkeletonScoreCard key={i} />
+                          ))}
+                        </div>
+                      ) : sport.featured.length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                          {sport.featured.map(game => (
+                            <MiniScoreCard key={game.id} game={game} sport={sport.id} />
+                          ))}
+                        </div>
+                      ) : (
+                        <Card padding="md" className="text-center">
+                          <p className="text-text-secondary text-sm">No {sport.name} games today</p>
+                          <p className="text-text-tertiary text-xs mt-1">
+                            {sport.isActive ? 'Check back later' : `Season: ${sport.season}`}
+                          </p>
+                        </Card>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : activeSportData && activeSportData.featured.length > 0 ? (
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="font-display text-xl font-bold uppercase text-text-primary">
+                      {activeSportData.name} Scores
+                    </h2>
+                    <Link
+                      href={activeSportData.href}
+                      className="text-burnt-orange text-sm font-semibold hover:text-ember transition-colors"
+                    >
+                      View All {activeSportData.todayCount} Games
+                    </Link>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    {activeSportData.featured.map(game => (
+                      <MiniScoreCard key={game.id} game={game} sport={activeSportData.id} />
+                    ))}
+                  </div>
+                </div>
+              ) : activeSportData && activeSportData.loaded ? (
+                <Card padding="lg" className="text-center">
+                  <p className="text-text-secondary">No {activeSportData.name} games today</p>
+                  <p className="text-text-tertiary text-sm mt-1">
+                    {activeSportData.isActive ? 'Check back later' : `Season: ${activeSportData.season}`}
+                  </p>
                   <Link
-                    href="/college-baseball/scores"
-                    className="px-4 py-2 bg-burnt-orange/20 hover:bg-burnt-orange/30 text-burnt-orange rounded-lg text-sm font-medium transition-colors"
+                    href={activeSportData.href}
+                    className="text-burnt-orange text-sm mt-3 inline-block hover:text-ember transition-colors"
                   >
-                    College Baseball Scores
+                    View {activeSportData.name} Hub
                   </Link>
-                  <Link
-                    href="/mlb/scores"
-                    className="px-4 py-2 bg-burnt-orange/20 hover:bg-burnt-orange/30 text-burnt-orange rounded-lg text-sm font-medium transition-colors"
-                  >
-                    MLB Scores
-                  </Link>
-                  <Link
-                    href="/college-baseball/standings"
-                    className="px-4 py-2 bg-charcoal hover:bg-slate text-text-secondary hover:text-text-primary rounded-lg text-sm font-medium transition-colors"
-                  >
-                    College Baseball Standings
-                  </Link>
-                  <Link
-                    href="/mlb/standings"
-                    className="px-4 py-2 bg-charcoal hover:bg-slate text-text-secondary hover:text-text-primary rounded-lg text-sm font-medium transition-colors"
-                  >
-                    MLB Standings
-                  </Link>
-                  <Link
-                    href="/nil-valuation"
-                    className="px-4 py-2 bg-charcoal hover:bg-slate text-text-secondary hover:text-text-primary rounded-lg text-sm font-medium transition-colors"
-                  >
-                    NIL Valuations
-                  </Link>
+                </Card>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <SkeletonScoreCard key={i} />
+                  ))}
+                </div>
+              )}
+
+              {/* All Sports Overview */}
+              <div className="mt-10">
+                <h2 className="font-display text-lg font-bold uppercase text-text-primary mb-4">
+                  All Sports
+                </h2>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {sports.map((sport, index) => (
+                    <ScrollReveal key={sport.id} direction="up" delay={index * 60}>
+                      <Link href={sport.href} className="block h-full">
+                        <Card
+                          variant="hover"
+                          padding="md"
+                          className={`h-full transition-all ${
+                            sport.liveCount > 0 ? 'border-success/50 bg-success/5' : ''
+                          }`}
+                        >
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="flex items-center gap-2.5">
+                              <span className="text-text-secondary">
+                                {(() => { const Icon = SPORT_ICONS[sport.id]; return Icon ? <Icon /> : null; })()}
+                              </span>
+                              <div>
+                                <h3 className="text-base font-display font-bold text-text-primary">
+                                  {sport.name}
+                                </h3>
+                                <p className="text-[11px] text-text-tertiary">Season: {sport.season}</p>
+                              </div>
+                            </div>
+                            {sport.liveCount > 0 ? (
+                              <div className="flex items-center gap-1.5 px-2.5 py-1 bg-success/20 rounded-full">
+                                <span className="w-1.5 h-1.5 bg-success rounded-full animate-pulse" />
+                                <span className="text-success text-xs font-semibold">{sport.liveCount} Live</span>
+                              </div>
+                            ) : sport.todayCount > 0 ? (
+                              <Badge variant="primary">{sport.todayCount} Today</Badge>
+                            ) : !sport.loaded ? (
+                              <span className="text-xs text-text-tertiary">Loading...</span>
+                            ) : (
+                              <Badge variant="default">{sport.isActive ? 'No games' : 'Off-season'}</Badge>
+                            )}
+                          </div>
+                          <p className="text-text-secondary text-xs">{sport.description}</p>
+                        </Card>
+                      </Link>
+                    </ScrollReveal>
+                  ))}
                 </div>
               </div>
-            </ScrollReveal>
 
-            {/* Data Freshness */}
-            <div className="mt-8 pt-4 border-t border-border-subtle">
-              <DataFreshnessIndicator
-                lastUpdated={fetchedAt ? new Date(fetchedAt) : undefined}
-                source="BSI Multi-Source"
-                refreshInterval={60}
-              />
-            </div>
+              {/* Quick Links */}
+              <ScrollReveal direction="up" delay={300}>
+                <div className="mt-10 p-5 bg-background-tertiary rounded-lg border border-border-subtle">
+                  <h3 className="text-sm font-semibold text-text-primary mb-3">Quick Access</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { href: '/college-baseball/scores', label: 'College Baseball Scores' },
+                      { href: '/mlb/scores', label: 'MLB Scores' },
+                      { href: '/nfl/games', label: 'NFL Scores' },
+                      { href: '/nba/games', label: 'NBA Scores' },
+                      { href: '/college-baseball/standings', label: 'CBB Standings' },
+                      { href: '/mlb/standings', label: 'MLB Standings' },
+                      { href: '/nfl/standings', label: 'NFL Standings' },
+                      { href: '/nba/standings', label: 'NBA Standings' },
+                    ].map(link => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className="px-3 py-1.5 bg-charcoal hover:bg-burnt-orange/20 text-text-secondary hover:text-burnt-orange rounded-lg text-xs font-medium transition-colors"
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </ScrollReveal>
+
+              {/* Data Freshness */}
+              <div className="mt-8 pt-4 border-t border-border-subtle">
+                <DataFreshnessIndicator
+                  lastUpdated={fetchedAt ? new Date(fetchedAt) : undefined}
+                  source="BSI Multi-Source"
+                  refreshInterval={60}
+                />
+              </div>
             </DataErrorBoundary>
           </Container>
         </Section>
       </div>
-
       <Footer />
     </>
+  );
+}
+
+// ── Page Export (with Suspense boundary for useSearchParams) ──
+
+export default function ScoresHubPage() {
+  return (
+    <Suspense fallback={<ScoresLoading />}>
+      <ScoresHubContent />
+    </Suspense>
   );
 }

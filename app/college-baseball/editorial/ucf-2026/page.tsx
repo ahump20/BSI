@@ -1,17 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'UCF Knights: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    'UCF was the AAC\'s most consistent baseball program for the better part of a decade. Two years into the Big 12, Greg Lovelady has the Knights competitive.',
-  openGraph: {
-    title: 'UCF Knights: 2026 Season Preview',
-    description:
-      'UCF was the AAC\'s most consistent baseball program for the better part of a decade. Two years into the Big 12, Greg Lovelady has the Knights competitive.',
-  },
+const seoConfig = {
+  title: 'UCF Knights 2026 Season Preview',
+  description: 'UCF Knights 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big 12 predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/ucf-2026',
+  image: '/images/og/cbb-ucf-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'UCF Knights — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'UCF',
@@ -182,5 +183,10 @@ const data: TeamPreviewData = {
 };
 
 export default function UCF2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

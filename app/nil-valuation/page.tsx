@@ -7,8 +7,10 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { ScrollReveal } from '@/components/cinematic';
+import { HeroGlow } from '@/components/ui/HeroGlow';
 import { Footer } from '@/components/layout-ds/Footer';
+import { ScrollReveal } from '@/components/cinematic';
+import { NILDashboardClient } from './NILDashboardClient';
 
 // ── Types ──
 interface NILPlayer {
@@ -114,11 +116,12 @@ export default function NILValuationPage() {
   const conferences = useMemo(() => new Set(leaders.map(p => p.conference)).size, [leaders]);
 
   return (
-    <div className="min-h-screen bg-background-primary text-text-primary">
-      {/* Hero Section */}
-      <Section className="pt-6 pb-16 bg-gradient-to-b from-background-secondary to-background-primary">
-        <Container>
-          <ScrollReveal>
+    <>
+      <div className="min-h-screen bg-background-primary text-text-primary">
+        {/* Hero */}
+        <Section className="pt-6 pb-12 relative overflow-hidden">
+          <HeroGlow />
+          <Container>
             <div className="max-w-4xl mx-auto text-center">
               <Badge variant="primary" className="mb-4">NIL Intelligence</Badge>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6" style={{ fontFamily: 'Georgia, serif' }}>
@@ -136,9 +139,8 @@ export default function NILValuationPage() {
                 </Link>
               </div>
             </div>
-          </ScrollReveal>
-        </Container>
-      </Section>
+          </Container>
+        </Section>
 
       {/* Live Stats Bar */}
       <div className="bg-background-secondary border-y border-border py-8">
@@ -151,22 +153,16 @@ export default function NILValuationPage() {
                 </div>
                 <p className="text-text-tertiary mt-1">Players Scored</p>
               </div>
-            </ScrollReveal>
-            <ScrollReveal delay={100}>
               <div>
                 <div className="text-3xl md:text-4xl font-bold text-burnt-orange">
                   {conferences > 0 ? conferences : '20+'}
                 </div>
                 <p className="text-text-tertiary mt-1">Conferences</p>
               </div>
-            </ScrollReveal>
-            <ScrollReveal delay={200}>
               <div>
                 <div className="text-3xl md:text-4xl font-bold text-burnt-orange">9</div>
                 <p className="text-text-tertiary mt-1">Analysis Tools</p>
               </div>
-            </ScrollReveal>
-            <ScrollReveal delay={300}>
               <div>
                 <div className="text-3xl md:text-4xl font-bold text-burnt-orange">Every 6h</div>
                 <p className="text-text-tertiary mt-1">Score Updates</p>
@@ -298,22 +294,28 @@ export default function NILValuationPage() {
           </ScrollReveal>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature, index) => (
-              <ScrollReveal key={feature.title} delay={index * 100}>
-                <Card className="h-full">
-                  <CardContent className="p-6">
-                    <span className="text-text-secondary mb-4 block">
-                      {(() => { const Icon = NIL_ICONS[feature.title]; return Icon ? <Icon /> : null; })()}
-                    </span>
-                    <h3 className="text-lg font-semibold text-text-primary mb-2">{feature.title}</h3>
-                    <p className="text-text-tertiary text-sm">{feature.description}</p>
-                  </CardContent>
-                </Card>
-              </ScrollReveal>
-            ))}
+            {features.map((feature, index) => {
+              const Icon = NIL_ICONS[feature.title];
+              return (
+                <ScrollReveal key={feature.title} delay={index * 100}>
+                  <Card className="h-full">
+                    <CardContent className="p-6">
+                      <div className="flex items-center gap-3 mb-4">
+                        {Icon && <div className="text-burnt-orange"><Icon /></div>}
+                        <h3 className="text-lg font-semibold text-text-primary">{feature.title}</h3>
+                      </div>
+                      <p className="text-text-tertiary text-sm">{feature.description}</p>
+                    </CardContent>
+                  </Card>
+                </ScrollReveal>
+              );
+            })}
           </div>
         </Container>
       </Section>
+
+        {/* Charts Section — client component */}
+        <NILDashboardClient />
 
       {/* Sport Breakdown */}
       <Section className="py-20 bg-background-secondary">
@@ -368,27 +370,39 @@ export default function NILValuationPage() {
                   <Badge variant="secondary" className="mb-4">Transparency</Badge>
                   <h2 className="text-2xl font-bold text-text-primary mb-4">Our Methodology</h2>
                   <p className="text-text-tertiary mb-6">
-                    We believe in full transparency. Our Fair Market NIL Value (FMNV) model combines
-                    on-field performance metrics, social media reach, market exposure, and verified
-                    deal data to calculate athlete valuations.
+                    BSI&apos;s FMNV model combines on-field performance data from our Savant compute
+                    pipeline with exposure and market factors to estimate what an athlete&apos;s NIL
+                    is worth. Every input is sourced from live data — no fabricated metrics.
                   </p>
                   <div className="grid grid-cols-3 gap-4 mb-6">
                     <div className="text-center p-4 bg-background-secondary rounded-lg">
                       <div className="text-xl font-bold text-text-primary">40%</div>
                       <div className="text-xs text-text-muted">Performance</div>
+                      <div className="text-[10px] text-text-muted/50 mt-1">wOBA, wRC+, FIP</div>
                     </div>
                     <div className="text-center p-4 bg-background-secondary rounded-lg">
                       <div className="text-xl font-bold text-text-primary">30%</div>
                       <div className="text-xs text-text-muted">Exposure</div>
+                      <div className="text-[10px] text-text-muted/50 mt-1">Conference, Social</div>
                     </div>
                     <div className="text-center p-4 bg-background-secondary rounded-lg">
                       <div className="text-xl font-bold text-text-primary">30%</div>
                       <div className="text-xs text-text-muted">Market</div>
+                      <div className="text-[10px] text-text-muted/50 mt-1">Metro, Program</div>
                     </div>
                   </div>
-                  <Link href="/nil-valuation/methodology">
-                    <Button variant="outline" className="w-full">Read Full Methodology →</Button>
-                  </Link>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Link href="/nil-valuation/methodology" className="flex-1">
+                      <Button variant="outline" className="w-full">
+                        Read Full Methodology →
+                      </Button>
+                    </Link>
+                    <Link href="/nil-valuation/performance-index" className="flex-1">
+                      <Button className="w-full bg-burnt-orange">
+                        Try the Calculator
+                      </Button>
+                    </Link>
+                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -419,8 +433,8 @@ export default function NILValuationPage() {
           </ScrollReveal>
         </Container>
       </Section>
-
+      </div>
       <Footer />
-    </div>
+    </>
   );
 }

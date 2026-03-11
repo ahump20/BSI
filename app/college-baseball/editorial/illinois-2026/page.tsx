@@ -1,17 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Illinois Fighting Illini: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    'Dan Hartleb has kept Illinois competitive for 17 years — a feat that requires equal parts stubbornness and development. The Illini went 30-24 with a 14-16 Big Ten record in 2025.',
-  openGraph: {
-    title: 'Illinois Fighting Illini: 2026 Season Preview',
-    description:
-      'Dan Hartleb has kept Illinois competitive for 17 years — a feat that requires equal parts stubbornness and development. The Illini went 30-24 with a 14-16 Big Ten record in 2025.',
-  },
+const seoConfig = {
+  title: 'Illinois Fighting Illini 2026 Season Preview',
+  description: 'Illinois Fighting Illini 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big Ten predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/illinois-2026',
+  image: '/images/og/cbb-illinois-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'Illinois Fighting Illini — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'Illinois',
@@ -182,5 +183,10 @@ const data: TeamPreviewData = {
 };
 
 export default function Illinois2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

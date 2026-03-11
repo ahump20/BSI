@@ -1,17 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Maryland Terrapins: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    "Maryland went 27-29 in 2025 and finished 12-18 in Big Ten play. But Matt Swope's third year in College Park brings his first full recruiting class, a targeted portal haul.",
-  openGraph: {
-    title: 'Maryland Terrapins: 2026 Season Preview',
-    description:
-      "Maryland went 27-29 in 2025 and finished 12-18 in Big Ten play. But Matt Swope's third year in College Park brings his first full recruiting class, a targeted portal haul.",
-  },
+const seoConfig = {
+  title: 'Maryland Terrapins 2026 Season Preview',
+  description: 'Maryland Terrapins 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big Ten predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/maryland-2026',
+  image: '/images/og/cbb-maryland-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'Maryland Terrapins — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'Maryland',
@@ -190,5 +191,10 @@ const data: TeamPreviewData = {
 };
 
 export default function Maryland2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

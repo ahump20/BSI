@@ -1,17 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Purdue Boilermakers: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    'Purdue won 31 games in 2025 and went 11-19 in Big Ten play. That disconnect is the program in a sentence: competitive enough outside the conference, unable to sustain it against Big Ten pitching.',
-  openGraph: {
-    title: 'Purdue Boilermakers: 2026 Season Preview',
-    description:
-      'Purdue won 31 games in 2025 and went 11-19 in Big Ten play. That disconnect is the program in a sentence: competitive enough outside the conference, unable to sustain it against Big Ten pitching.',
-  },
+const seoConfig = {
+  title: 'Purdue Boilermakers 2026 Season Preview',
+  description: 'Purdue Boilermakers 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big Ten predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/purdue-2026',
+  image: '/images/og/cbb-purdue-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'Purdue Boilermakers — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'Purdue',
@@ -183,5 +184,10 @@ const data: TeamPreviewData = {
 };
 
 export default function Purdue2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

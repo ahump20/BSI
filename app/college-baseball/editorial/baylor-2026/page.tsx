@@ -1,17 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Baylor Bears: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    'Thirty wins and twenty-seven losses tells the story of a team that couldn\'t find consistency. Mitch Thompson enters Year 4 needing the pitching to match the potential.',
-  openGraph: {
-    title: 'Baylor Bears: 2026 Season Preview',
-    description:
-      'Thirty wins and twenty-seven losses tells the story of a team that couldn\'t find consistency. Mitch Thompson enters Year 4 needing the pitching to match the potential.',
-  },
+const seoConfig = {
+  title: 'Baylor Bears 2026 Season Preview',
+  description: 'Baylor Bears 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big 12 predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/baylor-2026',
+  image: '/images/og/cbb-baylor-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'Baylor Bears — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'Baylor',
@@ -181,5 +182,10 @@ const data: TeamPreviewData = {
 };
 
 export default function Baylor2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

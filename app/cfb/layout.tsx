@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'College Football | Blaze Sports Intel',
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
     type: 'website',
     url: 'https://blazesportsintel.com/cfb',
     siteName: 'Blaze Sports Intel',
-    images: [{ url: '/images/og-cfb.png', width: 1200, height: 630, alt: 'BSI College Football Coverage' }],
+    images: ogImage('/images/og-cfb.png', 'BSI College Football Coverage'),
   },
   twitter: {
     card: 'summary_large_image',

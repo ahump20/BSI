@@ -1,16 +1,18 @@
-import type { Metadata } from 'next';
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'Mississippi State Bulldogs 2026 Season Preview | Blaze Sports Intel',
-  description: 'Mississippi State Bulldogs 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and predictions for the SEC season.',
-  openGraph: {
-    title: 'Mississippi State Bulldogs — 2026 Season Preview | BSI',
-    description: 'Full scouting report on the Mississippi State Bulldogs heading into the 2026 college baseball season.',
-    type: 'article',
-  },
+const seoConfig = {
+  title: 'Mississippi State Bulldogs 2026 Season Preview',
+  description: 'Mississippi State Bulldogs 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and SEC predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/mississippi-state-2026',
+  image: '/images/og/cbb-mississippi-state-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'Mississippi State Bulldogs — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'Mississippi State',
@@ -166,5 +168,10 @@ const data: TeamPreviewData = {
 };
 
 export default function MississippiState2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }

@@ -1,17 +1,18 @@
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
-import type { Metadata } from 'next';
+import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
-export const metadata: Metadata = {
-  title: 'USC Trojans: 2026 Season Preview | Blaze Sports Intel',
-  description:
-    "Twelve national titles. The most in college baseball history. USC's 2025 season — 37-23 in their first Big Ten campaign — showed that Andy Stankiewicz's rebuild has accelerated.",
-  openGraph: {
-    title: 'USC Trojans: 2026 Season Preview',
-    description:
-      "Twelve national titles. The most in college baseball history. USC's 2025 season — 37-23 in their first Big Ten campaign — showed that Andy Stankiewicz's rebuild has accelerated.",
-  },
+const seoConfig = {
+  title: 'USC Trojans 2026 Season Preview',
+  description: 'USC Trojans 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and Big Ten predictions.',
+  datePublished: '2026-02-20',
+  slug: '/college-baseball/editorial/usc-2026',
+  image: '/images/og/cbb-usc-2026.png',
+  sport: 'College Baseball',
+  ogTitle: 'USC Trojans — 2026 Season Preview | BSI',
 };
+export const metadata = editorialMetadata(seoConfig);
 
 const data: TeamPreviewData = {
   teamName: 'USC',
@@ -190,5 +191,10 @@ const data: TeamPreviewData = {
 };
 
 export default function USC2026Page() {
-  return <SECTeamPreviewTemplate data={data} />;
+  return (
+    <>
+      <ArticleJsonLd {...editorialJsonLdProps(seoConfig)} />
+      <SECTeamPreviewTemplate data={data} />
+    </>
+  );
 }
