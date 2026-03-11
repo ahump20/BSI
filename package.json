@@ -62,7 +62,9 @@
     "bundle:upload": "tsx tools/build-ncaa-baseball-daily-bundle.ts --upload",
     "deploy:guarded": "node scripts/guarded-deploy.mjs",
     "release:preview": "node scripts/guarded-deploy.mjs --preview-only",
-    "smoke:homepage": "npx playwright test tests/smoke/homepage.spec.ts"
+    "smoke:homepage": "npx playwright test tests/smoke/homepage.spec.ts",
+    "smoke:predeploy": "npx playwright test tests/smoke/homepage.spec.ts",
+    "release:guarded": "node scripts/release-guarded.mjs"
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^3.10.0",

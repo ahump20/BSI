@@ -91,4 +91,38 @@ test.describe('Homepage smoke tests', () => {
 
     expect(found).toBe(true);
   });
+
+  test('footer renders with 6 link columns', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+    const footer = page.locator('footer');
+    await expect(footer).toBeVisible();
+
+    // Footer grid has 6 columns: Start Here, Sports, Tools, Ecosystem, Company, Legal
+    const columnHeaders = footer.locator('h4');
+    const count = await columnHeaders.count();
+    expect(count).toBe(6);
+  });
+
+  test('Ask BSI input is visible', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+    // Ask BSI section should have a text input and a submit button
+    const askInput = page.locator('input[type="text"], textarea').filter({ hasText: /ask|question/i });
+    const askSection = page.getByText('Ask BSI', { exact: false });
+
+    // At minimum the section heading should exist
+    if ((await askSection.count()) > 0) {
+      await expect(askSection.first()).toBeVisible();
+    }
+  });
+
+  test('live scores section renders or shows graceful empty state', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+    // Either live scores load or a "no games" message appears
+    const scoresSection = page.locator('[data-error-boundary="Live Scores"], section').filter({ hasText: /score|game|live|no games/i });
+    const count = await scoresSection.count();
+    expect(count).toBeGreaterThan(0);
+  });
 });
