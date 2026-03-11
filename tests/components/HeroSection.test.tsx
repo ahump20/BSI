@@ -26,8 +26,8 @@ describe('HeroSection', () => {
     expect(screen.getByText(/Est\. 2024/i)).toBeTruthy();
     expect(screen.getByRole('heading', { name: /Blaze Sports/i })).toBeTruthy();
     expect(screen.getByRole('heading', { name: /Intel/i })).toBeTruthy();
-    expect(screen.getByText(/Analytics for the sports that don't get the spotlight\./i)).toBeTruthy();
-    expect(screen.getAllByText(/Born to Blaze the Path Beaten Less/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/Live scores, game intelligence, and park-adjusted analytics/i)).toBeTruthy();
+    expect(screen.getByText(/Born to Blaze the Path Beaten Less/i)).toBeTruthy();
   });
 
   it('keeps the primary homepage routes visible in the hero', () => {

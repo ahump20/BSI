@@ -8,7 +8,7 @@ import { HeroScoreStrip } from './HeroScoreStrip';
 /**
  * HeroSection — Heritage broadcast-open with logo visual anchor.
  * BSI shield mascot as hero centerpiece, pulsing ember glow,
- * massive headline, score strip as live proof, slogan in marquee.
+ * massive headline, score strip as live proof, slogan front-and-center.
  */
 export function HeroSection() {
   return (
@@ -89,7 +89,7 @@ export function HeroSection() {
           </p>
         </div>
 
-        {/* Cormorant italic subhead — broadcast chyron style */}
+        {/* Cormorant italic subhead — what's here today, why come back */}
         <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.5s_forwards] max-w-[22rem] sm:max-w-2xl mx-auto mb-8 px-4 sm:px-4">
           <p
             className="font-serif italic text-[15px] sm:text-lg md:text-xl tracking-[0.04em] leading-7 sm:leading-relaxed"
@@ -99,42 +99,40 @@ export function HeroSection() {
             }}
           >
             <span className="text-[var(--heritage-bronze)]">&mdash;</span>{' '}
-            Analytics for the sports that don&apos;t get the spotlight.
-            Five sports deep. College baseball at the core.{' '}
+            Live scores, game intelligence, and park-adjusted analytics across five sports.
+            College baseball at the core &mdash; free, updated every six hours.{' '}
             <span className="text-[var(--heritage-bronze)]">&mdash;</span>
           </p>
         </div>
 
-        {/* Live proof — score strip (moved up for prominence) */}
+        {/* Live proof — score strip */}
         <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.55s_forwards] mb-10">
           <DataErrorBoundary name="Score Strip" compact>
             <HeroScoreStrip />
           </DataErrorBoundary>
         </div>
 
-        {/* CTAs — heritage button trio */}
+        {/* CTAs — 1 primary + 2 supporting */}
         <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.65s_forwards] flex flex-col sm:flex-row gap-4 justify-center">
-          <Link href="/college-baseball" className="btn-heritage-fill px-6 py-3 text-sm">
-            College Baseball
-          </Link>
-          <Link href="/scores" className="btn-heritage px-6 py-3 text-sm">
+          <Link href="/scores" className="btn-heritage-fill px-6 py-3 text-sm">
             Live Scores
+          </Link>
+          <Link href="/college-baseball" className="btn-heritage px-6 py-3 text-sm">
+            College Baseball
           </Link>
           <Link href="/college-baseball/savant" className="btn-heritage px-6 py-3 text-sm">
             BSI Savant
           </Link>
         </div>
 
-        {/* Heritage stat marquee — with slogan */}
+        {/* Heritage stat marquee — no slogan repetition */}
         <div className="mt-10 overflow-hidden score-ticker py-2 opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-fade-in_0.8s_ease-out_0.9s_forwards]">
           <div className="marquee-track whitespace-nowrap">
             {[0, 1].map((i) => (
               <span key={i} className="inline-flex items-center gap-6 mr-6 text-[10px] uppercase tracking-[0.15em] text-[var(--bsi-dust)]">
-                <span className="text-[var(--bsi-primary)] font-semibold">Born to Blaze the Path Beaten Less</span>
-                <span className="text-[var(--heritage-bronze)]">&#9670;</span>
                 <span>5 Sports</span>
                 <span className="text-[var(--heritage-bronze)]">&#9670;</span>
-                <span>Park-Adjusted wOBA</span>
+                <span>wOBA</span>
                 <span className="text-[var(--heritage-bronze)]">&#9670;</span>
                 <span>wRC+</span>
                 <span className="text-[var(--heritage-bronze)]">&#9670;</span>

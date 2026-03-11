@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from 'react';
  */
 
 function AnimatedCount({ target, suffix = '' }: { target: number; suffix?: string }) {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(target);
   const ref = useRef<HTMLSpanElement>(null);
   const hasAnimated = useRef(false);
 
@@ -20,6 +20,8 @@ function AnimatedCount({ target, suffix = '' }: { target: number; suffix?: strin
       ([entry]) => {
         if (entry.isIntersecting && !hasAnimated.current) {
           hasAnimated.current = true;
+          // Reset to 0, then animate up — animation is enhancement, not requirement
+          setCount(0);
           const duration = 1200;
           const start = performance.now();
 

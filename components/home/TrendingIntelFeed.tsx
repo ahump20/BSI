@@ -49,6 +49,7 @@ export function TrendingIntelFeed() {
   const [articles, setArticles] = useState<FlatArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [lastFetched, setLastFetched] = useState<Date | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -81,6 +82,7 @@ export function TrendingIntelFeed() {
 
         flat.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime());
         setArticles(flat.slice(0, 8));
+        setLastFetched(new Date());
       } catch {
         if (!cancelled) setError(true);
       } finally {
@@ -150,6 +152,12 @@ export function TrendingIntelFeed() {
           })
         )}
       </div>
+
+      {!loading && articles.length > 0 && lastFetched && (
+        <p className="text-[10px] mt-2" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
+          Source: ESPN News · Updated {lastFetched.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })} CT
+        </p>
+      )}
     </div>
   );
 }

@@ -14,7 +14,6 @@ import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { extractCBBGames, extractESPNGames, extractMLBGames, type FeaturedGame } from '@/lib/scores/featured-games';
 
 // ── SVG Sport Icons ──
 
@@ -58,6 +57,22 @@ const INTEL_SPORT_MAP: Record<string, Sport> = {
 };
 
 // ── Game Types ──
+
+interface GameTeam {
+  name: string;
+  abbreviation: string;
+  logo?: string;
+  score?: string | number;
+}
+
+interface FeaturedGame {
+  id: string;
+  away: GameTeam;
+  home: GameTeam;
+  state: 'live' | 'final' | 'upcoming';
+  detail: string;
+  href: string;
+}
 
 interface SportSection {
   id: string;
@@ -250,6 +265,94 @@ function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) 
       {cardContent}
     </Link>
   );
+}
+
+// ── Helpers to extract featured games ──
+
+function extractMLBGames(data: Record<string, unknown>): FeaturedGame[] {
+  const games = (data?.games as Array<Record<string, unknown>>) || [];
+  return games.slice(0, 4).map(g => {
+    const away = (g.teams as Record<string, unknown>)?.away as Record<string, unknown> || {};
+    const home = (g.teams as Record<string, unknown>)?.home as Record<string, unknown> || {};
+    const status = g.status as Record<string, unknown> || {};
+    const isLive = Boolean((status as Record<string, boolean>)?.isLive);
+    const isFinal = Boolean((status as Record<string, unknown>)?.type && ((status as Record<string, Record<string, boolean>>).type?.completed));
+    return {
+      id: String(g.gamePk || g.id || ''),
+      away: { name: String(away.name || ''), abbreviation: String(away.abbreviation || 'AWY'), logo: String(away.logo || ''), score: String(away.score ?? '') },
+      home: { name: String(home.name || ''), abbreviation: String(home.abbreviation || 'HME'), logo: String(home.logo || ''), score: String(home.score ?? '') },
+      state: isLive ? 'live' : isFinal ? 'final' : 'upcoming',
+      detail: String((status as Record<string, string>)?.detailedState || ''),
+      href: `/mlb/game/${g.gamePk || g.id}`,
+    } satisfies FeaturedGame;
+  });
+}
+
+function extractESPNGames(data: Record<string, unknown>, sport: string): FeaturedGame[] {
+  const games = (data?.games as Array<Record<string, unknown>>) || [];
+  return games.slice(0, 4).map(g => {
+    const teams = (g.teams || g.competitors) as Array<Record<string, unknown>> || [];
+    const away = teams.find(t => t.homeAway === 'away') || teams[0] || {};
+    const home = teams.find(t => t.homeAway === 'home') || teams[1] || {};
+    const status = g.status as Record<string, Record<string, unknown>> || {};
+    const state = String(status?.type?.state || 'pre');
+    const completed = Boolean(status?.type?.completed);
+
+    const awayTeam = (away.team || {}) as Record<string, string>;
+    const homeTeam = (home.team || {}) as Record<string, string>;
+    const awayLogos = (awayTeam.logos || []) as Array<Record<string, string>>;
+    const homeLogos = (homeTeam.logos || []) as Array<Record<string, string>>;
+
+    return {
+      id: String(g.id || ''),
+      away: {
+        name: String(awayTeam.displayName || ''),
+        abbreviation: String(awayTeam.abbreviation || 'AWY'),
+        logo: String(awayTeam.logo || awayLogos[0]?.href || ''),
+        score: String((away as Record<string, string>).score ?? ''),
+      },
+      home: {
+        name: String(homeTeam.displayName || ''),
+        abbreviation: String(homeTeam.abbreviation || 'HME'),
+        logo: String(homeTeam.logo || homeLogos[0]?.href || ''),
+        score: String((home as Record<string, string>).score ?? ''),
+      },
+      state: state === 'in' ? 'live' : completed ? 'final' : 'upcoming',
+      detail: String(status?.type?.detail || status?.type?.shortDetail || ''),
+      href: `/${sport}/game/${g.id}`,
+    } satisfies FeaturedGame;
+  });
+}
+
+function extractCBBGames(data: Record<string, unknown>): FeaturedGame[] {
+  const games = ((data?.data || data?.games) as Array<Record<string, unknown>>) || [];
+  const teamName = (t: unknown): string => {
+    if (typeof t === 'string') return t;
+    if (t && typeof t === 'object' && 'name' in t) return String((t as Record<string, unknown>).name || '');
+    if (t && typeof t === 'object' && 'displayName' in t) return String((t as Record<string, unknown>).displayName || '');
+    return '';
+  };
+  return games.slice(0, 4).map(g => {
+    const awayName = teamName(g.awayTeam);
+    const homeName = teamName(g.homeTeam);
+    return {
+    id: String(g.id || ''),
+    away: {
+      name: awayName,
+      abbreviation: String(g.awayAbbreviation || (awayName ? awayName.substring(0, 3).toUpperCase() : 'AWY')),
+      logo: String(g.awayLogo || ''),
+      score: String(g.awayScore ?? ''),
+    },
+    home: {
+      name: homeName,
+      abbreviation: String(g.homeAbbreviation || (homeName ? homeName.substring(0, 3).toUpperCase() : 'HME')),
+      logo: String(g.homeLogo || ''),
+      score: String(g.homeScore ?? ''),
+    },
+    state: g.status === 'live' ? 'live' : g.status === 'final' ? 'final' : 'upcoming',
+    detail: String(g.statusDetail || ''),
+    href: `/college-baseball/game/${g.id}`,
+  };});
 }
 
 // ── Loading Fallback ──

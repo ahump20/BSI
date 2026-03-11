@@ -520,7 +520,7 @@ export function HomeLiveScores({ onCountsChange }: HomeLiveScoresProps = {}) {
 
         {!loading && allGames.length > 0 && (
           <p className="text-[10px] mt-2" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
-            {hasLiveGames ? 'Auto-refreshing every 30s' : 'Refreshes every 5 min'}
+            Source: SportsDataIO · ESPN
             {lastFetched && (
               <> · Updated {lastFetched.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })} CT</>
             )}
