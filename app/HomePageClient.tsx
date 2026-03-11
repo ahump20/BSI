@@ -605,7 +605,7 @@ export function HomePageClient() {
       </DataErrorBoundary>
 
       {/* ─── Section Break ─── */}
-      <div className="section-break py-6" aria-hidden="true"><span className="section-break-diamond" /></div>
+      <div className="section-break" aria-hidden="true"><span className="section-break-diamond" /></div>
 
       {/* ─── 4. Sports Hub — Our Coverage (redesigned layout) ─── */}
       <section
@@ -747,14 +747,14 @@ export function HomePageClient() {
       </section>
 
       {/* ─── Section Break ─── */}
-      <div className="section-break py-6" aria-hidden="true"><span className="section-break-diamond" /></div>
+      <div className="section-break" aria-hidden="true"><span className="section-break-diamond" /></div>
 
       {/* ─── 5. Feature Showcase — platform tools ─── */}
       <FeatureShowcase />
 
       {/* ─── 6. Ask BSI — AI-powered question card ─── */}
       <div className="surface-lifted">
-        <div className="section-break py-6" aria-hidden="true"><span className="section-break-diamond" /></div>
+        <div className="section-break" aria-hidden="true"><span className="section-break-diamond" /></div>
         <DataErrorBoundary name="Ask BSI" compact>
           <AskBSI />
         </DataErrorBoundary>
@@ -766,7 +766,7 @@ export function HomePageClient() {
       </DataErrorBoundary>
 
       {/* ─── Section Break ─── */}
-      <div className="section-break py-6" aria-hidden="true"><span className="section-break-diamond" /></div>
+      <div className="section-break" aria-hidden="true"><span className="section-break-diamond" /></div>
 
       {/* ─── 8. Trending Intel Feed ─── */}
       <section
@@ -791,7 +791,7 @@ export function HomePageClient() {
       </section>
 
       {/* ─── Section Break ─── */}
-      <div className="section-break py-6" aria-hidden="true"><span className="section-break-diamond" /></div>
+      <div className="section-break" aria-hidden="true"><span className="section-break-diamond" /></div>
 
       {/* ─── 9. Garrido + Austin Quote — elevated with B watermark ─── */}
       <section
@@ -884,7 +884,7 @@ export function HomePageClient() {
       </section>
 
       {/* ─── Section Break ─── */}
-      <div className="section-break py-6" aria-hidden="true"><span className="section-break-diamond" /></div>
+      <div className="section-break" aria-hidden="true"><span className="section-break-diamond" /></div>
 
       {/* ─── 10. CTA — with shield logo + slogan ─── */}
       <section className="surface-lifted py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">

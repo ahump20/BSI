@@ -801,7 +801,7 @@ textarea:focus-visible,
   display: flex;
   align-items: center;
   gap: 0;
-  padding: 0 1rem;
+  padding: 1.5rem 1rem;
   max-width: 72rem;
   margin: 0 auto;
 }
@@ -822,15 +822,18 @@ textarea:focus-visible,
   flex-shrink: 0;
 }
 
-/* Lifted surface — slightly lighter section background for visual rhythm */
+/* Lifted surface — slightly lighter section background for visual rhythm.
+   Uses dedicated value (same as press-box today) so section rhythm and
+   table headers can evolve independently. */
 .surface-lifted {
-  background: var(--surface-press-box);
+  background: #111111;
 }
 .surface-deep {
   background: var(--surface-scoreboard);
 }
 
-/* Section accent glows — atmospheric directional lighting */
+/* Section accent glows — atmospheric directional lighting.
+   Requires position: relative on the host element. */
 .accent-glow-warm-left::before {
   content: '';
   position: absolute;
