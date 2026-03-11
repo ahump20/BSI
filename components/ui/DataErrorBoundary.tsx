@@ -46,8 +46,17 @@ export class DataErrorBoundary extends Component<DataErrorBoundaryProps, State> 
 
       return (
         <div role="alert" className={`flex flex-col items-center justify-center text-center ${compact ? 'py-6 px-4' : 'py-12 px-4'}`}>
-          <p className="text-xs font-display font-bold uppercase tracking-wider text-text-muted mb-3">
+          <div className="text-text-muted mb-3">
+            <svg className="w-8 h-8 mx-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 8v4M12 16h.01" />
+            </svg>
+          </div>
+          <p className="text-xs font-display font-bold uppercase tracking-wider text-text-muted mb-1">
             {label}
+          </p>
+          <p className="text-[10px] text-text-muted mb-3 max-w-xs">
+            This data updates automatically. If the issue persists, try refreshing the page.
           </p>
           <button
             onClick={this.handleRetry}

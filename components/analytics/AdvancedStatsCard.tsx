@@ -2,6 +2,7 @@
 
 import { PercentileBar } from './PercentileBar';
 import { MetricGate } from './MetricGate';
+import { MetricExplainer } from './MetricExplainer';
 
 interface StatItem {
   label: string;
@@ -56,9 +57,9 @@ export function AdvancedStatsCard({
       <div className="px-5 py-3 space-y-2">
         {freeStats.map(stat => (
           <div key={stat.label} className="flex items-center justify-between">
-            <span className="text-[11px] text-text-muted font-mono uppercase tracking-wide">
+            <MetricExplainer metric={stat.label} className="text-[11px] text-text-muted font-mono uppercase tracking-wide">
               {stat.label}
-            </span>
+            </MetricExplainer>
             <div className="flex items-center gap-3">
               {stat.percentile != null && (
                 <div className="w-24 hidden sm:block">
@@ -84,9 +85,9 @@ export function AdvancedStatsCard({
           <div className="px-5 py-3 space-y-2">
             {proStats.map(stat => (
               <div key={stat.label} className="flex items-center justify-between">
-                <span className="text-[11px] text-text-muted font-mono uppercase tracking-wide">
+                <MetricExplainer metric={stat.label} className="text-[11px] text-text-muted font-mono uppercase tracking-wide">
                   {stat.label}
-                </span>
+                </MetricExplainer>
                 <div className="flex items-center gap-3">
                   {stat.percentile != null && (
                     <div className="w-24 hidden sm:block">
