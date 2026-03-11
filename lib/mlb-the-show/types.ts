@@ -213,7 +213,7 @@ export interface DDRosterSlot {
   id: string;
   label: string;
   group: 'captain' | 'lineup' | 'bench' | 'rotation' | 'bullpen';
-  allowedPositions: string[];
+  accepts: string[];
 }
 
 export interface DDBuildCardSelection {
