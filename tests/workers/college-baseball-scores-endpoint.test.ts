@@ -50,6 +50,11 @@ function mockNcaaOnly() {
   }) as unknown as typeof fetch;
 }
 
+function getTodayCacheKey(): string {
+  const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' }).format(new Date());
+  return `cb:scores:${today}`;
+}
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -72,8 +77,16 @@ describe('handleCollegeBaseballScores', () => {
   });
 
   it('returns cached scores on KV HIT', async () => {
-    const cached = { data: [{ id: 1, name: 'Cached Game' }], totalCount: 1 };
-    env.KV._store.set('cb:scores:today', JSON.stringify(cached));
+    const cached = {
+      data: [{ id: 1, name: 'Cached Game' }],
+      totalCount: 1,
+      meta: {
+        source: 'highlightly',
+        fetched_at: '2026-03-11T15:30:00Z',
+        timezone: 'America/Chicago',
+      },
+    };
+    env.KV._store.set(getTodayCacheKey(), JSON.stringify(cached));
     globalThis.fetch = vi.fn() as unknown as typeof fetch;
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/scores');
@@ -82,6 +95,7 @@ describe('handleCollegeBaseballScores', () => {
 
     expect(res.status).toBe(200);
     expect(res.headers.get('X-Cache')).toBe('HIT');
+    expect(res.headers.get('X-Last-Updated')).toBe('2026-03-11T15:30:00Z');
     expect(body.data).toHaveLength(1);
     expect(body.data[0].name).toBe('Cached Game');
     // Should NOT have called external APIs
@@ -98,7 +112,7 @@ describe('handleCollegeBaseballScores', () => {
     expect(res.headers.get('X-Cache')).toBe('MISS');
     // Verify KV was populated
     expect(env.KV.put).toHaveBeenCalledWith(
-      'cb:scores:today',
+      getTodayCacheKey(),
       expect.any(String),
       expect.objectContaining({ expirationTtl: expect.any(Number) })
     );
@@ -160,6 +174,34 @@ describe('handleCollegeBaseballScores', () => {
     const res = await worker.fetch(req, env, createMockCtx());
 
     expect(res.headers.get('Cache-Control')).toBe('public, max-age=30');
+  });
+
+  it('sets degraded=false when Highlightly succeeds and ESPN fails', async () => {
+    // Highlightly is PRIMARY — a successful Highlightly-only response is NOT degraded.
+    // ESPN is an enrichment fallback, not the primary source.
+    globalThis.fetch = vi.fn(async (url: string | URL | Request) => {
+      const urlStr = typeof url === 'string' ? url : url instanceof URL ? url.toString() : (url as Request).url;
+      if (urlStr.includes('mlb-college-baseball-api') && urlStr.includes('/matches')) {
+        return new Response(JSON.stringify(HIGHLIGHTLY_SCORES), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+      // ESPN fails
+      if (urlStr.includes('espn.com')) {
+        return new Response('Service Unavailable', { status: 503 });
+      }
+      return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    }) as unknown as typeof fetch;
+
+    const req = new Request('https://blazesportsintel.com/api/college-baseball/scores');
+    const res = await worker.fetch(req, env, createMockCtx());
+    const body = await res.json() as any;
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get('X-Data-Source')).toBe('highlightly');
+    // Bug 1: this must be false — Highlightly alone is not degraded
+    expect(body.meta.degraded).toBe(false);
   });
 });
 
