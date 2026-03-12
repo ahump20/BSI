@@ -9,7 +9,7 @@ const experiences = [
     period: '2023 – Present',
     accent: '#BF5700',
     description:
-      'Production-grade sports analytics platform covering six leagues — 27 Workers, 7 databases, 58+ editorial deep-dives. Full architecture designed, deployed, and maintained solo. See the BSI section above for the complete story.',
+      'Production-grade sports analytics platform covering six leagues — 23 Workers, 7 databases, 58+ editorial deep-dives. Full architecture designed, deployed, and maintained solo. See the BSI section above for the complete story.',
   },
   {
     title: 'Advertising Account Executive',

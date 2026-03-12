@@ -67,6 +67,15 @@ export default function Hero() {
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.35, ease: EASE_OUT_EXPO }}
+          className="font-sans font-semibold text-burnt-orange uppercase tracking-[0.2em] text-sm mb-6 text-center md:text-left"
+        >
+          Born to Blaze the Path Beaten Less
+        </motion.p>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.4, ease: EASE_OUT_EXPO }}
           className="text-warm-gray text-lg md:text-xl max-w-xl mb-10 leading-relaxed text-center md:text-left"
         >
