@@ -80,6 +80,9 @@ html {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #BF5700 #0d0d0d;
 }
 
 body {
@@ -113,12 +116,6 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #FF6B35;
-}
-
-/* Firefox scrollbar */
-html {
-  scrollbar-width: thin;
-  scrollbar-color: #BF5700 #0d0d0d;
 }
 
 /* ---- Skip link ---- */
@@ -438,13 +435,6 @@ textarea:focus-visible,
 
   .bsi-gradient-brand {
     background: linear-gradient(135deg, #bf5700 0%, #cc6600 50%, #d97b38 100%);
-  }
-
-  /* ---- Skeleton ---- */
-  .skeleton {
-    background: #1a1a1a;
-    border-radius: 0.25rem;
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
   /* ---- Leaderboard row (from Labs) ---- */
@@ -1127,6 +1117,31 @@ textarea:focus-visible,
   }
 }
 
+@media (max-width: 640px) {
+  .btn-primary, .btn-secondary, .btn-outline, .btn-ghost,
+  .btn-heritage, .btn-heritage-fill, .hero-btn-primary, .hero-btn-outline {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.7rem;
+  }
+
+  .stat-value {
+    font-size: 1.25rem;
+  }
+
+  .kicker {
+    font-size: 0.6rem;
+  }
+
+  .section-label {
+    font-size: 9px;
+  }
+
+  .heritage-stamp {
+    font-size: 0.6rem;
+    padding: 0.2rem 0.5rem;
+  }
+}
+
 /* Disable grain + scanlines below 768px and for reduced motion */
 @media (max-width: 767px) {
   .grain-overlay::after,
@@ -1345,6 +1360,15 @@ body.scroll-locked {
   body {
     background: white !important;
     color: #1a1a1a !important;
+  }
+  header,
+  footer,
+  nav,
+  .hamburger-btn,
+  .mobile-menu,
+  .bottom-nav,
+  [data-testid='bottom-nav'] {
+    display: none !important;
   }
   .glass-subtle,
   .glass-default,
