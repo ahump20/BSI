@@ -1,47 +1,6 @@
 import { motion } from 'framer-motion';
 import { staggerContainer, staggerItem } from '../utils/animations';
-
-const heavyProjects = [
-  {
-    name: 'A Documented Heritage',
-    description:
-      'Personal data archive with 12+ interactive D3 charts, a Three.js swing biomechanics viewer, and an ancestry globe. Cross-references 8 data sources — Spotify, 23andMe, natal chart, personality instruments, writing corpus, and more.',
-    tech: ['React', 'D3.js', 'Three.js', 'TypeScript', 'Tailwind'],
-    url: 'https://dna.austinhumphrey.com',
-    highlight: 'Data Viz',
-    live: false,
-  },
-  {
-    name: 'BSI Radar Lab',
-    description:
-      'Physics-based quality auditor for TrackMan pitch data. Six validation layers — Magnus model, SSW detection, calibration drift, physical bounds, release clustering, and fatigue tracking. All processing runs locally in the browser.',
-    tech: ['React', 'Recharts', 'TypeScript', 'Vite'],
-    url: 'https://labs.blazesportsintel.com',
-    highlight: 'Analytics',
-    live: true,
-  },
-];
-
-const lightProjects = [
-  {
-    name: 'BlazeCraft',
-    description:
-      'Warcraft 3: Frozen Throne-style system health dashboard for BSI infrastructure. Real-time monitoring with game-inspired UI and Durable Object state management.',
-    tech: ['Cloudflare Pages', 'Workers', 'Durable Objects', 'Canvas2D'],
-    url: 'https://blazecraft.app',
-    highlight: 'DevOps',
-    live: true,
-  },
-  {
-    name: 'Sandlot Sluggers',
-    description:
-      'Browser-based 3D baseball arcade with four game modes, real college baseball rosters via BSI API, and leaderboard integration.',
-    tech: ['Three.js', 'JavaScript', 'Cloudflare Pages'],
-    url: 'https://arcade.blazesportsintel.com',
-    highlight: 'Game',
-    live: true,
-  },
-];
+import { PORTFOLIO_PROJECTS } from '../content/site';
 
 function LiveBadge() {
   return (
@@ -76,7 +35,7 @@ export default function Projects() {
 
           {/* Heavy-weight projects — larger cards, more visual space */}
           <div className="grid md:grid-cols-2 gap-6 mb-8">
-            {heavyProjects.map((project) => (
+            {PORTFOLIO_PROJECTS.featured.map((project) => (
               <motion.a
                 key={project.name}
                 variants={staggerItem}
@@ -118,7 +77,7 @@ export default function Projects() {
 
           {/* Light-weight projects — compact treatment */}
           <div className="grid md:grid-cols-2 gap-4">
-            {lightProjects.map((project) => (
+            {PORTFOLIO_PROJECTS.supporting.map((project) => (
               <motion.a
                 key={project.name}
                 variants={staggerItem}

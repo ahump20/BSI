@@ -1,40 +1,7 @@
 import { motion } from 'framer-motion';
 import { staggerContainer, staggerItem } from '../utils/animations';
 import PlatformStatus from './PlatformStatus';
-
-const leagues = [
-  { name: 'College Baseball', note: 'Flagship' },
-  { name: 'MLB', note: 'Full Coverage' },
-  { name: 'NFL', note: 'Full Coverage' },
-  { name: 'NCAA Football', note: 'Full Coverage' },
-  { name: 'NBA', note: 'Full Coverage' },
-  { name: 'NCAA Basketball', note: 'Full Coverage' },
-];
-
-const techStack = [
-  'Cloudflare Workers', 'D1', 'KV', 'R2', 'Hono',
-  'Next.js', 'React', 'TypeScript', 'Claude API',
-  'SportsDataIO', 'Highlightly', 'Vitest', 'Playwright',
-];
-
-const capabilities = [
-  {
-    title: 'AI-Powered Analysis',
-    description: 'Claude-driven editorial generation, predictive modeling, and analytical depth — AI as a force multiplier for coverage, not a gimmick.',
-  },
-  {
-    title: 'Predictive Intelligence',
-    description: 'Machine learning models trained on historical performance, matchup dynamics, and contextual factors. Predictions grounded in real signal.',
-  },
-  {
-    title: 'Edge-First Architecture',
-    description: '23 Cloudflare Workers at the edge — sub-50ms response times globally. Data pipelines that fetch, transform, and cache without a traditional server.',
-  },
-  {
-    title: 'Podcast Export',
-    description: 'NotebookLM integration transforms written analytics into audio. Coverage extends beyond readers to listeners through a second medium.',
-  },
-];
+import { BSI_SHOWCASE, PLATFORM_URLS, SITE_TAGLINE } from '../content/site';
 
 function StatCard({ value, label }: { value: string; label: string }) {
   return (
@@ -67,7 +34,7 @@ export default function BSIShowcase() {
             <p className="section-label">// The Platform</p>
             <h2 id="bsi-heading" className="section-title">Blaze Sports Intel</h2>
             <p className="font-sans font-semibold text-burnt-orange uppercase tracking-[0.2em] text-sm mb-4">
-              Born to Blaze the Path Beaten Less
+              {SITE_TAGLINE}
             </p>
             <div className="mb-10">
               <PlatformStatus />
@@ -95,7 +62,7 @@ export default function BSIShowcase() {
 
               <div className="flex flex-wrap gap-4 pt-2">
                 <a
-                  href="https://blazesportsintel.com"
+                  href={PLATFORM_URLS.bsi}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-primary"
@@ -103,7 +70,7 @@ export default function BSIShowcase() {
                   Visit BSI
                 </a>
                 <a
-                  href="https://blazecraft.app"
+                  href={PLATFORM_URLS.blazecraft}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-outline"
@@ -117,22 +84,16 @@ export default function BSIShowcase() {
             <motion.div variants={staggerItem} className="lg:col-span-2 space-y-8">
               {/* Stat grid */}
               <div className="grid grid-cols-2 gap-6">
-                <StatCard value="23" label="Workers" />
-                <StatCard value="7" label="D1 Databases" />
-                <StatCard value="12" label="KV Namespaces" />
-                <StatCard value="18" label="R2 Buckets" />
+                {BSI_SHOWCASE.stats.map((stat) => (
+                  <StatCard key={stat.label} value={stat.value} label={stat.label} />
+                ))}
               </div>
 
               {/* Architecture flow — compact */}
               <div className="card p-5">
                 <p className="section-label mb-3">// Data Flow</p>
                 <div className="space-y-2">
-                  {[
-                    { label: 'External APIs', sub: 'Highlightly · SportsDataIO · ESPN' },
-                    { label: 'Workers', sub: '23 Hono-powered edge functions' },
-                    { label: 'Storage', sub: 'D1 · KV · R2' },
-                    { label: 'UI', sub: 'Next.js static export' },
-                  ].map((node, i) => (
+                  {BSI_SHOWCASE.architecture.map((node, i) => (
                     <div key={node.label} className="flex items-center gap-3">
                       {i > 0 && <span aria-hidden="true" className="text-burnt-orange/50 font-mono text-xs">→</span>}
                       <div>
@@ -150,13 +111,13 @@ export default function BSIShowcase() {
           <motion.div variants={staggerItem} className="mb-12">
             <p className="section-label mb-4">// Coverage</p>
             <div className="flex flex-wrap gap-x-6 gap-y-2">
-              {leagues.map((league, i) => (
+              {BSI_SHOWCASE.leagues.map((league, i) => (
                 <span key={league.name} className="flex items-center gap-2">
                   <span className="font-sans text-sm uppercase tracking-wider text-bone font-medium">
                     {league.name}
                   </span>
                   <span className="text-[0.6rem] font-mono text-burnt-orange">{league.note}</span>
-                  {i < leagues.length - 1 && (
+                  {i < BSI_SHOWCASE.leagues.length - 1 && (
                     <span className="text-bone/10 ml-2" aria-hidden="true">|</span>
                   )}
                 </span>
@@ -168,7 +129,7 @@ export default function BSIShowcase() {
           <motion.div variants={staggerItem} className="mb-12">
             <p className="section-label mb-6">// Intelligence Layer</p>
             <div className="grid md:grid-cols-2 gap-6">
-              {capabilities.map((cap) => (
+              {BSI_SHOWCASE.capabilities.map((cap) => (
                 <div
                   key={cap.title}
                   className="border-l-2 border-burnt-orange/30 pl-5 py-1 hover:border-burnt-orange transition-colors duration-300"
@@ -186,7 +147,7 @@ export default function BSIShowcase() {
           <motion.div variants={staggerItem}>
             <p className="section-label mb-4">// Tech Stack</p>
             <div className="flex flex-wrap gap-3">
-              {techStack.map((tech) => (
+              {BSI_SHOWCASE.techStack.map((tech) => (
                 <span
                   key={tech}
                   className="text-xs font-mono bg-burnt-orange/10 text-burnt-orange border border-burnt-orange/20 px-4 py-2 rounded-full hover:bg-burnt-orange/20 hover:border-burnt-orange/40 transition-all duration-300"
