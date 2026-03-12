@@ -34,6 +34,12 @@ const IconBrain = () => (
   </svg>
 );
 
+const IconChart = () => (
+  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+    <path d="M2 14V9M6 14V6M10 14V4M14 14V2" />
+  </svg>
+);
+
 const IconMore = () => (
   <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
     <circle cx="3" cy="8" r="1.2" fill="currentColor" stroke="none" />
@@ -50,7 +56,7 @@ const ICON_MAP: Record<NavIconKey, () => React.JSX.Element> = {
   baseball: IconBaseball,
   brain: IconBrain,
   // Unused keys in bottom nav — fallback to IconHome
-  grid: IconHome, football: IconHome, basketball: IconHome, chart: IconHome,
+  grid: IconHome, football: IconHome, basketball: IconHome, chart: IconChart,
   list: IconHome, target: IconHome, book: IconHome, tag: IconHome,
   globe: IconHome, pen: IconHome, info: IconHome, flask: IconHome,
   dollar: IconHome, star: IconHome, more: IconMore,

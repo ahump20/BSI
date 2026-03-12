@@ -19,6 +19,7 @@ interface MobileMenuDrawerProps {
   primary: MenuItem[];
   leagues: LeagueNavItem[];
   secondary: MenuItem[];
+  analytics?: MenuItem[];
 }
 
 /** Sub-links shown when a league is expanded. */
@@ -86,6 +87,7 @@ export function MobileMenuDrawer({
   primary,
   leagues,
   secondary,
+  analytics = [],
 }: MobileMenuDrawerProps) {
   const pathname = usePathname();
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -248,6 +250,13 @@ export function MobileMenuDrawer({
     );
   };
 
+  const renderSectionHeader = (label: string) => (
+    <span className="text-[10px] uppercase tracking-widest text-text-muted font-medium px-4 flex items-center gap-2">
+      {label}
+      <span className="h-px flex-1 bg-border-subtle" />
+    </span>
+  );
+
   return (
     <AnimatePresence>
       {open && (
@@ -312,10 +321,7 @@ export function MobileMenuDrawer({
               <>
                 <div className="mx-4 my-2 border-t border-border-subtle" />
                 <div className="px-4 pb-1">
-                  <span className="text-[10px] uppercase tracking-widest text-text-muted font-medium px-4 flex items-center gap-2">
-                    Sports
-                    <span className="h-px flex-1 bg-border-subtle" />
-                  </span>
+                  {renderSectionHeader('Sports')}
                 </div>
                 <motion.nav
                   className="px-4 pb-2 space-y-1"
@@ -328,14 +334,30 @@ export function MobileMenuDrawer({
               </>
             )}
 
-            {/* Secondary */}
+            {/* Analytics & Tools */}
+            {analytics.length > 0 && (
+              <>
+                <div className="mx-4 my-2 border-t border-border-subtle" />
+                <div className="px-4 pb-1">
+                  {renderSectionHeader('Analytics & Tools')}
+                </div>
+                <motion.nav
+                  className="px-4 pb-2 space-y-1"
+                  variants={linkStagger}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  {analytics.map(renderLink)}
+                </motion.nav>
+              </>
+            )}
+
+            {/* More */}
             {secondary.length > 0 && (
               <>
                 <div className="mx-4 my-2 border-t border-border-subtle" />
                 <div className="px-4 pb-1">
-                  <span className="text-[10px] uppercase tracking-widest text-text-muted font-medium px-4">
-                    More
-                  </span>
+                  {renderSectionHeader('More')}
                 </div>
                 <motion.nav
                   className="px-4 pb-4 space-y-1"

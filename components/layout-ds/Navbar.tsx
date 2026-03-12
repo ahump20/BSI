@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Menu, X, ChevronDown, Search } from 'lucide-react';
 import { MobileMenuDrawer } from './MobileMenuDrawer';
-import type { LeagueNavItem } from '@/lib/navigation';
+import type { LeagueNavItem, MainNavItem } from '@/lib/navigation';
 import { getReadApiUrl } from '@/lib/utils/public-api';
 
 export interface NavItem {
@@ -18,6 +18,7 @@ export interface NavbarProps {
   primary: NavItem[];
   leagues: LeagueNavItem[];
   secondary: NavItem[];
+  analytics?: MainNavItem[];
 }
 
 // ---------------------------------------------------------------------------
@@ -73,15 +74,13 @@ function useNewsTicker(): string {
 }
 
 // ---------------------------------------------------------------------------
-// Leagues dropdown — sport links with season indicators
+// Reusable dropdown hook — handles outside click + escape
 // ---------------------------------------------------------------------------
 
-function LeaguesDropdown({ items }: { items: LeagueNavItem[] }) {
+function useDropdown() {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
 
-  // Close on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
@@ -90,12 +89,21 @@ function LeaguesDropdown({ items }: { items: LeagueNavItem[] }) {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  // Close on Escape
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Escape') setOpen(false);
   }, []);
 
-  // Check if any league is active
+  return { open, setOpen, ref, handleKeyDown };
+}
+
+// ---------------------------------------------------------------------------
+// Leagues dropdown — sport links with season indicators
+// ---------------------------------------------------------------------------
+
+function LeaguesDropdown({ items }: { items: LeagueNavItem[] }) {
+  const { open, setOpen, ref, handleKeyDown } = useDropdown();
+  const pathname = usePathname();
+
   const hasActiveSport = items.some(
     (item) => pathname === item.href || pathname.startsWith(item.href + '/')
   );
@@ -113,7 +121,7 @@ function LeaguesDropdown({ items }: { items: LeagueNavItem[] }) {
         aria-haspopup="true"
         aria-controls="leagues-menu"
       >
-        Leagues
+        Sports
         <ChevronDown className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
 
@@ -128,7 +136,6 @@ function LeaguesDropdown({ items }: { items: LeagueNavItem[] }) {
             const isActive = item.phase !== 'offseason';
             const isFeatured = item.featured;
 
-            // Divider after featured items
             const prevItem = items[idx - 1];
             const showDivider = idx > 0 && prevItem?.featured && !isFeatured;
 
@@ -174,20 +181,72 @@ function LeaguesDropdown({ items }: { items: LeagueNavItem[] }) {
 }
 
 // ---------------------------------------------------------------------------
+// Analytics dropdown — power tools
+// ---------------------------------------------------------------------------
+
+function AnalyticsDropdown({ items }: { items: MainNavItem[] }) {
+  const { open, setOpen, ref, handleKeyDown } = useDropdown();
+  const pathname = usePathname();
+
+  const hasActiveItem = items.some(
+    (item) => pathname === item.href || pathname.startsWith(item.href + '/')
+  );
+
+  if (items.length === 0) return null;
+
+  return (
+    <div ref={ref} className="relative" onKeyDown={handleKeyDown}>
+      <button
+        onClick={() => setOpen(!open)}
+        className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+          hasActiveItem
+            ? 'bg-burnt-orange/15 text-ember'
+            : 'text-text-secondary hover:text-text-primary hover:bg-surface-light'
+        }`}
+        aria-expanded={open}
+        aria-haspopup="true"
+        aria-controls="analytics-menu"
+      >
+        Analytics
+        <ChevronDown className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+
+      {open && (
+        <div
+          id="analytics-menu"
+          className="absolute top-full left-0 mt-2 w-52 bg-midnight/95 backdrop-blur-xl border border-border rounded-xl shadow-2xl py-1 z-50"
+          role="menu"
+        >
+          {items.map((item) => {
+            const active = pathname === item.href || pathname.startsWith(item.href + '/');
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                role="menuitem"
+                className={`block px-4 py-2.5 text-sm transition-colors ${
+                  active
+                    ? 'text-ember bg-surface-light'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-surface-light'
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // More dropdown — secondary pages
 // ---------------------------------------------------------------------------
 
 function MoreDropdown({ items }: { items: NavItem[] }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
+  const { open, setOpen, ref } = useDropdown();
 
   if (items.length === 0) return null;
 
@@ -227,7 +286,7 @@ function MoreDropdown({ items }: { items: NavItem[] }) {
 // Navbar
 // ---------------------------------------------------------------------------
 
-export function Navbar({ primary, leagues, secondary }: NavbarProps) {
+export function Navbar({ primary, leagues, secondary, analytics = [] }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
   const tickerText = useNewsTicker();
@@ -263,7 +322,7 @@ export function Navbar({ primary, leagues, secondary }: NavbarProps) {
               />
             </Link>
 
-            {/* Center: Primary + Leagues + More (desktop) */}
+            {/* Center: Primary + Sports + Analytics + More (desktop) */}
             <div className="hidden md:flex items-center gap-1">
               {primary.map((item) => (
                 <Link
@@ -280,6 +339,7 @@ export function Navbar({ primary, leagues, secondary }: NavbarProps) {
                 </Link>
               ))}
               <LeaguesDropdown items={leagues} />
+              <AnalyticsDropdown items={analytics} />
               <MoreDropdown items={secondary} />
             </div>
 
@@ -334,6 +394,7 @@ export function Navbar({ primary, leagues, secondary }: NavbarProps) {
         primary={primary}
         leagues={leagues}
         secondary={secondary}
+        analytics={analytics}
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
       />

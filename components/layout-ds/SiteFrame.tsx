@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
 import { Providers } from '@/app/providers';
@@ -7,8 +8,10 @@ import { PageTransition, MotionProvider } from '@/components/motion';
 import { AppSidebar } from '@/components/layout-ds/AppSidebar';
 import { AppTopBar } from '@/components/layout-ds/AppTopBar';
 import { BottomNavWrapper } from '@/components/layout-ds/BottomNavWrapper';
+import { Navbar } from '@/components/layout-ds/Navbar';
 import { ScrollProgress } from '@/components/ui/ScrollProgress';
 import { BreadcrumbBar } from '@/components/layout-ds/BreadcrumbBar';
+import { getMainNavItems, getAnalyticsNavItems } from '@/lib/navigation';
 
 const CommandPalette = dynamic(() => import('@/components/layout-ds/CommandPalette').then((mod) => ({ default: mod.CommandPalette })));
 const KonamiCodeWrapper = dynamic(() => import('@/components/easter-eggs').then((mod) => ({ default: mod.KonamiCodeWrapper })));
@@ -26,6 +29,9 @@ function usesAppShell(pathname: string): boolean {
 export function SiteFrame({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const appShell = usesAppShell(pathname);
+
+  const navData = useMemo(() => getMainNavItems(), []);
+  const analyticsItems = useMemo(() => getAnalyticsNavItems(), []);
 
   return (
     <Providers>
@@ -52,6 +58,12 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
           </div>
         ) : (
           <>
+            <Navbar
+              primary={navData.primary}
+              leagues={navData.leagues}
+              secondary={navData.secondary}
+              analytics={analyticsItems}
+            />
             <CommandPalette />
             <KonamiCodeWrapper />
             <PageTracker />
@@ -59,12 +71,12 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
             <main id="main-content" className="min-h-screen">
               <PageTransition>{children}</PageTransition>
             </main>
+            <BottomNavWrapper />
           </>
         )}
 
         <FeedbackButton />
         <ScrollToTopButton />
-        {appShell ? <BottomNavWrapper /> : null}
       </MotionProvider>
     </Providers>
   );
