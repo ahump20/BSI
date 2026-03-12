@@ -8,6 +8,7 @@ import process from 'node:process';
 const PROJECT_NAME = 'blazesportsintel';
 const DEFAULT_PRODUCTION_URL = 'https://blazesportsintel.com';
 const DEPLOY_DIR = '/var/tmp/bsi-deploy-out';
+const DEPLOY_BUNDLE_DIRNAME = 'deploy-bundle';
 const NPM = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 const NPX = process.platform === 'win32' ? 'npx.cmd' : 'npx';
 
@@ -125,6 +126,9 @@ function createSummary(args) {
         productionUrl: args.productionUrl || '',
       },
     },
+    artifacts: {
+      deployBundleDir: '',
+    },
     error: null,
   };
 }
@@ -138,9 +142,18 @@ async function persistSummary(reportFile, summary) {
   await writeFile(reportFile, `${JSON.stringify(summary, null, 2)}\n`, 'utf8');
 }
 
-async function stageOutput() {
+async function stageOutput(args, summary) {
   logStep('Staging build output to deploy dir');
   await runCommand('rsync', ['-a', '--delete', 'out/', `${DEPLOY_DIR}/`], 'rsync stage');
+
+  if (!args.artifactDir) {
+    return;
+  }
+
+  const deployBundleDir = path.join(args.artifactDir, DEPLOY_BUNDLE_DIRNAME);
+  await mkdir(deployBundleDir, { recursive: true });
+  await runCommand('rsync', ['-a', '--delete', `${DEPLOY_DIR}/`, `${deployBundleDir}/`], 'rsync artifact bundle');
+  summary.artifacts.deployBundleDir = deployBundleDir;
 }
 
 async function deployBranch(branch) {
@@ -181,7 +194,7 @@ async function deployBranch(branch) {
 }
 
 async function runSmoke({ previewUrl, previewLabel, productionUrl, productionLabel, headed, artifactDir }) {
-  const args = ['run', 'smoke:homepage', '--'];
+  const args = ['run', 'smoke:release', '--'];
 
   if (headed) {
     args.push('--headed');
@@ -197,7 +210,7 @@ async function runGuardedDeploy(args, summary) {
   logStep('Building BSI');
   await runCommand(NPM, ['run', 'build'], 'npm run build');
 
-  await stageOutput();
+  await stageOutput(args, summary);
 
   const preview = await deployBranch(args.previewBranch);
   summary.preview = preview;

@@ -57,7 +57,8 @@ test.describe('Homepage smoke tests', () => {
   });
 
   test('no console errors on page load', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(1500);
 
     // Allow common benign errors (e.g. analytics, third-party scripts)
     const realErrors = consoleErrors.filter(

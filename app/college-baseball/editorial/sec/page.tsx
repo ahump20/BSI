@@ -7,6 +7,8 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
 import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
+import { ConferenceTeamGrid } from '@/components/editorial/ConferenceTeamGrid';
+import type { TeamEntry } from '@/components/editorial/ConferenceTeamGrid';
 
 const seoConfig = {
   title: 'SEC Baseball: 2026 Conference Preview',
@@ -20,56 +22,25 @@ const seoConfig = {
 
 export const metadata = editorialMetadata(seoConfig);
 
-// ── Projection tier badge styling ──────────────────────────────────────
-
-type Tier = 'Omaha Favorite' | 'Contender' | 'Dark Horse' | 'Bubble' | 'Rebuilding';
-
-const tierStyles: Record<Tier, string> = {
-  'Omaha Favorite': 'bg-[#C9A227]/20 text-[#C9A227] border-[#C9A227]/30',
-  Contender: 'bg-burnt-orange/20 text-ember border-burnt-orange/30',
-  'Dark Horse': 'bg-surface-medium text-text-secondary border-border-strong',
-  Bubble: 'bg-surface-light text-text-muted border-border',
-  Rebuilding: 'bg-surface-light text-text-muted border-border-subtle',
-};
-
-function TierBadge({ tier }: { tier: string }) {
-  const style = tierStyles[tier as Tier] || tierStyles.Bubble;
-  return (
-    <span
-      className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider border ${style}`}
-    >
-      {tier}
-    </span>
-  );
-}
-
 // ── SEC team data ──────────────────────────────────────────────────────
 
-interface TeamCard {
-  name: string;
-  slug: string;
-  mascot: string;
-  record: string;
-  tier: Tier;
-}
-
-const SEC_TEAMS: TeamCard[] = [
-  { name: 'Texas', slug: 'texas', mascot: 'Longhorns', record: '44-14', tier: 'Omaha Favorite' },
-  { name: 'Texas A&M', slug: 'texas-am', mascot: 'Aggies', record: '53-15', tier: 'Omaha Favorite' },
-  { name: 'LSU', slug: 'lsu', mascot: 'Tigers', record: '52-17', tier: 'Omaha Favorite' },
-  { name: 'Florida', slug: 'florida', mascot: 'Gators', record: '47-23', tier: 'Omaha Favorite' },
-  { name: 'Tennessee', slug: 'tennessee', mascot: 'Volunteers', record: '45-23', tier: 'Contender' },
-  { name: 'Arkansas', slug: 'arkansas', mascot: 'Razorbacks', record: '46-21', tier: 'Contender' },
-  { name: 'Vanderbilt', slug: 'vanderbilt', mascot: 'Commodores', record: '43-21', tier: 'Contender' },
-  { name: 'Oklahoma', slug: 'oklahoma', mascot: 'Sooners', record: '40-21', tier: 'Dark Horse' },
-  { name: 'Georgia', slug: 'georgia', mascot: 'Bulldogs', record: '39-23', tier: 'Dark Horse' },
-  { name: 'Kentucky', slug: 'kentucky', mascot: 'Wildcats', record: '40-22', tier: 'Dark Horse' },
-  { name: 'South Carolina', slug: 'south-carolina', mascot: 'Gamecocks', record: '38-22', tier: 'Dark Horse' },
-  { name: 'Ole Miss', slug: 'ole-miss', mascot: 'Rebels', record: '42-23', tier: 'Bubble' },
-  { name: 'Alabama', slug: 'alabama', mascot: 'Crimson Tide', record: '36-23', tier: 'Bubble' },
-  { name: 'Auburn', slug: 'auburn', mascot: 'Tigers', record: '32-26', tier: 'Bubble' },
-  { name: 'Mississippi State', slug: 'mississippi-state', mascot: 'Bulldogs', record: '33-25', tier: 'Bubble' },
-  { name: 'Missouri', slug: 'missouri', mascot: 'Tigers', record: '28-29', tier: 'Rebuilding' },
+const SEC_TEAMS: TeamEntry[] = [
+  { name: 'Texas', slug: 'texas', mascot: 'Longhorns', tier: 'Omaha Favorite' },
+  { name: 'Texas A&M', slug: 'texas-am', mascot: 'Aggies', tier: 'Omaha Favorite' },
+  { name: 'LSU', slug: 'lsu', mascot: 'Tigers', tier: 'Omaha Favorite' },
+  { name: 'Florida', slug: 'florida', mascot: 'Gators', tier: 'Omaha Favorite' },
+  { name: 'Tennessee', slug: 'tennessee', mascot: 'Volunteers', tier: 'Contender' },
+  { name: 'Arkansas', slug: 'arkansas', mascot: 'Razorbacks', tier: 'Contender' },
+  { name: 'Vanderbilt', slug: 'vanderbilt', mascot: 'Commodores', tier: 'Contender' },
+  { name: 'Oklahoma', slug: 'oklahoma', mascot: 'Sooners', tier: 'Dark Horse' },
+  { name: 'Georgia', slug: 'georgia', mascot: 'Bulldogs', tier: 'Dark Horse' },
+  { name: 'Kentucky', slug: 'kentucky', mascot: 'Wildcats', tier: 'Dark Horse' },
+  { name: 'South Carolina', slug: 'south-carolina', mascot: 'Gamecocks', tier: 'Dark Horse' },
+  { name: 'Ole Miss', slug: 'ole-miss', mascot: 'Rebels', tier: 'Bubble' },
+  { name: 'Alabama', slug: 'alabama', mascot: 'Crimson Tide', tier: 'Bubble' },
+  { name: 'Auburn', slug: 'auburn', mascot: 'Tigers', tier: 'Bubble' },
+  { name: 'Mississippi State', slug: 'mississippi-state', mascot: 'Bulldogs', tier: 'Bubble' },
+  { name: 'Missouri', slug: 'missouri', mascot: 'Tigers', tier: 'Rebuilding' },
 ];
 
 // ── Key storylines ─────────────────────────────────────────────────────
@@ -97,38 +68,6 @@ const STORYLINES: Storyline[] = [
     body: 'Thirteen SEC teams are ranked in the preseason Top 50. That\'s more than half the conference. Ole Miss, Alabama, Auburn, and Mississippi State all sit in the Bubble tier — and all four would be top-25 programs in most other conferences. Even Missouri, the lone Rebuilding team, has Power Five resources and a path to contention within two years. The floor is high. The ceiling is Omaha.',
   },
 ];
-
-// ── Team preview card ──────────────────────────────────────────────────
-
-function TeamPreviewCard({ team }: { team: TeamCard }) {
-  return (
-    <Link href={`/college-baseball/editorial/${team.slug}-2026`} className="block group">
-      <div className="bg-surface-light border border-border-subtle rounded-lg p-4 hover:border-[#C9A227]/40 hover:bg-surface-medium transition-all h-full">
-        <div className="flex items-start justify-between mb-2">
-          <div className="min-w-0">
-            <h4 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide group-hover:text-[#C9A227] transition-colors truncate">
-              {team.name}
-            </h4>
-            <p className="text-text-muted text-xs">{team.mascot}</p>
-          </div>
-          <TierBadge tier={team.tier} />
-        </div>
-        <div className="flex items-center justify-between mt-3">
-          <span className="text-text-muted text-xs font-mono">{team.record}</span>
-          <svg
-            viewBox="0 0 24 24"
-            className="w-3.5 h-3.5 text-text-muted group-hover:text-[#C9A227]/60 transition-colors"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <path d="M9 18l6-6-6-6" />
-          </svg>
-        </div>
-      </div>
-    </Link>
-  );
-}
 
 // ── Page ───────────────────────────────────────────────────────────────
 
@@ -296,13 +235,11 @@ export default function SECEditorialPage() {
               </div>
             </ScrollReveal>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-              {SEC_TEAMS.map((team, i) => (
-                <ScrollReveal key={team.slug} direction="up" delay={Math.min(i * 40, 400)}>
-                  <TeamPreviewCard team={team} />
-                </ScrollReveal>
-              ))}
-            </div>
+            <ConferenceTeamGrid
+              teams={SEC_TEAMS}
+              conference="SEC"
+              hoverColor="rgba(201, 162, 39, 0.4)"
+            />
           </Container>
         </Section>
 

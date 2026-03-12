@@ -13,6 +13,8 @@ import { ScrollReveal } from '@/components/cinematic';
 import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
+import { ConferenceTeamGrid } from '@/components/editorial/ConferenceTeamGrid';
+import type { TeamEntry, Conference } from '@/components/editorial/ConferenceTeamGrid';
 
 // ── Daily Digest types ───────────────────────────────────────────────
 
@@ -38,93 +40,63 @@ type FilterTag = 'All' | 'SEC' | 'Big 12' | 'Big Ten' | 'Weekly' | 'National' | 
 
 const FILTER_TAGS: FilterTag[] = ['All', 'SEC', 'Big 12', 'Big Ten', 'Weekly', 'National', 'Team Preview', 'Conference'];
 
-// ── Projection tier badge styling ──────────────────────────────────────
-
-type Tier = 'Omaha Favorite' | 'Contender' | 'Dark Horse' | 'Bubble' | 'Sleeper' | 'Rebuilding';
-
-const tierStyles: Record<Tier, string> = {
-  'Omaha Favorite': 'bg-[#C9A227]/20 text-[#C9A227] border-[#C9A227]/30',
-  Contender: 'bg-burnt-orange/20 text-ember border-burnt-orange/30',
-  'Dark Horse': 'bg-surface-medium text-text-secondary border-border-strong',
-  Bubble: 'bg-surface-light text-text-muted border-border',
-  Sleeper: 'bg-surface-light text-text-muted border-border',
-  Rebuilding: 'bg-surface-light text-text-muted border-border-subtle',
-};
-
-function TierBadge({ tier }: { tier: string }) {
-  const style = tierStyles[tier as Tier] || tierStyles.Bubble;
-  return (
-    <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider border ${style}`}>
-      {tier}
-    </span>
-  );
-}
-
 // ── Team data ──────────────────────────────────────────────────────────
 
-interface TeamCard {
-  name: string;
-  slug: string;
-  mascot: string;
-  record: string;
-  tier: string;
-}
-
-const SEC_TEAMS: TeamCard[] = [
-  { name: 'Texas', slug: 'texas', mascot: 'Longhorns', record: '16-0', tier: 'Omaha Favorite' },
-  { name: 'LSU', slug: 'lsu', mascot: 'Tigers', record: '11-1', tier: 'Omaha Favorite' },
-  { name: 'Florida', slug: 'florida', mascot: 'Gators', record: '12-1', tier: 'Omaha Favorite' },
-  { name: 'Mississippi State', slug: 'mississippi-state', mascot: 'Bulldogs', record: '11-2', tier: 'Omaha Favorite' },
-  { name: 'Arkansas', slug: 'arkansas', mascot: 'Razorbacks', record: '10-3', tier: 'Contender' },
-  { name: 'Auburn', slug: 'auburn', mascot: 'Tigers', record: '10-2', tier: 'Contender' },
-  { name: 'Georgia', slug: 'georgia', mascot: 'Bulldogs', record: '11-1', tier: 'Contender' },
-  { name: 'Texas A&M', slug: 'texas-am', mascot: 'Aggies', record: '9-3', tier: 'Contender' },
-  { name: 'Oklahoma', slug: 'oklahoma', mascot: 'Sooners', record: '10-2', tier: 'Contender' },
-  { name: 'Tennessee', slug: 'tennessee', mascot: 'Volunteers', record: '8-4', tier: 'Contender' },
-  { name: 'Kentucky', slug: 'kentucky', mascot: 'Wildcats', record: '9-3', tier: 'Dark Horse' },
-  { name: 'South Carolina', slug: 'south-carolina', mascot: 'Gamecocks', record: '8-5', tier: 'Dark Horse' },
-  { name: 'Vanderbilt', slug: 'vanderbilt', mascot: 'Commodores', record: '7-5', tier: 'Dark Horse' },
-  { name: 'Ole Miss', slug: 'ole-miss', mascot: 'Rebels', record: '9-4', tier: 'Bubble' },
-  { name: 'Alabama', slug: 'alabama', mascot: 'Crimson Tide', record: '8-4', tier: 'Bubble' },
-  { name: 'Missouri', slug: 'missouri', mascot: 'Tigers', record: '5-6', tier: 'Rebuilding' },
+const SEC_TEAMS: TeamEntry[] = [
+  { name: 'Texas', slug: 'texas', mascot: 'Longhorns', tier: 'Omaha Favorite' },
+  { name: 'LSU', slug: 'lsu', mascot: 'Tigers', tier: 'Omaha Favorite' },
+  { name: 'Florida', slug: 'florida', mascot: 'Gators', tier: 'Omaha Favorite' },
+  { name: 'Mississippi State', slug: 'mississippi-state', mascot: 'Bulldogs', tier: 'Omaha Favorite' },
+  { name: 'Arkansas', slug: 'arkansas', mascot: 'Razorbacks', tier: 'Contender' },
+  { name: 'Auburn', slug: 'auburn', mascot: 'Tigers', tier: 'Contender' },
+  { name: 'Georgia', slug: 'georgia', mascot: 'Bulldogs', tier: 'Contender' },
+  { name: 'Texas A&M', slug: 'texas-am', mascot: 'Aggies', tier: 'Contender' },
+  { name: 'Oklahoma', slug: 'oklahoma', mascot: 'Sooners', tier: 'Contender' },
+  { name: 'Tennessee', slug: 'tennessee', mascot: 'Volunteers', tier: 'Contender' },
+  { name: 'Kentucky', slug: 'kentucky', mascot: 'Wildcats', tier: 'Dark Horse' },
+  { name: 'South Carolina', slug: 'south-carolina', mascot: 'Gamecocks', tier: 'Dark Horse' },
+  { name: 'Vanderbilt', slug: 'vanderbilt', mascot: 'Commodores', tier: 'Dark Horse' },
+  { name: 'Ole Miss', slug: 'ole-miss', mascot: 'Rebels', tier: 'Bubble' },
+  { name: 'Alabama', slug: 'alabama', mascot: 'Crimson Tide', tier: 'Bubble' },
+  { name: 'Missouri', slug: 'missouri', mascot: 'Tigers', tier: 'Rebuilding' },
 ];
 
-const BIG12_TEAMS: TeamCard[] = [
-  { name: 'West Virginia', slug: 'west-virginia', mascot: 'Mountaineers', record: '10-2', tier: 'Dark Horse' },
-  { name: 'TCU', slug: 'tcu', mascot: 'Horned Frogs', record: '9-4', tier: 'Dark Horse' },
-  { name: 'Kansas', slug: 'kansas', mascot: 'Jayhawks', record: '7-4', tier: 'Dark Horse' },
-  { name: 'Oklahoma State', slug: 'oklahoma-state', mascot: 'Cowboys', record: '8-4', tier: 'Dark Horse' },
-  { name: 'Arizona', slug: 'arizona', mascot: 'Wildcats', record: '7-4', tier: 'Dark Horse' },
-  { name: 'Arizona State', slug: 'arizona-state', mascot: 'Sun Devils', record: '7-5', tier: 'Dark Horse' },
-  { name: 'Baylor', slug: 'baylor', mascot: 'Bears', record: '7-6', tier: 'Bubble' },
-  { name: 'Houston', slug: 'houston', mascot: 'Cougars', record: '7-5', tier: 'Bubble' },
-  { name: 'UCF', slug: 'ucf', mascot: 'Knights', record: '7-5', tier: 'Bubble' },
-  { name: 'Texas Tech', slug: 'texas-tech', mascot: 'Red Raiders', record: '6-5', tier: 'Bubble' },
-  { name: 'Cincinnati', slug: 'cincinnati', mascot: 'Bearcats', record: '6-6', tier: 'Rebuilding' },
-  { name: 'BYU', slug: 'byu', mascot: 'Cougars', record: '5-7', tier: 'Rebuilding' },
-  { name: 'Kansas State', slug: 'kansas-state', mascot: 'Wildcats', record: '5-6', tier: 'Rebuilding' },
-  { name: 'Utah', slug: 'utah', mascot: 'Utes', record: '3-8', tier: 'Rebuilding' },
+const BIG12_TEAMS: TeamEntry[] = [
+  { name: 'West Virginia', slug: 'west-virginia', mascot: 'Mountaineers', tier: 'Dark Horse' },
+  { name: 'TCU', slug: 'tcu', mascot: 'Horned Frogs', tier: 'Dark Horse' },
+  { name: 'Kansas', slug: 'kansas', mascot: 'Jayhawks', tier: 'Dark Horse' },
+  { name: 'Oklahoma State', slug: 'oklahoma-state', mascot: 'Cowboys', tier: 'Dark Horse' },
+  { name: 'Arizona', slug: 'arizona', mascot: 'Wildcats', tier: 'Dark Horse' },
+  { name: 'Arizona State', slug: 'arizona-state', mascot: 'Sun Devils', tier: 'Dark Horse' },
+  { name: 'Baylor', slug: 'baylor', mascot: 'Bears', tier: 'Bubble' },
+  { name: 'Houston', slug: 'houston', mascot: 'Cougars', tier: 'Bubble' },
+  { name: 'UCF', slug: 'ucf', mascot: 'Knights', tier: 'Bubble' },
+  { name: 'Texas Tech', slug: 'texas-tech', mascot: 'Red Raiders', tier: 'Bubble' },
+  { name: 'Cincinnati', slug: 'cincinnati', mascot: 'Bearcats', tier: 'Rebuilding' },
+  { name: 'BYU', slug: 'byu', mascot: 'Cougars', tier: 'Rebuilding' },
+  { name: 'Kansas State', slug: 'kansas-state', mascot: 'Wildcats', tier: 'Rebuilding' },
+  { name: 'Utah', slug: 'utah', mascot: 'Utes', tier: 'Rebuilding' },
 ];
 
-const BIGTEN_TEAMS: TeamCard[] = [
-  { name: 'UCLA', slug: 'ucla', mascot: 'Bruins', record: '10-2', tier: 'Omaha Favorite' },
-  { name: 'USC', slug: 'usc', mascot: 'Trojans', record: '12-0', tier: 'Contender' },
-  { name: 'Oregon', slug: 'oregon', mascot: 'Ducks', record: '8-4', tier: 'Contender' },
-  { name: 'Oregon State', slug: 'oregon-state', mascot: 'Beavers', record: '8-4', tier: 'Dark Horse' },
-  { name: 'Nebraska', slug: 'nebraska', mascot: 'Cornhuskers', record: '9-3', tier: 'Dark Horse' },
-  { name: 'Illinois', slug: 'illinois', mascot: 'Fighting Illini', record: '8-3', tier: 'Bubble' },
-  { name: 'Michigan', slug: 'michigan', mascot: 'Wolverines', record: '6-6', tier: 'Bubble' },
-  { name: 'Indiana', slug: 'indiana', mascot: 'Hoosiers', record: '7-4', tier: 'Bubble' },
-  { name: 'Iowa', slug: 'iowa', mascot: 'Hawkeyes', record: '6-5', tier: 'Bubble' },
-  { name: 'Penn State', slug: 'penn-state', mascot: 'Nittany Lions', record: '7-4', tier: 'Bubble' },
-  { name: 'Michigan State', slug: 'michigan-state', mascot: 'Spartans', record: '5-7', tier: 'Bubble' },
-  { name: 'Purdue', slug: 'purdue', mascot: 'Boilermakers', record: '5-6', tier: 'Bubble' },
-  { name: 'Rutgers', slug: 'rutgers', mascot: 'Scarlet Knights', record: '5-6', tier: 'Bubble' },
-  { name: 'Washington', slug: 'washington', mascot: 'Huskies', record: '5-7', tier: 'Bubble' },
-  { name: 'Ohio State', slug: 'ohio-state', mascot: 'Buckeyes', record: '5-7', tier: 'Rebuilding' },
-  { name: 'Maryland', slug: 'maryland', mascot: 'Terrapins', record: '5-6', tier: 'Rebuilding' },
-  { name: 'Minnesota', slug: 'minnesota', mascot: 'Golden Gophers', record: '4-7', tier: 'Rebuilding' },
-  { name: 'Northwestern', slug: 'northwestern', mascot: 'Wildcats', record: '5-7', tier: 'Rebuilding' },
+const BIGTEN_TEAMS: TeamEntry[] = [
+  { name: 'UCLA', slug: 'ucla', mascot: 'Bruins', tier: 'Omaha Favorite' },
+  { name: 'USC', slug: 'usc', mascot: 'Trojans', tier: 'Contender' },
+  { name: 'Oregon', slug: 'oregon', mascot: 'Ducks', tier: 'Contender' },
+  { name: 'Oregon State', slug: 'oregon-state', mascot: 'Beavers', tier: 'Dark Horse' },
+  { name: 'Nebraska', slug: 'nebraska', mascot: 'Cornhuskers', tier: 'Dark Horse' },
+  { name: 'Illinois', slug: 'illinois', mascot: 'Fighting Illini', tier: 'Bubble' },
+  { name: 'Michigan', slug: 'michigan', mascot: 'Wolverines', tier: 'Bubble' },
+  { name: 'Indiana', slug: 'indiana', mascot: 'Hoosiers', tier: 'Bubble' },
+  { name: 'Iowa', slug: 'iowa', mascot: 'Hawkeyes', tier: 'Bubble' },
+  { name: 'Penn State', slug: 'penn-state', mascot: 'Nittany Lions', tier: 'Bubble' },
+  { name: 'Michigan State', slug: 'michigan-state', mascot: 'Spartans', tier: 'Bubble' },
+  { name: 'Purdue', slug: 'purdue', mascot: 'Boilermakers', tier: 'Bubble' },
+  { name: 'Rutgers', slug: 'rutgers', mascot: 'Scarlet Knights', tier: 'Bubble' },
+  { name: 'Washington', slug: 'washington', mascot: 'Huskies', tier: 'Bubble' },
+  { name: 'Ohio State', slug: 'ohio-state', mascot: 'Buckeyes', tier: 'Rebuilding' },
+  { name: 'Maryland', slug: 'maryland', mascot: 'Terrapins', tier: 'Rebuilding' },
+  { name: 'Minnesota', slug: 'minnesota', mascot: 'Golden Gophers', tier: 'Rebuilding' },
+  { name: 'Northwestern', slug: 'northwestern', mascot: 'Wildcats', tier: 'Rebuilding' },
 ];
 
 // ── Standalone articles ────────────────────────────────────────────────
@@ -431,10 +403,10 @@ const CONFERENCES: ConferenceData[] = [
 ];
 
 // Conference section → tag mapping
-const CONFERENCE_SECTIONS: { tag: FilterTag; title: string; tagline: string; teams: TeamCard[]; accent: string; confHref: string }[] = [
-  { tag: 'SEC', title: 'SEC', tagline: 'The Standard', teams: SEC_TEAMS, accent: '#C9A227', confHref: '/college-baseball/editorial/sec' },
-  { tag: 'Big 12', title: 'Big 12', tagline: 'New Blood', teams: BIG12_TEAMS, accent: 'var(--bsi-primary)', confHref: '/college-baseball/editorial/big-12' },
-  { tag: 'Big Ten', title: 'Big Ten', tagline: 'Northern Rising', teams: BIGTEN_TEAMS, accent: '#6B8CAE', confHref: '/college-baseball/editorial/big-ten' },
+const CONFERENCE_SECTIONS: { tag: FilterTag; title: string; tagline: string; teams: TeamEntry[]; conference: Conference; accent: string; hoverColor: string; confHref: string }[] = [
+  { tag: 'SEC', title: 'SEC', tagline: 'The Standard', teams: SEC_TEAMS, conference: 'SEC', accent: '#C9A227', hoverColor: 'rgba(201, 162, 39, 0.4)', confHref: '/college-baseball/editorial/sec' },
+  { tag: 'Big 12', title: 'Big 12', tagline: 'New Blood', teams: BIG12_TEAMS, conference: 'Big 12', accent: 'var(--bsi-primary)', hoverColor: 'rgba(191, 87, 0, 0.4)', confHref: '/college-baseball/editorial/big-12' },
+  { tag: 'Big Ten', title: 'Big Ten', tagline: 'Northern Rising', teams: BIGTEN_TEAMS, conference: 'Big Ten', accent: '#6B8CAE', hoverColor: 'rgba(107, 140, 174, 0.4)', confHref: '/college-baseball/editorial/big-ten' },
 ];
 
 // ── Filter bar ─────────────────────────────────────────────────────────
@@ -464,41 +436,21 @@ function TagFilterBar({ activeTag, onTagChange }: { activeTag: FilterTag; onTagC
 
 // ── Card components ────────────────────────────────────────────────────
 
-function TeamPreviewCard({ team }: { team: TeamCard }) {
-  return (
-    <Link href={`/college-baseball/editorial/${team.slug}-2026`} className="block group">
-      <div className="bg-surface-light border border-border-subtle rounded-lg p-4 hover:border-burnt-orange/40 hover:bg-surface-medium transition-all h-full">
-        <div className="flex items-start justify-between mb-2">
-          <div className="min-w-0">
-            <h4 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide group-hover:text-burnt-orange transition-colors truncate">
-              {team.name}
-            </h4>
-            <p className="text-text-muted text-xs">{team.mascot}</p>
-          </div>
-          <TierBadge tier={team.tier} />
-        </div>
-        <div className="flex items-center justify-between mt-3">
-          <span className="text-text-muted text-xs font-mono">{team.record}</span>
-          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-text-muted group-hover:text-burnt-orange/60 transition-colors" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M9 18l6-6-6-6" />
-          </svg>
-        </div>
-      </div>
-    </Link>
-  );
-}
-
 function ConferenceSection({
   title,
   tagline,
   teams,
+  conference,
   accent,
+  hoverColor,
   confHref,
 }: {
   title: string;
   tagline: string;
-  teams: TeamCard[];
+  teams: TeamEntry[];
+  conference: Conference;
   accent: string;
+  hoverColor: string;
   confHref: string;
 }) {
   return (
@@ -523,13 +475,7 @@ function ConferenceSection({
             </Link>
           </div>
         </ScrollReveal>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-          {teams.map((team, i) => (
-            <ScrollReveal key={team.slug} direction="up" delay={Math.min(i * 30, 300)}>
-              <TeamPreviewCard team={team} />
-            </ScrollReveal>
-          ))}
-        </div>
+        <ConferenceTeamGrid teams={teams} conference={conference} hoverColor={hoverColor} />
         <div className="mt-6 md:hidden">
           <Link href={confHref}>
             <Button variant="secondary" size="sm">Full {title} Preview →</Button>
@@ -902,7 +848,9 @@ export default function EditorialHubPage() {
             title={section.title}
             tagline={section.tagline}
             teams={section.teams}
+            conference={section.conference}
             accent={section.accent}
+            hoverColor={section.hoverColor}
             confHref={section.confHref}
           />
         ))}

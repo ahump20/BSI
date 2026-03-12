@@ -29,9 +29,12 @@ export function HeroSection() {
 
       <div className="relative z-10 w-full min-w-0 max-w-5xl mx-auto text-center px-4 sm:px-6 lg:px-8 corner-marks py-16 sm:py-24">
         {/* Heritage stamp kicker */}
-        <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-fade-in_0.6s_ease-out_forwards] mb-6">
+        <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-fade-in_0.6s_ease-out_forwards] mb-6 flex flex-col items-center gap-1">
+          <span className="text-[10px] uppercase tracking-[0.2em] font-semibold" style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-dust)', opacity: 0.7 }}>
+            Est. 2024
+          </span>
           <span className="heritage-stamp">
-            Est. 2024 <span className="text-bsi-dust">//</span> Five Sports <span className="text-bsi-dust">//</span> One Standard
+            Courage <span className="text-bsi-dust">//</span> Grit <span className="text-bsi-dust">//</span> Leadership
           </span>
         </div>
 
@@ -99,8 +102,7 @@ export function HeroSection() {
             }}
           >
             <span className="text-[var(--heritage-bronze)]">&mdash;</span>{' '}
-            Live scores, game intelligence, and park-adjusted analytics across five sports.
-            College baseball at the core &mdash; free, updated every six hours.{' '}
+            Park-adjusted sabermetrics across college baseball &amp; football, MLB, NBA &amp; NFL &mdash; built for athletes, fans, and front offices who trust data on game day.{' '}
             <span className="text-[var(--heritage-bronze)]">&mdash;</span>
           </p>
         </div>
@@ -130,7 +132,9 @@ export function HeroSection() {
           <div className="marquee-track whitespace-nowrap">
             {[0, 1].map((i) => (
               <span key={i} className="inline-flex items-center gap-6 mr-6 text-[10px] uppercase tracking-[0.15em] text-[var(--bsi-dust)]">
-                <span>5 Sports</span>
+                <span>Free</span>
+                <span className="text-[var(--heritage-bronze)]">&#9670;</span>
+                <span>300+ D1 Teams</span>
                 <span className="text-[var(--heritage-bronze)]">&#9670;</span>
                 <span>wOBA</span>
                 <span className="text-[var(--heritage-bronze)]">&#9670;</span>
@@ -142,9 +146,7 @@ export function HeroSection() {
                 <span className="text-[var(--heritage-bronze)]">&#9670;</span>
                 <span>Editorial</span>
                 <span className="text-[var(--heritage-bronze)]">&#9670;</span>
-                <span>300+ D1 Teams</span>
-                <span className="text-[var(--heritage-bronze)]">&#9670;</span>
-                <span>Free</span>
+                <span>5 Sports</span>
                 <span className="text-[var(--heritage-bronze)]">&#9670;</span>
               </span>
             ))}

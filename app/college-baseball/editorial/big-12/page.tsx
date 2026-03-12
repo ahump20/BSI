@@ -7,6 +7,8 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
 import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
+import { ConferenceTeamGrid } from '@/components/editorial/ConferenceTeamGrid';
+import type { TeamEntry } from '@/components/editorial/ConferenceTeamGrid';
 
 const seoConfig = {
   title: 'Big 12 Baseball: 2026 Conference Preview',
@@ -20,54 +22,23 @@ const seoConfig = {
 
 export const metadata = editorialMetadata(seoConfig);
 
-// ── Projection tier badge styling ──────────────────────────────────────
-
-type Tier = 'Omaha Favorite' | 'Contender' | 'Dark Horse' | 'Bubble' | 'Rebuilding';
-
-const tierStyles: Record<Tier, string> = {
-  'Omaha Favorite': 'bg-[#C9A227]/20 text-[#C9A227] border-[#C9A227]/30',
-  Contender: 'bg-burnt-orange/20 text-ember border-burnt-orange/30',
-  'Dark Horse': 'bg-surface-medium text-text-secondary border-border-strong',
-  Bubble: 'bg-surface-light text-text-muted border-border',
-  Rebuilding: 'bg-surface-light text-text-muted border-border-subtle',
-};
-
-function TierBadge({ tier }: { tier: string }) {
-  const style = tierStyles[tier as Tier] || tierStyles.Bubble;
-  return (
-    <span
-      className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider border ${style}`}
-    >
-      {tier}
-    </span>
-  );
-}
-
 // ── Team data ──────────────────────────────────────────────────────────
 
-interface TeamCard {
-  name: string;
-  slug: string;
-  mascot: string;
-  record: string;
-  tier: string;
-}
-
-const BIG12_TEAMS: TeamCard[] = [
-  { name: 'TCU', slug: 'tcu', mascot: 'Horned Frogs', record: '44-20', tier: 'Contender' },
-  { name: 'Kansas', slug: 'kansas', mascot: 'Jayhawks', record: '42-18', tier: 'Dark Horse' },
-  { name: 'Oklahoma State', slug: 'oklahoma-state', mascot: 'Cowboys', record: '38-22', tier: 'Dark Horse' },
-  { name: 'Arizona', slug: 'arizona', mascot: 'Wildcats', record: '35-24', tier: 'Dark Horse' },
-  { name: 'Arizona State', slug: 'arizona-state', mascot: 'Sun Devils', record: '36-22', tier: 'Dark Horse' },
-  { name: 'Baylor', slug: 'baylor', mascot: 'Bears', record: '30-27', tier: 'Bubble' },
-  { name: 'Houston', slug: 'houston', mascot: 'Cougars', record: '32-26', tier: 'Bubble' },
-  { name: 'UCF', slug: 'ucf', mascot: 'Knights', record: '34-25', tier: 'Bubble' },
-  { name: 'West Virginia', slug: 'west-virginia', mascot: 'Mountaineers', record: '29-27', tier: 'Bubble' },
-  { name: 'Texas Tech', slug: 'texas-tech', mascot: 'Red Raiders', record: '20-33', tier: 'Rebuilding' },
-  { name: 'Cincinnati', slug: 'cincinnati', mascot: 'Bearcats', record: '25-30', tier: 'Rebuilding' },
-  { name: 'BYU', slug: 'byu', mascot: 'Cougars', record: '28-28', tier: 'Rebuilding' },
-  { name: 'Kansas State', slug: 'kansas-state', mascot: 'Wildcats', record: '26-29', tier: 'Rebuilding' },
-  { name: 'Utah', slug: 'utah', mascot: 'Utes', record: '22-33', tier: 'Rebuilding' },
+const BIG12_TEAMS: TeamEntry[] = [
+  { name: 'TCU', slug: 'tcu', mascot: 'Horned Frogs', tier: 'Contender' },
+  { name: 'Kansas', slug: 'kansas', mascot: 'Jayhawks', tier: 'Dark Horse' },
+  { name: 'Oklahoma State', slug: 'oklahoma-state', mascot: 'Cowboys', tier: 'Dark Horse' },
+  { name: 'Arizona', slug: 'arizona', mascot: 'Wildcats', tier: 'Dark Horse' },
+  { name: 'Arizona State', slug: 'arizona-state', mascot: 'Sun Devils', tier: 'Dark Horse' },
+  { name: 'Baylor', slug: 'baylor', mascot: 'Bears', tier: 'Bubble' },
+  { name: 'Houston', slug: 'houston', mascot: 'Cougars', tier: 'Bubble' },
+  { name: 'UCF', slug: 'ucf', mascot: 'Knights', tier: 'Bubble' },
+  { name: 'West Virginia', slug: 'west-virginia', mascot: 'Mountaineers', tier: 'Bubble' },
+  { name: 'Texas Tech', slug: 'texas-tech', mascot: 'Red Raiders', tier: 'Rebuilding' },
+  { name: 'Cincinnati', slug: 'cincinnati', mascot: 'Bearcats', tier: 'Rebuilding' },
+  { name: 'BYU', slug: 'byu', mascot: 'Cougars', tier: 'Rebuilding' },
+  { name: 'Kansas State', slug: 'kansas-state', mascot: 'Wildcats', tier: 'Rebuilding' },
+  { name: 'Utah', slug: 'utah', mascot: 'Utes', tier: 'Rebuilding' },
 ];
 
 // ── Storylines ─────────────────────────────────────────────────────────
@@ -95,38 +66,6 @@ const STORYLINES: Storyline[] = [
     body: 'Texas Tech, Cincinnati, BYU, Kansas State, and Utah sit in rebuilding tiers — but "rebuilding" in the new Big 12 doesn\'t mean irrelevant. Tech has the facilities and brand to reload fast. Cincinnati is learning Power Five baseball in real time. BYU and K-State are one recruiting cycle from flipping. And Utah is investing at levels the old Mountain West never required. The floor is rising across the board.',
   },
 ];
-
-// ── Team preview card ──────────────────────────────────────────────────
-
-function TeamPreviewCard({ team }: { team: TeamCard }) {
-  return (
-    <Link href={`/college-baseball/editorial/${team.slug}-2026`} className="block group">
-      <div className="bg-surface-light border border-border-subtle rounded-lg p-4 hover:border-burnt-orange/40 hover:bg-surface-medium transition-all h-full">
-        <div className="flex items-start justify-between mb-2">
-          <div className="min-w-0">
-            <h4 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide group-hover:text-burnt-orange transition-colors truncate">
-              {team.name}
-            </h4>
-            <p className="text-text-muted text-xs">{team.mascot}</p>
-          </div>
-          <TierBadge tier={team.tier} />
-        </div>
-        <div className="flex items-center justify-between mt-3">
-          <span className="text-text-muted text-xs font-mono">{team.record}</span>
-          <svg
-            viewBox="0 0 24 24"
-            className="w-3.5 h-3.5 text-text-muted group-hover:text-burnt-orange/60 transition-colors"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <path d="M9 18l6-6-6-6" />
-          </svg>
-        </div>
-      </div>
-    </Link>
-  );
-}
 
 // ── Page ───────────────────────────────────────────────────────────────
 
@@ -274,13 +213,11 @@ export default function Big12EditorialPage() {
                 </div>
               </div>
             </ScrollReveal>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-              {BIG12_TEAMS.map((team, i) => (
-                <ScrollReveal key={team.slug} direction="up" delay={Math.min(i * 30, 300)}>
-                  <TeamPreviewCard team={team} />
-                </ScrollReveal>
-              ))}
-            </div>
+            <ConferenceTeamGrid
+              teams={BIG12_TEAMS}
+              conference="Big 12"
+              hoverColor="rgba(191, 87, 0, 0.4)"
+            />
           </Container>
         </Section>
 

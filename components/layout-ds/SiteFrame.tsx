@@ -1,0 +1,71 @@
+'use client';
+
+import dynamic from 'next/dynamic';
+import { usePathname } from 'next/navigation';
+import { Providers } from '@/app/providers';
+import { PageTransition, MotionProvider } from '@/components/motion';
+import { AppSidebar } from '@/components/layout-ds/AppSidebar';
+import { AppTopBar } from '@/components/layout-ds/AppTopBar';
+import { BottomNavWrapper } from '@/components/layout-ds/BottomNavWrapper';
+import { ScrollProgress } from '@/components/ui/ScrollProgress';
+import { BreadcrumbBar } from '@/components/layout-ds/BreadcrumbBar';
+
+const CommandPalette = dynamic(() => import('@/components/layout-ds/CommandPalette').then((mod) => ({ default: mod.CommandPalette })));
+const KonamiCodeWrapper = dynamic(() => import('@/components/easter-eggs').then((mod) => ({ default: mod.KonamiCodeWrapper })));
+const FeedbackButton = dynamic(() => import('@/components/ui/FeedbackModal').then((mod) => ({ default: mod.FeedbackButton })));
+const ScrollToTopButton = dynamic(() => import('@/components/ui/ScrollToTopButton').then((mod) => ({ default: mod.ScrollToTopButton })));
+const PageTracker = dynamic(() => import('@/components/analytics/PageTracker').then((mod) => ({ default: mod.PageTracker })));
+const PostHogProvider = dynamic(() => import('@/components/analytics/PostHogProvider').then((mod) => ({ default: mod.PostHogProvider })));
+
+const APP_SHELL_PREFIXES = ['/dashboard', '/search', '/settings'];
+
+function usesAppShell(pathname: string): boolean {
+  return APP_SHELL_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+}
+
+export function SiteFrame({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const appShell = usesAppShell(pathname);
+
+  return (
+    <Providers>
+      <MotionProvider>
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
+
+        {appShell ? (
+          <div className="flex min-h-screen">
+            <AppSidebar />
+            <div className="flex-1 flex flex-col min-w-0">
+              <AppTopBar />
+              <ScrollProgress />
+              <BreadcrumbBar />
+              <CommandPalette />
+              <KonamiCodeWrapper />
+              <PageTracker />
+              <PostHogProvider />
+              <main id="main-content" className="flex-1 overflow-y-auto pb-20 md:pb-0">
+                <PageTransition>{children}</PageTransition>
+              </main>
+            </div>
+          </div>
+        ) : (
+          <>
+            <CommandPalette />
+            <KonamiCodeWrapper />
+            <PageTracker />
+            <PostHogProvider />
+            <main id="main-content" className="min-h-screen">
+              <PageTransition>{children}</PageTransition>
+            </main>
+          </>
+        )}
+
+        <FeedbackButton />
+        <ScrollToTopButton />
+        {appShell ? <BottomNavWrapper /> : null}
+      </MotionProvider>
+    </Providers>
+  );
+}

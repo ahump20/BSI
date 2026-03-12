@@ -411,7 +411,7 @@ function ScoresHubContent() {
     try {
       const [mlbResult, cbResult, nflResult, nbaResult, cfbResult] = await Promise.allSettled([
         fetch('/api/mlb/scores').then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),
-        fetch('/api/college-baseball/schedule').then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),
+        fetch(`/api/college-baseball/schedule?date=${new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' }).format(new Date())}`).then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),
         fetch('/api/nfl/scores').then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),
         fetch('/api/nba/scoreboard').then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),
         fetch('/api/cfb/scores').then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),

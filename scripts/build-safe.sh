@@ -87,7 +87,12 @@ rm -rf "$BUILD_DIR/node_modules/.ignored" 2>/dev/null || true
 
 echo "→ Building from $BUILD_DIR"
 cd "$BUILD_DIR"
-./node_modules/.bin/next build
+if [ -x "$BUILD_DIR/node_modules/.bin/next" ]; then
+  "$BUILD_DIR/node_modules/.bin/next" build
+else
+  echo "→ Falling back to root Next.js binary"
+  node "$PROJECT_DIR/node_modules/next/dist/bin/next" build
+fi
 
 # Post-build: copy functions into output, generate sitemap
 rm -rf "$BUILD_DIR/out/functions"

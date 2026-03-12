@@ -25,7 +25,7 @@ const FEATURES: FeatureItem[] = [
   },
   {
     label: 'Intelligence',
-    description: 'Get AI-generated game briefs and matchup analysis before first pitch — know what to watch for.',
+    description: 'AI-generated game briefs and matchup breakdowns before first pitch — walk in knowing what to watch.',
     href: '/intel',
     hero: true,
     icon: (
@@ -57,7 +57,7 @@ const FEATURES: FeatureItem[] = [
   },
   {
     label: 'NIL Valuation',
-    description: 'Check what players are worth in the NIL market — data-driven valuations.',
+    description: 'Data-driven NIL valuations — see what players are actually worth, not what agents claim.',
     href: '/nil-valuation',
     icon: (
       <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -67,7 +67,7 @@ const FEATURES: FeatureItem[] = [
   },
   {
     label: 'Models',
-    description: 'Run win probability simulations and see how games are likely to unfold.',
+    description: 'Win probability simulations that show how games are likely to unfold — before they start.',
     href: '/models',
     icon: (
       <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5">

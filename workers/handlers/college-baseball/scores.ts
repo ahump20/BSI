@@ -11,8 +11,8 @@ export async function handleCollegeBaseballScores(
   env: Env,
   ctx?: ExecutionContext,
 ): Promise<Response> {
-  const date = url.searchParams.get('date') || undefined;
-  const cacheKey = `cb:scores:${date || 'today'}`;
+  const date = url.searchParams.get('date') || new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' }).format(new Date());
+  const cacheKey = `cb:scores:${date}`;
   const empty = { data: [], totalCount: 0 };
   const now = new Date().toISOString();
 
@@ -202,7 +202,7 @@ export async function handleCollegeBaseballSchedule(
   url: URL,
   env: Env
 ): Promise<Response> {
-  const date = url.searchParams.get('date') || new Date().toISOString().split('T')[0];
+  const date = url.searchParams.get('date') || new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' }).format(new Date());
   const range = url.searchParams.get('range') || 'week';
   const conference = url.searchParams.get('conference') || '';
   const cacheKey = `cb:schedule:${date}:${range}`;

@@ -310,18 +310,19 @@ export function HomeLiveScores({ onCountsChange }: HomeLiveScoresProps = {}) {
   const [allGames, setAllGames] = useState<NormalizedGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [filter, setFilter] = useState<SportFilter>(() => {
-    if (typeof window === 'undefined') return 'all';
+  const [filter, setFilter] = useState<SportFilter>('all');
+  const activeSports = useActiveSports();
+  const [lastFetched, setLastFetched] = useState<Date | null>(null);
+
+  // Restore persisted filter after mount (avoids hydration mismatch)
+  useEffect(() => {
     try {
       const stored = localStorage.getItem('bsi-scores-filter');
       if (stored && ['all', 'college-baseball', 'mlb', 'nfl', 'nba'].includes(stored)) {
-        return stored as SportFilter;
+        setFilter(stored as SportFilter);
       }
     } catch { /* ignore */ }
-    return 'all';
-  });
-  const activeSports = useActiveSports();
-  const [lastFetched, setLastFetched] = useState<Date | null>(null);
+  }, []);
 
   // Persist filter selection
   useEffect(() => {
@@ -419,15 +420,10 @@ export function HomeLiveScores({ onCountsChange }: HomeLiveScoresProps = {}) {
     return counts;
   }, [allGames]);
 
-  // Don't render if no sports are in season
-  if (activeSports.length === 0) return null;
-
-  // Don't render if no games and done loading
-  if (!loading && !error && allGames.length === 0) return null;
-
-  const liveCount = allGames.filter((g) => g.status === 'live').length;
-  const finalCount = allGames.filter((g) => g.status === 'final').length;
-  const todayCount = allGames.length;
+  // Counts reflect the active filter so badge matches what's displayed
+  const liveCount = displayGames.filter((g) => g.status === 'live').length;
+  const finalCount = displayGames.filter((g) => g.status === 'final').length;
+  const todayCount = displayGames.length;
 
   // Temporal framing — header varies by time + game states
   const temporalHeader = useMemo(() => {
@@ -437,6 +433,12 @@ export function HomeLiveScores({ onCountsChange }: HomeLiveScoresProps = {}) {
     if (todayCount > 0 && finalCount === todayCount) return 'Today\u2019s Results';
     return 'Today\u2019s Games';
   }, [liveCount, finalCount, todayCount]);
+
+  // Don't render if no sports are in season
+  if (activeSports.length === 0) return null;
+
+  // Don't render if no games and done loading
+  if (!loading && !error && allGames.length === 0) return null;
 
   return (
     <section className="py-6 px-4 sm:px-6 lg:px-8" aria-label="Today's live scores">

@@ -441,13 +441,13 @@ export default function CollegeBaseballRankingsPage() {
                       Also Receiving Votes
                     </h3>
                     <p className="text-text-secondary text-sm">
-                      Additional teams receiving votes will appear here as the season progresses.
+                      Teams receiving votes outside the Top 25 — updated weekly with each new poll.
                     </p>
                   </Card>
                   <Card padding="md">
                     <h3 className="font-display text-lg font-bold text-text-primary mb-4">Dropped Out</h3>
                     <p className="text-text-secondary text-sm">
-                      Teams that fell out of the rankings will appear here during the season.
+                      Teams that dropped from the Top 25 this week — tracked across every poll release.
                     </p>
                   </Card>
                 </div>

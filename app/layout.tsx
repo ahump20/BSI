@@ -1,22 +1,8 @@
 import type { Metadata, Viewport } from 'next';
-import dynamic from 'next/dynamic';
 import { Bebas_Neue, Cormorant_Garamond, IBM_Plex_Mono, JetBrains_Mono, Oswald } from 'next/font/google';
 import './globals.css';
-import { Providers } from './providers';
-import { PageTransition, MotionProvider } from '@/components/motion';
-import { AppSidebar } from '@/components/layout-ds/AppSidebar';
-import { AppTopBar } from '@/components/layout-ds/AppTopBar';
-import { BottomNavWrapper } from '@/components/layout-ds/BottomNavWrapper';
-import { ScrollProgress } from '@/components/ui/ScrollProgress';
-import { BreadcrumbBar } from '@/components/layout-ds/BreadcrumbBar';
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd';
-// Lazy-load interaction-triggered components (not visible on initial render)
-const CommandPalette = dynamic(() => import('@/components/layout-ds/CommandPalette').then(m => ({ default: m.CommandPalette })));
-const KonamiCodeWrapper = dynamic(() => import('@/components/easter-eggs').then(m => ({ default: m.KonamiCodeWrapper })));
-const FeedbackButton = dynamic(() => import('@/components/ui/FeedbackModal').then(m => ({ default: m.FeedbackButton })));
-const ScrollToTopButton = dynamic(() => import('@/components/ui/ScrollToTopButton').then(m => ({ default: m.ScrollToTopButton })));
-const PageTracker = dynamic(() => import('@/components/analytics/PageTracker').then(m => ({ default: m.PageTracker })));
-const PostHogProvider = dynamic(() => import('@/components/analytics/PostHogProvider').then(m => ({ default: m.PostHogProvider })));
+import { SiteFrame } from '@/components/layout-ds/SiteFrame';
 
 // 3-font system: Display (Oswald) + Body (Cormorant Garamond) + Mono (JetBrains Mono)
 const cormorant = Cormorant_Garamond({
@@ -160,31 +146,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <BreadcrumbJsonLd />
       </head>
       <body className="bg-midnight text-[#F5F0EB] antialiased min-h-screen">
-        <Providers>
-          <MotionProvider>
-            <a href="#main-content" className="skip-link">
-              Skip to main content
-            </a>
-            <div className="flex min-h-screen">
-              <AppSidebar />
-              <div className="flex-1 flex flex-col min-w-0">
-                <AppTopBar />
-                <ScrollProgress />
-                <BreadcrumbBar />
-                <CommandPalette />
-                <KonamiCodeWrapper />
-                <PageTracker />
-                <PostHogProvider />
-                <main id="main-content" className="flex-1 overflow-y-auto pb-20 md:pb-0">
-                  <PageTransition>{children}</PageTransition>
-                </main>
-              </div>
-            </div>
-            <FeedbackButton />
-            <ScrollToTopButton />
-            <BottomNavWrapper />
-          </MotionProvider>
-        </Providers>
+        <SiteFrame>{children}</SiteFrame>
       </body>
     </html>
   );

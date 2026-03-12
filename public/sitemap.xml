@@ -85,12 +85,6 @@
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://blazesportsintel.com/baseball/rankings/</loc>
-    <lastmod>2026-03-11</lastmod>
-    <changefreq>hourly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
     <loc>https://blazesportsintel.com/blog-post-feed/</loc>
     <lastmod>2026-03-11</lastmod>
     <changefreq>weekly</changefreq>
@@ -476,7 +470,7 @@
   </url>
   <url>
     <loc>https://blazesportsintel.com/college-baseball/editorial/texas-houston-christian-recap/</loc>
-    <lastmod>2026-03-07</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -782,18 +776,6 @@
   </url>
   <url>
     <loc>https://blazesportsintel.com/data-sources/</loc>
-    <lastmod>2026-03-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://blazesportsintel.com/fanbase/</loc>
-    <lastmod>2026-03-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://blazesportsintel.com/fanbase/compare/</loc>
     <lastmod>2026-03-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -1136,7 +1118,7 @@
   </url>
   <url>
     <loc>https://blazesportsintel.com/nil-valuation/performance-index/</loc>
-    <lastmod>2026-03-07</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1172,13 +1154,13 @@
   </url>
   <url>
     <loc>https://blazesportsintel.com/research/</loc>
-    <lastmod>2026-03-07</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://blazesportsintel.com/research/nil-analysis/</loc>
-    <lastmod>2026-03-07</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -1205,18 +1187,6 @@
     <lastmod>2026-03-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://blazesportsintel.com/transfer-portal/</loc>
-    <lastmod>2026-03-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://blazesportsintel.com/vision-ai-intelligence/</loc>
-    <lastmod>2026-03-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://blazesportsintel.com/vision-ai/</loc>

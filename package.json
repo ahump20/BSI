@@ -62,9 +62,13 @@
     "bundle:upload": "tsx tools/build-ncaa-baseball-daily-bundle.ts --upload",
     "deploy:guarded": "node scripts/guarded-deploy.mjs",
     "release:preview": "node scripts/guarded-deploy.mjs --preview-only",
-    "smoke:homepage": "npx playwright test tests/smoke/homepage.spec.ts",
-    "smoke:predeploy": "npx playwright test tests/smoke/homepage.spec.ts",
-    "release:guarded": "node scripts/release-guarded.mjs"
+    "smoke:homepage": "npx playwright test tests/smoke/homepage.spec.ts --config=playwright.smoke.config.ts --project=chromium",
+    "smoke:release": "npx playwright test tests/smoke/homepage.spec.ts tests/smoke/public-layout.spec.ts tests/smoke/scores-integrity.spec.ts tests/smoke/mobile-overflow.spec.ts --config=playwright.smoke.config.ts --project=chromium",
+    "smoke:cross-property": "node scripts/cross-property-smoke.mjs",
+    "smoke:predeploy": "npx playwright test tests/smoke/homepage.spec.ts --config=playwright.smoke.config.ts --project=chromium",
+    "release:guarded": "node scripts/release-guarded.mjs",
+    "rollback:pages": "node scripts/pages-rollback.mjs",
+    "rollback:pages:list": "node scripts/pages-rollback.mjs --list"
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^3.10.0",
@@ -72,6 +76,7 @@
     "@tanstack/react-query": "^5.90.20",
     "@types/d3": "^7.4.3",
     "clsx": "^2.1.1",
+    "code-review": "^0.0.1",
     "d3": "^7.9.0",
     "framer-motion": "^12.29.2",
     "hono": "^4.11.9",

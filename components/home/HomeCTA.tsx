@@ -29,8 +29,8 @@ export function HomeCTA() {
             See You Tomorrow
           </h2>
           <p className="text-base mb-8 max-w-2xl mx-auto leading-relaxed" style={{ color: 'var(--bsi-dust)' }}>
-            Scores update every 30 seconds during live games. Savant refreshes every six hours.
-            Editorial drops every weekend. There&apos;s always something new.
+            Scores refresh every 30 seconds during live games. Savant recomputes every six hours.
+            Editorial lands every weekend. The data never sleeps.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
             <Link href="/scores" className="btn-heritage-fill px-8 py-4 text-lg">

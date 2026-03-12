@@ -15,10 +15,9 @@ export function WhyBSI() {
               className="font-serif text-base sm:text-lg leading-relaxed"
               style={{ color: 'var(--bsi-bone)' }}
             >
-              Five sports. One platform. BSI covers the athletes, programs, and markets
-              that mainstream sports media overlook &mdash; with the same depth of analytics
-              the big-market teams get. College baseball is the proving ground. Every
-              stat is free.
+              Five sports. One standard. BSI delivers the analytics that mainstream platforms
+              reserve for big-market teams &mdash; to every program, every conference, every fan.
+              College baseball is the proving ground. Every stat is free.
             </p>
           </div>
         </ScrollReveal>
