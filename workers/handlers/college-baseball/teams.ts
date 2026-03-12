@@ -3,7 +3,7 @@
  */
 
 import type { Env } from './shared';
-import { json, cachedJson, kvGet, kvPut, dataHeaders, getCollegeClient, getHighlightlyClient, archiveRawResponse, HTTP_CACHE, CACHE_TTL, teamMetadata, metaByEspnId, getLogoUrl, enrichTeamWithD1Stats, transformTeamSchedule, computeTrendSummary } from './shared';
+import { json, cachedJson, kvGet, kvPut, dataHeaders, cachedPayloadHeaders, withMeta, getCollegeClient, getHighlightlyClient, archiveRawResponse, HTTP_CACHE, CACHE_TTL, teamMetadata, metaByEspnId, getLogoUrl, enrichTeamWithD1Stats, transformTeamSchedule, computeTrendSummary } from './shared';
 import { transformHighlightlyTeam, transformCollegeBaseballTeamDetail } from './transforms';
 
 export async function handleCollegeBaseballTeam(
@@ -25,7 +25,7 @@ export async function handleCollegeBaseballTeam(
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
-    return cachedJson(cached, 200, HTTP_CACHE.team, { ...dataHeaders(now, 'cache'), 'X-Cache': 'HIT' });
+    return cachedJson(cached, 200, HTTP_CACHE.team, cachedPayloadHeaders(cached));
   }
 
   const sources: string[] = [];
@@ -94,10 +94,11 @@ export async function handleCollegeBaseballTeam(
       if (slugMeta) {
         team.logo = getLogoUrl(slugMeta.espnId, slugMeta.logoId);
       }
-      const payload: Record<string, unknown> = {
-        team,
-        meta: { source: sources.join('+'), fetched_at: hlTimestamp, timezone: 'America/Chicago', sources, degraded: false },
-      };
+      const payload: Record<string, unknown> = withMeta({ team }, sources.join('+'), {
+        fetchedAt: hlTimestamp,
+        sources,
+        degraded: false,
+      });
       await enrichTeamWithD1Stats(payload, String(numericId), env);
       await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
       return cachedJson(payload, 200, HTTP_CACHE.team, {
@@ -109,10 +110,11 @@ export async function handleCollegeBaseballTeam(
   // ESPN skeleton only
   if (espnTeam) {
     const team = transformCollegeBaseballTeamDetail(espnTeam, espnPlayers, slugMeta?.conference);
-    const payload: Record<string, unknown> = {
-      team,
-      meta: { source: 'espn', fetched_at: espnTimestamp, timezone: 'America/Chicago', sources, degraded },
-    };
+    const payload: Record<string, unknown> = withMeta({ team }, 'espn', {
+      fetchedAt: espnTimestamp,
+      sources,
+      degraded,
+    });
     await enrichTeamWithD1Stats(payload, String(numericId), env);
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
     return cachedJson(payload, 200, HTTP_CACHE.team, {
@@ -121,7 +123,7 @@ export async function handleCollegeBaseballTeam(
   }
 
   return json(
-    { team: null, meta: { source: 'error', fetched_at: now, timezone: 'America/Chicago', sources: [], degraded: true } },
+    withMeta({ team: null }, 'error', { fetchedAt: now, sources: [], degraded: true }),
     502,
     { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' },
   );
@@ -141,7 +143,7 @@ export async function handleCollegeBaseballTeamSchedule(
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
-    return cachedJson(cached, 200, HTTP_CACHE.schedule, { ...dataHeaders(now, 'cache'), 'X-Cache': 'HIT' });
+    return cachedJson(cached, 200, HTTP_CACHE.schedule, cachedPayloadHeaders(cached));
   }
 
   try {
@@ -151,15 +153,15 @@ export async function handleCollegeBaseballTeamSchedule(
       const raw = result.data as Record<string, unknown>;
       const events = (raw.events ?? []) as Record<string, unknown>[];
       const schedule = transformTeamSchedule(events, scheduleMeta?.shortName ?? '');
-      const payload = { schedule, meta: { source: 'espn', fetched_at: now, timezone: 'America/Chicago' } };
+      const payload = withMeta({ schedule }, 'espn', { fetchedAt: result.timestamp });
       await kvPut(env.KV, cacheKey, payload, CACHE_TTL.schedule);
-      return cachedJson(payload, 200, HTTP_CACHE.schedule, { ...dataHeaders(now, 'espn'), 'X-Cache': 'MISS' });
+      return cachedJson(payload, 200, HTTP_CACHE.schedule, { ...dataHeaders(result.timestamp, 'espn'), 'X-Cache': 'MISS' });
     }
   } catch (err) {
     console.error('[espn] team schedule:', err instanceof Error ? err.message : err);
   }
 
-  return json({ schedule: [], meta: { source: 'error', fetched_at: now, timezone: 'America/Chicago' } }, 502);
+  return json(withMeta({ schedule: [] }, 'error', { fetchedAt: now }), 502);
 }
 
 // ── Bulk teams endpoint ─────────────────────────────────────────────────────
@@ -192,7 +194,7 @@ export async function handleCollegeBaseballTeamsAll(
   // KV cache — 1 hour TTL
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
-    return cachedJson(cached, 200, HTTP_CACHE.team, { ...dataHeaders(now, 'cache'), 'X-Cache': 'HIT' });
+    return cachedJson(cached, 200, HTTP_CACHE.team, cachedPayloadHeaders(cached));
   }
 
   const teams: BulkTeamItem[] = [];
@@ -277,15 +279,11 @@ export async function handleCollegeBaseballTeamsAll(
   // Sort by conference then name
   teams.sort((a, b) => a.conference.localeCompare(b.conference) || a.name.localeCompare(b.name));
 
-  const payload = {
-    teams,
-    meta: {
-      source: sources.join('+') || 'metadata',
-      fetched_at: now,
-      timezone: 'America/Chicago' as const,
-      teamCount: teams.length,
-    },
-  };
+  const payload = withMeta(
+    { teams },
+    sources.join('+') || 'metadata',
+    { fetchedAt: now, extra: { teamCount: teams.length } },
+  );
 
   // Cache for 1 hour
   await kvPut(env.KV, cacheKey, payload, 3600);
@@ -322,20 +320,18 @@ export async function handleCollegeBaseballTrends(teamId: string, env: Env): Pro
 
     const summary = computeTrendSummary(snapshots.map(s => ({ wins: s.wins, losses: s.losses, ranking: s.ranking })));
 
-    return json({
+    return json(withMeta({
       team,
       snapshots,
       summary,
-      meta: { source: 'bsi-d1', fetched_at: now, timezone: 'America/Chicago' },
-    });
+    }, 'bsi-d1', { fetchedAt: now }), 200);
   } catch (err) {
     console.error('[trends] D1 query failed:', err instanceof Error ? err.message : err);
-    return json({
+    return json(withMeta({
       team: { id: teamId, name: 'Unknown', conference: 'Unknown' },
       snapshots: [],
       summary: { currentStreak: 'N/A', last10: 'N/A', rankingChange: null },
       message: 'Trend data temporarily unavailable.',
-      meta: { source: 'bsi-d1', fetched_at: now, timezone: 'America/Chicago' },
-    }, 503);
+    }, 'bsi-d1', { fetchedAt: now }), 503);
   }
 }

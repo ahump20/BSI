@@ -15,6 +15,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { HeroGlow } from '@/components/ui/HeroGlow';
+import { toDataMeta } from '@/lib/utils/data-meta';
 import { formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
 import type { DataMeta } from '@/lib/types/data-meta';
 import { IntelStreamCard } from '@/components/intel/IntelStreamCard';
@@ -241,7 +242,7 @@ export default function CollegeBaseballScoresPage() {
   }, []);
 
   const confParam = selectedConference !== 'All' ? `&conference=${selectedConference}` : '';
-  const { data: rawData, loading, error, retry } = useSportData<ScoresApiResponse>(
+  const { data: rawData, meta: responseMeta, loading, error, retry } = useSportData<ScoresApiResponse>(
     selectedDate ? `/api/college-baseball/schedule?date=${selectedDate}${confParam}` : null,
     { refreshInterval: 30000, refreshWhen: liveGamesDetected, timeout: 10000 }
   );
@@ -249,20 +250,7 @@ export default function CollegeBaseballScoresPage() {
   const games = useMemo(() => rawData?.data || rawData?.games || [], [rawData]);
   const hasLiveGames = useMemo(() => games.some((g) => g.status === 'live'), [games]);
 
-  const meta: DataMeta | null = useMemo(() => {
-    if (!rawData) return null;
-    const source = rawData.meta?.source || rawData.meta?.dataSource || 'ESPN';
-    const fetchedAt = rawData.meta?.fetched_at || rawData.meta?.lastUpdated || rawData.timestamp || new Date().toISOString();
-    return {
-      source,
-      fetched_at: fetchedAt,
-      dataSource: source,
-      lastUpdated: fetchedAt,
-      timezone: rawData.meta?.timezone || 'America/Chicago',
-      degraded: rawData.meta?.degraded,
-      sources: rawData.meta?.sources,
-    };
-  }, [rawData]);
+  const meta: DataMeta | null = useMemo(() => toDataMeta(responseMeta), [responseMeta]);
 
   // Sync live detection to enable auto-refresh
   useEffect(() => { setLiveGamesDetected(hasLiveGames); }, [hasLiveGames]);

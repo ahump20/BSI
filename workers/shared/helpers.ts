@@ -16,15 +16,23 @@ export function json(data: unknown, status = 200, extra: Record<string, string> 
 
 export function cachedJson(data: unknown, status: number, maxAge: number, extra: Record<string, string> = {}): Response {
   const headers: Record<string, string> = { 'Cache-Control': `public, max-age=${maxAge}`, ...extra };
+  const meta = getPayloadMeta(data);
+
   // Auto-fill tier-1 freshness headers when X-Cache is present
   if (headers['X-Cache']) {
-    if (!headers['X-Last-Updated']) headers['X-Last-Updated'] = new Date().toISOString();
+    if (!headers['X-Last-Updated']) headers['X-Last-Updated'] = meta?.lastUpdated ?? new Date().toISOString();
     if (!headers['X-Cache-State']) {
       const c = headers['X-Cache'];
       headers['X-Cache-State'] = c === 'HIT' ? 'cached' : c === 'STALE' ? 'stale' : c === 'ERROR' ? 'error' : 'fresh';
     }
     if (!headers['X-Data-Source'] && headers['X-Cache'] === 'HIT') {
       headers['X-Data-Source'] = 'cache';
+    }
+    if (!headers['X-Data-Source'] && meta?.source) {
+      headers['X-Data-Source'] = meta.source;
+    }
+    if (!headers['X-Origin-Data-Source'] && meta?.source) {
+      headers['X-Origin-Data-Source'] = meta.source;
     }
   }
   return json(data, status, headers);
@@ -65,6 +73,39 @@ export function dataHeaders(lastUpdated: string, source = 'highlightly'): Record
   };
 }
 
+export function cachedPayloadHeaders(payload: unknown, source = 'cache'): Record<string, string> {
+  const meta = getPayloadMeta(payload);
+  const lastUpdated = meta?.lastUpdated ?? new Date().toISOString();
+  return {
+    ...dataHeaders(lastUpdated, meta?.source ?? source),
+    'X-Cache': 'HIT',
+    ...(meta?.source ? { 'X-Origin-Data-Source': meta.source } : {}),
+  };
+}
+
+interface PayloadMetaSnapshot {
+  source?: string;
+  lastUpdated?: string;
+}
+
+function getPayloadMeta(payload: unknown): PayloadMetaSnapshot | null {
+  if (typeof payload !== 'object' || payload === null) return null;
+
+  const root = payload as Record<string, unknown>;
+  const meta = typeof root.meta === 'object' && root.meta !== null
+    ? (root.meta as Record<string, unknown>)
+    : null;
+
+  const source = [meta?.source, meta?.dataSource, root.source, root.dataSource].find(
+    (value): value is string => typeof value === 'string' && value.trim().length > 0,
+  );
+  const lastUpdated = [meta?.lastUpdated, meta?.fetched_at, root.lastUpdated, root.fetched_at, root.timestamp, root.cacheTime].find(
+    (value): value is string => typeof value === 'string' && value.trim().length > 0,
+  );
+
+  return source || lastUpdated ? { source, lastUpdated } : null;
+}
+
 /** Tier-1 response headers for fresh data (cache MISS). */
 export function freshDataHeaders(source = 'espn'): Record<string, string> {
   return {
@@ -85,11 +126,33 @@ export function cachedDataHeaders(): Record<string, string> {
   };
 }
 
+interface PayloadMetaOptions {
+  fetchedAt?: string;
+  sources?: string[];
+  degraded?: boolean;
+  extra?: Record<string, unknown>;
+}
+
+export function buildMeta(source = 'espn', options: PayloadMetaOptions = {}): Record<string, unknown> {
+  return {
+    source,
+    fetched_at: options.fetchedAt ?? new Date().toISOString(),
+    timezone: 'America/Chicago',
+    ...(options.sources ? { sources: options.sources } : {}),
+    ...(options.degraded !== undefined ? { degraded: options.degraded } : {}),
+    ...(options.extra ?? {}),
+  };
+}
+
 /** Wrap any payload with standard BSI meta attribution. */
-export function withMeta(data: unknown, source = 'espn'): Record<string, unknown> {
+export function withMeta(
+  data: unknown,
+  source = 'espn',
+  options: PayloadMetaOptions = {},
+): Record<string, unknown> {
   return {
     ...(data as Record<string, unknown>),
-    meta: { source, fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
+    meta: buildMeta(source, options),
   };
 }
 
@@ -159,16 +222,15 @@ export function cvApiResponse<T>(
 ): object {
   return {
     data,
-    meta: {
-      source,
-      fetched_at: new Date().toISOString(),
-      timezone: 'America/Chicago',
-      cache_hit: cacheHit,
-      ...(opts.ttlSeconds !== undefined && { ttl_seconds: opts.ttlSeconds }),
-      ...(opts.sport && { sport: opts.sport }),
-      ...(opts.sources && { sources: opts.sources }),
-      ...(opts.degraded !== undefined && { degraded: opts.degraded }),
-    },
+    meta: buildMeta(source, {
+      sources: opts.sources,
+      degraded: opts.degraded,
+      extra: {
+        cache_hit: cacheHit,
+        ...(opts.ttlSeconds !== undefined ? { ttl_seconds: opts.ttlSeconds } : {}),
+        ...(opts.sport ? { sport: opts.sport } : {}),
+      },
+    }),
   };
 }
 

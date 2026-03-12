@@ -1,37 +1,44 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import type { DataMetaLike } from '@/lib/utils/data-meta';
+import { getDataSourceLabel, normalizeDataMeta } from '@/lib/utils/data-meta';
+import { getRelativeUpdateLabel } from '@/lib/utils/data-freshness';
 
 interface DataAttributionProps {
-  lastUpdated: string;
+  lastUpdated?: string;
   source?: string;
+  meta?: DataMetaLike | null;
   className?: string;
 }
 
-export function DataAttribution({ lastUpdated, source = 'Highlightly', className = '' }: DataAttributionProps) {
+export function DataAttribution({
+  lastUpdated,
+  source = 'Highlightly',
+  meta,
+  className = '',
+}: DataAttributionProps) {
   const [relative, setRelative] = useState('');
-  const isValidDate = lastUpdated && !isNaN(new Date(lastUpdated).getTime());
+  const normalized = normalizeDataMeta(meta, { lastUpdated, source });
+  const effectiveSource = getDataSourceLabel(normalized, source);
+  const effectiveLastUpdated = normalized?.lastUpdated ?? undefined;
+  const isValidDate = Boolean(effectiveLastUpdated && !isNaN(new Date(effectiveLastUpdated).getTime()));
 
   useEffect(() => {
     if (!isValidDate) return;
 
     function update() {
-      const diff = Date.now() - new Date(lastUpdated).getTime();
-      const secs = Math.floor(diff / 1000);
-      if (secs < 60) setRelative(`Updated ${secs}s ago`);
-      else if (secs < 3600) setRelative(`Updated ${Math.floor(secs / 60)}m ago`);
-      else if (secs < 86400) setRelative(`Updated ${Math.floor(secs / 3600)}h ago`);
-      else setRelative(`Updated ${Math.floor(secs / 86400)}d ago`);
+      setRelative(getRelativeUpdateLabel(effectiveLastUpdated));
     }
     update();
     const id = setInterval(update, 10000);
     return () => clearInterval(id);
-  }, [lastUpdated, isValidDate]);
+  }, [effectiveLastUpdated, isValidDate]);
 
   if (!isValidDate) {
-    return source ? (
+    return effectiveSource ? (
       <div className={`flex items-center gap-2 text-xs text-text-muted ${className}`}>
-        <span>Powered by {source}</span>
+        <span>Powered by {effectiveSource}</span>
       </div>
     ) : null;
   }
@@ -40,7 +47,7 @@ export function DataAttribution({ lastUpdated, source = 'Highlightly', className
     <div className={`flex items-center gap-2 text-xs text-text-muted ${className}`}>
       <span>{relative}</span>
       <span className="text-text-muted">·</span>
-      <span>Powered by {source}</span>
+      <span>Powered by {effectiveSource}</span>
     </div>
   );
 }

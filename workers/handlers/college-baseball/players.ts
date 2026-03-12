@@ -2,8 +2,8 @@
  * College Baseball — player detail, list, and compare handlers.
  */
 
-import type { Env } from './shared';
-import { json, cachedJson, kvGet, kvPut, dataHeaders, getCollegeClient, getHighlightlyClient, HTTP_CACHE, CACHE_TTL, SEASON, teamMetadata, getLogoUrl, getD1PlayerStats, queryPlayersFromD1, computeBattingDifferentials, computePitchingDifferentials } from './shared';
+import type { Env, D1PlayerStats } from './shared';
+import { json, cachedJson, kvGet, kvPut, dataHeaders, cachedPayloadHeaders, withMeta, getCollegeClient, getHighlightlyClient, HTTP_CACHE, CACHE_TTL, SEASON, teamMetadata, getLogoUrl, getD1PlayerStats, queryPlayersFromD1, computeBattingDifferentials, computePitchingDifferentials } from './shared';
 import { transformHighlightlyPlayer, transformEspnPlayer } from './transforms';
 
 export async function handleCollegeBaseballPlayer(
@@ -15,7 +15,7 @@ export async function handleCollegeBaseballPlayer(
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
-    return cachedJson(cached, 200, HTTP_CACHE.player, { ...dataHeaders(now, 'cache'), 'X-Cache': 'HIT' });
+    return cachedJson(cached, 200, HTTP_CACHE.player, cachedPayloadHeaders(cached));
   }
 
   // Highlightly first
@@ -46,7 +46,7 @@ export async function handleCollegeBaseballPlayer(
           }
         }
         const source = payload.statistics && !(statsResult.success && statsResult.data) ? 'highlightly+d1' : 'highlightly';
-        const wrapped = { ...payload, meta: { source, fetched_at: playerResult.timestamp, timezone: 'America/Chicago' } };
+        const wrapped = withMeta(payload, source, { fetchedAt: playerResult.timestamp });
         await kvPut(env.KV, cacheKey, wrapped, CACHE_TTL.players);
         return cachedJson(wrapped, 200, HTTP_CACHE.player, {
           ...dataHeaders(playerResult.timestamp, source), 'X-Cache': 'MISS',
@@ -80,7 +80,7 @@ export async function handleCollegeBaseballPlayer(
         }
       }
       const source = d1Enriched ? 'espn+d1' : 'espn';
-      const wrapped = { ...payload, meta: { source, fetched_at: playerResult.timestamp, timezone: 'America/Chicago' } };
+      const wrapped = withMeta(payload, source, { fetchedAt: playerResult.timestamp });
       await kvPut(env.KV, cacheKey, wrapped, CACHE_TTL.players);
       return cachedJson(wrapped, 200, HTTP_CACHE.player, {
         ...dataHeaders(playerResult.timestamp, source), 'X-Cache': 'MISS',
@@ -99,7 +99,7 @@ export async function handleCollegeBaseballPlayer(
 
     if (row) {
       const d1Stats = await getD1PlayerStats(playerId, env);
-      const payload = {
+      const payload = withMeta({
         player: {
           id: Number(row.espn_id),
           name: row.name,
@@ -109,8 +109,7 @@ export async function handleCollegeBaseballPlayer(
           headshot: row.headshot || undefined,
         },
         statistics: d1Stats,
-        meta: { source: 'd1', fetched_at: now, timezone: 'America/Chicago' },
-      };
+      }, 'd1', { fetchedAt: now });
       await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
       return cachedJson(payload, 200, HTTP_CACHE.player, {
         ...dataHeaders(now, 'd1'), 'X-Cache': 'MISS',
@@ -120,7 +119,10 @@ export async function handleCollegeBaseballPlayer(
     console.error('[d1] player fallback:', err instanceof Error ? err.message : err);
   }
 
-  return json({ player: null, statistics: null }, 502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' });
+  return json(withMeta({ player: null, statistics: null }, 'error', { fetchedAt: now }), 502, {
+    ...dataHeaders(now, 'error'),
+    'X-Cache': 'ERROR',
+  });
 }
 
 export async function handleCollegeBaseballPlayersList(url: URL, env: Env): Promise<Response> {
@@ -131,17 +133,17 @@ export async function handleCollegeBaseballPlayersList(url: URL, env: Env): Prom
   const page = Math.max(1, parseInt(url.searchParams.get('page') || '1', 10));
   const limit = Math.min(100, Math.max(1, parseInt(url.searchParams.get('limit') || '50', 10)));
   const offset = (page - 1) * limit;
+  const now = new Date().toISOString();
 
   // D1 primary path — query accumulated stats directly
   try {
     const d1Result = await queryPlayersFromD1(env, { search, team, position, sortBy, limit, offset });
     if (d1Result && d1Result.length > 0) {
-      const payload = {
+      const payload = withMeta({
         players: d1Result,
-        meta: { source: 'd1-accumulated', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
-      };
+      }, 'd1-accumulated', { fetchedAt: now });
       return cachedJson(payload, 200, HTTP_CACHE.player, {
-        ...dataHeaders(new Date().toISOString(), 'd1'), 'X-Cache': 'MISS',
+        ...dataHeaders(now, 'd1-accumulated'), 'X-Cache': 'MISS',
       });
     }
   } catch (err) {
@@ -149,7 +151,6 @@ export async function handleCollegeBaseballPlayersList(url: URL, env: Env): Prom
   }
 
   // ESPN fallback — used when D1 has no data (offseason)
-  const now = new Date().toISOString();
   const cacheKey = `cb:players:list:${team || 'all'}`;
 
   let roster: Record<string, unknown>[] | null = null;
@@ -283,10 +284,9 @@ export async function handleCollegeBaseballPlayersList(url: URL, env: Env): Prom
     };
   });
 
-  const payload = {
+  const payload = withMeta({
     players,
-    meta: { source: 'espn', fetched_at: now, timezone: 'America/Chicago' },
-  };
+  }, 'espn', { fetchedAt: now });
 
   return cachedJson(payload, 200, HTTP_CACHE.player, { ...dataHeaders(now, 'espn'), 'X-Cache': roster === cached ? 'HIT' : 'MISS' });
 }
@@ -307,7 +307,7 @@ export async function handleCollegeBaseballPlayerCompare(
     const [data1, data2] = await Promise.all([res1.json() as Promise<Record<string, unknown>>, res2.json() as Promise<Record<string, unknown>>]);
 
     if (!data1?.player || !data2?.player) {
-      return json({ error: 'One or both players not found', meta: { source: 'bsi', fetched_at: now, timezone: 'America/Chicago' } }, 404);
+      return json(withMeta({ error: 'One or both players not found' }, 'bsi', { fetchedAt: now }), 404);
     }
 
     const p1Stats = (data1.stats ?? {}) as Record<string, Record<string, number>>;
@@ -322,14 +322,15 @@ export async function handleCollegeBaseballPlayerCompare(
       ...(hasPitching ? computePitchingDifferentials(p1Stats.pitching, p2Stats.pitching) : {}),
     };
 
-    return json({
+    return json(withMeta({
       player1: data1,
       player2: data2,
       comparison: { type, differentials },
-      meta: { source: 'bsi-compare', fetched_at: now, timezone: 'America/Chicago' },
-    });
+    }, 'bsi-compare', { fetchedAt: now }));
   } catch (err) {
-    return json({ error: err instanceof Error ? err.message : 'Comparison failed', meta: { source: 'bsi', fetched_at: now, timezone: 'America/Chicago' } }, 500);
+    return json(withMeta({
+      error: err instanceof Error ? err.message : 'Comparison failed',
+    }, 'bsi', { fetchedAt: now }), 500);
   }
 }
 
@@ -387,18 +388,16 @@ export async function handlePlayerGameLog(
       };
     });
 
-    return json({
+    return json(withMeta({
       playerId,
       games,
-      meta: { source: 'd1-game-log', fetched_at: now, timezone: 'America/Chicago' },
-    });
+    }, 'd1-game-log', { fetchedAt: now }));
   } catch (err) {
     console.error('[game-log]', err instanceof Error ? err.message : err);
-    return json({
+    return json(withMeta({
       playerId,
       games: [],
-      meta: { source: 'd1-game-log', fetched_at: now, timezone: 'America/Chicago' },
-    });
+    }, 'd1-game-log', { fetchedAt: now }));
   }
 }
 
