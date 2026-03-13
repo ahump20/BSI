@@ -26,6 +26,10 @@ permissions:
 env:
   NODE_VERSION: '20'
 
+concurrency:
+  group: cloudflare-${{ github.repository }}-${{ github.ref_name }}
+  cancel-in-progress: false
+
 jobs:
   detect-changes:
     name: Detect Changes
@@ -139,6 +143,35 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy out --project-name=blazesportsintel --branch=${{ github.ref_name }} --commit-dirty=true
 
+      - name: Write deployment record
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          record = {
+            "repo": os.environ["GITHUB_REPOSITORY"],
+            "sha": os.environ["GITHUB_SHA"],
+            "ref": os.environ["GITHUB_REF_NAME"],
+            "target_id": "blazesportsintel",
+            "target_type": "pages",
+            "target_name": "blazesportsintel",
+            "environment": "production",
+            "status": "success",
+            "deployed_at": datetime.now(timezone.utc).isoformat(),
+            "workflow_run_id": os.environ["GITHUB_RUN_ID"],
+          }
+          Path("cloudflare-deploy-record-blazesportsintel.json").write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
+          PY
+
+      - name: Upload deployment record
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloudflare-deploy-record-blazesportsintel
+          path: cloudflare-deploy-record-blazesportsintel.json
+
       - name: Wait for propagation
         if: github.ref == 'refs/heads/main'
         run: sleep 30
@@ -190,6 +223,35 @@ jobs:
           workingDirectory: games/blazecraft
           command: pages deploy dist --project-name=blazecraft --branch=${{ github.ref_name }} --commit-dirty=true
 
+      - name: Write deployment record
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          record = {
+            "repo": os.environ["GITHUB_REPOSITORY"],
+            "sha": os.environ["GITHUB_SHA"],
+            "ref": os.environ["GITHUB_REF_NAME"],
+            "target_id": "blazecraft",
+            "target_type": "pages",
+            "target_name": "blazecraft",
+            "environment": "production",
+            "status": "success",
+            "deployed_at": datetime.now(timezone.utc).isoformat(),
+            "workflow_run_id": os.environ["GITHUB_RUN_ID"],
+          }
+          Path("cloudflare-deploy-record-blazecraft.json").write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
+          PY
+
+      - name: Upload deployment record
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloudflare-deploy-record-blazecraft
+          path: cloudflare-deploy-record-blazecraft.json
+
   deploy-worker:
     name: Deploy Worker
     runs-on: ubuntu-latest
@@ -216,6 +278,35 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: workers
           command: deploy --env production
+
+      - name: Write deployment record
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          record = {
+            "repo": os.environ["GITHUB_REPOSITORY"],
+            "sha": os.environ["GITHUB_SHA"],
+            "ref": os.environ["GITHUB_REF_NAME"],
+            "target_id": "blazesportsintel-worker-prod",
+            "target_type": "worker",
+            "target_name": "blazesportsintel-worker-prod",
+            "environment": "production",
+            "status": "success",
+            "deployed_at": datetime.now(timezone.utc).isoformat(),
+            "workflow_run_id": os.environ["GITHUB_RUN_ID"],
+          }
+          Path("cloudflare-deploy-record-worker.json").write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
+          PY
+
+      - name: Upload deployment record
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloudflare-deploy-record-worker
+          path: cloudflare-deploy-record-worker.json
 
   deployment-summary:
     name: Deployment Summary
