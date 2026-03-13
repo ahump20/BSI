@@ -63,7 +63,9 @@
     "bundle:upload": "tsx tools/build-ncaa-baseball-daily-bundle.ts --upload",
     "deploy:guarded": "node scripts/guarded-deploy.mjs",
     "release:preview": "node scripts/guarded-deploy.mjs --preview-only",
-    "smoke:homepage": "npx playwright test tests/smoke/homepage.spec.ts"
+    "smoke:homepage": "npx playwright test tests/smoke/homepage.spec.ts",
+    "scan:secrets": "npx --no-install secretlint --secretlintrc .secretlintrc.json --secretlintignore .secretlintignore .",
+    "scan:secrets:staged": "node scripts/secretlint-staged.mjs"
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^3.10.0",
@@ -114,7 +116,9 @@
     "typescript-eslint": "^8.55.0",
     "vite": "^7.3.1",
     "vitest": "^4.0.18",
-    "wrangler": "^4.72.0"
+    "wrangler": "^4.72.0",
+    "@secretlint/secretlint-rule-preset-recommend": "^11.3.1",
+    "secretlint": "^11.3.1"
   },
   "optionalDependencies": {
     "@cloudflare/workerd-darwin-arm64": "^1.20260131.0"
