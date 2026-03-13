@@ -1,6 +1,6 @@
 'use client';
 
-import { Component, type ErrorInfo, type ReactNode } from 'react';
+import { Component, type ReactNode } from 'react';
 
 interface DataErrorBoundaryProps {
   children: ReactNode;
@@ -25,14 +25,6 @@ export class DataErrorBoundary extends Component<DataErrorBoundaryProps, State> 
 
   static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
-  }
-
-  componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error(
-      `[DataError${this.props.name ? `: ${this.props.name}` : ''}]`,
-      error,
-      info.componentStack,
-    );
   }
 
   handleRetry = () => {

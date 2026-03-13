@@ -1,17 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
-
 interface ErrorProps {
   error: Error & { digest?: string };
   reset: () => void;
 }
 
 export default function NFLError({ error, reset }: ErrorProps) {
-  useEffect(() => {
-    console.error('[BSI:nfl] Route error:', error);
-  }, [error]);
-
   return (
     <div className="min-h-[60vh] flex items-center justify-center px-4">
       <div className="max-w-md w-full bg-background-secondary border border-border-strong rounded-xl p-8 text-center">

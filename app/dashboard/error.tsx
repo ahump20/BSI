@@ -10,7 +10,6 @@ interface ErrorProps {
 
 export default function DashboardError({ error, reset }: ErrorProps) {
   useEffect(() => {
-    console.error('[BSI] Dashboard route error:', error);
     getPostHog()?.capture('$exception', {
       $exception_message: error.message,
       $exception_type: error.name,

@@ -10,7 +10,6 @@ interface ErrorProps {
 
 export default function ArcadeError({ error, reset }: ErrorProps) {
   useEffect(() => {
-    console.error('[BSI] Arcade route error:', error);
     getPostHog()?.capture('$exception', {
       $exception_message: error.message,
       $exception_type: error.name,
