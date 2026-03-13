@@ -81,7 +81,7 @@ PAGES_ORIGIN = "https://blazesportsintel.pages.dev"
 
 # Cron trigger — warm KV cache for scores + rankings
 [triggers]
-crons = ["*/1 * * * *"]  # Every minute (scores adjust TTL internally based on season)
+crons = ["*/1 * * * *", "*/15 * * * *", "15 09 * * *", "0 06 * * 1", "0 04 * * *"]
 
 [dev]
 port = 8787
@@ -158,7 +158,7 @@ dataset = "bsi_ops_events"
 
 # Cron trigger — warm KV cache for scores + rankings
 [env.production.triggers]
-crons = ["*/1 * * * *"]
+crons = ["*/1 * * * *", "*/15 * * * *", "15 09 * * *", "0 06 * * 1", "0 04 * * *"]
 
 [[env.production.tail_consumers]]
 service = "bsi-error-tracker"
