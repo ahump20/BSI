@@ -17,7 +17,7 @@ Start from product intent before visuals. State audience, decision task, and the
    - component state matrix (default/hover/active/focus/disabled/loading)
    - responsive behavior (mobile/tablet/desktop)
    - implementation notes (Tailwind + Recharts + Framer Motion)
-4. Run `python scripts/audit_design_spec.py <spec.md> --json` on completed specs.
+4. Run `python3 scripts/audit_design_spec.py <spec.md> --json` on completed specs.
 5. If audit fails, fix spec issues before implementation.
 
 ## Hard constraints

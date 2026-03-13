@@ -12,7 +12,7 @@ CATEGORIES = {
     "brand_fidelity": [r"#BF5700|burnt orange", r"Oswald", r"Cormorant Garamond", r"midnight|charcoal"],
     "hierarchy_density": [r"hierarchy|priority", r"scan|first", r"data|score|metrics"],
     "system_reusability": [r"reusable|tokens|pattern|component"],
-    "stack_realism": [r"\bNext\.js\b", r"\bTailwind\b", r"\bRecharts\b", r"\bFramer Motion\b"],
+    "stack_realism": [r"\bNext\.js\b", r"\bTailwind\b", r"\bRecharts\b", r"\bFramer Motion\b", r"\bframer-motion\b"],
     "accessibility": [r"focus", r"keyboard", r"contrast"],
     "spec_before_code": [r"spec|blueprint", r"before code|before implementation|implementation notes"],
 }
@@ -22,10 +22,7 @@ def score_text(text: str) -> dict[str, int]:
     scores: dict[str, int] = {}
     for key, patterns in CATEGORIES.items():
         hits = sum(1 for p in patterns if re.search(p, text, flags=re.IGNORECASE))
-        if key in {"system_reusability"}:
-            scores[key] = 2 if hits >= 1 else 0
-        else:
-            scores[key] = 2 if hits >= 2 else (1 if hits >= 1 else 0)
+        scores[key] = 2 if hits >= 2 else (1 if hits >= 1 else 0)
     return scores
 
 
