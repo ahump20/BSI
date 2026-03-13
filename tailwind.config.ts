@@ -9,8 +9,10 @@ const config: Config = {
   darkMode: 'class',
   theme: {
     extend: {
+      screens: {
+        xs: '375px',
+      },
       colors: {
-        // Brand Colors - Burnt Orange Scale
         'burnt-orange': {
           50: '#FFF4E6',
           100: '#FFE4C4',
@@ -18,7 +20,7 @@ const config: Config = {
           300: '#FFB066',
           400: '#FF9333',
           500: '#FF7700',
-          600: '#BF5700', // Primary Brand - UT Burnt Orange
+          600: '#BF5700',
           700: '#994500',
           800: '#733400',
           900: '#4D2300',
@@ -30,55 +32,48 @@ const config: Config = {
           200: '#FFE588',
           300: '#FFD54F',
           400: '#FFC947',
-          500: '#FDB913', // Primary gold accent
+          500: '#FDB913',
           600: '#F59E0B',
           700: '#D97706',
           800: '#B45309',
           900: '#92400E',
           DEFAULT: '#FDB913',
         },
-        // Charcoal — BSI brand neutral (not Tailwind's blue-tinted gray)
         charcoal: {
           DEFAULT: '#1A1A1A',
           800: '#1f2937',
           900: '#111827',
           950: '#0a0a0f',
         },
-        // Semantic Colors
         'texas-soil': '#8B4513',
         'texas-cream': '#F5E6D3',
         midnight: '#0D0D0D',
         ember: '#FF6B35',
         flame: '#E85D04',
         graphite: '#242424',
-        // Text Colors
         text: {
           primary: '#F5F0EB',
           secondary: '#A89F95',
           tertiary: '#737373',
           muted: 'rgba(245, 240, 235, 0.40)',
         },
-        // Border Colors
         border: {
           subtle: 'rgba(255, 255, 255, 0.06)',
           DEFAULT: 'rgba(255, 255, 255, 0.1)',
           strong: 'rgba(255, 255, 255, 0.15)',
           accent: 'rgba(191, 87, 0, 0.4)',
         },
-        // Background variants
         background: {
           primary: '#0D0D0D',
           secondary: '#1A1A1A',
           tertiary: '#242424',
           elevated: '#2E2E2E',
         },
-        // Surface/Glass — must match globals.css utility overrides
         surface: {
           DEFAULT: 'rgba(255, 255, 255, 0.04)',
           light: 'rgba(255, 255, 255, 0.025)',
           medium: 'rgba(255, 255, 255, 0.04)',
         },
-        // Status Colors
         success: {
           DEFAULT: '#10b981',
           light: '#34d399',
@@ -99,7 +94,6 @@ const config: Config = {
           light: '#60a5fa',
           dark: '#2563eb',
         },
-        // Sport Colors
         baseball: {
           DEFAULT: '#BF5700',
           diamond: '#6B8E23',
@@ -126,7 +120,6 @@ const config: Config = {
           lane: '#FFD700',
           field: '#10B981',
         },
-        // Team Colors
         cardinals: {
           DEFAULT: '#C41E3A',
           secondary: '#0C2340',
@@ -145,7 +138,6 @@ const config: Config = {
           DEFAULT: '#5D76A9',
           secondary: '#FDB927',
         },
-        // Heritage Vintage System
         'heritage-columbia': '#4B9CD3',
         'heritage-teal': '#00B2A9',
         'heritage-bronze': '#8C6239',
