@@ -11,12 +11,13 @@ import { getMainNavItems } from '@/lib/navigation';
 describe('Main Navigation — Structured (getMainNavItems)', () => {
   const { primary, secondary } = getMainNavItems();
 
-  it('has Intel and Models in primary nav', () => {
+  it('keeps scores, college baseball, intel, and pricing in primary nav', () => {
     const labels = primary.map((item) => item.label);
+    expect(labels).toContain('Scores');
+    expect(labels).toContain('College Baseball');
     expect(labels).toContain('Intel');
-    expect(labels).toContain('Models');
-    expect(labels).toContain('Live');
     expect(labels).toContain('Pricing');
+    expect(labels).not.toContain('Models');
   });
 
   it('moved About to secondary nav', () => {
@@ -32,8 +33,9 @@ describe('Main Navigation — Structured (getMainNavItems)', () => {
     expect(labels).toContain('Data Sources');
   });
 
-  it('includes Vision AI in secondary nav', () => {
+  it('keeps operational links in secondary nav', () => {
     const labels = secondary.map((item) => item.label);
-    expect(labels).toContain('Vision AI');
+    expect(labels).toContain('Dashboard');
+    expect(labels).toContain('Status');
   });
 });

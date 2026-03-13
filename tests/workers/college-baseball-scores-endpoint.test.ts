@@ -73,10 +73,10 @@ describe('handleCollegeBaseballScores', () => {
 
   it('returns cached scores on KV HIT', async () => {
     const cached = { data: [{ id: 1, name: 'Cached Game' }], totalCount: 1 };
-    env.KV._store.set('cb:scores:today', JSON.stringify(cached));
+    env.KV._store.set('cb:scores:2026-02-15', JSON.stringify(cached));
     globalThis.fetch = vi.fn() as unknown as typeof fetch;
 
-    const req = new Request('https://blazesportsintel.com/api/college-baseball/scores');
+    const req = new Request('https://blazesportsintel.com/api/college-baseball/scores?date=2026-02-15');
     const res = await worker.fetch(req, env, createMockCtx());
     const body = await res.json() as any;
 
@@ -91,14 +91,14 @@ describe('handleCollegeBaseballScores', () => {
   it('fetches from Highlightly on cache MISS', async () => {
     globalThis.fetch = mockHighlightlyScores();
 
-    const req = new Request('https://blazesportsintel.com/api/college-baseball/scores');
+    const req = new Request('https://blazesportsintel.com/api/college-baseball/scores?date=2026-02-15');
     const res = await worker.fetch(req, env, createMockCtx());
 
     expect(res.status).toBe(200);
     expect(res.headers.get('X-Cache')).toBe('MISS');
     // Verify KV was populated
     expect(env.KV.put).toHaveBeenCalledWith(
-      'cb:scores:today',
+      'cb:scores:2026-02-15',
       expect.any(String),
       expect.objectContaining({ expirationTtl: expect.any(Number) })
     );
