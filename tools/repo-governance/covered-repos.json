@@ -1,0 +1,151 @@
+{
+  "repos": [
+    {
+      "github_repo": "ahump20/BSI",
+      "path": "/Users/AustinHumphrey/BSI-clean",
+      "install_hooks": true,
+      "cloudflare_workflow": false
+    },
+    {
+      "github_repo": "Blaze-sports-Intel/blazecraft",
+      "path": "/Users/AustinHumphrey/blazecraft-app",
+      "install_hooks": true,
+      "cloudflare_workflow": true,
+      "cloudflare_targets": {
+        "node_version": "20",
+        "package_manager": "npm",
+        "install_command": "npm ci",
+        "validate_command": "npm run typecheck",
+        "targets": [
+          {
+            "id": "r2-site",
+            "kind": "r2-static-site",
+            "working_directory": ".",
+            "environment": "production",
+            "deploy_command": "bash scripts/deploy.sh"
+          }
+        ]
+      }
+    },
+    {
+      "github_repo": "Blaze-sports-Intel/bsi-labs",
+      "path": "/Users/AustinHumphrey/bsi-labs",
+      "install_hooks": true,
+      "cloudflare_workflow": true,
+      "cloudflare_targets": {
+        "node_version": "20",
+        "package_manager": "npm",
+        "install_command": "npm ci",
+        "validate_command": "npm run typecheck && npm run lint",
+        "targets": [
+          {
+            "id": "pages",
+            "kind": "pages",
+            "working_directory": ".",
+            "project_name": "trackman-audit-lab",
+            "environment": "production",
+            "deploy_command": "npm run build && wrangler pages deploy dist --project-name=trackman-audit-lab --branch \"$BRANCH\" --commit-dirty=true"
+          }
+        ]
+      }
+    },
+    {
+      "github_repo": "Blaze-sports-Intel/college-baseball-api",
+      "path": "/Users/AustinHumphrey/college-baseball-api",
+      "install_hooks": true,
+      "cloudflare_workflow": true,
+      "cloudflare_targets": {
+        "node_version": "20",
+        "package_manager": "npm",
+        "install_command": "npm ci",
+        "validate_command": "npm run typecheck && npm run test",
+        "targets": [
+          {
+            "id": "api",
+            "kind": "worker",
+            "working_directory": ".",
+            "project_name": "cbb-api",
+            "environment": "production",
+            "deploy_command": "npm --prefix api run deploy"
+          },
+          {
+            "id": "sync",
+            "kind": "worker",
+            "working_directory": ".",
+            "project_name": "cbb-api-sync",
+            "environment": "production",
+            "deploy_command": "npm --prefix sync run deploy"
+          }
+        ]
+      }
+    },
+    {
+      "github_repo": "ahump20/moltworker",
+      "path": "/Users/AustinHumphrey/moltworker",
+      "install_hooks": true,
+      "cloudflare_workflow": true,
+      "cloudflare_targets": {
+        "node_version": "22",
+        "package_manager": "npm",
+        "install_command": "npm ci",
+        "validate_command": "npm run lint && npm run format:check && npm run typecheck && npm test",
+        "targets": [
+          {
+            "id": "worker",
+            "kind": "worker",
+            "working_directory": ".",
+            "project_name": "moltbot-sandbox",
+            "environment": "production",
+            "deploy_command": "npm run deploy"
+          }
+        ]
+      }
+    },
+    {
+      "github_repo": "ahump20/humphrey-dna",
+      "path": "/Users/AustinHumphrey/humphrey-dna",
+      "install_hooks": true,
+      "cloudflare_workflow": true,
+      "cloudflare_targets": {
+        "node_version": "20",
+        "package_manager": "npm",
+        "install_command": "npm ci",
+        "validate_command": "npm run lint && npm run build",
+        "targets": [
+          {
+            "id": "pages",
+            "kind": "pages",
+            "working_directory": ".",
+            "project_name": "humphrey-dna",
+            "environment": "production",
+            "deploy_command": "npm run deploy"
+          }
+        ]
+      }
+    },
+    {
+      "github_repo": "ahump20/clawdbot",
+      "path": "/Users/AustinHumphrey/clawdbot",
+      "install_hooks": true,
+      "cloudflare_workflow": false
+    },
+    {
+      "github_repo": "Blaze-sports-Intel/wrangler-action",
+      "path": "/Users/AustinHumphrey/wrangler-action",
+      "install_hooks": true,
+      "cloudflare_workflow": false
+    },
+    {
+      "github_repo": "ahump20/Austin-Writing---Communication-Style-Archive",
+      "path": "/Users/AustinHumphrey/Austin-Writing---Communication-Style-Archive",
+      "install_hooks": true,
+      "cloudflare_workflow": false
+    },
+    {
+      "github_repo": "ahump20/austin-humphrey-portfolio",
+      "path": "/Users/AustinHumphrey/personal-website",
+      "install_hooks": true,
+      "cloudflare_workflow": false
+    }
+  ]
+}

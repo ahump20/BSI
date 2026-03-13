@@ -158,13 +158,13 @@ export function TeamVideoPanel({ teamId }: { teamId: string }) {
   const allVideos = useMemo(() => getTeamVideos(teamId), [teamId]);
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all');
 
-  if (allVideos.length === 0) return null;
-
   // Determine which category tabs to show (only categories that have videos)
   const availableCategories = useMemo(() => {
     const cats = new Set(allVideos.map(v => v.category));
     return CATEGORY_ORDER.filter(c => cats.has(c));
   }, [allVideos]);
+
+  if (allVideos.length === 0) return null;
 
   const filtered = activeFilter === 'all'
     ? allVideos
