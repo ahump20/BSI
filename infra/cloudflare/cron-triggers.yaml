@@ -1,0 +1,67 @@
+version: 3
+kind: cloudflare-cron-plan
+timezone: UTC
+
+workers:
+  - name: blazesportsintel-worker-prod
+    wrangler_config: workers/wrangler.toml
+    env: production
+    purpose: API edge refresh + cross-sport ingest orchestration
+    schedules:
+      - id: leaderboard_refresh_minutely
+        cron: "*/1 * * * *"
+        handler: scheduled
+        notes: Keep minute-level cache hydration for live score/ranking freshness.
+      - id: cfb_near_real_time
+        cron: "*/15 * * * *"
+        handler: scheduled
+        rate_limit:
+          provider: CollegeFootballData
+          max_calls_per_minute: 10
+        notes: Near real-time NCAA FB refresh with CFBD-aware throttling in handler logic.
+      - id: nfl_daily_in_season
+        cron: "15 09 * * *"
+        handler: scheduled
+        season_gate:
+          enabled: true
+          months_utc: [9, 10, 11, 12, 1, 2]
+        notes: Daily in-season nflverse refresh; no-op outside active season.
+      - id: projections_biweekly_anchor
+        cron: "0 06 * * 1"
+        handler: scheduled
+        biweekly_guard:
+          mode: iso_week_parity
+          run_on: odd
+        notes: Weekly anchor with parity guard for true biweekly projection updates.
+      - id: audit_daily
+        cron: "0 04 * * *"
+        handler: scheduled
+        checks:
+          - standings.json
+          - scores.json
+        notes: Daily payload audit for leaderboard integrity.
+
+  - name: bsi-sportradar-ingest
+    wrangler_config: workers/sportradar-ingest/wrangler.toml
+    env: production
+    purpose: MLB feed hydration + R2 archive + D1 upsert
+    schedules:
+      - id: mlb_realtime_primary
+        cron: "*/2 * * * *"
+        handler: scheduled
+        notes: Primary near-real-time MLB ingest loop.
+      - id: mlb_realtime_backstop
+        cron: "*/15 * * * *"
+        handler: scheduled
+        notes: Backstop pass for corrections and delayed stat updates.
+
+post_run:
+  on_success:
+    push_live_api: true
+    slack_channel: "#data-refresh"
+    notion_database: "Data Refresh Runs"
+    asana_project: "Leaderboard Data Ops"
+  on_failure:
+    sentry_capture: true
+    slack_channel: "#data-alerts"
+    open_incident: true
