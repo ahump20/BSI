@@ -272,7 +272,7 @@
             "-y",
             "@cloudflare/mcp-server-cloudflare@latest",
             "run",
-            "a12cb329d84130460eed99b816e4d0d3"
+            "CLOUDFLARE_MCP_RUN_TOKEN"
           ],
           "env": {}
         }
