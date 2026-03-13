@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -84,47 +84,56 @@ const VALUE_PROPS = [
 export default function TransferPortalPage() {
   const [entries, setEntries] = useState<PortalEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(0);
   const perPage = 25;
   const { addPlayer, removePlayer, isWatched } = useWatchlist();
 
+  const fetchPortalEntries = useCallback(async (): Promise<boolean> => {
+    try {
+      const [portalRes, nilRes] = await Promise.all([
+        fetch('/api/college-baseball/transfer-portal'),
+        fetch('/api/nil/leaderboard?limit=500'),
+      ]);
+
+      const nilMap: Record<string, number> = {};
+      if (nilRes.ok) {
+        const nilData = await nilRes.json() as { data?: NILPlayer[] };
+        for (const p of nilData.data || []) {
+          nilMap[p.player_name.toLowerCase()] = p.estimated_mid;
+        }
+      }
+
+      if (!portalRes.ok) {
+        setError('Portal feed is unavailable right now. Please try again shortly.');
+        return false;
+      }
+
+      const data = await portalRes.json() as { entries?: PortalEntry[] };
+      const fetched = (data.entries || []).map(e => ({
+        ...e,
+        nilValue: nilMap[e.playerName.toLowerCase()],
+      }));
+      setEntries(fetched);
+      setError(null);
+      return fetched.length > 0;
+    } catch {
+      setError('Portal feed is unavailable right now. Please try again shortly.');
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | null = null;
-    async function fetchPortalEntries() {
-      try {
-        const [portalRes, nilRes] = await Promise.all([
-          fetch('/api/college-baseball/transfer-portal'),
-          fetch('/api/nil/leaderboard?limit=500'),
-        ]);
-
-        const nilMap: Record<string, number> = {};
-        if (nilRes.ok) {
-          const nilData = await nilRes.json() as { data?: NILPlayer[] };
-          for (const p of nilData.data || []) {
-            nilMap[p.player_name.toLowerCase()] = p.estimated_mid;
-          }
-        }
-
-        if (portalRes.ok) {
-          const data = await portalRes.json() as { entries?: PortalEntry[] };
-          const fetched = (data.entries || []).map(e => ({
-            ...e,
-            nilValue: nilMap[e.playerName.toLowerCase()],
-          }));
-          setEntries(fetched);
-          if (fetched.length > 0 && !interval) {
-            interval = setInterval(fetchPortalEntries, 30000);
-          }
-        }
-      } catch {
-        // Fall through to empty state
-      } finally {
-        setLoading(false);
+    fetchPortalEntries().then((hasData) => {
+      if (hasData) {
+        interval = setInterval(fetchPortalEntries, 30000);
       }
-    }
-    fetchPortalEntries();
+    });
     return () => { if (interval) clearInterval(interval); };
-  }, []);
+  }, [fetchPortalEntries]);
 
   function relativeTime(dateStr: string): string {
     const diff = Date.now() - new Date(dateStr).getTime();
@@ -254,7 +263,21 @@ export default function TransferPortalPage() {
             </ScrollReveal>
 
             <DataErrorBoundary name="Transfer Portal">
-            {loading ? (
+            {error ? (
+              <Card padding="lg" className="text-center border border-border-subtle bg-surface-medium">
+                <h3 className="text-lg font-bold text-text-primary mb-2">Portal feed unavailable</h3>
+                <p className="text-text-tertiary text-sm mb-4 max-w-md mx-auto">
+                  We couldn&apos;t load the latest transfer activity. Please retry in a moment.
+                </p>
+                <button
+                  className="btn-heritage px-4 py-2 text-sm"
+                  onClick={() => { setLoading(true); fetchPortalEntries(); }}
+                  type="button"
+                >
+                  Retry
+                </button>
+              </Card>
+            ) : loading ? (
               <div className="flex items-center justify-center py-20">
                 <div className="w-10 h-10 border-4 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
               </div>
