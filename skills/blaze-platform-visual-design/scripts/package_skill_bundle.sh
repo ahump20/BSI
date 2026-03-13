@@ -5,7 +5,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DIST="$ROOT/dist"
 NAME="blaze-platform-visual-design"
 
-python "$ROOT/scripts/validate_skill_bundle.py" "$ROOT"
+python3 "$ROOT/scripts/validate_skill_bundle.py" "$ROOT"
 mkdir -p "$DIST"
 
 (

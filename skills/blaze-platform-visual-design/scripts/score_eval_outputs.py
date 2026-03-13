@@ -12,7 +12,7 @@ CATEGORIES = {
     "brand_fidelity": [r"#BF5700|burnt orange", r"Oswald", r"Cormorant Garamond", r"midnight|charcoal"],
     "hierarchy_density": [r"hierarchy|priority", r"scan|first", r"data|score|metrics"],
     "system_reusability": [r"reusable|tokens|pattern|component"],
-    "stack_realism": [r"Next\.js", r"Tailwind", r"Recharts", r"Framer Motion|Motion"],
+    "stack_realism": [r"Next\.js", r"Tailwind", r"Recharts", r"Framer Motion"],
     "accessibility": [r"focus", r"keyboard", r"contrast"],
     "spec_before_code": [r"spec|blueprint", r"before code|before implementation|implementation notes"],
 }
@@ -33,6 +33,11 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--inputs", nargs="+", required=True, help="Input markdown/text files")
     parser.add_argument("--out", required=True, help="Output JSON path")
+    parser.add_argument(
+        "--allow-failures",
+        action="store_true",
+        help="Exit zero even when one or more scored inputs fail the rubric",
+    )
     args = parser.parse_args()
 
     results = []
@@ -49,7 +54,8 @@ def main() -> int:
     out.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     print(json.dumps(payload, indent=2))
 
-    return 0
+    any_failed = any(not result["passed"] for result in results)
+    return 0 if args.allow_failures or not any_failed else 1
 
 
 if __name__ == "__main__":

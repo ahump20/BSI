@@ -9,7 +9,7 @@ import re
 from pathlib import Path
 
 REQUIRED = {
-    "brand_color": [r"#BF5700", r"burnt orange"],
+    "brand_color": [r"#BF5700"],
     "heading_font": [r"Oswald"],
     "body_font": [r"Cormorant Garamond"],
     "hierarchy": [r"hierarchy", r"priority"],
@@ -34,8 +34,38 @@ def check_required(text: str) -> dict[str, bool]:
 def check_banned(text: str) -> list[str]:
     hits = []
     for pattern in BANNED:
-        if re.search(pattern, text, flags=re.IGNORECASE):
+        for match in re.finditer(pattern, text, flags=re.IGNORECASE):
+            sentence_start = max(
+                text.rfind(".", 0, match.start()),
+                text.rfind("!", 0, match.start()),
+                text.rfind("?", 0, match.start()),
+                text.rfind("\n", 0, match.start()),
+            )
+            sentence_end_candidates = [
+                pos
+                for pos in (
+                    text.find(".", match.end()),
+                    text.find("!", match.end()),
+                    text.find("?", match.end()),
+                    text.find("\n", match.end()),
+                )
+                if pos != -1
+            ]
+            sentence_end = min(sentence_end_candidates) if sentence_end_candidates else len(text)
+            sentence = text[sentence_start + 1 : sentence_end].strip()
+            sentence_prefix = text[sentence_start + 1 : match.start()].strip()
+            negation_patterns = [
+                rf"(avoid|reject|ban|banned|forbid|forbidden|no|not|never|without|don't|do not)\s+{pattern}",
+                rf"{pattern}\s+(is|are|should be)?\s*(avoided|rejected|banned|forbidden|not allowed|disallowed)",
+            ]
+            if re.search(
+                r"(avoid|reject|ban|banned|forbid|forbidden|never|without|don't|do not)\b",
+                sentence_prefix,
+                flags=re.IGNORECASE,
+            ) or any(re.search(negation, sentence, flags=re.IGNORECASE) for negation in negation_patterns):
+                continue
             hits.append(pattern)
+            break
     return hits
 
 

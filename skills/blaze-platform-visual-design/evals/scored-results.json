@@ -19,11 +19,11 @@
         "brand_fidelity": 2,
         "hierarchy_density": 2,
         "system_reusability": 2,
-        "stack_realism": 1,
+        "stack_realism": 0,
         "accessibility": 2,
         "spec_before_code": 1
       },
-      "total": 10,
+      "total": 9,
       "passed": true
     }
   ]

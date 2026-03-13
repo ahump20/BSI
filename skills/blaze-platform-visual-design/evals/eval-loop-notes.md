@@ -13,4 +13,4 @@ Verification result:
 - `audit_design_spec.py` fails intentionally weak sample.
 - `audit_design_spec.py` passes revised sample.
 - `validate_skill_bundle.py` passes full bundle structure + metadata checks.
-- `score_eval_outputs.py` reports iteration-1 total 3 (fail) and iteration-2 total 10 (pass).
+- `score_eval_outputs.py` reports iteration-1 total 3 (fail) and iteration-2 total 9 (pass).
