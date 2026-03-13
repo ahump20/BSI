@@ -9,7 +9,7 @@ import re
 from pathlib import Path
 
 REQUIRED = {
-    "brand_color": [r"#BF5700", r"burnt orange"],
+    "brand_color": [r"#BF5700"],
     "heading_font": [r"Oswald"],
     "body_font": [r"Cormorant Garamond"],
     "hierarchy": [r"hierarchy", r"priority"],
@@ -31,11 +31,38 @@ def check_required(text: str) -> dict[str, bool]:
     return out
 
 
+def _is_negated_context(text: str, match_start: int) -> bool:
+    """Return True if the banned term at match_start appears in a rejecting/avoidance context."""
+    window_start = max(0, match_start - 100)
+    context = text[window_start:match_start].lower()
+
+    # Phrases that indicate the following term should *not* be used.
+    negation_patterns = [
+        r"\bavoid\b",
+        r"\breject\b",
+        r"\bno\b",
+        r"\bwithout\b",
+        r"\bdo not use\b",
+        r"\bdon't use\b",
+        r"\bshould not use\b",
+        r"\bmust not use\b",
+    ]
+
+    return any(re.search(pat, context) for pat in negation_patterns)
+
+
 def check_banned(text: str) -> list[str]:
-    hits = []
+    hits: list[str] = []
     for pattern in BANNED:
-        if re.search(pattern, text, flags=re.IGNORECASE):
+        # Look for all occurrences of the banned term.
+        for match in re.finditer(pattern, text, flags=re.IGNORECASE):
+            # Skip occurrences that are clearly in an avoidance/negative context,
+            # e.g., "avoid glassmorphism" or "do not use neumorphism".
+            if _is_negated_context(text, match.start()):
+                continue
             hits.append(pattern)
+            # Only need to record each banned pattern once.
+            break
     return hits
 
 

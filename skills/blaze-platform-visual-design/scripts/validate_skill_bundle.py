@@ -65,12 +65,16 @@ def validate(root: Path) -> dict:
 
     evals_file = root / "evals/evals.json"
     if evals_file.exists():
-        data = json.loads(evals_file.read_text(encoding="utf-8"))
-        if data.get("skill_name") != "blaze-platform-visual-design":
-            errors.append("eval_skill_name_mismatch")
-        evals = data.get("evals", [])
-        if len(evals) < 3:
-            errors.append("eval_count_lt_3")
+        try:
+            data = json.loads(evals_file.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError) as exc:
+            errors.append(f"evals_json_error:{exc}")
+        else:
+            if data.get("skill_name") != "blaze-platform-visual-design":
+                errors.append("eval_skill_name_mismatch")
+            evals = data.get("evals", [])
+            if len(evals) < 3:
+                errors.append("eval_count_lt_3")
 
     return {"passed": not errors, "errors": errors}
 

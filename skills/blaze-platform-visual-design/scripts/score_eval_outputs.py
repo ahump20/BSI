@@ -49,7 +49,8 @@ def main() -> int:
     out.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     print(json.dumps(payload, indent=2))
 
-    return 0
+    any_failed = any(not r["passed"] for r in results)
+    return 1 if any_failed else 0
 
 
 if __name__ == "__main__":
