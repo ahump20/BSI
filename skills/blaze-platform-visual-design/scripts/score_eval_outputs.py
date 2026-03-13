@@ -12,7 +12,7 @@ CATEGORIES = {
     "brand_fidelity": [r"#BF5700|burnt orange", r"Oswald", r"Cormorant Garamond", r"midnight|charcoal"],
     "hierarchy_density": [r"hierarchy|priority", r"scan|first", r"data|score|metrics"],
     "system_reusability": [r"reusable|tokens|pattern|component"],
-    "stack_realism": [r"Next\.js", r"Tailwind", r"Recharts", r"Framer Motion|Motion"],
+    "stack_realism": [r"\bNext\.js\b", r"\bTailwind\b", r"\bRecharts\b", r"\bFramer Motion\b"],
     "accessibility": [r"focus", r"keyboard", r"contrast"],
     "spec_before_code": [r"spec|blueprint", r"before code|before implementation|implementation notes"],
 }
