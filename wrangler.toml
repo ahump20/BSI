@@ -67,7 +67,7 @@ binding = "AI"
 
 [env.production.vars]
 ENVIRONMENT = "production"
-NEXT_PUBLIC_POSTHOG_KEY = "phc_KirkHATYxmVzlCgyZzXRwpdTvrKBVA4vyZ7b44NTtE5"
+# NEXT_PUBLIC_POSTHOG_KEY — set in Cloudflare Pages dashboard or via wrangler secret put
 
 [[env.production.kv_namespaces]]
 binding = "BSI_CACHE"

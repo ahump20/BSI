@@ -3,6 +3,16 @@
  *
  * Runs before every Pages Function under /api/.
  * Adds CORS headers, request logging, and error handling.
+ *
+ * ARCHITECTURE NOTE: In production, blazesportsintel.com/* is routed through
+ * the apex Worker (workers/wrangler.toml → blazesportsintel-worker). The Worker
+ * handles API routes and proxies static asset requests to this Cloudflare Pages
+ * project. These Pages Functions serve as the API layer when the site is accessed
+ * directly via the *.pages.dev domain (e.g., blazesportsintel.pages.dev/api/*),
+ * and as a fallback if the Worker is unavailable.
+ *
+ * Both the Worker and Pages Functions share the same KV namespace (BSI_CACHE / KV)
+ * so cached data is consistent regardless of which path serves the request.
  */
 
 export const onRequest: PagesFunction = async (context) => {
