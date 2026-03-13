@@ -17,7 +17,9 @@ import validate_skill_bundle
 
 class SkillScriptTests(unittest.TestCase):
     def create_skill_root(self) -> Path:
-        root = Path(tempfile.mkdtemp())
+        temp_dir = tempfile.TemporaryDirectory()
+        self.addCleanup(temp_dir.cleanup)
+        root = Path(temp_dir.name)
         (root / "references").mkdir()
         (root / "scripts").mkdir()
         (root / "evals").mkdir()
@@ -46,7 +48,7 @@ class SkillScriptTests(unittest.TestCase):
         result = validate_skill_bundle.validate(root)
 
         self.assertFalse(result["passed"])
-        self.assertIn("evals_json_invalid:Expecting value", result["errors"])
+        self.assertTrue(any(error.startswith("evals_json_invalid:") for error in result["errors"]))
 
     def test_audit_requires_explicit_brand_hex(self) -> None:
         required = audit_design_spec.check_required(

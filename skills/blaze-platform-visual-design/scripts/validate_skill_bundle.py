@@ -68,7 +68,7 @@ def validate(root: Path) -> dict:
         try:
             data = json.loads(evals_file.read_text(encoding="utf-8"))
         except json.JSONDecodeError as exc:
-            errors.append(f"evals_json_invalid:{exc.msg}")
+            errors.append(f"evals_json_invalid:{exc}")
         except OSError as exc:
             errors.append(f"evals_read_error:{exc}")
         else:
