@@ -117,7 +117,7 @@ export default function TexasRosterClient() {
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">
           <Container>
-            <nav className="flex items-center gap-2 text-sm">
+            <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm">
               <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">College Baseball</Link>
               <span className="text-text-muted">/</span>
               <Link href="/college-baseball/texas-intelligence" className="text-text-muted hover:text-burnt-orange transition-colors">Texas Intel</Link>
@@ -311,23 +311,33 @@ export default function TexasRosterClient() {
 // ─── Sort Header Components ─────────────────────────────────────────────────
 
 function SortTh({ label, field, current, onSort }: { label: string; field: SortField; current: SortField; onSort: (f: SortField) => void }) {
+  const active = current === field;
   return (
     <th
-      className={`text-right py-2 px-2 cursor-pointer hover:text-text-primary transition-colors ${current === field ? 'text-burnt-orange' : ''}`}
+      className={`text-right py-2 px-2 cursor-pointer hover:text-text-primary transition-colors ${active ? 'text-burnt-orange' : ''}`}
       onClick={() => onSort(field)}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSort(field); } }}
+      tabIndex={0}
+      role="columnheader"
+      aria-sort={active ? 'descending' : 'none'}
     >
-      {label} {current === field ? '▾' : ''}
+      {label} {active ? '▾' : ''}
     </th>
   );
 }
 
 function PitcherSortTh({ label, field, current, onSort }: { label: string; field: PitcherSortField; current: PitcherSortField; onSort: (f: PitcherSortField) => void }) {
+  const active = current === field;
   return (
     <th
-      className={`text-right py-2 px-2 cursor-pointer hover:text-text-primary transition-colors ${current === field ? 'text-burnt-orange' : ''}`}
+      className={`text-right py-2 px-2 cursor-pointer hover:text-text-primary transition-colors ${active ? 'text-burnt-orange' : ''}`}
       onClick={() => onSort(field)}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSort(field); } }}
+      tabIndex={0}
+      role="columnheader"
+      aria-sort={active ? 'descending' : 'none'}
     >
-      {label} {current === field ? '▾' : ''}
+      {label} {active ? '▾' : ''}
     </th>
   );
 }

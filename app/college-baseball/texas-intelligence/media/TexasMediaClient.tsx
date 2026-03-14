@@ -56,7 +56,7 @@ export default function TexasMediaClient() {
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">
           <Container>
-            <nav className="flex items-center gap-2 text-sm">
+            <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm">
               <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">College Baseball</Link>
               <span className="text-text-muted">/</span>
               <Link href="/college-baseball/texas-intelligence" className="text-text-muted hover:text-burnt-orange transition-colors">Texas Intel</Link>
