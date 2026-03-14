@@ -50,7 +50,7 @@ export async function handleTexasIntelVideos(env: Env): Promise<Response> {
     const query = encodeURIComponent('Texas Longhorns baseball 2026 highlights');
     const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&type=video&maxResults=20&order=date&key=${apiKey}`;
 
-    const res = await fetch(url, { headers: { Accept: 'application/json' } });
+    const res = await fetch(url, { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(8000) });
     if (!res.ok) {
       console.error(`[texas-intel] YouTube API error: ${res.status}`);
       return json(withMeta({ videos: [], error: 'YouTube API unavailable' }, 'error'), 200);
@@ -102,6 +102,17 @@ const RSS_FEEDS: { url: string; name: string; keywords: string[] }[] = [
   },
 ];
 
+function decodeEntities(text: string): string {
+  return text
+    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'");
+}
+
 function parseRSSItems(xml: string): { title: string; link: string; pubDate: string; description: string; categories: string }[] {
   const items: { title: string; link: string; pubDate: string; description: string; categories: string }[] = [];
   const itemRegex = /<item>([\s\S]*?)<\/item>/g;
@@ -117,7 +128,7 @@ function parseRSSItems(xml: string): { title: string; link: string; pubDate: str
     const catRegex = /<category[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/category>/g;
     let catMatch;
     while ((catMatch = catRegex.exec(block)) !== null) cats.push(catMatch[1]);
-    items.push({ title, link, pubDate, description: desc.slice(0, 200), categories: cats.join(' ') });
+    items.push({ title: decodeEntities(title), link, pubDate, description: decodeEntities(desc).slice(0, 200), categories: cats.join(' ') });
   }
   return items;
 }
@@ -223,7 +234,7 @@ export async function handleTexasIntelDigest(env: Env): Promise<Response> {
   // Gather source data for the digest
   let teamContext = '';
   try {
-    const teamRes = await fetch(`https://blazesportsintel.com/api/college-baseball/teams/251`);
+    const teamRes = await fetch(`https://blazesportsintel.com/api/college-baseball/teams/251`, { signal: AbortSignal.timeout(8000) });
     if (teamRes.ok) {
       const teamData = await teamRes.json();
       teamContext = JSON.stringify(teamData).slice(0, 2000);
@@ -1143,5 +1154,363 @@ export async function handleTexasScheduleHeatMap(env: Env): Promise<Response> {
   } catch (err) {
     console.error('[texas-intel] Schedule heatmap error:', err);
     return json(withMeta({ error: 'Failed to build schedule heatmap' }, 'error'), 500);
+  }
+}
+
+// ─── Matchup Theater ────────────────────────────────────────────────────────
+
+export async function handleTexasMatchup(env: Env, opponentId: string): Promise<Response> {
+  const KV_KEY = `texas-intel:matchup:${opponentId}`;
+  const TTL = 7200; // 2 hours
+
+  const cached = await kvGet<Record<string, unknown>>(env.KV, KV_KEY);
+  if (cached) {
+    return cachedJson(cached, 200, 300, { 'X-Cache': 'HIT' });
+  }
+
+  try {
+    const [
+      texasBatting, texasPitching, oppBatting, oppPitching,
+      texasHitters, oppHitters, texasPitchers, oppPitchers, h2hGames,
+    ] = await Promise.all([
+      env.DB.prepare(
+        `SELECT AVG(avg) AS avg, AVG(obp) AS obp, AVG(slg) AS slg, AVG(ops) AS ops,
+                AVG(k_pct) AS k_pct, AVG(bb_pct) AS bb_pct, AVG(iso) AS iso,
+                AVG(woba) AS woba, AVG(wrc_plus) AS wrc_plus
+         FROM cbb_batting_advanced WHERE team_id = ? OR team LIKE ?`,
+      ).bind(TEXAS_TEAM_ID, TEXAS_TEAM_PATTERN).first(),
+
+      env.DB.prepare(
+        `SELECT AVG(era) AS era, AVG(fip) AS fip, AVG(whip) AS whip,
+                AVG(k_9) AS k_9, AVG(bb_9) AS bb_9
+         FROM cbb_pitching_advanced WHERE team_id = ? OR team LIKE ?`,
+      ).bind(TEXAS_TEAM_ID, TEXAS_TEAM_PATTERN).first(),
+
+      env.DB.prepare(
+        `SELECT AVG(avg) AS avg, AVG(obp) AS obp, AVG(slg) AS slg, AVG(ops) AS ops,
+                AVG(k_pct) AS k_pct, AVG(bb_pct) AS bb_pct, AVG(iso) AS iso,
+                AVG(woba) AS woba, AVG(wrc_plus) AS wrc_plus
+         FROM cbb_batting_advanced WHERE team_id = ?`,
+      ).bind(opponentId).first(),
+
+      env.DB.prepare(
+        `SELECT AVG(era) AS era, AVG(fip) AS fip, AVG(whip) AS whip,
+                AVG(k_9) AS k_9, AVG(bb_9) AS bb_9
+         FROM cbb_pitching_advanced WHERE team_id = ?`,
+      ).bind(opponentId).first(),
+
+      env.DB.prepare(
+        `SELECT player_id, player_name, position, avg, obp, slg, woba, wrc_plus, hr, rbi, iso
+         FROM cbb_batting_advanced WHERE team_id = ? OR team LIKE ?
+         ORDER BY woba DESC LIMIT 5`,
+      ).bind(TEXAS_TEAM_ID, TEXAS_TEAM_PATTERN).all(),
+
+      env.DB.prepare(
+        `SELECT player_id, player_name, position, avg, obp, slg, woba, wrc_plus, hr, rbi, iso
+         FROM cbb_batting_advanced WHERE team_id = ?
+         ORDER BY woba DESC LIMIT 5`,
+      ).bind(opponentId).all(),
+
+      env.DB.prepare(
+        `SELECT player_id, player_name, position, era, fip, whip, k_9, bb_9, ip, w, l
+         FROM cbb_pitching_advanced WHERE (team_id = ? OR team LIKE ?) AND gs > 0
+         ORDER BY fip ASC LIMIT 3`,
+      ).bind(TEXAS_TEAM_ID, TEXAS_TEAM_PATTERN).all(),
+
+      env.DB.prepare(
+        `SELECT player_id, player_name, position, era, fip, whip, k_9, bb_9, ip, w, l
+         FROM cbb_pitching_advanced WHERE team_id = ? AND gs > 0
+         ORDER BY fip ASC LIMIT 3`,
+      ).bind(opponentId).all(),
+
+      env.DB.prepare(
+        `SELECT game_id, home_team, away_team, home_score, away_score, game_date,
+                home_team_id, away_team_id
+         FROM processed_games
+         WHERE (home_team_id = ? AND away_team_id = ?)
+            OR (home_team_id = ? AND away_team_id = ?)
+         ORDER BY game_date DESC LIMIT 10`,
+      ).bind(TEXAS_TEAM_ID, opponentId, opponentId, TEXAS_TEAM_ID).all<ProcessedGameRow>(),
+    ]);
+
+    const h2h = h2hGames.results ?? [];
+    let texasWins = 0;
+    let oppWins = 0;
+    for (const g of h2h) {
+      const isTexasHome = g.home_team_id === TEXAS_TEAM_ID;
+      const ts = isTexasHome ? g.home_score : g.away_score;
+      const os = isTexasHome ? g.away_score : g.home_score;
+      if (ts > os) texasWins++;
+      else if (os > ts) oppWins++;
+    }
+
+    const payload = withMeta({
+      texas: {
+        batting: texasBatting,
+        pitching: texasPitching,
+        topHitters: texasHitters.results ?? [],
+        topPitchers: texasPitchers.results ?? [],
+      },
+      opponent: {
+        id: opponentId,
+        batting: oppBatting,
+        pitching: oppPitching,
+        topHitters: oppHitters.results ?? [],
+        topPitchers: oppPitchers.results ?? [],
+      },
+      headToHead: {
+        texasWins,
+        opponentWins,
+        games: h2h.map((g) => ({
+          date: g.game_date,
+          homeTeam: g.home_team,
+          awayTeam: g.away_team,
+          homeScore: g.home_score,
+          awayScore: g.away_score,
+          texasIsHome: g.home_team_id === TEXAS_TEAM_ID,
+        })),
+      },
+    }, 'd1');
+
+    await kvPut(env.KV, KV_KEY, payload, TTL);
+    return cachedJson(payload, 200, 300, { 'X-Cache': 'MISS' });
+  } catch (err) {
+    console.error('[texas-intel] Matchup error:', err);
+    return json(withMeta({ error: 'Failed to load matchup data' }, 'error'), 500);
+  }
+}
+
+// ─── Draft Board ─────────────────────────────────────────────────────────────
+
+export async function handleTexasDraftBoard(env: Env): Promise<Response> {
+  const KV_KEY = 'texas-intel:draft-board';
+  const TTL = 14400; // 4 hours
+
+  const cached = await kvGet<Record<string, unknown>>(env.KV, KV_KEY);
+  if (cached) {
+    return cachedJson(cached, 200, 600, { 'X-Cache': 'HIT' });
+  }
+
+  try {
+    const [havfResult, battingResult, pitchingResult] = await Promise.all([
+      env.DB.prepare(
+        `SELECT * FROM havf_scores
+         WHERE league = 'college-baseball' AND team LIKE ?
+         ORDER BY havf_composite DESC`,
+      ).bind(TEXAS_TEAM_PATTERN).all<HavfRow>(),
+
+      env.DB.prepare(
+        `SELECT * FROM cbb_batting_advanced
+         WHERE team_id = ? OR team LIKE ?
+         ORDER BY woba DESC`,
+      ).bind(TEXAS_TEAM_ID, TEXAS_TEAM_PATTERN).all<BattingAdvancedRow>(),
+
+      env.DB.prepare(
+        `SELECT * FROM cbb_pitching_advanced
+         WHERE team_id = ? OR team LIKE ?
+         ORDER BY fip ASC`,
+      ).bind(TEXAS_TEAM_ID, TEXAS_TEAM_PATTERN).all<PitchingAdvancedRow>(),
+    ]);
+
+    const battingMap = new Map<string, BattingAdvancedRow>();
+    for (const b of battingResult.results ?? []) battingMap.set(b.player_id, b);
+
+    const pitchingMap = new Map<string, PitchingAdvancedRow>();
+    for (const p of pitchingResult.results ?? []) pitchingMap.set(p.player_id, p);
+
+    const players = (havfResult.results ?? []).map((h) => {
+      const batting = battingMap.get(h.player_id) ?? null;
+      const pitching = pitchingMap.get(h.player_id) ?? null;
+      const composite = h.havf_composite;
+
+      let draftTier: string;
+      if (composite >= 80) draftTier = 'Top 3 Rounds';
+      else if (composite >= 65) draftTier = 'Rounds 4-10';
+      else if (composite >= 50) draftTier = 'Day 3';
+      else draftTier = 'Development';
+
+      return {
+        playerId: h.player_id,
+        name: h.name,
+        position: h.position,
+        havf: { composite: h.havf_composite, h: h.h_score, a: h.a_score, v: h.v_score, f: h.f_score },
+        batting: batting
+          ? { avg: batting.avg, obp: batting.obp, slg: batting.slg, woba: batting.woba, wrc_plus: batting.wrc_plus, hr: batting.hr, sb: batting.sb, pa: batting.pa }
+          : null,
+        pitching: pitching
+          ? { era: pitching.era, fip: pitching.fip, ip: pitching.ip, k_9: pitching.k_9, w: pitching.w, l: pitching.l, sv: pitching.sv }
+          : null,
+        draftTier,
+      };
+    });
+
+    const payload = withMeta({ players, total: players.length }, 'd1');
+    await kvPut(env.KV, KV_KEY, payload, TTL);
+    return cachedJson(payload, 200, 600, { 'X-Cache': 'MISS' });
+  } catch (err) {
+    console.error('[texas-intel] Draft board error:', err);
+    return json(withMeta({ error: 'Failed to load draft board' }, 'error'), 500);
+  }
+}
+
+// ─── Transfer Portal Intelligence ────────────────────────────────────────────
+
+export async function handleTexasPortalIntel(env: Env): Promise<Response> {
+  const KV_KEY = 'texas-intel:portal';
+  const TTL = 3600; // 1 hour
+
+  const cached = await kvGet<Record<string, unknown>>(env.KV, KV_KEY);
+  if (cached) {
+    return cachedJson(cached, 200, 300, { 'X-Cache': 'HIT' });
+  }
+
+  try {
+    const portalRaw = await env.KV.get('portal:texas-intel');
+    let portalMoves: unknown[] = [];
+    if (portalRaw) {
+      const parsed = JSON.parse(portalRaw);
+      portalMoves = parsed.moves ?? parsed.players ?? [];
+    }
+
+    const [rosterResult, havfResult] = await Promise.all([
+      env.DB.prepare(
+        `SELECT espn_id, name, position, team, headshot, season
+         FROM player_season_stats
+         WHERE team_id = ?
+         ORDER BY name ASC`,
+      ).bind(TEXAS_TEAM_ID).all<PlayerBasicRow>(),
+
+      env.DB.prepare(
+        `SELECT player_id, name, havf_composite, position
+         FROM havf_scores
+         WHERE league = 'college-baseball' AND team LIKE ?
+         ORDER BY havf_composite DESC`,
+      ).bind(TEXAS_TEAM_PATTERN).all<HavfRow>(),
+    ]);
+
+    const havfMap = new Map<string, number>();
+    for (const h of havfResult.results ?? []) {
+      havfMap.set(h.player_id, h.havf_composite);
+    }
+
+    const roster = (rosterResult.results ?? []).map((p) => ({
+      id: p.espn_id,
+      name: p.name,
+      position: p.position,
+      headshot: p.headshot,
+      havfComposite: havfMap.get(p.espn_id) ?? null,
+    }));
+
+    const payload = withMeta({
+      portalMoves,
+      currentRoster: roster,
+      rosterCount: roster.length,
+    }, portalMoves.length > 0 ? 'portal-sync' : 'd1');
+
+    await kvPut(env.KV, KV_KEY, payload, TTL);
+    return cachedJson(payload, 200, 300, { 'X-Cache': 'MISS' });
+  } catch (err) {
+    console.error('[texas-intel] Portal error:', err);
+    return json(withMeta({ error: 'Failed to load portal intel' }, 'error'), 500);
+  }
+}
+
+// ─── Performance Trends ──────────────────────────────────────────────────────
+
+export async function handleTexasTrends(env: Env): Promise<Response> {
+  const KV_KEY = 'texas-intel:trends';
+  const TTL = 3600; // 1 hour
+
+  const cached = await kvGet<Record<string, unknown>>(env.KV, KV_KEY);
+  if (cached) {
+    return cachedJson(cached, 200, 300, { 'X-Cache': 'HIT' });
+  }
+
+  try {
+    const battersResult = await env.DB.prepare(
+      `SELECT player_id, player_name, position, avg, obp, slg, woba, wrc_plus, hr, sb, pa, iso, k_pct, bb_pct
+       FROM cbb_batting_advanced
+       WHERE team_id = ? OR team LIKE ?
+       ORDER BY woba DESC`,
+    ).bind(TEXAS_TEAM_ID, TEXAS_TEAM_PATTERN).all<BattingAdvancedRow>();
+
+    const batters = battersResult.results ?? [];
+
+    const trendsData = await Promise.all(
+      batters.map(async (batter) => {
+        const logResult = await env.DB.prepare(
+          `SELECT game_date, opponent, is_home, result, ab, r, h, rbi, hr, bb, k, sb
+           FROM player_game_log
+           WHERE espn_id = ? AND ab > 0
+           ORDER BY game_date DESC LIMIT 15`,
+        ).bind(batter.player_id).all<GameLogRow>();
+
+        const games = logResult.results ?? [];
+        if (games.length < 3) return null;
+
+        const avg5 = computeRollingAvg(games, 5);
+        const avg10 = computeRollingAvg(games, 10);
+
+        let status: 'hot' | 'cold' | 'neutral';
+        if (avg5 > batter.avg + 0.050) status = 'hot';
+        else if (avg5 < batter.avg - 0.050) status = 'cold';
+        else status = 'neutral';
+
+        const sparkline = games.slice(0, 10).reverse().map((g) => ({
+          date: g.game_date,
+          hits: g.h,
+          abs: g.ab,
+          avg: g.ab > 0 ? Math.round((g.h / g.ab) * 1000) / 1000 : 0,
+        }));
+
+        return {
+          playerId: batter.player_id,
+          name: batter.player_name,
+          position: batter.position,
+          seasonStats: { avg: batter.avg, woba: batter.woba, wrc_plus: batter.wrc_plus, pa: batter.pa },
+          rolling: { avg5, avg10 },
+          status,
+          sparkline,
+        };
+      }),
+    );
+
+    const players = trendsData
+      .filter((t): t is NonNullable<typeof t> => t !== null)
+      .sort((a, b) => {
+        if (a.status === 'hot' && b.status !== 'hot') return -1;
+        if (a.status !== 'hot' && b.status === 'hot') return 1;
+        if (a.status === 'cold' && b.status !== 'cold') return 1;
+        if (a.status !== 'cold' && b.status === 'cold') return -1;
+        return b.seasonStats.woba - a.seasonStats.woba;
+      });
+
+    const teamGamesResult = await env.DB.prepare(
+      `SELECT home_team_id, away_team_id, home_score, away_score, game_date
+       FROM processed_games
+       WHERE home_team_id = ? OR away_team_id = ?
+       ORDER BY game_date DESC LIMIT 10`,
+    ).bind(TEXAS_TEAM_ID, TEXAS_TEAM_ID).all<ProcessedGameRow>();
+
+    let last5RunDiff = 0;
+    for (const g of (teamGamesResult.results ?? []).slice(0, 5)) {
+      const isHome = g.home_team_id === TEXAS_TEAM_ID;
+      last5RunDiff += (isHome ? g.home_score : g.away_score) - (isHome ? g.away_score : g.home_score);
+    }
+
+    const payload = withMeta({
+      players,
+      teamMomentum: {
+        last5RunDifferential: last5RunDiff,
+        hotPlayers: players.filter((p) => p.status === 'hot').length,
+        coldPlayers: players.filter((p) => p.status === 'cold').length,
+      },
+    }, 'd1');
+
+    await kvPut(env.KV, KV_KEY, payload, TTL);
+    return cachedJson(payload, 200, 300, { 'X-Cache': 'MISS' });
+  } catch (err) {
+    console.error('[texas-intel] Trends error:', err);
+    return json(withMeta({ error: 'Failed to load trends data' }, 'error'), 500);
   }
 }
