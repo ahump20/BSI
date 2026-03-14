@@ -329,16 +329,18 @@ export function SocialIntelFeed() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    let cancelled = false;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
     setLoading(true);
     setError(false);
 
-    fetch('/api/college-baseball/social-intel')
+    fetch('/api/college-baseball/social-intel', { signal: controller.signal })
       .then(r => r.ok ? r.json() as Promise<FeedResponse> : Promise.reject(r.status))
-      .then(d => { if (!cancelled) { setData(d); setLoading(false); } })
-      .catch(() => { if (!cancelled) { setError(true); setLoading(false); } });
+      .then(d => { if (!controller.signal.aborted) { setData(d); setLoading(false); } })
+      .catch((err) => { if ((err as Error).name !== 'AbortError' && !controller.signal.aborted) { setError(true); setLoading(false); } })
+      .finally(() => clearTimeout(timeout));
 
-    return () => { cancelled = true; };
+    return () => { controller.abort(); clearTimeout(timeout); };
   }, []);
 
   const countFor = useCallback((type: SignalType) => {

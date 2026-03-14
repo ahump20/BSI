@@ -49,7 +49,8 @@ export function IntelStreamCard({
   const question = buildQuestion(analysisType, awayTeam, homeTeam);
 
   useEffect(() => {
-    let cancelled = false;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
 
     async function stream() {
       try {
@@ -65,10 +66,14 @@ export function IntelStreamCard({
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ question, context, analysisType }),
+          signal: controller.signal,
         });
 
+        // Clear the connection timeout once we get a response — streaming can take longer
+        clearTimeout(timeout);
+
         if (!res.ok || !res.body) {
-          if (!cancelled) { setFailed(true); setStreaming(false); }
+          setFailed(true); setStreaming(false);
           return;
         }
 
@@ -76,7 +81,8 @@ export function IntelStreamCard({
         const decoder = new TextDecoder();
         let buf = '';
 
-        while (!cancelled) {
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
           const { done, value } = await reader.read();
           if (done) break;
           buf += decoder.decode(value, { stream: true });
@@ -93,13 +99,15 @@ export function IntelStreamCard({
             }
           }
         }
-      } catch {
-        if (!cancelled) { setFailed(true); setStreaming(false); }
+      } catch (err) {
+        if ((err as Error).name !== 'AbortError') {
+          setFailed(true); setStreaming(false);
+        }
       }
     }
 
     stream();
-    return () => { cancelled = true; };
+    return () => { controller.abort(); clearTimeout(timeout); };
   }, [gameId, analysisType]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ─── Shared keyframes injected once ────────────────────────────────────────

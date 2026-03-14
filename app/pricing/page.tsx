@@ -61,6 +61,7 @@ export default function PricingPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tier: 'pro' }),
+        signal: AbortSignal.timeout(8000),
       });
 
       const data = (await response.json()) as { error?: string; clientSecret?: string };

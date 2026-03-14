@@ -16,7 +16,7 @@ test.describe('Homepage', () => {
     // Use domcontentloaded instead of networkidle — live score polling keeps the network active
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(3000); // Allow initial fetches to complete
-    // Filter expected noise: favicon 404s and API endpoint 404s (Pages Functions not served by next dev)
+    // Filter expected noise: favicon 404s and API endpoint 404s (worker API routes are not served by next dev)
     const unexpected = errors.filter(e =>
       !e.includes('favicon') && !e.includes('404') && !e.includes('Failed to load resource')
     );

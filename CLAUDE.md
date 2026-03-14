@@ -15,7 +15,7 @@ GitHub holds the source. Cloudflare runs the product. No AWS, no Vercel, no exte
 
 **Static export:** Every dynamic route needs `generateStaticParams()`. No SSR. Components using hooks/browser APIs need `'use client'`.
 
-**Data flow:** External APIs → Workers (fetch, transform, cache) → KV/D1/R2 → Pages Functions or client fetches → Static UI. Workers are the only code that talks to external APIs.
+**Data flow:** External APIs → Workers (fetch, transform, cache) → KV/D1/R2 → Worker API routes or client fetches → Static UI. Workers are the only code that talks to external APIs.
 
 **Path alias:** `@/*` maps to project root.
 
@@ -44,7 +44,6 @@ lib/                    # Core logic (api-clients/, analytics/, intel/, scores/,
 workers/                # Main Hono worker + sub-workers (each has own wrangler.toml)
   handlers/             # Handler functions by sport/domain
   shared/               # Types, helpers, constants, cors, rate-limit, auth
-functions/              # Cloudflare Pages Functions (own tsconfig.functions.json)
 games/                  # Browser arcade games
 external/               # Standalone projects (own CLAUDE.md)
 scripts/                # Build/deploy/data scripts
@@ -123,7 +122,7 @@ Live scores: 15–30s. Standings: 60s. Final games: 5 min. Rosters: 1 hour.
 - **Build:** `scripts/build-safe.sh` rsyncs to `/var/tmp/bsi-build-staging` to avoid iCloud evicting `.next/`. Staging path: `/var/tmp/bsi-deploy-out` (NOT `/tmp/`).
 - **Pages deploy:** timeout on 15K+ files — retry; second deploy is instant (hash dedup). Wrangler 4.71.0+ required.
 - **next.config.ts:** skips TS build errors, `trailingSlash: true`, `images: { unoptimized: true }`.
-- **tsconfig:** excludes `workers/**/*` (own configs). `functions/` has `tsconfig.functions.json`.
+- **tsconfig:** excludes `workers/**/*` (own configs).
 - **Testing:** `test:all` (Vitest) does NOT include Playwright tests. Run `test:routes`, `test:a11y` separately.
 - **ESPN dates:** labeled UTC but actually ET.
 - **Dual analytics crons:** `bsi-savant-compute` (6h) + `bsi-cbb-analytics` (daily) both write advanced metrics. Check both when debugging.

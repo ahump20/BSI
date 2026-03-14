@@ -1,0 +1,1124 @@
+.pageShell {
+  --burnt-orange: #bf5700;
+  --texas-soil: #8b4513;
+  --ember: #ff6b35;
+  --gold: #f2bf6b;
+  --gold-soft: #d99a45;
+  --charcoal: #1a1a1a;
+  --midnight: #0d0d0d;
+  --cream: #f7f0e6;
+  --muted: #cbb79c;
+  --panel: rgba(16, 16, 16, 0.9);
+  --panel-soft: rgba(24, 24, 24, 0.82);
+  --panel-border: rgba(255, 255, 255, 0.08);
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 10% 10%, rgba(255, 107, 53, 0.16), transparent 24%),
+    radial-gradient(circle at 88% 0%, rgba(191, 87, 0, 0.22), transparent 28%),
+    radial-gradient(circle at 50% 120%, rgba(242, 191, 107, 0.08), transparent 34%),
+    linear-gradient(180deg, #050505 0%, #0d0d0d 44%, #111111 100%);
+  color: var(--cream);
+}
+
+.page {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 5rem;
+}
+
+.heroGrid,
+.publicLaneGrid,
+.discoveryGrid,
+.detailGrid,
+.playerShell {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.heroGrid {
+  grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.88fr);
+  align-items: stretch;
+}
+
+.heroCard {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 78% 14%, rgba(255, 107, 53, 0.16), transparent 24%),
+    linear-gradient(180deg, rgba(21, 21, 21, 0.98), rgba(8, 8, 8, 0.94));
+}
+
+.heroCard::before {
+  content: '';
+  position: absolute;
+  inset: -20% auto auto -10%;
+  width: 60%;
+  height: 120%;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.16), transparent 60%);
+  transform: rotate(10deg);
+  animation: emberSweep 16s linear infinite;
+  pointer-events: none;
+}
+
+.heroCard,
+.brandCard,
+.publicFeatureCard,
+.publicSupportCard,
+.publishCard,
+.railCard,
+.indexCard,
+.detailCard,
+.playerCard {
+  border: 1px solid var(--panel-border);
+  border-radius: 28px;
+  background: linear-gradient(180deg, rgba(20, 20, 20, 0.96), rgba(11, 11, 11, 0.92));
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.heroCard,
+.brandCard,
+.publicFeatureCard,
+.publicSupportCard,
+.indexCard,
+.detailCard,
+.playerCard {
+  padding: 1.75rem;
+}
+
+.railCard,
+.publishCard {
+  padding: 1.25rem;
+}
+
+.heroEyebrow,
+.cardEyebrow,
+.brandEyebrow,
+.statLabel,
+.searchLabel,
+.sectionCaption,
+.stateBadge,
+.reasonLabel,
+.factLabel,
+.playerMode,
+.playerMetaRow,
+.clockRow,
+.categoryBadge,
+.detailMeta,
+.rateButton,
+.filterChip {
+  font-family: var(--font-oswald), 'Oswald', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+
+.heroEyebrow,
+.cardEyebrow,
+.brandEyebrow,
+.statLabel,
+.sectionCaption,
+.searchLabel,
+.reasonLabel,
+.factLabel,
+.detailMeta,
+.clockRow {
+  font-size: 0.68rem;
+  color: var(--muted);
+}
+
+.heroEyebrow,
+.cardEyebrow,
+.brandEyebrow,
+.statLabel,
+.sectionCaption,
+.searchLabel,
+.reasonLabel,
+.factLabel,
+.detailMeta,
+.clockRow,
+.categoryBadge,
+.brandFacts dt,
+.metaList dt {
+  font-family: var(--font-jetbrains-mono), 'JetBrains Mono', monospace;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+}
+
+.heroTitle,
+.sectionTitle,
+.featureTitle,
+.publishTitle,
+.railTitle,
+.detailTitle,
+.playerTitle,
+.supportTitle,
+.episodeTitle,
+.playerMode {
+  font-family: var(--font-oswald), 'Oswald', sans-serif;
+  text-transform: uppercase;
+  line-height: 0.94;
+}
+
+.heroTitle {
+  margin: 0.9rem 0 0;
+  font-size: clamp(2.7rem, 5vw, 5.5rem);
+  letter-spacing: 0.035em;
+  max-width: 11ch;
+}
+
+.heroCopy,
+.brandCopy,
+.featureCopy,
+.supportCopy,
+.publishCopy,
+.publishReason,
+.railCopy,
+.detailCopy,
+.episodeDescription,
+.episodeReason,
+.playerDescription,
+.reasonBlock p,
+.quoteBlock p,
+.supportList,
+.statusNotice p,
+.sourceOnlyCard p {
+  font-family: 'Cormorant Garamond', serif;
+  color: var(--muted);
+  line-height: 1.62;
+}
+
+.heroCopy {
+  max-width: 60rem;
+  margin-top: 1.25rem;
+  font-size: 1.34rem;
+}
+
+.sectionTitle,
+.railTitle,
+.detailTitle,
+.playerTitle,
+.supportTitle {
+  margin: 0.65rem 0 0;
+  font-size: clamp(1.65rem, 2.6vw, 3rem);
+  letter-spacing: 0.03em;
+}
+
+.brandCard {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 2%, rgba(255, 107, 53, 0.24), transparent 24%),
+    radial-gradient(circle at 84% 20%, rgba(242, 191, 107, 0.11), transparent 24%),
+    linear-gradient(180deg, rgba(18, 18, 18, 0.96), rgba(8, 8, 8, 0.94));
+}
+
+.brandCard::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(130deg, rgba(242, 191, 107, 0.08), transparent 28%),
+    linear-gradient(310deg, rgba(255, 107, 53, 0.1), transparent 24%);
+  pointer-events: none;
+}
+
+.brandFrame {
+  position: relative;
+  display: grid;
+  gap: 1rem;
+  min-height: 320px;
+  padding: 1rem;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 50% 12%, rgba(255, 107, 53, 0.22), transparent 28%),
+    linear-gradient(180deg, rgba(10, 10, 10, 0.92), rgba(19, 19, 19, 0.46));
+  border: 1px solid rgba(242, 191, 107, 0.18);
+}
+
+.brandFrame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.03), transparent 22%),
+    linear-gradient(310deg, rgba(255, 107, 53, 0.1), transparent 28%);
+  pointer-events: none;
+}
+
+.brandWordmarkShell,
+.brandPortraitShell,
+.brandTokenCard {
+  position: relative;
+  z-index: 1;
+}
+
+.brandWordmarkShell {
+  padding: 0.8rem 1rem 0.2rem;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0));
+  animation: wordmarkSettle 920ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.brandWordmark {
+  width: 100%;
+  display: block;
+  object-fit: contain;
+  filter: saturate(1.04) drop-shadow(0 18px 26px rgba(0, 0, 0, 0.5));
+}
+
+.brandPortraitShell {
+  display: grid;
+  place-items: center;
+  padding: 1.1rem;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 50% 24%, rgba(255, 107, 53, 0.22), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  animation: cardRise 980ms cubic-bezier(0.22, 1, 0.36, 1) 90ms both;
+}
+
+.brandPortraitShell::before {
+  content: '';
+  position: absolute;
+  inset: 11% 24%;
+  border-radius: 999px;
+  border: 1px solid rgba(242, 191, 107, 0.24);
+  box-shadow:
+    0 0 40px rgba(255, 107, 53, 0.22),
+    inset 0 0 40px rgba(255, 107, 53, 0.08);
+}
+
+.brandPortrait {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 430px);
+  display: block;
+  object-fit: contain;
+  filter: saturate(1.08) drop-shadow(0 20px 32px rgba(0, 0, 0, 0.5));
+}
+
+.brandCrestShell {
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  z-index: 2;
+  width: clamp(110px, 18vw, 170px);
+  padding: 0.4rem;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(6, 6, 6, 0.86), rgba(24, 24, 24, 0.6));
+  border: 1px solid rgba(242, 191, 107, 0.18);
+  box-shadow: 0 20px 36px rgba(0, 0, 0, 0.35);
+  animation: crestFloat 5.2s ease-in-out infinite;
+}
+
+.brandCrest {
+  width: 100%;
+  display: block;
+  object-fit: contain;
+  border-radius: 14px;
+}
+
+.brandTokenCard {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: center;
+  padding: 0.95rem 1rem;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  animation: cardRise 980ms cubic-bezier(0.22, 1, 0.36, 1) 180ms both;
+}
+
+.brandRoundel {
+  width: 100%;
+  display: block;
+  border-radius: 16px;
+  object-fit: contain;
+}
+
+.brandTokenCopy {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.brandTokenTitle {
+  color: var(--cream);
+  font-size: 1rem;
+  line-height: 1.3;
+}
+
+.brandMeta {
+  position: relative;
+  z-index: 1;
+  margin-top: 1.25rem;
+}
+
+.brandCopy {
+  margin: 0.75rem 0 0;
+  font-size: 1.08rem;
+}
+
+.brandFacts,
+.metaList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin-top: 1.25rem;
+}
+
+.brandFacts div,
+.metaList div,
+.factCard,
+.statPill {
+  padding: 0.95rem 1rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.brandFacts dt,
+.metaList dt {
+  font-family: var(--font-oswald), 'Oswald', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.65rem;
+  color: var(--muted);
+}
+
+.brandFacts dd,
+.metaList dd {
+  margin: 0.45rem 0 0;
+  font-size: 0.98rem;
+  color: var(--cream);
+}
+
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin-top: 1.5rem;
+}
+
+.statPill {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02)),
+    rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(10px);
+}
+
+.statValue {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 1.1rem;
+  color: var(--cream);
+}
+
+.heroActions,
+.actionRow,
+.actionStack,
+.filterWrap,
+.tagRow,
+.playerMetaRow,
+.playerControls,
+.sliderRow,
+.rateRow,
+.noticeActions,
+.detailMeta,
+.cardMetaRow,
+.publishTopRow,
+.episodeTopRow,
+.episodeMetaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.primaryButton,
+.secondaryButton,
+.inlineLink,
+.filterChip,
+.controlButton,
+.playButton,
+.iconButton,
+.rateButton {
+  appearance: none;
+  border-radius: 18px;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.primaryButton,
+.playButton {
+  border: 1px solid rgba(255, 137, 79, 0.28);
+  background: linear-gradient(135deg, var(--burnt-orange), var(--ember));
+  color: #fff5ef;
+  padding: 0.9rem 1.1rem;
+  font-family: var(--font-oswald), 'Oswald', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.secondaryButton,
+.inlineLink,
+.filterChip,
+.controlButton,
+.iconButton,
+.rateButton {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--cream);
+  padding: 0.85rem 1rem;
+  font-family: var(--font-oswald), 'Oswald', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.primaryButton:hover,
+.secondaryButton:hover,
+.inlineLink:hover,
+.filterChip:hover,
+.controlButton:hover,
+.playButton:hover,
+.iconButton:hover,
+.rateButton:hover,
+.publishCard:hover,
+.episodeCard:hover {
+  transform: translateY(-1px);
+}
+
+.laneSection,
+.discoveryGrid {
+  margin-top: 1.5rem;
+}
+
+.publicLaneGrid {
+  grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.9fr);
+  align-items: start;
+}
+
+.publicFeatureCard {
+  background:
+    radial-gradient(circle at 85% 0%, rgba(255, 107, 53, 0.14), transparent 26%),
+    linear-gradient(180deg, rgba(21, 21, 21, 0.98), rgba(9, 9, 9, 0.94));
+}
+
+.cardMetaRow,
+.episodeMetaRow,
+.publishTopRow,
+.detailMeta,
+.playerMetaRow,
+.clockRow {
+  align-items: center;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.stateBadge {
+  padding: 0.38rem 0.7rem 0.34rem;
+  border-radius: 999px;
+  font-size: 0.64rem;
+  border: 1px solid transparent;
+}
+
+.statePublic {
+  background: rgba(242, 191, 107, 0.12);
+  border-color: rgba(242, 191, 107, 0.28);
+  color: #ffe5be;
+}
+
+.statePrivate {
+  background: rgba(255, 107, 53, 0.12);
+  border-color: rgba(255, 107, 53, 0.26);
+  color: #ffd2c1;
+}
+
+.stateSourceOnly {
+  background: rgba(191, 87, 0, 0.14);
+  border-color: rgba(191, 87, 0, 0.28);
+  color: #ffd8bb;
+}
+
+.stateFeed {
+  background: rgba(86, 125, 164, 0.16);
+  border-color: rgba(119, 155, 190, 0.32);
+  color: #d8ecff;
+}
+
+.featureTitle {
+  margin: 1rem 0 0;
+  font-size: clamp(2rem, 3.6vw, 3.7rem);
+  letter-spacing: 0.03em;
+}
+
+.featureCopy,
+.supportCopy,
+.detailCopy,
+.playerDescription {
+  margin: 1rem 0 0;
+  font-size: 1.14rem;
+}
+
+.reasonBlock,
+.sourceOnlyCard,
+.statusNotice {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.quoteBlock {
+  margin: 1rem 0 0;
+  padding: 1.15rem 1rem 1rem;
+  border-left: 2px solid rgba(242, 191, 107, 0.38);
+  border-radius: 0 18px 18px 0;
+  background: rgba(242, 191, 107, 0.05);
+}
+
+.quoteBlock p {
+  margin: 0;
+  font-size: 1.08rem;
+  color: #f2dfc7;
+}
+
+.supportTitle {
+  max-width: 12ch;
+}
+
+.supportList {
+  margin: 1rem 0 0;
+  padding-left: 1.2rem;
+  font-size: 1.04rem;
+}
+
+.supportList li + li {
+  margin-top: 0.55rem;
+}
+
+.sourceOnlyCard strong {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 1.08rem;
+  color: var(--cream);
+}
+
+.publishGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.publishCard,
+.episodeCard {
+  text-align: left;
+}
+
+.publishCard {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(255, 255, 255, 0.07);
+  background:
+    linear-gradient(180deg, rgba(20, 20, 20, 0.94), rgba(11, 11, 11, 0.9)),
+    rgba(255, 255, 255, 0.02);
+  animation: cardRise 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.publishCard::before,
+.episodeCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(255, 107, 53, 0.08), transparent 30%);
+  opacity: 0;
+  transition: opacity 220ms ease;
+  pointer-events: none;
+}
+
+.publishCardActive,
+.episodeCardActive {
+  border-color: rgba(255, 107, 53, 0.35);
+  box-shadow:
+    0 20px 70px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 1px rgba(255, 107, 53, 0.18);
+}
+
+.publishTitle {
+  margin: 0.9rem 0 0;
+  font-size: 1.55rem;
+}
+
+.publishCard:hover::before,
+.episodeCard:hover::before,
+.publishCardActive::before,
+.episodeCardActive::before {
+  opacity: 1;
+}
+
+.publishCard:nth-child(2) {
+  animation-delay: 80ms;
+}
+
+.publishCard:nth-child(3) {
+  animation-delay: 140ms;
+}
+
+.publishCard:nth-child(4) {
+  animation-delay: 200ms;
+}
+
+.publishCard:nth-child(5) {
+  animation-delay: 260ms;
+}
+
+.publishCard:nth-child(6) {
+  animation-delay: 320ms;
+}
+
+.publishCard:nth-child(7) {
+  animation-delay: 380ms;
+}
+
+.publishCard:nth-child(8) {
+  animation-delay: 440ms;
+}
+
+.publishCopy,
+.publishReason,
+.episodeDescription,
+.episodeReason {
+  margin: 0.85rem 0 0;
+  font-size: 1rem;
+}
+
+.publishReason,
+.episodeReason {
+  color: #f0d4b3;
+}
+
+.tagRow {
+  margin-top: 1rem;
+}
+
+.tagPill {
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-family: var(--font-oswald), 'Oswald', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.discoveryGrid {
+  grid-template-columns: minmax(280px, 0.36fr) minmax(0, 0.64fr);
+  align-items: start;
+}
+
+.discoveryRail,
+.discoveryMain {
+  display: grid;
+  gap: 1rem;
+}
+
+.searchInput,
+.slider {
+  width: 100%;
+}
+
+.searchInput {
+  margin-top: 0.75rem;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--cream);
+  padding: 0.95rem 1rem;
+  font-family: var(--font-oswald), 'Oswald', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  outline: none;
+}
+
+.searchInput::placeholder {
+  color: rgba(203, 183, 156, 0.7);
+}
+
+.searchInput:focus {
+  border-color: rgba(255, 107, 53, 0.35);
+}
+
+.filterWrap {
+  margin-top: 1rem;
+}
+
+.filterChipActive,
+.rateButtonActive {
+  background: rgba(255, 107, 53, 0.15);
+  border-color: rgba(255, 107, 53, 0.35);
+  color: #ffe8dc;
+}
+
+.metaList {
+  margin-top: 1rem;
+}
+
+.episodeList {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 1rem;
+}
+
+.episodeCard {
+  position: relative;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.02);
+  animation: cardRise 680ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.episodeBody {
+  margin-top: 0.8rem;
+}
+
+.episodeTitle {
+  margin: 0;
+  font-size: 1.55rem;
+  letter-spacing: 0.02em;
+}
+
+.detailGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.factGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.factCard strong {
+  display: block;
+  margin-top: 0.45rem;
+  color: var(--cream);
+  font-size: 1rem;
+}
+
+.actionStack {
+  margin-top: 1rem;
+}
+
+.playerShell {
+  grid-template-columns: minmax(0, 0.38fr) minmax(0, 0.62fr);
+  align-items: start;
+}
+
+.playerInfo {
+  padding: 0.3rem 0;
+}
+
+.playerHeaderRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.playerMode {
+  margin-top: 0.45rem;
+  color: #f4d7b0;
+  font-size: 0.88rem;
+}
+
+.iconButton {
+  min-width: 88px;
+  text-align: center;
+}
+
+.progressTrack {
+  position: relative;
+  height: 10px;
+  margin-top: 1.1rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.progressTrackInteractive {
+  cursor: pointer;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-soft), var(--ember));
+}
+
+.progressThumb {
+  position: absolute;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--ember));
+  transform: translateX(-50%) translateY(-50%);
+  box-shadow: 0 0 20px rgba(255, 107, 53, 0.38);
+}
+
+.playerControls,
+.sliderRow {
+  margin-top: 1rem;
+  align-items: center;
+}
+
+.playerControls {
+  justify-content: space-between;
+}
+
+.playButton {
+  min-width: 120px;
+  justify-content: center;
+}
+
+.controlButton,
+.playButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.volumeShell {
+  display: grid;
+  grid-template-columns: auto minmax(180px, 1fr);
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1 1 260px;
+}
+
+.slider {
+  accent-color: var(--ember);
+}
+
+.rateRow {
+  justify-content: flex-end;
+}
+
+.playerNotice {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.noticeActions {
+  margin-top: 1rem;
+}
+
+.inlineLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.actionRow,
+.actionStack,
+.noticeActions {
+  align-items: center;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+@keyframes emberSweep {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(10deg);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: translate3d(10%, -4%, 0) rotate(14deg);
+    opacity: 0.9;
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0) rotate(10deg);
+    opacity: 0.5;
+  }
+}
+
+@keyframes wordmarkSettle {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes crestFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+@keyframes cardRise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.categoryBadge {
+  padding: 0.32rem 0.65rem 0.28rem;
+  border-radius: 999px;
+  background: rgba(255, 107, 53, 0.12);
+  border: 1px solid rgba(255, 107, 53, 0.22);
+  color: #ffe3d3;
+  font-size: 0.62rem;
+}
+
+@media (max-width: 1180px) {
+  .heroGrid,
+  .publicLaneGrid,
+  .discoveryGrid,
+  .playerShell {
+    grid-template-columns: 1fr;
+  }
+
+  .publishGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .detailGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 860px) {
+  .page {
+    padding: 1.25rem 1rem 4rem;
+  }
+
+  .statGrid,
+  .brandFacts,
+  .metaList,
+  .factGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .brandTokenCard {
+    grid-template-columns: 1fr;
+  }
+
+  .publishGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .heroTitle {
+    max-width: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .heroCard,
+  .brandCard,
+  .publicFeatureCard,
+  .publicSupportCard,
+  .railCard,
+  .indexCard,
+  .detailCard,
+  .playerCard {
+    padding: 1.15rem;
+    border-radius: 22px;
+  }
+
+  .statGrid,
+  .brandFacts,
+  .metaList,
+  .factGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .brandPortraitShell {
+    padding-bottom: 6rem;
+  }
+
+  .brandCrestShell {
+    width: 132px;
+  }
+
+  .sectionHeader,
+  .playerHeaderRow {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .playerControls {
+    justify-content: flex-start;
+  }
+
+  .volumeShell {
+    grid-template-columns: 1fr;
+  }
+
+  .rateRow {
+    justify-content: flex-start;
+  }
+
+  .heroTitle {
+    font-size: clamp(2.3rem, 11vw, 3.6rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroCard::before,
+  .brandWordmarkShell,
+  .brandPortraitShell,
+  .brandTokenCard,
+  .brandCrestShell,
+  .publishCard,
+  .episodeCard {
+    animation: none;
+  }
+
+  .primaryButton:hover,
+  .secondaryButton:hover,
+  .inlineLink:hover,
+  .filterChip:hover,
+  .controlButton:hover,
+  .playButton:hover,
+  .iconButton:hover,
+  .rateButton:hover,
+  .publishCard:hover,
+  .episodeCard:hover {
+    transform: none;
+  }
+}

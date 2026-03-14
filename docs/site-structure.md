@@ -384,24 +384,18 @@ All unmatched routes proxy to Cloudflare Pages (`blazesportsintel.pages.dev`) vi
 
 ---
 
-## Pages Functions
+## Worker-Owned API Additions
 
-Cloudflare Pages Functions under `functions/api/`. These serve as fallbacks when the hybrid Worker doesn't intercept the route (e.g., Pages-only preview deploys).
+These routes now live in the apex Worker alongside the rest of the runtime surface:
 
-| Route | File | Purpose |
-|-------|------|---------|
-| `/api/health` | `health.ts` | Lightweight health check fallback |
-| `/api/hero-scores` | `hero-scores.ts` | Hero strip aggregator -- returns liveNow/nextUp/recentFinal across in-season sports |
-| `/api/live-scores` | `live-scores.ts` | Empty-but-structured fallback when Worker unavailable |
-| `/api/lead` | `lead.ts` | Lead capture (KV storage, 90-day TTL, consent required) |
-| `/api/newsletter` | `newsletter.ts` | Newsletter subscription (KV storage) |
-| `/api/agent-health` | `agent-health.ts` | Agent pulse check |
-| `/api/semantic-health` | `semantic-health.ts` | Admin-only KV/R2 audit (paginated list, bearer token required) |
-| `/api/ai/game-analysis` | `ai/game-analysis.ts` | AI game analysis proxy (Claude or Gemini) |
-| `/api/mlb/abs` | `mlb/abs.ts` | ABS Challenge Tracker data (D1 + KV) |
-| `/api/mlb/leaderboards/:category` | `mlb/leaderboards/[category].ts` | MLB leaderboard fallback |
-| `_middleware.ts` | `_middleware.ts` | Shared middleware |
-| `_utils.ts` | `_utils.ts` | Shared utilities (ok, err, preflight, cache helpers) |
+| Route | Worker handler | Purpose |
+|-------|----------------|---------|
+| `/api/hero-scores` | `workers/handlers/hero-scores.ts` | Hero strip aggregator -- returns liveNow/nextUp/recentFinal across in-season sports |
+| `/api/newsletter` | `workers/handlers/lead.ts` | Newsletter subscription (KV storage) |
+| `/api/semantic-health` | `workers/handlers/health.ts` | Admin-only KV/R2 audit (paginated list, bearer token required) |
+| `/api/ai/game-analysis` | `workers/handlers/ai.ts` | AI game analysis proxy (Claude or Gemini) |
+| `/api/mlb/abs` | `workers/handlers/mlb.ts` | ABS Challenge Tracker data (D1 + KV) |
+| `/api/media/podcasts` | `workers/handlers/media.ts` | Podcast feed aggregation with BSI meta contract |
 
 ---
 
@@ -481,10 +475,6 @@ External APIs
   ├── KV  ─── hot cache (scores, standings, rankings, portal, digests)
   ├── D1  ─── structured data (games, pitches, predictions, models, analytics)
   └── R2  ─── raw payloads, archives, assets, media
-       │
-       ▼
-  Pages Functions (functions/api/*)
-  └── Fallback handlers for preview deploys + supplemental routes
        │
        ▼
   Static Next.js UI (app/)

@@ -80,6 +80,8 @@ html {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: #BF5700 #0d0d0d;
 }
 
 body {
@@ -113,12 +115,6 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #FF6B35;
-}
-
-/* Firefox scrollbar */
-html {
-  scrollbar-width: thin;
-  scrollbar-color: #BF5700 #0d0d0d;
 }
 
 /* ---- Skip link ---- */
@@ -438,13 +434,6 @@ textarea:focus-visible,
 
   .bsi-gradient-brand {
     background: linear-gradient(135deg, #bf5700 0%, #cc6600 50%, #d97b38 100%);
-  }
-
-  /* ---- Skeleton ---- */
-  .skeleton {
-    background: #1a1a1a;
-    border-radius: 0.25rem;
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
   /* ---- Leaderboard row (from Labs) ---- */
@@ -1338,14 +1327,30 @@ body.scroll-locked {
 }
 
 /* ========================================================================== */
+/* RESPONSIVE                                                                  */
+/* ========================================================================== */
+
+/* ─── Mobile button sizing ─── */
+@media (max-width: 640px) {
+  .btn-heritage,
+  .btn-heritage-fill {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* ========================================================================== */
 /* PRINT                                                                       */
 /* ========================================================================== */
 
 @media print {
-  body {
-    background: white !important;
-    color: #1a1a1a !important;
-  }
+  header, footer, nav,
+  .hamburger-menu, .bottom-nav,
+  .mobile-bottom-nav, .app-sidebar,
+  .score-ticker { display: none !important; }
+
+  body { background: white !important; color: black !important; }
+
   .glass-subtle,
   .glass-default,
   .glass-elevated,
@@ -1355,7 +1360,11 @@ body.scroll-locked {
     backdrop-filter: none !important;
     box-shadow: none !important;
   }
+
   .no-print {
     display: none !important;
   }
+
+  a { color: black !important; text-decoration: underline; }
+  a::after { content: " (" attr(href) ")"; font-size: 0.8em; }
 }

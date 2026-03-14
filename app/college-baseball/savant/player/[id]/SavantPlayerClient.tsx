@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Footer } from '@/components/layout-ds/Footer';
 import { PercentileBar } from '@/components/analytics/PercentileBar';
 import { MetricGate } from '@/components/analytics/MetricGate';
+import { PlayerScoutingComposite } from '@/components/college-baseball/PlayerScoutingComposite';
 import { fmt3 } from '@/lib/utils/format';
 
 // ---------------------------------------------------------------------------
@@ -247,6 +248,13 @@ export default function SavantPlayerClient() {
                 )}
               </div>
             </Card>
+
+            {/* Scouting Composite — radar chart + sparkline trends */}
+            <PlayerScoutingComposite
+              playerId={playerId}
+              position={isBatter ? 'hitter' : 'pitcher'}
+              className="mb-6"
+            />
 
             {/* Traditional Stats */}
             <Card padding="none" className="mb-6 overflow-hidden">

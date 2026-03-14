@@ -52,8 +52,7 @@ export default function Proof() {
     <section
       id="proof"
       aria-labelledby="proof-heading"
-      className="section-padding section-border section-glow relative overflow-hidden"
-      style={{ paddingBottom: 'clamp(2.5rem, 4vw, 3.75rem)' }}
+      className="section-padding section-border section-glow relative overflow-hidden proof-section-bottom"
     >
       <div className="container-custom">
         <motion.div
@@ -90,8 +89,7 @@ export default function Proof() {
                   {lead.tag}
                 </span>
                 <h3
-                  className="mt-5 font-sans font-bold uppercase tracking-[0.08em] text-bone transition-colors duration-300 group-hover:text-burnt-orange"
-                  style={{ fontSize: 'clamp(1.75rem, 4vw, 3.25rem)', lineHeight: 0.95 }}
+                  className="mt-5 font-sans font-bold uppercase tracking-[0.08em] text-bone transition-colors duration-300 group-hover:text-burnt-orange proof-lead-title"
                 >
                   {lead.title}
                 </h3>
@@ -220,8 +218,7 @@ export default function Proof() {
 
               <div className="relative overflow-hidden rounded-lg border border-bone/10 bg-midnight shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
                 <div
-                  className="pointer-events-none absolute inset-0 z-10"
-                  style={{ boxShadow: 'inset 0 0 110px rgba(0,0,0,0.62)' }}
+                  className="pointer-events-none absolute inset-0 z-10 vignette-deep"
                 />
                 <div className="aspect-video">
                   <video

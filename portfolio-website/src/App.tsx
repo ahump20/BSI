@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import ErrorBoundary from './components/ErrorBoundary';
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
@@ -16,62 +16,69 @@ import Footer from './components/Footer';
 const AIChatWidget = lazy(() => import('./components/AIChatWidget'));
 
 function App() {
+  useEffect(() => {
+    const routeToSection: Record<string, string> = {
+      '/': 'hero',
+      '/about': 'origin',
+      '/contact': 'contact',
+    };
+
+    const targetSectionId = routeToSection[window.location.pathname];
+    if (!targetSectionId) return;
+
+    const scrollToTarget = () => {
+      const target = document.getElementById(targetSectionId);
+      if (target) {
+        target.scrollIntoView({ behavior: 'auto', block: 'start' });
+      }
+    };
+
+    requestAnimationFrame(scrollToTarget);
+  }, []);
+
   return (
     <ErrorBoundary>
-    <div className="min-h-screen bg-midnight text-bone">
-      <a href="#bsi" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-burnt-orange focus:text-white focus:rounded focus:font-mono focus:text-xs focus:uppercase focus:tracking-widest">
+      <div className="min-h-screen bg-midnight text-bone">
+        <a href="#main" className="skip-link">
         Skip to content
-      </a>
-      <Navigation />
-      <Hero />
+        </a>
+        <Navigation />
+        <main id="main" className="main-content" tabIndex={-1}>
+          <Hero />
 
-      {/* Proof: authority first */}
-      <BSIShowcase />
+          {/* Proof: authority first */}
+          <BSIShowcase />
 
-      <div className="section-divider" />
+          <div className="section-divider" />
 
-      <Projects />
+          <Projects />
 
-      <div className="section-divider" />
+          <div className="section-divider" />
 
-      <Proof />
+          <Proof />
 
-      {/* Origin narrative — ambient warm glow bridges Proof into the personal story */}
-      <div
-        className="relative"
-        style={{
-          background: `
-            radial-gradient(ellipse 120% 50% at 15% 20%, rgba(191,87,0,0.04) 0%, transparent 60%),
-            radial-gradient(ellipse 80% 40% at 85% 80%, rgba(139,69,19,0.03) 0%, transparent 50%),
-            linear-gradient(180deg, var(--surface-deep) 0%, var(--surface-mid) 8%, var(--surface-mid) 92%, var(--surface-deep) 100%)
-          `,
-        }}
-      >
-        {/* Top seam — gradient line from Proof into Origin */}
-        <div
-          className="h-px"
-          style={{
-            background: 'linear-gradient(90deg, transparent 5%, rgba(191,87,0,0.5) 50%, transparent 95%)',
-          }}
-        />
-        <About />
-        <AthleticArc />
+          {/* Origin narrative — warm seam from authority into biography */}
+          <div className="origin-bridge-shell">
+            <div className="section-seam" />
+            <About />
+            <AthleticArc />
+          </div>
+
+          <Experience />
+
+          <Education />
+
+          {/* Emotional close */}
+          <Philosophy />
+
+          <Contact />
+        </main>
+        <Footer />
+
+        <Suspense fallback={null}>
+          <AIChatWidget />
+        </Suspense>
       </div>
-
-      <Experience />
-
-      <Education />
-
-      {/* Emotional close */}
-      <Philosophy />
-
-      <Contact />
-      <Footer />
-
-      <Suspense fallback={null}>
-        <AIChatWidget />
-      </Suspense>
-    </div>
     </ErrorBoundary>
   );
 }

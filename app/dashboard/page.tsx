@@ -151,7 +151,10 @@ export default function DashboardPage() {
       return;
     }
 
-    fetch('/api/auth/validate', { headers: { 'X-BSI-Key': key } })
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+
+    fetch('/api/auth/validate', { headers: { 'X-BSI-Key': key }, signal: controller.signal })
       .then((res) => res.json() as Promise<{ valid?: boolean; tier?: string; has_billing?: boolean }>)
       .then((data) => {
         if (data.valid) {
@@ -163,10 +166,13 @@ export default function DashboardPage() {
           setAuthStatus('unauthenticated');
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        if ((err as Error).name === 'AbortError') return;
         localStorage.removeItem('bsi-api-key');
         setAuthStatus('unauthenticated');
       });
+
+    return () => { controller.abort(); clearTimeout(timeout); };
   }, []);
 
   if (authStatus === 'checking') {
@@ -245,6 +251,7 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
       const res = await fetch('/api/stripe/customer-portal', {
         method: 'POST',
         headers: { 'X-BSI-Key': key },
+        signal: AbortSignal.timeout(8000),
       });
       const data = await res.json() as { url?: string };
       if (data.url) {
@@ -262,10 +269,15 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
 
   // Fetch provider health once for coverage chart
   useEffect(() => {
-    fetch('/api/health/providers')
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+
+    fetch('/api/health/providers', { signal: controller.signal })
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => { if (data) setHealthData(data as HealthData); })
       .catch(() => {});
+
+    return () => { controller.abort(); clearTimeout(timeout); };
   }, []);
 
   // Countdown timer for auto-refresh
@@ -277,7 +289,9 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
   }, []);
 
   useEffect(() => {
-    async function fetchDashboardData() {
+    const controller = new AbortController();
+
+    async function fetchDashboardData(signal?: AbortSignal) {
       setIsLoading(true);
       setFetchError(null);
 
@@ -288,7 +302,7 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
             : activeSport === 'nba' ? '/api/nba'
             : '/api/college-baseball';
 
-        const standingsRes = await fetch(`${apiBase}/standings`);
+        const standingsRes = await fetch(`${apiBase}/standings`, { signal });
         if (standingsRes.ok) {
           const standingsData = await standingsRes.json() as {
             standings?: StandingsTeam[];
@@ -305,7 +319,7 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
         }
 
         const scoresEndpoint = activeSport === 'nba' ? `${apiBase}/scoreboard` : `${apiBase}/scores`;
-        const scoresRes = await fetch(scoresEndpoint);
+        const scoresRes = await fetch(scoresEndpoint, { signal });
         if (scoresRes.ok) {
           const scoresData = await scoresRes.json() as {
             games?: Array<{ status?: { type?: { state?: string }; isLive?: boolean } | string }>;
@@ -327,18 +341,21 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
           }));
         }
       } catch (err) {
+        if ((err as Error).name === 'AbortError') return;
         setFetchError(err instanceof Error ? err.message : 'Failed to load dashboard data');
       } finally {
         setIsLoading(false);
       }
     }
 
-    fetchDashboardData();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    fetchDashboardData(controller.signal).finally(() => clearTimeout(timeout));
+
     const interval = setInterval(() => {
       fetchDashboardData();
       setCountdown(60);
     }, 60000);
-    return () => clearInterval(interval);
+    return () => { controller.abort(); clearInterval(interval); clearTimeout(timeout); };
   }, [activeSport]);
 
   const standingsChartData = standings.slice(0, 8).map((team, index) => ({

@@ -48,6 +48,21 @@ const fmtInt = (v: number) => String(Math.round(v));
 
 export { fmt3, fmt2, fmt1, fmtPct, fmtInt };
 
+/**
+ * Threshold-based cell background for pitching metrics.
+ * Returns a subtle background color when a value crosses a notable threshold.
+ */
+function getThresholdBg(key: string, val: number): string | undefined {
+  switch (key) {
+    case 'era': return val < 2 ? 'rgba(34, 211, 238, 0.08)' : undefined;
+    case 'k_9': return val >= 14 ? 'rgba(239, 68, 68, 0.08)' : undefined;
+    case 'whip': return val < 0.5 ? 'rgba(34, 197, 94, 0.08)' : undefined;
+    case 'k_bb': return val >= 8 ? 'rgba(34, 197, 94, 0.08)' : undefined;
+    case 'fip': return val < 2 ? 'rgba(34, 211, 238, 0.08)' : val > 6 ? 'rgba(239, 68, 68, 0.06)' : undefined;
+    default: return undefined;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Default column sets
 // ---------------------------------------------------------------------------
@@ -174,7 +189,7 @@ export function SavantLeaderboard({
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-border-subtle">
+            <tr className="border-b border-border-subtle" style={{ borderTop: '2px solid var(--svt-accent, #BF5700)' }}>
               <th className="pl-5 pr-2 py-3 text-left">
                 <span className="text-[10px] font-display uppercase tracking-widest text-text-muted">#</span>
               </th>
@@ -225,7 +240,7 @@ export function SavantLeaderboard({
                 <tr
                   key={playerId || i}
                   onClick={() => playerId && onPlayerClick?.(playerId)}
-                  className={`border-b border-border-subtle transition-colors hover:bg-surface-light/50 ${
+                  className={`border-b border-border-subtle transition-colors hover:bg-surface-light/50 ${i % 2 === 1 ? 'bg-[rgba(255,255,255,0.01)]' : ''} ${
                     onPlayerClick ? 'cursor-pointer' : ''
                   }`}
                 >
@@ -267,6 +282,10 @@ export function SavantLeaderboard({
                       ? getPercentileColor(pctl, higherIsBetter)
                       : undefined;
 
+                    const thresholdBg = !showHeatmap && val != null && !isGated
+                      ? getThresholdBg(col.key, val as number)
+                      : undefined;
+
                     return (
                       <td
                         key={col.key}
@@ -286,11 +305,13 @@ export function SavantLeaderboard({
                         ) : (
                           <span
                             className={`inline-block px-1.5 py-0.5 rounded font-mono tabular-nums text-xs ${
-                              showHeatmap ? 'text-white font-medium' : 'text-text-secondary'
+                              showHeatmap ? 'text-white font-medium' : col.key === 'fip' ? 'text-[var(--svt-accent,_#BF5700)] font-bold' : 'text-text-secondary'
                             }`}
                             style={showHeatmap ? {
                               backgroundColor: withAlpha(bgColor, 0.13),
                               color: bgColor,
+                            } : thresholdBg ? {
+                              backgroundColor: thresholdBg,
                             } : undefined}
                           >
                             {display}

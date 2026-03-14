@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
@@ -125,95 +126,64 @@ const AROUND_THE_LEAGUE = [
 
 export default function NBAPage() {
   const [activeTab, setActiveTab] = useState<TabType>('standings');
-  const [standings, setStandings] = useState<NBAStandingsTeam[]>([]);
-  const [games, setGames] = useState<Game[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<string>('');
-  const [hasLiveGames, setHasLiveGames] = useState(false);
-  const [leaderCategories, setLeaderCategories] = useState<LeaderCategory[]>([]);
-  const [leadersLoading, setLeadersLoading] = useState(false);
+  const [liveGamesDetected, setLiveGamesDetected] = useState(false);
 
-  const fetchStandings = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch('/api/nba/standings');
-      if (!res.ok) throw new Error('Failed to fetch standings');
-      const data = await res.json() as { standings?: NBAApiConference[]; meta?: { lastUpdated?: string } };
-      setStandings(flattenNBAStandings(data.standings || []));
-      setLastUpdated(data.meta?.lastUpdated || new Date().toISOString());
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // Standings — fetched when standings or teams tab is active
+  const standingsUrl = (activeTab === 'standings' || activeTab === 'teams') ? '/api/nba/standings' : null;
+  const { data: standingsRaw, loading: standingsLoading, error: standingsError, retry: retryStandings } =
+    useSportData<{ standings?: NBAApiConference[]; meta?: { lastUpdated?: string } }>(standingsUrl);
 
-  const fetchScores = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch('/api/nba/scoreboard');
-      if (!res.ok) throw new Error('Failed to fetch scores');
-      const data = await res.json() as { games?: Record<string, unknown>[]; scoreboard?: { games?: Record<string, unknown>[] }; meta?: { lastUpdated?: string } };
-      const rawGames = data.games || data.scoreboard?.games || [];
-      const normalized: Game[] = rawGames.map((g, i) => {
-        const teams = g.teams as Record<string, Record<string, unknown>> | undefined;
-        const homeTeam = (g.homeTeam || teams?.home) as Record<string, unknown> | undefined;
-        const awayTeam = (g.awayTeam || teams?.away) as Record<string, unknown> | undefined;
-        const status = g.status as Record<string, unknown> | string | undefined;
-        const isLive = typeof status === 'object'
-          ? (status?.type as Record<string, unknown>)?.state === 'in' || status?.isLive === true
-          : typeof status === 'string' && status.toLowerCase().includes('in progress');
-        const isFinal = typeof status === 'object'
-          ? status?.isFinal === true
-          : typeof status === 'string' && status.toLowerCase().includes('final');
-        return {
-          id: (g.id as string | number) || i,
-          away: { name: (awayTeam?.name as string) || 'Away', score: Number(awayTeam?.score ?? 0) },
-          home: { name: (homeTeam?.name as string) || 'Home', score: Number(homeTeam?.score ?? 0) },
-          status: typeof status === 'object' ? ((status?.detailedState as string) || 'Scheduled') : ((status as string) || 'Scheduled'),
-          isLive: Boolean(isLive),
-          isFinal: Boolean(isFinal),
-          detail: typeof status === 'object' && status?.period ? `Q${status.period}` : undefined,
-          venue: (g.venue as Record<string, unknown>)?.name as string || undefined,
-        };
-      });
-      setGames(normalized);
-      setHasLiveGames(normalized.some((g) => g.isLive));
-      setLastUpdated(data.meta?.lastUpdated || new Date().toISOString());
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const standings = useMemo<NBAStandingsTeam[]>(
+    () => flattenNBAStandings(standingsRaw?.standings || []),
+    [standingsRaw],
+  );
 
-  const fetchLeaders = useCallback(async () => {
-    // The deployed NBA data layer does not currently expose a league-leaders endpoint.
-    // Keep the players tab usable without generating repeated 404 noise in local or prod.
-    setLeaderCategories([]);
-    setLeadersLoading(false);
-  }, []);
+  // Scores — fetched when scores tab is active, auto-refreshes when live
+  const scoresUrl = activeTab === 'scores' ? '/api/nba/scoreboard' : null;
+  const { data: scoresRaw, loading: scoresLoading, error: scoresError, retry: retryScores } =
+    useSportData<{ games?: Record<string, unknown>[]; scoreboard?: { games?: Record<string, unknown>[] }; meta?: { lastUpdated?: string } }>(scoresUrl, {
+      refreshInterval: 30000,
+      refreshWhen: liveGamesDetected,
+    });
 
-  useEffect(() => {
-    if (activeTab === 'standings' || activeTab === 'teams') fetchStandings();
-    else if (activeTab === 'scores') fetchScores();
-    else if (activeTab === 'players') fetchLeaders();
-  }, [activeTab, fetchStandings, fetchScores, fetchLeaders]);
+  // Normalize raw API games into typed Game[]
+  const games = useMemo(() => {
+    const rawGames = scoresRaw?.games || scoresRaw?.scoreboard?.games || [];
+    return rawGames.map((g, i) => {
+      const teams = g.teams as Record<string, Record<string, unknown>> | undefined;
+      const homeTeam = (g.homeTeam || teams?.home) as Record<string, unknown> | undefined;
+      const awayTeam = (g.awayTeam || teams?.away) as Record<string, unknown> | undefined;
+      const status = g.status as Record<string, unknown> | string | undefined;
+      const isLive = typeof status === 'object'
+        ? (status?.type as Record<string, unknown>)?.state === 'in' || status?.isLive === true
+        : typeof status === 'string' && status.toLowerCase().includes('in progress');
+      const isFinal = typeof status === 'object'
+        ? status?.isFinal === true
+        : typeof status === 'string' && status.toLowerCase().includes('final');
+      return {
+        id: (g.id as string | number) || i,
+        away: { name: (awayTeam?.name as string) || 'Away', score: Number(awayTeam?.score ?? 0) },
+        home: { name: (homeTeam?.name as string) || 'Home', score: Number(homeTeam?.score ?? 0) },
+        status: typeof status === 'object' ? ((status?.detailedState as string) || 'Scheduled') : ((status as string) || 'Scheduled'),
+        isLive: Boolean(isLive),
+        isFinal: Boolean(isFinal),
+        detail: typeof status === 'object' && status?.period ? `Q${status.period}` : undefined,
+        venue: (g.venue as Record<string, unknown>)?.name as string || undefined,
+      } as Game;
+    });
+  }, [scoresRaw]);
 
-  useEffect(() => {
-    if (activeTab === 'scores' && hasLiveGames) {
-      const interval = setInterval(fetchScores, 30000);
-      return () => clearInterval(interval);
-    }
-  }, [activeTab, hasLiveGames, fetchScores]);
+  const hasLiveGames = useMemo(() => games.some((g) => g.isLive), [games]);
+  useEffect(() => { setLiveGamesDetected(hasLiveGames); }, [hasLiveGames]);
 
-  // Fetch leaders on mount for the League Leaders section below tabs
-  useEffect(() => {
-    fetchLeaders();
-  }, [fetchLeaders]);
+  // Leaders — the deployed NBA data layer does not currently expose a league-leaders endpoint.
+  const leadersLoading = false;
+  const leaderCategories = useMemo<LeaderCategory[]>(() => [], []);
+
+  // Derived shared state
+  const loading = standingsLoading || scoresLoading;
+  const error = standingsError || scoresError;
+  const lastUpdated = standingsRaw?.meta?.lastUpdated || scoresRaw?.meta?.lastUpdated || '';
 
   const { eastern, western } = useMemo(() => splitNBAByConference(standings), [standings]);
 
@@ -259,7 +229,7 @@ export default function NBAPage() {
                 </div>
               ) : error ? (
                 <Card variant="default" padding="lg">
-                  <EmptyState type="error" onRetry={fetchStandings} />
+                  <EmptyState type="error" onRetry={retryStandings} />
                 </Card>
               ) : standings.length === 0 ? (
                 <Card variant="default" padding="lg">
@@ -320,7 +290,7 @@ export default function NBAPage() {
                 <div className="space-y-4">{[1, 2, 3, 4].map((i) => <SkeletonScoreCard key={i} />)}</div>
               ) : error ? (
                 <Card variant="default" padding="lg">
-                  <EmptyState type="error" onRetry={fetchScores} />
+                  <EmptyState type="error" onRetry={retryScores} />
                 </Card>
               ) : games.length === 0 ? (
                 <Card variant="default" padding="lg">

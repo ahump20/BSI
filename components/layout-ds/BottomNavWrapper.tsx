@@ -115,17 +115,37 @@ export function BottomNavWrapper() {
                     </p>
                     <div className="grid grid-cols-3 gap-1.5">
                       {section.items.map((item) => {
-                        const active = isActive(item.href);
+                        const active = !item.external && isActive(item.href);
+                        const classes = `flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl transition-colors ${
+                          active
+                            ? 'bg-[var(--bsi-primary)]/15 text-[var(--bsi-primary)]'
+                            : 'text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-dugout)]'
+                        }`;
+
+                        if (item.external) {
+                          return (
+                            <a
+                              key={item.href}
+                              href={item.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={closeMore}
+                              className={classes}
+                            >
+                              <span className="text-[11px] font-medium text-center leading-tight">
+                                {item.label}
+                                <span className="text-[8px] ml-0.5 opacity-50" aria-hidden="true">&#8599;</span>
+                              </span>
+                            </a>
+                          );
+                        }
+
                         return (
                           <Link
                             key={item.href}
                             href={item.href}
                             onClick={closeMore}
-                            className={`flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl transition-colors ${
-                              active
-                                ? 'bg-[var(--bsi-primary)]/15 text-[var(--bsi-primary)]'
-                                : 'text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-dugout)]'
-                            }`}
+                            className={classes}
                             aria-current={active ? 'page' : undefined}
                           >
                             <span className="text-[11px] font-medium text-center leading-tight">

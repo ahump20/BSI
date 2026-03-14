@@ -7,7 +7,7 @@
  * Uses centralized team data utility, ESPN CDN logos, and user timezone preferences.
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Container } from '@/components/ui/Container';
@@ -17,6 +17,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { useUserSettings } from '@/lib/hooks';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { MLB_TEAMS, DIVISION_ORDER, type MLBTeamInfo } from '@/lib/utils/mlb-teams';
 import type { DataMeta } from '@/lib/types/data-meta';
 
@@ -32,8 +33,6 @@ function getLogoUrl(abbreviation: string): string {
 }
 
 export default function MLBTeamsPage() {
-  const [teams, setTeams] = useState<TeamWithRecord[]>(MLB_TEAMS);
-  const [meta, setMeta] = useState<DataMeta | null>(null);
   const [selectedLeague, setSelectedLeague] = useState<'all' | 'AL' | 'NL'>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -58,47 +57,34 @@ export default function MLBTeamsPage() {
   };
 
   // Fetch team records from standings API
-  useEffect(() => {
-    async function fetchRecords() {
-      try {
-        const res = await fetch('/api/mlb/standings');
-        if (res.ok) {
-          const data = (await res.json()) as {
-            standings?: Array<{
-              teamName: string;
-              abbreviation?: string;
-              wins?: number;
-              losses?: number;
-            }>;
-            meta?: DataMeta;
-          };
-          if (data.standings) {
-            setTeams((prev) =>
-              prev.map((team) => {
-                // Match by abbreviation first (reliable), fall back to name
-                const standing = data.standings?.find(
-                  (s) =>
-                    s.abbreviation?.toUpperCase() === team.abbreviation ||
-                    s.teamName.toLowerCase() === team.name.toLowerCase() ||
-                    s.teamName.toLowerCase() === team.shortName.toLowerCase()
-                );
-                if (standing) {
-                  return { ...team, wins: standing.wins, losses: standing.losses };
-                }
-                return team;
-              })
-            );
-          }
-          if (data.meta) {
-            setMeta(data.meta);
-          }
-        }
-      } catch {
-        // Records are optional enhancement
+  const { data: standingsData } = useSportData<{
+    standings?: Array<{
+      teamName: string;
+      abbreviation?: string;
+      wins?: number;
+      losses?: number;
+    }>;
+    meta?: DataMeta;
+  }>('/api/mlb/standings');
+
+  const meta = standingsData?.meta ?? null;
+
+  // Merge standings data into team list
+  const teams: TeamWithRecord[] = useMemo(() => {
+    if (!standingsData?.standings) return MLB_TEAMS;
+    return MLB_TEAMS.map((team) => {
+      const standing = standingsData.standings?.find(
+        (s) =>
+          s.abbreviation?.toUpperCase() === team.abbreviation ||
+          s.teamName.toLowerCase() === team.name.toLowerCase() ||
+          s.teamName.toLowerCase() === team.shortName.toLowerCase()
+      );
+      if (standing) {
+        return { ...team, wins: standing.wins, losses: standing.losses };
       }
-    }
-    fetchRecords();
-  }, []);
+      return team;
+    });
+  }, [standingsData]);
 
   // Apply league filter and search
   const query = searchQuery.toLowerCase().trim();

@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -106,38 +107,16 @@ function TeamCard({ team }: { team: NBATeam }) {
 }
 
 export default function NBATeamsPage() {
-  const [teams, setTeams] = useState<NBATeam[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedConference, setSelectedConference] = useState<'All' | 'Eastern' | 'Western'>(
     'All'
   );
   const [searchQuery, setSearchQuery] = useState('');
-  const [lastUpdated, setLastUpdated] = useState<string>(formatTimestamp());
 
-  const fetchTeams = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  const { data: teamsData, loading, error, retry: fetchTeams, lastUpdated } =
+    useSportData<TeamsResponse>('/api/nba/teams');
 
-    try {
-      const res = await fetch('/api/nba/teams');
-      if (!res.ok) {
-        throw new Error(`Failed to fetch teams: ${res.status}`);
-      }
-
-      const data: TeamsResponse = await res.json();
-      setTeams(data.teams || []);
-      setLastUpdated(formatTimestamp());
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load teams');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchTeams();
-  }, [fetchTeams]);
+  const teams = teamsData?.teams || [];
+  const lastUpdatedStr = lastUpdated ? formatTimestamp(lastUpdated.toISOString()) : formatTimestamp();
 
   // Get teams by conference/division
   const getTeamsByDivision = (conference: string, division: string) => {
@@ -329,7 +308,7 @@ export default function NBATeamsPage() {
 
             {/* Data Source Footer */}
             <div className="mt-8 pt-4 border-t border-border-subtle">
-              <DataSourceBadge source="ESPN NBA API" timestamp={lastUpdated} />
+              <DataSourceBadge source="ESPN NBA API" timestamp={lastUpdatedStr} />
             </div>
           </Container>
         </Section>

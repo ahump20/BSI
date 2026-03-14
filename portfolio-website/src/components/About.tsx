@@ -66,8 +66,7 @@ export default function About() {
     <section
       id="origin"
       aria-labelledby="origin-heading"
-      className="section-padding section-border"
-      style={{ paddingTop: 'clamp(2rem, 4vw, 3.5rem)' }}
+      className="section-padding section-border about-section-top"
     >
       <div className="container-custom">
         <motion.div
@@ -146,11 +145,7 @@ export default function About() {
                 </div>
 
                 <div
-                  className="card p-6"
-                  style={{
-                    background:
-                      'linear-gradient(135deg, rgba(191,87,0,0.10) 0%, rgba(139,69,19,0.05) 45%, rgba(26,26,26,0.78) 100%)',
-                  }}
+                  className="card p-6 about-quote-card"
                 >
                   <p className="text-[0.65rem] font-mono uppercase tracking-[0.22em] text-burnt-orange/80">
                     The Quote

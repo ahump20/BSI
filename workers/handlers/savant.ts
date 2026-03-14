@@ -67,6 +67,62 @@ function stripProFields(row: Record<string, unknown>): Record<string, unknown> {
 }
 
 // ---------------------------------------------------------------------------
+// Percentile Computation
+// ---------------------------------------------------------------------------
+
+/**
+ * Compute percentile ranks for each numeric column in the dataset.
+ * Returns rows with an added `percentiles` object mapping column → 0-100 rank.
+ */
+function computePercentileRanks(
+  rows: Record<string, unknown>[],
+  numericKeys: string[],
+): Record<string, unknown>[] {
+  if (rows.length === 0) return rows;
+
+  // For each key, build sorted indices
+  const percentilesByKey = new Map<string, number[]>();
+
+  for (const key of numericKeys) {
+    const indexed: { idx: number; val: number }[] = [];
+    for (let i = 0; i < rows.length; i++) {
+      const v = rows[i][key];
+      if (v != null && typeof v === 'number' && Number.isFinite(v)) {
+        indexed.push({ idx: i, val: v });
+      }
+    }
+    indexed.sort((a, b) => a.val - b.val);
+
+    const pctls = new Array<number>(rows.length).fill(50);
+    const n = indexed.length;
+    for (let rank = 0; rank < n; rank++) {
+      pctls[indexed[rank].idx] = n > 1 ? Math.round((rank / (n - 1)) * 100) : 50;
+    }
+    percentilesByKey.set(key, pctls);
+  }
+
+  // Attach percentiles to each row
+  return rows.map((row, i) => {
+    const pctl: Record<string, number> = {};
+    for (const key of numericKeys) {
+      const arr = percentilesByKey.get(key);
+      if (arr) pctl[key] = arr[i];
+    }
+    return { ...row, percentiles: pctl };
+  });
+}
+
+const BATTING_PERCENTILE_KEYS = [
+  'avg', 'obp', 'slg', 'ops', 'k_pct', 'bb_pct', 'iso', 'babip',
+  'woba', 'wrc_plus', 'ops_plus',
+];
+
+const PITCHING_PERCENTILE_KEYS = [
+  'era', 'whip', 'k_9', 'bb_9', 'hr_9', 'fip', 'x_fip',
+  'era_minus', 'k_bb', 'lob_pct', 'babip',
+];
+
+// ---------------------------------------------------------------------------
 // Batting Leaderboard
 // ---------------------------------------------------------------------------
 
@@ -136,6 +192,8 @@ export async function handleSavantBattingLeaderboard(url: URL, env: Env, headers
 
     // Free tier: strip pro metrics (row count follows requested limit for both tiers)
     let output = results as Record<string, unknown>[];
+    // Compute percentile ranks for all numeric columns
+    output = computePercentileRanks(output, BATTING_PERCENTILE_KEYS);
     if (tier !== 'pro') {
       output = output.map(stripProFields);
     }
@@ -218,6 +276,8 @@ export async function handleSavantPitchingLeaderboard(url: URL, env: Env, header
     const { results } = await env.DB.prepare(query).bind(...binds).all();
 
     let output = results as Record<string, unknown>[];
+    // Compute percentile ranks for all numeric columns
+    output = computePercentileRanks(output, PITCHING_PERCENTILE_KEYS);
     if (tier !== 'pro') {
       output = output.slice(0, 10).map(stripProFields);
     }
@@ -281,6 +341,43 @@ export async function handleSavantPlayer(playerId: string, url: URL, env: Env, h
       batting: batting || null,
       pitching: pitching || null,
       type: batting && pitching ? 'two-way' : batting ? 'hitter' : 'pitcher',
+    };
+
+    // Compute per-stat percentiles against full population
+    const battingPctls: Record<string, number> = {};
+    const pitchingPctls: Record<string, number> = {};
+
+    if (batting) {
+      for (const key of BATTING_PERCENTILE_KEYS) {
+        const val = (batting as Record<string, unknown>)[key];
+        if (val != null && typeof val === 'number' && Number.isFinite(val)) {
+          const { results: popResults } = await env.DB.prepare(
+            `SELECT ${key} FROM cbb_batting_advanced WHERE season = ? AND pa >= 25 AND ${key} IS NOT NULL`
+          ).bind(SEASON).all();
+          const sorted = popResults.map(r => r[key] as number).filter(v => Number.isFinite(v)).sort((a, b) => a - b);
+          const below = sorted.filter(v => v < val).length;
+          battingPctls[key] = sorted.length > 1 ? Math.round((below / (sorted.length - 1)) * 100) : 50;
+        }
+      }
+    }
+
+    if (pitching) {
+      for (const key of PITCHING_PERCENTILE_KEYS) {
+        const val = (pitching as Record<string, unknown>)[key];
+        if (val != null && typeof val === 'number' && Number.isFinite(val)) {
+          const { results: popResults } = await env.DB.prepare(
+            `SELECT ${key} FROM cbb_pitching_advanced WHERE season = ? AND ip >= 10 AND ${key} IS NOT NULL`
+          ).bind(SEASON).all();
+          const sorted = popResults.map(r => r[key] as number).filter(v => Number.isFinite(v)).sort((a, b) => a - b);
+          const below = sorted.filter(v => v < val).length;
+          pitchingPctls[key] = sorted.length > 1 ? Math.round((below / (sorted.length - 1)) * 100) : 50;
+        }
+      }
+    }
+
+    player.percentiles = {
+      batting: Object.keys(battingPctls).length > 0 ? battingPctls : null,
+      pitching: Object.keys(pitchingPctls).length > 0 ? pitchingPctls : null,
     };
 
     if (tier !== 'pro') {

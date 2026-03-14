@@ -167,9 +167,8 @@ export default function SavantHubPage() {
     <>
       <div>
         <section
-          className="relative overflow-hidden"
+          className="relative overflow-hidden savant-ambient"
           style={{
-            background: 'radial-gradient(ellipse at 30% 20%, rgba(191, 87, 0, 0.05) 0%, transparent 60%), var(--surface-scoreboard)',
             padding: 'clamp(2rem, 4vw, 3rem) 0',
           }}
         >
@@ -189,9 +188,9 @@ export default function SavantHubPage() {
               <div className="mb-10">
                 <span className="heritage-stamp mb-3">Advanced Analytics</span>
                 <h1
-                  className="mt-3 font-bold uppercase tracking-tight leading-none mb-4"
+                  className="mt-3 font-bold uppercase tracking-tight leading-none mb-4 font-savant-display"
                   style={{
-                    fontFamily: 'var(--bsi-font-display-hero)',
+                    fontFamily: 'var(--font-syne, var(--bsi-font-display-hero))',
                     fontSize: 'clamp(2rem, 5vw, 3.5rem)',
                     color: 'var(--bsi-bone)',
                     textShadow: '1px 1px 0px rgba(0,0,0,0.5)',
@@ -211,6 +210,16 @@ export default function SavantHubPage() {
                     style={{ color: 'var(--bsi-primary)' }}
                   >
                     <span className="uppercase tracking-wider" style={{ fontFamily: 'var(--bsi-font-display)' }}>Interactive Visuals</span>
+                    <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                  <Link
+                    href="/college-baseball/savant/glossary"
+                    className="inline-flex items-center gap-2 text-sm transition-colors group"
+                    style={{ color: 'var(--svt-text-muted, var(--bsi-dust))' }}
+                  >
+                    <span className="uppercase tracking-wider" style={{ fontFamily: 'var(--bsi-font-display)' }}>Glossary</span>
                     <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M5 12h14M12 5l7 7-7 7" />
                     </svg>
@@ -405,6 +414,13 @@ export default function SavantHubPage() {
                     className="font-mono text-[10px] uppercase tracking-[0.12em] text-burnt-orange/50 hover:text-burnt-orange transition-colors"
                   >
                     Conference Strength Index
+                  </Link>
+                  <span className="text-text-muted/20">&middot;</span>
+                  <Link
+                    href="/college-baseball/savant/glossary"
+                    className="font-mono text-[10px] uppercase tracking-[0.12em] text-burnt-orange/50 hover:text-burnt-orange transition-colors"
+                  >
+                    Metric Glossary
                   </Link>
                 </div>
               </div>

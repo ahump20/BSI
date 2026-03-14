@@ -135,6 +135,9 @@ export default function TeamStatsClient() {
                     src={getTeamLogo(awayTeam)!}
                     alt={awayTeam?.team?.abbreviation || 'Away'}
                     className="w-8 h-8 object-contain"
+                    width={32}
+                    height={32}
+                    loading="lazy"
                   />
                 ) : (
                   <span className="text-sm font-bold text-burnt-orange">
@@ -159,6 +162,9 @@ export default function TeamStatsClient() {
                     src={getTeamLogo(homeTeam)!}
                     alt={homeTeam?.team?.abbreviation || 'Home'}
                     className="w-8 h-8 object-contain"
+                    width={32}
+                    height={32}
+                    loading="lazy"
                   />
                 ) : (
                   <span className="text-sm font-bold text-burnt-orange">

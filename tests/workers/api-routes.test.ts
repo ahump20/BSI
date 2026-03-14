@@ -3,7 +3,7 @@
  *
  * Tests the hybrid Workers router's API route handling.
  * The worker handles API routes directly (calling ESPN/SportsDataIO APIs),
- * NOT by proxying to Pages Functions.
+ * NOT by proxying to a secondary runtime.
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

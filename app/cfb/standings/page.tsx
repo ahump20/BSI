@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -10,6 +10,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SportIcon } from '@/components/icons/SportIcon';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface CFBTeam {
@@ -37,29 +38,16 @@ interface Conference {
 const POWER_CONFERENCES = ['SEC', 'Big Ten', 'Big 12', 'ACC'];
 
 export default function CFBStandingsPage() {
-  const [conferences, setConferences] = useState<Conference[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState(formatTimestamp());
   const [selectedConference, setSelectedConference] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    async function fetchStandings() {
-      try {
-        const res = await fetch('/api/cfb/standings');
-        if (!res.ok) throw new Error('Failed to fetch standings');
-        const data = await res.json() as { standings?: Conference[]; meta?: { lastUpdated?: string } };
-        setConferences(data.standings || []);
-        setLastUpdated(formatTimestamp());
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load standings');
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchStandings();
-  }, []);
+  const { data: standingsData, loading, error, lastUpdated: lastUpdatedDate } = useSportData<{
+    standings?: Conference[];
+    meta?: { lastUpdated?: string };
+  }>('/api/cfb/standings');
+
+  const conferences = useMemo(() => standingsData?.standings || [], [standingsData]);
+  const lastUpdated = lastUpdatedDate ? formatTimestamp(lastUpdatedDate.toISOString()) : formatTimestamp();
 
   // Separate power conferences from the rest
   const { powerConferences, otherConferences } = useMemo(() => {

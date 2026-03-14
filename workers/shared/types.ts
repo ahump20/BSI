@@ -16,6 +16,8 @@ export interface Env {
   STRIPE_SECRET_KEY?: string;
   STRIPE_WEBHOOK_SECRET?: string;
   RESEND_API_KEY?: string;
+  ANTHROPIC_API_KEY?: string;
+  GEMINI_API_KEY?: string;
   PREDICTION_CACHE?: KVNamespace;
   BSI_PROD_CACHE?: KVNamespace;
   MONITOR_KV?: KVNamespace;

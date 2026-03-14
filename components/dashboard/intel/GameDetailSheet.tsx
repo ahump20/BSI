@@ -157,14 +157,14 @@ export function GameDetailSheet({ game, open, onClose }: GameDetailSheetProps) {
               <BarChart data={explainData} layout="vertical" margin={{ top: 0, right: 10, left: 0, bottom: 0 }}>
                 <XAxis
                   type="number"
-                  tick={{ fill: '#737373', fontSize: 10, fontFamily: 'var(--bsi-font-mono)' }}
+                  tick={{ fill: 'var(--chart-axis-text)', fontSize: 10, fontFamily: 'var(--bsi-font-mono)' }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis
                   dataKey="name"
                   type="category"
-                  tick={{ fill: '#a3a3a3', fontSize: 10, fontFamily: 'var(--bsi-font-mono)' }}
+                  tick={{ fill: 'var(--chart-label)', fontSize: 10, fontFamily: 'var(--bsi-font-mono)' }}
                   axisLine={false}
                   tickLine={false}
                   width={100}

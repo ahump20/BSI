@@ -17,10 +17,7 @@ export default function BSIShowcase() {
     <section
       id="bsi"
       aria-labelledby="bsi-heading"
-      className="section-padding relative"
-      style={{
-        background: 'linear-gradient(180deg, var(--surface-deep) 0%, var(--surface-elevated) 50%, var(--surface-deep) 100%)',
-      }}
+      className="section-padding relative bsi-showcase-bg"
     >
       <div className="container-custom">
         <motion.div

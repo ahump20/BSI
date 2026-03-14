@@ -58,6 +58,7 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
           prompt: promptText,
           gameContext,
         }),
+        signal: AbortSignal.timeout(8000),
       });
 
       if (!res.ok) {
@@ -68,7 +69,11 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
       const data = await res.json() as { analysis: string };
       setResponse(data.analysis);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Analysis failed');
+      if ((err as Error).name === 'AbortError') {
+        setError('Request timed out. Try again.');
+      } else {
+        setError(err instanceof Error ? err.message : 'Analysis failed');
+      }
     } finally {
       setLoading(false);
     }

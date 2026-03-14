@@ -9,7 +9,7 @@
  * Last Updated: 2025-01-07
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -18,6 +18,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { useUserSettings } from '@/lib/hooks';
+import { useSportData } from '@/lib/hooks/useSportData';
 // Team lookup utilities available if needed: getTeamById, MLBTeamInfo
 
 interface PlayerData {
@@ -117,12 +118,6 @@ const pitchingSortOptions = [
 ];
 
 export default function MLBPlayersPage() {
-  const [players, setPlayers] = useState<PlayerData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [meta, setMeta] = useState<LeaderboardResponse['meta'] | null>(null);
-  const [pagination, setPagination] = useState<LeaderboardResponse['pagination'] | null>(null);
-
   // Filters
   const [statType, setStatType] = useState<StatType>('bat');
   const [position, setPosition] = useState('all');
@@ -153,46 +148,30 @@ export default function MLBPlayersPage() {
     );
   };
 
-  const fetchPlayers = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const params = new URLSearchParams({
-        stat: statType,
-        pos: position,
-        lg: league,
-        qual: qualified ? 'y' : 'n',
-        sortby: sortBy,
-        sortdir:
-          sortBy === 'ERA' || sortBy === 'FIP' || sortBy === 'xFIP' || sortBy === 'WHIP'
-            ? 'asc'
-            : 'desc',
-        limit: '50',
-        page: page.toString(),
-      });
-
-      const category = statType === 'bat' ? 'batting' : 'pitching';
-      const res = await fetch(`/api/mlb/leaderboards/${category}?${params}`);
-
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-      }
-
-      const data: LeaderboardResponse = await res.json();
-      setPlayers(data.data || []);
-      setMeta(data.meta);
-      setPagination(data.pagination);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load players');
-    } finally {
-      setLoading(false);
-    }
+  // Build API URL from filter state
+  const leaderboardUrl = useMemo(() => {
+    const params = new URLSearchParams({
+      stat: statType,
+      pos: position,
+      lg: league,
+      qual: qualified ? 'y' : 'n',
+      sortby: sortBy,
+      sortdir:
+        sortBy === 'ERA' || sortBy === 'FIP' || sortBy === 'xFIP' || sortBy === 'WHIP'
+          ? 'asc'
+          : 'desc',
+      limit: '50',
+      page: page.toString(),
+    });
+    const category = statType === 'bat' ? 'batting' : 'pitching';
+    return `/api/mlb/leaderboards/${category}?${params}`;
   }, [statType, position, league, qualified, sortBy, page]);
 
-  useEffect(() => {
-    fetchPlayers();
-  }, [fetchPlayers]);
+  const { data: rawData, loading, error, retry: fetchPlayers } = useSportData<LeaderboardResponse>(leaderboardUrl);
+
+  const players = rawData?.data ?? [];
+  const meta = rawData?.meta ?? null;
+  const pagination = rawData?.pagination ?? null;
 
   // Reset sort to WAR when switching stat types
   useEffect(() => {

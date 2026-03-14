@@ -176,19 +176,24 @@ export default function BlogPostFeedPage() {
   const [activeCategory, setActiveCategory] = useState<CategoryKey>('all');
 
   useEffect(() => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+
     async function fetchFeed() {
       try {
-        const res = await fetch('/api/blog-post-feed?limit=50');
+        const res = await fetch('/api/blog-post-feed?limit=50', { signal: controller.signal });
         if (!res.ok) throw new Error('Failed to fetch feed');
         const data: FeedResponse = await res.json();
         setAllPosts(data.posts ?? []);
       } catch (err) {
+        if ((err as Error).name === 'AbortError') return;
         setError(err instanceof Error ? err.message : 'Failed to load articles');
       } finally {
         setLoading(false);
       }
     }
     fetchFeed();
+    return () => { controller.abort(); clearTimeout(timeout); };
   }, []);
 
   const filteredPosts =

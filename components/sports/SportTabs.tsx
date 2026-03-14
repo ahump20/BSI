@@ -10,11 +10,11 @@ interface SportTabsProps {
   onSportChange?: (sport: Sport) => void;
 }
 
-const sports: { id: Sport; label: string; icon: string; color: string }[] = [
-  { id: 'mlb', label: 'MLB', icon: '/icons/baseball.svg', color: '#C41E3A' },
-  { id: 'nfl', label: 'NFL', icon: '/icons/football.svg', color: '#013369' },
-  { id: 'nba', label: 'NBA', icon: '/icons/basketball.svg', color: '#1D428A' },
-  { id: 'ncaa', label: 'NCAA', icon: '/icons/baseball.svg', color: 'var(--bsi-primary)' },
+const sports: { id: Sport; label: string; icon: string; color: string; dataSport: string }[] = [
+  { id: 'mlb', label: 'MLB', icon: '/icons/baseball.svg', color: 'var(--bsi-primary)', dataSport: 'mlb' },
+  { id: 'nfl', label: 'NFL', icon: '/icons/football.svg', color: 'var(--sport-accent)', dataSport: 'nfl' },
+  { id: 'nba', label: 'NBA', icon: '/icons/basketball.svg', color: 'var(--sport-accent)', dataSport: 'nba' },
+  { id: 'ncaa', label: 'NCAA', icon: '/icons/baseball.svg', color: 'var(--bsi-primary)', dataSport: 'college-baseball' },
 ];
 
 export function SportTabs({ defaultSport = 'mlb', onSportChange }: SportTabsProps) {
@@ -30,12 +30,13 @@ export function SportTabs({ defaultSport = 'mlb', onSportChange }: SportTabsProp
   };
 
   return (
-    <div className="flex gap-2 p-1 bg-surface-light rounded-xl">
+    <div className="flex gap-2 p-1 bg-surface-light rounded-[2px]">
       {sports.map((sport) => (
         <button
           key={sport.id}
+          data-sport={sport.dataSport}
           onClick={() => handleChange(sport.id)}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-[2px] text-sm font-semibold transition-all ${
             active === sport.id
               ? 'bg-burnt-orange text-white shadow-lg'
               : 'text-text-muted hover:text-text-primary hover:bg-surface-light'
@@ -66,8 +67,9 @@ export function SportTabsCompact({ defaultSport = 'mlb', onSportChange }: SportT
       {sports.map((sport) => (
         <button
           key={sport.id}
+          data-sport={sport.dataSport}
           onClick={() => handleChange(sport.id)}
-          className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all ${
+          className={`px-4 py-2 rounded-[2px] text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all ${
             active === sport.id
               ? 'bg-burnt-orange text-white'
               : 'bg-surface-light text-text-muted hover:text-text-secondary'

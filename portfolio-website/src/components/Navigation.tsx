@@ -66,6 +66,29 @@ export default function Navigation() {
     return () => window.removeEventListener('keydown', handleKey);
   }, [mobileOpen]);
 
+  const scrollToSection = (sectionId: string) => {
+    const target = document.getElementById(sectionId);
+    if (!target) return;
+
+    const nextPath =
+      sectionId === 'hero'
+        ? '/'
+        : sectionId === 'origin'
+          ? '/about'
+          : sectionId === 'contact'
+            ? '/contact'
+            : `/#${sectionId}`;
+
+    window.history.replaceState(null, '', nextPath);
+    const scrollTarget = Math.max(window.scrollY + target.getBoundingClientRect().top - 88, 0);
+    const root = document.documentElement;
+    const previousScrollBehavior = root.style.scrollBehavior;
+    root.style.scrollBehavior = 'auto';
+    window.scrollTo({ top: scrollTarget, left: 0, behavior: 'auto' });
+    root.style.scrollBehavior = previousScrollBehavior;
+    setMobileOpen(false);
+  };
+
   return (
     <>
       {/* Scroll progress bar */}
@@ -82,13 +105,20 @@ export default function Navigation() {
         transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           scrolled
-            ? 'bg-midnight/90 backdrop-blur-2xl border-b border-bone/5 shadow-lg shadow-black/20'
+            ? 'bg-midnight/96 border-b border-burnt-orange/15 shadow-[0_10px_32px_rgba(0,0,0,0.35)]'
             : 'bg-transparent'
         }`}
       >
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           {/* Logo */}
-          <a href="#hero" className="flex items-center gap-3 group">
+          <a
+            href="/"
+            className="flex items-center gap-3 group"
+            onClick={(event) => {
+              event.preventDefault();
+              scrollToSection('hero');
+            }}
+          >
             <div className="w-9 h-9 bg-burnt-orange rounded-full flex items-center justify-center font-sans font-bold text-white text-xs group-hover:scale-110 transition-transform duration-300">
               AH
             </div>
@@ -103,6 +133,10 @@ export default function Navigation() {
               <li key={item.id}>
                 <a
                   href={`#${item.id}`}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    scrollToSection(item.id);
+                  }}
                   aria-current={activeSection === item.id ? 'location' : undefined}
                   className={`relative px-3 py-2 font-sans text-xs uppercase tracking-[0.2em] font-medium transition-colors duration-300 ${
                     activeSection === item.id
@@ -126,7 +160,7 @@ export default function Navigation() {
           {/* Mobile hamburger */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden text-bone/70 hover:text-burnt-orange transition-colors p-2"
+            className="md:hidden border border-burnt-orange/30 bg-charcoal/90 px-2.5 py-2 text-bone/70 hover:border-burnt-orange hover:text-burnt-orange transition-colors"
             aria-label="Navigation menu"
             aria-expanded={mobileOpen}
             aria-controls="mobile-nav-menu"
@@ -155,14 +189,17 @@ export default function Navigation() {
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.3, ease: [0.19, 1, 0.22, 1] }}
-              className="overflow-hidden md:hidden bg-midnight/95 backdrop-blur-xl border-t border-bone/5"
+              className="overflow-hidden md:hidden bg-midnight/98 border-t border-burnt-orange/10"
             >
               <ul className="px-6 py-4 space-y-1">
                 {NAV_ITEMS.map((item) => (
                   <li key={item.id}>
                     <a
                       href={`#${item.id}`}
-                      onClick={() => setMobileOpen(false)}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        scrollToSection(item.id);
+                      }}
                       aria-current={activeSection === item.id ? 'location' : undefined}
                       className={`block px-4 py-3 font-sans text-xs uppercase tracking-[0.2em] rounded transition-colors duration-300 ${
                         activeSection === item.id

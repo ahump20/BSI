@@ -55,14 +55,14 @@ export function NetRatingBar({ standings }: NetRatingBarProps) {
               <CartesianGrid {...cartesianGridProps} horizontal={false} />
               <XAxis
                 type="number"
-                tick={{ fill: '#737373', fontSize: 10, fontFamily: 'var(--bsi-font-mono)' }}
+                tick={{ fill: 'var(--chart-axis-text)', fontSize: 10, fontFamily: 'var(--bsi-font-mono)' }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
                 dataKey="name"
                 type="category"
-                tick={{ fill: '#a3a3a3', fontSize: 11, fontFamily: 'var(--bsi-font-mono)' }}
+                tick={{ fill: 'var(--chart-label)', fontSize: 11, fontFamily: 'var(--bsi-font-mono)' }}
                 axisLine={false}
                 tickLine={false}
                 width={40}

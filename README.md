@@ -94,7 +94,7 @@ npm run dev
 | Command | Description |
 |---------|-------------|
 | `npm run dev` | Start Next.js dev server |
-| `npm run build` | Static export to `out/` + copy functions |
+| `npm run build` | Static export to `out/` |
 | `npm run test` | Vitest in watch mode |
 | `npm run test:all` | API + integration + validation tests |
 | `npm run test:routes` | Playwright route tests |
@@ -105,7 +105,6 @@ npm run dev
 | `npm run deploy:production` | Build + deploy to Cloudflare Pages (main) |
 | `npm run deploy:worker` | Deploy Cloudflare Worker |
 | `npm run deploy:hybrid` | Deploy both Pages + Worker |
-| `./scripts/configure-provider-secrets.sh --target pages --env production` | Interactive setup for provider keys in Cloudflare Pages secrets |
 | `./scripts/configure-provider-secrets.sh --target worker --env production` | Interactive setup for provider keys in Worker secrets (`workers/wrangler.toml`) |
 
 ## Project Structure
@@ -124,7 +123,6 @@ app/                    # Next.js App Router pages
 components/             # Shared React components
 lib/                    # Core logic (API clients, utils, hooks, analytics)
 workers/                # Cloudflare Workers (each with own wrangler.toml)
-functions/              # Cloudflare Pages Functions (serverless)
 games/                  # Browser arcade games
 external/               # Standalone sub-projects (Sandlot Sluggers)
 tests/                  # Test suites (api, integration, a11y, routes, etc.)

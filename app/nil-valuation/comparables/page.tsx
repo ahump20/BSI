@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { useSportData } from '@/lib/hooks/useSportData';
 
 // ── Types ──
 interface Player {
@@ -45,25 +46,23 @@ function playerTier(p: Player): string {
 }
 
 export default function ComparablesPage() {
-  const [players, setPlayers] = useState<Player[]>([]);
-  const [comparables, setComparables] = useState<ComparablePlayer[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [compLoading, setCompLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+  const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [hasAccess, setHasAccess] = useState(true);
 
-  useEffect(() => {
-    fetch('/api/nil/leaderboard?limit=200')
-      .then(r => {
-        if (r.status === 403) { setHasAccess(false); setLoading(false); return null; }
-        return r.json();
-      })
-      .then((d: { data?: Player[] } | null) => { if (d) { setPlayers(d.data || []); setLoading(false); } })
-      .catch(e => { setError(e.message); setLoading(false); });
-  }, []);
+  const { data: leaderboardData, loading, error: leaderboardError } = useSportData<{ data?: Player[] }>('/api/nil/leaderboard?limit=200');
+
+  const hasAccess = !(leaderboardError && leaderboardError.includes('403'));
+  const error = leaderboardError;
+  const players = useMemo(() => leaderboardData?.data || [], [leaderboardData]);
+
+  // Fetch comparables when a player is selected
+  const { data: compData, loading: compLoading } = useSportData<{ comparables?: ComparablePlayer[] }>(
+    selectedPlayerId ? `/api/nil/comparables/${selectedPlayerId}` : null,
+  );
+
+  const comparables = useMemo(() => compData?.comparables || [], [compData]);
 
   const filtered = useMemo(() => {
     if (!searchQuery.trim()) return [];
@@ -73,14 +72,9 @@ export default function ComparablesPage() {
 
   function selectPlayer(player: Player) {
     setSelectedPlayer(player);
+    setSelectedPlayerId(player.player_id);
     setSearchQuery(player.player_name);
     setShowDropdown(false);
-    setCompLoading(true);
-    setComparables([]);
-    fetch(`/api/nil/comparables/${player.player_id}`)
-      .then(r => r.json())
-      .then((d: { comparables?: ComparablePlayer[] }) => { setComparables(d.comparables || []); setCompLoading(false); })
-      .catch(e => { setError(e.message); setCompLoading(false); });
   }
 
   return (

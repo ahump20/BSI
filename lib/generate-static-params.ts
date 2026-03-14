@@ -173,3 +173,29 @@ export function dailyEditorialDateParams(): { date: string }[] {
 
   return dates;
 }
+
+/** Returns [playerId] params for Texas intelligence player profiles. */
+export async function texasPlayerParams(): Promise<{ playerId: string }[]> {
+  const body = await cachedFetch<{ players?: { id: string }[] }>(
+    `${WORKER_BASE}/api/college-baseball/players?team=Texas+Longhorns`,
+  );
+  const players = body?.players ?? [];
+  const ids = players.map((p) => ({ playerId: String(p.id) }));
+  return ids.length > 0 ? ids : [{ playerId: 'placeholder' }];
+}
+
+/** Returns [opponentId] params for Texas scouting reports — all SEC + common non-conf opponents. */
+export function texasOpponentParams(): { opponentId: string }[] {
+  const opponents = [
+    // SEC
+    'texas-am', 'lsu', 'florida', 'tennessee', 'arkansas', 'vanderbilt',
+    'ole-miss', 'georgia', 'auburn', 'alabama', 'mississippi-state',
+    'south-carolina', 'kentucky', 'missouri', 'oklahoma',
+    // Common non-conference
+    'rice', 'houston', 'tcu', 'texas-tech', 'baylor', 'oklahoma-state',
+    'texas-state', 'utsa', 'dallas-baptist', 'sam-houston',
+    'stanford', 'lsu', 'florida-state', 'miami',
+  ];
+  // Deduplicate
+  return [...new Set(opponents)].map((id) => ({ opponentId: id }));
+}

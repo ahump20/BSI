@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -65,48 +66,21 @@ const formatDate = formatScheduleDate;
 const conferences = ['All', 'Eastern', 'Western'];
 
 export default function NBAGamesPage() {
-  const [games, setGames] = useState<NBAGame[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [meta, setMeta] = useState<DataMeta | null>(null);
-  const [hasLiveGames, setHasLiveGames] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>(getDateOffset(0));
   const [selectedConference, setSelectedConference] = useState('All');
+  const [liveGamesDetected, setLiveGamesDetected] = useState(false);
 
-  const fetchScores = useCallback(async (date: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`/api/nba/scoreboard?date=${date}`);
+  const { data: scoresData, loading, error, retry } =
+    useSportData<ScoreboardResponse>(`/api/nba/scoreboard?date=${selectedDate}`, {
+      refreshInterval: 30000,
+      refreshWhen: liveGamesDetected,
+    });
 
-      if (!res.ok) {
-        throw new Error('Failed to fetch scores');
-      }
+  const games = scoresData?.games || [];
+  const meta: DataMeta | null = scoresData?.meta || null;
+  const hasLiveGames = useMemo(() => games.some((g) => g.status.type.state === 'in'), [games]);
 
-      const data: ScoreboardResponse = await res.json();
-
-      setGames(data.games || []);
-      setHasLiveGames((data.games || []).some((g) => g.status.type.state === 'in'));
-      setMeta(data.meta);
-      setLoading(false);
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      setError(errorMessage);
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchScores(selectedDate);
-  }, [selectedDate, fetchScores]);
-
-  // Auto-refresh for live games
-  useEffect(() => {
-    if (hasLiveGames) {
-      const interval = setInterval(() => fetchScores(selectedDate), 30000);
-      return () => clearInterval(interval);
-    }
-  }, [hasLiveGames, selectedDate, fetchScores]);
+  useEffect(() => { setLiveGamesDetected(hasLiveGames); }, [hasLiveGames]);
 
   // Date navigation
   const dateOptions = [
@@ -423,7 +397,7 @@ export default function NBAGamesPage() {
                 <p className="text-warning font-semibold">Error Loading Games</p>
                 <p className="text-text-secondary text-sm mt-1">{error}</p>
                 <button
-                  onClick={() => fetchScores(selectedDate)}
+                  onClick={retry}
                   className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors"
                 >
                   Retry

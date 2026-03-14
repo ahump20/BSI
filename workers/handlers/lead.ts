@@ -274,3 +274,44 @@ export async function handleFeedback(request: Request, env: Env): Promise<Respon
     return json({ error: 'Failed to process feedback' }, 500);
   }
 }
+
+export async function handleNewsletter(request: Request, env: Env): Promise<Response> {
+  try {
+    const body = (await request.json()) as {
+      email?: string;
+      consent?: boolean;
+    };
+
+    if (!body.email || !isValidEmail(body.email)) {
+      return json({ error: 'Valid email is required' }, 400);
+    }
+
+    if (body.consent !== true) {
+      return json({ error: 'Consent to privacy policy is required' }, 400);
+    }
+
+    const clientIP = request.headers.get('CF-Connecting-IP') || 'unknown';
+    if (env.KV && !(await checkRateLimit(env.KV, clientIP))) {
+      console.warn('[rate-limit] newsletter:', clientIP);
+      return json({ error: 'Too many requests. Please try again later.' }, 429);
+    }
+
+    const subscribedAt = new Date().toISOString();
+    if (env.KV) {
+      await env.KV.put(
+        `newsletter:${body.email.toLowerCase()}`,
+        JSON.stringify({
+          email: body.email,
+          subscribedAt,
+          consentedAt: subscribedAt,
+        }),
+      );
+    }
+
+    emitOpsEvent(env, 'newsletter_subscription', [body.email]);
+
+    return json({ success: true, message: 'Subscribed successfully' });
+  } catch {
+    return json({ error: 'Subscription failed' }, 500);
+  }
+}

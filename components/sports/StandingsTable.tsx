@@ -78,23 +78,30 @@ export function StandingsTable({
   const [error, setError] = useState(false);
 
   useEffect(() => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+
     async function fetchStandings() {
       setLoading(true);
       setError(false);
       const apiBase = sport === 'ncaa' ? '/api/college-baseball' : `/api/${sport}`;
       try {
-        const res = await fetch(`${apiBase}/standings`);
+        const res = await fetch(`${apiBase}/standings`, { signal: controller.signal });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json() as Record<string, unknown>;
         setGroups(parseStandingsResponse(data, sport));
-      } catch {
-        setError(true);
-        setGroups([]);
+      } catch (err) {
+        if ((err as Error).name !== 'AbortError') {
+          setError(true);
+          setGroups([]);
+        }
       } finally {
+        clearTimeout(timeout);
         setLoading(false);
       }
     }
     fetchStandings();
+    return () => { controller.abort(); clearTimeout(timeout); };
   }, [sport, limit]);
 
   // Flatten or group based on prop

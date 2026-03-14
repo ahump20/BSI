@@ -14,6 +14,7 @@ import {
 export interface MainNavItem {
   label: string;
   href: string;
+  external?: boolean;
 }
 
 export interface LeagueNavItem extends MainNavItem {
@@ -167,10 +168,19 @@ export function getSidebarNav(): readonly NavGroup[] {
         { href: '/college-baseball/rankings', label: 'Rankings', iconKey: 'list' },
         { href: '/college-baseball/standings', label: 'Standings', iconKey: 'list' },
         { href: '/college-baseball/savant', label: 'Savant', iconKey: 'target' },
+        { href: '/college-baseball/savant/glossary', label: 'Glossary', iconKey: 'book' },
+        { href: '/college-baseball/savant/visuals', label: 'Visuals', iconKey: 'chart' },
+        { href: '/college-baseball/savant/conference-index', label: 'Conf. Index', iconKey: 'globe' },
+        { href: '/college-baseball/savant/park-factors', label: 'Park Factors', iconKey: 'chart' },
         { href: '/college-baseball/conferences', label: 'Conferences', iconKey: 'globe' },
         { href: '/college-baseball/compare', label: 'Compare', iconKey: 'chart' },
         { href: '/college-baseball/teams', label: 'Teams', iconKey: 'baseball' },
         { href: '/college-baseball/texas-intelligence', label: 'Texas Intel', iconKey: 'brain' },
+        { href: '/college-baseball/texas-intelligence/roster', label: 'Texas Roster', iconKey: 'list' },
+        { href: '/college-baseball/texas-intelligence/pitching', label: 'Texas Pitching', iconKey: 'target' },
+        { href: '/college-baseball/texas-intelligence/schedule', label: 'Texas Schedule', iconKey: 'activity' },
+        { href: '/college-baseball/texas-intelligence/draft', label: 'Texas Draft Board', iconKey: 'star' },
+        { href: '/college-baseball/texas-intelligence/trends', label: 'Texas Trends', iconKey: 'chart' },
         { href: '/college-baseball/texas-history', label: 'Texas History', iconKey: 'book' },
       ],
     },
@@ -187,6 +197,9 @@ export function getSidebarNav(): readonly NavGroup[] {
     {
       label: 'Analyze',
       items: [
+        { href: '/swing', label: 'Swing Intel', iconKey: 'target' },
+        { href: 'https://labs.blazesportsintel.com/athletic-analysis', label: 'Biomechanics Lab', iconKey: 'flask', external: true },
+        { href: 'https://labs.blazesportsintel.com/radar-lab', label: 'Radar Lab', iconKey: 'flask', external: true },
         { href: '/nil-valuation', label: 'NIL Valuation', iconKey: 'dollar' },
         { href: '/college-baseball/transfer-portal', label: 'Transfer Portal', iconKey: 'activity' },
         { href: '/models', label: 'Models', iconKey: 'chart' },
@@ -271,6 +284,16 @@ export function getMorePanelNav(): readonly MorePanelSection[] {
         { label: 'College Football', href: '/cfb' },
         { label: 'Rankings', href: '/college-baseball/rankings' },
         { label: 'Conferences', href: '/college-baseball/conferences' },
+      ],
+    },
+    {
+      label: 'Labs & Tools',
+      items: [
+        { label: 'Swing Intel', href: '/swing' },
+        { label: 'Biomechanics Lab', href: 'https://labs.blazesportsintel.com/athletic-analysis', external: true },
+        { label: 'Radar Lab', href: 'https://labs.blazesportsintel.com/radar-lab', external: true },
+        { label: 'Visuals', href: 'https://labs.blazesportsintel.com/visuals', external: true },
+        { label: 'Bubble Watch', href: 'https://labs.blazesportsintel.com/bubble', external: true },
       ],
     },
     {

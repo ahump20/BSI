@@ -293,7 +293,7 @@ Verify:
 - No placeholder text
 - Images/visuals load
 - Typography correct
-- D1 database connection working (if applicable — check Pages Functions)
+- D1 database connection working (if applicable — check Worker API routes)
 
 **Step 3: Fix issues**
 

@@ -3,7 +3,7 @@
  */
 
 import type { Env, PredictionPayload } from '../shared/types';
-import { json, kvGet, kvPut } from '../shared/helpers';
+import { cachedJson, json, kvGet, kvPut } from '../shared/helpers';
 
 export async function handlePredictionSubmit(request: Request, env: Env): Promise<Response> {
   try {

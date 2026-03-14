@@ -319,15 +319,16 @@ function SortTh({ label, field, current, onSort }: { label: string; field: SortF
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSort(field); } }}
       tabIndex={0}
       role="columnheader"
-      aria-sort={active ? 'descending' : 'none'}
+      aria-sort={active ? (field === 'kpct' ? 'ascending' : 'descending') : 'none'}
     >
-      {label} {active ? '▾' : ''}
+      {label} {active ? (field === 'kpct' ? '▴' : '▾') : ''}
     </th>
   );
 }
 
 function PitcherSortTh({ label, field, current, onSort }: { label: string; field: PitcherSortField; current: PitcherSortField; onSort: (f: PitcherSortField) => void }) {
   const active = current === field;
+  const ascending = field === 'fip' || field === 'bb9';
   return (
     <th
       className={`text-right py-2 px-2 cursor-pointer hover:text-text-primary transition-colors ${active ? 'text-burnt-orange' : ''}`}
@@ -335,9 +336,9 @@ function PitcherSortTh({ label, field, current, onSort }: { label: string; field
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSort(field); } }}
       tabIndex={0}
       role="columnheader"
-      aria-sort={active ? 'descending' : 'none'}
+      aria-sort={active ? (ascending ? 'ascending' : 'descending') : 'none'}
     >
-      {label} {active ? '▾' : ''}
+      {label} {active ? (ascending ? '▴' : '▾') : ''}
     </th>
   );
 }

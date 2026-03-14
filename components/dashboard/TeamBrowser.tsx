@@ -39,29 +39,27 @@ export function TeamBrowser() {
   const [conference, setConference] = useState('All');
 
   useEffect(() => {
-    let cancelled = false;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
     setLoading(true);
     setError(null);
 
-    fetch(getReadApiUrl('/api/college-baseball/teams/all'))
+    fetch(getReadApiUrl('/api/college-baseball/teams/all'), { signal: controller.signal })
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json() as Promise<TeamsAllResponse>;
       })
       .then((data) => {
-        if (!cancelled) {
-          setTeams(data.teams ?? []);
-          setLoading(false);
-        }
+        setTeams(data.teams ?? []);
+        setLoading(false);
       })
       .catch((err) => {
-        if (!cancelled) {
-          setError(err instanceof Error ? err.message : 'Failed to load teams');
-          setLoading(false);
-        }
+        if ((err as Error).name === 'AbortError') return;
+        setError(err instanceof Error ? err.message : 'Failed to load teams');
+        setLoading(false);
       });
 
-    return () => { cancelled = true; };
+    return () => { controller.abort(); clearTimeout(timeout); };
   }, []);
 
   // Debounced search

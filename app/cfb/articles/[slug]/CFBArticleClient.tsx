@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
@@ -9,6 +8,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Footer } from '@/components/layout-ds/Footer';
+import { useSportData } from '@/lib/hooks/useSportData';
 
 interface Article {
   id: number;
@@ -43,35 +43,13 @@ interface ArticleResponse {
 export function CFBArticleClient() {
   const params = useParams();
   const slug = params.slug as string;
-  const [article, setArticle] = useState<Article | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchArticle() {
-      try {
-        const response = await fetch(`/api/college-football/articles/${slug}`);
+  const { data: articleData, loading, error: fetchError } = useSportData<ArticleResponse>(
+    slug ? `/api/college-football/articles/${slug}` : null,
+  );
 
-        if (response.status === 404) {
-          setError('Article not found');
-          return;
-        }
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch article');
-        }
-
-        const data: ArticleResponse = await response.json();
-        setArticle(data.article);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load article');
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchArticle();
-  }, [slug]);
+  const article = articleData?.article || null;
+  const error = fetchError;
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {

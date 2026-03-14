@@ -33,6 +33,7 @@ function InstagramEmbed({ url }: { url: string }) {
       w.instgrm.Embeds.process();
       return;
     }
+    if (document.querySelector('script[src="https://www.instagram.com/embed.js"]')) return;
     const s = document.createElement('script');
     s.src = 'https://www.instagram.com/embed.js';
     s.async = true;

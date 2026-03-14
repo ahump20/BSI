@@ -72,7 +72,7 @@ const FALLBACK_ARTICLES: Editorial[] = [
 
 function SkeletonFeatured() {
   return (
-    <div className="bg-surface-light border border-border rounded-xl p-5 md:p-7 animate-pulse">
+    <div className="bg-surface-light border border-border rounded-[2px] p-5 md:p-7 animate-pulse">
       <div className="h-4 w-24 bg-surface rounded mb-3" />
       <div className="h-6 w-3/4 bg-surface rounded mb-2" />
       <div className="h-4 w-full bg-surface rounded mb-1" />
@@ -83,7 +83,7 @@ function SkeletonFeatured() {
 
 function SkeletonSecondary() {
   return (
-    <div className="bg-surface-light border border-border rounded-xl p-4 animate-pulse h-full">
+    <div className="bg-surface-light border border-border rounded-[2px] p-4 animate-pulse h-full">
       <div className="h-3 w-16 bg-surface rounded mb-3" />
       <div className="h-5 w-5/6 bg-surface rounded mb-2" />
       <div className="h-3 w-full bg-surface rounded" />
@@ -171,7 +171,10 @@ export function EditorialFeed() {
 
           {/* Featured article */}
           <Link href={getEditorialHref(featured)}>
-            <div className="bg-gradient-to-r from-burnt-orange/20 to-[#500000]/20 border border-burnt-orange/30 rounded-xl p-4 md:p-6 hover:border-burnt-orange/60 transition-all group cursor-pointer mb-3">
+            <div
+              className="border border-burnt-orange/30 rounded-[2px] p-4 md:p-6 hover:border-burnt-orange/60 transition-all group cursor-pointer mb-3"
+              style={{ background: 'linear-gradient(to right, rgba(var(--bsi-primary-rgb), 0.2), rgba(140, 98, 57, 0.15))' }}
+            >
               <div className="flex items-center justify-between">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 mb-2">
@@ -208,7 +211,7 @@ export function EditorialFeed() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {secondary.map((article) => (
                 <Link key={article.id} href={getEditorialHref(article)}>
-                  <div className="bg-surface-light border border-border rounded-xl p-3 md:p-4 hover:border-burnt-orange/40 transition-all group cursor-pointer h-full">
+                  <div className="bg-surface-light border border-border rounded-[2px] p-3 md:p-4 hover:border-burnt-orange/40 transition-all group cursor-pointer h-full">
                     <div className="flex items-center justify-between">
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 mb-1">

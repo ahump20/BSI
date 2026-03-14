@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -143,32 +144,28 @@ function PlayerCard({ player }: { player: Player }) {
 
 export default function NBAPlayersPage() {
   const [players, setPlayers] = useState<Player[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [rostersLoading, setRostersLoading] = useState(false);
+  const [rostersError, setRostersError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPosition, setSelectedPosition] = useState('All');
   const [selectedTeam, setSelectedTeam] = useState('All');
-  const [teams, setTeams] = useState<NBATeam[]>([]);
   const [lastUpdated, setLastUpdated] = useState<string>(formatTimestamp());
 
-  const fetchPlayers = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  // Fetch teams list via useSportData
+  const { data: teamsData, loading: teamsLoading, error: teamsError, retry: retryTeams } =
+    useSportData<TeamsResponse>('/api/nba/teams');
 
+  const teams = teamsData?.teams || [];
+
+  // Fetch rosters for each team when teams data arrives
+  const fetchRosters = useCallback(async (teamsList: NBATeam[]) => {
+    setRostersLoading(true);
+    setRostersError(null);
     try {
-      // First, get all teams
-      const teamsRes = await fetch('/api/nba/teams');
-      if (!teamsRes.ok) {
-        throw new Error(`Failed to fetch teams: ${teamsRes.status}`);
-      }
-      const teamsData: TeamsResponse = await teamsRes.json();
-      setTeams(teamsData.teams || []);
-
-      // Then fetch rosters for each team in parallel (batch of 5 at a time to avoid rate limiting)
       const allPlayers: Player[] = [];
       const teamBatches = [];
-      for (let i = 0; i < teamsData.teams.length; i += 5) {
-        teamBatches.push(teamsData.teams.slice(i, i + 5));
+      for (let i = 0; i < teamsList.length; i += 5) {
+        teamBatches.push(teamsList.slice(i, i + 5));
       }
 
       for (const batch of teamBatches) {
@@ -197,15 +194,20 @@ export default function NBAPlayersPage() {
       setPlayers(allPlayers);
       setLastUpdated(formatTimestamp());
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load players');
+      setRostersError(err instanceof Error ? err.message : 'Failed to load players');
     } finally {
-      setLoading(false);
+      setRostersLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchPlayers();
-  }, [fetchPlayers]);
+    if (teams.length > 0) {
+      fetchRosters(teams);
+    }
+  }, [teams, fetchRosters]);
+
+  const loading = teamsLoading || rostersLoading;
+  const error = teamsError || rostersError;
 
   // Filter and sort players
   const filteredPlayers = useMemo(() => {
@@ -340,7 +342,7 @@ export default function NBAPlayersPage() {
                 <p className="text-error font-semibold">Error loading players</p>
                 <p className="text-text-secondary text-sm mt-1">{error}</p>
                 <button
-                  onClick={fetchPlayers}
+                  onClick={teamsError ? retryTeams : () => fetchRosters(teams)}
                   className="mt-3 px-4 py-2 bg-burnt-orange text-white rounded-lg text-sm hover:bg-burnt-orange/80 transition-colors"
                 >
                   Try Again

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { useSportData } from '@/lib/hooks/useSportData';
 
 // ── Types ──
 interface TeamROI {
@@ -30,21 +31,13 @@ function formatValue(value: number): string {
 }
 
 export default function CollectiveROIPage() {
-  const [teams, setTeams] = useState<TeamROI[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [hasAccess, setHasAccess] = useState(true);
   const [confFilter, setConfFilter] = useState('');
   const [sortKey, setSortKey] = useState<'total_nil_value' | 'avg_index' | 'avg_performance'>('total_nil_value');
 
-  useEffect(() => {
-    fetch('/api/nil/collective-roi')
-      .then(r => {
-        if (r.status === 403) { setHasAccess(false); setLoading(false); return null; }
-        return r.json();
-      })
-      .then((d: { data?: TeamROI[] } | null) => { if (d) { setTeams(d.data || []); setLoading(false); } })
-      .catch(() => setLoading(false));
-  }, []);
+  const { data: roiData, loading, error: fetchError } = useSportData<{ data?: TeamROI[] }>('/api/nil/collective-roi');
+
+  const hasAccess = !(fetchError && fetchError.includes('403'));
+  const teams = useMemo(() => roiData?.data || [], [roiData]);
 
   const conferences = useMemo(() => [...new Set(teams.map(t => t.conference).filter(Boolean))].sort(), [teams]);
 

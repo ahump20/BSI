@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Bebas_Neue, Cormorant_Garamond, IBM_Plex_Mono, JetBrains_Mono, Oswald } from 'next/font/google';
+import { Bebas_Neue, Cormorant_Garamond, DM_Sans, IBM_Plex_Mono, JetBrains_Mono, Oswald, Syne } from 'next/font/google';
 import './globals.css';
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd';
 import { SiteFrame } from '@/components/layout-ds/SiteFrame';
@@ -37,6 +37,20 @@ const bebasNeue = Bebas_Neue({
   weight: '400',
   subsets: ['latin'],
   variable: '--font-bebas',
+  display: 'swap',
+});
+
+const syne = Syne({
+  weight: ['400', '500', '600', '700', '800'],
+  subsets: ['latin'],
+  variable: '--font-syne',
+  display: 'swap',
+});
+
+const dmSans = DM_Sans({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin'],
+  variable: '--font-dm-sans',
   display: 'swap',
 });
 
@@ -137,7 +151,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`dark ${cormorant.variable} ${oswald.variable} ${jetbrainsMono.variable} ${ibmPlexMono.variable} ${bebasNeue.variable}`}
+      className={`dark ${cormorant.variable} ${oswald.variable} ${jetbrainsMono.variable} ${ibmPlexMono.variable} ${bebasNeue.variable} ${syne.variable} ${dmSans.variable}`}
     >
       <head>
         <link rel="preconnect" href="https://customer-mpdvoybjqct2pzls.cloudflarestream.com" />

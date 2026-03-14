@@ -12,6 +12,7 @@ import { DataAttribution } from '@/components/ui/DataAttribution';
 import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
 import { AdvancedStatsCard } from '@/components/analytics/AdvancedStatsCard';
+import { PlayerScoutingComposite } from '@/components/college-baseball/PlayerScoutingComposite';
 import { fmt3 } from '@/lib/utils/format';
 import { getPlayerHighlights } from '@/lib/data/player-highlights';
 import { useWatchlist } from '@/lib/hooks/useWatchlist';
@@ -569,6 +570,15 @@ export default function PlayerDetailClient() {
                         ...(savant.data.era_minus != null ? [{ label: 'ERA-', value: savant.data.era_minus, format: (v: number) => String(Math.round(v)), higherIsBetter: false, pro: true }] : []),
                       ]
                 }
+              />
+            )}
+
+            {/* Scouting Composite — Radar + Sparklines */}
+            {savant?.data && (
+              <PlayerScoutingComposite
+                playerId={String(playerId)}
+                position={stats?.pitching ? 'pitcher' : 'hitter'}
+                className="mb-6"
               />
             )}
 

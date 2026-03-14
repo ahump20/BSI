@@ -23,5 +23,5 @@ export const metadata: Metadata = {
 };
 
 export default function SavantLayout({ children }: { children: ReactNode }) {
-  return <>{children}</>;
+  return <div className="savant-theme">{children}</div>;
 }

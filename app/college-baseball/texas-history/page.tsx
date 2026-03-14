@@ -175,7 +175,7 @@ Pierce was fired after the 2024 season. The program had improved under his watch
     },
     {
       name: 'Jim Schlossnagle',
-      years: '2024–Present',
+      years: '2025–Present',
       record: '60-18 (.769)*',
       titles: 0,
       cwsAppearances: 1,

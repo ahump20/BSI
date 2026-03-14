@@ -87,6 +87,8 @@ export function MatchupIntelCard({
     }
 
     setStatus('loading');
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
 
     fetch('/api/intelligence/v1/matchup', {
       method: 'POST',
@@ -103,6 +105,7 @@ export function MatchupIntelCard({
         homeStats,
         awayStats,
       }),
+      signal: controller.signal,
     })
       .then(async (res) => {
         if (!res.ok) throw new Error(`${res.status}`);
@@ -110,7 +113,10 @@ export function MatchupIntelCard({
         setCard(data);
         setStatus('loaded');
       })
-      .catch(() => setStatus('error'));
+      .catch((err) => { if ((err as Error).name !== 'AbortError') setStatus('error'); })
+      .finally(() => clearTimeout(timeout));
+
+    return () => { controller.abort(); clearTimeout(timeout); };
   }, [homeTeam, awayTeam, gameId, sport, retryCount]);
 
   // ─── Loading skeleton ───────────────────────────────────────────────────────

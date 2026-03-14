@@ -126,6 +126,9 @@ function SearchContent() {
       return;
     }
 
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+
     const fetchResults = async () => {
       setIsLoading(true);
       setError(null);
@@ -133,7 +136,8 @@ function SearchContent() {
       try {
         const sportParam = filters.sport ? `&sport=${filters.sport}` : '';
         const res = await fetch(
-          `/api/search?q=${encodeURIComponent(initialQuery)}${sportParam}`
+          `/api/search?q=${encodeURIComponent(initialQuery)}${sportParam}`,
+          { signal: controller.signal }
         );
 
         if (res.ok) {
@@ -142,15 +146,19 @@ function SearchContent() {
         } else {
           throw new Error('Search failed');
         }
-      } catch (_err) {
-        setError('Failed to fetch search results. Please try again.');
-        setResults([]);
+      } catch (err) {
+        if ((err as Error).name !== 'AbortError') {
+          setError('Failed to fetch search results. Please try again.');
+          setResults([]);
+        }
       } finally {
+        clearTimeout(timeout);
         setIsLoading(false);
       }
     };
 
     fetchResults();
+    return () => { controller.abort(); clearTimeout(timeout); };
   }, [initialQuery, filters.sport]);
 
   // Keep query state in sync

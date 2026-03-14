@@ -4,7 +4,7 @@ This runbook defines the integration surface needed in Blaze Sports Intel withou
 
 ## 1) Required secrets
 
-Set these secrets in Cloudflare (for **both** Pages and Worker targets that need provider access):
+Set these secrets in Cloudflare Worker secrets for the apex service that owns `/api/*`:
 
 - `SPORTRADAR_API_KEY`
 - `SKILLCORNER_API_KEY`
@@ -13,9 +13,6 @@ Set these secrets in Cloudflare (for **both** Pages and Worker targets that need
 Use the helper script:
 
 ```bash
-# Pages project secrets (used by Pages Functions)
-./scripts/configure-provider-secrets.sh --target pages --env production
-
 # Worker secrets (used by workers/wrangler.toml service)
 ./scripts/configure-provider-secrets.sh --target worker --env production
 ```
@@ -48,7 +45,7 @@ If provider adapters are added, expose connectivity checks from authenticated se
 ## 5) Deployment sequence
 
 1. Authenticate Wrangler: `wrangler login`
-2. Configure Pages secrets and Worker secrets with `configure-provider-secrets.sh`
+2. Configure Worker secrets with `configure-provider-secrets.sh`
 3. Deploy Pages: `npm run deploy:production`
 4. Deploy Worker (if changed): `npm run deploy:worker:production`
 5. Smoke test API routes

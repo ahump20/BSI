@@ -1,12 +1,39 @@
 'use client';
 
+import { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
+import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { fmt3 } from '@/lib/utils/format';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
+
+interface AllHitter {
+  espn_id: string;
+  name: string;
+  position: string;
+  games: number;
+  ab: number;
+  pa: number;
+  babip: number;
+  iso: number;
+  kpct: number;
+  bbpct: number;
+  woba: number;
+  wrc_plus: number;
+}
+
+interface AllPitcher {
+  espn_id: string;
+  name: string;
+  position: string;
+  games: number;
+  ip: number;
+  fip: number;
+  k9: number;
+  bb9: number;
+}
 
 interface TeamSabermetrics {
   teamId: string;
@@ -33,6 +60,8 @@ interface TeamSabermetrics {
     k_pct: number;
     bb_pct: number;
   };
+  all_hitters?: AllHitter[];
+  all_pitchers?: AllPitcher[];
   meta?: { source?: string; fetched_at?: string };
 }
 
@@ -104,6 +133,9 @@ interface SabermetricsPanelProps {
 }
 
 export function SabermetricsPanel({ teamId, espnId, accent = 'var(--bsi-primary)' }: SabermetricsPanelProps) {
+  const [showAllHitters, setShowAllHitters] = useState(false);
+  const [showAllPitchers, setShowAllPitchers] = useState(false);
+
   // D1 stores ESPN numeric IDs; prefer espnId when available
   const lookupId = espnId || teamId;
   const { data, loading, error } = useSportData<TeamSabermetrics>(
@@ -133,6 +165,17 @@ export function SabermetricsPanel({ teamId, espnId, accent = 'var(--bsi-primary)
   const fmt2 = (n: number) => n.toFixed(2);
   const fmtPct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
+  // Sort full roster arrays
+  const sortedHitters = data.all_hitters
+    ? [...data.all_hitters].sort((a, b) => b.wrc_plus - a.wrc_plus)
+    : [];
+  const sortedPitchers = data.all_pitchers
+    ? [...data.all_pitchers].sort((a, b) => a.fip - b.fip)
+    : [];
+
+  const displayHitters = showAllHitters ? sortedHitters : sortedHitters.slice(0, 5);
+  const displayPitchers = showAllPitchers ? sortedPitchers : sortedPitchers.slice(0, 5);
+
   return (
     <ScrollReveal direction="up">
       <div className="space-y-6">
@@ -154,35 +197,73 @@ export function SabermetricsPanel({ teamId, espnId, accent = 'var(--bsi-primary)
               <StatBar label="BB%" value={data.batting.bb_pct} leagueAvg={data.league.bb_pct} format={fmtPct} higher="better" />
             </div>
 
-            {/* Top Hitters by wRC+ */}
-            {data.batting.top_hitters.length > 0 && (
+            {/* Hitters Table — top 5 or full roster */}
+            {displayHitters.length > 0 && (
               <div className="mt-6 pt-4 border-t border-border-subtle">
-                <h4 className="text-xs uppercase tracking-wider text-text-muted mb-3">Top Hitters by wRC+</h4>
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-xs uppercase tracking-wider text-text-muted">
+                    {showAllHitters ? 'Full Roster' : 'Top Hitters'} by wRC+
+                  </h4>
+                  {sortedHitters.length > 5 && (
+                    <button
+                      onClick={() => setShowAllHitters(!showAllHitters)}
+                      className="text-xs text-burnt-orange hover:text-ember transition-colors"
+                    >
+                      {showAllHitters ? `Show top 5` : `Show all ${sortedHitters.length} players`}
+                    </button>
+                  )}
+                </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="text-text-muted text-xs uppercase tracking-wider">
                         <th className="text-left py-2">Player</th>
+                        {showAllHitters && <th className="text-left py-2">Pos</th>}
                         <th className="text-right py-2">wRC+</th>
                         <th className="text-right py-2">wOBA</th>
                         <th className="text-right py-2">BABIP</th>
                         <th className="text-right py-2">ISO</th>
+                        {showAllHitters && <th className="text-right py-2">K%</th>}
+                        {showAllHitters && <th className="text-right py-2">BB%</th>}
                         <th className="text-right py-2">PA</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {data.batting.top_hitters.map((h) => (
-                        <tr key={h.name} className="border-t border-border-subtle">
-                          <td className="py-2 text-text-primary font-medium">{h.name}</td>
-                          <td className="py-2 text-right font-mono" style={{ color: h.wrc_plus >= 100 ? accent : undefined }}>
-                            {Math.round(h.wrc_plus)}
-                          </td>
-                          <td className="py-2 text-right font-mono text-text-secondary">{fmt3(h.woba)}</td>
-                          <td className="py-2 text-right font-mono text-text-secondary">{fmt3(h.babip)}</td>
-                          <td className="py-2 text-right font-mono text-text-secondary">{fmt3(h.iso)}</td>
-                          <td className="py-2 text-right font-mono text-text-muted">{h.pa}</td>
-                        </tr>
-                      ))}
+                      {displayHitters.map((h) => {
+                        const hitter = h as AllHitter & SaberHitter;
+                        const name = hitter.name;
+                        const wrcPlus = hitter.wrc_plus;
+                        const woba = hitter.woba;
+                        const babip = hitter.babip;
+                        const iso = hitter.iso;
+                        const pa = hitter.pa;
+
+                        return (
+                          <tr key={name} className="border-t border-border-subtle">
+                            <td className="py-2 text-text-primary font-medium">{name}</td>
+                            {showAllHitters && (
+                              <td className="py-2 text-text-muted text-xs">{hitter.position || '—'}</td>
+                            )}
+                            <td className="py-2 text-right font-mono" style={{ color: wrcPlus >= 100 ? accent : undefined }}>
+                              {Math.round(wrcPlus)}
+                            </td>
+                            <td className="py-2 text-right font-mono text-text-secondary">{fmt3(woba)}</td>
+                            <td className="py-2 text-right font-mono text-text-secondary">{fmt3(babip)}</td>
+                            <td className="py-2 text-right font-mono text-text-secondary">{fmt3(iso)}</td>
+                            {showAllHitters && (
+                              <td className="py-2 text-right font-mono text-text-secondary">
+                                {hitter.kpct !== undefined ? fmtPct(hitter.kpct) : '—'}
+                              </td>
+                            )}
+                            {showAllHitters && (
+                              <td className="py-2 text-right font-mono text-text-secondary">
+                                {hitter.bbpct !== undefined ? fmtPct(hitter.bbpct) : '—'}
+                              </td>
+                            )}
+                            <td className="py-2 text-right font-mono text-text-muted">{pa}</td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -206,15 +287,28 @@ export function SabermetricsPanel({ teamId, espnId, accent = 'var(--bsi-primary)
               <StatBar label="BB/9" value={data.pitching.bb_per_9} leagueAvg={3.5} format={fmt1} higher="worse" />
             </div>
 
-            {/* Top Pitchers by FIP */}
-            {data.pitching.top_pitchers.length > 0 && (
+            {/* Pitchers Table — top 5 or full roster */}
+            {displayPitchers.length > 0 && (
               <div className="mt-6 pt-4 border-t border-border-subtle">
-                <h4 className="text-xs uppercase tracking-wider text-text-muted mb-3">Top Pitchers by FIP</h4>
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-xs uppercase tracking-wider text-text-muted">
+                    {showAllPitchers ? 'Full Staff' : 'Top Pitchers'} by FIP
+                  </h4>
+                  {sortedPitchers.length > 5 && (
+                    <button
+                      onClick={() => setShowAllPitchers(!showAllPitchers)}
+                      className="text-xs text-burnt-orange hover:text-ember transition-colors"
+                    >
+                      {showAllPitchers ? `Show top 5` : `Show all ${sortedPitchers.length} pitchers`}
+                    </button>
+                  )}
+                </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="text-text-muted text-xs uppercase tracking-wider">
                         <th className="text-left py-2">Player</th>
+                        {showAllPitchers && <th className="text-left py-2">Pos</th>}
                         <th className="text-right py-2">FIP</th>
                         <th className="text-right py-2">K/9</th>
                         <th className="text-right py-2">BB/9</th>
@@ -222,17 +316,29 @@ export function SabermetricsPanel({ teamId, espnId, accent = 'var(--bsi-primary)
                       </tr>
                     </thead>
                     <tbody>
-                      {data.pitching.top_pitchers.map((p) => (
-                        <tr key={p.name} className="border-t border-border-subtle">
-                          <td className="py-2 text-text-primary font-medium">{p.name}</td>
-                          <td className="py-2 text-right font-mono" style={{ color: p.fip <= data.league.fip ? accent : undefined }}>
-                            {fmt2(p.fip)}
-                          </td>
-                          <td className="py-2 text-right font-mono text-text-secondary">{fmt1(p.k_per_9)}</td>
-                          <td className="py-2 text-right font-mono text-text-secondary">{fmt1(p.bb_per_9)}</td>
-                          <td className="py-2 text-right font-mono text-text-muted">{fmt1(p.ip)}</td>
-                        </tr>
-                      ))}
+                      {displayPitchers.map((p) => {
+                        const pitcher = p as AllPitcher & SaberPitcher;
+                        const name = pitcher.name;
+                        const fip = pitcher.fip;
+                        const k9 = pitcher.k9 ?? pitcher.k_per_9;
+                        const bb9 = pitcher.bb9 ?? pitcher.bb_per_9;
+                        const ip = pitcher.ip;
+
+                        return (
+                          <tr key={name} className="border-t border-border-subtle">
+                            <td className="py-2 text-text-primary font-medium">{name}</td>
+                            {showAllPitchers && (
+                              <td className="py-2 text-text-muted text-xs">{pitcher.position || '—'}</td>
+                            )}
+                            <td className="py-2 text-right font-mono" style={{ color: fip <= data.league.fip ? accent : undefined }}>
+                              {fmt2(fip)}
+                            </td>
+                            <td className="py-2 text-right font-mono text-text-secondary">{fmt1(k9)}</td>
+                            <td className="py-2 text-right font-mono text-text-secondary">{fmt1(bb9)}</td>
+                            <td className="py-2 text-right font-mono text-text-muted">{fmt1(ip)}</td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -241,9 +347,20 @@ export function SabermetricsPanel({ teamId, espnId, accent = 'var(--bsi-primary)
           </CardContent>
         </Card>
 
-        {/* Attribution */}
-        <div className="text-xs text-text-muted text-center">
-          BSI Sabermetrics — computed from D1 box scores · Min. 20 PA / 15 IP
+        {/* Data Source Attribution */}
+        <div className="flex flex-col items-center gap-2">
+          <div className="text-xs text-text-muted text-center">
+            BSI Sabermetrics — computed from D1 box scores · Min. 20 PA / 15 IP
+          </div>
+          {data.meta?.fetched_at && (
+            <DataSourceBadge
+              source={data.meta.source || 'BSI'}
+              timestamp={new Date(data.meta.fetched_at).toLocaleString('en-US', {
+                timeZone: 'America/Chicago',
+                month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
+              }) + ' CT'}
+            />
+          )}
         </div>
       </div>
     </ScrollReveal>

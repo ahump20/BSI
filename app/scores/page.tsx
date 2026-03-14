@@ -407,14 +407,14 @@ function ScoresHubContent() {
   const sportParam = searchParams.get('sport');
   const [activeSport, setActiveSport] = useState<string | null>(sportParam);
 
-  const fetchLiveCounts = useCallback(async () => {
+  const fetchLiveCounts = useCallback(async (signal?: AbortSignal) => {
     try {
       const [mlbResult, cbResult, nflResult, nbaResult, cfbResult] = await Promise.allSettled([
-        fetch('/api/mlb/scores').then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),
-        fetch(`/api/college-baseball/schedule?date=${new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' }).format(new Date())}`).then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),
-        fetch('/api/nfl/scores').then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),
-        fetch('/api/nba/scoreboard').then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),
-        fetch('/api/cfb/scores').then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),
+        fetch('/api/mlb/scores', { signal }).then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),
+        fetch(`/api/college-baseball/schedule?date=${new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' }).format(new Date())}`, { signal }).then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),
+        fetch('/api/nfl/scores', { signal }).then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),
+        fetch('/api/nba/scoreboard', { signal }).then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),
+        fetch('/api/cfb/scores', { signal }).then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),
       ]);
 
       let live = 0;
@@ -477,9 +477,11 @@ function ScoresHubContent() {
   }, []);
 
   useEffect(() => {
-    fetchLiveCounts();
-    const interval = setInterval(fetchLiveCounts, 60000);
-    return () => clearInterval(interval);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    fetchLiveCounts(controller.signal).finally(() => clearTimeout(timeout));
+    const interval = setInterval(() => fetchLiveCounts(), 60000);
+    return () => { controller.abort(); clearTimeout(timeout); clearInterval(interval); };
   }, [fetchLiveCounts]);
 
   const hasAnyLive = totalLive > 0;
@@ -580,7 +582,7 @@ function ScoresHubContent() {
         <nav
           className="sticky top-0 z-20"
           style={{
-            background: 'rgba(17,17,17,0.96)',
+            background: 'color-mix(in srgb, var(--surface-press-box) 96%, transparent)',
             backdropFilter: 'blur(12px)',
             borderTop: '1px solid var(--border-vintage)',
             borderBottom: '1px solid var(--border-vintage)',

@@ -73,7 +73,7 @@ jobs:
           else
             CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || git diff --name-only HEAD)
 
-            if echo "$CHANGED_FILES" | grep -qE "^(app|components|functions|hooks|lib|public|src|styles)/|^package\\.json|^pnpm-lock\\.yaml|^wrangler\\.toml|^next\\.config\\.|^tailwind\\.config\\.|^tsconfig\\.json"; then
+            if echo "$CHANGED_FILES" | grep -qE "^(app|components|hooks|lib|public|scripts|src|styles|tests)/|^package\\.json|^package-lock\\.json|^wrangler\\.toml|^next\\.config\\.|^tailwind\\.config\\.|^tsconfig\\.json"; then
               echo "blazesportsintel=true" >> $GITHUB_OUTPUT
             else
               echo "blazesportsintel=false" >> $GITHUB_OUTPUT
@@ -101,33 +101,33 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: 9
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: npm
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: npm ci
 
       - name: Type check
-        run: pnpm typecheck
+        run: npm run typecheck
 
       - name: Lint
-        run: pnpm lint
+        run: npm run lint
 
       - name: Run unit tests
-        run: pnpm vitest run
+        run: npm run test:all
+
+      - name: Run worker tests
+        run: npm run test:workers
 
       - name: Build project
-        run: pnpm build
+        run: npm run build
 
-      - name: Copy lib to output
-        run: cp -r lib out/lib
+      - name: Run release gate
+        if: github.ref == 'refs/heads/main'
+        run: npm run gate:release
 
       - name: Remove RSC payload files (stay under 20k file limit)
         run: find out -name "__next.*" -delete
@@ -193,9 +193,10 @@ jobs:
   deploy-worker:
     name: Deploy Worker
     runs-on: ubuntu-latest
-    needs: detect-changes
+    needs: [detect-changes, deploy-blazesportsintel]
     if: >-
       needs.detect-changes.outputs.worker == 'true' &&
+      (needs.deploy-blazesportsintel.result == 'success' || needs.deploy-blazesportsintel.result == 'skipped') &&
       (
         (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
         (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
@@ -208,6 +209,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Deploy Worker to production
         uses: cloudflare/wrangler-action@v3

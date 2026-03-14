@@ -39,6 +39,7 @@ export function IntelSignup({ sport, onSignup }: IntelSignupProps = {}) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, consent, source: 'intel-signup' }),
+        signal: AbortSignal.timeout(8000),
       });
 
       const data = await res.json() as { error?: string; success?: boolean };
@@ -53,8 +54,12 @@ export function IntelSignup({ sport, onSignup }: IntelSignupProps = {}) {
       setEmail('');
       trackEmailSignup(sport);
       onSignup?.();
-    } catch {
-      setErrorMsg('Network error. Try again.');
+    } catch (err) {
+      if ((err as Error).name === 'AbortError') {
+        setErrorMsg('Request timed out. Try again.');
+      } else {
+        setErrorMsg('Network error. Try again.');
+      }
       setState('error');
     }
   }

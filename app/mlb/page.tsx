@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -18,6 +18,7 @@ import { SportInfoCard } from '@/components/sports/SportInfoCard';
 import { formatTimestamp } from '@/lib/utils/timezone';
 import { getSeasonPhase } from '@/lib/season';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { useSportData } from '@/lib/hooks/useSportData';
 import type { DataMeta } from '@/lib/types/data-meta';
 
 const mlbFeatures = [
@@ -160,73 +161,41 @@ const STATCAST_BULLETS = [
 
 export default function MLBPage() {
   const [activeTab, setActiveTab] = useState<TabType>('standings');
-  const [standings, setStandings] = useState<Team[]>([]);
-  const [schedule, setSchedule] = useState<Game[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [meta, setMeta] = useState<DataMeta | null>(null);
-  const [hasLiveGames, setHasLiveGames] = useState(false);
+  const [liveGamesDetected, setLiveGamesDetected] = useState(false);
 
-  const fetchStandings = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch('/api/mlb/standings');
-      if (!res.ok) throw new Error('Failed to fetch standings');
-      const data = (await res.json()) as { standings?: unknown; meta?: unknown };
+  // Standings data — fetched when standings tab is active (or initially)
+  const {
+    data: standingsData,
+    loading: standingsLoading,
+    error: standingsError,
+    retry: retryStandings,
+  } = useSportData<{ standings?: Team[]; meta?: DataMeta }>('/api/mlb/standings', {
+    skip: activeTab !== 'standings',
+  });
 
-      if (data.standings) {
-        setStandings(data.standings as typeof standings);
-      }
-      if (data.meta) {
-        setMeta(data.meta as typeof meta);
-      }
-      setLoading(false);
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      setError(errorMessage);
-      setLoading(false);
-    }
-  }, []);
+  // Schedule data — fetched when schedule tab is active, auto-refresh when live games
+  const {
+    data: scheduleData,
+    loading: scheduleLoading,
+    error: scheduleError,
+    retry: retrySchedule,
+  } = useSportData<{ games?: Game[]; live?: boolean; meta?: DataMeta }>('/api/mlb/scores', {
+    skip: activeTab !== 'schedule',
+    refreshInterval: 30000,
+    refreshWhen: liveGamesDetected,
+  });
 
-  const fetchSchedule = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch('/api/mlb/scores');
-      if (!res.ok) throw new Error('Failed to fetch scores');
-      const data = (await res.json()) as { games?: unknown; live?: boolean; meta?: unknown };
+  const standings = useMemo(() => standingsData?.standings ?? [], [standingsData]);
+  const schedule = useMemo(() => scheduleData?.games ?? [], [scheduleData]);
+  const hasLiveGames = useMemo(() => scheduleData?.live || schedule.some((g) => g.status.isLive), [scheduleData, schedule]);
 
-      if (data.games) {
-        setSchedule(data.games as typeof schedule);
-        setHasLiveGames(data.live || false);
-      }
-      if (data.meta) {
-        setMeta(data.meta as typeof meta);
-      }
-      setLoading(false);
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      setError(errorMessage);
-      setLoading(false);
-    }
-  }, []);
+  // Derive loading/error/meta based on active tab
+  const loading = activeTab === 'standings' ? standingsLoading : activeTab === 'schedule' ? scheduleLoading : false;
+  const error = activeTab === 'standings' ? standingsError : activeTab === 'schedule' ? scheduleError : null;
+  const meta = activeTab === 'standings' ? (standingsData?.meta ?? null) : (scheduleData?.meta ?? null);
 
-  useEffect(() => {
-    if (activeTab === 'standings') {
-      fetchStandings();
-    } else if (activeTab === 'schedule') {
-      fetchSchedule();
-    }
-  }, [activeTab, fetchStandings, fetchSchedule]);
-
-  // Auto-refresh for live games (every 30 seconds)
-  useEffect(() => {
-    if (activeTab === 'schedule' && hasLiveGames) {
-      const interval = setInterval(fetchSchedule, 30000);
-      return () => clearInterval(interval);
-    }
-  }, [activeTab, hasLiveGames, fetchSchedule]);
+  // Sync live detection to enable auto-refresh
+  useEffect(() => { setLiveGamesDetected(hasLiveGames); }, [hasLiveGames]);
 
   // Group standings by league and division
   const standingsByDivision: Record<string, Team[]> = {};
@@ -406,7 +375,7 @@ export default function MLBPage() {
                 </div>
               ) : error ? (
                 <Card variant="default" padding="lg">
-                  <EmptyState type="error" onRetry={fetchStandings} />
+                  <EmptyState type="error" onRetry={retryStandings} />
                 </Card>
               ) : standings.length === 0 ? (
                 <Card variant="default" padding="lg">
@@ -587,7 +556,7 @@ export default function MLBPage() {
                 </div>
               ) : error ? (
                 <Card variant="default" padding="lg">
-                  <EmptyState type="error" onRetry={fetchSchedule} />
+                  <EmptyState type="error" onRetry={retrySchedule} />
                 </Card>
               ) : schedule.length === 0 ? (
                 <Card variant="default" padding="lg">

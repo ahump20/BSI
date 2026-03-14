@@ -9,7 +9,7 @@
  * Last Updated: 2025-01-07
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Container } from '@/components/ui/Container';
@@ -19,6 +19,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { useUserSettings } from '@/lib/hooks';
+import { useSportData } from '@/lib/hooks/useSportData';
 import type { DataMeta } from '@/lib/types/data-meta';
 
 interface PlayerInfo {
@@ -102,12 +103,6 @@ interface PlayerDetailClientProps {
 }
 
 export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps) {
-  const [player, setPlayer] = useState<PlayerInfo | null>(null);
-  const [assets, setAssets] = useState<Assets | null>(null);
-  const [stats, setStats] = useState<Stats | null>(null);
-  const [meta, setMeta] = useState<DataMeta | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>('overview');
 
   // User timezone for formatting
@@ -132,44 +127,14 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
     );
   };
 
-  const fetchPlayer = useCallback(async () => {
-    if (!playerId) return;
+  const { data: rawData, loading, error } = useSportData<PlayerAPIResponse>(
+    playerId ? `/api/mlb/players/${playerId}?includeSplits=true` : null
+  );
 
-    setLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch(`/api/mlb/players/${playerId}?includeSplits=true`);
-      if (!res.ok) {
-        const errorData: PlayerAPIResponse = await res.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Failed to fetch player data');
-      }
-
-      const data: PlayerAPIResponse = await res.json();
-
-      if (data.player) {
-        setPlayer(data.player);
-      }
-      if (data.assets) {
-        setAssets(data.assets);
-      }
-      if (data.stats) {
-        setStats(data.stats);
-      }
-      if (data.meta) {
-        setMeta(data.meta);
-      }
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  }, [playerId]);
-
-  useEffect(() => {
-    fetchPlayer();
-  }, [fetchPlayer]);
+  const player = rawData?.player ?? null;
+  const assets = rawData?.assets ?? null;
+  const stats = rawData?.stats ?? null;
+  const meta = rawData?.meta ?? null;
 
   const tabs: { id: TabType; label: string }[] = [
     { id: 'overview', label: 'Overview' },

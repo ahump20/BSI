@@ -49,7 +49,10 @@ export function DashboardConfigurator({ prefs, onChange, onClose }: DashboardCon
 
   // Fetch team list for typeahead
   useEffect(() => {
-    fetch('/api/college-baseball/teams/all')
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+
+    fetch('/api/college-baseball/teams/all', { signal: controller.signal })
       .then((r) => (r.ok ? r.json() : null))
       .then((data: { teams?: TeamOption[] } | null) => {
         if (data?.teams) {
@@ -65,6 +68,8 @@ export function DashboardConfigurator({ prefs, onChange, onClose }: DashboardCon
         }
       })
       .catch(() => {});
+
+    return () => { controller.abort(); clearTimeout(timeout); };
   }, []);
 
   const toggleSport = (sport: string) => {

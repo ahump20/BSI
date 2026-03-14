@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -404,31 +405,14 @@ const staticStandings: Conference[] = [
 ];
 
 export default function NBAStandingsPage() {
-  const [standings, setStandings] = useState<Conference[]>(staticStandings);
-  const [loading, setLoading] = useState(true);
   const [selectedConference, setSelectedConference] = useState<string>('Eastern Conference');
-  const [dataFresh, setDataFresh] = useState(false);
 
-  useEffect(() => {
-    const fetchStandings = async () => {
-      try {
-        const res = await fetch('/api/nba/standings');
-        if (res.ok) {
-          const data = (await res.json()) as { standings?: Conference[] };
-          if (data.standings && data.standings.length > 0) {
-            setStandings(data.standings);
-            setDataFresh(true);
-          }
-        }
-      } catch (_err) {
-        // Use static data
-      } finally {
-        setLoading(false);
-      }
-    };
+  const { data: standingsData, loading } = useSportData<{ standings?: Conference[] }>('/api/nba/standings');
 
-    fetchStandings();
-  }, []);
+  const standings = standingsData?.standings && standingsData.standings.length > 0
+    ? standingsData.standings
+    : staticStandings;
+  const dataFresh = !!(standingsData?.standings && standingsData.standings.length > 0);
 
   const currentConference = standings.find((c) => c.name === selectedConference);
 

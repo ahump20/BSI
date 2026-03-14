@@ -55,15 +55,14 @@ export function TrendingIntelFeed() {
   useEffect(() => {
     let cancelled = false;
 
-    async function fetchIntel() {
+    async function fetchIntel(signal?: AbortSignal) {
       try {
-        const res = await fetch(getReadApiUrl('/api/intel/news?sport=all'));
+        const res = await fetch(getReadApiUrl('/api/intel/news?sport=all'), { signal });
         if (!res.ok) throw new Error('Intel fetch failed');
         const raw = await res.json();
         if (cancelled) return;
         setError(false);
 
-        // API returns array of { sport, data: { articles } } or { results: [...] }
         const entries: IntelResult[] = Array.isArray(raw)
           ? raw.map((r: { sport: string; data?: { articles?: Article[] }; articles?: Article[] }) => ({
               sport: r.sport,
@@ -84,17 +83,25 @@ export function TrendingIntelFeed() {
         flat.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime());
         setArticles(flat.slice(0, 8));
         setLastFetched(new Date());
-      } catch {
-        if (!cancelled) setError(true);
+      } catch (err) {
+        if ((err as Error).name !== 'AbortError' && !cancelled) setError(true);
       } finally {
-        if (!cancelled) setLoading(false);
+        setLoading(false);
       }
     }
 
-    fetchIntel();
-    const interval = setInterval(fetchIntel, 120_000);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    fetchIntel(controller.signal).finally(() => clearTimeout(timeout));
+
+    const interval = setInterval(() => {
+      fetchIntel(AbortSignal.timeout(8000));
+    }, 120_000);
+
     return () => {
       cancelled = true;
+      controller.abort();
+      clearTimeout(timeout);
       clearInterval(interval);
     };
   }, []);
