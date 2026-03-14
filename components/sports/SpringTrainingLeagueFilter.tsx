@@ -15,14 +15,14 @@ const options: { id: LeagueFilter; label: string }[] = [
 
 export function SpringTrainingLeagueFilter({ value, onChange }: SpringTrainingLeagueFilterProps) {
   return (
-    <div className="flex gap-1 p-1 bg-surface-light rounded-lg" role="radiogroup" aria-label="Filter by league">
+    <div className="flex gap-1 p-1 bg-surface-light rounded-sm" role="radiogroup" aria-label="Filter by league">
       {options.map((opt) => (
         <button
           key={opt.id}
           role="radio"
           aria-checked={value === opt.id}
           onClick={() => onChange(opt.id)}
-          className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+          className={`px-3 py-1.5 rounded-sm text-sm font-medium transition-colors ${
             value === opt.id
               ? 'bg-burnt-orange text-white'
               : 'text-text-muted hover:text-text-primary hover:bg-surface-light'

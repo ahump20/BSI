@@ -116,7 +116,7 @@ export default function DataSourcesPage() {
                   {PROVIDERS.map((p) => (
                     <div
                       key={p.name}
-                      className="bg-surface-light border border-border-subtle rounded-xl p-5 sm:p-6"
+                      className="bg-surface-light border border-border-subtle rounded-sm p-5 sm:p-6"
                     >
                       <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
                         <div>
@@ -134,7 +134,7 @@ export default function DataSourcesPage() {
                           {p.sports.map((s) => (
                             <span
                               key={s}
-                              className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-burnt-orange bg-burnt-orange/10 rounded-md"
+                              className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-burnt-orange bg-burnt-orange/10 rounded-sm"
                             >
                               {s}
                             </span>
@@ -163,7 +163,7 @@ export default function DataSourcesPage() {
                 <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-text-primary mb-6">
                   Storage Layers
                 </h2>
-                <div className="bg-surface-light border border-border-subtle rounded-xl overflow-hidden">
+                <div className="bg-surface-light border border-border-subtle rounded-sm overflow-hidden">
                   <div className="grid grid-cols-[1fr_2fr_2fr] gap-px bg-surface-light text-xs uppercase tracking-wider text-text-muted font-medium">
                     <div className="bg-background-primary p-3 sm:p-4">Layer</div>
                     <div className="bg-background-primary p-3 sm:p-4">Purpose</div>
@@ -191,7 +191,7 @@ export default function DataSourcesPage() {
                   {SEASONAL_CAVEATS.map((c) => (
                     <div
                       key={c.sport}
-                      className="flex gap-4 items-start bg-surface-light border border-border-subtle rounded-xl p-4 sm:p-5"
+                      className="flex gap-4 items-start bg-surface-light border border-border-subtle rounded-sm p-4 sm:p-5"
                     >
                       <span className="text-[10px] font-bold uppercase tracking-wider text-burnt-orange mt-0.5 shrink-0 w-20">
                         {c.sport}
@@ -204,7 +204,7 @@ export default function DataSourcesPage() {
 
               {/* Philosophy */}
               <section className="mb-16">
-                <div className="bg-surface-light border border-border-subtle rounded-xl p-6 sm:p-8">
+                <div className="bg-surface-light border border-border-subtle rounded-sm p-6 sm:p-8">
                   <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-text-primary mb-4">
                     How It Works
                   </h2>
@@ -216,10 +216,10 @@ export default function DataSourcesPage() {
                       sports so client requests read from KV in under 10ms.
                     </p>
                     <p>
-                      Every API response carries a <code className="text-text-secondary bg-surface-light px-1.5 py-0.5 rounded text-xs">meta</code> object
-                      with <code className="text-text-secondary bg-surface-light px-1.5 py-0.5 rounded text-xs">source</code>,{' '}
-                      <code className="text-text-secondary bg-surface-light px-1.5 py-0.5 rounded text-xs">fetched_at</code>, and{' '}
-                      <code className="text-text-secondary bg-surface-light px-1.5 py-0.5 rounded text-xs">timezone</code>.
+                      Every API response carries a <code className="text-text-secondary bg-surface-light px-1.5 py-0.5 rounded-sm text-xs">meta</code> object
+                      with <code className="text-text-secondary bg-surface-light px-1.5 py-0.5 rounded-sm text-xs">source</code>,{' '}
+                      <code className="text-text-secondary bg-surface-light px-1.5 py-0.5 rounded-sm text-xs">fetched_at</code>, and{' '}
+                      <code className="text-text-secondary bg-surface-light px-1.5 py-0.5 rounded-sm text-xs">timezone</code>.
                       The UI always shows when data was last updated and where it came from.
                     </p>
                     <p>
@@ -232,7 +232,7 @@ export default function DataSourcesPage() {
               </section>
 
               {/* Cross-link to expanded methodology */}
-              <div className="bg-burnt-orange/5 border border-burnt-orange/20 rounded-xl p-5 sm:p-6 mb-12">
+              <div className="bg-burnt-orange/5 border border-burnt-orange/20 rounded-sm p-5 sm:p-6 mb-12">
                 <p className="text-sm text-text-tertiary leading-relaxed">
                   For cross-reference methodology, API response times, and freshness guarantees,
                   see the expanded{' '}

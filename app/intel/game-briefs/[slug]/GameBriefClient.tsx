@@ -131,11 +131,11 @@ export function GameBriefClient({ slug }: { slug: string }) {
           <Section padding="lg">
             <Container>
               <div className="max-w-3xl animate-pulse space-y-4">
-                <div className="h-6 bg-border-subtle rounded w-1/4" />
-                <div className="h-10 bg-border-subtle rounded w-3/4" />
-                <div className="h-40 bg-surface-light rounded-xl" />
-                <div className="h-4 bg-surface-light rounded w-full" />
-                <div className="h-4 bg-surface-light rounded w-5/6" />
+                <div className="h-6 bg-border-subtle rounded-sm w-1/4" />
+                <div className="h-10 bg-border-subtle rounded-sm w-3/4" />
+                <div className="h-40 bg-surface-light rounded-sm" />
+                <div className="h-4 bg-surface-light rounded-sm w-full" />
+                <div className="h-4 bg-surface-light rounded-sm w-5/6" />
               </div>
             </Container>
           </Section>

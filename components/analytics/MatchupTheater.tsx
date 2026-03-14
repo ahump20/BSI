@@ -178,7 +178,7 @@ function PlayerSelector({
         aria-label={`Select ${label.toLowerCase()}`}
         value={selected}
         onChange={(e) => onSelect(e.target.value)}
-        className={`w-full bg-surface-light border border-border rounded-md px-3 py-2 text-sm text-text-tertiary font-mono appearance-none cursor-pointer hover:border-border-strong transition-colors focus:outline-none focus:border-burnt-orange/40 ${align === 'right' ? 'text-right' : ''}`}
+        className={`w-full bg-surface-light border border-border rounded-sm px-3 py-2 text-sm text-text-tertiary font-mono appearance-none cursor-pointer hover:border-border-strong transition-colors focus:outline-none focus:border-burnt-orange/40 ${align === 'right' ? 'text-right' : ''}`}
       >
         <option value="" className="bg-background-secondary text-text-primary">
           Select {label.toLowerCase()}...
@@ -227,7 +227,7 @@ function IdentityPlate({
         )}
         {position && position !== 'UN' && (
           <span
-            className="text-[9px] font-mono px-1.5 py-0.5 rounded"
+            className="text-[9px] font-mono px-1.5 py-0.5 rounded-sm"
             style={{ backgroundColor: withAlpha(color, 0.1), color }}
           >
             {position}
@@ -272,7 +272,7 @@ export function MatchupTheater({
   const [focusSide, setFocusSide] = useState<'batter' | 'pitcher' | null>(null);
 
   return (
-    <div className={`bg-background-primary border border-border-subtle rounded-xl overflow-hidden ${className}`}>
+    <div className={`bg-background-primary border border-border-subtle rounded-sm overflow-hidden ${className}`}>
       {/* Header bar */}
       <div className="px-5 pt-5 pb-3 border-b border-border-subtle">
         <div className="flex items-center justify-between mb-3">
@@ -325,12 +325,12 @@ export function MatchupTheater({
               {/* Summary stat chips */}
               <div className="flex flex-wrap gap-2 mb-4">
                 {batter.stats.pa != null && (
-                  <span className="text-[10px] font-mono text-text-muted bg-surface-light px-2 py-0.5 rounded">
+                  <span className="text-[10px] font-mono text-text-muted bg-surface-light px-2 py-0.5 rounded-sm">
                     {batter.stats.pa} PA
                   </span>
                 )}
                 {batter.stats.hr != null && (
-                  <span className="text-[10px] font-mono text-text-muted bg-surface-light px-2 py-0.5 rounded">
+                  <span className="text-[10px] font-mono text-text-muted bg-surface-light px-2 py-0.5 rounded-sm">
                     {batter.stats.hr} HR
                   </span>
                 )}
@@ -385,7 +385,7 @@ export function MatchupTheater({
               {/* Summary stat chips */}
               <div className="flex flex-wrap gap-2 mb-4 justify-end">
                 {pitcher.stats.ip != null && (
-                  <span className="text-[10px] font-mono text-text-muted bg-surface-light px-2 py-0.5 rounded">
+                  <span className="text-[10px] font-mono text-text-muted bg-surface-light px-2 py-0.5 rounded-sm">
                     {pitcher.stats.ip.toFixed(1)} IP
                   </span>
                 )}

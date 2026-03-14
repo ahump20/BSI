@@ -286,7 +286,7 @@ export default function SECEditorialPage() {
                     padding="lg"
                     className="h-full hover:border-burnt-orange/30 transition-all relative overflow-hidden"
                   >
-                    <div className="absolute top-0 left-0 w-full h-1 rounded-t-lg bg-burnt-orange" />
+                    <div className="absolute top-0 left-0 w-full h-1 rounded-t-sm bg-burnt-orange" />
                     <div className="mt-2">
                       <h3 className="font-display text-xl font-bold uppercase tracking-wide text-burnt-orange group-hover:text-ember transition-colors">
                         Big 12
@@ -319,7 +319,7 @@ export default function SECEditorialPage() {
                     padding="lg"
                     className="h-full hover:border-[#6B8CAE]/30 transition-all relative overflow-hidden"
                   >
-                    <div className="absolute top-0 left-0 w-full h-1 rounded-t-lg bg-[#6B8CAE]" />
+                    <div className="absolute top-0 left-0 w-full h-1 rounded-t-sm bg-[#6B8CAE]" />
                     <div className="mt-2">
                       <h3 className="font-display text-xl font-bold uppercase tracking-wide text-[#6B8CAE] group-hover:text-[#89A8C4] transition-colors">
                         Big Ten

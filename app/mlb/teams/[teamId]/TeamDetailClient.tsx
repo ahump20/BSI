@@ -171,7 +171,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             <button
               key={group.id}
               onClick={() => setPositionFilter(group.id)}
-              className={`px-4 py-2 rounded-md text-sm transition-all ${
+              className={`px-4 py-2 rounded-sm text-sm transition-all ${
                 positionFilter === group.id
                   ? 'bg-burnt-orange text-white font-semibold'
                   : 'bg-background-tertiary text-text-secondary hover:bg-surface-light hover:text-text-primary'
@@ -192,7 +192,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             >
               <div className="flex items-start gap-4">
                 <div
-                  className="w-14 h-14 rounded-lg flex items-center justify-center text-xl font-bold text-white flex-shrink-0"
+                  className="w-14 h-14 rounded-sm flex items-center justify-center text-xl font-bold text-white flex-shrink-0"
                   style={{ backgroundColor: teamInfo?.primaryColor || 'var(--bsi-primary)' }}
                 >
                   {player.primaryNumber || '-'}
@@ -263,7 +263,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   (p) => p.primaryPosition.abbreviation === pos.position
                 );
                 return (
-                  <div key={pos.position} className="bg-background-tertiary rounded-lg p-4">
+                  <div key={pos.position} className="bg-background-tertiary rounded-sm p-4">
                     <p className="text-xs text-text-tertiary uppercase tracking-wide mb-2">
                       {pos.label}
                     </p>
@@ -327,7 +327,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                           .map((player) => (
                             <div
                               key={player.id}
-                              className="flex items-center justify-between bg-background-tertiary rounded-lg px-3 py-2"
+                              className="flex items-center justify-between bg-background-tertiary rounded-sm px-3 py-2"
                             >
                               <div className="flex items-center gap-2">
                                 <span className="text-xs text-burnt-orange font-mono w-6">
@@ -375,7 +375,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
         </p>
         <Link
           href="/mlb/scores"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange/80 transition-colors"
         >
           View Today&apos;s Games
           <svg
@@ -455,7 +455,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             <ScrollReveal>
               <div className="flex items-center gap-6">
                 <div
-                  className="w-24 h-24 rounded-xl flex items-center justify-center text-3xl font-bold text-white"
+                  className="w-24 h-24 rounded-sm flex items-center justify-center text-3xl font-bold text-white"
                   style={{ backgroundColor: teamInfo?.primaryColor || 'var(--bsi-primary)' }}
                 >
                   {displayAbbrev}
@@ -509,8 +509,8 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
               <Card variant="default" padding="lg">
                 <div className="space-y-4">
                   {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="flex items-center gap-4 p-4 bg-background-tertiary rounded-lg">
-                      <Skeleton variant="rectangular" width={56} height={56} className="rounded-lg" />
+                    <div key={i} className="flex items-center gap-4 p-4 bg-background-tertiary rounded-sm">
+                      <Skeleton variant="rectangular" width={56} height={56} className="rounded-sm" />
                       <div className="flex-1">
                         <Skeleton variant="text" width={150} height={18} />
                         <Skeleton variant="text" width={100} height={14} className="mt-2" />
@@ -525,7 +525,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                 <p className="text-text-secondary text-sm mt-1">{error}</p>
                 <button
                   onClick={fetchTeam}
-                  className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors"
+                  className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange/80 transition-colors"
                 >
                   Retry
                 </button>

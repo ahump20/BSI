@@ -69,7 +69,7 @@ export default function CWSPage() {
                 {loading && !hasData ? (
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {Array.from({ length: 8 }).map((_, i) => (
-                      <div key={i} className="h-20 bg-surface-light rounded-lg animate-pulse" />
+                      <div key={i} className="h-20 bg-surface-light rounded-sm animate-pulse" />
                     ))}
                   </div>
                 ) : (
@@ -77,7 +77,7 @@ export default function CWSPage() {
                     {projectedSeeds.map((team, i) => (
                       <div
                         key={team.name || i}
-                        className="bg-surface-light border border-[#C9A227]/20 rounded-xl p-4 text-center"
+                        className="bg-surface-light border border-[#C9A227]/20 rounded-sm p-4 text-center"
                       >
                         <span className="text-2xl font-display font-bold text-[#C9A227] block mb-1">
                           #{team.rank || i + 1}
@@ -106,7 +106,7 @@ export default function CWSPage() {
               <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
                 How the CWS Works
               </h2>
-              <div className="bg-surface-light border border-border-subtle rounded-xl p-5 space-y-3">
+              <div className="bg-surface-light border border-border-subtle rounded-sm p-5 space-y-3">
                 {[
                   { label: 'Super Regionals', detail: '8 best-of-three series. Win your super regional to earn one of 8 CWS berths.' },
                   { label: 'CWS Bracket', detail: '8 teams in Omaha, split into two 4-team double-elimination brackets. Winners of each bracket meet in the Finals.' },
@@ -124,7 +124,7 @@ export default function CWSPage() {
             </section>
 
             {/* CWS data placeholder */}
-            <div className="bg-surface-light border border-dashed border-border rounded-xl p-8 text-center mb-8">
+            <div className="bg-surface-light border border-dashed border-border rounded-sm p-8 text-center mb-8">
               <p className="text-sm text-text-muted mb-2">
                 CWS bracket and game data populates when super regionals are set (mid-June).
               </p>

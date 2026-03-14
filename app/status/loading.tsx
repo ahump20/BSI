@@ -12,7 +12,7 @@ export default function StatusLoading() {
         <Skeleton variant="text" width={320} height={16} className="mb-8" />
 
         {/* Overall status banner */}
-        <div className="bg-surface-light border border-border-subtle rounded-xl p-6 mb-8 animate-pulse">
+        <div className="bg-surface-light border border-border-subtle rounded-sm p-6 mb-8 animate-pulse">
           <div className="flex items-center gap-3">
             <Skeleton variant="circular" width={12} height={12} />
             <Skeleton variant="text" width={200} height={22} />
@@ -23,7 +23,7 @@ export default function StatusLoading() {
         {/* Endpoint grid */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="bg-surface-light border border-border-subtle rounded-xl p-4 animate-pulse">
+            <div key={i} className="bg-surface-light border border-border-subtle rounded-sm p-4 animate-pulse">
               <div className="flex items-center justify-between mb-2">
                 <Skeleton variant="text" width={120} height={16} />
                 <Skeleton variant="circular" width={10} height={10} />

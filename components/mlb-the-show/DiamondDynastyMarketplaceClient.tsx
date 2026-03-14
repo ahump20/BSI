@@ -150,7 +150,7 @@ export function DiamondDynastyMarketplaceClient() {
                     value={search}
                     onChange={(event) => setSearch(event.target.value)}
                     placeholder="Aaron Judge, Yankees, Live Series..."
-                    className="w-full rounded-lg border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-2 text-sm text-[var(--bsi-bone)] outline-none transition-colors focus:border-burnt-orange/45"
+                    className="w-full rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-2 text-sm text-[var(--bsi-bone)] outline-none transition-colors focus:border-burnt-orange/45"
                   />
                 </label>
 
@@ -171,12 +171,12 @@ export function DiamondDynastyMarketplaceClient() {
                   <Select label="Sort" value={sort} onChange={(value) => setSort(value as (typeof SORT_OPTIONS)[number]['value'])} options={SORT_OPTIONS.map((option) => option.value)} />
                 </div>
 
-                <label className="flex items-center gap-3 rounded-lg border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-3 text-sm text-[var(--bsi-bone)]">
+                <label className="flex items-center gap-3 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-3 text-sm text-[var(--bsi-bone)]">
                   <input type="checkbox" checked={captainOnly} onChange={(event) => setCaptainOnly(event.target.checked)} />
                   Captain cards only
                 </label>
 
-                <label className="flex items-center gap-3 rounded-lg border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-3 text-sm text-[var(--bsi-bone)]">
+                <label className="flex items-center gap-3 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-3 text-sm text-[var(--bsi-bone)]">
                   <input type="checkbox" checked={wbcOnly} onChange={(event) => setWbcOnly(event.target.checked)} />
                   WBC-tagged only
                 </label>
@@ -185,7 +185,7 @@ export function DiamondDynastyMarketplaceClient() {
                   WBC filtering is source-bound: only cards whose official/public series, set, or acquisition metadata explicitly includes WBC or World Baseball Classic will appear.
                 </p>
 
-                <div className="rounded-lg border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-3 text-sm text-[var(--bsi-dust)]">
+                <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-3 text-sm text-[var(--bsi-dust)]">
                   Tracked on this page: <span className="font-semibold text-[var(--bsi-bone)]">{trackedOnPage}</span>
                 </div>
               </CardContent>
@@ -197,7 +197,7 @@ export function DiamondDynastyMarketplaceClient() {
                 {loading ? (
                   <div className="space-y-3">
                     {Array.from({ length: 8 }).map((_, index) => (
-                      <div key={index} className="h-16 animate-pulse rounded-lg border border-[var(--border-vintage)] bg-[var(--surface-dugout)]" />
+                      <div key={index} className="h-16 animate-pulse rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)]" />
                     ))}
                   </div>
                 ) : error ? (
@@ -305,7 +305,7 @@ function Select({
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="w-full rounded-lg border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-2 text-sm text-[var(--bsi-bone)] outline-none transition-colors focus:border-burnt-orange/45"
+        className="w-full rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-2 text-sm text-[var(--bsi-bone)] outline-none transition-colors focus:border-burnt-orange/45"
       >
         <option value="">All</option>
         {options.map((option) => (

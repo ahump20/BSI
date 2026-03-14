@@ -11,7 +11,7 @@ interface SkeletonProps {
 export function Skeleton({ className = '' }: SkeletonProps) {
   return (
     <div
-      className={`animate-pulse rounded bg-surface-light ${className}`}
+      className={`animate-pulse rounded-sm bg-surface-light ${className}`}
       aria-hidden="true"
     />
   );
@@ -20,7 +20,7 @@ export function Skeleton({ className = '' }: SkeletonProps) {
 /** Card-shaped skeleton with header and 3 rows */
 export function CardSkeleton({ className = '' }: SkeletonProps) {
   return (
-    <div className={`rounded-xl border border-border-subtle p-4 space-y-3 ${className}`}>
+    <div className={`rounded-sm border border-border-subtle p-4 space-y-3 ${className}`}>
       <Skeleton className="h-4 w-1/3" />
       <Skeleton className="h-3 w-full" />
       <Skeleton className="h-3 w-4/5" />
@@ -32,7 +32,7 @@ export function CardSkeleton({ className = '' }: SkeletonProps) {
 /** Table-shaped skeleton: header row + N data rows */
 export function TableSkeleton({ rows = 5, cols = 6, className = '' }: SkeletonProps & { rows?: number; cols?: number }) {
   return (
-    <div className={`rounded-xl border border-border-subtle overflow-hidden ${className}`}>
+    <div className={`rounded-sm border border-border-subtle overflow-hidden ${className}`}>
       {/* Header */}
       <div className="flex gap-4 px-4 py-3 bg-charcoal border-b border-border">
         {Array.from({ length: cols }).map((_, i) => (
@@ -56,7 +56,7 @@ export function StatGridSkeleton({ count = 4, className = '' }: SkeletonProps & 
   return (
     <div className={`grid grid-cols-2 md:grid-cols-${count} gap-3 ${className}`}>
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="rounded-xl border border-border-subtle p-4 space-y-2">
+        <div key={i} className="rounded-sm border border-border-subtle p-4 space-y-2">
           <Skeleton className="h-3 w-1/2 mx-auto" />
           <Skeleton className="h-8 w-2/3 mx-auto" />
         </div>

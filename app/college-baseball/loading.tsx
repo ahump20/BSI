@@ -8,9 +8,9 @@ export default function CollegeBaseballLoading() {
         <Skeleton variant="text" width={440} height={48} className="mx-auto mb-6" />
         <Skeleton variant="text" width={500} height={20} className="mx-auto mb-8" />
         <div className="flex gap-4 justify-center">
-          <Skeleton variant="rectangular" width={140} height={44} className="rounded-lg" />
-          <Skeleton variant="rectangular" width={140} height={44} className="rounded-lg" />
-          <Skeleton variant="rectangular" width={140} height={44} className="rounded-lg" />
+          <Skeleton variant="rectangular" width={140} height={44} className="rounded-sm" />
+          <Skeleton variant="rectangular" width={140} height={44} className="rounded-sm" />
+          <Skeleton variant="rectangular" width={140} height={44} className="rounded-sm" />
         </div>
       </div>
 

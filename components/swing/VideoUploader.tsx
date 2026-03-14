@@ -76,7 +76,7 @@ export function VideoUploader({ onVideoReady, isProcessing }: VideoUploaderProps
             onDragLeave={() => setDragActive(false)}
             onDrop={handleDrop}
             onClick={() => inputRef.current?.click()}
-            className={`relative rounded-xl border-2 border-dashed p-12 text-center cursor-pointer transition-all duration-300 ${
+            className={`relative rounded-sm border-2 border-dashed p-12 text-center cursor-pointer transition-all duration-300 ${
               dragActive
                 ? 'border-burnt-orange bg-burnt-orange/5 shadow-[0_0_30px_rgba(191,87,0,0.1)]'
                 : 'border-border-subtle bg-surface-dugout hover:border-burnt-orange/30 hover:bg-surface-dugout/80'
@@ -91,7 +91,7 @@ export function VideoUploader({ onVideoReady, isProcessing }: VideoUploaderProps
             />
 
             <div className="flex flex-col items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-burnt-orange/10 flex items-center justify-center">
+              <div className="w-16 h-16 rounded-sm bg-burnt-orange/10 flex items-center justify-center">
                 <svg viewBox="0 0 24 24" className="w-8 h-8 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
                   <circle cx="12" cy="13" r="4" />
@@ -135,7 +135,7 @@ export function VideoUploader({ onVideoReady, isProcessing }: VideoUploaderProps
             key="preview"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="rounded-xl overflow-hidden border border-border-subtle bg-surface-dugout"
+            className="rounded-sm overflow-hidden border border-border-subtle bg-surface-dugout"
           >
             <video
               src={preview}
@@ -170,7 +170,7 @@ export function VideoUploader({ onVideoReady, isProcessing }: VideoUploaderProps
         <motion.div
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-2 text-red-400 text-sm px-4 py-2 rounded-lg bg-red-500/10 border border-red-500/20"
+          className="flex items-center gap-2 text-red-400 text-sm px-4 py-2 rounded-sm bg-red-500/10 border border-red-500/20"
         >
           <svg viewBox="0 0 16 16" className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.5">
             <circle cx="8" cy="8" r="6.5" />

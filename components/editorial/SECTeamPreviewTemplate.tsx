@@ -177,7 +177,7 @@ export function SECTeamPreviewTemplate({ data }: { data: TeamPreviewData }) {
                   <Card key={player.name} variant="default" padding="md">
                     <div className="flex items-start justify-between mb-2">
                       <h4 className="font-display font-bold text-text-primary uppercase">{player.name}</h4>
-                      <span className="text-xs bg-surface-light px-2 py-1 rounded text-text-muted">
+                      <span className="text-xs bg-surface-light px-2 py-1 rounded-sm text-text-muted">
                         {player.position} &middot; {player.year}
                       </span>
                     </div>
@@ -197,7 +197,7 @@ export function SECTeamPreviewTemplate({ data }: { data: TeamPreviewData }) {
                   <Card key={player.name} variant="default" padding="md">
                     <div className="flex items-start justify-between mb-2">
                       <h4 className="font-display font-bold text-text-primary uppercase text-sm">{player.name}</h4>
-                      <span className="text-xs bg-surface-light px-2 py-1 rounded text-text-muted">
+                      <span className="text-xs bg-surface-light px-2 py-1 rounded-sm text-text-muted">
                         {player.position} &middot; {player.year}
                       </span>
                     </div>

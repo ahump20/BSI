@@ -186,7 +186,7 @@ function MarkdownRenderer({ content }: { content: string }) {
 
           case 'table':
             return (
-              <div key={idx} className="overflow-x-auto my-6 rounded-lg border border-border-subtle">
+              <div key={idx} className="overflow-x-auto my-6 rounded-sm border border-border-subtle">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-border-subtle bg-surface-light">
@@ -355,10 +355,10 @@ export function BlogPostClient() {
 
               {loading ? (
                 <div className="animate-pulse space-y-4">
-                  <div className="h-5 bg-surface-secondary rounded w-1/4" />
-                  <div className="h-10 bg-surface-secondary rounded w-3/4" />
-                  <div className="h-5 bg-surface-secondary rounded w-1/2" />
-                  <div className="h-4 bg-surface-secondary rounded w-1/3 mt-6" />
+                  <div className="h-5 bg-surface-secondary rounded-sm w-1/4" />
+                  <div className="h-10 bg-surface-secondary rounded-sm w-3/4" />
+                  <div className="h-5 bg-surface-secondary rounded-sm w-1/2" />
+                  <div className="h-4 bg-surface-secondary rounded-sm w-1/3 mt-6" />
                 </div>
               ) : error ? (
                 <Card variant="default" padding="lg" className="text-center">
@@ -427,7 +427,7 @@ export function BlogPostClient() {
                       <MarkdownRenderer content={content} />
                     ) : (
                       <p className="text-text-tertiary italic">
-                        Article content coming soon.
+                        This article is being prepared. Check back shortly.
                       </p>
                     )}
                   </article>

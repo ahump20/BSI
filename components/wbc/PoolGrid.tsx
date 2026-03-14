@@ -129,7 +129,7 @@ export function PoolGrid() {
               className="group block"
             >
               <div
-                className={`p-6 rounded-xl border ${danger.border} ${danger.accent} hover:shadow-lg transition-all duration-200`}
+                className={`p-6 rounded-sm border ${danger.border} ${danger.accent} hover:shadow-lg transition-all duration-200`}
               >
                 {/* Pool header */}
                 <div className="flex items-start justify-between mb-4">
@@ -138,7 +138,7 @@ export function PoolGrid() {
                       <span className="font-display text-3xl font-bold text-burnt-orange">
                         Pool {pool.id}
                       </span>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${danger.badge}`}>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-sm border ${danger.badge}`}>
                         {pool.dangerLabel}
                       </span>
                     </div>

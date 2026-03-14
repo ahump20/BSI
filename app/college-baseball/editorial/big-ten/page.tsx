@@ -129,25 +129,25 @@ export default function BigTenEditorialPage() {
             {/* Stats Band */}
             <ScrollReveal direction="up" delay={100}>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-surface-light border border-border-subtle rounded-lg p-4 text-center">
+                <div className="bg-surface-light border border-border-subtle rounded-sm p-4 text-center">
                   <div className="font-display text-3xl font-bold text-[#6B8CAE]">17</div>
                   <div className="text-text-muted text-xs uppercase tracking-wider mt-1">
                     Programs
                   </div>
                 </div>
-                <div className="bg-surface-light border border-border-subtle rounded-lg p-4 text-center">
+                <div className="bg-surface-light border border-border-subtle rounded-sm p-4 text-center">
                   <div className="font-display text-3xl font-bold text-[#C9A227]">1</div>
                   <div className="text-text-muted text-xs uppercase tracking-wider mt-1">
                     Omaha Favorite
                   </div>
                 </div>
-                <div className="bg-surface-light border border-border-subtle rounded-lg p-4 text-center">
+                <div className="bg-surface-light border border-border-subtle rounded-sm p-4 text-center">
                   <div className="font-display text-3xl font-bold text-[#6B8CAE]">2</div>
                   <div className="text-text-muted text-xs uppercase tracking-wider mt-1">
                     Contenders
                   </div>
                 </div>
-                <div className="bg-surface-light border border-border-subtle rounded-lg p-4 text-center">
+                <div className="bg-surface-light border border-border-subtle rounded-sm p-4 text-center">
                   <div className="font-display text-3xl font-bold text-text-muted">8</div>
                   <div className="text-text-muted text-xs uppercase tracking-wider mt-1">
                     Bubble Teams
@@ -276,7 +276,7 @@ export default function BigTenEditorialPage() {
                     padding="lg"
                     className="h-full hover:border-[#C9A227]/30 transition-all relative overflow-hidden"
                   >
-                    <div className="absolute top-0 left-0 w-full h-1 rounded-t-lg bg-[#C9A227]" />
+                    <div className="absolute top-0 left-0 w-full h-1 rounded-t-sm bg-[#C9A227]" />
                     <div className="mt-2">
                       <h3 className="font-display text-xl font-bold uppercase tracking-wide text-[#C9A227] group-hover:text-[#C9A227]/80 transition-colors">
                         SEC
@@ -309,7 +309,7 @@ export default function BigTenEditorialPage() {
                     padding="lg"
                     className="h-full hover:border-burnt-orange/30 transition-all relative overflow-hidden"
                   >
-                    <div className="absolute top-0 left-0 w-full h-1 rounded-t-lg bg-burnt-orange" />
+                    <div className="absolute top-0 left-0 w-full h-1 rounded-t-sm bg-burnt-orange" />
                     <div className="mt-2">
                       <h3 className="font-display text-xl font-bold uppercase tracking-wide text-burnt-orange group-hover:text-ember transition-colors">
                         Big 12

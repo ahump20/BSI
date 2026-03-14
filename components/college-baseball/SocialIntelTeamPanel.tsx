@@ -129,7 +129,7 @@ function SummaryRow({ summary }: { summary: TeamSummary }) {
         {stats.map(({ label, count, color, activeBg }) => (
           <div
             key={label}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg ${count > 0 ? activeBg : 'bg-surface'}`}
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-sm ${count > 0 ? activeBg : 'bg-surface'}`}
           >
             <span className={`text-sm font-semibold tabular-nums ${count > 0 ? color : 'text-text-muted'}`}>
               {count}
@@ -174,7 +174,7 @@ function SignalRow({ signal }: { signal: SocialSignal }) {
         <div className="flex items-center gap-2 mt-1.5 flex-wrap">
           <span
             className={`
-              inline-flex items-center px-1.5 py-px rounded text-[9px] font-semibold uppercase tracking-wide
+              inline-flex items-center px-1.5 py-px rounded-sm text-[9px] font-semibold uppercase tracking-wide
               border ${badge.bg} ${badge.color} ${badge.border}
             `}
           >
@@ -241,7 +241,7 @@ export function SocialIntelTeamPanel({ teamId }: SocialIntelTeamPanelProps) {
   if (!loading && (!data || data.signals.length === 0)) return null;
 
   return (
-    <div className="rounded-xl border border-border overflow-hidden bg-[#111111]">
+    <div className="rounded-sm border border-border overflow-hidden bg-[#111111]">
       {/* Panel header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <div className="flex items-center gap-2">
@@ -267,7 +267,7 @@ export function SocialIntelTeamPanel({ teamId }: SocialIntelTeamPanelProps) {
       {loading ? (
         <div className="p-4 space-y-2">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-12 rounded-lg bg-surface animate-pulse" style={{ animationDelay: `${i * 60}ms` }} />
+            <div key={i} className="h-12 rounded-sm bg-surface animate-pulse" style={{ animationDelay: `${i * 60}ms` }} />
           ))}
         </div>
       ) : (

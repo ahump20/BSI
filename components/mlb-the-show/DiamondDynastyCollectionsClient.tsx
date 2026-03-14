@@ -51,7 +51,7 @@ export function DiamondDynastyCollectionsClient() {
           {loading ? (
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {Array.from({ length: 9 }).map((_, index) => (
-                <div key={index} className="h-40 animate-pulse rounded-xl border border-[var(--border-vintage)] bg-[var(--surface-dugout)]" />
+                <div key={index} className="h-40 animate-pulse rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)]" />
               ))}
             </div>
           ) : error ? (
@@ -104,7 +104,7 @@ export function DiamondDynastyCollectionsClient() {
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3">
+    <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3">
       <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)]">{label}</div>
       <div className="mt-2 text-sm font-semibold text-[var(--bsi-bone)]">{value}</div>
     </div>

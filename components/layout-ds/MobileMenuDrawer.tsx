@@ -143,7 +143,7 @@ export function MobileMenuDrawer({
           href={item.href}
           onClick={onClose}
           aria-current={active ? 'page' : undefined}
-          className={`block w-full px-4 py-3 rounded-lg transition-all min-h-12 flex items-center relative ${
+          className={`block w-full px-4 py-3 rounded-sm transition-all min-h-12 flex items-center relative ${
             active
               ? 'text-burnt-orange font-semibold bg-surface'
               : 'text-text-secondary hover:text-text-primary hover:bg-surface-light'
@@ -175,7 +175,7 @@ export function MobileMenuDrawer({
               href={item.href}
               onClick={onClose}
               aria-current={active ? 'page' : undefined}
-              className={`flex-1 flex items-center justify-between px-4 py-3 rounded-l-lg transition-all min-h-12 ${
+              className={`flex-1 flex items-center justify-between px-4 py-3 rounded-l-sm transition-all min-h-12 ${
                 active
                   ? 'text-burnt-orange font-semibold bg-surface'
                   : 'text-text-secondary hover:text-text-primary hover:bg-surface-light'
@@ -197,7 +197,7 @@ export function MobileMenuDrawer({
             {subLinks && subLinks.length > 0 && (
               <button
                 onClick={() => setExpandedLeague(isExpanded ? null : item.href)}
-                className={`px-3 py-3 rounded-r-lg transition-colors min-h-12 ${
+                className={`px-3 py-3 rounded-r-sm transition-colors min-h-12 ${
                   active ? 'bg-surface' : 'hover:bg-surface-light'
                 }`}
                 aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${item.label} links`}
@@ -232,7 +232,7 @@ export function MobileMenuDrawer({
                       key={subHref}
                       href={subHref}
                       onClick={onClose}
-                      className={`block px-3 py-2 rounded-md text-sm transition-colors ${
+                      className={`block px-3 py-2 rounded-sm text-sm transition-colors ${
                         subActive
                           ? 'text-burnt-orange font-medium'
                           : 'text-text-muted hover:text-text-secondary'
@@ -299,7 +299,7 @@ export function MobileMenuDrawer({
               <button
                 ref={closeButtonRef}
                 onClick={onClose}
-                className="p-2 hover:bg-surface rounded-lg transition-colors"
+                className="p-2 hover:bg-surface rounded-sm transition-colors"
                 aria-label="Close menu"
               >
                 <X className="w-5 h-5 text-text-primary" />

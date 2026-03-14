@@ -130,7 +130,7 @@ export default function GlossaryPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search terms..."
-                className="flex-1 min-w-0 bg-surface-light border border-border rounded-lg px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-burnt-orange/50 transition-colors"
+                className="flex-1 min-w-0 bg-surface-light border border-border rounded-sm px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-burnt-orange/50 transition-colors"
               />
               <div className="flex gap-1.5 overflow-x-auto">
                 {(Object.keys(CATEGORY_LABELS) as CategoryFilter[]).map((cat) => (
@@ -155,7 +155,7 @@ export default function GlossaryPage() {
                   <a
                     key={letter}
                     href={hasResults ? `#letter-${letter}` : undefined}
-                    className={`w-8 h-8 flex items-center justify-center rounded text-xs font-mono font-bold border transition-all ${
+                    className={`w-8 h-8 flex items-center justify-center rounded-sm text-xs font-mono font-bold border transition-all ${
                       hasResults
                         ? 'text-text-tertiary border-white/[0.06] hover:text-burnt-orange hover:border-burnt-orange/30 hover:bg-burnt-orange/10'
                         : 'text-text-muted/30 border-transparent cursor-default'

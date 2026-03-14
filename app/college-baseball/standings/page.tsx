@@ -181,7 +181,7 @@ export default function CollegeBaseballStandingsPage() {
             {/* Undefeated Teams Callout */}
             {undefeatedTeams.length > 0 && (
               <ScrollReveal direction="up" delay={80}>
-                <div className="mb-6 bg-[#C9A227]/10 border border-[#C9A227]/25 rounded-xl px-5 py-4">
+                <div className="mb-6 bg-[#C9A227]/10 border border-[#C9A227]/25 rounded-sm px-5 py-4">
                   <div className="flex items-center gap-2 mb-2">
                     <span className="w-2 h-2 bg-[#C9A227] rounded-full animate-pulse" />
                     <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-[#C9A227]">
@@ -313,7 +313,7 @@ export default function CollegeBaseballStandingsPage() {
               {!loading && !error && standings.length === 0 && (
                 <Card padding="lg" className="text-center">
                   <p className="text-text-secondary mb-2">
-                    No standings data available for {currentConf?.fullName || currentConf?.name}.
+                    Standings for {currentConf?.fullName || currentConf?.name} update as conference play begins.
                   </p>
                   <p className="text-text-tertiary text-sm">
                     {isInSeason
@@ -446,7 +446,7 @@ export default function CollegeBaseballStandingsPage() {
                     <div className="px-4 py-3 bg-background-secondary border-t border-border-subtle">
                       <div className="flex items-center gap-4 text-xs text-text-tertiary">
                         <div className="flex items-center gap-2">
-                          <div className="w-3 h-3 bg-success/20 rounded" />
+                          <div className="w-3 h-3 bg-success/20 rounded-sm" />
                           <span>NCAA Tournament Projection</span>
                         </div>
                       </div>

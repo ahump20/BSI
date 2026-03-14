@@ -212,7 +212,7 @@ export default function TeamStatsClient() {
           <div className="space-y-4">
             {/* LOB */}
             {game.linescore && (
-              <div className="p-4 bg-background-tertiary rounded-lg">
+              <div className="p-4 bg-background-tertiary rounded-sm">
                 <p className="text-text-tertiary text-sm mb-1">Left on Base</p>
                 <div className="flex items-center justify-between">
                   <div className="text-center">
@@ -237,13 +237,13 @@ export default function TeamStatsClient() {
 
             {/* Efficiency */}
             <div className="grid gap-4 md:grid-cols-2">
-              <div className="p-4 bg-background-tertiary rounded-lg">
+              <div className="p-4 bg-background-tertiary rounded-sm">
                 <p className="text-text-tertiary text-sm mb-2">Hits with RISP</p>
                 <p className="text-text-secondary text-xs">
                   Situational hitting data appears during live games
                 </p>
               </div>
-              <div className="p-4 bg-background-tertiary rounded-lg">
+              <div className="p-4 bg-background-tertiary rounded-sm">
                 <p className="text-text-tertiary text-sm mb-2">Two-Out RBI</p>
                 <p className="text-text-secondary text-xs">
                   Clutch hitting metrics tracked during the game

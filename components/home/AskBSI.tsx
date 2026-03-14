@@ -211,7 +211,7 @@ export function AskBSI() {
       incrementAskCount();
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') return;
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      setError(err instanceof Error ? err.message : 'Couldn\'t get a response — try again in a moment.');
     } finally {
       setStreaming(false);
     }

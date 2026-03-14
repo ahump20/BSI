@@ -121,13 +121,13 @@ export function LiveScoreCard({ game, animate = true, lastMessageAt }: LiveScore
     <Wrapper {...(wrapperProps as Record<string, unknown>)}>
       <Link href={`/college-baseball/game/${game.id}`} className="block">
         <div
-          className={`bg-graphite rounded-lg border transition-all hover:border-burnt-orange hover:bg-surface-light ${
+          className={`bg-graphite rounded-sm border transition-all hover:border-burnt-orange hover:bg-surface-light ${
             isLive ? 'border-success' : 'border-border-subtle'
           }`}
         >
           {/* Status Bar */}
           <div
-            className={`px-4 py-2 rounded-t-lg flex items-center justify-between ${
+            className={`px-4 py-2 rounded-t-sm flex items-center justify-between ${
               isLive
                 ? 'bg-success/20'
                 : isFinal
@@ -178,7 +178,7 @@ export function LiveScoreCard({ game, animate = true, lastMessageAt }: LiveScore
               )}
             </AnimatePresence>
 
-            <span className="text-xs text-text-tertiary bg-charcoal/60 px-2 py-0.5 rounded">
+            <span className="text-xs text-text-tertiary bg-charcoal/60 px-2 py-0.5 rounded-sm">
               {game.homeTeam.conference || game.awayTeam.conference || 'NCAA'}
             </span>
           </div>

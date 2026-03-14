@@ -58,7 +58,7 @@ export function PercentilePlayerCard({
   className = '',
 }: PercentilePlayerCardProps) {
   return (
-    <div className={`savant-card overflow-hidden bg-[var(--svt-card,_#0D0D0D)] border border-[var(--svt-border,_rgba(245,240,235,0.04))] rounded-xl ${className}`}>
+    <div className={`savant-card overflow-hidden bg-[var(--svt-card,_#0D0D0D)] border border-[var(--svt-border,_rgba(245,240,235,0.04))] rounded-sm ${className}`}>
       {/* Header */}
       <div className="px-5 py-4 border-b border-[var(--svt-border,_rgba(245,240,235,0.04))]">
         <div className="flex items-center justify-between">
@@ -74,7 +74,7 @@ export function PercentilePlayerCard({
                 </span>
               )}
               {position && (
-                <span className="text-[10px] font-mono text-[var(--svt-text-muted,_#A89F95)] uppercase px-1.5 py-0.5 rounded bg-[var(--svt-surface,_rgba(255,255,255,0.04))]">
+                <span className="text-[10px] font-mono text-[var(--svt-text-muted,_#A89F95)] uppercase px-1.5 py-0.5 rounded-sm bg-[var(--svt-surface,_rgba(255,255,255,0.04))]">
                   {position}
                 </span>
               )}
@@ -175,7 +175,7 @@ export function PercentilePlayerCard({
               return (
                 <div
                   key={item.label}
-                  className="flex flex-col gap-1 p-3 rounded-lg bg-[var(--svt-surface,_rgba(255,255,255,0.02))]"
+                  className="flex flex-col gap-1 p-3 rounded-sm bg-[var(--svt-surface,_rgba(255,255,255,0.02))]"
                 >
                   <span className="text-[9px] font-mono uppercase tracking-wider text-[var(--svt-text-dim,_#737373)]">
                     {item.label}

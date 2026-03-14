@@ -251,7 +251,7 @@ export default function SavantHubPage() {
             {/* Spotlight cards — dynamic, data-driven */}
             <ScrollReveal direction="up" delay={100}>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
-                {SPOTLIGHT_DEFS.map(spot => {
+                {SPOTLIGHT_DEFS.map((spot, index) => {
                   const source = spot.tab === 'batting' ? battingRes?.data : pitchingRes?.data;
                   const leader = findLeader(source ?? [], spot.metricKey, spot.higherIsBetter);
                   const pctl = leader ? computeQuickPercentile(source ?? [], spot.metricKey, leader.value, spot.higherIsBetter) : 50;
@@ -260,8 +260,8 @@ export default function SavantHubPage() {
                   return (
                     <div
                       key={spot.metricKey}
-                      className="relative overflow-hidden rounded-xl bg-[rgba(26,26,26,0.6)] border border-[rgba(245,240,235,0.04)] p-4"
-                      style={{ borderLeftColor: color, borderLeftWidth: '2px' }}
+                      className="savant-fade-in relative overflow-hidden rounded-sm bg-[rgba(26,26,26,0.6)] border border-[rgba(245,240,235,0.04)] hover:border-[var(--svt-accent)]/30 transition-all p-4"
+                      style={{ borderLeftColor: color, borderLeftWidth: '2px', animationDelay: `${index * 50}ms` }}
                     >
                       <div className="flex items-baseline justify-between mb-2">
                         <span className="font-mono text-xs font-bold tracking-wide" style={{ color }}>{spot.abbr}</span>
@@ -280,7 +280,7 @@ export default function SavantHubPage() {
                           </div>
                         ) : (
                           <div className="mb-2.5 h-14 flex items-center">
-                            <div className="h-6 w-16 bg-surface-light rounded animate-pulse" />
+                            <div className="h-6 w-16 bg-surface-light rounded-sm animate-pulse" />
                           </div>
                         )}
                       </MetricGate>
@@ -458,7 +458,7 @@ function FilterSelect({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="bg-surface-light border border-border rounded-md px-2.5 py-1.5 text-xs text-text-tertiary font-mono appearance-none cursor-pointer hover:border-border-strong transition-colors focus:outline-none focus:border-burnt-orange/40"
+        className="bg-surface-light border border-border rounded-sm px-2.5 py-1.5 text-xs text-text-tertiary font-mono appearance-none cursor-pointer hover:border-border-strong transition-colors focus:outline-none focus:border-burnt-orange/40"
       >
         {options.map(opt => (
           <option key={opt} value={opt} className="bg-background-secondary text-text-primary">
@@ -526,17 +526,17 @@ function LeaderboardSkeleton() {
   return (
     <Card padding="none" className="overflow-hidden">
       <div className="px-5 py-4 border-b border-border-subtle flex items-center justify-between">
-        <div className="h-4 w-48 bg-surface-medium rounded animate-pulse" />
-        <div className="h-3 w-20 bg-surface-light rounded animate-pulse" />
+        <div className="h-4 w-48 bg-surface-medium rounded-sm animate-pulse" />
+        <div className="h-3 w-20 bg-surface-light rounded-sm animate-pulse" />
       </div>
       <div className="divide-y divide-border-subtle">
         {Array.from({ length: 10 }).map((_, i) => (
           <div key={i} className="px-5 py-3 flex items-center gap-4">
-            <div className="h-4 w-6 bg-surface-light rounded animate-pulse" />
-            <div className="h-4 flex-1 max-w-[200px] bg-surface-medium rounded animate-pulse" />
-            <div className="h-4 w-16 bg-surface-light rounded animate-pulse hidden sm:block" />
-            <div className="h-4 w-12 bg-surface-light rounded animate-pulse" />
-            <div className="h-4 w-12 bg-surface-light rounded animate-pulse hidden md:block" />
+            <div className="h-4 w-6 bg-surface-light rounded-sm animate-pulse" />
+            <div className="h-4 flex-1 max-w-[200px] bg-surface-medium rounded-sm animate-pulse" />
+            <div className="h-4 w-16 bg-surface-light rounded-sm animate-pulse hidden sm:block" />
+            <div className="h-4 w-12 bg-surface-light rounded-sm animate-pulse" />
+            <div className="h-4 w-12 bg-surface-light rounded-sm animate-pulse hidden md:block" />
           </div>
         ))}
       </div>

@@ -111,7 +111,7 @@ export default function ContactPage() {
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       placeholder="Your message..."
                       required
-                      className="w-full px-4 py-3 bg-background-secondary border border-border-subtle rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-burnt-orange/50 focus:border-burnt-orange/30 transition-all resize-none"
+                      className="w-full px-4 py-3 bg-background-secondary border border-border-subtle rounded-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-burnt-orange/50 focus:border-burnt-orange/30 transition-all resize-none"
                     />
                   </div>
                   <Button type="submit" variant="primary" size="lg" className="w-full">

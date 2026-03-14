@@ -262,6 +262,27 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
                 )}
               </div>
             )}
+            {/* Texas Intel Hub CTA */}
+            {teamId === 'texas' && (
+              <div className="mt-4">
+                <Link href="/college-baseball/texas-intelligence">
+                  <div className="heritage-card px-5 py-4 border-t-2 border-burnt-orange hover:border-burnt-orange/80 transition-colors cursor-pointer group">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="heritage-stamp text-[9px] block mb-1">Dedicated Hub</span>
+                        <span className="font-display font-bold text-sm uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors">
+                          Texas Intelligence Hub
+                        </span>
+                        <p className="text-text-muted text-xs mt-1">
+                          Full sabermetrics, scouting, draft board, press conference analysis, and program history
+                        </p>
+                      </div>
+                      <span className="text-burnt-orange text-lg" aria-hidden="true">&rarr;</span>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            )}
           </Container>
         </Section>
 

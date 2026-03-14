@@ -176,7 +176,7 @@ export default function BoxScoreClient() {
                   return (
                     <div key={gIdx}>
                       {groupName && (
-                        <div className="px-2 py-1.5 mb-2 text-xs text-burnt-orange font-semibold uppercase tracking-wide bg-background-tertiary rounded">
+                        <div className="px-2 py-1.5 mb-2 text-xs text-burnt-orange font-semibold uppercase tracking-wide bg-background-tertiary rounded-sm">
                           {groupName}
                         </div>
                       )}

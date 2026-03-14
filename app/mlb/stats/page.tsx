@@ -80,7 +80,7 @@ export default function MLBStatsPage() {
 
   const LeaderCard = ({ leader, rank }: { leader: StatLeader; rank: number }) => (
     <div
-      className={`flex items-center gap-4 p-4 rounded-lg ${
+      className={`flex items-center gap-4 p-4 rounded-sm ${
         rank === 1
           ? 'bg-burnt-orange/10 border border-burnt-orange'
           : rank <= 3
@@ -155,7 +155,7 @@ export default function MLBStatsPage() {
           <Container>
             <ScrollReveal direction="up">
               <Badge variant="primary" className="mb-4">
-                2025 Season
+                2026 Season
               </Badge>
             </ScrollReveal>
 
@@ -181,7 +181,7 @@ export default function MLBStatsPage() {
             <div className="flex gap-2 mb-6">
               <button
                 onClick={() => setCategory('batting')}
-                className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all ${
+                className={`px-6 py-2.5 rounded-sm font-semibold text-sm transition-all ${
                   category === 'batting'
                     ? 'bg-burnt-orange text-white'
                     : 'bg-background-tertiary text-text-secondary hover:bg-surface-light hover:text-text-primary'
@@ -191,7 +191,7 @@ export default function MLBStatsPage() {
               </button>
               <button
                 onClick={() => setCategory('pitching')}
-                className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all ${
+                className={`px-6 py-2.5 rounded-sm font-semibold text-sm transition-all ${
                   category === 'pitching'
                     ? 'bg-burnt-orange text-white'
                     : 'bg-background-tertiary text-text-secondary hover:bg-surface-light hover:text-text-primary'
@@ -207,7 +207,7 @@ export default function MLBStatsPage() {
                 <button
                   key={stat.id}
                   onClick={() => setSelectedStat(stat.id)}
-                  className={`px-4 py-2 rounded-md text-sm transition-all ${
+                  className={`px-4 py-2 rounded-sm text-sm transition-all ${
                     selectedStat === stat.id
                       ? 'bg-surface-light text-text-primary font-semibold border border-burnt-orange'
                       : 'text-text-tertiary hover:text-text-primary hover:bg-surface-light'
@@ -227,7 +227,7 @@ export default function MLBStatsPage() {
                 <CardContent>
                   <div className="space-y-4">
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
-                      <div key={i} className="flex items-center gap-4 p-4 bg-background-tertiary rounded-lg">
+                      <div key={i} className="flex items-center gap-4 p-4 bg-background-tertiary rounded-sm">
                         <Skeleton variant="rectangular" width={40} height={40} className="rounded-full" />
                         <div className="flex-1">
                           <Skeleton variant="text" width={150} height={18} />
@@ -245,7 +245,7 @@ export default function MLBStatsPage() {
                 <p className="text-text-secondary text-sm mt-1">{error}</p>
                 <button
                   onClick={fetchLeaders}
-                  className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors"
+                  className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange/80 transition-colors"
                 >
                   Retry
                 </button>
@@ -262,9 +262,9 @@ export default function MLBStatsPage() {
                   >
                     <path d="M3 3v18h18M8 17V9m4 8V5m4 12v-6" />
                   </svg>
-                  <p className="text-text-secondary">No stat leaders available</p>
+                  <p className="text-text-secondary">Stat leaders populate once the season starts</p>
                   <p className="text-text-tertiary text-sm mt-2">
-                    Leaders will be available when the 2025 season begins
+                    Check back for batting, pitching, and fielding leaders
                   </p>
                 </div>
               </Card>

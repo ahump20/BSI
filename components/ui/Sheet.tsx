@@ -48,7 +48,7 @@ export function Sheet({ open, onClose, children, side = 'right', className = '' 
   const positionClass =
     side === 'right'
       ? 'top-0 right-0 h-full w-full max-w-xl'
-      : 'bottom-0 left-0 w-full max-h-[90vh] rounded-t-2xl';
+      : 'bottom-0 left-0 w-full max-h-[90vh] rounded-t-sm';
 
   return (
     <AnimatePresence>

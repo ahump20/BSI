@@ -97,7 +97,7 @@ export function DataFreshnessIndicator({
         <button
           onClick={onRefresh}
           disabled={isRefreshing}
-          className="ml-2 p-1 hover:bg-surface rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="ml-2 p-1 hover:bg-surface rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="Refresh data"
         >
           <RefreshCw

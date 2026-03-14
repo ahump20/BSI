@@ -80,7 +80,7 @@ export function SpringTrainingStandingsTable({ title, teams }: SpringTrainingSta
               {sorted.length === 0 && (
                 <tr>
                   <td colSpan={7} className="px-4 py-8 text-center text-text-muted">
-                    No standings data available
+                    Standings update once games are underway
                   </td>
                 </tr>
               )}

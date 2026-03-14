@@ -5,9 +5,10 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
-import { Badge, DataSourceBadge } from '@/components/ui/Badge';
+import { DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 
@@ -121,9 +122,9 @@ export default function TexasPitchingClient() {
               <div className="flex items-center gap-4 mb-4">
                 <img src={logoUrl} alt="" className="w-12 h-12 object-contain" loading="lazy" />
                 <div>
-                  <Badge variant="primary" size="sm">{new Date().getFullYear()} Season</Badge>
+                  <span className="heritage-stamp text-[10px]">Pitching Staff</span>
                   <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-text-primary mt-1">
-                    Pitching <span className="text-gradient-blaze">Staff</span>
+                    Texas Pitching Staff
                   </h1>
                 </div>
               </div>
@@ -150,13 +151,14 @@ export default function TexasPitchingClient() {
           </Container>
         </Section>
 
+        <DataErrorBoundary name="Pitching Data">
         {/* Loading */}
         {loading && (
           <Section padding="lg">
             <Container>
               <div className="space-y-4">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="h-12 bg-surface-light rounded animate-pulse" />
+                  <div key={i} className="h-12 bg-surface-light rounded-sm animate-pulse" />
                 ))}
               </div>
             </Container>
@@ -220,6 +222,73 @@ export default function TexasPitchingClient() {
           </Section>
         )}
 
+        {/* Bullpen */}
+        {!loading && relievers.length > 0 && (
+          <Section padding="lg" background="charcoal" borderTop>
+            <Container>
+              <ScrollReveal direction="up">
+                <h2 className="font-display text-2xl font-bold uppercase tracking-wide mb-4 text-text-primary">
+                  Bullpen
+                </h2>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                  {relievers.map((p) => (
+                    <Card key={p.id} variant="default" padding="sm" className="border-t-2 border-burnt-orange">
+                      <CardContent>
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <div className="text-text-primary text-sm font-medium">{p.name}</div>
+                            <div className="text-text-muted text-xs">
+                              {fmt(p.stats.ip, 1)} IP · {p.stats.sv > 0 ? `${p.stats.sv} SV` : `${p.stats.w}-${p.stats.l}`}
+                            </div>
+                          </div>
+                          <div className="font-mono text-lg font-bold" style={{ color: p.stats.era <= 3.0 ? ACCENT : undefined }}>
+                            {fmt(p.stats.era)}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </ScrollReveal>
+            </Container>
+          </Section>
+        )}
+
+        {/* Season Workload */}
+        {!loading && sortedPitchers.length > 0 && (
+          <Section padding="lg" borderTop>
+            <Container>
+              <ScrollReveal direction="up">
+                <div className="mb-4">
+                  <span className="heritage-stamp text-[10px]">Workload Tracker</span>
+                  <h2 className="font-display text-xl font-bold uppercase tracking-wide text-text-primary mt-1">
+                    Season Workload
+                  </h2>
+                </div>
+                {(() => {
+                  const workloadPitchers = sortedPitchers.filter((p) => p.stats.ip >= 5).slice(0, 8);
+                  const maxIP = Math.max(...workloadPitchers.map((x) => x.stats.ip), 1);
+                  return workloadPitchers.map((p) => {
+                    const pct = (p.stats.ip / maxIP) * 100;
+                    return (
+                      <div key={p.id} className="flex items-center gap-3 mb-2">
+                        <div className="w-28 text-xs text-text-primary font-medium truncate">{p.name}</div>
+                        <div className="flex-1 bg-surface-light rounded-full h-3">
+                          <div
+                            className="h-3 rounded-full transition-all"
+                            style={{ width: `${pct}%`, backgroundColor: ACCENT }}
+                          />
+                        </div>
+                        <div className="w-12 text-right font-mono text-xs text-text-muted">{fmt(p.stats.ip, 1)}</div>
+                      </div>
+                    );
+                  });
+                })()}
+              </ScrollReveal>
+            </Container>
+          </Section>
+        )}
+
         {/* Full Staff Table */}
         {!loading && sortedPitchers.length > 0 && (
           <Section padding="lg" borderTop>
@@ -229,7 +298,7 @@ export default function TexasPitchingClient() {
                   Full Staff
                 </h2>
               </ScrollReveal>
-              <Card variant="default" padding="none" className="overflow-x-auto">
+              <Card variant="default" padding="none" className="overflow-x-auto border-t-2 border-burnt-orange">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-border bg-surface-light">
@@ -267,6 +336,7 @@ export default function TexasPitchingClient() {
             </Container>
           </Section>
         )}
+        </DataErrorBoundary>
       </main>
       <Footer />
     </>
@@ -283,6 +353,7 @@ function SortTh({ label, field, current, onSort }: { label: string; field: SortF
       tabIndex={0}
       role="columnheader"
       aria-sort={active ? 'descending' : 'none'}
+      aria-label={`Sort by ${label}`}
     >
       {label} {active ? '▾' : ''}
     </th>

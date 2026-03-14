@@ -78,7 +78,7 @@ export function PowerRankingsTable() {
           {Object.entries(TIER_COLORS).map(([tier, style]) => (
             <span
               key={tier}
-              className={`text-[10px] font-semibold px-2 py-0.5 rounded border ${style.bg} ${style.border} ${style.text}`}
+              className={`text-[10px] font-semibold px-2 py-0.5 rounded-sm border ${style.bg} ${style.border} ${style.text}`}
             >
               {style.label}
             </span>
@@ -115,7 +115,7 @@ export function PowerRankingsTable() {
                   <td className="p-3">
                     <div className="flex items-center gap-2">
                       <span className="font-semibold text-text-primary">{row.team}</span>
-                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border ${tier.bg} ${tier.border} ${tier.text}`}>
+                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-sm border ${tier.bg} ${tier.border} ${tier.text}`}>
                         {tier.label.toUpperCase()}
                       </span>
                     </div>
@@ -124,7 +124,7 @@ export function PowerRankingsTable() {
                     <div className="flex items-center gap-1.5">
                       <span className="text-text-secondary font-mono text-sm">Pool {row.pool}</span>
                       {row.pool === 'D' && (
-                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border hidden lg:inline ${poolDanger.color}`}>
+                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-sm border hidden lg:inline ${poolDanger.color}`}>
                           ☠
                         </span>
                       )}
@@ -150,7 +150,7 @@ export function PowerRankingsTable() {
           return (
             <div
               key={row.team}
-              className="flex items-center justify-between p-3 rounded-lg bg-surface-light/20 border border-border-subtle"
+              className="flex items-center justify-between p-3 rounded-sm bg-surface-light/20 border border-border-subtle"
             >
               <div className="flex items-center gap-3">
                 <span className={`text-lg font-bold ${tier.text} w-8 tabular-nums`}>{row.rank}</span>

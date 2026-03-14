@@ -8,8 +8,8 @@ export default function NFLLoading() {
         <Skeleton variant="text" width={360} height={48} className="mx-auto mb-6" />
         <Skeleton variant="text" width={480} height={20} className="mx-auto mb-8" />
         <div className="flex gap-4 justify-center">
-          <Skeleton variant="rectangular" width={160} height={44} className="rounded-lg" />
-          <Skeleton variant="rectangular" width={160} height={44} className="rounded-lg" />
+          <Skeleton variant="rectangular" width={160} height={44} className="rounded-sm" />
+          <Skeleton variant="rectangular" width={160} height={44} className="rounded-sm" />
         </div>
       </div>
 

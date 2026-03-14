@@ -270,7 +270,7 @@ export default function ABSTrackerPage() {
                         </div>
                       </div>
                     </div>
-                    <div className="bg-background-tertiary rounded-lg p-6">
+                    <div className="bg-background-tertiary rounded-sm p-6">
                       <h4 className="text-text-primary font-semibold text-sm mb-4">Key Facts</h4>
                       <div className="space-y-3 text-sm">
                         <div className="flex justify-between"><span className="text-text-tertiary">Cameras per park</span><span className="text-text-primary font-mono">12</span></div>

@@ -72,7 +72,7 @@ export function ConferenceStrengthChart({
     return (
       <div key={conf.conference}>
         <button
-          className="flex items-center gap-3 w-full py-2 hover:bg-surface-light transition-colors rounded-md px-1 -mx-1"
+          className="flex items-center gap-3 w-full py-2 hover:bg-surface-light transition-colors rounded-sm px-1 -mx-1"
           onClick={() => setExpandedConf(isExpanded ? null : conf.conference)}
         >
           <span className={`text-xs font-mono w-4 tabular-nums ${
@@ -131,7 +131,7 @@ export function ConferenceStrengthChart({
   let globalRank = 0;
 
   return (
-    <div className={`bg-background-primary border border-border-subtle rounded-xl overflow-hidden ${className}`}>
+    <div className={`bg-background-primary border border-border-subtle rounded-sm overflow-hidden ${className}`}>
       <div className="px-5 py-4 border-b border-border-subtle" style={{ borderTop: '2px solid var(--svt-accent, #BF5700)' }}>
         <h3 className="font-display text-base uppercase tracking-wider text-text-primary">
           Conference Strength Index
@@ -163,14 +163,14 @@ export function ConferenceStrengthChart({
                 contentStyle={{
                   background: 'var(--svt-surface, #12151c)',
                   border: '1px solid var(--svt-border, #242a38)',
-                  borderRadius: '6px',
+                  borderRadius: '2px',
                   color: '#e8eaf0',
                   fontSize: '0.75rem',
                   fontFamily: "'JetBrains Mono', monospace",
                 }}
                 formatter={(value: number) => [value.toFixed(1), 'Strength Index']}
               />
-              <Bar dataKey="strength_index" radius={[0, 4, 4, 0]}>
+              <Bar dataKey="strength_index" radius={[0, 2, 2, 0]}>
                 {sorted.map((conf) => (
                   <Cell
                     key={conf.conference}
@@ -247,7 +247,7 @@ export function ConferenceStrengthChart({
 function SubBadge({ label, value, color }: { label: string; value: string; color: string }) {
   return (
     <span
-      className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-mono"
+      className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-[9px] font-mono"
       style={{ backgroundColor: withAlpha(color, 0.09), color }}
     >
       <span className="text-text-muted">{label}</span>

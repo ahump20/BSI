@@ -64,7 +64,7 @@ export function MyTeamsPanel({ teamSlugs }: MyTeamsPanelProps) {
     return (
       <div className="flex gap-3 overflow-x-auto pb-2">
         {teamSlugs.map((slug) => (
-          <div key={slug} className="flex-shrink-0 w-36 h-20 bg-surface-medium rounded-lg animate-pulse" />
+          <div key={slug} className="flex-shrink-0 w-36 h-20 bg-surface-medium rounded-sm animate-pulse" />
         ))}
       </div>
     );
@@ -78,7 +78,7 @@ export function MyTeamsPanel({ teamSlugs }: MyTeamsPanelProps) {
         <Link
           key={team.slug}
           href={`/college-baseball/teams/${team.slug}`}
-          className="flex-shrink-0 flex items-center gap-3 px-4 py-3 bg-surface-light border border-border rounded-lg hover:border-burnt-orange/40 transition-all group min-w-[160px]"
+          className="flex-shrink-0 flex items-center gap-3 px-4 py-3 bg-surface-light border border-border rounded-sm hover:border-burnt-orange/40 transition-all group min-w-[160px]"
         >
           <Image
             src={team.logo}

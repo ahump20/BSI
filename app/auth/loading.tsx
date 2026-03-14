@@ -9,17 +9,17 @@ export default function AuthLoading() {
           <Skeleton variant="text" width={240} height={32} className="mx-auto mb-3" />
           <Skeleton variant="text" width={300} height={16} className="mx-auto" />
         </div>
-        <div className="bg-surface-light border border-border-subtle rounded-xl p-6 mb-6 animate-pulse">
+        <div className="bg-surface-light border border-border-subtle rounded-sm p-6 mb-6 animate-pulse">
           <Skeleton variant="text" width={140} height={20} className="mb-2" />
           <Skeleton variant="text" width="100%" height={14} className="mb-4" />
-          <Skeleton variant="rectangular" width="100%" height={42} className="rounded-lg mb-3" />
-          <Skeleton variant="rectangular" width="100%" height={40} className="rounded-lg" />
+          <Skeleton variant="rectangular" width="100%" height={42} className="rounded-sm mb-3" />
+          <Skeleton variant="rectangular" width="100%" height={40} className="rounded-sm" />
         </div>
-        <div className="bg-surface-light border border-border-subtle rounded-xl p-6 animate-pulse">
+        <div className="bg-surface-light border border-border-subtle rounded-sm p-6 animate-pulse">
           <Skeleton variant="text" width={130} height={20} className="mb-2" />
           <Skeleton variant="text" width="100%" height={14} className="mb-4" />
-          <Skeleton variant="rectangular" width="100%" height={42} className="rounded-lg mb-3" />
-          <Skeleton variant="rectangular" width="100%" height={48} className="rounded-lg" />
+          <Skeleton variant="rectangular" width="100%" height={42} className="rounded-sm mb-3" />
+          <Skeleton variant="rectangular" width="100%" height={48} className="rounded-sm" />
         </div>
       </div>
     </div>

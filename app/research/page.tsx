@@ -87,7 +87,7 @@ export default function ResearchIndexPage() {
                   href={`/research/${analysis.slug}`}
                   className="block group"
                 >
-                  <article className="relative bg-background-primary/40 border border-border/60 rounded-xl overflow-hidden hover:border-burnt-orange/25 transition-all duration-500">
+                  <article className="relative bg-background-primary/40 border border-border/60 rounded-sm overflow-hidden hover:border-burnt-orange/25 transition-all duration-500">
                     {/* Left accent bar */}
                     <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-burnt-orange/20 group-hover:bg-burnt-orange/60 transition-colors duration-500" />
 

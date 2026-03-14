@@ -118,7 +118,7 @@ export function EnrichedRankingsTable({
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-burnt-orange/15 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-sm bg-burnt-orange/15 flex items-center justify-center">
                 <svg viewBox="0 0 24 24" className="w-4 h-4 stroke-burnt-orange fill-none stroke-[2]">
                   <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.77 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z" />
                 </svg>
@@ -142,12 +142,12 @@ export function EnrichedRankingsTable({
               </table>
             </div>
           ) : error ? (
-            <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-6">
+            <div className="bg-red-500/10 border border-red-500/30 rounded-sm p-6">
               <p className="text-red-400 font-semibold">Rankings Unavailable</p>
               <p className="text-text-secondary text-sm mt-1">{error}</p>
               <button
                 onClick={onRetry}
-                className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg text-sm font-medium hover:bg-ember transition-colors"
+                className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-sm text-sm font-medium hover:bg-ember transition-colors"
               >
                 Retry
               </button>
@@ -223,7 +223,7 @@ export function EnrichedRankingsTable({
             <div className="flex items-center gap-3">
               <DataSourceBadge source="D1Baseball / NCAA" timestamp={formatTimestamp(lastUpdated)} />
               {!isLive && !loading && !error && (
-                <span className="text-xs text-yellow-400/60 bg-yellow-400/10 px-2 py-0.5 rounded">
+                <span className="text-xs text-yellow-400/60 bg-yellow-400/10 px-2 py-0.5 rounded-sm">
                   Using preseason data
                 </span>
               )}

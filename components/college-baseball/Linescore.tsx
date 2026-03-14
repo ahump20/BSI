@@ -54,7 +54,7 @@ export default function Linescore({
     isLive && currentInning != null && inningIndex + 1 === currentInning;
 
   return (
-    <div className="bg-midnight rounded-lg border border-border-subtle overflow-hidden">
+    <div className="bg-midnight rounded-sm border border-border-subtle overflow-hidden">
       {/* Live indicator */}
       {isLive && (
         <div className="flex items-center gap-2 px-4 py-2 bg-success/10 border-b border-border-subtle">

@@ -64,17 +64,17 @@ function SkeletonLeaderCard() {
   return (
     <Card variant="default" padding="md" className="animate-pulse">
       <div className="flex items-center justify-between mb-4">
-        <div className="h-4 w-24 bg-surface rounded" />
-        <div className="h-5 w-10 bg-surface rounded" />
+        <div className="h-4 w-24 bg-surface rounded-sm" />
+        <div className="h-5 w-10 bg-surface rounded-sm" />
       </div>
       <div className="space-y-3">
         {[1, 2, 3, 4, 5].map((i) => (
           <div key={i} className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="h-3 w-3 bg-surface rounded" />
-              <div className="h-3 w-28 bg-surface rounded" />
+              <div className="h-3 w-3 bg-surface rounded-sm" />
+              <div className="h-3 w-28 bg-surface rounded-sm" />
             </div>
-            <div className="h-3 w-10 bg-surface rounded" />
+            <div className="h-3 w-10 bg-surface rounded-sm" />
           </div>
         ))}
       </div>
@@ -106,7 +106,7 @@ export function LeagueLeaders() {
       <Container>
         <ScrollReveal>
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-lg bg-burnt-orange/15 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-sm bg-burnt-orange/15 flex items-center justify-center">
               <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
                 <path d="M18 20V10M12 20V4M6 20V14" />
               </svg>

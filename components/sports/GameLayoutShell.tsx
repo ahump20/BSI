@@ -246,7 +246,7 @@ export default function GameLayoutShell({ config, children }: GameLayoutShellPro
                 )}
                 <button
                   onClick={fetchGame}
-                  className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors"
+                  className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange/80 transition-colors"
                 >
                   {config.retryLabel || 'Retry'}
                 </button>

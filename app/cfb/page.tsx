@@ -303,7 +303,7 @@ export default function CFBPage() {
           <Container>
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
-                {hasLiveGames && <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />}
+                {hasLiveGames && <span className="w-2 h-2 bg-success rounded-full animate-pulse" />}
                 <h2 className="font-display text-xl md:text-2xl font-bold uppercase tracking-wide text-text-primary">
                   {hasLiveGames ? 'Live' : 'Recent'} <span className="text-burnt-orange">Scores</span>
                 </h2>
@@ -445,7 +445,7 @@ export default function CFBPage() {
                 <Link href="/cfb/transfer-portal" className="block group">
                   <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
                     <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="w-10 h-10 mb-4 bg-burnt-orange/15 rounded-xl flex items-center justify-center">
+                    <div className="w-10 h-10 mb-4 bg-burnt-orange/15 rounded-sm flex items-center justify-center">
                       <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
                         <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5" />
                       </svg>
@@ -462,7 +462,7 @@ export default function CFBPage() {
                 <Link href="/cfb/scores" className="block group">
                   <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
                     <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="w-10 h-10 mb-4 bg-burnt-orange/15 rounded-xl flex items-center justify-center">
+                    <div className="w-10 h-10 mb-4 bg-burnt-orange/15 rounded-sm flex items-center justify-center">
                       <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
                         <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
                       </svg>
@@ -479,7 +479,7 @@ export default function CFBPage() {
                 <Link href="/cfb/standings" className="block group">
                   <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
                     <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="w-10 h-10 mb-4 bg-burnt-orange/15 rounded-xl flex items-center justify-center">
+                    <div className="w-10 h-10 mb-4 bg-burnt-orange/15 rounded-sm flex items-center justify-center">
                       <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
                         <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
                         <line x1="3" y1="9" x2="21" y2="9" />
@@ -498,7 +498,7 @@ export default function CFBPage() {
                 <Link href="/cfb/teams" className="block group">
                   <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
                     <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="w-10 h-10 mb-4 bg-burnt-orange/15 rounded-xl flex items-center justify-center">
+                    <div className="w-10 h-10 mb-4 bg-burnt-orange/15 rounded-sm flex items-center justify-center">
                       <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
                         <line x1="18" y1="20" x2="18" y2="10" />
                         <line x1="12" y1="20" x2="12" y2="4" />
@@ -575,7 +575,7 @@ export default function CFBPage() {
                             </thead>
                             <tbody>
                               {rankings.map((team) => (
-                                <tr key={team.rank} className="border-b border-border-subtle hover:bg-surface-light transition-colors">
+                                <tr key={team.rank} className="border-b border-border-subtle hover:bg-[var(--surface-dugout)] transition-colors">
                                   <td className="p-3 text-burnt-orange font-bold text-lg">{team.rank}</td>
                                   <td className="p-3 font-semibold text-text-primary">{team.team}</td>
                                   <td className="p-3 text-text-secondary">{team.conference}</td>
@@ -591,7 +591,7 @@ export default function CFBPage() {
                             <Button variant="primary" size="sm" onClick={retryRankings}>Retry</Button>
                           </div>
                         )}
-                        <div className="mt-4 pt-4 border-t border-border">
+                        <div className="mt-4 pt-4 border-t border-[var(--border-vintage)]">
                           <DataSourceBadge source="SportsDataIO (Derived Rankings)" timestamp={formatTimestamp(lastUpdated)} />
                         </div>
                       </CardContent>
@@ -636,7 +636,7 @@ export default function CFBPage() {
                   {portalLoading ? (
                     <div className="space-y-3">
                       {Array.from({ length: 10 }).map((_, i) => (
-                        <div key={i} className="h-10 bg-surface-light rounded animate-pulse" />
+                        <div key={i} className="h-10 skeleton" />
                       ))}
                     </div>
                   ) : portalError ? (
@@ -665,7 +665,7 @@ export default function CFBPage() {
                         </thead>
                         <tbody>
                           {portalEntries.slice(0, 25).map((entry, i) => (
-                            <tr key={`${entry.name}-${i}`} className="border-b border-border-subtle hover:bg-surface-light transition-colors">
+                            <tr key={`${entry.name}-${i}`} className="border-b border-border-subtle hover:bg-[var(--surface-dugout)] transition-colors">
                               <td className="p-3 font-semibold text-text-primary">{entry.name}</td>
                               <td className="p-3 text-text-secondary">{entry.position}</td>
                               <td className="p-3 text-text-secondary">{entry.fromSchool}</td>

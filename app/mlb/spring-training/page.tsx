@@ -230,7 +230,7 @@ export default function SpringTrainingPage() {
                         {filteredSchedule.slice(0, 50).map((game) => (
                           <div
                             key={game.id}
-                            className="flex items-center justify-between p-3 bg-background-tertiary rounded-lg"
+                            className="flex items-center justify-between p-3 bg-background-tertiary rounded-sm"
                           >
                             <div className="flex-1 min-w-0">
                               <p className="text-text-primary text-sm font-medium truncate">{game.name}</p>
@@ -266,13 +266,13 @@ export default function SpringTrainingPage() {
         <Section padding="md" background="midnight" borderTop>
           <Container>
             <div className="flex flex-wrap gap-3 justify-center">
-              <Link href="/mlb/spring-training/scores" className="px-4 py-2 bg-background-tertiary rounded-lg text-text-primary text-sm hover:bg-burnt-orange/20 transition-colors">
+              <Link href="/mlb/spring-training/scores" className="px-4 py-2 bg-background-tertiary rounded-sm text-text-primary text-sm hover:bg-burnt-orange/20 transition-colors">
                 Scores
               </Link>
-              <Link href="/mlb/spring-training/standings" className="px-4 py-2 bg-background-tertiary rounded-lg text-text-primary text-sm hover:bg-burnt-orange/20 transition-colors">
+              <Link href="/mlb/spring-training/standings" className="px-4 py-2 bg-background-tertiary rounded-sm text-text-primary text-sm hover:bg-burnt-orange/20 transition-colors">
                 Standings
               </Link>
-              <Link href="/mlb" className="px-4 py-2 bg-background-tertiary rounded-lg text-text-tertiary text-sm hover:text-text-primary transition-colors">
+              <Link href="/mlb" className="px-4 py-2 bg-background-tertiary rounded-sm text-text-tertiary text-sm hover:text-text-primary transition-colors">
                 Back to MLB Hub
               </Link>
             </div>

@@ -28,9 +28,9 @@ function StrikeZone({
   size?: string;
 }) {
   return (
-    <div className="relative w-48 h-60 bg-charcoal rounded-lg border border-border">
+    <div className="relative w-48 h-60 bg-charcoal rounded-sm border border-border">
       {/* Zone outline */}
-      <div className="absolute inset-6 border border-border-strong rounded" />
+      <div className="absolute inset-6 border border-border-strong rounded-sm" />
       {/* Pitch dots */}
       {pitches.map((p) => {
         const x = p.coordinates ? (p.coordinates.x / 250) * 100 : 50;
@@ -83,7 +83,7 @@ function PitchList({
         <button
           key={p.id}
           onClick={() => onPitchSelect(p.id === selectedPitchId ? null : p.id)}
-          className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
+          className={`w-full flex items-center gap-3 px-3 py-2 rounded-sm text-left transition-colors ${
             p.id === selectedPitchId ? 'bg-burnt-orange/20 text-white' : 'hover:bg-surface-light text-text-secondary'
           }`}
         >
@@ -178,12 +178,12 @@ export function PitchTracker({
     return (
       <div className="p-4">
         <div className="flex gap-4">
-          <div className="skeleton w-48 h-60 rounded-lg" />
+          <div className="skeleton w-48 h-60 rounded-sm" />
           <div className="flex-1 space-y-2">
-            <div className="skeleton w-full h-10 rounded" />
-            <div className="skeleton w-full h-8 rounded" />
-            <div className="skeleton w-full h-8 rounded" />
-            <div className="skeleton w-full h-8 rounded" />
+            <div className="skeleton w-full h-10 rounded-sm" />
+            <div className="skeleton w-full h-8 rounded-sm" />
+            <div className="skeleton w-full h-8 rounded-sm" />
+            <div className="skeleton w-full h-8 rounded-sm" />
           </div>
         </div>
       </div>
@@ -194,7 +194,7 @@ export function PitchTracker({
   if (atBats.length === 0) {
     return (
       <div className="p-4">
-        <div className="text-center py-12 bg-charcoal rounded-lg">
+        <div className="text-center py-12 bg-charcoal rounded-sm">
           <svg
             className="w-12 h-12 mx-auto text-text-muted mb-3"
             fill="none"
@@ -204,7 +204,7 @@ export function PitchTracker({
             <circle cx="12" cy="12" r="10" strokeWidth="1.5" />
             <path strokeLinecap="round" strokeWidth="1.5" d="M12 6v6l4 2" />
           </svg>
-          <p className="text-text-muted">No pitch data available</p>
+          <p className="text-text-muted">Waiting for pitch data</p>
           <p className="text-text-muted text-sm mt-1">
             Pitch tracking data will appear here during live games
           </p>
@@ -226,7 +226,7 @@ export function PitchTracker({
             <button
               key={index}
               onClick={() => setSelectedAtBat(index)}
-              className={`flex-shrink-0 px-3 py-2 rounded-lg text-sm transition-all ${
+              className={`flex-shrink-0 px-3 py-2 rounded-sm text-sm transition-all ${
                 isSelected
                   ? 'bg-burnt-orange text-white'
                   : 'bg-charcoal text-text-secondary hover:bg-charcoal/80'
@@ -257,7 +257,7 @@ export function PitchTracker({
 
             {/* At-bat result */}
             <div
-              className={`mt-3 px-4 py-2 rounded-lg text-center ${
+              className={`mt-3 px-4 py-2 rounded-sm text-center ${
                 currentAtBat.isScoring
                   ? 'bg-green-500/20 text-green-400'
                   : 'bg-charcoal text-text-secondary'
@@ -329,7 +329,7 @@ function PitchTypeSummary({ atBats }: { atBats: AtBat[] }) {
   if (summary.length === 0) return null;
 
   return (
-    <div className="bg-charcoal rounded-lg p-4">
+    <div className="bg-charcoal rounded-sm p-4">
       <h3 className="text-sm font-semibold text-text-primary mb-3">Pitch Arsenal</h3>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         {summary.map(([type, data]) => {

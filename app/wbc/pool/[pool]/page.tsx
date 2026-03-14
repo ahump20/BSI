@@ -121,7 +121,7 @@ export default async function PoolPage({ params }: { params: Promise<{ pool: str
               Pool {data.id}
             </span>
             <span
-              className={`mt-2 text-xs font-bold px-2 py-1 rounded border ${
+              className={`mt-2 text-xs font-bold px-2 py-1 rounded-sm border ${
                 isDeath
                   ? 'text-ember bg-ember/10 border-ember/30'
                   : 'text-text-muted bg-surface-light border-border-subtle'
@@ -150,7 +150,7 @@ export default async function PoolPage({ params }: { params: Promise<{ pool: str
               {data.teams.map((team, i) => (
                 <div
                   key={team.name}
-                  className="flex items-center justify-between p-4 rounded-xl border border-border-subtle bg-surface-light/10"
+                  className="flex items-center justify-between p-4 rounded-sm border border-border-subtle bg-surface-light/10"
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-text-muted text-sm w-4 tabular-nums">{i + 1}</span>
@@ -168,11 +168,11 @@ export default async function PoolPage({ params }: { params: Promise<{ pool: str
 
           {/* Key race and routing */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
-            <div className="p-5 rounded-xl border border-border-subtle bg-surface-light/5">
+            <div className="p-5 rounded-sm border border-border-subtle bg-surface-light/5">
               <div className="text-burnt-orange font-semibold text-sm mb-2">Key Race</div>
               <p className="text-text-secondary text-sm">{data.keyRace}</p>
             </div>
-            <div className="p-5 rounded-xl border border-border-subtle bg-surface-light/5">
+            <div className="p-5 rounded-sm border border-border-subtle bg-surface-light/5">
               <div className="text-burnt-orange font-semibold text-sm mb-2">Quarterfinal Routing</div>
               <p className="text-text-secondary text-sm">{data.qfRoute}</p>
             </div>

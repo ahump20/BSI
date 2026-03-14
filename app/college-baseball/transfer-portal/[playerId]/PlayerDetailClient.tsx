@@ -70,7 +70,7 @@ function StatItem({
   highlight?: boolean;
 }) {
   return (
-    <div className="text-center p-4 rounded-lg bg-charcoal-800/50">
+    <div className="text-center p-4 rounded-sm bg-charcoal-800/50">
       <p className="text-xs text-text-muted uppercase tracking-wider mb-1">{label}</p>
       <p
         className={`text-xl font-display font-bold ${highlight ? 'text-burnt-orange' : 'text-text-primary'}`}
@@ -276,7 +276,7 @@ export function PlayerDetailClient() {
             <Container>
               <ScrollReveal delay={0.2}>
                 <h2 className="font-display text-2xl font-bold text-text-primary mb-6">
-                  2025 Season Stats
+                  2026 Season Stats
                 </h2>
                 <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
                   {isPitcher ? (
@@ -338,37 +338,37 @@ export function PlayerDetailClient() {
                 </h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {player.bio.height && (
-                    <div className="p-4 rounded-lg bg-charcoal-800/30">
+                    <div className="p-4 rounded-sm bg-charcoal-800/30">
                       <p className="text-xs text-text-muted uppercase mb-1">Height</p>
                       <p className="text-text-primary font-medium">{player.bio.height}</p>
                     </div>
                   )}
                   {player.bio.weight && (
-                    <div className="p-4 rounded-lg bg-charcoal-800/30">
+                    <div className="p-4 rounded-sm bg-charcoal-800/30">
                       <p className="text-xs text-text-muted uppercase mb-1">Weight</p>
                       <p className="text-text-primary font-medium">{player.bio.weight}</p>
                     </div>
                   )}
                   {player.bio.bats && (
-                    <div className="p-4 rounded-lg bg-charcoal-800/30">
+                    <div className="p-4 rounded-sm bg-charcoal-800/30">
                       <p className="text-xs text-text-muted uppercase mb-1">Bats</p>
                       <p className="text-text-primary font-medium">{player.bio.bats}</p>
                     </div>
                   )}
                   {player.bio.throws && (
-                    <div className="p-4 rounded-lg bg-charcoal-800/30">
+                    <div className="p-4 rounded-sm bg-charcoal-800/30">
                       <p className="text-xs text-text-muted uppercase mb-1">Throws</p>
                       <p className="text-text-primary font-medium">{player.bio.throws}</p>
                     </div>
                   )}
                   {player.bio.hometown && (
-                    <div className="p-4 rounded-lg bg-charcoal-800/30 col-span-2">
+                    <div className="p-4 rounded-sm bg-charcoal-800/30 col-span-2">
                       <p className="text-xs text-text-muted uppercase mb-1">Hometown</p>
                       <p className="text-text-primary font-medium">{player.bio.hometown}</p>
                     </div>
                   )}
                   {player.bio.high_school && (
-                    <div className="p-4 rounded-lg bg-charcoal-800/30 col-span-2">
+                    <div className="p-4 rounded-sm bg-charcoal-800/30 col-span-2">
                       <p className="text-xs text-text-muted uppercase mb-1">High School</p>
                       <p className="text-text-primary font-medium">{player.bio.high_school}</p>
                     </div>

@@ -231,7 +231,7 @@ export default function HAVFMethodologyPage() {
             </div>
 
             {/* Composite formula */}
-            <div className="bg-surface-light border border-border-subtle rounded-xl p-5 sm:p-6">
+            <div className="bg-surface-light border border-border-subtle rounded-sm p-5 sm:p-6">
               <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted block mb-3">
                 Composite Formula
               </span>
@@ -254,7 +254,7 @@ and   HAV-F ∈ [0, 100]`}
 
             <div className="space-y-10">
               {COMPONENTS.map((comp) => (
-                <div key={comp.key} className="bg-surface-light border border-border-subtle rounded-xl p-5 sm:p-6">
+                <div key={comp.key} className="bg-surface-light border border-border-subtle rounded-sm p-5 sm:p-6">
                   {/* Component header */}
                   <div className="flex items-baseline gap-3 mb-3">
                     <span
@@ -285,7 +285,7 @@ and   HAV-F ∈ [0, 100]`}
                     {comp.subStats.map((sub) => (
                       <div key={sub.stat} className="flex items-start gap-3">
                         <div className="flex items-center gap-2 shrink-0 w-28">
-                          <code className="text-xs font-mono text-text-secondary bg-surface-light px-1.5 py-0.5 rounded">
+                          <code className="text-xs font-mono text-text-secondary bg-surface-light px-1.5 py-0.5 rounded-sm">
                             {sub.stat}
                           </code>
                           <span className="text-[10px] font-mono text-text-muted">
@@ -328,7 +328,7 @@ and   HAV-F ∈ [0, 100]`}
               <p>
                 The composite tells you where a player sits overall. The component breakdown
                 tells you <em className="text-text-secondary">why</em>. A 70 composite could be a
-                well-rounded player (65/70/72/68) or a specialist (90/80/60/30). The shape
+                well-rounded-sm player (65/70/72/68) or a specialist (90/80/60/30). The shape
                 of the radar chart matters as much as the number.
               </p>
               <p>
@@ -342,7 +342,7 @@ and   HAV-F ∈ [0, 100]`}
               {INTERPRETATION_TIERS.map((tier) => (
                 <div
                   key={tier.range}
-                  className="flex items-start gap-4 bg-surface-light border border-border-subtle rounded-xl p-4"
+                  className="flex items-start gap-4 bg-surface-light border border-border-subtle rounded-sm p-4"
                 >
                   <div className="shrink-0 w-20 text-center">
                     <span
@@ -369,7 +369,7 @@ and   HAV-F ∈ [0, 100]`}
               Data Sources & Limitations
             </h2>
             <div className="space-y-6">
-              <div className="bg-surface-light border border-border-subtle rounded-xl p-5 sm:p-6">
+              <div className="bg-surface-light border border-border-subtle rounded-sm p-5 sm:p-6">
                 <h3 className="text-sm font-display uppercase tracking-wide text-text-primary mb-3">
                   What Feeds HAV-F
                 </h3>
@@ -390,7 +390,7 @@ and   HAV-F ∈ [0, 100]`}
                 </div>
               </div>
 
-              <div className="bg-surface-light border border-border-subtle rounded-xl p-5 sm:p-6">
+              <div className="bg-surface-light border border-border-subtle rounded-sm p-5 sm:p-6">
                 <h3 className="text-sm font-display uppercase tracking-wide text-text-primary mb-3">
                   Known Limitations
                 </h3>
@@ -441,11 +441,11 @@ and   HAV-F ∈ [0, 100]`}
             <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-text-primary mb-6">
               Technical Implementation
             </h2>
-            <div className="bg-surface-light border border-border-subtle rounded-xl p-5 sm:p-6 space-y-4">
+            <div className="bg-surface-light border border-border-subtle rounded-sm p-5 sm:p-6 space-y-4">
               <div className="text-sm text-text-tertiary leading-relaxed space-y-3">
                 <p>
                   The computation engine lives in{' '}
-                  <code className="text-text-secondary bg-surface-light px-1.5 py-0.5 rounded text-xs font-mono">
+                  <code className="text-text-secondary bg-surface-light px-1.5 py-0.5 rounded-sm text-xs font-mono">
                     lib/analytics/havf.ts
                   </code>
                   {' '}— pure math with no external dependencies. It takes an array of player stat
@@ -458,7 +458,7 @@ and   HAV-F ∈ [0, 100]`}
                 </p>
                 <p>
                   Computed scores are persisted to Cloudflare D1 (the{' '}
-                  <code className="text-text-secondary bg-surface-light px-1.5 py-0.5 rounded text-xs font-mono">
+                  <code className="text-text-secondary bg-surface-light px-1.5 py-0.5 rounded-sm text-xs font-mono">
                     havf_scores
                   </code>{' '}
                   table) with raw input stats preserved for audit trail. The leaderboard API
@@ -467,7 +467,7 @@ and   HAV-F ∈ [0, 100]`}
               </div>
 
               {/* Storage schema summary */}
-              <div className="bg-surface-light rounded-lg p-4">
+              <div className="bg-surface-light rounded-sm p-4">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted block mb-2">
                   D1 Schema Highlights
                 </span>

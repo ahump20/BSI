@@ -115,7 +115,7 @@ export function MonteCarloClient() {
                 ].map((input) => (
                   <div
                     key={input.label}
-                    className="flex gap-4 items-start bg-surface-light border border-border-subtle rounded-lg p-4"
+                    className="flex gap-4 items-start bg-surface-light border border-border-subtle rounded-sm p-4"
                   >
                     <span className="text-[10px] font-bold uppercase tracking-wider text-burnt-orange mt-0.5 shrink-0 w-32">
                       {input.label}
@@ -157,7 +157,7 @@ export function MonteCarloClient() {
               <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
                 Validation
               </h2>
-              <div className="bg-surface-light border border-border-subtle rounded-xl p-5">
+              <div className="bg-surface-light border border-border-subtle rounded-sm p-5">
                 <p className="text-sm text-text-tertiary leading-relaxed mb-3">
                   <strong className="text-text-secondary">Backtest approach:</strong> run the simulation at
                   multiple points during past seasons and compare projected standings to actual final
@@ -166,13 +166,13 @@ export function MonteCarloClient() {
 
                 {loading && (
                   <div className="mt-4 space-y-2 animate-pulse">
-                    <div className="h-4 bg-surface-light rounded w-3/4" />
-                    <div className="h-32 bg-surface-light rounded-lg" />
+                    <div className="h-4 bg-surface-light rounded-sm w-3/4" />
+                    <div className="h-32 bg-surface-light rounded-sm" />
                   </div>
                 )}
 
                 {mcData?.example && (
-                  <div className="mt-4 bg-surface-light rounded-lg p-4">
+                  <div className="mt-4 bg-surface-light rounded-sm p-4">
                     <p className="text-xs font-bold uppercase tracking-wider text-burnt-orange mb-1">
                       Sample: {mcData.example.conference} Conference
                     </p>
@@ -240,7 +240,7 @@ export function MonteCarloClient() {
                 ].map((mode, i) => (
                   <div
                     key={i}
-                    className="flex gap-3 items-start bg-error/5 border border-error/10 rounded-lg p-4"
+                    className="flex gap-3 items-start bg-error/5 border border-error/10 rounded-sm p-4"
                   >
                     <span className="text-error/60 text-xs font-bold mt-0.5 shrink-0">!</span>
                     <p className="text-sm text-text-tertiary leading-relaxed">{mode}</p>
@@ -254,7 +254,7 @@ export function MonteCarloClient() {
               <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
                 Version History
               </h2>
-              <div className="bg-surface-light border border-border-subtle rounded-lg p-4">
+              <div className="bg-surface-light border border-border-subtle rounded-sm p-4">
                 <div className="flex items-center gap-3">
                   <span className="font-mono text-xs text-burnt-orange">v0.1</span>
                   <span className="text-text-muted">|</span>

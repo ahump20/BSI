@@ -43,7 +43,7 @@ export type { TeamDossierData };
 function TierBadge({ tier }: { tier: string }) {
   const style = tierStyles[tier as Tier] || tierStyles.Bubble;
   return (
-    <span className={`inline-block px-2.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider border ${style}`}>
+    <span className={`inline-block px-2.5 py-0.5 rounded-sm text-[10px] font-semibold uppercase tracking-wider border ${style}`}>
       {tier}
     </span>
   );
@@ -85,7 +85,7 @@ export function TeamDossier({ dossier }: { dossier: TeamDossierData }) {
           ].map((item) => (
             <div
               key={item.label}
-              className="bg-surface-light border border-border-subtle rounded-lg p-4"
+              className="bg-surface-light border border-border-subtle rounded-sm p-4"
             >
               <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted">
                 {item.label}
@@ -102,7 +102,7 @@ export function TeamDossier({ dossier }: { dossier: TeamDossierData }) {
           Game Plan
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-green-500/5 border border-green-500/10 rounded-xl p-5">
+          <div className="bg-green-500/5 border border-green-500/10 rounded-sm p-5">
             <h3 className="text-xs font-bold uppercase tracking-wider text-green-400/70 mb-3">
               How They Win
             </h3>
@@ -115,7 +115,7 @@ export function TeamDossier({ dossier }: { dossier: TeamDossierData }) {
               ))}
             </ul>
           </div>
-          <div className="bg-red-500/5 border border-red-500/10 rounded-xl p-5">
+          <div className="bg-red-500/5 border border-red-500/10 rounded-sm p-5">
             <h3 className="text-xs font-bold uppercase tracking-wider text-red-400/70 mb-3">
               How They Lose
             </h3>
@@ -141,7 +141,7 @@ export function TeamDossier({ dossier }: { dossier: TeamDossierData }) {
             {dossier.keyPlayers.map((player) => (
               <div
                 key={player.name}
-                className="bg-surface-light border border-border-subtle rounded-lg p-4 flex items-start justify-between gap-4"
+                className="bg-surface-light border border-border-subtle rounded-sm p-4 flex items-start justify-between gap-4"
               >
                 <div>
                   <span className="font-display text-sm font-bold text-text-primary uppercase">
@@ -163,7 +163,7 @@ export function TeamDossier({ dossier }: { dossier: TeamDossierData }) {
         <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
           Schedule Snapshot
         </h2>
-        <div className="bg-surface-light border border-border-subtle rounded-xl p-5">
+        <div className="bg-surface-light border border-border-subtle rounded-sm p-5">
           <p className="text-sm text-text-muted leading-relaxed">{dossier.scheduleDifficulty}</p>
         </div>
       </section>
@@ -173,7 +173,7 @@ export function TeamDossier({ dossier }: { dossier: TeamDossierData }) {
         <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
           BSI Outlook
         </h2>
-        <div className="bg-burnt-orange/5 border border-burnt-orange/15 rounded-xl p-5">
+        <div className="bg-burnt-orange/5 border border-burnt-orange/15 rounded-sm p-5">
           <p className="text-sm text-text-muted leading-relaxed">{dossier.outlook}</p>
         </div>
       </section>

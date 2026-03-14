@@ -43,7 +43,7 @@ function TierBadge({ tier }: { tier: Tier }) {
   const style = tierStyles[tier] || tierStyles.Bubble;
   return (
     <span
-      className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider border ${style}`}
+      className={`inline-block px-2 py-0.5 rounded-sm text-[10px] font-semibold uppercase tracking-wider border ${style}`}
     >
       {tier}
     </span>
@@ -70,7 +70,7 @@ function TeamPreviewCard({
   return (
     <Link href={`/college-baseball/editorial/${team.slug}-2026`} className="block group">
       <div
-        className="bg-surface-light border border-border-subtle rounded-lg p-4 hover:bg-surface-medium transition-all h-full"
+        className="bg-surface-light border border-border-subtle rounded-sm p-4 hover:bg-surface-medium transition-all h-full"
         onMouseEnter={(e) => { e.currentTarget.style.borderColor = hoverColor; }}
         onMouseLeave={(e) => { e.currentTarget.style.borderColor = ''; }}
       >

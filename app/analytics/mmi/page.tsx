@@ -157,7 +157,7 @@ export default function MMITrendingPage() {
                   {methodologyWeights.map((w) => (
                     <div
                       key={w.abbr}
-                      className="bg-surface-light border border-border rounded-lg p-4"
+                      className="bg-surface-light border border-border rounded-sm p-4"
                     >
                       <div className="flex items-baseline gap-2 mb-1">
                         <span className="font-mono text-burnt-orange font-bold text-lg">
@@ -206,12 +206,12 @@ export default function MMITrendingPage() {
                 {Array.from({ length: 4 }).map((_, i) => (
                   <Card key={i} variant="default" padding="lg">
                     <div className="animate-pulse space-y-4">
-                      <div className="h-5 bg-surface-medium rounded w-2/3" />
-                      <div className="h-14 bg-surface-light rounded-xl" />
+                      <div className="h-5 bg-surface-medium rounded-sm w-2/3" />
+                      <div className="h-14 bg-surface-light rounded-sm" />
                       <div className="flex gap-4">
-                        <div className="h-4 bg-surface-light rounded w-24" />
-                        <div className="h-4 bg-surface-light rounded w-28" />
-                        <div className="h-4 bg-surface-light rounded w-20" />
+                        <div className="h-4 bg-surface-light rounded-sm w-24" />
+                        <div className="h-4 bg-surface-light rounded-sm w-28" />
+                        <div className="h-4 bg-surface-light rounded-sm w-20" />
                       </div>
                     </div>
                   </Card>
@@ -225,7 +225,7 @@ export default function MMITrendingPage() {
                 <p className="text-error mb-4">{error}</p>
                 <button
                   onClick={retry}
-                  className="px-6 py-2.5 rounded-lg font-semibold text-sm bg-burnt-orange text-white hover:bg-burnt-orange/80 transition-colors"
+                  className="px-6 py-2.5 rounded-sm font-semibold text-sm bg-burnt-orange text-white hover:bg-burnt-orange/80 transition-colors"
                 >
                   Retry
                 </button>
@@ -236,10 +236,10 @@ export default function MMITrendingPage() {
             {!loading && !error && sortedGames.length === 0 && (
               <Card variant="default" padding="lg" className="text-center">
                 <p className="text-text-tertiary text-lg mb-2">
-                  No momentum data available yet.
+                  Momentum metrics activate on game days
                 </p>
                 <p className="text-text-tertiary text-sm">
-                  Check back during game days.
+                  Live momentum data appears here during active games.
                 </p>
               </Card>
             )}

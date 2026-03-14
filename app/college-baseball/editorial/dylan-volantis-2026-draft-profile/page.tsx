@@ -265,19 +265,19 @@ export default function VolantisDraftProfilePage() {
                 2025 Freshman Season
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div className="p-3 rounded-lg bg-surface-light border border-border-subtle">
+                <div className="p-3 rounded-sm bg-surface-light border border-border-subtle">
                   <span className="text-[10px] text-text-muted block uppercase tracking-widest">ERA</span>
                   <span className="font-mono text-2xl font-bold text-burnt-orange">{FRESHMAN_STATS.era}</span>
                 </div>
-                <div className="p-3 rounded-lg bg-surface-light border border-border-subtle">
+                <div className="p-3 rounded-sm bg-surface-light border border-border-subtle">
                   <span className="text-[10px] text-text-muted block uppercase tracking-widest">IP</span>
                   <span className="font-mono text-2xl font-bold text-text-primary">{FRESHMAN_STATS.ip}</span>
                 </div>
-                <div className="p-3 rounded-lg bg-surface-light border border-border-subtle">
+                <div className="p-3 rounded-sm bg-surface-light border border-border-subtle">
                   <span className="text-[10px] text-text-muted block uppercase tracking-widest">Strikeouts</span>
                   <span className="font-mono text-2xl font-bold text-text-primary">{FRESHMAN_STATS.so}</span>
                 </div>
-                <div className="p-3 rounded-lg bg-surface-light border border-border-subtle">
+                <div className="p-3 rounded-sm bg-surface-light border border-border-subtle">
                   <span className="text-[10px] text-text-muted block uppercase tracking-widest">Saves</span>
                   <span className="font-mono text-2xl font-bold text-burnt-orange">{FRESHMAN_STATS.sv}</span>
                 </div>
@@ -332,25 +332,25 @@ export default function VolantisDraftProfilePage() {
             <ScrollReveal direction="up">
               <h3 className="font-display text-sm font-semibold uppercase tracking-widest text-text-muted mb-4">More 2026 Draft Profiles</h3>
               <div className="grid md:grid-cols-2 gap-4 mb-6">
-                <Link href="/college-baseball/editorial/roch-cholowsky-2026-draft-profile" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                <Link href="/college-baseball/editorial/roch-cholowsky-2026-draft-profile" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
                   <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
                   <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     Roch Cholowsky &mdash; No. 1 Overall Pick
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/jackson-flora-2026-draft-profile" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                <Link href="/college-baseball/editorial/jackson-flora-2026-draft-profile" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
                   <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
                   <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     Jackson Flora &mdash; 100 MPH, New Arsenal
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/liam-peterson-2026-draft-profile" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                <Link href="/college-baseball/editorial/liam-peterson-2026-draft-profile" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
                   <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
                   <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     Liam Peterson &mdash; The Walk Problem
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/tyce-armstrong-2026-draft-profile" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                <Link href="/college-baseball/editorial/tyce-armstrong-2026-draft-profile" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
                   <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
                   <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     Tyce Armstrong &mdash; 3 Grand Slams, 50 Years
@@ -358,13 +358,13 @@ export default function VolantisDraftProfilePage() {
                 </Link>
               </div>
               <div className="grid md:grid-cols-2 gap-4 mb-8">
-                <Link href="/college-baseball/editorial/texas-week-2-recap" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                <Link href="/college-baseball/editorial/texas-week-2-recap" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
                   <span className="text-[10px] text-text-muted uppercase tracking-widest">Related</span>
                   <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     Texas Week 2: Robbins Cycle, Volantis Shutout
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/texas-2026" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                <Link href="/college-baseball/editorial/texas-2026" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
                   <span className="text-[10px] text-text-muted uppercase tracking-widest">Team Preview</span>
                   <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     Texas 2026 Season Preview

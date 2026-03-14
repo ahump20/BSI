@@ -114,7 +114,7 @@ export default function AboutPage() {
                     width={256}
                     height={341}
                     className="border"
-                    style={{ borderColor: 'var(--border-vintage)' }}
+                    style={{ borderColor: 'var(--border-vintage)', borderRadius: '2px' }}
                     priority
                   />
                   <div

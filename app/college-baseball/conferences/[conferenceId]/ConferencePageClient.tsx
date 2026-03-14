@@ -1970,7 +1970,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                         >
                           <div className="flex items-center gap-4">
                             <div
-                              className="w-14 h-14 rounded-lg flex items-center justify-center overflow-hidden shrink-0"
+                              className="w-14 h-14 rounded-sm flex items-center justify-center overflow-hidden shrink-0"
                               style={{ backgroundColor: withAlpha(team.colors.primary, 0.12) }}
                             >
                               <img
@@ -1986,7 +1986,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                                   {team.fullName}
                                 </h3>
                                 {rank && (
-                                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold text-white bg-burnt-orange shrink-0">
+                                  <span className="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-semibold text-white bg-burnt-orange shrink-0">
                                     #{rank}
                                   </span>
                                 )}
@@ -2234,7 +2234,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                         >
                           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                             <div className="flex items-center gap-4">
-                              <div className="w-12 h-12 rounded-lg bg-burnt-orange/20 flex items-center justify-center overflow-hidden">
+                              <div className="w-12 h-12 rounded-sm bg-burnt-orange/20 flex items-center justify-center overflow-hidden">
                                 {logoUrl ? (
                                   <img src={logoUrl} alt="" className="w-9 h-9 object-contain" loading="lazy" decoding="async" />
                                 ) : (

@@ -153,7 +153,7 @@ export default function ACCOpeningWeekendPage() {
                       <div className="flex-1">
                         <p className="text-text-tertiary text-sm mb-2">{team.capsule}</p>
                         <div className="flex flex-wrap items-center gap-3">
-                          <span className="text-xs bg-surface-light px-2 py-1 rounded text-text-muted">{team.keyPlayer}</span>
+                          <span className="text-xs bg-surface-light px-2 py-1 rounded-sm text-text-muted">{team.keyPlayer}</span>
                           <span className="text-xs text-text-muted">{team.opener}</span>
                         </div>
                       </div>

@@ -7,8 +7,8 @@ export default function EditorialLoading() {
       <Skeleton variant="text" width={400} height={40} className="mb-8" />
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="rounded-lg overflow-hidden">
-            <Skeleton variant="rectangular" width="100%" height={180} className="rounded-t-lg" />
+          <div key={i} className="rounded-sm overflow-hidden">
+            <Skeleton variant="rectangular" width="100%" height={180} className="rounded-t-sm" />
             <div className="p-4 space-y-3">
               <Skeleton variant="text" width="60%" height={16} />
               <Skeleton variant="text" width="90%" height={20} />

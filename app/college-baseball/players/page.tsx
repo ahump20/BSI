@@ -243,12 +243,12 @@ export default function CollegeBaseballPlayersPage() {
                       onChange={(e) => setFilters({ ...filters, search: e.target.value })}
                       onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                       placeholder="Search by player name, team, or hometown..."
-                      className="flex-1 px-4 py-2 bg-background-secondary border border-border-subtle rounded-lg text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors"
+                      className="flex-1 px-4 py-2 bg-background-secondary border border-border-subtle rounded-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors"
                       aria-label="Search players"
                     />
                     <button
                       onClick={handleSearch}
-                      className="px-6 py-2 bg-burnt-orange text-white font-semibold rounded-lg hover:bg-burnt-orange/90 transition-colors"
+                      className="px-6 py-2 bg-burnt-orange text-white font-semibold rounded-sm hover:bg-burnt-orange/90 transition-colors"
                       aria-label="Search"
                     >
                       Search
@@ -260,7 +260,7 @@ export default function CollegeBaseballPlayersPage() {
                     <select
                       value={filters.team}
                       onChange={(e) => setFilters({ ...filters, team: e.target.value })}
-                      className="px-3 py-2 bg-background-secondary border border-border-subtle rounded-lg text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
+                      className="px-3 py-2 bg-background-secondary border border-border-subtle rounded-sm text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
                       aria-label="Filter by team"
                     >
                       {conferences.map((conf) => (
@@ -273,7 +273,7 @@ export default function CollegeBaseballPlayersPage() {
                     <select
                       value={filters.position}
                       onChange={(e) => setFilters({ ...filters, position: e.target.value })}
-                      className="px-3 py-2 bg-background-secondary border border-border-subtle rounded-lg text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
+                      className="px-3 py-2 bg-background-secondary border border-border-subtle rounded-sm text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
                       aria-label="Filter by position"
                     >
                       {positions.map((pos) => (
@@ -286,7 +286,7 @@ export default function CollegeBaseballPlayersPage() {
                     <select
                       value={filters.classYear}
                       onChange={(e) => setFilters({ ...filters, classYear: e.target.value })}
-                      className="px-3 py-2 bg-background-secondary border border-border-subtle rounded-lg text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
+                      className="px-3 py-2 bg-background-secondary border border-border-subtle rounded-sm text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
                       aria-label="Filter by class year"
                     >
                       {classYears.map((year) => (
@@ -296,7 +296,7 @@ export default function CollegeBaseballPlayersPage() {
                       ))}
                     </select>
 
-                    <label className="flex items-center gap-2 px-3 py-2 bg-background-secondary border border-border-subtle rounded-lg cursor-pointer hover:border-burnt-orange/50 transition-colors">
+                    <label className="flex items-center gap-2 px-3 py-2 bg-background-secondary border border-border-subtle rounded-sm cursor-pointer hover:border-burnt-orange/50 transition-colors">
                       <input
                         type="checkbox"
                         checked={filters.draftOnly}
@@ -355,7 +355,7 @@ export default function CollegeBaseballPlayersPage() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="px-3 py-1.5 bg-background-secondary border border-border-subtle rounded text-text-primary text-sm focus:outline-none focus:border-burnt-orange transition-colors"
+                  className="px-3 py-1.5 bg-background-secondary border border-border-subtle rounded-sm text-text-primary text-sm focus:outline-none focus:border-burnt-orange transition-colors"
                   aria-label="Sort players"
                 >
                   {sortOptions.map((opt) => (

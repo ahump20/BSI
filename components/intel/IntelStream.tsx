@@ -102,7 +102,7 @@ export function IntelStream({
   const hasOutput = output.length > 0;
 
   return (
-    <div className="rounded-xl border border-border-subtle bg-surface-light overflow-hidden">
+    <div className="rounded-sm border border-border-subtle bg-surface-light overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border-subtle">
         <div className="flex items-center gap-2">
@@ -173,12 +173,12 @@ export function IntelStream({
               placeholder="Ask about this game…"
               aria-label="Ask a question about this game"
               disabled={isStreaming}
-              className="flex-1 bg-surface-light border border-border rounded-lg px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-burnt-orange/50 disabled:opacity-40 transition-colors"
+              className="flex-1 bg-surface-light border border-border rounded-sm px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-burnt-orange/50 disabled:opacity-40 transition-colors"
             />
             <button
               type="submit"
               disabled={isStreaming || !question.trim()}
-              className="px-4 py-2 rounded-lg bg-burnt-orange text-white text-xs font-display font-bold uppercase tracking-wider hover:bg-ember disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-2 rounded-sm bg-burnt-orange text-white text-xs font-display font-bold uppercase tracking-wider hover:bg-ember disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
               {isStreaming ? '…' : 'Ask'}
             </button>

@@ -122,16 +122,18 @@ function getOpponentConference(opponentId: string): string | undefined {
 // ─── Component ──────────────────────────────────────────────────────────────
 
 export default function TexasScoutingClient({ opponentId }: { opponentId: string }) {
+  const opponentMeta = teamMetadata[opponentId];
+  const opponentEspnId = opponentMeta?.espnId ?? opponentId;
+
   const opponentName = useMemo(() => {
-    const meta = teamMetadata[opponentId];
-    return meta ? meta.name : formatOpponentName(opponentId);
-  }, [opponentId]);
+    return opponentMeta ? opponentMeta.name : formatOpponentName(opponentId);
+  }, [opponentId, opponentMeta]);
 
   const opponentLogo = useMemo(() => getOpponentLogo(opponentId), [opponentId]);
   const conference = useMemo(() => getOpponentConference(opponentId), [opponentId]);
 
   const { data: scouting, loading: scoutLoading, error: scoutError } = useSportData<ScoutingResponse>(
-    `/api/college-baseball/texas-intelligence/scouting/${opponentId}`,
+    `/api/college-baseball/texas-intelligence/scouting/${opponentEspnId}`,
     { timeout: 15000 },
   );
 
@@ -176,7 +178,7 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
           <Container>
             <ScrollReveal direction="up">
               <div className="flex flex-col sm:flex-row items-start gap-5">
-                <div className="w-16 h-16 flex-shrink-0 rounded-xl bg-surface-light/50 flex items-center justify-center overflow-hidden">
+                <div className="w-16 h-16 flex-shrink-0 rounded-sm bg-surface-light/50 flex items-center justify-center overflow-hidden">
                   <img
                     src={opponentLogo}
                     alt={opponentName}
@@ -205,13 +207,43 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
           </Container>
         </Section>
 
+        {/* ── Quick Brief (3-point summary) ─────────────────────── */}
+        {!loading && brief && (
+          <Section padding="md" className="bg-[var(--surface-dugout)] border-y border-border">
+            <Container>
+              <ScrollReveal direction="up">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Card variant="default" padding="md" className="border-t-2 border-burnt-orange">
+                    <CardContent>
+                      <span className="heritage-stamp text-[10px] block mb-2">Recent Form</span>
+                      <p className="text-text-secondary text-xs leading-relaxed">{brief.overview.slice(0, 200)}{brief.overview.length > 200 ? '...' : ''}</p>
+                    </CardContent>
+                  </Card>
+                  <Card variant="default" padding="md" className="border-t-2 border-[var(--heritage-columbia-blue)]">
+                    <CardContent>
+                      <span className="heritage-stamp text-[10px] block mb-2">Key Matchup</span>
+                      <p className="text-text-secondary text-xs leading-relaxed">{brief.key_matchups.slice(0, 200)}{brief.key_matchups.length > 200 ? '...' : ''}</p>
+                    </CardContent>
+                  </Card>
+                  <Card variant="default" padding="md" className="border-t-2 border-[var(--bsi-dust)]">
+                    <CardContent>
+                      <span className="heritage-stamp text-[10px] block mb-2">Texas Edge</span>
+                      <p className="text-text-secondary text-xs leading-relaxed">{brief.game_plan.slice(0, 200)}{brief.game_plan.length > 200 ? '...' : ''}</p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </ScrollReveal>
+            </Container>
+          </Section>
+        )}
+
         {/* ── AI Brief ───────────────────────────────────────────── */}
         {loading ? (
           <Section padding="lg" borderTop>
             <Container>
               <div className="space-y-4">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="h-24 bg-surface-light rounded-lg animate-pulse" />
+                  <div key={i} className="h-24 bg-surface-light rounded-sm animate-pulse" />
                 ))}
               </div>
             </Container>

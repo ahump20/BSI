@@ -53,7 +53,7 @@ export default function ArcadeGamesPage() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
             <span
-              className="inline-block mb-4 px-3 py-1 rounded text-xs font-display uppercase tracking-widest bg-burnt-orange/20 text-burnt-orange"
+              className="inline-block mb-4 px-3 py-1 rounded-sm text-xs font-display uppercase tracking-widest bg-burnt-orange/20 text-burnt-orange"
             >
               BSI Arcade
             </span>
@@ -66,7 +66,7 @@ export default function ArcadeGamesPage() {
           </div>
           <Link
             href="/arcade"
-            className="btn-secondary px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wide"
+            className="btn-secondary px-6 py-3 rounded-sm text-sm font-semibold uppercase tracking-wide"
           >
             Back to Arcade
           </Link>
@@ -77,7 +77,7 @@ export default function ArcadeGamesPage() {
             <a
               key={game.id}
               href={game.url}
-              className="glass-elevated rounded-xl p-6 flex flex-col justify-between group hover:border-border-strong transition-all"
+              className="glass-elevated rounded-sm p-6 flex flex-col justify-between group hover:border-border-strong transition-all"
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
@@ -91,7 +91,7 @@ export default function ArcadeGamesPage() {
               </div>
               <div className="mt-6">
                 <span
-                  className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold uppercase tracking-wide w-full"
+                  className="inline-flex items-center justify-center rounded-sm px-4 py-2 text-sm font-semibold uppercase tracking-wide w-full"
                   style={{ background: game.color, color: '#0D0D12' }}
                 >
                   Play Now

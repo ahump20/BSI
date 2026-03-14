@@ -166,7 +166,7 @@ export function MobileMenu({ isOpen, onClose, items, actions }: MobileMenuProps)
                 <Link
                   href={item.href}
                   className={cn(
-                    'flex items-center justify-between px-4 py-3 rounded-lg',
+                    'flex items-center justify-between px-4 py-3 rounded-sm',
                     'text-lg font-medium transition-colors',
                     'hover:bg-graphite',
                     isActive(item.href)
@@ -179,7 +179,7 @@ export function MobileMenu({ isOpen, onClose, items, actions }: MobileMenuProps)
                 >
                   <span>{item.label}</span>
                   {item.badge && (
-                    <span className="px-2 py-0.5 text-xs font-semibold rounded bg-burnt-orange/20 text-burnt-orange">
+                    <span className="px-2 py-0.5 text-xs font-semibold rounded-sm bg-burnt-orange/20 text-burnt-orange">
                       {item.badge}
                     </span>
                   )}

@@ -56,7 +56,7 @@ export function GameBrief({ brief }: { brief: GameBriefData }) {
         <h1 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary mb-3">
           {brief.headline}
         </h1>
-        <div className="bg-surface-light border border-border-subtle rounded-xl p-5 mb-4">
+        <div className="bg-surface-light border border-border-subtle rounded-sm p-5 mb-4">
           <div className="flex items-center justify-between">
             <div className="text-center flex-1">
               <p className="font-display text-lg font-bold text-text-primary uppercase">{brief.awayTeam}</p>
@@ -87,7 +87,7 @@ export function GameBrief({ brief }: { brief: GameBriefData }) {
             {brief.leverageMoments.map((moment, i) => (
               <div
                 key={i}
-                className="flex gap-4 items-start bg-surface-light border border-border-subtle rounded-lg p-4"
+                className="flex gap-4 items-start bg-surface-light border border-border-subtle rounded-sm p-4"
               >
                 <div className="shrink-0 w-16">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-burnt-orange">
@@ -108,7 +108,7 @@ export function GameBrief({ brief }: { brief: GameBriefData }) {
           <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
             Win Probability
           </h2>
-          <div className="bg-surface-light border border-dashed border-border rounded-xl p-8 text-center">
+          <div className="bg-surface-light border border-dashed border-border rounded-sm p-8 text-center">
             <p className="text-sm text-text-muted">
               Win probability chart will render here when the WP model is live.
             </p>
@@ -132,7 +132,7 @@ export function GameBrief({ brief }: { brief: GameBriefData }) {
             {brief.decidingStats.map((stat, i) => (
               <div
                 key={i}
-                className="bg-surface-light border border-border-subtle rounded-lg p-4"
+                className="bg-surface-light border border-border-subtle rounded-sm p-4"
               >
                 <div className="flex items-start justify-between mb-2">
                   <div>

@@ -7,7 +7,7 @@ export default function DashboardLoading() {
         <SkeletonPageHeader />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
           {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} variant="rectangular" height={200} className="rounded-xl" />
+            <Skeleton key={i} variant="rectangular" height={200} className="rounded-sm" />
           ))}
         </div>
       </div>

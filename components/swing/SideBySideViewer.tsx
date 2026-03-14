@@ -102,14 +102,14 @@ export function SideBySideViewer({ videoUrl, frames, phases, width = 640, seekTo
   const panelHeight = Math.round(halfWidth * aspectRatio);
 
   return (
-    <div className="rounded-xl overflow-hidden bg-surface-scoreboard border border-border-subtle">
+    <div className="rounded-sm overflow-hidden bg-surface-scoreboard border border-border-subtle">
       {/* Phase indicator strip */}
       <div className="flex items-center gap-2 px-4 py-2 bg-surface-press-box border-b border-border-subtle overflow-x-auto">
         {phases.phases.map((p) => (
           <button
             key={p.phase}
             onClick={() => setCurrentFrame(p.frameIndex)}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-mono uppercase tracking-wider transition-all whitespace-nowrap ${
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[10px] font-mono uppercase tracking-wider transition-all whitespace-nowrap ${
               currentPhase === p.phase
                 ? 'text-white'
                 : 'text-text-muted hover:text-bsi-dust'
@@ -136,7 +136,7 @@ export function SideBySideViewer({ videoUrl, frames, phases, width = 640, seekTo
             playsInline
             className="absolute inset-0 w-full h-full object-contain"
           />
-          <span className="absolute top-2 left-2 text-[9px] font-mono uppercase tracking-wider text-white/50 bg-black/50 px-1.5 py-0.5 rounded">
+          <span className="absolute top-2 left-2 text-[9px] font-mono uppercase tracking-wider text-white/50 bg-black/50 px-1.5 py-0.5 rounded-sm">
             Original
           </span>
         </div>
@@ -154,7 +154,7 @@ export function SideBySideViewer({ videoUrl, frames, phases, width = 640, seekTo
               phase={currentPhase}
             />
           )}
-          <span className="absolute top-2 left-2 text-[9px] font-mono uppercase tracking-wider text-white/50 bg-black/50 px-1.5 py-0.5 rounded">
+          <span className="absolute top-2 left-2 text-[9px] font-mono uppercase tracking-wider text-white/50 bg-black/50 px-1.5 py-0.5 rounded-sm">
             Skeleton
           </span>
         </div>
@@ -166,7 +166,7 @@ export function SideBySideViewer({ videoUrl, frames, phases, width = 640, seekTo
           {/* Play/Pause */}
           <button
             onClick={togglePlay}
-            className="w-8 h-8 rounded-lg bg-burnt-orange/15 flex items-center justify-center text-burnt-orange hover:bg-burnt-orange/25 transition-colors"
+            className="w-8 h-8 rounded-sm bg-burnt-orange/15 flex items-center justify-center text-burnt-orange hover:bg-burnt-orange/25 transition-colors"
           >
             {isPlaying ? (
               <svg viewBox="0 0 16 16" className="w-4 h-4" fill="currentColor">

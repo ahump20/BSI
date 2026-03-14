@@ -240,10 +240,10 @@ export default function MLBPage() {
           <Section padding="md" background="charcoal" borderTop>
             <Container>
               <Link href="/mlb/spring-training" className="group block">
-                <div className="bg-gradient-to-r from-burnt-orange/15 via-ember/10 to-transparent rounded-xl p-6 border border-burnt-orange/30 hover:border-burnt-orange transition-colors">
+                <div className="bg-gradient-to-r from-burnt-orange/15 via-ember/10 to-transparent rounded-sm p-6 border border-burnt-orange/30 hover:border-burnt-orange transition-colors">
                   <div className="flex items-center justify-between flex-wrap gap-4">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-burnt-orange/20 rounded-lg flex items-center justify-center">
+                      <div className="w-12 h-12 bg-burnt-orange/20 rounded-sm flex items-center justify-center">
                         <svg viewBox="0 0 24 24" className="w-6 h-6 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5">
                           <circle cx="12" cy="12" r="10" />
                           <path d="M12 2c-2 4-2 8 0 12s2 8 0 12" />
@@ -294,7 +294,7 @@ export default function MLBPage() {
                     <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
                       <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
 
-                      <div className="w-12 h-12 mb-5 bg-burnt-orange/15 rounded-xl flex items-center justify-center">
+                      <div className="w-12 h-12 mb-5 bg-burnt-orange/15 rounded-sm flex items-center justify-center">
                         {feature.icon}
                       </div>
 
@@ -425,7 +425,7 @@ export default function MLBPage() {
                                 {standingsByDivision[division].map((team, idx) => (
                                   <tr
                                     key={team.teamName}
-                                    className="border-b border-border-subtle hover:bg-surface-light transition-colors"
+                                    className="border-b border-border-subtle hover:bg-[var(--surface-dugout)] transition-colors"
                                   >
                                     <td className="p-3 text-burnt-orange font-bold">{idx + 1}</td>
                                     <td className="p-3 font-semibold text-text-primary">
@@ -480,7 +480,7 @@ export default function MLBPage() {
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <Link href="/mlb/teams" className="group block">
-                      <div className="bg-background-tertiary rounded-lg p-6 border border-border-subtle hover:border-burnt-orange transition-colors">
+                      <div className="bg-[var(--surface-dugout)] rounded-sm p-6 border border-[var(--border-vintage)] hover:border-burnt-orange transition-colors">
                         <h3 className="text-text-primary font-semibold mb-2 group-hover:text-burnt-orange transition-colors">All 30 Teams</h3>
                         <p className="text-text-tertiary text-sm">Full team directory with profiles, rosters, and season stats.</p>
                         <span className="text-burnt-orange text-sm font-semibold mt-3 inline-flex items-center gap-1">
@@ -490,7 +490,7 @@ export default function MLBPage() {
                       </div>
                     </Link>
                     <Link href="/mlb/standings" className="group block">
-                      <div className="bg-background-tertiary rounded-lg p-6 border border-border-subtle hover:border-burnt-orange transition-colors">
+                      <div className="bg-[var(--surface-dugout)] rounded-sm p-6 border border-[var(--border-vintage)] hover:border-burnt-orange transition-colors">
                         <h3 className="text-text-primary font-semibold mb-2 group-hover:text-burnt-orange transition-colors">Division Standings</h3>
                         <p className="text-text-tertiary text-sm">AL &amp; NL standings with win percentage, games back, and streaks.</p>
                         <span className="text-burnt-orange text-sm font-semibold mt-3 inline-flex items-center gap-1">
@@ -521,7 +521,7 @@ export default function MLBPage() {
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <Link href="/mlb/players" className="group block">
-                      <div className="bg-background-tertiary rounded-lg p-6 border border-border-subtle hover:border-burnt-orange transition-colors">
+                      <div className="bg-[var(--surface-dugout)] rounded-sm p-6 border border-[var(--border-vintage)] hover:border-burnt-orange transition-colors">
                         <h3 className="text-text-primary font-semibold mb-2 group-hover:text-burnt-orange transition-colors">Browse Players</h3>
                         <p className="text-text-tertiary text-sm">Search and explore player profiles with batting, pitching, and fielding stats.</p>
                         <span className="text-burnt-orange text-sm font-semibold mt-3 inline-flex items-center gap-1">
@@ -531,7 +531,7 @@ export default function MLBPage() {
                       </div>
                     </Link>
                     <Link href="/mlb/stats" className="group block">
-                      <div className="bg-background-tertiary rounded-lg p-6 border border-border-subtle hover:border-burnt-orange transition-colors">
+                      <div className="bg-[var(--surface-dugout)] rounded-sm p-6 border border-[var(--border-vintage)] hover:border-burnt-orange transition-colors">
                         <h3 className="text-text-primary font-semibold mb-2 group-hover:text-burnt-orange transition-colors">Statcast Analytics</h3>
                         <p className="text-text-tertiary text-sm">Exit velocity, launch angle, sprint speed, and pitch movement data.</p>
                         <span className="text-burnt-orange text-sm font-semibold mt-3 inline-flex items-center gap-1">

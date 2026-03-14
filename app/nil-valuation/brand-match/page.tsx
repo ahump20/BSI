@@ -152,7 +152,7 @@ function OptionGrid<T extends string>({
             key={opt.value}
             type="button"
             onClick={() => onChange(opt.value)}
-            className={`p-2.5 rounded-lg border text-sm font-medium transition-all ${
+            className={`p-2.5 rounded-sm border text-sm font-medium transition-all ${
               value === opt.value
                 ? 'border-burnt-orange bg-burnt-orange/10 text-burnt-orange'
                 : 'border-border text-text-tertiary hover:border-text-muted'

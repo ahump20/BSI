@@ -259,7 +259,7 @@ export default function NBAPage() {
                               </thead>
                               <tbody>
                                 {conf.teams.sort((a, b) => b.wins - a.wins).map((team, idx) => (
-                                  <tr key={team.teamName} className="border-b border-border-subtle hover:bg-surface-light transition-colors">
+                                  <tr key={team.teamName} className="border-b border-border-subtle hover:bg-[var(--surface-dugout)] transition-colors">
                                     <td className="p-3 text-burnt-orange font-bold">{idx + 1}</td>
                                     <td className="p-3 font-semibold text-text-primary">{team.teamName}</td>
                                     <td className="p-3 text-text-secondary">{team.wins}</td>
@@ -345,7 +345,7 @@ export default function NBAPage() {
                             const isPlayIn = idx >= 6 && idx < 10;
                             return (
                               <Link key={team.teamName} href={`/nba/teams/${team.teamName.toLowerCase().replace(/\s+/g, '-')}`}>
-                                <div className="flex items-center justify-between py-3 px-2 hover:bg-surface-light rounded-lg transition-colors group">
+                                <div className="flex items-center justify-between py-3 px-2 hover:bg-[var(--surface-dugout)] rounded-sm transition-colors group">
                                   <div className="flex items-center gap-3">
                                     <span className={`text-sm font-bold w-6 text-center ${isPlayoffSeed ? 'text-burnt-orange' : isPlayIn ? 'text-text-secondary' : 'text-text-tertiary'}`}>
                                       {idx + 1}
@@ -405,7 +405,7 @@ export default function NBAPage() {
                           <Card variant="default" padding="lg">
                             <CardHeader>
                               <CardTitle className="flex items-center gap-3">
-                                <span className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-burnt-orange/15 text-burnt-orange font-mono font-bold text-sm">
+                                <span className="inline-flex items-center justify-center w-10 h-10 rounded-sm bg-burnt-orange/15 text-burnt-orange font-mono font-bold text-sm">
                                   {cat.abbreviation}
                                 </span>
                                 {cat.label}
@@ -477,7 +477,7 @@ export default function NBAPage() {
                     <Card variant="default" padding="lg" className="h-full">
                       <CardHeader>
                         <CardTitle className="flex items-center gap-3 text-lg">
-                          <span className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-burnt-orange/15 text-burnt-orange font-mono font-bold text-sm">
+                          <span className="inline-flex items-center justify-center w-10 h-10 rounded-sm bg-burnt-orange/15 text-burnt-orange font-mono font-bold text-sm">
                             {cat.abbreviation}
                           </span>
                           {cat.label}
@@ -571,7 +571,7 @@ export default function NBAPage() {
               <ScrollReveal>
                 <Card variant="default" padding="lg" className="h-full">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-lg bg-burnt-orange/15 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-sm bg-burnt-orange/15 flex items-center justify-center">
                       <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
                         <line x1="18" y1="20" x2="18" y2="10" />
                         <line x1="12" y1="20" x2="12" y2="4" />

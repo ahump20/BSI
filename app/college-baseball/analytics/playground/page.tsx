@@ -41,7 +41,7 @@ export default function SabermetricsPlaygroundPage() {
           </div>
           <span style={{
             background: 'rgba(191,87,0,0.12)', border: '1px solid rgba(191,87,0,0.25)',
-            color: '#BF5700', padding: '3px 10px', borderRadius: '4px',
+            color: '#BF5700', padding: '3px 10px', borderRadius: '2px',
             fontSize: '0.65rem', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.08em',
           }}>
             INTERNAL TOOL
@@ -70,7 +70,7 @@ export default function SabermetricsPlaygroundPage() {
                 key={t.id}
                 onClick={() => setActiveTab(t.id)}
                 style={{
-                  padding: '8px 20px', borderRadius: '4px', cursor: 'pointer',
+                  padding: '8px 20px', borderRadius: '2px', cursor: 'pointer',
                   fontFamily: 'Oswald, sans-serif', fontSize: '0.875rem',
                   textTransform: 'uppercase', letterSpacing: '0.06em',
                   background: activeTab === t.id ? 'rgba(191,87,0,0.2)' : 'rgba(26,26,26,0.6)',

@@ -11,6 +11,7 @@ const seoConfig = {
   slug: '/college-baseball/texas-history',
   sport: 'College Baseball',
   ogTitle: 'Texas Longhorns Baseball: The Complete History | BSI',
+  image: '/images/og/texas-history.png',
 };
 export const metadata = editorialMetadata(seoConfig);
 

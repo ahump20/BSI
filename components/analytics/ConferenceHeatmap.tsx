@@ -191,7 +191,7 @@ export function ConferenceHeatmap({
   const totalHeight = 40 + sorted.length * 32 + 12;
 
   return (
-    <div className={`bg-background-primary border border-border-subtle rounded-xl overflow-hidden ${className}`}>
+    <div className={`bg-background-primary border border-border-subtle rounded-sm overflow-hidden ${className}`}>
       {/* Header */}
       <div className="px-5 py-4 border-b border-border-subtle">
         <h3 className="font-display text-base uppercase tracking-wider text-text-primary">
@@ -215,7 +215,7 @@ export function ConferenceHeatmap({
         {/* Tooltip */}
         {tooltip && (
           <div
-            className="absolute z-50 pointer-events-none bg-background-secondary border border-border shadow-xl rounded-lg px-3 py-2"
+            className="absolute z-50 pointer-events-none bg-background-secondary border border-border shadow-xl rounded-sm px-3 py-2"
             style={{
               left: tooltip.x + 12,
               top: tooltip.y - 10,

@@ -17,35 +17,35 @@ export default function IntelLoading() {
         <div className="flex flex-wrap items-center gap-4 mb-6">
           <div className="flex gap-2">
             {[1, 2, 3, 4].map((i) => (
-              <Skeleton key={i} variant="rectangular" width={64} height={36} className="rounded-lg" />
+              <Skeleton key={i} variant="rectangular" width={64} height={36} className="rounded-sm" />
             ))}
           </div>
-          <Skeleton variant="rectangular" width={240} height={36} className="rounded-lg flex-1 min-w-[200px]" />
+          <Skeleton variant="rectangular" width={240} height={36} className="rounded-sm flex-1 min-w-[200px]" />
         </div>
 
         {/* Content grid skeleton */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
           <div className="space-y-4">
             {/* Hero card */}
-            <Skeleton variant="rectangular" width="100%" height={200} className="rounded-xl" />
+            <Skeleton variant="rectangular" width="100%" height={200} className="rounded-sm" />
             {/* Marquee row */}
             <div className="flex gap-3">
               {[1, 2, 3].map((i) => (
-                <Skeleton key={i} variant="rectangular" width={260} height={120} className="rounded-xl shrink-0" />
+                <Skeleton key={i} variant="rectangular" width={260} height={120} className="rounded-sm shrink-0" />
               ))}
             </div>
             {/* Standard cards */}
             <div className="grid grid-cols-2 gap-3">
               {[1, 2, 3, 4].map((i) => (
-                <Skeleton key={i} variant="rectangular" width="100%" height={100} className="rounded-xl" />
+                <Skeleton key={i} variant="rectangular" width="100%" height={100} className="rounded-sm" />
               ))}
             </div>
           </div>
           {/* Sidebar */}
           <div className="space-y-4">
-            <Skeleton variant="rectangular" width="100%" height={200} className="rounded-xl" />
-            <Skeleton variant="rectangular" width="100%" height={160} className="rounded-xl" />
-            <Skeleton variant="rectangular" width="100%" height={240} className="rounded-xl" />
+            <Skeleton variant="rectangular" width="100%" height={200} className="rounded-sm" />
+            <Skeleton variant="rectangular" width="100%" height={160} className="rounded-sm" />
+            <Skeleton variant="rectangular" width="100%" height={240} className="rounded-sm" />
           </div>
         </div>
       </div>

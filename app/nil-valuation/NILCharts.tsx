@@ -52,7 +52,7 @@ const AXIS_STYLE = {
 const TOOLTIP_STYLE = {
   background: '#1A1A1A',
   border: '1px solid rgba(191, 87, 0, 0.3)',
-  borderRadius: 8,
+  borderRadius: 2,
   fontSize: 12,
   fontFamily: 'JetBrains Mono, monospace',
 };

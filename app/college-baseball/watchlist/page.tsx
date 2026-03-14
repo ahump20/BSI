@@ -69,10 +69,10 @@ export default function WatchlistPage() {
                   Browse player profiles and tap the star icon to add players here. Your watchlist persists across sessions on this device.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                  <Link href="/college-baseball/players" className="inline-flex items-center justify-center px-4 py-2 bg-burnt-orange text-white rounded-lg text-sm font-semibold hover:bg-ember transition-colors">
+                  <Link href="/college-baseball/players" className="inline-flex items-center justify-center px-4 py-2 bg-burnt-orange text-white rounded-sm text-sm font-semibold hover:bg-ember transition-colors">
                     Browse Players
                   </Link>
-                  <Link href="/college-baseball/transfer-portal" className="inline-flex items-center justify-center px-4 py-2 border border-border text-text-tertiary rounded-lg text-sm font-semibold hover:border-burnt-orange/40 transition-colors">
+                  <Link href="/college-baseball/transfer-portal" className="inline-flex items-center justify-center px-4 py-2 border border-border text-text-tertiary rounded-sm text-sm font-semibold hover:border-burnt-orange/40 transition-colors">
                     Transfer Portal
                   </Link>
                 </div>

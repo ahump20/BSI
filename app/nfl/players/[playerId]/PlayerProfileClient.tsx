@@ -64,7 +64,7 @@ interface PlayerResponse {
 
 function StatCard({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="text-center p-4 bg-background-tertiary rounded-lg">
+    <div className="text-center p-4 bg-background-tertiary rounded-sm">
       <p className="text-2xl md:text-3xl font-bold text-text-primary">{value}</p>
       <p className="text-xs text-text-tertiary uppercase tracking-wider mt-1">{label}</p>
     </div>
@@ -77,11 +77,11 @@ function SkeletonProfile() {
       <div className="flex flex-col md:flex-row gap-8 items-start">
         <div className="w-48 h-48 bg-background-tertiary rounded-full flex-shrink-0" />
         <div className="flex-1 space-y-4">
-          <div className="h-8 bg-background-tertiary rounded w-2/3" />
-          <div className="h-6 bg-background-tertiary/50 rounded w-1/3" />
+          <div className="h-8 bg-background-tertiary rounded-sm w-2/3" />
+          <div className="h-6 bg-background-tertiary/50 rounded-sm w-1/3" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-20 bg-background-tertiary rounded-lg" />
+              <div key={i} className="h-20 bg-background-tertiary rounded-sm" />
             ))}
           </div>
         </div>
@@ -174,7 +174,7 @@ export default function PlayerProfileClient({ playerId }: PlayerProfileClientPro
                 <p className="text-text-secondary text-sm mt-1">{error}</p>
                 <button
                   onClick={fetchPlayer}
-                  className="mt-3 px-4 py-2 bg-burnt-orange text-white rounded-lg text-sm hover:bg-burnt-orange/80 transition-colors"
+                  className="mt-3 px-4 py-2 bg-burnt-orange text-white rounded-sm text-sm hover:bg-burnt-orange/80 transition-colors"
                 >
                   Try Again
                 </button>
@@ -366,21 +366,21 @@ export default function PlayerProfileClient({ playerId }: PlayerProfileClientPro
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/nfl/players"
-                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
               >
                 ← All Players
               </Link>
               {player?.team?.abbreviation && (
                 <Link
                   href={`/nfl/teams/${player.team.abbreviation.toLowerCase()}`}
-                  className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
+                  className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
                 >
                   {player.team.name} Roster →
                 </Link>
               )}
               <Link
                 href="/nfl/games"
-                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
               >
                 Live Scores →
               </Link>

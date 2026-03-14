@@ -127,21 +127,21 @@ export default function PressConferenceAnalyzer() {
               value={coach}
               onChange={(e) => setCoach(e.target.value)}
               placeholder="Coach name (optional)"
-              className="px-4 py-2.5 bg-surface-dugout border border-border-vintage rounded-lg text-bsi-bone placeholder-text-muted text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
+              className="px-4 py-2.5 bg-surface-dugout border border-border-vintage rounded-sm text-bsi-bone placeholder-text-muted text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
             />
             <input
               type="text"
               value={team}
               onChange={(e) => setTeam(e.target.value)}
               placeholder="Team (optional)"
-              className="px-4 py-2.5 bg-surface-dugout border border-border-vintage rounded-lg text-bsi-bone placeholder-text-muted text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
+              className="px-4 py-2.5 bg-surface-dugout border border-border-vintage rounded-sm text-bsi-bone placeholder-text-muted text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
             />
             <input
               type="text"
               value={context}
               onChange={(e) => setContext(e.target.value)}
               placeholder="Context, e.g. 'post-game Friday'"
-              className="px-4 py-2.5 bg-surface-dugout border border-border-vintage rounded-lg text-bsi-bone placeholder-text-muted text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
+              className="px-4 py-2.5 bg-surface-dugout border border-border-vintage rounded-sm text-bsi-bone placeholder-text-muted text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
             />
           </div>
 
@@ -149,7 +149,7 @@ export default function PressConferenceAnalyzer() {
             value={transcript}
             onChange={(e) => setTranscript(e.target.value)}
             placeholder="Paste the press conference transcript here..."
-            className="w-full h-48 px-4 py-3 bg-surface-dugout border border-border-vintage rounded-lg text-bsi-bone placeholder-text-muted text-sm focus:outline-none focus:border-burnt-orange/50 transition-all resize-y font-mono leading-relaxed"
+            className="w-full h-48 px-4 py-3 bg-surface-dugout border border-border-vintage rounded-sm text-bsi-bone placeholder-text-muted text-sm focus:outline-none focus:border-burnt-orange/50 transition-all resize-y font-mono leading-relaxed"
           />
 
           <div className="flex items-center justify-between">
@@ -168,7 +168,7 @@ export default function PressConferenceAnalyzer() {
 
         {/* Error */}
         {error && (
-          <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+          <div className="mb-6 p-4 rounded-sm bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
             {error}
           </div>
         )}
@@ -177,7 +177,7 @@ export default function PressConferenceAnalyzer() {
         {loading && (
           <div className="space-y-4 mb-8">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-20 bg-surface-dugout rounded-lg animate-pulse" />
+              <div key={i} className="h-20 bg-surface-dugout rounded-sm animate-pulse" />
             ))}
           </div>
         )}
@@ -337,7 +337,7 @@ export default function PressConferenceAnalyzer() {
                 <h2 className="heritage-stamp text-xs mb-4">Said vs. Implied</h2>
                 <div className="space-y-4">
                   {analysis.saidVsImplied.map((s, i) => (
-                    <div key={i} className="bg-surface-scoreboard/50 rounded-lg p-4">
+                    <div key={i} className="bg-surface-scoreboard/50 rounded-sm p-4">
                       <div className="flex items-start gap-2 mb-2">
                         <span className="text-xs text-text-muted font-mono uppercase shrink-0 mt-0.5">Said:</span>
                         <p className="text-sm text-bsi-bone italic">&ldquo;{s.quote}&rdquo;</p>

@@ -112,7 +112,7 @@ export default function DraftLeveragePage() {
           <ScrollReveal>
             <div className="max-w-3xl mx-auto text-center">
               <Badge variant="primary" className="mb-4">Pro Tool</Badge>
-              <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: 'Georgia, serif' }}>
+              <h1 className="text-4xl md:text-5xl font-bold mb-4 font-display uppercase tracking-wide">
                 <span className="text-burnt-orange">Draft</span> Leverage
               </h1>
               <p className="text-lg text-text-secondary max-w-2xl mx-auto">

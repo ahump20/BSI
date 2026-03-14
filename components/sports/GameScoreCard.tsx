@@ -49,7 +49,7 @@ function TeamRow({ team, isLive }: { team: GameTeam; isLive: boolean }) {
 function CardContent({ game, showHitsErrors }: { game: GameScoreCardGame; showHitsErrors: boolean }) {
   return (
     <div
-      className={`bg-graphite rounded-lg p-4 flex justify-between items-center border ${
+      className={`bg-graphite rounded-sm p-4 flex justify-between items-center border ${
         game.isLive ? 'border-success' : 'border-border-subtle'
       }`}
     >

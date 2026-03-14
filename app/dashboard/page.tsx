@@ -177,10 +177,10 @@ export default function DashboardPage() {
 
   if (authStatus === 'checking') {
     return (
-      <div className="min-h-screen pt-6 flex items-center justify-center">
+      <div className="min-h-screen pt-6 flex items-center justify-center bg-[var(--surface-scoreboard)]">
         <div className="text-center">
           <div className="w-8 h-8 border-2 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-text-secondary text-sm">Verifying access...</p>
+          <p className="text-bsi-dust text-sm">Verifying access...</p>
         </div>
       </div>
     );
@@ -392,20 +392,20 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
                   alt="Blaze Sports Intel"
                   width={48}
                   height={48}
-                  className="rounded-lg"
+                  className="rounded-sm"
                 />
                 <div>
-                  <h1 className="text-3xl md:text-4xl font-display text-text-primary mb-1">
+                  <h1 className="text-3xl md:text-4xl font-display text-bsi-bone mb-1">
                     COMMAND CENTER
                   </h1>
-                  <p className="text-text-secondary text-sm">
+                  <p className="text-bsi-dust text-sm">
                     Real-time scores, standings, and analytics across all leagues
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 {tier && (
-                  <span className="px-3 py-1 bg-burnt-orange/20 text-burnt-orange rounded-full text-xs font-semibold uppercase tracking-wider">
+                  <span className="heritage-stamp">
                     {tier}
                   </span>
                 )}
@@ -418,14 +418,14 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
                 {hasBilling && (
                   <button
                     onClick={handleManageSubscription}
-                    className="px-3 py-1.5 text-xs text-burnt-orange hover:text-ember border border-burnt-orange/30 hover:border-burnt-orange/50 rounded-lg transition-colors"
+                    className="px-3 py-1.5 text-xs text-burnt-orange hover:text-ember border border-burnt-orange/30 hover:border-burnt-orange/50 rounded-sm transition-colors"
                   >
                     Manage Subscription
                   </button>
                 )}
                 <button
                   onClick={handleSignOut}
-                  className="px-3 py-1.5 text-xs text-text-muted hover:text-text-secondary border border-border hover:border-border-subtle rounded-lg transition-colors"
+                  className="px-3 py-1.5 text-xs text-text-muted hover:text-text-secondary border border-border hover:border-border-subtle rounded-sm transition-colors"
                 >
                   Sign Out
                 </button>
@@ -447,7 +447,7 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
 
           {/* Error Banner */}
           {fetchError && (
-            <div className="mb-6 px-4 py-3 bg-error/10 border border-error/20 rounded-lg flex items-center justify-between">
+            <div className="mb-6 px-4 py-3 bg-error/10 border border-error/20 rounded-sm flex items-center justify-between">
               <span className="text-error text-sm">{fetchError}</span>
               <button
                 onClick={() => { setFetchError(null); setIsLoading(true); }}
@@ -650,7 +650,7 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
               onClick={() => setConfiguratorOpen(false)}
             />
             <motion.div
-              className="fixed top-0 right-0 bottom-0 z-50 w-full max-w-md bg-midnight border-l border-border overflow-y-auto"
+              className="fixed top-0 right-0 bottom-0 z-50 w-full max-w-md bg-[var(--surface-scoreboard)] border-l border-[var(--border-vintage)] overflow-y-auto"
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
@@ -689,7 +689,7 @@ interface HealthData {
 
 const STATUS_COLORS: Record<string, { dot: string; text: string }> = {
   ok: { dot: 'bg-success', text: 'text-success' },
-  degraded: { dot: 'bg-yellow-500', text: 'text-yellow-400' },
+  degraded: { dot: 'bg-warning', text: 'text-warning' },
   down: { dot: 'bg-error', text: 'text-error' },
 };
 
@@ -731,35 +731,35 @@ interface StatCardProps {
 
 function StatCard({ label, value, subtitle, trend, icon }: StatCardProps) {
   return (
-    <Card className="p-4 border-border/50 bg-surface-light/30 backdrop-blur-sm">
+    <div className="heritage-card p-4">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs text-text-muted uppercase tracking-wider mb-1">{label}</p>
+          <p className="text-xs text-bsi-dust uppercase tracking-wider mb-1 font-mono">{label}</p>
           <p className={`text-2xl font-bold ${
-            trend === 'live' ? 'text-success' : trend === 'up' ? 'text-success' : trend === 'down' ? 'text-error' : 'text-text-primary'
+            trend === 'live' ? 'text-success' : trend === 'up' ? 'text-success' : trend === 'down' ? 'text-error' : 'text-bsi-bone'
           }`}>
             {value}
           </p>
-          {subtitle && <p className="text-xs text-text-muted mt-0.5">{subtitle}</p>}
+          {subtitle && <p className="text-xs text-bsi-dust mt-0.5">{subtitle}</p>}
         </div>
-        {icon && <div className="text-text-muted">{icon}</div>}
+        {icon && <div className="text-bsi-dust">{icon}</div>}
       </div>
-    </Card>
+    </div>
   );
 }
 
 function StatCardSkeleton() {
   return (
-    <Card className="p-4">
+    <div className="heritage-card p-4">
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <div className="h-3 w-16 bg-surface-medium rounded animate-pulse mb-2" />
-          <div className="h-7 w-12 bg-surface-medium rounded animate-pulse mb-1" />
-          <div className="h-3 w-20 bg-surface-light rounded animate-pulse" />
+          <div className="h-3 w-16 skeleton mb-2" />
+          <div className="h-7 w-12 skeleton mb-1" />
+          <div className="h-3 w-20 skeleton" />
         </div>
-        <div className="w-6 h-6 bg-surface-light rounded animate-pulse" />
+        <div className="w-6 h-6 skeleton" />
       </div>
-    </Card>
+    </div>
   );
 }
 
@@ -774,13 +774,13 @@ function QuickLinkCard({ href, icon, title, subtitle }: QuickLinkCardProps) {
   return (
     <Link
       href={href}
-      className="block p-4 bg-surface-light rounded-lg hover:bg-surface-medium hover:border-burnt-orange border border-transparent transition-all group"
+      className="block p-4 heritage-card hover:border-[var(--border-active)] transition-all group"
     >
       <Image src={icon} alt="" width={28} height={28} className="mb-2 opacity-60 group-hover:opacity-100 transition-opacity" />
-      <p className="font-semibold text-text-primary group-hover:text-burnt-orange transition-colors text-sm">
+      <p className="font-semibold text-bsi-bone group-hover:text-burnt-orange transition-colors text-sm">
         {title}
       </p>
-      <p className="text-xs text-text-muted">{subtitle}</p>
+      <p className="text-xs text-bsi-dust">{subtitle}</p>
     </Link>
   );
 }
@@ -789,17 +789,17 @@ function ArcadeQuickLinkCard() {
   return (
     <Link
       href="/arcade"
-      className="block p-4 bg-surface-light rounded-lg hover:bg-surface-medium hover:border-burnt-orange border border-transparent transition-all group"
+      className="block p-4 heritage-card hover:border-[var(--border-active)] transition-all group"
     >
       <svg viewBox="0 0 24 24" className="w-7 h-7 mb-2 opacity-60 group-hover:opacity-100 transition-opacity text-[var(--bsi-gold,#D4A843)]" fill="none" stroke="currentColor" strokeWidth="1.5">
         <rect x="2" y="6" width="20" height="12" rx="2" />
         <circle cx="9" cy="12" r="2" />
         <path d="M15 10v4M13 12h4" />
       </svg>
-      <p className="font-semibold text-text-primary group-hover:text-burnt-orange transition-colors text-sm">
+      <p className="font-semibold text-bsi-bone group-hover:text-burnt-orange transition-colors text-sm">
         Arcade
       </p>
-      <p className="text-xs text-text-muted">Mini-games</p>
+      <p className="text-xs text-bsi-dust">Mini-games</p>
     </Link>
   );
 }

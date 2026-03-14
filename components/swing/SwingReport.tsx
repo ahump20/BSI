@@ -134,7 +134,7 @@ export function SwingReport({ analysis, chatContext, videoUrl, frames, narration
               {analysis.metrics.slice(0, 4).map((m) => (
                 <div
                   key={m.key}
-                  className="rounded-xl bg-surface-dugout border border-border-subtle p-3 text-center"
+                  className="rounded-sm bg-surface-dugout border border-border-subtle p-3 text-center"
                 >
                   <div
                     className={`text-xl font-bold font-display ${
@@ -153,7 +153,7 @@ export function SwingReport({ analysis, chatContext, videoUrl, frames, narration
             </div>
 
             {/* Key findings */}
-            <div className="rounded-xl bg-surface-dugout border border-border-subtle p-5">
+            <div className="rounded-sm bg-surface-dugout border border-border-subtle p-5">
               <h3 className="heritage-stamp text-xs mb-3">Key Findings</h3>
               <div className="space-y-3">
                 {/* Strengths */}
@@ -190,7 +190,7 @@ export function SwingReport({ analysis, chatContext, videoUrl, frames, narration
             </div>
 
             {/* Sport-specific notes */}
-            <div className="rounded-xl bg-surface-dugout border border-border-subtle p-5">
+            <div className="rounded-sm bg-surface-dugout border border-border-subtle p-5">
               <h3 className="heritage-stamp text-xs mb-3">{model.displayName} Notes</h3>
               <ul className="space-y-2">
                 {model.analysisNotes.map((note, i) => (

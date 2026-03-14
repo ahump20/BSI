@@ -88,7 +88,7 @@ function formatGameDate(dateString: string): string {
 
 function StatCard({ label, value, subValue }: { label: string; value: string | number; subValue?: string }) {
   return (
-    <div className="text-center p-4 bg-background-tertiary rounded-lg">
+    <div className="text-center p-4 bg-background-tertiary rounded-sm">
       <p className="text-2xl md:text-3xl font-bold text-text-primary">{value}</p>
       <p className="text-xs text-text-tertiary uppercase tracking-wider mt-1">{label}</p>
       {subValue && <p className="text-xs text-text-secondary mt-1">{subValue}</p>}
@@ -100,13 +100,13 @@ function SkeletonTeamProfile() {
   return (
     <div className="animate-pulse">
       <div className="flex flex-col md:flex-row gap-8 items-center">
-        <div className="w-32 h-32 bg-background-tertiary rounded-lg flex-shrink-0" />
+        <div className="w-32 h-32 bg-background-tertiary rounded-sm flex-shrink-0" />
         <div className="flex-1 space-y-4 text-center md:text-left">
-          <div className="h-10 bg-background-tertiary rounded w-2/3 mx-auto md:mx-0" />
-          <div className="h-6 bg-background-tertiary/50 rounded w-1/3 mx-auto md:mx-0" />
+          <div className="h-10 bg-background-tertiary rounded-sm w-2/3 mx-auto md:mx-0" />
+          <div className="h-6 bg-background-tertiary/50 rounded-sm w-1/3 mx-auto md:mx-0" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-20 bg-background-tertiary rounded-lg" />
+              <div key={i} className="h-20 bg-background-tertiary rounded-sm" />
             ))}
           </div>
         </div>
@@ -301,7 +301,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                 <p className="text-text-secondary text-sm mt-1">{error}</p>
                 <button
                   onClick={fetchTeam}
-                  className="mt-3 px-4 py-2 bg-burnt-orange text-white rounded-lg text-sm hover:bg-burnt-orange/80 transition-colors"
+                  className="mt-3 px-4 py-2 bg-burnt-orange text-white rounded-sm text-sm hover:bg-burnt-orange/80 transition-colors"
                 >
                   Try Again
                 </button>
@@ -327,7 +327,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                       />
                     ) : (
                       <div
-                        className="w-full h-full rounded-lg flex items-center justify-center text-3xl font-bold"
+                        className="w-full h-full rounded-sm flex items-center justify-center text-3xl font-bold"
                         style={{ backgroundColor: teamColor, color: '#fff' }}
                       >
                         {team.abbreviation}
@@ -377,7 +377,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
               <div className="flex gap-2">
                 <button
                   onClick={() => setActiveTab('roster')}
-                  className={`px-6 py-2 rounded-lg font-semibold transition-all ${
+                  className={`px-6 py-2 rounded-sm font-semibold transition-all ${
                     activeTab === 'roster'
                       ? 'bg-burnt-orange text-white'
                       : 'bg-background-tertiary text-text-secondary hover:bg-surface-light'
@@ -387,7 +387,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                 </button>
                 <button
                   onClick={() => setActiveTab('schedule')}
-                  className={`px-6 py-2 rounded-lg font-semibold transition-all ${
+                  className={`px-6 py-2 rounded-sm font-semibold transition-all ${
                     activeTab === 'schedule'
                       ? 'bg-burnt-orange text-white'
                       : 'bg-background-tertiary text-text-secondary hover:bg-surface-light'
@@ -412,7 +412,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
 
               {sortedRoster.length === 0 ? (
                 <Card variant="default" padding="lg" className="text-center">
-                  <p className="text-text-secondary">No roster data available</p>
+                  <p className="text-text-secondary">Roster updates once the season roster is finalized</p>
                 </Card>
               ) : (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -489,25 +489,25 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/nba/teams"
-                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
               >
                 ← All Teams
               </Link>
               <Link
                 href="/nba/standings"
-                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
               >
                 Standings →
               </Link>
               <Link
                 href="/nba/games"
-                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
               >
                 Live Scores →
               </Link>
               <Link
                 href="/nba/players"
-                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
               >
                 All Players →
               </Link>

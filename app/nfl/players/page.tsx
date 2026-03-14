@@ -104,9 +104,9 @@ function SkeletonPlayerCard() {
       <div className="flex items-center gap-4">
         <div className="w-16 h-16 bg-background-tertiary rounded-full" />
         <div className="flex-1 space-y-2">
-          <div className="h-5 bg-background-tertiary rounded w-3/4" />
-          <div className="h-4 bg-background-tertiary/50 rounded w-1/2" />
-          <div className="h-3 bg-background-tertiary/30 rounded w-1/3" />
+          <div className="h-5 bg-background-tertiary rounded-sm w-3/4" />
+          <div className="h-4 bg-background-tertiary/50 rounded-sm w-1/2" />
+          <div className="h-3 bg-background-tertiary/30 rounded-sm w-1/3" />
         </div>
       </div>
     </Card>
@@ -287,7 +287,7 @@ export default function NFLPlayersPage() {
                   placeholder="Search players or teams..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-4 py-2 bg-background-tertiary border border-border-subtle rounded-lg text-text-primary placeholder-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors"
+                  className="w-full px-4 py-2 bg-background-tertiary border border-border-subtle rounded-sm text-text-primary placeholder-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors"
                 />
                 {searchQuery && (
                   <button
@@ -306,7 +306,7 @@ export default function NFLPlayersPage() {
                     <button
                       key={pos}
                       onClick={() => setSelectedPosition(pos)}
-                      className={`px-3 py-1.5 rounded-lg font-medium transition-all text-sm ${
+                      className={`px-3 py-1.5 rounded-sm font-medium transition-all text-sm ${
                         selectedPosition === pos
                           ? 'bg-burnt-orange text-white'
                           : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
@@ -321,7 +321,7 @@ export default function NFLPlayersPage() {
                 <select
                   value={selectedTeam}
                   onChange={(e) => setSelectedTeam(e.target.value)}
-                  className="px-4 py-2 bg-background-tertiary border border-border-subtle rounded-lg text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
+                  className="px-4 py-2 bg-background-tertiary border border-border-subtle rounded-sm text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
                 >
                   <option value="All">All Teams</option>
                   {nflTeams
@@ -346,7 +346,7 @@ export default function NFLPlayersPage() {
                 <p className="text-text-secondary text-sm mt-1">{error}</p>
                 <button
                   onClick={selectedTeam === 'All' ? retryAllPlayers : retryRoster}
-                  className="mt-3 px-4 py-2 bg-burnt-orange text-white rounded-lg text-sm hover:bg-burnt-orange/80 transition-colors"
+                  className="mt-3 px-4 py-2 bg-burnt-orange text-white rounded-sm text-sm hover:bg-burnt-orange/80 transition-colors"
                 >
                   Try Again
                 </button>
@@ -403,19 +403,19 @@ export default function NFLPlayersPage() {
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/nfl/games"
-                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
               >
                 Live Scores →
               </Link>
               <Link
                 href="/nfl/standings"
-                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
               >
                 Standings →
               </Link>
               <Link
                 href="/nfl/teams"
-                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
               >
                 All Teams →
               </Link>

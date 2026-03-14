@@ -188,7 +188,7 @@ export default function ModelsHubPage() {
                         {model.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-text-muted bg-surface-light rounded-md"
+                            className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-text-muted bg-surface-light rounded-sm"
                           >
                             {tag}
                           </span>
@@ -204,7 +204,7 @@ export default function ModelsHubPage() {
 
         <Section padding="md" borderTop>
           <Container>
-            <div className="bg-surface-light border border-border-subtle rounded-xl p-6 sm:p-8">
+            <div className="bg-surface-light border border-border-subtle rounded-sm p-6 sm:p-8">
               <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-text-primary mb-4">
                 Why Document This?
               </h2>

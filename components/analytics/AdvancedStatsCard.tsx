@@ -41,7 +41,7 @@ export function AdvancedStatsCard({
   const proStats = stats.filter(s => s.pro);
 
   return (
-    <div className={`bg-background-primary border border-border-subtle rounded-xl overflow-hidden ${className}`}>
+    <div className={`bg-background-primary border border-border-subtle rounded-sm overflow-hidden ${className}`}>
       <div className="px-5 py-3 border-b border-border-subtle flex items-center justify-between">
         <h4 className="font-display text-sm uppercase tracking-wider text-text-primary">{title}</h4>
         {profileUrl && (

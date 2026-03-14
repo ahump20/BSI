@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -12,7 +12,7 @@ import type { ProgramHistoryData } from './types';
 
 function YouTubeEmbed({ id, title }: { id: string; title: string }) {
   return (
-    <div className="aspect-video w-full rounded-xl overflow-hidden border border-border my-8">
+    <div className="aspect-video w-full rounded-sm overflow-hidden border border-border my-8">
       <iframe
         src={`https://www.youtube.com/embed/${id}`}
         title={title}
@@ -77,7 +77,7 @@ function Prose({ children }: { children: React.ReactNode }) {
 
 function EraImage({ src, alt }: { src: string; alt: string }) {
   return (
-    <figure className="my-8 rounded-xl overflow-hidden border border-border">
+    <figure className="my-8 rounded-sm overflow-hidden border border-border">
       <img
         src={src}
         alt={alt}
@@ -93,8 +93,19 @@ function EraImage({ src, alt }: { src: string; alt: string }) {
 }
 
 export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
+  const [activeChampionship, setActiveChampionship] = useState<number | null>(null);
+
   return (
     <>
+      <style>{`
+        @keyframes kenBurns {
+          0% { transform: scale(1); }
+          100% { transform: scale(1.08); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          img[style*="kenBurns"] { animation: none !important; }
+        }
+      `}</style>
       <main id="main-content">
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">
@@ -142,15 +153,27 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
           </Container>
         </Section>
 
-        {/* Hero Image */}
+        {/* Hero Image — Ken Burns zoom */}
         {data.heroImage && (
           <Section padding="md">
             <Container>
               <ScrollReveal direction="up">
-                <EraImage src={data.heroImage} alt={data.heroImageAlt || data.programName} />
-                {data.heroImageCaption && (
-                  <p className="text-xs text-text-muted text-center -mt-6 mb-4">{data.heroImageCaption}</p>
-                )}
+                <figure className="my-8 rounded-sm overflow-hidden border border-border relative">
+                  <div className="relative overflow-hidden max-h-[500px]">
+                    <img
+                      src={data.heroImage}
+                      alt={data.heroImageAlt || data.programName}
+                      loading="lazy"
+                      className="w-full max-h-[500px] object-cover"
+                      style={{ animation: 'kenBurns 20s ease-in-out infinite alternate' }}
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none" />
+                  </div>
+                  <figcaption className="text-xs text-text-muted px-4 py-2 bg-surface-light">
+                    {data.heroImageCaption || data.heroImageAlt || data.programName}
+                  </figcaption>
+                </figure>
               </ScrollReveal>
             </Container>
           </Section>
@@ -201,7 +224,7 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
               <div className="grid lg:grid-cols-[280px_1fr] gap-8">
                 {/* Era stats sidebar */}
                 <ScrollReveal direction="left" delay={100}>
-                  <Card variant="default" padding="lg">
+                  <Card variant="default" padding="lg" className="border-t-2 border-burnt-orange">
                     <div className="space-y-4">
                       <div>
                         <div className="text-xs uppercase tracking-wide text-text-muted">Record</div>
@@ -252,6 +275,50 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
               <p className="text-text-muted mb-8">From Omaha to the record books</p>
             </ScrollReveal>
 
+            {/* Horizontal Championship Timeline */}
+            <ScrollReveal direction="up">
+              <div className="mb-10">
+                <div className="relative flex items-center gap-8 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-hide px-2">
+                  {/* Connecting line */}
+                  <div className="absolute top-6 left-0 right-0 h-px bg-border-subtle pointer-events-none" />
+                  {data.championships.map((c) => (
+                    <button
+                      key={c.year}
+                      onClick={() => setActiveChampionship(c.year === activeChampionship ? null : c.year)}
+                      className="snap-center flex-shrink-0 flex flex-col items-center gap-2 group relative z-10"
+                      aria-label={`${c.year} Championship${c.year === activeChampionship ? ' — selected' : ''}`}
+                    >
+                      <div className={`w-12 h-12 rounded-full border-2 flex items-center justify-center font-mono text-sm font-bold transition-colors ${
+                        c.year === activeChampionship
+                          ? 'border-burnt-orange bg-burnt-orange text-white'
+                          : 'border-border-subtle bg-[var(--surface-dugout)] text-text-muted group-hover:border-burnt-orange'
+                      }`}>
+                        {String(c.year).slice(-2)}
+                      </div>
+                      <span className="text-[10px] text-text-muted">{c.year}</span>
+                    </button>
+                  ))}
+                </div>
+                {activeChampionship && (() => {
+                  const champ = data.championships.find((c) => c.year === activeChampionship);
+                  if (!champ) return null;
+                  return (
+                    <div className="mt-4 rounded-sm bg-[var(--surface-dugout)] border border-border-subtle p-4 animate-in fade-in">
+                      <div className="flex items-start gap-3 mb-2">
+                        <span className="font-display text-2xl font-bold text-burnt-orange">{champ.year}</span>
+                        <Badge variant="primary" size="sm">Champion</Badge>
+                      </div>
+                      <div className="font-mono text-sm text-text-primary mb-1">{champ.record}</div>
+                      <div className="text-xs text-text-muted mb-2">
+                        vs {champ.titleGameOpponent} &middot; {champ.titleGameScore} &middot; MOP: {champ.mop}
+                      </div>
+                      <p className="text-text-secondary text-sm leading-relaxed">{champ.narrative}</p>
+                    </div>
+                  );
+                })()}
+              </div>
+            </ScrollReveal>
+
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {data.championships.map((c) => (
                 <ScrollReveal key={c.year} direction="up">
@@ -261,7 +328,7 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
                         src={c.image}
                         alt={c.imageAlt || `${c.year} championship`}
                         loading="lazy"
-                        className="w-full max-h-[200px] object-cover rounded-t-lg -mx-6 -mt-6 mb-4"
+                        className="w-full max-h-[200px] object-cover rounded-t-sm -mx-6 -mt-6 mb-4"
                         style={{ width: 'calc(100% + 3rem)' }}
                         onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                       />
@@ -325,7 +392,7 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
                         src={player.image}
                         alt={player.name}
                         loading="lazy"
-                        className="w-full max-h-[160px] object-cover rounded-t-lg -mx-4 -mt-4 mb-3"
+                        className="w-full max-h-[160px] object-cover rounded-t-sm -mx-4 -mt-4 mb-3"
                         style={{ width: 'calc(100% + 2rem)' }}
                         onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                       />

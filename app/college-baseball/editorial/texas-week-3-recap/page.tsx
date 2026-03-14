@@ -419,7 +419,7 @@ export default function TexasWeek3RecapPage() {
 
               {/* Schlossnagle 1,000th win callout */}
               <ScrollReveal direction="up" delay={150}>
-                <div className="bg-[#C9A227]/8 border border-[#C9A227]/20 rounded p-6 my-8">
+                <div className="bg-[#C9A227]/8 border border-[#C9A227]/20 rounded-sm p-6 my-8">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="font-display text-[11px] uppercase tracking-[3px] text-[#C9A227]">
                       Milestone
@@ -564,14 +564,14 @@ export default function TexasWeek3RecapPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
                 <button
                   onClick={() => openAI('claude')}
-                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded transition-colors text-left"
+                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded-sm transition-colors text-left"
                 >
                   <div className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-1">Claude Analysis</div>
                   <div className="text-text-muted text-xs">Anthropic-powered tournament breakdown</div>
                 </button>
                 <button
                   onClick={() => openAI('gemini')}
-                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded transition-colors text-left"
+                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded-sm transition-colors text-left"
                 >
                   <div className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-1">Gemini Analysis</div>
                   <div className="text-text-muted text-xs">Google-powered scouting insights</div>

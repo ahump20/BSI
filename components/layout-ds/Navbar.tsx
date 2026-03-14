@@ -128,7 +128,7 @@ function LeaguesDropdown({ items }: { items: LeagueNavItem[] }) {
       {open && (
         <div
           id="leagues-menu"
-          className="absolute top-full left-0 mt-2 w-56 bg-midnight/95 backdrop-blur-xl border border-border rounded-xl shadow-2xl py-1 z-50"
+          className="absolute top-full left-0 mt-2 w-56 bg-midnight/95 backdrop-blur-xl border border-border rounded-sm shadow-2xl py-1 z-50"
           role="menu"
         >
           {items.map((item, idx) => {
@@ -214,7 +214,7 @@ function AnalyticsDropdown({ items }: { items: MainNavItem[] }) {
       {open && (
         <div
           id="analytics-menu"
-          className="absolute top-full left-0 mt-2 w-52 bg-midnight/95 backdrop-blur-xl border border-border rounded-xl shadow-2xl py-1 z-50"
+          className="absolute top-full left-0 mt-2 w-52 bg-midnight/95 backdrop-blur-xl border border-border rounded-sm shadow-2xl py-1 z-50"
           role="menu"
         >
           {items.map((item) => {
@@ -264,7 +264,7 @@ function MoreDropdown({ items }: { items: NavItem[] }) {
       </button>
 
       {open && (
-        <div id="more-menu" className="absolute top-full right-0 mt-2 w-48 bg-midnight/95 backdrop-blur-xl border border-border rounded-xl shadow-2xl py-1 z-50" role="menu">
+        <div id="more-menu" className="absolute top-full right-0 mt-2 w-48 bg-midnight/95 backdrop-blur-xl border border-border rounded-sm shadow-2xl py-1 z-50" role="menu">
           {items.map((item) => (
             <Link
               key={item.href}
@@ -356,12 +356,12 @@ export function Navbar({ primary, leagues, secondary, analytics = [] }: NavbarPr
               {/* Cmd+K search trigger */}
               <button
                 onClick={openCommandPalette}
-                className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-light border border-border-subtle text-text-muted hover:text-text-secondary hover:bg-surface-medium transition-all text-sm"
+                className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-sm bg-surface-light border border-border-subtle text-text-muted hover:text-text-secondary hover:bg-surface-medium transition-all text-sm"
                 aria-label="Open search"
               >
                 <Search className="w-3.5 h-3.5" />
                 <span className="hidden lg:inline">Search...</span>
-                <kbd className="hidden lg:inline text-[10px] text-text-muted bg-surface-light px-1.5 py-0.5 rounded font-mono">
+                <kbd className="hidden lg:inline text-[10px] text-text-muted bg-surface-light px-1.5 py-0.5 rounded-sm font-mono">
                   ⌘K
                 </kbd>
               </button>

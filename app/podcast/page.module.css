@@ -70,7 +70,7 @@
 .detailCard,
 .playerCard {
   border: 1px solid var(--panel-border);
-  border-radius: 28px;
+  border-radius: 2px;
   background: linear-gradient(180deg, rgba(20, 20, 20, 0.96), rgba(11, 11, 11, 0.92));
   box-shadow:
     0 24px 80px rgba(0, 0, 0, 0.42),
@@ -229,7 +229,7 @@
   gap: 1rem;
   min-height: 320px;
   padding: 1rem;
-  border-radius: 22px;
+  border-radius: 2px;
   background:
     radial-gradient(circle at 50% 12%, rgba(255, 107, 53, 0.22), transparent 28%),
     linear-gradient(180deg, rgba(10, 10, 10, 0.92), rgba(19, 19, 19, 0.46));
@@ -255,7 +255,7 @@
 
 .brandWordmarkShell {
   padding: 0.8rem 1rem 0.2rem;
-  border-radius: 18px;
+  border-radius: 2px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0));
   animation: wordmarkSettle 920ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -271,7 +271,7 @@
   display: grid;
   place-items: center;
   padding: 1.1rem;
-  border-radius: 24px;
+  border-radius: 2px;
   background:
     radial-gradient(circle at 50% 24%, rgba(255, 107, 53, 0.22), transparent 28%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
@@ -306,7 +306,7 @@
   z-index: 2;
   width: clamp(110px, 18vw, 170px);
   padding: 0.4rem;
-  border-radius: 18px;
+  border-radius: 2px;
   background: linear-gradient(180deg, rgba(6, 6, 6, 0.86), rgba(24, 24, 24, 0.6));
   border: 1px solid rgba(242, 191, 107, 0.18);
   box-shadow: 0 20px 36px rgba(0, 0, 0, 0.35);
@@ -317,7 +317,7 @@
   width: 100%;
   display: block;
   object-fit: contain;
-  border-radius: 14px;
+  border-radius: 2px;
 }
 
 .brandTokenCard {
@@ -326,7 +326,7 @@
   gap: 0.9rem;
   align-items: center;
   padding: 0.95rem 1rem;
-  border-radius: 20px;
+  border-radius: 2px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
   animation: cardRise 980ms cubic-bezier(0.22, 1, 0.36, 1) 180ms both;
@@ -335,7 +335,7 @@
 .brandRoundel {
   width: 100%;
   display: block;
-  border-radius: 16px;
+  border-radius: 2px;
   object-fit: contain;
 }
 
@@ -374,7 +374,7 @@
 .factCard,
 .statPill {
   padding: 0.95rem 1rem;
-  border-radius: 18px;
+  border-radius: 2px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -445,7 +445,7 @@
 .iconButton,
 .rateButton {
   appearance: none;
-  border-radius: 18px;
+  border-radius: 2px;
   cursor: pointer;
   text-decoration: none;
   transition:
@@ -571,7 +571,7 @@
 .statusNotice {
   margin-top: 1rem;
   padding: 1rem;
-  border-radius: 18px;
+  border-radius: 2px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.07);
 }
@@ -580,7 +580,7 @@
   margin: 1rem 0 0;
   padding: 1.15rem 1rem 1rem;
   border-left: 2px solid rgba(242, 191, 107, 0.38);
-  border-radius: 0 18px 18px 0;
+  border-radius: 0 2px 2px 0;
   background: rgba(242, 191, 107, 0.05);
 }
 
@@ -738,7 +738,7 @@
 
 .searchInput {
   margin-top: 0.75rem;
-  border-radius: 18px;
+  border-radius: 2px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.03);
   color: var(--cream);
@@ -782,7 +782,7 @@
   position: relative;
   padding: 1.1rem 1.2rem;
   border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 22px;
+  border-radius: 2px;
   background: rgba(255, 255, 255, 0.02);
   animation: cardRise 680ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -916,7 +916,7 @@
 .playerNotice {
   margin-top: 1rem;
   padding: 1rem;
-  border-radius: 18px;
+  border-radius: 2px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -1057,7 +1057,7 @@
   .detailCard,
   .playerCard {
     padding: 1.15rem;
-    border-radius: 22px;
+    border-radius: 2px;
   }
 
   .statGrid,

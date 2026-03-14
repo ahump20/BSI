@@ -353,19 +353,19 @@ export default function WhatTwoWeekendsToldUsPage() {
           <Container size="narrow">
             <ScrollReveal direction="up">
               <div className="grid md:grid-cols-3 gap-4 mb-8">
-                <Link href="/college-baseball/editorial/roch-cholowsky-2026-draft-profile" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                <Link href="/college-baseball/editorial/roch-cholowsky-2026-draft-profile" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
                   <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
                   <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     Cholowsky: The No. 1 Pick
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/dylan-volantis-2026-draft-profile" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                <Link href="/college-baseball/editorial/dylan-volantis-2026-draft-profile" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
                   <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
                   <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     Volantis: 14 IP, 0 ER
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/jackson-flora-2026-draft-profile" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                <Link href="/college-baseball/editorial/jackson-flora-2026-draft-profile" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
                   <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
                   <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     Flora: 100 MPH at UCSB

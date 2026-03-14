@@ -117,11 +117,11 @@ export default function NILValuationPage() {
           <Container>
             <div className="max-w-4xl mx-auto text-center">
               <Badge variant="primary" className="mb-4">NIL Intelligence</Badge>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6" style={{ fontFamily: 'Georgia, serif' }}>
+              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-wide mb-6">
                 <span className="text-burnt-orange">NIL Valuation</span> Engine
               </h1>
               <p className="text-xl text-text-secondary mb-8 max-w-2xl mx-auto">
-                Fair Market Value calculations, transfer portal intelligence, and roster optimization tools for the 2025-26 season. Know what athletes are worth before you make offers.
+                Fair Market Value calculations, transfer portal intelligence, and roster optimization tools. Know what athletes are worth before you make offers.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/nil-valuation/tools">
@@ -368,17 +368,17 @@ export default function NILValuationPage() {
                     is worth. Every input is sourced from live data — no fabricated metrics.
                   </p>
                   <div className="grid grid-cols-3 gap-4 mb-6">
-                    <div className="text-center p-4 bg-background-secondary rounded-lg">
+                    <div className="text-center p-4 bg-background-secondary rounded-sm">
                       <div className="text-xl font-bold text-text-primary">40%</div>
                       <div className="text-xs text-text-muted">Performance</div>
                       <div className="text-[10px] text-text-muted/50 mt-1">wOBA, wRC+, FIP</div>
                     </div>
-                    <div className="text-center p-4 bg-background-secondary rounded-lg">
+                    <div className="text-center p-4 bg-background-secondary rounded-sm">
                       <div className="text-xl font-bold text-text-primary">30%</div>
                       <div className="text-xs text-text-muted">Exposure</div>
                       <div className="text-[10px] text-text-muted/50 mt-1">Conference, Social</div>
                     </div>
-                    <div className="text-center p-4 bg-background-secondary rounded-lg">
+                    <div className="text-center p-4 bg-background-secondary rounded-sm">
                       <div className="text-xl font-bold text-text-primary">30%</div>
                       <div className="text-xs text-text-muted">Market</div>
                       <div className="text-[10px] text-text-muted/50 mt-1">Metro, Program</div>
@@ -408,7 +408,7 @@ export default function NILValuationPage() {
         <Container>
           <ScrollReveal>
             <div className="max-w-2xl mx-auto text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6" style={{ fontFamily: 'Georgia, serif' }}>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6 font-display uppercase tracking-wide">
                 Ready to Navigate <span className="text-burnt-orange">NIL</span> with Data?
               </h2>
               <p className="text-xl text-text-tertiary mb-8">

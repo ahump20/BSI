@@ -34,7 +34,7 @@ export function DataSourcePanel({ sources, lastUpdated, meta, refreshInterval, c
   const effectiveTimezone = normalized?.timezone ?? 'America/Chicago';
 
   return (
-    <div className={`bg-surface-light border border-border rounded-xl p-4 ${className}`}>
+    <div className={`bg-surface-light border border-border rounded-sm p-4 ${className}`}>
       <div className="flex items-center gap-2 mb-3">
         <svg viewBox="0 0 24 24" className="w-4 h-4 text-text-muted" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />

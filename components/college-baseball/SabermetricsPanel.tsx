@@ -106,10 +106,8 @@ function StatBar({ label, value, leagueAvg, format, higher }: {
       </div>
       <div className="relative h-2 bg-surface-light rounded-full overflow-hidden">
         <div
-          className={`absolute inset-y-0 left-0 rounded-full transition-all ${
-            aboveAvg ? 'bg-green-500/60' : 'bg-surface-medium'
-          }`}
-          style={{ width: `${pct}%` }}
+          className="absolute inset-y-0 left-0 rounded-full transition-all"
+          style={{ width: `${pct}%`, backgroundColor: aboveAvg ? 'var(--bsi-primary)' : 'var(--bsi-dust, #C4B8A5)' }}
         />
         <div
           className="absolute inset-y-0 w-0.5 bg-text-muted"
@@ -147,7 +145,7 @@ export function SabermetricsPanel({ teamId, espnId, accent = 'var(--bsi-primary)
     return (
       <div className="space-y-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-24 bg-surface-light rounded-lg animate-pulse" />
+          <div key={i} className="h-24 bg-surface-light rounded-sm animate-pulse" />
         ))}
       </div>
     );

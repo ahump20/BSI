@@ -44,7 +44,7 @@ function buildSrcdoc(youtubeId: string, title: string): string {
 html,body{height:100%;background:#0D0D0D}
 img{position:absolute;width:100%;top:0;bottom:0;margin:auto}
 .play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-width:72px;height:50px;background:rgba(191,87,0,0.9);border-radius:6px;
+width:72px;height:50px;background:rgba(191,87,0,0.9);border-radius:2px;
 display:flex;align-items:center;justify-content:center;cursor:pointer;
 transition:background 0.2s,box-shadow 0.2s;
 box-shadow:0 2px 12px rgba(0,0,0,0.4)}
@@ -68,7 +68,7 @@ function buildSrcdocWithBadge(youtubeId: string, title: string, category: string
 html,body{height:100%;background:#0D0D0D}
 img{position:absolute;width:100%;top:0;bottom:0;margin:auto}
 .play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-width:72px;height:50px;background:rgba(191,87,0,0.9);border-radius:6px;
+width:72px;height:50px;background:rgba(191,87,0,0.9);border-radius:2px;
 display:flex;align-items:center;justify-content:center;cursor:pointer;
 transition:background 0.2s,box-shadow 0.2s;
 box-shadow:0 2px 12px rgba(0,0,0,0.4)}

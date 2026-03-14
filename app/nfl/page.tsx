@@ -303,7 +303,7 @@ export default function NFLPage() {
                             {category.leaders.slice(0, 5).map((player, idx) => (
                               <div
                                 key={`${player.name}-${idx}`}
-                                className="flex items-center gap-3 py-2 border-b border-border-subtle last:border-0 group hover:bg-surface-light/50 transition-colors rounded px-1 -mx-1"
+                                className="flex items-center gap-3 py-2 border-b border-[var(--border-vintage)] last:border-0 group hover:bg-[var(--surface-dugout)] transition-colors rounded-sm px-1 -mx-1"
                               >
                                 <span className={`w-7 h-7 flex items-center justify-center rounded-full text-xs font-bold shrink-0 ${
                                   idx === 0 ? 'bg-burnt-orange text-white' : 'bg-burnt-orange/15 text-burnt-orange'
@@ -372,7 +372,7 @@ export default function NFLPage() {
                     <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
                       <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
                       <div className="flex items-start gap-4">
-                        <div className="w-10 h-10 rounded-lg bg-burnt-orange/15 flex items-center justify-center shrink-0">
+                        <div className="w-10 h-10 rounded-sm bg-burnt-orange/15 flex items-center justify-center shrink-0">
                           {card.icon}
                         </div>
                         <div className="min-w-0 flex-1">
@@ -450,7 +450,7 @@ export default function NFLPage() {
                             </thead>
                             <tbody>
                               {standingsByDivision[division].map((team, idx) => (
-                                <tr key={team.teamName} className="border-b border-border-subtle hover:bg-surface-light transition-colors">
+                                <tr key={team.teamName} className="border-b border-border-subtle hover:bg-[var(--surface-dugout)] transition-colors">
                                   <td className="p-3 text-burnt-orange font-bold">{idx + 1}</td>
                                   <td className="p-3 font-semibold text-text-primary">{team.teamName}</td>
                                   <td className="p-3 text-text-secondary">{team.wins}</td>
@@ -538,12 +538,12 @@ export default function NFLPage() {
                                 const isLeader = idx === 0 && team.wins > 0;
                                 return (
                                   <Link key={team.teamName} href={`/nfl/teams/${team.teamName.toLowerCase().replace(/\s+/g, '-')}`} className="block group">
-                                    <div className={`flex items-center justify-between py-2 px-3 rounded-lg transition-colors ${
-                                      isLeader ? 'bg-burnt-orange/10 border border-burnt-orange/20' : 'hover:bg-surface-light'
+                                    <div className={`flex items-center justify-between py-2 px-3 rounded-sm transition-colors ${
+                                      isLeader ? 'bg-burnt-orange/10 border border-burnt-orange/20' : 'hover:bg-[var(--surface-dugout)]'
                                     }`}>
                                       <div className="flex items-center gap-3 min-w-0">
                                         <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] font-bold ${
-                                          isLeader ? 'bg-burnt-orange text-white' : 'bg-surface-light text-text-tertiary'
+                                          isLeader ? 'bg-burnt-orange text-white' : 'bg-[var(--surface-dugout)] text-bsi-dust'
                                         }`}>
                                           {idx + 1}
                                         </span>
@@ -604,7 +604,7 @@ export default function NFLPage() {
                         { label: 'Defenders', desc: 'Sacks, INTs, PFF grade', href: '/nfl/players' },
                       ].map((cat) => (
                         <Link key={cat.label} href={cat.href} className="group block">
-                          <div className="bg-background-tertiary rounded-lg p-4 border border-border-subtle hover:border-burnt-orange transition-colors h-full">
+                          <div className="bg-[var(--surface-dugout)] rounded-sm p-4 border border-[var(--border-vintage)] hover:border-burnt-orange transition-colors h-full">
                             <h4 className="text-sm font-semibold text-text-primary group-hover:text-burnt-orange transition-colors">
                               {cat.label}
                             </h4>
@@ -633,7 +633,7 @@ export default function NFLPage() {
                           if (!topPlayer) return null;
                           const catInfo = LEADER_CATEGORY_MAP[cat.abbreviation] || { label: cat.name, unit: cat.abbreviation };
                           return (
-                            <div key={cat.abbreviation} className="bg-background-tertiary rounded-lg p-4 border border-border-subtle">
+                            <div key={cat.abbreviation} className="bg-[var(--surface-dugout)] rounded-sm p-4 border border-[var(--border-vintage)]">
                               <p className="text-[10px] text-text-tertiary uppercase tracking-wider mb-2">{catInfo.label} Leader</p>
                               <div className="flex items-center gap-3">
                                 {topPlayer.headshot && (
@@ -685,7 +685,7 @@ export default function NFLPage() {
               <ScrollReveal delay={150}>
                 <Card variant="default" padding="lg" className="h-full">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-lg bg-burnt-orange/15 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-sm bg-burnt-orange/15 flex items-center justify-center">
                       <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
                         <line x1="18" y1="20" x2="18" y2="10" />
                         <line x1="12" y1="20" x2="12" y2="4" />

@@ -53,13 +53,13 @@ export function HeroSection() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/dashboard"
-            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-burnt-orange to-burnt-orange/80 hover:from-burnt-orange/90 hover:to-burnt-orange text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300"
+            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-burnt-orange to-burnt-orange/80 hover:from-burnt-orange/90 hover:to-burnt-orange text-white px-8 py-4 rounded-sm font-semibold text-lg transition-all duration-300"
           >
             Launch Dashboard
           </Link>
           <Link
             href="/college-baseball"
-            className="inline-flex items-center justify-center gap-2 border-2 border-border-strong hover:border-burnt-orange text-white hover:text-burnt-orange px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300"
+            className="inline-flex items-center justify-center gap-2 border-2 border-border-strong hover:border-burnt-orange text-white hover:text-burnt-orange px-8 py-4 rounded-sm font-semibold text-lg transition-all duration-300"
           >
             College Baseball
           </Link>

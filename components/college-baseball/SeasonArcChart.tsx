@@ -100,7 +100,7 @@ function ArcTooltip({
 
   return (
     <div
-      className="rounded px-3 py-2 shadow-lg"
+      className="rounded-sm px-3 py-2 shadow-lg"
       style={{
         backgroundColor: '#161616',
         border: '1px solid rgba(140,98,57,0.3)',
@@ -299,7 +299,7 @@ export function SeasonArcChart({ teamId, espnId, season, className }: SeasonArcC
             fontSize: '14px',
           }}
         >
-          Full season arc coming soon
+          Season arc builds as games are played
         </div>
       )}
 

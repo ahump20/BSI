@@ -39,7 +39,7 @@ export function BattedBallScatter({
   [data]);
 
   return (
-    <div className={`savant-card overflow-hidden bg-[var(--svt-card,_#0D0D0D)] border border-[var(--svt-border,_rgba(245,240,235,0.04))] rounded-xl ${className}`}>
+    <div className={`savant-card overflow-hidden bg-[var(--svt-card,_#0D0D0D)] border border-[var(--svt-border,_rgba(245,240,235,0.04))] rounded-sm ${className}`}>
       {/* Header */}
       <div className="px-5 py-4 border-b border-[var(--svt-border,_rgba(245,240,235,0.04))] flex items-center justify-between flex-wrap gap-3">
         <div>
@@ -93,7 +93,7 @@ export function BattedBallScatter({
                 if (!payload?.length) return null;
                 const p = payload[0].payload as BattedBallPlayer & { z: number };
                 return (
-                  <div className="bg-[var(--svt-surface,_#12151c)] border border-[var(--svt-border,_#242a38)] rounded-lg px-3 py-2 shadow-xl">
+                  <div className="bg-[var(--svt-surface,_#12151c)] border border-[var(--svt-border,_#242a38)] rounded-sm px-3 py-2 shadow-xl">
                     <div className="text-sm text-[var(--svt-text,_#e8eaf0)] font-medium">{p.player_name}</div>
                     <div className="text-[10px] text-[var(--svt-text-muted,_#8890a4)]">{p.team} · {p.conference}</div>
                     <div className="flex gap-3 mt-1.5">

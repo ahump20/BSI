@@ -8,6 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 import { fmt3 } from '@/lib/utils/format';
@@ -125,6 +126,7 @@ export default function TexasDraftClient() {
           </Container>
         </Section>
 
+        <DataErrorBoundary name="Draft Board">
         {/* Tier Summary */}
         {!loading && data?.players && data.players.length > 0 && (
           <Section padding="md" borderTop>
@@ -135,7 +137,7 @@ export default function TexasDraftClient() {
                     <button
                       key={tier}
                       onClick={() => setTierFilter(tierFilter === tier ? 'all' : tier)}
-                      className={`rounded-lg border p-4 text-center transition-all ${
+                      className={`rounded-sm border p-4 text-center transition-all ${
                         tierFilter === tier
                           ? 'border-burnt-orange bg-burnt-orange/10'
                           : 'border-border-subtle bg-[var(--surface-dugout)] hover:border-burnt-orange/30'
@@ -157,7 +159,7 @@ export default function TexasDraftClient() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <Card variant="default" padding="lg">
+              <Card variant="default" padding="lg" className="border-t-2 border-burnt-orange">
                 <CardHeader>
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <CardTitle className="flex items-center gap-3">
@@ -180,7 +182,7 @@ export default function TexasDraftClient() {
                   {loading ? (
                     <div className="space-y-3">
                       {[1, 2, 3, 4, 5, 6].map((i) => (
-                        <div key={i} className="h-10 bg-surface-light rounded animate-pulse" />
+                        <div key={i} className="h-10 bg-surface-light rounded-sm animate-pulse" />
                       ))}
                     </div>
                   ) : error || !data?.players ? (
@@ -210,7 +212,7 @@ export default function TexasDraftClient() {
                               <td className="py-2.5 px-2 text-text-primary font-medium">{p.name}</td>
                               <td className="py-2.5 px-2 text-text-muted text-xs">{p.position}</td>
                               <td className="py-2.5 px-2">
-                                <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider ${TIER_COLORS[p.draftTier] ?? ''}`}>
+                                <span className={`inline-block px-2 py-0.5 rounded-sm text-[10px] font-semibold uppercase tracking-wider ${TIER_COLORS[p.draftTier] ?? ''}`}>
                                   {p.draftTier}
                                 </span>
                               </td>
@@ -286,6 +288,12 @@ export default function TexasDraftClient() {
                           </div>
                         ))}
                       </div>
+                      <div className="mt-3 pt-3 border-t border-border-subtle">
+                        <div className="text-[10px] text-text-muted uppercase tracking-wider">Projected Range</div>
+                        <div className="text-xs text-text-primary font-mono mt-1">
+                          {p.draftTier === 'Top 3 Rounds' ? 'Rounds 1-3' : p.draftTier === 'Rounds 4-10' ? 'Rounds 4-10' : p.draftTier === 'Day 3' ? 'Rounds 11-20' : 'UDFA / Development'}
+                        </div>
+                      </div>
                     </Card>
                   ))}
                 </div>
@@ -293,6 +301,7 @@ export default function TexasDraftClient() {
             </Container>
           </Section>
         )}
+        </DataErrorBoundary>
 
         {/* Attribution */}
         <Section padding="md" borderTop>

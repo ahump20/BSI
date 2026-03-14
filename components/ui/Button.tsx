@@ -33,7 +33,7 @@ export function Button({
   href,
   ...props
 }: ButtonProps) {
-  const classes = `inline-flex items-center justify-center font-semibold rounded-lg border transition-all duration-300 uppercase tracking-wider ${variantClasses[variant] ?? variantClasses.primary} ${sizeClasses[size] ?? sizeClasses.md} ${className}`;
+  const classes = `inline-flex items-center justify-center font-semibold rounded-sm border transition-all duration-300 uppercase tracking-wider ${variantClasses[variant] ?? variantClasses.primary} ${sizeClasses[size] ?? sizeClasses.md} ${className}`;
 
   if (href) {
     return (

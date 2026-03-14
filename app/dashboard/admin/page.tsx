@@ -56,8 +56,8 @@ export default function AdminDashboardPage() {
             <div className="max-w-sm mx-auto">
               <Card padding="lg" className="text-center">
                 <h1 className="text-xl font-bold text-text-primary mb-4">Admin Access</h1>
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && login()} placeholder="Password" className="w-full bg-background-tertiary border border-border rounded-lg px-3 py-2 text-sm text-text-primary mb-4 focus:outline-none focus:border-burnt-orange" />
-                <button onClick={login} className="w-full py-2.5 bg-burnt-orange text-white rounded-lg font-medium">Enter</button>
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && login()} placeholder="Password" className="w-full bg-background-tertiary border border-border rounded-sm px-3 py-2 text-sm text-text-primary mb-4 focus:outline-none focus:border-burnt-orange" />
+                <button onClick={login} className="w-full py-2.5 bg-burnt-orange text-white rounded-sm font-medium">Enter</button>
               </Card>
             </div>
           </Container>
@@ -105,7 +105,7 @@ export default function AdminDashboardPage() {
             </div>
           ) : null}
 
-          <button onClick={fetchHealth} disabled={loading} className="mt-6 px-4 py-2 bg-background-tertiary text-text-secondary hover:text-text-primary rounded-lg text-sm transition-colors disabled:opacity-50">
+          <button onClick={fetchHealth} disabled={loading} className="mt-6 px-4 py-2 bg-background-tertiary text-text-secondary hover:text-text-primary rounded-sm text-sm transition-colors disabled:opacity-50">
             {loading ? 'Refreshing...' : 'Refresh'}
           </button>
         </Container>

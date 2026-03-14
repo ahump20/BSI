@@ -97,7 +97,7 @@ export default function RecapClient() {
                 {scoringPlays.slice(-10).map((play, idx) => (
                   <div
                     key={play.id || idx}
-                    className="p-3 bg-background-tertiary rounded-lg border-l-4 border-burnt-orange"
+                    className="p-3 bg-background-tertiary rounded-sm border-l-4 border-burnt-orange"
                   >
                     <div className="flex items-center gap-2 mb-1">
                       <Badge variant="primary" size="sm">
@@ -181,7 +181,7 @@ export default function RecapClient() {
           <CardContent>
             <div className="grid gap-4 md:grid-cols-3">
               {passingLeader && (
-                <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-lg">
+                <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-sm">
                   <Badge variant="primary">PASS</Badge>
                   <div>
                     <p className="font-semibold text-text-primary">
@@ -192,7 +192,7 @@ export default function RecapClient() {
                 </div>
               )}
               {rushingLeader && (
-                <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-lg">
+                <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-sm">
                   <Badge variant="success">RUSH</Badge>
                   <div>
                     <p className="font-semibold text-text-primary">
@@ -203,7 +203,7 @@ export default function RecapClient() {
                 </div>
               )}
               {receivingLeader && (
-                <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-lg">
+                <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-sm">
                   <Badge variant="secondary">REC</Badge>
                   <div>
                     <p className="font-semibold text-text-primary">
@@ -229,7 +229,7 @@ export default function RecapClient() {
               {scoringPlays.map((play, idx) => (
                 <div
                   key={play.id || idx}
-                  className="p-3 bg-background-tertiary rounded-lg border-l-4 border-burnt-orange"
+                  className="p-3 bg-background-tertiary rounded-sm border-l-4 border-burnt-orange"
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <Badge variant="primary" size="sm">
@@ -270,7 +270,7 @@ export default function RecapClient() {
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2">
               {/* Away */}
-              <div className="p-4 bg-background-tertiary rounded-lg">
+              <div className="p-4 bg-background-tertiary rounded-sm">
                 <p className="text-text-primary font-semibold mb-3">
                   {awayTeam?.team?.displayName || 'Away'}
                 </p>
@@ -286,7 +286,7 @@ export default function RecapClient() {
                 </div>
               </div>
               {/* Home */}
-              <div className="p-4 bg-background-tertiary rounded-lg">
+              <div className="p-4 bg-background-tertiary rounded-sm">
                 <p className="text-text-primary font-semibold mb-3">
                   {homeTeam?.team?.displayName || 'Home'}
                 </p>

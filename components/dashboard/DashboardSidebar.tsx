@@ -82,7 +82,7 @@ export function DashboardSidebar({
 
   return (
     <motion.aside
-      className="hidden lg:flex flex-col bg-surface-light/50 border border-border rounded-xl backdrop-blur-sm h-fit sticky top-28 overflow-hidden"
+      className="hidden lg:flex flex-col bg-surface-light/50 border border-border rounded-sm backdrop-blur-sm h-fit sticky top-28 overflow-hidden"
       animate={{ width: collapsed ? 64 : 240 }}
       transition={{ type: 'spring', damping: 25, stiffness: 300 }}
     >
@@ -112,7 +112,7 @@ export function DashboardSidebar({
             <button
               key={sport.key}
               onClick={() => onSportChange(sport.key)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all text-sm ${
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-sm transition-all text-sm ${
                 active
                   ? 'bg-burnt-orange/15 text-burnt-orange font-semibold'
                   : 'text-text-secondary hover:text-text-primary hover:bg-surface-medium'
@@ -145,7 +145,7 @@ export function DashboardSidebar({
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-text-muted hover:text-text-primary hover:bg-surface-medium transition-colors"
+                  className="flex items-center gap-3 px-3 py-2 rounded-sm text-sm text-text-muted hover:text-text-primary hover:bg-surface-medium transition-colors"
                 >
                   <Icon className="w-4 h-4 flex-shrink-0" />
                   <span>{link.label}</span>
@@ -167,7 +167,7 @@ export function DashboardSidebar({
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="flex items-center justify-center p-2 rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-medium transition-colors"
+                  className="flex items-center justify-center p-2 rounded-sm text-text-muted hover:text-text-primary hover:bg-surface-medium transition-colors"
                   title={link.label}
                 >
                   <Icon className="w-4 h-4" />

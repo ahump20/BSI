@@ -130,7 +130,7 @@ export function EdgeBotPanel() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Input form */}
-        <div className="bg-surface-light/10 border border-border-subtle rounded-xl p-5">
+        <div className="bg-surface-light/10 border border-border-subtle rounded-sm p-5">
           <h3 className="text-sm font-semibold text-text-secondary mb-4 uppercase tracking-wide">
             PRE Mode — Game Setup
           </h3>
@@ -142,7 +142,7 @@ export function EdgeBotPanel() {
                   id="teamA"
                   value={input.teamA}
                   onChange={update('teamA')}
-                  className="w-full bg-midnight border border-border-subtle rounded-lg px-3 py-2 text-text-primary text-sm focus:border-burnt-orange focus:outline-none"
+                  className="w-full bg-midnight border border-border-subtle rounded-sm px-3 py-2 text-text-primary text-sm focus:border-burnt-orange focus:outline-none"
                 >
                   <option value="">Select team</option>
                   {TEAMS.map((t) => (
@@ -156,7 +156,7 @@ export function EdgeBotPanel() {
                   id="teamB"
                   value={input.teamB}
                   onChange={update('teamB')}
-                  className="w-full bg-midnight border border-border-subtle rounded-lg px-3 py-2 text-text-primary text-sm focus:border-burnt-orange focus:outline-none"
+                  className="w-full bg-midnight border border-border-subtle rounded-sm px-3 py-2 text-text-primary text-sm focus:border-burnt-orange focus:outline-none"
                 >
                   <option value="">Select team</option>
                   {TEAMS.map((t) => (
@@ -173,7 +173,7 @@ export function EdgeBotPanel() {
                   id="pool"
                   value={input.pool}
                   onChange={update('pool')}
-                  className="w-full bg-midnight border border-border-subtle rounded-lg px-3 py-2 text-text-primary text-sm focus:border-burnt-orange focus:outline-none"
+                  className="w-full bg-midnight border border-border-subtle rounded-sm px-3 py-2 text-text-primary text-sm focus:border-burnt-orange focus:outline-none"
                 >
                   {POOLS.map((p) => (
                     <option key={p} value={p}>{p === 'A' || p === 'B' || p === 'C' || p === 'D' ? `Pool ${p}` : p}</option>
@@ -189,7 +189,7 @@ export function EdgeBotPanel() {
                   onChange={update('date')}
                   min="2026-03-05"
                   max="2026-03-17"
-                  className="w-full bg-midnight border border-border-subtle rounded-lg px-3 py-2 text-text-primary text-sm focus:border-burnt-orange focus:outline-none"
+                  className="w-full bg-midnight border border-border-subtle rounded-sm px-3 py-2 text-text-primary text-sm focus:border-burnt-orange focus:outline-none"
                 />
               </div>
             </div>
@@ -202,7 +202,7 @@ export function EdgeBotPanel() {
                 placeholder="e.g. Tokyo Dome"
                 value={input.venue}
                 onChange={update('venue')}
-                className="w-full bg-midnight border border-border-subtle rounded-lg px-3 py-2 text-text-primary text-sm focus:border-burnt-orange focus:outline-none"
+                className="w-full bg-midnight border border-border-subtle rounded-sm px-3 py-2 text-text-primary text-sm focus:border-burnt-orange focus:outline-none"
               />
             </div>
 
@@ -217,7 +217,7 @@ export function EdgeBotPanel() {
                   placeholder="Optional"
                   value={input.teamAStarter}
                   onChange={update('teamAStarter')}
-                  className="w-full bg-midnight border border-border-subtle rounded-lg px-3 py-2 text-text-primary text-sm focus:border-burnt-orange focus:outline-none"
+                  className="w-full bg-midnight border border-border-subtle rounded-sm px-3 py-2 text-text-primary text-sm focus:border-burnt-orange focus:outline-none"
                 />
               </div>
               <div>
@@ -230,7 +230,7 @@ export function EdgeBotPanel() {
                   placeholder="Optional"
                   value={input.teamBStarter}
                   onChange={update('teamBStarter')}
-                  className="w-full bg-midnight border border-border-subtle rounded-lg px-3 py-2 text-text-primary text-sm focus:border-burnt-orange focus:outline-none"
+                  className="w-full bg-midnight border border-border-subtle rounded-sm px-3 py-2 text-text-primary text-sm focus:border-burnt-orange focus:outline-none"
                 />
               </div>
             </div>
@@ -243,14 +243,14 @@ export function EdgeBotPanel() {
                 value={input.notes}
                 onChange={update('notes')}
                 rows={2}
-                className="w-full bg-midnight border border-border-subtle rounded-lg px-3 py-2 text-text-primary text-sm focus:border-burnt-orange focus:outline-none resize-none"
+                className="w-full bg-midnight border border-border-subtle rounded-sm px-3 py-2 text-text-primary text-sm focus:border-burnt-orange focus:outline-none resize-none"
               />
             </div>
 
             <button
               type="submit"
               disabled={!canSubmit || state === 'loading'}
-              className="w-full py-2.5 bg-burnt-orange text-white font-semibold rounded-lg text-sm hover:bg-ember transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-2.5 bg-burnt-orange text-white font-semibold rounded-sm text-sm hover:bg-ember transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {state === 'loading' ? 'Analyzing...' : 'Run EdgeBot v3 →'}
             </button>
@@ -258,7 +258,7 @@ export function EdgeBotPanel() {
         </div>
 
         {/* Output panel */}
-        <div className="bg-midnight border border-border-subtle rounded-xl p-5 flex flex-col min-h-[300px]">
+        <div className="bg-midnight border border-border-subtle rounded-sm p-5 flex flex-col min-h-[300px]">
           <h3 className="text-sm font-semibold text-text-secondary mb-4 uppercase tracking-wide">
             BSI Analytical Readout
           </h3>

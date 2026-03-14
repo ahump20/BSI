@@ -483,7 +483,7 @@ export default function SECPreviewPage() {
                   baseball will never be the same.
                 </p>
                 <Link href="/college-baseball/preseason/lone-star-rivalry">
-                  <span className="inline-flex items-center px-6 py-3 bg-burnt-orange text-white font-medium rounded-lg hover:bg-burnt-orange/80 transition-colors">
+                  <span className="inline-flex items-center px-6 py-3 bg-burnt-orange text-white font-medium rounded-sm hover:bg-burnt-orange/80 transition-colors">
                     Read: The Lone Star Rivalry <ArrowRight className="w-4 h-4 ml-2" />
                   </span>
                 </Link>

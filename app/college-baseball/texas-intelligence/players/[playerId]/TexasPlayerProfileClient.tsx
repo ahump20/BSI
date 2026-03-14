@@ -283,11 +283,11 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
           <Section padding="lg" className="bg-[var(--surface-scoreboard)]">
             <Container>
               <div className="space-y-6 animate-pulse">
-                <div className="h-8 w-48 bg-surface-light rounded" />
-                <div className="h-12 w-72 bg-surface-light rounded" />
+                <div className="h-8 w-48 bg-surface-light rounded-sm" />
+                <div className="h-12 w-72 bg-surface-light rounded-sm" />
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
                   {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className="h-24 bg-surface-light rounded" />
+                    <div key={i} className="h-24 bg-surface-light rounded-sm" />
                   ))}
                 </div>
               </div>

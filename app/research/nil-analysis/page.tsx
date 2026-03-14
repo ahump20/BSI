@@ -107,7 +107,7 @@ function DataTable({
         <span className="w-4 h-px bg-burnt-orange/40" />
         {caption}
       </figcaption>
-      <div className="overflow-x-auto rounded-lg border border-border/40">
+      <div className="overflow-x-auto rounded-sm border border-border/40">
         <table className="w-full border-collapse text-sm">
           <thead>
             <tr className="bg-white/[0.02]">
@@ -265,7 +265,7 @@ export default function NILAnalysisPage() {
               {/* Sticky TOC — desktop only */}
               <aside className="hidden xl:block w-56 shrink-0">
                 <div className="sticky top-24">
-                  <div className="rounded-lg bg-white/[0.02] border border-border/30 p-5">
+                  <div className="rounded-sm bg-white/[0.02] border border-border/30 p-5">
                     <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-burnt-orange/50 mb-5">
                       Contents
                     </p>
@@ -288,7 +288,7 @@ export default function NILAnalysisPage() {
               <article className="min-w-0 max-w-3xl">
                 {/* ── Abstract ──────────────────────────────────────── */}
                 <SectionHeading id="abstract">Abstract</SectionHeading>
-                <div className="bg-white/[0.02] border border-border/30 rounded-lg p-6 md:p-8 mb-12">
+                <div className="bg-white/[0.02] border border-border/30 rounded-sm p-6 md:p-8 mb-12">
                   <P>
                     The NCAA&rsquo;s name, image, and likeness market &mdash; reaching an estimated $2.26 billion in annual activity by its fourth year and projected to exceed $2.75 billion under the <em>House v. NCAA</em> revenue-sharing framework (Opendorse, 2025) &mdash; is not a reform. It is an unregulated financial experiment conducted on eighteen- to twenty-two-year-olds, and the primary beneficiaries are not the athletes it was designed to liberate. This analysis examines how structural opacity in NIL financial flows concentrates advantage among intermediaries &mdash; collectives, platform companies, hedge fund&ndash;adjacent donor vehicles, and institutional compliance offices &mdash; while athletes navigate a marketplace with no standardized disclosure requirements, no collective bargaining rights, and no fiduciary protections. Findings span four domains: market concentration, where a small number of high-revenue sport athletes capture the overwhelming majority of NIL dollars while the median Division I athlete earns approximately $500&ndash;$713 annually; gender inequity, where women&rsquo;s sports athletes receive less than 3.5% of collective-backed funds despite generating measurable and growing marginal revenue; compliance fragmentation, where thirty-plus different state laws produce a regulatory patchwork that advantages programs in permissive jurisdictions; and predatory financial vehicles, where charitable-structure collectives and NIL hedge funds operate with minimal transparency obligations while functioning as de facto recruiting war chests and speculative instruments. The $2.8 billion <em>House v. NCAA</em> settlement, far from resolving these tensions, layers a revenue-sharing model atop an already opaque system &mdash; adding institutional money without institutional accountability. The central argument is straightforward: transparency is not a feature request. It is the minimum standard for any marketplace that routes billions of dollars through the labor of unpaid (or newly, unevenly paid) young people.
                   </P>
@@ -526,7 +526,7 @@ export default function NILAnalysisPage() {
                 </P>
 
                 {/* ── Interactive Tools CTA ─────────────────────────── */}
-                <div className="my-12 p-6 rounded-xl border border-burnt-orange/20 bg-burnt-orange/[0.04]">
+                <div className="my-12 p-6 rounded-sm border border-burnt-orange/20 bg-burnt-orange/[0.04]">
                   <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-burnt-orange mb-3">
                     Explore the Data
                   </p>
@@ -537,14 +537,14 @@ export default function NILAnalysisPage() {
                   <div className="flex flex-col sm:flex-row gap-3">
                     <a
                       href="/nil-valuation"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-burnt-orange/10 border border-burnt-orange/30 text-burnt-orange text-sm font-medium hover:bg-burnt-orange/20 transition-colors"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-burnt-orange/10 border border-burnt-orange/30 text-burnt-orange text-sm font-medium hover:bg-burnt-orange/20 transition-colors"
                     >
                       NIL Market Intelligence Dashboard
                       <span className="text-xs opacity-60">&rarr;</span>
                     </a>
                     <a
                       href="/nil-valuation/performance-index"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-text-secondary text-sm font-medium hover:bg-white/[0.08] transition-colors"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-white/[0.04] border border-white/10 text-text-secondary text-sm font-medium hover:bg-white/[0.08] transition-colors"
                     >
                       Calculate a Player&rsquo;s NIL Index
                       <span className="text-xs opacity-60">&rarr;</span>

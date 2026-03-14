@@ -132,7 +132,7 @@ export function TechMaturityMap({ className = '' }: { className?: string }) {
               {entries.map((entry) => (
                 <div
                   key={entry.company}
-                  className="group bg-surface-light hover:bg-surface-light border border-border-subtle hover:border-border rounded-lg px-4 py-3 transition-all"
+                  className="group bg-surface-light hover:bg-surface-light border border-border-subtle hover:border-border rounded-sm px-4 py-3 transition-all"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
@@ -148,7 +148,7 @@ export function TechMaturityMap({ className = '' }: { className?: string }) {
                       {entry.sports.filter((s) => s !== 'All').map((sport) => (
                         <span
                           key={sport}
-                          className="text-[9px] px-1.5 py-0.5 rounded bg-surface-light text-text-muted font-mono"
+                          className="text-[9px] px-1.5 py-0.5 rounded-sm bg-surface-light text-text-muted font-mono"
                         >
                           {sport}
                         </span>

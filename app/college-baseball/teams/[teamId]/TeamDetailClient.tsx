@@ -386,7 +386,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
               <div className="text-burnt-orange text-4xl mb-4 font-display">?</div>
               <h3 className="text-xl font-semibold text-text-primary mb-2">Team Not Found</h3>
               <p className="text-text-muted mb-6">No data available for &ldquo;{teamId}&rdquo;.</p>
-              <Link href="/college-baseball/teams" className="inline-block px-6 py-2 bg-burnt-orange text-white font-semibold rounded-lg hover:bg-burnt-orange/90 transition-colors">
+              <Link href="/college-baseball/teams" className="inline-block px-6 py-2 bg-burnt-orange text-white font-semibold rounded-sm hover:bg-burnt-orange/90 transition-colors">
                 Back to Teams
               </Link>
             </Card>
@@ -445,7 +445,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                       <Badge variant="secondary">{meta.conference}</Badge>
                       {hasPreseason && (
                         <>
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold text-white" style={{ backgroundColor: accent }}>#{preseason.rank} Preseason</span>
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-semibold text-white" style={{ backgroundColor: accent }}>#{preseason.rank} Preseason</span>
                           <Badge variant="accent">{getTierLabel(preseason.tier)}</Badge>
                         </>
                       )}
@@ -642,12 +642,12 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
 
                       {/* Offense + Pitching Analysis */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                        <div className="rounded-lg bg-surface-light border border-border-subtle p-4">
+                        <div className="rounded-sm bg-surface-light border border-border-subtle p-4">
                           <h3 className="text-xs uppercase tracking-wider font-semibold mb-3" style={{ color: accent }}>Offense</h3>
                           <div className="text-sm font-semibold text-text-primary mb-2">{featuredInsight.offenseAnalysis.headline}</div>
                           <div className="flex flex-wrap gap-2 mb-3">
                             {featuredInsight.offenseAnalysis.indicators.slice(0, 4).map((ind) => (
-                              <div key={ind.label} className="bg-charcoal rounded px-2 py-1">
+                              <div key={ind.label} className="bg-charcoal rounded-sm px-2 py-1">
                                 <span className="font-mono text-sm font-bold" style={{ color: accent }}>{ind.value}</span>
                                 <span className="text-text-muted text-xs ml-1">{ind.label}</span>
                               </div>
@@ -655,12 +655,12 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                           </div>
                           <p className="text-text-muted text-xs leading-relaxed">{featuredInsight.offenseAnalysis.narrative}</p>
                         </div>
-                        <div className="rounded-lg bg-surface-light border border-border-subtle p-4">
+                        <div className="rounded-sm bg-surface-light border border-border-subtle p-4">
                           <h3 className="text-xs uppercase tracking-wider font-semibold mb-3" style={{ color: accent }}>Pitching</h3>
                           <div className="text-sm font-semibold text-text-primary mb-2">{featuredInsight.pitchingAnalysis.headline}</div>
                           <div className="flex flex-wrap gap-2 mb-3">
                             {featuredInsight.pitchingAnalysis.indicators.slice(0, 4).map((ind) => (
-                              <div key={ind.label} className="bg-charcoal rounded px-2 py-1">
+                              <div key={ind.label} className="bg-charcoal rounded-sm px-2 py-1">
                                 <span className="font-mono text-sm font-bold" style={{ color: accent }}>{ind.value}</span>
                                 <span className="text-text-muted text-xs ml-1">{ind.label}</span>
                               </div>
@@ -677,7 +677,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                           {featuredInsight.keyContributors.slice(0, 6).map((c) => {
                             const rosterMatch = rosterPlayers.find(p => p.name.toLowerCase().includes(c.name.split(' ').pop()?.toLowerCase() ?? ''));
                             return (
-                              <div key={c.name} className="flex gap-3 p-3 rounded-lg bg-surface-light border border-border-subtle">
+                              <div key={c.name} className="flex gap-3 p-3 rounded-sm bg-surface-light border border-border-subtle">
                                 <PlayerAvatar name={c.name} headshot={rosterMatch?.headshot} size={48} />
                                 <div className="min-w-0">
                                   <div className="text-text-primary font-semibold text-sm">{c.name}</div>
@@ -1028,7 +1028,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                     <Card padding="lg">
                       <div className="flex items-center justify-between mb-6">
                         <h2 className="font-display text-xl font-bold text-text-primary uppercase tracking-wide">NIL Spending Power</h2>
-                        <span className="text-xs px-2 py-1 rounded font-semibold" style={{ backgroundColor: 'rgba(191,87,0,0.15)', color: '#BF5700' }}>
+                        <span className="text-xs px-2 py-1 rounded-sm font-semibold" style={{ backgroundColor: 'rgba(191,87,0,0.15)', color: '#BF5700' }}>
                           {nilTeamData.conference} — {nilTeamData.marketTier}
                         </span>
                       </div>
@@ -1124,7 +1124,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                           </div>
                           <div className="space-y-1">
                             {teamPlayers.slice(0, 5).map((p, i) => (
-                              <div key={p.player_name} className="flex items-center justify-between py-1.5 px-2 rounded hover:bg-surface-light transition-colors">
+                              <div key={p.player_name} className="flex items-center justify-between py-1.5 px-2 rounded-sm hover:bg-surface-light transition-colors">
                                 <div className="flex items-center gap-2">
                                   <span className="text-xs text-text-muted font-mono w-4">{i + 1}</span>
                                   <span className="text-sm text-text-primary">{p.player_name}</span>
@@ -1201,7 +1201,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   </Card>
                 ) : (
                   <Card padding="lg" className="text-center">
-                    <p className="text-text-tertiary">Schedule loading...</p>
+                    <p className="text-text-tertiary">Loading schedule...</p>
                   </Card>
                 )}
               </ScrollReveal>
@@ -1221,7 +1221,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                           <div className="text-xs uppercase tracking-wider text-text-muted mb-3 font-semibold">Weekend Rotation</div>
                           <div className="space-y-2">
                             {positionGroups.find(g => g.group === 'Rotation')?.players.slice(0, 4).map((p, i) => (
-                              <div key={p.id || p.name} className="flex items-center justify-between p-3 rounded-lg bg-surface-light border border-border-subtle">
+                              <div key={p.id || p.name} className="flex items-center justify-between p-3 rounded-sm bg-surface-light border border-border-subtle">
                                 <div className="flex items-center gap-3 min-w-0">
                                   <span className="font-mono text-xs text-text-muted w-5">{['FRI', 'SAT', 'SUN', 'MID'][i]}</span>
                                   <PlayerAvatar name={p.name} headshot={p.headshot} size={36} />
@@ -1264,7 +1264,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                             <div className="text-xs uppercase tracking-wider text-text-muted mb-3 font-semibold">Bullpen</div>
                             <div className="space-y-2">
                               {positionGroups.find(g => g.group === 'Bullpen')?.players.map((p) => (
-                                <div key={p.id || p.name} className="flex items-center justify-between p-3 rounded-lg bg-surface-light border border-border-subtle">
+                                <div key={p.id || p.name} className="flex items-center justify-between p-3 rounded-sm bg-surface-light border border-border-subtle">
                                   <div className="flex items-center gap-3 min-w-0">
                                     <PlayerAvatar name={p.name} headshot={p.headshot} size={36} />
                                     <div className="min-w-0">
@@ -1392,7 +1392,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   })
                 ) : (
                   <Card padding="lg" className="text-center">
-                    <p className="text-text-tertiary">Roster loading...</p>
+                    <p className="text-text-tertiary">Loading roster...</p>
                   </Card>
                 )}
 

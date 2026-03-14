@@ -123,14 +123,14 @@ export function MatchupIntelCard({
 
   if (status === 'idle' || status === 'loading') {
     return (
-      <div className="rounded-xl border border-border-subtle bg-surface-light overflow-hidden animate-pulse">
+      <div className="rounded-sm border border-border-subtle bg-surface-light overflow-hidden animate-pulse">
         <div className="flex items-center justify-between px-4 py-3 border-b border-background-tertiary">
-          <div className="h-3 w-40 bg-background-tertiary rounded" />
+          <div className="h-3 w-40 bg-background-tertiary rounded-sm" />
           <div className="h-4 w-8 bg-background-tertiary rounded-full" />
         </div>
         <div className="p-4 space-y-3">
-          <div className="h-3 w-64 bg-background-tertiary rounded" />
-          <div className="h-[200px] bg-background-tertiary rounded" />
+          <div className="h-3 w-64 bg-background-tertiary rounded-sm" />
+          <div className="h-[200px] bg-background-tertiary rounded-sm" />
         </div>
       </div>
     );
@@ -140,7 +140,7 @@ export function MatchupIntelCard({
 
   if (status === 'upgrade') {
     return (
-      <div className="rounded-xl border border-border-subtle bg-surface-light overflow-hidden">
+      <div className="rounded-sm border border-border-subtle bg-surface-light overflow-hidden">
         <div className="flex items-center justify-between px-4 py-3 border-b border-background-tertiary">
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-burnt-orange" />
@@ -161,7 +161,7 @@ export function MatchupIntelCard({
           </p>
           <Link
             href="/pricing"
-            className="inline-block mt-2 px-4 py-2 rounded-lg text-xs font-display font-bold uppercase tracking-wider text-white bg-burnt-orange hover:bg-ember transition-colors"
+            className="inline-block mt-2 px-4 py-2 rounded-sm text-xs font-display font-bold uppercase tracking-wider text-white bg-burnt-orange hover:bg-ember transition-colors"
           >
             Upgrade to Pro
           </Link>
@@ -174,7 +174,7 @@ export function MatchupIntelCard({
 
   if (status === 'error') {
     return (
-      <div className="rounded-xl border border-border-subtle bg-surface-light overflow-hidden">
+      <div className="rounded-sm border border-border-subtle bg-surface-light overflow-hidden">
         <div className="flex items-center justify-between px-4 py-3 border-b border-background-tertiary">
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-burnt-orange" />
@@ -207,7 +207,7 @@ export function MatchupIntelCard({
   const awayName = card.offense.away.teamName;
 
   return (
-    <div className="rounded-xl border border-border-subtle bg-surface-light overflow-hidden">
+    <div className="rounded-sm border border-border-subtle bg-surface-light overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-background-tertiary">
         <div className="flex items-center gap-2">

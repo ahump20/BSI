@@ -51,7 +51,7 @@ export function FeedbackButton() {
       </button>
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={(e) => { if (e.target === e.currentTarget) setOpen(false); }}>
-          <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="feedback-heading" className="bg-background-secondary border border-border rounded-xl p-6 w-full max-w-md">
+          <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="feedback-heading" className="bg-background-secondary border border-border rounded-sm p-6 w-full max-w-md">
             {submitted ? (
               <div className="text-center py-8"><div aria-hidden="true" className="text-4xl mb-3">&#10003;</div><p className="text-text-primary font-medium">Thanks for your feedback!</p></div>
             ) : (
@@ -63,7 +63,7 @@ export function FeedbackButton() {
                 <div className="mb-4">
                   <label className="block text-xs text-text-muted mb-1.5 uppercase tracking-wider">Category</label>
                   <div className="flex flex-wrap gap-2">
-                    {CATEGORIES.map((c) => (<button key={c} onClick={() => setCategory(c)} className={`px-3 py-1 rounded text-sm transition-colors ${category === c ? 'bg-burnt-orange text-white' : 'bg-surface text-text-muted hover:text-text-primary'}`}>{c}</button>))}
+                    {CATEGORIES.map((c) => (<button key={c} onClick={() => setCategory(c)} className={`px-3 py-1 rounded-sm text-sm transition-colors ${category === c ? 'bg-burnt-orange text-white' : 'bg-surface text-text-muted hover:text-text-primary'}`}>{c}</button>))}
                   </div>
                 </div>
                 <div className="mb-4">
@@ -74,9 +74,9 @@ export function FeedbackButton() {
                 </div>
                 <div className="mb-4">
                   <label className="block text-xs text-text-muted mb-1.5 uppercase tracking-wider">Your Feedback</label>
-                  <textarea value={text} onChange={(e) => setText(e.target.value)} rows={4} className="w-full bg-surface border border-border-strong rounded-lg p-3 text-text-primary text-sm placeholder:text-text-muted resize-none focus:outline-none focus:border-burnt-orange" placeholder="Tell us what you think..." />
+                  <textarea value={text} onChange={(e) => setText(e.target.value)} rows={4} className="w-full bg-surface border border-border-strong rounded-sm p-3 text-text-primary text-sm placeholder:text-text-muted resize-none focus:outline-none focus:border-burnt-orange" placeholder="Tell us what you think..." />
                 </div>
-                <button onClick={submit} disabled={submitting || !text.trim()} className="w-full py-2.5 bg-burnt-orange hover:bg-burnt-orange/80 disabled:opacity-50 text-white rounded-lg font-medium transition-colors">{submitting ? 'Sending...' : 'Send Feedback'}</button>
+                <button onClick={submit} disabled={submitting || !text.trim()} className="w-full py-2.5 bg-burnt-orange hover:bg-burnt-orange/80 disabled:opacity-50 text-white rounded-sm font-medium transition-colors">{submitting ? 'Sending...' : 'Send Feedback'}</button>
               </>
             )}
           </div>

@@ -49,14 +49,14 @@ const QF_ROUNDS: BracketRound[] = [
 
 function MatchupCard({ round }: { round: BracketRound }) {
   return (
-    <div className="bg-surface-light/20 border border-border-subtle rounded-xl p-4">
+    <div className="bg-surface-light/20 border border-border-subtle rounded-sm p-4">
       <div className="text-xs text-burnt-orange font-semibold mb-1">{round.title}</div>
       <div className="text-text-muted text-xs mb-3">{round.date}</div>
       <div className="space-y-2">
         {round.slots.map((slot) => (
           <div key={slot.seed} className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono font-bold text-text-muted bg-surface-light px-1.5 py-0.5 rounded">
+              <span className="text-[10px] font-mono font-bold text-text-muted bg-surface-light px-1.5 py-0.5 rounded-sm">
                 {slot.seed}
               </span>
               <span className="text-text-secondary text-sm">{slot.label}</span>
@@ -82,39 +82,39 @@ export function TournamentBracket() {
       </div>
 
       {/* Pool play → QF routing diagram */}
-      <div className="mb-8 p-4 sm:p-6 rounded-xl border border-border-subtle bg-surface-light/10">
+      <div className="mb-8 p-4 sm:p-6 rounded-sm border border-border-subtle bg-surface-light/10">
         <div className="text-xs text-text-muted mb-4 uppercase tracking-wider font-semibold">Advancement Routing</div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center text-sm">
           <div>
             <div className="font-semibold text-text-primary mb-1">Pool A</div>
             <div className="text-text-muted text-xs">San Juan</div>
             <div className="mt-2 space-y-1">
-              <div className="text-[11px] px-2 py-0.5 bg-burnt-orange/10 rounded text-burnt-orange">A1 → QF 1</div>
-              <div className="text-[11px] px-2 py-0.5 bg-burnt-orange/10 rounded text-burnt-orange">A2 → QF 2</div>
+              <div className="text-[11px] px-2 py-0.5 bg-burnt-orange/10 rounded-sm text-burnt-orange">A1 → QF 1</div>
+              <div className="text-[11px] px-2 py-0.5 bg-burnt-orange/10 rounded-sm text-burnt-orange">A2 → QF 2</div>
             </div>
           </div>
           <div>
             <div className="font-semibold text-text-primary mb-1">Pool B</div>
             <div className="text-text-muted text-xs">Houston</div>
             <div className="mt-2 space-y-1">
-              <div className="text-[11px] px-2 py-0.5 bg-ember/10 rounded text-ember">B1 → QF 3</div>
-              <div className="text-[11px] px-2 py-0.5 bg-ember/10 rounded text-ember">B2 → QF 4</div>
+              <div className="text-[11px] px-2 py-0.5 bg-ember/10 rounded-sm text-ember">B1 → QF 3</div>
+              <div className="text-[11px] px-2 py-0.5 bg-ember/10 rounded-sm text-ember">B2 → QF 4</div>
             </div>
           </div>
           <div>
             <div className="font-semibold text-text-primary mb-1">Pool C</div>
             <div className="text-text-muted text-xs">Tokyo</div>
             <div className="mt-2 space-y-1">
-              <div className="text-[11px] px-2 py-0.5 bg-ember/10 rounded text-ember">C1 → QF 4</div>
-              <div className="text-[11px] px-2 py-0.5 bg-ember/10 rounded text-ember">C2 → QF 3</div>
+              <div className="text-[11px] px-2 py-0.5 bg-ember/10 rounded-sm text-ember">C1 → QF 4</div>
+              <div className="text-[11px] px-2 py-0.5 bg-ember/10 rounded-sm text-ember">C2 → QF 3</div>
             </div>
           </div>
           <div>
             <div className="font-semibold text-text-primary mb-1">Pool D</div>
             <div className="text-text-muted text-xs">Miami</div>
             <div className="mt-2 space-y-1">
-              <div className="text-[11px] px-2 py-0.5 bg-burnt-orange/10 rounded text-burnt-orange">D1 → QF 2</div>
-              <div className="text-[11px] px-2 py-0.5 bg-burnt-orange/10 rounded text-burnt-orange">D2 → QF 1</div>
+              <div className="text-[11px] px-2 py-0.5 bg-burnt-orange/10 rounded-sm text-burnt-orange">D1 → QF 2</div>
+              <div className="text-[11px] px-2 py-0.5 bg-burnt-orange/10 rounded-sm text-burnt-orange">D2 → QF 1</div>
             </div>
           </div>
         </div>
@@ -136,7 +136,7 @@ export function TournamentBracket() {
           <h3 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-3">Semifinals</h3>
           <div className="space-y-4">
             {[{ title: 'SF 1', date: 'Mar 15 · Miami', qf: 'QF1 winner vs QF2 winner' }, { title: 'SF 2', date: 'Mar 16 · Miami', qf: 'QF3 winner vs QF4 winner' }].map((sf) => (
-              <div key={sf.title} className="bg-surface-light/20 border border-border-subtle rounded-xl p-4">
+              <div key={sf.title} className="bg-surface-light/20 border border-border-subtle rounded-sm p-4">
                 <div className="text-xs text-burnt-orange font-semibold mb-1">{sf.title}</div>
                 <div className="text-text-muted text-xs mb-2">{sf.date}</div>
                 <div className="text-text-secondary text-sm italic">{sf.qf}</div>
@@ -146,7 +146,7 @@ export function TournamentBracket() {
         </div>
         <div>
           <h3 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-3">Championship</h3>
-          <div className="bg-gradient-to-br from-burnt-orange/15 to-ember/5 border border-burnt-orange/30 rounded-xl p-6 h-full flex flex-col justify-center">
+          <div className="bg-gradient-to-br from-burnt-orange/15 to-ember/5 border border-burnt-orange/30 rounded-sm p-6 h-full flex flex-col justify-center">
             <div className="text-center">
               <div className="text-xs text-burnt-orange font-bold uppercase tracking-wider mb-2">WBC Final</div>
               <div className="text-text-muted text-sm mb-2">March 17, 2026</div>

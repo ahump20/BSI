@@ -148,7 +148,7 @@ function SearchContent() {
         }
       } catch (err) {
         if ((err as Error).name !== 'AbortError') {
-          setError('Failed to fetch search results. Please try again.');
+          setError('Search hit a snag — try again in a moment.');
           setResults([]);
         }
       } finally {
@@ -258,7 +258,7 @@ function SearchContent() {
                 <p className="text-red-400 mb-4">{error}</p>
                 <button
                   onClick={() => window.location.reload()}
-                  className="px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange-dark transition-colors"
+                  className="px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange-dark transition-colors"
                 >
                   Try Again
                 </button>
@@ -280,19 +280,19 @@ function SearchContent() {
                 <div className="flex flex-wrap justify-center gap-3">
                   <Link
                     href="/college-baseball/teams"
-                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-lg hover:bg-surface-light transition-colors"
+                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-sm hover:bg-surface-light transition-colors"
                   >
                     Browse NCAA Baseball
                   </Link>
                   <Link
                     href="/mlb/teams"
-                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-lg hover:bg-surface-light transition-colors"
+                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-sm hover:bg-surface-light transition-colors"
                   >
                     Browse MLB Teams
                   </Link>
                   <Link
                     href="/nfl/teams"
-                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-lg hover:bg-surface-light transition-colors"
+                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-sm hover:bg-surface-light transition-colors"
                   >
                     Browse NFL Teams
                   </Link>
@@ -328,7 +328,7 @@ function SearchContent() {
                 {/* Ask BSI Callout */}
                 <Card variant="default" padding="lg" className="border-burnt-orange/20">
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-burnt-orange/10 flex items-center justify-center shrink-0">
+                    <div className="w-12 h-12 rounded-sm bg-burnt-orange/10 flex items-center justify-center shrink-0">
                       <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-burnt-orange" stroke="currentColor" strokeWidth={1.5}>
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" />
                         <path d="M12 16v-4M12 8h.01" />
@@ -367,7 +367,7 @@ function SearchContent() {
                       <Link
                         key={sport.href}
                         href={sport.href}
-                        className="p-4 bg-background-tertiary rounded-lg hover:bg-surface-light transition-colors"
+                        className="p-4 bg-background-tertiary rounded-sm hover:bg-surface-light transition-colors"
                       >
                         <p className="font-medium text-text-primary">{sport.label}</p>
                         <p className="text-xs text-text-tertiary">{sport.sub}</p>
@@ -404,7 +404,7 @@ function SearchContent() {
                               <div className="flex items-center gap-4">
                                 {/* Type Badge */}
                                 <div
-                                  className={`w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold text-sm ${getSportColor(sport)} group-hover:scale-105 transition-transform`}
+                                  className={`w-12 h-12 rounded-sm flex items-center justify-center text-white font-bold text-sm ${getSportColor(sport)} group-hover:scale-105 transition-transform`}
                                 >
                                   {item.name.substring(0, 2).toUpperCase()}
                                 </div>

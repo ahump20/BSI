@@ -440,7 +440,7 @@ const ChartTooltip = ({ active, payload, label }: TooltipProps) => {
       style={{
         background: TOKENS.midnight,
         border: `1px solid ${TOKENS.slate}`,
-        borderRadius: 4,
+        borderRadius: 2,
         padding: '5px 8px',
         fontFamily: FONTS.mono,
         fontSize: 9,
@@ -477,7 +477,7 @@ const Badge = ({
         fontFamily: FONTS.mono,
         fontWeight: 700,
         letterSpacing: '0.08em',
-        borderRadius: 3,
+        borderRadius: 2,
         background: ghost ? 'transparent' : `${color}15`,
         color,
         border: ghost ? `1px solid ${color}30` : 'none',
@@ -502,7 +502,7 @@ const WinGradient = ({
   opp: string;
   color: string;
 }) => (
-  <div style={{ position: 'relative', height: 20, borderRadius: 4, overflow: 'hidden', background: TOKENS.ash }}>
+  <div style={{ position: 'relative', height: 20, borderRadius: 2, overflow: 'hidden', background: TOKENS.ash }}>
     <div
       style={{
         position: 'absolute',
@@ -661,7 +661,7 @@ export function WC3Dashboard() {
           width: 320,
           background: TOKENS.midnight,
           border: `1px solid ${clr}30`,
-          borderRadius: 10,
+          borderRadius: 2,
           boxShadow: `0 12px 40px rgba(0,0,0,0.6), 0 0 0 1px ${clr}15`,
           padding: 16,
           pointerEvents: 'none',
@@ -752,7 +752,7 @@ export function WC3Dashboard() {
             width: '100%',
             textAlign: 'left',
             background: isHov ? TOKENS.cardHover : TOKENS.card,
-            borderRadius: 10,
+            borderRadius: 2,
             border: `1px solid ${isHov ? `${clr}35` : TOKENS.cardBorder}`,
             padding: wide ? '18px 22px' : '14px 16px',
             cursor: 'pointer',
@@ -771,7 +771,7 @@ export function WC3Dashboard() {
               width: 3,
               height: '100%',
               background: `${clr}40`,
-              borderRadius: '10px 0 0 10px',
+              borderRadius: '2px 0 0 2px',
             }}
           />
 
@@ -849,7 +849,7 @@ export function WC3Dashboard() {
                 gap: 6,
                 alignItems: 'flex-start',
                 padding: '6px 8px',
-                borderRadius: 5,
+                borderRadius: 2,
                 background: `${TOKENS.midnight}60`,
                 borderLeft: `2px solid ${getPriorityColor(game.intel[0].pri)}`,
               }}
@@ -898,7 +898,7 @@ export function WC3Dashboard() {
           width: '100%',
           textAlign: 'left',
           background: TOKENS.card,
-          borderRadius: 12,
+          borderRadius: 2,
           border: `1px solid ${TOKENS.cardBorder}`,
           cursor: 'pointer',
           overflow: 'hidden',
@@ -1067,7 +1067,7 @@ export function WC3Dashboard() {
                   flex: '1 1 0',
                   minWidth: 0,
                   padding: '7px 10px',
-                  borderRadius: 6,
+                  borderRadius: 2,
                   background: `${TOKENS.midnight}70`,
                   borderLeft: `2px solid ${getPriorityColor(item.pri)}`,
                 }}
@@ -1170,7 +1170,7 @@ export function WC3Dashboard() {
                 style={{
                   width: 28,
                   height: 28,
-                  borderRadius: 6,
+                  borderRadius: 2,
                   border: `1px solid ${TOKENS.ash}`,
                   display: 'flex',
                   alignItems: 'center',
@@ -1286,7 +1286,7 @@ export function WC3Dashboard() {
                   lineHeight: 1.5,
                   marginBottom: 20,
                   padding: '12px 16px',
-                  borderRadius: 8,
+                  borderRadius: 2,
                   background: TOKENS.card,
                   border: `1px solid ${TOKENS.cardBorder}`,
                 }}
@@ -1412,7 +1412,7 @@ export function WC3Dashboard() {
                 <div
                   style={{
                     background: TOKENS.card,
-                    borderRadius: 8,
+                    borderRadius: 2,
                     border: `1px solid ${TOKENS.cardBorder}`,
                     overflow: 'hidden',
                   }}
@@ -1518,7 +1518,7 @@ export function WC3Dashboard() {
                         display: 'flex',
                         gap: 8,
                         padding: '8px 12px',
-                        borderRadius: 6,
+                        borderRadius: 2,
                         background: TOKENS.card,
                         borderLeft: `2px solid ${getPriorityColor(item.pri)}`,
                         border: `1px solid ${TOKENS.cardBorder}`,
@@ -1577,7 +1577,7 @@ export function WC3Dashboard() {
                 style={{
                   width: 28,
                   height: 28,
-                  borderRadius: 5,
+                  borderRadius: 2,
                   background: `linear-gradient(135deg, ${TOKENS.burnt}, ${TOKENS.ember})`,
                   display: 'flex',
                   alignItems: 'center',
@@ -1604,7 +1604,7 @@ export function WC3Dashboard() {
                 style={{
                   width: '100%',
                   padding: '5px 10px 5px 26px',
-                  borderRadius: 6,
+                  borderRadius: 2,
                   border: `1px solid ${TOKENS.ash}`,
                   background: TOKENS.charcoal,
                   fontFamily: FONTS.mono,
@@ -1688,7 +1688,7 @@ export function WC3Dashboard() {
                     fontSize: 8,
                     fontWeight: 600,
                     letterSpacing: '0.08em',
-                    borderRadius: 12,
+                    borderRadius: 2,
                     cursor: 'pointer',
                     background: active ? `${color}18` : 'transparent',
                     color: active ? color : TOKENS.dim,
@@ -1710,7 +1710,7 @@ export function WC3Dashboard() {
             style={{
               marginBottom: 18,
               padding: '8px 14px',
-              borderRadius: 8,
+              borderRadius: 2,
               background: `${TOKENS.ember}06`,
               border: `1px solid ${TOKENS.ember}18`,
               display: 'flex',
@@ -1811,7 +1811,7 @@ export function WC3Dashboard() {
                         display: 'flex',
                         gap: 8,
                         padding: '10px 14px',
-                        borderRadius: 8,
+                        borderRadius: 2,
                         background: TOKENS.card,
                         border: `1px solid ${TOKENS.cardBorder}`,
                         borderLeft: `3px solid ${getSportColor(item.sport)}25`,
@@ -1845,7 +1845,7 @@ export function WC3Dashboard() {
             {(['west', 'east'] as const).map((conference) => (
               <div
                 key={conference}
-                style={{ background: TOKENS.card, borderRadius: 8, border: `1px solid ${TOKENS.cardBorder}`, overflow: 'hidden' }}
+                style={{ background: TOKENS.card, borderRadius: 2, border: `1px solid ${TOKENS.cardBorder}`, overflow: 'hidden' }}
               >
                 <div
                   style={{
@@ -1905,7 +1905,7 @@ export function WC3Dashboard() {
               </div>
             ))}
 
-            <div style={{ background: TOKENS.card, borderRadius: 8, border: `1px solid ${TOKENS.cardBorder}`, padding: 12 }}>
+            <div style={{ background: TOKENS.card, borderRadius: 2, border: `1px solid ${TOKENS.cardBorder}`, padding: 12 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                 <span
                   style={{
@@ -1943,7 +1943,7 @@ export function WC3Dashboard() {
               </div>
             </div>
 
-            <div style={{ background: TOKENS.card, borderRadius: 8, border: `1px solid ${TOKENS.cardBorder}`, padding: 12 }}>
+            <div style={{ background: TOKENS.card, borderRadius: 2, border: `1px solid ${TOKENS.cardBorder}`, padding: 12 }}>
               <div
                 style={{
                   fontFamily: FONTS.head,
@@ -1973,7 +1973,7 @@ export function WC3Dashboard() {
                     tickLine={false}
                   />
                   <Tooltip content={<ChartTooltip />} />
-                  <Bar dataKey="v" name="Net RTG" radius={[0, 3, 3, 0]} fill={TOKENS.burnt}>
+                  <Bar dataKey="v" name="Net RTG" radius={[0, 2, 2, 0]} fill={TOKENS.burnt}>
                     {NET_RTG.map((entry, idx) => (
                       <Cell key={`${entry.t}-${idx}`} fill={idx === 0 ? TOKENS.burnt : `${TOKENS.blue}80`} />
                     ))}

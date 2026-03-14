@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardContent } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
+import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { TeamVideoPanel } from '@/components/college-baseball/TeamVideoPanel';
@@ -91,11 +91,16 @@ export default function TexasMediaClient() {
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-6 text-text-primary">
-                Film Room
-              </h2>
+              <div className="mb-6">
+                <span className="heritage-stamp text-[10px]">BSI Film Room</span>
+                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary mt-1">
+                  Film Room
+                </h2>
+              </div>
             </ScrollReveal>
-            <TeamVideoPanel teamId={TEAM_ID} />
+            <div className="[&_iframe]:w-full [&_iframe]:aspect-video [&_iframe]:rounded-sm">
+              <TeamVideoPanel teamId={TEAM_ID} />
+            </div>
           </Container>
         </Section>
 
@@ -103,15 +108,18 @@ export default function TexasMediaClient() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-6 text-text-primary">
-                Latest News
-              </h2>
+              <div className="mb-6">
+                <span className="heritage-stamp text-[10px]">News Intelligence</span>
+                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary mt-1">
+                  Latest News
+                </h2>
+              </div>
             </ScrollReveal>
 
             {newsLoading ? (
               <div className="space-y-3">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="h-20 bg-surface-light rounded-lg animate-pulse" />
+                  <div key={i} className="h-20 bg-surface-light rounded-sm animate-pulse" />
                 ))}
               </div>
             ) : news && news.articles.length > 0 ? (
@@ -155,19 +163,48 @@ export default function TexasMediaClient() {
                 </p>
               </Card>
             )}
+
+            {news && news.articles.length > 0 && (
+              <div className="mt-4">
+                <DataSourceBadge
+                  source={news.meta?.source ?? 'BSI News Aggregation'}
+                  timestamp={
+                    news.meta?.fetched_at
+                      ? new Date(news.meta.fetched_at).toLocaleString('en-US', {
+                          timeZone: 'America/Chicago',
+                          month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
+                        }) + ' CT'
+                      : 'Live'
+                  }
+                />
+              </div>
+            )}
           </Container>
         </Section>
 
         {/* Footer nav */}
         <Section padding="md" borderTop>
           <Container>
-            <div className="flex flex-wrap gap-4">
-              <Link href="/college-baseball/texas-intelligence" className="text-sm text-burnt-orange hover:text-ember transition-colors">
-                &larr; Back to Hub
-              </Link>
-              <Link href="/college-baseball/editorial" className="text-sm text-text-muted hover:text-text-primary transition-colors">
-                All Editorial &rarr;
-              </Link>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <DataSourceBadge
+                source="BSI Intelligence"
+                timestamp={
+                  news?.meta?.fetched_at
+                    ? new Date(news.meta.fetched_at).toLocaleString('en-US', {
+                        timeZone: 'America/Chicago',
+                        month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
+                      }) + ' CT'
+                    : 'Live'
+                }
+              />
+              <div className="flex flex-wrap gap-4">
+                <Link href="/college-baseball/texas-intelligence" className="text-sm text-burnt-orange hover:text-ember transition-colors">
+                  &larr; Back to Hub
+                </Link>
+                <Link href="/college-baseball/editorial" className="text-sm text-text-muted hover:text-text-primary transition-colors">
+                  All Editorial &rarr;
+                </Link>
+              </div>
             </div>
           </Container>
         </Section>

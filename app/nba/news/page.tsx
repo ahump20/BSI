@@ -42,14 +42,14 @@ function SkeletonNewsCard() {
   return (
     <Card variant="default" padding="md" className="animate-pulse">
       <div className="flex gap-4">
-        <div className="w-24 h-24 bg-background-tertiary rounded-lg flex-shrink-0 hidden sm:block" />
+        <div className="w-24 h-24 bg-background-tertiary rounded-sm flex-shrink-0 hidden sm:block" />
         <div className="flex-1 space-y-3">
-          <div className="h-5 bg-background-tertiary rounded w-3/4" />
-          <div className="h-4 bg-background-tertiary/50 rounded w-full" />
-          <div className="h-4 bg-background-tertiary/50 rounded w-2/3" />
+          <div className="h-5 bg-background-tertiary rounded-sm w-3/4" />
+          <div className="h-4 bg-background-tertiary/50 rounded-sm w-full" />
+          <div className="h-4 bg-background-tertiary/50 rounded-sm w-2/3" />
           <div className="flex gap-2">
-            <div className="h-5 w-16 bg-background-tertiary rounded" />
-            <div className="h-5 w-12 bg-background-tertiary/50 rounded" />
+            <div className="h-5 w-16 bg-background-tertiary rounded-sm" />
+            <div className="h-5 w-12 bg-background-tertiary/50 rounded-sm" />
           </div>
         </div>
       </div>
@@ -67,7 +67,7 @@ function NewsCard({ item }: { item: NewsItem }) {
       >
         <div className="flex gap-4">
           {item.image && (
-            <div className="relative w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden hidden sm:block">
+            <div className="relative w-24 h-24 flex-shrink-0 rounded-sm overflow-hidden hidden sm:block">
               <Image
                 src={item.image}
                 alt=""
@@ -179,7 +179,7 @@ export default function NBANewsPage() {
                 <p className="text-text-secondary text-sm mt-1">{error}</p>
                 <button
                   onClick={fetchNews}
-                  className="mt-3 px-4 py-2 bg-burnt-orange text-white rounded-lg text-sm hover:bg-burnt-orange/80 transition-colors"
+                  className="mt-3 px-4 py-2 bg-burnt-orange text-white rounded-sm text-sm hover:bg-burnt-orange/80 transition-colors"
                 >
                   Try Again
                 </button>
@@ -199,9 +199,9 @@ export default function NBANewsPage() {
                     <path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z" />
                     <path d="M7 7h4v4H7zM13 7h4M13 11h4M7 15h10" />
                   </svg>
-                  <p className="text-text-secondary text-lg">No NBA news available right now</p>
+                  <p className="text-text-secondary text-lg">NBA news feed is quiet right now</p>
                   <p className="text-text-tertiary text-sm mt-2">
-                    Check back soon for the latest updates from around the league.
+                    Stories appear here as they break across the league.
                   </p>
                 </div>
               </Card>
@@ -223,7 +223,7 @@ export default function NBANewsPage() {
                       >
                         <div className="flex flex-col md:flex-row gap-6">
                           {news[0].image && (
-                            <div className="relative w-full md:w-64 h-48 md:h-40 flex-shrink-0 rounded-lg overflow-hidden">
+                            <div className="relative w-full md:w-64 h-48 md:h-40 flex-shrink-0 rounded-sm overflow-hidden">
                               <Image
                                 src={news[0].image}
                                 alt=""
@@ -286,19 +286,19 @@ export default function NBANewsPage() {
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/nba/games"
-                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
               >
                 Live Scores →
               </Link>
               <Link
                 href="/nba/standings"
-                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
               >
                 Standings →
               </Link>
               <Link
                 href="/nba/teams"
-                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
               >
                 All Teams →
               </Link>

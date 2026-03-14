@@ -15,7 +15,7 @@ export default function AboutLoading() {
         {/* Evidence strip */}
         <div className="grid md:grid-cols-3 gap-6 mb-16">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-surface-light border border-border-subtle rounded-lg p-6 animate-pulse">
+            <div key={i} className="bg-surface-light border border-border-subtle rounded-sm p-6 animate-pulse">
               <Skeleton variant="text" width={120} height={28} className="mb-2" />
               <Skeleton variant="text" width={100} height={10} className="mb-3" />
               <Skeleton variant="text" width="100%" height={12} className="mb-1" />
@@ -28,7 +28,7 @@ export default function AboutLoading() {
         {/* Builder section */}
         <div className="grid md:grid-cols-5 gap-12">
           <div className="md:col-span-2 flex justify-center">
-            <Skeleton variant="rectangular" width={256} height={341} className="rounded-lg" />
+            <Skeleton variant="rectangular" width={256} height={341} className="rounded-sm" />
           </div>
           <div className="md:col-span-3">
             <Skeleton variant="text" width={80} height={10} className="mb-3" />

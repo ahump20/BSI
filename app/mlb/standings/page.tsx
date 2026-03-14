@@ -406,7 +406,7 @@ export default function MLBStandingsPage() {
                 <button
                   key={view.id}
                   onClick={() => setViewType(view.id)}
-                  className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all ${
+                  className={`px-6 py-2.5 rounded-sm font-semibold text-sm transition-all ${
                     viewType === view.id
                       ? 'bg-burnt-orange text-white'
                       : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium hover:text-text-primary'
@@ -468,7 +468,7 @@ export default function MLBStandingsPage() {
                 <p className="text-text-secondary text-sm mt-1">{error}</p>
                 <button
                   onClick={retry}
-                  className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors"
+                  className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange/80 transition-colors"
                 >
                   Retry
                 </button>
@@ -476,9 +476,9 @@ export default function MLBStandingsPage() {
             ) : standings.length === 0 ? (
               <Card variant="default" padding="lg">
                 <div className="text-center py-8">
-                  <p className="text-text-secondary">No standings data available</p>
+                  <p className="text-text-secondary">Standings update once the season begins</p>
                   <p className="text-text-tertiary text-sm mt-2">
-                    Standings will be available when the 2026 season begins
+                    Division and league standings refresh daily during the season
                   </p>
                 </div>
               </Card>

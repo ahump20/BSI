@@ -158,7 +158,7 @@ export default function CFBScoresPage() {
                   <button
                     key={opt.offset}
                     onClick={() => setSelectedDate(val)}
-                    className={`px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${
+                    className={`px-4 py-2 rounded-sm font-semibold text-sm whitespace-nowrap transition-all ${
                       selectedDate === val
                         ? 'bg-burnt-orange text-white'
                         : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
@@ -173,14 +173,14 @@ export default function CFBScoresPage() {
             {loading ? (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="h-40 bg-background-tertiary rounded-lg animate-pulse" />
+                  <div key={i} className="h-40 bg-background-tertiary rounded-sm animate-pulse" />
                 ))}
               </div>
             ) : error ? (
               <Card padding="lg" className="bg-error/10 border-error/30">
                 <p className="text-error font-semibold">Data Unavailable</p>
                 <p className="text-text-secondary text-sm mt-1">{error}</p>
-                <button onClick={retry} className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg text-sm">
+                <button onClick={retry} className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-sm text-sm">
                   Retry
                 </button>
               </Card>

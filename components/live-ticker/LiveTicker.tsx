@@ -241,7 +241,7 @@ export function LiveTicker({
           >
             {(() => { const LeagueIcon = LEAGUE_ICON_COMPONENTS[currentItem.league]; return <LeagueIcon />; })()}
             <span
-              className={`px-1.5 py-0.5 text-[10px] font-bold uppercase rounded ${PRIORITY_COLORS[currentItem.priority]} text-white`}
+              className={`px-1.5 py-0.5 text-[10px] font-bold uppercase rounded-sm ${PRIORITY_COLORS[currentItem.priority]} text-white`}
             >
               {TYPE_LABELS[currentItem.type]}
             </span>
@@ -254,7 +254,7 @@ export function LiveTicker({
 
   return (
     <div
-      className={`bg-midnight/90 backdrop-blur-sm border border-charcoal/50 rounded-lg ${className}`}
+      className={`bg-midnight/90 backdrop-blur-sm border border-charcoal/50 rounded-sm ${className}`}
     >
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-charcoal/50">
@@ -291,7 +291,7 @@ export function LiveTicker({
             <div className="flex items-center gap-2 mb-1">
               {(() => { const LeagueIcon = LEAGUE_ICON_COMPONENTS[currentItem.league]; return <LeagueIcon />; })()}
               <span
-                className={`px-2 py-0.5 text-xs font-bold uppercase rounded ${PRIORITY_COLORS[currentItem.priority]} text-white`}
+                className={`px-2 py-0.5 text-xs font-bold uppercase rounded-sm ${PRIORITY_COLORS[currentItem.priority]} text-white`}
               >
                 {currentItem.priority === 1 ? '🔴 BREAKING' : TYPE_LABELS[currentItem.type]}
               </span>

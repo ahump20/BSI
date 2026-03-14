@@ -47,7 +47,7 @@ interface TeamDetailResponse {
 
 function StatCard({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="text-center p-4 bg-background-tertiary rounded-lg">
+    <div className="text-center p-4 bg-background-tertiary rounded-sm">
       <p className="text-2xl md:text-3xl font-bold text-text-primary">{value}</p>
       <p className="text-xs text-text-tertiary uppercase tracking-wider mt-1">{label}</p>
     </div>
@@ -58,13 +58,13 @@ function SkeletonTeamProfile() {
   return (
     <div className="animate-pulse">
       <div className="flex flex-col md:flex-row gap-8 items-center">
-        <div className="w-32 h-32 bg-background-tertiary rounded-lg flex-shrink-0" />
+        <div className="w-32 h-32 bg-background-tertiary rounded-sm flex-shrink-0" />
         <div className="flex-1 space-y-4 text-center md:text-left">
-          <div className="h-10 bg-background-tertiary rounded w-2/3 mx-auto md:mx-0" />
-          <div className="h-6 bg-background-tertiary/50 rounded w-1/3 mx-auto md:mx-0" />
+          <div className="h-10 bg-background-tertiary rounded-sm w-2/3 mx-auto md:mx-0" />
+          <div className="h-6 bg-background-tertiary/50 rounded-sm w-1/3 mx-auto md:mx-0" />
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-20 bg-background-tertiary rounded-lg" />
+              <div key={i} className="h-20 bg-background-tertiary rounded-sm" />
             ))}
           </div>
         </div>
@@ -166,7 +166,7 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
                 <p className="text-text-secondary text-sm mt-1">{error}</p>
                 <button
                   onClick={fetchTeam}
-                  className="mt-3 px-4 py-2 bg-burnt-orange text-white rounded-lg text-sm hover:bg-burnt-orange/80 transition-colors"
+                  className="mt-3 px-4 py-2 bg-burnt-orange text-white rounded-sm text-sm hover:bg-burnt-orange/80 transition-colors"
                 >
                   Try Again
                 </button>
@@ -192,7 +192,7 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
                       />
                     ) : (
                       <div
-                        className="w-full h-full rounded-lg flex items-center justify-center text-3xl font-bold"
+                        className="w-full h-full rounded-sm flex items-center justify-center text-3xl font-bold"
                         style={{ backgroundColor: teamColor, color: '#fff' }}
                       >
                         {team.abbreviation}
@@ -247,7 +247,7 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
                       <button
                         key={pos}
                         onClick={() => setPositionFilter(pos)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
+                        className={`px-3 py-1.5 rounded-sm text-xs font-semibold transition-all whitespace-nowrap ${
                           positionFilter === pos
                             ? 'bg-burnt-orange text-white'
                             : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
@@ -262,7 +262,7 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
                         onChange={(e) => {
                           if (e.target.value) setPositionFilter(e.target.value);
                         }}
-                        className="px-2 py-1.5 bg-background-tertiary border border-border-subtle rounded-lg text-text-secondary text-xs focus:outline-none focus:border-burnt-orange"
+                        className="px-2 py-1.5 bg-background-tertiary border border-border-subtle rounded-sm text-text-secondary text-xs focus:outline-none focus:border-burnt-orange"
                       >
                         <option value="">More...</option>
                         {positions.slice(8).map((pos) => (
@@ -349,19 +349,19 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/cfb/teams"
-                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
               >
                 All Teams
               </Link>
               <Link
                 href="/cfb/scores"
-                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
               >
                 Live Scores
               </Link>
               <Link
                 href="/cfb/standings"
-                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
               >
                 Standings
               </Link>

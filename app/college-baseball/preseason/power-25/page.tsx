@@ -565,7 +565,7 @@ export default function Power25Page() {
                             {team.keyPlayers.map((player) => (
                               <span
                                 key={player}
-                                className="text-xs bg-surface-light px-2 py-1 rounded text-text-tertiary"
+                                className="text-xs bg-surface-light px-2 py-1 rounded-sm text-text-tertiary"
                               >
                                 {player}
                               </span>
@@ -727,7 +727,7 @@ export default function Power25Page() {
                 </p>
                 <Link
                   href="/college-baseball/preseason/lone-star-rivalry"
-                  className="inline-flex items-center px-6 py-3 bg-burnt-orange text-white font-medium rounded-lg hover:bg-burnt-orange/80 transition-colors"
+                  className="inline-flex items-center px-6 py-3 bg-burnt-orange text-white font-medium rounded-sm hover:bg-burnt-orange/80 transition-colors"
                 >
                   Read: The Lone Star Rivalry Enters the SEC
                   <ChevronRight className="w-5 h-5 ml-1" />

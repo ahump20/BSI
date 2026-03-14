@@ -126,12 +126,12 @@ export default function TeamDossiersIndexPage() {
             {loading && liveDossiers.length === 0 && (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="bg-surface-light border border-border-subtle rounded-xl p-4 animate-pulse">
+                  <div key={i} className="bg-surface-light border border-border-subtle rounded-sm p-4 animate-pulse">
                     <div className="flex justify-between mb-2">
-                      <div className="h-4 bg-border-subtle rounded w-1/3" />
-                      <div className="h-4 bg-surface-light rounded w-1/4" />
+                      <div className="h-4 bg-border-subtle rounded-sm w-1/3" />
+                      <div className="h-4 bg-surface-light rounded-sm w-1/4" />
                     </div>
-                    <div className="h-3 bg-surface-light rounded w-1/2 mt-3" />
+                    <div className="h-3 bg-surface-light rounded-sm w-1/2 mt-3" />
                   </div>
                 ))}
               </div>
@@ -159,7 +159,7 @@ export default function TeamDossiersIndexPage() {
                           </h2>
                           {dossier.mascot && <p className="text-text-muted text-xs">{dossier.mascot}</p>}
                         </div>
-                        <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider border ${style}`}>
+                        <span className={`inline-block px-2 py-0.5 rounded-sm text-[10px] font-semibold uppercase tracking-wider border ${style}`}>
                           {dossier.tier}
                         </span>
                       </div>
@@ -173,7 +173,7 @@ export default function TeamDossiersIndexPage() {
               })}
             </div>
 
-            <div className="mt-8 bg-surface-light border border-dashed border-border rounded-xl p-6 text-center">
+            <div className="mt-8 bg-surface-light border border-dashed border-border rounded-sm p-6 text-center">
               <p className="text-sm text-text-muted">
                 {liveDossiers.length > 0
                   ? `Showing top 25 from live rankings. Full dossier set building through the 2026 season.`

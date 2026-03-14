@@ -253,7 +253,7 @@ export function PowerVsContact({
   }, [filteredData, data, onPlayerClick]);
 
   return (
-    <div className={`bg-background-primary border border-border-subtle rounded-xl overflow-hidden ${className}`}>
+    <div className={`bg-background-primary border border-border-subtle rounded-sm overflow-hidden ${className}`}>
       {/* Header */}
       <div className="px-5 py-4 border-b border-border-subtle flex items-center justify-between flex-wrap gap-3">
         <div>
@@ -268,7 +268,7 @@ export function PowerVsContact({
           aria-label="Filter by conference"
           value={selectedConf}
           onChange={(e) => setSelectedConf(e.target.value)}
-          className="bg-surface-light border border-border rounded-md px-2.5 py-1.5 text-xs text-text-tertiary font-mono appearance-none cursor-pointer hover:border-border-strong transition-colors focus:outline-none focus:border-burnt-orange/40"
+          className="bg-surface-light border border-border rounded-sm px-2.5 py-1.5 text-xs text-text-tertiary font-mono appearance-none cursor-pointer hover:border-border-strong transition-colors focus:outline-none focus:border-burnt-orange/40"
         >
           {conferences.map(c => (
             <option key={c} value={c} className="bg-background-secondary text-text-primary">
@@ -290,7 +290,7 @@ export function PowerVsContact({
         {/* Tooltip */}
         {tooltip && (
           <div
-            className="absolute z-50 pointer-events-none bg-background-secondary border border-border shadow-xl rounded-lg px-3 py-2"
+            className="absolute z-50 pointer-events-none bg-background-secondary border border-border shadow-xl rounded-sm px-3 py-2"
             style={{
               left: tooltip.x + 12,
               top: tooltip.y - 10,

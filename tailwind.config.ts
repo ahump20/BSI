@@ -160,7 +160,7 @@ const config: Config = {
         sans: ['var(--font-oswald)', 'Oswald', 'Impact', 'Arial Black', 'sans-serif'],
         display: ['var(--font-oswald)', 'Oswald', 'Impact', 'Arial Black', 'sans-serif'],
         serif: ['var(--font-cormorant)', 'Cormorant Garamond', 'Georgia', 'Cambria', 'serif'],
-        mono: ['var(--font-mono)', 'JetBrains Mono', 'SF Mono', 'Consolas', 'Monaco', 'Courier New', 'monospace'],
+        mono: ['var(--font-plex-mono)', 'IBM Plex Mono', 'var(--font-mono)', 'JetBrains Mono', 'SF Mono', 'Consolas', 'monospace'],
         'savant-display': ['var(--font-syne)', 'Syne', 'system-ui', 'sans-serif'],
         'savant-body': ['var(--font-dm-sans)', 'DM Sans', 'system-ui', 'sans-serif'],
       },

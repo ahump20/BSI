@@ -105,7 +105,7 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
 
         {/* Model toggle */}
         <div className="p-4 border-b border-border-subtle">
-          <div className="flex bg-background-secondary rounded overflow-hidden">
+          <div className="flex bg-background-secondary rounded-sm overflow-hidden">
             {(['claude', 'gemini'] as const).map((m) => (
               <button
                 key={m}
@@ -129,7 +129,7 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
               <button
                 onClick={() => prompt.id !== 'custom' && handleAnalyze(prompt.id)}
                 disabled={loading}
-                className={`w-full text-left p-3 rounded border transition-colors ${
+                className={`w-full text-left p-3 rounded-sm border transition-colors ${
                   selectedPrompt === prompt.id
                     ? 'border-burnt-orange/40 bg-burnt-orange/5'
                     : 'border-border-subtle hover:border-border bg-background-secondary'
@@ -146,12 +146,12 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
                     value={customQuestion}
                     onChange={(e) => setCustomQuestion(e.target.value)}
                     placeholder="What do you want to know about this game?"
-                    className="w-full bg-background-secondary border border-border rounded p-3 text-sm text-text-primary placeholder:text-text-muted resize-none h-20 focus:outline-none focus:border-burnt-orange/30"
+                    className="w-full bg-background-secondary border border-border rounded-sm p-3 text-sm text-text-primary placeholder:text-text-muted resize-none h-20 focus:outline-none focus:border-burnt-orange/30"
                   />
                   <button
                     onClick={() => handleAnalyze('custom')}
                     disabled={loading || !customQuestion.trim()}
-                    className="w-full py-2 bg-burnt-orange hover:bg-ember disabled:opacity-40 text-white text-xs font-mono uppercase tracking-wider rounded transition-colors"
+                    className="w-full py-2 bg-burnt-orange hover:bg-ember disabled:opacity-40 text-white text-xs font-mono uppercase tracking-wider rounded-sm transition-colors"
                   >
                     {loading ? 'Analyzing...' : 'Analyze'}
                   </button>
@@ -167,7 +167,7 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
             {loading && (
               <div className="space-y-3">
                 {[...Array(4)].map((_, i) => (
-                  <div key={i} className="h-4 bg-burnt-orange/10 rounded animate-pulse" style={{ width: `${80 - i * 15}%` }} />
+                  <div key={i} className="h-4 bg-burnt-orange/10 rounded-sm animate-pulse" style={{ width: `${80 - i * 15}%` }} />
                 ))}
               </div>
             )}
@@ -190,7 +190,7 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
                 <div className="flex gap-2">
                   <button
                     onClick={handleCopy}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider text-text-muted hover:text-burnt-orange border border-border rounded transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider text-text-muted hover:text-burnt-orange border border-border rounded-sm transition-colors"
                   >
                     Copy
                   </button>

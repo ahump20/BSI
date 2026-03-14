@@ -171,7 +171,7 @@ function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) 
   }, []);
 
   const cardContent = (
-    <div className={`p-3 rounded-lg border transition-all hover:border-burnt-orange/50 ${
+    <div className={`p-3 rounded-sm border transition-all hover:border-burnt-orange/50 ${
       game.state === 'live' ? 'border-success/30 bg-success/5' : 'border-border-vintage bg-surface-dugout'
     }`}>
       <div className="flex items-center justify-between mb-1">
@@ -229,7 +229,7 @@ function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) 
 
           {/* Expanded intel panel */}
           {intelOpen && (
-            <div className="mt-2 max-h-48 overflow-y-auto rounded bg-midnight/50 p-2">
+            <div className="mt-2 max-h-48 overflow-y-auto rounded-sm bg-midnight/50 p-2">
               {intelLoading && (
                 <div className="flex items-center gap-2 text-bsi-dust/60 text-xs">
                   <span className="w-1.5 h-1.5 bg-burnt-orange rounded-full animate-pulse" />
@@ -243,7 +243,7 @@ function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) 
                 <p className="text-xs text-bsi-dust leading-relaxed whitespace-pre-wrap">{intelText}</p>
               )}
               {intelCached && !intelLoading && (
-                <span className="inline-block mt-1.5 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider bg-burnt-orange/20 text-burnt-orange rounded">
+                <span className="inline-block mt-1.5 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider bg-burnt-orange/20 text-burnt-orange rounded-sm">
                   Cached
                 </span>
               )}
@@ -769,7 +769,7 @@ function ScoresHubContent() {
 
               {/* Quick Links */}
               <ScrollReveal direction="up" delay={300}>
-                <div className="mt-10 p-5 bg-surface-press-box rounded-lg border border-border-vintage">
+                <div className="mt-10 p-5 bg-surface-press-box rounded-sm border border-border-vintage">
                   <h3 className="text-sm font-semibold text-bsi-bone mb-3">Quick Access</h3>
                   <div className="flex flex-wrap gap-2">
                     {[
@@ -785,7 +785,7 @@ function ScoresHubContent() {
                       <Link
                         key={link.href}
                         href={link.href}
-                        className="px-3 py-1.5 bg-surface-dugout hover:bg-burnt-orange/20 text-bsi-dust hover:text-burnt-orange rounded-lg text-xs font-medium transition-colors"
+                        className="px-3 py-1.5 bg-surface-dugout hover:bg-burnt-orange/20 text-bsi-dust hover:text-burnt-orange rounded-sm text-xs font-medium transition-colors"
                       >
                         {link.label}
                       </Link>

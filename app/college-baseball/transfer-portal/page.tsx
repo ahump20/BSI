@@ -214,7 +214,7 @@ export default function TransferPortalPage() {
                 <ScrollReveal key={prop.title} direction="up" delay={i * 80}>
                   <Card variant="default" padding="lg" className="h-full">
                     <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-burnt-orange/10 flex items-center justify-center text-burnt-orange flex-shrink-0">
+                      <div className="w-12 h-12 rounded-sm bg-burnt-orange/10 flex items-center justify-center text-burnt-orange flex-shrink-0">
                         {prop.icon}
                       </div>
                       <div>
@@ -351,9 +351,9 @@ export default function TransferPortalPage() {
 
                 {totalPages > 1 && (
                   <div className="flex items-center justify-center gap-2 mt-6">
-                    <button onClick={() => setPage(Math.max(0, page - 1))} disabled={page === 0} className="px-3 py-1.5 bg-surface-medium text-text-tertiary rounded-lg text-sm disabled:opacity-30">Prev</button>
+                    <button onClick={() => setPage(Math.max(0, page - 1))} disabled={page === 0} className="px-3 py-1.5 bg-surface-medium text-text-tertiary rounded-sm text-sm disabled:opacity-30">Prev</button>
                     <span className="text-text-muted text-sm">Page {page + 1} of {totalPages}</span>
-                    <button onClick={() => setPage(Math.min(totalPages - 1, page + 1))} disabled={page >= totalPages - 1} className="px-3 py-1.5 bg-surface-medium text-text-tertiary rounded-lg text-sm disabled:opacity-30">Next</button>
+                    <button onClick={() => setPage(Math.min(totalPages - 1, page + 1))} disabled={page >= totalPages - 1} className="px-3 py-1.5 bg-surface-medium text-text-tertiary rounded-sm text-sm disabled:opacity-30">Next</button>
                   </div>
                 )}
               </>

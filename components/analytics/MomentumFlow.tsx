@@ -260,7 +260,7 @@ export function MomentumFlow({
   const hasSampleData = snapshots.length >= 2;
 
   return (
-    <div className={`bg-background-primary border border-border-subtle rounded-xl overflow-hidden ${className}`}>
+    <div className={`bg-background-primary border border-border-subtle rounded-sm overflow-hidden ${className}`}>
       {/* Header */}
       <div className="px-5 pt-5 pb-3">
         <div className="flex items-center justify-between mb-1">
@@ -295,7 +295,7 @@ export function MomentumFlow({
             <svg ref={svgRef} className="w-full" />
             {tooltip && (
               <div
-                className="absolute z-10 pointer-events-none bg-surface-medium border border-border-subtle rounded-lg px-3 py-2 shadow-lg"
+                className="absolute z-10 pointer-events-none bg-surface-medium border border-border-subtle rounded-sm px-3 py-2 shadow-lg"
                 style={{
                   left: Math.min(tooltip.x, dimensions.width - 180),
                   top: Math.max(tooltip.y - 70, 0),

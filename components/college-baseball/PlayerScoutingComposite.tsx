@@ -304,7 +304,7 @@ function RadarTooltipOverlay({
       }}
     >
       <div
-        className="px-3 py-2 rounded"
+        className="px-3 py-2 rounded-sm"
         style={{
           background: 'var(--surface-dugout)',
           border: '1px solid var(--border-vintage)',
@@ -348,7 +348,7 @@ function SparklineTooltipContent({
 
   return (
     <div
-      className="px-2 py-1.5 rounded"
+      className="px-2 py-1.5 rounded-sm"
       style={{
         background: 'var(--surface-dugout)',
         border: '1px solid var(--border-vintage)',
@@ -615,14 +615,14 @@ export function PlayerScoutingComposite({
       <div className={`heritage-card p-6 ${className}`}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div
-            className="animate-pulse rounded"
+            className="animate-pulse rounded-sm"
             style={{ background: 'rgba(255,255,255,0.04)', height: RADAR_SIZE.height }}
           />
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="animate-pulse rounded"
+                className="animate-pulse rounded-sm"
                 style={{ background: 'rgba(255,255,255,0.04)', height: SPARKLINE_HEIGHT + 20 }}
               />
             ))}
