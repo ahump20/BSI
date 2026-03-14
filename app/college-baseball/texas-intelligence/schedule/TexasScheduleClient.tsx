@@ -69,12 +69,6 @@ export default function TexasScheduleClient() {
     return { w, l };
   }, [completed]);
 
-  const confGames = useMemo(() => {
-    // SEC conference games typically start in mid-March
-    // We don't have explicit conference flags, so count completed games from March onward with SEC opponents
-    return completed.length;
-  }, [completed]);
-
   const formatDate = (iso: string) => {
     try {
       return new Date(iso).toLocaleDateString('en-US', {
@@ -112,7 +106,7 @@ export default function TexasScheduleClient() {
               <div className="flex items-center gap-4 mb-4">
                 <img src={logoUrl} alt="" className="w-12 h-12 object-contain" loading="lazy" />
                 <div>
-                  <Badge variant="primary" size="sm">2026 Season</Badge>
+                  <Badge variant="primary" size="sm">{new Date().getFullYear()} Season</Badge>
                   <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-text-primary mt-1">
                     Schedule <span className="text-gradient-blaze">& Results</span>
                   </h1>

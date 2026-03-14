@@ -121,7 +121,7 @@ export default function TexasPitchingClient() {
               <div className="flex items-center gap-4 mb-4">
                 <img src={logoUrl} alt="" className="w-12 h-12 object-contain" loading="lazy" />
                 <div>
-                  <Badge variant="primary" size="sm">2026 Season</Badge>
+                  <Badge variant="primary" size="sm">{new Date().getFullYear()} Season</Badge>
                   <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-text-primary mt-1">
                     Pitching <span className="text-gradient-blaze">Staff</span>
                   </h1>
