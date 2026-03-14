@@ -1,26 +1,4 @@
-const quickLinks = [
-  { label: 'BSI', href: '#bsi' },
-  { label: 'Work', href: '#projects' },
-  { label: 'Proof', href: '#proof' },
-  { label: 'Origin', href: '#origin' },
-  { label: 'Covenant', href: '#covenant' },
-  { label: 'Contact', href: '#contact' },
-];
-
-const bsiLinks = [
-  { label: 'BlazeSportsIntel.com', href: 'https://blazesportsintel.com' },
-  { label: 'BSI Radar Lab', href: 'https://labs.blazesportsintel.com' },
-  { label: 'BlazeCraft Dashboard', href: 'https://blazecraft.app' },
-  { label: 'BSI Arcade', href: 'https://arcade.blazesportsintel.com' },
-  { label: 'A Documented Heritage', href: 'https://dna.austinhumphrey.com' },
-];
-
-const socialLinks = [
-  { label: 'LinkedIn', href: 'https://linkedin.com/in/ahump20' },
-  { label: 'GitHub', href: 'https://github.com/ahump20' },
-  { label: 'X / Twitter', href: 'https://x.com/BlazeSportsIntel' },
-  { label: 'Email', href: 'mailto:Austin@BlazeSportsIntel.com' },
-];
+import { FOOTER_LINK_GROUPS, PRIMARY_EMAIL, RESUME_PATH, SITE_LOCATION, SITE_TAGLINE } from '../content/site';
 
 export default function Footer() {
   return (
@@ -35,63 +13,31 @@ export default function Footer() {
 
       <div className="max-w-6xl mx-auto px-6 py-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-12">
-          {/* Quick Links */}
-          <div>
-            <h4 className="font-sans text-xs uppercase tracking-[0.2em] text-bone font-medium mb-4">
-              Navigate
-            </h4>
-            <ul className="space-y-2">
-              {quickLinks.map((link) => (
-                <li key={link.label}>
-                  <a href={link.href} className="text-sm text-warm-gray hover:text-burnt-orange transition-colors duration-300">
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {FOOTER_LINK_GROUPS.map((group) => (
+            <div key={group.title}>
+              <h4 className="font-sans text-xs uppercase tracking-[0.2em] text-bone font-medium mb-4">
+                {group.title}
+              </h4>
+              <ul className="space-y-2">
+                {group.links.map((link) => {
+                  const isExternal = 'external' in link && Boolean(link.external);
 
-          {/* BSI Links */}
-          <div>
-            <h4 className="font-sans text-xs uppercase tracking-[0.2em] text-bone font-medium mb-4">
-              BSI
-            </h4>
-            <ul className="space-y-2">
-              {bsiLinks.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-warm-gray hover:text-burnt-orange transition-colors duration-300"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Social */}
-          <div>
-            <h4 className="font-sans text-xs uppercase tracking-[0.2em] text-bone font-medium mb-4">
-              Social
-            </h4>
-            <ul className="space-y-2">
-              {socialLinks.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    target={link.href.startsWith('mailto') ? undefined : '_blank'}
-                    rel={link.href.startsWith('mailto') ? undefined : 'noopener noreferrer'}
-                    className="text-sm text-warm-gray hover:text-burnt-orange transition-colors duration-300"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+                  return (
+                    <li key={link.label}>
+                      <a
+                        href={link.href}
+                        target={isExternal ? '_blank' : undefined}
+                        rel={isExternal ? 'noopener noreferrer' : undefined}
+                        className="text-sm text-warm-gray hover:text-burnt-orange transition-colors duration-300"
+                      >
+                        {link.label}
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
 
           {/* Legal / Info */}
           <div>
@@ -99,12 +45,13 @@ export default function Footer() {
               Info
             </h4>
             <ul className="space-y-2">
-              <li className="text-sm text-warm-gray">San Antonio, Texas</li>
+              <li className="text-sm text-warm-gray">{SITE_LOCATION}</li>
               <li>
-                <a href="/Austin_Humphrey_Resume.pdf" download className="text-sm text-warm-gray hover:text-burnt-orange transition-colors duration-300">
+                <a href={RESUME_PATH} download className="text-sm text-warm-gray hover:text-burnt-orange transition-colors duration-300">
                   Download Resume
                 </a>
               </li>
+              <li className="text-sm text-warm-gray break-all">{PRIMARY_EMAIL}</li>
             </ul>
 
             {/* Built on Cloudflare badge */}
@@ -125,7 +72,7 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} Austin Humphrey. All rights reserved.
           </p>
           <p className="text-xs font-mono text-warm-gray/40 mt-3 italic">
-            Born to Blaze the Path Beaten Less
+            {SITE_TAGLINE}
           </p>
         </div>
       </div>

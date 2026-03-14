@@ -1,6 +1,8 @@
 /** Page view + feature tracking for austinhumphrey.com */
 
-const BSI_ANALYTICS = 'https://blazesportsintel.com/api/analytics/event';
+import { PLATFORM_URLS } from '../content/site';
+
+const BSI_ANALYTICS = `${PLATFORM_URLS.bsi}/api/analytics/event`;
 
 function getSessionId(): string {
   const existing = sessionStorage.getItem('portfolio_session');

@@ -1,4 +1,6 @@
 import React, { ReactNode } from 'react';
+import type { DataMetaLike } from '@/lib/utils/data-meta';
+import { getDataSourceLabel, normalizeDataMeta } from '@/lib/utils/data-meta';
 
 export interface BadgeProps {
   children: ReactNode;
@@ -74,19 +76,27 @@ export function GameStatusBadge({ status, className = '' }: { status: GameStatus
 }
 
 interface DataSourceBadgeProps {
-  source: string;
+  source?: string;
   timestamp?: string;
+  meta?: DataMetaLike | null;
   className?: string;
 }
 
-export function DataSourceBadge({ source, timestamp, className = '' }: DataSourceBadgeProps) {
+export function DataSourceBadge({ source, timestamp, meta, className = '' }: DataSourceBadgeProps) {
+  const normalized = normalizeDataMeta(meta, {
+    source,
+    lastUpdated: timestamp,
+  });
+  const effectiveSource = getDataSourceLabel(normalized, source ?? 'Blaze Sports Intel');
+  const effectiveTimestamp = normalized?.lastUpdated ?? timestamp;
+
   return (
     <div className={`flex items-center gap-2 text-xs text-text-muted ${className}`} suppressHydrationWarning>
-      <span className="font-medium">{source}</span>
-      {timestamp && (
+      <span className="font-medium">{effectiveSource}</span>
+      {effectiveTimestamp && (
         <>
           <span>|</span>
-          <span suppressHydrationWarning>{timestamp}</span>
+          <span suppressHydrationWarning>{effectiveTimestamp}</span>
         </>
       )}
     </div>

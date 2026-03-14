@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { getAgeMinutes, getCompactAge, getFreshnessLevel, type FreshnessLevel } from '@/lib/utils/data-freshness';
 
 interface FreshnessBadgeProps {
   /** ISO timestamp of when data was last fetched */
@@ -8,27 +9,6 @@ interface FreshnessBadgeProps {
   /** Whether the game/section is currently live */
   isLive?: boolean;
   className?: string;
-}
-
-type FreshnessLevel = 'fresh' | 'degraded' | 'stale';
-
-function getAgeMinutes(fetchedAt: string): number {
-  const fetched = new Date(fetchedAt);
-  if (isNaN(fetched.getTime())) return 999;
-  return Math.floor((Date.now() - fetched.getTime()) / 60_000);
-}
-
-function getFreshnessLevel(ageMinutes: number): FreshnessLevel {
-  if (ageMinutes < 2) return 'fresh';
-  if (ageMinutes < 5) return 'degraded';
-  return 'stale';
-}
-
-function getCompactAge(ageMinutes: number): string {
-  if (ageMinutes < 1) return '';
-  if (ageMinutes < 60) return `${ageMinutes}m ago`;
-  const hours = Math.floor(ageMinutes / 60);
-  return `${hours}h ago`;
 }
 
 const levelStyles: Record<FreshnessLevel, { dot: string; text: string; label: string; pulse: boolean }> = {
@@ -72,9 +52,8 @@ export function FreshnessBadge({ fetchedAt, isLive = false, className = '' }: Fr
 
   useEffect(() => {
     const update = () => {
-      const mins = getAgeMinutes(effectiveFetchedAt);
-      setLevel(getFreshnessLevel(mins));
-      setCompactAge(getCompactAge(mins));
+      setLevel(getFreshnessLevel(getAgeMinutes(effectiveFetchedAt)));
+      setCompactAge(getCompactAge(effectiveFetchedAt));
     };
 
     update();

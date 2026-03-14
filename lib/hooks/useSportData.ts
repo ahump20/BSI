@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import type { NormalizedDataMeta } from '@/lib/utils/data-meta';
+import { extractDataMeta } from '@/lib/utils/data-meta';
 import { getReadApiUrl } from '@/lib/utils/public-api';
 
 interface UseSportDataOptions {
@@ -16,6 +18,7 @@ interface UseSportDataOptions {
 
 interface UseSportDataReturn<T> {
   data: T | null;
+  meta: NormalizedDataMeta | null;
   loading: boolean;
   error: string | null;
   lastUpdated: Date | null;
@@ -31,6 +34,7 @@ export function useSportData<T>(
   const { refreshInterval = 0, refreshWhen = true, skip = false, timeout = 10000 } = options;
 
   const [data, setData] = useState<T | null>(null);
+  const [meta, setMeta] = useState<NormalizedDataMeta | null>(null);
   const [loading, setLoading] = useState(!skip && !!url);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -63,8 +67,14 @@ export function useSportData<T>(
           throw new Error(`Failed to fetch data (${res.status})`);
         }
         const json = (await res.json()) as T;
+        const normalizedMeta = extractDataMeta(json);
+        const effectiveLastUpdated = normalizedMeta?.lastUpdated
+          ? new Date(normalizedMeta.lastUpdated)
+          : new Date();
+
         setData(json);
-        setLastUpdated(new Date());
+        setMeta(normalizedMeta);
+        setLastUpdated(effectiveLastUpdated);
         hasFetchedRef.current = true;
       } catch (err) {
         if (err instanceof DOMException && err.name === 'AbortError') {
@@ -103,5 +113,5 @@ export function useSportData<T>(
 
   const refresh = useCallback(() => fetchData(true), [fetchData]);
 
-  return { data, loading, error, lastUpdated, isRefreshing, retry, refresh };
+  return { data, meta, loading, error, lastUpdated, isRefreshing, retry, refresh };
 }

@@ -3,7 +3,7 @@
  */
 
 import type { Env } from './shared';
-import { json, cachedJson, kvGet, kvPut, dataHeaders, getCollegeClient, getHighlightlyClient, archiveRawResponse, HTTP_CACHE, CACHE_TTL, lookupConference, getScoreboard, getGameSummary, getLogoUrl, metaByEspnId } from './shared';
+import { json, cachedJson, kvGet, kvPut, dataHeaders, cachedPayloadHeaders, withMeta, getCollegeClient, getHighlightlyClient, archiveRawResponse, HTTP_CACHE, CACHE_TTL, lookupConference, getScoreboard, getGameSummary, getLogoUrl, metaByEspnId } from './shared';
 import { transformHighlightlyGame, transformEspnGameSummary } from './transforms';
 
 export async function handleCollegeBaseballScores(
@@ -18,11 +18,10 @@ export async function handleCollegeBaseballScores(
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
-    return cachedJson(cached, 200, HTTP_CACHE.scores, { ...dataHeaders(now, 'cache'), 'X-Cache': 'HIT' });
+    return cachedJson(cached, 200, HTTP_CACHE.scores, cachedPayloadHeaders(cached));
   }
 
   const sources: string[] = [];
-  let degraded = false;
 
   // ---------------------------------------------------------------------------
   // Step 1: ESPN scoreboard (skeleton — game status, team names, basic scores)
@@ -73,36 +72,37 @@ export async function handleCollegeBaseballScores(
 
   // Both available: serve Highlightly (richer) with full source attribution
   if (hlData && espnData) {
-    const payload = {
-      ...(hlData as Record<string, unknown>),
-      meta: { source: 'highlightly+espn', fetched_at: now, timezone: 'America/Chicago', sources, degraded: false },
-    };
+    const payload = withMeta(hlData as Record<string, unknown>, 'highlightly+espn', {
+      fetchedAt: now,
+      sources,
+      degraded: false,
+    });
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
     return cachedJson(payload, 200, HTTP_CACHE.scores, {
       ...dataHeaders(now, 'highlightly+espn'), 'X-Cache': 'MISS',
     });
   }
 
-  // ESPN only: skeleton mode
+  // ESPN only: skeleton mode (degraded — missing Highlightly enrichment)
   if (espnData) {
-    degraded = true;
-    const payload = {
-      ...espnData,
-      meta: { source: 'espn', fetched_at: now, timezone: 'America/Chicago', sources, degraded },
-    };
+    const payload = withMeta(espnData, 'espn', {
+      fetchedAt: now,
+      sources,
+      degraded: true,
+    });
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
     return cachedJson(payload, 200, HTTP_CACHE.scores, {
       ...dataHeaders(now, 'espn'), 'X-Cache': 'MISS',
     });
   }
 
-  // Highlightly only (ESPN failed): serve Highlightly as sole source
+  // Highlightly only (ESPN failed): Highlightly is primary — not degraded
   if (hlData) {
-    degraded = true;
-    const payload = {
-      ...(hlData as Record<string, unknown>),
-      meta: { source: 'highlightly', fetched_at: now, timezone: 'America/Chicago', sources, degraded },
-    };
+    const payload = withMeta(hlData as Record<string, unknown>, 'highlightly', {
+      fetchedAt: now,
+      sources,
+      degraded: false,
+    });
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
     return cachedJson(payload, 200, HTTP_CACHE.scores, {
       ...dataHeaders(now, 'highlightly'), 'X-Cache': 'MISS',
@@ -114,10 +114,11 @@ export async function handleCollegeBaseballScores(
     const client = getCollegeClient();
     const result = await client.getMatches('NCAA', date);
 
-    const ncaaPayload = {
-      ...(result.data as Record<string, unknown> ?? empty),
-      meta: { source: 'ncaa', fetched_at: now, timezone: 'America/Chicago', sources: ['ncaa'], degraded: true },
-    };
+    const ncaaPayload = withMeta((result.data as Record<string, unknown>) ?? empty, 'ncaa', {
+      fetchedAt: now,
+      sources: ['ncaa'],
+      degraded: true,
+    });
 
     if (result.success && result.data) {
       await kvPut(env.KV, cacheKey, ncaaPayload, CACHE_TTL.scores);
@@ -127,7 +128,11 @@ export async function handleCollegeBaseballScores(
       ...dataHeaders(result.timestamp, 'ncaa'), 'X-Cache': 'MISS',
     });
   } catch {
-    return json({ ...empty, meta: { source: 'error', fetched_at: now, timezone: 'America/Chicago', sources: [], degraded: true } }, 502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' });
+    return json(
+      withMeta(empty, 'error', { fetchedAt: now, sources: [], degraded: true }),
+      502,
+      { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' },
+    );
   }
 }
 
@@ -140,16 +145,18 @@ export async function handleCollegeBaseballGame(
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
-    return cachedJson(cached, 200, HTTP_CACHE.game, { ...dataHeaders(now, 'cache'), 'X-Cache': 'HIT' });
+    return cachedJson(cached, 200, HTTP_CACHE.game, cachedPayloadHeaders(cached));
   }
 
   // Highlightly first (if API key is set)
   const hlClient = getHighlightlyClient(env);
   if (hlClient) {
     try {
+      const numericGameId = parseInt(gameId, 10);
+      if (isNaN(numericGameId)) throw new Error(`Non-numeric gameId: ${gameId}`);
       const [matchResult, boxResult] = await Promise.all([
-        hlClient.getMatch(parseInt(gameId, 10)),
-        hlClient.getBoxScore(parseInt(gameId, 10)),
+        hlClient.getMatch(numericGameId),
+        hlClient.getBoxScore(numericGameId),
       ]);
 
       if (matchResult.success && matchResult.data) {
@@ -157,7 +164,7 @@ export async function handleCollegeBaseballGame(
           matchResult.data,
           boxResult.success ? (boxResult.data ?? null) : null
         );
-        const payload = { game, meta: { source: 'highlightly', fetched_at: matchResult.timestamp, timezone: 'America/Chicago' } };
+        const payload = withMeta({ game }, 'highlightly', { fetchedAt: matchResult.timestamp });
         await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
         return cachedJson(payload, 200, HTTP_CACHE.game, {
           ...dataHeaders(matchResult.timestamp, 'highlightly'), 'X-Cache': 'MISS',
@@ -178,7 +185,7 @@ export async function handleCollegeBaseballGame(
       const game = transformEspnGameSummary(summary);
 
       if (game) {
-        const payload = { game, meta: { source: 'espn', fetched_at: matchResult.timestamp, timezone: 'America/Chicago' } };
+        const payload = withMeta({ game }, 'espn', { fetchedAt: matchResult.timestamp });
         await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
         return cachedJson(payload, 200, HTTP_CACHE.game, {
           ...dataHeaders(matchResult.timestamp, 'espn'), 'X-Cache': 'MISS',
@@ -187,12 +194,12 @@ export async function handleCollegeBaseballGame(
     }
 
     return json(
-      { game: null, meta: { source: 'error', fetched_at: now, timezone: 'America/Chicago' } },
+      withMeta({ game: null }, 'error', { fetchedAt: now }),
       502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' }
     );
   } catch {
     return json(
-      { game: null, meta: { source: 'error', fetched_at: now, timezone: 'America/Chicago' } },
+      withMeta({ game: null }, 'error', { fetchedAt: now }),
       502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' }
     );
   }
@@ -214,7 +221,7 @@ export async function handleCollegeBaseballSchedule(
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
-    return cachedJson(cached, 200, httpCache, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'HIT' });
+    return cachedJson(cached, 200, httpCache, cachedPayloadHeaders(cached));
   }
 
   const client = getCollegeClient();

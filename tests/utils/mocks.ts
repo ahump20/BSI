@@ -250,8 +250,8 @@ export const ESPN_STANDINGS = {
       name: 'Southeastern Conference',
       standings: {
         entries: [
-          { team: { id: '126', displayName: 'Texas Longhorns', abbreviation: 'TEX', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/251.png' }, wins: 30, losses: 10, winPercent: 0.75, leagueWinPercent: 0.80, streak: 'W5', pointDifferential: 62 },
-          { team: { id: '123', displayName: 'Texas A&M Aggies', abbreviation: 'TAMU', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/245.png' }, wins: 25, losses: 15, winPercent: 0.625, leagueWinPercent: 0.60, streak: 'L1', pointDifferential: 18 },
+          { team: { id: '126', displayName: 'Texas Longhorns', abbreviation: 'TEX', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/251.png' }, stats: [{ name: 'wins', value: 30 }, { name: 'losses', value: 10 }, { name: 'conferenceRecord', displayValue: '12-4' }, { name: 'streak', displayValue: 'W5' }, { name: 'pointsFor', value: 200 }, { name: 'pointsAgainst', value: 138 }] },
+          { team: { id: '123', displayName: 'Texas A&M Aggies', abbreviation: 'TAMU', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/245.png' }, stats: [{ name: 'wins', value: 25 }, { name: 'losses', value: 15 }, { name: 'conferenceRecord', displayValue: '10-6' }, { name: 'streak', displayValue: 'L1' }, { name: 'pointsFor', value: 150 }, { name: 'pointsAgainst', value: 132 }] },
         ],
       },
     },
@@ -259,7 +259,7 @@ export const ESPN_STANDINGS = {
       name: 'Big 12 Conference',
       standings: {
         entries: [
-          { team: { id: '66', displayName: 'TCU Horned Frogs', abbreviation: 'TCU', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/66.png' }, wins: 28, losses: 12, winPercent: 0.70, leagueWinPercent: 0.65, streak: 'W3', pointDifferential: 30 },
+          { team: { id: '66', displayName: 'TCU Horned Frogs', abbreviation: 'TCU', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/66.png' }, stats: [{ name: 'wins', value: 28 }, { name: 'losses', value: 12 }, { name: 'conferenceRecord', displayValue: '11-5' }, { name: 'streak', displayValue: 'W3' }, { name: 'pointsFor', value: 180 }, { name: 'pointsAgainst', value: 150 }] },
         ],
       },
     },

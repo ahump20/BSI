@@ -6,8 +6,9 @@
  */
 
 import type { Env } from '../../shared/types';
-import { json, cachedJson, kvGet, kvPut, dataHeaders, getCollegeClient, getHighlightlyClient, archiveRawResponse } from '../../shared/helpers';
+import { json, cachedJson, kvGet, kvPut, dataHeaders, cachedPayloadHeaders, buildMeta, withMeta, getCollegeClient, getHighlightlyClient, archiveRawResponse } from '../../shared/helpers';
 import { HTTP_CACHE, CACHE_TTL } from '../../shared/constants';
+import { safeFetch } from '../../shared/cbb-fetch';
 import type {
   HighlightlyMatch,
   HighlightlyTeamDetail,
@@ -48,7 +49,7 @@ export type {
 // Re-export everything domain modules need
 export type { Env };
 export type { HighlightlyMatch, HighlightlyTeamDetail, HighlightlyPlayer, HighlightlyPlayerStats, HighlightlyBoxScore };
-export { json, cachedJson, kvGet, kvPut, dataHeaders, getCollegeClient, getHighlightlyClient, archiveRawResponse };
+export { json, cachedJson, kvGet, kvPut, dataHeaders, cachedPayloadHeaders, buildMeta, withMeta, getCollegeClient, getHighlightlyClient, archiveRawResponse, safeFetch };
 export { HTTP_CACHE, CACHE_TTL };
 export { teamMetadata, getLogoUrl };
 export { getLeaders, getScoreboard, getGameSummary };

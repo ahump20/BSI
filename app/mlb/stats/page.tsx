@@ -54,11 +54,11 @@ export default function MLBStatsPage() {
   const [category, setCategory] = useState<CategoryType>('batting');
   const [selectedStat, setSelectedStat] = useState<StatType>('avg');
 
-  const fetchLeaders = useCallback(async () => {
+  const fetchLeaders = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/mlb/stats/leaders?category=${category}&stat=${selectedStat}`);
+      const res = await fetch(`/api/mlb/stats/leaders?category=${category}&stat=${selectedStat}`, { signal });
       if (!res.ok) throw new Error('Failed to fetch leaders');
       const data = (await res.json()) as { leaders?: StatLeader[]; meta?: DataMeta };
 
@@ -70,6 +70,7 @@ export default function MLBStatsPage() {
       }
       setLoading(false);
     } catch (err: unknown) {
+      if ((err as Error).name === 'AbortError') return;
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMessage);
       setLoading(false);
@@ -77,7 +78,10 @@ export default function MLBStatsPage() {
   }, [category, selectedStat]);
 
   useEffect(() => {
-    fetchLeaders();
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    fetchLeaders(controller.signal);
+    return () => { controller.abort(); clearTimeout(timeout); };
   }, [fetchLeaders]);
 
   // Update selectedStat when category changes
@@ -170,7 +174,7 @@ export default function MLBStatsPage() {
           <Container>
             <ScrollReveal direction="up">
               <Badge variant="primary" className="mb-4">
-                2025 Season
+                2026 Season
               </Badge>
             </ScrollReveal>
 
@@ -259,7 +263,7 @@ export default function MLBStatsPage() {
                 <p className="text-error font-semibold">Data Unavailable</p>
                 <p className="text-text-secondary text-sm mt-1">{error}</p>
                 <button
-                  onClick={fetchLeaders}
+                  onClick={() => fetchLeaders()}
                   className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors"
                 >
                   Retry
@@ -279,7 +283,7 @@ export default function MLBStatsPage() {
                   </svg>
                   <p className="text-text-secondary">No stat leaders available</p>
                   <p className="text-text-tertiary text-sm mt-2">
-                    Leaders will be available when the 2025 season begins
+                    Leaders will be available when the 2026 season begins
                   </p>
                 </div>
               </Card>

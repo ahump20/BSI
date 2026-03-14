@@ -107,6 +107,7 @@ export function getMainNavItems(date?: Date): {
   ];
 
   const secondary: MainNavItem[] = [
+    { label: 'Podcast', href: '/podcast' },
     { label: 'Editorial', href: '/college-baseball/editorial' },
     { label: 'Diamond Dynasty', href: '/mlb/the-show-26/diamond-dynasty' },
     { label: 'Research', href: '/research' },
@@ -169,6 +170,8 @@ export function getSidebarNav(): readonly NavGroup[] {
         { href: '/college-baseball/conferences', label: 'Conferences', iconKey: 'globe' },
         { href: '/college-baseball/compare', label: 'Compare', iconKey: 'chart' },
         { href: '/college-baseball/teams', label: 'Teams', iconKey: 'baseball' },
+        { href: '/college-baseball/texas-intelligence', label: 'Texas Intel', iconKey: 'brain' },
+        { href: '/college-baseball/texas-history', label: 'Texas History', iconKey: 'book' },
       ],
     },
     {
@@ -196,6 +199,7 @@ export function getSidebarNav(): readonly NavGroup[] {
     {
       label: 'More',
       items: [
+        { href: '/podcast', label: 'Podcast', iconKey: 'activity' },
         { href: '/college-baseball/editorial', label: 'Editorial', iconKey: 'pen' },
         { href: '/arcade', label: 'Arcade', iconKey: 'activity' },
         { href: 'https://labs.blazesportsintel.com', label: 'Labs', iconKey: 'flask', external: true },
@@ -272,6 +276,7 @@ export function getMorePanelNav(): readonly MorePanelSection[] {
     {
       label: 'More',
       items: [
+        { label: 'Podcast', href: '/podcast' },
         { label: 'Editorial', href: '/college-baseball/editorial' },
         { label: 'Arcade', href: '/arcade' },
         { label: 'Diamond Dynasty', href: '/mlb/the-show-26/diamond-dynasty' },

@@ -1,15 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useMotionValueEvent, useSpring, AnimatePresence } from 'framer-motion';
-
-const navItems = [
-  { id: 'hero', label: 'Home' },
-  { id: 'bsi', label: 'BSI' },
-  { id: 'projects', label: 'Work' },
-  { id: 'proof', label: 'Proof' },
-  { id: 'origin', label: 'Origin' },
-  { id: 'covenant', label: 'Covenant' },
-  { id: 'contact', label: 'Contact' },
-];
+import { NAV_ITEMS } from '../content/site';
 
 export default function Navigation() {
   const [activeSection, setActiveSection] = useState('hero');
@@ -108,7 +99,7 @@ export default function Navigation() {
 
           {/* Desktop nav */}
           <ul className="hidden md:flex items-center gap-1">
-            {navItems.map((item) => (
+            {NAV_ITEMS.map((item) => (
               <li key={item.id}>
                 <a
                   href={`#${item.id}`}
@@ -167,7 +158,7 @@ export default function Navigation() {
               className="overflow-hidden md:hidden bg-midnight/95 backdrop-blur-xl border-t border-bone/5"
             >
               <ul className="px-6 py-4 space-y-1">
-                {navItems.map((item) => (
+                {NAV_ITEMS.map((item) => (
                   <li key={item.id}>
                     <a
                       href={`#${item.id}`}

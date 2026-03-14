@@ -8,6 +8,8 @@ export { SportLeaders } from './SportLeaders';
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import type { DataMetaLike } from '@/lib/utils/data-meta';
+import { getDataSourceLabel, normalizeDataMeta } from '@/lib/utils/data-meta';
 
 // Data attribution components
 
@@ -21,11 +23,16 @@ export interface DataSource {
 interface DataSourcePanelProps {
   sources: DataSource[];
   lastUpdated?: string;
+  meta?: DataMetaLike | null;
   refreshInterval?: number;
   className?: string;
 }
 
-export function DataSourcePanel({ sources, lastUpdated, refreshInterval, className = '' }: DataSourcePanelProps) {
+export function DataSourcePanel({ sources, lastUpdated, meta, refreshInterval, className = '' }: DataSourcePanelProps) {
+  const normalized = normalizeDataMeta(meta, { lastUpdated });
+  const effectiveLastUpdated = normalized?.lastUpdated ?? lastUpdated;
+  const effectiveTimezone = normalized?.timezone ?? 'America/Chicago';
+
   return (
     <div className={`bg-surface-light border border-border rounded-xl p-4 ${className}`}>
       <div className="flex items-center gap-2 mb-3">
@@ -50,9 +57,9 @@ export function DataSourcePanel({ sources, lastUpdated, refreshInterval, classNa
           </a>
         ))}
       </div>
-      {lastUpdated && (
+      {effectiveLastUpdated && (
         <p className="text-xs text-text-muted mt-2">
-          Last updated: {new Date(lastUpdated).toLocaleString('en-US', { timeZone: 'America/Chicago' })} CT
+          Last updated: {new Date(effectiveLastUpdated).toLocaleString('en-US', { timeZone: effectiveTimezone })} CT
         </p>
       )}
     </div>
@@ -126,15 +133,17 @@ export function BottomNav({ items, className = '' }: { items: BottomNavItem[]; c
 }
 
 
-export function CitationFooter({ sources, source, fetchedAt, additionalSources, showFreshness, className = "" }: {
+export function CitationFooter({ sources, source, fetchedAt, meta, additionalSources, showFreshness, className = "" }: {
   sources?: DataSource[];
   source?: string;
   fetchedAt?: string;
+  meta?: DataMetaLike | null;
   additionalSources?: string[];
   showFreshness?: boolean;
   className?: string;
 }) {
-  const resolvedSources = sources ?? (source ? [{ name: source, url: '', fetchedAt: fetchedAt ?? '' }] : []);
+  const normalized = normalizeDataMeta(meta, { source, lastUpdated: fetchedAt });
+  const resolvedSources = sources ?? (normalized?.source ? [{ name: getDataSourceLabel(normalized), url: '', fetchedAt: normalized.lastUpdated ?? '' }] : []);
   if (resolvedSources.length === 0) return null;
   return (
     <footer className={`border-t border-border pt-4 mt-8 ${className}`}>
@@ -151,8 +160,8 @@ export function CitationFooter({ sources, source, fetchedAt, additionalSources, 
           <span key={s} className="text-xs text-text-muted">{s}</span>
         ))}
       </div>
-      {showFreshness && fetchedAt && (
-        <p className="text-[10px] text-text-muted mt-1">Last updated: {fetchedAt}</p>
+      {showFreshness && (normalized?.lastUpdated ?? fetchedAt) && (
+        <p className="text-[10px] text-text-muted mt-1">Last updated: {normalized?.lastUpdated ?? fetchedAt}</p>
       )}
     </footer>
   );
