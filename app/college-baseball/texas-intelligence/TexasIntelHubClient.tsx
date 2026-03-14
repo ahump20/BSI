@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -32,6 +32,30 @@ interface TeamResponse {
   meta?: { source?: string; fetched_at?: string };
 }
 
+interface GameAnalysis {
+  gameId: string;
+  date: string;
+  homeTeam: string;
+  awayTeam: string;
+  homeScore: number;
+  awayScore: number;
+  isTexasHome: boolean;
+  analysis: { title: string; paragraphs: string[] } | null;
+}
+
+interface GameAnalysesResponse {
+  games: GameAnalysis[];
+  meta?: { source?: string; fetched_at?: string };
+}
+
+const INTEL_NAV = [
+  { label: 'Roster', href: '/college-baseball/texas-intelligence/roster', desc: 'Advanced metrics for every player' },
+  { label: 'Pitching Staff', href: '/college-baseball/texas-intelligence/pitching', desc: 'Rotation, bullpen, workload tracking' },
+  { label: 'Schedule', href: '/college-baseball/texas-intelligence/schedule', desc: 'Difficulty-rated heat map' },
+  { label: 'NIL Intelligence', href: '/college-baseball/texas-intelligence/nil', desc: 'Valuations and draft leverage' },
+  { label: 'Media Archive', href: '/college-baseball/texas-intelligence/media', desc: 'Film room, news, social content' },
+] as const;
+
 // ─── Component ──────────────────────────────────────────────────────────────
 
 export default function TexasIntelHubClient() {
@@ -42,6 +66,14 @@ export default function TexasIntelHubClient() {
     `/api/college-baseball/teams/${meta?.espnId || ESPN_ID}`,
     { timeout: 10000 },
   );
+
+  const { data: analysesData } = useSportData<GameAnalysesResponse>(
+    '/api/college-baseball/texas-intelligence/game-analyses',
+    { timeout: 10000 },
+  );
+
+  const [analysisIdx, setAnalysisIdx] = useState(0);
+  const recentAnalyses = analysesData?.games?.filter((g) => g.analysis) ?? [];
 
   const texasArticles = useMemo(
     () => FEATURE_ARTICLES.filter((a) => a.teams?.includes(TEAM_ID)).slice(0, 4),
@@ -139,6 +171,33 @@ export default function TexasIntelHubClient() {
           </Container>
         </Section>
 
+        {/* ── Intelligence Navigation ──────────────────────────── */}
+        <Section padding="lg" borderTop>
+          <Container>
+            <ScrollReveal direction="up">
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-6 text-text-primary">
+                Intelligence Sections
+              </h2>
+            </ScrollReveal>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {INTEL_NAV.map((item) => (
+                <ScrollReveal key={item.href} direction="up">
+                  <Link href={item.href}>
+                    <Card variant="default" padding="md" className="h-full hover:border-burnt-orange/30 transition-colors cursor-pointer group">
+                      <CardContent>
+                        <h3 className="font-display font-bold text-sm uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors">
+                          {item.label}
+                        </h3>
+                        <p className="text-text-muted text-xs mt-1">{item.desc}</p>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                </ScrollReveal>
+              ))}
+            </div>
+          </Container>
+        </Section>
+
         {/* ── 3. Roster Sabermetrics ─────────────────────────────── */}
         <Section padding="lg" borderTop>
           <Container>
@@ -192,6 +251,89 @@ export default function TexasIntelHubClient() {
             <SocialIntelTeamPanel teamId={TEAM_ID} />
           </Container>
         </Section>
+
+        {/* ── Game Analyses Carousel ─────────────────────────────── */}
+        {recentAnalyses.length > 0 && (
+          <Section padding="lg" borderTop>
+            <Container>
+              <ScrollReveal direction="up">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary">
+                    Post-Game Intel
+                  </h2>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setAnalysisIdx((i) => Math.max(0, i - 1))}
+                      disabled={analysisIdx === 0}
+                      className="w-8 h-8 rounded border border-border flex items-center justify-center text-text-muted hover:text-text-primary disabled:opacity-30 transition-colors"
+                      aria-label="Previous game"
+                    >
+                      &larr;
+                    </button>
+                    <button
+                      onClick={() => setAnalysisIdx((i) => Math.min(recentAnalyses.length - 1, i + 1))}
+                      disabled={analysisIdx >= recentAnalyses.length - 1}
+                      className="w-8 h-8 rounded border border-border flex items-center justify-center text-text-muted hover:text-text-primary disabled:opacity-30 transition-colors"
+                      aria-label="Next game"
+                    >
+                      &rarr;
+                    </button>
+                  </div>
+                </div>
+              </ScrollReveal>
+              {(() => {
+                const game = recentAnalyses[analysisIdx];
+                if (!game?.analysis) return null;
+                const texasWon = game.isTexasHome
+                  ? game.homeScore > game.awayScore
+                  : game.awayScore > game.homeScore;
+                const opponent = game.isTexasHome ? game.awayTeam : game.homeTeam;
+                return (
+                  <Card variant="default" padding="lg" className="relative overflow-hidden">
+                    <div
+                      className="absolute top-0 left-0 right-0 h-0.5"
+                      style={{ backgroundColor: texasWon ? ACCENT : 'var(--text-muted)' }}
+                    />
+                    <CardHeader>
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                        <CardTitle className="text-base">
+                          Texas {game.isTexasHome ? 'vs' : '@'} {opponent}
+                        </CardTitle>
+                        <div className="flex items-center gap-3">
+                          <Badge variant={texasWon ? 'accent' : 'secondary'} size="sm">
+                            {texasWon ? 'W' : 'L'} {game.isTexasHome
+                              ? `${game.homeScore}-${game.awayScore}`
+                              : `${game.awayScore}-${game.homeScore}`}
+                          </Badge>
+                          <span className="text-text-muted text-xs">{game.date}</span>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      {game.analysis.paragraphs.map((p, i) => (
+                        <p key={i} className="text-text-secondary text-sm leading-relaxed mb-3 last:mb-0">
+                          {p}
+                        </p>
+                      ))}
+                    </CardContent>
+                  </Card>
+                );
+              })()}
+              <div className="flex justify-center gap-1.5 mt-4">
+                {recentAnalyses.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setAnalysisIdx(i)}
+                    className={`w-2 h-2 rounded-full transition-colors ${
+                      i === analysisIdx ? 'bg-burnt-orange' : 'bg-surface-light'
+                    }`}
+                    aria-label={`Game ${i + 1}`}
+                  />
+                ))}
+              </div>
+            </Container>
+          </Section>
+        )}
 
         {/* ── 7. Program History Excerpt ──────────────────────────── */}
         <Section padding="lg" borderTop>
@@ -283,28 +425,40 @@ export default function TexasIntelHubClient() {
               />
               <div className="flex flex-wrap gap-4">
                 <Link
-                  href="/college-baseball/teams/texas"
+                  href="/college-baseball/texas-intelligence/pitching"
                   className="text-sm text-burnt-orange hover:text-ember transition-colors"
                 >
-                  Team Detail &rarr;
+                  Pitching Staff &rarr;
                 </Link>
                 <Link
-                  href="/college-baseball/teams/texas/intelligence"
+                  href="/college-baseball/texas-intelligence/schedule"
+                  className="text-sm text-burnt-orange hover:text-ember transition-colors"
+                >
+                  Schedule Heat Map &rarr;
+                </Link>
+                <Link
+                  href="/college-baseball/texas-intelligence/roster"
                   className="text-sm text-text-muted hover:text-text-primary transition-colors"
                 >
-                  Sabermetrics Deep Dive &rarr;
+                  Full Roster &rarr;
+                </Link>
+                <Link
+                  href="/college-baseball/texas-intelligence/nil"
+                  className="text-sm text-text-muted hover:text-text-primary transition-colors"
+                >
+                  NIL Intelligence &rarr;
+                </Link>
+                <Link
+                  href="/college-baseball/teams/texas"
+                  className="text-sm text-text-muted hover:text-text-primary transition-colors"
+                >
+                  Team Detail &rarr;
                 </Link>
                 <Link
                   href="/college-baseball/texas-history"
                   className="text-sm text-text-muted hover:text-text-primary transition-colors"
                 >
                   Program History &rarr;
-                </Link>
-                <Link
-                  href="/college-baseball/editorial"
-                  className="text-sm text-text-muted hover:text-text-primary transition-colors"
-                >
-                  All Editorial &rarr;
                 </Link>
                 <Link
                   href="/college-baseball/savant"
