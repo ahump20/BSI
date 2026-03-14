@@ -25,13 +25,20 @@ function cachedFetch<T>(url: string): Promise<T> {
   return cache.get(url) as Promise<T>;
 }
 
-/** Returns [gameId] params for college baseball game detail pages. */
+/** Returns [gameId] params for college baseball game detail pages.
+ *  Always includes "placeholder" so the Worker can serve its shell HTML
+ *  as a fallback for game IDs that weren't present at build time. */
 export async function cbbGameParams(): Promise<{ gameId: string }[]> {
   const body = await cachedFetch<{ data?: { id: string }[] }>(
     `${WORKER_BASE}/api/college-baseball/scores`,
   );
   const games = body?.data ?? [];
   const ids = games.map((g) => ({ gameId: String(g.id) }));
+  // Always include placeholder — the Worker proxy uses it as the
+  // fallback shell for any game ID not generated at build time.
+  if (!ids.some((p) => p.gameId === 'placeholder')) {
+    ids.push({ gameId: 'placeholder' });
+  }
   return ids.length > 0 ? ids : [{ gameId: 'placeholder' }];
 }
 
@@ -43,11 +50,15 @@ export async function nbaTeamParams(): Promise<{ teamId: string }[]> {
   return ids.length > 0 ? ids : [{ teamId: 'placeholder' }];
 }
 
-/** Returns [gameId] params for MLB game detail pages. */
+/** Returns [gameId] params for MLB game detail pages.
+ *  Always includes "placeholder" for the Worker proxy fallback shell. */
 export async function mlbGameParams(): Promise<{ gameId: string }[]> {
   const body = await cachedFetch<{ games?: { id: string }[] }>(`${WORKER_BASE}/api/mlb/scores`);
   const games = body?.games ?? [];
   const ids = games.map((g) => ({ gameId: String(g.id) }));
+  if (!ids.some((p) => p.gameId === 'placeholder')) {
+    ids.push({ gameId: 'placeholder' });
+  }
   return ids.length > 0 ? ids : [{ gameId: 'placeholder' }];
 }
 
