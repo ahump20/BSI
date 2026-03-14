@@ -1,107 +1,40 @@
 #!/usr/bin/env bash
-# build-safe.sh — Builds Next.js outside iCloud Drive to prevent file eviction.
+# build-safe.sh — Builds Next.js with iCloud-safe precautions.
 #
-# iCloud's storage optimization can evict .next/ files mid-build when generating
-# 1500+ static pages. This script copies the project to /var/tmp, builds there,
-# then copies the output back.
+# Previous approach: rsync everything to /var/tmp/bsi-build-staging.
+# That fails because: (1) cp -al hard-links corrupt across macOS APFS volumes,
+# (2) Turbopack rejects symlinked node_modules pointing outside the filesystem root,
+# (3) rsync -L follows iCloud placeholders that get evicted mid-copy.
 #
-# Because the repo root is ~/ (home directory), we use an include-list approach
-# to only sync BSI source directories. This keeps the rsync under 30 seconds
-# instead of 10+ minutes copying screenshots, game repos, etc.
+# Current approach: build in-place with a clean .next directory. The build completes
+# in ~36 seconds — fast enough that iCloud doesn't evict .next/ files mid-build.
+# If iCloud eviction does occur, retry once (second build reuses Turbopack cache).
 
 set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-BUILD_DIR="/var/tmp/bsi-build-staging"
 OUT_DIR="$PROJECT_DIR/out"
 
-echo "→ Preparing build staging at $BUILD_DIR"
-# Perl remove_tree handles hard-linked node_modules that rm -rf can't delete
-# (iCloud + cp -al creates cross-device hard links that confuse rm on macOS)
-perl -e 'use File::Path qw(remove_tree); remove_tree("'"$BUILD_DIR"'")' 2>/dev/null || true
-rm -rf "$BUILD_DIR" 2>/dev/null || true
-mkdir -p "$BUILD_DIR"
+# Clean stale .next to prevent Turbopack invariant errors
+echo "→ Cleaning .next build cache"
+rm -rf "$PROJECT_DIR/.next"
 
-# Clear stale .next from prior builds (prevents Turbopack invariant errors)
-rm -rf "$BUILD_DIR/.next" 2>/dev/null || true
+echo "→ Building from $PROJECT_DIR"
+cd "$PROJECT_DIR"
 
-# Sync only BSI source directories + root config files.
-# Uses --include/--exclude filters: include what we need, exclude everything else.
-# -L follows iCloud deferred file references.
-# Sync BSI source directories, excluding nested node_modules (iCloud-managed
-# subdirectories have transient symlinks that cause rsync failures).
-# The build only needs the root node_modules (hard-linked separately below).
-rsync -aL \
-  --exclude='node_modules' \
-  --exclude='.wrangler' \
-  --exclude='dist' \
-  --exclude='.next' \
-  --include='/app/***' \
-  --include='/components/***' \
-  --include='/lib/***' \
-  --include='/workers/***' \
-  --include='/functions/***' \
-  --include='/scripts/***' \
-  --include='/tests/***' \
-  --include='/games/***' \
-  --include='/docs/***' \
-  --include='/[Pp]ublic/***' \
-  --include='/external/***' \
-  --include='/migrations/***' \
-  --include='/styles/***' \
-  --include='package.json' \
-  --include='package-lock.json' \
-  --include='tsconfig.json' \
-  --include='tsconfig.*.json' \
-  --include='next.config.*' \
-  --include='next-env.d.ts' \
-  --include='tailwind.config.*' \
-  --include='postcss.config.*' \
-  --include='wrangler.toml' \
-  --include='vitest.config.*' \
-  --include='playwright.config.*' \
-  --include='.gitignore' \
-  --include='_headers' \
-  --include='_redirects' \
-  --include='_routes.json' \
-  --exclude='*' \
-  "$PROJECT_DIR/" "$BUILD_DIR/"
-
-# Ensure public/ is lowercase — macOS APFS stores it as 'Public' (case-insensitive)
-# but Next.js requires lowercase 'public/' for static asset copying.
-if [ -d "$BUILD_DIR/Public" ] && [ ! -d "$BUILD_DIR/public" ]; then
-  mv "$BUILD_DIR/Public" "$BUILD_DIR/public"
-  echo "→ Renamed Public → public for Next.js compatibility"
+# Build — retry once if iCloud evicts files mid-build
+if ! npx next build 2>&1; then
+  echo "→ First build attempt failed, retrying..."
+  rm -rf "$PROJECT_DIR/.next"
+  npx next build
 fi
 
-# Link node_modules — hard-link preferred, fall back to rsync (handles iCloud eviction)
-# On re-runs, stale hard-linked node_modules may resist rm -rf — nuke it first
-perl -e 'use File::Path qw(remove_tree); remove_tree("'"$BUILD_DIR/node_modules"'")' 2>/dev/null || true
-rm -rf "$BUILD_DIR/node_modules" 2>/dev/null || true
-if ! cp -al "$PROJECT_DIR/node_modules" "$BUILD_DIR/node_modules" 2>/dev/null; then
-  echo "→ Hard-link failed, using rsync for node_modules"
-  rsync -aL "$PROJECT_DIR/node_modules/" "$BUILD_DIR/node_modules/"
-fi
-# Remove .ignored dir if Turbopack left one — causes build failures on reuse
-rm -rf "$BUILD_DIR/node_modules/.ignored" 2>/dev/null || true
-
-echo "→ Building from $BUILD_DIR"
-cd "$BUILD_DIR"
-if [ -x "$BUILD_DIR/node_modules/.bin/next" ]; then
-  "$BUILD_DIR/node_modules/.bin/next" build
-else
-  echo "→ Falling back to root Next.js binary"
-  node "$PROJECT_DIR/node_modules/next/dist/bin/next" build
-fi
-
-# Post-build: copy functions into output, generate sitemap
-rm -rf "$BUILD_DIR/out/functions"
-cp -R "$BUILD_DIR/functions" "$BUILD_DIR/out/functions"
-node "$BUILD_DIR/scripts/generate-sitemap.mjs" 2>/dev/null || true
-
-# Copy output back to project
-echo "→ Copying build output to $OUT_DIR"
-rm -rf "$OUT_DIR"
-cp -R "$BUILD_DIR/out" "$OUT_DIR"
+# Post-build: generate sitemap + ensure Pages control files land at out root
+node "$PROJECT_DIR/scripts/generate-sitemap.mjs" 2>/dev/null || true
+for cf_file in _headers _redirects _routes.json; do
+  if [ -f "$PROJECT_DIR/public/$cf_file" ]; then
+    cp "$PROJECT_DIR/public/$cf_file" "$OUT_DIR/$cf_file"
+  fi
+done
 
 echo "✓ Build complete — output at $OUT_DIR"

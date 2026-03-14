@@ -105,3 +105,80 @@ export interface TeamPreviewData {
   projectionText: string;
   relatedLinks: { label: string; href: string }[];
 }
+
+// ── Program History Types ───────────────────────────────────────────
+
+export interface CoachingEra {
+  name: string;
+  years: string;
+  record: string;
+  titles: number;
+  cwsAppearances: number;
+  keyPlayers: string[];
+  narrative: string;
+  pullQuote?: string;
+  image?: string;
+  imageAlt?: string;
+}
+
+export interface ChampionshipSeason {
+  year: number;
+  record: string;
+  mop: string;
+  titleGameOpponent: string;
+  titleGameScore: string;
+  narrative: string;
+  image?: string;
+  imageAlt?: string;
+}
+
+export interface IconicPlayer {
+  name: string;
+  number?: string;
+  years: string;
+  position: string;
+  headline: string;
+  stats: string;
+  retired: boolean;
+  image?: string;
+}
+
+export interface MediaEmbed {
+  type: 'youtube' | 'instagram' | 'link';
+  id?: string;
+  url: string;
+  title: string;
+  placement: string;
+}
+
+export interface ProgramHistoryData {
+  programName: string;
+  heroTitle: string;
+  heroSubtitle: string;
+  badgeText: string;
+  date: string;
+  readTime: string;
+  openingNarrative: string;
+  closingNarrative: string;
+  stadiumNarrative: string;
+  cultureNarrative: string;
+  coachingEras: CoachingEra[];
+  championships: ChampionshipSeason[];
+  iconicPlayers: IconicPlayer[];
+  cwsAppearances: number[];
+  programRecords: { label: string; value: string; context?: string }[];
+  mediaEmbeds?: MediaEmbed[];
+  relatedLinks: { label: string; href: string }[];
+  heroImage?: string;
+  heroImageAlt?: string;
+  heroImageCaption?: string;
+  featuredVideoId?: string;
+  featuredVideoTitle?: string;
+  stadiumImages?: { src: string; alt: string }[];
+  cultureImage?: string;
+  cultureImageAlt?: string;
+  closingImage?: string;
+  closingImageAlt?: string;
+  brandEvolutionImage?: string;
+  brandEvolutionImageAlt?: string;
+}
