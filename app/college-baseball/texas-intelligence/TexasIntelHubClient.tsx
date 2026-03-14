@@ -52,6 +52,9 @@ const INTEL_NAV = [
   { label: 'Roster', href: '/college-baseball/texas-intelligence/roster', desc: 'Advanced metrics for every player' },
   { label: 'Pitching Staff', href: '/college-baseball/texas-intelligence/pitching', desc: 'Rotation, bullpen, workload tracking' },
   { label: 'Schedule', href: '/college-baseball/texas-intelligence/schedule', desc: 'Difficulty-rated heat map' },
+  { label: 'Draft Board', href: '/college-baseball/texas-intelligence/draft', desc: 'HAV-F rankings & pro pipeline' },
+  { label: 'Transfer Portal', href: '/college-baseball/texas-intelligence/portal', desc: 'Incoming targets & departures' },
+  { label: 'Performance Trends', href: '/college-baseball/texas-intelligence/trends', desc: 'Hot/cold tracker & momentum' },
   { label: 'NIL Intelligence', href: '/college-baseball/texas-intelligence/nil', desc: 'Valuations and draft leverage' },
   { label: 'Media Archive', href: '/college-baseball/texas-intelligence/media', desc: 'Film room, news, social content' },
 ] as const;
