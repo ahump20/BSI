@@ -378,7 +378,7 @@ export default function MLBStandingsPage() {
           <Container>
             <ScrollReveal direction="up">
               <Badge variant="primary" className="mb-4">
-                2025 Season
+                2026 Season
               </Badge>
             </ScrollReveal>
 
@@ -478,7 +478,7 @@ export default function MLBStandingsPage() {
                 <div className="text-center py-8">
                   <p className="text-text-secondary">No standings data available</p>
                   <p className="text-text-tertiary text-sm mt-2">
-                    Standings will be available when the 2025 season begins
+                    Standings will be available when the 2026 season begins
                   </p>
                 </div>
               </Card>

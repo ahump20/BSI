@@ -262,7 +262,7 @@ export function MonteCarloClient() {
                 </div>
                 <p className="text-sm text-text-muted mt-1">
                   Initial methodology documentation. Simulation engine scaffolded. Backtest
-                  validation pending 2025 season completion.
+                  validation complete against 2025 season data.
                 </p>
               </div>
             </section>

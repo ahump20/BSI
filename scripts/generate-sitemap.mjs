@@ -59,6 +59,10 @@ function routeMeta(route) {
   if (route.startsWith('/intel/'))
     return { changefreq: 'daily', priority: '0.7' };
 
+  // Team intelligence hubs (texas-intelligence, future team intel pages)
+  if (/\/college-baseball\/[^/]+-intelligence\//.test(route))
+    return { changefreq: 'daily', priority: '0.7' };
+
   // Models/methodology
   if (route.startsWith('/models/'))
     return { changefreq: 'weekly', priority: '0.6' };

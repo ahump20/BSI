@@ -56,7 +56,15 @@ export function ConferencePositionCard({
     return <div className="h-48 bg-surface-light rounded-lg animate-pulse" />;
   }
 
-  if (error || !data || data.teams.length === 0) return null;
+  if (error) {
+    return (
+      <div className="bg-surface-light border border-border rounded-lg p-6 text-center">
+        <p className="text-text-muted text-sm">Conference data temporarily unavailable</p>
+      </div>
+    );
+  }
+
+  if (!data || data.teams.length === 0) return null;
 
   const lookupId = espnId || teamId;
   const teamRow = data.teams.find((t) => t.team_id === lookupId);

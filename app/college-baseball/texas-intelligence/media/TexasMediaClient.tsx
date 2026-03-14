@@ -39,13 +39,14 @@ export default function TexasMediaClient() {
 
   const [news, setNews] = useState<NewsResponse | null>(null);
   const [newsLoading, setNewsLoading] = useState(true);
+  const [newsError, setNewsError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     fetch('/api/college-baseball/texas-intelligence/news')
       .then((r) => (r.ok ? (r.json() as Promise<NewsResponse>) : Promise.reject(r.status)))
       .then((d) => { if (!cancelled) { setNews(d); setNewsLoading(false); } })
-      .catch(() => { if (!cancelled) setNewsLoading(false); });
+      .catch(() => { if (!cancelled) { setNewsLoading(false); setNewsError(true); } });
     return () => { cancelled = true; };
   }, []);
 
@@ -149,7 +150,9 @@ export default function TexasMediaClient() {
               </div>
             ) : (
               <Card padding="lg" className="text-center">
-                <p className="text-text-muted text-sm">News aggregation is refreshing. Check back soon.</p>
+                <p className="text-text-muted text-sm">
+                  {newsError ? 'Unable to load news. Try refreshing the page.' : 'News aggregation is refreshing. Check back soon.'}
+                </p>
               </Card>
             )}
           </Container>

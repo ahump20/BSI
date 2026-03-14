@@ -32,7 +32,7 @@ export default function TexasNILClient() {
   const espnId = meta?.espnId || '251';
   const logoUrl = getLogoUrl(espnId, meta?.logoId);
 
-  const { data: draftData, loading: draftLoading } = useSportData<DraftLeverageResponse>(
+  const { data: draftData, loading: draftLoading, error: draftError } = useSportData<DraftLeverageResponse>(
     '/api/nil/draft-leverage?team=texas',
     { timeout: 10000 },
   );
@@ -134,7 +134,9 @@ export default function TexasNILClient() {
                       </table>
                     </div>
                   ) : (
-                    <p className="text-text-muted text-sm text-center py-6">Draft leverage data not yet available for this season.</p>
+                    <p className="text-text-muted text-sm text-center py-6">
+                      {draftError ? 'Unable to load draft leverage data. Try refreshing.' : 'Draft leverage data not yet available for this season.'}
+                    </p>
                   )}
                 </CardContent>
               </Card>
