@@ -212,6 +212,8 @@ describe('workers/index.ts route handlers', () => {
       expect(res.status).toBe(400);
       expect(body).toHaveProperty('error');
     });
+
+    // newsletter endpoint removed — route no longer exists
   });
 
   // -----------------------------------------------------------------------
@@ -388,4 +390,6 @@ describe('workers/index.ts route handlers', () => {
       expect(res.status).toBe(204);
     });
   });
+
+  // migrated Pages routes removed — newsletter and semantic-health endpoints no longer exist
 });
