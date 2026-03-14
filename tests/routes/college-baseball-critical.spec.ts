@@ -92,7 +92,7 @@ test.describe('CBB Standings — data integrity', () => {
 
     // Current year should appear somewhere (schedule headers, etc.)
     if (IN_SEASON) {
-      await expect(page.getByText(/2026/)).toBeVisible();
+      await expect(page.getByText(/2026/).first()).toBeVisible();
     }
   });
 });

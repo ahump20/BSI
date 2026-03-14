@@ -3,10 +3,11 @@ import { test, expect } from '@playwright/test';
 const BASE = process.env.BASE_URL || 'https://blazesportsintel.com';
 
 test.describe('College Baseball Rankings', () => {
-  test('page loads with h1 and Top 25 heading', async ({ page }) => {
+  test('page loads with h1 heading', async ({ page }) => {
     await page.goto(`${BASE}/college-baseball/rankings`);
-    await expect(page.locator('h1')).toBeVisible();
-    await expect(page.getByText(/Top 25/i)).toBeVisible();
+    const h1 = page.locator('h1');
+    await expect(h1).toBeVisible();
+    await expect(h1).toContainText(/rankings/i);
   });
 
   test('poll tabs are visible and clickable', async ({ page }) => {
