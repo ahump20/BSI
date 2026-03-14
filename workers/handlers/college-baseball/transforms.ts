@@ -72,6 +72,30 @@ export function transformEspnTeam(
     return Number(s?.value ?? 0);
   };
 
+  // Ranking from standingSummary or rank field
+  const standingSummary = (team.standingSummary as string) ?? '';
+  const rankNum = team.rank != null ? Number(team.rank) : undefined;
+
+  // Next game from nextEvent
+  const nextEvents = (team.nextEvent as Array<Record<string, unknown>>) ?? [];
+  let nextGame: Record<string, unknown> | undefined;
+  if (nextEvents.length > 0) {
+    const ne = nextEvents[0];
+    const comps = (ne.competitions as Array<Record<string, unknown>>) ?? [];
+    if (comps.length > 0) {
+      const comp = comps[0];
+      const competitors = (comp.competitors as Array<Record<string, unknown>>) ?? [];
+      const teamIdStr = String(team.id ?? '');
+      const opp = competitors.find((c) => String(c.id ?? '') !== teamIdStr);
+      const oppTeam = (opp?.team as Record<string, unknown>) ?? {};
+      nextGame = {
+        opponent: (oppTeam.displayName as string) ?? (oppTeam.name as string) ?? '',
+        date: (ne.date as string) ?? '',
+        location: (comp.venue as Record<string, unknown>)?.fullName as string ?? '',
+      };
+    }
+  }
+
   return {
     id: String(team.id ?? ''),
     name: (team.displayName as string) ?? (team.name as string) ?? '',
@@ -87,6 +111,9 @@ export function transformEspnTeam(
       capacity: (team.venue as Record<string, unknown>)?.capacity as number | undefined,
     },
     colors: colors ? { primary: `#${colors}`, secondary: altColor ? `#${altColor}` : '' } : undefined,
+    ranking: rankNum,
+    standingSummary,
+    nextGame,
     stats: overall ? {
       wins: getStat('wins'),
       losses: getStat('losses'),
