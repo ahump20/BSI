@@ -181,7 +181,7 @@ import { handleTeams, handleModelHealth, handleAnalyticsEvent, handleWeeklyBrief
 import { handleContact, handleLead, handleFeedback, handleNewsletter, handleCSPReport } from './handlers/lead';
 import { handlePredictionSubmit, handlePredictionAccuracy } from './handlers/predictions';
 import { handleIntelNews, handleESPNNews } from './handlers/news';
-import { handleTexasIntelVideos, handleTexasIntelNews, handleTexasIntelDigest } from './handlers/texas-intel';
+import { handleTexasIntelVideos, handleTexasIntelNews, handleTexasIntelDigest, handleTexasPlayerProfile, handleTexasOpponentScout, handleTexasGameAnalyses, handleTexasGameAnalysisGenerate, handleTexasPitchingStaff, handleTexasScheduleHeatMap } from './handlers/texas-intel';
 import {
   handleShowSourceStatus,
   handleShowMarketOverview,
@@ -436,6 +436,12 @@ app.get('/api/college-baseball/social-intel/team/:teamId', (c) => handleSocialIn
 app.get('/api/college-baseball/texas-intelligence/videos', (c) => handleTexasIntelVideos(c.env));
 app.get('/api/college-baseball/texas-intelligence/news', (c) => handleTexasIntelNews(c.env));
 app.get('/api/college-baseball/texas-intelligence/digest', (c) => handleTexasIntelDigest(c.env));
+app.get('/api/college-baseball/texas-intelligence/players/:playerId', (c) => handleTexasPlayerProfile(c.env, c.req.param('playerId')));
+app.get('/api/college-baseball/texas-intelligence/scouting/:opponentId', (c) => handleTexasOpponentScout(c.env, c.req.param('opponentId')));
+app.get('/api/college-baseball/texas-intelligence/game-analyses', (c) => handleTexasGameAnalyses(c.env));
+app.get('/api/college-baseball/texas-intelligence/game-analyses/:gameId/generate', (c) => handleTexasGameAnalysisGenerate(c.env, c.req.param('gameId')));
+app.get('/api/college-baseball/texas-intelligence/pitching', (c) => handleTexasPitchingStaff(c.env));
+app.get('/api/college-baseball/texas-intelligence/schedule-heatmap', (c) => handleTexasScheduleHeatMap(c.env));
 app.get('/api/college-baseball/scores/ws', (c) => {
   if (c.req.header('Upgrade') !== 'websocket') {
     return c.json({ error: 'Expected websocket upgrade' }, 400);
