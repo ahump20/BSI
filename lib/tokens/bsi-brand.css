@@ -172,6 +172,171 @@
   --glass-bg-top: rgba(255, 255, 255, 0.08);
   --glass-border-top: rgba(255, 255, 255, 0.16);
   --glass-blur: 20px;
+
+  /* ---- Heritage Borders (v2.1) ---- */
+  --border-primary: #BF5700;
+  --border-data: rgba(75, 156, 211, 0.2);
+  --border-subtle: rgba(245, 242, 235, 0.06);
+
+  /* ---- Heritage Border Radius (v2.1) ---- */
+  --radius-none: 0px;
+  --radius-sm: 2px;
+  --radius-full: 9999px;
+
+  /* ---- Heritage Shadows / Elevation (v2.1) ---- */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 18px 40px rgba(0, 0, 0, 0.35);
+  --shadow-glow-primary: 0 0 20px rgba(191, 87, 0, 0.15);
+  --shadow-glow-data: 0 0 12px rgba(75, 156, 211, 0.1);
+
+  /* ---- Heritage Spacing Scale (v2.1) ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* ---- Heritage Typography (v2.1) ---- */
+  --font-hero: "Bebas Neue", sans-serif;
+  --font-heading: "Oswald", sans-serif;
+
+  --text-display-xl: 4rem;
+  --text-display: 3rem;
+  --text-h1: 2rem;
+  --text-h2: 1.5rem;
+  --text-h3: 1.25rem;
+  --text-body: 1rem;
+  --text-body-sm: 0.875rem;
+  --text-data: 0.875rem;
+  --text-data-sm: 0.75rem;
+  --text-label: 0.6875rem;
+
+  --leading-tight: 1.1;
+  --leading-heading: 1.2;
+  --leading-data: 1.4;
+  --leading-body: 1.7;
+
+  --tracking-heading: 0.15em;
+  --tracking-stamp: 0.08em;
+  --tracking-wide: 0.2em;
+
+  /* ---- Heritage Motion (v2.1) ---- */
+  --duration-fast: 120ms;
+  --duration-normal: 200ms;
+  --duration-slow: 350ms;
+  --duration-orchestrated: 600ms;
+
+  --ease-out: cubic-bezier(0.0, 0.0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0.0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ---- Heritage Z-Index (v2.1) ---- */
+  --z-base: 0;
+  --z-card: 10;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-modal: 300;
+  --z-toast: 400;
+  --z-overlay: 500;
+
+  /* ---- Heritage Containers (v2.1) ---- */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-max: 1440px;
+
+  /* ---- Heritage Breakpoints (v2.1 reference) ---- */
+  --bp-sm: 640px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1280px;
+  --bp-2xl: 1440px;
+}
+
+/* ==========================================================================
+   SAVANT DESIGN SYSTEM — Scoped analytics theme
+   Applied via .savant-theme class on analytics pages
+   ========================================================================== */
+
+.savant-theme {
+  --svt-bg: #0a0c10;
+  --svt-surface: #12151c;
+  --svt-card: #181c26;
+  --svt-border: #242a38;
+  --svt-accent: #e85d26;
+  --svt-accent-hot: #ff7a3d;
+  --svt-accent-ember: #ff4500;
+  --svt-text: #e8eaf0;
+  --svt-text-muted: #8890a4;
+  --svt-text-dim: #555d73;
+  --svt-blue: #3b82f6;
+  --svt-cyan: #22d3ee;
+  --svt-green: #22c55e;
+  --svt-yellow: #eab308;
+  --svt-red: #ef4444;
+  --svt-purple: #a855f7;
+}
+
+/* Savant percentile scale (updated 6-tier) */
+.savant-theme {
+  --savant-elite: #ef4444;
+  --savant-great: #f97316;
+  --savant-above: #eab308;
+  --savant-avg: #8890a4;
+  --savant-below: #3b82f6;
+  --savant-poor: #6366f1;
+}
+
+/* Savant card surface */
+.savant-card {
+  background: var(--svt-card);
+  border: 1px solid var(--svt-border);
+  border-radius: 8px;
+}
+
+.savant-card-feature {
+  background: var(--svt-card);
+  border: 1px solid var(--svt-border);
+  border-radius: 8px;
+  border-top: 2px solid var(--svt-accent);
+}
+
+/* Savant ambient background */
+.savant-ambient {
+  background:
+    radial-gradient(ellipse at 80% 20%, rgba(232, 93, 38, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 20% 80%, rgba(59, 130, 246, 0.04) 0%, transparent 50%),
+    var(--svt-bg);
+}
+
+/* Savant staggered fade-in */
+@keyframes savant-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.savant-fade-in {
+  animation: savant-fade-in 0.6s ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .savant-fade-in {
+    animation: none;
+  }
 }
 
 /* ---- Animations ---- */
@@ -352,6 +517,208 @@
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .live-indicator__dot {
+    animation: none;
+  }
+}
+
+/* ==========================================================================
+   HERITAGE DESIGN SYSTEM v2.1 — Component Classes
+   ========================================================================== */
+
+/* Heritage Card */
+.heritage-card {
+  position: relative;
+  background: var(--surface-dugout);
+  color: var(--bsi-bone);
+  border: 1px solid var(--border-vintage);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-5);
+  transition: box-shadow var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out);
+}
+
+.heritage-card:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(140, 98, 57, 0.5);
+}
+
+.heritage-card--active {
+  border-color: var(--border-primary);
+}
+
+.heritage-card--loading {
+  animation: heritage-pulse 1.5s var(--ease-in-out) infinite;
+}
+
+@keyframes heritage-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Heritage Stamp */
+.heritage-stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-heading);
+  font-size: var(--text-label);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-stamp);
+  color: var(--bsi-primary);
+}
+
+/* Buttons */
+.btn-heritage {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-stamp);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+  padding: 8px 16px;
+  font-size: var(--text-data);
+}
+
+.btn-heritage--primary {
+  border: 1px solid var(--bsi-primary);
+  color: var(--bsi-bone);
+  background: var(--bsi-primary);
+}
+
+.btn-heritage--primary:hover {
+  box-shadow: var(--shadow-glow-primary);
+  transform: translateY(-1px);
+}
+
+.btn-heritage--secondary {
+  border: 1px solid var(--bsi-primary);
+  color: var(--bsi-bone);
+  background: transparent;
+}
+
+.btn-heritage--secondary:hover {
+  background: rgba(191, 87, 0, 0.1);
+}
+
+.btn-heritage--ghost {
+  border: none;
+  color: var(--bsi-dust);
+  background: transparent;
+}
+
+.btn-heritage--ghost:hover {
+  color: var(--bsi-bone);
+}
+
+.btn-heritage--danger {
+  border: 1px solid var(--heritage-oiler-red);
+  color: var(--heritage-oiler-red);
+  background: transparent;
+}
+
+.btn-heritage--danger:hover {
+  background: rgba(196, 30, 58, 0.1);
+}
+
+.btn-heritage:disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.btn-heritage:active {
+  transform: scale(0.98);
+}
+
+/* Button sizes */
+.btn-heritage--sm {
+  padding: 6px 12px;
+  font-size: var(--text-data-sm);
+}
+
+.btn-heritage--lg {
+  padding: 12px 24px;
+  font-size: var(--text-body);
+}
+
+/* Corner Marks */
+.corner-marks {
+  position: relative;
+}
+
+.corner-marks::before,
+.corner-marks::after {
+  content: "";
+  position: absolute;
+  inset: 20px;
+  border: 1px solid rgba(196, 184, 165, 0.16);
+  pointer-events: none;
+}
+
+/* Grain Overlay */
+.grain-overlay {
+  position: relative;
+}
+
+.grain-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.03), transparent 40%),
+    radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.02), transparent 35%);
+}
+
+/* Disable grain on mobile */
+@media (max-width: 767px) {
+  .grain-overlay::after {
+    display: none;
+  }
+}
+
+/* Trust Layer */
+.trust-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: var(--text-data-sm);
+  color: var(--bsi-dust);
+  letter-spacing: 0;
+}
+
+.trust-badge--live {
+  color: var(--heritage-teal);
+}
+
+.trust-badge--stale {
+  color: var(--heritage-oiler-red);
+}
+
+/* Heritage Focus Ring */
+:focus-visible {
+  outline: 2px solid var(--bsi-primary);
+  outline-offset: 2px;
+}
+
+/* Heritage reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .heritage-card,
+  .btn-heritage {
+    transition: none;
+  }
+
+  .btn-heritage:hover {
+    transform: none;
+  }
+
+  .heritage-card--loading {
     animation: none;
   }
 }

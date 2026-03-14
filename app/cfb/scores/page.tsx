@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -9,6 +9,7 @@ import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SportIcon } from '@/components/icons/SportIcon';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
 
 interface ESPNGame {
@@ -98,40 +99,19 @@ function GameCard({ game }: { game: ESPNGame }) {
 }
 
 export default function CFBScoresPage() {
-  const [games, setGames] = useState<ESPNGame[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState(getDateOffset(0));
-  const [lastUpdated, setLastUpdated] = useState('');
 
-  const fetchScores = useCallback(async (date: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`/api/cfb/scores?date=${date}`);
-      if (!res.ok) throw new Error('Failed to fetch scores');
-      const data = await res.json() as { games?: ESPNGame[]; meta?: { lastUpdated?: string } };
-      setGames(data.games || []);
-      setLastUpdated(data.meta?.lastUpdated || new Date().toISOString());
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load scores');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const { data: scoresData, loading, error, retry, lastUpdated: lastUpdatedDate } = useSportData<{
+    games?: ESPNGame[];
+    meta?: { lastUpdated?: string };
+  }>(`/api/cfb/scores?date=${selectedDate}`, {
+    refreshInterval: 30000,
+  });
 
-  useEffect(() => {
-    fetchScores(selectedDate);
-  }, [selectedDate, fetchScores]);
+  const games = useMemo(() => scoresData?.games || [], [scoresData]);
+  const lastUpdated = scoresData?.meta?.lastUpdated || lastUpdatedDate?.toISOString() || '';
 
   const hasLive = games.some((g) => !g.status?.type?.completed && g.status?.period && g.status.period > 0);
-
-  useEffect(() => {
-    if (hasLive) {
-      const interval = setInterval(() => fetchScores(selectedDate), 30000);
-      return () => clearInterval(interval);
-    }
-  }, [hasLive, selectedDate, fetchScores]);
 
   const dateOptions = [
     { offset: -2, label: formatDate(getDateOffset(-2)) },
@@ -200,7 +180,7 @@ export default function CFBScoresPage() {
               <Card padding="lg" className="bg-error/10 border-error/30">
                 <p className="text-error font-semibold">Data Unavailable</p>
                 <p className="text-text-secondary text-sm mt-1">{error}</p>
-                <button onClick={() => fetchScores(selectedDate)} className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg text-sm">
+                <button onClick={retry} className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg text-sm">
                   Retry
                 </button>
               </Card>

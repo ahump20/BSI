@@ -109,7 +109,7 @@ export default function AboutPage() {
               <div className="md:col-span-2 flex justify-center md:justify-end">
                 <div className="relative w-56 md:w-64">
                   <Image
-                    src="/images/headshot.jpg"
+                    src="/images/headshot.webp"
                     alt="Austin Humphrey"
                     width={256}
                     height={341}

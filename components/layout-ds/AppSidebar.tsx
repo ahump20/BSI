@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getSidebarNav, type NavIconKey } from '@/lib/navigation';
+import { lockScroll, unlockScroll } from '@/lib/utils/scroll-lock';
 
 /* ========================================================================== */
 /* SVG ICONS — 16x16 stroke-based, inherits currentColor                      */
@@ -205,6 +206,13 @@ export function AppSidebar() {
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
   }, [mobileOpen, closeMobile]);
+
+  // Lock body scroll when mobile drawer is open
+  useEffect(() => {
+    if (!mobileOpen) return;
+    lockScroll();
+    return () => { unlockScroll(); };
+  }, [mobileOpen]);
 
   /** Match active state — exact for "/", prefix for everything else */
   const isActive = (href: string) => {

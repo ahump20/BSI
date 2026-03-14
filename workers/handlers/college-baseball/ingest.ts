@@ -910,7 +910,7 @@ export async function handleCBBBulkSync(
         await env.KV.delete(`cb:saber:team:${team.espnId}`);
         await env.KV.delete(`cb:saber:team:${team.slug}`);
       } catch (err) {
-        results.push({ team: team.name, espnId: team.espnId, gamesProcessed: 0, gamesNoData: 0, error: err instanceof Error ? err.message : 'Failed' });
+        results.push({ team: team.name, espnId: team.espnId, gamesProcessed: 0, gamesSkipped: 0, gamesNoData: 0, error: err instanceof Error ? err.message : 'Failed' });
       }
     }
 

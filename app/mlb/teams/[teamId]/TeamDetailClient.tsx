@@ -9,7 +9,7 @@
  * Last Updated: 2025-01-07
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -19,6 +19,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useUserSettings } from '@/lib/hooks';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { getTeamBySlug } from '@/lib/utils/mlb-teams';
 import type { DataMeta } from '@/lib/types/data-meta';
 
@@ -73,12 +74,6 @@ interface TeamDetailClientProps {
 }
 
 export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
-  const [_teamData, setTeamData] = useState<TeamData | null>(null);
-  const [roster, setRoster] = useState<Player[]>([]);
-  const [quickStats, setQuickStats] = useState<QuickStats | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [meta, setMeta] = useState<DataMeta | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>('roster');
   const [positionFilter, setPositionFilter] = useState<string>('all');
 
@@ -107,45 +102,16 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
     );
   };
 
-  const fetchTeam = useCallback(async () => {
-    if (!teamId) return;
+  // API expects abbreviation-based slug (e.g. "nyy"), not name slug (e.g. "yankees")
+  const apiSlug = teamInfo ? teamInfo.abbreviation.toLowerCase() : teamId;
 
-    setLoading(true);
-    setError(null);
-    try {
-      // API expects abbreviation-based slug (e.g. "nyy"), not name slug (e.g. "yankees")
-      const apiSlug = teamInfo ? teamInfo.abbreviation.toLowerCase() : teamId;
-      const res = await fetch(`/api/mlb/teams/${apiSlug}`);
-      if (!res.ok) {
-        const errorData: APIResponse = await res.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Failed to fetch team data');
-      }
+  const { data: rawData, loading, error, retry: fetchTeam } = useSportData<APIResponse>(
+    teamId ? `/api/mlb/teams/${apiSlug}` : null
+  );
 
-      const data: APIResponse = await res.json();
-
-      if (data.team) {
-        setTeamData(data.team);
-      }
-      if (data.roster?.roster) {
-        setRoster(data.roster.roster);
-      }
-      if (data.quickStats) {
-        setQuickStats(data.quickStats);
-      }
-      if (data.meta) {
-        setMeta(data.meta);
-      }
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  }, [teamId, teamInfo]);
-
-  useEffect(() => {
-    fetchTeam();
-  }, [fetchTeam]);
+  const roster = useMemo(() => rawData?.roster?.roster ?? [], [rawData]);
+  const quickStats = rawData?.quickStats ?? null;
+  const meta = rawData?.meta ?? null;
 
   const tabs: { id: TabType; label: string }[] = [
     { id: 'roster', label: 'Roster' },

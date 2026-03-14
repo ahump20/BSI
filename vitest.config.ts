@@ -18,7 +18,7 @@
  *
  * Coverage:
  * - Target: >80% coverage for all code
- * - Includes: lib/, functions/
+ * - Includes: lib/, workers/
  * - Excludes: node_modules, dist, tests
  *
  * Last Updated: October 19, 2025
@@ -62,7 +62,7 @@ export default defineConfig({
       reporter: ['text', 'json', 'html', 'lcov'],
       include: [
         'lib/**/*.{js,ts}',
-        'functions/**/*.{js,ts}'
+        'workers/**/*.{js,ts}'
       ],
       exclude: [
         'node_modules/',
@@ -91,7 +91,6 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './'),
       '@lib': path.resolve(__dirname, './lib'),
-      '@functions': path.resolve(__dirname, './functions'),
       '@tests': path.resolve(__dirname, './tests')
     }
   },
@@ -101,7 +100,6 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './'),
       '@lib': path.resolve(__dirname, './lib'),
-      '@functions': path.resolve(__dirname, './functions'),
       '@tests': path.resolve(__dirname, './tests')
     }
   }

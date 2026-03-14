@@ -37,17 +37,11 @@ export default function AthleticArc() {
     <section
       id="athletic-arc"
       aria-label="Athletic arc — Friday Night Lights to the Forty Acres"
-      className="relative pt-8 pb-12 overflow-hidden"
-      style={{
-        background: 'linear-gradient(180deg, #0D0D0D 0%, rgba(26,26,26,0.4) 50%, #0D0D0D 100%)',
-      }}
+      className="relative pt-8 pb-12 overflow-hidden athletic-arc-bg"
     >
       {/* Top accent line */}
       <div
-        className="absolute top-0 left-0 right-0 h-px"
-        style={{
-          background: 'linear-gradient(90deg, transparent 10%, rgba(191,87,0,0.3) 50%, transparent 90%)',
-        }}
+        className="absolute top-0 left-0 right-0 h-px accent-line-horizontal"
       />
 
       <div className="max-w-6xl mx-auto px-6">
@@ -76,8 +70,7 @@ export default function AthleticArc() {
                 <motion.div
                   key={photo.alt}
                   variants={staggerItem}
-                  className={`${colSpan} relative group`}
-                  style={isLastGame ? { gridColumn: '1 / -1' } : undefined}
+                  className={`${colSpan} relative group ${isLastGame ? 'grid-full-span' : ''}`}
                 >
                   <div
                     className={`overflow-hidden rounded-sm ${
@@ -92,16 +85,12 @@ export default function AthleticArc() {
                       loading="lazy"
                       decoding="async"
                       className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02] ${
-                        isLastGame ? 'object-center' : ''
+                        isLastGame ? 'object-center min-h-photo' : ''
                       }`}
-                      style={isLastGame ? { minHeight: '300px' } : undefined}
                     />
                     {/* Vignette overlay */}
                     <div
-                      className="absolute inset-0 pointer-events-none"
-                      style={{
-                        boxShadow: 'inset 0 0 60px rgba(0,0,0,0.4)',
-                      }}
+                      className="absolute inset-0 pointer-events-none vignette-inset"
                     />
                   </div>
                   <p
@@ -122,7 +111,7 @@ export default function AthleticArc() {
 
           {/* Mobile: horizontal scroll strip */}
           <div className="md:hidden -mx-6 px-6 overflow-x-auto scrollbar-hide">
-            <div className="flex gap-4 pb-4" style={{ width: 'max-content' }}>
+            <div className="flex gap-4 pb-4 mobile-scroll-track">
               {photos.map((photo) => {
                 const isLastGame = photo.featured;
                 return (
@@ -160,10 +149,7 @@ export default function AthleticArc() {
 
       {/* Bottom accent line */}
       <div
-        className="absolute bottom-0 left-0 right-0 h-px"
-        style={{
-          background: 'linear-gradient(90deg, transparent 10%, rgba(191,87,0,0.3) 50%, transparent 90%)',
-        }}
+        className="absolute bottom-0 left-0 right-0 h-px accent-line-horizontal"
       />
     </section>
   );

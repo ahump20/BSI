@@ -223,7 +223,7 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
             <div className="flex items-start gap-5 mb-6">
               {logoUrl && (
                 <div className="shrink-0 w-20 h-20 md:w-24 md:h-24 rounded-sm overflow-hidden heritage-card p-2 flex items-center justify-center">
-                  <img src={logoUrl} alt={teamName} className="w-full h-full object-contain" />
+                  <img src={logoUrl} alt={teamName} className="w-full h-full object-contain" loading="eager" />
                 </div>
               )}
               <div className="min-w-0">

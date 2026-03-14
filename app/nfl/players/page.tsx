@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -174,65 +175,34 @@ function PlayerCard({ player }: { player: Player }) {
 }
 
 export default function NFLPlayersPage() {
-  const [players, setPlayers] = useState<Player[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPosition, setSelectedPosition] = useState('All');
   const [selectedTeam, setSelectedTeam] = useState('All');
-  const [lastUpdated, setLastUpdated] = useState<string>(formatTimestamp());
 
-  const fetchPlayers = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  const playersUrl = selectedTeam === 'All'
+    ? '/api/nfl/players?limit=200'
+    : `/api/nfl/players?teamId=${selectedTeam}`;
 
-    try {
-      // Fetch players from our API (which fetches from multiple teams)
-      const res = await fetch('/api/nfl/players?limit=200');
-      if (!res.ok) {
-        throw new Error(`Failed to fetch players: ${res.status}`);
-      }
-      const data: PlayersResponse = await res.json();
-      setPlayers(data.players || []);
-      setLastUpdated(formatTimestamp());
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load players');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const { data: playersData, loading: allPlayersLoading, error: allPlayersError, retry: retryAllPlayers, lastUpdated: allPlayersUpdated } =
+    useSportData<PlayersResponse>(selectedTeam === 'All' ? playersUrl : null);
 
-  const fetchTeamRoster = useCallback(async (teamId: string) => {
-    setLoading(true);
-    setError(null);
+  const { data: rosterData, loading: rosterLoading, error: rosterError, retry: retryRoster, lastUpdated: rosterUpdated } =
+    useSportData<RosterResponse>(selectedTeam !== 'All' ? playersUrl : null);
 
-    try {
-      const res = await fetch(`/api/nfl/players?teamId=${teamId}`);
-      if (!res.ok) {
-        throw new Error(`Failed to fetch roster: ${res.status}`);
-      }
-      const data: RosterResponse = await res.json();
-      // Transform to match Player interface with team info
-      const playersWithTeam = data.players.map((p) => ({
+  const players = useMemo(() => {
+    if (selectedTeam !== 'All' && rosterData) {
+      return (rosterData.players || []).map((p) => ({
         ...p,
-        team: data.team,
+        team: rosterData.team,
       }));
-      setPlayers(playersWithTeam);
-      setLastUpdated(formatTimestamp());
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load roster');
-    } finally {
-      setLoading(false);
     }
-  }, []);
+    return playersData?.players || [];
+  }, [selectedTeam, playersData, rosterData]);
 
-  useEffect(() => {
-    if (selectedTeam === 'All') {
-      fetchPlayers();
-    } else {
-      fetchTeamRoster(selectedTeam);
-    }
-  }, [selectedTeam, fetchPlayers, fetchTeamRoster]);
+  const loading = allPlayersLoading || rosterLoading;
+  const error = allPlayersError || rosterError;
+  const lastUpdatedDate = allPlayersUpdated || rosterUpdated;
+  const lastUpdated = lastUpdatedDate ? formatTimestamp(lastUpdatedDate.toISOString()) : formatTimestamp();
 
   // Filter and sort players
   const filteredPlayers = useMemo(() => {
@@ -375,9 +345,7 @@ export default function NFLPlayersPage() {
                 <p className="text-error font-semibold">Error loading players</p>
                 <p className="text-text-secondary text-sm mt-1">{error}</p>
                 <button
-                  onClick={() =>
-                    selectedTeam === 'All' ? fetchPlayers() : fetchTeamRoster(selectedTeam)
-                  }
+                  onClick={selectedTeam === 'All' ? retryAllPlayers : retryRoster}
                   className="mt-3 px-4 py-2 bg-burnt-orange text-white rounded-lg text-sm hover:bg-burnt-orange/80 transition-colors"
                 >
                   Try Again

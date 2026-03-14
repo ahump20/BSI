@@ -187,7 +187,8 @@ function LiveScoresPanelREST({ sport, className = '' }: { sport: Sport; classNam
   }, [sport]);
 
   useEffect(() => {
-    let cancelled = false;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
 
     async function fetchScores() {
       setLoading(true);
@@ -195,60 +196,71 @@ function LiveScoresPanelREST({ sport, className = '' }: { sport: Sport; classNam
       setIsYesterday(false);
 
       try {
-        const cachedRes = await fetch(buildCachedEndpoint());
+        const cachedRes = await fetch(buildCachedEndpoint(), { signal: controller.signal });
         if (cachedRes.ok && cachedRes.status === 200) {
           const cachedData = await cachedRes.json() as { data?: unknown };
           if (cachedData?.data) {
             const cachedGames = normalizeGames(sport, cachedData.data as Record<string, unknown>);
-            if (!cancelled && cachedGames.length > 0) {
+            if (cachedGames.length > 0) {
               setGames(sortGames(cachedGames));
               setLoading(false);
+              clearTimeout(timeout);
               return;
             }
           }
         }
 
-        const res = await fetch(buildEndpoint());
+        const res = await fetch(buildEndpoint(), { signal: controller.signal });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         const todayGames = normalizeGames(sport, data as Record<string, unknown>);
 
-        if (!cancelled) {
-          if (todayGames.length > 0) {
-            setGames(sortGames(todayGames));
-          } else {
-            try {
-              const yRes = await fetch(buildEndpoint(getYesterdayDateString()));
-              if (yRes.ok) {
-                const yData = await yRes.json();
-                const yGames = normalizeGames(sport, yData as Record<string, unknown>);
-                if (yGames.length > 0) {
-                  setGames(sortGames(yGames));
-                  setIsYesterday(true);
-                } else {
-                  setGames([]);
-                }
+        if (todayGames.length > 0) {
+          setGames(sortGames(todayGames));
+        } else {
+          try {
+            const yRes = await fetch(buildEndpoint(getYesterdayDateString()), { signal: controller.signal });
+            if (yRes.ok) {
+              const yData = await yRes.json();
+              const yGames = normalizeGames(sport, yData as Record<string, unknown>);
+              if (yGames.length > 0) {
+                setGames(sortGames(yGames));
+                setIsYesterday(true);
               } else {
                 setGames([]);
               }
-            } catch {
+            } else {
               setGames([]);
             }
+          } catch (err) {
+            if ((err as Error).name !== 'AbortError') setGames([]);
           }
         }
       } catch (err) {
-        if (!cancelled) setError(err instanceof Error ? err.message : 'Failed to load scores');
+        if ((err as Error).name !== 'AbortError') {
+          setError(err instanceof Error ? err.message : 'Failed to load scores');
+        }
       } finally {
-        if (!cancelled) setLoading(false);
+        clearTimeout(timeout);
+        setLoading(false);
       }
     }
 
     fetchScores();
     const hasLive = gamesRef.current.some((g) => g.isLive);
-    const interval = setInterval(fetchScores, hasLive ? 30000 : 60000);
+    const interval = setInterval(() => {
+      fetch(buildEndpoint(), { signal: AbortSignal.timeout(8000) })
+        .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
+        .then(data => {
+          const games = normalizeGames(sport, data as Record<string, unknown>);
+          setGames(sortGames(games));
+        })
+        .catch(() => { /* silent interval failure */ });
+    }, hasLive ? 30000 : 60000);
 
     return () => {
-      cancelled = true;
+      controller.abort();
+      clearTimeout(timeout);
       clearInterval(interval);
     };
   }, [sport, buildEndpoint, buildCachedEndpoint]);

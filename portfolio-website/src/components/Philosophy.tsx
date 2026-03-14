@@ -6,10 +6,7 @@ export default function Philosophy() {
     <section
       id="covenant"
       aria-labelledby="covenant-heading"
-      className="section-padding section-border relative overflow-hidden"
-      style={{
-        background: 'radial-gradient(ellipse 80% 50% at 50% 50%, rgba(191,87,0,0.03) 0%, transparent 60%)',
-      }}
+      className="section-padding section-border relative overflow-hidden philosophy-bg"
     >
       <div className="container-custom max-w-4xl mx-auto text-center">
         <motion.div

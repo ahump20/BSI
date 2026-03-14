@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Container } from '@/components/ui/Container';
@@ -9,6 +9,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface CFBTeam {
@@ -121,36 +122,13 @@ function TeamCard({ team }: { team: CFBTeam }) {
 }
 
 export default function CFBTeamsPage() {
-  const [teams, setTeams] = useState<CFBTeam[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedConference, setSelectedConference] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [lastUpdated, setLastUpdated] = useState<string>(formatTimestamp());
 
-  const fetchTeams = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  const { data: teamsData, loading, error, retry: fetchTeams, lastUpdated: lastUpdatedDate } = useSportData<TeamsResponse>('/api/cfb/teams');
 
-    try {
-      const res = await fetch('/api/cfb/teams');
-      if (!res.ok) {
-        throw new Error(`Failed to fetch teams: ${res.status}`);
-      }
-
-      const data: TeamsResponse = await res.json();
-      setTeams(data.teams || []);
-      setLastUpdated(formatTimestamp());
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load teams');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchTeams();
-  }, [fetchTeams]);
+  const teams = useMemo(() => teamsData?.teams || [], [teamsData]);
+  const lastUpdated = lastUpdatedDate ? formatTimestamp(lastUpdatedDate.toISOString()) : formatTimestamp();
 
   // Group teams by conference
   const teamsByConference = teams.reduce<Record<string, CFBTeam[]>>((acc, team) => {

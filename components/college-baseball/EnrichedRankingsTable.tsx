@@ -105,7 +105,7 @@ export function EnrichedRankingsTable({
       const slug = team.slug || teamNameToSlug[team.team.toLowerCase()];
       const meta = slug ? teamMetadata[slug] : undefined;
       const conference = team.conference || meta?.conference || '';
-      const logoUrl = meta ? getLogoUrl(meta.espnId, meta.logoId) : null;
+      const logoUrl = meta ? getLogoUrl(meta.espnId, meta.logoId, meta.localLogo) : null;
       const prevRank = prevMap?.get(team.team.toLowerCase()) ?? null;
 
       return { ...team, slug, conference, logoUrl, prevRank };
@@ -132,13 +132,15 @@ export function EnrichedRankingsTable({
         </CardHeader>
         <CardContent>
           {loading ? (
-            <table className="w-full">
-              <tbody>
-                {Array.from({ length: 25 }).map((_, i) => (
-                  <SkeletonTableRow key={i} columns={5} />
-                ))}
-              </tbody>
-            </table>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <tbody>
+                  {Array.from({ length: 25 }).map((_, i) => (
+                    <SkeletonTableRow key={i} columns={5} />
+                  ))}
+                </tbody>
+              </table>
+            </div>
           ) : error ? (
             <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-6">
               <p className="text-red-400 font-semibold">Rankings Unavailable</p>

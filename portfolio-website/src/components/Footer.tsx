@@ -5,10 +5,7 @@ export default function Footer() {
     <footer className="relative border-t border-bone/5">
       {/* Angular accent line */}
       <div
-        className="absolute top-0 left-0 right-0 h-px"
-        style={{
-          background: 'linear-gradient(90deg, transparent, #BF5700 30%, #FF6B35 50%, #BF5700 70%, transparent)',
-        }}
+        className="absolute top-0 left-0 right-0 h-px footer-accent-line"
       />
 
       <div className="max-w-6xl mx-auto px-6 py-16">

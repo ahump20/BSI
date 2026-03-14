@@ -178,6 +178,8 @@ export async function handleV1Games(
   env: Env,
 ): Promise<Response> {
   const seasonId = url.searchParams.get('season_id') ?? DEFAULT_SEASON_ID;
+  const teamId = url.searchParams.get('team_id');
+  const dateFrom = url.searchParams.get('date_from');
   const dateTo = url.searchParams.get('date_to');
   const status = url.searchParams.get('status');
   const page = Math.max(1, Number(url.searchParams.get('page') ?? 1));

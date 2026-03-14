@@ -1,5 +1,5 @@
 import type { Env } from '../shared/types';
-import { cachedJson, kvGet, kvPut, getSDIOClient, toDateString, freshDataHeaders, cachedDataHeaders, withMeta } from '../shared/helpers';
+import { cachedJson, kvGet, kvPut, getSDIOClient, toDateString, freshDataHeaders, cachedPayloadHeaders, ensurePayloadMeta, fetchResultHeaders, withMeta } from '../shared/helpers';
 import { HTTP_CACHE, CACHE_TTL } from '../shared/constants';
 import {
   getScoreboard,
@@ -25,7 +25,12 @@ import {
   transformSDIOTeams,
   transformSDIONews,
 } from '../../lib/api-clients/sportsdataio-api';
-import type { BSIScoreboardResult } from '../../lib/api-clients/espn-types';
+import type {
+  BSINewsResult,
+  BSIScoreboardResult,
+  BSIStandingsResult,
+  BSITeamsResult,
+} from '../../lib/api-clients/espn-types';
 import { fetchWithFallback } from '../../lib/api-clients/data-fetcher';
 
 export async function handleNBAScores(url: URL, env: Env): Promise<Response> {
@@ -37,20 +42,18 @@ export async function handleNBAScores(url: URL, env: Env): Promise<Response> {
   if (sdio) {
     // ESPN primary so game IDs match handleNBAGame (which uses ESPN getGameSummary)
     const result = await fetchWithFallback(
-      async () => transformScoreboard(await getScoreboard('nba', toDateString(date)) as Record<string, unknown>) as BSIScoreboardResult,
+      async () => transformScoreboard(await getScoreboard('nba', toDateString(date)) as Record<string, unknown>) as unknown as BSIScoreboardResult,
       async () => transformSDIONBAScores(await sdio.getNBAScores(date)),
       cacheKey, env.KV, CACHE_TTL.scores,
       'espn', 'sportsdataio',
       { staleKey: `${cacheKey}:stale` },
     );
-    return cachedJson(withMeta(result.data, result.source), 200, HTTP_CACHE.scores, {
-      'X-Cache': result.cached ? 'HIT' : 'MISS',
-      'X-Data-Source': result.source,
-    });
+    const payload = ensurePayloadMeta(result.data, result.source);
+    return cachedJson(payload, 200, HTTP_CACHE.scores, fetchResultHeaders(payload, result));
   }
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.scores, cachedDataHeaders());
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.scores, cachedPayloadHeaders(cached));
 
   const raw = await getScoreboard('nba', toDateString(date));
   const payload = withMeta(transformScoreboard(raw as Record<string, unknown>));
@@ -65,19 +68,17 @@ export async function handleNBAStandings(env: Env): Promise<Response> {
   if (sdio) {
     const result = await fetchWithFallback(
       async () => transformSDIONBAStandings(await sdio.getNBAStandings()),
-      async () => transformStandings(await getStandings('nba') as Record<string, unknown>, 'nba'),
+      async () => transformStandings(await getStandings('nba') as Record<string, unknown>, 'nba') as unknown as BSIStandingsResult,
       cacheKey, env.KV, CACHE_TTL.standings,
       'sportsdataio', 'espn',
       { staleKey: `${cacheKey}:stale` },
     );
-    return cachedJson(withMeta(result.data, result.source), 200, HTTP_CACHE.standings, {
-      'X-Cache': result.cached ? 'HIT' : 'MISS',
-      'X-Data-Source': result.source,
-    });
+    const payload = ensurePayloadMeta(result.data, result.source);
+    return cachedJson(payload, 200, HTTP_CACHE.standings, fetchResultHeaders(payload, result));
   }
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, cachedDataHeaders());
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, cachedPayloadHeaders(cached));
 
   const raw = await getStandings('nba');
   const payload = withMeta(transformStandings(raw as Record<string, unknown>, 'nba'));
@@ -89,7 +90,7 @@ export async function handleNBAGame(gameId: string, env: Env): Promise<Response>
   const cacheKey = `nba:game:${gameId}`;
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.game, cachedDataHeaders());
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.game, cachedPayloadHeaders(cached));
 
   const raw = await getGameSummary('nba', gameId);
   const payload = withMeta(transformGameSummary(raw as Record<string, unknown>));
@@ -101,7 +102,7 @@ export async function handleNBAPlayer(playerId: string, env: Env): Promise<Respo
   const cacheKey = `nba:player:${playerId}`;
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.player, cachedDataHeaders());
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.player, cachedPayloadHeaders(cached));
 
   const raw = await getAthlete('nba', playerId);
   const payload = withMeta(transformAthlete(raw as Record<string, unknown>));
@@ -113,7 +114,7 @@ export async function handleNBATeam(teamId: string, env: Env): Promise<Response>
   const cacheKey = `nba:team:${teamId}`;
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, cachedDataHeaders());
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, cachedPayloadHeaders(cached));
 
   const [teamRaw, rosterRaw] = await Promise.all([
     getTeamDetail('nba', teamId),
@@ -132,17 +133,15 @@ export async function handleNBATeamsList(env: Env): Promise<Response> {
   if (sdio) {
     const result = await fetchWithFallback(
       async () => transformSDIOTeams(await sdio.getNBATeams()),
-      async () => transformTeams(await espnGetTeams('nba') as Record<string, unknown>),
+      async () => transformTeams(await espnGetTeams('nba') as Record<string, unknown>) as unknown as BSITeamsResult,
       cacheKey, env.KV, CACHE_TTL.teams,
     );
-    return cachedJson(withMeta(result.data, result.source), 200, HTTP_CACHE.team, {
-      'X-Cache': result.cached ? 'HIT' : 'MISS',
-      'X-Data-Source': result.source,
-    });
+    const payload = ensurePayloadMeta(result.data, result.source);
+    return cachedJson(payload, 200, HTTP_CACHE.team, fetchResultHeaders(payload, result));
   }
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, cachedDataHeaders());
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, cachedPayloadHeaders(cached));
 
   const raw = await espnGetTeams('nba');
   const payload = withMeta(transformTeams(raw as Record<string, unknown>));
@@ -157,17 +156,15 @@ export async function handleNBANews(env: Env): Promise<Response> {
   if (sdio) {
     const result = await fetchWithFallback(
       async () => transformSDIONews(await sdio.getNBANews()),
-      async () => transformNews(await getNews('nba') as Record<string, unknown>),
+      async () => transformNews(await getNews('nba') as Record<string, unknown>) as unknown as BSINewsResult,
       cacheKey, env.KV, CACHE_TTL.trending,
     );
-    return cachedJson(withMeta(result.data, result.source), 200, HTTP_CACHE.news, {
-      'X-Cache': result.cached ? 'HIT' : 'MISS',
-      'X-Data-Source': result.source,
-    });
+    const payload = ensurePayloadMeta(result.data, result.source);
+    return cachedJson(payload, 200, HTTP_CACHE.news, fetchResultHeaders(payload, result));
   }
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.news, cachedDataHeaders());
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.news, cachedPayloadHeaders(cached));
 
   const raw = await getNews('nba');
   const payload = withMeta(transformNews(raw as Record<string, unknown>));
@@ -179,7 +176,7 @@ export async function handleNBATeamFull(teamId: string, env: Env): Promise<Respo
   const cacheKey = `nba:team-full:${teamId}`;
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, { 'X-Cache': 'HIT' });
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, cachedPayloadHeaders(cached));
 
   const [teamRaw, rosterRaw, scheduleRaw] = await Promise.all([
     getTeamDetail('nba', teamId),
@@ -218,7 +215,7 @@ export async function handleNBATeamFull(teamId: string, env: Env): Promise<Respo
     })),
   }));
 
-  const payload = {
+  const payload = withMeta({
     timestamp: new Date().toISOString(),
     team: {
       ...team,
@@ -233,13 +230,7 @@ export async function handleNBATeamFull(teamId: string, env: Env): Promise<Respo
     },
     roster,
     schedule,
-    meta: {
-      source: 'espn',
-      fetched_at: new Date().toISOString(),
-      timezone: 'America/Chicago',
-      season: '2024-25',
-    },
-  };
+  }, 'espn', { extra: { season: '2024-25' } });
 
   await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
   return cachedJson(payload, 200, HTTP_CACHE.team, { 'X-Cache': 'MISS' });

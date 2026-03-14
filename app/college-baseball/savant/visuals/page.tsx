@@ -20,6 +20,8 @@ import {
 } from '@/components/analytics/PercentilePlayerCard';
 import { MomentumFlow, type MomentumSnapshot } from '@/components/analytics/MomentumFlow';
 import { MatchupTheater, type BatterProfile, type PitcherProfile } from '@/components/analytics/MatchupTheater';
+import { BattedBallScatter, type BattedBallPlayer } from '@/components/analytics/BattedBallScatter';
+import { PitchingCommandScatter, type PitchingCommandPlayer } from '@/components/analytics/PitchingCommandScatter';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -60,6 +62,14 @@ const VISUAL_TOOLS: VisualTool[] = [
     available: true,
   },
   {
+    id: 'batted-ball',
+    title: 'Batted Ball Profile',
+    description: 'wOBA vs ISO bubble chart — bubble size maps to wRC+. Reference line at .370 wOBA marks elite threshold.',
+    category: 'batting',
+    available: true,
+    proRequired: true,
+  },
+  {
     id: 'spray-chart',
     title: 'Spray Chart',
     description: 'Batted ball distribution across the field. Pull vs. oppo tendencies visualized on a diamond overlay.',
@@ -91,6 +101,14 @@ const VISUAL_TOOLS: VisualTool[] = [
     id: 'era-fip-gap',
     title: 'ERA vs FIP Gap',
     description: 'Identifies pitchers whose ERA diverges from FIP — separating luck and defense from true performance.',
+    category: 'pitching',
+    available: true,
+    proRequired: true,
+  },
+  {
+    id: 'pitching-command',
+    title: 'Pitching Command',
+    description: 'K/9 vs BB/9 with reversed Y-axis. Bubble size inversely proportional to FIP — dominant arms float to the top-right.',
     category: 'pitching',
     available: true,
     proRequired: true,
@@ -303,6 +321,45 @@ export default function SavantVisualsPage() {
       }));
   }, [pitchingRes]);
 
+  // Batted Ball data (wOBA + ISO, pro-gated)
+  const battedBallData: BattedBallPlayer[] = useMemo(() => {
+    if (!battingRes?.data) return [];
+    return battingRes.data
+      .filter(r =>
+        r.woba != null && r.iso != null &&
+        Number.isFinite(r.woba as number) && Number.isFinite(r.iso as number)
+      )
+      .map(r => ({
+        player_name: r.player_name as string,
+        team: r.team as string,
+        conference: (r.conference as string) ?? 'Unknown',
+        woba: r.woba as number,
+        iso: r.iso as number,
+        wrc_plus: (r.wrc_plus as number) ?? undefined,
+        player_id: r.player_id as string | undefined,
+      }));
+  }, [battingRes]);
+
+  // Pitching Command data (K/9, BB/9, pro-gated FIP)
+  const pitchingCommandData: PitchingCommandPlayer[] = useMemo(() => {
+    if (!pitchingRes?.data) return [];
+    return pitchingRes.data
+      .filter(r =>
+        r.k_9 != null && r.bb_9 != null &&
+        Number.isFinite(r.k_9 as number) && Number.isFinite(r.bb_9 as number)
+      )
+      .map(r => ({
+        player_name: r.player_name as string,
+        team: r.team as string,
+        conference: (r.conference as string) ?? 'Unknown',
+        k_9: r.k_9 as number,
+        bb_9: r.bb_9 as number,
+        fip: (r.fip as number) ?? undefined,
+        ip: (r.ip as number) ?? undefined,
+        player_id: r.player_id as string | undefined,
+      }));
+  }, [pitchingRes]);
+
   // Player list for selector
   const playerOptions = useMemo(() => {
     if (!battingRes?.data) return [];
@@ -430,14 +487,14 @@ export default function SavantVisualsPage() {
           <Container size="wide">
             {/* Breadcrumb */}
             <ScrollReveal direction="up">
-              <nav className="flex items-center gap-2 text-sm mb-6">
-                <Link href="/" className="text-text-muted hover:text-burnt-orange transition-colors">Home</Link>
-                <span className="text-text-muted">/</span>
-                <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">College Baseball</Link>
-                <span className="text-text-muted">/</span>
-                <Link href="/college-baseball/savant" className="text-text-muted hover:text-burnt-orange transition-colors">Savant</Link>
-                <span className="text-text-muted">/</span>
-                <span className="text-text-secondary">Visuals</span>
+              <nav className="flex items-center gap-2 text-xs mb-6" style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--svt-text-muted)' }}>
+                <Link href="/" className="transition-colors hover:text-[var(--svt-text)]">Home</Link>
+                <span>/</span>
+                <Link href="/college-baseball" className="transition-colors hover:text-[var(--svt-text)]">College Baseball</Link>
+                <span>/</span>
+                <Link href="/college-baseball/savant" className="transition-colors hover:text-[var(--svt-text)]">Savant</Link>
+                <span>/</span>
+                <span style={{ color: 'var(--svt-accent)' }}>Visuals</span>
               </nav>
             </ScrollReveal>
 
@@ -445,12 +502,20 @@ export default function SavantVisualsPage() {
             <ScrollReveal direction="up" delay={50}>
               <div className="mb-10">
                 <div className="flex items-center gap-3 mb-3">
-                  <Badge variant="accent" size="sm">VISUAL ANALYTICS</Badge>
+                  <span
+                    className="text-[10px] font-mono uppercase tracking-[0.15em] px-2 py-1 rounded"
+                    style={{ backgroundColor: 'rgba(232, 93, 38, 0.1)', color: 'var(--svt-accent)' }}
+                  >
+                    Visual Analytics
+                  </span>
                 </div>
-                <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-wider text-text-primary">
-                  Savant <span className="text-burnt-orange">Visuals</span>
+                <h1
+                  className="font-savant-display font-bold uppercase tracking-tight leading-none"
+                  style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', color: 'var(--svt-text)' }}
+                >
+                  Savant <span style={{ color: 'var(--svt-accent)' }}>Visuals</span>
                 </h1>
-                <p className="text-text-tertiary mt-3 max-w-2xl text-base leading-relaxed">
+                <p className="font-savant-body mt-3 max-w-2xl text-base leading-relaxed" style={{ color: 'var(--svt-text-muted)' }}>
                   Interactive data visualizations for college baseball analytics. Each tool
                   turns leaderboard data into spatial, scannable insight — the kind of view
                   that tables alone can&apos;t provide.
@@ -580,6 +645,50 @@ export default function SavantVisualsPage() {
                       </Card>
                     ) : (
                       <EraFipGap data={eraFipData} />
+                    )
+                  )}
+
+                  {/* Batted Ball Profile */}
+                  {activeViz === 'batted-ball' && (
+                    battingLoading ? (
+                      <Card padding="lg" className="text-center">
+                        <span className="text-xs text-text-muted font-mono">Loading batted ball data...</span>
+                      </Card>
+                    ) : battedBallData.length === 0 ? (
+                      <Card padding="lg" className="text-center">
+                        <div className="py-6">
+                          <span className="text-sm text-text-muted">
+                            wOBA data requires Pro tier.{' '}
+                            <Link href="/pricing" className="text-burnt-orange hover:text-ember transition-colors">
+                              Upgrade to unlock
+                            </Link>
+                          </span>
+                        </div>
+                      </Card>
+                    ) : (
+                      <BattedBallScatter data={battedBallData} />
+                    )
+                  )}
+
+                  {/* Pitching Command */}
+                  {activeViz === 'pitching-command' && (
+                    pitchingLoading ? (
+                      <Card padding="lg" className="text-center">
+                        <span className="text-xs text-text-muted font-mono">Loading pitching data...</span>
+                      </Card>
+                    ) : pitchingCommandData.length === 0 ? (
+                      <Card padding="lg" className="text-center">
+                        <div className="py-6">
+                          <span className="text-sm text-text-muted">
+                            K/9 data requires Pro tier.{' '}
+                            <Link href="/pricing" className="text-burnt-orange hover:text-ember transition-colors">
+                              Upgrade to unlock
+                            </Link>
+                          </span>
+                        </div>
+                      </Card>
+                    ) : (
+                      <PitchingCommandScatter data={pitchingCommandData} />
                     )
                   )}
 

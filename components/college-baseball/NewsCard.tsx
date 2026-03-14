@@ -13,7 +13,7 @@ interface NewsCardProps {
 }
 
 const SOURCE_STYLES: Record<string, { bg: string; text: string; label: string }> = {
-  espn: { bg: 'bg-[#004C97]/20 border-[#004C97]/40', text: 'text-[#4A90D9]', label: 'ESPN' },
+  espn: { bg: 'bg-[rgba(75,156,211,0.2)] border-[rgba(75,156,211,0.4)]', text: 'text-[var(--heritage-columbia-blue)]', label: 'ESPN' },
   highlightly: { bg: 'bg-emerald-500/20 border-emerald-500/40', text: 'text-emerald-400', label: 'Highlightly' },
   bsi: { bg: 'bg-burnt-orange/20 border-burnt-orange/40', text: 'text-burnt-orange', label: 'BSI' },
 };
@@ -48,7 +48,7 @@ export function NewsCard({
       rel={url.startsWith('/') ? undefined : 'noopener noreferrer'}
       className="block group"
     >
-      <div className="bg-background-secondary border border-border rounded-xl overflow-hidden hover:border-burnt-orange/40 hover:-translate-y-0.5 transition-all duration-200">
+      <div className="bg-background-secondary border border-border rounded-[2px] overflow-hidden hover:border-burnt-orange/40 hover:-translate-y-0.5 transition-all duration-200">
         {/* Image header (optional) */}
         {imageUrl && (
           <div className="relative h-40 overflow-hidden bg-surface-light">

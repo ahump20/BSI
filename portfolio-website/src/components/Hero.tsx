@@ -20,14 +20,7 @@ export default function Hero() {
       {/* Static editorial gradient — deliberate burnt-orange anchor at top-right */}
       <div className="absolute inset-0 pointer-events-none">
         <div
-          className="absolute inset-0"
-          style={{
-            background: [
-              'radial-gradient(ellipse 70% 60% at 85% 15%, rgba(191,87,0,0.10) 0%, transparent 60%)',
-              'radial-gradient(ellipse 50% 50% at 10% 80%, rgba(139,69,19,0.05) 0%, transparent 50%)',
-              'radial-gradient(ellipse 40% 40% at 50% 50%, rgba(255,107,53,0.02) 0%, transparent 50%)',
-            ].join(', '),
-          }}
+          className="absolute inset-0 hero-gradient-mesh"
         />
       </div>
 
@@ -52,12 +45,11 @@ export default function Hero() {
             id="hero-heading"
             className="font-sans font-bold uppercase leading-[0.9] tracking-wider text-bone mb-6"
           >
-            <span className="block" style={{ fontSize: 'clamp(2.5rem, 8vw, 5rem)' }}>
+            <span className="block hero-first-name">
               Austin
             </span>
             <span
-              className="block text-stroke text-burnt-orange"
-              style={{ fontSize: 'clamp(4rem, 12vw, 8rem)' }}
+              className="block text-stroke text-burnt-orange hero-last-name"
             >
               Humphrey
             </span>

@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Container } from '@/components/ui/Container';
@@ -9,6 +8,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface PlayerData {
@@ -91,38 +91,13 @@ interface CFBPlayerDetailClientProps {
 }
 
 export default function CFBPlayerDetailClient({ playerId }: CFBPlayerDetailClientProps) {
-  const [player, setPlayer] = useState<PlayerData | null>(null);
-  const [stats, setStats] = useState<SeasonStats | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<string>(formatTimestamp());
+  const { data: playerData, loading, error, retry: fetchPlayer, lastUpdated: lastUpdatedDate } = useSportData<PlayerResponse>(
+    playerId ? `/api/cfb/players/${playerId}` : null,
+  );
 
-  const fetchPlayer = useCallback(async () => {
-    if (!playerId) return;
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch(`/api/cfb/players/${playerId}`);
-      if (!res.ok) {
-        throw new Error(`Failed to fetch player: ${res.status}`);
-      }
-
-      const data: PlayerResponse = await res.json();
-      setPlayer(data.player);
-      setStats(data.seasonStats || null);
-      setLastUpdated(formatTimestamp());
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load player');
-    } finally {
-      setLoading(false);
-    }
-  }, [playerId]);
-
-  useEffect(() => {
-    fetchPlayer();
-  }, [fetchPlayer]);
+  const player = playerData?.player || null;
+  const stats = playerData?.seasonStats || null;
+  const lastUpdated = lastUpdatedDate ? formatTimestamp(lastUpdatedDate.toISOString()) : formatTimestamp();
 
   const teamColor = 'var(--bsi-primary)'; // BSI burnt-orange default for CFB
 

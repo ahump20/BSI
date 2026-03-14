@@ -673,6 +673,12 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://blazesportsintel.com/college-baseball/savant/glossary/</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://blazesportsintel.com/college-baseball/savant/park-factors/</loc>
     <lastmod>2026-03-14</lastmod>
     <changefreq>weekly</changefreq>
@@ -745,6 +751,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://blazesportsintel.com/college-baseball/texas-intelligence/portal/</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://blazesportsintel.com/college-baseball/texas-intelligence/roster/</loc>
     <lastmod>2026-03-14</lastmod>
     <changefreq>daily</changefreq>
@@ -752,6 +764,18 @@
   </url>
   <url>
     <loc>https://blazesportsintel.com/college-baseball/texas-intelligence/schedule/</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://blazesportsintel.com/college-baseball/texas-intelligence/scouting/press-conference/</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://blazesportsintel.com/college-baseball/texas-intelligence/trends/</loc>
     <lastmod>2026-03-14</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>

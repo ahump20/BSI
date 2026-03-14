@@ -89,12 +89,14 @@ export default function TransferPortalPage() {
   const { addPlayer, removePlayer, isWatched } = useWatchlist();
 
   useEffect(() => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
     let interval: ReturnType<typeof setInterval> | null = null;
     async function fetchPortalEntries() {
       try {
         const [portalRes, nilRes] = await Promise.all([
-          fetch('/api/college-baseball/transfer-portal'),
-          fetch('/api/nil/leaderboard?limit=500'),
+          fetch('/api/college-baseball/transfer-portal', { signal: controller.signal }),
+          fetch('/api/nil/leaderboard?limit=500', { signal: controller.signal }),
         ]);
 
         const nilMap: Record<string, number> = {};
@@ -116,14 +118,16 @@ export default function TransferPortalPage() {
             interval = setInterval(fetchPortalEntries, 30000);
           }
         }
-      } catch {
+      } catch (err) {
+        if ((err as Error).name === 'AbortError') return;
         // Fall through to empty state
       } finally {
+        clearTimeout(timeout);
         setLoading(false);
       }
     }
     fetchPortalEntries();
-    return () => { if (interval) clearInterval(interval); };
+    return () => { controller.abort(); clearTimeout(timeout); if (interval) clearInterval(interval); };
   }, []);
 
   function relativeTime(dateStr: string): string {

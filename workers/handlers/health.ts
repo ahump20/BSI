@@ -2,6 +2,9 @@ import type { Env } from '../shared/types';
 import { json, getCollegeClient } from '../shared/helpers';
 import { getScoreboard } from '../../lib/api-clients/espn-api';
 
+const LIST_PAGE_SIZE = 1000;
+const MAX_LIST_ROUNDS = 10;
+
 export function handleHealth(env: Env): Response {
   return json({
     status: 'ok',
@@ -174,4 +177,115 @@ export function handleWebSocket(): Response {
   });
 
   return new Response(null, { status: 101, webSocket: client });
+}
+
+interface KVListResult {
+  keys: { name: string; expiration?: number; metadata?: unknown }[];
+  list_complete: boolean;
+  cursor?: string;
+}
+
+interface R2ListResult {
+  objects: { key: string; size: number; uploaded: string }[];
+  truncated: boolean;
+  cursor?: string;
+}
+
+function requireAdmin(request: Request, env: Env): Response | null {
+  if (!env.ADMIN_KEY) {
+    return json({ error: 'Admin auth secret not configured' }, 500);
+  }
+
+  const auth = request.headers.get('Authorization');
+  const headerKey = request.headers.get('X-Admin-Key');
+  const queryKey = new URL(request.url).searchParams.get('key');
+  const bearer = auth?.startsWith('Bearer ') ? auth.slice('Bearer '.length) : null;
+  const provided = bearer || headerKey || queryKey;
+
+  if (!provided || provided !== env.ADMIN_KEY) {
+    return json({ error: 'Unauthorized' }, 401);
+  }
+
+  return null;
+}
+
+async function paginateKVList(
+  kv: KVNamespace,
+  prefix?: string,
+): Promise<{ keys: string[]; rounds: number; complete: boolean }> {
+  const allKeys: string[] = [];
+  let cursor: string | undefined;
+  let rounds = 0;
+
+  do {
+    rounds += 1;
+    const result = await (kv.list as (opts: Record<string, unknown>) => Promise<KVListResult>)({
+      limit: LIST_PAGE_SIZE,
+      ...(prefix ? { prefix } : {}),
+      ...(cursor ? { cursor } : {}),
+    });
+
+    for (const key of result.keys) {
+      allKeys.push(key.name);
+    }
+
+    if (result.list_complete) break;
+    cursor = result.cursor;
+  } while (cursor && rounds < MAX_LIST_ROUNDS);
+
+  return { keys: allKeys, rounds, complete: rounds < MAX_LIST_ROUNDS };
+}
+
+async function paginateR2List(
+  bucket: R2Bucket,
+  prefix?: string,
+): Promise<{ objects: { key: string; size: number }[]; rounds: number; complete: boolean }> {
+  const allObjects: { key: string; size: number }[] = [];
+  let cursor: string | undefined;
+  let rounds = 0;
+
+  do {
+    rounds += 1;
+    const result = await (bucket.list as (opts: Record<string, unknown>) => Promise<R2ListResult>)({
+      limit: LIST_PAGE_SIZE,
+      ...(prefix ? { prefix } : {}),
+      ...(cursor ? { cursor } : {}),
+    });
+
+    for (const object of result.objects) {
+      allObjects.push({ key: object.key, size: object.size });
+    }
+
+    if (!result.truncated) break;
+    cursor = result.cursor;
+  } while (cursor && rounds < MAX_LIST_ROUNDS);
+
+  return { objects: allObjects, rounds, complete: rounds < MAX_LIST_ROUNDS };
+}
+
+export async function handleSemanticHealth(request: Request, env: Env): Promise<Response> {
+  const authError = requireAdmin(request, env);
+  if (authError) return authError;
+
+  const kvResult = await paginateKVList(env.KV);
+  const r2Result = env.DATA_LAKE
+    ? await paginateR2List(env.DATA_LAKE, 'snapshots/')
+    : { objects: [], rounds: 0, complete: true };
+
+  return json({
+    timestamp: new Date().toISOString(),
+    note: 'KV listing is eventually consistent (~60s)',
+    kv: {
+      totalKeys: kvResult.keys.length,
+      rounds: kvResult.rounds,
+      complete: kvResult.complete,
+      keys: kvResult.keys,
+    },
+    r2: {
+      totalObjects: r2Result.objects.length,
+      rounds: r2Result.rounds,
+      complete: r2Result.complete,
+      objects: r2Result.objects,
+    },
+  });
 }

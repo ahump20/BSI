@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSportData } from '@/lib/hooks/useSportData';
@@ -158,13 +158,51 @@ const conferences = [
 ];
 export default function CFBPage() {
   const [activeTab, setActiveTab] = useState<TabType>('rankings');
-  const [rankings, setRankings] = useState<RankedTeam[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<string>('');
-  const [portalEntries, setPortalEntries] = useState<PortalEntry[]>([]);
-  const [portalLoading, setPortalLoading] = useState(false);
-  const [portalError, setPortalError] = useState<string | null>(null);
+
+  // Rankings data — fetched only when rankings tab is active
+  const { data: teamsRaw, loading, error, retry: retryRankings, lastUpdated: rankingsUpdated } = useSportData<{
+    teams?: Array<{
+      school?: string;
+      name?: string;
+      conference?: string;
+      apRank?: number | null;
+      coachesRank?: number | null;
+    }>;
+    meta?: { lastUpdated?: string };
+  }>('/api/cfb/teams', { skip: activeTab !== 'rankings' });
+
+  const rankings: RankedTeam[] = useMemo(() => {
+    if (!teamsRaw?.teams) return [];
+    return teamsRaw.teams
+      .filter((team) => {
+        const ap = team.apRank ?? 0;
+        const coaches = team.coachesRank ?? 0;
+        return ap > 0 || coaches > 0;
+      })
+      .sort((a, b) => {
+        const aRank = a.apRank && a.apRank > 0 ? a.apRank : (a.coachesRank || 999);
+        const bRank = b.apRank && b.apRank > 0 ? b.apRank : (b.coachesRank || 999);
+        return aRank - bRank;
+      })
+      .slice(0, 25)
+      .map((team, idx) => ({
+        rank: team.apRank && team.apRank > 0 ? team.apRank : idx + 1,
+        team: team.school || team.name || 'Unknown Team',
+        conference: team.conference || 'Independent',
+      }));
+  }, [teamsRaw]);
+
+  const lastUpdated = rankingsUpdated ? rankingsUpdated.toISOString() : '';
+
+  // Portal data — fetched only when portal tab is active
+  const { data: portalRaw, loading: portalLoading, error: portalError } = useSportData<{
+    entries?: PortalEntry[];
+    players?: PortalEntry[];
+  }>('/api/cfb/transfer-portal', { skip: activeTab !== 'portal' });
+
+  const portalEntries: PortalEntry[] = useMemo(() => {
+    return portalRaw?.entries || portalRaw?.players || [];
+  }, [portalRaw]);
 
   // Recent scores — always fetched on mount for the preview strip
   const { data: scoresRaw, loading: scoresLoading } = useSportData<{
@@ -234,72 +272,6 @@ export default function CFBPage() {
     return grouped;
   })();
   const hasStandings = Object.keys(standingsSnapshot).length > 0;
-
-  const fetchRankings = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch('/api/cfb/teams');
-      if (!res.ok) throw new Error('Failed to fetch rankings');
-      const data = await res.json() as {
-        teams?: Array<{
-          school?: string;
-          name?: string;
-          conference?: string;
-          apRank?: number | null;
-          coachesRank?: number | null;
-        }>;
-        meta?: { lastUpdated?: string };
-      };
-
-      const ranked = (data.teams || [])
-        .filter((team) => {
-          const ap = team.apRank ?? 0;
-          const coaches = team.coachesRank ?? 0;
-          return ap > 0 || coaches > 0;
-        })
-        .sort((a, b) => {
-          const aRank = a.apRank && a.apRank > 0 ? a.apRank : (a.coachesRank || 999);
-          const bRank = b.apRank && b.apRank > 0 ? b.apRank : (b.coachesRank || 999);
-          return aRank - bRank;
-        })
-        .slice(0, 25)
-        .map((team, idx) => ({
-          rank: team.apRank && team.apRank > 0 ? team.apRank : idx + 1,
-          team: team.school || team.name || 'Unknown Team',
-          conference: team.conference || 'Independent',
-        }));
-
-      setRankings(ranked);
-      setLastUpdated(data.meta?.lastUpdated || new Date().toISOString());
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
-      setRankings([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const fetchPortalData = useCallback(async () => {
-    if (portalEntries.length > 0) return;
-    setPortalLoading(true);
-    setPortalError(null);
-    try {
-      const res = await fetch('/api/cfb/transfer-portal');
-      if (!res.ok) throw new Error('Failed to fetch transfer portal data');
-      const data = await res.json() as { entries?: PortalEntry[]; players?: PortalEntry[] };
-      setPortalEntries(data.entries || data.players || []);
-    } catch (err) {
-      setPortalError(err instanceof Error ? err.message : 'Unknown error');
-    } finally {
-      setPortalLoading(false);
-    }
-  }, [portalEntries.length]);
-
-  useEffect(() => {
-    if (activeTab === 'rankings') fetchRankings();
-    if (activeTab === 'portal') fetchPortalData();
-  }, [activeTab, fetchRankings, fetchPortalData]);
 
   const tabs: { id: TabType; label: string }[] = [
     { id: 'rankings', label: 'Rankings' },
@@ -616,7 +588,7 @@ export default function CFBPage() {
                         {rankings.length === 0 && error && (
                           <div className="text-center py-8">
                             <p className="text-text-secondary mb-4">{error}</p>
-                            <Button variant="primary" size="sm" onClick={() => fetchRankings()}>Retry</Button>
+                            <Button variant="primary" size="sm" onClick={retryRankings}>Retry</Button>
                           </div>
                         )}
                         <div className="mt-4 pt-4 border-t border-border">

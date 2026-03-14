@@ -94,7 +94,6 @@ app/                    # Next.js pages (App Router)
 components/            # React components
 lib/                   # Core logic (API clients, utils, hooks)
 workers/               # Cloudflare Workers (53 deployed)
-functions/             # Cloudflare Pages Functions
 tests/                 # Test suites
 docs/                  # Documentation
 ```

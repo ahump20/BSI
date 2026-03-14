@@ -10,6 +10,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { DataAttribution } from '@/components/ui/DataAttribution';
 import { ConferenceBaseline } from '@/components/analytics/ConferenceBaseline';
+import { ConferencePowerStrip } from '@/components/college-baseball/ConferencePowerStrip';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 import { preseason2026 } from '@/lib/data/preseason-2026';
 import {
@@ -1942,8 +1943,17 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                 </div>
               </ScrollReveal>
 
-              {/* Team Grid */}
+              {/* Conference Power Strip */}
               <ScrollReveal direction="up" delay={200}>
+                <ConferencePowerStrip
+                  conferenceId={conferenceId}
+                  conferenceName={auto.fullName}
+                  className="mb-10"
+                />
+              </ScrollReveal>
+
+              {/* Team Grid */}
+              <ScrollReveal direction="up" delay={300}>
                 <h2 className="font-display text-xl font-bold text-text-primary mb-4">
                   Conference Teams
                 </h2>

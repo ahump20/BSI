@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { useSportData } from '@/lib/hooks/useSportData';
 
 // ── Types ──
 interface UndervaluedPlayer {
@@ -36,20 +37,10 @@ function gapColor(gap: number): string {
 }
 
 export default function UndervaluedPage() {
-  const [players, setPlayers] = useState<UndervaluedPlayer[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [hasAccess, setHasAccess] = useState(true);
+  const { data: undervaluedData, loading, error } = useSportData<{ data?: UndervaluedPlayer[] }>('/api/nil/undervalued');
 
-  useEffect(() => {
-    fetch('/api/nil/undervalued')
-      .then(r => {
-        if (r.status === 403) { setHasAccess(false); setLoading(false); return null; }
-        return r.json();
-      })
-      .then((d: { data?: UndervaluedPlayer[] } | null) => { if (d) { setPlayers(d.data || []); setLoading(false); } })
-      .catch(e => { setError(e.message); setLoading(false); });
-  }, []);
+  const hasAccess = !(error && error.includes('403'));
+  const players = useMemo(() => undervaluedData?.data || [], [undervaluedData]);
 
   const sorted = [...players].sort(
     (a, b) => (b.performance_score - b.index_score) - (a.performance_score - a.index_score)

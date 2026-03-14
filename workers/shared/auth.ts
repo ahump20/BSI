@@ -15,12 +15,19 @@ export interface Env {
   RESEND_API_KEY?: string;
 }
 
+type AuthContext = Context<{
+  Bindings: Env;
+  Variables: {
+    tier: KeyData['tier'];
+  };
+}>;
+
 /**
  * Middleware: gate routes behind a valid BSI API key stored in KV.
  * Checks X-BSI-Key header. Returns 401/402/403 on failure.
  * Sets c.var.tier on success.
  */
-export async function requireApiKey(c: Context<{ Bindings: Env }>, next: Next) {
+export async function requireApiKey(c: AuthContext, next: Next) {
   const apiKey = c.req.header('X-BSI-Key');
   if (!apiKey) {
     return c.json(

@@ -1,8 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
+} from 'recharts';
 import { getPercentileColor } from './PercentileBar';
 import { withAlpha } from '@/lib/utils/color';
+import { SAVANT_CHART_COLORS, savantXAxisProps, savantYAxisProps, savantCartesianGridProps } from '@/lib/chart-theme';
 
 interface ConferenceRow {
   conference: string;
@@ -21,15 +25,15 @@ interface ConferenceStrengthChartProps {
 }
 
 /**
- * ConferenceStrengthChart — ranked bar visualization with sub-metric badges.
- * Uses inline CSS bars instead of Recharts for zero-bundle-cost rendering.
+ * ConferenceStrengthChart — horizontal bar chart + ranked list with sub-metric badges.
+ * Recharts bar chart for 4+ conferences; inline CSS bars for the expandable detail list.
  * P5 / mid-major tier separator. Expandable detail rows.
  */
-function strengthColor(index: number): string {
-  if (index >= 75) return 'var(--bsi-primary)';
-  if (index >= 60) return '#d4775c';
-  if (index >= 45) return '#aaaaaa';
-  return 'rgba(255,255,255,0.25)';
+function strengthColor(index: number, isPower: boolean): string {
+  if (isPower) return 'var(--svt-accent, #BF5700)';
+  if (index >= 60) return 'var(--svt-blue, #3b82f6)';
+  if (index >= 45) return 'var(--svt-text-muted, #8890a4)';
+  return 'var(--svt-text-dim, rgba(255,255,255,0.25))';
 }
 
 export function ConferenceStrengthChart({
@@ -84,13 +88,13 @@ export function ConferenceStrengthChart({
               className="h-full rounded-full transition-all duration-700"
               style={{
                 width: `${conf.strength_index}%`,
-                backgroundColor: strengthColor(conf.strength_index),
+                backgroundColor: strengthColor(conf.strength_index, conf.is_power === 1),
               }}
             />
           </div>
           <span
             className="text-xs font-mono font-bold tabular-nums w-8 text-right"
-            style={{ color: strengthColor(conf.strength_index) }}
+            style={{ color: strengthColor(conf.strength_index, conf.is_power === 1) }}
           >
             {conf.strength_index.toFixed(0)}
           </span>
@@ -128,7 +132,7 @@ export function ConferenceStrengthChart({
 
   return (
     <div className={`bg-background-primary border border-border-subtle rounded-xl overflow-hidden ${className}`}>
-      <div className="px-5 py-4 border-b border-border-subtle">
+      <div className="px-5 py-4 border-b border-border-subtle" style={{ borderTop: '2px solid var(--svt-accent, #BF5700)' }}>
         <h3 className="font-display text-base uppercase tracking-wider text-text-primary">
           Conference Strength Index
         </h3>
@@ -136,6 +140,49 @@ export function ConferenceStrengthChart({
           Composite of inter-conference record, RPI, offense, and pitching · Click to expand
         </p>
       </div>
+
+      {/* Horizontal bar chart */}
+      {displayData.length > 3 && (
+        <div className="px-3 py-4 border-b border-border-subtle" style={{ background: SAVANT_CHART_COLORS.bg }}>
+          <ResponsiveContainer width="100%" height={Math.max(200, displayData.length * 32)}>
+            <BarChart
+              data={sorted.map(c => ({ ...c, name: c.conference }))}
+              layout="vertical"
+              margin={{ top: 5, right: 30, bottom: 5, left: 60 }}
+            >
+              <CartesianGrid {...savantCartesianGridProps} horizontal={false} vertical />
+              <XAxis type="number" {...savantXAxisProps} />
+              <YAxis
+                type="category"
+                dataKey="name"
+                {...savantYAxisProps}
+                width={55}
+                tick={{ fill: SAVANT_CHART_COLORS.axis, fontSize: 10, fontFamily: "'JetBrains Mono', monospace" }}
+              />
+              <Tooltip
+                contentStyle={{
+                  background: 'var(--svt-surface, #12151c)',
+                  border: '1px solid var(--svt-border, #242a38)',
+                  borderRadius: '6px',
+                  color: '#e8eaf0',
+                  fontSize: '0.75rem',
+                  fontFamily: "'JetBrains Mono', monospace",
+                }}
+                formatter={(value: number) => [value.toFixed(1), 'Strength Index']}
+              />
+              <Bar dataKey="strength_index" radius={[0, 4, 4, 0]}>
+                {sorted.map((conf) => (
+                  <Cell
+                    key={conf.conference}
+                    fill={conf.is_power === 1 ? 'var(--svt-accent, #BF5700)' : 'var(--svt-blue, #3b82f6)'}
+                    fillOpacity={0.75}
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
 
       <div className="px-5 py-4 space-y-1">
         {/* P5 section */}

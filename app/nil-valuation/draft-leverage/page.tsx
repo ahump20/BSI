@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { useSportData } from '@/lib/hooks/useSportData';
 
 // ── Types ──
 interface LeveragePlayer {
@@ -74,19 +75,10 @@ function formatValue(value: number): string {
 }
 
 export default function DraftLeveragePage() {
-  const [players, setPlayers] = useState<LeveragePlayer[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [hasAccess, setHasAccess] = useState(true);
+  const { data: leverageData, loading, error: fetchError } = useSportData<{ data?: LeveragePlayer[] }>('/api/nil/draft-leverage');
 
-  useEffect(() => {
-    fetch('/api/nil/draft-leverage')
-      .then(r => {
-        if (r.status === 403) { setHasAccess(false); setLoading(false); return null; }
-        return r.json();
-      })
-      .then((d: { data?: LeveragePlayer[] } | null) => { if (d) { setPlayers(d.data || []); setLoading(false); } })
-      .catch(() => setLoading(false));
-  }, []);
+  const hasAccess = !(fetchError && fetchError.includes('403'));
+  const players = useMemo(() => leverageData?.data || [], [leverageData]);
 
   const grouped = useMemo(() => {
     const map: Record<string, LeveragePlayer[]> = {};

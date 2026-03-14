@@ -10,6 +10,9 @@ export default {
         'ember': '#FF6B35',
         'bone': '#F5F0EB',
         'warm-gray': '#A89F95',
+        'spectrum-blue': '#3B82F6',
+        'nw-navy': '#1E3A5F',
+        'ato-gold': '#D4A843',
       },
       fontFamily: {
         serif: ['Cormorant Garamond', 'Georgia', 'serif'],

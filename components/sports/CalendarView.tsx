@@ -58,12 +58,17 @@ export function CalendarView({ initialDate }: CalendarViewProps) {
   }, [initialDate]);
 
   useEffect(() => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+
     setLoading(true);
-    fetch(`/api/college-baseball/schedule?date=${currentDate}&range=week`)
+    fetch(`/api/college-baseball/schedule?date=${currentDate}&range=week`, { signal: controller.signal })
       .then((r) => r.json())
       .then((data: { data?: CalendarGame[]; games?: CalendarGame[] }) => setGames(data.data ?? data.games ?? []))
-      .catch(() => setGames([]))
-      .finally(() => setLoading(false));
+      .catch((err) => { if ((err as Error).name !== 'AbortError') setGames([]); })
+      .finally(() => { clearTimeout(timeout); setLoading(false); });
+
+    return () => { controller.abort(); clearTimeout(timeout); };
   }, [currentDate]);
 
   const shiftWeek = (direction: number) => {

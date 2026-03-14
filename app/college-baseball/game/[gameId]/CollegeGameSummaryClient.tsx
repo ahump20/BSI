@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useGameData } from './layout';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -148,17 +148,24 @@ export default function CollegeGameSummaryClient() {
   const [homeStats, setHomeStats] = useState<TeamStats | undefined>(undefined);
   const [awayStats, setAwayStats] = useState<TeamStats | undefined>(undefined);
   const [seriesGames, setSeriesGames] = useState<SeriesGame[]>([]);
+  const savantAbortRef = useRef<AbortController | null>(null);
+  const seriesAbortRef = useRef<AbortController | null>(null);
 
   // Fetch savant team stats only for pregame — skip once a boxscore exists
   useEffect(() => {
     if (!game || game.boxscore || game.status.isLive || game.status.isFinal) return;
 
+    savantAbortRef.current?.abort();
+    const controller = new AbortController();
+    savantAbortRef.current = controller;
+    const timeout = setTimeout(() => controller.abort(), 8000);
+
     const apiKey = typeof window !== 'undefined' ? localStorage.getItem('bsi-api-key') ?? '' : '';
     const headers: HeadersInit = apiKey ? { 'X-BSI-Key': apiKey } : {};
 
     Promise.all([
-      fetch('/api/savant/batting/leaderboard?limit=100&min_pa=5', { headers }).then((r) => r.json()),
-      fetch('/api/savant/pitching/leaderboard?limit=100&min_ip=5', { headers }).then((r) => r.json()),
+      fetch('/api/savant/batting/leaderboard?limit=100&min_pa=5', { headers, signal: controller.signal }).then((r) => r.json()),
+      fetch('/api/savant/pitching/leaderboard?limit=100&min_ip=5', { headers, signal: controller.signal }).then((r) => r.json()),
     ])
       .then(([battingResp, pitchingResp]) => {
         const batters: SavantBatterRow[] = (battingResp as { data?: SavantBatterRow[] })?.data ?? [];
@@ -166,21 +173,31 @@ export default function CollegeGameSummaryClient() {
         setHomeStats(buildTeamStats(batters, pitchers, game.teams.home.name));
         setAwayStats(buildTeamStats(batters, pitchers, game.teams.away.name));
       })
-      .catch(() => {
+      .catch((err) => {
+        if ((err as Error).name === 'AbortError') return;
         // Stats unavailable — card falls back to contextual analysis
-      });
+      })
+      .finally(() => clearTimeout(timeout));
+
+    return () => controller.abort();
   }, [game?.id]);
 
   // Fetch series context — find games between the same two teams on Fri/Sat/Sun
   useEffect(() => {
     if (!game) return;
+
+    seriesAbortRef.current?.abort();
+    const controller = new AbortController();
+    seriesAbortRef.current = controller;
+    const timeout = setTimeout(() => controller.abort(), 8000);
+
     const dates = getSeriesWeekend(game.date);
     const homeTeam = game.teams.home.name.toLowerCase();
     const awayTeam = game.teams.away.name.toLowerCase();
 
     Promise.all(
       dates.map(date =>
-        fetch(`/api/college-baseball/scores?date=${date}`)
+        fetch(`/api/college-baseball/scores?date=${date}`, { signal: controller.signal })
           .then(r => r.json())
           .then((resp: { data?: any[]; games?: any[] }) => {
             const games = resp?.data || resp?.games || [];
@@ -199,12 +216,17 @@ export default function CollegeGameSummaryClient() {
               awayScore: g.awayTeam?.score,
             }));
           })
-          .catch(() => [])
+          .catch((err) => {
+            if ((err as Error).name === 'AbortError') return [];
+            return [];
+          })
       )
     ).then(results => {
       const allGames = results.flat();
       if (allGames.length > 1) setSeriesGames(allGames);
-    });
+    }).finally(() => clearTimeout(timeout));
+
+    return () => controller.abort();
   }, [game?.id, game?.date]);
 
   if (loading || error || !game) {

@@ -93,20 +93,25 @@ export function SportLeaders({ sport, className = '' }: SportLeadersProps) {
   const config = sportConfigs[sport];
 
   useEffect(() => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+
     async function fetchLeaders() {
       setLoading(true);
       try {
-        const res = await fetch(config.endpoint);
+        const res = await fetch(config.endpoint, { signal: controller.signal });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         setLeaders(config.extractLeaders(data as Record<string, unknown>));
-      } catch {
-        setLeaders([]);
+      } catch (err) {
+        if ((err as Error).name !== 'AbortError') setLeaders([]);
       } finally {
+        clearTimeout(timeout);
         setLoading(false);
       }
     }
     fetchLeaders();
+    return () => { controller.abort(); clearTimeout(timeout); };
   }, [sport, config]);
 
   return (

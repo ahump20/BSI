@@ -43,10 +43,7 @@ export default function Projects() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => window.posthog?.capture('project_clicked', { project: project.name })}
-                className="card p-8 group block gradient-border-hover rounded-lg"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(26,26,26,0.8) 0%, rgba(191,87,0,0.04) 100%)',
-                }}
+                className="card p-8 group block gradient-border-hover rounded-lg project-card-featured-bg"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">

@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -102,48 +103,27 @@ function NewsCard({ item }: { item: NewsItem }) {
 }
 
 export default function NBANewsPage() {
-  const [news, setNews] = useState<NewsItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<string>(formatTimestamp());
+  const { data: newsData, loading, error, retry: fetchNews } =
+    useSportData<NewsResponse>('/api/nba/news', { refreshInterval: 5 * 60 * 1000 });
 
-  const fetchNews = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch('/api/nba/news');
-      if (!res.ok) {
-        throw new Error(`Failed to fetch news: ${res.status}`);
-      }
-
-      const data: NewsResponse = await res.json();
-      const normalized = (data.articles || []).map((article) => ({
+  const news = useMemo<NewsItem[]>(() => {
+    if (!newsData?.articles) return [];
+    return (newsData.articles || [])
+      .map((article) => ({
         sport: 'nba',
         title: article.headline || 'Untitled',
         description: article.description || '',
         published: article.published || new Date().toISOString(),
         link: article.link || '#',
-        source: article.source || data.meta?.source || 'ESPN',
+        source: article.source || newsData.meta?.source || 'ESPN',
         image: article.images?.[0]?.url || null,
-      }));
+      }))
+      .filter((item) => item.link !== '#');
+  }, [newsData]);
 
-      setNews(normalized.filter((item) => item.link !== '#'));
-      setLastUpdated(formatTimestamp(data.meta?.fetched_at));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load news');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchNews();
-
-    // Refresh news every 5 minutes
-    const interval = setInterval(fetchNews, 5 * 60 * 1000);
-    return () => clearInterval(interval);
-  }, [fetchNews]);
+  const lastUpdated = newsData?.meta?.fetched_at
+    ? formatTimestamp(newsData.meta.fetched_at)
+    : formatTimestamp();
 
   return (
     <>

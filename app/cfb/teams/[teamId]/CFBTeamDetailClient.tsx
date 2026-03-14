@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Container } from '@/components/ui/Container';
@@ -9,6 +9,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface TeamData {
@@ -85,39 +86,15 @@ interface CFBTeamDetailClientProps {
 }
 
 export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps) {
-  const [team, setTeam] = useState<TeamData | null>(null);
-  const [roster, setRoster] = useState<RosterPlayer[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<string>(formatTimestamp());
   const [positionFilter, setPositionFilter] = useState<string>('All');
 
-  const fetchTeam = useCallback(async () => {
-    if (!teamId) return;
+  const { data: teamData, loading, error, retry: fetchTeam, lastUpdated: lastUpdatedDate } = useSportData<TeamDetailResponse>(
+    teamId ? `/api/cfb/teams/${teamId}` : null,
+  );
 
-    setLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch(`/api/cfb/teams/${teamId}`);
-      if (!res.ok) {
-        throw new Error(`Failed to fetch team: ${res.status}`);
-      }
-
-      const data: TeamDetailResponse = await res.json();
-      setTeam(data.team);
-      setRoster(data.roster || []);
-      setLastUpdated(formatTimestamp());
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load team');
-    } finally {
-      setLoading(false);
-    }
-  }, [teamId]);
-
-  useEffect(() => {
-    fetchTeam();
-  }, [fetchTeam]);
+  const team = teamData?.team || null;
+  const roster = useMemo(() => teamData?.roster || [], [teamData]);
+  const lastUpdated = lastUpdatedDate ? formatTimestamp(lastUpdatedDate.toISOString()) : formatTimestamp();
 
   const teamColor = team?.color ? `#${team.color}` : 'var(--bsi-primary)';
   const logoUrl = team?.logos?.[0]?.href;

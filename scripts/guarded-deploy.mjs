@@ -194,7 +194,7 @@ async function deployBranch(branch) {
 }
 
 async function runSmoke({ previewUrl, previewLabel, productionUrl, productionLabel, headed, artifactDir }) {
-  const args = ['run', 'smoke:release', '--'];
+  const args = ['run', 'gate:release', '--'];
 
   if (headed) {
     args.push('--headed');

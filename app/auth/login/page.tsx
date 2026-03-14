@@ -34,6 +34,7 @@ export default function LoginPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email.trim().toLowerCase() }),
+        signal: AbortSignal.timeout(8000),
       });
 
       const data = (await response.json()) as { success?: boolean; message?: string; error?: string };
@@ -66,6 +67,7 @@ export default function LoginPage() {
       const response = await fetch('/api/auth/validate', {
         method: 'GET',
         headers: { 'X-BSI-Key': trimmedKey },
+        signal: AbortSignal.timeout(8000),
       });
 
       const data = (await response.json()) as { valid?: boolean; error?: string };

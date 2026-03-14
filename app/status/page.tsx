@@ -50,15 +50,14 @@ export default function StatusPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let mounted = true;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
 
     async function fetchStatus() {
       try {
-        const res = await fetch(getReadApiUrl('/api/status'));
+        const res = await fetch(getReadApiUrl('/api/status'), { signal: controller.signal });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = (await res.json()) as StatusApiRaw;
-
-        if (!mounted) return;
 
         // Normalize: the endpoint may return different shapes
         const endpoints: EndpointStatus[] = json.endpoints || json.results || [];
@@ -67,15 +66,28 @@ export default function StatusPage() {
 
         setData({ timestamp, overall, endpoints });
       } catch (err) {
-        if (mounted) setError(err instanceof Error ? err.message : 'Failed to load status');
+        if ((err as Error).name !== 'AbortError') {
+          setError(err instanceof Error ? err.message : 'Failed to load status');
+        }
       } finally {
-        if (mounted) setLoading(false);
+        clearTimeout(timeout);
+        setLoading(false);
       }
     }
 
     fetchStatus();
-    const interval = setInterval(fetchStatus, 60_000);
-    return () => { mounted = false; clearInterval(interval); };
+    const interval = setInterval(() => {
+      fetch(getReadApiUrl('/api/status'), { signal: AbortSignal.timeout(8000) })
+        .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json() as Promise<StatusApiRaw>; })
+        .then(json => {
+          const endpoints: EndpointStatus[] = json.endpoints || json.results || [];
+          const overall = json.overall || getOverallFromEndpoints(endpoints);
+          const timestamp = json.timestamp || json.checked_at || new Date().toISOString();
+          setData({ timestamp, overall, endpoints });
+        })
+        .catch(() => { /* silent refresh failure */ });
+    }, 60_000);
+    return () => { controller.abort(); clearTimeout(timeout); clearInterval(interval); };
   }, []);
 
   const overall = data ? overallConfig[data.overall] : null;

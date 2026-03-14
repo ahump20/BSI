@@ -5,6 +5,8 @@ interface PercentileBarProps {
   value: number;
   /** Stat label */
   label: string;
+  /** Raw stat value to display */
+  statValue?: string;
   /** Whether higher is better (true for batting, false for ERA-like stats) */
   higherIsBetter?: boolean;
   /** Show numeric value */
@@ -13,25 +15,28 @@ interface PercentileBarProps {
 }
 
 /**
- * Baseball Savant-style percentile bar.
- * Red-white-blue gradient: blue = poor, white = average, red = elite.
- * When higherIsBetter is false (e.g., ERA), the gradient inverts.
+ * 6-tier percentile color scale matching Baseball Savant conventions.
+ * Red = elite, indigo = poor. When higherIsBetter is false, the scale inverts.
  */
-export function getPercentileColor(pct: number, higherIsBetter: boolean): string {
+export function getPercentileColor(pct: number, higherIsBetter = true): string {
   const effective = higherIsBetter ? pct : 100 - pct;
 
-  if (effective >= 90) return '#c0392b'; // Deep red — elite
-  if (effective >= 75) return '#e74c3c'; // Red — great
-  if (effective >= 60) return '#d4775c'; // Salmon — above average
-  if (effective >= 40) return '#aaaaaa'; // Gray — average
-  if (effective >= 25) return '#5b9bd5'; // Light blue — below average
-  if (effective >= 10) return '#2980b9'; // Blue — poor
-  return '#1a5276';                      // Deep blue — very poor
+  if (effective >= 90) return '#ef4444'; // Red — elite
+  if (effective >= 75) return '#f97316'; // Orange — great
+  if (effective >= 60) return '#eab308'; // Yellow — above average
+  if (effective >= 40) return '#8890a4'; // Gray — average
+  if (effective >= 25) return '#3b82f6'; // Blue — below average
+  return '#6366f1';                      // Indigo — poor
 }
 
+/**
+ * Savant-style percentile bar with metric label, stat value, bar, and percentile badge.
+ * Layout: [LABEL] [BAR with value inside] [PERCENTILE PILL]
+ */
 export function PercentileBar({
   value,
   label,
+  statValue,
   higherIsBetter = true,
   showValue = true,
   className = '',
@@ -41,19 +46,40 @@ export function PercentileBar({
 
   return (
     <div className={`flex items-center gap-3 ${className}`}>
-      <span className="text-[11px] text-text-muted font-mono w-16 text-right shrink-0 uppercase tracking-wide">
+      {/* Metric label — left side */}
+      <span className="text-[11px] text-[var(--svt-text-muted,_#A89F95)] font-mono w-16 text-right shrink-0 uppercase tracking-wide">
         {label}
       </span>
-      <div className="flex-1 h-[8px] rounded-full bg-surface-light overflow-hidden relative">
+
+      {/* Bar track */}
+      <div className="flex-1 h-[10px] rounded-full bg-[var(--svt-border,_rgba(255,255,255,0.04))] overflow-hidden relative">
         <div
-          className="h-full rounded-full transition-all duration-700 ease-out"
-          style={{ width: `${pct}%`, backgroundColor: color }}
-        />
+          className="h-full rounded-full transition-all duration-700 ease-out relative"
+          style={{ width: `${Math.max(3, pct)}%`, backgroundColor: color }}
+        >
+          {/* Stat value inside bar — right-aligned, only if bar is wide enough */}
+          {statValue && pct > 25 && (
+            <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[9px] font-mono font-bold text-white/90 tabular-nums leading-none">
+              {statValue}
+            </span>
+          )}
+        </div>
+        {/* Stat value outside bar if bar is narrow */}
+        {statValue && pct <= 25 && (
+          <span
+            className="absolute top-1/2 -translate-y-1/2 text-[9px] font-mono font-bold tabular-nums leading-none"
+            style={{ left: `calc(${Math.max(3, pct)}% + 6px)`, color }}
+          >
+            {statValue}
+          </span>
+        )}
       </div>
+
+      {/* Percentile badge pill */}
       {showValue && (
         <span
-          className="text-xs font-mono font-bold tabular-nums w-8 text-right shrink-0"
-          style={{ color }}
+          className="text-[11px] font-mono font-bold tabular-nums w-9 text-center shrink-0 rounded-full py-0.5 text-white"
+          style={{ backgroundColor: color }}
         >
           {Math.round(pct)}
         </span>

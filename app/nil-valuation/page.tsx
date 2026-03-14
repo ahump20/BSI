@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/Button';
 import { HeroGlow } from '@/components/ui/HeroGlow';
 import { Footer } from '@/components/layout-ds/Footer';
 import { ScrollReveal } from '@/components/cinematic';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { NILDashboardClient } from './NILDashboardClient';
 
 // ── Types ──
@@ -89,26 +90,10 @@ const sportBreakdown = [
 ];
 
 export default function NILValuationPage() {
-  const [leaders, setLeaders] = useState<NILPlayer[]>([]);
-  const [totalScored, setTotalScored] = useState(0);
+  const { data: leaderboardData, error: fetchError } = useSportData<{ data?: NILPlayer[]; total?: number }>('/api/nil/leaderboard?limit=50');
 
-  const [fetchError, setFetchError] = useState(false);
-
-  useEffect(() => {
-    fetch('/api/nil/leaderboard?limit=50')
-      .then(r => {
-        if (!r.ok) throw new Error(`Leaderboard API returned ${r.status}`);
-        return r.json();
-      })
-      .then((d: { data?: NILPlayer[]; total?: number }) => {
-        setLeaders(d.data || []);
-        setTotalScored(d.total || 0);
-      })
-      .catch((err) => {
-        console.error('[NIL] Leaderboard fetch failed:', err);
-        setFetchError(true);
-      });
-  }, []);
+  const leaders = useMemo(() => leaderboardData?.data || [], [leaderboardData]);
+  const totalScored = leaderboardData?.total || 0;
 
   const topTen = leaders.slice(0, 10);
 

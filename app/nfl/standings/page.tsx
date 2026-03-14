@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -540,31 +541,14 @@ const staticStandings: Conference[] = [
 ];
 
 export default function NFLStandingsPage() {
-  const [standings, setStandings] = useState<Conference[]>(staticStandings);
-  const [loading, setLoading] = useState(true);
   const [selectedConference, setSelectedConference] = useState<string>('AFC');
-  const [isOffSeason, setIsOffSeason] = useState(true);
 
-  useEffect(() => {
-    const fetchStandings = async () => {
-      try {
-        const res = await fetch('/api/nfl/standings');
-        if (res.ok) {
-          const data = (await res.json()) as { standings?: Conference[] };
-          if (data.standings && data.standings.length > 0) {
-            setStandings(data.standings);
-            setIsOffSeason(false);
-          }
-        }
-      } catch (_err) {
-        // Use static data
-      } finally {
-        setLoading(false);
-      }
-    };
+  const { data: standingsData, loading } = useSportData<{ standings?: Conference[] }>('/api/nfl/standings');
 
-    fetchStandings();
-  }, []);
+  const standings = standingsData?.standings && standingsData.standings.length > 0
+    ? standingsData.standings
+    : staticStandings;
+  const isOffSeason = !(standingsData?.standings && standingsData.standings.length > 0);
 
   const currentConference = standings.find((c) => c.name === selectedConference);
 

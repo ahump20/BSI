@@ -30,6 +30,7 @@ import { ScheduleGameCard } from '@/components/college-baseball/ScheduleGameCard
 import type { ScheduleGame } from '@/components/college-baseball/ScheduleGameCard';
 import { PlayersTabContent } from '@/components/college-baseball/PlayersTabContent';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { FeaturedProgramCard } from '@/components/college-baseball/FeaturedProgramCard';
 
 
 interface StandingsTeam {
@@ -151,7 +152,7 @@ export default function CollegeBaseballPage() {
     if (!query || query.length < 2) { setApiSearchResults([]); return; }
     searchTimerRef.current = setTimeout(async () => {
       try {
-        const resp = await fetch(`/api/search?q=${encodeURIComponent(query)}&sport=college-baseball`);
+        const resp = await fetch(`/api/search?q=${encodeURIComponent(query)}&sport=college-baseball`, { signal: AbortSignal.timeout(8000) });
         if (!resp.ok) return;
         const data = await resp.json() as { results?: Array<{ name?: string; title?: string; url?: string; href?: string; type?: string }> };
         setApiSearchResults((data.results || []).map((r) => ({
@@ -252,12 +253,14 @@ export default function CollegeBaseballPage() {
   useEffect(() => {
     if (activeTab !== 'schedule' || hasAutoAdvanced.current) return;
     hasAutoAdvanced.current = true;
+    const controller = new AbortController();
 
     async function findNextGameDay() {
       for (let i = 1; i <= 7; i++) {
+        if (controller.signal.aborted) return;
         const date = getDateOffset(i);
         try {
-          const res = await fetch(`/api/college-baseball/schedule?date=${date}`);
+          const res = await fetch(`/api/college-baseball/schedule?date=${date}`, { signal: controller.signal });
           const data = await res.json() as { data?: unknown[]; games?: unknown[] };
           const games = data.data || data.games || [];
           if (games.length > 0) {
@@ -270,6 +273,7 @@ export default function CollegeBaseballPage() {
       }
     }
     findNextGameDay();
+    return () => { controller.abort(); };
   }, [activeTab]);
 
   // Client-side conference filter for schedule
@@ -325,6 +329,15 @@ export default function CollegeBaseballPage() {
         {/* Editorial Feed — dynamic from D1 */}
         <EditorialFeed />
 
+        {/* Featured Program Intelligence */}
+        <Section padding="md">
+          <Container>
+            <ScrollReveal direction="up">
+              <FeaturedProgramCard />
+            </ScrollReveal>
+          </Container>
+        </Section>
+
         {/* Quick Rankings — Top 10 always visible */}
         <QuickRankings rankings={rankings} loading={rankingsLoading} />
 
@@ -346,6 +359,7 @@ export default function CollegeBaseballPage() {
                 {[
                   { label: 'BSI Savant', desc: 'Advanced metrics for every D1 player', href: '/college-baseball/savant', icon: 'M18 20V10M12 20V4M6 20v-6' },
                   { label: 'Transfer Portal', desc: 'Track every portal entry in real time', href: '/college-baseball/transfer-portal', icon: 'M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4' },
+                  { label: 'Swing Intel', desc: 'AI-powered swing analysis from video', href: '/swing', icon: 'M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z', badge: 'PRO' },
                   { label: 'Editorial', desc: 'Weekly recaps and previews', href: '/college-baseball/editorial', icon: 'M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 1 2-2V9a2 2 0 0 1-2-2h-2' },
                   { label: 'Compare', desc: 'Head-to-head team matchups', href: '/college-baseball/compare', icon: 'M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z' },
                 ].map((feature) => (
@@ -354,9 +368,16 @@ export default function CollegeBaseballPage() {
                     href={feature.href}
                     className="flex flex-col gap-2 p-3 bg-surface-light border border-border rounded-xl hover:border-burnt-orange/30 transition-all group"
                   >
-                    <svg viewBox="0 0 24 24" className="w-5 h-5 text-burnt-orange opacity-70" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d={feature.icon} />
-                    </svg>
+                    <div className="flex items-center justify-between">
+                      <svg viewBox="0 0 24 24" className="w-5 h-5 text-burnt-orange opacity-70" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d={feature.icon} />
+                      </svg>
+                      {'badge' in feature && feature.badge && (
+                        <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 bg-burnt-orange/15 text-burnt-orange rounded">
+                          {feature.badge}
+                        </span>
+                      )}
+                    </div>
                     <div>
                       <div className="text-xs font-semibold text-text-primary group-hover:text-burnt-orange transition-colors">{feature.label}</div>
                       <div className="text-[10px] text-text-muted leading-tight mt-0.5">{feature.desc}</div>
@@ -395,6 +416,7 @@ export default function CollegeBaseballPage() {
                 { label: 'Compare', href: '/college-baseball/compare' },
                 { label: 'Conferences', href: '/college-baseball/conferences' },
                 { label: 'Scores', href: '/college-baseball/scores' },
+                { label: 'Texas Intel', href: '/college-baseball/texas-intelligence' },
               ].map((link, i) => (
                 <Link key={link.href} href={link.href}
                   className={`px-3 py-1.5 text-[11px] font-mono uppercase tracking-wider text-text-muted hover:text-burnt-orange transition-colors whitespace-nowrap ${

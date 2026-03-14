@@ -33,7 +33,10 @@ export function MyTeamsPanel({ teamSlugs }: MyTeamsPanelProps) {
       return;
     }
 
-    fetch('/api/college-baseball/teams/all')
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+
+    fetch('/api/college-baseball/teams/all', { signal: controller.signal })
       .then((r) => (r.ok ? r.json() : null))
       .then((data: { teams?: TeamData[] } | null) => {
         if (data?.teams) {
@@ -47,7 +50,12 @@ export function MyTeamsPanel({ teamSlugs }: MyTeamsPanelProps) {
         }
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch((err) => {
+        if ((err as Error).name === 'AbortError') return;
+        setLoading(false);
+      });
+
+    return () => { controller.abort(); clearTimeout(timeout); };
   }, [teamSlugs]);
 
   if (teamSlugs.length === 0) return null;

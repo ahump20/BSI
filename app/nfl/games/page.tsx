@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -92,44 +93,20 @@ function FootballIcon({ className }: { className?: string }) {
 /* ------------------------------------------------------------------ */
 
 export default function NFLGamesPage() {
-  const [games, setGames] = useState<NFLGame[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [meta, setMeta] = useState<DataMeta | null>(null);
-  const [hasLiveGames, setHasLiveGames] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>(getDateOffset(0));
+  const [liveGamesDetected, setLiveGamesDetected] = useState(false);
 
-  const fetchScores = useCallback(async (date: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`/api/nfl/scores?date=${date}`);
-      if (!res.ok) throw new Error('Failed to fetch scores');
+  const { data: scoresData, loading, error, retry } =
+    useSportData<ScoreboardResponse>(`/api/nfl/scores?date=${selectedDate}`, {
+      refreshInterval: 30000,
+      refreshWhen: liveGamesDetected,
+    });
 
-      const data: ScoreboardResponse = await res.json();
+  const games = scoresData?.games || [];
+  const meta: DataMeta | null = scoresData?.meta || null;
+  const hasLiveGames = useMemo(() => games.some((g) => g.status.type.state === 'in'), [games]);
 
-      setGames(data.games || []);
-      setHasLiveGames((data.games || []).some((g) => g.status.type.state === 'in'));
-      setMeta(data.meta);
-      setLoading(false);
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      setError(errorMessage);
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchScores(selectedDate);
-  }, [selectedDate, fetchScores]);
-
-  // Auto-refresh for live games (30s)
-  useEffect(() => {
-    if (hasLiveGames) {
-      const interval = setInterval(() => fetchScores(selectedDate), 30000);
-      return () => clearInterval(interval);
-    }
-  }, [hasLiveGames, selectedDate, fetchScores]);
+  useEffect(() => { setLiveGamesDetected(hasLiveGames); }, [hasLiveGames]);
 
   // Date navigation
   const dateOptions = [
@@ -454,7 +431,7 @@ export default function NFLGamesPage() {
                 <p className="text-error font-semibold">Data Unavailable</p>
                 <p className="text-text-secondary text-sm mt-1">{error}</p>
                 <button
-                  onClick={() => fetchScores(selectedDate)}
+                  onClick={retry}
                   className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors"
                 >
                   Retry

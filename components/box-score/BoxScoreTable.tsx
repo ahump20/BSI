@@ -194,6 +194,7 @@ export function BoxScoreTable({
                 <h4 className="text-sm font-display text-text-secondary uppercase tracking-wider mb-3">
                   {side.abbr}
                 </h4>
+                <div className="overflow-x-auto">
                 <table className="w-full text-xs text-text-secondary" aria-label={`${side.abbr} batting statistics`}>
                   <thead>
                     <tr className="text-text-muted uppercase">
@@ -241,6 +242,7 @@ export function BoxScoreTable({
                     </tr>
                   </tbody>
                 </table>
+                </div>
               </div>
             )
           ))}
@@ -259,6 +261,7 @@ export function BoxScoreTable({
                 <h4 className="text-sm font-display text-text-secondary uppercase tracking-wider mb-3">
                   {side.abbr}
                 </h4>
+                <div className="overflow-x-auto">
                 <table className="w-full text-xs text-text-secondary" aria-label={`${side.abbr} pitching statistics`}>
                   <thead>
                     <tr className="text-text-muted uppercase">
@@ -290,6 +293,7 @@ export function BoxScoreTable({
                     ))}
                   </tbody>
                 </table>
+                </div>
               </div>
             )
           ))}

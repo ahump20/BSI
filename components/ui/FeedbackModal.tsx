@@ -38,7 +38,7 @@ export function FeedbackButton() {
     if (!text.trim()) return;
     setSubmitting(true);
     try {
-      await fetch('/api/feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ category, rating, text }) });
+      await fetch('/api/feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ category, rating, text }), signal: AbortSignal.timeout(8000) });
       setSubmitted(true);
       setTimeout(() => { setOpen(false); setSubmitted(false); setText(''); setRating(0); }, 2000);
     } catch {} finally { setSubmitting(false); }

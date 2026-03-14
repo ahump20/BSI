@@ -2,15 +2,15 @@
  * College Baseball — editorial, news, trending, and daily handlers.
  */
 
-import type { Env, EnhancedArticle, HighlightlyMatch } from './shared';
-import { json, cachedJson, kvGet, kvPut, dataHeaders, cachedPayloadHeaders, withMeta, getCollegeClient, getHighlightlyClient, HTTP_CACHE, CACHE_TTL, categorizeArticle, titleSimilarity, CATEGORY_KEYWORDS } from './shared';
+import type { Env, EnhancedArticle } from './shared';
+import { json, cachedJson, kvGet, kvPut, dataHeaders, getCollegeClient, getHighlightlyClient, HTTP_CACHE, CACHE_TTL, categorizeArticle, titleSimilarity, CATEGORY_KEYWORDS } from './shared';
 
 export async function handleCollegeBaseballTrending(env: Env): Promise<Response> {
   const cacheKey = 'cb:trending';
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
-    return cachedJson(cached, 200, HTTP_CACHE.trending, cachedPayloadHeaders(cached));
+    return cachedJson(cached, 200, HTTP_CACHE.trending, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'HIT' });
   }
 
   // Trending is computed from recent scores — fetch today's games and derive
@@ -18,7 +18,7 @@ export async function handleCollegeBaseballTrending(env: Env): Promise<Response>
   const result = await client.getMatches('NCAA');
 
   if (!result.success || !result.data) {
-    return json(withMeta({ trendingPlayers: [], topGames: [] }, 'error', { fetchedAt: result.timestamp }), 502, dataHeaders(result.timestamp, 'error'));
+    return json({ trendingPlayers: [], topGames: [] }, 502, dataHeaders(result.timestamp));
   }
 
   const games = (result.data.data || []) as HighlightlyMatch[];
@@ -41,10 +41,10 @@ export async function handleCollegeBaseballTrending(env: Env): Promise<Response>
     margin: Math.abs(g.homeScore - g.awayScore),
   }));
 
-  const payload = withMeta({ trendingPlayers: [], topGames }, 'ncaa', { fetchedAt: result.timestamp });
+  const payload = { trendingPlayers: [], topGames };
   await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
 
-  return cachedJson(payload, 200, HTTP_CACHE.trending, { ...dataHeaders(result.timestamp, 'ncaa'), 'X-Cache': 'MISS' });
+  return cachedJson(payload, 200, HTTP_CACHE.trending, { ...dataHeaders(result.timestamp), 'X-Cache': 'MISS' });
 }
 
 export async function handleCollegeBaseballDaily(url: URL, env: Env): Promise<Response> {
@@ -63,7 +63,8 @@ export async function handleCollegeBaseballDaily(url: URL, env: Env): Promise<Re
   const cached = await kvGet<unknown>(env.KV, kvKey);
   if (cached) {
     return cachedJson(cached, 200, 300, {
-      ...cachedPayloadHeaders(cached, 'bsi-college-baseball-daily'),
+      ...dataHeaders(new Date().toISOString(), 'bsi-college-baseball-daily'),
+      'X-Cache': 'HIT',
     });
   }
 
@@ -72,17 +73,16 @@ export async function handleCollegeBaseballDaily(url: URL, env: Env): Promise<Re
     const latest = await kvGet<unknown>(env.KV, 'cb:daily:latest');
     if (latest) {
       return cachedJson(latest, 200, 300, {
-        ...cachedPayloadHeaders(latest, 'bsi-college-baseball-daily'),
+        ...dataHeaders(new Date().toISOString(), 'bsi-college-baseball-daily'),
         'X-Cache': 'FALLBACK',
-        'X-Cache-State': 'fallback',
-        'X-Data-Source': 'bsi-college-baseball-daily',
       });
     }
   }
 
-  return json(withMeta({
+  return json({
     error: 'Daily digest not yet generated. The pipeline runs at 5 AM and 11 PM CT.',
-  }, 'bsi-college-baseball-daily'), 404);
+    meta: { source: 'bsi-college-baseball-daily', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
+  }, 404);
 }
 
 export async function handleCollegeBaseballNews(env: Env): Promise<Response> {
@@ -90,7 +90,7 @@ export async function handleCollegeBaseballNews(env: Env): Promise<Response> {
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
-    return cachedJson(cached, 200, HTTP_CACHE.news, cachedPayloadHeaders(cached));
+    return cachedJson(cached, 200, HTTP_CACHE.news, { ...dataHeaders(new Date().toISOString(), 'cache'), 'X-Cache': 'HIT' });
   }
 
   try {
@@ -102,9 +102,8 @@ export async function handleCollegeBaseballNews(env: Env): Promise<Response> {
     );
     clearTimeout(timeout);
 
-    const fetchedAt = new Date().toISOString();
     if (!res.ok) {
-      return json(withMeta({ articles: [] }, 'espn', { fetchedAt }), 502);
+      return json({ articles: [], meta: { source: 'espn', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' } }, 502);
     }
 
     const raw = (await res.json()) as Record<string, unknown>;
@@ -145,14 +144,15 @@ export async function handleCollegeBaseballNews(env: Env): Promise<Response> {
       };
     });
 
-    const payload = withMeta({
+    const payload = {
       articles,
-    }, 'espn', { fetchedAt });
+      meta: { source: 'espn', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
+    };
 
     await kvPut(env.KV, cacheKey, payload, 300); // 5 min cache
-    return cachedJson(payload, 200, HTTP_CACHE.news, { ...dataHeaders(fetchedAt, 'espn'), 'X-Cache': 'MISS' });
+    return cachedJson(payload, 200, HTTP_CACHE.news, { ...dataHeaders(new Date().toISOString(), 'espn'), 'X-Cache': 'MISS' });
   } catch {
-    return json(withMeta({ articles: [] }, 'espn'), 502);
+    return json({ articles: [], meta: { source: 'espn', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' } }, 502);
   }
 }
 
@@ -162,14 +162,15 @@ export async function handleCollegeBaseballNewsEnhanced(env: Env): Promise<Respo
   const cached = await kvGet<string>(env.KV, cacheKey);
   if (cached) {
     try {
-      const cachedPayload = JSON.parse(cached) as Record<string, unknown>;
-      return cachedJson(cachedPayload, 200, HTTP_CACHE.news, cachedPayloadHeaders(cachedPayload));
+      return cachedJson(JSON.parse(cached), 200, HTTP_CACHE.news);
     } catch { /* corrupted cache — rebuild */ }
   }
 
   async function fetchEspnNews(): Promise<EnhancedArticle[]> {
     try {
-      const resp = await fetch('https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/news?limit=30');
+      const resp = await fetch('https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/news?limit=30', {
+        signal: AbortSignal.timeout(8000),
+      });
       if (!resp.ok) return [];
       const data = await resp.json() as { articles?: Array<{ headline?: string; description?: string; links?: { web?: { href?: string } }; images?: Array<{ url?: string }>; published?: string }> };
       return (data.articles || []).map((a, i) => ({
@@ -193,6 +194,7 @@ export async function handleCollegeBaseballNewsEnhanced(env: Env): Promise<Respo
     try {
       const resp = await fetch('https://highlightly.p.rapidapi.com/baseball/matches?league=NCAA&status=complete&limit=20', {
         headers: { 'x-rapidapi-key': key, 'x-rapidapi-host': 'highlightly.p.rapidapi.com' },
+        signal: AbortSignal.timeout(8000),
       });
       if (!resp.ok) return [];
       const data = await resp.json() as { matches?: Array<{ id?: string; homeTeam?: { name?: string }; awayTeam?: { name?: string }; homeScore?: number; awayScore?: number; date?: string; status?: string }> };
@@ -226,14 +228,15 @@ export async function handleCollegeBaseballNewsEnhanced(env: Env): Promise<Respo
   }
   merged.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
 
-  const payload = withMeta({
+  const payload = {
     articles: merged,
     sources: { espn: espn.length, highlightly: highlightly.length, total: merged.length },
-  }, 'espn+highlightly', { fetchedAt: now });
+    meta: { source: 'espn+highlightly', fetched_at: now, timezone: 'America/Chicago' },
+  };
 
   await kvPut(env.KV, cacheKey, JSON.stringify(payload), 120);
 
-  return cachedJson(payload, 200, HTTP_CACHE.news, { ...dataHeaders(now, 'espn+highlightly'), 'X-Cache': 'MISS' });
+  return cachedJson(payload, 200, HTTP_CACHE.news);
 }
 
 export async function handleCollegeBaseballTransferPortal(env: Env): Promise<Response> {
@@ -242,21 +245,21 @@ export async function handleCollegeBaseballTransferPortal(env: Env): Promise<Res
     try {
       const data = JSON.parse(raw) as Record<string, unknown>;
       const entries = (data.entries ?? []) as unknown[];
-      return cachedJson(withMeta({
+      return cachedJson({
         entries,
         totalEntries: entries.length,
         lastUpdated: data.lastUpdated ?? null,
-      }, 'portal-sync', {
-        fetchedAt: (data.lastUpdated as string) ?? new Date().toISOString(),
-      }), 200, HTTP_CACHE.trending);
+        meta: { source: 'portal-sync', fetched_at: (data.lastUpdated as string) ?? new Date().toISOString(), timezone: 'America/Chicago' },
+      }, 200, HTTP_CACHE.trending);
     } catch {
       // Corrupt KV entry — fall through
     }
   }
-  return json(withMeta({
+  return json({
     entries: [], totalEntries: 0, lastUpdated: null,
+    meta: { source: 'none', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
     message: 'No portal data available yet',
-  }, 'none'), 200);
+  }, 200);
 }
 
 export async function handleCollegeBaseballEditorialList(env: Env): Promise<Response> {
@@ -265,7 +268,9 @@ export async function handleCollegeBaseballEditorialList(env: Env): Promise<Resp
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
-    return cachedJson(cached, 200, HTTP_CACHE.news, cachedPayloadHeaders(cached));
+    return cachedJson(cached, 200, HTTP_CACHE.news, {
+      ...dataHeaders(now, 'cache'), 'X-Cache': 'HIT',
+    });
   }
 
   try {
@@ -301,9 +306,10 @@ export async function handleCollegeBaseballEditorialList(env: Env): Promise<Resp
       };
     });
 
-    const payload = withMeta({
+    const payload = {
       editorials,
-    }, 'bsi-d1', { fetchedAt: now });
+      meta: { source: 'bsi-d1', fetched_at: now, timezone: 'America/Chicago' },
+    };
 
     await kvPut(env.KV, cacheKey, payload, 300); // 5 min cache
     return cachedJson(payload, 200, HTTP_CACHE.news, {
@@ -311,10 +317,11 @@ export async function handleCollegeBaseballEditorialList(env: Env): Promise<Resp
     });
   } catch (err) {
     console.error('[editorial] D1 query failed:', err instanceof Error ? err.message : err);
-    return json(withMeta({
+    return json({
       editorials: [],
+      meta: { source: 'bsi-d1', fetched_at: now, timezone: 'America/Chicago' },
       message: 'Editorial content is being set up.',
-    }, 'bsi-d1', { fetchedAt: now }), 200);
+    }, 200);
   }
 }
 
@@ -326,9 +333,10 @@ export async function handleCollegeBaseballEditorialContent(
 
   // Validate date format (YYYY-MM-DD)
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-    return json(withMeta({
+    return json({
       error: 'Invalid date format. Use YYYY-MM-DD.',
-    }, 'bsi-r2', { fetchedAt: now }), 400);
+      meta: { source: 'bsi-r2', fetched_at: now, timezone: 'America/Chicago' },
+    }, 400);
   }
 
   const r2Key = `editorial/cbb/${date}.md`;
@@ -337,27 +345,30 @@ export async function handleCollegeBaseballEditorialContent(
     const object = await env.ASSETS_BUCKET.get(r2Key);
 
     if (!object) {
-      return json(withMeta({
+      return json({
         content: null,
         date,
+        meta: { source: 'bsi-r2', fetched_at: now, timezone: 'America/Chicago' },
         message: `No editorial found for ${date}. Content is generated daily by the digest pipeline.`,
-      }, 'bsi-r2', { fetchedAt: now }), 404);
+      }, 404);
     }
 
     const content = await object.text();
 
-    return json(withMeta({
+    return json({
       content,
       date,
       contentType: object.httpMetadata?.contentType ?? 'text/markdown',
       size: object.size,
-    }, 'bsi-r2', { fetchedAt: now }));
+      meta: { source: 'bsi-r2', fetched_at: now, timezone: 'America/Chicago' },
+    });
   } catch (err) {
     console.error('[editorial] R2 read failed:', err instanceof Error ? err.message : err);
-    return json(withMeta({
+    return json({
       content: null,
       date,
+      meta: { source: 'bsi-r2', fetched_at: now, timezone: 'America/Chicago' },
       error: 'Failed to retrieve editorial content from storage.',
-    }, 'bsi-r2', { fetchedAt: now }), 500);
+    }, 500);
   }
 }

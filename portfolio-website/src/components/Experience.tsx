@@ -7,7 +7,8 @@ const experiences = [
     company: 'Blaze Sports Intel',
     location: 'San Antonio, TX',
     period: '2023 – Present',
-    accent: '#BF5700',
+    bgAccent: 'bg-burnt-orange',
+    textAccent: 'text-burnt-orange',
     description:
       'Production-grade sports analytics platform covering six leagues — 23 Workers, 7 databases, 58+ editorial deep-dives. Full architecture designed, deployed, and maintained solo. See the BSI section above for the complete story.',
   },
@@ -16,7 +17,8 @@ const experiences = [
     company: 'Spectrum Reach',
     location: 'Austin / San Antonio, TX',
     period: 'Nov 2022 – Dec 2025',
-    accent: '#3B82F6',
+    bgAccent: 'bg-spectrum-blue',
+    textAccent: 'text-spectrum-blue',
     description:
       'Data-informed advertising across linear TV, OTT/CTV, streaming, and digital platforms in the Austin/San Antonio DMA. Translated campaign performance into actionable insights and coordinated cross-functional teams.',
   },
@@ -25,7 +27,8 @@ const experiences = [
     company: 'Northwestern Mutual',
     location: 'Austin, TX',
     period: 'Dec 2020 – Aug 2022',
-    accent: '#1E3A5F',
+    bgAccent: 'bg-nw-navy',
+    textAccent: 'text-nw-navy',
     description:
       'Top-5 nationally ranked intern program led to a full-time role. Built comprehensive financial plans. Earned "Power of 10" Award for top 10% national performance.',
   },
@@ -34,7 +37,8 @@ const experiences = [
     company: 'Alpha Tau Omega — UT Austin',
     location: 'Austin, TX',
     period: '2015 – 2020',
-    accent: '#D4A843',
+    bgAccent: 'bg-ato-gold',
+    textAccent: 'text-ato-gold',
     description:
       'Led recruitment strategy for 73 new members. Managed approximately $100K in event budgets. Bridge between active chapter and alumni network.',
   },
@@ -70,8 +74,7 @@ export default function Experience() {
                 {/* Timeline dot */}
                 <div className="absolute left-0 top-8 -translate-x-1/2">
                   <span
-                    className="block w-2.5 h-2.5 rounded-full"
-                    style={{ backgroundColor: exp.accent }}
+                    className={`block w-2.5 h-2.5 rounded-full ${exp.bgAccent}`}
                   />
                 </div>
 
@@ -80,7 +83,7 @@ export default function Experience() {
                     <h3 className="font-sans font-semibold text-base uppercase tracking-wider text-bone group-hover:text-burnt-orange transition-colors duration-300">
                       {exp.title}
                     </h3>
-                    <p className="text-sm font-semibold" style={{ color: exp.accent }}>{exp.company}</p>
+                    <p className={`text-sm font-semibold ${exp.textAccent}`}>{exp.company}</p>
                   </div>
                   <div className="flex items-center gap-3 text-sm font-mono text-warm-gray shrink-0">
                     <span>{exp.location}</span>

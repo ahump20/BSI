@@ -7,9 +7,13 @@ import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { LiveStatsBadge } from '@/components/editorial/LiveStatsBadge';
+import { teamMetadata } from '@/lib/data/team-metadata';
 import type { TeamPreviewData } from './types';
 
 export function SECTeamPreviewTemplate({ data }: { data: TeamPreviewData }) {
+  const teamMeta = data.teamSlug ? teamMetadata[data.teamSlug] : null;
+  const espnId = teamMeta?.espnId;
   return (
     <>
       <main id="main-content">
@@ -91,6 +95,7 @@ export function SECTeamPreviewTemplate({ data }: { data: TeamPreviewData }) {
                   <div className="text-text-muted text-xs mt-1">CWS Wins</div>
                 </Card>
               </div>
+              {espnId && <LiveStatsBadge espnId={espnId} />}
             </ScrollReveal>
           </Container>
         </Section>

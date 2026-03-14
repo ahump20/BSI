@@ -9,6 +9,9 @@ const config: Config = {
   darkMode: 'class',
   theme: {
     extend: {
+      screens: {
+        xs: '375px',
+      },
       colors: {
         // Brand Colors - Burnt Orange Scale
         'burnt-orange': {
@@ -158,6 +161,8 @@ const config: Config = {
         display: ['var(--font-oswald)', 'Oswald', 'Impact', 'Arial Black', 'sans-serif'],
         serif: ['var(--font-cormorant)', 'Cormorant Garamond', 'Georgia', 'Cambria', 'serif'],
         mono: ['var(--font-mono)', 'JetBrains Mono', 'SF Mono', 'Consolas', 'Monaco', 'Courier New', 'monospace'],
+        'savant-display': ['var(--font-syne)', 'Syne', 'system-ui', 'sans-serif'],
+        'savant-body': ['var(--font-dm-sans)', 'DM Sans', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         xs: ['clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem)', { lineHeight: '1.5' }],

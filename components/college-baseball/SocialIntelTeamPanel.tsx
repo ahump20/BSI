@@ -225,14 +225,16 @@ export function SocialIntelTeamPanel({ teamId }: SocialIntelTeamPanelProps) {
 
   useEffect(() => {
     if (!teamId) return;
-    let cancelled = false;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
 
-    fetch(`/api/college-baseball/social-intel/team/${encodeURIComponent(teamId)}`)
+    fetch(`/api/college-baseball/social-intel/team/${encodeURIComponent(teamId)}`, { signal: controller.signal })
       .then(r => r.ok ? r.json() as Promise<TeamIntelResponse> : Promise.reject(r.status))
-      .then(d => { if (!cancelled) { setData(d); setLoading(false); } })
-      .catch(() => { if (!cancelled) setLoading(false); });
+      .then(d => { if (!controller.signal.aborted) { setData(d); setLoading(false); } })
+      .catch((err) => { if ((err as Error).name !== 'AbortError' && !controller.signal.aborted) setLoading(false); })
+      .finally(() => clearTimeout(timeout));
 
-    return () => { cancelled = true; };
+    return () => { controller.abort(); clearTimeout(timeout); };
   }, [teamId]);
 
   // Don't render if empty after load

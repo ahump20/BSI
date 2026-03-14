@@ -113,8 +113,11 @@ export async function handleCollegeBaseballScores(
   try {
     const client = getCollegeClient();
     const result = await client.getMatches('NCAA', date);
+    const fallbackData = result.data && typeof result.data === 'object'
+      ? result.data as unknown as Record<string, unknown>
+      : empty;
 
-    const ncaaPayload = withMeta((result.data as Record<string, unknown>) ?? empty, 'ncaa', {
+    const ncaaPayload = withMeta(fallbackData, 'ncaa', {
       fetchedAt: now,
       sources: ['ncaa'],
       degraded: true,

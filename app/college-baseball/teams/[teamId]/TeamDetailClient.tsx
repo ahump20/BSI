@@ -10,6 +10,8 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { AITeamPreview } from '@/components/college-baseball/AITeamPreview';
 import { SabermetricsPanel } from '@/components/college-baseball/SabermetricsPanel';
+import { SeasonArcChart } from '@/components/college-baseball/SeasonArcChart';
+import { ConferencePositionCard } from '@/components/college-baseball/ConferencePositionCard';
 import { SocialIntelTeamPanel } from '@/components/college-baseball/SocialIntelTeamPanel';
 import { MMIGauge } from '@/components/analytics/MMIGauge';
 import { TeamVideoPanel } from '@/components/college-baseball/TeamVideoPanel';
@@ -395,7 +397,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
     );
   }
 
-  const logoUrl = getLogoUrl(meta.espnId, meta.logoId);
+  const logoUrl = getLogoUrl(meta.espnId, meta.logoId, meta.localLogo);
   const hasPreseason = !!preseason;
   const overallRecord = preseason?.record2025?.split(' (')[0] || null;
   const confRecord = preseason?.record2025?.match(/\(([^)]+)\)/)?.[1] || null;
@@ -1402,7 +1404,23 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
 
             {/* ── Advanced Stats ──────────────────────────────────────────── */}
             {activeTab === 'advanced' && (
-              <SabermetricsPanel teamId={teamId} espnId={meta?.espnId} accent={accent} />
+              <div className="space-y-6">
+                <SabermetricsPanel teamId={teamId} espnId={meta?.espnId} accent={accent} />
+                {meta?.conference && (
+                  <ConferencePositionCard
+                    teamId={teamId}
+                    espnId={meta.espnId}
+                    conference={meta.conference}
+                    accent={accent}
+                  />
+                )}
+                {meta?.espnId && (
+                  <SeasonArcChart
+                    teamId={teamId}
+                    espnId={meta.espnId}
+                  />
+                )}
+              </div>
             )}
 
             {/* Attribution */}

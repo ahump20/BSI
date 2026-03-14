@@ -116,10 +116,13 @@ export default function NFLNewsPage() {
   const [sourceLabel, setSourceLabel] = useState('ESPN');
 
   useEffect(() => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+
     const fetchNews = async () => {
       setLoading(true);
       try {
-        const res = await fetch(getReadApiUrl('/api/nfl/news'));
+        const res = await fetch(getReadApiUrl('/api/nfl/news'), { signal: controller.signal });
         if (!res.ok) throw new Error('Failed to fetch news');
         const data = (await res.json()) as NewsApiResponse;
         const normalized = (data.articles || []).map((article, index) => ({
@@ -138,12 +141,16 @@ export default function NFLNewsPage() {
         setSourceLabel(data.meta?.source || 'ESPN');
         setLoading(false);
       } catch (err) {
+        if ((err as Error).name === 'AbortError') return;
         setError(err instanceof Error ? err.message : 'Unknown error');
         setLoading(false);
+      } finally {
+        clearTimeout(timeout);
       }
     };
 
     fetchNews();
+    return () => { controller.abort(); clearTimeout(timeout); };
   }, []);
 
   const filteredNews = filter === 'all' ? news : news.filter((item) => item.category === filter);

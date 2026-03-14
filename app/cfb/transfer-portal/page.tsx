@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { useSportData } from '@/lib/hooks/useSportData';
 
 // Import shared portal components
 import {
@@ -163,7 +164,6 @@ function StatCard({
 }
 
 export default function CFBTransferPortalPage() {
-  const [entries, setEntries] = useState<PortalEntry[]>(FALLBACK_ENTRIES);
   const [filters, setFilters] = useState<FilterState>({
     position: '',
     conference: '',
@@ -171,18 +171,14 @@ export default function CFBTransferPortalPage() {
     search: '',
   });
 
-  useEffect(() => {
-    fetch('/api/cfb/transfer-portal')
-      .then((r) => r.json())
-      .then((data: { entries?: PortalEntry[] }) => {
-        if (data.entries && data.entries.length > 0) {
-          setEntries(data.entries);
-        }
-      })
-      .catch(() => {
-        // Keep fallback data on fetch failure
-      });
-  }, []);
+  const { data: portalData } = useSportData<{ entries?: PortalEntry[] }>('/api/cfb/transfer-portal');
+
+  const entries = useMemo(() => {
+    if (portalData?.entries && portalData.entries.length > 0) {
+      return portalData.entries;
+    }
+    return FALLBACK_ENTRIES;
+  }, [portalData]);
 
   // Filter entries locally
   const filteredEntries = entries.filter((entry) => {

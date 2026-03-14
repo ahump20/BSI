@@ -133,6 +133,11 @@ interface PayloadMetaOptions {
   extra?: Record<string, unknown>;
 }
 
+interface CachedResultShape {
+  cached: boolean;
+  source: string;
+}
+
 export function buildMeta(source = 'espn', options: PayloadMetaOptions = {}): Record<string, unknown> {
   return {
     source,
@@ -154,6 +159,42 @@ export function withMeta(
     ...(data as Record<string, unknown>),
     meta: buildMeta(source, options),
   };
+}
+
+/** Preserve existing payload meta when it is already present; otherwise add standard BSI meta. */
+export function ensurePayloadMeta(
+  data: unknown,
+  source = 'espn',
+  options: PayloadMetaOptions = {},
+): Record<string, unknown> {
+  if (typeof data === 'object' && data !== null) {
+    const root = data as Record<string, unknown>;
+    if (typeof root.meta === 'object' && root.meta !== null) {
+      return root;
+    }
+  }
+  return withMeta(data, source, options);
+}
+
+/** Standardize headers for fetchWithFallback/fetchWithCache style result envelopes. */
+export function fetchResultHeaders(payload: unknown, result: CachedResultShape): Record<string, string> {
+  if (!result.cached) {
+    return {
+      'X-Cache': 'MISS',
+      'X-Data-Source': result.source,
+    };
+  }
+
+  if (result.source === 'stale-cache') {
+    return {
+      ...cachedPayloadHeaders(payload, 'stale-cache'),
+      'X-Cache': 'STALE',
+      'X-Cache-State': 'stale',
+      'X-Data-Source': 'stale-cache',
+    };
+  }
+
+  return cachedPayloadHeaders(payload);
 }
 
 export function getSDIOClient(env: Env): SportsDataIOClient | null {

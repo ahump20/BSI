@@ -305,16 +305,13 @@ export default function AIChatWidget() {
                   </span>
                   <span className="inline-flex gap-1">
                     <span
-                      className="w-1.5 h-1.5 bg-burnt-orange/60 rounded-full animate-bounce"
-                      style={{ animationDelay: '0ms' }}
+                      className="w-1.5 h-1.5 bg-burnt-orange/60 rounded-full animate-bounce bounce-delay-0"
                     />
                     <span
-                      className="w-1.5 h-1.5 bg-burnt-orange/60 rounded-full animate-bounce"
-                      style={{ animationDelay: '150ms' }}
+                      className="w-1.5 h-1.5 bg-burnt-orange/60 rounded-full animate-bounce bounce-delay-1"
                     />
                     <span
-                      className="w-1.5 h-1.5 bg-burnt-orange/60 rounded-full animate-bounce"
-                      style={{ animationDelay: '300ms' }}
+                      className="w-1.5 h-1.5 bg-burnt-orange/60 rounded-full animate-bounce bounce-delay-2"
                     />
                   </span>
                 </div>

@@ -86,24 +86,37 @@ export default function Contact() {
     if (website) return;
 
     setFormState('sending');
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
     try {
       const payload: Record<string, string> = { name, email, message, site: 'austinhumphrey.com' };
       if (turnstileToken) payload.turnstileToken = turnstileToken;
-      const res = await fetch(`${PLATFORM_URLS.bsi}/api/contact`, {
+      const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
+        signal: controller.signal,
       });
-      if (res.ok) {
-        setFormState('sent');
-        setName('');
-        setEmail('');
-        setMessage('');
-      } else {
-        setFormState('error');
+
+      const data = (await res.json().catch(() => null)) as { error?: string } | null;
+      if (!res.ok) {
+        throw new Error(data?.error || 'Unable to send your message right now.');
       }
-    } catch {
+
+      setFormState('sent');
+      setName('');
+      setEmail('');
+      setMessage('');
+      setTurnstileToken('');
+    } catch (err) {
+      if (err instanceof Error && err.name === 'AbortError') {
+        setFormState('error');
+        return;
+      }
       setFormState('error');
+    } finally {
+      clearTimeout(timeoutId);
     }
   };
 
@@ -111,11 +124,7 @@ export default function Contact() {
     <section
       id="contact"
       aria-labelledby="contact-heading"
-      className="section-padding section-border"
-      style={{
-        background:
-          'linear-gradient(180deg, rgba(8,8,8,1) 0%, rgba(13,13,13,1) 38%, rgba(21,21,21,1) 100%)',
-      }}
+      className="section-padding section-border contact-bg"
     >
       <div className="container-custom">
         <motion.div
@@ -138,10 +147,7 @@ export default function Contact() {
               {/* Direct Line card — prominent, above link grid */}
               <div className="relative rounded-sm border border-bone/10 bg-midnight/70 px-6 py-6 overflow-hidden">
                 <div
-                  className="pointer-events-none absolute inset-x-0 top-0 h-px"
-                  style={{
-                    background: 'linear-gradient(90deg, transparent 8%, rgba(191,87,0,0.45) 50%, transparent 92%)',
-                  }}
+                  className="pointer-events-none absolute inset-x-0 top-0 h-px accent-line-narrow"
                 />
                 <p className="section-label mb-3">Direct Line</p>
                 <p className="text-base leading-7 text-bone/75">
@@ -199,11 +205,7 @@ export default function Contact() {
               className="card relative overflow-hidden p-8 text-left md:p-10"
             >
               <div
-                className="pointer-events-none absolute inset-x-0 top-0 h-px"
-                style={{
-                  background:
-                    'linear-gradient(90deg, transparent 8%, rgba(191,87,0,0.45) 50%, transparent 92%)',
-                }}
+                className="pointer-events-none absolute inset-x-0 top-0 h-px accent-line-narrow"
               />
               <h3 className="font-sans text-sm uppercase tracking-[0.2em] text-burnt-orange font-medium mb-3">
                 Send a Message
@@ -283,13 +285,13 @@ export default function Contact() {
               </button>
 
               {formState === 'sent' && (
-                <p className="text-green-400 text-xs font-mono mt-3 text-center">
+                <p className="text-green-400 text-xs font-mono mt-3 text-center" aria-live="polite">
                   Message received. Austin will get back to you.
                 </p>
               )}
               {formState === 'error' && (
-                <p className="text-orange-400 text-xs font-mono mt-3 text-center">
-                  Something went wrong. Try emailing {PRIMARY_EMAIL} directly.
+                <p className="text-orange-400 text-xs font-mono mt-3 text-center" aria-live="polite">
+                  Something went wrong. Try again or email {PRIMARY_EMAIL} directly.
                 </p>
               )}
             </motion.form>

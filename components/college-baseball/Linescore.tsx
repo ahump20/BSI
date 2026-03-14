@@ -111,6 +111,9 @@ export default function Linescore({
                       src={awayTeam.logo}
                       alt={awayTeam.name}
                       className="w-5 h-5 object-contain"
+                      width={20}
+                      height={20}
+                      loading="lazy"
                     />
                   )}
                   <span className="font-semibold text-bone text-xs uppercase tracking-wide">
@@ -159,6 +162,9 @@ export default function Linescore({
                       src={homeTeam.logo}
                       alt={homeTeam.name}
                       className="w-5 h-5 object-contain"
+                      width={20}
+                      height={20}
+                      loading="lazy"
                     />
                   )}
                   <span className="font-semibold text-bone text-xs uppercase tracking-wide">

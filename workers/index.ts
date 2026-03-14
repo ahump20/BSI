@@ -49,6 +49,7 @@ import {
   handleCBBTeamSabermetrics,
   handleCBBTeamSOS,
   handleCBBConferencePowerIndex,
+  handleCBBSeasonArc,
   handleCBBBulkSync,
   handleHighlightlySync,
   handleGameLogBackfill,
@@ -75,7 +76,6 @@ import {
 import {
   handleMLBScores,
   handleMLBStandings,
-  handleMLBAbs,
   handleMLBGame,
   handleMLBPlayer,
   handleMLBTeam,
@@ -88,9 +88,6 @@ import {
   handleMLBSpringSchedule,
   handleMLBSpringRoster,
 } from './handlers/mlb';
-import { handleGameAnalysis } from './handlers/ai';
-import { handleHeroScores } from './handlers/hero-scores';
-import { handlePodcasts } from './handlers/media';
 
 import {
   handleNFLScores,
@@ -132,7 +129,7 @@ import { handleSearch } from './handlers/search';
 import { handleCreateEmbeddedCheckout, handleSessionStatus, handleCustomerPortal } from './handlers/stripe';
 import { handleLogin, handleValidateKey } from './handlers/auth';
 import { handleScheduled, handleCachedScores, handleHealthProviders } from './handlers/cron';
-import { handleHealth, handleStatus, handleAdminHealth, handleAdminErrors, handleSemanticHealth, handleWebSocket } from './handlers/health';
+import { handleHealth, handleStatus, handleAdminHealth, handleAdminErrors, handleWebSocket } from './handlers/health';
 import { handleMcpRequest } from './handlers/mcp';
 import {
   handleCVPitcherMechanics,
@@ -178,10 +175,24 @@ import {
   handleArcadeSession,
 } from './handlers/games';
 import { handleTeams, handleModelHealth, handleAnalyticsEvent, handleWeeklyBrief } from './handlers/general';
-import { handleContact, handleLead, handleFeedback, handleNewsletter, handleCSPReport } from './handlers/lead';
+import { handleContact, handleLead, handleFeedback, handleCSPReport } from './handlers/lead';
 import { handlePredictionSubmit, handlePredictionAccuracy } from './handlers/predictions';
 import { handleIntelNews, handleESPNNews } from './handlers/news';
-import { handleTexasIntelVideos, handleTexasIntelNews, handleTexasIntelDigest, handleTexasPlayerProfile, handleTexasOpponentScout, handleTexasGameAnalyses, handleTexasGameAnalysisGenerate, handleTexasPitchingStaff, handleTexasScheduleHeatMap } from './handlers/texas-intel';
+import {
+  handleTexasIntelVideos,
+  handleTexasIntelNews,
+  handleTexasIntelDigest,
+  handleTexasPlayerProfile,
+  handleTexasOpponentScout,
+  handleTexasGameAnalysisGenerate,
+  handleTexasGameAnalyses,
+  handleTexasPitchingStaff,
+  handleTexasScheduleHeatMap,
+  handleTexasMatchup,
+  handleTexasDraftBoard,
+  handleTexasPortalIntel,
+  handleTexasTrends,
+} from './handlers/texas-intel';
 import {
   handleShowSourceStatus,
   handleShowMarketOverview,
@@ -316,8 +327,6 @@ app.all('/api/auth/signup', (c) => c.redirect('/pricing', 302));
 app.get('/health', (c) => handleHealth(c.env));
 app.get('/api/health', (c) => handleHealth(c.env));
 app.get('/api/status', (c) => handleStatus(c.env));
-app.get('/api/hero-scores', (c) => handleHeroScores(new URL(c.req.url), c.env));
-app.get('/api/semantic-health', (c) => handleSemanticHealth(c.req.raw, c.env));
 
 // --- Admin auth middleware — requires ADMIN_KEY secret ---
 app.use('/api/admin/*', async (c, next) => {
@@ -415,6 +424,7 @@ app.get('/api/college-baseball/sync-stats', (c) => handleCBBBulkSync(new URL(c.r
 app.get('/api/college-baseball/sync-highlightly', (c) => handleHighlightlySync(new URL(c.req.url), c.env));
 app.get('/api/college-baseball/backfill-game-log', (c) => handleGameLogBackfill(new URL(c.req.url), c.env));
 app.get('/api/college-baseball/teams/:teamId/sos', (c) => handleCBBTeamSOS(c.req.param('teamId'), c.env));
+app.get('/api/college-baseball/teams/:teamId/season-arc', (c) => handleCBBSeasonArc(c.req.param('teamId'), new URL(c.req.url), c.env));
 app.get('/api/college-baseball/conferences/:conf/power-index', (c) => handleCBBConferencePowerIndex(c.req.param('conf'), c.env));
 app.get('/api/college-baseball/teams/:teamId', (c) => {
   let ctx: ExecutionContext | undefined;
@@ -436,12 +446,17 @@ app.get('/api/college-baseball/social-intel/team/:teamId', (c) => handleSocialIn
 app.get('/api/college-baseball/texas-intelligence/videos', (c) => handleTexasIntelVideos(c.env));
 app.get('/api/college-baseball/texas-intelligence/news', (c) => handleTexasIntelNews(c.env));
 app.get('/api/college-baseball/texas-intelligence/digest', (c) => handleTexasIntelDigest(c.env));
+app.get('/api/college-baseball/texas-intelligence/pitching', (c) => handleTexasPitchingStaff(c.env));
+app.get('/api/college-baseball/texas-intelligence/schedule', (c) => handleTexasScheduleHeatMap(c.env));
+app.get('/api/college-baseball/texas-intelligence/draft', (c) => handleTexasDraftBoard(c.env));
+app.get('/api/college-baseball/texas-intelligence/portal', (c) => handleTexasPortalIntel(c.env));
+app.get('/api/college-baseball/texas-intelligence/trends', (c) => handleTexasTrends(c.env));
+app.get('/api/college-baseball/texas-intelligence/game-analyses', (c) => handleTexasGameAnalyses(c.env));
+app.get('/api/college-baseball/texas-intelligence/game-analysis/:gameId', (c) => handleTexasGameAnalysisGenerate(c.env, c.req.param('gameId')));
 app.get('/api/college-baseball/texas-intelligence/players/:playerId', (c) => handleTexasPlayerProfile(c.env, c.req.param('playerId')));
 app.get('/api/college-baseball/texas-intelligence/scouting/:opponentId', (c) => handleTexasOpponentScout(c.env, c.req.param('opponentId')));
-app.get('/api/college-baseball/texas-intelligence/game-analyses', (c) => handleTexasGameAnalyses(c.env));
-app.get('/api/college-baseball/texas-intelligence/game-analyses/:gameId/generate', (c) => handleTexasGameAnalysisGenerate(c.env, c.req.param('gameId')));
-app.get('/api/college-baseball/texas-intelligence/pitching', (c) => handleTexasPitchingStaff(c.env));
-app.get('/api/college-baseball/texas-intelligence/schedule-heatmap', (c) => handleTexasScheduleHeatMap(c.env));
+app.get('/api/college-baseball/texas-intelligence/matchup/:opponentId', (c) => handleTexasMatchup(c.env, c.req.param('opponentId')));
+
 app.get('/api/college-baseball/scores/ws', (c) => {
   if (c.req.header('Upgrade') !== 'websocket') {
     return c.json({ error: 'Expected websocket upgrade' }, 400);
@@ -497,14 +512,9 @@ app.get('/api/blog-post-feed/:slug', (c) =>
   handleBlogPostFeedItem(c.req.param('slug'), c.env)
 );
 
-// --- AI + Media ---
-app.post('/api/ai/game-analysis', (c) => handleGameAnalysis(c.req.raw, c.env));
-app.get('/api/media/podcasts', (c) => handlePodcasts(c.env));
-
 // --- MLB ---
 app.get('/api/mlb/scores', (c) => safeESPN(() => handleMLBScores(new URL(c.req.url), c.env), 'games', [], c.env));
 app.get('/api/mlb/standings', (c) => safeESPN(() => handleMLBStandings(c.env), 'standings', [], c.env));
-app.get('/api/mlb/abs', (c) => handleMLBAbs(c.env));
 app.get('/api/mlb/news', (c) => safeESPN(() => handleMLBNews(c.env), 'articles', [], c.env));
 app.get('/api/mlb/stats/leaders', (c) => safeESPN(() => handleMLBStatsLeaders(new URL(c.req.url), c.env), 'leaders', [], c.env));
 app.get('/api/mlb/leaderboards/:category', (c) => safeESPN(() => handleMLBLeaderboard(c.req.param('category'), new URL(c.req.url), c.env), 'data', [], c.env));
@@ -655,7 +665,6 @@ app.get('/teams/:league', (c) => safeESPN(() => handleTeams(c.req.param('league'
 app.post('/api/contact', (c) => handleContact(c.req.raw, c.env));
 app.post('/api/lead', (c) => handleLead(c.req.raw, c.env));
 app.post('/api/leads', (c) => handleLead(c.req.raw, c.env));
-app.post('/api/newsletter', (c) => handleNewsletter(c.req.raw, c.env));
 
 // --- WebSocket ---
 app.get('/ws', (c) => {

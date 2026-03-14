@@ -42,7 +42,7 @@ export function MatchupRadar({ game }: MatchupRadarProps) {
             />
             <PolarAngleAxis
               dataKey="metric"
-              tick={{ fill: '#737373', fontSize: 10, fontFamily: 'var(--bsi-font-mono)' }}
+              tick={{ fill: 'var(--chart-axis-text)', fontSize: 10, fontFamily: 'var(--bsi-font-mono)' }}
             />
             <Radar
               name={game.away.abbreviation || 'Away'}

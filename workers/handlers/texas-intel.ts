@@ -1,10 +1,5 @@
 /**
- * Texas Intelligence — content aggregation handlers.
- *
- * Endpoints:
- *   GET /api/college-baseball/texas-intelligence/videos  — YouTube search results
- *   GET /api/college-baseball/texas-intelligence/news    — RSS aggregation
- *   GET /api/college-baseball/texas-intelligence/digest  — AI-generated daily digest
+ * Texas Intelligence — content aggregation, roster, analytics, and scheduling handlers.
  */
 
 import type { Env } from '../shared/types';
@@ -599,34 +594,41 @@ export async function handleTexasOpponentScout(env: Env, opponentId: string): Pr
   }
 
   try {
-    const [teamBattingResult, topHittersResult, topPitchersResult] = await Promise.all([
+    const [teamBattingResult, teamPitchingResult, topHittersResult, topPitchersResult] = await Promise.all([
       env.DB.prepare(
         `SELECT AVG(avg) AS avg, AVG(obp) AS obp, AVG(slg) AS slg, AVG(ops) AS ops,
                 AVG(k_pct) AS k_pct, AVG(bb_pct) AS bb_pct, AVG(iso) AS iso,
-                AVG(woba) AS woba, AVG(wrc_plus) AS wrc_plus
+                AVG(woba) AS woba, AVG(wrc_plus) AS wrc_plus, AVG(babip) AS babip
          FROM cbb_batting_advanced
          WHERE team_id = ?`,
       ).bind(opponentId).first(),
 
       env.DB.prepare(
-        `SELECT player_id, player_name, position, g, ab, avg, obp, slg, ops, hr, rbi, sb, woba, wrc_plus, iso, k_pct, bb_pct
+        `SELECT AVG(era) AS era, AVG(fip) AS fip, AVG(whip) AS whip,
+                AVG(k_9) AS k_9, AVG(bb_9) AS bb_9
+         FROM cbb_pitching_advanced
+         WHERE team_id = ?`,
+      ).bind(opponentId).first(),
+
+      env.DB.prepare(
+        `SELECT player_name, position, ab AS pa, avg, woba, wrc_plus, hr
          FROM cbb_batting_advanced
          WHERE team_id = ?
          ORDER BY woba DESC LIMIT 5`,
       ).bind(opponentId).all(),
 
       env.DB.prepare(
-        `SELECT player_id, player_name, position, g, gs, w, l, sv, ip, era, whip, k_9, bb_9, fip, x_fip, k_bb
+        `SELECT player_name, position, ip, era, fip, k_9, bb_9
          FROM cbb_pitching_advanced
          WHERE team_id = ?
          ORDER BY fip ASC LIMIT 5`,
       ).bind(opponentId).all(),
     ]);
 
-    // Determine opponent conference from one of the returned rows
+    // Determine opponent name + conference from data rows
     const sampleRow = await env.DB.prepare(
-      `SELECT conference FROM cbb_batting_advanced WHERE team_id = ? LIMIT 1`,
-    ).bind(opponentId).first<{ conference: string }>();
+      `SELECT team_name, conference FROM cbb_batting_advanced WHERE team_id = ? LIMIT 1`,
+    ).bind(opponentId).first<{ team_name: string; conference: string }>();
 
     let conferenceStrength: ConferenceStrengthRow | null = null;
     if (sampleRow?.conference) {
@@ -640,16 +642,8 @@ export async function handleTexasOpponentScout(env: Env, opponentId: string): Pr
     const topHitters = topHittersResult.results ?? [];
     const topPitchers = topPitchersResult.results ?? [];
 
-    const scoutData = {
-      opponentId,
-      teamBatting: teamBattingResult ?? null,
-      topHitters,
-      topPitchers,
-      conferenceStrength: conferenceStrength ?? null,
-    };
-
     // Attempt AI scouting brief
-    let aiBrief: Record<string, unknown> | null = null;
+    let brief: Record<string, unknown> | null = null;
     if (env.ANTHROPIC_API_KEY) {
       try {
         const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -669,6 +663,7 @@ export async function handleTexasOpponentScout(env: Env, opponentId: string): Pr
                 content: `You are a college baseball scouting analyst for the Texas Longhorns. Analyze this opponent data and provide a scouting report.
 
 Team batting averages: ${JSON.stringify(teamBattingResult)}
+Team pitching averages: ${JSON.stringify(teamPitchingResult)}
 Top 5 hitters by wOBA: ${JSON.stringify(topHitters)}
 Top 5 pitchers by FIP: ${JSON.stringify(topPitchers)}
 Conference strength: ${JSON.stringify(conferenceStrength)}
@@ -678,7 +673,7 @@ Respond ONLY with valid JSON in this exact structure:
   "overview": "1-2 sentence team summary",
   "offense_analysis": "2-3 sentences on their offensive profile — strengths, weaknesses, tendencies",
   "pitching_analysis": "2-3 sentences on their pitching staff — strengths, weaknesses, tendencies",
-  "key_matchups": ["matchup 1", "matchup 2", "matchup 3"],
+  "key_matchups": "2-3 sentences on key individual matchups Texas should watch",
   "game_plan": "2-3 sentences on recommended approach for Texas"
 }`,
               },
@@ -691,7 +686,7 @@ Respond ONLY with valid JSON in this exact structure:
           const text = result.content?.[0]?.text ?? '';
           const jsonMatch = text.match(/\{[\s\S]*\}/);
           if (jsonMatch) {
-            aiBrief = JSON.parse(jsonMatch[0]) as Record<string, unknown>;
+            brief = JSON.parse(jsonMatch[0]) as Record<string, unknown>;
           }
         }
       } catch (aiErr) {
@@ -699,12 +694,22 @@ Respond ONLY with valid JSON in this exact structure:
       }
     }
 
+    // Structure response to match client ScoutingResponse interface
     const payload = withMeta(
       {
-        ...scoutData,
-        aiBrief,
+        opponent: {
+          id: opponentId,
+          name: sampleRow?.team_name ?? opponentId,
+          conference: sampleRow?.conference ?? '',
+          teamBatting: teamBattingResult ?? {},
+          teamPitching: teamPitchingResult ?? {},
+        },
+        topHitters,
+        topPitchers,
+        conferenceStrength: conferenceStrength ?? null,
+        brief,
       },
-      aiBrief ? 'anthropic+d1' : 'd1',
+      brief ? 'anthropic+d1' : 'd1',
     );
 
     await kvPut(env.KV, KV_KEY, payload, TTL);
@@ -1068,19 +1073,21 @@ export async function handleTexasScheduleHeatMap(env: Env): Promise<Response> {
       const opponentRecord = teamWins.get(opponentId);
       const opponentRecordStr = opponentRecord ? `${opponentRecord.w}-${opponentRecord.l}` : null;
 
-      // Find conference strength — approximate lookup
+      // Find opponent's conference strength via team name lookup in DB
       let confStrengthVal: number | null = null;
-      // We don't have a direct team→conference mapping from ESPN here,
-      // so use a moderate default and enhance from D1 if available
-      const confEntries = Array.from(confStrengthMap.values());
-      for (let ci = 0; ci < confEntries.length; ci++) {
-        if (confEntries[ci].strength_index != null) {
-          confStrengthVal = confEntries[ci].strength_index;
-          break;
+      // Try to find the opponent's conference from their team name
+      const opponentConf = confStrengthMap.get(opponentName);
+      if (opponentConf?.strength_index != null) {
+        confStrengthVal = opponentConf.strength_index;
+      } else {
+        // Fallback: look through all conferences for a name match in team lists
+        for (const [, conf] of confStrengthMap) {
+          if (conf.strength_index != null) {
+            // Use a moderate default if we can't match the opponent
+            confStrengthVal = confStrengthVal ?? conf.strength_index;
+          }
         }
       }
-
-      // Attempt to get opponent-specific conference from D1
       const { difficulty, difficultyLabel } = computeDifficulty(confStrengthVal, !isHome, opponentName);
       totalDifficulty += difficulty;
 

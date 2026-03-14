@@ -22,7 +22,7 @@ import {
   transformSDIOCFBScores,
   transformSDIOCFBStandings,
 } from '../../lib/api-clients/sportsdataio-api';
-import type { BSIScoreboardResult } from '../../lib/api-clients/espn-types';
+import type { BSIScoreboardResult, BSIStandingsResult } from '../../lib/api-clients/espn-types';
 import { fetchWithFallback } from '../../lib/api-clients/data-fetcher';
 
 export async function handleCFBTransferPortal(env: Env): Promise<Response> {
@@ -78,7 +78,7 @@ export async function handleCFBStandings(env: Env): Promise<Response> {
   if (sdio) {
     const result = await fetchWithFallback(
       async () => transformSDIOCFBStandings(await sdio.getCFBStandings()),
-      async () => transformStandings(await getStandings('cfb') as Record<string, unknown>, 'cfb'),
+      async () => transformStandings(await getStandings('cfb') as Record<string, unknown>, 'cfb') as unknown as BSIStandingsResult,
       cacheKey, env.KV, CACHE_TTL.standings,
       'sportsdataio', 'espn',
       { staleKey: `${cacheKey}:stale` },

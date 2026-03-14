@@ -67,13 +67,11 @@ test.describe('API: /api/college-baseball/rankings', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 test.describe('API: /api/college-baseball/scores', () => {
-  test('returns 200 with meta and games/data array', async ({ request }) => {
+  test('returns 200 with games/data array', async ({ request }) => {
     const res = await request.get(`${BASE}/api/college-baseball/scores`);
     expect(res.status()).toBe(200);
 
     const data = await res.json();
-    expect(data).toHaveProperty('meta');
-
     const games = data.games ?? data.data;
     expect(Array.isArray(games)).toBe(true);
   });

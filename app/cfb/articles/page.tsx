@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { useSportData } from '@/lib/hooks/useSportData';
 
 interface Article {
   id: number;
@@ -25,25 +26,9 @@ interface ArticlesResponse {
 }
 
 export default function CFBArticlesPage() {
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: articlesData, loading, error } = useSportData<ArticlesResponse>('/api/college-football/articles');
 
-  useEffect(() => {
-    async function fetchArticles() {
-      try {
-        const res = await fetch('/api/college-football/articles');
-        if (!res.ok) throw new Error('Failed to fetch articles');
-        const data: ArticlesResponse = await res.json();
-        setArticles(data.articles || []);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load articles');
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchArticles();
-  }, []);
+  const articles = useMemo(() => articlesData?.articles || [], [articlesData]);
 
   const formatDate = (dateString: string) =>
     new Date(dateString).toLocaleDateString('en-US', {

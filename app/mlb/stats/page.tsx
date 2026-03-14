@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -9,6 +9,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { formatTimestamp } from '@/lib/utils/timezone';
 import type { DataMeta } from '@/lib/types/data-meta';
 
@@ -48,41 +49,21 @@ const pitchingStats = [
 
 export default function MLBStatsPage() {
   const [leaders, setLeaders] = useState<Record<string, StatLeader[]>>({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [meta, setMeta] = useState<DataMeta | null>(null);
   const [category, setCategory] = useState<CategoryType>('batting');
   const [selectedStat, setSelectedStat] = useState<StatType>('avg');
 
-  const fetchLeaders = useCallback(async (signal?: AbortSignal) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`/api/mlb/stats/leaders?category=${category}&stat=${selectedStat}`, { signal });
-      if (!res.ok) throw new Error('Failed to fetch leaders');
-      const data = (await res.json()) as { leaders?: StatLeader[]; meta?: DataMeta };
+  const { data: rawData, loading, error, retry: fetchLeaders } = useSportData<{ leaders?: StatLeader[]; meta?: DataMeta }>(
+    `/api/mlb/stats/leaders?category=${category}&stat=${selectedStat}`
+  );
 
-      if (data.leaders) {
-        setLeaders((prev) => ({ ...prev, [`${category}-${selectedStat}`]: data.leaders }));
-      }
-      if (data.meta) {
-        setMeta(data.meta);
-      }
-      setLoading(false);
-    } catch (err: unknown) {
-      if ((err as Error).name === 'AbortError') return;
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      setError(errorMessage);
-      setLoading(false);
-    }
-  }, [category, selectedStat]);
+  const meta = rawData?.meta ?? null;
 
+  // Cache leaders by category-stat key so switching back preserves data
   useEffect(() => {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 8000);
-    fetchLeaders(controller.signal);
-    return () => { controller.abort(); clearTimeout(timeout); };
-  }, [fetchLeaders]);
+    if (rawData?.leaders) {
+      setLeaders((prev) => ({ ...prev, [`${category}-${selectedStat}`]: rawData.leaders! }));
+    }
+  }, [rawData, category, selectedStat]);
 
   // Update selectedStat when category changes
   useEffect(() => {
@@ -174,7 +155,7 @@ export default function MLBStatsPage() {
           <Container>
             <ScrollReveal direction="up">
               <Badge variant="primary" className="mb-4">
-                2026 Season
+                2025 Season
               </Badge>
             </ScrollReveal>
 
@@ -263,7 +244,7 @@ export default function MLBStatsPage() {
                 <p className="text-error font-semibold">Data Unavailable</p>
                 <p className="text-text-secondary text-sm mt-1">{error}</p>
                 <button
-                  onClick={() => fetchLeaders()}
+                  onClick={fetchLeaders}
                   className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors"
                 >
                   Retry
@@ -283,7 +264,7 @@ export default function MLBStatsPage() {
                   </svg>
                   <p className="text-text-secondary">No stat leaders available</p>
                   <p className="text-text-tertiary text-sm mt-2">
-                    Leaders will be available when the 2026 season begins
+                    Leaders will be available when the 2025 season begins
                   </p>
                 </div>
               </Card>

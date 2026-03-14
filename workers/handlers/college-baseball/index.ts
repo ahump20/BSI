@@ -27,7 +27,7 @@ export { handleCollegeBaseballTrending, handleCollegeBaseballDaily, handleColleg
 export { processFinishedGames, handleIngestStats, syncTeamCumulativeStats, handleCBBBulkSync, handleHighlightlySync, handleGameLogBackfill } from './ingest';
 
 // Sabermetrics
-export { handleCBBLeagueSabermetrics, handleCBBTeamSabermetrics, handleCBBTeamSOS, handleCBBConferencePowerIndex } from './savant';
+export { handleCBBLeagueSabermetrics, handleCBBTeamSabermetrics, handleCBBTeamSOS, handleCBBConferencePowerIndex, handleCBBSeasonArc } from './savant';
 
 // Social intelligence
 export { handleSocialIntelFeed, handleSocialIntelTeam } from './social-intel';

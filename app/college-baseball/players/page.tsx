@@ -132,7 +132,7 @@ export default function CollegeBaseballPlayersPage() {
   });
   const [sortBy, setSortBy] = useState('default');
 
-  const loadPlayers = useCallback(async () => {
+  const loadPlayers = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);
     setError(null);
 
@@ -145,7 +145,7 @@ export default function CollegeBaseballPlayersPage() {
       if (filters.draftOnly) params.append('draft', 'true');
       if (sortBy && sortBy !== 'default') params.append('sort', sortBy);
 
-      const response = await fetch(`/api/college-baseball/players?${params}`);
+      const response = await fetch(`/api/college-baseball/players?${params}`, { signal });
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -154,6 +154,7 @@ export default function CollegeBaseballPlayersPage() {
       const data = (await response.json()) as PlayersApiResponse;
       setPlayers(data.players || []);
     } catch (err) {
+      if ((err as Error).name === 'AbortError') return;
       setError(err instanceof Error ? err.message : 'Failed to load players');
     } finally {
       setLoading(false);
@@ -161,7 +162,10 @@ export default function CollegeBaseballPlayersPage() {
   }, [filters, sortBy]);
 
   useEffect(() => {
-    loadPlayers();
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    loadPlayers(controller.signal);
+    return () => { controller.abort(); clearTimeout(timeout); };
   }, [loadPlayers]);
 
   // When sort is 'default', preserve API order (server-side sorted by D1)
@@ -190,7 +194,7 @@ export default function CollegeBaseballPlayersPage() {
   };
 
   const handleSearch = () => {
-    loadPlayers();
+    loadPlayers(AbortSignal.timeout(8000));
   };
 
   const getToolGradeClass = (grade: number) => {

@@ -16,11 +16,14 @@ export interface TeamMeta {
   espnId: string;
   /** General NCAA school ID for ESPN logo CDN — differs from baseball-specific espnId for ~88 teams */
   logoId?: string;
+  /** Local logo path — takes priority over ESPN CDN when set */
+  localLogo?: string;
   colors: { primary: string; secondary: string };
   location: { city: string; state: string; stadium: string };
 }
 
-export function getLogoUrl(espnId: string, logoId?: string): string {
+export function getLogoUrl(espnId: string, logoId?: string, localLogo?: string): string {
+  if (localLogo) return localLogo;
   return `https://a.espncdn.com/i/teamlogos/ncaa/500/${logoId || espnId}.png`;
 }
 
@@ -34,6 +37,7 @@ export const teamMetadata: Record<string, TeamMeta> = {
     conference: 'SEC',
     espnId: '126',
     logoId: '251',
+    localLogo: '/images/teams/texas/logo-primary.png',
     colors: { primary: '#BF5700', secondary: '#FFFFFF' }, // team identity color (coincides with BSI primary)
     location: { city: 'Austin', state: 'TX', stadium: 'UFCU Disch-Falk Field' },
   },
