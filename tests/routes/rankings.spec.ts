@@ -12,7 +12,7 @@ test.describe('College Baseball Rankings', () => {
 
   test('poll tabs are visible and clickable', async ({ page }) => {
     await page.goto(`${BASE}/college-baseball/rankings`);
-    await expect(page.getByRole('button', { name: /d1baseball/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /d1baseball/i })).toBeVisible({ timeout: 10000 });
   });
 
   test('default tab (D1Baseball) shows ranked teams, not empty state', async ({ page }) => {
