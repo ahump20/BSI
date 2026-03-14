@@ -143,8 +143,8 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
           const sd = await schedRes.json() as { schedule?: ScheduleGame[] };
           setSchedule(sd.schedule || []);
         }
-      } catch (err) {
-        console.error(`[readout] Failed to load team ${teamId}:`, err);
+      } catch {
+        // Error state handled by loading=false, showing empty data
       } finally {
         setLoading(false);
       }

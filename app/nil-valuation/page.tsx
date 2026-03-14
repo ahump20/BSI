@@ -104,8 +104,7 @@ export default function NILValuationPage() {
         setLeaders(d.data || []);
         setTotalScored(d.total || 0);
       })
-      .catch((err) => {
-        console.error('[NIL] Leaderboard fetch failed:', err);
+      .catch(() => {
         setFetchError(true);
       });
   }, []);
