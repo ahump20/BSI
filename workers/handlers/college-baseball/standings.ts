@@ -97,10 +97,29 @@ export async function handleCollegeBaseballStandings(
       const team = (entry.team as Record<string, unknown>) || {};
       const teamId = String(team.id ?? '');
       const meta = metaByEspnId[teamId];
-      const wins = Number(entry.wins ?? 0);
-      const losses = Number(entry.losses ?? 0);
-      const winPct = Number(entry.winPercent ?? 0);
-      const leagueWinPct = Number(entry.leagueWinPercent ?? 0);
+
+      // ESPN v2 standings entries carry stats in a stats[] array, not flat fields.
+      // Each element: { name, abbreviation, displayValue, value }
+      const statsList = (entry.stats as Array<Record<string, unknown>>) || [];
+      const stat = (name: string): number => {
+        const s = statsList.find((s) => s.name === name || s.abbreviation === name);
+        return Number(s?.value ?? s?.displayValue ?? 0) || 0;
+      };
+
+      const wins = stat('wins');
+      const losses = stat('losses');
+      const total = wins + losses;
+      const winPct = total > 0 ? wins / total : 0;
+
+      // Conference record from stats array or parsed from string
+      const confStatStr = String(
+        statsList.find((s) => s.name === 'conferenceRecord' || s.name === 'Conference')?.displayValue ?? '0-0'
+      );
+      const confParts = confStatStr.match(/(\d+)-(\d+)/);
+      const confWins = confParts ? Number(confParts[1]) : 0;
+      const confLosses = confParts ? Number(confParts[2]) : 0;
+      const confTotal = confWins + confLosses;
+      const leagueWinPct = confTotal > 0 ? confWins / confTotal : 0;
 
       const logo = meta
         ? getLogoUrl(meta.espnId, meta.logoId)
@@ -114,11 +133,11 @@ export async function handleCollegeBaseballStandings(
           shortName: meta?.shortName ?? (team.abbreviation as string) ?? '',
           logo,
         },
-        conferenceRecord: { wins: 0, losses: 0, pct: leagueWinPct },
+        conferenceRecord: { wins: confWins, losses: confLosses, pct: leagueWinPct },
         overallRecord: { wins, losses },
         winPct,
-        streak: (entry.streak as string) ?? '',
-        pointDifferential: Number(entry.pointDifferential ?? 0),
+        streak: String(statsList.find((s) => s.name === 'streak')?.displayValue ?? ''),
+        pointDifferential: stat('pointDifferential') || stat('pointsFor') - stat('pointsAgainst'),
       };
     });
 
