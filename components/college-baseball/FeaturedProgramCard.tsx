@@ -13,6 +13,14 @@ interface TeamSabermetrics {
   meta?: { fetched_at?: string };
 }
 
+interface TeamInfo {
+  team: {
+    record?: string;
+    streak?: { type: string; length: number };
+  };
+  meta?: { fetched_at?: string };
+}
+
 // ─── Component ─────────────────────────────────────────────────────────────
 
 /**
@@ -24,7 +32,12 @@ export function FeaturedProgramCard() {
     '/api/college-baseball/teams/126/sabermetrics',
     { timeout: 8000 },
   );
+  const { data: teamInfo } = useSportData<TeamInfo>(
+    '/api/college-baseball/teams/texas',
+    { timeout: 8000 },
+  );
 
+  const streak = teamInfo?.team?.streak;
   const logoUrl = getLogoUrl('126', '251', '/images/teams/texas/logo-primary.png');
 
   return (
@@ -32,7 +45,7 @@ export function FeaturedProgramCard() {
       <CardContent>
         <div className="flex items-start gap-4">
           {/* Logo */}
-          <div className="w-14 h-14 flex-shrink-0 rounded-lg bg-surface-light flex items-center justify-center overflow-hidden">
+          <div className="w-14 h-14 flex-shrink-0 rounded-sm bg-surface-light flex items-center justify-center overflow-hidden">
             <img
               src={logoUrl}
               alt="Texas Longhorns"
@@ -46,15 +59,27 @@ export function FeaturedProgramCard() {
             <div className="flex items-center gap-2 mb-2">
               <span className="heritage-stamp text-[10px]">Program Intelligence</span>
             </div>
-            <h3 className="font-display text-lg font-bold uppercase tracking-wide text-text-primary mb-3">
-              Texas Longhorns
-            </h3>
+            <div className="flex items-center gap-2 mb-3">
+              <h3 className="font-display text-lg font-bold uppercase tracking-wide text-text-primary">
+                Texas Longhorns
+              </h3>
+              {streak && streak.length >= 2 && (
+                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-sm text-[10px] font-mono font-bold ${
+                  streak.type === 'W' || streak.type === 'win'
+                    ? 'bg-green-500/10 text-green-400'
+                    : 'bg-red-500/10 text-red-400'
+                }`}>
+                  <span aria-hidden="true">{streak.type === 'W' || streak.type === 'win' ? '\u25B2' : '\u25BC'}</span>
+                  {(streak.type === 'W' || streak.type === 'win') ? 'W' : 'L'}{streak.length}
+                </span>
+              )}
+            </div>
 
             {/* Stats row */}
             {loading ? (
               <div className="flex gap-4">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-10 w-16 bg-surface-light rounded animate-pulse" />
+                  <div key={i} className="h-10 w-16 bg-surface-light rounded-sm animate-pulse" />
                 ))}
               </div>
             ) : data ? (
@@ -86,7 +111,7 @@ export function FeaturedProgramCard() {
 
             {/* CTA */}
             <Link
-              href="/college-baseball/teams/texas/intelligence"
+              href="/college-baseball/texas-intelligence"
               className="inline-flex items-center gap-1 text-sm text-burnt-orange hover:text-ember transition-colors font-semibold"
             >
               View Full Intel

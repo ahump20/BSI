@@ -41,7 +41,7 @@ export function GameDetailSheet({ game, open, onClose }: GameDetailSheetProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span
-              className="rounded px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider"
+              className="rounded-sm px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider"
               style={{
                 color: accent,
                 background: `color-mix(in srgb, ${accent} 12%, transparent)`,
@@ -58,7 +58,7 @@ export function GameDetailSheet({ game, open, onClose }: GameDetailSheetProps) {
           </div>
           <button
             onClick={onClose}
-            className="rounded-md p-1.5 text-text-muted hover:text-text-primary hover:bg-surface transition-colors"
+            className="rounded-sm p-1.5 text-text-muted hover:text-text-primary hover:bg-surface transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
@@ -170,7 +170,7 @@ export function GameDetailSheet({ game, open, onClose }: GameDetailSheetProps) {
                   width={100}
                 />
                 <ReTooltip {...tooltipProps} />
-                <Bar dataKey="delta" name="Impact" barSize={12} radius={[0, 4, 4, 0]}>
+                <Bar dataKey="delta" name="Impact" barSize={12} radius={[0, 2, 2, 0]}>
                   {explainData.map((entry, i) => (
                     <Cell
                       key={i}

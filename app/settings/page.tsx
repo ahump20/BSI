@@ -90,7 +90,7 @@ export default function SettingsPage() {
                 <p className="text-text-primary font-medium">Theme</p>
                 <p className="text-xs text-text-tertiary">Currently in dark mode (default)</p>
               </div>
-              <span className="text-xs px-3 py-1 rounded bg-burnt-orange/20 text-burnt-orange">
+              <span className="text-xs px-3 py-1 rounded-sm bg-burnt-orange/20 text-burnt-orange">
                 {settings.theme === 'dark' ? 'Dark' : 'Light'}
               </span>
             </div>
@@ -99,7 +99,7 @@ export default function SettingsPage() {
                 <p className="text-text-primary font-medium">Time Format</p>
                 <p className="text-xs text-text-tertiary">12-hour or 24-hour clock</p>
               </div>
-              <span className="text-xs px-3 py-1 rounded bg-background-secondary text-text-secondary">
+              <span className="text-xs px-3 py-1 rounded-sm bg-background-secondary text-text-secondary">
                 {settings.timeFormat === '12h' ? '12-hour' : '24-hour'}
               </span>
             </div>
@@ -117,7 +117,7 @@ export default function SettingsPage() {
             </div>
             <button
               onClick={handleResetAll}
-              className="px-4 py-2 text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors"
+              className="px-4 py-2 text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-sm transition-colors"
             >
               Reset All
             </button>
@@ -129,7 +129,7 @@ export default function SettingsPage() {
           <section className="pt-4 border-t border-background-secondary/30">
             <details className="text-xs text-text-muted">
               <summary className="cursor-pointer hover:text-text-tertiary">Debug Info</summary>
-              <pre className="mt-2 p-3 bg-background-secondary/30 rounded overflow-x-auto">
+              <pre className="mt-2 p-3 bg-background-secondary/30 rounded-sm overflow-x-auto">
                 {JSON.stringify(settings, null, 2)}
               </pre>
             </details>

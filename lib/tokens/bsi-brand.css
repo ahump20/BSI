@@ -47,7 +47,7 @@
   /* ---- Typography ---- */
   --bsi-font-display: 'Oswald', system-ui, sans-serif;
   --bsi-font-body: 'Cormorant Garamond', 'Georgia', serif;
-  --bsi-font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --bsi-font-mono: 'IBM Plex Mono', 'JetBrains Mono', 'Fira Code', monospace;
 
   /* Aliases used by Labs and globals */
   --font-display: var(--bsi-font-display);
@@ -299,13 +299,13 @@
 .savant-card {
   background: var(--svt-card);
   border: 1px solid var(--svt-border);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
 }
 
 .savant-card-feature {
   background: var(--svt-card);
   border: 1px solid var(--svt-border);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border-top: 2px solid var(--svt-accent);
 }
 
@@ -390,7 +390,7 @@
   backdrop-filter: blur(var(--glass-subtle-blur));
   -webkit-backdrop-filter: blur(var(--glass-subtle-blur));
   border: 1px solid var(--glass-subtle-border);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-sm);
 }
 
 .glass-default {
@@ -398,7 +398,7 @@
   backdrop-filter: blur(var(--glass-default-blur));
   -webkit-backdrop-filter: blur(var(--glass-default-blur));
   border: 1px solid var(--glass-default-border);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-sm);
 }
 
 .glass-elevated {
@@ -406,7 +406,7 @@
   backdrop-filter: blur(var(--glass-elevated-blur));
   -webkit-backdrop-filter: blur(var(--glass-elevated-blur));
   border: 1px solid var(--glass-elevated-border);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-sm);
 }
 
 /* ==========================================================================

@@ -43,7 +43,7 @@ export default function MethodologyPage() {
               <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
                 Topic Monitoring
               </h2>
-              <div className="bg-surface-light border border-border-subtle rounded-xl p-5 sm:p-6">
+              <div className="bg-surface-light border border-border-subtle rounded-sm p-5 sm:p-6">
                 <p className="text-sm text-text-tertiary leading-relaxed mb-4">
                   BSI tracks conversation across sports media and fan communities using keyword
                   packs organized by sport and topic. Monitoring serves two purposes: identifying
@@ -60,7 +60,7 @@ export default function MethodologyPage() {
                     { pack: 'CFB/NFL', examples: 'EPA, CPOE, win probability, transfer portal, NIL, coaching carousel' },
                     { pack: 'BSI Brand', examples: 'blazesportsintel, BSI, blaze sports, Austin Humphrey' },
                   ].map((kp) => (
-                    <div key={kp.pack} className="bg-surface-light rounded-lg p-3">
+                    <div key={kp.pack} className="bg-surface-light rounded-sm p-3">
                       <span className="text-xs font-bold text-burnt-orange">{kp.pack}</span>
                       <p className="text-[10px] text-text-muted mt-1">{kp.examples}</p>
                     </div>
@@ -84,7 +84,7 @@ export default function MethodologyPage() {
                 ].map((b) => (
                   <div
                     key={b.bucket}
-                    className="flex gap-4 items-start bg-surface-light border border-border-subtle rounded-lg p-4"
+                    className="flex gap-4 items-start bg-surface-light border border-border-subtle rounded-sm p-4"
                   >
                     <span className={`text-[10px] font-bold uppercase tracking-wider mt-0.5 shrink-0 w-20 ${b.color}`}>
                       {b.bucket}
@@ -108,7 +108,7 @@ export default function MethodologyPage() {
                 ].map((p) => (
                   <div
                     key={p.platform}
-                    className="flex gap-4 items-start bg-surface-light border border-border-subtle rounded-lg p-4"
+                    className="flex gap-4 items-start bg-surface-light border border-border-subtle rounded-sm p-4"
                   >
                     <span className="text-[10px] font-bold uppercase tracking-wider text-burnt-orange mt-0.5 shrink-0 w-20">
                       {p.platform}
@@ -124,7 +124,7 @@ export default function MethodologyPage() {
               <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
                 Claim Validation
               </h2>
-              <div className="bg-surface-light border border-border-subtle rounded-xl p-5">
+              <div className="bg-surface-light border border-border-subtle rounded-sm p-5">
                 <p className="text-sm text-text-tertiary leading-relaxed">
                   Before BSI publishes a statistical claim or analytical finding, it goes through a
                   three-step validation: (1) verify the underlying data against official sources,

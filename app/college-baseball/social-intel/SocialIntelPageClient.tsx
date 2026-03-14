@@ -157,7 +157,7 @@ function SignalRow({ signal, index }: { signal: SocialSignal; index: number }) {
         <div className="flex items-center gap-2 flex-wrap">
           {/* Type badge */}
           <span
-            className={`inline-flex items-center gap-1 px-1.5 py-px rounded text-[9px] font-semibold uppercase tracking-wide border ${cfg.bg} ${cfg.text} ${cfg.border}`}
+            className={`inline-flex items-center gap-1 px-1.5 py-px rounded-sm text-[9px] font-semibold uppercase tracking-wide border ${cfg.bg} ${cfg.text} ${cfg.border}`}
           >
             <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: cfg.color }} />
             {cfg.short}
@@ -227,12 +227,12 @@ function Skeleton() {
         >
           <div className="w-px bg-[#1e1e1e] animate-pulse min-h-[2.5rem]" />
           <div className="flex-1 space-y-2">
-            <div className="h-3.5 rounded bg-[#1e1e1e] animate-pulse w-4/5" style={{ animationDelay: `${i * 50 + 80}ms` }} />
-            <div className="h-3.5 rounded bg-[#1e1e1e] animate-pulse w-2/3" style={{ animationDelay: `${i * 50 + 120}ms` }} />
+            <div className="h-3.5 rounded-sm bg-[#1e1e1e] animate-pulse w-4/5" style={{ animationDelay: `${i * 50 + 80}ms` }} />
+            <div className="h-3.5 rounded-sm bg-[#1e1e1e] animate-pulse w-2/3" style={{ animationDelay: `${i * 50 + 120}ms` }} />
             <div className="flex gap-2 mt-1">
-              <div className="h-3 w-8 rounded bg-[#1e1e1e] animate-pulse" />
-              <div className="h-3 w-6 rounded bg-[#1e1e1e] animate-pulse" />
-              <div className="h-3 w-20 rounded bg-[#1e1e1e] animate-pulse" />
+              <div className="h-3 w-8 rounded-sm bg-[#1e1e1e] animate-pulse" />
+              <div className="h-3 w-6 rounded-sm bg-[#1e1e1e] animate-pulse" />
+              <div className="h-3 w-20 rounded-sm bg-[#1e1e1e] animate-pulse" />
             </div>
           </div>
         </div>
@@ -376,7 +376,7 @@ export function SocialIntelPageClient() {
                   {tab.label}
                   {count > 0 && (
                     <span className={`
-                      px-1.5 py-0.5 rounded text-[9px] tabular-nums font-mono
+                      px-1.5 py-0.5 rounded-sm text-[9px] tabular-nums font-mono
                       ${isActive ? 'bg-[#BF5700]/15 text-[#BF5700]' : 'bg-surface text-text-muted'}
                     `}>
                       {count}
@@ -393,7 +393,7 @@ export function SocialIntelPageClient() {
       <Container>
         <div className="py-6">
           {loading ? (
-            <div className="rounded-xl border border-border overflow-hidden bg-[#111111]">
+            <div className="rounded-sm border border-border overflow-hidden bg-[#111111]">
               <Skeleton />
             </div>
           ) : filtered.length === 0 ? (
@@ -408,7 +408,7 @@ export function SocialIntelPageClient() {
               </p>
             </div>
           ) : (
-            <div className="rounded-xl border border-border overflow-hidden bg-[#111111]">
+            <div className="rounded-sm border border-border overflow-hidden bg-[#111111]">
               {/* Feed header */}
               <div className="flex items-center justify-between px-5 py-3 border-b border-border bg-[#0D0D0D]/60">
                 <span className="font-mono text-[10px] uppercase tracking-wider text-text-muted">

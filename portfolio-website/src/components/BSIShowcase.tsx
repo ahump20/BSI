@@ -147,7 +147,7 @@ export default function BSIShowcase() {
               {BSI_SHOWCASE.techStack.map((tech) => (
                 <span
                   key={tech}
-                  className="text-xs font-mono bg-burnt-orange/10 text-burnt-orange border border-burnt-orange/20 px-4 py-2 rounded-full hover:bg-burnt-orange/20 hover:border-burnt-orange/40 transition-all duration-300"
+                  className="text-xs font-mono bg-burnt-orange/10 text-burnt-orange border border-burnt-orange/20 px-4 py-2 rounded-sm hover:bg-burnt-orange/20 hover:border-burnt-orange/40 transition-all duration-300"
                 >
                   {tech}
                 </span>

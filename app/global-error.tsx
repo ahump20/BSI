@@ -19,13 +19,13 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
       </head>
       <body style={{ background: 'var(--bsi-midnight)', color: '#FAF8F5', fontFamily: "'Cormorant Garamond', serif" }}>
         <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-          <div style={{ maxWidth: '28rem', width: '100%', background: 'var(--bsi-charcoal)', border: '1px solid #333', borderRadius: '0.75rem', padding: '2rem', textAlign: 'center' }}>
+          <div style={{ maxWidth: '28rem', width: '100%', background: 'var(--bsi-charcoal)', border: '1px solid #333', borderRadius: '2px', padding: '2rem', textAlign: 'center' }}>
             <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>&#9888;</div>
             <h1 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem' }}>
               Blaze Sports Intel
             </h1>
             <p style={{ color: '#999', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
-              A critical error occurred. We&apos;re working on it.
+              BSI ran into a problem. Refreshing usually fixes it.
             </p>
             <button
               onClick={reset}
@@ -34,7 +34,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                 background: 'var(--bsi-primary)',
                 color: 'white',
                 border: 'none',
-                borderRadius: '0.5rem',
+                borderRadius: '2px',
                 fontWeight: 500,
                 cursor: 'pointer',
                 fontSize: '0.875rem',

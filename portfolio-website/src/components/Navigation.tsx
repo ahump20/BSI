@@ -201,7 +201,7 @@ export default function Navigation() {
                         scrollToSection(item.id);
                       }}
                       aria-current={activeSection === item.id ? 'location' : undefined}
-                      className={`block px-4 py-3 font-sans text-xs uppercase tracking-[0.2em] rounded transition-colors duration-300 ${
+                      className={`block px-4 py-3 font-sans text-xs uppercase tracking-[0.2em] rounded-sm transition-colors duration-300 ${
                         activeSection === item.id
                           ? 'text-burnt-orange bg-burnt-orange/10'
                           : 'text-bone/50 hover:text-bone hover:bg-white/5'

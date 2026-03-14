@@ -248,7 +248,7 @@ export default function AnalyticsPage() {
             <ScrollReveal direction="up" delay={200}>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {quickStats.map((stat) => (
-                  <div key={stat.label} className="bg-surface-light border border-border-subtle rounded-xl p-5 text-center">
+                  <div key={stat.label} className="bg-surface-light border border-border-subtle rounded-sm p-5 text-center">
                     <p className="text-2xl md:text-3xl font-mono font-bold text-burnt-orange">{stat.value}</p>
                     <p className="text-sm text-text-primary font-medium mt-1">{stat.label}</p>
                     <p className="text-xs text-text-muted mt-0.5">{stat.sublabel}</p>

@@ -98,7 +98,7 @@ export default function BubbleWatchPage() {
             {loading && !hasBubbleData && (
               <div className="space-y-3 mb-8">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="h-14 bg-surface-light rounded-lg animate-pulse" />
+                  <div key={i} className="h-14 bg-surface-light rounded-sm animate-pulse" />
                 ))}
               </div>
             )}
@@ -120,7 +120,7 @@ export default function BubbleWatchPage() {
                   return (
                     <div
                       key={team.name || team.team}
-                      className={`flex items-center justify-between gap-4 border rounded-lg p-3 ${style}`}
+                      className={`flex items-center justify-between gap-4 border rounded-sm p-3 ${style}`}
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <span className="text-xs font-mono w-8 shrink-0 text-text-muted">
@@ -137,7 +137,7 @@ export default function BubbleWatchPage() {
                         {team.record && (
                           <span className="text-xs font-mono text-text-muted">{team.record}</span>
                         )}
-                        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-current">
+                        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm border border-current">
                           {zone}
                         </span>
                       </div>
@@ -151,7 +151,7 @@ export default function BubbleWatchPage() {
                 )}
               </div>
             ) : !loading && (
-              <div className="bg-surface-light border border-dashed border-border rounded-xl p-8 text-center">
+              <div className="bg-surface-light border border-dashed border-border rounded-sm p-8 text-center">
                 <p className="text-sm text-text-muted mb-2">
                   Bubble data populates when conference tournaments begin in late May.
                 </p>

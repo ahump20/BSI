@@ -12,9 +12,9 @@ export default function SavantLoading() {
         ))}
       </div>
       <div className="space-y-4">
-        <Skeleton variant="rectangular" width="100%" height={48} className="rounded-lg" />
+        <Skeleton variant="rectangular" width="100%" height={48} className="rounded-sm" />
         {Array.from({ length: 10 }).map((_, i) => (
-          <Skeleton key={i} variant="rectangular" width="100%" height={40} className="rounded" />
+          <Skeleton key={i} variant="rectangular" width="100%" height={40} className="rounded-sm" />
         ))}
       </div>
     </div>

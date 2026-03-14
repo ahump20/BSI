@@ -149,7 +149,7 @@ export function PerformanceIndexClient() {
                       : 'Type a player name or team...'
                   }
                   disabled={loading}
-                  className="w-full bg-background-primary border border-border rounded-lg px-4 py-3 text-text-primary placeholder:text-text-muted/40 focus:outline-none focus:border-burnt-orange/50 transition-colors font-serif"
+                  className="w-full bg-background-primary border border-border rounded-sm px-4 py-3 text-text-primary placeholder:text-text-muted/40 focus:outline-none focus:border-burnt-orange/50 transition-colors font-serif"
                 />
                 {loading && (
                   <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -160,7 +160,7 @@ export function PerformanceIndexClient() {
 
               {/* Search Results Dropdown */}
               {filtered.length > 0 && (
-                <div className="mt-2 border border-border rounded-lg overflow-hidden bg-background-primary">
+                <div className="mt-2 border border-border rounded-sm overflow-hidden bg-background-primary">
                   {filtered.map((player, i) => (
                     <button
                       key={`${player.player_name}-${player.team}-${i}`}
@@ -294,7 +294,7 @@ export function PerformanceIndexClient() {
               <p className="text-text-muted/50 text-xs mt-2">
                 {allPlayers.length > 0
                   ? `${allPlayers.length} players available from BSI Savant`
-                  : 'Player data loading...'}
+                  : 'Loading player data from BSI Savant...'}
               </p>
             </div>
           )}
@@ -477,10 +477,10 @@ function DollarRangeBar({
 
   return (
     <div>
-      <div className="relative h-8 bg-white/5 rounded-lg overflow-hidden">
+      <div className="relative h-8 bg-white/5 rounded-sm overflow-hidden">
         {/* Range band */}
         <div
-          className="absolute top-1 bottom-1 rounded bg-burnt-orange/20 border border-burnt-orange/30"
+          className="absolute top-1 bottom-1 rounded-sm bg-burnt-orange/20 border border-burnt-orange/30"
           style={{
             left: `${lowPct}%`,
             width: `${highPct - lowPct}%`,

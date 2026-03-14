@@ -176,7 +176,7 @@ export function SavantLeaderboard({
   }
 
   return (
-    <div className={`bg-background-primary border border-border-subtle rounded-xl overflow-hidden ${className}`}>
+    <div className={`bg-background-primary border border-border-subtle rounded-sm overflow-hidden ${className}`}>
       {/* Header */}
       <div className="px-5 py-4 border-b border-border-subtle flex items-center justify-between">
         <h3 className="font-display text-base uppercase tracking-wider text-text-primary">{title}</h3>
@@ -294,7 +294,7 @@ export function SavantLeaderboard({
                         }`}
                       >
                         {isGated ? (
-                          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded">
+                          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-sm">
                             <span className="font-mono tabular-nums text-xs text-text-muted/30 blur-[3px] select-none" aria-hidden="true">
                               {col.format ? col.format(col.key === 'wrc_plus' || col.key === 'ops_plus' || col.key === 'era_minus' ? 105 : col.key === 'fip' || col.key === 'era' ? 3.85 : col.key === 'k_bb' ? 2.80 : col.key === 'lob_pct' ? 0.72 : 0.320) : '0.0'}
                             </span>
@@ -304,7 +304,7 @@ export function SavantLeaderboard({
                           </span>
                         ) : (
                           <span
-                            className={`inline-block px-1.5 py-0.5 rounded font-mono tabular-nums text-xs ${
+                            className={`inline-block px-1.5 py-0.5 rounded-sm font-mono tabular-nums text-xs ${
                               showHeatmap ? 'text-white font-medium' : col.key === 'fip' ? 'text-[var(--svt-accent,_#BF5700)] font-bold' : 'text-text-secondary'
                             }`}
                             style={showHeatmap ? {
@@ -376,7 +376,7 @@ export function SavantLeaderboard({
               </span>
               <a
                 href="/pricing"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-burnt-orange/10 text-burnt-orange text-[11px] font-mono uppercase tracking-wider hover:bg-burnt-orange/20 transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-burnt-orange/10 text-burnt-orange text-[11px] font-mono uppercase tracking-wider hover:bg-burnt-orange/20 transition-colors"
               >
                 Upgrade to Pro
               </a>

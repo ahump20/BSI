@@ -168,6 +168,22 @@ const proSports: SitemapEntry[] = [
   { path: '/cfb/teams', changeFrequency: 'daily', priority: 0.6 },
 ];
 
+const texasIntelligence: SitemapEntry[] = [
+  { path: '/college-baseball/texas-intelligence', changeFrequency: 'daily', priority: 0.9 },
+  { path: '/college-baseball/texas-intelligence/roster', changeFrequency: 'daily', priority: 0.8 },
+  { path: '/college-baseball/texas-intelligence/pitching', changeFrequency: 'daily', priority: 0.8 },
+  { path: '/college-baseball/texas-intelligence/schedule', changeFrequency: 'daily', priority: 0.8 },
+  { path: '/college-baseball/texas-intelligence/draft', changeFrequency: 'weekly', priority: 0.8 },
+  { path: '/college-baseball/texas-intelligence/portal', changeFrequency: 'weekly', priority: 0.8 },
+  { path: '/college-baseball/texas-intelligence/trends', changeFrequency: 'daily', priority: 0.8 },
+  { path: '/college-baseball/texas-intelligence/nil', changeFrequency: 'weekly', priority: 0.8 },
+  { path: '/college-baseball/texas-intelligence/media', changeFrequency: 'daily', priority: 0.7 },
+  { path: '/college-baseball/texas-intelligence/compare', changeFrequency: 'weekly', priority: 0.7 },
+  { path: '/college-baseball/texas-intelligence/digest', changeFrequency: 'weekly', priority: 0.7 },
+  { path: '/college-baseball/texas-intelligence/scouting/press-conference', changeFrequency: 'weekly', priority: 0.8 },
+  { path: '/college-baseball/texas-history', changeFrequency: 'monthly', priority: 0.9 },
+];
+
 const features: SitemapEntry[] = [
   { path: '/status', changeFrequency: 'always', priority: 0.4 },
   { path: '/dashboard', changeFrequency: 'daily', priority: 0.7 },
@@ -213,6 +229,7 @@ const marketing: SitemapEntry[] = [
 export default function sitemap(): MetadataRoute.Sitemap {
   const all = [
     ...flagship,
+    ...texasIntelligence,
     ...editorial,
     ...mlbEditorial,
     ...proSports,
@@ -223,7 +240,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
 
   return all.map(({ path, changeFrequency, priority }) => ({
-    url: `${BASE}${path}`,
+    url: `${BASE}${path.endsWith('/') ? path : `${path}/`}`,
     lastModified: new Date(),
     changeFrequency,
     priority,

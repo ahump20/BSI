@@ -269,25 +269,25 @@ export default function FloraDraftProfilePage() {
             <ScrollReveal direction="up">
               <h3 className="font-display text-sm font-semibold uppercase tracking-widest text-text-muted mb-4">More 2026 Draft Profiles</h3>
               <div className="grid md:grid-cols-2 gap-4 mb-6">
-                <Link href="/college-baseball/editorial/roch-cholowsky-2026-draft-profile" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                <Link href="/college-baseball/editorial/roch-cholowsky-2026-draft-profile" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
                   <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
                   <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     Roch Cholowsky &mdash; No. 1 Overall Pick
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/dylan-volantis-2026-draft-profile" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                <Link href="/college-baseball/editorial/dylan-volantis-2026-draft-profile" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
                   <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
                   <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     Dylan Volantis &mdash; 14 IP, 0 ER, The Conversion
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/liam-peterson-2026-draft-profile" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                <Link href="/college-baseball/editorial/liam-peterson-2026-draft-profile" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
                   <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
                   <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     Liam Peterson &mdash; The Walk Problem
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/tyce-armstrong-2026-draft-profile" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                <Link href="/college-baseball/editorial/tyce-armstrong-2026-draft-profile" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
                   <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
                   <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     Tyce Armstrong &mdash; 3 Grand Slams, 50 Years
@@ -295,13 +295,13 @@ export default function FloraDraftProfilePage() {
                 </Link>
               </div>
               <div className="grid md:grid-cols-2 gap-4 mb-8">
-                <Link href="/college-baseball/editorial/week-1-recap" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                <Link href="/college-baseball/editorial/week-1-recap" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
                   <span className="text-[10px] text-text-muted uppercase tracking-widest">Related</span>
                   <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     Week 1 Recap: Three Grand Slams. One Record Book.
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/what-two-weekends-told-us" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                <Link href="/college-baseball/editorial/what-two-weekends-told-us" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
                   <span className="text-[10px] text-text-muted uppercase tracking-widest">Analysis</span>
                   <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     What Two Weekends Actually Told Us

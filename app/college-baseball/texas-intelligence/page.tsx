@@ -12,6 +12,20 @@ export const metadata: Metadata = {
     description:
       'The most complete Texas Longhorns baseball intelligence destination. Live stats, film room, social signals, and deep program history.',
     type: 'website',
+    images: [
+      {
+        url: '/images/og/texas-intelligence-hub.png',
+        width: 1200,
+        height: 630,
+        alt: 'Texas Longhorns Baseball Intelligence Hub — Blaze Sports Intel',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Texas Longhorns Baseball Intelligence Hub | BSI',
+    description: 'The most complete Texas Longhorns baseball intelligence destination.',
+    images: ['/images/og/texas-intelligence-hub.png'],
   },
 };
 

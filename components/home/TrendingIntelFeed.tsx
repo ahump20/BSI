@@ -131,8 +131,8 @@ export function TrendingIntelFeed() {
         {loading ? (
           Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="space-y-1.5 animate-pulse">
-              <div className="h-3 rounded w-16" style={{ backgroundColor: 'var(--surface-press-box)' }} />
-              <div className="h-4 rounded w-full" style={{ backgroundColor: 'var(--surface-press-box)' }} />
+              <div className="h-3 rounded-sm w-16" style={{ backgroundColor: 'var(--surface-press-box)' }} />
+              <div className="h-4 rounded-sm w-full" style={{ backgroundColor: 'var(--surface-press-box)' }} />
             </div>
           ))
         ) : error ? (

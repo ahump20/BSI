@@ -124,7 +124,7 @@ export default function MLBEditorialPage() {
             {featured && (
               <ScrollReveal direction="up" delay={100}>
                 <Link href={`/mlb/editorial/${featured.slug}`} className="block group">
-                  <div className="relative bg-gradient-to-r from-burnt-orange/15 to-[#C9A227]/10 border border-burnt-orange/25 rounded-xl p-6 md:p-8 hover:border-burnt-orange/50 transition-all overflow-hidden">
+                  <div className="relative bg-gradient-to-r from-burnt-orange/15 to-[#C9A227]/10 border border-burnt-orange/25 rounded-sm p-6 md:p-8 hover:border-burnt-orange/50 transition-all overflow-hidden">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-radial from-[#C9A227]/10 to-transparent pointer-events-none" />
                     <div className="relative">
                       <div className="flex items-center gap-3 mb-3">

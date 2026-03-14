@@ -139,7 +139,7 @@ function StatCard({
   isLive?: boolean;
 }) {
   return (
-    <div className="relative p-4 md:p-6 rounded-xl bg-gradient-to-br from-charcoal-800/80 to-charcoal-900/80 border border-border-subtle">
+    <div className="relative p-4 md:p-6 rounded-sm bg-gradient-to-br from-charcoal-800/80 to-charcoal-900/80 border border-border-subtle">
       {isLive && (
         <div className="absolute top-3 right-3">
           <span className="flex h-2 w-2">
@@ -285,7 +285,7 @@ export default function CFBTransferPortalPage() {
 
             {/* Portal window info */}
             <ScrollReveal>
-              <div className="mt-12 p-6 rounded-xl bg-gradient-to-br from-football/10 to-transparent border border-football/20">
+              <div className="mt-12 p-6 rounded-sm bg-gradient-to-br from-football/10 to-transparent border border-football/20">
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0 w-12 h-12 rounded-full bg-football/20 flex items-center justify-center">
                     <svg

@@ -63,7 +63,7 @@ function categoryLabel(cat: string): string {
 function FeaturedCard({ post }: { post: BlogPost }) {
   return (
     <Link href={`/blog-post-feed/${post.slug}`} className="block group">
-      <div className="relative rounded-xl overflow-hidden border border-burnt-orange/30 bg-gradient-to-br from-charcoal-900 via-background-tertiary to-background-primary hover:border-burnt-orange/60 transition-all duration-300">
+      <div className="relative rounded-sm overflow-hidden border border-burnt-orange/30 bg-gradient-to-br from-charcoal-900 via-background-tertiary to-background-primary hover:border-burnt-orange/60 transition-all duration-300">
         {/* Glow accent */}
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-burnt-orange via-ember to-burnt-orange/50" />
         <div className="p-8 md:p-10">
@@ -156,11 +156,11 @@ function ArticleCard({ post }: { post: BlogPost }) {
 
 function SkeletonCard() {
   return (
-    <div className="bg-background-tertiary rounded-lg p-6 animate-pulse">
-      <div className="h-4 bg-surface-secondary rounded w-1/4 mb-3" />
-      <div className="h-6 bg-surface-secondary rounded w-3/4 mb-2" />
-      <div className="h-4 bg-surface-secondary rounded w-full mb-1" />
-      <div className="h-4 bg-surface-secondary rounded w-2/3" />
+    <div className="bg-background-tertiary rounded-sm p-6 animate-pulse">
+      <div className="h-4 bg-surface-secondary rounded-sm w-1/4 mb-3" />
+      <div className="h-6 bg-surface-secondary rounded-sm w-3/4 mb-2" />
+      <div className="h-4 bg-surface-secondary rounded-sm w-full mb-1" />
+      <div className="h-4 bg-surface-secondary rounded-sm w-2/3" />
     </div>
   );
 }
@@ -268,7 +268,7 @@ export default function BlogPostFeedPage() {
           <Container>
             {loading ? (
               <div className="space-y-8">
-                <div className="animate-pulse rounded-xl bg-background-tertiary h-64" />
+                <div className="animate-pulse rounded-sm bg-background-tertiary h-64" />
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {[1, 2, 3, 4, 5].map((i) => (
                     <SkeletonCard key={i} />

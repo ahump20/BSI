@@ -18,7 +18,7 @@ export default function PlatformStatus({ className = '' }: PlatformStatusProps) 
 
   return (
     <div
-      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-charcoal/80 border border-bone/10 ${className}`}
+      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-sm bg-charcoal/80 border border-bone/10 ${className}`}
       role="status"
       aria-label={`BSI platform status: ${config.label}`}
     >

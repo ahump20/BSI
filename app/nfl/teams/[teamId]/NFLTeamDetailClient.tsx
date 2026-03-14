@@ -641,19 +641,19 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
                   <div className="flex flex-wrap gap-4">
                     <Link
                       href="/nfl"
-                      className="px-4 py-2 bg-burnt-orange/20 text-burnt-orange rounded-lg hover:bg-burnt-orange/30 transition-colors"
+                      className="px-4 py-2 bg-burnt-orange/20 text-burnt-orange rounded-sm hover:bg-burnt-orange/30 transition-colors"
                     >
                       Live Scores
                     </Link>
                     <Link
                       href="/nfl"
-                      className="px-4 py-2 bg-burnt-orange/20 text-burnt-orange rounded-lg hover:bg-burnt-orange/30 transition-colors"
+                      className="px-4 py-2 bg-burnt-orange/20 text-burnt-orange rounded-sm hover:bg-burnt-orange/30 transition-colors"
                     >
                       Full Standings
                     </Link>
                     <Link
                       href="/nfl/teams"
-                      className="px-4 py-2 bg-burnt-orange/20 text-burnt-orange rounded-lg hover:bg-burnt-orange/30 transition-colors"
+                      className="px-4 py-2 bg-burnt-orange/20 text-burnt-orange rounded-sm hover:bg-burnt-orange/30 transition-colors"
                     >
                       All Teams
                     </Link>

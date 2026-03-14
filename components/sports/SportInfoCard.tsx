@@ -19,7 +19,7 @@ export function SportInfoCard({ icon, title, subtitle, bullets, actions }: Sport
     <ScrollReveal>
       <Card variant="default" padding="lg">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-lg bg-burnt-orange/15 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-sm bg-burnt-orange/15 flex items-center justify-center">
             {icon}
           </div>
           <div>

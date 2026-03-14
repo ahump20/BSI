@@ -80,10 +80,10 @@ export default function CFBArticlesPage() {
             {loading ? (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="bg-background-tertiary rounded-lg p-6 animate-pulse">
-                    <div className="h-4 bg-surface-secondary rounded w-1/4 mb-3" />
-                    <div className="h-6 bg-surface-secondary rounded w-3/4 mb-2" />
-                    <div className="h-4 bg-surface-secondary rounded w-full" />
+                  <div key={i} className="bg-background-tertiary rounded-sm p-6 animate-pulse">
+                    <div className="h-4 bg-surface-secondary rounded-sm w-1/4 mb-3" />
+                    <div className="h-6 bg-surface-secondary rounded-sm w-3/4 mb-2" />
+                    <div className="h-4 bg-surface-secondary rounded-sm w-full" />
                   </div>
                 ))}
               </div>

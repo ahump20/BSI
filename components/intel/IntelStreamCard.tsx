@@ -120,7 +120,7 @@ export function IntelStreamCard({
   const cardStyle: React.CSSProperties = {
     backgroundColor: '#0D0D0D',
     border: '1px solid rgba(191,87,0,0.2)',
-    borderRadius: '0.75rem',
+    borderRadius: '2px',
     overflow: 'hidden',
     opacity: 0,
     animation: 'bsiIntelFadeIn 0.4s ease-out 0.1s forwards',
@@ -143,9 +143,9 @@ export function IntelStreamCard({
           </span>
         </div>
         <div className="px-4 py-5 space-y-3">
-          <div className="h-3 rounded animate-pulse bg-background-tertiary" style={{ width: '91.666%' }} />
-          <div className="h-3 rounded animate-pulse bg-background-tertiary" style={{ width: '75%' }} />
-          <div className="h-3 rounded animate-pulse bg-background-tertiary" style={{ width: '83.333%' }} />
+          <div className="h-3 rounded-sm animate-pulse bg-background-tertiary" style={{ width: '91.666%' }} />
+          <div className="h-3 rounded-sm animate-pulse bg-background-tertiary" style={{ width: '75%' }} />
+          <div className="h-3 rounded-sm animate-pulse bg-background-tertiary" style={{ width: '83.333%' }} />
         </div>
       </div>
     );

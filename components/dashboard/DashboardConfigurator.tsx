@@ -138,7 +138,7 @@ export function DashboardConfigurator({ prefs, onChange, onClose }: DashboardCon
             <button
               key={sport}
               onClick={() => toggleSport(sport)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+              className={`px-3 py-1.5 rounded-sm text-sm font-medium transition-all ${
                 local.favoriteSports.includes(sport)
                   ? 'bg-burnt-orange text-white'
                   : 'bg-charcoal text-text-secondary hover:text-white'
@@ -162,7 +162,7 @@ export function DashboardConfigurator({ prefs, onChange, onClose }: DashboardCon
             {favoriteTeamObjects.map((team) => (
               <div
                 key={team.slug}
-                className="flex items-center gap-2 px-3 py-1.5 bg-burnt-orange/15 text-burnt-orange rounded-lg text-sm"
+                className="flex items-center gap-2 px-3 py-1.5 bg-burnt-orange/15 text-burnt-orange rounded-sm text-sm"
               >
                 <Image
                   src={team.logo}
@@ -202,12 +202,12 @@ export function DashboardConfigurator({ prefs, onChange, onClose }: DashboardCon
             }}
             placeholder="Search teams to add..."
             aria-label="Search teams to add to dashboard"
-            className="w-full px-3 py-2 bg-charcoal border border-border rounded-lg text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-burnt-orange/50 transition-colors"
+            className="w-full px-3 py-2 bg-charcoal border border-border rounded-sm text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-burnt-orange/50 transition-colors"
           />
 
           {/* Dropdown */}
           {showDropdown && filteredTeams.length > 0 && (
-            <div className="absolute z-20 top-full left-0 right-0 mt-1 bg-midnight border border-border rounded-lg overflow-hidden shadow-lg max-h-48 overflow-y-auto">
+            <div className="absolute z-20 top-full left-0 right-0 mt-1 bg-midnight border border-border rounded-sm overflow-hidden shadow-lg max-h-48 overflow-y-auto">
               {filteredTeams.map((team) => (
                 <button
                   key={team.slug}
@@ -244,13 +244,13 @@ export function DashboardConfigurator({ prefs, onChange, onClose }: DashboardCon
       <div className="flex gap-3">
         <button
           onClick={() => { onChange(local); onClose(); }}
-          className="px-6 py-2 bg-burnt-orange hover:bg-burnt-orange/80 text-white rounded-lg font-medium transition-colors"
+          className="px-6 py-2 bg-burnt-orange hover:bg-burnt-orange/80 text-white rounded-sm font-medium transition-colors"
         >
           Save
         </button>
         <button
           onClick={onClose}
-          className="px-6 py-2 bg-charcoal text-text-secondary hover:text-white rounded-lg font-medium transition-colors"
+          className="px-6 py-2 bg-charcoal text-text-secondary hover:text-white rounded-sm font-medium transition-colors"
         >
           Cancel
         </button>

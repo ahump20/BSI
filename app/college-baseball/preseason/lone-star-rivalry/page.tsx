@@ -113,7 +113,7 @@ export default function LoneStarRivalryPage() {
                         Texas Longhorns
                       </h2>
                     </div>
-                    <div className="w-16 h-16 bg-burnt-orange rounded-lg flex items-center justify-center">
+                    <div className="w-16 h-16 bg-burnt-orange rounded-sm flex items-center justify-center">
                       <span className="font-display text-2xl font-bold text-white">UT</span>
                     </div>
                   </div>
@@ -166,7 +166,7 @@ export default function LoneStarRivalryPage() {
                         Texas A&M Aggies
                       </h2>
                     </div>
-                    <div className="w-16 h-16 bg-[#500000] rounded-lg flex items-center justify-center">
+                    <div className="w-16 h-16 bg-[#500000] rounded-sm flex items-center justify-center">
                       <span className="font-display text-2xl font-bold text-white">A&M</span>
                     </div>
                   </div>
@@ -348,12 +348,12 @@ export default function LoneStarRivalryPage() {
                 </p>
                 <div className="flex flex-wrap gap-4 justify-center">
                   <Link href="/college-baseball/teams/texas">
-                    <span className="inline-flex items-center px-6 py-3 bg-burnt-orange text-white font-medium rounded-lg hover:bg-burnt-orange/80 transition-colors">
+                    <span className="inline-flex items-center px-6 py-3 bg-burnt-orange text-white font-medium rounded-sm hover:bg-burnt-orange/80 transition-colors">
                       Texas Longhorns
                     </span>
                   </Link>
                   <Link href="/college-baseball/teams/texas-am">
-                    <span className="inline-flex items-center px-6 py-3 bg-[#500000] text-white font-medium rounded-lg hover:bg-[#500000]/80 transition-colors">
+                    <span className="inline-flex items-center px-6 py-3 bg-[#500000] text-white font-medium rounded-sm hover:bg-[#500000]/80 transition-colors">
                       Texas A&M Aggies
                     </span>
                   </Link>

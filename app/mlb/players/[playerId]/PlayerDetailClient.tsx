@@ -199,7 +199,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                 <p className="text-text-secondary mb-4">{error}</p>
                 <Link
                   href="/mlb/players"
-                  className="inline-block px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/90 transition-colors"
+                  className="inline-block px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange/90 transition-colors"
                 >
                   Back to Players
                 </Link>
@@ -216,7 +216,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                 <div className="flex flex-col md:flex-row gap-8 items-start">
                   {/* Headshot */}
                   <ScrollReveal direction="left">
-                    <div className="relative w-40 h-40 rounded-lg overflow-hidden bg-background-tertiary border border-border-subtle">
+                    <div className="relative w-40 h-40 rounded-sm overflow-hidden bg-background-tertiary border border-border-subtle">
                       {assets?.headshot ? (
                         <Image
                           src={assets.headshot}

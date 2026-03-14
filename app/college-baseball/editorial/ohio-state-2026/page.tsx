@@ -90,7 +90,7 @@ const data: TeamPreviewData = {
       year: 'Jr.',
       fromSchool: 'Ball State',
       stats: '.298/.375/.452, 8 HR, 18 SB',
-      bio: 'MAC standout with a well-rounded game. Provides the shortstop presence Ohio State completely lacked in 2025. Athletic defender with a bat that plays at both ends of the lineup.',
+      bio: 'MAC standout with a well-rounded-sm game. Provides the shortstop presence Ohio State completely lacked in 2025. Athletic defender with a bat that plays at both ends of the lineup.',
     },
     {
       name: 'Drew Dyer',
@@ -149,7 +149,7 @@ const data: TeamPreviewData = {
     middle:
       'Bryce Bonner (from West Virginia, .282, 10 HR) and Kolton Schaller (from Cincinnati, .278, 9 HR) add the power Ohio State completely lacked in 2025. The Buckeyes hit 28 home runs as a team last year — Bonner and Schaller should combine for 18-plus by themselves. The middle of the order has a pulse.',
     supportingCast:
-      'Tanner Jacobson (from Ball State, .298, 8 HR, 18 SB) is the most well-rounded position player addition. Drew Dyer (from Kentucky, .262) steadies things behind the plate. Cole Andrews (.248) needs a breakout. The lineup is significantly better — whether it is good enough to compete in the Big Ten remains to be seen.',
+      'Tanner Jacobson (from Ball State, .298, 8 HR, 18 SB) is the most well-rounded-sm position player addition. Drew Dyer (from Kentucky, .262) steadies things behind the plate. Cole Andrews (.248) needs a breakout. The lineup is significantly better — whether it is good enough to compete in the Big Ten remains to be seen.',
   },
 
   scheduleHighlights: [

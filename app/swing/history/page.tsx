@@ -72,9 +72,9 @@ export default function SwingHistoryPage() {
           {loading ? (
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="rounded-xl bg-surface-dugout border border-border-subtle p-6 animate-pulse">
-                  <div className="h-5 bg-white/[0.06] rounded w-48 mb-3" />
-                  <div className="h-3 bg-white/[0.04] rounded w-32" />
+                <div key={i} className="rounded-sm bg-surface-dugout border border-border-subtle p-6 animate-pulse">
+                  <div className="h-5 bg-white/[0.06] rounded-sm w-48 mb-3" />
+                  <div className="h-3 bg-white/[0.04] rounded-sm w-32" />
                 </div>
               ))}
             </div>
@@ -82,7 +82,7 @@ export default function SwingHistoryPage() {
             <Card variant="default" padding="lg">
               <CardContent>
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-burnt-orange/10 flex items-center justify-center">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-sm bg-burnt-orange/10 flex items-center justify-center">
                     <svg viewBox="0 0 24 24" className="w-8 h-8 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5">
                       <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
                       <circle cx="12" cy="13" r="4" />
@@ -155,7 +155,7 @@ export default function SwingHistoryPage() {
                       </CardContent>
                     </Card>
                     {isLocked && (
-                      <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-surface-scoreboard/60">
+                      <div className="absolute inset-0 flex items-center justify-center rounded-sm bg-surface-scoreboard/60">
                         <div className="text-center">
                           <svg viewBox="0 0 24 24" className="w-5 h-5 text-text-muted mx-auto mb-1" fill="none" stroke="currentColor" strokeWidth="1.5">
                             <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />

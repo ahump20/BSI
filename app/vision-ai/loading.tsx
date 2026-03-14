@@ -17,7 +17,7 @@ export default function VisionAILoading() {
         {/* KPI strip */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="bg-surface-light border border-border-subtle rounded-xl p-4 text-center animate-pulse">
+            <div key={i} className="bg-surface-light border border-border-subtle rounded-sm p-4 text-center animate-pulse">
               <Skeleton variant="text" width={60} height={28} className="mx-auto mb-2" />
               <Skeleton variant="text" width={100} height={10} className="mx-auto" />
             </div>
@@ -27,14 +27,14 @@ export default function VisionAILoading() {
         {/* Nav bar skeleton */}
         <div className="flex gap-2 mb-8 overflow-hidden">
           {Array.from({ length: 8 }).map((_, i) => (
-            <Skeleton key={i} variant="rectangular" width={80} height={36} className="rounded shrink-0" />
+            <Skeleton key={i} variant="rectangular" width={80} height={36} className="rounded-sm shrink-0" />
           ))}
         </div>
 
         {/* 8-card grid skeleton */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="bg-surface-light border border-border-subtle rounded-xl p-5 animate-pulse">
+            <div key={i} className="bg-surface-light border border-border-subtle rounded-sm p-5 animate-pulse">
               <div className="flex items-center gap-2 mb-3">
                 <Skeleton variant="circular" width={24} height={24} />
                 <Skeleton variant="rectangular" width={50} height={18} className="rounded-full" />

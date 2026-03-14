@@ -269,7 +269,7 @@ export function LiveScoreStrip() {
               </div>
             </ScrollReveal>
           ) : (
-            <div className="bg-surface-light border border-border rounded-xl p-5">
+            <div className="bg-surface-light border border-border rounded-sm p-5">
               <div className="flex items-center justify-between mb-3">
                 <h2 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide">
                   Today&apos;s Games
@@ -290,7 +290,7 @@ export function LiveScoreStrip() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="px-3 py-1.5 text-xs font-medium bg-surface border border-border rounded-lg text-text-secondary hover:text-burnt-orange hover:border-burnt-orange/30 transition-all"
+                    className="px-3 py-1.5 text-xs font-medium bg-surface border border-border rounded-sm text-text-secondary hover:text-burnt-orange hover:border-burnt-orange/30 transition-all"
                   >
                     {link.label}
                   </Link>

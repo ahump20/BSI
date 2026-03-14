@@ -133,7 +133,7 @@ export function StandingsTable({
   })();
 
   return (
-    <div className={`bg-surface-light border border-border rounded-xl ${className}`}>
+    <div className={`bg-surface-light border border-border rounded-sm ${className}`}>
       <div className="px-6 py-4 border-b border-border flex items-center justify-between">
         <h3 className="text-lg font-semibold text-text-primary">Standings</h3>
         {groupBy === 'none' && (
@@ -180,7 +180,7 @@ export function StandingsTable({
                         <tr key={i} className="border-b border-border-subtle">
                           {Array.from({ length: 5 }).map((_, j) => (
                             <td key={j} className="p-3">
-                              <div className="h-4 bg-surface rounded animate-pulse" />
+                              <div className="h-4 bg-surface rounded-sm animate-pulse" />
                             </td>
                           ))}
                         </tr>

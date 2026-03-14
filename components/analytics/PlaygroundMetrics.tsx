@@ -101,7 +101,7 @@ const PITCHING_CARDS: FormulaCard[] = [
 const inputStyle: React.CSSProperties = {
   background: 'rgba(0,0,0,0.3)',
   border: '1px solid rgba(191,87,0,0.25)',
-  borderRadius: '4px',
+  borderRadius: '2px',
   color: '#FAF8F5',
   padding: '4px 8px',
   fontSize: '0.8125rem',
@@ -155,7 +155,7 @@ function MetricResult({ label, value, tier }: { label: string; value: string; ti
     <div style={{
       background: tier === 'pro' ? 'rgba(255,107,53,0.08)' : 'rgba(26,26,26,0.8)',
       border: tier === 'pro' ? '1px solid rgba(255,107,53,0.2)' : '1px solid rgba(191,87,0,0.15)',
-      borderRadius: '6px',
+      borderRadius: '2px',
       padding: '8px 12px',
       display: 'flex',
       justifyContent: 'space-between',
@@ -180,7 +180,7 @@ function FormulaCardView({ card, isOpen, onToggle }: { card: FormulaCard; isOpen
   return (
     <div style={{
       border: '1px solid rgba(191,87,0,0.15)',
-      borderRadius: '6px',
+      borderRadius: '2px',
       overflow: 'hidden',
       background: '#1A1A1A',
     }}>
@@ -199,7 +199,7 @@ function FormulaCardView({ card, isOpen, onToggle }: { card: FormulaCard; isOpen
           <span style={{
             background: card.tier === 'pro' ? 'rgba(255,107,53,0.15)' : 'rgba(250,248,245,0.08)',
             color: card.tier === 'pro' ? '#FF6B35' : 'rgba(250,248,245,0.4)',
-            padding: '1px 6px', borderRadius: '3px', fontSize: '0.625rem',
+            padding: '1px 6px', borderRadius: '2px', fontSize: '0.625rem',
             fontFamily: 'JetBrains Mono, monospace',
           }}>
             {card.tier}
@@ -210,7 +210,7 @@ function FormulaCardView({ card, isOpen, onToggle }: { card: FormulaCard; isOpen
 
       {isOpen && (
         <div style={{ padding: '0 14px 14px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-          <code style={{ display: 'block', padding: '8px 10px', background: '#111', borderRadius: '4px', color: '#BF5700', fontSize: '0.75rem', fontFamily: 'JetBrains Mono, monospace', margin: '10px 0 8px' }}>
+          <code style={{ display: 'block', padding: '8px 10px', background: '#111', borderRadius: '2px', color: '#BF5700', fontSize: '0.75rem', fontFamily: 'JetBrains Mono, monospace', margin: '10px 0 8px' }}>
             {card.formula}
           </code>
           <p style={{ color: 'rgba(250,248,245,0.7)', fontSize: '0.8125rem', margin: '0 0 6px', lineHeight: 1.5 }}>
@@ -273,7 +273,7 @@ function BattingCalculator() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Inputs */}
-      <div style={{ background: '#1A1A1A', borderRadius: '8px', border: '1px solid rgba(191,87,0,0.2)', padding: '1rem' }}>
+      <div style={{ background: '#1A1A1A', borderRadius: '2px', border: '1px solid rgba(191,87,0,0.2)', padding: '1rem' }}>
         <div style={{ fontSize: '0.7rem', color: '#BF5700', fontFamily: 'JetBrains Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.75rem' }}>
           Raw Inputs
         </div>
@@ -380,7 +380,7 @@ function PitchingCalculator() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      <div style={{ background: '#1A1A1A', borderRadius: '8px', border: '1px solid rgba(191,87,0,0.2)', padding: '1rem' }}>
+      <div style={{ background: '#1A1A1A', borderRadius: '2px', border: '1px solid rgba(191,87,0,0.2)', padding: '1rem' }}>
         <div style={{ fontSize: '0.7rem', color: '#BF5700', fontFamily: 'JetBrains Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.75rem' }}>
           Raw Inputs
         </div>
@@ -455,7 +455,7 @@ export function PlaygroundMetrics() {
             key={t}
             onClick={() => setTab(t)}
             style={{
-              padding: '6px 18px', borderRadius: '4px', cursor: 'pointer',
+              padding: '6px 18px', borderRadius: '2px', cursor: 'pointer',
               fontFamily: 'Oswald, sans-serif', fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.05em',
               background: tab === t ? 'rgba(191,87,0,0.2)' : 'transparent',
               border: tab === t ? '1px solid #BF5700' : '1px solid rgba(191,87,0,0.2)',

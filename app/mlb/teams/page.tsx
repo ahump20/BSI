@@ -186,7 +186,7 @@ export default function MLBTeamsPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search teams, cities, venues..."
-                  className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-background-tertiary border border-border-subtle text-text-primary text-sm placeholder:text-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-sm bg-background-tertiary border border-border-subtle text-text-primary text-sm placeholder:text-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors"
                 />
               </div>
 
@@ -196,7 +196,7 @@ export default function MLBTeamsPage() {
                   <button
                     key={league}
                     onClick={() => setSelectedLeague(league)}
-                    className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all ${
+                    className={`px-6 py-2.5 rounded-sm font-semibold text-sm transition-all ${
                       selectedLeague === league
                         ? 'bg-burnt-orange text-white'
                         : 'bg-background-tertiary text-text-secondary hover:bg-surface-light hover:text-text-primary'
@@ -299,7 +299,7 @@ function TeamCard({ team }: { team: TeamWithRecord }) {
         <div className="flex items-center gap-4">
           {/* Team Logo */}
           <div
-            className="w-16 h-16 rounded-lg flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform"
+            className="w-16 h-16 rounded-sm flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform"
             style={{ backgroundColor: team.primaryColor }}
           >
             {logoError ? (

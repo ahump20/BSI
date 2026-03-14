@@ -107,10 +107,10 @@ export default function GameBriefsIndexPage() {
             {loading && (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="bg-surface-light border border-border-subtle rounded-xl p-4 animate-pulse">
-                    <div className="h-4 bg-border-subtle rounded w-1/3 mb-3" />
-                    <div className="h-5 bg-border-subtle rounded w-3/4 mb-2" />
-                    <div className="h-3 bg-surface-light rounded w-1/2" />
+                  <div key={i} className="bg-surface-light border border-border-subtle rounded-sm p-4 animate-pulse">
+                    <div className="h-4 bg-border-subtle rounded-sm w-1/3 mb-3" />
+                    <div className="h-5 bg-border-subtle rounded-sm w-3/4 mb-2" />
+                    <div className="h-3 bg-surface-light rounded-sm w-1/2" />
                   </div>
                 ))}
               </div>
@@ -146,7 +146,7 @@ export default function GameBriefsIndexPage() {
             </div>
 
             {briefs.length <= 1 && (
-              <div className="mt-8 bg-surface-light border border-dashed border-border rounded-xl p-6 text-center">
+              <div className="mt-8 bg-surface-light border border-dashed border-border rounded-sm p-6 text-center">
                 <p className="text-sm text-text-muted">
                   More game briefs publishing as the 2026 season progresses.
                 </p>

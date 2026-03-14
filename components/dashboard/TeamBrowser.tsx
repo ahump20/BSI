@@ -99,11 +99,11 @@ export function TeamBrowser() {
     return (
       <div>
         {/* Search skeleton */}
-        <div className="h-10 bg-surface-medium rounded-lg animate-pulse mb-4" />
+        <div className="h-10 bg-surface-medium rounded-sm animate-pulse mb-4" />
         {/* Grid skeleton */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
           {Array.from({ length: 12 }).map((_, i) => (
-            <div key={i} className="h-24 bg-surface-medium rounded-lg animate-pulse" />
+            <div key={i} className="h-24 bg-surface-medium rounded-sm animate-pulse" />
           ))}
         </div>
       </div>
@@ -129,7 +129,7 @@ export function TeamBrowser() {
           onChange={handleSearchChange}
           placeholder="Search teams..."
           aria-label="Search teams"
-          className="w-full px-4 py-2.5 bg-surface-light border border-border rounded-lg text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-burnt-orange/50 transition-colors"
+          className="w-full px-4 py-2.5 bg-surface-light border border-border rounded-sm text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-burnt-orange/50 transition-colors"
         />
       </div>
 
@@ -172,7 +172,7 @@ export function TeamBrowser() {
             >
               <Link
                 href={`/college-baseball/teams/${team.slug}`}
-                className="block p-3 bg-surface-light border border-border rounded-lg hover:border-burnt-orange/40 hover:bg-surface-medium transition-all group"
+                className="block p-3 bg-surface-light border border-border rounded-sm hover:border-burnt-orange/40 hover:bg-surface-medium transition-all group"
               >
                 <div className="flex items-center gap-3">
                   <div className="relative w-10 h-10 flex-shrink-0">
@@ -204,7 +204,7 @@ export function TeamBrowser() {
                   </div>
                 </div>
                 {team.ranking && team.ranking <= 25 && (
-                  <span className="absolute top-1 right-1 px-1.5 py-0.5 bg-burnt-orange/20 text-burnt-orange text-[10px] font-bold rounded">
+                  <span className="absolute top-1 right-1 px-1.5 py-0.5 bg-burnt-orange/20 text-burnt-orange text-[10px] font-bold rounded-sm">
                     #{team.ranking}
                   </span>
                 )}

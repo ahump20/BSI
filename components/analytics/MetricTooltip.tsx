@@ -37,7 +37,7 @@ export function MetricTooltip({
     >
       {children}
       {open && (
-        <span className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 rounded-lg bg-background-secondary border border-border shadow-xl">
+        <span className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 rounded-sm bg-background-secondary border border-border shadow-xl">
           <span className="block text-xs font-mono text-burnt-orange font-bold mb-1">
             {metric}
           </span>

@@ -8,6 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 import { fmt3 } from '@/lib/utils/format';
@@ -83,6 +84,7 @@ export default function TexasRosterClient() {
     { timeout: 12000 },
   );
 
+  const [activeTab, setActiveTab] = useState<'all' | 'position' | 'pitchers'>('all');
   const [hitterSort, setHitterSort] = useState<SortField>('wrc_plus');
   const [pitcherSort, setPitcherSort] = useState<PitcherSortField>('fip');
   const [posFilter, setPosFilter] = useState<PositionFilter>('all');
@@ -145,11 +147,34 @@ export default function TexasRosterClient() {
           </Container>
         </Section>
 
+        {/* Tab Bar */}
+        <Section padding="sm" className="border-b border-border">
+          <Container>
+            <div className="flex gap-1 bg-[var(--surface-press-box)] rounded-sm p-1 w-fit">
+              {(['all', 'position', 'pitchers'] as const).map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-4 py-2 rounded-sm text-xs font-mono uppercase tracking-wider transition-colors ${
+                    activeTab === tab
+                      ? 'bg-burnt-orange text-white'
+                      : 'text-text-muted hover:text-text-primary'
+                  }`}
+                >
+                  {tab === 'all' ? 'All' : tab === 'position' ? 'Position Players' : 'Pitchers'}
+                </button>
+              ))}
+            </div>
+          </Container>
+        </Section>
+
+        <DataErrorBoundary name="Roster Data">
         {/* Hitters */}
+        {(activeTab === 'all' || activeTab === 'position') && (
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <Card variant="default" padding="lg">
+              <Card variant="default" padding="lg" className="border-t-2 border-burnt-orange">
                 <CardHeader>
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <CardTitle className="flex items-center gap-3">
@@ -163,7 +188,7 @@ export default function TexasRosterClient() {
                         <button
                           key={f}
                           onClick={() => setPosFilter(f)}
-                          className={`px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded transition-colors ${
+                          className={`px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-sm transition-colors ${
                             posFilter === f
                               ? 'bg-burnt-orange text-white'
                               : 'bg-surface-light text-text-muted hover:text-text-primary'
@@ -179,7 +204,7 @@ export default function TexasRosterClient() {
                   {loading ? (
                     <div className="space-y-3">
                       {[1, 2, 3, 4, 5].map((i) => (
-                        <div key={i} className="h-10 bg-surface-light rounded animate-pulse" />
+                        <div key={i} className="h-10 bg-surface-light rounded-sm animate-pulse" />
                       ))}
                     </div>
                   ) : sortedHitters.length === 0 ? (
@@ -221,8 +246,10 @@ export default function TexasRosterClient() {
             </ScrollReveal>
           </Container>
         </Section>
+        )}
 
         {/* Pitchers */}
+        {(activeTab === 'all' || activeTab === 'pitchers') && (
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
@@ -239,7 +266,7 @@ export default function TexasRosterClient() {
                   {loading ? (
                     <div className="space-y-3">
                       {[1, 2, 3, 4].map((i) => (
-                        <div key={i} className="h-10 bg-surface-light rounded animate-pulse" />
+                        <div key={i} className="h-10 bg-surface-light rounded-sm animate-pulse" />
                       ))}
                     </div>
                   ) : sortedPitchers.length === 0 ? (
@@ -277,7 +304,9 @@ export default function TexasRosterClient() {
             </ScrollReveal>
           </Container>
         </Section>
+        )}
 
+        </DataErrorBoundary>
         {/* Attribution */}
         <Section padding="md" borderTop>
           <Container>
@@ -320,6 +349,7 @@ function SortTh({ label, field, current, onSort }: { label: string; field: SortF
       tabIndex={0}
       role="columnheader"
       aria-sort={active ? (field === 'kpct' ? 'ascending' : 'descending') : 'none'}
+      aria-label={`Sort by ${label}`}
     >
       {label} {active ? (field === 'kpct' ? '▴' : '▾') : ''}
     </th>
@@ -337,6 +367,7 @@ function PitcherSortTh({ label, field, current, onSort }: { label: string; field
       tabIndex={0}
       role="columnheader"
       aria-sort={active ? (ascending ? 'ascending' : 'descending') : 'none'}
+      aria-label={`Sort by ${label}`}
     >
       {label} {active ? (ascending ? '▴' : '▾') : ''}
     </th>

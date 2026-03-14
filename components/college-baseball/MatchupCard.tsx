@@ -58,7 +58,7 @@ export default function MatchupCard({ pitcher, batter, isLive }: MatchupCardProp
   if (!pitcher && !batter) return null;
 
   return (
-    <div className="bg-midnight rounded-lg border border-border-subtle overflow-hidden">
+    <div className="bg-midnight rounded-sm border border-border-subtle overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-border-subtle bg-charcoal">
         <h3 className="font-display text-xs font-semibold uppercase tracking-wide text-bone">

@@ -311,7 +311,7 @@ export default function NFLTeamsPage() {
       className="h-full transition-all hover:border-burnt-orange group"
     >
       <div className="flex items-center gap-4">
-        <div className="w-16 h-16 bg-background-secondary rounded-lg flex items-center justify-center text-xl font-bold text-burnt-orange group-hover:bg-burnt-orange/10 transition-colors">
+        <div className="w-16 h-16 bg-background-secondary rounded-sm flex items-center justify-center text-xl font-bold text-burnt-orange group-hover:bg-burnt-orange/10 transition-colors">
           {team.abbreviation}
         </div>
         <div className="flex-1 min-w-0">

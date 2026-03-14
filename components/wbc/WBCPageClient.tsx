@@ -109,14 +109,14 @@ export function WBCPageClient() {
                   <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
                     <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
 
-                    <div className="w-12 h-12 mb-4 bg-burnt-orange/15 rounded-xl flex items-center justify-center">
+                    <div className="w-12 h-12 mb-4 bg-burnt-orange/15 rounded-sm flex items-center justify-center">
                       {feature.icon}
                     </div>
                     <h3 className="text-base font-semibold text-text-primary mb-2">{feature.title}</h3>
                     <p className="text-text-tertiary text-sm leading-relaxed mb-4">{feature.description}</p>
 
                     <div className="flex items-center justify-between pt-3 border-t border-border-subtle">
-                      <span className="text-xs font-semibold text-text-muted bg-surface-light px-2 py-0.5 rounded">
+                      <span className="text-xs font-semibold text-text-muted bg-surface-light px-2 py-0.5 rounded-sm">
                         {feature.badge}
                       </span>
                       <span className="text-burnt-orange text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
@@ -185,19 +185,19 @@ export function WBCPageClient() {
       <section className="py-12 px-4 sm:px-6 lg:px-8 bg-midnight border-t border-border-subtle">
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="p-5 rounded-xl border border-border-subtle bg-surface-light/5">
+            <div className="p-5 rounded-sm border border-border-subtle bg-surface-light/5">
               <div className="text-burnt-orange font-semibold text-sm mb-2">Pool of Death</div>
               <p className="text-text-secondary text-sm leading-relaxed">
                 Dominican Republic, Venezuela, and Puerto Rico combine for 37% of championship probability in the BSI model. All three play Pool D Miami. One doesn&apos;t make the quarterfinals.
               </p>
             </div>
-            <div className="p-5 rounded-xl border border-border-subtle bg-surface-light/5">
+            <div className="p-5 rounded-sm border border-border-subtle bg-surface-light/5">
               <div className="text-burnt-orange font-semibold text-sm mb-2">Japan&apos;s Edge</div>
               <p className="text-text-secondary text-sm leading-relaxed">
                 Defending champions, deepest pitching staff, Ohtani available. Japan reaches the final in 55% of BSI simulations. The question is whether they spend ace arms in Tokyo or save them for Miami.
               </p>
             </div>
-            <div className="p-5 rounded-xl border border-border-subtle bg-surface-light/5">
+            <div className="p-5 rounded-sm border border-border-subtle bg-surface-light/5">
               <div className="text-burnt-orange font-semibold text-sm mb-2">USA&apos;s Ceiling</div>
               <p className="text-text-secondary text-sm leading-relaxed">
                 USA gets Pool B Houston — easiest draw of any Tier 1 team. Their 40% Final% vs 15% Championship% reveals the pattern: they reach the final, they don&apos;t finish it. Bullpen management is the recurring problem.

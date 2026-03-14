@@ -66,7 +66,7 @@ export function EmptyState({ type, sport: _sport, message, action, onRetry }: Em
       {showRetry && (
         <button
           onClick={onRetry}
-          className="px-6 py-2 bg-burnt-orange hover:bg-burnt-orange-700 text-white font-semibold rounded-lg transition-colors"
+          className="px-6 py-2 bg-burnt-orange hover:bg-burnt-orange-700 text-white font-semibold rounded-sm transition-colors"
         >
           Try Again
         </button>

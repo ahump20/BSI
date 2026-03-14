@@ -104,14 +104,14 @@ export function AppTopBar() {
         {/* Search trigger — visible, clickable button */}
         <button
           onClick={openSearch}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/[0.08] hover:border-[var(--bsi-primary)]/30 hover:bg-white/[0.04] transition-all cursor-pointer group"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-sm border border-white/[0.08] hover:border-[var(--bsi-primary)]/30 hover:bg-white/[0.04] transition-all cursor-pointer group"
           aria-label="Search (Cmd+K)"
         >
           <IconSearch />
           <span className="hidden sm:inline text-[11px] text-[var(--bsi-dust)] group-hover:text-[var(--bsi-bone)] transition-colors">
             Search
           </span>
-          <kbd className="hidden sm:inline text-[10px] text-[var(--bsi-dust)] bg-white/[0.06] px-1.5 py-0.5 rounded font-mono ml-1">
+          <kbd className="hidden sm:inline text-[10px] text-[var(--bsi-dust)] bg-white/[0.06] px-1.5 py-0.5 rounded-sm font-mono ml-1">
             ⌘K
           </kbd>
         </button>

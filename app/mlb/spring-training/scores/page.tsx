@@ -89,13 +89,13 @@ export default function SpringTrainingScoresPage() {
             <div className="flex items-center gap-2 mb-6">
               <button
                 onClick={() => setDateOffset((d) => d - 1)}
-                className="px-3 py-1.5 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary text-sm transition-colors"
+                className="px-3 py-1.5 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary text-sm transition-colors"
               >
                 &larr; Previous
               </button>
               <button
                 onClick={() => setDateOffset(0)}
-                className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                className={`px-3 py-1.5 rounded-sm text-sm transition-colors ${
                   dateOffset === 0
                     ? 'bg-burnt-orange text-white'
                     : 'bg-background-tertiary text-text-secondary hover:text-text-primary'
@@ -105,7 +105,7 @@ export default function SpringTrainingScoresPage() {
               </button>
               <button
                 onClick={() => setDateOffset((d) => d + 1)}
-                className="px-3 py-1.5 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary text-sm transition-colors"
+                className="px-3 py-1.5 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary text-sm transition-colors"
               >
                 Next &rarr;
               </button>

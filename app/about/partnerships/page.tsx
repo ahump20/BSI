@@ -63,7 +63,7 @@ export default function PartnershipsPage() {
                 ].map((item) => (
                   <div
                     key={item.org}
-                    className="bg-surface-light border border-border-subtle rounded-xl p-5"
+                    className="bg-surface-light border border-border-subtle rounded-sm p-5"
                   >
                     <div className="flex items-center gap-2 mb-2">
                       <span className="font-display text-sm font-bold text-text-primary uppercase">{item.org}</span>
@@ -80,7 +80,7 @@ export default function PartnershipsPage() {
               <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
                 Citation Standards
               </h2>
-              <div className="bg-surface-light border border-border-subtle rounded-xl p-5 sm:p-6">
+              <div className="bg-surface-light border border-border-subtle rounded-sm p-5 sm:p-6">
                 <div className="space-y-4 text-sm text-text-tertiary leading-relaxed">
                   <p>
                     BSI follows these citation principles across all content:
@@ -121,7 +121,7 @@ export default function PartnershipsPage() {
               <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
                 Partnership Interest
               </h2>
-              <div className="bg-burnt-orange/5 border border-burnt-orange/15 rounded-xl p-5">
+              <div className="bg-burnt-orange/5 border border-burnt-orange/15 rounded-sm p-5">
                 <p className="text-sm text-text-tertiary leading-relaxed mb-3">
                   BSI is open to partnerships with academic institutions, analytics conferences,
                   and data providers that align with its mission of bringing depth coverage to

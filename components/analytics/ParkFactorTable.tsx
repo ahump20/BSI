@@ -86,7 +86,7 @@ export function ParkFactorTable({ data, isPro = false, className = '' }: ParkFac
   }
 
   return (
-    <div className={`bg-background-primary border border-border-subtle rounded-xl overflow-hidden ${className}`}>
+    <div className={`bg-background-primary border border-border-subtle rounded-sm overflow-hidden ${className}`}>
       <div className="px-5 py-4 border-b border-border-subtle flex items-center justify-between">
         <h3 className="font-display text-base uppercase tracking-wider text-text-primary">Park Factors</h3>
         <button
@@ -179,7 +179,7 @@ export function ParkFactorTable({ data, isPro = false, className = '' }: ParkFac
                   </td>
                   <td className="px-2 py-3 text-center">
                     <span
-                      className="inline-block px-1.5 py-0.5 rounded font-mono text-xs font-bold tabular-nums"
+                      className="inline-block px-1.5 py-0.5 rounded-sm font-mono text-xs font-bold tabular-nums"
                       style={{ color, backgroundColor: withAlpha(color, 0.13) }}
                     >
                       {formatFactor(row.runs_factor)}

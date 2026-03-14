@@ -99,8 +99,8 @@ export function EditorialPreview() {
       <section className="py-16 px-4 sm:px-6 lg:px-8" style={{ background: 'var(--surface-dugout)' }}>
         <div className="max-w-5xl mx-auto">
           <div className="mb-10">
-            <div className="h-3 w-20 bg-surface rounded mb-4 animate-pulse" />
-            <div className="h-8 w-48 bg-surface rounded animate-pulse" />
+            <div className="h-3 w-20 bg-surface rounded-sm mb-4 animate-pulse" />
+            <div className="h-8 w-48 bg-surface rounded-sm animate-pulse" />
           </div>
           <div className="space-y-4">
             <div className="h-40 border animate-pulse" style={{ background: 'var(--surface-press-box)', borderColor: 'var(--border-vintage)', borderRadius: '2px' }} />

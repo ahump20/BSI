@@ -73,10 +73,10 @@ const FALLBACK_ARTICLES: Editorial[] = [
 function SkeletonFeatured() {
   return (
     <div className="bg-surface-light border border-border rounded-[2px] p-5 md:p-7 animate-pulse">
-      <div className="h-4 w-24 bg-surface rounded mb-3" />
-      <div className="h-6 w-3/4 bg-surface rounded mb-2" />
-      <div className="h-4 w-full bg-surface rounded mb-1" />
-      <div className="h-4 w-2/3 bg-surface rounded" />
+      <div className="h-4 w-24 bg-surface rounded-sm mb-3" />
+      <div className="h-6 w-3/4 bg-surface rounded-sm mb-2" />
+      <div className="h-4 w-full bg-surface rounded-sm mb-1" />
+      <div className="h-4 w-2/3 bg-surface rounded-sm" />
     </div>
   );
 }
@@ -84,9 +84,9 @@ function SkeletonFeatured() {
 function SkeletonSecondary() {
   return (
     <div className="bg-surface-light border border-border rounded-[2px] p-4 animate-pulse h-full">
-      <div className="h-3 w-16 bg-surface rounded mb-3" />
-      <div className="h-5 w-5/6 bg-surface rounded mb-2" />
-      <div className="h-3 w-full bg-surface rounded" />
+      <div className="h-3 w-16 bg-surface rounded-sm mb-3" />
+      <div className="h-5 w-5/6 bg-surface rounded-sm mb-2" />
+      <div className="h-3 w-full bg-surface rounded-sm" />
     </div>
   );
 }

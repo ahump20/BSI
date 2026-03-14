@@ -112,7 +112,7 @@ function SeriesStrip({ games, currentGameId }: { games: SeriesGame[]; currentGam
           return (
             <div
               key={g.id}
-              className={`flex-shrink-0 px-3 py-2 rounded-lg text-sm ${
+              className={`flex-shrink-0 px-3 py-2 rounded-sm text-sm ${
                 isCurrent
                   ? 'bg-burnt-orange/15 border border-burnt-orange/30'
                   : 'bg-background-tertiary'
@@ -363,7 +363,7 @@ export default function CollegeGameSummaryClient() {
               <div className="space-y-4">
                 {/* Top Hitters */}
                 {topHitters.map((hitter, idx) => (
-                  <div key={idx} className="flex items-center gap-4 p-3 bg-background-tertiary rounded-lg">
+                  <div key={idx} className="flex items-center gap-4 p-3 bg-background-tertiary rounded-sm">
                     <div className="w-10 h-10 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
                       {hitter.player.position}
                     </div>
@@ -387,7 +387,7 @@ export default function CollegeGameSummaryClient() {
 
                 {/* Pitching Decisions */}
                 {winningPitcher && (
-                  <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-lg">
+                  <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-sm">
                     <Badge variant="success">W</Badge>
                     <div>
                       <p className="font-semibold text-text-primary">{winningPitcher.player.name}</p>
@@ -398,7 +398,7 @@ export default function CollegeGameSummaryClient() {
                   </div>
                 )}
                 {losingPitcher && (
-                  <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-lg">
+                  <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-sm">
                     <Badge variant="error">L</Badge>
                     <div>
                       <p className="font-semibold text-text-primary">{losingPitcher.player.name}</p>
@@ -409,7 +409,7 @@ export default function CollegeGameSummaryClient() {
                   </div>
                 )}
                 {savePitcher && (
-                  <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-lg">
+                  <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-sm">
                     <Badge variant="secondary">SV</Badge>
                     <div>
                       <p className="font-semibold text-text-primary">{savePitcher.player.name}</p>
@@ -439,7 +439,7 @@ export default function CollegeGameSummaryClient() {
                 {scoringPlays.map((play) => (
                   <div
                     key={play.id}
-                    className="p-3 bg-background-tertiary rounded-lg border-l-4 border-burnt-orange"
+                    className="p-3 bg-background-tertiary rounded-sm border-l-4 border-burnt-orange"
                   >
                     <div className="flex items-center gap-2 mb-1">
                       <Badge variant="primary" size="sm">
@@ -471,25 +471,25 @@ export default function CollegeGameSummaryClient() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="text-center p-4 bg-background-tertiary rounded-lg">
+              <div className="text-center p-4 bg-background-tertiary rounded-sm">
                 <p className="text-text-tertiary text-sm mb-1">Total Runs</p>
                 <p className="text-2xl font-bold text-text-primary font-mono">
                   {game.linescore.totals.away.runs + game.linescore.totals.home.runs}
                 </p>
               </div>
-              <div className="text-center p-4 bg-background-tertiary rounded-lg">
+              <div className="text-center p-4 bg-background-tertiary rounded-sm">
                 <p className="text-text-tertiary text-sm mb-1">Total Hits</p>
                 <p className="text-2xl font-bold text-text-primary font-mono">
                   {game.linescore.totals.away.hits + game.linescore.totals.home.hits}
                 </p>
               </div>
-              <div className="text-center p-4 bg-background-tertiary rounded-lg">
+              <div className="text-center p-4 bg-background-tertiary rounded-sm">
                 <p className="text-text-tertiary text-sm mb-1">Errors</p>
                 <p className="text-2xl font-bold text-text-primary font-mono">
                   {game.linescore.totals.away.errors + game.linescore.totals.home.errors}
                 </p>
               </div>
-              <div className="text-center p-4 bg-background-tertiary rounded-lg">
+              <div className="text-center p-4 bg-background-tertiary rounded-sm">
                 <p className="text-text-tertiary text-sm mb-1">Innings</p>
                 <p className="text-2xl font-bold text-text-primary font-mono">
                   {game.linescore.innings.length}

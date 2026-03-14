@@ -140,13 +140,13 @@ function GameCard({ game }: { game: Game }) {
   return (
     <Link href={gameHref} className="block">
       <div
-        className={`bg-background-tertiary rounded-lg border transition-all hover:border-burnt-orange hover:bg-surface-light ${
+        className={`bg-background-tertiary rounded-sm border transition-all hover:border-burnt-orange hover:bg-surface-light ${
           isLive ? 'border-success' : 'border-border-subtle'
         }`}
       >
         {/* Game Status Bar */}
         <div
-          className={`px-4 py-2 rounded-t-lg flex items-center justify-between ${
+          className={`px-4 py-2 rounded-t-sm flex items-center justify-between ${
             isLive ? 'bg-success/20' : isFinal ? 'bg-background-secondary' : 'bg-burnt-orange/20'
           }`}
         >
@@ -473,7 +473,7 @@ export default function CollegeBaseballScoresPage() {
                 </p>
                 <button
                   onClick={() => retry()}
-                  className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors"
+                  className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange/80 transition-colors"
                 >
                   Retry
                 </button>

@@ -85,7 +85,7 @@ export default function Proof() {
                 rel="noopener noreferrer"
                 className="group block"
               >
-                <span className="inline-flex rounded-full border border-burnt-orange/25 bg-burnt-orange/10 px-3 py-1 font-mono text-[0.58rem] uppercase tracking-[0.28em] text-burnt-orange">
+                <span className="inline-flex rounded-sm border border-burnt-orange/25 bg-burnt-orange/10 px-3 py-1 font-mono text-[0.58rem] uppercase tracking-[0.28em] text-burnt-orange">
                   {lead.tag}
                 </span>
                 <h3
@@ -216,7 +216,7 @@ export default function Proof() {
                 </p>
               </div>
 
-              <div className="relative overflow-hidden rounded-lg border border-bone/10 bg-midnight shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
+              <div className="relative overflow-hidden rounded-sm border border-bone/10 bg-midnight shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
                 <div
                   className="pointer-events-none absolute inset-0 z-10 vignette-deep"
                 />

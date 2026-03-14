@@ -26,7 +26,7 @@ export default class ErrorBoundary extends Component<Props, State> {
         <div className="error-boundary-container">
           <div>
             <p className="error-boundary-label">
-              Something went wrong
+              This section hit a snag
             </p>
             <button
               type="button"

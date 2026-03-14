@@ -88,10 +88,10 @@ export function WeeklyBriefClient() {
 
             {loading && (
               <div className="space-y-4 animate-pulse mb-8">
-                <div className="h-6 bg-border-subtle rounded w-1/3" />
-                <div className="h-32 bg-surface-light rounded-xl" />
-                <div className="h-6 bg-border-subtle rounded w-1/4" />
-                <div className="h-24 bg-surface-light rounded-xl" />
+                <div className="h-6 bg-border-subtle rounded-sm w-1/3" />
+                <div className="h-32 bg-surface-light rounded-sm" />
+                <div className="h-6 bg-border-subtle rounded-sm w-1/4" />
+                <div className="h-24 bg-surface-light rounded-sm" />
               </div>
             )}
 
@@ -115,7 +115,7 @@ export function WeeklyBriefClient() {
                     </h2>
                     <div className="space-y-3">
                       {brief!.decisions.map((d, i) => (
-                        <div key={i} className="bg-surface-light border border-border-subtle rounded-xl p-4">
+                        <div key={i} className="bg-surface-light border border-border-subtle rounded-sm p-4">
                           <p className="text-sm text-text-secondary font-medium mb-1">{d.topic}</p>
                           <p className="text-sm text-burnt-orange mb-2">{d.decision}</p>
                           <p className="text-xs text-text-muted">{d.rationale}</p>
@@ -133,7 +133,7 @@ export function WeeklyBriefClient() {
                     </h2>
                     <div className="space-y-3">
                       {brief!.feeds.map((f, i) => (
-                        <div key={i} className="bg-surface-light border border-border-subtle rounded-lg p-4">
+                        <div key={i} className="bg-surface-light border border-border-subtle rounded-sm p-4">
                           <span className="text-xs font-bold uppercase tracking-wider text-burnt-orange">{f.feed}</span>
                           <p className="text-sm text-text-secondary mt-1">{f.headline}</p>
                           {f.detail && <p className="text-xs text-text-muted mt-1">{f.detail}</p>}
@@ -151,7 +151,7 @@ export function WeeklyBriefClient() {
                     </h2>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                       {brief!.kpis.map((kpi) => (
-                        <div key={kpi.label} className="bg-surface-light border border-border-subtle rounded-lg p-4 text-center">
+                        <div key={kpi.label} className="bg-surface-light border border-border-subtle rounded-sm p-4 text-center">
                           <span className="text-xs font-bold uppercase tracking-wider text-text-tertiary">{kpi.label}</span>
                           <p className="text-lg font-display text-text-primary mt-1">{kpi.value}</p>
                           {kpi.change && <p className="text-[10px] text-text-muted mt-0.5">{kpi.change}</p>}
@@ -176,12 +176,12 @@ export function WeeklyBriefClient() {
                   <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
                     Decision Register
                   </h2>
-                  <div className="bg-surface-light border border-border-subtle rounded-xl p-5">
+                  <div className="bg-surface-light border border-border-subtle rounded-sm p-5">
                     <p className="text-sm text-text-muted leading-relaxed mb-3">
                       10–15 editorial decisions per week, documented with rationale. What got covered,
                       what got cut, and why.
                     </p>
-                    <div className="bg-surface-light border border-dashed border-border rounded-lg p-4 text-center">
+                    <div className="bg-surface-light border border-dashed border-border rounded-sm p-4 text-center">
                       <p className="text-xs text-text-muted">
                         {data?.message || 'First decision register publishes Week 2 of the 2026 season.'}
                       </p>
@@ -203,7 +203,7 @@ export function WeeklyBriefClient() {
                     ].map((feed) => (
                       <div
                         key={feed.name}
-                        className="bg-surface-light border border-border-subtle rounded-lg p-4"
+                        className="bg-surface-light border border-border-subtle rounded-sm p-4"
                       >
                         <span className="text-xs font-bold uppercase tracking-wider text-burnt-orange">
                           {feed.name}
@@ -218,7 +218,7 @@ export function WeeklyBriefClient() {
                   <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
                     ICE Scoring
                   </h2>
-                  <div className="bg-surface-light border border-border-subtle rounded-xl p-5">
+                  <div className="bg-surface-light border border-border-subtle rounded-sm p-5">
                     <p className="text-sm text-text-muted leading-relaxed mb-3">
                       Content prioritization using Impact, Confidence, and Ease scores. Each piece of
                       potential content gets scored 1–10 on each dimension. Highest composite score
@@ -230,7 +230,7 @@ export function WeeklyBriefClient() {
                         { label: 'Confidence', description: 'How confident are we in the analysis?' },
                         { label: 'Ease', description: 'How quickly can we produce it at quality?' },
                       ].map((dim) => (
-                        <div key={dim.label} className="bg-surface-light rounded-lg p-3">
+                        <div key={dim.label} className="bg-surface-light rounded-sm p-3">
                           <span className="text-xs font-bold uppercase tracking-wider text-text-tertiary">{dim.label}</span>
                           <p className="text-[10px] text-text-muted mt-1">{dim.description}</p>
                         </div>
@@ -250,7 +250,7 @@ export function WeeklyBriefClient() {
                       { label: 'Returning Users', description: 'Weekly active readers' },
                       { label: 'Model Views', description: 'Methodology page traffic' },
                     ].map((kpi) => (
-                      <div key={kpi.label} className="bg-surface-light border border-border-subtle rounded-lg p-4 text-center">
+                      <div key={kpi.label} className="bg-surface-light border border-border-subtle rounded-sm p-4 text-center">
                         <span className="text-xs font-bold uppercase tracking-wider text-text-tertiary">{kpi.label}</span>
                         <p className="text-[10px] text-text-muted mt-1">{kpi.description}</p>
                       </div>

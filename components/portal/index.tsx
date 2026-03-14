@@ -41,7 +41,7 @@ interface PortalCardProps {
 }
 
 export function PortalCard({ children, className = '' }: PortalCardProps) {
-  return <div className={`bg-charcoal border border-border-subtle rounded-xl p-4 ${className}`}>{children}</div>;
+  return <div className={`bg-charcoal border border-border-subtle rounded-sm p-4 ${className}`}>{children}</div>;
 }
 
 export function PortalCardGrid({ children, className = '' }: { children: React.ReactNode; className?: string }) {
@@ -61,7 +61,7 @@ interface PortalFiltersProps {
 export function PortalFilters({ onFilterChange }: PortalFiltersProps) {
   return (
     <div className="flex flex-wrap gap-2 mb-6">
-      <select aria-label="Filter by sport" className="bg-charcoal border border-border-subtle rounded-lg px-3 py-1.5 text-white text-sm" onChange={(e) => onFilterChange?.({ sport: e.target.value })}>
+      <select aria-label="Filter by sport" className="bg-charcoal border border-border-subtle rounded-sm px-3 py-1.5 text-white text-sm" onChange={(e) => onFilterChange?.({ sport: e.target.value })}>
         <option value="">All Sports</option>
         <option value="baseball">Baseball</option>
         <option value="football">Football</option>

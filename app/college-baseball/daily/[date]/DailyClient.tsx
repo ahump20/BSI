@@ -201,9 +201,9 @@ export function DailyClient({ date }: { date: string }) {
           <Section padding="lg">
             <Container>
               <div className="animate-pulse space-y-4">
-                <div className="h-8 bg-surface-medium rounded w-1/3" />
-                <div className="h-4 bg-surface-light rounded w-2/3" />
-                <div className="h-64 bg-surface-light rounded" />
+                <div className="h-8 bg-surface-medium rounded-sm w-1/3" />
+                <div className="h-4 bg-surface-light rounded-sm w-2/3" />
+                <div className="h-64 bg-surface-light rounded-sm" />
               </div>
             </Container>
           </Section>
@@ -334,7 +334,7 @@ export function DailyClient({ date }: { date: string }) {
               </h3>
               <div className="space-y-2">
                 {sources_used.map((src, i) => (
-                  <div key={i} className="bg-surface-light border border-border-subtle rounded-lg p-3">
+                  <div key={i} className="bg-surface-light border border-border-subtle rounded-sm p-3">
                     <div className="flex items-center gap-2 mb-1">
                       <Badge variant="secondary" size="sm">{src.source_type}</Badge>
                       <span className="text-text-muted text-xs">{src.used_for.join(', ')}</span>
@@ -355,7 +355,7 @@ export function DailyClient({ date }: { date: string }) {
               </h3>
               <div className="space-y-1">
                 {search_queries_used.map((q, i) => (
-                  <div key={i} className="font-mono text-xs text-text-muted bg-surface-light px-3 py-1.5 rounded">{q}</div>
+                  <div key={i} className="font-mono text-xs text-text-muted bg-surface-light px-3 py-1.5 rounded-sm">{q}</div>
                 ))}
               </div>
             </div>
@@ -370,7 +370,7 @@ export function DailyClient({ date }: { date: string }) {
                 <summary className="cursor-pointer hover:text-text-secondary transition-colors font-display uppercase tracking-wider">
                   Data Quality Notes
                 </summary>
-                <pre className="mt-2 bg-surface-light rounded p-3 overflow-x-auto font-mono text-[11px] leading-relaxed">
+                <pre className="mt-2 bg-surface-light rounded-sm p-3 overflow-x-auto font-mono text-[11px] leading-relaxed">
                   {JSON.stringify(data.data_quality_notes, null, 2)}
                 </pre>
               </details>

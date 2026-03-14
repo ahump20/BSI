@@ -793,7 +793,7 @@ export default function PlayerDetailClient() {
                 </h2>
                 <Link
                   href={`/college-baseball/editorial/${draftProfile.slug}`}
-                  className="block p-3 rounded-lg border border-border hover:border-burnt-orange/40 transition-colors group"
+                  className="block p-3 rounded-sm border border-border hover:border-burnt-orange/40 transition-colors group"
                 >
                   <div className="flex items-center justify-between">
                     <div>
@@ -821,11 +821,11 @@ export default function PlayerDetailClient() {
                       href={hl.videoUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block p-3 rounded-lg border border-border hover:border-burnt-orange/40 transition-colors group"
+                      className="block p-3 rounded-sm border border-border hover:border-burnt-orange/40 transition-colors group"
                     >
                       <div className="flex items-center gap-3">
                         {hl.thumbnailUrl && (
-                          <div className="w-16 h-12 rounded overflow-hidden bg-surface-light shrink-0">
+                          <div className="w-16 h-12 rounded-sm overflow-hidden bg-surface-light shrink-0">
                             <Image src={hl.thumbnailUrl} alt={hl.title} width={64} height={48} className="w-full h-full object-cover" unoptimized />
                           </div>
                         )}

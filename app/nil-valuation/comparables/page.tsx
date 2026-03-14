@@ -96,7 +96,7 @@ export default function ComparablesPage() {
           <ScrollReveal>
             <div className="max-w-3xl mx-auto text-center">
               <Badge variant="primary" className="mb-4">Pro Tool</Badge>
-              <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: 'Georgia, serif' }}>
+              <h1 className="text-4xl md:text-5xl font-bold mb-4 font-display uppercase tracking-wide">
                 <span className="text-burnt-orange">Comparable</span> Analysis
               </h1>
               <p className="text-lg text-text-secondary max-w-2xl mx-auto">
@@ -146,10 +146,10 @@ export default function ComparablesPage() {
                   onChange={e => { setSearchQuery(e.target.value); setShowDropdown(true); }}
                   onFocus={() => setShowDropdown(true)}
                   placeholder="Search player name..."
-                  className="w-full px-4 py-3 rounded-lg bg-background-secondary border border-border text-text-primary placeholder:text-text-muted focus:outline-none focus:border-burnt-orange transition-colors"
+                  className="w-full px-4 py-3 rounded-sm bg-background-secondary border border-border text-text-primary placeholder:text-text-muted focus:outline-none focus:border-burnt-orange transition-colors"
                 />
                 {showDropdown && filtered.length > 0 && (
-                  <div className="absolute z-10 w-full mt-1 bg-background-secondary border border-border rounded-lg shadow-lg max-h-64 overflow-y-auto">
+                  <div className="absolute z-10 w-full mt-1 bg-background-secondary border border-border rounded-sm shadow-lg max-h-64 overflow-y-auto">
                     {filtered.map(p => (
                       <button
                         key={p.player_id}

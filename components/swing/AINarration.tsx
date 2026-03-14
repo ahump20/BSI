@@ -55,10 +55,10 @@ export function AINarration({ narrationText, onSeekToFrame }: AINarrationProps) 
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-xl bg-surface-dugout border border-burnt-orange/20 p-5 relative"
+      className="rounded-sm bg-surface-dugout border border-burnt-orange/20 p-5 relative"
     >
       <div className="flex items-center gap-2 mb-3">
-        <div className="w-7 h-7 rounded-lg bg-burnt-orange/15 flex items-center justify-center">
+        <div className="w-7 h-7 rounded-sm bg-burnt-orange/15 flex items-center justify-center">
           <svg viewBox="0 0 16 16" className="w-3.5 h-3.5 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M1 14l3-1 9-9-2-2-9 9zM11 2l2 2" />
           </svg>

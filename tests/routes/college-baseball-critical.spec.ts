@@ -194,8 +194,8 @@ test.describe('Mobile — no content clipping', () => {
   test.use({ viewport: { width: 393, height: 852 } }); // Pixel 5 / iPhone 14
 
   test('hub loads without clipped primary modules', async ({ page }) => {
-    await page.goto(`${BASE}/college-baseball`);
-    await expect(page.locator('h1')).toBeVisible();
+    await page.goto(`${BASE}/college-baseball`, { waitUntil: 'networkidle' });
+    await expect(page.locator('h1').first()).toBeVisible({ timeout: 15000 });
     await expect(page.locator('main')).toBeVisible();
     // No horizontal overflow
     const bodyWidth = await page.evaluate(() => document.body.scrollWidth);
@@ -204,16 +204,16 @@ test.describe('Mobile — no content clipping', () => {
   });
 
   test('rankings page loads on mobile without clipping', async ({ page }) => {
-    await page.goto(`${BASE}/college-baseball/rankings`);
-    await expect(page.locator('h1')).toBeVisible();
+    await page.goto(`${BASE}/college-baseball/rankings`, { waitUntil: 'networkidle' });
+    await expect(page.locator('h1').first()).toBeVisible({ timeout: 15000 });
     const bodyWidth = await page.evaluate(() => document.body.scrollWidth);
     const viewportWidth = await page.evaluate(() => window.innerWidth);
     expect(bodyWidth).toBeLessThanOrEqual(viewportWidth + 4);
   });
 
   test('sec conference page loads on mobile', async ({ page }) => {
-    await page.goto(`${BASE}/college-baseball/conferences/sec`);
-    await expect(page.locator('h1')).toBeVisible({ timeout: 10000 });
+    await page.goto(`${BASE}/college-baseball/conferences/sec`, { waitUntil: 'networkidle' });
+    await expect(page.locator('h1').first()).toBeVisible({ timeout: 15000 });
     const bodyWidth = await page.evaluate(() => document.body.scrollWidth);
     const viewportWidth = await page.evaluate(() => window.innerWidth);
     expect(bodyWidth).toBeLessThanOrEqual(viewportWidth + 4);

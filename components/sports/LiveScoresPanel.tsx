@@ -39,7 +39,7 @@ function GameCardList({ games }: { games: GameScore[] }) {
           key={game.id}
           role="group"
           aria-label={`${game.away.name} at ${game.home.name}`}
-          className={`bg-surface-light rounded-lg p-4 border transition-colors ${
+          className={`bg-surface-light rounded-sm p-4 border transition-colors ${
             game.isLive
               ? 'border-green-500/30'
               : game.isPostponed
@@ -50,7 +50,7 @@ function GameCardList({ games }: { games: GameScore[] }) {
           <div className="flex justify-between items-center mb-1.5">
             <span className="font-semibold text-text-primary text-sm flex items-center gap-1.5">
               {game.away.rank && (
-                <span className="text-[10px] font-bold text-burnt-orange bg-burnt-orange/10 px-1.5 py-0.5 rounded-md leading-none">
+                <span className="text-[10px] font-bold text-burnt-orange bg-burnt-orange/10 px-1.5 py-0.5 rounded-sm leading-none">
                   #{game.away.rank}
                 </span>
               )}
@@ -61,7 +61,7 @@ function GameCardList({ games }: { games: GameScore[] }) {
           <div className="flex justify-between items-center">
             <span className="font-semibold text-text-primary text-sm flex items-center gap-1.5">
               {game.home.rank && (
-                <span className="text-[10px] font-bold text-burnt-orange bg-burnt-orange/10 px-1.5 py-0.5 rounded-md leading-none">
+                <span className="text-[10px] font-bold text-burnt-orange bg-burnt-orange/10 px-1.5 py-0.5 rounded-sm leading-none">
                   #{game.home.rank}
                 </span>
               )}
@@ -92,9 +92,9 @@ function LoadingSkeleton() {
   return (
     <>
       {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="bg-surface-light rounded-lg p-4 animate-pulse">
-          <div className="h-4 bg-surface rounded w-2/3 mb-2" />
-          <div className="h-4 bg-surface rounded w-2/3" />
+        <div key={i} className="bg-surface-light rounded-sm p-4 animate-pulse">
+          <div className="h-4 bg-surface rounded-sm w-2/3 mb-2" />
+          <div className="h-4 bg-surface rounded-sm w-2/3" />
         </div>
       ))}
     </>
@@ -116,7 +116,7 @@ function LiveScoresPanelWS({ className = '' }: { className?: string }) {
   const loading = connectionStatus === 'connecting' && games.length === 0;
 
   return (
-    <div className={`bg-surface-light border border-border-subtle rounded-xl ${className}`}>
+    <div className={`bg-surface-light border border-border-subtle rounded-sm ${className}`}>
       <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between">
         <div className="flex items-center gap-3">
           <h3 className="text-lg font-semibold text-text-primary">Live Scores</h3>
@@ -125,7 +125,7 @@ function LiveScoresPanelWS({ className = '' }: { className?: string }) {
         <span className="text-xs text-text-muted uppercase tracking-wider">NCAA</span>
       </div>
       {isPreseason && preseasonLabel && (
-        <div className="mx-4 mt-3 px-3 py-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+        <div className="mx-4 mt-3 px-3 py-2 bg-yellow-500/10 border border-yellow-500/20 rounded-sm">
           <p className="text-yellow-400/80 text-xs">
             {preseasonLabel} — coverage may be limited; some games unavailable until first pitch
           </p>
@@ -266,7 +266,7 @@ function LiveScoresPanelREST({ sport, className = '' }: { sport: Sport; classNam
   }, [sport, buildEndpoint, buildCachedEndpoint]);
 
   return (
-    <div className={`bg-surface-light border border-border-subtle rounded-xl ${className}`}>
+    <div className={`bg-surface-light border border-border-subtle rounded-sm ${className}`}>
       <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between">
         <h3 className="text-lg font-semibold text-text-primary">
           {isYesterday ? "Yesterday's Results" : 'Live Scores'}
@@ -274,7 +274,7 @@ function LiveScoresPanelREST({ sport, className = '' }: { sport: Sport; classNam
         <span className="text-xs text-text-muted uppercase tracking-wider">{sport.toUpperCase()}</span>
       </div>
       {isPreseason && preseasonLabel && (
-        <div className="mx-4 mt-3 px-3 py-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+        <div className="mx-4 mt-3 px-3 py-2 bg-yellow-500/10 border border-yellow-500/20 rounded-sm">
           <p className="text-yellow-400/80 text-xs">
             {preseasonLabel} — coverage may be limited; some games unavailable until first pitch
           </p>

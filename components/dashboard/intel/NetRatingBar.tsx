@@ -78,7 +78,7 @@ export function NetRatingBar({ standings }: NetRatingBarProps) {
                 dataKey="rating"
                 name="Net Rtg"
                 fill="url(#netRtgGrad)"
-                radius={[0, 4, 4, 0]}
+                radius={[0, 2, 2, 0]}
                 barSize={14}
               />
             </BarChart>

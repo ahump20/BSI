@@ -8,6 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 import { fmt3 } from '@/lib/utils/format';
@@ -31,6 +32,13 @@ interface TrendPlayer {
   sparkline: SparklinePoint[];
 }
 
+interface TeamRollingPoint {
+  game: number;
+  avg?: number;
+  era?: number;
+  runDiff?: number;
+}
+
 interface TrendsResponse {
   players: TrendPlayer[];
   teamMomentum: {
@@ -38,6 +46,7 @@ interface TrendsResponse {
     hotPlayers: number;
     coldPlayers: number;
   };
+  teamRolling?: TeamRollingPoint[];
   meta?: { source?: string; fetched_at?: string };
 }
 
@@ -87,6 +96,132 @@ function MiniSparkline({ data, status }: { data: SparklinePoint[]; status: strin
         />
       )}
     </svg>
+  );
+}
+
+// ─── Rolling Area Chart ─────────────────────────────────────────────────────
+
+function RollingAreaChart({
+  data,
+  valueKey,
+  color,
+  label,
+  format,
+  invertY,
+}: {
+  data: TeamRollingPoint[];
+  valueKey: keyof TeamRollingPoint;
+  color: string;
+  label: string;
+  format: (n: number) => string;
+  invertY?: boolean;
+}) {
+  if (data.length < 2) {
+    return (
+      <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
+        <p className="text-text-muted text-xs">{label} data will appear as the season progresses.</p>
+      </div>
+    );
+  }
+
+  const width = 280;
+  const height = 100;
+  const padX = 0;
+  const padY = 8;
+  const innerW = width - padX * 2;
+  const innerH = height - padY * 2;
+
+  const values = data.map((d) => (d[valueKey] as number) ?? 0);
+  const minVal = Math.min(...values);
+  const maxVal = Math.max(...values);
+  const range = maxVal - minVal || 1;
+
+  const toY = (v: number): number => {
+    const normalized = (v - minVal) / range;
+    return invertY
+      ? padY + normalized * innerH
+      : padY + (1 - normalized) * innerH;
+  };
+
+  const stepX = innerW / (data.length - 1);
+  const linePts = data.map((d, i) => `${padX + i * stepX},${toY((d[valueKey] as number) ?? 0)}`).join(' ');
+  const areaPts = `${padX},${height} ${linePts} ${padX + (data.length - 1) * stepX},${height}`;
+
+  const lastVal = values[values.length - 1];
+
+  return (
+    <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-[10px] uppercase tracking-wider text-text-muted">{label}</span>
+        <span className="font-mono text-sm font-bold" style={{ color }}>{format(lastVal)}</span>
+      </div>
+      <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto" aria-hidden="true">
+        <polygon points={areaPts} fill={color} fillOpacity="0.1" />
+        <polyline
+          points={linePts}
+          fill="none"
+          stroke={color}
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        {data.length > 0 && (
+          <circle
+            cx={padX + (data.length - 1) * stepX}
+            cy={toY(lastVal)}
+            r="3"
+            fill={color}
+          />
+        )}
+      </svg>
+    </div>
+  );
+}
+
+function RunDiffBarChart({ data }: { data: TeamRollingPoint[] }) {
+  if (data.length < 2) {
+    return (
+      <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
+        <p className="text-text-muted text-xs">Run differential data will appear as the season progresses.</p>
+      </div>
+    );
+  }
+
+  const width = 280;
+  const height = 100;
+  const midY = height / 2;
+
+  const values = data.map((d) => d.runDiff ?? 0);
+  const maxAbs = Math.max(...values.map(Math.abs), 1);
+  const barW = Math.max(2, (width - data.length) / data.length);
+  const gap = 1;
+
+  const lastVal = values[values.length - 1];
+
+  return (
+    <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-[10px] uppercase tracking-wider text-text-muted">Run Differential</span>
+        <span
+          className="font-mono text-sm font-bold"
+          style={{ color: lastVal > 0 ? '#22c55e' : lastVal < 0 ? '#ef4444' : undefined }}
+        >
+          {lastVal > 0 ? '+' : ''}{lastVal}
+        </span>
+      </div>
+      <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto" aria-hidden="true">
+        <line x1="0" y1={midY} x2={width} y2={midY} stroke="var(--border-subtle,#333)" strokeWidth="0.5" />
+        {values.map((v, i) => {
+          const barH = (Math.abs(v) / maxAbs) * (height / 2 - 4);
+          const x = i * (barW + gap);
+          const y = v >= 0 ? midY - barH : midY;
+          const fill = v > 0 ? '#22c55e' : v < 0 ? '#ef4444' : '#6b7280';
+          return (
+            <rect key={i} x={x} y={y} width={barW} height={Math.max(barH, 1)} fill={fill} fillOpacity="0.7" rx="1" />
+          );
+        })}
+      </svg>
+    </div>
   );
 }
 
@@ -149,13 +284,14 @@ export default function TexasTrendsClient() {
           </Container>
         </Section>
 
+        <DataErrorBoundary name="Trend Data">
         {/* Team Momentum Strip */}
         {!loading && momentum && (
           <Section padding="md" borderTop>
             <Container>
               <ScrollReveal direction="up">
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="rounded-lg border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
+                  <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
                     <div
                       className="font-mono text-2xl font-bold"
                       style={{
@@ -168,14 +304,43 @@ export default function TexasTrendsClient() {
                     </div>
                     <div className="text-[10px] uppercase tracking-wider text-text-muted mt-1">Run Diff (L5)</div>
                   </div>
-                  <div className="rounded-lg border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
+                  <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
                     <div className="font-mono text-2xl font-bold text-orange-400">{momentum.hotPlayers}</div>
                     <div className="text-[10px] uppercase tracking-wider text-text-muted mt-1">Hot Bats</div>
                   </div>
-                  <div className="rounded-lg border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
+                  <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
                     <div className="font-mono text-2xl font-bold text-blue-400">{momentum.coldPlayers}</div>
                     <div className="text-[10px] uppercase tracking-wider text-text-muted mt-1">Cold Bats</div>
                   </div>
+                </div>
+              </ScrollReveal>
+            </Container>
+          </Section>
+        )}
+
+        {/* Team Rolling 10-Game Charts */}
+        {!loading && data && (
+          <Section padding="md" borderTop>
+            <Container>
+              <ScrollReveal direction="up">
+                <span className="heritage-stamp text-[10px] block mb-4">Rolling 10-Game Trends</span>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <RollingAreaChart
+                    data={data.teamRolling ?? []}
+                    valueKey="avg"
+                    color={ACCENT}
+                    label="Team Batting AVG"
+                    format={(n) => n.toFixed(3).replace(/^0/, '')}
+                  />
+                  <RollingAreaChart
+                    data={data.teamRolling ?? []}
+                    valueKey="era"
+                    color="#4B9CD3"
+                    label="Team ERA"
+                    format={(n) => n.toFixed(2)}
+                    invertY
+                  />
+                  <RunDiffBarChart data={data.teamRolling ?? []} />
                 </div>
               </ScrollReveal>
             </Container>
@@ -186,7 +351,7 @@ export default function TexasTrendsClient() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <Card variant="default" padding="lg">
+              <Card variant="default" padding="lg" className="border-t-2 border-burnt-orange">
                 <CardHeader>
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <CardTitle className="flex items-center gap-3">
@@ -200,7 +365,7 @@ export default function TexasTrendsClient() {
                         <button
                           key={f}
                           onClick={() => setStatusFilter(f)}
-                          className={`px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded transition-colors ${
+                          className={`px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-sm transition-colors ${
                             statusFilter === f
                               ? f === 'hot' ? 'bg-orange-500 text-white'
                                 : f === 'cold' ? 'bg-blue-500 text-white'
@@ -218,7 +383,7 @@ export default function TexasTrendsClient() {
                   {loading ? (
                     <div className="space-y-3">
                       {[1, 2, 3, 4, 5, 6].map((i) => (
-                        <div key={i} className="h-12 bg-surface-light rounded animate-pulse" />
+                        <div key={i} className="h-12 bg-surface-light rounded-sm animate-pulse" />
                       ))}
                     </div>
                   ) : error || !data?.players ? (
@@ -250,7 +415,7 @@ export default function TexasTrendsClient() {
                                 <td className="py-2.5 px-2 text-text-primary font-medium">{p.name}</td>
                                 <td className="py-2.5 px-2 text-text-muted text-xs">{p.position}</td>
                                 <td className="py-2.5 px-2 text-center">
-                                  <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded ${s.bg}`}>
+                                  <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm ${s.bg}`}>
                                     <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
                                     <span className={`text-[10px] font-semibold uppercase tracking-wider ${s.text}`}>{s.label}</span>
                                   </span>
@@ -290,7 +455,7 @@ export default function TexasTrendsClient() {
         <Section padding="md" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <div className="rounded-lg bg-[var(--surface-dugout)] border border-border-subtle p-4">
+              <div className="rounded-sm bg-[var(--surface-dugout)] border border-border-subtle p-4">
                 <span className="heritage-stamp text-[10px] block mb-2">How This Works</span>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-text-secondary">
                   <div>
@@ -319,6 +484,8 @@ export default function TexasTrendsClient() {
             </ScrollReveal>
           </Container>
         </Section>
+
+        </DataErrorBoundary>
 
         {/* Attribution */}
         <Section padding="md" borderTop>

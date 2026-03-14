@@ -366,14 +366,14 @@ export default function CollegeBaseballPage() {
                   <Link
                     key={feature.href}
                     href={feature.href}
-                    className="flex flex-col gap-2 p-3 bg-surface-light border border-border rounded-xl hover:border-burnt-orange/30 transition-all group"
+                    className="flex flex-col gap-2 p-3 bg-surface-light border border-border rounded-sm hover:border-burnt-orange/30 transition-all group"
                   >
                     <div className="flex items-center justify-between">
                       <svg viewBox="0 0 24 24" className="w-5 h-5 text-burnt-orange opacity-70" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                         <path d={feature.icon} />
                       </svg>
                       {'badge' in feature && feature.badge && (
-                        <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 bg-burnt-orange/15 text-burnt-orange rounded">
+                        <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 bg-burnt-orange/15 text-burnt-orange rounded-sm">
                           {feature.badge}
                         </span>
                       )}
@@ -535,7 +535,7 @@ export default function CollegeBaseballPage() {
                       <button
                         key={option.offset}
                         onClick={() => setSelectedDate(dateValue)}
-                        className={`px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all flex-shrink-0 ${
+                        className={`px-4 py-2 rounded-sm font-semibold text-sm whitespace-nowrap transition-all flex-shrink-0 ${
                           isSelected
                             ? 'bg-burnt-orange text-white'
                             : 'bg-surface-light text-text-tertiary hover:bg-surface-medium hover:text-text-primary'
@@ -565,7 +565,7 @@ export default function CollegeBaseballPage() {
                     <button
                       key={conf}
                       onClick={() => setSelectedConference(conf)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                      className={`px-3 py-1.5 rounded-sm text-xs font-medium transition-all ${
                         selectedConference === conf
                           ? 'bg-burnt-orange text-white'
                           : 'bg-surface-light text-text-tertiary hover:text-text-primary hover:bg-surface-medium'
@@ -577,7 +577,7 @@ export default function CollegeBaseballPage() {
                   {!showAllConferences && hiddenCount > 0 && (
                     <button
                       onClick={() => setShowAllConferences(true)}
-                      className="px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-light text-burnt-orange hover:bg-surface-medium transition-all"
+                      className="px-3 py-1.5 rounded-sm text-xs font-medium bg-surface-light text-burnt-orange hover:bg-surface-medium transition-all"
                     >
                       +{hiddenCount} More
                     </button>
@@ -664,12 +664,12 @@ export default function CollegeBaseballPage() {
                     value={teamSearch}
                     onChange={(e) => setTeamSearch(e.target.value)}
                     placeholder="Search teams..."
-                    className="flex-1 px-4 py-2.5 bg-surface-light border border-border rounded-lg text-text-primary placeholder-text-muted text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
+                    className="flex-1 px-4 py-2.5 bg-surface-light border border-border rounded-sm text-text-primary placeholder-text-muted text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
                   />
                   <select
                     value={teamConfFilter}
                     onChange={(e) => setTeamConfFilter(e.target.value)}
-                    className="px-3 py-2.5 bg-surface-light border border-border rounded-lg text-text-primary text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
+                    className="px-3 py-2.5 bg-surface-light border border-border rounded-sm text-text-primary text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
                   >
                     <option value="All">All Conferences</option>
                     {conferenceList.filter(c => c.name !== 'All Conferences').map(c => (
@@ -681,12 +681,12 @@ export default function CollegeBaseballPage() {
                 {teamsLoading ? (
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                     {Array.from({ length: 12 }).map((_, i) => (
-                      <div key={i} className="bg-surface-light rounded-lg p-4 animate-pulse">
+                      <div key={i} className="bg-surface-light rounded-sm p-4 animate-pulse">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 bg-surface-medium rounded-full" />
                           <div>
-                            <div className="h-4 bg-surface-medium rounded w-24 mb-1" />
-                            <div className="h-3 bg-surface-light rounded w-16" />
+                            <div className="h-4 bg-surface-medium rounded-sm w-24 mb-1" />
+                            <div className="h-3 bg-surface-light rounded-sm w-16" />
                           </div>
                         </div>
                       </div>
@@ -756,7 +756,7 @@ export default function CollegeBaseballPage() {
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal>
-              <div className="relative rounded-2xl overflow-hidden border border-burnt-orange/15">
+              <div className="relative rounded-sm overflow-hidden border border-burnt-orange/15">
                 <div
                   className="absolute inset-0 pointer-events-none"
                   style={{ background: 'linear-gradient(135deg, rgba(191,87,0,0.06) 0%, transparent 40%, rgba(191,87,0,0.03) 100%)' }}
@@ -791,7 +791,7 @@ export default function CollegeBaseballPage() {
             <ScrollReveal>
               <Card variant="default" padding="lg">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-lg bg-burnt-orange/15 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-sm bg-burnt-orange/15 flex items-center justify-center">
                     <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
                       <circle cx="12" cy="12" r="10" />
                       <circle cx="12" cy="12" r="3" />

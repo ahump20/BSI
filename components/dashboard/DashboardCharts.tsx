@@ -38,10 +38,10 @@ export function StandingsBarChart({ data, isLoading }: StandingsBarChartProps) {
     return (
       <div className="h-64 flex items-center justify-center">
         <div className="w-full max-w-sm space-y-3 px-4" aria-hidden>
-          <div className="h-4 rounded bg-surface animate-pulse" />
-          <div className="h-4 rounded bg-surface animate-pulse" />
-          <div className="h-4 rounded bg-surface animate-pulse" />
-          <div className="h-4 rounded bg-surface animate-pulse" />
+          <div className="h-4 rounded-sm bg-surface animate-pulse" />
+          <div className="h-4 rounded-sm bg-surface animate-pulse" />
+          <div className="h-4 rounded-sm bg-surface animate-pulse" />
+          <div className="h-4 rounded-sm bg-surface animate-pulse" />
         </div>
         <span className="sr-only">Updating standings visualization</span>
       </div>
@@ -61,13 +61,13 @@ export function StandingsBarChart({ data, isLoading }: StandingsBarChartProps) {
             contentStyle={{
               backgroundColor: 'var(--bsi-charcoal)',
               border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: '8px',
+              borderRadius: '2px',
               color: '#fff',
               fontSize: 12,
             }}
           />
-          <Bar dataKey="wins" fill="#BF5700" radius={[4, 4, 0, 0]} /> {/* token: --bsi-primary */}
-          <Bar dataKey="losses" fill="rgba(255,255,255,0.15)" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="wins" fill="#BF5700" radius={[2, 2, 0, 0]} /> {/* token: --bsi-primary */}
+          <Bar dataKey="losses" fill="rgba(255,255,255,0.15)" radius={[2, 2, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
       {data.length === 0 && (
@@ -108,7 +108,7 @@ export function SportCoveragePieChart({ data }: SportCoveragePieChartProps) {
           contentStyle={{
             backgroundColor: 'var(--bsi-charcoal)',
             border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: '8px',
+            borderRadius: '2px',
             color: '#fff',
             fontSize: 12,
           }}

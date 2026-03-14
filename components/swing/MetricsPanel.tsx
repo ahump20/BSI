@@ -70,7 +70,7 @@ function MetricBar({ metric }: { metric: MetricResult }) {
         </div>
       </div>
       <span
-        className={`text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded ${
+        className={`text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded-sm ${
           metric.score >= 80
             ? 'text-emerald-400 bg-emerald-500/10'
             : metric.score >= 50
@@ -88,7 +88,7 @@ export function MetricsPanel({ metrics, overallScore }: MetricsPanelProps) {
   return (
     <div className="space-y-6">
       {/* Overall Score */}
-      <div className="flex items-center gap-5 p-5 rounded-xl bg-surface-dugout border border-border-subtle">
+      <div className="flex items-center gap-5 p-5 rounded-sm bg-surface-dugout border border-border-subtle">
         <ScoreRing score={overallScore} size={88} />
         <div>
           <h3 className="font-display text-lg font-bold uppercase tracking-wide text-bsi-bone">
@@ -115,7 +115,7 @@ export function MetricsPanel({ metrics, overallScore }: MetricsPanelProps) {
         );
 
         return (
-          <div key={groupName} className="rounded-xl bg-surface-dugout border border-border-subtle p-4">
+          <div key={groupName} className="rounded-sm bg-surface-dugout border border-border-subtle p-4">
             <div className="flex items-center justify-between mb-3">
               <h4 className="heritage-stamp text-xs">{groupName}</h4>
               <span

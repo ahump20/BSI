@@ -150,7 +150,7 @@ function SignalCard({ signal }: { signal: SocialSignal }) {
   const inner = (
     <div
       className={`
-        group relative rounded-xl border p-4 transition-all duration-200
+        group relative rounded-sm border p-4 transition-all duration-200
         bg-[#111111] border-border
         hover:border-[#BF5700]/40 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30
         ${signal.post_url ? 'cursor-pointer' : ''}
@@ -228,7 +228,7 @@ function SignalCard({ signal }: { signal: SocialSignal }) {
 
           {/* Confidence pill — only show when notable */}
           {isHighConfidence && (
-            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-semibold uppercase tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex-shrink-0">
+            <span className="inline-flex items-center px-1.5 py-0.5 rounded-sm text-[9px] font-semibold uppercase tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex-shrink-0">
               {confidenceLabel(confidence)}
             </span>
           )}
@@ -243,7 +243,7 @@ function SignalCard({ signal }: { signal: SocialSignal }) {
         href={signal.post_url}
         target="_blank"
         rel="noopener noreferrer"
-        className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-[#BF5700] rounded-xl"
+        className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-[#BF5700] rounded-sm"
         aria-label={signal.summary ?? signal.post_text.slice(0, 80)}
       >
         {inner}
@@ -354,7 +354,7 @@ export function SocialIntelFeed() {
     : [], [data, activeTab]);
 
   return (
-    <div className="rounded-2xl border border-border bg-[#0D0D0D] overflow-hidden">
+    <div className="rounded-sm border border-border bg-[#0D0D0D] overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-5 pt-5 pb-0">
         <div className="flex items-center gap-2.5">
@@ -414,7 +414,7 @@ export function SocialIntelFeed() {
             {[...Array(4)].map((_, i) => (
               <div
                 key={i}
-                className="h-20 rounded-xl bg-surface animate-pulse"
+                className="h-20 rounded-sm bg-surface animate-pulse"
                 style={{ animationDelay: `${i * 80}ms` }}
               />
             ))}
@@ -433,7 +433,7 @@ export function SocialIntelFeed() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="px-3 py-1.5 text-xs font-medium bg-surface border border-border rounded-lg text-text-secondary hover:text-[#BF5700] hover:border-[#BF5700]/30 transition-all"
+                  className="px-3 py-1.5 text-xs font-medium bg-surface border border-border rounded-sm text-text-secondary hover:text-[#BF5700] hover:border-[#BF5700]/30 transition-all"
                 >
                   {link.label}
                 </Link>

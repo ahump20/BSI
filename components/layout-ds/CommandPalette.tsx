@@ -258,7 +258,7 @@ export function CommandPalette() {
 
       {/* Palette container */}
       <div className="relative flex items-start justify-center pt-[15vh] sm:pt-[20vh] px-4">
-        <div className="w-full max-w-xl bg-background-primary border border-border rounded-2xl shadow-2xl overflow-hidden">
+        <div className="w-full max-w-xl bg-background-primary border border-border rounded-sm shadow-2xl overflow-hidden">
           {/* Search input */}
           <div className="flex items-center gap-3 px-4 py-3 border-b border-border-subtle">
             <Search className="w-5 h-5 text-text-muted shrink-0" />
@@ -273,7 +273,7 @@ export function CommandPalette() {
               autoComplete="off"
               spellCheck={false}
             />
-            <kbd className="hidden sm:inline text-[10px] text-text-muted bg-surface-light px-1.5 py-0.5 rounded font-mono">
+            <kbd className="hidden sm:inline text-[10px] text-text-muted bg-surface-light px-1.5 py-0.5 rounded-sm font-mono">
               ESC
             </kbd>
           </div>
@@ -296,7 +296,7 @@ export function CommandPalette() {
                           setQuery(q);
                           search(q);
                         }}
-                        className="flex items-center gap-2 w-full px-2 py-2 text-sm text-text-muted hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors text-left"
+                        className="flex items-center gap-2 w-full px-2 py-2 text-sm text-text-muted hover:text-text-primary hover:bg-surface-light rounded-sm transition-colors text-left"
                       >
                         <Clock className="w-3.5 h-3.5 text-text-muted" />
                         {q}
@@ -313,7 +313,7 @@ export function CommandPalette() {
                   <button
                     key={link.href}
                     onClick={() => navigate(link.href)}
-                    className="flex items-center justify-between w-full px-2 py-2 text-sm text-text-muted hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors"
+                    className="flex items-center justify-between w-full px-2 py-2 text-sm text-text-muted hover:text-text-primary hover:bg-surface-light rounded-sm transition-colors"
                   >
                     <span>{link.label}</span>
                     <ArrowRight className="w-3.5 h-3.5 text-text-muted" />
@@ -333,7 +333,7 @@ export function CommandPalette() {
                 </p>
                 <button
                   onClick={handleWebSearch}
-                  className={`flex items-center justify-between w-full px-3 py-2.5 rounded-lg transition-colors text-left ${
+                  className={`flex items-center justify-between w-full px-3 py-2.5 rounded-sm transition-colors text-left ${
                     selectedIndex === 0 ? 'bg-surface-light text-text-primary' : 'text-text-muted hover:bg-surface-light'
                   }`}
                 >
@@ -353,7 +353,7 @@ export function CommandPalette() {
                   <button
                     key={`${r.type}-${r.id}`}
                     onClick={() => navigate(r.url)}
-                    className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-lg transition-colors text-left ${
+                    className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-sm transition-colors text-left ${
                       i === selectedIndex ? 'bg-surface-light' : 'hover:bg-surface-light'
                     }`}
                     onMouseEnter={() => setSelectedIndex(i)}
@@ -376,7 +376,7 @@ export function CommandPalette() {
                   <button
                     onClick={handleWebSearch}
                     onMouseEnter={() => setSelectedIndex(results.length)}
-                    className={`flex items-center justify-between w-full px-3 py-2.5 rounded-lg transition-colors text-left ${
+                    className={`flex items-center justify-between w-full px-3 py-2.5 rounded-sm transition-colors text-left ${
                       selectedIndex === results.length
                         ? 'bg-surface-light text-text-primary'
                         : 'text-text-muted hover:bg-surface-light'
@@ -395,13 +395,13 @@ export function CommandPalette() {
           {/* Footer */}
           <div className="border-t border-border-subtle px-4 py-2 flex items-center gap-4 text-[10px] text-text-muted">
             <span>
-              <kbd className="bg-surface-light px-1 py-0.5 rounded font-mono">↑↓</kbd> navigate
+              <kbd className="bg-surface-light px-1 py-0.5 rounded-sm font-mono">↑↓</kbd> navigate
             </span>
             <span>
-              <kbd className="bg-surface-light px-1 py-0.5 rounded font-mono">↵</kbd> select
+              <kbd className="bg-surface-light px-1 py-0.5 rounded-sm font-mono">↵</kbd> select
             </span>
             <span>
-              <kbd className="bg-surface-light px-1 py-0.5 rounded font-mono">esc</kbd> close
+              <kbd className="bg-surface-light px-1 py-0.5 rounded-sm font-mono">esc</kbd> close
             </span>
           </div>
         </div>

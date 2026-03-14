@@ -33,7 +33,7 @@ export function MetricGate({
       <div className="blur-[6px] select-none pointer-events-none" aria-hidden="true">
         {children}
       </div>
-      <div className="absolute inset-0 flex flex-col items-center justify-center bg-background-primary/60 rounded-lg">
+      <div className="absolute inset-0 flex flex-col items-center justify-center bg-background-primary/60 rounded-sm">
         <span className="text-[10px] font-display uppercase tracking-widest text-burnt-orange mb-1">
           PRO
         </span>

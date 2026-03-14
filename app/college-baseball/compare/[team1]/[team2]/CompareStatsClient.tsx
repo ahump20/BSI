@@ -126,11 +126,11 @@ export default function CompareStatsClient({ team1Slug, team2Slug, team1Name, te
     return (
       <Card variant="default" padding="lg" className="mt-8">
         <div className="animate-pulse space-y-4">
-          <div className="h-6 bg-background-tertiary rounded w-48 mx-auto" />
-          <div className="h-4 bg-background-tertiary rounded w-32 mx-auto" />
+          <div className="h-6 bg-background-tertiary rounded-sm w-48 mx-auto" />
+          <div className="h-4 bg-background-tertiary rounded-sm w-32 mx-auto" />
           <div className="space-y-2">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="h-10 bg-background-tertiary rounded" />
+              <div key={i} className="h-10 bg-background-tertiary rounded-sm" />
             ))}
           </div>
         </div>

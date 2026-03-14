@@ -43,11 +43,11 @@ export default function Projects() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => window.posthog?.capture('project_clicked', { project: project.name })}
-                className="card p-8 group block gradient-border-hover rounded-lg project-card-featured-bg"
+                className="card p-8 group block gradient-border-hover rounded-sm project-card-featured-bg"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <span className="text-[0.6rem] font-mono text-burnt-orange bg-burnt-orange/10 border border-burnt-orange/20 px-3 py-1 rounded-full uppercase tracking-widest">
+                    <span className="text-[0.6rem] font-mono text-burnt-orange bg-burnt-orange/10 border border-burnt-orange/20 px-3 py-1 rounded-sm uppercase tracking-widest">
                       {project.highlight}
                     </span>
                     {project.live && <LiveBadge />}
@@ -63,7 +63,7 @@ export default function Projects() {
                 <p className="text-bone/75 text-base leading-relaxed mb-5">{project.description}</p>
                 <div className="flex flex-wrap gap-2">
                   {project.tech.map((t) => (
-                    <span key={t} className="text-[0.65rem] font-mono text-warm-gray bg-bone/5 px-3 py-1 rounded">
+                    <span key={t} className="text-[0.65rem] font-mono text-warm-gray bg-bone/5 px-3 py-1 rounded-sm">
                       {t}
                     </span>
                   ))}
@@ -82,10 +82,10 @@ export default function Projects() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => window.posthog?.capture('project_clicked', { project: project.name })}
-                className="group flex items-start gap-4 py-4 px-4 rounded-lg hover:bg-bone/[0.02] transition-colors duration-300 border border-transparent hover:border-bone/5"
+                className="group flex items-start gap-4 py-4 px-4 rounded-sm hover:bg-bone/[0.02] transition-colors duration-300 border border-transparent hover:border-bone/5"
               >
                 <div className="shrink-0 mt-1">
-                  <span className="text-[0.55rem] font-mono text-burnt-orange bg-burnt-orange/10 border border-burnt-orange/20 px-2 py-0.5 rounded-full uppercase tracking-widest">
+                  <span className="text-[0.55rem] font-mono text-burnt-orange bg-burnt-orange/10 border border-burnt-orange/20 px-2 py-0.5 rounded-sm uppercase tracking-widest">
                     {project.highlight}
                   </span>
                 </div>

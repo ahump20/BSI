@@ -522,11 +522,11 @@ function DailyDigestSection() {
         {loading && (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="bg-surface-light border border-border-subtle rounded-lg p-5 animate-pulse">
-                <div className="h-3 bg-surface-light rounded w-24 mb-3" />
-                <div className="h-5 bg-surface-light rounded w-3/4 mb-2" />
-                <div className="h-3 bg-surface-light rounded w-full" />
-                <div className="h-3 bg-surface-light rounded w-5/6 mt-1" />
+              <div key={i} className="bg-surface-light border border-border-subtle rounded-sm p-5 animate-pulse">
+                <div className="h-3 bg-surface-light rounded-sm w-24 mb-3" />
+                <div className="h-5 bg-surface-light rounded-sm w-3/4 mb-2" />
+                <div className="h-3 bg-surface-light rounded-sm w-full" />
+                <div className="h-3 bg-surface-light rounded-sm w-5/6 mt-1" />
               </div>
             ))}
           </div>
@@ -568,7 +568,7 @@ function DailyDigestSection() {
                         {editorial.teams.slice(0, 3).map((team) => (
                           <span
                             key={team}
-                            className="text-[10px] text-text-muted bg-surface-light px-1.5 py-0.5 rounded"
+                            className="text-[10px] text-text-muted bg-surface-light px-1.5 py-0.5 rounded-sm"
                           >
                             {team}
                           </span>
@@ -661,7 +661,7 @@ export default function EditorialHubPage() {
             {featured && (
               <ScrollReveal direction="up" delay={100}>
                 <Link href={`/college-baseball/editorial/${featured.slug}`} className="block group">
-                  <div className="relative bg-gradient-to-r from-burnt-orange/15 to-[#C9A227]/10 border border-burnt-orange/25 rounded-xl p-6 md:p-8 hover:border-burnt-orange/50 transition-all overflow-hidden">
+                  <div className="relative bg-gradient-to-r from-burnt-orange/15 to-[#C9A227]/10 border border-burnt-orange/25 rounded-sm p-6 md:p-8 hover:border-burnt-orange/50 transition-all overflow-hidden">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-radial from-[#C9A227]/10 to-transparent pointer-events-none" />
                     <div className="relative">
                       <div className="flex items-center gap-3 mb-3">
@@ -783,7 +783,7 @@ export default function EditorialHubPage() {
                   <ScrollReveal key={conf.name} direction="up" delay={i * 80}>
                     <Link href={conf.href} className="block group">
                       <Card variant="default" padding="lg" className="h-full hover:border-border-strong transition-all relative overflow-hidden">
-                        <div className="absolute top-0 left-0 w-full h-1 rounded-t-lg" style={{ backgroundColor: conf.accent }} />
+                        <div className="absolute top-0 left-0 w-full h-1 rounded-t-sm" style={{ backgroundColor: conf.accent }} />
                         <div className="mt-2">
                           <h3 className="font-display text-xl font-bold uppercase tracking-wide group-hover:transition-colors" style={{ color: conf.accent }}>
                             {conf.name}

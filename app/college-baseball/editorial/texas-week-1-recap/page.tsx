@@ -488,7 +488,7 @@ export default function TexasWeek1RecapPage() {
 
               {/* SEC Co-Pitcher of the Week callout */}
               <ScrollReveal direction="up" delay={150}>
-                <div className="bg-[#C9A227]/8 border border-[#C9A227]/20 rounded p-6 my-8">
+                <div className="bg-[#C9A227]/8 border border-[#C9A227]/20 rounded-sm p-6 my-8">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="font-display text-[11px] uppercase tracking-[3px] text-[#C9A227]">
                       SEC Co-Pitcher of the Week
@@ -526,14 +526,14 @@ export default function TexasWeek1RecapPage() {
                 {performers.map((p) => (
                   <div
                     key={p.name}
-                    className="relative bg-gradient-to-br from-[#2A2A2A]/90 to-charcoal/95 border border-burnt-orange/10 hover:border-burnt-orange/25 rounded p-5 pl-7 overflow-hidden transition-colors"
+                    className="relative bg-gradient-to-br from-[#2A2A2A]/90 to-charcoal/95 border border-burnt-orange/10 hover:border-burnt-orange/25 rounded-sm p-5 pl-7 overflow-hidden transition-colors"
                   >
                     <div className="absolute top-0 left-0 w-[3px] h-full bg-burnt-orange" />
                     <div className="flex items-center justify-between mb-0.5">
                       <div className="font-display text-base font-semibold uppercase tracking-wide text-[#FAF7F2]">
                         {p.name}
                       </div>
-                      <span className="text-[9px] font-mono uppercase tracking-wider text-[#C9A227] bg-[#C9A227]/10 px-2 py-0.5 rounded">
+                      <span className="text-[9px] font-mono uppercase tracking-wider text-[#C9A227] bg-[#C9A227]/10 px-2 py-0.5 rounded-sm">
                         {p.label}
                       </span>
                     </div>
@@ -649,7 +649,7 @@ export default function TexasWeek1RecapPage() {
                       </p>
                     </div>
 
-                    <div className="bg-surface-light border border-border-subtle rounded p-4 mt-5">
+                    <div className="bg-surface-light border border-border-subtle rounded-sm p-4 mt-5">
                       <h4 className="font-display text-[11px] uppercase tracking-[3px] text-burnt-orange mb-3">
                         Keys for Texas
                       </h4>
@@ -693,21 +693,21 @@ export default function TexasWeek1RecapPage() {
                     </p>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                      <div className="bg-surface-light border border-border-subtle rounded p-4">
+                      <div className="bg-surface-light border border-border-subtle rounded-sm p-4">
                         <div className="font-display text-[10px] uppercase tracking-[3px] text-text-muted mb-1">Game 1</div>
                         <div className="font-display text-lg font-bold text-text-primary">MSU 4, Louisville 3</div>
                         <div className="font-mono text-[11px] text-text-muted mt-1">
                           Seymour 2-4, 3 RBI, HR &middot; Broski HR &middot; Donovan 5 IP starter &middot; Szczepanski 1.1 IP, 3K save
                         </div>
                       </div>
-                      <div className="bg-surface-light border border-border-subtle rounded p-4">
+                      <div className="bg-surface-light border border-border-subtle rounded-sm p-4">
                         <div className="font-display text-[10px] uppercase tracking-[3px] text-text-muted mb-1">Game 2</div>
                         <div className="font-display text-lg font-bold text-text-primary">MSU 13, Louisville 4</div>
                         <div className="font-mono text-[11px] text-text-muted mt-1">
                           Parker Picot: 8 RBI &mdash; grand slam + 3-run HR
                         </div>
                       </div>
-                      <div className="bg-surface-light border border-border-subtle rounded p-4">
+                      <div className="bg-surface-light border border-border-subtle rounded-sm p-4">
                         <div className="font-display text-[10px] uppercase tracking-[3px] text-text-muted mb-1">Game 3</div>
                         <div className="font-display text-lg font-bold text-text-tertiary">Louisville 9, MSU 1</div>
                         <div className="font-mono text-[11px] text-text-muted mt-1">
@@ -734,7 +734,7 @@ export default function TexasWeek1RecapPage() {
                       { name: 'Broski', note: 'HR in Game 1 upset' },
                       { name: 'Donovan', note: '5 IP, 3K — Game 1 starter' },
                     ].map((player) => (
-                      <div key={player.name} className="bg-surface-light border border-border-subtle rounded p-3">
+                      <div key={player.name} className="bg-surface-light border border-border-subtle rounded-sm p-3">
                         <div className="font-display text-sm font-semibold uppercase tracking-wide text-text-primary">{player.name}</div>
                         <div className="font-mono text-[10px] text-text-muted mt-1">{player.note}</div>
                       </div>
@@ -743,7 +743,7 @@ export default function TexasWeek1RecapPage() {
                 </div>
 
                 {/* Series keys */}
-                <div className="bg-surface-light border border-border-subtle rounded p-5 mb-8">
+                <div className="bg-surface-light border border-border-subtle rounded-sm p-5 mb-8">
                   <h4 className="font-display text-[11px] uppercase tracking-[3px] text-burnt-orange mb-4">
                     Series Keys for Texas
                   </h4>
@@ -795,14 +795,14 @@ export default function TexasWeek1RecapPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
                 <button
                   onClick={() => openAI('claude')}
-                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded transition-colors text-left"
+                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded-sm transition-colors text-left"
                 >
                   <div className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-1">Claude Analysis</div>
                   <div className="text-text-muted text-xs">Anthropic-powered series breakdown</div>
                 </button>
                 <button
                   onClick={() => openAI('gemini')}
-                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded transition-colors text-left"
+                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded-sm transition-colors text-left"
                 >
                   <div className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-1">Gemini Analysis</div>
                   <div className="text-text-muted text-xs">Google-powered scouting insights</div>

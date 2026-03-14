@@ -604,7 +604,7 @@ export default function NFLStandingsPage() {
                 <button
                   key={conf}
                   onClick={() => setSelectedConference(conf)}
-                  className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+                  className={`px-6 py-3 rounded-sm font-semibold transition-all ${
                     selectedConference === conf
                       ? 'bg-burnt-orange text-white'
                       : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
@@ -635,10 +635,10 @@ export default function NFLStandingsPage() {
                 {[1, 2, 3, 4].map((i) => (
                   <Card key={i} variant="default" padding="lg">
                     <div className="animate-pulse">
-                      <div className="h-6 bg-background-tertiary rounded w-32 mb-4"></div>
+                      <div className="h-6 bg-background-tertiary rounded-sm w-32 mb-4"></div>
                       <div className="space-y-2">
                         {[1, 2, 3, 4].map((j) => (
-                          <div key={j} className="h-10 bg-background-tertiary rounded"></div>
+                          <div key={j} className="h-10 bg-background-tertiary rounded-sm"></div>
                         ))}
                       </div>
                     </div>

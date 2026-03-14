@@ -187,7 +187,7 @@ export function PlaygroundApiSim() {
             key={ep.id}
             onClick={() => { setActiveEndpoint(ep.id); simulateFetch(); }}
             style={{
-              padding: '6px 14px', borderRadius: '4px', cursor: 'pointer',
+              padding: '6px 14px', borderRadius: '2px', cursor: 'pointer',
               fontFamily: 'JetBrains Mono, monospace', fontSize: '0.75rem',
               background: activeEndpoint === ep.id ? 'rgba(191,87,0,0.2)' : 'rgba(26,26,26,0.8)',
               border: activeEndpoint === ep.id ? '1px solid #BF5700' : '1px solid rgba(191,87,0,0.25)',
@@ -200,9 +200,9 @@ export function PlaygroundApiSim() {
       </div>
 
       {/* Endpoint info */}
-      <div style={{ background: '#1A1A1A', borderRadius: '8px', border: '1px solid rgba(191,87,0,0.2)', padding: '1rem' }}>
+      <div style={{ background: '#1A1A1A', borderRadius: '2px', border: '1px solid rgba(191,87,0,0.2)', padding: '1rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
-          <span style={{ background: 'rgba(16,185,129,0.15)', color: '#10b981', padding: '2px 8px', borderRadius: '4px', fontSize: '0.7rem', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>
+          <span style={{ background: 'rgba(16,185,129,0.15)', color: '#10b981', padding: '2px 8px', borderRadius: '2px', fontSize: '0.7rem', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>
             GET
           </span>
           <code style={{ color: '#FAF8F5', fontSize: '0.8125rem', fontFamily: 'JetBrains Mono, monospace' }}>
@@ -211,7 +211,7 @@ export function PlaygroundApiSim() {
           <span style={{
             background: endpoint.tier === 'pro' ? 'rgba(255,107,53,0.15)' : 'rgba(250,248,245,0.08)',
             color: endpoint.tier === 'pro' ? '#FF6B35' : 'rgba(250,248,245,0.5)',
-            padding: '2px 8px', borderRadius: '4px', fontSize: '0.65rem', fontFamily: 'JetBrains Mono, monospace',
+            padding: '2px 8px', borderRadius: '2px', fontSize: '0.65rem', fontFamily: 'JetBrains Mono, monospace',
           }}>
             {endpoint.tier}
           </span>
@@ -221,7 +221,7 @@ export function PlaygroundApiSim() {
         </p>
         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
           {endpoint.params.map(p => (
-            <code key={p} style={{ background: 'rgba(191,87,0,0.12)', color: '#BF5700', padding: '2px 8px', borderRadius: '4px', fontSize: '0.7rem', fontFamily: 'JetBrains Mono, monospace' }}>
+            <code key={p} style={{ background: 'rgba(191,87,0,0.12)', color: '#BF5700', padding: '2px 8px', borderRadius: '2px', fontSize: '0.7rem', fontFamily: 'JetBrains Mono, monospace' }}>
               {p}
             </code>
           ))}
@@ -234,7 +234,7 @@ export function PlaygroundApiSim() {
           onClick={simulateFetch}
           disabled={isLoading}
           style={{
-            padding: '8px 20px', borderRadius: '4px', cursor: isLoading ? 'not-allowed' : 'pointer',
+            padding: '8px 20px', borderRadius: '2px', cursor: isLoading ? 'not-allowed' : 'pointer',
             background: isLoading ? 'rgba(191,87,0,0.08)' : 'rgba(191,87,0,0.15)',
             border: '1px solid rgba(191,87,0,0.4)', color: '#FF6B35',
             fontFamily: 'JetBrains Mono, monospace', fontSize: '0.8125rem',
@@ -256,7 +256,7 @@ export function PlaygroundApiSim() {
       </div>
 
       {/* Response viewer */}
-      <div style={{ background: '#111', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
+      <div style={{ background: '#111', borderRadius: '2px', border: '1px solid rgba(255,255,255,0.06)' }}>
         <div
           style={{ padding: '8px 16px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}
           onClick={() => setExpanded(v => !v)}

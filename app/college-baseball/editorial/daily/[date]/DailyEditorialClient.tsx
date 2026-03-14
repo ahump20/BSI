@@ -137,7 +137,7 @@ export default function DailyEditorialClient() {
                       {data.teams.split(',').map((team) => (
                         <span
                           key={team.trim()}
-                          className="px-2.5 py-1 bg-surface-light border border-border rounded text-text-tertiary text-xs"
+                          className="px-2.5 py-1 bg-surface-light border border-border rounded-sm text-text-tertiary text-xs"
                         >
                           {team.trim()}
                         </span>

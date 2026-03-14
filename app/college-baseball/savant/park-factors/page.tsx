@@ -114,7 +114,7 @@ export default function ParkFactorsPage() {
                   <p className="text-error mb-4">{error}</p>
                   <button
                     onClick={retry}
-                    className="px-5 py-2 bg-burnt-orange/20 text-burnt-orange rounded-lg text-sm font-medium hover:bg-burnt-orange/30 transition-colors"
+                    className="px-5 py-2 bg-burnt-orange/20 text-burnt-orange rounded-sm text-sm font-medium hover:bg-burnt-orange/30 transition-colors"
                   >
                     Try again
                   </button>
@@ -136,13 +136,13 @@ function TableSkeleton() {
   return (
     <Card padding="none" className="overflow-hidden">
       <div className="px-5 py-4 border-b border-border-subtle">
-        <div className="h-5 w-32 bg-surface-medium rounded animate-pulse" />
+        <div className="h-5 w-32 bg-surface-medium rounded-sm animate-pulse" />
       </div>
       {Array.from({ length: 8 }).map((_, i) => (
         <div key={i} className="px-5 py-3 flex items-center gap-4 border-b border-border-subtle">
-          <div className="h-4 w-32 bg-surface-medium rounded animate-pulse" />
-          <div className="h-4 w-24 bg-surface-light rounded animate-pulse hidden sm:block" />
-          <div className="h-4 w-16 bg-surface-light rounded animate-pulse ml-auto" />
+          <div className="h-4 w-32 bg-surface-medium rounded-sm animate-pulse" />
+          <div className="h-4 w-24 bg-surface-light rounded-sm animate-pulse hidden sm:block" />
+          <div className="h-4 w-16 bg-surface-light rounded-sm animate-pulse ml-auto" />
         </div>
       ))}
     </Card>

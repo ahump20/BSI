@@ -10,8 +10,8 @@ export default function SettingsLoading() {
           <Skeleton variant="text" width={200} height={36} className="mb-2" />
           <Skeleton variant="text" width={360} height={14} />
           <div className="flex gap-2 mt-4">
-            <Skeleton variant="rectangular" width={120} height={28} className="rounded-lg" />
-            <Skeleton variant="rectangular" width={140} height={28} className="rounded-lg" />
+            <Skeleton variant="rectangular" width={120} height={28} className="rounded-sm" />
+            <Skeleton variant="rectangular" width={140} height={28} className="rounded-sm" />
           </div>
         </div>
       </div>
@@ -24,8 +24,8 @@ export default function SettingsLoading() {
               <Skeleton variant="circular" width={20} height={20} />
               <Skeleton variant="text" width={120} height={18} />
             </div>
-            <div className="bg-surface-light border border-border-subtle rounded-xl p-5">
-              <Skeleton variant="text" width="100%" height={42} className="rounded-lg mb-3" />
+            <div className="bg-surface-light border border-border-subtle rounded-sm p-5">
+              <Skeleton variant="text" width="100%" height={42} className="rounded-sm mb-3" />
               <Skeleton variant="text" width="60%" height={12} />
             </div>
           </div>

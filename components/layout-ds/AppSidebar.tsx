@@ -251,7 +251,7 @@ export function AppSidebar() {
                 key={item.href}
                 href={item.href}
                 onClick={closeMobile}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200 relative ${
+                className={`flex items-center gap-3 px-3 py-2 rounded-sm text-sm transition-all duration-200 relative ${
                   active
                     ? 'text-[var(--bsi-primary-light)]'
                     : 'text-[var(--bsi-text-muted)] hover:text-[var(--bsi-text)] hover:bg-white/[0.06]'
@@ -262,7 +262,7 @@ export function AppSidebar() {
                   <>
                     <motion.div
                       layoutId="sidebar-active"
-                      className="absolute inset-0 rounded-lg bg-burnt-orange/[0.12] shadow-[0_0_20px_rgba(191,87,0,0.08)]"
+                      className="absolute inset-0 rounded-sm bg-burnt-orange/[0.12] shadow-[0_0_20px_rgba(191,87,0,0.08)]"
                       transition={{ type: 'spring', stiffness: 400, damping: 35 }}
                     />
                     <motion.div
@@ -349,7 +349,7 @@ export function AppSidebar() {
       {/* ── Mobile hamburger ── */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="md:hidden fixed top-3 left-3 z-50 p-2 rounded-lg glass-default cursor-pointer text-text-primary"
+        className="md:hidden fixed top-3 left-3 z-50 p-2 rounded-sm glass-default cursor-pointer text-text-primary"
         aria-label="Open navigation"
       >
         <IconMenu />

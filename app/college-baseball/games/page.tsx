@@ -30,19 +30,19 @@ export default function CollegeBaseballGamesPage() {
 
             {/* Quick Links — prevents dead-end */}
             <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-3">
-              <Link href="/scores" className="block p-4 rounded-xl border border-border-subtle hover:border-burnt-orange/30 transition-colors text-center group">
+              <Link href="/scores" className="block p-4 rounded-sm border border-border-subtle hover:border-burnt-orange/30 transition-colors text-center group">
                 <span className="text-xs text-text-muted uppercase tracking-wider block mb-1">Live</span>
                 <span className="text-sm font-semibold text-text-primary group-hover:text-burnt-orange transition-colors">Scores</span>
               </Link>
-              <Link href="/college-baseball/standings" className="block p-4 rounded-xl border border-border-subtle hover:border-burnt-orange/30 transition-colors text-center group">
+              <Link href="/college-baseball/standings" className="block p-4 rounded-sm border border-border-subtle hover:border-burnt-orange/30 transition-colors text-center group">
                 <span className="text-xs text-text-muted uppercase tracking-wider block mb-1">Current</span>
                 <span className="text-sm font-semibold text-text-primary group-hover:text-burnt-orange transition-colors">Standings</span>
               </Link>
-              <Link href="/college-baseball/rankings" className="block p-4 rounded-xl border border-border-subtle hover:border-burnt-orange/30 transition-colors text-center group">
+              <Link href="/college-baseball/rankings" className="block p-4 rounded-sm border border-border-subtle hover:border-burnt-orange/30 transition-colors text-center group">
                 <span className="text-xs text-text-muted uppercase tracking-wider block mb-1">National</span>
                 <span className="text-sm font-semibold text-text-primary group-hover:text-burnt-orange transition-colors">Rankings</span>
               </Link>
-              <Link href="/college-baseball/editorial" className="block p-4 rounded-xl border border-border-subtle hover:border-burnt-orange/30 transition-colors text-center group">
+              <Link href="/college-baseball/editorial" className="block p-4 rounded-sm border border-border-subtle hover:border-burnt-orange/30 transition-colors text-center group">
                 <span className="text-xs text-text-muted uppercase tracking-wider block mb-1">Latest</span>
                 <span className="text-sm font-semibold text-text-primary group-hover:text-burnt-orange transition-colors">Editorial</span>
               </Link>

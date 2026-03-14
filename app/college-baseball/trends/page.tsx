@@ -147,7 +147,7 @@ export default function TrendsPage() {
                   setSelectedConference(e.target.value);
                   setSelectedTeamSlug(null);
                 }}
-                className="bg-surface-light border border-border rounded-lg px-4 py-2 text-text-primary text-sm focus:outline-none focus:border-burnt-orange"
+                className="bg-surface-light border border-border rounded-sm px-4 py-2 text-text-primary text-sm focus:outline-none focus:border-burnt-orange"
               >
                 {conferences.map((c) => (
                   <option key={c.id} value={c.id} className="bg-charcoal">
@@ -161,7 +161,7 @@ export default function TrendsPage() {
                 placeholder="Search teams..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-surface-light border border-border rounded-lg px-4 py-2 text-text-primary text-sm placeholder:text-text-muted focus:outline-none focus:border-burnt-orange flex-1"
+                className="bg-surface-light border border-border rounded-sm px-4 py-2 text-text-primary text-sm placeholder:text-text-muted focus:outline-none focus:border-burnt-orange flex-1"
               />
             </div>
           </Container>

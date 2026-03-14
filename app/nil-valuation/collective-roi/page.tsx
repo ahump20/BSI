@@ -67,7 +67,7 @@ export default function CollectiveROIPage() {
           <ScrollReveal>
             <div className="max-w-3xl mx-auto text-center">
               <Badge variant="primary" className="mb-4">Pro Tool</Badge>
-              <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: 'Georgia, serif' }}>
+              <h1 className="text-4xl md:text-5xl font-bold mb-4 font-display uppercase tracking-wide">
                 <span className="text-burnt-orange">Collective</span> ROI
               </h1>
               <p className="text-lg text-text-secondary max-w-2xl mx-auto">
@@ -135,7 +135,7 @@ export default function CollectiveROIPage() {
                   <select
                     value={confFilter}
                     onChange={e => setConfFilter(e.target.value)}
-                    className="p-2 rounded-lg bg-background-secondary border border-border text-text-primary text-sm focus:border-burnt-orange focus:outline-none"
+                    className="p-2 rounded-sm bg-background-secondary border border-border text-text-primary text-sm focus:border-burnt-orange focus:outline-none"
                   >
                     <option value="">All Conferences</option>
                     {conferences.map(c => <option key={c} value={c}>{c}</option>)}
@@ -147,7 +147,7 @@ export default function CollectiveROIPage() {
                       { key: 'avg_performance' as const, label: 'Avg Performance' },
                     ]).map(opt => (
                       <button key={opt.key} onClick={() => setSortKey(opt.key)}
-                        className={`px-3 py-1.5 rounded-lg border text-xs font-semibold transition-all ${sortKey === opt.key ? 'border-burnt-orange bg-burnt-orange/10 text-burnt-orange' : 'border-border text-text-tertiary hover:border-text-muted'}`}>
+                        className={`px-3 py-1.5 rounded-sm border text-xs font-semibold transition-all ${sortKey === opt.key ? 'border-burnt-orange bg-burnt-orange/10 text-burnt-orange' : 'border-border text-text-tertiary hover:border-text-muted'}`}>
                         {opt.label}
                       </button>
                     ))}

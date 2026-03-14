@@ -277,7 +277,7 @@ function ScoreboardTab({
   if (games.length === 0) {
     return (
       <Card padding="lg" className="text-center">
-        <p className="text-text-muted text-sm">No games available. Check back during the season.</p>
+        <p className="text-text-muted text-sm">Games and sabermetric breakdowns appear here during the season</p>
       </Card>
     );
   }
@@ -345,7 +345,7 @@ function GameCard({ game, selected, onClick }: { game: ESPNGame; selected: boole
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left p-3 rounded-lg border transition-colors ${
+      className={`w-full text-left p-3 rounded-sm border transition-colors ${
         selected ? 'border-burnt-orange bg-burnt-orange/5' : 'border-border-subtle hover:border-border-strong'
       }`}
     >
@@ -464,10 +464,10 @@ function ScoreboardSkeleton() {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
       <div className="space-y-2">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="h-16 rounded-lg bg-surface-light animate-pulse" />
+          <div key={i} className="h-16 rounded-sm bg-surface-light animate-pulse" />
         ))}
       </div>
-      <div className="lg:col-span-2 h-64 rounded-lg bg-surface-light animate-pulse" />
+      <div className="lg:col-span-2 h-64 rounded-sm bg-surface-light animate-pulse" />
     </div>
   );
 }
@@ -496,7 +496,7 @@ function LeaderboardsTab({
           <button
             key={s}
             onClick={() => setSub(s)}
-            className={`px-4 py-2 rounded-lg text-xs font-display uppercase tracking-wider transition-colors border ${
+            className={`px-4 py-2 rounded-sm text-xs font-display uppercase tracking-wider transition-colors border ${
               sub === s
                 ? 'border-burnt-orange text-burnt-orange bg-burnt-orange/5'
                 : 'border-border text-text-muted hover:border-border-strong'
@@ -565,7 +565,7 @@ function DataTable({
   if (rows.length === 0) {
     return (
       <Card padding="lg" className="text-center">
-        <p className="text-text-muted text-sm">No data available.</p>
+        <p className="text-text-muted text-sm">Leaderboard data populates as games are played</p>
       </Card>
     );
   }
@@ -623,11 +623,11 @@ function LeaderboardSkeleton() {
       <div className="divide-y divide-border-subtle">
         {Array.from({ length: 10 }).map((_, i) => (
           <div key={i} className="px-4 py-3 flex items-center gap-4">
-            <div className="h-3 w-5 bg-surface-light rounded animate-pulse" />
-            <div className="h-3 flex-1 max-w-[180px] bg-surface-medium rounded animate-pulse" />
-            <div className="h-3 w-12 bg-surface-light rounded animate-pulse" />
-            <div className="h-3 w-10 bg-surface-light rounded animate-pulse hidden sm:block" />
-            <div className="h-3 w-10 bg-surface-light rounded animate-pulse hidden md:block" />
+            <div className="h-3 w-5 bg-surface-light rounded-sm animate-pulse" />
+            <div className="h-3 flex-1 max-w-[180px] bg-surface-medium rounded-sm animate-pulse" />
+            <div className="h-3 w-12 bg-surface-light rounded-sm animate-pulse" />
+            <div className="h-3 w-10 bg-surface-light rounded-sm animate-pulse hidden sm:block" />
+            <div className="h-3 w-10 bg-surface-light rounded-sm animate-pulse hidden md:block" />
           </div>
         ))}
       </div>
@@ -774,7 +774,7 @@ function CalculatorTab() {
           <button
             key={m}
             onClick={() => setMode(m)}
-            className={`px-4 py-2 rounded-lg text-xs font-display uppercase tracking-wider transition-colors border ${
+            className={`px-4 py-2 rounded-sm text-xs font-display uppercase tracking-wider transition-colors border ${
               mode === m
                 ? 'border-burnt-orange text-burnt-orange bg-burnt-orange/5'
                 : 'border-border text-text-muted hover:border-border-strong'
@@ -801,7 +801,7 @@ function CalculatorTab() {
                     step="any"
                     value={battingInputs[f.key]}
                     onChange={e => setBattingInputs(prev => ({ ...prev, [f.key]: e.target.value }))}
-                    className="w-full bg-surface-light border border-border rounded px-2.5 py-1.5 text-sm font-mono text-text-primary focus:outline-none focus:border-burnt-orange/50 transition-colors"
+                    className="w-full bg-surface-light border border-border rounded-sm px-2.5 py-1.5 text-sm font-mono text-text-primary focus:outline-none focus:border-burnt-orange/50 transition-colors"
                   />
                 </div>
               ))}
@@ -809,13 +809,13 @@ function CalculatorTab() {
             <div className="flex gap-3 mt-4">
               <button
                 onClick={calculateBatting}
-                className="px-4 py-2 bg-burnt-orange hover:bg-ember text-white text-xs font-display uppercase tracking-wider rounded-lg transition-colors"
+                className="px-4 py-2 bg-burnt-orange hover:bg-ember text-white text-xs font-display uppercase tracking-wider rounded-sm transition-colors"
               >
                 Calculate
               </button>
               <button
                 onClick={() => { setBattingInputs({ pa: '', ab: '', h: '', singles: '', doubles: '', triples: '', hr: '', bb: '', hbp: '', sf: '', k: '' }); setBattingResult(null); }}
-                className="px-4 py-2 border border-border text-text-muted text-xs font-display uppercase tracking-wider rounded-lg hover:border-border-strong transition-colors"
+                className="px-4 py-2 border border-border text-text-muted text-xs font-display uppercase tracking-wider rounded-sm hover:border-border-strong transition-colors"
               >
                 Clear
               </button>
@@ -854,7 +854,7 @@ function CalculatorTab() {
                     step="any"
                     value={pitchingInputs[f.key]}
                     onChange={e => setPitchingInputs(prev => ({ ...prev, [f.key]: e.target.value }))}
-                    className="w-full bg-surface-light border border-border rounded px-2.5 py-1.5 text-sm font-mono text-text-primary focus:outline-none focus:border-burnt-orange/50 transition-colors"
+                    className="w-full bg-surface-light border border-border rounded-sm px-2.5 py-1.5 text-sm font-mono text-text-primary focus:outline-none focus:border-burnt-orange/50 transition-colors"
                   />
                 </div>
               ))}
@@ -862,13 +862,13 @@ function CalculatorTab() {
             <div className="flex gap-3 mt-4">
               <button
                 onClick={calculatePitching}
-                className="px-4 py-2 bg-burnt-orange hover:bg-ember text-white text-xs font-display uppercase tracking-wider rounded-lg transition-colors"
+                className="px-4 py-2 bg-burnt-orange hover:bg-ember text-white text-xs font-display uppercase tracking-wider rounded-sm transition-colors"
               >
                 Calculate
               </button>
               <button
                 onClick={() => { setPitchingInputs({ ip: '', h: '', er: '', hr: '', bb: '', hbp: '', k: '', ibb: '' }); setPitchingResult(null); }}
-                className="px-4 py-2 border border-border text-text-muted text-xs font-display uppercase tracking-wider rounded-lg hover:border-border-strong transition-colors"
+                className="px-4 py-2 border border-border text-text-muted text-xs font-display uppercase tracking-wider rounded-sm hover:border-border-strong transition-colors"
               >
                 Clear
               </button>
@@ -976,7 +976,7 @@ function ApiExplorerTab() {
                   {tool.params.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mt-2">
                       {tool.params.map(p => (
-                        <span key={p} className="text-[10px] font-mono text-text-muted bg-surface-light px-2 py-0.5 rounded">
+                        <span key={p} className="text-[10px] font-mono text-text-muted bg-surface-light px-2 py-0.5 rounded-sm">
                           {p}
                         </span>
                       ))}

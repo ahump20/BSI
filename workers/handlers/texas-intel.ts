@@ -297,7 +297,7 @@ Format as JSON: { "title": "...", "date": "${new Date().toISOString().slice(0, 1
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 
-const TEXAS_TEAM_ID = '251';
+const TEXAS_TEAM_ID = '126';
 const TEXAS_TEAM_PATTERN = '%Texas Longhorns%';
 const RIVALRY_OPPONENTS = ['texas a&m', 'oklahoma', 'oklahoma state', 'tcu', 'baylor', 'texas tech', 'arkansas', 'lsu'];
 
@@ -381,7 +381,7 @@ interface PitchingAdvancedRow {
 
 interface HavfRow {
   player_id: string;
-  name: string;
+  player_name: string;
   team: string;
   league: string;
   season: number;
@@ -627,7 +627,7 @@ export async function handleTexasOpponentScout(env: Env, opponentId: string): Pr
 
     // Determine opponent name + conference from data rows
     const sampleRow = await env.DB.prepare(
-      `SELECT team_name, conference FROM cbb_batting_advanced WHERE team_id = ? LIMIT 1`,
+      `SELECT team AS team_name, conference FROM cbb_batting_advanced WHERE team_id = ? LIMIT 1`,
     ).bind(opponentId).first<{ team_name: string; conference: string }>();
 
     let conferenceStrength: ConferenceStrengthRow | null = null;
@@ -1267,7 +1267,7 @@ export async function handleTexasMatchup(env: Env, opponentId: string): Promise<
       },
       headToHead: {
         texasWins,
-        opponentWins,
+        opponentWins: oppWins,
         games: h2h.map((g) => ({
           date: g.game_date,
           homeTeam: g.home_team,
@@ -1338,7 +1338,7 @@ export async function handleTexasDraftBoard(env: Env): Promise<Response> {
 
       return {
         playerId: h.player_id,
-        name: h.name,
+        name: h.player_name,
         position: h.position,
         havf: { composite: h.havf_composite, h: h.h_score, a: h.a_score, v: h.v_score, f: h.f_score },
         batting: batting
@@ -1388,7 +1388,7 @@ export async function handleTexasPortalIntel(env: Env): Promise<Response> {
       ).bind(TEXAS_TEAM_ID).all<PlayerBasicRow>(),
 
       env.DB.prepare(
-        `SELECT player_id, name, havf_composite, position
+        `SELECT player_id, player_name, havf_composite, position
          FROM havf_scores
          WHERE league = 'college-baseball' AND team LIKE ?
          ORDER BY havf_composite DESC`,

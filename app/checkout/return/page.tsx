@@ -153,7 +153,7 @@ function CheckoutReturnContent() {
                       </p>
                     )}
                     {tier === 'pro' && trialEnd && (
-                      <div className="bg-burnt-orange/10 border border-burnt-orange/30 rounded-lg p-4 mb-6">
+                      <div className="bg-burnt-orange/10 border border-burnt-orange/30 rounded-sm p-4 mb-6">
                         <p className="text-burnt-orange text-sm">
                           Your 14-day free trial has started. You won&apos;t be charged until{' '}
                           {new Date(trialEnd * 1000).toLocaleDateString('en-US', {
@@ -165,7 +165,7 @@ function CheckoutReturnContent() {
                         </p>
                       </div>
                     )}
-                    <div className="bg-background-secondary/50 border border-border rounded-lg p-4 mb-8">
+                    <div className="bg-background-secondary/50 border border-border rounded-sm p-4 mb-8">
                       <p className="text-text-secondary text-sm">
                         Check your inbox for an email from BSI with your API key.
                         Enter it on the login page to access your dashboard.

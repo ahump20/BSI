@@ -14,7 +14,7 @@ export default function CFBError({ error, reset }: ErrorProps) {
 
   return (
     <div className="min-h-[60vh] flex items-center justify-center px-4">
-      <div className="max-w-md w-full bg-background-secondary border border-border-strong rounded-xl p-8 text-center">
+      <div className="max-w-md w-full bg-background-secondary border border-border-strong rounded-sm p-8 text-center">
         <div className="text-4xl mb-4">&#127944;</div>
         <h2 className="text-xl font-bold text-text-primary mb-2">College Football data unavailable</h2>
         <p className="text-text-muted text-sm mb-6">
@@ -22,7 +22,7 @@ export default function CFBError({ error, reset }: ErrorProps) {
         </p>
         <button
           onClick={reset}
-          className="px-6 py-2.5 bg-burnt-orange hover:bg-burnt-orange/80 text-white rounded-lg font-medium transition-colors"
+          className="px-6 py-2.5 bg-burnt-orange hover:bg-burnt-orange/80 text-white rounded-sm font-medium transition-colors"
         >
           Try again
         </button>

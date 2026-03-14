@@ -45,7 +45,7 @@ export function SportSelector({ selected, onSelect }: SportSelectorProps) {
             onClick={() => onSelect(sport.key)}
             onMouseEnter={() => setHoveredKey(sport.key)}
             onMouseLeave={() => setHoveredKey(null)}
-            className={`relative overflow-hidden rounded-xl border-2 p-6 text-left transition-all duration-300 cursor-pointer ${
+            className={`relative overflow-hidden rounded-sm border-2 p-6 text-left transition-all duration-300 cursor-pointer ${
               isSelected
                 ? 'border-burnt-orange bg-burnt-orange/10 shadow-[0_0_30px_rgba(191,87,0,0.15)]'
                 : 'border-border-subtle bg-surface-dugout hover:border-burnt-orange/40 hover:bg-surface-dugout/80'
@@ -54,7 +54,7 @@ export function SportSelector({ selected, onSelect }: SportSelectorProps) {
             {isSelected && (
               <motion.div
                 layoutId="sport-selected"
-                className="absolute inset-0 rounded-xl border-2 border-burnt-orange"
+                className="absolute inset-0 rounded-sm border-2 border-burnt-orange"
                 transition={{ type: 'spring', stiffness: 400, damping: 30 }}
               />
             )}
@@ -62,7 +62,7 @@ export function SportSelector({ selected, onSelect }: SportSelectorProps) {
             <div className="relative">
               <div className="flex items-center gap-3 mb-3">
                 <div
-                  className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
+                  className={`w-10 h-10 rounded-sm flex items-center justify-center transition-colors ${
                     isSelected
                       ? 'bg-burnt-orange/20'
                       : 'bg-white/[0.04]'

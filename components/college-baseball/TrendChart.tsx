@@ -59,7 +59,7 @@ function CustomTooltip({
     : String(entry.value);
 
   return (
-    <div className="bg-charcoal border border-border-strong rounded-lg px-3 py-2 shadow-lg">
+    <div className="bg-charcoal border border-border-strong rounded-sm px-3 py-2 shadow-lg">
       <p className="text-text-muted text-xs mb-1">{formattedDate}</p>
       <p className="text-text-primary font-mono text-sm font-semibold">
         {entry.payload.label ?? formattedValue}
@@ -80,7 +80,7 @@ export function TrendChart({
   if (data.length === 0) {
     return (
       <div className="flex items-center justify-center text-text-muted text-sm" style={{ height }}>
-        No trend data available
+        Trend data builds over the season
       </div>
     );
   }

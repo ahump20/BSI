@@ -89,7 +89,7 @@ export function DiamondDynastyWatchlistClient() {
           {loading ? (
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {Array.from({ length: 6 }).map((_, index) => (
-                <div key={index} className="h-44 animate-pulse rounded-xl border border-[var(--border-vintage)] bg-[var(--surface-dugout)]" />
+                <div key={index} className="h-44 animate-pulse rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)]" />
               ))}
             </div>
           ) : ids.length === 0 ? (
@@ -108,7 +108,7 @@ export function DiamondDynastyWatchlistClient() {
                 <CardContent className="space-y-3 px-0 pb-0 pt-4">
                   {events.length ? (
                     events.slice(0, 6).map((event) => (
-                      <div key={event.eventId} className="rounded-lg border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3">
+                      <div key={event.eventId} className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3">
                         <div className="text-sm font-semibold text-[var(--bsi-bone)]">{event.cardName}</div>
                         <div className="mt-1 text-xs uppercase tracking-[0.18em] text-burnt-orange">{event.eventLabel}</div>
                         <div className="mt-1 text-xs text-[var(--bsi-dust)]">
@@ -147,7 +147,7 @@ export function DiamondDynastyWatchlistClient() {
                         </div>
 
                         {latestEvent ? (
-                          <div className="rounded-lg border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3">
+                          <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3">
                             <div className="text-xs uppercase tracking-[0.18em] text-burnt-orange">{latestEvent.eventLabel}</div>
                             <div className="mt-1 text-sm text-[var(--bsi-dust)]">
                               {latestEvent.deltaValue !== null ? `${latestEvent.deltaValue > 0 ? '+' : ''}${latestEvent.deltaValue.toLocaleString()} stubs` : 'N/A'}
@@ -185,7 +185,7 @@ export function DiamondDynastyWatchlistClient() {
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3">
+    <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3">
       <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)]">{label}</div>
       <div className="mt-2 text-sm font-semibold text-[var(--bsi-bone)]">{value}</div>
     </div>

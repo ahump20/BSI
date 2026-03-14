@@ -12,7 +12,7 @@ export function Skeleton({ variant = 'rectangular', width, height, className = '
   if (height) style.height = typeof height === 'number' ? `${height}px` : height;
 
   const variantClass =
-    variant === 'circular' ? 'rounded-full' : variant === 'text' ? 'rounded' : 'rounded-lg';
+    variant === 'circular' ? 'rounded-full' : variant === 'text' ? 'rounded-sm' : 'rounded-sm';
 
   return (
     <div
@@ -37,7 +37,7 @@ export function SkeletonTableRow({ columns = 5 }: { columns?: number }) {
 
 export function SkeletonScoreCard() {
   return (
-    <div className="bg-surface-light rounded-lg p-4">
+    <div className="bg-surface-light rounded-sm p-4">
       <div className="flex justify-between items-center mb-3">
         <Skeleton variant="text" width={120} height={16} />
         <Skeleton variant="text" width={40} height={24} />
@@ -71,9 +71,9 @@ export function SkeletonPageHeader() {
     <div className="space-y-3">
       <Skeleton variant="text" width={200} height={28} />
       <div className="flex gap-2">
-        <Skeleton variant="rectangular" width={80} height={32} className="rounded-md" />
-        <Skeleton variant="rectangular" width={80} height={32} className="rounded-md" />
-        <Skeleton variant="rectangular" width={80} height={32} className="rounded-md" />
+        <Skeleton variant="rectangular" width={80} height={32} className="rounded-sm" />
+        <Skeleton variant="rectangular" width={80} height={32} className="rounded-sm" />
+        <Skeleton variant="rectangular" width={80} height={32} className="rounded-sm" />
       </div>
     </div>
   );
@@ -82,18 +82,18 @@ export function SkeletonPageHeader() {
 /** Generic card-shaped skeleton — matches Card padding="md" footprint */
 export function SkeletonCard({ className = '' }: { className?: string }) {
   return (
-    <div className={`bg-surface-light rounded-lg p-4 animate-pulse ${className}`} aria-hidden="true">
+    <div className={`bg-surface-light rounded-sm p-4 animate-pulse ${className}`} aria-hidden="true">
       <div className="flex items-center gap-3 mb-3">
         <div className="w-8 h-8 rounded-full bg-surface-medium" />
         <div className="flex-1 space-y-2">
-          <div className="h-4 bg-surface-medium rounded w-3/4" />
-          <div className="h-3 bg-surface-medium rounded w-1/2" />
+          <div className="h-4 bg-surface-medium rounded-sm w-3/4" />
+          <div className="h-3 bg-surface-medium rounded-sm w-1/2" />
         </div>
       </div>
       <div className="space-y-2">
-        <div className="h-3 bg-surface-medium rounded" />
-        <div className="h-3 bg-surface-medium rounded w-5/6" />
-        <div className="h-3 bg-surface-medium rounded w-4/6" />
+        <div className="h-3 bg-surface-medium rounded-sm" />
+        <div className="h-3 bg-surface-medium rounded-sm w-5/6" />
+        <div className="h-3 bg-surface-medium rounded-sm w-4/6" />
       </div>
     </div>
   );
@@ -102,18 +102,18 @@ export function SkeletonCard({ className = '' }: { className?: string }) {
 /** Table skeleton — rows of equally-spaced cells */
 export function SkeletonTable({ rows = 5 }: { rows?: number }) {
   return (
-    <div className="bg-surface-light rounded-lg overflow-hidden animate-pulse" aria-hidden="true">
+    <div className="bg-surface-light rounded-sm overflow-hidden animate-pulse" aria-hidden="true">
       {/* Header row */}
       <div className="flex gap-4 px-4 py-3 border-b border-border bg-surface-medium">
         {[40, 120, 80, 80, 60].map((w, i) => (
-          <div key={i} className="h-3 bg-surface rounded" style={{ width: w }} />
+          <div key={i} className="h-3 bg-surface rounded-sm" style={{ width: w }} />
         ))}
       </div>
       {/* Data rows */}
       {Array.from({ length: rows }).map((_, i) => (
         <div key={i} className="flex gap-4 px-4 py-3 border-b border-border-subtle last:border-0">
           {[40, 120, 80, 80, 60].map((w, j) => (
-            <div key={j} className="h-3 bg-surface-medium rounded" style={{ width: w }} />
+            <div key={j} className="h-3 bg-surface-medium rounded-sm" style={{ width: w }} />
           ))}
         </div>
       ))}
@@ -123,7 +123,7 @@ export function SkeletonTable({ rows = 5 }: { rows?: number }) {
 
 export function SkeletonStandingsTable({ rows = 10, columns = 5 }: { rows?: number; columns?: number }) {
   return (
-    <div className="bg-surface-light rounded-lg p-4">
+    <div className="bg-surface-light rounded-sm p-4">
       <Skeleton variant="text" width={140} height={20} className="mb-4" />
       <table className="w-full">
         <thead>

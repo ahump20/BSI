@@ -239,7 +239,7 @@ export default function MLBPlayersPage() {
               <div className="flex gap-2 mb-6">
                 <button
                   onClick={() => setStatType('bat')}
-                  className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all ${
+                  className={`px-6 py-2.5 rounded-sm font-semibold text-sm transition-all ${
                     statType === 'bat'
                       ? 'bg-burnt-orange text-white'
                       : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium hover:text-text-primary'
@@ -249,7 +249,7 @@ export default function MLBPlayersPage() {
                 </button>
                 <button
                   onClick={() => setStatType('pit')}
-                  className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all ${
+                  className={`px-6 py-2.5 rounded-sm font-semibold text-sm transition-all ${
                     statType === 'pit'
                       ? 'bg-burnt-orange text-white'
                       : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium hover:text-text-primary'
@@ -272,7 +272,7 @@ export default function MLBPlayersPage() {
                         setPosition(e.target.value);
                         setPage(1);
                       }}
-                      className="px-3 py-2 bg-background-secondary border border-border-subtle rounded-lg text-text-primary text-sm focus:outline-none focus:border-burnt-orange transition-colors"
+                      className="px-3 py-2 bg-background-secondary border border-border-subtle rounded-sm text-text-primary text-sm focus:outline-none focus:border-burnt-orange transition-colors"
                       aria-label="Filter by position"
                     >
                       {positions.map((pos) => (
@@ -290,7 +290,7 @@ export default function MLBPlayersPage() {
                       setLeague(e.target.value as 'all' | 'al' | 'nl');
                       setPage(1);
                     }}
-                    className="px-3 py-2 bg-background-secondary border border-border-subtle rounded-lg text-text-primary text-sm focus:outline-none focus:border-burnt-orange transition-colors"
+                    className="px-3 py-2 bg-background-secondary border border-border-subtle rounded-sm text-text-primary text-sm focus:outline-none focus:border-burnt-orange transition-colors"
                     aria-label="Filter by league"
                   >
                     <option value="all">All Leagues</option>
@@ -305,7 +305,7 @@ export default function MLBPlayersPage() {
                       setSortBy(e.target.value);
                       setPage(1);
                     }}
-                    className="px-3 py-2 bg-background-secondary border border-border-subtle rounded-lg text-text-primary text-sm focus:outline-none focus:border-burnt-orange transition-colors"
+                    className="px-3 py-2 bg-background-secondary border border-border-subtle rounded-sm text-text-primary text-sm focus:outline-none focus:border-burnt-orange transition-colors"
                     aria-label="Sort by"
                   >
                     {sortOptions.map((opt) => (
@@ -356,7 +356,7 @@ export default function MLBPlayersPage() {
                 <p className="text-text-secondary">{error}</p>
                 <button
                   onClick={fetchPlayers}
-                  className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/90 transition-colors"
+                  className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange/90 transition-colors"
                 >
                   Retry
                 </button>
@@ -481,7 +481,7 @@ export default function MLBPlayersPage() {
                   <button
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={page === 1}
-                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-lg hover:bg-surface-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-sm hover:bg-surface-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     Previous
                   </button>
@@ -491,7 +491,7 @@ export default function MLBPlayersPage() {
                   <button
                     onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
                     disabled={page === pagination.totalPages}
-                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-lg hover:bg-surface-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-sm hover:bg-surface-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     Next
                   </button>

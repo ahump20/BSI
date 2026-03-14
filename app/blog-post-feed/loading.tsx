@@ -29,10 +29,10 @@ export default function BlogPostFeedLoading() {
 
       {/* Featured card */}
       <div className="max-w-7xl mx-auto px-4 py-10">
-        <div className="rounded-xl border border-border-subtle bg-background-tertiary p-8 animate-pulse mb-10">
+        <div className="rounded-sm border border-border-subtle bg-background-tertiary p-8 animate-pulse mb-10">
           <div className="flex gap-2 mb-4">
-            <Skeleton variant="rectangular" width={70} height={22} className="rounded-md" />
-            <Skeleton variant="rectangular" width={100} height={22} className="rounded-md" />
+            <Skeleton variant="rectangular" width={70} height={22} className="rounded-sm" />
+            <Skeleton variant="rectangular" width={100} height={22} className="rounded-sm" />
           </div>
           <Skeleton variant="text" width="70%" height={32} className="mb-3" />
           <Skeleton variant="text" width="50%" height={18} className="mb-4" />
@@ -54,8 +54,8 @@ export default function BlogPostFeedLoading() {
         {/* Article grid */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="bg-background-tertiary rounded-lg p-6 animate-pulse">
-              <Skeleton variant="rectangular" width={90} height={20} className="rounded-md mb-3" />
+            <div key={i} className="bg-background-tertiary rounded-sm p-6 animate-pulse">
+              <Skeleton variant="rectangular" width={90} height={20} className="rounded-sm mb-3" />
               <Skeleton variant="text" width="85%" height={18} className="mb-2" />
               <Skeleton variant="text" width="100%" height={14} className="mb-1" />
               <Skeleton variant="text" width="90%" height={14} className="mb-1" />

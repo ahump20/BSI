@@ -503,7 +503,7 @@ export default function SavantVisualsPage() {
               <div className="mb-10">
                 <div className="flex items-center gap-3 mb-3">
                   <span
-                    className="text-[10px] font-mono uppercase tracking-[0.15em] px-2 py-1 rounded"
+                    className="text-[10px] font-mono uppercase tracking-[0.15em] px-2 py-1 rounded-sm"
                     style={{ backgroundColor: 'rgba(232, 93, 38, 0.1)', color: 'var(--svt-accent)' }}
                   >
                     Visual Analytics
@@ -531,23 +531,24 @@ export default function SavantVisualsPage() {
                     {CATEGORY_LABELS[category] ?? category}
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {tools.map(tool => (
+                    {tools.map((tool, index) => (
                       <button
                         key={tool.id}
                         onClick={() => tool.available ? setActiveViz(activeViz === tool.id ? null : tool.id) : undefined}
                         disabled={!tool.available}
-                        className={`text-left group ${!tool.available ? 'opacity-40 cursor-not-allowed' : ''}`}
+                        className={`savant-fade-in text-left group ${!tool.available ? 'opacity-40 cursor-not-allowed' : ''}`}
+                        style={{ animationDelay: `${index * 50}ms` }}
                       >
                         <Card
                           padding="md"
                           className={`h-full transition-all duration-300 ${
                             activeViz === tool.id
                               ? 'border-burnt-orange/40 shadow-[0_0_20px_rgba(191,87,0,0.1)]'
-                              : 'hover:border-border-strong'
+                              : 'hover:border-[var(--svt-accent)]/30'
                           }`}
                         >
                           {/* Thumbnail placeholder */}
-                          <div className={`h-24 rounded-lg mb-3 flex items-center justify-center ${
+                          <div className={`h-24 rounded-sm mb-3 flex items-center justify-center ${
                             tool.available ? 'bg-gradient-to-br from-surface-light to-surface-medium' : 'bg-surface-light'
                           }`}>
                             {tool.available ? (
@@ -706,7 +707,7 @@ export default function SavantVisualsPage() {
                             <select
                               value={selectedPlayerId}
                               onChange={(e) => setSelectedPlayerId(e.target.value)}
-                              className="w-full bg-surface-light border border-border rounded-md px-3 py-2 text-sm text-text-tertiary font-mono appearance-none cursor-pointer hover:border-border-strong transition-colors focus:outline-none focus:border-burnt-orange/40"
+                              className="w-full bg-surface-light border border-border rounded-sm px-3 py-2 text-sm text-text-tertiary font-mono appearance-none cursor-pointer hover:border-border-strong transition-colors focus:outline-none focus:border-burnt-orange/40"
                             >
                               <option value="" className="bg-background-secondary text-text-primary">
                                 Top player (auto)

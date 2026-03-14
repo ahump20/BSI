@@ -103,7 +103,7 @@ export function HAVFLeaderboard({
   );
 
   return (
-    <div className={`bg-background-primary border border-border-subtle rounded-xl overflow-hidden ${className}`}>
+    <div className={`bg-background-primary border border-border-subtle rounded-sm overflow-hidden ${className}`}>
       {/* Header */}
       <div className="px-5 py-4 border-b border-border-subtle flex items-center justify-between">
         <h3 className="font-display text-base uppercase tracking-wider text-text-primary">{title}</h3>

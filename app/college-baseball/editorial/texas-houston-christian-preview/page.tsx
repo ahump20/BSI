@@ -125,7 +125,7 @@ export default function TexasHoustonChristianPreviewPage() {
               <div className="max-w-3xl mx-auto">
                 <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-8">The Matchup</h2>
                 <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
-                  <div className="bg-surface-elevated/50 border border-border rounded-lg p-6 mb-6">
+                  <div className="bg-surface-elevated/50 border border-border rounded-sm p-6 mb-6">
                     <p className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary">
                       No. 3 Texas vs. Houston Christian
                     </p>

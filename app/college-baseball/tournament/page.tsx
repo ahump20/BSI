@@ -152,7 +152,7 @@ export default function TournamentHubPage() {
                     <Link
                       key={slug}
                       href={`/college-baseball/teams/${slug}`}
-                      className="group flex items-center gap-2.5 bg-surface-light border border-border-subtle rounded-lg p-2.5 hover:border-[#C9A227]/40 transition-all"
+                      className="group flex items-center gap-2.5 bg-surface-light border border-border-subtle rounded-sm p-2.5 hover:border-[#C9A227]/40 transition-all"
                     >
                       <span className="text-[11px] font-mono text-[#C9A227] w-5 shrink-0 text-right">
                         {i + 1}
@@ -193,7 +193,7 @@ export default function TournamentHubPage() {
                     return (
                       <div
                         key={i}
-                        className="bg-surface-light border border-border-subtle rounded-lg overflow-hidden"
+                        className="bg-surface-light border border-border-subtle rounded-sm overflow-hidden"
                       >
                         <div className="px-3 py-1.5 bg-gradient-to-r from-[#C9A227]/8 to-transparent border-b border-border-subtle">
                           <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted">
@@ -270,7 +270,7 @@ export default function TournamentHubPage() {
                     College World Series
                   </h3>
                 </div>
-                <div className="bg-surface-light border border-[#C9A227]/20 rounded-xl overflow-hidden">
+                <div className="bg-surface-light border border-[#C9A227]/20 rounded-sm overflow-hidden">
                   <div className="bg-gradient-to-r from-[#C9A227]/10 via-[#C9A227]/5 to-transparent px-4 py-3 border-b border-[#C9A227]/10">
                     <p className="font-display text-xs font-bold uppercase tracking-wider text-[#C9A227]">
                       Charles Schwab Field &middot; Omaha, NE
@@ -291,7 +291,7 @@ export default function TournamentHubPage() {
                         <Link
                           key={slug}
                           href={`/college-baseball/teams/${slug}`}
-                          className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-surface-medium/50 transition-colors group"
+                          className="flex items-center gap-2 px-2 py-1.5 rounded-sm hover:bg-surface-medium/50 transition-colors group"
                         >
                           <Image
                             src={logoUrl(slug)}
@@ -314,7 +314,7 @@ export default function TournamentHubPage() {
                 </div>
 
                 {/* CWS Format Explainer */}
-                <div className="mt-4 bg-surface-light border border-border-subtle rounded-lg p-4">
+                <div className="mt-4 bg-surface-light border border-border-subtle rounded-sm p-4">
                   <h4 className="font-display text-xs font-bold uppercase tracking-wider text-text-secondary mb-2">
                     How It Works
                   </h4>
@@ -545,7 +545,7 @@ export default function TournamentHubPage() {
                     href={`/college-baseball/teams/${slug}`}
                     className="group block"
                   >
-                    <div className="bg-surface-light border border-border-subtle rounded-xl p-4 hover:border-[#C9A227]/30 transition-all h-full">
+                    <div className="bg-surface-light border border-border-subtle rounded-sm p-4 hover:border-[#C9A227]/30 transition-all h-full">
                       <div className="flex items-center gap-3 mb-3">
                         <span className="flex items-center justify-center w-7 h-7 rounded-full bg-[#C9A227]/10 text-[#C9A227] text-xs font-mono font-bold">
                           {i + 1}
@@ -624,7 +624,7 @@ export default function TournamentHubPage() {
 
                       {/* Content */}
                       <div className={`ml-10 md:ml-0 md:w-1/2 ${isLeft ? 'md:pr-10 md:text-right' : 'md:pl-10'}`}>
-                        <div className="bg-surface-light border border-border-subtle rounded-lg p-4 hover:border-[#C9A227]/20 transition-colors">
+                        <div className="bg-surface-light border border-border-subtle rounded-sm p-4 hover:border-[#C9A227]/20 transition-colors">
                           <p className="text-xs font-mono text-[#C9A227] mb-1">{item.date}</p>
                           <h3 className="font-display text-sm font-bold uppercase tracking-wide text-text-primary mb-1">
                             {item.event}

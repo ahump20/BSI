@@ -70,7 +70,7 @@ export default function RegionalsPage() {
                 {loading && !hasData ? (
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {Array.from({ length: 16 }).map((_, i) => (
-                      <div key={i} className="h-16 bg-surface-light rounded-lg animate-pulse" />
+                      <div key={i} className="h-16 bg-surface-light rounded-sm animate-pulse" />
                     ))}
                   </div>
                 ) : (
@@ -78,7 +78,7 @@ export default function RegionalsPage() {
                     {projectedHosts.map((team, i) => (
                       <div
                         key={team.name || i}
-                        className="bg-surface-light border border-border-subtle rounded-lg p-4 flex items-start gap-3"
+                        className="bg-surface-light border border-border-subtle rounded-sm p-4 flex items-start gap-3"
                       >
                         <span className="text-lg font-display font-bold text-[#C9A227] w-8 shrink-0">
                           #{team.rank || i + 1}
@@ -112,7 +112,7 @@ export default function RegionalsPage() {
               <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
                 How Regionals Work
               </h2>
-              <div className="bg-surface-light border border-border-subtle rounded-xl p-5 space-y-3">
+              <div className="bg-surface-light border border-border-subtle rounded-sm p-5 space-y-3">
                 {[
                   { label: 'Selection Monday', detail: 'The NCAA announces the 64-team field, 16 national seeds, and regional bracket assignments in late May.' },
                   { label: 'Format', detail: 'Each regional is double-elimination with 4 teams. Win three games to advance to super regionals.' },
@@ -130,7 +130,7 @@ export default function RegionalsPage() {
             </section>
 
             {/* Empty state for bracket data */}
-            <div className="bg-surface-light border border-dashed border-border rounded-xl p-8 text-center mb-8">
+            <div className="bg-surface-light border border-dashed border-border rounded-sm p-8 text-center mb-8">
               <p className="text-sm text-text-muted mb-2">
                 Bracket data populates on Selection Monday (late May / early June).
               </p>

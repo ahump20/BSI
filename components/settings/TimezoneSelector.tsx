@@ -20,7 +20,7 @@ export function TimezoneSelector({ value, onChange }: TimezoneSelectorProps) {
         id="tz-select"
         value={value || 'America/Chicago'}
         onChange={(e) => onChange?.(e.target.value)}
-        className="w-full bg-charcoal border border-border-subtle rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-burnt-orange"
+        className="w-full bg-charcoal border border-border-subtle rounded-sm px-3 py-2 text-white text-sm focus:outline-none focus:border-burnt-orange"
       >
         {TIMEZONES.map((tz) => (
           <option key={tz.value} value={tz.value}>{tz.label}</option>
@@ -33,7 +33,7 @@ export function TimezoneSelector({ value, onChange }: TimezoneSelectorProps) {
 export function TimezoneBadge({ timezone }: { timezone?: string }) {
   const tz = TIMEZONES.find((t) => t.value === timezone);
   return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-charcoal text-text-secondary border border-border-subtle">
+    <span className="inline-flex items-center px-2 py-0.5 rounded-sm text-xs bg-charcoal text-text-secondary border border-border-subtle">
       {tz?.label || 'CT'}
     </span>
   );

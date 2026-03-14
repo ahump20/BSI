@@ -31,16 +31,16 @@ export function DrillCard({ drill, index }: DrillCardProps) {
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
-      className="rounded-xl bg-surface-dugout border border-border-subtle p-4 hover:border-burnt-orange/20 transition-colors"
+      className="rounded-sm bg-surface-dugout border border-border-subtle p-4 hover:border-burnt-orange/20 transition-colors"
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2">
-          <span className="w-6 h-6 rounded-md bg-burnt-orange/15 flex items-center justify-center text-xs font-bold text-burnt-orange font-mono">
+          <span className="w-6 h-6 rounded-sm bg-burnt-orange/15 flex items-center justify-center text-xs font-bold text-burnt-orange font-mono">
             {index + 1}
           </span>
           <h4 className="text-sm font-semibold text-bsi-bone">{drill.name}</h4>
         </div>
-        <span className={`text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded ${diff.color}`}>
+        <span className={`text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded-sm ${diff.color}`}>
           {diff.label}
         </span>
       </div>
@@ -256,10 +256,10 @@ Only output the JSON array, nothing else.`,
       {loading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="rounded-xl bg-surface-dugout border border-border-subtle p-4 animate-pulse">
-              <div className="h-4 bg-white/[0.06] rounded w-40 mb-3" />
-              <div className="h-3 bg-white/[0.04] rounded w-full mb-2" />
-              <div className="h-3 bg-white/[0.04] rounded w-3/4" />
+            <div key={i} className="rounded-sm bg-surface-dugout border border-border-subtle p-4 animate-pulse">
+              <div className="h-4 bg-white/[0.06] rounded-sm w-40 mb-3" />
+              <div className="h-3 bg-white/[0.04] rounded-sm w-full mb-2" />
+              <div className="h-3 bg-white/[0.04] rounded-sm w-3/4" />
             </div>
           ))}
         </div>

@@ -68,7 +68,7 @@
   margin: 1rem 0;
   border: 1px solid #ef4444;
   background: rgba(239, 68, 68, 0.1);
-  border-radius: 0.75rem;
+  border-radius: 2px;
   animation: errorSlideIn 0.3s ease-out;
 }
 
@@ -112,7 +112,7 @@
   color: #ff6b35;
   cursor: pointer;
   transition: all 0.3s;
-  border-radius: 0.5rem;
+  border-radius: 2px;
   font-weight: 600;
 }
 
@@ -132,7 +132,7 @@
   margin: 1rem 0;
   border: 1px solid #10b981;
   background: rgba(16, 185, 129, 0.1);
-  border-radius: 0.75rem;
+  border-radius: 2px;
   animation: successSlideIn 0.3s ease-out;
 }
 
@@ -349,7 +349,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  border-radius: 2rem;
+  border-radius: 999px;
   font-size: 0.875rem;
   transition: all 0.3s;
   z-index: 1000;

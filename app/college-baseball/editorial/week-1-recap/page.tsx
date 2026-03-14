@@ -349,7 +349,7 @@ export default function Week1RecapPage() {
                   Don&rsquo;t overreact to early polls &mdash; the Coaches Poll is conservative in February, and the real movement is in how programs deploy pitching and tighten defensive variance before March. The driver of lasting ranking change isn&rsquo;t one loss. It&rsquo;s <em>how</em> you lost &mdash; bullpen collapse, defensive volatility, and whether you showed a second way to win when the first one failed. The teams that answered that question this weekend already know what they can lean on. The rest are still guessing.
                 </p>
                 <p className="!mt-8">
-                  <Link href="/college-baseball/editorial/weekend-2-recap" className="inline-flex items-center gap-2 bg-burnt-orange/10 border border-burnt-orange/20 rounded px-4 py-2.5 text-burnt-orange hover:bg-burnt-orange/15 transition-colors text-base not-italic">
+                  <Link href="/college-baseball/editorial/weekend-2-recap" className="inline-flex items-center gap-2 bg-burnt-orange/10 border border-burnt-orange/20 rounded-sm px-4 py-2.5 text-burnt-orange hover:bg-burnt-orange/15 transition-colors text-base not-italic">
                     <span className="font-display text-xs uppercase tracking-widest font-semibold">Update</span>
                     <span className="text-text-tertiary">|</span>
                     <span>Weekend 2 results are in &mdash; UCLA answered, and so did the rest of the field.</span>

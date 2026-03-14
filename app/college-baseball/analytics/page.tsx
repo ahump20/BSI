@@ -146,16 +146,16 @@ export default function CollegeBaseballAnalyticsPage() {
                 <Card padding="none" className="overflow-hidden">
                   {/* Skeleton header */}
                   <div className="px-5 py-4 border-b border-border-subtle flex items-center justify-between">
-                    <div className="h-4 w-40 bg-surface-light rounded animate-pulse" />
-                    <div className="h-3 w-20 bg-surface-light rounded animate-pulse" />
+                    <div className="h-4 w-40 bg-surface-light rounded-sm animate-pulse" />
+                    <div className="h-3 w-20 bg-surface-light rounded-sm animate-pulse" />
                   </div>
                   {/* Skeleton rows */}
                   <div className="divide-y divide-border-subtle">
                     {Array.from({ length: 10 }).map((_, i) => (
                       <div key={i} className="px-5 py-3 flex items-center gap-4">
-                        <div className="h-4 w-6 bg-surface-light rounded animate-pulse" />
-                        <div className="h-4 flex-1 max-w-[200px] bg-surface-light rounded animate-pulse" />
-                        <div className="h-4 w-16 bg-surface-light rounded animate-pulse hidden sm:block" />
+                        <div className="h-4 w-6 bg-surface-light rounded-sm animate-pulse" />
+                        <div className="h-4 flex-1 max-w-[200px] bg-surface-light rounded-sm animate-pulse" />
+                        <div className="h-4 w-16 bg-surface-light rounded-sm animate-pulse hidden sm:block" />
                         <div className="h-6 w-12 bg-surface-light rounded-full animate-pulse ml-auto" />
                         <div className="h-[6px] w-16 bg-surface-light rounded-full animate-pulse hidden md:block" />
                         <div className="h-[6px] w-16 bg-surface-light rounded-full animate-pulse hidden md:block" />
@@ -175,7 +175,7 @@ export default function CollegeBaseballAnalyticsPage() {
                 <p className="text-text-muted mb-6 text-sm">{error}</p>
                 <button
                   onClick={retry}
-                  className="px-5 py-2 bg-burnt-orange/20 text-burnt-orange rounded-lg text-sm font-medium hover:bg-burnt-orange/30 transition-colors"
+                  className="px-5 py-2 bg-burnt-orange/20 text-burnt-orange rounded-sm text-sm font-medium hover:bg-burnt-orange/30 transition-colors"
                 >
                   Try again
                 </button>
@@ -192,7 +192,7 @@ export default function CollegeBaseballAnalyticsPage() {
                 </p>
                 <button
                   onClick={retry}
-                  className="px-5 py-2 bg-surface-light text-text-tertiary rounded-lg text-sm font-medium hover:bg-surface-medium transition-colors"
+                  className="px-5 py-2 bg-surface-light text-text-tertiary rounded-sm text-sm font-medium hover:bg-surface-medium transition-colors"
                 >
                   Refresh
                 </button>

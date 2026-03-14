@@ -104,7 +104,7 @@ export function SavantGlossary({ className = '' }: { className?: string }) {
                 >
                   <button
                     onClick={() => setOpenKey(isOpen ? null : entry.key)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-sm transition-all ${
                       isOpen
                         ? 'bg-[var(--svt-surface,_rgba(255,255,255,0.04))] border border-[var(--svt-accent,_#BF5700)]/20'
                         : 'bg-[var(--svt-card,_rgba(26,26,26,0.6))] border border-[var(--svt-border,_rgba(255,255,255,0.04))] hover:border-[var(--svt-accent,_#BF5700)]/30'
@@ -112,7 +112,7 @@ export function SavantGlossary({ className = '' }: { className?: string }) {
                   >
                     {/* Abbreviation badge */}
                     <span
-                      className={`text-[11px] font-mono font-bold px-2 py-0.5 rounded shrink-0 ${
+                      className={`text-[11px] font-mono font-bold px-2 py-0.5 rounded-sm shrink-0 ${
                         isOpen
                           ? 'bg-[var(--svt-accent,_#BF5700)] text-white'
                           : 'bg-[var(--svt-accent,_#BF5700)]/10 text-[var(--svt-accent,_#BF5700)]'

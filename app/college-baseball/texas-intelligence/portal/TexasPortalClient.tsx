@@ -8,6 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 
@@ -44,6 +45,7 @@ const TEAM_ID = 'texas';
 const ACCENT = '#BF5700';
 
 type DirectionFilter = 'all' | 'incoming' | 'departing';
+type ViewMode = 'list' | 'split';
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
@@ -58,6 +60,7 @@ export default function TexasPortalClient() {
   );
 
   const [dirFilter, setDirFilter] = useState<DirectionFilter>('all');
+  const [viewMode, setViewMode] = useState<ViewMode>('list');
 
   const portalMoves = useMemo(() => {
     const moves = (data?.portalMoves ?? []) as PortalMove[];
@@ -116,23 +119,24 @@ export default function TexasPortalClient() {
           </Container>
         </Section>
 
+        <DataErrorBoundary name="Portal Data">
         {/* Summary Cards */}
         {!loading && data && (
           <Section padding="md" borderTop>
             <Container>
               <ScrollReveal direction="up">
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="rounded-lg border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
+                  <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
                     <div className="font-mono text-2xl font-bold text-text-primary">{data.rosterCount}</div>
                     <div className="text-[10px] uppercase tracking-wider text-text-muted mt-1">Active Roster</div>
                   </div>
-                  <div className="rounded-lg border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
+                  <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
                     <div className="font-mono text-2xl font-bold" style={{ color: incoming.length > 0 ? '#22c55e' : undefined }}>
                       {incoming.length}
                     </div>
                     <div className="text-[10px] uppercase tracking-wider text-text-muted mt-1">Incoming</div>
                   </div>
-                  <div className="rounded-lg border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
+                  <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
                     <div className="font-mono text-2xl font-bold" style={{ color: departing.length > 0 ? '#ef4444' : undefined }}>
                       {departing.length}
                     </div>
@@ -148,7 +152,27 @@ export default function TexasPortalClient() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <Card variant="default" padding="lg">
+              {/* Net Talent Indicator */}
+              {!loading && !error && (incoming.length > 0 || departing.length > 0) && (
+                <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-3 mb-4 flex items-center justify-center gap-3">
+                  <span className="text-[10px] uppercase tracking-wider text-text-muted">Net Talent</span>
+                  <span
+                    className="font-mono text-lg font-bold"
+                    style={{
+                      color: incoming.length - departing.length > 0 ? '#22c55e'
+                        : incoming.length - departing.length < 0 ? '#ef4444'
+                        : undefined,
+                    }}
+                  >
+                    {incoming.length - departing.length > 0 ? '+' : ''}{incoming.length - departing.length}
+                  </span>
+                  <span className="text-text-muted text-xs">
+                    ({incoming.length} in / {departing.length} out)
+                  </span>
+                </div>
+              )}
+
+              <Card variant="default" padding="lg" className="border-t-2 border-burnt-orange">
                 <CardHeader>
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <CardTitle className="flex items-center gap-3">
@@ -157,20 +181,41 @@ export default function TexasPortalClient() {
                         <Badge variant="accent" size="sm">{portalMoves.length} moves</Badge>
                       )}
                     </CardTitle>
-                    <div className="flex gap-2">
-                      {(['all', 'incoming', 'departing'] as DirectionFilter[]).map((f) => (
-                        <button
-                          key={f}
-                          onClick={() => setDirFilter(f)}
-                          className={`px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded transition-colors ${
-                            dirFilter === f
-                              ? 'bg-burnt-orange text-white'
-                              : 'bg-surface-light text-text-muted hover:text-text-primary'
-                          }`}
-                        >
-                          {f === 'all' ? 'All' : f}
-                        </button>
-                      ))}
+                    <div className="flex items-center gap-3">
+                      {/* View mode toggle */}
+                      <div className="flex gap-1 border border-border-subtle rounded-sm overflow-hidden">
+                        {(['list', 'split'] as ViewMode[]).map((mode) => (
+                          <button
+                            key={mode}
+                            onClick={() => setViewMode(mode)}
+                            className={`px-2 py-1 text-[10px] font-semibold uppercase tracking-wider transition-colors ${
+                              viewMode === mode
+                                ? 'bg-burnt-orange text-white'
+                                : 'bg-transparent text-text-muted hover:text-text-primary'
+                            }`}
+                          >
+                            {mode}
+                          </button>
+                        ))}
+                      </div>
+                      {/* Direction filter (list view only) */}
+                      {viewMode === 'list' && (
+                        <div className="flex gap-2">
+                          {(['all', 'incoming', 'departing'] as DirectionFilter[]).map((f) => (
+                            <button
+                              key={f}
+                              onClick={() => setDirFilter(f)}
+                              className={`px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-sm transition-colors ${
+                                dirFilter === f
+                                  ? 'bg-burnt-orange text-white'
+                                  : 'bg-surface-light text-text-muted hover:text-text-primary'
+                              }`}
+                            >
+                              {f === 'all' ? 'All' : f}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </CardHeader>
@@ -178,11 +223,49 @@ export default function TexasPortalClient() {
                   {loading ? (
                     <div className="space-y-3">
                       {[1, 2, 3].map((i) => (
-                        <div key={i} className="h-14 bg-surface-light rounded animate-pulse" />
+                        <div key={i} className="h-14 bg-surface-light rounded-sm animate-pulse" />
                       ))}
                     </div>
                   ) : error ? (
                     <p className="text-text-muted text-sm text-center py-8">Portal data is not available right now.</p>
+                  ) : viewMode === 'split' ? (
+                    /* Split View — Incoming / Departing side by side */
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="w-2 h-2 rounded-full bg-green-500" />
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-green-400">
+                            Incoming ({incoming.length})
+                          </span>
+                        </div>
+                        {incoming.length === 0 ? (
+                          <p className="text-text-muted text-xs text-center py-4">No incoming transfers</p>
+                        ) : (
+                          <div className="space-y-2">
+                            {incoming.map((move, i) => (
+                              <PortalMoveRow key={`in-${move.name}-${i}`} move={move} />
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="w-2 h-2 rounded-full bg-red-500" />
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-red-400">
+                            Departing ({departing.length})
+                          </span>
+                        </div>
+                        {departing.length === 0 ? (
+                          <p className="text-text-muted text-xs text-center py-4">No departing transfers</p>
+                        ) : (
+                          <div className="space-y-2">
+                            {departing.map((move, i) => (
+                              <PortalMoveRow key={`out-${move.name}-${i}`} move={move} />
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   ) : portalMoves.length === 0 ? (
                     <div className="text-center py-8">
                       <p className="text-text-muted text-sm">No portal activity recorded yet this cycle.</p>
@@ -191,29 +274,7 @@ export default function TexasPortalClient() {
                   ) : (
                     <div className="space-y-2">
                       {portalMoves.map((move, i) => (
-                        <div
-                          key={`${move.name}-${i}`}
-                          className="flex items-center gap-3 rounded-lg border border-border-subtle bg-[var(--surface-press-box)] p-3"
-                        >
-                          <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                            move.direction === 'incoming' ? 'bg-green-500' : 'bg-red-500'
-                          }`} />
-                          <div className="flex-1 min-w-0">
-                            <div className="text-text-primary text-sm font-medium">{move.name}</div>
-                            <div className="text-text-muted text-xs">
-                              {move.position}
-                              {move.fromTeam && ` · from ${move.fromTeam}`}
-                              {move.toTeam && ` · to ${move.toTeam}`}
-                            </div>
-                          </div>
-                          <span className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded ${
-                            move.direction === 'incoming'
-                              ? 'bg-green-500/10 text-green-400'
-                              : 'bg-red-500/10 text-red-400'
-                          }`}>
-                            {move.direction}
-                          </span>
-                        </div>
+                        <PortalMoveRow key={`${move.name}-${i}`} move={move} />
                       ))}
                     </div>
                   )}
@@ -277,6 +338,7 @@ export default function TexasPortalClient() {
             </Container>
           </Section>
         )}
+        </DataErrorBoundary>
 
         {/* Attribution */}
         <Section padding="md" borderTop>
@@ -305,5 +367,32 @@ export default function TexasPortalClient() {
       </main>
       <Footer />
     </>
+  );
+}
+
+// ─── Sub-components ────────────────────────────────────────────────────────
+
+function PortalMoveRow({ move }: { move: PortalMove }) {
+  return (
+    <div className="flex items-center gap-3 rounded-sm border border-border-subtle bg-[var(--surface-press-box)] p-3">
+      <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
+        move.direction === 'incoming' ? 'bg-green-500' : 'bg-red-500'
+      }`} />
+      <div className="flex-1 min-w-0">
+        <div className="text-text-primary text-sm font-medium">{move.name}</div>
+        <div className="text-text-muted text-xs">
+          {move.position}
+          {move.fromTeam && ` · from ${move.fromTeam}`}
+          {move.toTeam && ` · to ${move.toTeam}`}
+        </div>
+      </div>
+      <span className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-sm ${
+        move.direction === 'incoming'
+          ? 'bg-green-500/10 text-green-400'
+          : 'bg-red-500/10 text-red-400'
+      }`}>
+        {move.direction}
+      </span>
+    </div>
   );
 }

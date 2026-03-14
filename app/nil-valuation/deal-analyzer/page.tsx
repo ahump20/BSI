@@ -108,7 +108,7 @@ export default function DealAnalyzerPage() {
           <ScrollReveal>
             <div className="max-w-3xl mx-auto text-center">
               <Badge variant="primary" className="mb-4">Pro Tool</Badge>
-              <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: 'Georgia, serif' }}>
+              <h1 className="text-4xl md:text-5xl font-bold mb-4 font-display uppercase tracking-wide">
                 <span className="text-burnt-orange">Deal</span> Analyzer
               </h1>
               <p className="text-lg text-text-secondary max-w-2xl mx-auto">
@@ -130,14 +130,14 @@ export default function DealAnalyzerPage() {
                   <div>
                     <label className="block text-sm font-semibold text-text-secondary mb-1">Player Name</label>
                     <input type="text" value={input.playerName} onChange={e => update({ playerName: e.target.value })}
-                      placeholder="e.g. John Smith" className="w-full p-2.5 rounded-lg bg-background-secondary border border-border text-text-primary text-sm focus:border-burnt-orange focus:outline-none" />
+                      placeholder="e.g. John Smith" className="w-full p-2.5 rounded-sm bg-background-secondary border border-border text-text-primary text-sm focus:border-burnt-orange focus:outline-none" />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-text-secondary mb-1">Sport</label>
                     <div className="grid grid-cols-3 gap-2">
                       {(['baseball', 'football', 'basketball'] as const).map(s => (
                         <button key={s} onClick={() => update({ sport: s })}
-                          className={`p-2 rounded-lg border text-xs font-semibold capitalize transition-all ${input.sport === s ? 'border-burnt-orange bg-burnt-orange/10 text-burnt-orange' : 'border-border text-text-tertiary hover:border-text-muted'}`}>
+                          className={`p-2 rounded-sm border text-xs font-semibold capitalize transition-all ${input.sport === s ? 'border-burnt-orange bg-burnt-orange/10 text-burnt-orange' : 'border-border text-text-tertiary hover:border-text-muted'}`}>
                           {s}
                         </button>
                       ))}
@@ -148,7 +148,7 @@ export default function DealAnalyzerPage() {
                     <div className="grid grid-cols-3 gap-2">
                       {(['large', 'medium', 'small'] as const).map(m => (
                         <button key={m} onClick={() => update({ marketSize: m })}
-                          className={`p-2 rounded-lg border text-xs font-semibold capitalize transition-all ${input.marketSize === m ? 'border-burnt-orange bg-burnt-orange/10 text-burnt-orange' : 'border-border text-text-tertiary hover:border-text-muted'}`}>
+                          className={`p-2 rounded-sm border text-xs font-semibold capitalize transition-all ${input.marketSize === m ? 'border-burnt-orange bg-burnt-orange/10 text-burnt-orange' : 'border-border text-text-tertiary hover:border-text-muted'}`}>
                           {m}
                         </button>
                       ))}
@@ -158,24 +158,24 @@ export default function DealAnalyzerPage() {
                     <div>
                       <label className="block text-sm font-semibold text-text-secondary mb-1">Deal Amount ($)</label>
                       <input type="number" value={input.dealAmount} onChange={e => update({ dealAmount: Number(e.target.value) })}
-                        className="w-full p-2.5 rounded-lg bg-background-secondary border border-border text-text-primary text-sm focus:border-burnt-orange focus:outline-none" />
+                        className="w-full p-2.5 rounded-sm bg-background-secondary border border-border text-text-primary text-sm focus:border-burnt-orange focus:outline-none" />
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-text-secondary mb-1">Duration (months)</label>
                       <input type="number" value={input.durationMonths} onChange={e => update({ durationMonths: Number(e.target.value) })}
-                        className="w-full p-2.5 rounded-lg bg-background-secondary border border-border text-text-primary text-sm focus:border-burnt-orange focus:outline-none" />
+                        className="w-full p-2.5 rounded-sm bg-background-secondary border border-border text-text-primary text-sm focus:border-burnt-orange focus:outline-none" />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-semibold text-text-secondary mb-1">Guaranteed (%)</label>
                       <input type="number" min={0} max={100} value={input.guaranteedPct} onChange={e => update({ guaranteedPct: Number(e.target.value) })}
-                        className="w-full p-2.5 rounded-lg bg-background-secondary border border-border text-text-primary text-sm focus:border-burnt-orange focus:outline-none" />
+                        className="w-full p-2.5 rounded-sm bg-background-secondary border border-border text-text-primary text-sm focus:border-burnt-orange focus:outline-none" />
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-text-secondary mb-1">Performance Bonus ($)</label>
                       <input type="number" value={input.performanceBonus} onChange={e => update({ performanceBonus: Number(e.target.value) })}
-                        className="w-full p-2.5 rounded-lg bg-background-secondary border border-border text-text-primary text-sm focus:border-burnt-orange focus:outline-none" />
+                        className="w-full p-2.5 rounded-sm bg-background-secondary border border-border text-text-primary text-sm focus:border-burnt-orange focus:outline-none" />
                     </div>
                   </div>
                   <Button variant="primary" className="w-full bg-burnt-orange" onClick={handleAnalyze}>

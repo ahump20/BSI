@@ -420,12 +420,12 @@ export default function VisionAIPage() {
                     <p className="text-text-tertiary text-xs leading-relaxed">{area.tagline}</p>
                     <div className="flex gap-1 mt-3 flex-wrap">
                       {area.sports.slice(0, 3).map((sport) => (
-                        <span key={sport} className="text-[9px] px-1.5 py-0.5 rounded bg-surface-light text-text-muted font-mono">
+                        <span key={sport} className="text-[9px] px-1.5 py-0.5 rounded-sm bg-surface-light text-text-muted font-mono">
                           {sport}
                         </span>
                       ))}
                       {area.sports.length > 3 && (
-                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-surface-light text-text-muted font-mono">
+                        <span className="text-[9px] px-1.5 py-0.5 rounded-sm bg-surface-light text-text-muted font-mono">
                           +{area.sports.length - 3}
                         </span>
                       )}
@@ -496,7 +496,7 @@ export default function VisionAIPage() {
 
                   {/* BSI Take */}
                   <ScrollReveal delay={200}>
-                    <div className="bg-burnt-orange/5 border-l-2 border-burnt-orange rounded-r-lg p-5">
+                    <div className="bg-burnt-orange/5 border-l-2 border-burnt-orange rounded-r-sm p-5">
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-burnt-orange text-xs font-semibold uppercase tracking-wider">BSI Take</span>
                       </div>
@@ -673,7 +673,7 @@ export default function VisionAIPage() {
             </ScrollReveal>
 
             <ScrollReveal delay={150}>
-              <div className="mt-6 bg-yellow-500/5 border border-yellow-500/15 rounded-lg p-4">
+              <div className="mt-6 bg-yellow-500/5 border border-yellow-500/15 rounded-sm p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="w-1 h-4 bg-yellow-500 rounded-full" />
                   <span className="text-yellow-400 text-xs font-semibold uppercase tracking-wider">Legal Note</span>

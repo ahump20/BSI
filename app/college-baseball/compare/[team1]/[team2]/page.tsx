@@ -166,7 +166,7 @@ export default async function ComparisonPage({ params }: PageProps) {
                     <span className="text-text-muted text-sm block mb-2">Key Players</span>
                     <div className="flex flex-wrap gap-2">
                       {a.keyPlayers.map((p) => (
-                        <span key={p} className="text-xs bg-surface-light px-2 py-1 rounded text-text-tertiary">{p}</span>
+                        <span key={p} className="text-xs bg-surface-light px-2 py-1 rounded-sm text-text-tertiary">{p}</span>
                       ))}
                     </div>
                   </div>
@@ -203,7 +203,7 @@ export default async function ComparisonPage({ params }: PageProps) {
                     <span className="text-text-muted text-sm block mb-2">Key Players</span>
                     <div className="flex flex-wrap gap-2">
                       {b.keyPlayers.map((p) => (
-                        <span key={p} className="text-xs bg-surface-light px-2 py-1 rounded text-text-tertiary">{p}</span>
+                        <span key={p} className="text-xs bg-surface-light px-2 py-1 rounded-sm text-text-tertiary">{p}</span>
                       ))}
                     </div>
                   </div>

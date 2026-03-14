@@ -144,7 +144,7 @@ export default function CFBStandingsPage() {
               <div className="flex gap-2 overflow-x-auto pb-1">
                 <button
                   onClick={() => setSelectedConference('all')}
-                  className={`px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all ${
+                  className={`px-4 py-2 rounded-sm text-sm font-semibold whitespace-nowrap transition-all ${
                     selectedConference === 'all'
                       ? 'bg-burnt-orange text-white'
                       : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
@@ -159,7 +159,7 @@ export default function CFBStandingsPage() {
                     <button
                       key={pc}
                       onClick={() => setSelectedConference(conf.name)}
-                      className={`px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all ${
+                      className={`px-4 py-2 rounded-sm text-sm font-semibold whitespace-nowrap transition-all ${
                         selectedConference === conf.name
                           ? 'bg-burnt-orange text-white'
                           : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
@@ -174,7 +174,7 @@ export default function CFBStandingsPage() {
                   <select
                     value={selectedConference}
                     onChange={(e) => setSelectedConference(e.target.value)}
-                    className="px-3 py-2 rounded-lg text-sm font-semibold bg-background-tertiary text-text-secondary border-none cursor-pointer"
+                    className="px-3 py-2 rounded-sm text-sm font-semibold bg-background-tertiary text-text-secondary border-none cursor-pointer"
                   >
                     <option value="all">More Conferences</option>
                     {otherConferences.map(c => (
@@ -191,7 +191,7 @@ export default function CFBStandingsPage() {
                   placeholder="Search teams..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg text-sm bg-background-tertiary text-text-primary placeholder:text-text-tertiary border border-border-subtle focus:border-burnt-orange focus:outline-none transition-colors"
+                  className="w-full px-3 py-2 rounded-sm text-sm bg-background-tertiary text-text-primary placeholder:text-text-tertiary border border-border-subtle focus:border-burnt-orange focus:outline-none transition-colors"
                 />
               </div>
             </div>
@@ -206,10 +206,10 @@ export default function CFBStandingsPage() {
                   {Array.from({ length: 4 }).map((_, i) => (
                     <Card key={i} variant="default" padding="lg">
                       <div className="animate-pulse">
-                        <div className="h-6 bg-background-tertiary rounded w-40 mb-4" />
+                        <div className="h-6 bg-background-tertiary rounded-sm w-40 mb-4" />
                         <div className="space-y-2">
                           {Array.from({ length: 4 }).map((_, j) => (
-                            <div key={j} className="h-10 bg-background-tertiary rounded" />
+                            <div key={j} className="h-10 bg-background-tertiary rounded-sm" />
                           ))}
                         </div>
                       </div>

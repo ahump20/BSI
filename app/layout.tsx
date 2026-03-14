@@ -4,7 +4,7 @@ import './globals.css';
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd';
 import { SiteFrame } from '@/components/layout-ds/SiteFrame';
 
-// 3-font system: Display (Oswald) + Body (Cormorant Garamond) + Mono (JetBrains Mono)
+// Heritage v2.1 font system: Display (Oswald/Bebas Neue) + Body (Cormorant Garamond) + Data (IBM Plex Mono) + Code (JetBrains Mono) + Savant (Syne/DM Sans)
 const cormorant = Cormorant_Garamond({
   weight: ['400', '500', '600', '700'],
   style: ['normal', 'italic'],

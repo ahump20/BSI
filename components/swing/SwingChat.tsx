@@ -111,10 +111,10 @@ export function SwingChat({ swingId, systemPrompt, onSeekToFrame, disabled, isPr
   };
 
   return (
-    <div className="flex flex-col rounded-xl bg-surface-dugout border border-border-subtle overflow-hidden h-[70vh] sm:h-[500px]">
+    <div className="flex flex-col rounded-sm bg-surface-dugout border border-border-subtle overflow-hidden h-[70vh] sm:h-[500px]">
       {/* Header */}
       <div className="flex items-center gap-3 px-4 py-3 border-b border-border-subtle bg-surface-press-box">
-        <div className="w-8 h-8 rounded-lg bg-burnt-orange/15 flex items-center justify-center">
+        <div className="w-8 h-8 rounded-sm bg-burnt-orange/15 flex items-center justify-center">
           <svg viewBox="0 0 16 16" className="w-4 h-4 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M1 14l3-1 9-9-2-2-9 9zM11 2l2 2" />
           </svg>
@@ -138,7 +138,7 @@ export function SwingChat({ swingId, systemPrompt, onSeekToFrame, disabled, isPr
                   key={q}
                   onClick={() => sendMessage(q)}
                   disabled={disabled}
-                  className="block w-full text-left px-3 py-2 rounded-lg bg-white/[0.03] border border-border-subtle text-xs text-bsi-dust hover:bg-white/[0.06] hover:border-burnt-orange/20 transition-all disabled:opacity-50"
+                  className="block w-full text-left px-3 py-2 rounded-sm bg-white/[0.03] border border-border-subtle text-xs text-bsi-dust hover:bg-white/[0.06] hover:border-burnt-orange/20 transition-all disabled:opacity-50"
                 >
                   {q}
                 </button>
@@ -156,7 +156,7 @@ export function SwingChat({ swingId, systemPrompt, onSeekToFrame, disabled, isPr
               className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-[85%] rounded-xl px-3 py-2.5 text-sm leading-relaxed ${
+                className={`max-w-[85%] rounded-sm px-3 py-2.5 text-sm leading-relaxed ${
                   msg.role === 'user'
                     ? 'bg-burnt-orange/15 text-bsi-bone'
                     : 'bg-white/[0.04] text-bsi-dust border border-border-subtle'
@@ -174,7 +174,7 @@ export function SwingChat({ swingId, systemPrompt, onSeekToFrame, disabled, isPr
             animate={{ opacity: 1 }}
             className="flex justify-start"
           >
-            <div className="bg-white/[0.04] border border-border-subtle rounded-xl px-4 py-3">
+            <div className="bg-white/[0.04] border border-border-subtle rounded-sm px-4 py-3">
               <div className="flex gap-1">
                 {[0, 1, 2].map((i) => (
                   <motion.div
@@ -223,12 +223,12 @@ export function SwingChat({ swingId, systemPrompt, onSeekToFrame, disabled, isPr
             placeholder={isGated ? 'Upgrade to Pro for unlimited questions' : disabled ? 'Upgrade to ask follow-up questions' : 'Ask about your swing...'}
             disabled={disabled || isLoading || isGated}
             rows={1}
-            className="flex-1 resize-none rounded-lg bg-surface-dugout border border-border-subtle px-3 py-2 text-sm text-bsi-bone placeholder-text-muted focus:outline-none focus:border-burnt-orange/40 disabled:opacity-50 transition-colors"
+            className="flex-1 resize-none rounded-sm bg-surface-dugout border border-border-subtle px-3 py-2 text-sm text-bsi-bone placeholder-text-muted focus:outline-none focus:border-burnt-orange/40 disabled:opacity-50 transition-colors"
           />
           <button
             onClick={() => sendMessage(input)}
             disabled={!input.trim() || isLoading || disabled || isGated}
-            className="w-8 h-8 rounded-lg bg-burnt-orange flex items-center justify-center text-white disabled:opacity-30 transition-opacity shrink-0"
+            className="w-8 h-8 rounded-sm bg-burnt-orange flex items-center justify-center text-white disabled:opacity-30 transition-opacity shrink-0"
           >
             <svg viewBox="0 0 16 16" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <path d="M2 14l12-6L2 2v5l8 1-8 1z" />

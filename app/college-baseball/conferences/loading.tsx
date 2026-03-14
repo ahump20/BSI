@@ -7,7 +7,7 @@ export default function ConferencesLoading() {
       <Skeleton variant="text" width={420} height={18} className="mb-8" />
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
-          <Skeleton key={i} variant="rectangular" width="100%" height={200} className="rounded-lg" />
+          <Skeleton key={i} variant="rectangular" width="100%" height={200} className="rounded-sm" />
         ))}
       </div>
     </div>

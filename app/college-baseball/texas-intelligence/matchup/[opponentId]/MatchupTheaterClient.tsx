@@ -56,8 +56,9 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
     ? getLogoUrl(oppMeta.espnId, oppMeta.logoId, oppMeta.localLogo)
     : `https://a.espncdn.com/i/teamlogos/ncaa/500/${opponentId}.png`;
 
+  const oppEspnId = oppMeta?.espnId ?? opponentId;
   const { data, loading, error } = useSportData<MatchupResponse>(
-    `/api/college-baseball/texas-intelligence/matchup/${opponentId}`,
+    `/api/college-baseball/texas-intelligence/matchup/${oppEspnId}`,
     { timeout: 15000 },
   );
 
@@ -114,7 +115,7 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
             <Container>
               <div className="space-y-4">
                 {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="h-24 bg-surface-light rounded-lg animate-pulse" />
+                  <div key={i} className="h-24 bg-surface-light rounded-sm animate-pulse" />
                 ))}
               </div>
             </Container>
@@ -192,6 +193,111 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
                               <CompareRow stat="BB/9" texas={fmt1(texas.pitching.bb_9)} opp={fmt1(opp.pitching.bb_9)} texasVal={texas.pitching.bb_9} oppVal={opp.pitching.bb_9} higher={false} />
                             </tbody>
                           </table>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </ScrollReveal>
+                </Container>
+              </Section>
+            )}
+
+            {/* Matchup Grid — Texas Pitchers vs Opponent Hitters */}
+            {texas && opp && texas.topPitchers.length > 0 && opp.topHitters.length > 0 && (
+              <Section padding="lg" borderTop>
+                <Container>
+                  <ScrollReveal direction="up">
+                    <Card variant="default" padding="lg">
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-3">
+                          <span>Matchup Grid</span>
+                          <Badge variant="secondary" size="sm">Pitchers vs Hitters</Badge>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-text-muted text-xs mb-4">
+                          Projected advantage based on pitcher FIP and hitter wRC+. Green favors Texas pitching; red favors opponent bats.
+                        </p>
+                        <div className="overflow-x-auto">
+                          <table className="text-xs">
+                            <thead>
+                              <tr>
+                                <th className="py-2 px-2 text-left text-text-muted uppercase tracking-wider bg-[var(--surface-press-box)] min-w-[100px]">
+                                  Pitcher
+                                </th>
+                                {opp.topHitters.map((h, hi) => (
+                                  <th
+                                    key={`${h.player_name}-${hi}`}
+                                    className="py-2 px-2 text-center text-text-muted uppercase tracking-wider bg-[var(--surface-press-box)] min-w-[80px]"
+                                  >
+                                    <div className="truncate max-w-[80px]" title={h.player_name}>
+                                      {h.player_name.split(' ').pop()}
+                                    </div>
+                                    <div className="text-[9px] font-normal normal-case tracking-normal text-text-muted">
+                                      {Math.round(h.wrc_plus)} wRC+
+                                    </div>
+                                  </th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {texas.topPitchers.map((p, pi) => (
+                                <tr key={`${p.player_name}-${pi}`} className="border-t border-border-subtle">
+                                  <td className="py-2 px-2 text-text-primary font-medium whitespace-nowrap">
+                                    <div>{p.player_name}</div>
+                                    <div className="text-[9px] text-text-muted font-normal">
+                                      {p.fip.toFixed(2)} FIP
+                                    </div>
+                                  </td>
+                                  {opp.topHitters.map((h, hi) => {
+                                    const pitcherStrong = p.fip < 3.5;
+                                    const hitterWeak = h.wrc_plus < 100;
+                                    const pitcherWeak = p.fip > 4.0;
+                                    const hitterStrong = h.wrc_plus > 120;
+                                    const advantage: 'texas' | 'opponent' | 'neutral' =
+                                      pitcherStrong && hitterWeak ? 'texas'
+                                      : pitcherWeak && hitterStrong ? 'opponent'
+                                      : 'neutral';
+                                    const cellBg =
+                                      advantage === 'texas' ? 'bg-green-500/15'
+                                      : advantage === 'opponent' ? 'bg-red-500/15'
+                                      : 'bg-surface-light/20';
+                                    const cellBorder =
+                                      advantage === 'texas' ? 'border-green-500/30'
+                                      : advantage === 'opponent' ? 'border-red-500/30'
+                                      : 'border-border-subtle';
+                                    return (
+                                      <td
+                                        key={`${p.player_name}-${hi}`}
+                                        className={`py-2 px-2 text-center border ${cellBorder} ${cellBg}`}
+                                      >
+                                        <span className={`text-[10px] font-semibold uppercase ${
+                                          advantage === 'texas' ? 'text-green-400'
+                                          : advantage === 'opponent' ? 'text-red-400'
+                                          : 'text-text-muted'
+                                        }`}>
+                                          {advantage === 'texas' ? 'TX' : advantage === 'opponent' ? 'OPP' : '—'}
+                                        </span>
+                                      </td>
+                                    );
+                                  })}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                        <div className="flex items-center gap-4 mt-4 text-[10px] text-text-muted">
+                          <span className="flex items-center gap-1.5">
+                            <span className="w-3 h-3 rounded-sm bg-green-500/15 border border-green-500/30" />
+                            Texas advantage
+                          </span>
+                          <span className="flex items-center gap-1.5">
+                            <span className="w-3 h-3 rounded-sm bg-red-500/15 border border-red-500/30" />
+                            Opponent advantage
+                          </span>
+                          <span className="flex items-center gap-1.5">
+                            <span className="w-3 h-3 rounded-sm bg-surface-light/20 border border-border-subtle" />
+                            Neutral
+                          </span>
                         </div>
                       </CardContent>
                     </Card>
@@ -288,7 +394,7 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
                             const oppScore = g.texasIsHome ? g.awayScore : g.homeScore;
                             const texasWon = texasScore > oppScore;
                             return (
-                              <div key={`${g.date}-${i}`} className="flex items-center justify-between rounded-lg bg-[var(--surface-press-box)] p-3">
+                              <div key={`${g.date}-${i}`} className="flex items-center justify-between rounded-sm bg-[var(--surface-press-box)] p-3">
                                 <div className="text-text-muted text-xs">{g.date}</div>
                                 <div className="flex items-center gap-3">
                                   <span className={`font-mono text-sm font-bold ${texasWon ? 'text-text-primary' : 'text-text-muted'}`}>
@@ -298,7 +404,7 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
                                   <span className={`font-mono text-sm font-bold ${!texasWon ? 'text-text-primary' : 'text-text-muted'}`}>
                                     {oppScore} {oppName.split(' ').pop()}
                                   </span>
-                                  <span className={`text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded ${
+                                  <span className={`text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded-sm ${
                                     texasWon ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'
                                   }`}>
                                     {texasWon ? 'W' : 'L'}

@@ -32,8 +32,8 @@ const variantClasses = {
     inactive: 'text-text-muted hover:text-text-primary',
   },
   pills: {
-    container: 'flex gap-2 p-1 bg-surface-light rounded-lg',
-    tab: 'rounded-md transition-colors',
+    container: 'flex gap-2 p-1 bg-surface-light rounded-sm',
+    tab: 'rounded-sm transition-colors',
     active: 'bg-burnt-orange text-white',
     inactive: 'text-text-secondary hover:text-text-primary hover:bg-surface-light',
   },

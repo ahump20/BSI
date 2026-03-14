@@ -444,7 +444,7 @@ export default function TexasWeek2RecapPage() {
 
               {/* Robbins Cycle highlight callout */}
               <ScrollReveal direction="up" delay={150}>
-                <div className="bg-[#C9A227]/8 border border-[#C9A227]/20 rounded p-6 my-8">
+                <div className="bg-[#C9A227]/8 border border-[#C9A227]/20 rounded-sm p-6 my-8">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="font-display text-[11px] uppercase tracking-[3px] text-[#C9A227]">
                       Hit for the Cycle
@@ -536,14 +536,14 @@ export default function TexasWeek2RecapPage() {
                 {performers.map((p) => (
                   <div
                     key={p.name}
-                    className="relative bg-gradient-to-br from-[#2A2A2A]/90 to-charcoal/95 border border-burnt-orange/10 hover:border-burnt-orange/25 rounded p-5 pl-7 overflow-hidden transition-colors"
+                    className="relative bg-gradient-to-br from-[#2A2A2A]/90 to-charcoal/95 border border-burnt-orange/10 hover:border-burnt-orange/25 rounded-sm p-5 pl-7 overflow-hidden transition-colors"
                   >
                     <div className="absolute top-0 left-0 w-[3px] h-full bg-burnt-orange" />
                     <div className="flex items-center justify-between mb-0.5">
                       <div className="font-display text-base font-semibold uppercase tracking-wide text-[#FAF7F2]">
                         {p.name}
                       </div>
-                      <span className="text-[9px] font-mono uppercase tracking-wider text-[#C9A227] bg-[#C9A227]/10 px-2 py-0.5 rounded">
+                      <span className="text-[9px] font-mono uppercase tracking-wider text-[#C9A227] bg-[#C9A227]/10 px-2 py-0.5 rounded-sm">
                         {p.label}
                       </span>
                     </div>
@@ -571,19 +571,19 @@ export default function TexasWeek2RecapPage() {
               </h2>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
-                <div className="bg-surface-light border border-border-subtle rounded p-4 text-center">
+                <div className="bg-surface-light border border-border-subtle rounded-sm p-4 text-center">
                   <div className="font-display text-[10px] uppercase tracking-[3px] text-text-muted mb-1">Team BA</div>
                   <div className="font-display text-2xl font-bold text-burnt-orange">.321</div>
                 </div>
-                <div className="bg-surface-light border border-border-subtle rounded p-4 text-center">
+                <div className="bg-surface-light border border-border-subtle rounded-sm p-4 text-center">
                   <div className="font-display text-[10px] uppercase tracking-[3px] text-text-muted mb-1">Team OPS</div>
                   <div className="font-display text-2xl font-bold text-burnt-orange">.986</div>
                 </div>
-                <div className="bg-surface-light border border-border-subtle rounded p-4 text-center">
+                <div className="bg-surface-light border border-border-subtle rounded-sm p-4 text-center">
                   <div className="font-display text-[10px] uppercase tracking-[3px] text-text-muted mb-1">Staff ERA</div>
                   <div className="font-display text-2xl font-bold text-burnt-orange">1.53</div>
                 </div>
-                <div className="bg-surface-light border border-border-subtle rounded p-4 text-center">
+                <div className="bg-surface-light border border-border-subtle rounded-sm p-4 text-center">
                   <div className="font-display text-[10px] uppercase tracking-[3px] text-text-muted mb-1">WHIP</div>
                   <div className="font-display text-2xl font-bold text-burnt-orange">0.86</div>
                 </div>
@@ -597,25 +597,25 @@ export default function TexasWeek2RecapPage() {
                 <div className="space-y-4">
                   <h3 className="font-display text-sm uppercase tracking-wider text-text-tertiary mb-3">Individual Leaders</h3>
 
-                  <div className="bg-surface-light border border-border-subtle rounded p-4">
+                  <div className="bg-surface-light border border-border-subtle rounded-sm p-4">
                     <div className="font-display text-sm font-semibold uppercase tracking-wide text-text-primary mb-1">Ethan Mendoza</div>
                     <div className="font-mono text-xs text-burnt-orange mb-1">.462 AVG &middot; 12 H &middot; 3 HR &middot; 9 RBI &middot; 1.375 OPS</div>
                     <div className="font-mono text-[11px] text-text-muted">Best bat in the lineup through two weekends. Hitting for average and power with no platoon weakness.</div>
                   </div>
 
-                  <div className="bg-surface-light border border-border-subtle rounded p-4">
+                  <div className="bg-surface-light border border-border-subtle rounded-sm p-4">
                     <div className="font-display text-sm font-semibold uppercase tracking-wide text-text-primary mb-1">Carson Tinney</div>
                     <div className="font-mono text-xs text-burnt-orange mb-1">.316/.567/.684 &middot; 11 BB (T-6th nationally)</div>
                     <div className="font-mono text-[11px] text-text-muted">Sees more pitches than anyone in the order. Eleven walks in seven games &mdash; the kind of on-base presence that lengthens every inning.</div>
                   </div>
 
-                  <div className="bg-surface-light border border-border-subtle rounded p-4">
+                  <div className="bg-surface-light border border-border-subtle rounded-sm p-4">
                     <div className="font-display text-sm font-semibold uppercase tracking-wide text-text-primary mb-1">Ruger Riojas</div>
                     <div className="font-mono text-xs text-burnt-orange mb-1">11 IP &middot; 2 ER &middot; 19 K &middot; 1.64 ERA (10 K vs MSU)</div>
                     <div className="font-mono text-[11px] text-text-muted">Posted a 5.61 ERA in 2025. Through two Friday starts: 19 strikeouts in 11 innings &mdash; 9 K in the opener, 10 K against Michigan State. The leap is real.</div>
                   </div>
 
-                  <div className="bg-surface-light border border-border-subtle rounded p-4">
+                  <div className="bg-surface-light border border-border-subtle rounded-sm p-4">
                     <div className="font-display text-sm font-semibold uppercase tracking-wide text-text-primary mb-1">Dylan Volantis</div>
                     <div className="font-mono text-xs text-burnt-orange mb-1">14 IP &middot; 0 ER &middot; 17 K &middot; 2 BB &middot; 0.00 ERA</div>
                     <div className="font-mono text-[11px] text-text-muted">Converted from closer (12 SV, 1.94 ERA as freshman) to Sunday starter. Two starts, zero earned runs. Career-high K totals both weekends.</div>
@@ -677,7 +677,7 @@ export default function TexasWeek2RecapPage() {
                       </p>
                     </div>
 
-                    <div className="bg-surface-light border border-border-subtle rounded p-4 mt-5">
+                    <div className="bg-surface-light border border-border-subtle rounded-sm p-4 mt-5">
                       <h4 className="font-display text-[11px] uppercase tracking-[3px] text-burnt-orange mb-3">
                         Keys for Texas
                       </h4>
@@ -720,21 +720,21 @@ export default function TexasWeek2RecapPage() {
                   </h4>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-                    <div className="bg-[#C9A227]/5 border border-[#C9A227]/15 rounded p-4">
+                    <div className="bg-[#C9A227]/5 border border-[#C9A227]/15 rounded-sm p-4">
                       <div className="font-display text-[10px] uppercase tracking-[3px] text-[#C9A227] mb-1">Friday 7:05 PM</div>
                       <div className="font-display text-lg font-bold text-text-primary">vs No. 11 Coastal Carolina</div>
                       <div className="font-mono text-[11px] text-[#C9A227]/70 mt-1">
                         Flukey &middot; Preseason NPOY &middot; 2025 National Runner-Up (56-14)
                       </div>
                     </div>
-                    <div className="bg-surface-light border border-border-subtle rounded p-4">
+                    <div className="bg-surface-light border border-border-subtle rounded-sm p-4">
                       <div className="font-display text-[10px] uppercase tracking-[3px] text-text-muted mb-1">Saturday 7:05 PM</div>
                       <div className="font-display text-lg font-bold text-text-primary">vs Baylor</div>
                       <div className="font-mono text-[11px] text-text-muted mt-1">
                         In-state rivalry &middot; Big 12
                       </div>
                     </div>
-                    <div className="bg-surface-light border border-border-subtle rounded p-4">
+                    <div className="bg-surface-light border border-border-subtle rounded-sm p-4">
                       <div className="font-display text-[10px] uppercase tracking-[3px] text-text-muted mb-1">Sunday 2:05 PM</div>
                       <div className="font-display text-lg font-bold text-text-primary">vs Ohio State</div>
                       <div className="font-mono text-[11px] text-text-muted mt-1">
@@ -785,12 +785,12 @@ export default function TexasWeek2RecapPage() {
                     Also in the Field
                   </h4>
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-surface-light border border-border-subtle rounded p-4">
+                    <div className="bg-surface-light border border-border-subtle rounded-sm p-4">
                       <div className="font-display text-sm font-semibold uppercase tracking-wide text-text-primary">Ole Miss</div>
                       <div className="font-mono text-[11px] text-[#C9A227] mt-1">8-0 &middot; No. 1 RPI</div>
                       <div className="font-mono text-[10px] text-text-muted mt-1">Texas won&rsquo;t play them this weekend, but they&rsquo;re the best team in the building.</div>
                     </div>
-                    <div className="bg-surface-light border border-border-subtle rounded p-4">
+                    <div className="bg-surface-light border border-border-subtle rounded-sm p-4">
                       <div className="font-display text-sm font-semibold uppercase tracking-wide text-text-primary">UTSA</div>
                       <div className="font-mono text-[11px] text-text-muted mt-1">2025 AAC Champions</div>
                       <div className="font-mono text-[10px] text-text-muted mt-1">Won their conference last season. Capable program in a loaded field.</div>
@@ -799,7 +799,7 @@ export default function TexasWeek2RecapPage() {
                 </div>
 
                 {/* Series keys */}
-                <div className="bg-surface-light border border-border-subtle rounded p-5">
+                <div className="bg-surface-light border border-border-subtle rounded-sm p-5">
                   <h4 className="font-display text-[11px] uppercase tracking-[3px] text-burnt-orange mb-4">
                     What to Watch For
                   </h4>
@@ -827,14 +827,14 @@ export default function TexasWeek2RecapPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
                 <button
                   onClick={() => openAI('claude')}
-                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded transition-colors text-left"
+                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded-sm transition-colors text-left"
                 >
                   <div className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-1">Claude Analysis</div>
                   <div className="text-text-muted text-xs">Anthropic-powered series breakdown</div>
                 </button>
                 <button
                   onClick={() => openAI('gemini')}
-                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded transition-colors text-left"
+                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded-sm transition-colors text-left"
                 >
                   <div className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-1">Gemini Analysis</div>
                   <div className="text-text-muted text-xs">Google-powered scouting insights</div>

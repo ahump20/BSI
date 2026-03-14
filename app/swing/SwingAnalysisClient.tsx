@@ -154,7 +154,7 @@ export default function SwingAnalysisClient() {
       await new Promise((r) => setTimeout(r, 500));
       setStep('report');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Analysis failed. Please try again.');
+      setError(err instanceof Error ? err.message : 'Swing analysis couldn\'t complete — try uploading again.');
       setStep('upload');
     } finally {
       disposePoseLandmarker();
@@ -188,7 +188,7 @@ export default function SwingAnalysisClient() {
     return (
       <div className="min-h-screen bg-surface-scoreboard">
         <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-          <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-burnt-orange/10 flex items-center justify-center">
+          <div className="w-16 h-16 mx-auto mb-6 rounded-sm bg-burnt-orange/10 flex items-center justify-center">
             <svg viewBox="0 0 24 24" className="w-8 h-8 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
               <path d="M7 11V7a5 5 0 0 1 10 0v4" />
@@ -315,7 +315,7 @@ export default function SwingAnalysisClient() {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="mt-4 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm"
+                  className="mt-4 p-4 rounded-sm bg-red-500/10 border border-red-500/20 text-red-400 text-sm"
                 >
                   {error}
                 </motion.div>
@@ -352,7 +352,7 @@ export default function SwingAnalysisClient() {
               exit={{ opacity: 0 }}
               className="text-center py-16"
             >
-              <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-burnt-orange/10 flex items-center justify-center">
+              <div className="w-20 h-20 mx-auto mb-6 rounded-sm bg-burnt-orange/10 flex items-center justify-center">
                 <motion.svg
                   viewBox="0 0 24 24"
                   className="w-10 h-10 text-burnt-orange"

@@ -69,15 +69,15 @@ export function CollegeSportsGap({ className = '' }: { className?: string }) {
     <div className={className} role="region" aria-label="Pro vs college tracking infrastructure comparison">
       {/* Summary stats */}
       <div className="grid grid-cols-3 gap-4 mb-6" role="group" aria-label="Coverage summary">
-        <div className="text-center p-3 bg-green-500/5 rounded-lg border border-green-500/10">
+        <div className="text-center p-3 bg-green-500/5 rounded-sm border border-green-500/10">
           <p className="text-2xl font-bold font-mono text-green-400">{proFull}/{TRACKING_DATA.length}</p>
           <p className="text-[10px] text-text-tertiary uppercase tracking-wider mt-1">Pro: Full Coverage</p>
         </div>
-        <div className="text-center p-3 bg-yellow-500/5 rounded-lg border border-yellow-500/10">
+        <div className="text-center p-3 bg-yellow-500/5 rounded-sm border border-yellow-500/10">
           <p className="text-2xl font-bold font-mono text-yellow-400">{collegeFull}/{TRACKING_DATA.length}</p>
           <p className="text-[10px] text-text-tertiary uppercase tracking-wider mt-1">College: Full</p>
         </div>
-        <div className="text-center p-3 bg-burnt-orange/5 rounded-lg border border-burnt-orange/10">
+        <div className="text-center p-3 bg-burnt-orange/5 rounded-sm border border-burnt-orange/10">
           <p className="text-2xl font-bold font-mono text-burnt-orange">{collegeNone}</p>
           <p className="text-[10px] text-text-tertiary uppercase tracking-wider mt-1">Critical Gaps</p>
         </div>
@@ -86,7 +86,7 @@ export function CollegeSportsGap({ className = '' }: { className?: string }) {
       {/* Comparison table */}
       <div className="space-y-3">
         {TRACKING_DATA.map((row) => (
-          <div key={row.category} className="bg-surface-light rounded-lg p-4 border border-border-subtle hover:border-border transition-colors">
+          <div key={row.category} className="bg-surface-light rounded-sm p-4 border border-border-subtle hover:border-border transition-colors">
             <div className="text-text-primary font-semibold text-sm mb-3">{row.category}</div>
             <div className="grid grid-cols-2 gap-4">
               {/* Pro */}
@@ -126,7 +126,7 @@ export function CollegeSportsGap({ className = '' }: { className?: string }) {
       </div>
 
       {/* BSI editorial take */}
-      <div className="mt-6 bg-burnt-orange/5 border border-burnt-orange/15 rounded-lg p-4">
+      <div className="mt-6 bg-burnt-orange/5 border border-burnt-orange/15 rounded-sm p-4">
         <div className="flex items-center gap-2 mb-2">
           <span className="w-1 h-4 bg-burnt-orange rounded-full" />
           <span className="text-burnt-orange text-xs font-semibold uppercase tracking-wider">BSI Take</span>

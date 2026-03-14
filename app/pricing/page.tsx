@@ -75,7 +75,7 @@ export default function PricingPage() {
         window.location.href = `/checkout?client_secret=${data.clientSecret}`;
       }
     } catch (_error) {
-      alert('Failed to start checkout. Please try again.');
+      alert('Couldn\'t start checkout — try again in a moment.');
     } finally {
       setLoading(null);
     }
@@ -163,7 +163,7 @@ export default function PricingPage() {
                   <ul className="space-y-3 mb-8">
                     {tier.features.map((feature) => (
                       <li key={feature} className="flex items-start gap-3">
-                        <svg className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#22c55e' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <svg className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: 'var(--bsi-primary)' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                           <polyline points="20 6 9 17 4 12" />
                         </svg>
                         <span className="text-sm font-serif" style={{ color: 'var(--bsi-dust)' }}>{feature}</span>

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
+import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { TexasNILPanel } from '@/components/college-baseball/TexasNILPanel';
@@ -83,11 +83,52 @@ export default function TexasNILClient() {
           </Container>
         </Section>
 
+        {/* Performance vs NIL Quadrant */}
+        {draftData?.players && draftData.players.length > 0 && (
+          <Section padding="lg" borderTop>
+            <Container>
+              <ScrollReveal direction="up">
+                <Card variant="default" padding="lg">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-3">
+                      <span>Performance vs NIL Value</span>
+                      <Badge variant="secondary" size="sm">Quadrant Map</Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 gap-px bg-border-subtle rounded-sm overflow-hidden">
+                      {[
+                        { label: 'Elite + Paid', desc: 'High performance, high NIL', bg: 'bg-green-500/5', check: (p: DraftLeveragePlayer) => p.nil_index >= 60 && p.draft_round_projection <= 5 },
+                        { label: 'Undervalued', desc: 'High performance, low NIL', bg: 'bg-burnt-orange/5', check: (p: DraftLeveragePlayer) => p.nil_index >= 60 && p.draft_round_projection > 5 },
+                        { label: 'Overvalued', desc: 'Low performance, high NIL', bg: 'bg-red-500/5', check: (p: DraftLeveragePlayer) => p.nil_index < 60 && p.draft_round_projection <= 5 },
+                        { label: 'Development', desc: 'Building both', bg: 'bg-[var(--surface-dugout)]', check: (p: DraftLeveragePlayer) => p.nil_index < 60 && p.draft_round_projection > 5 },
+                      ].map((q) => (
+                        <div key={q.label} className={`${q.bg} p-4`}>
+                          <div className="text-text-primary text-sm font-medium">{q.label}</div>
+                          <div className="text-text-muted text-xs mt-1">{q.desc}</div>
+                          <div className="mt-2 space-y-1">
+                            {draftData.players
+                              .filter(q.check)
+                              .slice(0, 3)
+                              .map((p) => (
+                                <div key={p.player_id} className="text-xs text-text-secondary font-mono">{p.name}</div>
+                              ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </ScrollReveal>
+            </Container>
+          </Section>
+        )}
+
         {/* Draft Leverage */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <Card variant="default" padding="lg">
+              <Card variant="default" padding="lg" className="border-t-2 border-burnt-orange">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3">
                     <span>Draft Leverage</span>
@@ -103,7 +144,7 @@ export default function TexasNILClient() {
                   {draftLoading ? (
                     <div className="space-y-3">
                       {[1, 2, 3].map((i) => (
-                        <div key={i} className="h-10 bg-surface-light rounded animate-pulse" />
+                        <div key={i} className="h-10 bg-surface-light rounded-sm animate-pulse" />
                       ))}
                     </div>
                   ) : draftData?.players && draftData.players.length > 0 ? (
@@ -147,13 +188,26 @@ export default function TexasNILClient() {
         {/* Footer nav */}
         <Section padding="md" borderTop>
           <Container>
-            <div className="flex flex-wrap gap-4">
-              <Link href="/college-baseball/texas-intelligence" className="text-sm text-burnt-orange hover:text-ember transition-colors">
-                &larr; Back to Hub
-              </Link>
-              <Link href="/nil-valuation" className="text-sm text-text-muted hover:text-text-primary transition-colors">
-                Full NIL Valuation Tool &rarr;
-              </Link>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <DataSourceBadge
+                source="BSI Intelligence"
+                timestamp={
+                  draftData?.meta?.fetched_at
+                    ? new Date(draftData.meta.fetched_at).toLocaleString('en-US', {
+                        timeZone: 'America/Chicago',
+                        month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
+                      }) + ' CT'
+                    : 'Live'
+                }
+              />
+              <div className="flex flex-wrap gap-4">
+                <Link href="/college-baseball/texas-intelligence" className="text-sm text-burnt-orange hover:text-ember transition-colors">
+                  &larr; Back to Hub
+                </Link>
+                <Link href="/nil-valuation" className="text-sm text-text-muted hover:text-text-primary transition-colors">
+                  Full NIL Valuation Tool &rarr;
+                </Link>
+              </div>
             </div>
           </Container>
         </Section>

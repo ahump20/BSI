@@ -184,14 +184,14 @@ export function TeamDossierClient({ slug }: { slug: string }) {
           <Section padding="lg">
             <Container>
               <div className="max-w-3xl animate-pulse space-y-4">
-                <div className="h-6 bg-border-subtle rounded w-1/4" />
-                <div className="h-10 bg-border-subtle rounded w-1/2" />
+                <div className="h-6 bg-border-subtle rounded-sm w-1/4" />
+                <div className="h-10 bg-border-subtle rounded-sm w-1/2" />
                 <div className="grid grid-cols-3 gap-3">
                   {[1, 2, 3].map((i) => (
-                    <div key={i} className="h-24 bg-surface-light rounded-lg" />
+                    <div key={i} className="h-24 bg-surface-light rounded-sm" />
                   ))}
                 </div>
-                <div className="h-40 bg-surface-light rounded-xl" />
+                <div className="h-40 bg-surface-light rounded-sm" />
               </div>
             </Container>
           </Section>

@@ -145,7 +145,7 @@ function PlayerSearchInput({
     return (
       <div className="relative">
         <label className="block text-xs font-semibold text-text-muted uppercase tracking-wider mb-2">{label}</label>
-        <div className={`flex items-center justify-between p-3 rounded-lg border bg-surface-light`} style={{ borderColor: accentColor + '40' }}>
+        <div className={`flex items-center justify-between p-3 rounded-sm border bg-surface-light`} style={{ borderColor: accentColor + '40' }}>
           <div>
             <span className="text-text-primary font-medium">{selected.name}</span>
             <span className="text-text-muted text-sm ml-2">{selected.team}</span>
@@ -175,7 +175,7 @@ function PlayerSearchInput({
         }}
         onFocus={() => { if (results.length > 0) setOpen(true); }}
         placeholder="Search by name..."
-        className="w-full p-3 rounded-lg border border-border-strong bg-surface-light text-text-primary placeholder-text-muted focus:outline-none focus:border-burnt-orange transition-colors"
+        className="w-full p-3 rounded-sm border border-border-strong bg-surface-light text-text-primary placeholder-text-muted focus:outline-none focus:border-burnt-orange transition-colors"
       />
       {searching && (
         <div className="absolute right-3 top-[38px] mt-0.5">
@@ -185,7 +185,7 @@ function PlayerSearchInput({
 
       {/* Dropdown */}
       {open && results.length > 0 && (
-        <ul className="absolute z-50 mt-1 w-full bg-background-secondary border border-border-strong rounded-lg shadow-xl max-h-64 overflow-y-auto">
+        <ul className="absolute z-50 mt-1 w-full bg-background-secondary border border-border-strong rounded-sm shadow-xl max-h-64 overflow-y-auto">
           {results.map((p) => (
             <li key={p.id}>
               <button
@@ -211,7 +211,7 @@ function PlayerSearchInput({
       )}
 
       {open && query.length >= 2 && !searching && results.length === 0 && (
-        <div className="absolute z-50 mt-1 w-full bg-background-secondary border border-border-strong rounded-lg shadow-xl px-4 py-3">
+        <div className="absolute z-50 mt-1 w-full bg-background-secondary border border-border-strong rounded-sm shadow-xl px-4 py-3">
           <span className="text-text-muted text-sm">No players found</span>
         </div>
       )}
@@ -295,7 +295,7 @@ export default function PlayerComparePage() {
                 <p className="text-error mb-3">{error}</p>
                 <button
                   onClick={retry}
-                  className="px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors text-sm"
+                  className="px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange/80 transition-colors text-sm"
                 >
                   Retry
                 </button>

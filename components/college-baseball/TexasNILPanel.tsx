@@ -60,7 +60,7 @@ export function TexasNILPanel({ limit = 15 }: TexasNILPanelProps) {
     return (
       <div className="space-y-3">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-16 bg-surface-light rounded-lg animate-pulse" />
+          <div key={i} className="h-16 bg-surface-light rounded-sm animate-pulse" />
         ))}
       </div>
     );

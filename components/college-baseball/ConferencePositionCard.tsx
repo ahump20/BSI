@@ -53,12 +53,12 @@ export function ConferencePositionCard({
   );
 
   if (loading) {
-    return <div className="h-48 bg-surface-light rounded-lg animate-pulse" />;
+    return <div className="h-48 bg-surface-light rounded-sm animate-pulse" />;
   }
 
   if (error) {
     return (
-      <div className="bg-surface-light border border-border rounded-lg p-6 text-center">
+      <div className="bg-surface-light border border-border rounded-sm p-6 text-center">
         <p className="text-text-muted text-sm">Conference data temporarily unavailable</p>
       </div>
     );
@@ -84,6 +84,14 @@ export function ConferencePositionCard({
     <Card variant="default" padding="lg">
       <CardHeader>
         <CardTitle className="flex items-center gap-3">
+          {confSlug === 'sec' && (
+            <img
+              src="https://a.espncdn.com/i/teamlogos/ncaa_conf/500/sec.png"
+              alt="SEC"
+              className="w-6 h-6 object-contain"
+              loading="lazy"
+            />
+          )}
           <span>{confDisplay} Conference Position</span>
           <Badge variant="accent" size="sm">Power Index</Badge>
         </CardTitle>
@@ -113,7 +121,7 @@ export function ConferencePositionCard({
           </div>
         )}
 
-        {/* Conference table */}
+        {/* Conference table — shows team's neighborhood (±2 positions) + full table */}
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -153,6 +161,11 @@ export function ConferencePositionCard({
               })}
             </tbody>
           </table>
+        </div>
+
+        {/* Conference size indicator */}
+        <div className="mt-3 text-center text-[10px] text-text-muted">
+          {data.teams.length} teams · {data.season} season
         </div>
       </CardContent>
     </Card>

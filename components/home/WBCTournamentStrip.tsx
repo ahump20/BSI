@@ -98,7 +98,7 @@ export function WBCTournamentStrip() {
           {/* Header */}
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-sm bg-amber-500/15 flex items-center justify-center">
                 <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-amber-400 fill-none" strokeWidth="1.5">
                   <circle cx="12" cy="12" r="10" />
                   <path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10" />
@@ -132,7 +132,7 @@ export function WBCTournamentStrip() {
                   href={`/wbc/pool/${pool.id.toLowerCase()}`}
                   className="flex-shrink-0 w-64 sm:w-auto group"
                 >
-                  <div className="p-4 rounded-xl bg-[rgba(26,26,26,0.6)] border border-amber-500/10 hover:border-amber-500/30 transition-all duration-300 h-full">
+                  <div className="p-4 rounded-sm bg-[rgba(26,26,26,0.6)] border border-amber-500/10 hover:border-amber-500/30 transition-all duration-300 h-full">
                     {/* Pool header */}
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">

@@ -26,7 +26,7 @@ export function FilterPill({
 }: FilterPillProps) {
   return (
     <button
-      className={`rounded-lg font-mono border transition-all ${sizeClasses[size] ?? sizeClasses.md} ${uppercase ? 'uppercase tracking-wider' : ''} ${active ? ACTIVE : INACTIVE} ${className}`}
+      className={`rounded-sm font-mono border transition-all ${sizeClasses[size] ?? sizeClasses.md} ${uppercase ? 'uppercase tracking-wider' : ''} ${active ? ACTIVE : INACTIVE} ${className}`}
       {...rest}
     >
       {children}

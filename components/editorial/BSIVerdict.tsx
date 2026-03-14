@@ -14,11 +14,11 @@ export function BSIVerdict({ children }: BSIVerdictProps) {
         <ScrollReveal>
           <div className="max-w-3xl mx-auto relative">
             <div className="absolute -top-3 left-6">
-              <span className="bg-burnt-orange text-white text-xs font-display uppercase tracking-widest px-3 py-1 rounded">
+              <span className="bg-burnt-orange text-white text-xs font-display uppercase tracking-widest px-3 py-1 rounded-sm">
                 BSI Verdict
               </span>
             </div>
-            <div className="bg-gradient-to-br from-burnt-orange/8 to-texas-soil/5 border border-burnt-orange/15 rounded-lg p-8 pt-10">
+            <div className="bg-gradient-to-br from-burnt-orange/8 to-texas-soil/5 border border-burnt-orange/15 rounded-sm p-8 pt-10">
               <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                 {children}
               </div>

@@ -309,14 +309,14 @@ export function PlaygroundERD() {
   return (
     <div style={{ display: 'flex', gap: '1.5rem', height: '600px' }}>
       {/* SVG canvas */}
-      <div style={{ flex: 1, background: '#111', borderRadius: '8px', border: '1px solid rgba(191,87,0,0.2)', overflow: 'hidden', position: 'relative' }}>
+      <div style={{ flex: 1, background: '#111', borderRadius: '2px', border: '1px solid rgba(191,87,0,0.2)', overflow: 'hidden', position: 'relative' }}>
         {/* Reset button */}
         <button
           onClick={() => dispatch({ type: 'reset' })}
           style={{
             position: 'absolute', top: '12px', right: '12px', zIndex: 10,
             background: 'rgba(191,87,0,0.15)', border: '1px solid rgba(191,87,0,0.3)',
-            color: '#FF6B35', padding: '4px 10px', borderRadius: '4px',
+            color: '#FF6B35', padding: '4px 10px', borderRadius: '2px',
             fontSize: '0.75rem', cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace',
           }}
         >
@@ -428,7 +428,7 @@ export function PlaygroundERD() {
       {/* Column detail panel */}
       <div style={{
         width: '260px', flexShrink: 0,
-        background: '#1A1A1A', borderRadius: '8px',
+        background: '#1A1A1A', borderRadius: '2px',
         border: '1px solid rgba(191,87,0,0.2)',
         overflowY: 'auto', padding: '1rem',
       }}>

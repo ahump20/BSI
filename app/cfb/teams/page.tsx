@@ -55,8 +55,8 @@ function SkeletonTeamCard() {
       <div className="flex items-center gap-4">
         <div className="w-14 h-14 bg-background-tertiary rounded-full" />
         <div className="flex-1 space-y-2">
-          <div className="h-5 bg-background-tertiary rounded w-3/4" />
-          <div className="h-4 bg-background-tertiary/50 rounded w-1/2" />
+          <div className="h-5 bg-background-tertiary rounded-sm w-3/4" />
+          <div className="h-4 bg-background-tertiary/50 rounded-sm w-1/2" />
         </div>
       </div>
     </Card>
@@ -220,7 +220,7 @@ export default function CFBTeamsPage() {
                   <button
                     key={conf}
                     onClick={() => setSelectedConference(conf)}
-                    className={`px-4 py-2 rounded-lg font-semibold transition-all text-sm whitespace-nowrap ${
+                    className={`px-4 py-2 rounded-sm font-semibold transition-all text-sm whitespace-nowrap ${
                       selectedConference === conf
                         ? 'bg-burnt-orange text-white'
                         : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
@@ -239,7 +239,7 @@ export default function CFBTeamsPage() {
                     onChange={(e) => {
                       if (e.target.value) setSelectedConference(e.target.value);
                     }}
-                    className="px-3 py-2 bg-background-tertiary border border-border-subtle rounded-lg text-text-secondary text-sm focus:outline-none focus:border-burnt-orange"
+                    className="px-3 py-2 bg-background-tertiary border border-border-subtle rounded-sm text-text-secondary text-sm focus:outline-none focus:border-burnt-orange"
                   >
                     <option value="">More...</option>
                     {availableConferences.slice(6).map((conf) => (
@@ -258,7 +258,7 @@ export default function CFBTeamsPage() {
                   placeholder="Search teams..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-4 py-2 bg-background-tertiary border border-border-subtle rounded-lg text-text-primary placeholder-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors"
+                  className="w-full px-4 py-2 bg-background-tertiary border border-border-subtle rounded-sm text-text-primary placeholder-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors"
                 />
                 {searchQuery && (
                   <button
@@ -282,7 +282,7 @@ export default function CFBTeamsPage() {
                 <p className="text-text-secondary text-sm mt-1">{error}</p>
                 <button
                   onClick={fetchTeams}
-                  className="mt-3 px-4 py-2 bg-burnt-orange text-white rounded-lg text-sm hover:bg-burnt-orange/80 transition-colors"
+                  className="mt-3 px-4 py-2 bg-burnt-orange text-white rounded-sm text-sm hover:bg-burnt-orange/80 transition-colors"
                 >
                   Try Again
                 </button>
@@ -365,19 +365,19 @@ export default function CFBTeamsPage() {
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/cfb/scores"
-                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
               >
                 Live Scores
               </Link>
               <Link
                 href="/cfb/standings"
-                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
               >
                 Standings
               </Link>
               <Link
                 href="/cfb"
-                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
               >
                 CFB Home
               </Link>

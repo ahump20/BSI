@@ -23,7 +23,7 @@ export function GlossaryPageClient() {
           {/* Hero */}
           <div className="mb-10 savant-fade-in">
             <span
-              className="text-[10px] font-mono uppercase tracking-[0.15em] px-2 py-1 rounded"
+              className="text-[10px] font-mono uppercase tracking-[0.15em] px-2 py-1 rounded-sm"
               style={{ backgroundColor: 'rgba(232, 93, 38, 0.1)', color: 'var(--svt-accent)' }}
             >
               Reference

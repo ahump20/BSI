@@ -118,7 +118,7 @@ function CheckoutContent() {
 
     // Stripe client secrets follow pattern: cs_xxx_secret_xxx
     if (!clientSecret.includes('_secret_')) {
-      setError('Invalid checkout session. Please try again from pricing.');
+      setError('Checkout session expired — start again from the pricing page.');
       return;
     }
 
@@ -167,7 +167,7 @@ function CheckoutContent() {
 
                 {/* Stripe Embedded Checkout */}
                 <Card padding="none" className="overflow-hidden">
-                  <div className="bg-white rounded-lg min-h-[500px]">
+                  <div className="bg-white rounded-sm min-h-[500px]">
                     <EmbeddedCheckoutProvider
                       stripe={stripePromise}
                       options={{ fetchClientSecret }}

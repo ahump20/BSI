@@ -232,8 +232,8 @@ export default function AIChatWidget() {
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
             className="fixed z-50 flex flex-col overflow-hidden border border-bone/10 bg-charcoal shadow-2xl
-              inset-x-0 bottom-0 w-full rounded-t-lg max-h-[70vh]
-              sm:inset-auto sm:bottom-20 sm:right-5 sm:w-[min(24rem,calc(100vw-2.5rem))] sm:max-h-[28rem] sm:rounded-lg"
+              inset-x-0 bottom-0 w-full rounded-t-sm max-h-[70vh]
+              sm:inset-auto sm:bottom-20 sm:right-5 sm:w-[min(24rem,calc(100vw-2.5rem))] sm:max-h-[28rem] sm:rounded-sm"
           >
             {/* Header */}
             <div className="border-b border-bone/5 bg-midnight px-4 py-4">
@@ -278,7 +278,7 @@ export default function AIChatWidget() {
                       key={prompt}
                       type="button"
                       onClick={() => send(prompt)}
-                      className="font-mono text-[0.6rem] rounded-full border border-bone/10 px-3 py-1.5 text-bone/60 hover:border-burnt-orange/30 hover:text-burnt-orange transition-colors duration-200 cursor-pointer"
+                      className="font-mono text-[0.6rem] rounded-sm border border-bone/10 px-3 py-1.5 text-bone/60 hover:border-burnt-orange/30 hover:text-burnt-orange transition-colors duration-200 cursor-pointer"
                     >
                       {prompt}
                     </button>
@@ -336,13 +336,13 @@ export default function AIChatWidget() {
                   placeholder="Ask about the work, the origin, or the contact path..."
                   aria-label="Ask a question about Austin"
                   disabled={loading}
-                  className="flex-1 bg-midnight border border-bone/10 rounded px-3 py-2 text-sm text-bone placeholder-warm-gray/70 focus:outline-none focus:border-burnt-orange/50 disabled:opacity-50"
+                  className="flex-1 bg-midnight border border-bone/10 rounded-sm px-3 py-2 text-sm text-bone placeholder-warm-gray/70 focus:outline-none focus:border-burnt-orange/50 disabled:opacity-50"
                 />
                 <button
                   type="button"
                   onClick={() => void send()}
                   disabled={loading}
-                  className="bg-burnt-orange text-white px-3 py-2 rounded text-xs font-sans uppercase tracking-wider hover:brightness-110 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-burnt-orange text-white px-3 py-2 rounded-sm text-xs font-sans uppercase tracking-wider hover:brightness-110 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Send
                 </button>

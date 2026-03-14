@@ -291,7 +291,7 @@ export default function Contact() {
               )}
               {formState === 'error' && (
                 <p className="text-orange-400 text-xs font-mono mt-3 text-center" aria-live="polite">
-                  Something went wrong. Try again or email {PRIMARY_EMAIL} directly.
+                  Couldn&apos;t send that. Try again or email {PRIMARY_EMAIL} directly.
                 </p>
               )}
             </motion.form>

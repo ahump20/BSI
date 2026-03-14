@@ -71,7 +71,7 @@ export function HAVFRadar({
   const color = getCompositeColor(composite);
 
   return (
-    <div className={`bg-background-primary border border-border-subtle rounded-xl p-5 ${className}`}>
+    <div className={`bg-background-primary border border-border-subtle rounded-sm p-5 ${className}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-1">
         <h4 className="font-display text-sm uppercase tracking-widest text-text-secondary">

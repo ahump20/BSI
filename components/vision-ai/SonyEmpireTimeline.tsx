@@ -106,7 +106,7 @@ export function SonyEmpireTimeline({ className = '' }: { className?: string }) {
 
                 {/* Content */}
                 <div
-                  className={`rounded-lg border transition-all cursor-pointer ${
+                  className={`rounded-sm border transition-all cursor-pointer ${
                     isExpanded
                       ? 'bg-surface-light border-burnt-orange/20'
                       : 'bg-transparent border-transparent hover:bg-surface-light'
@@ -143,7 +143,7 @@ export function SonyEmpireTimeline({ className = '' }: { className?: string }) {
                           ))}
                         </div>
 
-                        <div className="bg-burnt-orange/5 border border-burnt-orange/10 rounded px-3 py-2">
+                        <div className="bg-burnt-orange/5 border border-burnt-orange/10 rounded-sm px-3 py-2">
                           <p className="text-burnt-orange/80 text-xs font-semibold">
                             {acq.significance}
                           </p>
@@ -159,7 +159,7 @@ export function SonyEmpireTimeline({ className = '' }: { className?: string }) {
       </div>
 
       {/* Summary insight */}
-      <div className="mt-4 bg-graphite rounded-lg p-4 border border-border-subtle">
+      <div className="mt-4 bg-graphite rounded-sm p-4 border border-border-subtle">
         <div className="flex justify-between text-sm mb-2">
           <span className="text-text-tertiary">Total acquisitions</span>
           <span className="text-text-primary font-mono">{ACQUISITIONS.length}</span>

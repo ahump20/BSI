@@ -242,7 +242,7 @@ export default function CollegeBaseballRankingsPage() {
                 <p className="text-text-secondary mb-4">{error}</p>
                 <button
                   onClick={retry}
-                  className="px-4 py-2 bg-burnt-orange/20 text-burnt-orange rounded-lg text-sm font-medium hover:bg-burnt-orange/30 transition-colors"
+                  className="px-4 py-2 bg-burnt-orange/20 text-burnt-orange rounded-sm text-sm font-medium hover:bg-burnt-orange/30 transition-colors"
                 >
                   Try again
                 </button>
@@ -256,7 +256,7 @@ export default function CollegeBaseballRankingsPage() {
                 </p>
                 <button
                   onClick={retry}
-                  className="px-4 py-2 bg-surface-light text-text-secondary rounded-lg text-sm font-medium hover:bg-surface-medium transition-colors"
+                  className="px-4 py-2 bg-surface-light text-text-secondary rounded-sm text-sm font-medium hover:bg-surface-medium transition-colors"
                 >
                   Refresh
                 </button>
@@ -415,7 +415,7 @@ export default function CollegeBaseballRankingsPage() {
                   <div className="px-4 py-3 bg-background-secondary border-t border-border-subtle">
                     <div className="flex flex-wrap items-center gap-4 text-xs text-text-tertiary">
                       <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-burnt-orange/20 rounded" />
+                        <div className="w-3 h-3 bg-burnt-orange/20 rounded-sm" />
                         <span>Top 10 Teams</span>
                       </div>
                       <div className="flex items-center gap-2">

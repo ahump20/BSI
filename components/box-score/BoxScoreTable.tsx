@@ -83,9 +83,9 @@ export interface BoxScoreTableProps {
 export function BoxScoreTableSkeleton() {
   return (
     <div className="animate-pulse space-y-4 p-4">
-      <div className="h-6 bg-surface rounded w-1/3" />
-      <div className="h-32 bg-surface-light rounded" />
-      <div className="h-48 bg-surface-light rounded" />
+      <div className="h-6 bg-surface rounded-sm w-1/3" />
+      <div className="h-32 bg-surface-light rounded-sm" />
+      <div className="h-48 bg-surface-light rounded-sm" />
     </div>
   );
 }
@@ -116,7 +116,7 @@ export function BoxScoreTable({
 
   if (!boxscore) {
     return (
-      <div className="bg-background-primary rounded-xl overflow-hidden border border-border-subtle">
+      <div className="bg-background-primary rounded-sm overflow-hidden border border-border-subtle">
         <div className="px-4 py-8 text-center text-text-muted text-sm">
           Box score data not available yet
         </div>
@@ -125,7 +125,7 @@ export function BoxScoreTable({
   }
 
   return (
-    <div className="bg-background-primary rounded-xl overflow-hidden border border-border-subtle">
+    <div className="bg-background-primary rounded-sm overflow-hidden border border-border-subtle">
       {/* Linescore */}
       {showLinescore && linescore && (
         <div className="overflow-x-auto">

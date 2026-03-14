@@ -88,7 +88,7 @@ export default function GameSummaryClient() {
           <h3 className="text-lg font-semibold text-text-primary mb-4">Batting Leaders</h3>
           <div className="grid gap-4 md:grid-cols-2">
             {topAwayHitter && (
-              <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-lg">
+              <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-sm">
                 <div className="w-12 h-12 bg-background-secondary rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange">
                   {game.teams.away.abbreviation}
                 </div>
@@ -102,7 +102,7 @@ export default function GameSummaryClient() {
               </div>
             )}
             {topHomeHitter && (
-              <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-lg">
+              <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-sm">
                 <div className="w-12 h-12 bg-background-secondary rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange">
                   {game.teams.home.abbreviation}
                 </div>

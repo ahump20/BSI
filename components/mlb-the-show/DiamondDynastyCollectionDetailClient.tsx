@@ -99,8 +99,8 @@ export function DiamondDynastyCollectionDetailClient() {
         <DataErrorBoundary name="collection detail">
           {loading ? (
             <div className="space-y-4">
-              <div className="h-40 animate-pulse rounded-xl border border-[var(--border-vintage)] bg-[var(--surface-dugout)]" />
-              <div className="h-96 animate-pulse rounded-xl border border-[var(--border-vintage)] bg-[var(--surface-dugout)]" />
+              <div className="h-40 animate-pulse rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)]" />
+              <div className="h-96 animate-pulse rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)]" />
             </div>
           ) : error || !detail ? (
             <Card padding="lg">
@@ -186,7 +186,7 @@ export function DiamondDynastyCollectionDetailClient() {
 
 function InfoChip({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-xl border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-4">
+    <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-4">
       <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)]">{label}</div>
       <div className="mt-2 font-mono text-2xl text-burnt-orange">{value.toLocaleString()}</div>
     </div>

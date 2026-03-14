@@ -14,10 +14,10 @@ export default function GlossaryLoading() {
 
         {/* Search + Filters */}
         <div className="flex gap-3 mb-6">
-          <Skeleton variant="rectangular" width="60%" height={42} className="rounded-lg" />
+          <Skeleton variant="rectangular" width="60%" height={42} className="rounded-sm" />
           <div className="flex gap-1.5">
             {[1, 2, 3, 4, 5].map((i) => (
-              <Skeleton key={i} variant="rectangular" width={70} height={36} className="rounded-lg" />
+              <Skeleton key={i} variant="rectangular" width={70} height={36} className="rounded-sm" />
             ))}
           </div>
         </div>
@@ -25,7 +25,7 @@ export default function GlossaryLoading() {
         {/* Alphabetical nav */}
         <div className="flex flex-wrap gap-1.5 mb-8">
           {Array.from({ length: 26 }).map((_, i) => (
-            <Skeleton key={i} variant="rectangular" width={32} height={32} className="rounded" />
+            <Skeleton key={i} variant="rectangular" width={32} height={32} className="rounded-sm" />
           ))}
         </div>
 

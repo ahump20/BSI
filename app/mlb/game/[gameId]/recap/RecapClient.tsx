@@ -111,7 +111,7 @@ export default function RecapClient() {
                 {scoringPlays.map((play) => (
                   <div
                     key={play.id}
-                    className="p-3 bg-background-tertiary rounded-lg border-l-4 border-burnt-orange"
+                    className="p-3 bg-background-tertiary rounded-sm border-l-4 border-burnt-orange"
                   >
                     <div className="flex items-center gap-2 mb-1">
                       <Badge variant="primary" size="sm">
@@ -169,7 +169,7 @@ export default function RecapClient() {
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2">
               {battingStars.slice(0, 4).map((player, idx) => (
-                <div key={idx} className="flex items-center gap-4 p-3 bg-background-tertiary rounded-lg">
+                <div key={idx} className="flex items-center gap-4 p-3 bg-background-tertiary rounded-sm">
                   <div className="w-12 h-12 bg-background-secondary rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange">
                     {player.team}
                   </div>
@@ -199,7 +199,7 @@ export default function RecapClient() {
               {scoringPlays.map((play) => (
                 <div
                   key={play.id}
-                  className="p-3 bg-background-tertiary rounded-lg border-l-4 border-burnt-orange"
+                  className="p-3 bg-background-tertiary rounded-sm border-l-4 border-burnt-orange"
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <Badge variant="primary" size="sm">
@@ -226,7 +226,7 @@ export default function RecapClient() {
           <CardContent>
             <div className="space-y-3">
               {qualityStarts.map((pitcher, idx) => (
-                <div key={idx} className="flex items-center gap-4 p-3 bg-background-tertiary rounded-lg">
+                <div key={idx} className="flex items-center gap-4 p-3 bg-background-tertiary rounded-sm">
                   <Badge variant="success">QS</Badge>
                   <div>
                     <p className="font-semibold text-text-primary">{pitcher.player.name}</p>

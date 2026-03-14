@@ -60,7 +60,7 @@ export class DataErrorBoundary extends Component<DataErrorBoundaryProps, State> 
           </p>
           <button
             onClick={this.handleRetry}
-            className="px-4 py-1.5 rounded-lg text-[10px] uppercase tracking-wider font-bold font-display cursor-pointer transition-all bg-burnt-orange/10 border border-burnt-orange/25 text-burnt-orange hover:bg-burnt-orange/20"
+            className="px-4 py-1.5 rounded-sm text-[10px] uppercase tracking-wider font-bold font-display cursor-pointer transition-all bg-burnt-orange/10 border border-burnt-orange/25 text-burnt-orange hover:bg-burnt-orange/20"
           >
             Retry
           </button>

@@ -224,7 +224,7 @@ export function AITeamPreview({ teamId: _teamId, teamName, stats, conference: _c
   // No stats available — show minimal placeholder
   if (!stats || !analysis) {
     return (
-      <div className="bg-charcoal/50 border border-border-subtle rounded-xl p-4 mt-4">
+      <div className="bg-charcoal/50 border border-border-subtle rounded-sm p-4 mt-4">
         <div className="flex items-center gap-2 mb-2">
           <span className="text-burnt-orange text-xs font-semibold uppercase tracking-wider">Scouting Intel</span>
           <Badge variant="secondary" size="sm">Pre-Season</Badge>
@@ -241,7 +241,7 @@ export function AITeamPreview({ teamId: _teamId, teamName, stats, conference: _c
   const games = stats.wins + stats.losses;
 
   return (
-    <div className="bg-charcoal/50 border border-border-subtle rounded-xl p-5">
+    <div className="bg-charcoal/50 border border-border-subtle rounded-sm p-5">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
@@ -265,7 +265,7 @@ export function AITeamPreview({ teamId: _teamId, teamName, stats, conference: _c
       </div>
 
       {/* Pythagorean Bar */}
-      <div className="bg-graphite rounded-lg p-3 mb-4">
+      <div className="bg-graphite rounded-sm p-3 mb-4">
         <div className="flex justify-between items-baseline mb-1.5">
           <span className="text-text-tertiary text-xs">Actual Win%</span>
           <span className="text-text-primary font-mono text-sm font-bold">{(analysis.winPct * 100).toFixed(1)}%</span>

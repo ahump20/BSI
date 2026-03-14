@@ -134,8 +134,8 @@ export default function SwingLandingPage() {
               { step: '04', title: 'Ask', desc: 'Chat with your AI coach about what the numbers mean and how to improve.' },
             ].map((item, i) => (
               <ScrollReveal key={item.step} delay={i * 0.1}>
-                <div className="rounded-xl bg-surface-dugout border border-border-subtle p-6 text-center h-full">
-                  <div className="w-10 h-10 rounded-lg bg-burnt-orange/15 flex items-center justify-center mx-auto mb-4">
+                <div className="rounded-sm bg-surface-dugout border border-border-subtle p-6 text-center h-full">
+                  <div className="w-10 h-10 rounded-sm bg-burnt-orange/15 flex items-center justify-center mx-auto mb-4">
                     <span className="text-burnt-orange font-mono font-bold text-sm">{item.step}</span>
                   </div>
                   <h3 className="font-display text-lg font-bold uppercase tracking-wide text-bsi-bone mb-2">
@@ -164,8 +164,8 @@ export default function SwingLandingPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {FEATURES.map((feature, i) => {
               const card = (
-                <div className={`rounded-xl bg-surface-dugout border border-border-subtle p-5 h-full transition-colors ${feature.href ? 'hover:border-burnt-orange/40 group cursor-pointer' : 'hover:border-burnt-orange/20'}`}>
-                  <div className="w-10 h-10 rounded-lg bg-burnt-orange/10 flex items-center justify-center mb-4">
+                <div className={`rounded-sm bg-surface-dugout border border-border-subtle p-5 h-full transition-colors ${feature.href ? 'hover:border-burnt-orange/40 group cursor-pointer' : 'hover:border-burnt-orange/20'}`}>
+                  <div className="w-10 h-10 rounded-sm bg-burnt-orange/10 flex items-center justify-center mb-4">
                     <svg
                       viewBox="0 0 24 24"
                       className="w-5 h-5 text-burnt-orange"
@@ -203,7 +203,7 @@ export default function SwingLandingPage() {
         <Container>
           <ScrollReveal>
             <div className="max-w-2xl mx-auto">
-              <div className="rounded-xl bg-surface-dugout border border-burnt-orange/20 p-6 sm:p-8 corner-marks relative">
+              <div className="rounded-sm bg-surface-dugout border border-burnt-orange/20 p-6 sm:p-8 corner-marks relative">
                 <span className="heritage-stamp text-xs mb-4 block">BSI Labs</span>
                 <h2 className="font-display text-xl sm:text-2xl font-bold uppercase tracking-wide text-bsi-bone mb-3">
                   Go Deeper in the Lab
@@ -241,7 +241,7 @@ export default function SwingLandingPage() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="rounded-xl bg-surface-dugout border border-border-subtle p-6 corner-marks relative">
+                <div className="rounded-sm bg-surface-dugout border border-border-subtle p-6 corner-marks relative">
                   <h3 className="font-display text-lg font-bold uppercase text-bsi-bone mb-4">Free</h3>
                   <ul className="space-y-2 text-xs text-bsi-dust">
                     <li className="flex gap-2"><span className="text-emerald-400">✓</span> 3 swing analyses per month</li>
@@ -253,8 +253,8 @@ export default function SwingLandingPage() {
                   </ul>
                 </div>
 
-                <div className="rounded-xl bg-surface-dugout border-2 border-burnt-orange p-6 relative">
-                  <div className="absolute -top-3 left-4 bg-burnt-orange text-white text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 rounded">
+                <div className="rounded-sm bg-surface-dugout border-2 border-burnt-orange p-6 relative">
+                  <div className="absolute -top-3 left-4 bg-burnt-orange text-white text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-sm">
                     Pro
                   </div>
                   <h3 className="font-display text-lg font-bold uppercase text-bsi-bone mb-4">BSI Pro</h3>

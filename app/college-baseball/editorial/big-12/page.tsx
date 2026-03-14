@@ -122,7 +122,7 @@ export default function Big12EditorialPage() {
 
             {/* Stats Band */}
             <ScrollReveal direction="up" delay={100}>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center bg-surface-light border border-border-subtle rounded-xl p-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center bg-surface-light border border-border-subtle rounded-sm p-6">
                 <div>
                   <div className="font-display text-3xl font-bold text-burnt-orange">14</div>
                   <div className="text-text-muted text-xs uppercase tracking-wider mt-1">
@@ -263,7 +263,7 @@ export default function Big12EditorialPage() {
                     padding="lg"
                     className="h-full hover:border-[#C9A227]/30 transition-all relative overflow-hidden"
                   >
-                    <div className="absolute top-0 left-0 w-full h-1 rounded-t-lg bg-[#C9A227]" />
+                    <div className="absolute top-0 left-0 w-full h-1 rounded-t-sm bg-[#C9A227]" />
                     <div className="mt-2">
                       <h3 className="font-display text-xl font-bold uppercase tracking-wide text-[#C9A227] group-hover:brightness-125 transition-all">
                         SEC
@@ -296,7 +296,7 @@ export default function Big12EditorialPage() {
                     padding="lg"
                     className="h-full hover:border-[#6B8CAE]/30 transition-all relative overflow-hidden"
                   >
-                    <div className="absolute top-0 left-0 w-full h-1 rounded-t-lg bg-[#6B8CAE]" />
+                    <div className="absolute top-0 left-0 w-full h-1 rounded-t-sm bg-[#6B8CAE]" />
                     <div className="mt-2">
                       <h3 className="font-display text-xl font-bold uppercase tracking-wide text-[#6B8CAE] group-hover:brightness-125 transition-all">
                         Big Ten

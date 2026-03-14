@@ -87,7 +87,7 @@ export default function PlayByPlayClient() {
         <div className="flex gap-2">
           <button
             onClick={() => setFilter('all')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-4 py-2 rounded-sm text-sm font-medium transition-colors ${
               filter === 'all'
                 ? 'bg-burnt-orange text-white'
                 : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
@@ -97,7 +97,7 @@ export default function PlayByPlayClient() {
           </button>
           <button
             onClick={() => setFilter('scoring')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-4 py-2 rounded-sm text-sm font-medium transition-colors ${
               filter === 'scoring'
                 ? 'bg-burnt-orange text-white'
                 : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'

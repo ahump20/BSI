@@ -113,7 +113,7 @@ export default function PlayByPlay({
 
   if (plays.length === 0) {
     return (
-      <div className="bg-graphite rounded-lg border border-border-subtle p-8 text-center">
+      <div className="bg-graphite rounded-sm border border-border-subtle p-8 text-center">
         <p className="text-text-secondary">No play-by-play data available yet.</p>
         <p className="text-text-tertiary text-sm mt-2">
           When the game gets going, every at-bat shows up here.
@@ -125,7 +125,7 @@ export default function PlayByPlay({
   const scoringCount = plays.filter((p) => p.isScoring).length;
 
   return (
-    <div className="bg-midnight rounded-lg border border-border-subtle overflow-hidden">
+    <div className="bg-midnight rounded-sm border border-border-subtle overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border-subtle bg-charcoal">
         <div className="flex items-center gap-3">
@@ -144,7 +144,7 @@ export default function PlayByPlay({
         <div className="flex gap-1.5">
           <button
             onClick={() => setFilter('all')}
-            className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+            className={`px-3 py-1 rounded-sm text-xs font-medium transition-colors ${
               filter === 'all'
                 ? 'bg-burnt-orange text-white'
                 : 'bg-graphite text-text-secondary hover:bg-surface'
@@ -154,7 +154,7 @@ export default function PlayByPlay({
           </button>
           <button
             onClick={() => setFilter('scoring')}
-            className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+            className={`px-3 py-1 rounded-sm text-xs font-medium transition-colors ${
               filter === 'scoring'
                 ? 'bg-burnt-orange text-white'
                 : 'bg-graphite text-text-secondary hover:bg-surface'
@@ -239,7 +239,7 @@ export default function PlayByPlay({
         <div className="sticky bottom-0 px-4 py-2 bg-gradient-to-t from-midnight to-transparent">
           <button
             onClick={scrollToBottom}
-            className="w-full py-2 bg-burnt-orange/90 hover:bg-burnt-orange text-white text-xs font-semibold rounded transition-colors flex items-center justify-center gap-1.5"
+            className="w-full py-2 bg-burnt-orange/90 hover:bg-burnt-orange text-white text-xs font-semibold rounded-sm transition-colors flex items-center justify-center gap-1.5"
           >
             <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M12 5v14M5 12l7 7 7-7" />

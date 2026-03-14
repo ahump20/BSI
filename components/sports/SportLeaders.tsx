@@ -115,7 +115,7 @@ export function SportLeaders({ sport, className = '' }: SportLeadersProps) {
   }, [sport, config]);
 
   return (
-    <div className={`bg-surface-light border border-border rounded-xl p-6 ${className}`}>
+    <div className={`bg-surface-light border border-border rounded-sm p-6 ${className}`}>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-text-primary">{config.title}</h3>
         <Link
@@ -128,21 +128,21 @@ export function SportLeaders({ sport, className = '' }: SportLeadersProps) {
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="p-4 bg-surface-light rounded-lg animate-pulse">
-              <div className="h-3 bg-surface rounded w-1/2 mb-2" />
-              <div className="h-5 bg-surface rounded w-3/4 mb-1" />
-              <div className="h-7 bg-surface rounded w-1/3" />
+            <div key={i} className="p-4 bg-surface-light rounded-sm animate-pulse">
+              <div className="h-3 bg-surface rounded-sm w-1/2 mb-2" />
+              <div className="h-5 bg-surface rounded-sm w-3/4 mb-1" />
+              <div className="h-7 bg-surface rounded-sm w-1/3" />
             </div>
           ))}
         </div>
       ) : leaders.length === 0 ? (
-        <p className="text-text-muted text-sm text-center py-6">No leader data available</p>
+        <p className="text-text-muted text-sm text-center py-6">Leader stats update as games are played</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
           {leaders.map((player, index) => (
             <div
               key={`${player.name}-${index}`}
-              className="p-4 bg-surface-light rounded-lg hover:bg-surface transition-colors"
+              className="p-4 bg-surface-light rounded-sm hover:bg-surface transition-colors"
             >
               <div className="flex items-center gap-2 mb-2">
                 <span className="w-6 h-6 flex items-center justify-center bg-burnt-orange/20 text-burnt-orange rounded-full text-xs font-bold">

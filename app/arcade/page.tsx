@@ -87,7 +87,7 @@ export default function ArcadePage() {
                   <div key={game.id} className="opacity-60">
                     <Card variant="hover" padding="lg" className="h-full">
                       <div
-                        className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-4"
+                        className="w-14 h-14 rounded-sm flex items-center justify-center text-2xl mb-4"
                         style={{ background: withAlpha(game.color, 0.12) }}
                       >
                         {game.icon}
@@ -97,7 +97,7 @@ export default function ArcadePage() {
                       </h3>
                       <p className="text-sm text-text-tertiary leading-relaxed">{game.description}</p>
                       <div className="mt-4">
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-surface-light text-text-muted uppercase tracking-wider">
+                        <span className="text-[10px] px-2 py-0.5 rounded-sm bg-surface-light text-text-muted uppercase tracking-wider">
                           Coming Soon
                         </span>
                       </div>
@@ -117,7 +117,7 @@ export default function ArcadePage() {
                   >
                     <Card variant="hover" padding="lg" className="h-full transition-all group-hover:border-border-strong">
                       <div
-                        className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-4"
+                        className="w-14 h-14 rounded-sm flex items-center justify-center text-2xl mb-4"
                         style={{ background: withAlpha(game.color, 0.12) }}
                       >
                         {game.icon}
@@ -144,7 +144,7 @@ export default function ArcadePage() {
                 >
                   <Card variant="hover" padding="lg" className="h-full transition-all group-hover:border-border-strong">
                     <div
-                      className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-4"
+                      className="w-14 h-14 rounded-sm flex items-center justify-center text-2xl mb-4"
                       style={{ background: withAlpha(game.color, 0.12) }}
                     >
                       {game.icon}
@@ -172,7 +172,7 @@ export default function ArcadePage() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => setActiveGame(null)}
-                      className={`px-3 py-1 rounded text-xs font-medium transition-colors ${!activeGame ? 'bg-burnt-orange text-white' : 'bg-surface-light text-text-tertiary hover:text-text-primary'}`}
+                      className={`px-3 py-1 rounded-sm text-xs font-medium transition-colors ${!activeGame ? 'bg-burnt-orange text-white' : 'bg-surface-light text-text-tertiary hover:text-text-primary'}`}
                     >
                       All
                     </button>
@@ -180,7 +180,7 @@ export default function ArcadePage() {
                       <button
                         key={g.id}
                         onClick={() => setActiveGame(g.id)}
-                        className={`px-3 py-1 rounded text-xs font-medium transition-colors ${activeGame === g.id ? 'bg-burnt-orange text-white' : 'bg-surface-light text-text-tertiary hover:text-text-primary'}`}
+                        className={`px-3 py-1 rounded-sm text-xs font-medium transition-colors ${activeGame === g.id ? 'bg-burnt-orange text-white' : 'bg-surface-light text-text-tertiary hover:text-text-primary'}`}
                       >
                         {g.icon}
                       </button>
@@ -191,7 +191,7 @@ export default function ArcadePage() {
                 {loadingLeaderboard ? (
                   <div className="space-y-3">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <div key={i} className="h-10 bg-surface-light rounded animate-pulse" />
+                      <div key={i} className="h-10 bg-surface-light rounded-sm animate-pulse" />
                     ))}
                   </div>
                 ) : leaderboardError ? (
@@ -199,7 +199,7 @@ export default function ArcadePage() {
                     <p className="text-text-muted mb-3">Leaderboard unavailable</p>
                     <button
                       onClick={retryLeaderboard}
-                      className="px-4 py-2 text-sm bg-burnt-orange/20 text-burnt-orange rounded hover:bg-burnt-orange/30 transition-colors"
+                      className="px-4 py-2 text-sm bg-burnt-orange/20 text-burnt-orange rounded-sm hover:bg-burnt-orange/30 transition-colors"
                     >
                       Retry
                     </button>
@@ -213,7 +213,7 @@ export default function ArcadePage() {
                       .map((entry, i) => (
                         <div
                           key={`${entry.name}-${entry.game_id}-${i}`}
-                          className="flex items-center gap-3 px-3 py-2 rounded-lg bg-surface-light hover:bg-surface-medium transition-colors"
+                          className="flex items-center gap-3 px-3 py-2 rounded-sm bg-surface-light hover:bg-surface-medium transition-colors"
                         >
                           <span className={`w-6 text-center font-bold text-sm ${i < 3 ? 'text-burnt-orange' : 'text-text-muted'}`}>
                             {i + 1}

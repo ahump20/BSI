@@ -442,7 +442,7 @@ export default function NBAStandingsPage() {
           <Container>
             <ScrollReveal direction="up">
               <Badge variant="primary" className="mb-4">
-                2024-25 Season
+                2025-26 Season
               </Badge>
             </ScrollReveal>
 
@@ -468,7 +468,7 @@ export default function NBAStandingsPage() {
                 <button
                   key={conf}
                   onClick={() => setSelectedConference(conf)}
-                  className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+                  className={`px-6 py-3 rounded-sm font-semibold transition-all ${
                     selectedConference === conf
                       ? 'bg-burnt-orange text-white'
                       : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
@@ -488,7 +488,7 @@ export default function NBAStandingsPage() {
               <Card variant="default" padding="lg">
                 <div className="animate-pulse space-y-4">
                   {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                    <div key={i} className="h-12 bg-background-tertiary rounded"></div>
+                    <div key={i} className="h-12 bg-background-tertiary rounded-sm"></div>
                   ))}
                 </div>
               </Card>
@@ -606,11 +606,11 @@ export default function NBAStandingsPage() {
                   {/* Legend */}
                   <div className="mt-4 pt-4 border-t border-border-subtle flex gap-4 text-xs text-text-tertiary">
                     <span className="flex items-center gap-1">
-                      <span className="w-3 h-3 bg-success/20 rounded"></span>
+                      <span className="w-3 h-3 bg-success/20 rounded-sm"></span>
                       Playoff spot (1-6)
                     </span>
                     <span className="flex items-center gap-1">
-                      <span className="w-3 h-3 bg-warning/20 rounded"></span>
+                      <span className="w-3 h-3 bg-warning/20 rounded-sm"></span>
                       Play-In (7-10)
                     </span>
                   </div>

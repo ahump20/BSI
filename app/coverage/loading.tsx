@@ -24,7 +24,7 @@ export default function CoverageLoading() {
 
         {/* Sport cards */}
         {[1, 2, 3, 4, 5].map((i) => (
-          <div key={i} className="bg-surface-light border border-border-subtle rounded-xl p-6 mb-6 animate-pulse">
+          <div key={i} className="bg-surface-light border border-border-subtle rounded-sm p-6 mb-6 animate-pulse">
             <div className="grid md:grid-cols-4 gap-6">
               <div>
                 <div className="flex items-center gap-3 mb-3">
