@@ -88,7 +88,7 @@ export function MobileBottomNav({ onMorePress }: { onMorePress?: () => void }) {
               key={href}
               href={href}
               aria-current={active ? 'page' : undefined}
-              className={`flex flex-col items-center justify-center gap-1 flex-1 py-2.5 px-1 transition-colors ${
+              className={`relative flex flex-col items-center justify-center gap-1 flex-1 py-2.5 px-1 transition-colors ${
                 active
                   ? 'text-[#BF5700]'
                   : 'text-[rgba(245,240,235,0.35)] hover:text-[rgba(245,240,235,0.65)]'
@@ -96,7 +96,7 @@ export function MobileBottomNav({ onMorePress }: { onMorePress?: () => void }) {
             >
               {/* Active indicator bar */}
               <span
-                className={`absolute top-0 h-[2px] w-8 rounded-b-full transition-opacity ${
+                className={`absolute top-0 left-1/2 -translate-x-1/2 h-[2px] w-8 rounded-b-full transition-opacity ${
                   active ? 'bg-[#BF5700] opacity-100' : 'opacity-0'
                 }`}
                 aria-hidden="true"
