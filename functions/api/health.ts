@@ -6,7 +6,22 @@
  * but preview aliases need a local Pages Function so smoke checks pass.
  */
 
-import { corsHeaders, ok, preflight } from './_utils';
+const corsHeaders: Record<string, string> = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, HEAD, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
+function ok(body: unknown): Response {
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  });
+}
+
+function preflight(): Response {
+  return new Response(null, { status: 204, headers: corsHeaders });
+}
 
 interface Env {
   API_VERSION?: string;
