@@ -6,6 +6,8 @@ vi.mock('next/font/google', () => ({
   JetBrains_Mono: () => ({ variable: '--font-jetbrains-mono' }),
   IBM_Plex_Mono: () => ({ variable: '--font-ibm-plex-mono' }),
   Bebas_Neue: () => ({ variable: '--font-bebas' }),
+  Syne: () => ({ variable: '--font-syne' }),
+  DM_Sans: () => ({ variable: '--font-dm-sans' }),
 }));
 
 import { metadata as homeMetadata } from '@/app/page';
