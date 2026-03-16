@@ -8,7 +8,9 @@
 /* BSI GLOBAL STYLES — Labs structure + portfolio atmosphere                   */
 /* ========================================================================== */
 
+/* Prevent white flash before dark theme paints */
 :root {
+  color-scheme: dark;
   /* ---- Semantic Aliases (reference bsi-brand.css tokens) ---- */
   --color-burnt-orange: var(--bsi-primary);
   --color-burnt-orange-600: var(--bsi-primary);

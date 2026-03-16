@@ -154,9 +154,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`dark ${cormorant.variable} ${oswald.variable} ${jetbrainsMono.variable} ${ibmPlexMono.variable} ${bebasNeue.variable} ${syne.variable} ${dmSans.variable}`}
     >
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* next/font/google self-hosts fonts at build time — no runtime Google Fonts connection needed */}
         <link rel="preconnect" href="https://customer-mpdvoybjqct2pzls.cloudflarestream.com" />
+        <link rel="dns-prefetch" href="https://a.espncdn.com" />
         {/* Static JSON-LD for SEO — hardcoded content, no user input */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdContent }} />
         <BreadcrumbJsonLd />
