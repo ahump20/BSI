@@ -16,6 +16,7 @@ import type { Env } from './shared/types';
 import { SECURITY_HEADERS, GHOST_REDIRECTS } from './shared/constants';
 import { logError, safeESPN } from './shared/helpers';
 import { corsOrigin, corsHeaders } from './shared/cors';
+import { securityMiddleware } from './shared/security';
 import { checkInMemoryRateLimit, checkPostRateLimit, maybeCleanupRateLimit } from './shared/rate-limit';
 import { proxyToPages } from './shared/proxy';
 import { requireApiKey, provisionKey, emailKey } from './shared/auth';
@@ -268,12 +269,7 @@ app.use('*', async (c, next) => {
 });
 
 // --- Middleware: Security headers ---
-app.use('*', async (c, next) => {
-  await next();
-  for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
-    c.res.headers.set(key, value);
-  }
-});
+app.use('*', securityMiddleware);
 
 // --- Middleware: Rate limiting on /api/* ---
 app.use('/api/*', async (c, next) => {

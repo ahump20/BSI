@@ -11,6 +11,7 @@
 
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
+import { securityMiddleware } from '../shared/security';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -453,6 +454,8 @@ function buildTransformStream(
 // ─── App ──────────────────────────────────────────────────────────────────────
 
 const app = new Hono<{ Bindings: Env }>().basePath('/api/intelligence');
+
+app.use('/*', securityMiddleware);
 
 app.use('/*', cors({
   origin: ['https://blazesportsintel.com', 'https://www.blazesportsintel.com'],
