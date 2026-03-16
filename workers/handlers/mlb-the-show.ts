@@ -169,50 +169,60 @@ export function summarizeHistoryPoints(
 }
 
 export async function handleShowSourceStatus(env: Env): Promise<Response> {
-  const cacheKey = buildCacheKey('status');
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(cached, 200, SHOW_CACHE_TTL.status, { 'X-Cache': 'HIT' });
-  }
+  try {
+    const cacheKey = buildCacheKey('status');
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(cached, 200, SHOW_CACHE_TTL.status, { 'X-Cache': 'HIT' });
+    }
 
-  const status = await resolveSourceStatus(env);
-  const payload = {
-    status,
-    meta: showMeta(status, 'BSI D1', !status.catalogReady),
-  };
-  await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.status);
-  return cachedJson(payload, 200, SHOW_CACHE_TTL.status, { 'X-Cache': 'MISS' });
+    const status = await resolveSourceStatus(env);
+    const payload = {
+      status,
+      meta: showMeta(status, 'BSI D1', !status.catalogReady),
+    };
+    await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.status);
+    return cachedJson(payload, 200, SHOW_CACHE_TTL.status, { 'X-Cache': 'MISS' });
+  } catch (err) {
+    console.error(err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }
 
 export async function handleShowMarketOverview(env: Env): Promise<Response> {
-  const cacheKey = buildCacheKey('overview');
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(cached, 200, SHOW_CACHE_TTL.overview, { 'X-Cache': 'HIT' });
+  try {
+    const cacheKey = buildCacheKey('overview');
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(cached, 200, SHOW_CACHE_TTL.overview, { 'X-Cache': 'HIT' });
+    }
+
+    const status = await resolveSourceStatus(env);
+    const overview = status.catalogReady
+      ? await getOverviewFromDb(env, status)
+      : {
+          totalCards: 0,
+          sellableCards: 0,
+          compatibilityMode: status.compatibilityMode,
+          topBuyNow: [],
+          topSellNow: [],
+          captainSpotlight: [],
+          newlyTracked: [],
+        };
+
+    const payload = {
+      overview,
+      collections: status.collectionsReady ? await listCollections(env, 18) : [],
+      captains: status.catalogReady ? await listCaptains(env, 8) : [],
+      meta: showMeta(status, 'BSI D1', !status.catalogReady),
+    };
+
+    await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.overview);
+    return cachedJson(payload, 200, SHOW_CACHE_TTL.overview, { 'X-Cache': 'MISS' });
+  } catch (err) {
+    console.error(err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
-
-  const status = await resolveSourceStatus(env);
-  const overview = status.catalogReady
-    ? await getOverviewFromDb(env, status)
-    : {
-        totalCards: 0,
-        sellableCards: 0,
-        compatibilityMode: status.compatibilityMode,
-        topBuyNow: [],
-        topSellNow: [],
-        captainSpotlight: [],
-        newlyTracked: [],
-      };
-
-  const payload = {
-    overview,
-    collections: status.collectionsReady ? await listCollections(env, 18) : [],
-    captains: status.catalogReady ? await listCaptains(env, 8) : [],
-    meta: showMeta(status, 'BSI D1', !status.catalogReady),
-  };
-
-  await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.overview);
-  return cachedJson(payload, 200, SHOW_CACHE_TTL.overview, { 'X-Cache': 'MISS' });
 }
 
 export const handleShowOverview = handleShowMarketOverview;
@@ -286,46 +296,51 @@ function filterLiveCards(
 }
 
 export async function handleShowCards(url: URL, env: Env): Promise<Response> {
-  const queryKey = url.searchParams.toString() || 'all';
-  const cacheKey = buildCacheKey('cards', queryKey);
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(cached, 200, SHOW_CACHE_TTL.cards, { 'X-Cache': 'HIT' });
-  }
+  try {
+    const queryKey = url.searchParams.toString() || 'all';
+    const cacheKey = buildCacheKey('cards', queryKey);
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(cached, 200, SHOW_CACHE_TTL.cards, { 'X-Cache': 'HIT' });
+    }
 
-  const status = await resolveSourceStatus(env);
-  const page = Math.max(Number(url.searchParams.get('page') || 1), 1);
-  const perPage = Math.min(Math.max(Number(url.searchParams.get('limit') || 24), 1), 60);
-  let result = status.catalogReady
-    ? await queryCardsFromDb(env, url.searchParams)
-    : { cards: [], page, perPage, totalCards: 0, totalPages: 1 };
+    const status = await resolveSourceStatus(env);
+    const page = Math.max(Number(url.searchParams.get('page') || 1), 1);
+    const perPage = Math.min(Math.max(Number(url.searchParams.get('limit') || 24), 1), 60);
+    let result = status.catalogReady
+      ? await queryCardsFromDb(env, url.searchParams)
+      : { cards: [], page, perPage, totalCards: 0, totalPages: 1 };
 
-  if (!status.catalogReady && allowLiveSource(env)) {
-    const liveCards = await fetchShowListingsPage(env, page).catch(() => []);
-    const filtered = filterLiveCards(liveCards, url.searchParams);
-    result = {
-      cards: filtered.slice(0, perPage),
-      page,
-      perPage,
-      totalCards: filtered.length,
-      totalPages: Math.max(Math.ceil(filtered.length / perPage), 1),
+    if (!status.catalogReady && allowLiveSource(env)) {
+      const liveCards = await fetchShowListingsPage(env, page).catch(() => []);
+      const filtered = filterLiveCards(liveCards, url.searchParams);
+      result = {
+        cards: filtered.slice(0, perPage),
+        page,
+        perPage,
+        totalCards: filtered.length,
+        totalPages: Math.max(Math.ceil(filtered.length / perPage), 1),
+      };
+    }
+
+    const payload = {
+      cards: result.cards,
+      page: result.page,
+      perPage: result.perPage,
+      totalPages: result.totalPages,
+      totalCards: result.totalCards,
+      supportedFilters: ['team', 'series', 'rarity', 'bats', 'position', 'captain', 'collection', 'wbc_only', 'market_status'],
+      meta: showMeta(status, 'BSI D1', !status.catalogReady, {
+        partial_catalog: !status.catalogReady,
+      }),
     };
+
+    await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.cards);
+    return cachedJson(payload, 200, SHOW_CACHE_TTL.cards, { 'X-Cache': 'MISS' });
+  } catch (err) {
+    console.error(err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
-
-  const payload = {
-    cards: result.cards,
-    page: result.page,
-    perPage: result.perPage,
-    totalPages: result.totalPages,
-    totalCards: result.totalCards,
-    supportedFilters: ['team', 'series', 'rarity', 'bats', 'position', 'captain', 'collection', 'wbc_only', 'market_status'],
-    meta: showMeta(status, 'BSI D1', !status.catalogReady, {
-      partial_catalog: !status.catalogReady,
-    }),
-  };
-
-  await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.cards);
-  return cachedJson(payload, 200, SHOW_CACHE_TTL.cards, { 'X-Cache': 'MISS' });
 }
 
 async function hydrateCard(env: Env, cardId: string, status: ShowSourceStatus) {
@@ -345,138 +360,168 @@ async function hydrateCard(env: Env, cardId: string, status: ShowSourceStatus) {
 }
 
 export async function handleShowCardDetail(cardId: string, env: Env): Promise<Response> {
-  const cacheKey = buildCacheKey('card', cardId);
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(cached, 200, SHOW_CACHE_TTL.card, { 'X-Cache': 'HIT' });
+  try {
+    const cacheKey = buildCacheKey('card', cardId);
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(cached, 200, SHOW_CACHE_TTL.card, { 'X-Cache': 'HIT' });
+    }
+
+    const status = await resolveSourceStatus(env);
+    let detail = await getCardDetailFromDb(env, cardId, status);
+
+    if (!detail && allowLiveSource(env)) {
+      detail = await hydrateCard(env, cardId, status);
+    }
+
+    if (!detail) {
+      return json({ error: 'Card not found', meta: showMeta(status, 'BSI D1', true) }, 404);
+    }
+
+    const payload = {
+      detail,
+      meta: showMeta(status, detail.card.sourceName || 'BSI D1', !status.catalogReady),
+    };
+
+    await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.card);
+    return cachedJson(payload, 200, SHOW_CACHE_TTL.card, { 'X-Cache': 'MISS' });
+  } catch (err) {
+    console.error(err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
-
-  const status = await resolveSourceStatus(env);
-  let detail = await getCardDetailFromDb(env, cardId, status);
-
-  if (!detail && allowLiveSource(env)) {
-    detail = await hydrateCard(env, cardId, status);
-  }
-
-  if (!detail) {
-    return json({ error: 'Card not found', meta: showMeta(status, 'BSI D1', true) }, 404);
-  }
-
-  const payload = {
-    detail,
-    meta: showMeta(status, detail.card.sourceName || 'BSI D1', !status.catalogReady),
-  };
-
-  await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.card);
-  return cachedJson(payload, 200, SHOW_CACHE_TTL.card, { 'X-Cache': 'MISS' });
 }
 
 export async function handleShowCardHistory(cardId: string, url: URL, env: Env): Promise<Response> {
-  const range = (url.searchParams.get('range') as '24h' | '7d' | '30d' | 'all' | null) || '30d';
-  const metric = (url.searchParams.get('metric') as 'sell' | 'buy' | 'spread' | 'sale' | null) || 'sell';
-  const cacheKey = buildCacheKey('history', `${cardId}:${range}:${metric}`);
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(cached, 200, SHOW_CACHE_TTL.history, { 'X-Cache': 'HIT' });
+  try {
+    const range = (url.searchParams.get('range') as '24h' | '7d' | '30d' | 'all' | null) || '30d';
+    const metric = (url.searchParams.get('metric') as 'sell' | 'buy' | 'spread' | 'sale' | null) || 'sell';
+    const cacheKey = buildCacheKey('history', `${cardId}:${range}:${metric}`);
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(cached, 200, SHOW_CACHE_TTL.history, { 'X-Cache': 'HIT' });
+    }
+
+    const status = await resolveSourceStatus(env);
+    let points = await getHistoryFromDb(env, cardId, range);
+
+    if (points.length === 0 && allowLiveSource(env)) {
+      await hydrateCard(env, cardId, status);
+      points = await getHistoryFromDb(env, cardId, range);
+    }
+
+    const payload = {
+      cardId,
+      metric,
+      points,
+      summary: summarizeHistoryPoints(points, metric),
+      meta: showMeta(status, 'BSI D1', points.length === 0),
+    };
+
+    await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.history);
+    return cachedJson(payload, 200, SHOW_CACHE_TTL.history, { 'X-Cache': 'MISS' });
+  } catch (err) {
+    console.error(err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
-
-  const status = await resolveSourceStatus(env);
-  let points = await getHistoryFromDb(env, cardId, range);
-
-  if (points.length === 0 && allowLiveSource(env)) {
-    await hydrateCard(env, cardId, status);
-    points = await getHistoryFromDb(env, cardId, range);
-  }
-
-  const payload = {
-    cardId,
-    metric,
-    points,
-    summary: summarizeHistoryPoints(points, metric),
-    meta: showMeta(status, 'BSI D1', points.length === 0),
-  };
-
-  await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.history);
-  return cachedJson(payload, 200, SHOW_CACHE_TTL.history, { 'X-Cache': 'MISS' });
 }
 
 export async function handleShowCollections(env: Env): Promise<Response> {
-  const cacheKey = buildCacheKey('collections');
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(cached, 200, SHOW_CACHE_TTL.collections, { 'X-Cache': 'HIT' });
-  }
+  try {
+    const cacheKey = buildCacheKey('collections');
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(cached, 200, SHOW_CACHE_TTL.collections, { 'X-Cache': 'HIT' });
+    }
 
-  const status = await resolveSourceStatus(env);
-  const collections = status.collectionsReady ? await listCollections(env, 60) : [];
-  const payload = {
-    collections,
-    meta: showMeta(status, 'BSI D1', !status.collectionsReady),
-  };
-  await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.collections);
-  return cachedJson(payload, 200, SHOW_CACHE_TTL.collections, { 'X-Cache': 'MISS' });
+    const status = await resolveSourceStatus(env);
+    const collections = status.collectionsReady ? await listCollections(env, 60) : [];
+    const payload = {
+      collections,
+      meta: showMeta(status, 'BSI D1', !status.collectionsReady),
+    };
+    await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.collections);
+    return cachedJson(payload, 200, SHOW_CACHE_TTL.collections, { 'X-Cache': 'MISS' });
+  } catch (err) {
+    console.error(err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }
 
 export async function handleShowCollectionDetail(collectionId: string, url: URL, env: Env): Promise<Response> {
-  const queryKey = url.searchParams.toString() || 'all';
-  const cacheKey = buildCacheKey('collection-detail', `${collectionId}:${queryKey}`);
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(cached, 200, SHOW_CACHE_TTL.collectionDetail, { 'X-Cache': 'HIT' });
+  try {
+    const queryKey = url.searchParams.toString() || 'all';
+    const cacheKey = buildCacheKey('collection-detail', `${collectionId}:${queryKey}`);
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(cached, 200, SHOW_CACHE_TTL.collectionDetail, { 'X-Cache': 'HIT' });
+    }
+
+    const status = await resolveSourceStatus(env);
+    const detail = await getCollectionDetailFromDb(env, collectionId, url.searchParams);
+    if (!detail) {
+      return json({ error: 'Collection not found', meta: showMeta(status, 'BSI D1', true) }, 404);
+    }
+
+    const payload = {
+      detail,
+      meta: showMeta(status, 'BSI D1', !status.collectionsReady),
+    };
+
+    await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.collectionDetail);
+    return cachedJson(payload, 200, SHOW_CACHE_TTL.collectionDetail, { 'X-Cache': 'MISS' });
+  } catch (err) {
+    console.error(err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
-
-  const status = await resolveSourceStatus(env);
-  const detail = await getCollectionDetailFromDb(env, collectionId, url.searchParams);
-  if (!detail) {
-    return json({ error: 'Collection not found', meta: showMeta(status, 'BSI D1', true) }, 404);
-  }
-
-  const payload = {
-    detail,
-    meta: showMeta(status, 'BSI D1', !status.collectionsReady),
-  };
-
-  await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.collectionDetail);
-  return cachedJson(payload, 200, SHOW_CACHE_TTL.collectionDetail, { 'X-Cache': 'MISS' });
 }
 
 export async function handleShowWatchEvents(url: URL, env: Env): Promise<Response> {
-  const queryKey = url.searchParams.toString() || 'all';
-  const cacheKey = buildCacheKey('watch-events', queryKey);
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(cached, 200, SHOW_CACHE_TTL.watchEvents, { 'X-Cache': 'HIT' });
+  try {
+    const queryKey = url.searchParams.toString() || 'all';
+    const cacheKey = buildCacheKey('watch-events', queryKey);
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(cached, 200, SHOW_CACHE_TTL.watchEvents, { 'X-Cache': 'HIT' });
+    }
+
+    const status = await resolveSourceStatus(env);
+    const events = await listWatchEvents(env, url.searchParams);
+    const payload = {
+      events,
+      meta: showMeta(status, 'BSI D1', !status.catalogReady),
+    };
+
+    await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.watchEvents);
+    return cachedJson(payload, 200, SHOW_CACHE_TTL.watchEvents, { 'X-Cache': 'MISS' });
+  } catch (err) {
+    console.error(err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
-
-  const status = await resolveSourceStatus(env);
-  const events = await listWatchEvents(env, url.searchParams);
-  const payload = {
-    events,
-    meta: showMeta(status, 'BSI D1', !status.catalogReady),
-  };
-
-  await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.watchEvents);
-  return cachedJson(payload, 200, SHOW_CACHE_TTL.watchEvents, { 'X-Cache': 'MISS' });
 }
 
 export async function handleShowTeamBuilderReference(env: Env): Promise<Response> {
-  const cacheKey = buildCacheKey('team-builder-reference');
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(cached, 200, SHOW_CACHE_TTL.builder, { 'X-Cache': 'HIT' });
-  }
+  try {
+    const cacheKey = buildCacheKey('team-builder-reference');
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(cached, 200, SHOW_CACHE_TTL.builder, { 'X-Cache': 'HIT' });
+    }
 
-  const status = await resolveSourceStatus(env);
-  const payload = {
-    slots: DD_ROSTER_SLOTS.map((s) => ({ key: s.id, label: s.label, group: s.group, accepts: s.accepts })),
-    captains: status.catalogReady ? await listCaptains(env, 30) : [],
-    collections: status.collectionsReady ? await listCollections(env, 24) : [],
-    parallelLevels: [...DD_PARALLEL_LEVELS],
-    parallelMods: [...DD_PARALLEL_MODS],
-    meta: showMeta(status, 'BSI D1', !status.catalogReady),
-  };
-  await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.builder);
-  return cachedJson(payload, 200, SHOW_CACHE_TTL.builder, { 'X-Cache': 'MISS' });
+    const status = await resolveSourceStatus(env);
+    const payload = {
+      slots: DD_ROSTER_SLOTS.map((s) => ({ key: s.id, label: s.label, group: s.group, accepts: s.accepts })),
+      captains: status.catalogReady ? await listCaptains(env, 30) : [],
+      collections: status.collectionsReady ? await listCollections(env, 24) : [],
+      parallelLevels: [...DD_PARALLEL_LEVELS],
+      parallelMods: [...DD_PARALLEL_MODS],
+      meta: showMeta(status, 'BSI D1', !status.catalogReady),
+    };
+    await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.builder);
+    return cachedJson(payload, 200, SHOW_CACHE_TTL.builder, { 'X-Cache': 'MISS' });
+  } catch (err) {
+    console.error(err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }
 
 function isBuildSelectionArray(value: unknown): value is DDBuildCardSelection[] {
@@ -484,51 +529,66 @@ function isBuildSelectionArray(value: unknown): value is DDBuildCardSelection[] 
 }
 
 export async function handleShowBuildCreate(req: Request, env: Env): Promise<Response> {
-  const body = await req.json().catch(() => null) as { title?: string; captainCardId?: string | null; cards?: unknown } | null;
-  if (!body || typeof body.title !== 'string' || !isBuildSelectionArray(body.cards)) {
-    return json({ error: 'Invalid build payload' }, 400);
+  try {
+    const body = await req.json().catch(() => null) as { title?: string; captainCardId?: string | null; cards?: unknown } | null;
+    if (!body || typeof body.title !== 'string' || !isBuildSelectionArray(body.cards)) {
+      return json({ error: 'Invalid build payload' }, 400);
+    }
+
+    const now = new Date().toISOString();
+    const build: DDBuildRecord = {
+      buildId: makeBuildId(),
+      title: body.title.trim() || 'Diamond Dynasty Build',
+      seasonLabel: 'MLB The Show 26',
+      captainCardId: body.captainCardId ?? null,
+      cards: body.cards,
+      summary: summarizeBuild(body.cards),
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    await saveBuild(env, build);
+    return json({ build, meta: { source: 'BSI D1', fetched_at: now, timezone: 'America/Chicago' } }, 201);
+  } catch (err) {
+    console.error(err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
-
-  const now = new Date().toISOString();
-  const build: DDBuildRecord = {
-    buildId: makeBuildId(),
-    title: body.title.trim() || 'Diamond Dynasty Build',
-    seasonLabel: 'MLB The Show 26',
-    captainCardId: body.captainCardId ?? null,
-    cards: body.cards,
-    summary: summarizeBuild(body.cards),
-    createdAt: now,
-    updatedAt: now,
-  };
-
-  await saveBuild(env, build);
-  return json({ build, meta: { source: 'BSI D1', fetched_at: now, timezone: 'America/Chicago' } }, 201);
 }
 
 export const handleShowBuildSave = handleShowBuildCreate;
 
 export async function handleShowBuildGet(buildId: string, env: Env): Promise<Response> {
-  const cacheKey = buildCacheKey('build', buildId);
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(cached, 200, SHOW_CACHE_TTL.build, { 'X-Cache': 'HIT' });
-  }
+  try {
+    const cacheKey = buildCacheKey('build', buildId);
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(cached, 200, SHOW_CACHE_TTL.build, { 'X-Cache': 'HIT' });
+    }
 
-  const build = await getBuild(env, buildId);
-  if (!build) {
-    return json({ error: 'Build not found' }, 404);
-  }
+    const build = await getBuild(env, buildId);
+    if (!build) {
+      return json({ error: 'Build not found' }, 404);
+    }
 
-  const payload = {
-    build,
-    meta: { source: 'BSI D1', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
-  };
-  await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.build);
-  return cachedJson(payload, 200, SHOW_CACHE_TTL.build, { 'X-Cache': 'MISS' });
+    const payload = {
+      build,
+      meta: { source: 'BSI D1', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
+    };
+    await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.build);
+    return cachedJson(payload, 200, SHOW_CACHE_TTL.build, { 'X-Cache': 'MISS' });
+  } catch (err) {
+    console.error(err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }
 
 export async function handleShowRebuildCollections(env: Env): Promise<Response> {
-  await rebuildCollections(env);
-  const status = await resolveSourceStatus(env);
-  return json({ ok: true, meta: showMeta(status, 'BSI D1') });
+  try {
+    await rebuildCollections(env);
+    const status = await resolveSourceStatus(env);
+    return json({ ok: true, meta: showMeta(status, 'BSI D1') });
+  } catch (err) {
+    console.error(err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }
