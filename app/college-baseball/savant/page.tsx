@@ -573,7 +573,8 @@ function FilterSelect({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="bg-surface-light border border-border rounded-sm px-2.5 py-1.5 text-xs text-text-tertiary font-mono appearance-none cursor-pointer hover:border-border-strong transition-colors focus:outline-none focus:border-burnt-orange/40"
+        aria-label={`Filter by ${label.toLowerCase()}`}
+        className="bg-surface-light border border-border rounded-sm px-2.5 py-1.5 text-xs text-text-tertiary font-mono appearance-none cursor-pointer hover:border-border-strong transition-colors focus:outline-none focus:border-burnt-orange/40 focus:ring-1 focus:ring-burnt-orange/30"
       >
         {options.map(opt => (
           <option key={opt} value={opt} className="bg-background-secondary text-text-primary">
