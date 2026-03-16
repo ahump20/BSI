@@ -111,6 +111,7 @@ export default function SavantHubPage() {
   const [activeTab, setActiveTab] = useState<Tab>('batting');
   const [conferenceFilter, setConferenceFilter] = useState('');
   const [positionFilter, setPositionFilter] = useState('');
+  const [playerSearch, setPlayerSearch] = useState('');
 
   const { data: battingRes, loading: battingLoading } =
     useSportData<LeaderboardResponse>('/api/savant/batting/leaderboard?limit=100');
@@ -157,8 +158,16 @@ export default function SavantHubPage() {
     if (positionFilter) {
       filtered = filtered.filter(r => r.position === positionFilter);
     }
+    if (playerSearch.trim()) {
+      const q = playerSearch.trim().toLowerCase();
+      filtered = filtered.filter(
+        r =>
+          (r.player_name as string)?.toLowerCase().includes(q) ||
+          (r.team as string)?.toLowerCase().includes(q)
+      );
+    }
     return filtered;
-  }, [conferenceFilter, positionFilter]);
+  }, [conferenceFilter, positionFilter, playerSearch]);
 
   const filteredBatting = useMemo(() => applyFilters(battingRes?.data ?? []), [applyFilters, battingRes]);
   const filteredPitching = useMemo(() => applyFilters(pitchingRes?.data ?? []), [applyFilters, pitchingRes]);
@@ -220,6 +229,26 @@ export default function SavantHubPage() {
                     style={{ color: 'var(--svt-text-muted, var(--bsi-dust))' }}
                   >
                     <span className="uppercase tracking-wider" style={{ fontFamily: 'var(--bsi-font-display)' }}>Glossary</span>
+                    <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                  <Link
+                    href="/college-baseball/savant/methodology"
+                    className="inline-flex items-center gap-2 text-sm transition-colors group"
+                    style={{ color: 'var(--svt-text-muted, var(--bsi-dust))' }}
+                  >
+                    <span className="uppercase tracking-wider" style={{ fontFamily: 'var(--bsi-font-display)' }}>Methodology</span>
+                    <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                  <Link
+                    href="/college-baseball/savant/conference-comparison"
+                    className="inline-flex items-center gap-2 text-sm transition-colors group"
+                    style={{ color: 'var(--svt-text-muted, var(--bsi-dust))' }}
+                  >
+                    <span className="uppercase tracking-wider" style={{ fontFamily: 'var(--bsi-font-display)' }}>Compare Conferences</span>
                     <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M5 12h14M12 5l7 7-7 7" />
                     </svg>
@@ -328,9 +357,50 @@ export default function SavantHubPage() {
                     options={positions}
                     allLabel="All Positions"
                   />
-                  {(conferenceFilter || positionFilter) && (
+                  <div className="flex items-center gap-1.5 ml-auto">
+                    <input
+                      type="text"
+                      value={playerSearch}
+                      onChange={(e) => setPlayerSearch(e.target.value)}
+                      placeholder="Search player or team..."
+                      className="px-3 py-1.5 text-xs font-mono w-48 sm:w-56 outline-none placeholder:text-text-muted"
+                      style={{
+                        background: 'var(--surface-press-box, #111)',
+                        color: 'var(--bsi-bone, #F5F2EB)',
+                        border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))',
+                      }}
+                      aria-label="Search players or teams"
+                    />
+                    {isPro ? (
+                      <a
+                        href={`/api/savant/${activeTab === 'pitching' ? 'pitching' : 'batting'}/export?format=csv${conferenceFilter ? `&conference=${encodeURIComponent(conferenceFilter)}` : ''}`}
+                        download
+                        className="px-3 py-1.5 text-[10px] font-mono uppercase tracking-wider whitespace-nowrap transition-colors hover:opacity-80"
+                        style={{
+                          background: 'var(--bsi-primary, #BF5700)',
+                          color: 'var(--bsi-bone, #F5F2EB)',
+                        }}
+                      >
+                        Export CSV
+                      </a>
+                    ) : (
+                      <Link
+                        href="/pricing"
+                        className="px-3 py-1.5 text-[10px] font-mono uppercase tracking-wider whitespace-nowrap transition-colors hover:opacity-80"
+                        style={{
+                          background: 'var(--surface-press-box, #111)',
+                          color: 'var(--bsi-dust, #C4B8A5)',
+                          border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))',
+                        }}
+                        title="CSV export requires Pro subscription"
+                      >
+                        Export CSV ↗
+                      </Link>
+                    )}
+                  </div>
+                  {(conferenceFilter || positionFilter || playerSearch) && (
                     <button
-                      onClick={() => { setConferenceFilter(''); setPositionFilter(''); }}
+                      onClick={() => { setConferenceFilter(''); setPositionFilter(''); setPlayerSearch(''); }}
                       className="text-[10px] font-mono text-burnt-orange hover:text-ember transition-colors"
                     >
                       Clear filters

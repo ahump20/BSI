@@ -156,6 +156,7 @@ import {
   handleSavantPlayer,
   handleSavantParkFactors,
   handleSavantConferenceStrength,
+  handleSavantExport,
 } from './handlers/savant';
 import {
   handleNILLeaderboard,
@@ -595,6 +596,8 @@ app.get('/api/savant/pitching/leaderboard', (c) => handleSavantPitchingLeaderboa
 app.get('/api/savant/player/:id', (c) => handleSavantPlayer(c.req.param('id'), new URL(c.req.url), c.env, c.req.raw.headers));
 app.get('/api/savant/park-factors', (c) => handleSavantParkFactors(new URL(c.req.url), c.env, c.req.raw.headers));
 app.get('/api/savant/conference-strength', (c) => handleSavantConferenceStrength(new URL(c.req.url), c.env, c.req.raw.headers));
+app.get('/api/savant/batting/export', (c) => handleSavantExport('batting', new URL(c.req.url), c.env, c.req.raw.headers));
+app.get('/api/savant/pitching/export', (c) => handleSavantExport('pitching', new URL(c.req.url), c.env, c.req.raw.headers));
 
 // --- NIL Intelligence ---
 app.get('/api/nil/leaderboard', (c) => handleNILLeaderboard(new URL(c.req.url), c.env, c.req.raw.headers));

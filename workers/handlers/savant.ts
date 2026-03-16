@@ -461,6 +461,91 @@ export async function handleSavantParkFactors(url: URL, env: Env, headers?: Head
 }
 
 // ---------------------------------------------------------------------------
+// CSV Export (Pro tier only)
+// ---------------------------------------------------------------------------
+
+/**
+ * GET /api/savant/batting/export?format=csv
+ * GET /api/savant/pitching/export?format=csv
+ *
+ * Pro-tier only. Returns full leaderboard as CSV download.
+ */
+export async function handleSavantExport(
+  type: 'batting' | 'pitching',
+  url: URL,
+  env: Env,
+  headers?: Headers
+): Promise<Response> {
+  const tier = await resolveTier(url, headers ?? new Headers(), env);
+  if (tier !== 'pro') {
+    return json(
+      {
+        error: 'CSV export requires a Pro subscription.',
+        upgrade_url: '/pricing',
+        meta: savantMeta('bsi-savant', false),
+      },
+      403
+    );
+  }
+
+  const conference = url.searchParams.get('conference') || '';
+  const minThreshold = type === 'batting'
+    ? Math.max(0, parseInt(url.searchParams.get('min_pa') || '25', 10) || 25)
+    : Math.max(0, parseFloat(url.searchParams.get('min_ip') || '10') || 10);
+
+  try {
+    const table = type === 'batting' ? 'cbb_batting_advanced' : 'cbb_pitching_advanced';
+    const thresholdCol = type === 'batting' ? 'pa' : 'ip';
+    let query = `SELECT * FROM ${table} WHERE season = ? AND ${thresholdCol} >= ?`;
+    const binds: (string | number)[] = [SEASON, minThreshold];
+
+    if (conference) {
+      query += ' AND conference = ?';
+      binds.push(conference);
+    }
+
+    const sortCol = type === 'batting' ? 'woba' : 'fip';
+    const sortDir = type === 'batting' ? 'DESC' : 'ASC';
+    query += ` ORDER BY ${sortCol} ${sortDir}`;
+
+    const { results } = await env.DB.prepare(query).bind(...binds).all();
+
+    if (!results.length) {
+      return json({ error: 'No data matching filters', meta: savantMeta('bsi-savant', false) }, 404);
+    }
+
+    // Build CSV
+    const columns = Object.keys(results[0]);
+    const csvRows = [columns.join(',')];
+    for (const row of results) {
+      const values = columns.map(col => {
+        const val = (row as Record<string, unknown>)[col];
+        if (val === null || val === undefined) return '';
+        const str = String(val);
+        return str.includes(',') || str.includes('"') ? `"${str.replace(/"/g, '""')}"` : str;
+      });
+      csvRows.push(values.join(','));
+    }
+
+    const csv = csvRows.join('\n');
+    const filename = `bsi-savant-${type}-${SEASON}${conference ? `-${conference}` : ''}.csv`;
+
+    return new Response(csv, {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/csv; charset=utf-8',
+        'Content-Disposition': `attachment; filename="${filename}"`,
+        'X-BSI-Source': 'bsi-savant',
+        'X-BSI-Timestamp': new Date().toISOString(),
+      },
+    });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Unknown error';
+    return json({ error: 'Failed to export CSV', detail: msg }, 500);
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Conference Strength
 // ---------------------------------------------------------------------------
 
