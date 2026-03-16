@@ -36,7 +36,7 @@ function tierColor(tier: string | undefined): string {
   switch ((tier || '').toLowerCase()) {
     case 'elite': return 'text-burnt-orange';
     case 'high': return 'text-green-400';
-    case 'mid': return 'text-blue-400';
+    case 'mid': return 'text-[var(--heritage-columbia-blue)]';
     default: return 'text-text-tertiary';
   }
 }

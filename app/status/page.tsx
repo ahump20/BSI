@@ -39,7 +39,7 @@ function getOverallFromEndpoints(endpoints: EndpointStatus[]): 'healthy' | 'degr
 }
 
 const overallConfig = {
-  healthy: { label: 'All Systems Operational', color: 'text-green-400', bg: 'bg-green-400/10 border-green-400/30' },
+  healthy: { label: 'All Systems Operational', color: 'text-[var(--bsi-primary)]', bg: 'bg-[var(--bsi-primary)]/10 border-[var(--bsi-primary)]/30' },
   degraded: { label: 'Partial Degradation', color: 'text-yellow-400', bg: 'bg-yellow-400/10 border-yellow-400/30' },
   down: { label: 'Major Outage', color: 'text-red-400', bg: 'bg-red-400/10 border-red-400/30' },
 };
@@ -137,7 +137,7 @@ export default function StatusPage() {
                 <Card padding="lg" className={`mb-8 border ${overall?.bg}`}>
                   <div className="flex items-center gap-3">
                     <span className={`w-3 h-3 rounded-full ${
-                      data.overall === 'healthy' ? 'bg-green-400' :
+                      data.overall === 'healthy' ? 'bg-[var(--bsi-primary)]' :
                       data.overall === 'degraded' ? 'bg-yellow-400' : 'bg-red-400'
                     }`} />
                     <span className={`text-lg font-semibold ${overall?.color}`}>
@@ -164,7 +164,7 @@ export default function StatusPage() {
                           {endpoint.name}
                         </span>
                         <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${
-                          endpoint.status === 'ok' ? 'bg-green-400' :
+                          endpoint.status === 'ok' ? 'bg-[var(--bsi-primary)]' :
                           endpoint.status === 'timeout' ? 'bg-yellow-400' : 'bg-red-400'
                         }`} />
                       </div>

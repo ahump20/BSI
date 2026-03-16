@@ -573,7 +573,7 @@ export default function SavantVisualsPage() {
 
                           {tool.available && (
                             <div className="mt-3 flex items-center gap-1.5">
-                              <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                              <span className="w-1.5 h-1.5 rounded-full bg-[var(--bsi-primary)]" />
                               <span className="text-[9px] font-mono text-text-muted uppercase tracking-wider">
                                 {activeViz === tool.id ? 'Active' : 'Click to explore'}
                               </span>

@@ -32,7 +32,7 @@ interface FeedResponse {
 const SIGNAL_CONFIG = {
   injury_lineup:   { label: 'Injury',    short: 'INJ', color: '#ef4444', bg: 'bg-red-500/10',    border: 'border-red-500/25',    text: 'text-red-400' },
   transfer_portal: { label: 'Portal',    short: 'PRT', color: '#f59e0b', bg: 'bg-amber-500/10',  border: 'border-amber-500/25',  text: 'text-amber-400' },
-  recruiting:      { label: 'Recruiting',short: 'REC', color: '#a855f7', bg: 'bg-purple-500/10', border: 'border-purple-500/25', text: 'text-purple-400' },
+  recruiting:      { label: 'Recruiting',short: 'REC', color: '#4B9CD3', bg: 'bg-[var(--heritage-columbia-blue)]/10', border: 'border-[var(--heritage-columbia-blue)]/25', text: 'text-[var(--heritage-columbia-blue)]' },
   sentiment:       { label: 'Sentiment', short: 'SNT', color: '#10b981', bg: 'bg-emerald-500/10',border: 'border-emerald-500/25',text: 'text-emerald-400' },
   general:         { label: 'General',   short: 'GEN', color: '#6b7280', bg: 'bg-zinc-500/10',   border: 'border-zinc-500/25',   text: 'text-zinc-400' },
 } as const;

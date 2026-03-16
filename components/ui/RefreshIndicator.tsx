@@ -45,13 +45,13 @@ export function RefreshIndicator({
   return (
     <div className={`flex items-center gap-2 text-xs text-text-muted ${className}`}>
       <span className="relative flex h-2 w-2">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--bsi-primary)] opacity-75" />
+        <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--bsi-primary)]" />
       </span>
       <span>Live &middot; refreshing in {secondsLeft}s</span>
       <div className="w-12 h-1 bg-surface rounded-full overflow-hidden">
         <div
-          className="h-full bg-green-400/50 rounded-full transition-all duration-1000 ease-linear"
+          className="h-full bg-[var(--bsi-primary)]/50 rounded-full transition-all duration-1000 ease-linear"
           style={{ width: `${progress}%` }}
         />
       </div>

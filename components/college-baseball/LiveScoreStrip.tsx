@@ -315,7 +315,7 @@ export function LiveScoreStrip() {
               </h2>
               {liveCount > 0 && (
                 <Badge variant="success" className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
+                  <span className="w-1.5 h-1.5 bg-[var(--bsi-primary)] rounded-full animate-pulse" />
                   {liveCount} Live
                 </Badge>
               )}

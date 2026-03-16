@@ -1095,7 +1095,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   const teamPlayers = nilLeaderboardData.data.filter(p => p.team === meta?.name);
                   const totalValue = teamPlayers.reduce((sum, p) => sum + p.estimated_mid, 0);
                   const formatNIL = (v: number) => v >= 1_000_000 ? `$${(v / 1_000_000).toFixed(1)}M` : v >= 1_000 ? `$${Math.round(v / 1_000)}K` : `$${v}`;
-                  const tierColors: Record<string, string> = { elite: 'text-burnt-orange', high: 'text-green-400', mid: 'text-blue-400', emerging: 'text-yellow-400' };
+                  const tierColors: Record<string, string> = { elite: 'text-burnt-orange', high: 'text-green-400', mid: 'text-[var(--heritage-columbia-blue)]', emerging: 'text-yellow-400' };
                   return (
                     <ScrollReveal direction="up" className="mt-6">
                       <Card padding="none" className="overflow-hidden">

@@ -40,17 +40,17 @@ export function ScheduleGameCard({ game }: { game: ScheduleGame }) {
   return (
     <Link href={`/college-baseball/game/${game.id}`} className="block">
       <div className={`bg-surface-light rounded-sm border transition-all hover:border-burnt-orange hover:bg-surface ${
-        isLive ? 'border-green-500/30' : 'border-border'
+        isLive ? 'border-[var(--bsi-primary)]/30' : 'border-border'
       }`}>
         <div className={`px-3 py-1.5 rounded-t-sm flex items-center justify-between ${
-          isLive ? 'bg-green-500/10' : isFinal ? 'bg-surface-light' : 'bg-burnt-orange/10'
+          isLive ? 'bg-[var(--bsi-primary)]/10' : isFinal ? 'bg-surface-light' : 'bg-burnt-orange/10'
         }`}>
           <span className={`text-xs font-semibold uppercase ${
-            isLive ? 'text-green-400' : isFinal ? 'text-text-muted' : 'text-burnt-orange'
+            isLive ? 'text-[var(--bsi-primary)]' : isFinal ? 'text-text-muted' : 'text-burnt-orange'
           }`}>
             {isLive ? (
               <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
+                <span className="w-1.5 h-1.5 bg-[var(--bsi-primary)] rounded-full animate-pulse" />
                 {game.inning ? `Inn ${game.inning}` : 'Live'}
               </span>
             ) : isFinal ? 'Final' : game.time}

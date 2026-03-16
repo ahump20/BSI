@@ -38,7 +38,7 @@ function tierBadge(tier: string): { text: string; color: string } {
   switch (tier) {
     case 'elite': return { text: 'Elite', color: 'text-burnt-orange' };
     case 'high': return { text: 'High', color: 'text-green-400' };
-    case 'mid': return { text: 'Mid', color: 'text-blue-400' };
+    case 'mid': return { text: 'Mid', color: 'text-[var(--heritage-columbia-blue)]' };
     case 'emerging': return { text: 'Emerging', color: 'text-yellow-400' };
     default: return { text: 'Dev', color: 'text-text-muted' };
   }

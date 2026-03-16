@@ -63,10 +63,10 @@ const SIGNAL_CONFIG: Record<string, {
   },
   recruiting: {
     label: 'Recruiting',
-    color: 'text-purple-400',
-    bg: 'bg-purple-500/10',
-    border: 'border-purple-500/25',
-    dot: 'bg-purple-400',
+    color: 'text-[var(--heritage-columbia-blue)]',
+    bg: 'bg-[var(--heritage-columbia-blue)]/10',
+    border: 'border-[var(--heritage-columbia-blue)]/25',
+    dot: 'bg-[var(--heritage-columbia-blue)]',
   },
   sentiment: {
     label: 'Sentiment',

@@ -624,7 +624,7 @@ export default function CollegeBaseballPage() {
                     {filteredGames.some((g) => g.status === 'live') && (
                       <div className="mb-6">
                         <h3 className="text-sm font-semibold text-text-primary mb-3 flex items-center gap-2">
-                          <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                          <span className="w-2 h-2 bg-[var(--bsi-primary)] rounded-full animate-pulse" />
                           Live Games
                         </h3>
                         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">

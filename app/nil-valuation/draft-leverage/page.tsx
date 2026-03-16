@@ -47,8 +47,8 @@ const QUADRANTS: QuadrantInfo[] = [
     title: 'Hidden Gems',
     subtitle: 'Low NIL + High Draft',
     description: 'Elite on-field producers whose NIL value hasn\'t caught up to their talent. The market inefficiency window is closing.',
-    color: 'text-blue-400',
-    borderColor: 'border-l-blue-400',
+    color: 'text-[var(--heritage-columbia-blue)]',
+    borderColor: 'border-l-[var(--heritage-columbia-blue)]',
   },
   {
     key: 'high-nil-low-draft',
