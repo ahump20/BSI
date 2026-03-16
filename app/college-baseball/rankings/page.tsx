@@ -454,8 +454,32 @@ export default function CollegeBaseballRankingsPage() {
               </ScrollReveal>
             )}
 
+            {/* Savant Cross-Link */}
+            <div className="mt-10">
+              <Link
+                href="/college-baseball/savant"
+                className="block p-4 transition-colors group"
+                style={{ background: 'var(--surface-dugout, #161616)', border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))' }}
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="heritage-stamp text-[10px]" style={{ color: 'var(--bsi-primary, #BF5700)' }}>BSI SAVANT</span>
+                    <p className="font-oswald uppercase text-sm tracking-wider mt-1" style={{ color: 'var(--bsi-bone, #F5F2EB)' }}>
+                      Rankings only tell half the story
+                    </p>
+                    <p className="font-cormorant text-xs mt-1" style={{ color: 'var(--bsi-dust, #C4B8A5)' }}>
+                      Park-adjusted wOBA, wRC+, FIP — the metrics that predict who&apos;s real and who&apos;s due for regression
+                    </p>
+                  </div>
+                  <svg viewBox="0 0 24 24" className="w-5 h-5 opacity-40 group-hover:opacity-70 group-hover:translate-x-1 transition-all shrink-0" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: 'var(--bsi-primary, #BF5700)' }}>
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </Link>
+            </div>
+
             {/* Data Attribution */}
-            <div className="mt-12 pt-4 border-t border-white/[0.06]">
+            <div className="mt-6 pt-4 border-t border-white/[0.06]">
               <p className="text-[11px] font-mono text-text-muted/50 text-center">
                 Official polls &middot; D1Baseball{rankings && <> &middot; {formatTimestamp(rankings.lastUpdated)}</>} &middot; Updated weekly
               </p>
