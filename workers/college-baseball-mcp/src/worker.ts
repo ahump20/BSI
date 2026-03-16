@@ -1088,22 +1088,39 @@ async function handleLeaderboard(
   const cacheKey = `leaderboard:${metric}:${type}:${limit}`;
 
   return kvCached(env, cacheKey, 21600, async () => {
-    // Try BSI savant leaderboard first
+    // Try BSI savant leaderboard first (routes: /api/savant/batting/leaderboard, /api/savant/pitching/leaderboard)
     let bsiData: Record<string, unknown> | null = null;
     try {
       const conf = args.conference
         ? `&conference=${encodeURIComponent(args.conference)}`
         : '';
+      const sortDir = type === 'pitching' ? 'asc' : 'desc';
       bsiData = (await bsiFetch(
-        `/api/college-baseball/sabermetrics/${type}?metric=${metric}&limit=${limit}${conf}`,
+        `/api/savant/${type}/leaderboard?metric=${metric}&limit=${limit}&sort=${sortDir}${conf}`,
         env
       )) as Record<string, unknown>;
     } catch {
       // BSI unavailable — fall through to ESPN leaders
     }
 
-    if (bsiData && !bsiData.error) {
-      return bsiData;
+    if (bsiData && !bsiData.error && Array.isArray((bsiData as Record<string, unknown>).data)) {
+      // Reshape to match expected MCP output format
+      const rows = (bsiData as Record<string, unknown>).data as Record<string, unknown>[];
+      return {
+        leaders: rows.map((r, i) => ({
+          rank: i + 1,
+          player_name: r.player_name,
+          team: r.team,
+          conference: r.conference,
+          position: r.position,
+          value: r[metric] ?? r.woba ?? r.fip,
+          ...r,
+        })),
+        metric,
+        type,
+        total: (bsiData as Record<string, unknown>).total,
+        meta: (bsiData as Record<string, unknown>).meta,
+      };
     }
 
     // Fallback: ESPN traditional leaders

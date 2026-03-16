@@ -185,13 +185,17 @@ const config: Config = {
         '22': '5.5rem',
       },
       borderRadius: {
-        'sm': '0.25rem',
-        'md': '0.5rem',
-        'lg': '0.75rem',
-        'xl': '1rem',
-        '2xl': '1.25rem',
-        '3xl': '1.5rem',
-        '4xl': '2rem',
+        // Heritage Design System v2.1 — max 2px border-radius sitewide
+        none: '0',
+        'sm': '2px',
+        DEFAULT: '2px',
+        'md': '2px',
+        'lg': '2px',
+        'xl': '2px',
+        '2xl': '2px',
+        '3xl': '2px',
+        '4xl': '2px',
+        'full': '9999px', // Preserve for avatars/badges
       },
       boxShadow: {
         'glow-sm': '0 0 20px rgba(191, 87, 0, 0.3)',
