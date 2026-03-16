@@ -25,9 +25,9 @@ if (!existsSync(OUT_DIR)) mkdirSync(OUT_DIR, { recursive: true });
 // ─── Brand colors ───────────────────────────────────────────
 const MIDNIGHT = '#0D0D0D';
 const CHARCOAL = '#1A1A1A';
-const BURNT_ORANGE = '#BF5700';
-const EMBER = '#FF6B35';
-const TEXAS_SOIL = '#8B4513';
+const _BURNT_ORANGE = '#BF5700';
+const _EMBER = '#FF6B35';
+const _TEXAS_SOIL = '#8B4513';
 const BONE = '#F5F0EB';
 const WARM_GRAY = '#A89F95';
 
@@ -107,7 +107,7 @@ function generateSvg(slug, title, type, layoutIdx) {
 
   // Angle and position for decorative elements based on hash
   const h = hashSlug(slug);
-  const angle = (h % 60) - 30; // -30 to 30 degrees
+  const _angle = (h % 60) - 30; // -30 to 30 degrees
   const xShift = (h % 200) + 600;
 
   // Common elements
@@ -252,7 +252,7 @@ async function main() {
 
   // Now update page.tsx metadata to point to unique images
   let updated = 0;
-  for (const { slug, imagePath, pagePath } of updates) {
+  for (const { slug: _slug, imagePath, pagePath } of updates) {
     let src = readFileSync(pagePath, 'utf-8');
 
     // Replace generic OG image with unique one

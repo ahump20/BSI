@@ -31,7 +31,7 @@ describe('Pages Function /api/health', () => {
   it('handles preflight requests', async () => {
     const response = onRequestOptions();
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(204);
     expect(response.headers.get('Access-Control-Allow-Methods')).toContain('GET');
   });
 

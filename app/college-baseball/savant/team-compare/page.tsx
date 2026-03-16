@@ -36,8 +36,8 @@ const COMPARE_METRICS: {
   { key: 'woba', label: 'wOBA', higherBetter: true, format: (v) => v?.toFixed(3) ?? '—', category: 'batting' },
   { key: 'wrc_plus', label: 'wRC+', higherBetter: true, format: (v) => Math.round(v)?.toString() ?? '—', category: 'batting' },
   { key: 'ops', label: 'OPS', higherBetter: true, format: (v) => v?.toFixed(3) ?? '—', category: 'batting' },
-  { key: 'bb_pct', label: 'BB%', higherBetter: true, format: (v) => (v * 100)?.toFixed(1) + '%' ?? '—', category: 'batting' },
-  { key: 'k_pct', label: 'K%', higherBetter: false, format: (v) => (v * 100)?.toFixed(1) + '%' ?? '—', category: 'batting' },
+  { key: 'bb_pct', label: 'BB%', higherBetter: true, format: (v) => (v * 100).toFixed(1) + '%', category: 'batting' },
+  { key: 'k_pct', label: 'K%', higherBetter: false, format: (v) => (v * 100).toFixed(1) + '%', category: 'batting' },
   { key: 'iso', label: 'ISO', higherBetter: true, format: (v) => v?.toFixed(3) ?? '—', category: 'batting' },
   { key: 'era', label: 'ERA', higherBetter: false, format: (v) => v?.toFixed(2) ?? '—', category: 'pitching' },
   { key: 'fip', label: 'FIP', higherBetter: false, format: (v) => v?.toFixed(2) ?? '—', category: 'pitching' },
@@ -109,8 +109,8 @@ export default function TeamComparePage() {
           fetch(`/api/college-baseball/teams/${leftSlug}/sabermetrics`),
           fetch(`/api/college-baseball/teams/${rightSlug}/sabermetrics`),
         ]);
-        const lJson = await lRes.json();
-        const rJson = await rRes.json();
+        const lJson = (await lRes.json()) as TeamSaber & { batting?: TeamSaber };
+        const rJson = (await rRes.json()) as TeamSaber & { batting?: TeamSaber };
         setLeftData(lJson.batting ?? lJson);
         setRightData(rJson.batting ?? rJson);
       } catch {

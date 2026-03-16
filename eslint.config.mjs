@@ -20,7 +20,7 @@ export default tseslint.config(
   },
   ...tseslint.configs.recommended,
   {
-    files: ['**/*.{ts,tsx,js,jsx}'],
+    files: ['**/*.{ts,tsx,js,jsx,mjs}'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',

@@ -193,7 +193,7 @@ async function deployBranch(branch) {
   };
 }
 
-async function runSmoke({ previewUrl, previewLabel, productionUrl, productionLabel, headed, artifactDir }) {
+async function runSmoke({ previewUrl, previewLabel: _previewLabel, productionUrl: _productionUrl, productionLabel: _productionLabel, headed, artifactDir: _artifactDir }) {
   const args = ['run', 'gate:release', '--'];
 
   if (headed) {
