@@ -117,7 +117,7 @@ function createSummary(args) {
     production: null,
     smokeChecks: {
       prePromotion: {
-        status: args.previewOnly ? 'skipped' : 'pending',
+        status: 'pending',
         previewUrl: '',
         productionUrl: args.productionUrl || '',
       },
@@ -206,6 +206,21 @@ async function runSmoke({ previewUrl, previewLabel, productionUrl, productionLab
   await runCommand(NPM, args, 'smoke:homepage');
 }
 
+async function runUrlSmoke(baseUrl) {
+  const previousBaseUrl = process.env.BSI_BASE_URL;
+  process.env.BSI_BASE_URL = baseUrl;
+
+  try {
+    await runCommand('bash', ['scripts/post-deploy-smoke.sh'], `post-deploy smoke for ${baseUrl}`);
+  } finally {
+    if (previousBaseUrl === undefined) {
+      delete process.env.BSI_BASE_URL;
+    } else {
+      process.env.BSI_BASE_URL = previousBaseUrl;
+    }
+  }
+}
+
 async function runGuardedDeploy(args, summary) {
   logStep('Building BSI');
   await runCommand(NPM, ['run', 'build'], 'npm run build');
@@ -216,6 +231,11 @@ async function runGuardedDeploy(args, summary) {
   summary.preview = preview;
   console.log(`Preview alias: ${preview.aliasUrl || '(none)'}`);
   console.log(`Preview deployment: ${preview.deploymentUrl || '(none)'}`);
+  summary.smokeChecks.prePromotion.previewUrl = preview.smokeUrl;
+
+  logStep('Running preview smoke verification');
+  await runUrlSmoke(preview.smokeUrl);
+  summary.smokeChecks.prePromotion.status = 'passed';
 
   if (args.previewOnly) {
     console.log('\nGuarded deploy was run in preview-only mode.');
@@ -223,7 +243,6 @@ async function runGuardedDeploy(args, summary) {
   }
 
   logStep('Running gated smoke checks against preview');
-  summary.smokeChecks.prePromotion.previewUrl = preview.smokeUrl;
   await runSmoke({
     previewUrl: preview.smokeUrl,
     previewLabel: 'preview-candidate',
@@ -232,7 +251,6 @@ async function runGuardedDeploy(args, summary) {
     headed: args.headedSmoke,
     artifactDir: args.artifactDir ? path.join(args.artifactDir, 'smoke', 'pre-promotion') : '',
   });
-  summary.smokeChecks.prePromotion.status = 'passed';
 
   const production = await deployBranch('main');
   summary.production = production;

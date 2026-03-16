@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+set -e
+
+echo "Running repository secret scan before push..."
+npx --no-install secretlint \
+  --secretlintrc .secretlintrc.json \
+  --secretlintignore .secretlintignore \
+  .
