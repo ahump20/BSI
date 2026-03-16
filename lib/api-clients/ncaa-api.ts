@@ -84,7 +84,7 @@ function extractRecord(competitor: Record<string, unknown>): { wins: number; los
   const overall = records.find((r) => (r.type as string) === 'total') ?? records[0];
   if (overall?.summary) {
     const parts = (overall.summary as string).split('-');
-    return { wins: parseInt(parts[0], 10) || 0, losses: parseInt(parts[1], 10) || 0 };
+    return { wins: parseInt(parts[0] ?? '0', 10) || 0, losses: parseInt(parts[1] ?? '0', 10) || 0 };
   }
   return { wins: 0, losses: 0 };
 }
