@@ -19,6 +19,7 @@ export const metadata: Metadata = {
     description: 'Live MLB scores, standings, and advanced sabermetric analytics.',
     images: ['/images/og-mlb.png'],
   },
+  alternates: { canonical: '/mlb' },
 };
 
 export default function MLBLayout({ children }: { children: React.ReactNode }) {

@@ -19,6 +19,7 @@ export const metadata: Metadata = {
     description: 'Live college football scores, standings, and conference analytics.',
     images: ['/images/og-cfb.png'],
   },
+  alternates: { canonical: '/cfb' },
 };
 
 export default function CFBLayout({ children }: { children: React.ReactNode }) {

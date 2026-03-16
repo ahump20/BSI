@@ -19,6 +19,7 @@ export const metadata: Metadata = {
     description: 'Live NFL scores, standings, and deep team analytics.',
     images: ['/images/og-nfl.png'],
   },
+  alternates: { canonical: '/nfl' },
 };
 
 export default function NFLLayout({ children }: { children: React.ReactNode }) {

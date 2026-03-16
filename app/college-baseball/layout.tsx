@@ -20,6 +20,7 @@ export const metadata: Metadata = {
     description: 'Live scores, standings, rankings, and advanced analytics for D1 college baseball.',
     images: ['/images/og-college-baseball.png'],
   },
+  alternates: { canonical: '/college-baseball' },
 };
 
 export default function CollegeBaseballLayout({ children }: { children: React.ReactNode }) {

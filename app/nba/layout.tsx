@@ -19,6 +19,7 @@ export const metadata: Metadata = {
     description: 'Live NBA scores, standings, and full-league analytics.',
     images: ['/images/og-nba.png'],
   },
+  alternates: { canonical: '/nba' },
 };
 
 export default function NBALayout({ children }: { children: React.ReactNode }) {
