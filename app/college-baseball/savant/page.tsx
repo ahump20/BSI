@@ -112,6 +112,7 @@ export default function SavantHubPage() {
   const [conferenceFilter, setConferenceFilter] = useState('');
   const [positionFilter, setPositionFilter] = useState('');
   const [playerSearch, setPlayerSearch] = useState('');
+  const [minPA, setMinPA] = useState(25);
 
   const { data: battingRes, loading: battingLoading } =
     useSportData<LeaderboardResponse>('/api/savant/batting/leaderboard?limit=100');
@@ -166,8 +167,15 @@ export default function SavantHubPage() {
           (r.team as string)?.toLowerCase().includes(q)
       );
     }
+    // Apply minimum PA/IP threshold
+    if (minPA > 0) {
+      filtered = filtered.filter(r => {
+        const threshold = (r.pa as number) ?? (r.ip as number) ?? 0;
+        return threshold >= minPA;
+      });
+    }
     return filtered;
-  }, [conferenceFilter, positionFilter, playerSearch]);
+  }, [conferenceFilter, positionFilter, playerSearch, minPA]);
 
   const filteredBatting = useMemo(() => applyFilters(battingRes?.data ?? []), [applyFilters, battingRes]);
   const filteredPitching = useMemo(() => applyFilters(pitchingRes?.data ?? []), [applyFilters, pitchingRes]);
@@ -357,6 +365,30 @@ export default function SavantHubPage() {
                     options={positions}
                     allLabel="All Positions"
                   />
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] font-mono uppercase tracking-wider" style={{ color: 'var(--bsi-dust, #C4B8A5)' }}>
+                      Min {activeTab === 'pitching' ? 'IP' : 'PA'}:
+                    </span>
+                    <select
+                      value={minPA}
+                      onChange={(e) => setMinPA(Number(e.target.value))}
+                      className="px-2 py-1 text-xs font-mono appearance-none cursor-pointer"
+                      style={{
+                        background: 'var(--surface-press-box, #111)',
+                        color: 'var(--bsi-bone, #F5F2EB)',
+                        border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))',
+                      }}
+                      aria-label={`Minimum ${activeTab === 'pitching' ? 'innings pitched' : 'plate appearances'}`}
+                    >
+                      <option value={0}>Any</option>
+                      <option value={10}>10+</option>
+                      <option value={25}>25+</option>
+                      <option value={50}>50+</option>
+                      <option value={75}>75+</option>
+                      <option value={100}>100+</option>
+                      <option value={150}>150+</option>
+                    </select>
+                  </div>
                   <div className="flex items-center gap-1.5 ml-auto">
                     <input
                       type="text"
@@ -398,9 +430,9 @@ export default function SavantHubPage() {
                       </Link>
                     )}
                   </div>
-                  {(conferenceFilter || positionFilter || playerSearch) && (
+                  {(conferenceFilter || positionFilter || playerSearch || minPA !== 25) && (
                     <button
-                      onClick={() => { setConferenceFilter(''); setPositionFilter(''); setPlayerSearch(''); }}
+                      onClick={() => { setConferenceFilter(''); setPositionFilter(''); setPlayerSearch(''); setMinPA(25); }}
                       className="text-[10px] font-mono text-burnt-orange hover:text-ember transition-colors"
                     >
                       Clear filters
