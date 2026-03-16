@@ -233,12 +233,12 @@ export function PlateDisciplineScatter({
 
         {/* Quadrant labels */}
         <div className="flex justify-between px-14 -mt-2 mb-2">
-          <span className="text-[9px] font-savant-display uppercase tracking-[0.12em] text-green-400/30">Elite Eye</span>
-          <span className="text-[9px] font-savant-display uppercase tracking-[0.12em] text-yellow-400/30">Aggressive Power</span>
+          <span className="text-[9px] font-savant-display uppercase tracking-[0.12em] text-[var(--bsi-success)]/30">Elite Eye</span>
+          <span className="text-[9px] font-savant-display uppercase tracking-[0.12em] text-[var(--bsi-warning)]/30">Aggressive Power</span>
         </div>
         <div className="flex justify-between px-14 -mt-1">
-          <span className="text-[9px] font-savant-display uppercase tracking-[0.12em] text-gray-400/30">Patient Contact</span>
-          <span className="text-[9px] font-savant-display uppercase tracking-[0.12em] text-red-400/30">Free Swinger</span>
+          <span className="text-[9px] font-savant-display uppercase tracking-[0.12em] text-[var(--bsi-dust)]/30">Patient Contact</span>
+          <span className="text-[9px] font-savant-display uppercase tracking-[0.12em] text-[var(--bsi-danger)]/30">Free Swinger</span>
         </div>
       </div>
 

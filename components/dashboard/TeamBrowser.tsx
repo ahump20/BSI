@@ -139,7 +139,7 @@ export function TeamBrowser() {
           <button
             key={conf}
             onClick={() => setConference(conf)}
-            className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+            className={`flex-shrink-0 px-3 py-1.5 rounded-sm text-xs font-medium transition-colors ${
               conference === conf
                 ? 'bg-burnt-orange text-white'
                 : 'bg-surface-light text-text-muted hover:text-text-primary hover:bg-surface-medium'

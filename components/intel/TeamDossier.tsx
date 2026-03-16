@@ -102,27 +102,27 @@ export function TeamDossier({ dossier }: { dossier: TeamDossierData }) {
           Game Plan
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-green-500/5 border border-green-500/10 rounded-sm p-5">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-green-400/70 mb-3">
+          <div className="bg-[var(--bsi-success)]/5 border border-[var(--bsi-success)]/10 rounded-sm p-5">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--bsi-success)]/70 mb-3">
               How They Win
             </h3>
             <ul className="space-y-2">
               {dossier.howTheyWin.map((item, i) => (
                 <li key={i} className="flex gap-2 text-sm text-text-muted leading-relaxed">
-                  <span className="text-green-400/50 mt-1 shrink-0">+</span>
+                  <span className="text-[var(--bsi-success)]/50 mt-1 shrink-0">+</span>
                   {item}
                 </li>
               ))}
             </ul>
           </div>
-          <div className="bg-red-500/5 border border-red-500/10 rounded-sm p-5">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-red-400/70 mb-3">
+          <div className="bg-[var(--bsi-danger)]/5 border border-[var(--bsi-danger)]/10 rounded-sm p-5">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--bsi-danger)]/70 mb-3">
               How They Lose
             </h3>
             <ul className="space-y-2">
               {dossier.howTheyLose.map((item, i) => (
                 <li key={i} className="flex gap-2 text-sm text-text-muted leading-relaxed">
-                  <span className="text-red-400/50 mt-1 shrink-0">-</span>
+                  <span className="text-[var(--bsi-danger)]/50 mt-1 shrink-0">-</span>
                   {item}
                 </li>
               ))}

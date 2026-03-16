@@ -140,7 +140,7 @@ export function MarketGrowthChart() {
           decimals={2}
           className="text-2xl font-mono font-bold text-burnt-orange"
         />
-        <span className="text-xs font-mono text-emerald-400">
+        <span className="text-xs font-mono text-[var(--bsi-success)]">
           +{yoyGrowth.toFixed(0)}% YoY
         </span>
       </div>
@@ -454,7 +454,7 @@ export function CollectiveGrowthChart() {
           decimals={0}
           className="text-2xl font-mono font-bold text-burnt-orange"
         />
-        <span className="text-xs font-mono text-emerald-400">
+        <span className="text-xs font-mono text-[var(--bsi-success)]">
           +{growth}% since {data[0]?.year}
         </span>
       </div>

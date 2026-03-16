@@ -461,6 +461,13 @@ app.get('/api/college-baseball/scores/ws', (c) => {
 });
 
 // --- NCAA Baseball v1 API ---
+// Default cache headers for v1 API responses (60s browser, 5min edge)
+app.use('/v1/*', async (c, next) => {
+  await next();
+  if (c.res.ok && !c.res.headers.has('Cache-Control')) {
+    c.res.headers.set('Cache-Control', 'public, max-age=60, s-maxage=300');
+  }
+});
 app.get('/v1/seasons', (c) => handleV1Seasons(new URL(c.req.url), c.env));
 app.get('/v1/teams', (c) => handleV1Teams(new URL(c.req.url), c.env));
 app.get('/v1/teams/:teamId', (c) => handleV1Team(c.req.param('teamId'), c.env));

@@ -239,7 +239,7 @@ function CompactGameCard({ game }: { game: NormalizedGame }) {
         style={{
           fontFamily: 'var(--bsi-font-data)',
           backgroundColor: isLive ? withAlpha(sportColor, 0.08) : 'var(--surface-scoreboard)',
-          color: isLive ? '#22c55e' : isFinal ? 'var(--bsi-dust)' : 'var(--bsi-dust)',
+          color: isLive ? 'var(--bsi-success)' : isFinal ? 'var(--bsi-dust)' : 'var(--bsi-dust)',
         }}
       >
         <span className="flex items-center gap-1.5">

@@ -9,9 +9,9 @@ interface ConnectionIndicatorProps {
 
 const STATUS_CONFIG: Record<ConnectionStatus, { color: string; bg: string; label: string }> = {
   connected: { color: 'bg-[var(--bsi-primary)]', bg: 'bg-[var(--bsi-primary)]/10', label: 'Live' },
-  polling: { color: 'bg-yellow-400', bg: 'bg-yellow-400/10', label: 'Polling' },
-  connecting: { color: 'bg-yellow-400 animate-pulse', bg: 'bg-yellow-400/10', label: 'Connecting' },
-  disconnected: { color: 'bg-red-400', bg: 'bg-red-400/10', label: 'Offline' },
+  polling: { color: 'bg-[var(--bsi-warning)]', bg: 'bg-[var(--bsi-warning)]/10', label: 'Polling' },
+  connecting: { color: 'bg-[var(--bsi-warning)] animate-pulse', bg: 'bg-[var(--bsi-warning)]/10', label: 'Connecting' },
+  disconnected: { color: 'bg-[var(--bsi-danger)]', bg: 'bg-[var(--bsi-danger)]/10', label: 'Offline' },
 };
 
 /**

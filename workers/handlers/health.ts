@@ -121,33 +121,38 @@ export async function handleStatus(env: Env): Promise<Response> {
 }
 
 export async function handleAdminErrors(url: URL, env: Env): Promise<Response> {
-  const errorKv = env.ERROR_LOG ?? env.KV;
-  const limit = Math.min(parseInt(url.searchParams.get('limit') ?? '50', 10) || 50, 200);
-  const dateFilter = url.searchParams.get('date') ?? '';
+  try {
+    const errorKv = env.ERROR_LOG ?? env.KV;
+    const limit = Math.min(parseInt(url.searchParams.get('limit') ?? '50', 10) || 50, 200);
+    const dateFilter = url.searchParams.get('date') ?? '';
 
-  const listResult = await errorKv.list({ prefix: 'err:', limit: 1000 });
+    const listResult = await errorKv.list({ prefix: 'err:', limit: 1000 });
 
-  const errors: unknown[] = [];
-  for (const key of listResult.keys) {
-    if (errors.length >= limit) break;
-    const raw = await errorKv.get(key.name, 'text');
-    if (!raw) continue;
-    try {
-      const entry = JSON.parse(raw);
-      if (dateFilter && entry.timestamp && !entry.timestamp.startsWith(dateFilter)) continue;
-      errors.push({ key: key.name, ...entry });
-    } catch {
-      errors.push({ key: key.name, raw });
+    const errors: unknown[] = [];
+    for (const key of listResult.keys) {
+      if (errors.length >= limit) break;
+      const raw = await errorKv.get(key.name, 'text');
+      if (!raw) continue;
+      try {
+        const entry = JSON.parse(raw);
+        if (dateFilter && entry.timestamp && !entry.timestamp.startsWith(dateFilter)) continue;
+        errors.push({ key: key.name, ...entry });
+      } catch {
+        errors.push({ key: key.name, raw });
+      }
     }
-  }
 
-  return json({
-    errors,
-    count: errors.length,
-    total_keys: listResult.keys.length,
-    has_more: !listResult.list_complete,
-    timestamp: new Date().toISOString(),
-  });
+    return json({
+      errors,
+      count: errors.length,
+      total_keys: listResult.keys.length,
+      has_more: !listResult.list_complete,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    console.error('[handleAdminErrors]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }
 
 export function handleWebSocket(): Response {
@@ -264,28 +269,33 @@ async function paginateR2List(
 }
 
 export async function handleSemanticHealth(request: Request, env: Env): Promise<Response> {
-  const authError = requireAdmin(request, env);
-  if (authError) return authError;
+  try {
+    const authError = requireAdmin(request, env);
+    if (authError) return authError;
 
-  const kvResult = await paginateKVList(env.KV);
-  const r2Result = env.DATA_LAKE
-    ? await paginateR2List(env.DATA_LAKE, 'snapshots/')
-    : { objects: [], rounds: 0, complete: true };
+    const kvResult = await paginateKVList(env.KV);
+    const r2Result = env.DATA_LAKE
+      ? await paginateR2List(env.DATA_LAKE, 'snapshots/')
+      : { objects: [], rounds: 0, complete: true };
 
-  return json({
-    timestamp: new Date().toISOString(),
-    note: 'KV listing is eventually consistent (~60s)',
-    kv: {
-      totalKeys: kvResult.keys.length,
-      rounds: kvResult.rounds,
-      complete: kvResult.complete,
-      keys: kvResult.keys,
-    },
-    r2: {
-      totalObjects: r2Result.objects.length,
-      rounds: r2Result.rounds,
-      complete: r2Result.complete,
-      objects: r2Result.objects,
-    },
-  });
+    return json({
+      timestamp: new Date().toISOString(),
+      note: 'KV listing is eventually consistent (~60s)',
+      kv: {
+        totalKeys: kvResult.keys.length,
+        rounds: kvResult.rounds,
+        complete: kvResult.complete,
+        keys: kvResult.keys,
+      },
+      r2: {
+        totalObjects: r2Result.objects.length,
+        rounds: r2Result.rounds,
+        complete: r2Result.complete,
+        objects: r2Result.objects,
+      },
+    });
+  } catch (err) {
+    console.error('[handleSemanticHealth]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }

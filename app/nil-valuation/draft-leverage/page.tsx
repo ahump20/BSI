@@ -39,8 +39,8 @@ const QUADRANTS: QuadrantInfo[] = [
     title: 'Premier Assets',
     subtitle: 'High NIL + High Draft',
     description: 'Top-tier talent with both market value and pro potential. These players command premium deals and have clear paths to the next level.',
-    color: 'text-green-400',
-    borderColor: 'border-l-green-400',
+    color: 'text-[var(--bsi-success)]',
+    borderColor: 'border-l-[var(--bsi-success)]',
   },
   {
     key: 'low-nil-high-draft',
@@ -55,8 +55,8 @@ const QUADRANTS: QuadrantInfo[] = [
     title: 'Marketing Stars',
     subtitle: 'High NIL + Low Draft',
     description: 'Strong brand value driven by market and exposure rather than draft-caliber performance. Value comes from influence, not pro projection.',
-    color: 'text-yellow-400',
-    borderColor: 'border-l-yellow-400',
+    color: 'text-[var(--bsi-warning)]',
+    borderColor: 'border-l-[var(--bsi-warning)]',
   },
   {
     key: 'low-nil-low-draft',

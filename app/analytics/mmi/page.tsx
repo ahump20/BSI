@@ -148,7 +148,7 @@ export default function MMITrendingPage() {
                 </h2>
                 <p className="text-text-secondary text-sm mb-6 max-w-3xl">
                   The Momentum Magnitude Index combines four weighted signals into a single
-                  value on a scale from <span className="font-mono text-[#6B8DB2]">-100</span> (full
+                  value on a scale from <span className="font-mono text-[var(--heritage-columbia-blue)]">-100</span> (full
                   away momentum) to <span className="font-mono text-burnt-orange">+100</span> (full
                   home momentum). Zero is neutral.
                 </p>

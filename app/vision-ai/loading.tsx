@@ -6,9 +6,9 @@ export default function VisionAILoading() {
       <div className="max-w-7xl mx-auto px-4 py-12">
         {/* Hero skeleton */}
         <div className="mb-6 flex gap-2">
-          <Skeleton variant="rectangular" width={160} height={22} className="rounded-full" />
-          <Skeleton variant="rectangular" width={130} height={22} className="rounded-full" />
-          <Skeleton variant="rectangular" width={110} height={22} className="rounded-full" />
+          <Skeleton variant="rectangular" width={160} height={22} className="rounded-sm" />
+          <Skeleton variant="rectangular" width={130} height={22} className="rounded-sm" />
+          <Skeleton variant="rectangular" width={110} height={22} className="rounded-sm" />
         </div>
         <Skeleton variant="text" width="70%" height={48} className="mb-4" />
         <Skeleton variant="text" width="90%" height={20} className="mb-2" />
@@ -37,7 +37,7 @@ export default function VisionAILoading() {
             <div key={i} className="bg-surface-light border border-border-subtle rounded-sm p-5 animate-pulse">
               <div className="flex items-center gap-2 mb-3">
                 <Skeleton variant="circular" width={24} height={24} />
-                <Skeleton variant="rectangular" width={50} height={18} className="rounded-full" />
+                <Skeleton variant="rectangular" width={50} height={18} className="rounded-sm" />
               </div>
               <Skeleton variant="text" width="80%" height={16} className="mb-2" />
               <Skeleton variant="text" width="100%" height={12} />

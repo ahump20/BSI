@@ -112,7 +112,7 @@ function LeaguesDropdown({ items }: { items: LeagueNavItem[] }) {
     <div ref={ref} className="relative" onKeyDown={handleKeyDown}>
       <button
         onClick={() => setOpen(!open)}
-        className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+        className={`flex items-center gap-1 px-3 py-1.5 rounded-sm text-sm font-medium transition-all ${
           hasActiveSport
             ? 'bg-burnt-orange/15 text-ember'
             : 'text-text-secondary hover:text-text-primary hover:bg-surface-light'
@@ -198,7 +198,7 @@ function AnalyticsDropdown({ items }: { items: MainNavItem[] }) {
     <div ref={ref} className="relative" onKeyDown={handleKeyDown}>
       <button
         onClick={() => setOpen(!open)}
-        className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+        className={`flex items-center gap-1 px-3 py-1.5 rounded-sm text-sm font-medium transition-all ${
           hasActiveItem
             ? 'bg-burnt-orange/15 text-ember'
             : 'text-text-secondary hover:text-text-primary hover:bg-surface-light'
@@ -254,7 +254,7 @@ function MoreDropdown({ items }: { items: NavItem[] }) {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium text-text-muted hover:text-text-primary hover:bg-surface-light transition-all"
+        className="flex items-center gap-1 px-3 py-1.5 rounded-sm text-sm font-medium text-text-muted hover:text-text-primary hover:bg-surface-light transition-all"
         aria-expanded={open}
         aria-haspopup="true"
         aria-controls="more-menu"
@@ -328,7 +328,7 @@ export function Navbar({ primary, leagues, secondary, analytics = [] }: NavbarPr
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                  className={`px-3 py-1.5 rounded-sm text-sm font-medium transition-all ${
                     isActive(item.href)
                       ? 'bg-burnt-orange/15 text-ember'
                       : 'text-text-secondary hover:text-text-primary hover:bg-surface-light'

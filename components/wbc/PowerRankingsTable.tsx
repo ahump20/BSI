@@ -1,16 +1,16 @@
 'use client';
 
 const TIER_COLORS = {
-  1: { bg: 'bg-yellow-500/10', border: 'border-yellow-500/20', text: 'text-yellow-400', label: 'Tier 1' },
-  2: { bg: 'bg-slate-400/10', border: 'border-slate-400/20', text: 'text-slate-300', label: 'Tier 2' },
-  3: { bg: 'bg-amber-700/10', border: 'border-amber-700/20', text: 'text-amber-600', label: 'Tier 3' },
+  1: { bg: 'bg-[var(--bsi-warning)]/10', border: 'border-[var(--bsi-warning)]/20', text: 'text-[var(--bsi-warning)]', label: 'Tier 1' },
+  2: { bg: 'bg-[var(--bsi-dust)]/10', border: 'border-[var(--bsi-dust)]/20', text: 'text-[var(--bsi-dust)]', label: 'Tier 2' },
+  3: { bg: 'bg-[var(--bsi-warning)]/10', border: 'border-[var(--bsi-warning)]/20', text: 'text-[var(--bsi-warning)]', label: 'Tier 3' },
   4: { bg: 'bg-surface-light/5', border: 'border-border-subtle', text: 'text-text-muted', label: 'Tier 4' },
   5: { bg: 'bg-surface-light/5', border: 'border-border-subtle', text: 'text-text-muted', label: 'Tier 5' },
 } as const;
 
 const POOL_DANGER: Record<string, { label: string; color: string }> = {
   D: { label: 'POOL OF DEATH', color: 'text-ember bg-ember/10 border-ember/20' },
-  C: { label: 'HIGH', color: 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20' },
+  C: { label: 'HIGH', color: 'text-[var(--bsi-warning)] bg-[var(--bsi-warning)]/10 border-[var(--bsi-warning)]/20' },
   B: { label: 'MED-HIGH', color: 'text-text-secondary bg-surface-light border-border-subtle' },
   A: { label: 'MEDIUM', color: 'text-text-secondary bg-surface-light border-border-subtle' },
 };

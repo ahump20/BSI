@@ -33,25 +33,25 @@ function analyticsMeta(source: string, cacheHit: boolean) {
  *   season    – default current year
  */
 export async function handleHAVFLeaderboard(url: URL, env: Env): Promise<Response> {
-  const league = url.searchParams.get('league') || 'college-baseball';
-  const team = url.searchParams.get('team') || '';
-  const position = url.searchParams.get('position') || '';
-  const conference = url.searchParams.get('conference') || '';
-  const season = parseInt(url.searchParams.get('season') || String(new Date().getFullYear()), 10);
-  const limit = Math.min(parseInt(url.searchParams.get('limit') || '25', 10) || 25, 100);
-
-  const cacheKey = `havf:leaderboard:${league}:${season}:${team || 'all'}:${position || 'all'}:${conference || 'all'}`;
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(
-      { leaderboard: cached, meta: analyticsMeta('bsi-havf', true) },
-      200,
-      HTTP_CACHE.standings,
-      { 'X-Cache': 'HIT' },
-    );
-  }
-
   try {
+    const league = url.searchParams.get('league') || 'college-baseball';
+    const team = url.searchParams.get('team') || '';
+    const position = url.searchParams.get('position') || '';
+    const conference = url.searchParams.get('conference') || '';
+    const season = parseInt(url.searchParams.get('season') || String(new Date().getFullYear()), 10);
+    const limit = Math.min(parseInt(url.searchParams.get('limit') || '25', 10) || 25, 100);
+
+    const cacheKey = `havf:leaderboard:${league}:${season}:${team || 'all'}:${position || 'all'}:${conference || 'all'}`;
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(
+        { leaderboard: cached, meta: analyticsMeta('bsi-havf', true) },
+        200,
+        HTTP_CACHE.standings,
+        { 'X-Cache': 'HIT' },
+      );
+    }
+
     let query = 'SELECT * FROM havf_scores WHERE league = ? AND season = ?';
     const binds: (string | number)[] = [league, season];
 
@@ -93,18 +93,18 @@ export async function handleHAVFLeaderboard(url: URL, env: Env): Promise<Respons
  * Returns the latest HAV-F result for a single player with full component breakdown.
  */
 export async function handleHAVFPlayer(playerId: string, env: Env): Promise<Response> {
-  const cacheKey = `havf:player:${playerId}`;
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(
-      { player: cached, meta: analyticsMeta('bsi-havf', true) },
-      200,
-      HTTP_CACHE.player,
-      { 'X-Cache': 'HIT' },
-    );
-  }
-
   try {
+    const cacheKey = `havf:player:${playerId}`;
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(
+        { player: cached, meta: analyticsMeta('bsi-havf', true) },
+        200,
+        HTTP_CACHE.player,
+        { 'X-Cache': 'HIT' },
+      );
+    }
+
     const result = await env.DB.prepare(
       'SELECT * FROM havf_scores WHERE player_id = ? ORDER BY season DESC LIMIT 1',
     ).bind(playerId).first();
@@ -231,18 +231,18 @@ export async function handleHAVFCompute(request: Request, env: Env): Promise<Res
  * Short TTL (15s) since this powers live dashboards.
  */
 export async function handleMMILive(gameId: string, env: Env): Promise<Response> {
-  const cacheKey = `mmi:live:${gameId}`;
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(
-      { snapshot: cached, meta: analyticsMeta('bsi-mmi', true) },
-      200,
-      15,
-      { 'X-Cache': 'HIT' },
-    );
-  }
-
   try {
+    const cacheKey = `mmi:live:${gameId}`;
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(
+        { snapshot: cached, meta: analyticsMeta('bsi-mmi', true) },
+        200,
+        15,
+        { 'X-Cache': 'HIT' },
+      );
+    }
+
     const result = await env.DB.prepare(
       'SELECT * FROM mmi_snapshots WHERE game_id = ? ORDER BY id DESC LIMIT 1',
     ).bind(gameId).first();
@@ -271,18 +271,18 @@ export async function handleMMILive(gameId: string, env: Env): Promise<Response>
  * Longer TTL for completed games.
  */
 export async function handleMMIGame(gameId: string, env: Env): Promise<Response> {
-  const cacheKey = `mmi:game:${gameId}`;
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(
-      cached,
-      200,
-      HTTP_CACHE.standings,
-      { 'X-Cache': 'HIT' },
-    );
-  }
-
   try {
+    const cacheKey = `mmi:game:${gameId}`;
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(
+        cached,
+        200,
+        HTTP_CACHE.standings,
+        { 'X-Cache': 'HIT' },
+      );
+    }
+
     const [snapshots, summary] = await Promise.all([
       env.DB.prepare(
         'SELECT * FROM mmi_snapshots WHERE game_id = ? ORDER BY id ASC',
@@ -317,18 +317,18 @@ export async function handleMMIGame(gameId: string, env: Env): Promise<Response>
  * Returns the top 10 most volatile/exciting games from today.
  */
 export async function handleMMITrending(env: Env): Promise<Response> {
-  const cacheKey = 'mmi:trending';
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(
-      { games: cached, meta: analyticsMeta('bsi-mmi', true) },
-      200,
-      60,
-      { 'X-Cache': 'HIT' },
-    );
-  }
-
   try {
+    const cacheKey = 'mmi:trending';
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(
+        { games: cached, meta: analyticsMeta('bsi-mmi', true) },
+        200,
+        60,
+        { 'X-Cache': 'HIT' },
+      );
+    }
+
     const today = new Date().toISOString().split('T')[0];
     const { results: summaries } = await env.DB.prepare(
       `SELECT * FROM mmi_game_summary
@@ -374,18 +374,18 @@ export async function handleMMITrending(env: Env): Promise<Response> {
  * Cached 5 minutes in KV.
  */
 export async function handleMMITeam(teamId: string, env: Env): Promise<Response> {
-  const cacheKey = `mmi:team:${teamId}`;
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(
-      { games: cached, meta: analyticsMeta('bsi-mmi', true) },
-      200,
-      300,
-      { 'X-Cache': 'HIT' },
-    );
-  }
-
   try {
+    const cacheKey = `mmi:team:${teamId}`;
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(
+        { games: cached, meta: analyticsMeta('bsi-mmi', true) },
+        200,
+        300,
+        { 'X-Cache': 'HIT' },
+      );
+    }
+
     const pattern = `%${teamId}%`;
     const { results: summaries } = await env.DB.prepare(
       `SELECT * FROM mmi_game_summary
@@ -435,13 +435,13 @@ export async function handleMMITeam(teamId: string, env: Env): Promise<Response>
  * game exists, otherwise returns a static example with methodology context.
  */
 export async function handleWinProbExample(env: Env): Promise<Response> {
-  const cacheKey = 'model:wp-example';
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(cached, 200, 600, { 'X-Cache': 'HIT' });
-  }
-
   try {
+    const cacheKey = 'model:wp-example';
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(cached, 200, 600, { 'X-Cache': 'HIT' });
+    }
+
     // Try to pull a recent game with WP snapshots from D1
     const recent = await env.DB.prepare(
       `SELECT game_id, home_team, away_team, final_home_score, final_away_score, game_date
@@ -521,39 +521,44 @@ export async function handleWinProbExample(env: Env): Promise<Response> {
  * Pulls from KV if populated, otherwise returns a static example.
  */
 export async function handleMonteCarloExample(env: Env): Promise<Response> {
-  const cacheKey = 'model:mc-example';
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(cached, 200, 600, { 'X-Cache': 'HIT' });
+  try {
+    const cacheKey = 'model:mc-example';
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(cached, 200, 600, { 'X-Cache': 'HIT' });
+    }
+
+    // Static example — Monte Carlo isn't running live yet
+    const payload = {
+      example: {
+        conference: 'SEC',
+        simulations: 10000,
+        date: new Date().toISOString().split('T')[0],
+        projectedStandings: [
+          { team: 'Texas', projectedWins: 20.3, projectedLosses: 9.7, tournamentOdds: 0.94, cwsOdds: 0.18, nationalSeedOdds: 0.41 },
+          { team: 'LSU', projectedWins: 19.1, projectedLosses: 10.9, tournamentOdds: 0.91, cwsOdds: 0.14, nationalSeedOdds: 0.28 },
+          { team: 'Vanderbilt', projectedWins: 18.4, projectedLosses: 11.6, tournamentOdds: 0.88, cwsOdds: 0.11, nationalSeedOdds: 0.19 },
+          { team: 'Texas A&M', projectedWins: 17.8, projectedLosses: 12.2, tournamentOdds: 0.82, cwsOdds: 0.08, nationalSeedOdds: 0.12 },
+          { team: 'Arkansas', projectedWins: 16.2, projectedLosses: 13.8, tournamentOdds: 0.71, cwsOdds: 0.05, nationalSeedOdds: 0.04 },
+        ],
+      },
+      methodology: {
+        model: 'Monte Carlo v0.1',
+        simCount: 10000,
+        inputs: ['team_strength', 'remaining_schedule', 'home_advantage', 'conference_rules'],
+        assumptions: [
+          'Fixed team strength (no in-season injuries modeled)',
+          'Independent game outcomes',
+          'Home advantage: 54% baseline',
+        ],
+      },
+      meta: analyticsMeta('bsi-models', false),
+    };
+
+    await kvPut(env.KV, cacheKey, payload, 600);
+    return cachedJson(payload, 200, 600, { 'X-Cache': 'MISS' });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Unknown error';
+    return json({ error: 'Failed to generate Monte Carlo example', detail: msg }, 500);
   }
-
-  // Static example — Monte Carlo isn't running live yet
-  const payload = {
-    example: {
-      conference: 'SEC',
-      simulations: 10000,
-      date: new Date().toISOString().split('T')[0],
-      projectedStandings: [
-        { team: 'Texas', projectedWins: 20.3, projectedLosses: 9.7, tournamentOdds: 0.94, cwsOdds: 0.18, nationalSeedOdds: 0.41 },
-        { team: 'LSU', projectedWins: 19.1, projectedLosses: 10.9, tournamentOdds: 0.91, cwsOdds: 0.14, nationalSeedOdds: 0.28 },
-        { team: 'Vanderbilt', projectedWins: 18.4, projectedLosses: 11.6, tournamentOdds: 0.88, cwsOdds: 0.11, nationalSeedOdds: 0.19 },
-        { team: 'Texas A&M', projectedWins: 17.8, projectedLosses: 12.2, tournamentOdds: 0.82, cwsOdds: 0.08, nationalSeedOdds: 0.12 },
-        { team: 'Arkansas', projectedWins: 16.2, projectedLosses: 13.8, tournamentOdds: 0.71, cwsOdds: 0.05, nationalSeedOdds: 0.04 },
-      ],
-    },
-    methodology: {
-      model: 'Monte Carlo v0.1',
-      simCount: 10000,
-      inputs: ['team_strength', 'remaining_schedule', 'home_advantage', 'conference_rules'],
-      assumptions: [
-        'Fixed team strength (no in-season injuries modeled)',
-        'Independent game outcomes',
-        'Home advantage: 54% baseline',
-      ],
-    },
-    meta: analyticsMeta('bsi-models', false),
-  };
-
-  await kvPut(env.KV, cacheKey, payload, 600);
-  return cachedJson(payload, 200, 600, { 'X-Cache': 'MISS' });
 }

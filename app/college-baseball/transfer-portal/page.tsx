@@ -328,7 +328,7 @@ export default function TransferPortalPage() {
                                       ? removePlayer(entry.id)
                                       : addPlayer({ playerId: entry.id, playerName: entry.playerName, team: entry.fromSchool, position: entry.position })
                                     }
-                                    className={`p-1.5 rounded-full transition-colors cursor-pointer ${
+                                    className={`p-1.5 rounded-sm transition-colors cursor-pointer ${
                                       watched
                                         ? 'text-burnt-orange hover:text-ember'
                                         : 'text-text-muted hover:text-burnt-orange'

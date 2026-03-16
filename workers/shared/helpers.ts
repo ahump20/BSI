@@ -14,6 +14,10 @@ export function json(data: unknown, status = 200, extra: Record<string, string> 
   });
 }
 
+export function errorJson(message: string, status = 500): Response {
+  return json({ error: true, message, status }, status);
+}
+
 export function cachedJson(data: unknown, status: number, maxAge: number, extra: Record<string, string> = {}): Response {
   const headers: Record<string, string> = { 'Cache-Control': `public, max-age=${maxAge}`, ...extra };
   const meta = getPayloadMeta(data);

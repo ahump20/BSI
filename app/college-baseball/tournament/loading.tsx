@@ -8,7 +8,7 @@ export default function TournamentLoading() {
         <div className="grid md:grid-cols-3 gap-4 mt-8">
           {[1, 2, 3].map((i) => (
             <div key={i} className="bg-surface-light border border-border-subtle rounded-sm p-6 animate-pulse">
-              <Skeleton variant="rectangular" width={100} height={22} className="rounded-full mb-3" />
+              <Skeleton variant="rectangular" width={100} height={22} className="rounded-sm mb-3" />
               <Skeleton variant="text" width="80%" height={20} className="mb-2" />
               <Skeleton variant="text" width="100%" height={14} className="mb-1" />
               <Skeleton variant="text" width="70%" height={14} />

@@ -18,9 +18,9 @@ interface DrillCardProps {
 }
 
 const DIFFICULTY_STYLES = {
-  beginner: { label: 'Beginner', color: 'text-emerald-400 bg-emerald-500/10' },
-  intermediate: { label: 'Intermediate', color: 'text-amber-400 bg-amber-500/10' },
-  advanced: { label: 'Advanced', color: 'text-red-400 bg-red-500/10' },
+  beginner: { label: 'Beginner', color: 'text-[var(--bsi-success)] bg-[var(--bsi-success)]/10' },
+  intermediate: { label: 'Intermediate', color: 'text-[var(--bsi-warning)] bg-[var(--bsi-warning)]/10' },
+  advanced: { label: 'Advanced', color: 'text-[var(--bsi-danger)] bg-[var(--bsi-danger)]/10' },
 };
 
 export function DrillCard({ drill, index }: DrillCardProps) {

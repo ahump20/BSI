@@ -6,7 +6,7 @@ export default function NILValuationLoading() {
       <div className="max-w-7xl mx-auto px-4 py-12">
         {/* Hero skeleton */}
         <div className="max-w-4xl mx-auto text-center mb-12">
-          <Skeleton variant="rectangular" width={120} height={22} className="rounded-full mx-auto mb-4" />
+          <Skeleton variant="rectangular" width={120} height={22} className="rounded-sm mx-auto mb-4" />
           <Skeleton variant="text" width={320} height={44} className="mx-auto mb-4" />
           <Skeleton variant="text" width="80%" height={18} className="mx-auto mb-2" />
           <Skeleton variant="text" width="60%" height={18} className="mx-auto mb-6" />

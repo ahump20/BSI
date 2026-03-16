@@ -249,7 +249,7 @@ export function LiveScoreStrip() {
                   <h2 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide">
                     Yesterday&apos;s Results
                   </h2>
-                  <span className="text-[10px] text-text-muted uppercase tracking-wider bg-surface-light px-2 py-0.5 rounded-full border border-border">
+                  <span className="text-[10px] text-text-muted uppercase tracking-wider bg-surface-light px-2 py-0.5 rounded-sm border border-border">
                     No games today
                   </span>
                 </div>

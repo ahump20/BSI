@@ -141,10 +141,10 @@ export default function SwingHistoryPage() {
                             <div
                               className={`text-2xl font-bold font-display ${
                                 entry.overallScore >= 80
-                                  ? 'text-emerald-400'
+                                  ? 'text-[var(--bsi-success)]'
                                   : entry.overallScore >= 50
-                                    ? 'text-amber-400'
-                                    : 'text-red-400'
+                                    ? 'text-[var(--bsi-warning)]'
+                                    : 'text-[var(--bsi-danger)]'
                               }`}
                             >
                               {entry.overallScore}

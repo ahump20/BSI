@@ -704,11 +704,11 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                           </div>
                         </div>
                         <div>
-                          <h3 className="text-xs uppercase tracking-wider font-semibold mb-2 text-yellow-500">Pressure Points</h3>
+                          <h3 className="text-xs uppercase tracking-wider font-semibold mb-2 text-[var(--bsi-warning)]">Pressure Points</h3>
                           <div className="space-y-1">
                             {featuredInsight.pressurePoints.map((p, i) => (
                               <div key={i} className="text-text-tertiary text-sm flex gap-2">
-                                <span className="text-yellow-500 shrink-0">&bull;</span>{p}
+                                <span className="text-[var(--bsi-warning)] shrink-0">&bull;</span>{p}
                               </div>
                             ))}
                           </div>
@@ -1095,7 +1095,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   const teamPlayers = nilLeaderboardData.data.filter(p => p.team === meta?.name);
                   const totalValue = teamPlayers.reduce((sum, p) => sum + p.estimated_mid, 0);
                   const formatNIL = (v: number) => v >= 1_000_000 ? `$${(v / 1_000_000).toFixed(1)}M` : v >= 1_000 ? `$${Math.round(v / 1_000)}K` : `$${v}`;
-                  const tierColors: Record<string, string> = { elite: 'text-burnt-orange', high: 'text-green-400', mid: 'text-[var(--heritage-columbia-blue)]', emerging: 'text-yellow-400' };
+                  const tierColors: Record<string, string> = { elite: 'text-burnt-orange', high: 'text-[var(--bsi-success)]', mid: 'text-[var(--heritage-columbia-blue)]', emerging: 'text-[var(--bsi-warning)]' };
                   return (
                     <ScrollReveal direction="up" className="mt-6">
                       <Card padding="none" className="overflow-hidden">
@@ -1438,7 +1438,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                 {statsUnavailable && !liveStats && (
                   <>
                     <span>|</span>
-                    <span className="text-yellow-500/60 text-xs">Live stats temporarily unavailable</span>
+                    <span className="text-[var(--bsi-warning)]/60 text-xs">Live stats temporarily unavailable</span>
                   </>
                 )}
               </div>

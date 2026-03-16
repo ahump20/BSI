@@ -55,7 +55,7 @@ function RankChange({ current, previous }: { current: number; previous: number |
   }
   if (diff > 0) {
     return (
-      <span className="text-green-400 text-xs font-semibold flex items-center gap-0.5">
+      <span className="text-[var(--bsi-success)] text-xs font-semibold flex items-center gap-0.5">
         <svg viewBox="0 0 10 10" className="w-2.5 h-2.5" fill="currentColor">
           <path d="M5 1L9 7H1z" />
         </svg>
@@ -64,7 +64,7 @@ function RankChange({ current, previous }: { current: number; previous: number |
     );
   }
   return (
-    <span className="text-red-400 text-xs font-semibold flex items-center gap-0.5">
+    <span className="text-[var(--bsi-danger)] text-xs font-semibold flex items-center gap-0.5">
       <svg viewBox="0 0 10 10" className="w-2.5 h-2.5" fill="currentColor">
         <path d="M5 9L1 3h8z" />
       </svg>
@@ -142,8 +142,8 @@ export function EnrichedRankingsTable({
               </table>
             </div>
           ) : error ? (
-            <div className="bg-red-500/10 border border-red-500/30 rounded-sm p-6">
-              <p className="text-red-400 font-semibold">Rankings Unavailable</p>
+            <div className="bg-[var(--bsi-danger)]/10 border border-[var(--bsi-danger)]/30 rounded-sm p-6">
+              <p className="text-[var(--bsi-danger)] font-semibold">Rankings Unavailable</p>
               <p className="text-text-secondary text-sm mt-1">{error}</p>
               <button
                 onClick={onRetry}
@@ -223,7 +223,7 @@ export function EnrichedRankingsTable({
             <div className="flex items-center gap-3">
               <DataSourceBadge source="D1Baseball / NCAA" timestamp={formatTimestamp(lastUpdated)} />
               {!isLive && !loading && !error && (
-                <span className="text-xs text-yellow-400/60 bg-yellow-400/10 px-2 py-0.5 rounded-sm">
+                <span className="text-xs text-[var(--bsi-warning)]/60 bg-[var(--bsi-warning)]/10 px-2 py-0.5 rounded-sm">
                   Using preseason data
                 </span>
               )}

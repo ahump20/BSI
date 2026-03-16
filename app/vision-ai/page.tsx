@@ -673,10 +673,10 @@ export default function VisionAIPage() {
             </ScrollReveal>
 
             <ScrollReveal delay={150}>
-              <div className="mt-6 bg-yellow-500/5 border border-yellow-500/15 rounded-sm p-4">
+              <div className="mt-6 bg-[var(--bsi-warning)]/5 border border-[var(--bsi-warning)]/15 rounded-sm p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="w-1 h-4 bg-yellow-500 rounded-full" />
-                  <span className="text-yellow-400 text-xs font-semibold uppercase tracking-wider">Legal Note</span>
+                  <span className="w-1 h-4 bg-[var(--bsi-warning)] rounded-full" />
+                  <span className="text-[var(--bsi-warning)] text-xs font-semibold uppercase tracking-wider">Legal Note</span>
                 </div>
                 <p className="text-text-secondary text-sm leading-relaxed">
                   Processing broadcast video without league authorization likely violates copyright and

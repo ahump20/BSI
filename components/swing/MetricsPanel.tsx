@@ -48,7 +48,7 @@ function ScoreRing({ score, size = 80 }: { score: number; size?: number }) {
 }
 
 function MetricBar({ metric }: { metric: MetricResult }) {
-  const color = metric.score >= 80 ? 'bg-emerald-500' : metric.score >= 50 ? 'bg-amber-500' : 'bg-red-500';
+  const color = metric.score >= 80 ? 'bg-[var(--bsi-success)]' : metric.score >= 50 ? 'bg-[var(--bsi-warning)]' : 'bg-[var(--bsi-danger)]';
   const label = metric.score >= 80 ? 'Good' : metric.score >= 50 ? 'Needs Work' : 'Issue';
 
   return (
@@ -72,10 +72,10 @@ function MetricBar({ metric }: { metric: MetricResult }) {
       <span
         className={`text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded-sm ${
           metric.score >= 80
-            ? 'text-emerald-400 bg-emerald-500/10'
+            ? 'text-[var(--bsi-success)] bg-[var(--bsi-success)]/10'
             : metric.score >= 50
-              ? 'text-amber-400 bg-amber-500/10'
-              : 'text-red-400 bg-red-500/10'
+              ? 'text-[var(--bsi-warning)] bg-[var(--bsi-warning)]/10'
+              : 'text-[var(--bsi-danger)] bg-[var(--bsi-danger)]/10'
         }`}
       >
         {label}
@@ -120,7 +120,7 @@ export function MetricsPanel({ metrics, overallScore }: MetricsPanelProps) {
               <h4 className="heritage-stamp text-xs">{groupName}</h4>
               <span
                 className={`text-xs font-mono font-bold ${
-                  groupAvg >= 80 ? 'text-emerald-400' : groupAvg >= 50 ? 'text-amber-400' : 'text-red-400'
+                  groupAvg >= 80 ? 'text-[var(--bsi-success)]' : groupAvg >= 50 ? 'text-[var(--bsi-warning)]' : 'text-[var(--bsi-danger)]'
                 }`}
               >
                 {groupAvg}/100

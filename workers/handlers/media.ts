@@ -1,4 +1,4 @@
-import { buildMeta, cachedJson, cachedPayloadHeaders, kvGet, kvPut } from '../shared/helpers';
+import { buildMeta, cachedJson, cachedPayloadHeaders, json, kvGet, kvPut } from '../shared/helpers';
 import type { Env } from '../shared/types';
 
 interface RSSItem {
@@ -327,32 +327,37 @@ async function fetchAllEpisodes(): Promise<PodcastFeedResult> {
 }
 
 export async function handlePodcasts(env: Env): Promise<Response> {
-  const cached = await kvGet<Record<string, unknown>>(env.KV, CACHE_KEY);
-  if (cached) {
-    return cachedJson(cached, 200, CACHE_TTL_SECONDS, cachedPayloadHeaders(cached));
+  try {
+    const cached = await kvGet<Record<string, unknown>>(env.KV, CACHE_KEY);
+    if (cached) {
+      return cachedJson(cached, 200, CACHE_TTL_SECONDS, cachedPayloadHeaders(cached));
+    }
+
+    const feedResult = await fetchAllEpisodes();
+    const payload = {
+      success: true,
+      fromCache: false,
+      episodes: feedResult.episodes,
+      sources: feedResult.sources,
+      meta: {
+        ...buildMeta('bsi-media-podcasts'),
+        totalShows: PODCAST_SHOWS.length,
+        totalEpisodes: feedResult.episodes.length,
+        responsiveShows: feedResult.responsiveShows,
+        liveShows: feedResult.liveShows,
+        emptyShows: feedResult.emptyShows,
+        degradedShows: feedResult.degradedShows,
+        laneStatus: feedResult.laneStatus,
+        liveAudioAvailable: feedResult.liveAudioAvailable,
+        statusMessage: feedResult.statusMessage,
+        cacheTTL: `${CACHE_TTL_SECONDS}s`,
+      },
+    };
+
+    await kvPut(env.KV, CACHE_KEY, payload, CACHE_TTL_SECONDS);
+    return cachedJson(payload, 200, CACHE_TTL_SECONDS, { 'X-Cache': 'MISS' });
+  } catch (err) {
+    console.error('[handlePodcasts]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
-
-  const feedResult = await fetchAllEpisodes();
-  const payload = {
-    success: true,
-    fromCache: false,
-    episodes: feedResult.episodes,
-    sources: feedResult.sources,
-    meta: {
-      ...buildMeta('bsi-media-podcasts'),
-      totalShows: PODCAST_SHOWS.length,
-      totalEpisodes: feedResult.episodes.length,
-      responsiveShows: feedResult.responsiveShows,
-      liveShows: feedResult.liveShows,
-      emptyShows: feedResult.emptyShows,
-      degradedShows: feedResult.degradedShows,
-      laneStatus: feedResult.laneStatus,
-      liveAudioAvailable: feedResult.liveAudioAvailable,
-      statusMessage: feedResult.statusMessage,
-      cacheTTL: `${CACHE_TTL_SECONDS}s`,
-    },
-  };
-
-  await kvPut(env.KV, CACHE_KEY, payload, CACHE_TTL_SECONDS);
-  return cachedJson(payload, 200, CACHE_TTL_SECONDS, { 'X-Cache': 'MISS' });
 }

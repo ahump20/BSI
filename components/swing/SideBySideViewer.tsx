@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { motion } from 'framer-motion';
 import { SkeletonOverlay } from './SkeletonOverlay';
 import type { NormalizedLandmark } from '@mediapipe/tasks-vision';
 import type { SwingPhaseResult, SwingPhase } from '@/lib/swing/swing-phases';

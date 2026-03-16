@@ -2,17 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { PRICING_TIERS } from '@/lib/data/pricing-tiers';
 import { trackPaywallHit } from '@/lib/analytics/tracker';
-
-// Lazy-load HeroVideo — decorative background, not LCP-critical on pricing page
-const HeroVideo = dynamic(
-  () => import('@/components/hero/HeroVideo').then((mod) => ({ default: mod.HeroVideo })),
-  { ssr: false }
-);
 
 const tiers = PRICING_TIERS;
 
@@ -85,7 +78,7 @@ export default function PricingPage() {
     <div className="min-h-screen grain-overlay" style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
       {/* Hero */}
       <section className="relative overflow-hidden" style={{ padding: 'clamp(3rem, 6vw, 5rem) 0' }}>
-        <HeroVideo />
+        {/* Decorative background removed — Heritage grain overlay provides texture */}
         <div
           className="absolute inset-0 z-[1]"
           style={{

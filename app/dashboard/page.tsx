@@ -411,7 +411,7 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
                 )}
                 <FreshnessBadge isLive={stats.liveGames > 0} fetchedAt={stats.lastUpdated} />
                 {stats.liveGames > 0 && (
-                  <span className="px-3 py-1 bg-success/20 text-success rounded-full text-sm font-medium animate-pulse">
+                  <span className="px-3 py-1 bg-success/20 text-success rounded-sm text-sm font-medium animate-pulse">
                     {stats.liveGames} Live Now
                   </span>
                 )}

@@ -993,48 +993,64 @@ export async function handleScheduled(env: Env): Promise<void> {
  * Read cached scores from KV. Returns the pre-warmed payload or null.
  */
 export async function handleCachedScores(sport: string, env: Env): Promise<Response> {
-  const date = todayCST();
-  const key = scoresCacheKey(sport, date);
-  const cached = await kvGet<{ data: unknown; meta: unknown }>(env.KV, key);
+  try {
+    const date = todayCST();
+    const key = scoresCacheKey(sport, date);
+    const cached = await kvGet<{ data: unknown; meta: unknown }>(env.KV, key);
 
-  if (cached) {
-    return new Response(JSON.stringify(cached), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=15',
-        'X-Cache': 'HIT',
-        'X-Source': 'cron-cache',
-      },
+    if (cached) {
+      return new Response(JSON.stringify(cached), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'public, max-age=15',
+          'X-Cache': 'HIT',
+          'X-Source': 'cron-cache',
+        },
+      });
+    }
+
+    // No cached data — return 204 so client knows to fall back to live endpoint
+    return new Response(null, { status: 204 });
+  } catch (err) {
+    console.error('[handleCachedScores]', err instanceof Error ? err.message : err);
+    return new Response(JSON.stringify({ error: 'Internal server error', status: 500 }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
     });
   }
-
-  // No cached data — return 204 so client knows to fall back to live endpoint
-  return new Response(null, { status: 204 });
 }
 
 /**
  * Return provider health status from KV. Used by the dashboard health panel.
  */
 export async function handleHealthProviders(env: Env): Promise<Response> {
-  const health = await kvGet<{
-    providers: Record<string, { status: string; lastSuccessAt?: string; lastCheckAt: string }>;
-    checkedAt: string;
-    activeSports: string[];
-  }>(env.KV, 'health:providers:latest');
+  try {
+    const health = await kvGet<{
+      providers: Record<string, { status: string; lastSuccessAt?: string; lastCheckAt: string }>;
+      checkedAt: string;
+      activeSports: string[];
+    }>(env.KV, 'health:providers:latest');
 
-  if (health) {
-    return new Response(JSON.stringify(health), {
+    if (health) {
+      return new Response(JSON.stringify(health), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'public, max-age=30',
+        },
+      });
+    }
+
+    return new Response(JSON.stringify({ providers: {}, checkedAt: null, activeSports: [] }), {
       status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=30',
-      },
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (err) {
+    console.error('[handleHealthProviders]', err instanceof Error ? err.message : err);
+    return new Response(JSON.stringify({ error: 'Internal server error', status: 500 }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
     });
   }
-
-  return new Response(JSON.stringify({ providers: {}, checkedAt: null, activeSports: [] }), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' },
-  });
 }

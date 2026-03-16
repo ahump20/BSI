@@ -315,7 +315,7 @@ export default function SwingAnalysisClient() {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="mt-4 p-4 rounded-sm bg-red-500/10 border border-red-500/20 text-red-400 text-sm"
+                  className="mt-4 p-4 rounded-sm bg-[var(--bsi-danger)]/10 border border-[var(--bsi-danger)]/20 text-[var(--bsi-danger)] text-sm"
                 >
                   {error}
                 </motion.div>

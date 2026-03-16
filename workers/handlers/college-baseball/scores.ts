@@ -11,6 +11,7 @@ export async function handleCollegeBaseballScores(
   env: Env,
   ctx?: ExecutionContext,
 ): Promise<Response> {
+  try {
   const date = url.searchParams.get('date') || new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' }).format(new Date());
   const cacheKey = `cb:scores:${date}`;
   const empty = { data: [], totalCount: 0 };
@@ -137,12 +138,17 @@ export async function handleCollegeBaseballScores(
       { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' },
     );
   }
+  } catch (err) {
+    console.error('[handleCollegeBaseballScores]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }
 
 export async function handleCollegeBaseballGame(
   gameId: string,
   env: Env
 ): Promise<Response> {
+  try {
   const cacheKey = `cb:game:${gameId}`;
   const now = new Date().toISOString();
 
@@ -206,12 +212,17 @@ export async function handleCollegeBaseballGame(
       502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' }
     );
   }
+  } catch (err) {
+    console.error('[handleCollegeBaseballGame]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }
 
 export async function handleCollegeBaseballSchedule(
   url: URL,
   env: Env
 ): Promise<Response> {
+  try {
   const date = url.searchParams.get('date') || new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' }).format(new Date());
   const range = url.searchParams.get('range') || 'week';
   const conference = url.searchParams.get('conference') || '';
@@ -317,4 +328,8 @@ export async function handleCollegeBaseballSchedule(
   return cachedJson(payload, 200, httpCache, {
     ...dataHeaders(result.timestamp), 'X-Cache': 'MISS',
   });
+  } catch (err) {
+    console.error('[handleCollegeBaseballSchedule]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }

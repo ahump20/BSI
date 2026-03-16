@@ -258,9 +258,9 @@ export default function CollegeBaseballStandingsPage() {
                   </div>
                   {meta?.sources ? (
                     <div className={`flex items-center gap-1.5 text-xs font-medium ${
-                      meta.degraded ? 'text-yellow-400' : 'text-[var(--bsi-primary)]'
+                      meta.degraded ? 'text-[var(--bsi-warning)]' : 'text-[var(--bsi-primary)]'
                     }`}>
-                      <span className={`w-2 h-2 rounded-full ${meta.degraded ? 'bg-yellow-400' : 'bg-[var(--bsi-primary)]'}`} />
+                      <span className={`w-2 h-2 rounded-full ${meta.degraded ? 'bg-[var(--bsi-warning)]' : 'bg-[var(--bsi-primary)]'}`} />
                       Sources: {meta.sources.join(' + ')}
                     </div>
                   ) : (

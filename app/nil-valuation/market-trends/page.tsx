@@ -94,7 +94,7 @@ export default function MarketTrendsPage() {
                   <CardContent className="p-5">
                     <div className="text-2xl md:text-3xl font-bold text-burnt-orange">{item.value}</div>
                     <div className="text-sm text-text-secondary mt-1">{item.label}</div>
-                    <div className="text-xs text-green-400 mt-2">{item.change}</div>
+                    <div className="text-xs text-[var(--bsi-success)] mt-2">{item.change}</div>
                   </CardContent>
                 </Card>
               </ScrollReveal>
@@ -124,7 +124,7 @@ export default function MarketTrendsPage() {
                           <td className="p-4 font-semibold text-text-primary">{row.sport}</td>
                           <td className="p-4 text-right text-text-secondary">{row.share}</td>
                           <td className="p-4 text-right text-text-secondary">{row.avg}</td>
-                          <td className="p-4 text-right text-green-400">{row.growth}</td>
+                          <td className="p-4 text-right text-[var(--bsi-success)]">{row.growth}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -194,7 +194,7 @@ export default function MarketTrendsPage() {
                             <td className="p-4 text-right text-burnt-orange font-semibold">{formatValue(row.avg_value)}</td>
                             <td className="p-4 text-right text-text-secondary">{formatValue(row.top_value)}</td>
                             <td className="p-4 text-right">
-                              <span className="text-green-400 font-semibold">{row.elite_count}</span>
+                              <span className="text-[var(--bsi-success)] font-semibold">{row.elite_count}</span>
                               <span className="text-text-muted"> / {row.high_count}</span>
                             </td>
                           </tr>

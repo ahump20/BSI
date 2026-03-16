@@ -60,7 +60,7 @@ type StatusFilter = 'all' | 'hot' | 'cold' | 'neutral';
 const STATUS_STYLES: Record<string, { bg: string; text: string; dot: string; label: string }> = {
   hot: { bg: 'bg-orange-500/10', text: 'text-orange-400', dot: 'bg-orange-500', label: 'Hot' },
   cold: { bg: 'bg-[var(--heritage-columbia-blue)]/10', text: 'text-[var(--heritage-columbia-blue)]', dot: 'bg-[var(--heritage-columbia-blue)]', label: 'Cold' },
-  neutral: { bg: 'bg-gray-500/10', text: 'text-gray-400', dot: 'bg-gray-500', label: 'Neutral' },
+  neutral: { bg: 'bg-[var(--bsi-dust)]/10', text: 'text-[var(--bsi-dust)]', dot: 'bg-[var(--bsi-dust)]', label: 'Neutral' },
 };
 
 // ─── Sparkline Component ────────────────────────────────────────────────────
@@ -204,7 +204,7 @@ function RunDiffBarChart({ data }: { data: TeamRollingPoint[] }) {
         <span className="text-[10px] uppercase tracking-wider text-text-muted">Run Differential</span>
         <span
           className="font-mono text-sm font-bold"
-          style={{ color: lastVal > 0 ? '#22c55e' : lastVal < 0 ? '#ef4444' : undefined }}
+          style={{ color: lastVal > 0 ? 'var(--bsi-success)' : lastVal < 0 ? 'var(--bsi-error)' : undefined }}
         >
           {lastVal > 0 ? '+' : ''}{lastVal}
         </span>
@@ -215,7 +215,7 @@ function RunDiffBarChart({ data }: { data: TeamRollingPoint[] }) {
           const barH = (Math.abs(v) / maxAbs) * (height / 2 - 4);
           const x = i * (barW + gap);
           const y = v >= 0 ? midY - barH : midY;
-          const fill = v > 0 ? '#22c55e' : v < 0 ? '#ef4444' : '#6b7280';
+          const fill = v > 0 ? 'var(--bsi-success)' : v < 0 ? 'var(--bsi-error)' : '#6b7280';
           return (
             <rect key={i} x={x} y={y} width={barW} height={Math.max(barH, 1)} fill={fill} fillOpacity="0.7" rx="1" />
           );
@@ -295,8 +295,8 @@ export default function TexasTrendsClient() {
                     <div
                       className="font-mono text-2xl font-bold"
                       style={{
-                        color: momentum.last5RunDifferential > 0 ? '#22c55e'
-                          : momentum.last5RunDifferential < 0 ? '#ef4444'
+                        color: momentum.last5RunDifferential > 0 ? 'var(--bsi-success)'
+                          : momentum.last5RunDifferential < 0 ? 'var(--bsi-error)'
                           : undefined,
                       }}
                     >
@@ -474,7 +474,7 @@ export default function TexasTrendsClient() {
                   </div>
                   <div>
                     <span className="inline-flex items-center gap-1.5 mb-1">
-                      <span className="w-2 h-2 rounded-full bg-gray-500" />
+                      <span className="w-2 h-2 rounded-full bg-[var(--bsi-dust)]" />
                       <span className="text-text-primary font-semibold">Neutral</span>
                     </span>
                     <p>Performing within normal range of season averages. Steady contributor.</p>

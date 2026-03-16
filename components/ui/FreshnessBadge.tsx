@@ -19,8 +19,8 @@ const levelStyles: Record<FreshnessLevel, { dot: string; text: string; label: st
     pulse: true,
   },
   degraded: {
-    dot: 'bg-yellow-400',
-    text: 'text-yellow-400',
+    dot: 'bg-[var(--bsi-warning)]',
+    text: 'text-[var(--bsi-warning)]',
     label: 'LIVE',
     pulse: true,
   },

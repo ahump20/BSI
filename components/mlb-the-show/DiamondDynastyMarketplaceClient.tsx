@@ -259,7 +259,7 @@ export function DiamondDynastyMarketplaceClient() {
                       type="button"
                       onClick={() => setPage((current) => Math.max(current - 1, 1))}
                       disabled={page <= 1}
-                      className="rounded-full border border-[var(--border-vintage)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] disabled:opacity-40"
+                      className="rounded-sm border border-[var(--border-vintage)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] disabled:opacity-40"
                     >
                       Previous
                     </button>
@@ -270,7 +270,7 @@ export function DiamondDynastyMarketplaceClient() {
                       type="button"
                       onClick={() => setPage((current) => Math.min(current + 1, data.totalPages))}
                       disabled={page >= data.totalPages}
-                      className="rounded-full border border-[var(--border-vintage)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] disabled:opacity-40"
+                      className="rounded-sm border border-[var(--border-vintage)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] disabled:opacity-40"
                     >
                       Next
                     </button>

@@ -40,8 +40,8 @@ function getOverallFromEndpoints(endpoints: EndpointStatus[]): 'healthy' | 'degr
 
 const overallConfig = {
   healthy: { label: 'All Systems Operational', color: 'text-[var(--bsi-primary)]', bg: 'bg-[var(--bsi-primary)]/10 border-[var(--bsi-primary)]/30' },
-  degraded: { label: 'Partial Degradation', color: 'text-yellow-400', bg: 'bg-yellow-400/10 border-yellow-400/30' },
-  down: { label: 'Major Outage', color: 'text-red-400', bg: 'bg-red-400/10 border-red-400/30' },
+  degraded: { label: 'Partial Degradation', color: 'text-[var(--bsi-warning)]', bg: 'bg-[var(--bsi-warning)]/10 border-[var(--bsi-warning)]/30' },
+  down: { label: 'Major Outage', color: 'text-[var(--bsi-danger)]', bg: 'bg-[var(--bsi-danger)]/10 border-[var(--bsi-danger)]/30' },
 };
 
 export default function StatusPage() {
@@ -138,7 +138,7 @@ export default function StatusPage() {
                   <div className="flex items-center gap-3">
                     <span className={`w-3 h-3 rounded-full ${
                       data.overall === 'healthy' ? 'bg-[var(--bsi-primary)]' :
-                      data.overall === 'degraded' ? 'bg-yellow-400' : 'bg-red-400'
+                      data.overall === 'degraded' ? 'bg-[var(--bsi-warning)]' : 'bg-[var(--bsi-danger)]'
                     }`} />
                     <span className={`text-lg font-semibold ${overall?.color}`}>
                       {overall?.label}
@@ -165,7 +165,7 @@ export default function StatusPage() {
                         </span>
                         <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${
                           endpoint.status === 'ok' ? 'bg-[var(--bsi-primary)]' :
-                          endpoint.status === 'timeout' ? 'bg-yellow-400' : 'bg-red-400'
+                          endpoint.status === 'timeout' ? 'bg-[var(--bsi-warning)]' : 'bg-[var(--bsi-danger)]'
                         }`} />
                       </div>
                       <div className="flex items-center justify-between text-xs text-text-tertiary">

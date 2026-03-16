@@ -80,7 +80,7 @@ export function TechMaturityMap({ className = '' }: { className?: string }) {
             key={sport}
             onClick={() => setActiveSport(sport)}
             aria-pressed={activeSport === sport}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-all ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-sm border transition-all ${
               activeSport === sport
                 ? 'bg-burnt-orange/20 text-burnt-orange border-burnt-orange/40'
                 : 'bg-surface-light text-text-tertiary border-border hover:text-text-primary hover:border-border-strong'
@@ -96,7 +96,7 @@ export function TechMaturityMap({ className = '' }: { className?: string }) {
         <button
           onClick={() => setActiveMaturity('all')}
           aria-pressed={activeMaturity === 'all'}
-          className={`px-3 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-full border transition-all ${
+          className={`px-3 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-sm border transition-all ${
             activeMaturity === 'all'
               ? 'bg-surface text-text-primary border-border-strong'
               : 'bg-transparent text-text-tertiary border-border-subtle hover:text-text-primary'
@@ -109,7 +109,7 @@ export function TechMaturityMap({ className = '' }: { className?: string }) {
             key={m}
             onClick={() => setActiveMaturity(m)}
             aria-pressed={activeMaturity === m}
-            className={`px-3 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-full border transition-all ${
+            className={`px-3 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-sm border transition-all ${
               activeMaturity === m
                 ? `bg-surface text-text-primary border-border-strong`
                 : 'bg-transparent text-text-tertiary border-border-subtle hover:text-text-primary'
@@ -173,7 +173,7 @@ export function TechMaturityMap({ className = '' }: { className?: string }) {
             return (
               <span key={m} className="text-[10px] text-text-muted flex items-center gap-1">
                 <span className={`w-1.5 h-1.5 rounded-full ${
-                  m === 'production' ? 'bg-green-500' : m === 'growth' ? 'bg-yellow-500' : 'bg-white/30'
+                  m === 'production' ? 'bg-[var(--bsi-success)]' : m === 'growth' ? 'bg-[var(--bsi-warning)]' : 'bg-white/30'
                 }`} />
                 {count} {maturityConfig[m].label}
               </span>

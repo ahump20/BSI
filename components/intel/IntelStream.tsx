@@ -143,7 +143,7 @@ export function IntelStream({
       {/* Error state */}
       {status === 'error' && (
         <div className="px-4 py-3">
-          <p className="text-xs text-red-400/70">{errorMsg}</p>
+          <p className="text-xs text-[var(--bsi-danger)]/70">{errorMsg}</p>
         </div>
       )}
 
@@ -157,7 +157,7 @@ export function IntelStream({
                 <button
                   key={s}
                   onClick={() => handleSuggestion(s)}
-                  className="text-[11px] text-text-muted border border-border-subtle rounded-full px-3 py-1 hover:text-text-secondary hover:border-border-strong transition-colors"
+                  className="text-[11px] text-text-muted border border-border-subtle rounded-sm px-3 py-1 hover:text-text-secondary hover:border-border-strong transition-colors"
                 >
                   {s}
                 </button>

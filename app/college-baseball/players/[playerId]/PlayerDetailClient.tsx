@@ -167,10 +167,10 @@ type ProfileTab = 'season' | 'gamelog';
 
 const NIL_TIER_COLORS: Record<string, { bg: string; text: string; label: string }> = {
   elite:         { bg: 'bg-[#BF5700]/20', text: 'text-[#BF5700]', label: 'Elite' },
-  high:          { bg: 'bg-green-500/15', text: 'text-green-400', label: 'High' },
-  mid:           { bg: 'bg-yellow-500/15', text: 'text-yellow-400', label: 'Mid' },
+  high:          { bg: 'bg-[var(--bsi-success)]/15', text: 'text-[var(--bsi-success)]', label: 'High' },
+  mid:           { bg: 'bg-[var(--bsi-warning)]/15', text: 'text-[var(--bsi-warning)]', label: 'Mid' },
   emerging:      { bg: 'bg-[var(--heritage-columbia-blue)]/15', text: 'text-[var(--heritage-columbia-blue)]', label: 'Emerging' },
-  developmental: { bg: 'bg-zinc-500/15', text: 'text-zinc-400', label: 'Developmental' },
+  developmental: { bg: 'bg-[var(--bsi-dust)]/15', text: 'text-[var(--bsi-dust)]', label: 'Developmental' },
 };
 
 function formatNILValue(value: number): string {
@@ -321,11 +321,11 @@ export default function PlayerDetailClient() {
                   {player.jerseyNumber && <Badge variant="secondary">#{player.jerseyNumber}</Badge>}
                   {player.classYear && <Badge variant="secondary">{player.classYear}</Badge>}
                   {player.portalStatus && (
-                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-widest leading-none border ${
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[10px] font-semibold uppercase tracking-widest leading-none border ${
                       player.portalStatus === 'committed'
-                        ? 'bg-green-500/15 border-green-500/30 text-green-400'
+                        ? 'bg-[var(--bsi-success)]/15 border-[var(--bsi-success)]/30 text-[var(--bsi-success)]'
                         : player.portalStatus === 'withdrawn'
-                          ? 'bg-zinc-500/15 border-zinc-500/30 text-zinc-400'
+                          ? 'bg-[var(--bsi-dust)]/15 border-[var(--bsi-dust)]/30 text-[var(--bsi-dust)]'
                           : 'bg-burnt-orange/15 border-burnt-orange/30 text-burnt-orange'
                     }`}>
                       <svg className="w-3 h-3" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -344,7 +344,7 @@ export default function PlayerDetailClient() {
                     return (
                       <Link
                         href="/nil-valuation"
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${tierInfo.bg} border border-[#BF5700]/20 hover:border-[#BF5700]/40 transition-colors`}
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm ${tierInfo.bg} border border-[#BF5700]/20 hover:border-[#BF5700]/40 transition-colors`}
                       >
                         <span className="text-[10px] text-text-muted uppercase tracking-widest leading-none">Est. NIL</span>
                         <span className="text-sm font-bold text-[#BF5700] font-mono leading-none">
@@ -361,7 +361,7 @@ export default function PlayerDetailClient() {
                       ? removePlayer(playerId)
                       : addPlayer({ playerId, playerName: player.name, team: player.team?.name, position: player.position ?? undefined })
                     }
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border transition-colors cursor-pointer ${
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm border transition-colors cursor-pointer ${
                       watched
                         ? 'bg-burnt-orange/15 border-burnt-orange/30 text-burnt-orange'
                         : 'bg-transparent border-border hover:border-burnt-orange/30 text-text-muted hover:text-burnt-orange'
@@ -466,7 +466,7 @@ export default function PlayerDetailClient() {
                   </div>
                   <div className="p-4 flex flex-wrap items-center gap-3">
                     {isDraftEligible && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-burnt-orange/15 border border-burnt-orange/30 text-burnt-orange text-xs font-semibold uppercase tracking-wider">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-burnt-orange/15 border border-burnt-orange/30 text-burnt-orange text-xs font-semibold uppercase tracking-wider">
                         <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M8 1v14M4 5l4-4 4 4" />
                         </svg>
@@ -474,12 +474,12 @@ export default function PlayerDetailClient() {
                       </span>
                     )}
                     {player.portalStatus && (
-                      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider border ${
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-semibold uppercase tracking-wider border ${
                         player.portalStatus === 'committed'
-                          ? 'bg-green-500/15 border-green-500/30 text-green-400'
+                          ? 'bg-[var(--bsi-success)]/15 border-[var(--bsi-success)]/30 text-[var(--bsi-success)]'
                           : player.portalStatus === 'withdrawn'
-                            ? 'bg-zinc-500/15 border-zinc-500/30 text-zinc-400'
-                            : 'bg-yellow-500/15 border-yellow-500/30 text-yellow-400'
+                            ? 'bg-[var(--bsi-dust)]/15 border-[var(--bsi-dust)]/30 text-[var(--bsi-dust)]'
+                            : 'bg-[var(--bsi-warning)]/15 border-[var(--bsi-warning)]/30 text-[var(--bsi-warning)]'
                       }`}>
                         In Portal: {player.portalStatus}
                       </span>
@@ -487,7 +487,7 @@ export default function PlayerDetailClient() {
                     {draftProfile && (
                       <Link
                         href={`/college-baseball/editorial/${draftProfile.slug}`}
-                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border hover:border-burnt-orange/40 text-text-secondary hover:text-burnt-orange transition-colors text-xs font-medium group"
+                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border border-border hover:border-burnt-orange/40 text-text-secondary hover:text-burnt-orange transition-colors text-xs font-medium group"
                       >
                         <span className="text-burnt-orange font-semibold uppercase tracking-wider">Draft Profile</span>
                         <span className="truncate max-w-[200px]">{draftProfile.title}</span>
@@ -520,7 +520,7 @@ export default function PlayerDetailClient() {
                     <div className="space-y-3">
                       <HAVFBar label="H" score={havfPlayer.h_score} color="var(--bsi-primary)" />
                       <HAVFBar label="A" score={havfPlayer.a_score} color="var(--bsi-accent)" />
-                      <HAVFBar label="V" score={havfPlayer.v_score} color="#FDB913" />
+                      <HAVFBar label="V" score={havfPlayer.v_score} color="var(--bsi-warning)" />
                       <HAVFBar label="F" score={havfPlayer.f_score} color="var(--bsi-texas-soil)" />
                     </div>
                     <div className="flex flex-col items-center justify-center md:border-l md:border-border-subtle md:pl-6">
@@ -669,8 +669,8 @@ export default function PlayerDetailClient() {
                               <tr className="border-b border-border">
                                 <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.games}</td>
                                 <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.gamesStarted}</td>
-                                <td className="py-3 px-3 text-center text-[#2E7D32] font-bold">{stats.pitching.wins}</td>
-                                <td className="py-3 px-3 text-center text-[#C62828] font-bold">{stats.pitching.losses}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-success)] font-bold">{stats.pitching.wins}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-error)] font-bold">{stats.pitching.losses}</td>
                                 <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.saves}</td>
                                 <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.inningsPitched.toFixed(1)}</td>
                                 <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.hits}</td>
@@ -716,7 +716,7 @@ export default function PlayerDetailClient() {
                                     {g.isHome ? 'vs' : '@'} {g.opponent || '—'}
                                   </td>
                                   <td className="py-2 px-2 text-center text-xs">
-                                    <span className={g.result === 'W' ? 'text-[#2E7D32] font-bold' : 'text-[#C62828] font-bold'}>
+                                    <span className={g.result === 'W' ? 'text-[var(--bsi-success)] font-bold' : 'text-[var(--bsi-error)] font-bold'}>
                                       {g.result || '—'}
                                     </span>
                                   </td>
@@ -758,7 +758,7 @@ export default function PlayerDetailClient() {
                                       {g.isHome ? 'vs' : '@'} {g.opponent || '—'}
                                     </td>
                                     <td className="py-2 px-2 text-center text-xs">
-                                      <span className={g.result === 'W' ? 'text-[#2E7D32] font-bold' : 'text-[#C62828] font-bold'}>
+                                      <span className={g.result === 'W' ? 'text-[var(--bsi-success)] font-bold' : 'text-[var(--bsi-error)] font-bold'}>
                                         {g.result || '—'}
                                       </span>
                                     </td>

@@ -29,7 +29,7 @@ export default function StatusLoading() {
                 <Skeleton variant="circular" width={10} height={10} />
               </div>
               <div className="flex items-center justify-between">
-                <Skeleton variant="rectangular" width={60} height={20} className="rounded-full" />
+                <Skeleton variant="rectangular" width={60} height={20} className="rounded-sm" />
                 <Skeleton variant="text" width={40} height={12} />
               </div>
             </div>

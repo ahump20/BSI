@@ -22,47 +22,52 @@ export async function handleLogin(
   request: Request,
   env: Env,
 ): Promise<Response> {
-  if (request.method !== 'POST') {
-    return json({ error: 'Method not allowed' }, 405);
-  }
-
-  let body: { email?: string };
   try {
-    body = await request.json() as { email?: string };
-  } catch {
-    return json({ error: 'Invalid request body.' }, 400);
+    if (request.method !== 'POST') {
+      return json({ error: 'Method not allowed' }, 405);
+    }
+
+    let body: { email?: string };
+    try {
+      body = await request.json() as { email?: string };
+    } catch {
+      return json({ error: 'Invalid request body.' }, 400);
+    }
+
+    const email = body.email?.trim().toLowerCase();
+    if (!email) {
+      return json({ error: 'Email is required.' }, 400);
+    }
+
+    if (!env.BSI_KEYS) {
+      return json({ error: 'Auth service not configured.' }, 503);
+    }
+
+    // Look up the API key associated with this email
+    const apiKey = await env.BSI_KEYS.get(`email:${email}`);
+    if (!apiKey) {
+      return json({ error: 'No subscription found for this email.' }, 404);
+    }
+
+    // Verify the key still exists and hasn't been deleted
+    const raw = await env.BSI_KEYS.get(`key:${apiKey}`);
+    if (!raw) {
+      return json({ error: 'No subscription found for this email.' }, 404);
+    }
+
+    const keyData: KeyData = JSON.parse(raw);
+
+    // Re-send the API key via email
+    await emailKey(env.RESEND_API_KEY, email, apiKey, keyData.tier);
+
+    return json({
+      success: true,
+      message: 'API key sent to your email.',
+    });
+  } catch (err) {
+    console.error('[handleLogin]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
-
-  const email = body.email?.trim().toLowerCase();
-  if (!email) {
-    return json({ error: 'Email is required.' }, 400);
-  }
-
-  if (!env.BSI_KEYS) {
-    return json({ error: 'Auth service not configured.' }, 503);
-  }
-
-  // Look up the API key associated with this email
-  const apiKey = await env.BSI_KEYS.get(`email:${email}`);
-  if (!apiKey) {
-    return json({ error: 'No subscription found for this email.' }, 404);
-  }
-
-  // Verify the key still exists and hasn't been deleted
-  const raw = await env.BSI_KEYS.get(`key:${apiKey}`);
-  if (!raw) {
-    return json({ error: 'No subscription found for this email.' }, 404);
-  }
-
-  const keyData: KeyData = JSON.parse(raw);
-
-  // Re-send the API key via email
-  await emailKey(env.RESEND_API_KEY, email, apiKey, keyData.tier);
-
-  return json({
-    success: true,
-    message: 'API key sent to your email.',
-  });
 }
 
 /**
@@ -75,35 +80,40 @@ export async function handleValidateKey(
   request: Request,
   env: Env,
 ): Promise<Response> {
-  const apiKey = request.headers.get('X-BSI-Key');
-  if (!apiKey) {
-    return json({ valid: false, error: 'API key required.' }, 401);
-  }
+  try {
+    const apiKey = request.headers.get('X-BSI-Key');
+    if (!apiKey) {
+      return json({ valid: false, error: 'API key required.' }, 401);
+    }
 
-  if (!env.BSI_KEYS) {
-    return json({ error: 'Auth service not configured.' }, 503);
-  }
+    if (!env.BSI_KEYS) {
+      return json({ error: 'Auth service not configured.' }, 503);
+    }
 
-  const raw = await env.BSI_KEYS.get(`key:${apiKey}`);
-  if (!raw) {
-    return json({ valid: false, error: 'Invalid API key.' }, 401);
-  }
+    const raw = await env.BSI_KEYS.get(`key:${apiKey}`);
+    if (!raw) {
+      return json({ valid: false, error: 'Invalid API key.' }, 401);
+    }
 
-  const keyData: KeyData = JSON.parse(raw);
+    const keyData: KeyData = JSON.parse(raw);
 
-  if (Date.now() > keyData.expires) {
+    if (Date.now() > keyData.expires) {
+      return json({
+        valid: false,
+        error: 'Subscription expired.',
+        upgrade: 'https://blazesportsintel.com/pricing',
+      }, 402);
+    }
+
     return json({
-      valid: false,
-      error: 'Subscription expired.',
-      upgrade: 'https://blazesportsintel.com/pricing',
-    }, 402);
+      valid: true,
+      tier: keyData.tier,
+      email: keyData.email,
+      expires_at: new Date(keyData.expires).toISOString(),
+      has_billing: !!keyData.stripe_customer_id,
+    });
+  } catch (err) {
+    console.error('[handleValidateKey]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
-
-  return json({
-    valid: true,
-    tier: keyData.tier,
-    email: keyData.email,
-    expires_at: new Date(keyData.expires).toISOString(),
-    has_billing: !!keyData.stripe_customer_id,
-  });
 }

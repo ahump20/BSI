@@ -177,32 +177,32 @@ export async function handleCustomerPortal(
   request: Request,
   env: ExtendedEnv,
 ): Promise<Response> {
-  const { STRIPE_SECRET_KEY } = env;
-  if (!STRIPE_SECRET_KEY) {
-    return json({ error: 'Stripe is not configured.' }, 503);
-  }
-
-  const apiKey = request.headers.get('X-BSI-Key');
-  if (!apiKey) {
-    return json({ error: 'API key required.' }, 401);
-  }
-
-  const raw = await env.BSI_KEYS?.get(`key:${apiKey}`);
-  if (!raw) {
-    return json({ error: 'Invalid API key.' }, 401);
-  }
-
-  const keyData: KeyData = JSON.parse(raw);
-  if (!keyData.stripe_customer_id) {
-    return json({ error: 'No billing account linked.' }, 404);
-  }
-
-  const params = new URLSearchParams({
-    'customer': keyData.stripe_customer_id,
-    'return_url': 'https://blazesportsintel.com/dashboard',
-  });
-
   try {
+    const { STRIPE_SECRET_KEY } = env;
+    if (!STRIPE_SECRET_KEY) {
+      return json({ error: 'Stripe is not configured.' }, 503);
+    }
+
+    const apiKey = request.headers.get('X-BSI-Key');
+    if (!apiKey) {
+      return json({ error: 'API key required.' }, 401);
+    }
+
+    const raw = await env.BSI_KEYS?.get(`key:${apiKey}`);
+    if (!raw) {
+      return json({ error: 'Invalid API key.' }, 401);
+    }
+
+    const keyData: KeyData = JSON.parse(raw);
+    if (!keyData.stripe_customer_id) {
+      return json({ error: 'No billing account linked.' }, 404);
+    }
+
+    const params = new URLSearchParams({
+      'customer': keyData.stripe_customer_id,
+      'return_url': 'https://blazesportsintel.com/dashboard',
+    });
+
     const res = await fetch(`${STRIPE_API}/billing_portal/sessions`, {
       method: 'POST',
       headers: {
@@ -225,7 +225,7 @@ export async function handleCustomerPortal(
 
     return json({ url: session.url });
   } catch (err) {
-    console.error('[stripe] customer portal error:', err);
-    return json({ error: 'Failed to create portal session.' }, 502);
+    console.error('[handleCustomerPortal]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }

@@ -77,8 +77,8 @@ const POOLS: PoolData[] = [
 
 const DANGER_MAP: Record<string, { label: string; color: string }> = {
   A: { label: 'MEDIUM', color: 'text-text-secondary' },
-  B: { label: 'MED-HIGH', color: 'text-amber-400' },
-  C: { label: 'HIGH', color: 'text-yellow-400' },
+  B: { label: 'MED-HIGH', color: 'text-[var(--bsi-warning)]' },
+  C: { label: 'HIGH', color: 'text-[var(--bsi-warning)]' },
   D: { label: 'POOL OF DEATH', color: 'text-[#FF6B35]' },
 };
 
@@ -98,15 +98,15 @@ export function WBCTournamentStrip() {
           {/* Header */}
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-sm bg-amber-500/15 flex items-center justify-center">
-                <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-amber-400 fill-none" strokeWidth="1.5">
+              <div className="w-8 h-8 rounded-sm bg-[var(--bsi-warning)]/15 flex items-center justify-center">
+                <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-[var(--bsi-warning)] fill-none" strokeWidth="1.5">
                   <circle cx="12" cy="12" r="10" />
                   <path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10" />
                   <path d="M2 12h20" />
                 </svg>
               </div>
               <div>
-                <span className="block text-[9px] font-mono uppercase tracking-[0.2em] text-amber-400/80">
+                <span className="block text-[9px] font-mono uppercase tracking-[0.2em] text-[var(--bsi-warning)]/80">
                   Live Tournament
                 </span>
                 <h2 className="font-display text-lg md:text-xl font-bold uppercase tracking-wide text-text-primary">
@@ -116,7 +116,7 @@ export function WBCTournamentStrip() {
             </div>
             <Link
               href="/wbc"
-              className="text-amber-400 text-xs font-semibold uppercase tracking-wider hover:text-amber-300 transition-colors"
+              className="text-[var(--bsi-warning)] text-xs font-semibold uppercase tracking-wider hover:text-[var(--bsi-warning)] transition-colors"
             >
               Full Coverage &rarr;
             </Link>
@@ -132,11 +132,11 @@ export function WBCTournamentStrip() {
                   href={`/wbc/pool/${pool.id.toLowerCase()}`}
                   className="flex-shrink-0 w-64 sm:w-auto group"
                 >
-                  <div className="p-4 rounded-sm bg-[rgba(26,26,26,0.6)] border border-amber-500/10 hover:border-amber-500/30 transition-all duration-300 h-full">
+                  <div className="p-4 rounded-sm bg-[rgba(26,26,26,0.6)] border border-[var(--bsi-warning)]/10 hover:border-[var(--bsi-warning)]/30 transition-all duration-300 h-full">
                     {/* Pool header */}
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
-                        <span className="font-display text-sm font-bold uppercase text-amber-400">
+                        <span className="font-display text-sm font-bold uppercase text-[var(--bsi-warning)]">
                           Pool {pool.id}
                         </span>
                         <span className="text-[9px] font-mono text-text-muted">{pool.city}</span>
@@ -175,14 +175,14 @@ export function WBCTournamentStrip() {
           <div className="mt-4 flex items-center justify-center gap-4">
             <Link
               href="/wbc"
-              className="text-xs text-text-muted hover:text-amber-400 transition-colors font-mono uppercase tracking-wider"
+              className="text-xs text-text-muted hover:text-[var(--bsi-warning)] transition-colors font-mono uppercase tracking-wider"
             >
               Power Rankings (200K sims)
             </Link>
             <span className="text-text-muted/30">|</span>
             <Link
               href="/wbc"
-              className="text-xs text-text-muted hover:text-amber-400 transition-colors font-mono uppercase tracking-wider"
+              className="text-xs text-text-muted hover:text-[var(--bsi-warning)] transition-colors font-mono uppercase tracking-wider"
             >
               Bracket + Intelligence
             </Link>

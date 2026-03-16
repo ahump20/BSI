@@ -6,7 +6,7 @@ export default function CoverageLoading() {
       <div className="max-w-7xl mx-auto px-4 py-12">
         {/* Hero */}
         <div className="max-w-4xl mx-auto text-center mb-12">
-          <Skeleton variant="rectangular" width={120} height={22} className="rounded-full mx-auto mb-4" />
+          <Skeleton variant="rectangular" width={120} height={22} className="rounded-sm mx-auto mb-4" />
           <Skeleton variant="text" width={360} height={44} className="mx-auto mb-4" />
           <Skeleton variant="text" width="70%" height={18} className="mx-auto mb-2" />
           <Skeleton variant="text" width="50%" height={18} className="mx-auto" />
@@ -31,7 +31,7 @@ export default function CoverageLoading() {
                   <Skeleton variant="circular" width={36} height={36} />
                   <div>
                     <Skeleton variant="text" width={120} height={20} className="mb-1" />
-                    <Skeleton variant="rectangular" width={90} height={18} className="rounded-full" />
+                    <Skeleton variant="rectangular" width={90} height={18} className="rounded-sm" />
                   </div>
                 </div>
               </div>
@@ -46,8 +46,8 @@ export default function CoverageLoading() {
               <div>
                 <Skeleton variant="text" width={80} height={12} className="mb-2" />
                 <div className="flex gap-2">
-                  <Skeleton variant="rectangular" width={60} height={20} className="rounded-full" />
-                  <Skeleton variant="rectangular" width={50} height={20} className="rounded-full" />
+                  <Skeleton variant="rectangular" width={60} height={20} className="rounded-sm" />
+                  <Skeleton variant="rectangular" width={50} height={20} className="rounded-sm" />
                 </div>
               </div>
             </div>

@@ -10,6 +10,7 @@ export async function handleCollegeBaseballPlayer(
   playerId: string,
   env: Env
 ): Promise<Response> {
+  try {
   const cacheKey = `cb:player:${playerId}`;
   const now = new Date().toISOString();
 
@@ -123,9 +124,14 @@ export async function handleCollegeBaseballPlayer(
     ...dataHeaders(now, 'error'),
     'X-Cache': 'ERROR',
   });
+  } catch (err) {
+    console.error('[handleCollegeBaseballPlayer]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }
 
 export async function handleCollegeBaseballPlayersList(url: URL, env: Env): Promise<Response> {
+  try {
   const team = url.searchParams.get('team') || '';
   const search = url.searchParams.get('search') || '';
   const position = url.searchParams.get('position') || '';
@@ -289,6 +295,10 @@ export async function handleCollegeBaseballPlayersList(url: URL, env: Env): Prom
   }, 'espn', { fetchedAt: now });
 
   return cachedJson(payload, 200, HTTP_CACHE.player, { ...dataHeaders(now, 'espn'), 'X-Cache': roster === cached ? 'HIT' : 'MISS' });
+  } catch (err) {
+    console.error('[handleCollegeBaseballPlayersList]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }
 
 export async function handleCollegeBaseballPlayerCompare(

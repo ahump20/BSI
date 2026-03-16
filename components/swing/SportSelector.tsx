@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { motion } from 'framer-motion';
 import type { SwingSport } from '@/lib/swing/sport-models';
 
@@ -31,20 +30,14 @@ const SPORTS: { key: SwingSport; label: string; desc: string; icon: string }[] =
 ];
 
 export function SportSelector({ selected, onSelect }: SportSelectorProps) {
-  const [hoveredKey, setHoveredKey] = useState<SwingSport | null>(null);
-
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
       {SPORTS.map((sport) => {
         const isSelected = selected === sport.key;
-        const isHovered = hoveredKey === sport.key;
-
         return (
           <button
             key={sport.key}
             onClick={() => onSelect(sport.key)}
-            onMouseEnter={() => setHoveredKey(sport.key)}
-            onMouseLeave={() => setHoveredKey(null)}
             className={`relative overflow-hidden rounded-sm border-2 p-6 text-left transition-all duration-300 cursor-pointer ${
               isSelected
                 ? 'border-burnt-orange bg-burnt-orange/10 shadow-[0_0_30px_rgba(191,87,0,0.15)]'

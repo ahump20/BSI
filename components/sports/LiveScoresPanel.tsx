@@ -75,7 +75,7 @@ function GameCardList({ games }: { games: GameScore[] }) {
             )}
             <span className={`text-xs ${
               game.isLive ? 'text-[var(--bsi-primary)]'
-                : game.isPostponed ? 'text-yellow-500/60'
+                : game.isPostponed ? 'text-[var(--bsi-warning)]/60'
                 : game.isFinal ? 'text-text-muted'
                 : 'text-burnt-orange'
             }`}>
@@ -125,8 +125,8 @@ function LiveScoresPanelWS({ className = '' }: { className?: string }) {
         <span className="text-xs text-text-muted uppercase tracking-wider">NCAA</span>
       </div>
       {isPreseason && preseasonLabel && (
-        <div className="mx-4 mt-3 px-3 py-2 bg-yellow-500/10 border border-yellow-500/20 rounded-sm">
-          <p className="text-yellow-400/80 text-xs">
+        <div className="mx-4 mt-3 px-3 py-2 bg-[var(--bsi-warning)]/10 border border-[var(--bsi-warning)]/20 rounded-sm">
+          <p className="text-[var(--bsi-warning)]/80 text-xs">
             {preseasonLabel} — coverage may be limited; some games unavailable until first pitch
           </p>
         </div>
@@ -136,7 +136,7 @@ function LiveScoresPanelWS({ className = '' }: { className?: string }) {
           <LoadingSkeleton />
         ) : error && games.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-red-400 text-sm mb-2">{error}</p>
+            <p className="text-[var(--bsi-danger)] text-sm mb-2">{error}</p>
             <button
               onClick={retry}
               className="text-xs text-burnt-orange hover:text-ember transition-colors"
@@ -274,8 +274,8 @@ function LiveScoresPanelREST({ sport, className = '' }: { sport: Sport; classNam
         <span className="text-xs text-text-muted uppercase tracking-wider">{sport.toUpperCase()}</span>
       </div>
       {isPreseason && preseasonLabel && (
-        <div className="mx-4 mt-3 px-3 py-2 bg-yellow-500/10 border border-yellow-500/20 rounded-sm">
-          <p className="text-yellow-400/80 text-xs">
+        <div className="mx-4 mt-3 px-3 py-2 bg-[var(--bsi-warning)]/10 border border-[var(--bsi-warning)]/20 rounded-sm">
+          <p className="text-[var(--bsi-warning)]/80 text-xs">
             {preseasonLabel} — coverage may be limited; some games unavailable until first pitch
           </p>
         </div>
@@ -285,7 +285,7 @@ function LiveScoresPanelREST({ sport, className = '' }: { sport: Sport; classNam
           <LoadingSkeleton />
         ) : error ? (
           <div className="text-center py-8">
-            <p className="text-red-400 text-sm">{error}</p>
+            <p className="text-[var(--bsi-danger)] text-sm">{error}</p>
           </div>
         ) : games.length === 0 ? (
           <div className="text-center py-8">

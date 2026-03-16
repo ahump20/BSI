@@ -343,17 +343,59 @@ export async function handleSearch(url: URL, env: Env): Promise<Response> {
     return json({ results: [], message: 'Query must be at least 2 characters' }, 400);
   }
 
-  const sport = url.searchParams.get('sport') || 'all';
-  const normalized = normalizeSearchTerm(query);
-  const now = new Date().toISOString();
+  try {
+    const sport = url.searchParams.get('sport') || 'all';
+    const normalized = normalizeSearchTerm(query);
+    const now = new Date().toISOString();
 
-  // Try D1 FTS5 first — ranked full-text search
-  const ftsResults = await searchD1FTS5(normalized, sport, env, 20);
-  if (ftsResults && ftsResults.length > 0) {
-    // Merge FTS5 results with pro-team static matches for completeness
-    const combined: SearchResult[] = [...ftsResults];
+    // Try D1 FTS5 first — ranked full-text search
+    const ftsResults = await searchD1FTS5(normalized, sport, env, 20);
+    if (ftsResults && ftsResults.length > 0) {
+      // Merge FTS5 results with pro-team static matches for completeness
+      const combined: SearchResult[] = [...ftsResults];
 
-    // Always include pro-team static matches (FTS5 may not index them yet)
+      // Always include pro-team static matches (FTS5 may not index them yet)
+      if (sport === 'all' || sport !== 'college-baseball') {
+        for (const team of PRO_TEAMS) {
+          if (sport !== 'all' && team.sport !== sport) continue;
+          const score = Math.max(
+            computeScore(team.name, normalized),
+            team.abv.toLowerCase() === normalized ? 95 : 0,
+          );
+          if (score > 0) {
+            const teamUrl = `/${team.sport}/teams/${team.slug}`;
+            if (!combined.some((r) => r.url === teamUrl)) {
+              combined.push({
+                type: 'team',
+                id: team.slug,
+                name: team.name,
+                url: teamUrl,
+                sport: team.sport.toUpperCase(),
+                score,
+              });
+            }
+          }
+        }
+      }
+
+      const sorted = combined.sort((a, b) => b.score - a.score).slice(0, 20);
+      return json({
+        results: sorted,
+        query,
+        meta: { source: 'bsi-search-fts5', fetched_at: now, timezone: 'America/Chicago' },
+      });
+    }
+
+    // Fallback: static search (existing behavior)
+    const results: SearchResult[] = [];
+
+    // College Baseball — enhanced KV-backed index
+    if (sport === 'all' || sport === 'college-baseball') {
+      const cbbResults = await searchCollegeBaseballIndex(normalized, env, 20);
+      results.push(...cbbResults);
+    }
+
+    // Pro teams — instant static match
     if (sport === 'all' || sport !== 'college-baseball') {
       for (const team of PRO_TEAMS) {
         if (sport !== 'all' && team.sport !== sport) continue;
@@ -362,86 +404,49 @@ export async function handleSearch(url: URL, env: Env): Promise<Response> {
           team.abv.toLowerCase() === normalized ? 95 : 0,
         );
         if (score > 0) {
-          const teamUrl = `/${team.sport}/teams/${team.slug}`;
-          if (!combined.some((r) => r.url === teamUrl)) {
-            combined.push({
-              type: 'team',
-              id: team.slug,
-              name: team.name,
-              url: teamUrl,
-              sport: team.sport.toUpperCase(),
-              score,
-            });
-          }
+          results.push({
+            type: 'team',
+            id: team.slug,
+            name: team.name,
+            url: `/${team.sport}/teams/${team.slug}`,
+            sport: team.sport.toUpperCase(),
+            score,
+          });
+        }
+        if (results.length >= 30) break;
+      }
+    }
+
+    // Sport pages
+    if (sport === 'all') {
+      for (const page of SPORT_PAGES) {
+        const score = computeScore(page.name, normalized);
+        if (score > 0) {
+          results.push({ type: 'page', id: page.url, name: page.name, url: page.url, score });
         }
       }
     }
 
-    const sorted = combined.sort((a, b) => b.score - a.score).slice(0, 20);
+    // Deduplicate by url
+    const seen = new Map<string, SearchResult>();
+    for (const r of results) {
+      const existing = seen.get(r.url);
+      if (!existing || r.score > existing.score) {
+        seen.set(r.url, r);
+      }
+    }
+
+    const sorted = Array.from(seen.values())
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 20);
+
     return json({
       results: sorted,
       query,
-      meta: { source: 'bsi-search-fts5', fetched_at: now, timezone: 'America/Chicago' },
+      meta: { source: 'bsi-search', fetched_at: now, timezone: 'America/Chicago' },
     });
+  } catch (err) {
+    console.error('[handleSearch]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
-
-  // Fallback: static search (existing behavior)
-  const results: SearchResult[] = [];
-
-  // College Baseball — enhanced KV-backed index
-  if (sport === 'all' || sport === 'college-baseball') {
-    const cbbResults = await searchCollegeBaseballIndex(normalized, env, 20);
-    results.push(...cbbResults);
-  }
-
-  // Pro teams — instant static match
-  if (sport === 'all' || sport !== 'college-baseball') {
-    for (const team of PRO_TEAMS) {
-      if (sport !== 'all' && team.sport !== sport) continue;
-      const score = Math.max(
-        computeScore(team.name, normalized),
-        team.abv.toLowerCase() === normalized ? 95 : 0,
-      );
-      if (score > 0) {
-        results.push({
-          type: 'team',
-          id: team.slug,
-          name: team.name,
-          url: `/${team.sport}/teams/${team.slug}`,
-          sport: team.sport.toUpperCase(),
-          score,
-        });
-      }
-      if (results.length >= 30) break;
-    }
-  }
-
-  // Sport pages
-  if (sport === 'all') {
-    for (const page of SPORT_PAGES) {
-      const score = computeScore(page.name, normalized);
-      if (score > 0) {
-        results.push({ type: 'page', id: page.url, name: page.name, url: page.url, score });
-      }
-    }
-  }
-
-  // Deduplicate by url
-  const seen = new Map<string, SearchResult>();
-  for (const r of results) {
-    const existing = seen.get(r.url);
-    if (!existing || r.score > existing.score) {
-      seen.set(r.url, r);
-    }
-  }
-
-  const sorted = Array.from(seen.values())
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 20);
-
-  return json({
-    results: sorted,
-    query,
-    meta: { source: 'bsi-search', fetched_at: now, timezone: 'America/Chicago' },
-  });
 }

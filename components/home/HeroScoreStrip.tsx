@@ -22,7 +22,7 @@ interface HeroScoresData {
 }
 
 function statusColor(label: string): string {
-  if (label === 'Live') return '#22c55e';
+  if (label === 'Live') return 'var(--bsi-success)';
   if (label === 'Final') return 'var(--bsi-dust)';
   return 'var(--bsi-primary)';
 }
@@ -111,7 +111,7 @@ export function HeroScoreStrip() {
   if (!loading && (!data || data.empty)) return null;
 
   const cards: Array<{ game: HeroGame; label: string; accent: string }> = [];
-  if (data?.liveNow) cards.push({ game: data.liveNow, label: 'Live', accent: '#22c55e' });
+  if (data?.liveNow) cards.push({ game: data.liveNow, label: 'Live', accent: 'var(--bsi-success)' });
   if (data?.nextUp) cards.push({ game: data.nextUp, label: 'Next Up', accent: '#BF5700' });
   if (data?.recentFinal) cards.push({ game: data.recentFinal, label: 'Final', accent: '#6b7280' });
 
