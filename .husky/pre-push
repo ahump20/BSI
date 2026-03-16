@@ -3,7 +3,6 @@
 set -e
 
 echo "Running repository secret scan before push..."
-npx --no-install secretlint \
+git ls-files -z | xargs -0 npx --no-install secretlint \
   --secretlintrc .secretlintrc.json \
-  --secretlintignore .secretlintignore \
-  .
+  --secretlintignore .secretlintignore
