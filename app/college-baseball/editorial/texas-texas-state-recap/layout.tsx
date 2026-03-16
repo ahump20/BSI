@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     description:
       'Borba homers twice, Pack and Becerra go deep as Texas rolls to 16-0 in their first road test.',
     type: 'article',
-    images: ogImage('/images/og-college-baseball.png'),
+    images: ogImage('/images/og/cbb-texas-week-3-recap.png'),
   },
 };
 

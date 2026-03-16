@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     description:
       'Texas stays unbeaten. USC and Texas are the last two undefeated Top 25 teams standing.',
     type: 'article',
-    images: ogImage('/images/og-college-baseball.png'),
+    images: ogImage('/images/og/cbb-texas-houston-christian-preview.png'),
   },
 };
 

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     description:
       'Texas swept the BRUCE BOLT Classic, topping Coastal Carolina 8-1, Baylor 5-2, Ohio State 10-3.',
     type: 'article',
-    images: ogImage('/images/og-college-baseball.png'),
+    images: ogImage('/images/og/cbb-texas-week-3-recap.png'),
   },
 };
 
