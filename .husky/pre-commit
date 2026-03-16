@@ -3,3 +3,4 @@
 set -e
 
 node scripts/secretlint-staged.mjs
+node scripts/check-banned-patterns.mjs
