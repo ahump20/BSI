@@ -161,7 +161,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdContent }} />
         <BreadcrumbJsonLd />
       </head>
-      <body className="bg-midnight text-[#F5F0EB] antialiased min-h-screen">
+      <body className="bg-midnight text-bsi-bone antialiased min-h-screen">
         <SiteFrame>{children}</SiteFrame>
       </body>
     </html>
