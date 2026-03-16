@@ -10,7 +10,7 @@ const experiences = [
     bgAccent: 'bg-burnt-orange',
     textAccent: 'text-burnt-orange',
     description:
-      'Production-grade sports analytics platform covering six leagues — 23 Workers, 7 databases, 58+ editorial deep-dives. Full architecture designed, deployed, and maintained solo. See the BSI section above for the complete story.',
+      'Production-grade sports analytics platform covering six leagues — dozens of specialized systems, multiple databases, 58+ editorial deep-dives. Full architecture designed, deployed, and maintained solo.',
   },
   {
     title: 'Advertising Account Executive',
@@ -20,7 +20,7 @@ const experiences = [
     bgAccent: 'bg-spectrum-blue',
     textAccent: 'text-spectrum-blue',
     description:
-      'Data-informed advertising across linear TV, OTT/CTV, streaming, and digital platforms in the Austin/San Antonio DMA. Translated campaign performance into actionable insights and coordinated cross-functional teams.',
+      'Advertising strategy across Austin and San Antonio — two of the fastest-growing markets in Texas — spanning linear TV, OTT/CTV, streaming, and digital. Turned raw campaign data into revenue decisions for local and regional businesses.',
   },
   {
     title: 'Financial Representative',
@@ -30,7 +30,7 @@ const experiences = [
     bgAccent: 'bg-nw-navy',
     textAccent: 'text-nw-navy',
     description:
-      'Top-5 nationally ranked intern program led to a full-time role. Built comprehensive financial plans. Earned "Power of 10" Award for top 10% national performance.',
+      'Top-5 nationally ranked intern program to full-time. Only person in the office daily during COVID. Nearly tripled the referral production of every other advisor. "Power of 10" Award — top 10% national performance.',
   },
   {
     title: 'Rush Captain & Alumni Relations Chair',

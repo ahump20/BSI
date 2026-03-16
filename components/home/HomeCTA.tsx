@@ -24,13 +24,13 @@ export function HomeCTA() {
             </div>
           </div>
 
-          <span className="heritage-stamp mb-4">Every Day</span>
+          <span className="heritage-stamp mb-4">Every League</span>
           <h2 className="font-display text-3xl md:text-4xl font-bold mb-4 mt-4" style={{ color: 'var(--bsi-bone)' }}>
-            See You Tomorrow
+            Every Game Gets Covered
           </h2>
           <p className="text-base mb-8 max-w-2xl mx-auto leading-relaxed" style={{ color: 'var(--bsi-dust)' }}>
-            Scores refresh every 30 seconds during live games. Savant recomputes every six hours.
-            Editorial lands every weekend. The data never sleeps.
+            Scores refresh every 30 seconds during live games. Analytics recompute every six hours.
+            Editorial lands every weekend. One person. No days off.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
             <Link href="/scores" className="btn-heritage-fill px-8 py-4 text-lg">

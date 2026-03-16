@@ -1,15 +1,16 @@
 import { motion } from 'framer-motion';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import { EASE_OUT_EXPO } from '../utils/animations';
+import { PLATFORM_URLS, RESUME_PATH } from '../content/site';
 
 const marqueeItems = [
-  '23 Workers',
   '6 Leagues',
+  '330+ D1 Programs',
   '58+ Articles',
-  '7 Databases',
-  '12 KV Caches',
-  '18 R2 Buckets',
-  '558 Tests Passing',
+  'Live Scores',
+  'Advanced Analytics',
+  'Original Editorial',
+  'Solo Built',
 ];
 
 export default function Hero() {
@@ -71,7 +72,7 @@ export default function Hero() {
           transition={{ duration: 0.7, delay: 0.4, ease: EASE_OUT_EXPO }}
           className="text-warm-gray text-lg md:text-xl max-w-xl mb-10 leading-relaxed text-center md:text-left"
         >
-          Building the sports analytics platform that mainstream media won't — old-school scouting instinct fused with new-school sabermetrics, covering the athletes and programs outside the spotlight.
+          Blaze Sports Intel — six leagues of live analytics and original editorial, built solo because the athletes outside the spotlight deserved real coverage.
         </motion.p>
 
         <motion.div
@@ -81,7 +82,7 @@ export default function Hero() {
           className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start"
         >
           <a
-            href="https://blazesportsintel.com"
+            href={PLATFORM_URLS.bsi}
             target="_blank"
             rel="noopener noreferrer"
             className="btn-primary"
@@ -91,7 +92,7 @@ export default function Hero() {
           <a href="#origin" className="btn-outline">
             The Origin
           </a>
-          <a href="/Austin_Humphrey_Resume.pdf" download className="btn-outline">
+          <a href={RESUME_PATH} download className="btn-outline">
             Resume
           </a>
         </motion.div>

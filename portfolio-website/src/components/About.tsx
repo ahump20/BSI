@@ -20,12 +20,7 @@ const originMoments = [
   {
     title: 'The soil came first',
     text:
-      'Austin was born in Memphis on August 17, 1995, but his parents brought Texas soil from West Columbia and placed it beneath his mother before he was born. That was not a gesture for a story later. It was a family continuation.',
-  },
-  {
-    title: 'Identity was inherited early',
-    text:
-      'The doctor reportedly told the family, “You know you ain’t the first to do this, but they’ve ALL been from Texas.” The next day the El Campo Leader-News ran the headline “Tennessee Birth Will Be on Texas Soil.”',
+      'Austin was born in Memphis on August 17, 1995, but his parents brought Texas soil from West Columbia and placed it beneath his mother before he was born. The doctor told the family, “You know you ain’t the first to do this, but they’ve ALL been from Texas.” The next day the El Campo Leader-News ran the headline “Tennessee Birth Will Be on Texas Soil.” Not a gesture for a story later — a family continuation.',
   },
   {
     title: 'Sports culture was native, not added',

@@ -50,11 +50,10 @@ export default function BSIShowcase() {
                 data is the product.
               </p>
               <p>
-                Twenty-three Workers handle every API call, data transformation, and cache layer.
-                Seven databases store historical and live game data. Eighteen storage buckets
-                hold everything from box scores to editorial assets. One person built all of it
-                &mdash; old-school scouting instinct fused with new-school sabermetrics, running
-                on Cloudflare&rsquo;s edge.
+                Dozens of specialized systems handle every data call, transformation, and
+                storage layer. Multiple databases track historical and live game data across
+                six leagues. One person built all of it &mdash; old-school scouting instinct
+                fused with new-school sabermetrics.
               </p>
 
               <div className="flex flex-wrap gap-4 pt-2">

@@ -138,32 +138,28 @@ export default function AboutPage() {
 
                 <div className="space-y-5 leading-[1.75] font-serif" style={{ color: 'var(--bsi-dust)' }}>
                   <p>
-                    I grew up watching Tuesday night college baseball games that nobody would
-                    talk about the next morning. Not because they weren&apos;t worth watching —
-                    a kid from a mid-major program working a two-seam fastball he taught himself
-                    off YouTube deserves coverage as much as anyone on ESPN — but because no
-                    platform thought the audience was large enough to justify it. The audience
-                    was always there. It just never had anywhere to go.
+                    The coverage I wanted didn&apos;t exist. Not because the audience
+                    wasn&apos;t there — a mid-major kid working a two-seam fastball he taught
+                    himself off YouTube deserves the same depth as anyone on a prime-time
+                    broadcast — but because every platform with the resources to build it
+                    decided that audience wasn&apos;t worth the investment. They were wrong.
                   </p>
                   <p>
-                    I studied international systems at UT Austin — how power structures decide
-                    who gets seen and who gets ignored. That framework maps onto sports media
-                    with uncomfortable precision: the same forces that determine which countries
-                    get a seat at the table determine which programs get a broadcast window,
-                    which athletes get scouted, and which markets get written off. A graduate
-                    degree in entertainment business sharpened the conviction: this gap
-                    isn&apos;t editorial. It&apos;s structural. And structural problems need
-                    someone willing to build what closes them.
+                    I played varsity baseball in the Texas Hill Country, coached privately
+                    by Danny Graves and Jason Marshall. Studied international systems and
+                    entertainment business at UT Austin — how power structures decide who
+                    gets seen and who gets ignored. That framework maps onto sports media
+                    with uncomfortable precision: the same forces that determine which
+                    countries get a seat at the table determine which programs get a
+                    broadcast window. The gap isn&apos;t editorial. It&apos;s structural.
                   </p>
                   <p>
-                    BSI is that build. Every data pipeline, every article, every line of code —
-                    written and maintained by one person. Not out of stubbornness, but because
-                    the thing I wanted didn&apos;t exist and nobody with a content team and a
-                    VC check was going to make it for the fans I had in mind. Five sports, college
-                    and pro. Live scores from multiple verified sources. Analytics deeper than a
-                    box score. A Wednesday night game between Rice and Sam Houston covered with
-                    the same rigor as a Saturday showcase between Tennessee and LSU — because
-                    that&apos;s the standard, not the exception.
+                    BSI is the build that closes it. Every data pipeline, every article,
+                    every line of code — one person, end to end. Not out of stubbornness, but because
+                    nobody with a content team and a VC check was going to make this for the
+                    fans I had in mind. A Wednesday night game between Rice and Sam Houston
+                    covered with the same rigor as a Saturday showcase between Tennessee and
+                    LSU. That&apos;s the standard, not the exception.
                   </p>
                   <p style={{ color: 'var(--bsi-bone)' }}>
                     The name comes from a dachshund. My first baseball team in Bartlett, Texas
