@@ -271,6 +271,32 @@ export interface SDIONFLNews {
   TeamID?: number;
 }
 
+export interface SDIONFLPlayerSeason {
+  PlayerID?: number;
+  Name?: string;
+  Team?: string;
+  Position?: string;
+  PhotoUrl?: string;
+  PassingYards?: number;
+  PassingTouchdowns?: number;
+  PassingCompletions?: number;
+  PassingAttempts?: number;
+  PassingInterceptions?: number;
+  PassingRating?: number;
+  RushingYards?: number;
+  RushingTouchdowns?: number;
+  RushingAttempts?: number;
+  ReceivingYards?: number;
+  ReceivingTouchdowns?: number;
+  Receptions?: number;
+  ReceivingTargets?: number;
+  Sacks?: number;
+  Interceptions?: number;
+  Touchdowns?: number;
+  FantasyPoints?: number;
+  Played?: number;
+}
+
 // ---------------------------------------------------------------------------
 // NBA
 // ---------------------------------------------------------------------------
@@ -391,6 +417,28 @@ export interface SDIONBANews {
   Source?: string;
   PlayerID?: number;
   TeamID?: number;
+}
+
+export interface SDIONBAPlayerSeason {
+  PlayerID?: number;
+  Name?: string;
+  Team?: string;
+  Position?: string;
+  PhotoUrl?: string;
+  Points?: number;
+  Rebounds?: number;
+  Assists?: number;
+  Steals?: number;
+  BlockedShots?: number;
+  TwoPointersPercentage?: number;
+  ThreePointersPercentage?: number;
+  FreeThrowsPercentage?: number;
+  FieldGoalsPercentage?: number;
+  Games?: number;
+  Minutes?: number;
+  Turnovers?: number;
+  EfficiencyRating?: number;
+  FantasyPoints?: number;
 }
 
 // ---------------------------------------------------------------------------

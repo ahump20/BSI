@@ -216,12 +216,13 @@ export default function NFLPage() {
   useEffect(() => { setLiveGamesDetected(hasLiveGames); }, [hasLiveGames]);
 
   // Leaders — always fetch for the hub page
-  const leadersLoading = false;
-  const leaderCategories = useMemo<LeaderCategory[]>(() => {
-    // The deployed NFL leaders endpoint is currently returning a 502 fallback payload.
-    // Keep the hub stable until the backend route is repaired.
-    return [];
-  }, []);
+  const { data: leadersRaw, loading: leadersLoading } =
+    useSportData<{ categories?: LeaderCategory[]; meta?: { lastUpdated?: string } }>('/api/nfl/leaders');
+
+  const leaderCategories = useMemo<LeaderCategory[]>(
+    () => leadersRaw?.categories || [],
+    [leadersRaw],
+  );
 
   // Derived shared state
   const loading = standingsLoading || scoresLoading;

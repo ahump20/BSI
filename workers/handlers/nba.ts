@@ -10,6 +10,7 @@ import {
   getGameSummary,
   getAthlete,
   getNews,
+  getLeaders,
   getTeamSchedule,
   transformStandings,
   transformScoreboard,
@@ -24,6 +25,7 @@ import {
   transformSDIONBAStandings,
   transformSDIOTeams,
   transformSDIONews,
+  transformSDIONBALeaders,
 } from '../../lib/api-clients/sportsdataio-api';
 import type {
   BSINewsResult,
@@ -273,5 +275,57 @@ export async function handleNBATeamFull(teamId: string, env: Env): Promise<Respo
   } catch (err) {
     console.error('handleNBATeamFull error:', err);
     return cachedJson({ error: 'Failed to fetch NBA team details' }, 500, 'no-store');
+  }
+}
+
+export async function handleNBALeaders(env: Env): Promise<Response> {
+  try {
+    const cacheKey = 'nba:leaders';
+    const LEADERS_TTL = 3600; // 1 hour
+
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, cachedPayloadHeaders(cached));
+
+    // Primary: SportsDataIO player season stats
+    const sdio = getSDIOClient(env);
+    if (sdio) {
+      try {
+        const stats = await sdio.getNBAPlayerSeasonStats();
+        const { categories } = transformSDIONBALeaders(stats);
+        const payload = withMeta({ categories }, 'sportsdataio');
+        await kvPut(env.KV, cacheKey, payload, LEADERS_TTL);
+        return cachedJson(payload, 200, HTTP_CACHE.standings, freshDataHeaders('sportsdataio'));
+      } catch {
+        // Fall through to ESPN
+      }
+    }
+
+    // Fallback: ESPN leaders
+    const raw = await getLeaders('nba') as Record<string, unknown>;
+
+    const espnCategories = ((raw?.leaders || []) as Record<string, unknown>[]).map((cat) => {
+      const catLeaders = (cat.leaders || []) as Record<string, unknown>[];
+      return {
+        label: (cat.displayName as string) || (cat.name as string) || '',
+        abbreviation: (cat.abbreviation as string) || '',
+        unit: (cat.abbreviation as string) || '',
+        players: catLeaders.slice(0, 10).map((leader) => {
+          const athlete = (leader.athlete || {}) as Record<string, unknown>;
+          const team = (athlete.team || {}) as Record<string, unknown>;
+          return {
+            name: (athlete.displayName as string) || '',
+            team: (team.abbreviation as string) || '',
+            value: Number(leader.value ?? leader.displayValue ?? 0),
+          };
+        }),
+      };
+    });
+
+    const payload = withMeta({ categories: espnCategories }, 'espn');
+    await kvPut(env.KV, cacheKey, payload, LEADERS_TTL);
+    return cachedJson(payload, 200, HTTP_CACHE.standings, freshDataHeaders('espn'));
+  } catch (err) {
+    console.error('handleNBALeaders error:', err);
+    return cachedJson({ error: 'Internal server error', status: 500 }, 500, 0);
   }
 }

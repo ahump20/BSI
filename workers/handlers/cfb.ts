@@ -236,6 +236,79 @@ export async function handleCFBGame(gameId: string, env: Env): Promise<Response>
   }
 }
 
+export async function handleCFBRankings(env: Env): Promise<Response> {
+  try {
+    const cacheKey = 'cfb:rankings';
+
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return cachedJson(cached, 200, HTTP_CACHE.rankings, cachedDataHeaders());
+
+    // ESPN CFB rankings — AP Poll, Coaches Poll, CFP Rankings
+    const espnUrl = 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/rankings';
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 10_000);
+
+    try {
+      const res = await fetch(espnUrl, {
+        headers: { Accept: 'application/json' },
+        signal: controller.signal,
+      });
+      clearTimeout(timer);
+
+      if (!res.ok) {
+        console.error('[handleCFBRankings] ESPN returned', res.status);
+        return json({ error: 'Rankings unavailable', status: 502 }, 502);
+      }
+
+      const raw = (await res.json()) as Record<string, unknown>;
+      const polls = (raw.rankings as unknown[]) || [];
+
+      // Transform each poll into a flat, consumer-friendly shape
+      const rankings = polls.map((poll) => {
+        const p = poll as Record<string, unknown>;
+        const ranks = (p.ranks as Array<Record<string, unknown>>) || [];
+        return {
+          name: p.name || p.shortName || 'Unknown Poll',
+          shortName: p.shortName || p.name || '',
+          type: p.type || '',
+          headline: p.headline || '',
+          season: p.season,
+          teams: ranks.map((entry) => {
+            const team = (entry.team as Record<string, unknown>) || {};
+            const logos = (team.logos as Array<Record<string, unknown>>) || [];
+            return {
+              rank: entry.current,
+              previousRank: entry.previous,
+              team: {
+                id: team.id?.toString(),
+                name: team.location
+                  ? `${team.location} ${team.nickname || team.name || ''}`
+                  : (team.nickname as string) || (team.name as string) || 'Unknown',
+                abbreviation: (team.abbreviation as string) || '',
+                logo: logos[0]?.href || '',
+              },
+              record: (entry.recordSummary as string) || '',
+              points: entry.points,
+              firstPlaceVotes: entry.firstPlaceVotes,
+              trend: entry.trend,
+            };
+          }),
+        };
+      });
+
+      const payload = withMeta({ rankings, timestamp: new Date().toISOString() }, 'espn');
+      await kvPut(env.KV, cacheKey, payload, CACHE_TTL.rankings);
+      return cachedJson(payload, 200, HTTP_CACHE.rankings, freshDataHeaders('espn'));
+    } catch (fetchErr) {
+      clearTimeout(timer);
+      throw fetchErr;
+    }
+  } catch (err) {
+    console.error('[handleCFBRankings]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
+}
+
 export async function handleCFBPlayer(playerId: string, env: Env): Promise<Response> {
   try {
     const cacheKey = `cfb:player:${playerId}`;

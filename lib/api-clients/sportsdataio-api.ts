@@ -20,12 +20,14 @@ import type {
   SDIONFLPlayer,
   SDIONFLBoxScore,
   SDIONFLNews,
+  SDIONFLPlayerSeason,
   SDIONBAGame,
   SDIONBAStanding,
   SDIONBATeam,
   SDIONBAPlayer,
   SDIONBABoxScore,
   SDIONBANews,
+  SDIONBAPlayerSeason,
   SDIOCFBGame,
   SDIOCFBStanding,
   SDIOCFBTeam,
@@ -86,6 +88,37 @@ export class SportsDataIOClient {
   private async fetch<T>(sport: SDIOSport, endpoint: string): Promise<T> {
     const sportPath = SDIO_SPORT_PATHS[sport];
     const url = `${BASE}/${sportPath}/scores/json/${endpoint}`;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+    try {
+      const res = await fetch(url, {
+        headers: {
+          'Ocp-Apim-Subscription-Key': this.apiKey,
+          Accept: 'application/json',
+        },
+        signal: controller.signal,
+      });
+
+      if (!res.ok) {
+        throw new SportsDataIOError(
+          `SDIO ${res.status}: ${res.statusText}`,
+          res.status,
+          sport,
+          endpoint,
+        );
+      }
+
+      return (await res.json()) as T;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  /** Fetch from the stats/json path (player season stats, etc.) */
+  private async fetchStats<T>(sport: SDIOSport, endpoint: string): Promise<T> {
+    const sportPath = SDIO_SPORT_PATHS[sport];
+    const url = `${BASE}/${sportPath}/stats/json/${endpoint}`;
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
@@ -186,6 +219,11 @@ export class SportsDataIOClient {
     return this.fetch<SDIONFLNews[]>('nfl', 'News');
   }
 
+  async getNFLPlayerSeasonStats(season?: number): Promise<SDIONFLPlayerSeason[]> {
+    const s = season || currentYear();
+    return this.fetchStats<SDIONFLPlayerSeason[]>('nfl', `PlayerSeasonStats/${s}`);
+  }
+
   // -------------------------------------------------------------------------
   // NBA
   // -------------------------------------------------------------------------
@@ -214,6 +252,11 @@ export class SportsDataIOClient {
 
   async getNBANews(): Promise<SDIONBANews[]> {
     return this.fetch<SDIONBANews[]>('nba', 'News');
+  }
+
+  async getNBAPlayerSeasonStats(season?: number): Promise<SDIONBAPlayerSeason[]> {
+    const s = season || currentYear();
+    return this.fetchStats<SDIONBAPlayerSeason[]>('nba', `PlayerSeasonStats/${s}`);
   }
 
   // -------------------------------------------------------------------------
@@ -748,6 +791,133 @@ export function transformSDIOPlayer(
       stats: [],
     },
     meta: makeMeta(),
+  };
+}
+
+/** Transform SDIO NFL player season stats into league leader categories */
+export function transformSDIONFLLeaders(
+  players: SDIONFLPlayerSeason[],
+): { categories: Array<{ name: string; abbreviation: string; leaders: Array<{ name: string; id?: string; team: string; teamId?: string; headshot: string; value: string | number; stat: string }> }> } {
+  const active = players.filter((p) => (p.Played ?? 0) > 0);
+
+  const categories = [
+    {
+      name: 'Passing Yards',
+      abbreviation: 'PYDS',
+      extract: (p: SDIONFLPlayerSeason) => p.PassingYards ?? 0,
+      format: (v: number) => v.toLocaleString(),
+    },
+    {
+      name: 'Rushing Yards',
+      abbreviation: 'RYDS',
+      extract: (p: SDIONFLPlayerSeason) => p.RushingYards ?? 0,
+      format: (v: number) => v.toLocaleString(),
+    },
+    {
+      name: 'Receiving Yards',
+      abbreviation: 'RECYDS',
+      extract: (p: SDIONFLPlayerSeason) => p.ReceivingYards ?? 0,
+      format: (v: number) => v.toLocaleString(),
+    },
+    {
+      name: 'Touchdowns',
+      abbreviation: 'TD',
+      extract: (p: SDIONFLPlayerSeason) => p.Touchdowns ?? 0,
+      format: (v: number) => String(v),
+    },
+    {
+      name: 'Sacks',
+      abbreviation: 'SACKS',
+      extract: (p: SDIONFLPlayerSeason) => p.Sacks ?? 0,
+      format: (v: number) => v.toFixed(1),
+    },
+    {
+      name: 'Interceptions',
+      abbreviation: 'INT',
+      extract: (p: SDIONFLPlayerSeason) => p.Interceptions ?? 0,
+      format: (v: number) => String(v),
+    },
+  ];
+
+  return {
+    categories: categories.map((cat) => {
+      const sorted = [...active].sort((a, b) => cat.extract(b) - cat.extract(a));
+      return {
+        name: cat.name,
+        abbreviation: cat.abbreviation,
+        leaders: sorted.slice(0, 10).map((p) => ({
+          name: p.Name || '',
+          id: p.PlayerID?.toString(),
+          team: p.Team || '',
+          teamId: undefined,
+          headshot: p.PhotoUrl || '',
+          value: cat.format(cat.extract(p)),
+          stat: cat.abbreviation,
+        })),
+      };
+    }),
+  };
+}
+
+/** Transform SDIO NBA player season stats into league leader categories */
+export function transformSDIONBALeaders(
+  players: SDIONBAPlayerSeason[],
+): { categories: Array<{ label: string; abbreviation: string; unit: string; players: Array<{ name: string; team: string; value: number }> }> } {
+  const active = players.filter((p) => (p.Games ?? 0) >= 10);
+
+  const categories = [
+    {
+      label: 'Points',
+      abbreviation: 'PPG',
+      unit: 'PPG',
+      extract: (p: SDIONBAPlayerSeason) => (p.Games ?? 0) > 0 ? (p.Points ?? 0) / (p.Games ?? 1) : 0,
+    },
+    {
+      label: 'Rebounds',
+      abbreviation: 'RPG',
+      unit: 'RPG',
+      extract: (p: SDIONBAPlayerSeason) => (p.Games ?? 0) > 0 ? (p.Rebounds ?? 0) / (p.Games ?? 1) : 0,
+    },
+    {
+      label: 'Assists',
+      abbreviation: 'APG',
+      unit: 'APG',
+      extract: (p: SDIONBAPlayerSeason) => (p.Games ?? 0) > 0 ? (p.Assists ?? 0) / (p.Games ?? 1) : 0,
+    },
+    {
+      label: 'Steals',
+      abbreviation: 'SPG',
+      unit: 'SPG',
+      extract: (p: SDIONBAPlayerSeason) => (p.Games ?? 0) > 0 ? (p.Steals ?? 0) / (p.Games ?? 1) : 0,
+    },
+    {
+      label: 'Blocks',
+      abbreviation: 'BPG',
+      unit: 'BPG',
+      extract: (p: SDIONBAPlayerSeason) => (p.Games ?? 0) > 0 ? (p.BlockedShots ?? 0) / (p.Games ?? 1) : 0,
+    },
+    {
+      label: 'FG%',
+      abbreviation: 'FG%',
+      unit: 'FG%',
+      extract: (p: SDIONBAPlayerSeason) => (p.FieldGoalsPercentage ?? 0) * 100,
+    },
+  ];
+
+  return {
+    categories: categories.map((cat) => {
+      const sorted = [...active].sort((a, b) => cat.extract(b) - cat.extract(a));
+      return {
+        label: cat.label,
+        abbreviation: cat.abbreviation,
+        unit: cat.unit,
+        players: sorted.slice(0, 10).map((p) => ({
+          name: p.Name || '',
+          team: p.Team || '',
+          value: Math.round(cat.extract(p) * 10) / 10,
+        })),
+      };
+    }),
   };
 }
 

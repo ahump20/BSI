@@ -110,12 +110,14 @@ import {
   handleNBATeamFull,
   handleNBATeamsList,
   handleNBANews,
+  handleNBALeaders,
 } from './handlers/nba';
 
 import {
   handleCFBTransferPortal,
   handleCFBScores,
   handleCFBStandings,
+  handleCFBRankings,
   handleCFBNews,
   handleCFBArticle,
   handleCFBArticlesList,
@@ -487,6 +489,7 @@ app.get('/v1/provenance/:resource', (c) => handleV1Provenance(c.req.param('resou
 app.get('/api/cfb/transfer-portal', (c) => handleCFBTransferPortal(c.env));
 app.get('/api/cfb/scores', (c) => safeESPN(() => handleCFBScores(new URL(c.req.url), c.env), 'games', [], c.env));
 app.get('/api/cfb/standings', (c) => safeESPN(() => handleCFBStandings(c.env), 'standings', [], c.env));
+app.get('/api/cfb/rankings', (c) => safeESPN(() => handleCFBRankings(c.env), 'rankings', [], c.env));
 app.get('/api/cfb/news', (c) => safeESPN(() => handleCFBNews(c.env), 'articles', [], c.env));
 app.get('/api/ncaa/scores', (c) => {
   if (c.req.query('sport') === 'football') return safeESPN(() => handleCFBScores(new URL(c.req.url), c.env), 'games', [], c.env);
@@ -562,6 +565,7 @@ app.get('/api/nba/scoreboard', (c) => safeESPN(() => handleNBAScores(new URL(c.r
 app.get('/api/nba/standings', (c) => safeESPN(() => handleNBAStandings(c.env), 'standings', [], c.env));
 app.get('/api/nba/news', (c) => safeESPN(() => handleNBANews(c.env), 'articles', [], c.env));
 app.get('/api/nba/teams', (c) => safeESPN(() => handleNBATeamsList(c.env), 'teams', [], c.env));
+app.get('/api/nba/leaders', (c) => safeESPN(() => handleNBALeaders(c.env), 'categories', [], c.env));
 app.get('/api/nba/game/:gameId', (c) => safeESPN(() => handleNBAGame(c.req.param('gameId'), c.env), 'game', null, c.env));
 app.get('/api/nba/players/:playerId', (c) => safeESPN(() => handleNBAPlayer(c.req.param('playerId'), c.env), 'player', null, c.env));
 app.get('/api/nba/teams/:teamId', (c) => safeESPN(() => handleNBATeamFull(c.req.param('teamId'), c.env), 'team', null, c.env));

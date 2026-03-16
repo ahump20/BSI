@@ -17,7 +17,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { SportHero } from '@/components/sports/SportHero';
 import { GameScoreCard } from '@/components/sports/GameScoreCard';
 import { SportInfoCard } from '@/components/sports/SportInfoCard';
-import { formatTimestamp } from '@/lib/utils/timezone';
+import { formatTimestamp, getRelativeTime } from '@/lib/utils/timezone';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import {
@@ -90,49 +90,139 @@ const STAT_EXPLAINERS = [
   },
 ];
 
-const AROUND_THE_LEAGUE = [
-  {
-    category: 'Playoff Picture',
-    headline: 'Western Conference race tightens',
-    description: 'Five teams within two games of each other for the final two playoff spots. The play-in tournament looms for teams seeded 7-10.',
-    badge: 'Postseason',
-    badgeVariant: 'success' as const,
-    href: '/nba/standings',
-  },
-  {
-    category: 'Trade Market',
-    headline: 'Deadline fallout reshaping rosters',
-    description: 'Contenders loaded up at the deadline while rebuilding teams stockpiled draft capital. The ripple effects are showing up in the standings.',
-    badge: 'Analysis',
-    badgeVariant: 'warning' as const,
-    href: '/nba/teams',
-  },
-  {
-    category: 'Injury Watch',
-    headline: 'Star availability driving betting lines',
-    description: 'Load management and late-season injuries are shifting the title odds nightly. Teams with depth are separating from those relying on one or two stars.',
-    badge: 'Health',
-    badgeVariant: 'error' as const,
-    href: '/nba/scores',
-  },
-  {
-    category: 'Rookie Watch',
-    headline: 'First-year players making an impact',
-    description: 'This draft class is producing immediate contributors. Multiple rookies are cracking rotation minutes on playoff-bound teams — a rarity in the modern NBA.',
-    badge: 'Rising',
-    badgeVariant: 'accent' as const,
-    href: '/nba/players',
-  },
-];
+interface LeagueInsight {
+  category: string;
+  headline: string;
+  description: string;
+  badge: string;
+  badgeVariant: 'success' | 'warning' | 'error' | 'accent' | 'primary' | 'info';
+  href: string;
+}
+
+interface NewsResponse {
+  articles?: Array<{
+    headline?: string;
+    description?: string;
+    published?: string;
+    link?: string;
+    source?: string;
+    images?: Array<{ url?: string }>;
+  }>;
+  meta?: {
+    fetched_at?: string;
+    timezone?: string;
+    source?: string;
+  };
+}
+
+/**
+ * Derive real-time "Around the League" insights from standings data.
+ * Produces up to 4 cards based on actual conference standings.
+ */
+function deriveStandingsInsights(
+  eastern: NBAStandingsTeam[],
+  western: NBAStandingsTeam[],
+): LeagueInsight[] {
+  const insights: LeagueInsight[] = [];
+
+  // 1. Conference leaders
+  const eastSorted = [...eastern].sort((a, b) => b.wins - a.wins);
+  const westSorted = [...western].sort((a, b) => b.wins - a.wins);
+  const eastLeader = eastSorted[0];
+  const westLeader = westSorted[0];
+  if (eastLeader && westLeader) {
+    const bestOverall = eastLeader.wins >= westLeader.wins ? eastLeader : westLeader;
+    const runnerUp = bestOverall === eastLeader ? westLeader : eastLeader;
+    insights.push({
+      category: 'Conference Leaders',
+      headline: `${bestOverall.teamName} lead the NBA at ${bestOverall.wins}-${bestOverall.losses}`,
+      description: `${bestOverall.teamName} (${bestOverall.winPercentage.toFixed(3).replace('0.', '.')}) top the league. ${runnerUp.teamName} lead the other conference at ${runnerUp.wins}-${runnerUp.losses}.`,
+      badge: 'Standings',
+      badgeVariant: 'success',
+      href: '/nba/standings',
+    });
+  }
+
+  // 2. Play-in race — find how tight seeds 7-10 are in the tighter conference
+  for (const conf of [
+    { label: 'Eastern', teams: eastSorted },
+    { label: 'Western', teams: westSorted },
+  ]) {
+    if (conf.teams.length < 10) continue;
+    const seed7 = conf.teams[6];
+    const seed10 = conf.teams[9];
+    const gapGames = seed7.wins - seed10.wins;
+    if (gapGames <= 4) {
+      const playInTeams = conf.teams.slice(6, 10).map((t) => t.teamName.split(' ').pop()).join(', ');
+      insights.push({
+        category: 'Play-In Race',
+        headline: `${conf.label} play-in separated by ${gapGames === 0 ? 'less than a game' : `${gapGames} game${gapGames === 1 ? '' : 's'}`}`,
+        description: `Seeds 7-10 in the ${conf.label} Conference: ${playInTeams}. The ${seed7.teamName} (${seed7.wins}-${seed7.losses}) hold the 7 seed; the ${seed10.teamName} (${seed10.wins}-${seed10.losses}) are 10th.`,
+        badge: 'Postseason',
+        badgeVariant: 'warning',
+        href: '/nba/standings',
+      });
+      break; // Only show the tighter race
+    }
+  }
+
+  // 3. Hottest streak
+  const allTeams = [...eastSorted, ...westSorted];
+  const streakTeams = allTeams
+    .filter((t) => t.streak && t.streak.startsWith('W'))
+    .sort((a, b) => {
+      const aStreak = parseInt(a.streak.replace('W', ''), 10) || 0;
+      const bStreak = parseInt(b.streak.replace('W', ''), 10) || 0;
+      return bStreak - aStreak;
+    });
+  if (streakTeams.length > 0) {
+    const hot = streakTeams[0];
+    const streakNum = parseInt(hot.streak.replace('W', ''), 10) || 0;
+    if (streakNum >= 3) {
+      insights.push({
+        category: 'Hot Streak',
+        headline: `${hot.teamName} riding ${streakNum}-game win streak`,
+        description: `The ${hot.teamName} have won ${streakNum} straight, moving to ${hot.wins}-${hot.losses} (${hot.winPercentage.toFixed(3).replace('0.', '.')}). ${streakTeams.length > 1 ? `The ${streakTeams[1].teamName} are also hot with a ${streakTeams[1].streak} streak.` : ''}`,
+        badge: 'Trending',
+        badgeVariant: 'accent',
+        href: '/nba/teams',
+      });
+    }
+  }
+
+  // 4. Coldest streak
+  const coldTeams = allTeams
+    .filter((t) => t.streak && t.streak.startsWith('L'))
+    .sort((a, b) => {
+      const aStreak = parseInt(a.streak.replace('L', ''), 10) || 0;
+      const bStreak = parseInt(b.streak.replace('L', ''), 10) || 0;
+      return bStreak - aStreak;
+    });
+  if (coldTeams.length > 0) {
+    const cold = coldTeams[0];
+    const coldNum = parseInt(cold.streak.replace('L', ''), 10) || 0;
+    if (coldNum >= 3) {
+      insights.push({
+        category: 'Cold Streak',
+        headline: `${cold.teamName} have dropped ${coldNum} straight`,
+        description: `The ${cold.teamName} sit at ${cold.wins}-${cold.losses} after losing ${coldNum} in a row. ${cold.gamesBack > 0 ? `They are ${cold.gamesBack.toFixed(1)} games back in the ${cold.conference} Conference.` : ''}`,
+        badge: 'Struggling',
+        badgeVariant: 'error',
+        href: '/nba/standings',
+      });
+    }
+  }
+
+  return insights.slice(0, 4);
+}
 
 export default function NBAPage() {
   const [activeTab, setActiveTab] = useState<TabType>('standings');
   const [liveGamesDetected, setLiveGamesDetected] = useState(false);
 
-  // Standings — fetched when standings or teams tab is active
-  const standingsUrl = (activeTab === 'standings' || activeTab === 'teams') ? '/api/nba/standings' : null;
+  // Standings — always fetched (used by tabs AND Around the League insights)
   const { data: standingsRaw, loading: standingsLoading, error: standingsError, retry: retryStandings } =
-    useSportData<{ standings?: NBAApiConference[]; meta?: { lastUpdated?: string } }>(standingsUrl);
+    useSportData<{ standings?: NBAApiConference[]; meta?: { lastUpdated?: string } }>('/api/nba/standings');
 
   const standings = useMemo<NBAStandingsTeam[]>(
     () => flattenNBAStandings(standingsRaw?.standings || []),
@@ -177,9 +267,18 @@ export default function NBAPage() {
   const hasLiveGames = useMemo(() => games.some((g) => g.isLive), [games]);
   useEffect(() => { setLiveGamesDetected(hasLiveGames); }, [hasLiveGames]);
 
-  // Leaders — the deployed NBA data layer does not currently expose a league-leaders endpoint.
-  const leadersLoading = false;
-  const leaderCategories = useMemo<LeaderCategory[]>(() => [], []);
+  // News — always fetched for Around the League section
+  const { data: newsRaw, loading: newsLoading } =
+    useSportData<NewsResponse>('/api/nba/news', { refreshInterval: 5 * 60 * 1000 });
+
+  // Leaders — always fetch for the hub page
+  const { data: leadersRaw, loading: leadersLoading } =
+    useSportData<{ categories?: LeaderCategory[]; meta?: { lastUpdated?: string } }>('/api/nba/leaders');
+
+  const leaderCategories = useMemo<LeaderCategory[]>(
+    () => leadersRaw?.categories || [],
+    [leadersRaw],
+  );
 
   // Derived shared state
   const loading = standingsLoading || scoresLoading;
@@ -187,6 +286,32 @@ export default function NBAPage() {
   const lastUpdated = standingsRaw?.meta?.lastUpdated || scoresRaw?.meta?.lastUpdated || '';
 
   const { eastern, western } = useMemo(() => splitNBAByConference(standings), [standings]);
+
+  // Around the League — derived from standings + news data
+  const aroundTheLeagueLoading = standingsLoading && newsLoading;
+  const aroundTheLeague = useMemo<LeagueInsight[]>(() => {
+    const standingsInsights = deriveStandingsInsights(eastern, western);
+
+    // Fill remaining slots (up to 4 total) with top news headlines
+    const newsSlots = 4 - standingsInsights.length;
+    const newsInsights: LeagueInsight[] = [];
+    if (newsSlots > 0 && newsRaw?.articles) {
+      for (const article of newsRaw.articles.slice(0, newsSlots)) {
+        if (!article.headline) continue;
+        newsInsights.push({
+          category: 'League News',
+          headline: article.headline,
+          description: article.description || '',
+          badge: article.published ? getRelativeTime(article.published) : 'News',
+          badgeVariant: 'info',
+          href: '/nba/news',
+        });
+      }
+    }
+
+    const combined = [...standingsInsights, ...newsInsights];
+    return combined.length > 0 ? combined.slice(0, 4) : [];
+  }, [eastern, western, newsRaw]);
 
   const tabs: { id: TabType; label: string }[] = [
     { id: 'standings', label: 'Standings' },
@@ -523,31 +648,69 @@ export default function NBAPage() {
                 <h2 className="font-display text-2xl md:text-3xl font-bold text-text-primary uppercase tracking-wide">
                   Around the League
                 </h2>
-                <p className="text-text-tertiary text-sm mt-2">Storylines shaping the NBA right now</p>
+                <p className="text-text-tertiary text-sm mt-2">Live storylines from the standings and news wire</p>
               </div>
             </ScrollReveal>
-            <div className="grid gap-6 md:grid-cols-2">
-              {AROUND_THE_LEAGUE.map((item) => (
-                <ScrollReveal key={item.headline}>
-                  <Link href={item.href}>
-                    <Card variant="hover" padding="lg" className="h-full">
-                      <CardContent>
-                        <div className="flex items-center gap-3 mb-3">
-                          <Badge variant={item.badgeVariant} size="sm">{item.badge}</Badge>
-                          <span className="text-xs text-text-tertiary uppercase tracking-wider font-semibold">{item.category}</span>
-                        </div>
-                        <h3 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide mb-2">
-                          {item.headline}
-                        </h3>
-                        <p className="text-sm text-text-secondary leading-relaxed">
-                          {item.description}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                </ScrollReveal>
-              ))}
-            </div>
+            {aroundTheLeagueLoading ? (
+              <div className="grid gap-6 md:grid-cols-2">
+                {[1, 2, 3, 4].map((i) => (
+                  <Card key={i} variant="default" padding="lg" className="animate-pulse">
+                    <CardContent>
+                      <div className="flex items-center gap-3 mb-3">
+                        <Skeleton variant="text" width={60} height={20} />
+                        <Skeleton variant="text" width={100} height={14} />
+                      </div>
+                      <Skeleton variant="text" width="80%" height={22} />
+                      <div className="mt-3 space-y-2">
+                        <Skeleton variant="text" width="100%" height={14} />
+                        <Skeleton variant="text" width="70%" height={14} />
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : aroundTheLeague.length === 0 ? (
+              <Card variant="default" padding="lg">
+                <CardContent>
+                  <p className="text-text-secondary text-center py-4">
+                    League insights will appear here once standings data is available.
+                  </p>
+                  <div className="flex justify-center">
+                    <Link href="/nba/news">
+                      <Button variant="secondary">Browse NBA News</Button>
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid gap-6 md:grid-cols-2">
+                {aroundTheLeague.map((item) => (
+                  <ScrollReveal key={item.headline}>
+                    <Link href={item.href}>
+                      <Card variant="hover" padding="lg" className="h-full">
+                        <CardContent>
+                          <div className="flex items-center gap-3 mb-3">
+                            <Badge variant={item.badgeVariant} size="sm">{item.badge}</Badge>
+                            <span className="text-xs text-text-tertiary uppercase tracking-wider font-semibold">{item.category}</span>
+                          </div>
+                          <h3 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide mb-2">
+                            {item.headline}
+                          </h3>
+                          <p className="text-sm text-text-secondary leading-relaxed">
+                            {item.description}
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  </ScrollReveal>
+                ))}
+              </div>
+            )}
+            {!aroundTheLeagueLoading && aroundTheLeague.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-border-subtle">
+                <DataSourceBadge source="SportsDataIO + ESPN" timestamp={formatTimestamp(lastUpdated)} />
+              </div>
+            )}
           </Container>
         </Section>
 

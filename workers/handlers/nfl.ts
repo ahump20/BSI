@@ -24,6 +24,7 @@ import {
   transformSDIONFLStandings,
   transformSDIOTeams,
   transformSDIONews,
+  transformSDIONFLLeaders,
 } from '../../lib/api-clients/sportsdataio-api';
 import type {
   BSIScoreboardResult,
@@ -285,10 +286,26 @@ export async function handleNFLPlayers(url: URL, env: Env): Promise<Response> {
 export async function handleNFLLeaders(env: Env): Promise<Response> {
   try {
     const cacheKey = 'nfl:leaders';
+    const LEADERS_TTL = 3600; // 1 hour
 
     const cached = await kvGet<unknown>(env.KV, cacheKey);
     if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, cachedPayloadHeaders(cached));
 
+    // Primary: SportsDataIO player season stats
+    const sdio = getSDIOClient(env);
+    if (sdio) {
+      try {
+        const stats = await sdio.getNFLPlayerSeasonStats();
+        const { categories } = transformSDIONFLLeaders(stats);
+        const payload = withMeta({ categories }, 'sportsdataio');
+        await kvPut(env.KV, cacheKey, payload, LEADERS_TTL);
+        return cachedJson(payload, 200, HTTP_CACHE.standings, freshDataHeaders('sportsdataio'));
+      } catch {
+        // Fall through to ESPN
+      }
+    }
+
+    // Fallback: ESPN leaders
     const raw = await getLeaders('nfl') as Record<string, unknown>;
 
     const categories = ((raw?.leaders || []) as Record<string, unknown>[]).map((cat) => {
@@ -313,14 +330,11 @@ export async function handleNFLLeaders(env: Env): Promise<Response> {
       };
     });
 
-    const payload = withMeta({
-      categories,
-    }, 'espn');
-
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
-    return cachedJson(payload, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' });
+    const payload = withMeta({ categories }, 'espn');
+    await kvPut(env.KV, cacheKey, payload, LEADERS_TTL);
+    return cachedJson(payload, 200, HTTP_CACHE.standings, freshDataHeaders('espn'));
   } catch (err) {
-    console.error(err);
+    console.error('handleNFLLeaders error:', err);
     return cachedJson({ error: 'Internal server error', status: 500 }, 500, 0);
   }
 }
