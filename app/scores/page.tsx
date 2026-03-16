@@ -84,6 +84,7 @@ interface SportSection {
   season: string;
   isActive: boolean;
   loaded: boolean;
+  fetchError?: boolean;
   featured: FeaturedGame[];
 }
 
@@ -472,7 +473,7 @@ function ScoresHubContent() {
       setTotalLive(live);
       setFetchedAt(new Date().toISOString());
     } catch {
-      setSports(prev => prev.map(s => ({ ...s, loaded: true })));
+      setSports(prev => prev.map(s => ({ ...s, loaded: true, fetchError: true })));
     }
   }, []);
 
@@ -756,7 +757,7 @@ function ScoresHubContent() {
                             ) : !sport.loaded ? (
                               <span className="text-xs text-bsi-dust/60">Loading...</span>
                             ) : (
-                              <Badge variant="default">{sport.isActive ? 'No games' : 'Off-season'}</Badge>
+                              <Badge variant={sport.fetchError ? 'error' : 'default'}>{sport.fetchError ? 'Unavailable' : sport.isActive ? 'No games' : 'Off-season'}</Badge>
                             )}
                           </div>
                           <p className="text-bsi-dust text-xs">{sport.description}</p>

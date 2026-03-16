@@ -90,9 +90,11 @@ export default function SavantPlayerClient() {
   const playerId = params.id as string;
   const [player, setPlayer] = useState<SavantPlayer | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
+      setError(null);
       try {
         const res = await fetch(`/api/savant/player/${playerId}`);
         if (!res.ok) throw new Error('Not found');
@@ -100,6 +102,7 @@ export default function SavantPlayerClient() {
         setPlayer(json.data);
       } catch {
         setPlayer(null);
+        setError('Unable to load Savant player data.');
       } finally {
         setLoading(false);
       }
@@ -128,9 +131,11 @@ export default function SavantPlayerClient() {
           <Section padding="lg">
             <Container>
               <Card padding="lg" className="text-center">
-                <h2 className="text-xl font-bold text-text-primary mb-2">Player not found</h2>
+                <h2 className="text-xl font-bold text-text-primary mb-2">
+                  {error ? 'Temporarily Unavailable' : 'Player not found'}
+                </h2>
                 <p className="text-text-muted mb-4 text-sm">
-                  Advanced metrics may not be available for this player yet.
+                  {error || 'Advanced metrics may not be available for this player yet.'}
                 </p>
                 <Link
                   href="/college-baseball/savant"

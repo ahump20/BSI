@@ -86,10 +86,12 @@ export function PlayerDetailClient() {
   const playerId = params.playerId as string;
   const [player, setPlayer] = useState<PlayerProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadPlayer() {
       setLoading(true);
+      setError(null);
       try {
         const response = await fetch(`/api/portal/player/${playerId}`);
         if (!response.ok) {
@@ -98,8 +100,8 @@ export function PlayerDetailClient() {
         const data = (await response.json()) as PlayerApiResponse;
         setPlayer(data.player || data.data || null);
       } catch {
-        // Use mock data for development
-        setPlayer(getMockPlayer(playerId));
+        setPlayer(null);
+        setError('Unable to load player data. The transfer portal API may be temporarily unavailable.');
       } finally {
         setLoading(false);
       }
@@ -139,10 +141,10 @@ export function PlayerDetailClient() {
             <Container>
               <div className="text-center py-16">
                 <h1 className="text-2xl font-display font-bold text-text-primary mb-4">
-                  Player Not Found
+                  {error ? 'Temporarily Unavailable' : 'Player Not Found'}
                 </h1>
                 <p className="text-text-secondary mb-8">
-                  The player profile you&apos;re looking for doesn&apos;t exist.
+                  {error || "The player profile you're looking for doesn't exist."}
                 </p>
                 <Link href="/college-baseball/transfer-portal">
                   <Button variant="primary">Back to Portal Tracker</Button>
@@ -407,80 +409,3 @@ export function PlayerDetailClient() {
   );
 }
 
-// Mock player data for development
-function getMockPlayer(id: string): PlayerProfile {
-  const mockPlayers: Record<string, PlayerProfile> = {
-    'sample-player-1': {
-      id: 'sample-player-1',
-      player_name: 'Jake Wilson',
-      school_from: 'Texas A&M',
-      school_to: null,
-      position: 'RHP',
-      conference: 'SEC',
-      class_year: 'Jr',
-      status: 'in_portal',
-      portal_date: '2025-06-02',
-      engagement_score: 95,
-      verified: true,
-      stats: {
-        era: 2.87,
-        wins: 8,
-        losses: 2,
-        strikeouts: 94,
-        ip: 78.2,
-        games: 15,
-      },
-      bio: {
-        height: '6\'3"',
-        weight: '205 lbs',
-        hometown: 'Houston, TX',
-        high_school: 'St. Thomas',
-        throws: 'Right',
-      },
-    },
-    '2': {
-      id: '2',
-      player_name: 'Marcus Johnson',
-      school_from: 'Florida',
-      school_to: 'LSU',
-      position: 'SS',
-      conference: 'SEC',
-      class_year: 'Sr',
-      status: 'committed',
-      portal_date: '2025-06-02',
-      engagement_score: 88,
-      verified: true,
-      stats: {
-        avg: 0.312,
-        hr: 14,
-        rbi: 52,
-        obp: 0.401,
-        slg: 0.567,
-        sb: 12,
-      },
-      bio: {
-        height: '6\'1"',
-        weight: '185 lbs',
-        hometown: 'Miami, FL',
-        high_school: 'Columbus',
-        bats: 'Right',
-        throws: 'Right',
-      },
-    },
-  };
-
-  return (
-    mockPlayers[id] || {
-      id,
-      player_name: 'Unknown Player',
-      school_from: 'Unknown',
-      school_to: null,
-      position: 'UTL',
-      conference: 'Unknown',
-      class_year: 'Jr',
-      status: 'in_portal',
-      portal_date: '2025-06-02',
-      verified: false,
-    }
-  );
-}

@@ -192,6 +192,7 @@ export default function PlayerDetailClient() {
   const [nil, setNil] = useState<NILData | null>(null);
   const [gameLog, setGameLog] = useState<GameLogData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState('');
   const [activeTab, setActiveTab] = useState<ProfileTab>('season');
   const { addPlayer, removePlayer, isWatched } = useWatchlist();
@@ -233,6 +234,7 @@ export default function PlayerDetailClient() {
         }
       } catch {
         setData(null);
+        setError('Unable to load player profile. The data source may be temporarily unavailable.');
       } finally {
         setLoading(false);
       }
@@ -269,7 +271,10 @@ export default function PlayerDetailClient() {
         <Section padding="lg">
           <Container>
             <Card padding="lg" className="text-center">
-              <h2 className="text-xl font-bold text-text-primary mb-2">Player not found</h2>
+              <h2 className="text-xl font-bold text-text-primary mb-2">
+                {error ? 'Temporarily Unavailable' : 'Player not found'}
+              </h2>
+              {error && <p className="text-text-muted mb-3 text-sm">{error}</p>}
               <Link href="/college-baseball/players" className="text-burnt-orange hover:text-ember">
                 Back to Players
               </Link>

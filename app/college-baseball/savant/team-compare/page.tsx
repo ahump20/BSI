@@ -114,7 +114,8 @@ export default function TeamComparePage() {
         setLeftData(lJson.batting ?? lJson);
         setRightData(rJson.batting ?? rJson);
       } catch {
-        // fail silently — show empty state
+        setLeftData(null);
+        setRightData(null);
       } finally {
         setLoading(false);
       }
