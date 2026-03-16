@@ -348,7 +348,10 @@ export function SabermetricsPanel({ teamId, espnId, accent = 'var(--bsi-primary)
         {/* Data Source Attribution */}
         <div className="flex flex-col items-center gap-2">
           <div className="text-xs text-text-muted text-center">
-            BSI Sabermetrics — computed from D1 box scores · Min. 20 PA / 15 IP
+            BSI Sabermetrics — computed from D1 box scores · Min. 20 PA / 15 IP ·{' '}
+            <a href="/college-baseball/savant/methodology" className="text-burnt-orange hover:underline">
+              Methodology
+            </a>
           </div>
           {data.meta?.fetched_at && (
             <DataSourceBadge
