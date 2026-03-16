@@ -18,6 +18,8 @@ const BANNED_PATTERNS = [
   { pattern: /\bmockTeams\b/, label: 'mockTeams' },
   { pattern: /\bsampleData\b/, label: 'sampleData' },
   { pattern: /\blorem ipsum\b/i, label: 'lorem ipsum' },
+  { pattern: /\bMath\.random\(\)/, label: 'Math.random()' },
+  { pattern: /\bfaker\./, label: 'faker library' },
 ];
 
 /** Only check staged TS/TSX files under app/, components/, lib/ — skip tests */
