@@ -227,6 +227,9 @@ const config: Config = {
         'ease-elastic': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
         'ease-bounce': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
       },
+      screens: {
+        'xs': '375px',
+      },
       zIndex: {
         'dropdown': '1000',
         'sticky': '1020',
