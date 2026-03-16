@@ -30,7 +30,9 @@ import { ScheduleGameCard } from '@/components/college-baseball/ScheduleGameCard
 import type { ScheduleGame } from '@/components/college-baseball/ScheduleGameCard';
 import { PlayersTabContent } from '@/components/college-baseball/PlayersTabContent';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { FeaturedProgramCard } from '@/components/college-baseball/FeaturedProgramCard';
+import { SECAttendanceChart } from '@/components/college-baseball/SECAttendanceChart';
 
 
 interface StandingsTeam {
@@ -308,6 +310,7 @@ export default function CollegeBaseballPage() {
   ];
 
   return (
+    <ErrorBoundary>
     <div className="bsi-theme-baseball">
       <>
         <div>
@@ -328,6 +331,15 @@ export default function CollegeBaseballPage() {
 
         {/* Editorial Feed — dynamic from D1 */}
         <EditorialFeed />
+
+        {/* SEC Attendance — market context visualization */}
+        <Section padding="md">
+          <Container>
+            <ScrollReveal direction="up">
+              <SECAttendanceChart />
+            </ScrollReveal>
+          </Container>
+        </Section>
 
         {/* Featured Program Intelligence */}
         <Section padding="md">
@@ -834,5 +846,6 @@ export default function CollegeBaseballPage() {
         <Footer />
       </>
     </div>
+    </ErrorBoundary>
   );
 }

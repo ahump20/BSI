@@ -19,6 +19,7 @@ import { GameScoreCard } from '@/components/sports/GameScoreCard';
 import { SportInfoCard } from '@/components/sports/SportInfoCard';
 import { formatTimestamp } from '@/lib/utils/timezone';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import {
   type NBAApiConference,
   type NBAStandingsTeam,
@@ -195,6 +196,7 @@ export default function NBAPage() {
   ];
 
   return (
+    <ErrorBoundary>
     <div className="bsi-theme-basketball">
       <>
         <div>
@@ -605,5 +607,6 @@ export default function NBAPage() {
         <Footer />
       </>
     </div>
+    </ErrorBoundary>
   );
 }

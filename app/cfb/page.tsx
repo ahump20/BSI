@@ -18,6 +18,7 @@ import { SportInfoCard } from '@/components/sports/SportInfoCard';
 import { formatTimestamp } from '@/lib/utils/timezone';
 import { SportHero } from '@/components/sports/SportHero';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 interface RankedTeam {
   rank: number;
@@ -280,6 +281,7 @@ export default function CFBPage() {
   ];
 
   return (
+    <ErrorBoundary>
     <>
       <div>
         <SportHero
@@ -752,5 +754,6 @@ export default function CFBPage() {
       </div>
       <Footer />
     </>
+    </ErrorBoundary>
   );
 }
