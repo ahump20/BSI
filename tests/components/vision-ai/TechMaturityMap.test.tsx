@@ -9,14 +9,16 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { TechMaturityMap } from '@/components/vision-ai/TechMaturityMap';
 
 /**
- * Helper: get the sport filter button row (first flex-wrap container).
- * Filter buttons are round-full styled buttons; sport tags on entries use
- * a different class (text-[9px]).
+ * Helper: get all filter buttons (sport + maturity filter groups).
+ * Filter buttons live inside role="group" containers.
  */
 function getFilterButtons(container: HTMLElement) {
-  // Filter buttons have rounded-full class and are direct children of the first flex-wrap div
-  const buttons = container.querySelectorAll('button.rounded-full');
-  return Array.from(buttons);
+  const groups = container.querySelectorAll('[role="group"]');
+  const buttons: Element[] = [];
+  groups.forEach((g) => {
+    buttons.push(...Array.from(g.querySelectorAll('button')));
+  });
+  return buttons;
 }
 
 function clickSportFilter(container: HTMLElement, label: string) {
