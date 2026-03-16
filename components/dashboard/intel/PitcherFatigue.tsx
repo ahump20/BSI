@@ -30,9 +30,9 @@ function getZone(score: number): FatigueZone {
 }
 
 const ZONE_COLORS: Record<FatigueZone, string> = {
-  low: '#10b981',
-  moderate: '#f59e0b',
-  high: '#ef4444',
+  low: 'var(--bsi-success)',
+  moderate: 'var(--bsi-warning)',
+  high: 'var(--bsi-error)',
 };
 
 const ZONE_LABELS: Record<FatigueZone, string> = {
