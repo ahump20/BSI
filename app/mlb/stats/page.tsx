@@ -291,7 +291,7 @@ export default function MLBStatsPage() {
                     </div>
 
                     {currentLeaders.length >= 10 && (
-                      <button className="w-full mt-6 py-3 text-burnt-orange hover:text-ember font-semibold text-sm transition-colors">
+                      <button type="button" className="w-full mt-6 py-3 text-burnt-orange hover:text-ember font-semibold text-sm transition-colors">
                         View Full Leaderboard →
                       </button>
                     )}
