@@ -18,6 +18,7 @@ import { SportHero } from '@/components/sports/SportHero';
 import { GameScoreCard } from '@/components/sports/GameScoreCard';
 import { SportInfoCard } from '@/components/sports/SportInfoCard';
 import { formatTimestamp } from '@/lib/utils/timezone';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import {
   type NFLApiConference,
@@ -237,6 +238,7 @@ export default function NFLPage() {
   ];
 
   return (
+    <ErrorBoundary>
     <div className="bsi-theme-football">
       <>
         <div>
@@ -717,5 +719,6 @@ export default function NFLPage() {
         <Footer />
       </>
     </div>
+    </ErrorBoundary>
   );
 }

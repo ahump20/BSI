@@ -18,6 +18,7 @@ import { SportInfoCard } from '@/components/sports/SportInfoCard';
 import { formatTimestamp } from '@/lib/utils/timezone';
 import { getSeasonPhase } from '@/lib/season';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useSportData } from '@/lib/hooks/useSportData';
 import type { DataMeta } from '@/lib/types/data-meta';
 
@@ -220,6 +221,7 @@ export default function MLBPage() {
   ];
 
   return (
+    <ErrorBoundary>
     <div className="bsi-theme-baseball">
       <>
         <div>
@@ -666,5 +668,6 @@ export default function MLBPage() {
         <Footer />
       </>
     </div>
+    </ErrorBoundary>
   );
 }
