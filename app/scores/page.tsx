@@ -7,13 +7,13 @@ import { streamAnalysis } from '@/lib/bsi-stream-client';
 import type { Sport } from '@/lib/bsi-stream-client';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
-import { Badge, FreshnessBadge } from '@/components/ui/Badge';
+import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
-import { Breadcrumb } from '@/components/ui/Breadcrumb';
+
 
 // ── SVG Sport Icons ──
 
@@ -793,6 +793,30 @@ function ScoresHubContent() {
                   </div>
                 </div>
               </ScrollReveal>
+
+              {/* Savant Cross-Link */}
+              <div className="mt-8 pt-6 border-t" style={{ borderColor: 'var(--border-vintage, rgba(140,98,57,0.3))' }}>
+                <Link
+                  href="/college-baseball/savant"
+                  className="block p-4 transition-colors group"
+                  style={{ background: 'var(--surface-dugout, #161616)', border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))' }}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="heritage-stamp text-[10px]" style={{ color: 'var(--bsi-primary, #BF5700)' }}>BSI SAVANT</span>
+                      <p className="font-oswald uppercase text-sm tracking-wider mt-1" style={{ color: 'var(--bsi-bone, #F5F2EB)' }}>
+                        Go deeper with advanced analytics
+                      </p>
+                      <p className="font-cormorant text-xs mt-1" style={{ color: 'var(--bsi-dust, #C4B8A5)' }}>
+                        Park-adjusted wOBA, wRC+, FIP, and conference strength for 300+ D1 programs
+                      </p>
+                    </div>
+                    <svg viewBox="0 0 24 24" className="w-5 h-5 opacity-40 group-hover:opacity-70 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: 'var(--bsi-primary, #BF5700)' }}>
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </Link>
+              </div>
 
               {/* Data Freshness */}
               <div className="mt-8 pt-4 border-t border-border-vintage">

@@ -14,7 +14,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { preseason2026 } from '@/lib/data/preseason-2026';
 import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
-import { teamMetadata, getLogoUrl, teamNameToSlug } from '@/lib/data/team-metadata';
+import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 import { normalizeRankings, type RankedTeam, type ESPNPoll, type RankingsRawResponse } from '@/lib/utils/rankings';
 import { HubHero } from '@/components/college-baseball/HubHero';
 import { LiveScoreStrip } from '@/components/college-baseball/LiveScoreStrip';
