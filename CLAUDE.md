@@ -1,5 +1,7 @@
 # CLAUDE.md
 
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 # Blaze Sports Intel
 
 BSI covers what mainstream sports media overlook — athletes, programs, and markets outside the East/West Coast spotlight. Old-school scouting instinct fused with new-school sabermetrics, powered by AI. Coverage spans MLB, NFL, NBA, NCAA football, NCAA baseball, and NCAA basketball.
@@ -20,6 +22,25 @@ GitHub holds the source. Cloudflare runs the product. No AWS, no Vercel, no exte
 **Path alias:** `@/*` maps to project root.
 
 **Infrastructure inventory:** `~/.claude/projects/-Users-AustinHumphrey/memory/infrastructure.md`
+
+## Worker Architecture
+
+**Apex worker pattern:** `blazesportsintel-worker-prod` (Hono) handles `blazesportsintel.com/*`. API routes are served by Hono handlers in `workers/handlers/`. All other requests proxy to `blazesportsintel.pages.dev` (the Pages static export). This means the Worker is the single entry point — Pages never receives traffic directly.
+
+**Game detail fallback:** Dynamic game IDs (e.g., `/college-baseball/game/12345/`) don't have static pages. When Pages 404s, the Worker serves a placeholder shell (`/game/placeholder/`). Client-side routing reads the real ID from `window.location` and fetches data dynamically.
+
+**Scheduled handler:** Main worker cron runs every minute (`handleScheduled`), warming KV cache for scores and rankings across all sports.
+
+**Satellite workers:** 18 independent workers in `workers/*/`, each with own `wrangler.toml`, deployed separately via `wrangler deploy --config workers/{name}/wrangler.toml`. Key satellites:
+- `bsi-savant-compute` — 6h cron, recomputes wOBA/FIP/wRC+ from D1
+- `bsi-cbb-analytics` — daily 6AM CT, full sabermetric recompute (park factors + conference strength on Sundays)
+- `bsi-live-scores` — Durable Objects + WebSocket, polls Highlightly every 15s
+- `college-baseball-mcp` — MCP server for Claude tools
+- `error-tracker` — tail consumer for all worker errors
+
+**Durable Objects (in main worker):**
+- `CacheObject` — in-memory TTL cache
+- `PortalPoller` — stub, alarm-based transfer portal polling (not yet active)
 
 ## Data Philosophy
 
@@ -69,6 +90,23 @@ npm run deploy:preview       # Preview branch
 # Data
 npm run db:migrate:production / db:seed:production
 npm run data:freshness / cache:warm
+
+# Single test / filtered
+npx vitest run tests/workers/scores.test.ts      # One Vitest file
+npx vitest run -t "standings"                     # Tests matching name
+npx playwright test tests/smoke/homepage.spec.ts --config=playwright.smoke.config.ts --project=chromium
+
+# Worker typecheck (all satellite workers)
+npm run typecheck:workers
+
+# Satellite worker deploy (each has own wrangler.toml)
+wrangler deploy --config workers/{name}/wrangler.toml
+
+# Deploy gates
+npm run gate:cbb         # Playwright: college baseball critical paths
+npm run smoke:release    # Smoke suite (homepage, layout, scores, mobile)
+npm run gate:release     # smoke:release + gate:cbb
+npm run health           # Post-deploy: 9 curl checks against production
 ```
 
 ## Conventions
@@ -116,61 +154,76 @@ RESEND_API_KEY · TURNSTILE_SECRET_KEY · NOTION_TOKEN · AMPLITUDE_API_KEY
 
 Live scores: 15–30s. Standings: 60s. Final games: 5 min. Rosters: 1 hour.
 
-## Non-Negotiable Rules
-
-### Mock Data Ban
-
-Never use hardcoded arrays, `Math.random()`, `faker`, `sampleData`, or placeholder content in production code. Every piece of data on the site must come from a real API call to one of BSI's data sources (Highlightly, ESPN, SportsDataIO) or from D1/KV/R2 storage. Fallback arrays in components (like editorial previews) are acceptable ONLY as last-resort error states when the API is unreachable — they must be clearly marked as fallbacks and must contain realistic, dated content.
-
-### Verification Protocol
-
-After any deploy or page change, verify the LIVE production URL — not the build output, not a local dev server, not a curl of the API alone. Open the actual page in a browser and confirm:
-1. Real data renders (team names, scores, records — not empty tables)
-2. No console errors
-3. The specific change you made is visible to visitors
-
-### Anti-Regression
-
-Before modifying any file, check `git log --oneline -5 <file>` to understand recent changes. Do not overwrite work from recent commits. If a file was modified in the last 3 commits, understand WHY before changing it.
-
-### Effort Standard
-
-100% always. When uncertain, say "I don't know" rather than guessing. Never ship code you haven't verified works. Never claim something is fixed without evidence.
-
-### Identity
-
-BSI is Austin Humphrey's passion project, not a company. It's one person building the sports coverage platform he wanted to exist. Every decision filters through that lens — scrappy, resourceful, authentic.
-
-### Banned Patterns
-
-These patterns are NEVER allowed in non-test files under `app/`, `components/`, or `lib/`:
-- `Math.random()` in a data context (generating fake scores, standings, stats)
-- `mockGames`, `mockScores`, `mockStandings`, `mockTeams`, `sampleData` variables
-- Hardcoded game/score arrays that aren't clearly labeled as API-down fallbacks
-- `lorem ipsum` or placeholder text in any visitor-facing component
-- Inline hex colors that aren't Heritage Design System tokens
-
-### Key API Routes
-
-The main worker exposes 40+ routes. Key endpoints for sport hubs:
-
-| Sport | Scores | Standings | Other |
-|-------|--------|-----------|-------|
-| College Baseball | `/api/college-baseball/scores` | `/api/college-baseball/standings` | `/api/college-baseball/rankings`, `/api/college-baseball/savant/*`, `/api/college-baseball/editorial/*` |
-| MLB | `/api/mlb/scores` | `/api/mlb/standings` | `/api/mlb/schedule` |
-| NFL | `/api/nfl/scores` | `/api/nfl/standings` | `/api/nfl/schedule` |
-| NBA | `/api/nba/scores` | `/api/nba/standings` | `/api/nba/schedule` |
-| CFB | `/api/cfb/scores` | `/api/cfb/standings` | `/api/cfb/rankings` |
-
-Worker base: `https://bsi-api.blazesportsintel.com` (production) or the Worker dev server locally.
-
 ## Gotchas
 
 - **iCloud Drive:** git operations may hang. Check for stale `.git/index.lock`. Use `--no-verify` if hooks stall.
-- **Build:** `scripts/build-safe.sh` rsyncs to `/var/tmp/bsi-build-staging` to avoid iCloud evicting `.next/`. Staging path: `/var/tmp/bsi-deploy-out` (NOT `/tmp/`).
+- **Build:** `scripts/build-safe.sh` builds in-place, cleans `.next` first, retries once if iCloud evicts. `/var/tmp/bsi-deploy-out` is for deploy staging only (rsync from `out/`).
 - **Pages deploy:** timeout on 15K+ files — retry; second deploy is instant (hash dedup). Wrangler 4.71.0+ required.
 - **next.config.ts:** skips TS build errors, `trailingSlash: true`, `images: { unoptimized: true }`.
 - **tsconfig:** excludes `workers/**/*` (own configs).
 - **Testing:** `test:all` (Vitest) does NOT include Playwright tests. Run `test:routes`, `test:a11y` separately.
 - **ESPN dates:** labeled UTC but actually ET.
 - **Dual analytics crons:** `bsi-savant-compute` (6h) + `bsi-cbb-analytics` (daily) both write advanced metrics. Check both when debugging.
+
+## Non-Negotiable Rules
+
+### Anti-Mock-Data Protocol
+Never generate hardcoded mock data, sample arrays, Math.random() values, or placeholder content. BSI has 40+ live API routes returning real data.
+1. Read the API code first (via MCP tools, web fetch, or codebase search)
+2. Write real fetch() calls to real endpoints
+3. If you can't determine the endpoint, ASK — don't invent data
+A visually complete component with fake data is worth ZERO. A rough component wired to real data is worth everything.
+
+### Anti-Fabrication Protocol
+When you don't know something, say "I don't know" and stop. Never fill knowledge gaps with plausible-sounding fiction. Before making architectural, technical, or capability claims: verify with a tool (web search, web fetch, MCP, codebase search) or explicitly flag as unverified.
+
+### Verification Protocol
+Never claim a task is complete without verification the user can see. "Build passed" is not verification. "Deploy succeeded" is not verification. Verification means: the end user would see the intended result if they loaded the page right now.
+- After every deploy, `curl` the affected page URLs and confirm real data appears
+- If a page renders empty tables, blank grids, or zero content, the task is NOT complete
+- Report what users SEE, not what code says
+
+### Anti-Regression Protocol
+- ALWAYS read `git log --oneline -20` before modifying any file that was recently changed
+- ALWAYS check what the previous session fixed before introducing changes
+- Pre-commit hook blocks mock-data patterns in non-test files
+
+### Anti-Template-Recycling Protocol
+When asked for something "novel" or "creative," check what's already been produced. If the structural layout matches a prior output (same grid, same card pattern, same color placement), you are recycling, not creating. Generate a genuinely different form factor, information architecture, or interaction model.
+
+### Identity
+- BSI is a passion project / prospective startup. NOT a company. NOT formally founded.
+- Never position Austin as "CEO," "founder of a company," or any corporate title
+- Brand: Blaze Intelligence (parent); Blaze Sports Intel (public-facing)
+- Tagline: "Born to Blaze the Path Beaten Less" — this exact word order, always
+
+### Code Standard
+- Production-ready. No placeholders, TODOs, or mock data.
+- Search codebase before creating new files. Replace instead of add. Delete replaced code.
+- For bugs: write a reproducing test first, then fix, then prove with passing test.
+- Wire to real endpoints. Always. No exceptions.
+
+## API Route Patterns
+
+Production worker serves 40+ routes. Key patterns:
+- `/api/{sport}/scores` — live scores (college-baseball, mlb, nfl, nba, cfb)
+- `/api/{sport}/standings` — current standings
+- `/api/{sport}/rankings` — where applicable
+- `/api/{sport}/news` — news feed
+- `/api/{sport}/teams/:id` — team detail
+- `/api/{sport}/players/:id` — player detail
+- `/api/{sport}/games/:id` — game detail
+- `/api/health` — health check
+- `/api/admin/health` — admin health (requires X-Admin-Key header)
+- `/v1/*` — NCAA Baseball v1 API (60s browser cache, 5min edge cache)
+
+## Banned Patterns
+
+Pre-commit hook and Claude Code session discipline both enforce these. Must NOT appear in non-test source files:
+
+- `Math.random()` in data-rendering context
+- `mockGames` / `mockScores` / `mockStandings` / `mockTeams` — hardcoded arrays
+- `sampleData` — any sample/placeholder data
+- `faker.` — faker library usage
+- `"placeholder"` in data components
+- `const.*=.*\[.*{.*home:.*away:` — hardcoded game objects
