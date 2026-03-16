@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSportData } from '@/lib/hooks/useSportData';
+import { SortableTh } from '@/components/ui/SortableTh';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -151,6 +152,41 @@ export default function CollegeBaseballStandingsPage() {
   const hasConferencePlay = standings.some((s) =>
     s.conferenceRecord?.wins > 0 || s.conferenceRecord?.losses > 0 || (s.conferenceRecord?.pct ?? 0) > 0
   );
+
+  // Sortable column state
+  type SortKey = 'rank' | 'confWins' | 'overallWins' | 'winPct' | 'diff';
+  const [sortKey, setSortKey] = useState<SortKey>('rank');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
+
+  const handleSort = useCallback((key: string) => {
+    const k = key as SortKey;
+    setSortKey((prev) => {
+      if (prev === k) { setSortDir((d) => (d === 'asc' ? 'desc' : 'asc')); return k; }
+      setSortDir(k === 'rank' ? 'asc' : 'desc');
+      return k;
+    });
+  }, []);
+
+  const sortIndicator = useCallback((key: string) => {
+    if (sortKey !== key) return '' as const;
+    return sortDir === 'asc' ? '▲' as const : '▼' as const;
+  }, [sortKey, sortDir]);
+
+  const sortedStandings = useMemo(() => {
+    if (sortKey === 'rank') {
+      return sortDir === 'asc' ? standings : [...standings].reverse();
+    }
+    return [...standings].sort((a, b) => {
+      let aVal = 0, bVal = 0;
+      switch (sortKey) {
+        case 'confWins': aVal = a.conferenceRecord?.wins ?? 0; bVal = b.conferenceRecord?.wins ?? 0; break;
+        case 'overallWins': aVal = a.overallRecord?.wins ?? 0; bVal = b.overallRecord?.wins ?? 0; break;
+        case 'winPct': aVal = a.winPct ?? 0; bVal = b.winPct ?? 0; break;
+        case 'diff': aVal = a.pointDifferential ?? 0; bVal = b.pointDifferential ?? 0; break;
+      }
+      return sortDir === 'asc' ? aVal - bVal : bVal - aVal;
+    });
+  }, [standings, sortKey, sortDir]);
 
   return (
     <>
@@ -336,33 +372,23 @@ export default function CollegeBaseballStandingsPage() {
                       <table className="w-full" aria-label="College baseball standings by conference">
                         <thead>
                           <tr className="bg-background-secondary border-b border-border-subtle">
-                            <th scope="col" className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider w-12">
-                              #
-                            </th>
+                            <SortableTh label="#" sortKey="rank" indicator={sortIndicator('rank')} onSort={handleSort} className="py-4 px-4 w-12 uppercase tracking-wider" />
                             <th scope="col" className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
                               Team
                             </th>
                             {hasConferencePlay && (
-                              <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
-                                Conf
-                              </th>
+                              <SortableTh label="Conf" sortKey="confWins" indicator={sortIndicator('confWins')} onSort={handleSort} className="py-4 px-4 text-center uppercase tracking-wider" />
                             )}
-                            <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
-                              Overall
-                            </th>
-                            <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden md:table-cell">
-                              Win%
-                            </th>
+                            <SortableTh label="Overall" sortKey="overallWins" indicator={sortIndicator('overallWins')} onSort={handleSort} className="py-4 px-4 text-center uppercase tracking-wider" />
+                            <SortableTh label="Win%" sortKey="winPct" indicator={sortIndicator('winPct')} onSort={handleSort} className="py-4 px-4 text-center uppercase tracking-wider hidden md:table-cell" />
                             <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden md:table-cell">
                               Streak
                             </th>
-                            <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden lg:table-cell">
-                              Diff
-                            </th>
+                            <SortableTh label="Diff" sortKey="diff" indicator={sortIndicator('diff')} onSort={handleSort} className="py-4 px-4 text-center uppercase tracking-wider hidden lg:table-cell" />
                           </tr>
                         </thead>
                         <tbody>
-                          {standings.map((standing, index) => (
+                          {sortedStandings.map((standing, index) => (
                             <tr
                               key={standing.team?.id || index}
                               className={`border-b border-border-subtle hover:bg-background-secondary/50 transition-colors ${

@@ -667,6 +667,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://blazesportsintel.com/college-baseball/savant/conference-comparison/</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://blazesportsintel.com/college-baseball/savant/conference-index/</loc>
     <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
@@ -674,6 +680,12 @@
   </url>
   <url>
     <loc>https://blazesportsintel.com/college-baseball/savant/glossary/</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://blazesportsintel.com/college-baseball/savant/methodology/</loc>
     <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>

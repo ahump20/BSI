@@ -8,6 +8,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { LiveStatsBadge } from '@/components/editorial/LiveStatsBadge';
+import { ArticleMeta } from '@/components/ui/ArticleMeta';
 import { teamMetadata } from '@/lib/data/team-metadata';
 import type { TeamPreviewData } from './types';
 
@@ -52,10 +53,15 @@ export function SECTeamPreviewTemplate({ data }: { data: TeamPreviewData }) {
                 <p className="text-text-secondary text-lg md:text-xl leading-relaxed mb-4">
                   {data.heroSubtitle}
                 </p>
-                <div className="flex items-center gap-4 text-sm text-text-muted">
+                <div className="flex items-center gap-4 text-sm text-text-muted flex-wrap">
                   <span>By Blaze Sports Intel</span>
                   <span>|</span>
                   <span>Austin, TX</span>
+                  <span>|</span>
+                  <ArticleMeta
+                    readingTime={parseInt(data.readTime || '10', 10) || 10}
+                    shareTitle={`${data.teamName} ${data.mascot}: ${data.heroTitle} | BSI`}
+                  />
                 </div>
               </div>
             </ScrollReveal>
