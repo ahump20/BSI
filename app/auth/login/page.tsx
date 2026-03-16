@@ -134,9 +134,9 @@ export default function LoginPage() {
                     className="p-3 text-sm"
                     style={{
                       background: 'rgba(239, 68, 68, 0.1)',
-                      border: '1px solid rgba(239, 68, 68, 0.2)',
+                      border: '1px solid rgba(239, 68, 68, 0.20)',
                       borderRadius: '2px',
-                      color: '#ef4444',
+                      color: 'var(--bsi-error)',
                     }}
                   >
                     {emailError}
@@ -149,7 +149,7 @@ export default function LoginPage() {
                       background: 'rgba(16, 185, 129, 0.1)',
                       border: '1px solid rgba(16, 185, 129, 0.2)',
                       borderRadius: '2px',
-                      color: '#10b981',
+                      color: 'var(--bsi-success)',
                     }}
                   >
                     {emailMessage}
@@ -215,9 +215,9 @@ export default function LoginPage() {
                     className="p-3 text-sm"
                     style={{
                       background: 'rgba(239, 68, 68, 0.1)',
-                      border: '1px solid rgba(239, 68, 68, 0.2)',
+                      border: '1px solid rgba(239, 68, 68, 0.20)',
                       borderRadius: '2px',
-                      color: '#ef4444',
+                      color: 'var(--bsi-error)',
                     }}
                   >
                     {keyError}

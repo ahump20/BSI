@@ -85,7 +85,7 @@ export function StandingsTable({ standings, sport }: StandingsTableProps) {
                   </td>
                   <td
                     className="py-1.5 pl-2 text-right"
-                    style={{ color: netRtg > 0 ? '#10b981' : netRtg < 0 ? '#ef4444' : 'var(--intel-text-caption)', fontVariantNumeric: 'tabular-nums' }}
+                    style={{ color: netRtg > 0 ? 'var(--bsi-success)' : netRtg < 0 ? 'var(--bsi-error)' : 'var(--intel-text-caption)', fontVariantNumeric: 'tabular-nums' }}
                   >
                     {netRtg > 0 ? '+' : ''}{netRtg.toFixed(1)}
                   </td>
