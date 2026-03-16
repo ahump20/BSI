@@ -92,7 +92,7 @@ export function CiteWidget({ title, path, date = '2026-02-17', author = 'Austin 
       >
         {copied ? (
           <>
-            <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-green-400" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-[var(--bsi-primary)]" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M20 6L9 17l-5-5" />
             </svg>
             Copied

@@ -64,11 +64,11 @@ const SPORT_LABELS: Record<string, string> = {
 
 const SPORT_COLORS: Record<string, string> = {
   mlb: 'bg-red-600',
-  nfl: 'bg-blue-700',
+  nfl: 'bg-[var(--heritage-columbia-blue)]',
   nba: 'bg-orange-600',
   college_baseball: 'bg-amber-700',
-  cfb: 'bg-green-700',
-  cbb: 'bg-purple-700',
+  cfb: 'bg-[var(--bsi-primary)]',
+  cbb: 'bg-[var(--heritage-columbia-blue)]',
 };
 
 function getSportLabel(sport: string): string {

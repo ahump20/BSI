@@ -169,7 +169,7 @@ const NIL_TIER_COLORS: Record<string, { bg: string; text: string; label: string 
   elite:         { bg: 'bg-[#BF5700]/20', text: 'text-[#BF5700]', label: 'Elite' },
   high:          { bg: 'bg-green-500/15', text: 'text-green-400', label: 'High' },
   mid:           { bg: 'bg-yellow-500/15', text: 'text-yellow-400', label: 'Mid' },
-  emerging:      { bg: 'bg-blue-500/15', text: 'text-blue-400', label: 'Emerging' },
+  emerging:      { bg: 'bg-[var(--heritage-columbia-blue)]/15', text: 'text-[var(--heritage-columbia-blue)]', label: 'Emerging' },
   developmental: { bg: 'bg-zinc-500/15', text: 'text-zinc-400', label: 'Developmental' },
 };
 

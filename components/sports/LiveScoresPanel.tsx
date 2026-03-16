@@ -41,7 +41,7 @@ function GameCardList({ games }: { games: GameScore[] }) {
           aria-label={`${game.away.name} at ${game.home.name}`}
           className={`bg-surface-light rounded-sm p-4 border transition-colors ${
             game.isLive
-              ? 'border-green-500/30'
+              ? 'border-[var(--bsi-primary)]/30'
               : game.isPostponed
                 ? 'border-border-subtle opacity-50'
                 : 'border-transparent'
@@ -71,10 +71,10 @@ function GameCardList({ games }: { games: GameScore[] }) {
           </div>
           <div className="mt-2 flex items-center gap-2">
             {game.isLive && (
-              <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" role="status" aria-label="Game in progress" />
+              <span className="w-1.5 h-1.5 bg-[var(--bsi-primary)] rounded-full animate-pulse" role="status" aria-label="Game in progress" />
             )}
             <span className={`text-xs ${
-              game.isLive ? 'text-green-400'
+              game.isLive ? 'text-[var(--bsi-primary)]'
                 : game.isPostponed ? 'text-yellow-500/60'
                 : game.isFinal ? 'text-text-muted'
                 : 'text-burnt-orange'

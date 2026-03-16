@@ -66,8 +66,8 @@ export function IntelSignup({ sport, onSignup }: IntelSignupProps = {}) {
 
   if (state === 'success') {
     return (
-      <div className="glass-default rounded-sm p-4 border border-green-500/20 mb-4">
-        <p className="text-sm text-green-400 font-medium">You&apos;re in.</p>
+      <div className="glass-default rounded-sm p-4 border border-[var(--bsi-primary)]/20 mb-4">
+        <p className="text-sm text-[var(--bsi-primary)] font-medium">You&apos;re in.</p>
         <p className="text-xs text-text-muted mt-1">Roster-market intelligence, delivered first.</p>
       </div>
     );

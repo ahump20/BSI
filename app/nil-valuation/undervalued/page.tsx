@@ -32,7 +32,7 @@ function formatValue(value: number): string {
 
 function gapColor(gap: number): string {
   if (gap >= 30) return 'text-green-400';
-  if (gap >= 15) return 'text-blue-400';
+  if (gap >= 15) return 'text-[var(--heritage-columbia-blue)]';
   return 'text-text-secondary';
 }
 

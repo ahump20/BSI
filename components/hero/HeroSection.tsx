@@ -31,8 +31,8 @@ export function HeroSection() {
       <div className="relative z-10 max-w-5xl mx-auto text-center px-4 sm:px-6 lg:px-8">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-burnt-orange-500/20 text-burnt-orange-400 mb-8">
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--bsi-primary)] opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--bsi-primary)]" />
           </span>
           Live Sports Intelligence
         </div>

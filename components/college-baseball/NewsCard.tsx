@@ -19,10 +19,10 @@ const SOURCE_STYLES: Record<string, { bg: string; text: string; label: string }>
 };
 
 const CATEGORY_STYLES: Record<string, string> = {
-  scores: 'bg-green-500/15 text-green-400 border-green-500/30',
+  scores: 'bg-[var(--bsi-primary)]/15 text-[var(--bsi-primary)] border-[var(--bsi-primary)]/30',
   transfers: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
-  recruiting: 'bg-purple-500/15 text-purple-400 border-purple-500/30',
-  editorial: 'bg-blue-500/15 text-blue-400 border-blue-500/30',
+  recruiting: 'bg-[var(--heritage-columbia-blue)]/15 text-[var(--heritage-columbia-blue)] border-[var(--heritage-columbia-blue)]/30',
+  editorial: 'bg-[var(--heritage-columbia-blue)]/15 text-[var(--heritage-columbia-blue)] border-[var(--heritage-columbia-blue)]/30',
   analysis: 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30',
   rankings: 'bg-orange-500/15 text-orange-400 border-orange-500/30',
   general: 'bg-surface text-text-muted border-border-strong',

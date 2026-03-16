@@ -82,7 +82,7 @@ export default function ArcadeGamesPage() {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-3xl">{game.icon}</span>
-                  <span className="w-2 h-2 rounded-full bg-green-400" />
+                  <span className="w-2 h-2 rounded-full bg-[var(--bsi-primary)]" />
                 </div>
                 <h2 className="text-lg font-display text-text-primary uppercase tracking-wide mb-2 group-hover:text-burnt-orange transition-colors">
                   {game.title}

@@ -47,7 +47,7 @@ interface EnrichedRankingsTableProps {
 
 function RankChange({ current, previous }: { current: number; previous: number | null }) {
   if (previous === null) {
-    return <span className="text-[10px] text-blue-400/70 font-semibold uppercase tracking-wider">NR</span>;
+    return <span className="text-[10px] text-[var(--heritage-columbia-blue)]/70 font-semibold uppercase tracking-wider">NR</span>;
   }
   const diff = previous - current;
   if (diff === 0) {

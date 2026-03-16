@@ -55,7 +55,7 @@ function toGrade(percentile: number): number {
 
 function gradeColor(grade: number): string {
   if (grade >= 70) return 'text-green-400';
-  if (grade >= 60) return 'text-blue-400';
+  if (grade >= 60) return 'text-[var(--heritage-columbia-blue)]';
   if (grade >= 50) return 'text-text-primary';
   if (grade >= 40) return 'text-yellow-400';
   return 'text-red-400';

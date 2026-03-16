@@ -51,7 +51,7 @@ interface TeamIntelResponse {
 const SIGNAL_BADGE: Record<string, { label: string; color: string; bg: string; border: string }> = {
   injury_lineup:  { label: 'Injury',   color: 'text-red-400',    bg: 'bg-red-500/10',    border: 'border-red-500/25' },
   transfer_portal:{ label: 'Portal',   color: 'text-amber-400',  bg: 'bg-amber-500/10',  border: 'border-amber-500/25' },
-  recruiting:     { label: 'Recruit',  color: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/25' },
+  recruiting:     { label: 'Recruit',  color: 'text-[var(--heritage-columbia-blue)]', bg: 'bg-[var(--heritage-columbia-blue)]/10', border: 'border-[var(--heritage-columbia-blue)]/25' },
   sentiment:      { label: 'Sentiment',color: 'text-emerald-400',bg: 'bg-emerald-500/10',border: 'border-emerald-500/25' },
   general:        { label: 'General',  color: 'text-text-muted', bg: 'bg-surface',       border: 'border-border' },
 };
@@ -120,7 +120,7 @@ function SummaryRow({ summary }: { summary: TeamSummary }) {
   const stats = [
     { label: 'Injuries', count: summary.injury_count, color: 'text-red-400', activeBg: 'bg-red-500/10' },
     { label: 'Portal',   count: summary.transfer_count, color: 'text-amber-400', activeBg: 'bg-amber-500/10' },
-    { label: 'Recruiting', count: summary.recruiting_count, color: 'text-purple-400', activeBg: 'bg-purple-500/10' },
+    { label: 'Recruiting', count: summary.recruiting_count, color: 'text-[var(--heritage-columbia-blue)]', activeBg: 'bg-[var(--heritage-columbia-blue)]/10' },
   ];
 
   return (

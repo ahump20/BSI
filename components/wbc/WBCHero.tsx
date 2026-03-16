@@ -28,7 +28,7 @@ const PHASE_LABELS: Record<Phase, string> = {
 
 const PHASE_COLORS: Record<Phase, string> = {
   pre: 'text-text-tertiary',
-  pool: 'text-green-400',
+  pool: 'text-[var(--bsi-primary)]',
   knockout: 'text-ember',
   final: 'text-burnt-orange',
   complete: 'text-text-secondary',
@@ -87,8 +87,8 @@ export function WBCHero() {
           <div className="inline-flex items-center gap-2 mb-6">
             {isLive && (
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--bsi-primary)] opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--bsi-primary)]" />
               </span>
             )}
             <span className={`text-sm font-semibold tracking-wider uppercase ${PHASE_COLORS[phase]}`}>

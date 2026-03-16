@@ -538,8 +538,8 @@ function ScoresHubContent() {
                   <span className="heritage-stamp" style={{ padding: '1px 8px', fontSize: '9px', color: '#22c55e', borderColor: 'rgba(34, 197, 94, 0.3)' }}>
                     <span className="inline-flex items-center gap-1.5">
                       <span className="relative flex h-1.5 w-1.5">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500" />
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--bsi-primary)] opacity-75" />
+                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[var(--bsi-primary)]" />
                       </span>
                       LIVE
                     </span>
@@ -568,7 +568,7 @@ function ScoresHubContent() {
             {hasAnyLive && (
               <ScrollReveal direction="up" delay={200}>
                 <div className="mt-4 inline-flex items-center gap-2 px-4 py-2" style={{ background: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.25)' }}>
-                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                  <span className="w-2 h-2 bg-[var(--bsi-primary)] rounded-full animate-pulse" />
                   <span className="font-semibold text-sm" style={{ color: '#22c55e' }}>
                     {totalLive} game{totalLive !== 1 ? 's' : ''} live now
                   </span>
@@ -621,7 +621,7 @@ function ScoresHubContent() {
                     {sport.name}
                     {sport.liveCount > 0 && (
                       <span className="flex items-center gap-1 ml-1">
-                        <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                        <span className="w-1.5 h-1.5 bg-[var(--bsi-primary)] rounded-full animate-pulse" />
                         <span style={{ color: '#22c55e' }}>{sport.liveCount}</span>
                       </span>
                     )}

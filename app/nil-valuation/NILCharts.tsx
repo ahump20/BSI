@@ -331,7 +331,7 @@ export function GenderEquityChart() {
       {/* Key insight callout */}
       <div className="flex gap-6 mb-4">
         <div>
-          <div className="text-lg font-mono font-bold text-blue-400">52%</div>
+          <div className="text-lg font-mono font-bold text-[var(--heritage-columbia-blue)]">52%</div>
           <div className="text-[10px] font-mono text-text-muted">Women in Top-100</div>
         </div>
         <div>
