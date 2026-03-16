@@ -116,6 +116,54 @@ RESEND_API_KEY · TURNSTILE_SECRET_KEY · NOTION_TOKEN · AMPLITUDE_API_KEY
 
 Live scores: 15–30s. Standings: 60s. Final games: 5 min. Rosters: 1 hour.
 
+## Non-Negotiable Rules
+
+### Mock Data Ban
+
+Never use hardcoded arrays, `Math.random()`, `faker`, `sampleData`, or placeholder content in production code. Every piece of data on the site must come from a real API call to one of BSI's data sources (Highlightly, ESPN, SportsDataIO) or from D1/KV/R2 storage. Fallback arrays in components (like editorial previews) are acceptable ONLY as last-resort error states when the API is unreachable — they must be clearly marked as fallbacks and must contain realistic, dated content.
+
+### Verification Protocol
+
+After any deploy or page change, verify the LIVE production URL — not the build output, not a local dev server, not a curl of the API alone. Open the actual page in a browser and confirm:
+1. Real data renders (team names, scores, records — not empty tables)
+2. No console errors
+3. The specific change you made is visible to visitors
+
+### Anti-Regression
+
+Before modifying any file, check `git log --oneline -5 <file>` to understand recent changes. Do not overwrite work from recent commits. If a file was modified in the last 3 commits, understand WHY before changing it.
+
+### Effort Standard
+
+100% always. When uncertain, say "I don't know" rather than guessing. Never ship code you haven't verified works. Never claim something is fixed without evidence.
+
+### Identity
+
+BSI is Austin Humphrey's passion project, not a company. It's one person building the sports coverage platform he wanted to exist. Every decision filters through that lens — scrappy, resourceful, authentic.
+
+### Banned Patterns
+
+These patterns are NEVER allowed in non-test files under `app/`, `components/`, or `lib/`:
+- `Math.random()` in a data context (generating fake scores, standings, stats)
+- `mockGames`, `mockScores`, `mockStandings`, `mockTeams`, `sampleData` variables
+- Hardcoded game/score arrays that aren't clearly labeled as API-down fallbacks
+- `lorem ipsum` or placeholder text in any visitor-facing component
+- Inline hex colors that aren't Heritage Design System tokens
+
+### Key API Routes
+
+The main worker exposes 40+ routes. Key endpoints for sport hubs:
+
+| Sport | Scores | Standings | Other |
+|-------|--------|-----------|-------|
+| College Baseball | `/api/college-baseball/scores` | `/api/college-baseball/standings` | `/api/college-baseball/rankings`, `/api/college-baseball/savant/*`, `/api/college-baseball/editorial/*` |
+| MLB | `/api/mlb/scores` | `/api/mlb/standings` | `/api/mlb/schedule` |
+| NFL | `/api/nfl/scores` | `/api/nfl/standings` | `/api/nfl/schedule` |
+| NBA | `/api/nba/scores` | `/api/nba/standings` | `/api/nba/schedule` |
+| CFB | `/api/cfb/scores` | `/api/cfb/standings` | `/api/cfb/rankings` |
+
+Worker base: `https://bsi-api.blazesportsintel.com` (production) or the Worker dev server locally.
+
 ## Gotchas
 
 - **iCloud Drive:** git operations may hang. Check for stale `.git/index.lock`. Use `--no-verify` if hooks stall.
