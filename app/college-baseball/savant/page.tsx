@@ -252,6 +252,16 @@ export default function SavantHubPage() {
                     </svg>
                   </Link>
                   <Link
+                    href="/college-baseball/savant/team-compare"
+                    className="inline-flex items-center gap-2 text-sm transition-colors group"
+                    style={{ color: 'var(--svt-text-muted, var(--bsi-dust))' }}
+                  >
+                    <span className="uppercase tracking-wider" style={{ fontFamily: 'var(--bsi-font-display)' }}>Compare Teams</span>
+                    <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                  <Link
                     href="/college-baseball/savant/conference-comparison"
                     className="inline-flex items-center gap-2 text-sm transition-colors group"
                     style={{ color: 'var(--svt-text-muted, var(--bsi-dust))' }}
