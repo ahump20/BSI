@@ -244,10 +244,10 @@ export default function SwingLandingPage() {
                 <div className="rounded-sm bg-surface-dugout border border-border-subtle p-6 corner-marks relative">
                   <h3 className="font-display text-lg font-bold uppercase text-bsi-bone mb-4">Free</h3>
                   <ul className="space-y-2 text-xs text-bsi-dust">
-                    <li className="flex gap-2"><span className="text-emerald-400">✓</span> 3 swing analyses per month</li>
-                    <li className="flex gap-2"><span className="text-emerald-400">✓</span> Full 12-metric report</li>
-                    <li className="flex gap-2"><span className="text-emerald-400">✓</span> Video + skeleton overlay</li>
-                    <li className="flex gap-2"><span className="text-emerald-400">✓</span> AI narrated analysis</li>
+                    <li className="flex gap-2"><span className="text-[var(--bsi-success)]">✓</span> 3 swing analyses per month</li>
+                    <li className="flex gap-2"><span className="text-[var(--bsi-success)]">✓</span> Full 12-metric report</li>
+                    <li className="flex gap-2"><span className="text-[var(--bsi-success)]">✓</span> Video + skeleton overlay</li>
+                    <li className="flex gap-2"><span className="text-[var(--bsi-success)]">✓</span> AI narrated analysis</li>
                     <li className="flex gap-2"><span className="text-text-muted">–</span> 2 follow-up questions per swing</li>
                     <li className="flex gap-2"><span className="text-text-muted">–</span> Last 3 swings history</li>
                   </ul>

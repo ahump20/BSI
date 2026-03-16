@@ -173,7 +173,7 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
             )}
             {error && (
               <div className="text-center space-y-3">
-                <p className="text-red-400/80 text-sm">{error}</p>
+                <p className="text-[var(--bsi-danger)]/80 text-sm">{error}</p>
                 <button
                   onClick={() => selectedPrompt && handleAnalyze(selectedPrompt)}
                   className="text-xs font-mono uppercase tracking-wider text-burnt-orange hover:text-ember transition-colors"

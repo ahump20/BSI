@@ -29,12 +29,12 @@ function getTimeAgo(date: Date): string {
 function getStatusColor(
   date: Date,
   isCached: boolean
-): 'bg-[var(--bsi-primary)]' | 'bg-yellow-400' | 'bg-orange-400' | 'bg-red-400' {
+): 'bg-[var(--bsi-primary)]' | 'bg-[var(--bsi-warning)]' | 'bg-orange-400' | 'bg-[var(--bsi-danger)]' {
   if (isCached) return 'bg-orange-400';
   const minutesAgo = getAgeMinutes(date);
 
   if (minutesAgo < 1) return 'bg-[var(--bsi-primary)]';
-  if (minutesAgo < 5) return 'bg-yellow-400';
+  if (minutesAgo < 5) return 'bg-[var(--bsi-warning)]';
   return 'bg-orange-400';
 }
 

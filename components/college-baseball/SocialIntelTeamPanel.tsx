@@ -49,10 +49,10 @@ interface TeamIntelResponse {
 // ─── Constants ──────────────────────────────────────────────────────────────
 
 const SIGNAL_BADGE: Record<string, { label: string; color: string; bg: string; border: string }> = {
-  injury_lineup:  { label: 'Injury',   color: 'text-red-400',    bg: 'bg-red-500/10',    border: 'border-red-500/25' },
-  transfer_portal:{ label: 'Portal',   color: 'text-amber-400',  bg: 'bg-amber-500/10',  border: 'border-amber-500/25' },
+  injury_lineup:  { label: 'Injury',   color: 'text-[var(--bsi-danger)]',    bg: 'bg-[var(--bsi-danger)]/10',    border: 'border-[var(--bsi-danger)]/25' },
+  transfer_portal:{ label: 'Portal',   color: 'text-[var(--bsi-warning)]',  bg: 'bg-[var(--bsi-warning)]/10',  border: 'border-[var(--bsi-warning)]/25' },
   recruiting:     { label: 'Recruit',  color: 'text-[var(--heritage-columbia-blue)]', bg: 'bg-[var(--heritage-columbia-blue)]/10', border: 'border-[var(--heritage-columbia-blue)]/25' },
-  sentiment:      { label: 'Sentiment',color: 'text-emerald-400',bg: 'bg-emerald-500/10',border: 'border-emerald-500/25' },
+  sentiment:      { label: 'Sentiment',color: 'text-[var(--bsi-success)]',bg: 'bg-[var(--bsi-success)]/10',border: 'border-[var(--bsi-success)]/25' },
   general:        { label: 'General',  color: 'text-text-muted', bg: 'bg-surface',       border: 'border-border' },
 };
 
@@ -83,13 +83,13 @@ function SentimentGauge({ score }: { score: number | null }) {
   const isNegative = score <= -0.1;
 
   const barColor = isPositive
-    ? 'bg-emerald-500'
+    ? 'bg-[var(--bsi-success)]'
     : isNegative
-    ? 'bg-red-500'
-    : 'bg-zinc-500';
+    ? 'bg-[var(--bsi-danger)]'
+    : 'bg-[var(--bsi-dust)]';
 
   const label = isPositive ? 'Positive' : isNegative ? 'Negative' : 'Neutral';
-  const textColor = isPositive ? 'text-emerald-400' : isNegative ? 'text-red-400' : 'text-text-muted';
+  const textColor = isPositive ? 'text-[var(--bsi-success)]' : isNegative ? 'text-[var(--bsi-danger)]' : 'text-text-muted';
 
   return (
     <div className="flex items-center gap-2" title={`Sentiment score: ${score.toFixed(2)}`}>
@@ -118,8 +118,8 @@ function SentimentGauge({ score }: { score: number | null }) {
 
 function SummaryRow({ summary }: { summary: TeamSummary }) {
   const stats = [
-    { label: 'Injuries', count: summary.injury_count, color: 'text-red-400', activeBg: 'bg-red-500/10' },
-    { label: 'Portal',   count: summary.transfer_count, color: 'text-amber-400', activeBg: 'bg-amber-500/10' },
+    { label: 'Injuries', count: summary.injury_count, color: 'text-[var(--bsi-danger)]', activeBg: 'bg-[var(--bsi-danger)]/10' },
+    { label: 'Portal',   count: summary.transfer_count, color: 'text-[var(--bsi-warning)]', activeBg: 'bg-[var(--bsi-warning)]/10' },
     { label: 'Recruiting', count: summary.recruiting_count, color: 'text-[var(--heritage-columbia-blue)]', activeBg: 'bg-[var(--heritage-columbia-blue)]/10' },
   ];
 
@@ -159,7 +159,7 @@ function SignalRow({ signal }: { signal: SocialSignal }) {
       <span
         className={`
           mt-1 flex-shrink-0 w-2 h-2 rounded-full
-          ${isPlatformReddit ? 'bg-orange-400' : 'bg-sky-400'}
+          ${isPlatformReddit ? 'bg-orange-400' : 'bg-[var(--heritage-columbia-blue)]'}
         `}
         title={isPlatformReddit ? 'Reddit' : 'X / Twitter'}
       />

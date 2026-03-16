@@ -63,10 +63,10 @@ const SPORT_LABELS: Record<string, string> = {
 };
 
 const SPORT_COLORS: Record<string, string> = {
-  mlb: 'bg-red-600',
+  mlb: 'bg-[var(--heritage-oiler-red)]',
   nfl: 'bg-[var(--heritage-columbia-blue)]',
   nba: 'bg-orange-600',
-  college_baseball: 'bg-amber-700',
+  college_baseball: 'bg-[var(--bsi-warning)]',
   cfb: 'bg-[var(--bsi-primary)]',
   cbb: 'bg-[var(--heritage-columbia-blue)]',
 };
@@ -255,7 +255,7 @@ function SearchContent() {
             {/* Error State */}
             {error && (
               <Card variant="default" padding="lg" className="text-center">
-                <p className="text-red-400 mb-4">{error}</p>
+                <p className="text-[var(--bsi-danger)] mb-4">{error}</p>
                 <button
                   onClick={() => window.location.reload()}
                   className="px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange-dark transition-colors"
@@ -317,7 +317,7 @@ function SearchContent() {
                       <Link
                         key={term}
                         href={`/search?q=${encodeURIComponent(term)}`}
-                        className="px-3 py-1.5 text-sm bg-surface-light border border-border-subtle rounded-full text-text-secondary hover:text-burnt-orange hover:border-burnt-orange/30 transition-colors"
+                        className="px-3 py-1.5 text-sm bg-surface-light border border-border-subtle rounded-sm text-text-secondary hover:text-burnt-orange hover:border-burnt-orange/30 transition-colors"
                       >
                         {term}
                       </Link>

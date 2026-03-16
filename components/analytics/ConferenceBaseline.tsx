@@ -49,8 +49,8 @@ export function ConferenceBaseline({
     const diff = value - confAvg;
     const isGood = higherIsBetter ? diff > 0 : diff < 0;
     const isBad = higherIsBetter ? diff < 0 : diff > 0;
-    if (isGood) indicatorColor = 'text-emerald-400';
-    else if (isBad) indicatorColor = 'text-red-400';
+    if (isGood) indicatorColor = 'text-[var(--bsi-success)]';
+    else if (isBad) indicatorColor = 'text-[var(--bsi-danger)]';
   }
 
   return (

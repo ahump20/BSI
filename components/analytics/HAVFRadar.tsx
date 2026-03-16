@@ -78,7 +78,7 @@ export function HAVFRadar({
           HAV-F Profile
         </h4>
         <div
-          className="px-3 py-1 rounded-full text-sm font-bold tabular-nums"
+          className="px-3 py-1 rounded-sm text-sm font-bold tabular-nums"
           style={{
             color,
             backgroundColor: withAlpha(color, 0.08),

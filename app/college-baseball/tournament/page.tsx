@@ -45,7 +45,7 @@ function confColor(conf: string): string {
 
 /** Bubble status based on rank and tier. */
 function bubbleStatus(rank: number, tier: string): { label: string; color: string; bg: string } {
-  if (rank <= 12) return { label: 'Safe', color: '#22C55E', bg: 'rgba(34,197,94,0.12)' };
+  if (rank <= 12) return { label: 'Safe', color: 'var(--bsi-success)', bg: 'rgba(16,185,129,0.12)' };
   if (rank <= 16) return { label: 'Projected Host', color: '#C9A227', bg: 'rgba(201,162,39,0.12)' };
   if (tier === 'sleeper' || rank <= 20) return { label: 'Bubble', color: '#F59E0B', bg: 'rgba(245,158,11,0.12)' };
   return { label: 'Work to Do', color: '#EF4444', bg: 'rgba(239,68,68,0.12)' };
@@ -408,7 +408,7 @@ export default function TournamentHubPage() {
                           </div>
                           <div className="flex items-center gap-2 mb-2">
                             <span
-                              className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider"
+                              className="inline-flex items-center rounded-sm px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider"
                               style={{ backgroundColor: status.bg, color: status.color }}
                             >
                               {status.label}

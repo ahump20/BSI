@@ -30,7 +30,7 @@ const sizeClasses: Record<string, string> = {
 export function Badge({ children, variant = 'primary', size = 'md', style, className = '' }: BadgeProps) {
   return (
     <span
-      className={`inline-flex items-center rounded-full font-semibold border ${sizeClasses[size] ?? sizeClasses.md} ${variantClasses[variant] ?? variantClasses.secondary} ${className}`}
+      className={`inline-flex items-center rounded-sm font-semibold border ${sizeClasses[size] ?? sizeClasses.md} ${variantClasses[variant] ?? variantClasses.secondary} ${className}`}
       style={style}
     >
       {children}

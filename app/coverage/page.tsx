@@ -57,7 +57,7 @@ const sportsCoverage = [
   {
     name: 'College Baseball',
     status: 'Full Coverage',
-    statusColor: '#22C55E',
+    statusColor: 'var(--bsi-success, #22C55E)',
     href: '/college-baseball',
     teams: '300+ D1 Programs',
     features: [
@@ -74,7 +74,7 @@ const sportsCoverage = [
   {
     name: 'MLB',
     status: 'Full Coverage',
-    statusColor: '#22C55E',
+    statusColor: 'var(--bsi-success, #22C55E)',
     href: '/mlb',
     teams: 'All 30 Teams',
     features: [
@@ -91,7 +91,7 @@ const sportsCoverage = [
   {
     name: 'NFL',
     status: 'Full Coverage',
-    statusColor: '#22C55E',
+    statusColor: 'var(--bsi-success, #22C55E)',
     href: '/nfl',
     teams: 'All 32 Teams',
     features: [
@@ -107,7 +107,7 @@ const sportsCoverage = [
   {
     name: 'NBA',
     status: 'Full Coverage',
-    statusColor: '#22C55E',
+    statusColor: 'var(--bsi-success, #22C55E)',
     href: '/nba',
     teams: 'All 30 Teams',
     features: [
@@ -122,7 +122,7 @@ const sportsCoverage = [
   {
     name: 'College Football',
     status: 'Full Coverage',
-    statusColor: '#22C55E',
+    statusColor: 'var(--bsi-success, #22C55E)',
     href: '/cfb',
     teams: '134 FBS Programs',
     features: [

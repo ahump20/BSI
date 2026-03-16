@@ -10,6 +10,7 @@ export async function handleCollegeBaseballStandings(
   env: Env,
   ctx?: ExecutionContext,
 ): Promise<Response> {
+  try {
   const conference = url.searchParams.get('conference') || 'NCAA';
   const cacheKey = `cb:standings:v3:${conference}`;
   const now = new Date().toISOString();
@@ -215,6 +216,10 @@ export async function handleCollegeBaseballStandings(
   return cachedJson(emptyPayload, 502, HTTP_CACHE.standings, {
     ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR',
   });
+  } catch (err) {
+    console.error('[handleCollegeBaseballStandings]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }
 
 /** Flatten ESPN nested poll format into simple { rank, team, record, ... } entries. */
@@ -243,6 +248,7 @@ export function flattenESPNPolls(polls: unknown[]): unknown[] {
 }
 
 export async function handleCollegeBaseballRankings(env: Env): Promise<Response> {
+  try {
   const cacheKey = 'cb:rankings:v2';
   const prevKey = 'cb:rankings:prev';
   const now = new Date().toISOString();
@@ -346,6 +352,10 @@ export async function handleCollegeBaseballRankings(env: Env): Promise<Response>
       degraded: true,
       extra: { sport: 'college-baseball' },
     }), 502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' });
+  }
+  } catch (err) {
+    console.error('[handleCollegeBaseballRankings]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
 

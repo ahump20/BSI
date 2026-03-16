@@ -55,7 +55,7 @@ interface SportsEventParams {
 
 export function sportsEventJsonLd({
   sport,
-  gameId,
+  gameId: _gameId,
   name,
   description,
   path,

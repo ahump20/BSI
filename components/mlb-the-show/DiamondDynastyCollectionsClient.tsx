@@ -86,7 +86,7 @@ export function DiamondDynastyCollectionsClient() {
                     </p>
                     <Link
                       href={buildCollectionHref(collection.id)}
-                      className="inline-flex rounded-full border border-[var(--border-vintage)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] transition-colors hover:border-burnt-orange/40 hover:text-burnt-orange"
+                      className="inline-flex rounded-sm border border-[var(--border-vintage)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] transition-colors hover:border-burnt-orange/40 hover:text-burnt-orange"
                     >
                       Open collection
                     </Link>

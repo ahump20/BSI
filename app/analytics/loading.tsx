@@ -38,8 +38,8 @@ export default function AnalyticsLoading() {
               <Skeleton variant="text" width="90%" height={14} className="mb-1" />
               <Skeleton variant="text" width="60%" height={14} className="mb-4" />
               <div className="flex items-center justify-between">
-                <Skeleton variant="rectangular" width={50} height={18} className="rounded-full" />
-                <Skeleton variant="rectangular" width={70} height={18} className="rounded-full" />
+                <Skeleton variant="rectangular" width={50} height={18} className="rounded-sm" />
+                <Skeleton variant="rectangular" width={70} height={18} className="rounded-sm" />
               </div>
             </div>
           ))}

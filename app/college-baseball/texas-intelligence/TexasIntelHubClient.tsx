@@ -154,7 +154,7 @@ function FreshnessIndicator({ timestamp }: { timestamp?: string }) {
   if (!timestamp) return null;
   const ageMs = Date.now() - new Date(timestamp).getTime();
   const ageMin = ageMs / 60000;
-  const color = ageMin < 5 ? '#22c55e' : ageMin < 30 ? '#eab308' : '#ef4444';
+  const color = ageMin < 5 ? 'var(--bsi-success)' : ageMin < 30 ? 'var(--bsi-warning)' : 'var(--bsi-error)';
   const label = ageMin < 1 ? 'Just now' : ageMin < 60 ? `${Math.round(ageMin)}m ago` : `${Math.round(ageMin / 60)}h ago`;
   return (
     <div className="flex items-center gap-1.5 text-[10px] text-text-muted" suppressHydrationWarning>
@@ -175,7 +175,7 @@ function SeasonPulse({ results }: { results: Array<{ result: 'W' | 'L'; date: st
       {last10.map((g, i) => {
         const isLast = i === last10.length - 1;
         const size = isLast ? 'w-2 h-2' : 'w-1.5 h-1.5';
-        const bg = g.result === 'W' ? '#22c55e' : '#ef4444';
+        const bg = g.result === 'W' ? 'var(--bsi-success)' : 'var(--bsi-error)';
         return (
           <span
             key={`${g.date}-${i}`}
@@ -458,12 +458,12 @@ export default function TexasIntelHubClient() {
               <div className="text-center py-2">
                 {liveGame ? (
                   <div className="flex flex-col items-center gap-1">
-                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-red-500/15 mb-1">
+                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-[var(--bsi-danger)]/15 mb-1">
                       <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--bsi-danger)] opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--bsi-danger)]" />
                       </span>
-                      <span className="text-[10px] font-semibold uppercase tracking-wider text-red-400">Live</span>
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--bsi-danger)]">Live</span>
                     </span>
                     <div className="flex items-center gap-2 font-mono text-sm font-bold">
                       <span className="text-text-primary truncate max-w-[60px]">{liveGame.awayTeam.shortName}</span>

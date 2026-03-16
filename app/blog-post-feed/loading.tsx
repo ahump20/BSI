@@ -22,7 +22,7 @@ export default function BlogPostFeedLoading() {
       <div className="border-b border-border-subtle bg-midnight/40">
         <div className="max-w-7xl mx-auto px-4 py-3 flex gap-2">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} variant="rectangular" width={90} height={32} className="rounded-full" />
+            <Skeleton key={i} variant="rectangular" width={90} height={32} className="rounded-sm" />
           ))}
         </div>
       </div>

@@ -78,15 +78,6 @@ const SEASON_RULES: Record<SportKey, SeasonDef[]> = {
   ],
 };
 
-// When a sport returns to action (month name for off-season messaging)
-const RETURN_MONTHS: Record<SportKey, string> = {
-  mlb: 'February',
-  nfl: 'August',
-  nba: 'October',
-  ncaa: 'February',
-  cfb: 'August',
-};
-
 // ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------

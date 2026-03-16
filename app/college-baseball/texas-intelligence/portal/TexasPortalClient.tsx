@@ -131,7 +131,7 @@ export default function TexasPortalClient() {
                     <div className="text-[10px] uppercase tracking-wider text-text-muted mt-1">Active Roster</div>
                   </div>
                   <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
-                    <div className="font-mono text-2xl font-bold" style={{ color: incoming.length > 0 ? '#22c55e' : undefined }}>
+                    <div className="font-mono text-2xl font-bold" style={{ color: incoming.length > 0 ? 'var(--bsi-success)' : undefined }}>
                       {incoming.length}
                     </div>
                     <div className="text-[10px] uppercase tracking-wider text-text-muted mt-1">Incoming</div>
@@ -159,8 +159,8 @@ export default function TexasPortalClient() {
                   <span
                     className="font-mono text-lg font-bold"
                     style={{
-                      color: incoming.length - departing.length > 0 ? '#22c55e'
-                        : incoming.length - departing.length < 0 ? '#ef4444'
+                      color: incoming.length - departing.length > 0 ? 'var(--bsi-success)'
+                        : incoming.length - departing.length < 0 ? 'var(--bsi-error)'
                         : undefined,
                     }}
                   >
@@ -233,8 +233,8 @@ export default function TexasPortalClient() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <div className="flex items-center gap-2 mb-3">
-                          <span className="w-2 h-2 rounded-full bg-green-500" />
-                          <span className="text-[10px] font-semibold uppercase tracking-wider text-green-400">
+                          <span className="w-2 h-2 rounded-full bg-[var(--bsi-success)]" />
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--bsi-success)]">
                             Incoming ({incoming.length})
                           </span>
                         </div>
@@ -250,8 +250,8 @@ export default function TexasPortalClient() {
                       </div>
                       <div>
                         <div className="flex items-center gap-2 mb-3">
-                          <span className="w-2 h-2 rounded-full bg-red-500" />
-                          <span className="text-[10px] font-semibold uppercase tracking-wider text-red-400">
+                          <span className="w-2 h-2 rounded-full bg-[var(--bsi-danger)]" />
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--bsi-danger)]">
                             Departing ({departing.length})
                           </span>
                         </div>
@@ -376,7 +376,7 @@ function PortalMoveRow({ move }: { move: PortalMove }) {
   return (
     <div className="flex items-center gap-3 rounded-sm border border-border-subtle bg-[var(--surface-press-box)] p-3">
       <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
-        move.direction === 'incoming' ? 'bg-green-500' : 'bg-red-500'
+        move.direction === 'incoming' ? 'bg-[var(--bsi-success)]' : 'bg-[var(--bsi-danger)]'
       }`} />
       <div className="flex-1 min-w-0">
         <div className="text-text-primary text-sm font-medium">{move.name}</div>
@@ -388,8 +388,8 @@ function PortalMoveRow({ move }: { move: PortalMove }) {
       </div>
       <span className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-sm ${
         move.direction === 'incoming'
-          ? 'bg-green-500/10 text-green-400'
-          : 'bg-red-500/10 text-red-400'
+          ? 'bg-[var(--bsi-success)]/10 text-[var(--bsi-success)]'
+          : 'bg-[var(--bsi-danger)]/10 text-[var(--bsi-danger)]'
       }`}>
         {move.direction}
       </span>

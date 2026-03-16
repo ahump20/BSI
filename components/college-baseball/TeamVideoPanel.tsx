@@ -37,30 +37,6 @@ const FEATURED_THRESHOLD = 4;
  * Clicking it replaces the srcdoc with the real YouTube embed.
  * Zero YouTube JS loaded until the user explicitly clicks.
  */
-function buildSrcdoc(youtubeId: string, title: string): string {
-  const thumbUrl = `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`;
-  return `<style>
-*{padding:0;margin:0;overflow:hidden}
-html,body{height:100%;background:#0D0D0D}
-img{position:absolute;width:100%;top:0;bottom:0;margin:auto}
-.play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-width:72px;height:50px;background:rgba(191,87,0,0.9);border-radius:2px;
-display:flex;align-items:center;justify-content:center;cursor:pointer;
-transition:background 0.2s,box-shadow 0.2s;
-box-shadow:0 2px 12px rgba(0,0,0,0.4)}
-.play:hover{background:rgba(191,87,0,1);box-shadow:0 4px 20px rgba(191,87,0,0.35)}
-.play svg{width:26px;height:26px;fill:#fff;margin-left:3px}
-.badge{position:absolute;bottom:8px;left:8px;background:rgba(13,13,13,0.85);
-color:#BF5700;font-family:system-ui,sans-serif;font-size:10px;font-weight:700;
-letter-spacing:0.08em;text-transform:uppercase;padding:3px 8px;border-radius:2px;
-border:1px solid rgba(191,87,0,0.3)}
-</style>
-<a href="https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1&rel=0" title="${title.replace(/"/g, '&quot;')}">
-<img src="${thumbUrl}" alt="${title.replace(/"/g, '&quot;')}" loading="lazy">
-<div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-</a>`;
-}
-
 function buildSrcdocWithBadge(youtubeId: string, title: string, category: string): string {
   const thumbUrl = `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`;
   return `<style>
@@ -158,13 +134,13 @@ export function TeamVideoPanel({ teamId }: { teamId: string }) {
   const allVideos = useMemo(() => getTeamVideos(teamId), [teamId]);
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all');
 
-  if (allVideos.length === 0) return null;
-
   // Determine which category tabs to show (only categories that have videos)
   const availableCategories = useMemo(() => {
     const cats = new Set(allVideos.map(v => v.category));
     return CATEGORY_ORDER.filter(c => cats.has(c));
   }, [allVideos]);
+
+  if (allVideos.length === 0) return null;
 
   const filtered = activeFilter === 'all'
     ? allVideos

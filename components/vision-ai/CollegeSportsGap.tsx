@@ -55,8 +55,8 @@ const TRACKING_DATA: TrackingRow[] = [
 ];
 
 const levelConfig = {
-  full: { bar: 'w-full', color: 'bg-green-500', label: 'Full' },
-  partial: { bar: 'w-1/2', color: 'bg-yellow-500', label: 'Partial' },
+  full: { bar: 'w-full', color: 'bg-[var(--bsi-success)]', label: 'Full' },
+  partial: { bar: 'w-1/2', color: 'bg-[var(--bsi-warning)]', label: 'Partial' },
   none: { bar: 'w-[8%]', color: 'bg-surface', label: 'Gap' },
 } as const;
 
@@ -69,12 +69,12 @@ export function CollegeSportsGap({ className = '' }: { className?: string }) {
     <div className={className} role="region" aria-label="Pro vs college tracking infrastructure comparison">
       {/* Summary stats */}
       <div className="grid grid-cols-3 gap-4 mb-6" role="group" aria-label="Coverage summary">
-        <div className="text-center p-3 bg-green-500/5 rounded-sm border border-green-500/10">
-          <p className="text-2xl font-bold font-mono text-green-400">{proFull}/{TRACKING_DATA.length}</p>
+        <div className="text-center p-3 bg-[var(--bsi-success)]/5 rounded-sm border border-[var(--bsi-success)]/10">
+          <p className="text-2xl font-bold font-mono text-[var(--bsi-success)]">{proFull}/{TRACKING_DATA.length}</p>
           <p className="text-[10px] text-text-tertiary uppercase tracking-wider mt-1">Pro: Full Coverage</p>
         </div>
-        <div className="text-center p-3 bg-yellow-500/5 rounded-sm border border-yellow-500/10">
-          <p className="text-2xl font-bold font-mono text-yellow-400">{collegeFull}/{TRACKING_DATA.length}</p>
+        <div className="text-center p-3 bg-[var(--bsi-warning)]/5 rounded-sm border border-[var(--bsi-warning)]/10">
+          <p className="text-2xl font-bold font-mono text-[var(--bsi-warning)]">{collegeFull}/{TRACKING_DATA.length}</p>
           <p className="text-[10px] text-text-tertiary uppercase tracking-wider mt-1">College: Full</p>
         </div>
         <div className="text-center p-3 bg-burnt-orange/5 rounded-sm border border-burnt-orange/10">
@@ -97,7 +97,7 @@ export function CollegeSportsGap({ className = '' }: { className?: string }) {
                     <div className={`h-full ${levelConfig[row.pro.level].color} ${levelConfig[row.pro.level].bar} rounded-full transition-all`} />
                   </div>
                   <span className={`text-[9px] font-mono ${
-                    row.pro.level === 'full' ? 'text-green-400' : row.pro.level === 'partial' ? 'text-yellow-400' : 'text-text-muted'
+                    row.pro.level === 'full' ? 'text-[var(--bsi-success)]' : row.pro.level === 'partial' ? 'text-[var(--bsi-warning)]' : 'text-text-muted'
                   }`}>
                     {levelConfig[row.pro.level].label}
                   </span>
@@ -113,7 +113,7 @@ export function CollegeSportsGap({ className = '' }: { className?: string }) {
                     <div className={`h-full ${levelConfig[row.college.level].color} ${levelConfig[row.college.level].bar} rounded-full transition-all`} />
                   </div>
                   <span className={`text-[9px] font-mono ${
-                    row.college.level === 'full' ? 'text-green-400' : row.college.level === 'partial' ? 'text-yellow-400' : 'text-text-muted'
+                    row.college.level === 'full' ? 'text-[var(--bsi-success)]' : row.college.level === 'partial' ? 'text-[var(--bsi-warning)]' : 'text-text-muted'
                   }`}>
                     {levelConfig[row.college.level].label}
                   </span>

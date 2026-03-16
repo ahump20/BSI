@@ -549,7 +549,7 @@ export default function CollegeBaseballScoresPage() {
                     isCached={!hasLiveGames && !!rawData}
                   />
                   {meta?.degraded && (
-                    <p className="text-xs text-yellow-500/60 text-center">
+                    <p className="text-xs text-[var(--bsi-warning)]/60 text-center">
                       Limited data — advanced stats unavailable
                     </p>
                   )}

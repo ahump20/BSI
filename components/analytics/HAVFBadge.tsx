@@ -36,7 +36,7 @@ export function HAVFBadge({ score, label, size = 'md', className = '' }: HAVFBad
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full font-mono font-bold tabular-nums ${sizeClass.badge} ${className}`}
+      className={`inline-flex items-center gap-1.5 rounded-sm font-mono font-bold tabular-nums ${sizeClass.badge} ${className}`}
       style={{ color: config.color, backgroundColor: config.bg }}
       title={`HAV-F: ${score.toFixed(1)} (${config.tier})`}
     >

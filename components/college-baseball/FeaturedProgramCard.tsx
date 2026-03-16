@@ -66,8 +66,8 @@ export function FeaturedProgramCard() {
               {streak && streak.length >= 2 && (
                 <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-sm text-[10px] font-mono font-bold ${
                   streak.type === 'W' || streak.type === 'win'
-                    ? 'bg-green-500/10 text-green-400'
-                    : 'bg-red-500/10 text-red-400'
+                    ? 'bg-[var(--bsi-success)]/10 text-[var(--bsi-success)]'
+                    : 'bg-[var(--bsi-danger)]/10 text-[var(--bsi-danger)]'
                 }`}>
                   <span aria-hidden="true">{streak.type === 'W' || streak.type === 'win' ? '\u25B2' : '\u25BC'}</span>
                   {(streak.type === 'W' || streak.type === 'win') ? 'W' : 'L'}{streak.length}

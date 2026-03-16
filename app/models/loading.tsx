@@ -9,7 +9,7 @@ export default function ModelsLoading() {
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="bg-surface-light border border-border-subtle rounded-sm p-6 animate-pulse">
               <div className="flex items-start justify-between mb-3">
-                <Skeleton variant="rectangular" width={80} height={22} className="rounded-full" />
+                <Skeleton variant="rectangular" width={80} height={22} className="rounded-sm" />
                 <Skeleton variant="text" width={32} height={14} />
               </div>
               <Skeleton variant="text" width="70%" height={20} className="mb-2" />

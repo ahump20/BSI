@@ -38,13 +38,13 @@ export async function handleLeaderboard(url: URL, env: Env): Promise<Response> {
  * Body: { name: string, score: number, game: string, avatar?: string }
  */
 export async function handleLeaderboardSubmit(request: Request, env: Env): Promise<Response> {
-  const body = await request.json() as { name?: string; score?: number; game?: string; avatar?: string };
-
-  if (!body.name || typeof body.score !== 'number' || !body.game) {
-    return json({ error: 'name, score (number), and game are required' }, 400);
-  }
-
   try {
+    const body = await request.json() as { name?: string; score?: number; game?: string; avatar?: string };
+
+    if (!body.name || typeof body.score !== 'number' || !body.game) {
+      return json({ error: 'name, score (number), and game are required' }, 400);
+    }
+
     await env.DB.prepare(
       `INSERT INTO leaderboard (player_name, game_id, score, avatar, updated_at)
        VALUES (?, ?, ?, ?, datetime('now'))
@@ -56,8 +56,8 @@ export async function handleLeaderboardSubmit(request: Request, env: Env): Promi
 
     return json({ success: true });
   } catch (err) {
-    const msg = err instanceof Error ? err.message : 'D1 error';
-    return json({ error: msg }, 500);
+    console.error('[handleLeaderboardSubmit]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
 
@@ -66,23 +66,28 @@ export async function handleLeaderboardSubmit(request: Request, env: Env): Promi
  * Query: ?category=sports (optional filter)
  */
 export async function handleArcadeGames(url: URL): Promise<Response> {
-  // Import inline to avoid bundling lib/ into worker at top-level
-  const { ARCADE_GAMES, ARCADE_CATEGORIES } = await import('../../lib/data/arcade-games');
-  const category = url.searchParams.get('category');
+  try {
+    // Import inline to avoid bundling lib/ into worker at top-level
+    const { ARCADE_GAMES, ARCADE_CATEGORIES } = await import('../../lib/data/arcade-games');
+    const category = url.searchParams.get('category');
 
-  const games = category
-    ? ARCADE_GAMES.filter((g) => g.category === category)
-    : ARCADE_GAMES;
+    const games = category
+      ? ARCADE_GAMES.filter((g) => g.category === category)
+      : ARCADE_GAMES;
 
-  return json({
-    games,
-    categories: ARCADE_CATEGORIES,
-    meta: {
-      source: 'bsi-arcade',
-      fetched_at: new Date().toISOString(),
-      timezone: 'America/Chicago',
-    },
-  });
+    return json({
+      games,
+      categories: ARCADE_CATEGORIES,
+      meta: {
+        source: 'bsi-arcade',
+        fetched_at: new Date().toISOString(),
+        timezone: 'America/Chicago',
+      },
+    });
+  } catch (err) {
+    console.error('[handleArcadeGames]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }
 
 /**
@@ -134,18 +139,18 @@ export async function handleArcadeStats(url: URL, env: Env): Promise<Response> {
  * Body: { player_name: string, game_id: string, score: number, duration_ms?: number }
  */
 export async function handleArcadeSession(request: Request, env: Env): Promise<Response> {
-  const body = (await request.json()) as {
-    player_name?: string;
-    game_id?: string;
-    score?: number;
-    duration_ms?: number;
-  };
-
-  if (!body.player_name || !body.game_id || typeof body.score !== 'number') {
-    return json({ error: 'player_name, game_id, and score (number) are required' }, 400);
-  }
-
   try {
+    const body = (await request.json()) as {
+      player_name?: string;
+      game_id?: string;
+      score?: number;
+      duration_ms?: number;
+    };
+
+    if (!body.player_name || !body.game_id || typeof body.score !== 'number') {
+      return json({ error: 'player_name, game_id, and score (number) are required' }, 400);
+    }
+
     // Record session
     await env.DB.prepare(
       `INSERT INTO arcade_sessions (player_name, game_id, score, duration_ms, played_at)
@@ -172,11 +177,8 @@ export async function handleArcadeSession(request: Request, env: Env): Promise<R
 
     return json({ success: true });
   } catch (err) {
-    const msg = err instanceof Error ? err.message : 'D1 error';
-    if (msg.includes('no such table')) {
-      return json({ success: false, error: 'Arcade tables not yet initialized' }, 503);
-    }
-    return json({ error: msg }, 500);
+    console.error('[handleArcadeSession]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
 
@@ -184,20 +186,25 @@ export async function handleGameAsset(
   assetPath: string,
   env: Env
 ): Promise<Response> {
-  const object = await env.ASSETS_BUCKET.get(assetPath);
+  try {
+    const object = await env.ASSETS_BUCKET.get(assetPath);
 
-  if (!object) {
-    return json({ error: 'Asset not found' }, 404);
+    if (!object) {
+      return json({ error: 'Asset not found' }, 404);
+    }
+
+    const headers: Record<string, string> = {
+      'Cache-Control': 'public, max-age=86400, immutable',
+      'Content-Type': object.httpMetadata?.contentType || 'application/octet-stream',
+    };
+
+    if (object.httpMetadata?.contentEncoding) {
+      headers['Content-Encoding'] = object.httpMetadata.contentEncoding;
+    }
+
+    return new Response(object.body, { headers });
+  } catch (err) {
+    console.error('[handleGameAsset]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
-
-  const headers: Record<string, string> = {
-    'Cache-Control': 'public, max-age=86400, immutable',
-    'Content-Type': object.httpMetadata?.contentType || 'application/octet-stream',
-  };
-
-  if (object.httpMetadata?.contentEncoding) {
-    headers['Content-Encoding'] = object.httpMetadata.contentEncoding;
-  }
-
-  return new Response(object.body, { headers });
 }

@@ -60,7 +60,7 @@ export function WatchlistButton({
     <button
       type="button"
       onClick={onToggle}
-      className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] transition-colors ${
+      className={`inline-flex items-center gap-2 rounded-sm border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] transition-colors ${
         active
           ? 'border-burnt-orange bg-burnt-orange/15 text-burnt-orange'
           : 'border-[var(--border-vintage)] bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:border-burnt-orange/40'
@@ -78,7 +78,7 @@ export function SurfaceNav() {
         <Link
           key={link.href}
           href={link.href}
-          className="rounded-full border border-[var(--border-vintage)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] transition-colors hover:border-burnt-orange/40 hover:text-burnt-orange"
+          className="rounded-sm border border-[var(--border-vintage)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] transition-colors hover:border-burnt-orange/40 hover:text-burnt-orange"
         >
           {link.label}
         </Link>

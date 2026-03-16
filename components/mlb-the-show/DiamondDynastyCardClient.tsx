@@ -218,7 +218,7 @@ export function DiamondDynastyCardClient() {
                         />
                         <Link
                           href={`/mlb/the-show-26/diamond-dynasty/team-builder?card=${encodeURIComponent(detail.detail.card.id)}`}
-                          className="rounded-full border border-[var(--border-vintage)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] transition-colors hover:border-burnt-orange/40 hover:text-burnt-orange"
+                          className="rounded-sm border border-[var(--border-vintage)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] transition-colors hover:border-burnt-orange/40 hover:text-burnt-orange"
                         >
                           Add to build
                         </Link>
@@ -281,7 +281,7 @@ export function DiamondDynastyCardClient() {
                           key={option}
                           type="button"
                           onClick={() => setRange(option)}
-                          className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${
+                          className={`rounded-sm border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${
                             range === option
                               ? 'border-burnt-orange bg-burnt-orange/15 text-burnt-orange'
                               : 'border-[var(--border-vintage)] text-[var(--bsi-dust)]'
@@ -299,7 +299,7 @@ export function DiamondDynastyCardClient() {
                           key={option.value}
                           type="button"
                           onClick={() => setMetric(option.value)}
-                          className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${
+                          className={`rounded-sm border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${
                             metric === option.value
                               ? 'border-burnt-orange bg-burnt-orange/15 text-burnt-orange'
                               : 'border-[var(--border-vintage)] text-[var(--bsi-dust)]'
@@ -353,7 +353,7 @@ export function DiamondDynastyCardClient() {
                       <div className="flex flex-wrap gap-2">
                         {detail.detail.acquisitionPaths.length ? (
                           detail.detail.acquisitionPaths.map((path) => (
-                            <span key={path.label} className="rounded-full border border-[var(--border-vintage)] px-3 py-1 text-xs text-[var(--bsi-bone)]">
+                            <span key={path.label} className="rounded-sm border border-[var(--border-vintage)] px-3 py-1 text-xs text-[var(--bsi-bone)]">
                               {path.label}
                             </span>
                           ))

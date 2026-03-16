@@ -30,11 +30,11 @@ interface FeedResponse {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const SIGNAL_CONFIG = {
-  injury_lineup:   { label: 'Injury',    short: 'INJ', color: '#ef4444', bg: 'bg-red-500/10',    border: 'border-red-500/25',    text: 'text-red-400' },
-  transfer_portal: { label: 'Portal',    short: 'PRT', color: '#f59e0b', bg: 'bg-amber-500/10',  border: 'border-amber-500/25',  text: 'text-amber-400' },
+  injury_lineup:   { label: 'Injury',    short: 'INJ', color: '#ef4444', bg: 'bg-[var(--bsi-danger)]/10',    border: 'border-[var(--bsi-danger)]/25',    text: 'text-[var(--bsi-danger)]' },
+  transfer_portal: { label: 'Portal',    short: 'PRT', color: '#f59e0b', bg: 'bg-[var(--bsi-warning)]/10',  border: 'border-[var(--bsi-warning)]/25',  text: 'text-[var(--bsi-warning)]' },
   recruiting:      { label: 'Recruiting',short: 'REC', color: '#4B9CD3', bg: 'bg-[var(--heritage-columbia-blue)]/10', border: 'border-[var(--heritage-columbia-blue)]/25', text: 'text-[var(--heritage-columbia-blue)]' },
-  sentiment:       { label: 'Sentiment', short: 'SNT', color: '#10b981', bg: 'bg-emerald-500/10',border: 'border-emerald-500/25',text: 'text-emerald-400' },
-  general:         { label: 'General',   short: 'GEN', color: '#6b7280', bg: 'bg-zinc-500/10',   border: 'border-zinc-500/25',   text: 'text-zinc-400' },
+  sentiment:       { label: 'Sentiment', short: 'SNT', color: '#10b981', bg: 'bg-[var(--bsi-success)]/10',border: 'border-[var(--bsi-success)]/25',text: 'text-[var(--bsi-success)]' },
+  general:         { label: 'General',   short: 'GEN', color: '#C4B8A5', bg: 'bg-[var(--bsi-dust)]/10',   border: 'border-[var(--bsi-dust)]/25',   text: 'text-[var(--bsi-dust)]' },
 } as const;
 
 const FILTER_TABS = [
@@ -164,7 +164,7 @@ function SignalRow({ signal, index }: { signal: SocialSignal; index: number }) {
           </span>
 
           {/* Platform */}
-          <span className={`font-mono text-[10px] uppercase tracking-wider ${isReddit ? 'text-orange-400/60' : 'text-sky-400/60'}`}>
+          <span className={`font-mono text-[10px] uppercase tracking-wider ${isReddit ? 'text-orange-400/60' : 'text-[var(--heritage-columbia-blue)]/60'}`}>
             {isReddit ? 'r/' : 'X'}
           </span>
 
@@ -184,7 +184,7 @@ function SignalRow({ signal, index }: { signal: SocialSignal; index: number }) {
 
           {/* Confidence pill — high only */}
           {signal.confidence >= 0.75 && (
-            <span className="px-1.5 py-px rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-mono uppercase tracking-wide">
+            <span className="px-1.5 py-px rounded-sm bg-[var(--bsi-success)]/10 border border-[var(--bsi-success)]/20 text-[var(--bsi-success)] text-[9px] font-mono uppercase tracking-wide">
               HIGH
             </span>
           )}
@@ -346,7 +346,7 @@ export function SocialIntelPageClient() {
                 <span className="font-mono text-[10px] uppercase tracking-wider text-text-muted">Reddit</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-sky-400 flex-shrink-0" />
+                <span className="w-2 h-2 rounded-full bg-[var(--heritage-columbia-blue)] flex-shrink-0" />
                 <span className="font-mono text-[10px] uppercase tracking-wider text-text-muted">X / Twitter</span>
               </div>
             </div>

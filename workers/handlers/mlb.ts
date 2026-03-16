@@ -48,148 +48,178 @@ function getESPNSeasonType(date?: Date): number | undefined {
 }
 
 export async function handleMLBScores(url: URL, env: Env): Promise<Response> {
-  const date = url.searchParams.get('date') || undefined;
-  const dateKey = date?.replace(/-/g, '') || 'today';
-  const seasonType = getESPNSeasonType(date ? new Date(date) : undefined);
-  const cacheKey = `mlb:scores:${dateKey}:st${seasonType ?? 'auto'}`;
-  const sdio = getSDIOClient(env);
+  try {
+    const date = url.searchParams.get('date') || undefined;
+    const dateKey = date?.replace(/-/g, '') || 'today';
+    const seasonType = getESPNSeasonType(date ? new Date(date) : undefined);
+    const cacheKey = `mlb:scores:${dateKey}:st${seasonType ?? 'auto'}`;
+    const sdio = getSDIOClient(env);
 
-  if (sdio) {
-    const result = await fetchWithFallback(
-      async () => transformSDIOMLBScores(await sdio.getMLBScores(date)),
-      async () => transformScoreboard(await getScoreboard('mlb', toDateString(date), seasonType) as Record<string, unknown>) as unknown as BSIScoreboardResult,
-      cacheKey, env.KV, CACHE_TTL.scores,
-      'sportsdataio', 'espn',
-      { staleKey: `${cacheKey}:stale` },
-    );
-    const payload = ensurePayloadMeta(result.data, result.source);
-    return cachedJson(payload, 200, HTTP_CACHE.scores, fetchResultHeaders(payload, result));
+    if (sdio) {
+      const result = await fetchWithFallback(
+        async () => transformSDIOMLBScores(await sdio.getMLBScores(date)),
+        async () => transformScoreboard(await getScoreboard('mlb', toDateString(date), seasonType) as Record<string, unknown>) as unknown as BSIScoreboardResult,
+        cacheKey, env.KV, CACHE_TTL.scores,
+        'sportsdataio', 'espn',
+        { staleKey: `${cacheKey}:stale` },
+      );
+      const payload = ensurePayloadMeta(result.data, result.source);
+      return cachedJson(payload, 200, HTTP_CACHE.scores, fetchResultHeaders(payload, result));
+    }
+
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return cachedJson(cached, 200, HTTP_CACHE.scores, cachedPayloadHeaders(cached));
+
+    const raw = await getScoreboard('mlb', toDateString(date), seasonType);
+    const payload = withMeta(transformScoreboard(raw as Record<string, unknown>));
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
+    return cachedJson(payload, 200, HTTP_CACHE.scores, freshDataHeaders());
+  } catch (err) {
+    console.error('[handleMLBScores]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
-
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.scores, cachedPayloadHeaders(cached));
-
-  const raw = await getScoreboard('mlb', toDateString(date), seasonType);
-  const payload = withMeta(transformScoreboard(raw as Record<string, unknown>));
-  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
-  return cachedJson(payload, 200, HTTP_CACHE.scores, freshDataHeaders());
 }
 
 export async function handleMLBStandings(env: Env): Promise<Response> {
-  const cacheKey = 'mlb:standings';
-  const sdio = getSDIOClient(env);
+  try {
+    const cacheKey = 'mlb:standings';
+    const sdio = getSDIOClient(env);
 
-  if (sdio) {
-    const result = await fetchWithFallback(
-      async () => transformSDIOMLBStandings(await sdio.getMLBStandings()),
-      async () => transformStandings(await getStandings('mlb') as Record<string, unknown>, 'mlb') as unknown as BSIStandingsResult,
-      cacheKey, env.KV, CACHE_TTL.standings,
-      'sportsdataio', 'espn',
-      { staleKey: `${cacheKey}:stale` },
-    );
-    const payload = ensurePayloadMeta(result.data, result.source);
-    return cachedJson(payload, 200, HTTP_CACHE.standings, fetchResultHeaders(payload, result));
+    if (sdio) {
+      const result = await fetchWithFallback(
+        async () => transformSDIOMLBStandings(await sdio.getMLBStandings()),
+        async () => transformStandings(await getStandings('mlb') as Record<string, unknown>, 'mlb') as unknown as BSIStandingsResult,
+        cacheKey, env.KV, CACHE_TTL.standings,
+        'sportsdataio', 'espn',
+        { staleKey: `${cacheKey}:stale` },
+      );
+      const payload = ensurePayloadMeta(result.data, result.source);
+      return cachedJson(payload, 200, HTTP_CACHE.standings, fetchResultHeaders(payload, result));
+    }
+
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, cachedPayloadHeaders(cached));
+
+    const raw = await getStandings('mlb');
+    const payload = withMeta(transformStandings(raw as Record<string, unknown>, 'mlb'));
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
+    return cachedJson(payload, 200, HTTP_CACHE.standings, freshDataHeaders());
+  } catch (err) {
+    console.error('[handleMLBStandings]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
-
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, cachedPayloadHeaders(cached));
-
-  const raw = await getStandings('mlb');
-  const payload = withMeta(transformStandings(raw as Record<string, unknown>, 'mlb'));
-  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
-  return cachedJson(payload, 200, HTTP_CACHE.standings, freshDataHeaders());
 }
 
 export async function handleMLBGame(gameId: string, env: Env): Promise<Response> {
-  const cacheKey = `mlb:game:${gameId}`;
-  const sdio = getSDIOClient(env);
+  try {
+    const cacheKey = `mlb:game:${gameId}`;
+    const sdio = getSDIOClient(env);
 
-  if (sdio) {
-    const numId = parseInt(gameId, 10);
-    if (!isNaN(numId)) {
-      const result = await fetchWithFallback(
-        async () => transformSDIOMLBBoxScore(await sdio.getMLBBoxScore(numId)),
-        async () => transformGameSummary(await getGameSummary('mlb', gameId) as Record<string, unknown>) as unknown as BSIGameSummaryResult,
-        cacheKey, env.KV, CACHE_TTL.games,
-      );
-      const payload = ensurePayloadMeta(result.data, result.source);
-      return cachedJson(payload, 200, HTTP_CACHE.game, fetchResultHeaders(payload, result));
+    if (sdio) {
+      const numId = parseInt(gameId, 10);
+      if (!isNaN(numId)) {
+        const result = await fetchWithFallback(
+          async () => transformSDIOMLBBoxScore(await sdio.getMLBBoxScore(numId)),
+          async () => transformGameSummary(await getGameSummary('mlb', gameId) as Record<string, unknown>) as unknown as BSIGameSummaryResult,
+          cacheKey, env.KV, CACHE_TTL.games,
+        );
+        const payload = ensurePayloadMeta(result.data, result.source);
+        return cachedJson(payload, 200, HTTP_CACHE.game, fetchResultHeaders(payload, result));
+      }
     }
+
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return cachedJson(cached, 200, HTTP_CACHE.game, cachedPayloadHeaders(cached));
+
+    const raw = await getGameSummary('mlb', gameId);
+    const payload = withMeta(transformGameSummary(raw as Record<string, unknown>));
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
+    return cachedJson(payload, 200, HTTP_CACHE.game, freshDataHeaders());
+  } catch (err) {
+    console.error('[handleMLBGame]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
-
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.game, cachedPayloadHeaders(cached));
-
-  const raw = await getGameSummary('mlb', gameId);
-  const payload = withMeta(transformGameSummary(raw as Record<string, unknown>));
-  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
-  return cachedJson(payload, 200, HTTP_CACHE.game, freshDataHeaders());
 }
 
 export async function handleMLBPlayer(playerId: string, env: Env): Promise<Response> {
-  const cacheKey = `mlb:player:${playerId}`;
+  try {
+    const cacheKey = `mlb:player:${playerId}`;
 
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.player, cachedPayloadHeaders(cached));
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return cachedJson(cached, 200, HTTP_CACHE.player, cachedPayloadHeaders(cached));
 
-  const raw = await getAthlete('mlb', playerId);
-  const payload = withMeta(transformAthlete(raw as Record<string, unknown>));
-  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
-  return cachedJson(payload, 200, HTTP_CACHE.player, freshDataHeaders());
+    const raw = await getAthlete('mlb', playerId);
+    const payload = withMeta(transformAthlete(raw as Record<string, unknown>));
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
+    return cachedJson(payload, 200, HTTP_CACHE.player, freshDataHeaders());
+  } catch (err) {
+    console.error('[handleMLBPlayer]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }
 
 export async function handleMLBTeam(teamId: string, env: Env): Promise<Response> {
-  const cacheKey = `mlb:team:${teamId}`;
+  try {
+    const cacheKey = `mlb:team:${teamId}`;
 
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, cachedPayloadHeaders(cached));
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, cachedPayloadHeaders(cached));
 
-  const [teamRaw, rosterRaw] = await Promise.all([
-    getTeamDetail('mlb', teamId),
-    getTeamRoster('mlb', teamId),
-  ]);
+    const [teamRaw, rosterRaw] = await Promise.all([
+      getTeamDetail('mlb', teamId),
+      getTeamRoster('mlb', teamId),
+    ]);
 
-  const payload = withMeta(transformTeamDetail(teamRaw as Record<string, unknown>, rosterRaw as Record<string, unknown>));
-  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
-  return cachedJson(payload, 200, HTTP_CACHE.team, freshDataHeaders());
+    const payload = withMeta(transformTeamDetail(teamRaw as Record<string, unknown>, rosterRaw as Record<string, unknown>));
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
+    return cachedJson(payload, 200, HTTP_CACHE.team, freshDataHeaders());
+  } catch (err) {
+    console.error('[handleMLBTeam]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }
 
 export async function handleMLBTeamsList(env: Env): Promise<Response> {
-  const cacheKey = 'mlb:teams:list';
-  const sdio = getSDIOClient(env);
+  try {
+    const cacheKey = 'mlb:teams:list';
+    const sdio = getSDIOClient(env);
 
-  if (sdio) {
-    const result = await fetchWithFallback(
-      async () => transformSDIOTeams(await sdio.getMLBTeams()),
-      async () => transformTeams(await espnGetTeams('mlb') as Record<string, unknown>) as unknown as BSITeamsResult,
-      cacheKey, env.KV, CACHE_TTL.teams,
-    );
-    const payload = ensurePayloadMeta(result.data, result.source);
-    return cachedJson(payload, 200, HTTP_CACHE.team, fetchResultHeaders(payload, result));
+    if (sdio) {
+      const result = await fetchWithFallback(
+        async () => transformSDIOTeams(await sdio.getMLBTeams()),
+        async () => transformTeams(await espnGetTeams('mlb') as Record<string, unknown>) as unknown as BSITeamsResult,
+        cacheKey, env.KV, CACHE_TTL.teams,
+      );
+      const payload = ensurePayloadMeta(result.data, result.source);
+      return cachedJson(payload, 200, HTTP_CACHE.team, fetchResultHeaders(payload, result));
+    }
+
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, cachedPayloadHeaders(cached));
+
+    const raw = await espnGetTeams('mlb');
+    const payload = withMeta(transformTeams(raw as Record<string, unknown>));
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
+    return cachedJson(payload, 200, HTTP_CACHE.team, freshDataHeaders());
+  } catch (err) {
+    console.error('[handleMLBTeamsList]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
-
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, cachedPayloadHeaders(cached));
-
-  const raw = await espnGetTeams('mlb');
-  const payload = withMeta(transformTeams(raw as Record<string, unknown>));
-  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
-  return cachedJson(payload, 200, HTTP_CACHE.team, freshDataHeaders());
 }
 
 export async function handleMLBStatsLeaders(url: URL, env: Env): Promise<Response> {
-  const category = url.searchParams.get('category') || 'batting';
-  const stat = url.searchParams.get('stat') || (category === 'pitching' ? 'era' : 'avg');
-  const cacheKey = `mlb:leaders:${category}:${stat}`;
-
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, cachedPayloadHeaders(cached));
-
-  // ESPN leaders endpoint — 0=batting, 1=pitching
-  const espnCategory = category === 'pitching' ? 1 : 0;
-  const espnUrl = `https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/leaders?season=${new Date().getFullYear()}&seasontype=2`;
-
   try {
+    const category = url.searchParams.get('category') || 'batting';
+    const stat = url.searchParams.get('stat') || (category === 'pitching' ? 'era' : 'avg');
+    const cacheKey = `mlb:leaders:${category}:${stat}`;
+
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, cachedPayloadHeaders(cached));
+
+    // ESPN leaders endpoint — 0=batting, 1=pitching
+    const espnCategory = category === 'pitching' ? 1 : 0;
+    const espnUrl = `https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/leaders?season=${new Date().getFullYear()}&seasontype=2`;
+
     const res = await fetch(espnUrl, { headers: { 'User-Agent': 'BSI/1.0' } });
     if (!res.ok) throw new Error(`ESPN ${res.status}`);
     const raw = await res.json() as Record<string, unknown>;
@@ -232,28 +262,22 @@ export async function handleMLBStatsLeaders(url: URL, env: Env): Promise<Respons
     await kvPut(env.KV, cacheKey, payload, 1800);
     return cachedJson(payload, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' });
   } catch (err) {
-    return json(withMeta({
-      leaders: [],
-      category,
-      stat,
-    }, 'espn', {
-      extra: { error: err instanceof Error ? err.message : 'Failed to fetch leaders' },
-    }), 502);
+    console.error('[handleMLBStatsLeaders]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
 
 export async function handleMLBLeaderboard(category: string, url: URL, env: Env): Promise<Response> {
-  const stat = url.searchParams.get('stat') || (category === 'pitching' ? 'pit' : 'bat');
-  const sortBy = url.searchParams.get('sortby') || 'WAR';
-  const season = url.searchParams.get('season') || String(new Date().getFullYear());
-  const page = Math.max(1, Number(url.searchParams.get('page') || '1'));
-  const limit = Math.min(50, Math.max(1, Number(url.searchParams.get('limit') || '50')));
-  const cacheKey = `mlb:leaderboard:${category}:${sortBy}:${season}`;
-
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, cachedPayloadHeaders(cached));
-
   try {
+    const stat = url.searchParams.get('stat') || (category === 'pitching' ? 'pit' : 'bat');
+    const sortBy = url.searchParams.get('sortby') || 'WAR';
+    const season = url.searchParams.get('season') || String(new Date().getFullYear());
+    const limit = Math.min(50, Math.max(1, Number(url.searchParams.get('limit') || '50')));
+    const cacheKey = `mlb:leaderboard:${category}:${sortBy}:${season}`;
+
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, cachedPayloadHeaders(cached));
+
     const espnUrl = `https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/leaders?season=${season}&seasontype=2`;
     const res = await fetch(espnUrl, { headers: { 'User-Agent': 'BSI/1.0' } });
     if (!res.ok) throw new Error(`ESPN ${res.status}`);
@@ -295,37 +319,37 @@ export async function handleMLBLeaderboard(category: string, url: URL, env: Env)
     await kvPut(env.KV, cacheKey, payload, 1800);
     return cachedJson(payload, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS', 'X-Data-Source': 'ESPN' });
   } catch (err) {
-    return json(withMeta({
-      leaderboard: { category, type: stat, season: Number(season), sortBy },
-      data: [],
-      pagination: { page, pageSize: limit, totalResults: 0, totalPages: 0 },
-    }, 'none', {
-      extra: { error: err instanceof Error ? err.message : 'Failed to fetch leaderboard' },
-    }), 502);
+    console.error('[handleMLBLeaderboard]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
 
 export async function handleMLBNews(env: Env): Promise<Response> {
-  const cacheKey = 'mlb:news';
-  const sdio = getSDIOClient(env);
+  try {
+    const cacheKey = 'mlb:news';
+    const sdio = getSDIOClient(env);
 
-  if (sdio) {
-    const result = await fetchWithFallback(
-      async () => transformSDIONews(await sdio.getMLBNews()),
-      async () => transformNews(await getNews('mlb') as Record<string, unknown>) as unknown as BSINewsResult,
-      cacheKey, env.KV, CACHE_TTL.trending,
-    );
-    const payload = ensurePayloadMeta(result.data, result.source);
-    return cachedJson(payload, 200, HTTP_CACHE.news, fetchResultHeaders(payload, result));
+    if (sdio) {
+      const result = await fetchWithFallback(
+        async () => transformSDIONews(await sdio.getMLBNews()),
+        async () => transformNews(await getNews('mlb') as Record<string, unknown>) as unknown as BSINewsResult,
+        cacheKey, env.KV, CACHE_TTL.trending,
+      );
+      const payload = ensurePayloadMeta(result.data, result.source);
+      return cachedJson(payload, 200, HTTP_CACHE.news, fetchResultHeaders(payload, result));
+    }
+
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return cachedJson(cached, 200, HTTP_CACHE.news, cachedPayloadHeaders(cached));
+
+    const raw = await getNews('mlb');
+    const payload = withMeta(transformNews(raw as Record<string, unknown>));
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
+    return cachedJson(payload, 200, HTTP_CACHE.news, freshDataHeaders());
+  } catch (err) {
+    console.error('[handleMLBNews]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
-
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.news, cachedPayloadHeaders(cached));
-
-  const raw = await getNews('mlb');
-  const payload = withMeta(transformNews(raw as Record<string, unknown>));
-  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
-  return cachedJson(payload, 200, HTTP_CACHE.news, freshDataHeaders());
 }
 
 // =============================================================================

@@ -144,8 +144,8 @@ export default function TexasDigestClient() {
                   </div>
                   <div className="text-center py-2">
                     <div className="font-mono text-2xl font-bold" style={{
-                      color: ranking?.movement && ranking.movement > 0 ? '#22c55e'
-                        : ranking?.movement && ranking.movement < 0 ? '#ef4444'
+                      color: ranking?.movement && ranking.movement > 0 ? 'var(--bsi-success)'
+                        : ranking?.movement && ranking.movement < 0 ? 'var(--bsi-error)'
                         : undefined,
                     }}>
                       {ranking?.movement ? (ranking.movement > 0 ? `+${ranking.movement}` : String(ranking.movement)) : '—'}

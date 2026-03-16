@@ -8,7 +8,7 @@ export default function SavantLoading() {
       <Skeleton variant="text" width={480} height={18} className="mb-8" />
       <div className="flex gap-3 mb-8">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} variant="rectangular" width={100} height={36} className="rounded-full" />
+          <Skeleton key={i} variant="rectangular" width={100} height={36} className="rounded-sm" />
         ))}
       </div>
       <div className="space-y-4">

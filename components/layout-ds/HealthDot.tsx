@@ -13,8 +13,8 @@ interface StatusApiRaw {
 
 const dotColors: Record<HealthLevel, string> = {
   healthy: 'bg-[var(--bsi-primary)]',
-  degraded: 'bg-yellow-400',
-  down: 'bg-red-400',
+  degraded: 'bg-[var(--bsi-warning)]',
+  down: 'bg-[var(--bsi-danger)]',
   unknown: '', // hidden
 };
 

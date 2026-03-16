@@ -270,7 +270,7 @@ export function MomentumFlow({
           {excitementRating && (
             <span className={`text-[9px] uppercase tracking-wider font-display px-2 py-0.5 rounded-full ${
               excitementRating === 'instant-classic' ? 'bg-burnt-orange/10 text-burnt-orange' :
-              excitementRating === 'thriller' ? 'bg-amber-500/10 text-amber-400' :
+              excitementRating === 'thriller' ? 'bg-[var(--bsi-warning)]/10 text-[var(--bsi-warning)]' :
               excitementRating === 'competitive' ? 'bg-[var(--heritage-columbia-blue)]/10 text-[var(--heritage-columbia-blue)]' :
               'bg-surface-light text-text-muted'
             }`}>

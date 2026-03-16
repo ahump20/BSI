@@ -22,6 +22,9 @@ export function Footer() {
                 </span>
               </div>
             </div>
+            <p className="text-[11px] font-serif italic tracking-wide mb-2" style={{ color: 'var(--bsi-primary)', opacity: 0.85 }}>
+              Born to Blaze the Path Beaten Less
+            </p>
             <p className="text-xs leading-relaxed font-serif italic" style={{ color: 'var(--bsi-dust)' }}>
               The only free, park-adjusted sabermetrics platform for D1 college baseball.
               Plus live scores across MLB, NFL, NBA, and NCAA.

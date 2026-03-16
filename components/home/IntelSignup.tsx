@@ -109,7 +109,7 @@ export function IntelSignup({ sport, onSignup }: IntelSignupProps = {}) {
       </label>
 
       {state === 'error' && errorMsg && (
-        <p className="text-xs text-red-400 mt-2">{errorMsg}</p>
+        <p className="text-xs text-[var(--bsi-danger)] mt-2">{errorMsg}</p>
       )}
     </form>
   );

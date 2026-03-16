@@ -14,11 +14,10 @@ import { json, cachedJson, kvGet, kvPut, dataHeaders, HTTP_CACHE, CACHE_TTL, SEA
  * Computes league-average wOBA, BABIP, K%, BB% from all qualified hitters in D1.
  */
 export async function handleCBBLeagueSabermetrics(env: Env): Promise<Response> {
+  try {
   const cacheKey = 'cb:saber:league:2026';
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, { 'X-Cache': 'HIT' });
-
-  try {
     // Aggregate batting stats for all qualified hitters (20+ AB)
     // Include OBP/SLG for per-player derivation of 2B/3B/HBP
     const batting = await env.DB.prepare(`
@@ -210,7 +209,8 @@ export async function handleCBBLeagueSabermetrics(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, 3600);
     return cachedJson(payload, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' });
   } catch (err) {
-    return json({ error: err instanceof Error ? err.message : 'Sabermetrics computation failed' }, 500);
+    console.error('[handleCBBLeagueSabermetrics]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
 
@@ -219,11 +219,10 @@ export async function handleCBBLeagueSabermetrics(env: Env): Promise<Response> {
  * GET /api/college-baseball/teams/:teamId/sabermetrics
  */
 export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promise<Response> {
+  try {
   const cacheKey = `cb:saber:team:${teamId}`;
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, { 'X-Cache': 'HIT' });
-
-  try {
     // Resolve slug to ESPN numeric team_id if non-numeric
     let resolvedId = teamId;
     if (!/^\d+$/.test(teamId)) {
@@ -469,7 +468,8 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
     await kvPut(env.KV, cacheKey, payload, 1800);
     return cachedJson(payload, 200, HTTP_CACHE.team, { 'X-Cache': 'MISS' });
   } catch (err) {
-    return json({ error: err instanceof Error ? err.message : 'Team sabermetrics failed' }, 500);
+    console.error('[handleCBBTeamSabermetrics]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
 
@@ -493,11 +493,10 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
  * OOWP = opponents' opponents' average winning percentage
  */
 export async function handleCBBTeamSOS(teamId: string, env: Env): Promise<Response> {
+  try {
   const cacheKey = `cb:sos:${teamId}`;
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, { 'X-Cache': 'HIT' });
-
-  try {
     // Resolve slug to ESPN numeric team_id if non-numeric
     let resolvedId = teamId;
     if (!/^\d+$/.test(teamId)) {
@@ -645,7 +644,8 @@ export async function handleCBBTeamSOS(teamId: string, env: Env): Promise<Respon
     await kvPut(env.KV, cacheKey, payload, 3600);
     return cachedJson(payload, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' });
   } catch (err) {
-    return json({ error: err instanceof Error ? err.message : 'RPI computation failed' }, 500);
+    console.error('[handleCBBTeamSOS]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
 
@@ -659,11 +659,10 @@ export async function handleCBBTeamSOS(teamId: string, env: Env): Promise<Respon
  * GET /api/college-baseball/conferences/:conf/power-index
  */
 export async function handleCBBConferencePowerIndex(conf: string, env: Env): Promise<Response> {
+  try {
   const cacheKey = `cb:cpi:${conf}`;
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, { 'X-Cache': 'HIT' });
-
-  try {
     // Get league baseline
     const leagueRaw = await kvGet<Record<string, number>>(env.KV, 'cb:saber:league:2026');
     const lgWoba = leagueRaw?.league_woba ?? 0.340;
@@ -852,7 +851,8 @@ export async function handleCBBConferencePowerIndex(conf: string, env: Env): Pro
     await kvPut(env.KV, cacheKey, payload, 3600);
     return cachedJson(payload, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' });
   } catch (err) {
-    return json({ error: err instanceof Error ? err.message : 'CPI computation failed' }, 500);
+    console.error('[handleCBBConferencePowerIndex]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
 
@@ -888,12 +888,11 @@ interface SeasonArcResponse {
  * through that game in the season.
  */
 export async function handleCBBSeasonArc(espnId: string, url: URL, env: Env): Promise<Response> {
+  try {
   const season = Number(url.searchParams.get('season') || SEASON);
   const cacheKey = `cb:season-arc:${espnId}`;
   const cached = await kvGet<SeasonArcResponse>(env.KV, cacheKey);
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, { 'X-Cache': 'HIT' });
-
-  try {
     // Resolve team's conference for isConference tagging
     const teamMeta = metaByEspnId[espnId];
     const teamConference = teamMeta?.conference ?? '';
@@ -1144,6 +1143,7 @@ export async function handleCBBSeasonArc(espnId: string, url: URL, env: Env): Pr
     await kvPut(env.KV, cacheKey, payload, 3600);
     return cachedJson(payload, 200, HTTP_CACHE.team, { 'X-Cache': 'MISS' });
   } catch (err) {
-    return json({ error: err instanceof Error ? err.message : 'Season arc computation failed' }, 500);
+    console.error('[handleCBBSeasonArc]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }

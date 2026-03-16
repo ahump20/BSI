@@ -45,9 +45,9 @@ interface AnalysisResult {
 }
 
 const CONFIDENCE_COLORS: Record<string, string> = {
-  high: 'text-green-400',
-  medium: 'text-yellow-400',
-  low: 'text-red-400',
+  high: 'text-[var(--bsi-success)]',
+  medium: 'text-[var(--bsi-warning)]',
+  low: 'text-[var(--bsi-danger)]',
 };
 
 export default function PressConferenceAnalyzer() {
@@ -168,7 +168,7 @@ export default function PressConferenceAnalyzer() {
 
         {/* Error */}
         {error && (
-          <div className="mb-6 p-4 rounded-sm bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+          <div className="mb-6 p-4 rounded-sm bg-[var(--bsi-danger)]/10 border border-[var(--bsi-danger)]/20 text-[var(--bsi-danger)] text-sm">
             {error}
           </div>
         )}
@@ -231,7 +231,7 @@ export default function PressConferenceAnalyzer() {
                 <h2 className="heritage-stamp text-xs mb-4">Health Indicators</h2>
                 <div className="space-y-3">
                   {analysis.healthIndicators.map((h, i) => (
-                    <div key={i} className="border-l-2 border-yellow-500/40 pl-4">
+                    <div key={i} className="border-l-2 border-[var(--bsi-warning)]/40 pl-4">
                       <p className="text-sm font-semibold text-bsi-bone">{h.player}</p>
                       <p className="text-xs text-bsi-dust">{h.status}</p>
                       <p className="text-xs text-burnt-orange/80 italic mt-1">{h.readBetweenLines}</p>
@@ -277,7 +277,7 @@ export default function PressConferenceAnalyzer() {
                 <h2 className="heritage-stamp text-xs mb-4">Closer &amp; High Leverage</h2>
                 <div className="space-y-3">
                   {analysis.closerAndHighLeverage.map((s, i) => (
-                    <div key={i} className="border-l-2 border-red-500/40 pl-4">
+                    <div key={i} className="border-l-2 border-[var(--bsi-danger)]/40 pl-4">
                       <p className="text-sm text-bsi-bone">{s.signal}</p>
                       <p className="text-xs text-bsi-dust mt-1">{s.implication}</p>
                     </div>
@@ -323,7 +323,7 @@ export default function PressConferenceAnalyzer() {
                 <ul className="space-y-2">
                   {analysis.notableOmissions.map((o, i) => (
                     <li key={i} className="flex gap-2 text-sm text-bsi-bone">
-                      <span className="text-red-400 mt-0.5 shrink-0">&#9888;</span>
+                      <span className="text-[var(--bsi-danger)] mt-0.5 shrink-0">&#9888;</span>
                       <span>{o}</span>
                     </li>
                   ))}

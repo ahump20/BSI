@@ -188,7 +188,7 @@ export function GameDetailSheet({ game, open, onClose }: GameDetailSheetProps) {
               <span className="text-text-muted">Favors outcome</span>
             </span>
             <span className="flex items-center gap-1">
-              <span className="h-2 w-2 rounded-sm bg-red-500/80" />
+              <span className="h-2 w-2 rounded-sm bg-[var(--bsi-danger)]/80" />
               <span className="text-text-muted">Works against</span>
             </span>
           </div>

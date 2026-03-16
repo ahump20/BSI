@@ -11,6 +11,7 @@ export async function handleCollegeBaseballTeam(
   env: Env,
   ctx?: ExecutionContext,
 ): Promise<Response> {
+  try {
   // Resolve slug → ESPN numeric ID via team metadata
   const slugMeta = teamMetadata[teamId];
   const espnId = slugMeta?.espnId ?? teamId;
@@ -125,26 +126,30 @@ export async function handleCollegeBaseballTeam(
     502,
     { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' },
   );
+  } catch (err) {
+    console.error('[handleCollegeBaseballTeam]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }
 
 export async function handleCollegeBaseballTeamSchedule(
   teamId: string,
   env: Env
 ): Promise<Response> {
-  const scheduleMeta = teamMetadata[teamId];
-  const espnId = scheduleMeta?.espnId ?? teamId;
-  const numericId = parseInt(espnId, 10);
-  if (isNaN(numericId)) return json({ schedule: null, error: 'Unknown team' }, 404);
-
-  const cacheKey = `cb:team-schedule:${teamId}`;
-  const now = new Date().toISOString();
-
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(cached, 200, HTTP_CACHE.schedule, { ...dataHeaders(now, 'cache'), 'X-Cache': 'HIT' });
-  }
-
   try {
+    const scheduleMeta = teamMetadata[teamId];
+    const espnId = scheduleMeta?.espnId ?? teamId;
+    const numericId = parseInt(espnId, 10);
+    if (isNaN(numericId)) return json({ schedule: null, error: 'Unknown team' }, 404);
+
+    const cacheKey = `cb:team-schedule:${teamId}`;
+    const now = new Date().toISOString();
+
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(cached, 200, HTTP_CACHE.schedule, { ...dataHeaders(now, 'cache'), 'X-Cache': 'HIT' });
+    }
+
     const client = getCollegeClient();
     const result = await client.getTeamSchedule(numericId);
     if (result.success && result.data) {
@@ -155,11 +160,12 @@ export async function handleCollegeBaseballTeamSchedule(
       await kvPut(env.KV, cacheKey, payload, CACHE_TTL.schedule);
       return cachedJson(payload, 200, HTTP_CACHE.schedule, { ...dataHeaders(now, 'espn'), 'X-Cache': 'MISS' });
     }
-  } catch (err) {
-    console.error('[espn] team schedule:', err instanceof Error ? err.message : err);
-  }
 
-  return json({ schedule: [], meta: { source: 'error', fetched_at: now, timezone: 'America/Chicago' } }, 502);
+    return json({ schedule: [], meta: { source: 'error', fetched_at: now, timezone: 'America/Chicago' } }, 502);
+  } catch (err) {
+    console.error('[handleCollegeBaseballTeamSchedule]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }
 
 // ── Bulk teams endpoint ─────────────────────────────────────────────────────
@@ -186,6 +192,7 @@ interface BulkTeamItem {
 export async function handleCollegeBaseballTeamsAll(
   env: Env,
 ): Promise<Response> {
+  try {
   const cacheKey = 'cb:teams:all';
   const now = new Date().toISOString();
 
@@ -290,6 +297,10 @@ export async function handleCollegeBaseballTeamsAll(
   // Cache for 1 hour
   await kvPut(env.KV, cacheKey, payload, 3600);
   return cachedJson(payload, 200, HTTP_CACHE.team, { ...dataHeaders(now, sources.join('+') || 'metadata'), 'X-Cache': 'MISS' });
+  } catch (err) {
+    console.error('[handleCollegeBaseballTeamsAll]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }
 
 export async function handleCollegeBaseballTrends(teamId: string, env: Env): Promise<Response> {

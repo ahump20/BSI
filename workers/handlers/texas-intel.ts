@@ -23,25 +23,25 @@ interface YouTubeSearchResponse {
 }
 
 export async function handleTexasIntelVideos(env: Env): Promise<Response> {
-  const KV_KEY = 'texas-intel:videos';
-  const TTL = 3600; // 1 hour
-
-  // Check cache
-  const cached = await env.KV.get(KV_KEY);
-  if (cached) {
-    return cachedJson(JSON.parse(cached), 200, 300, { 'X-Cache': 'HIT' });
-  }
-
-  // YouTube API key is optional — fallback to empty when not configured
-  const apiKey = (env as Env & { YOUTUBE_API_KEY?: string }).YOUTUBE_API_KEY;
-  if (!apiKey) {
-    return json(
-      withMeta({ videos: [], message: 'YouTube API key not configured — use curated video registry' }, 'fallback'),
-      200,
-    );
-  }
-
   try {
+    const KV_KEY = 'texas-intel:videos';
+    const TTL = 3600; // 1 hour
+
+    // Check cache
+    const cached = await env.KV.get(KV_KEY);
+    if (cached) {
+      return cachedJson(JSON.parse(cached), 200, 300, { 'X-Cache': 'HIT' });
+    }
+
+    // YouTube API key is optional — fallback to empty when not configured
+    const apiKey = (env as Env & { YOUTUBE_API_KEY?: string }).YOUTUBE_API_KEY;
+    if (!apiKey) {
+      return json(
+        withMeta({ videos: [], message: 'YouTube API key not configured — use curated video registry' }, 'fallback'),
+        200,
+      );
+    }
+
     const query = encodeURIComponent('Texas Longhorns baseball 2026 highlights');
     const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&type=video&maxResults=20&order=date&key=${apiKey}`;
 
@@ -66,8 +66,8 @@ export async function handleTexasIntelVideos(env: Env): Promise<Response> {
 
     return cachedJson(payload, 200, 300, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[texas-intel] YouTube fetch error:', err);
-    return json(withMeta({ videos: [], error: 'Failed to fetch videos' }, 'error'), 200);
+    console.error('[handleTexasIntelVideos]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
 
@@ -135,6 +135,7 @@ function isTexasRelevant(text: string, keywords: string[]): boolean {
 }
 
 export async function handleTexasIntelNews(env: Env): Promise<Response> {
+  try {
   const KV_KEY = 'texas-intel:news';
   const TTL = 1800; // 30 minutes
 
@@ -204,51 +205,55 @@ export async function handleTexasIntelNews(env: Env): Promise<Response> {
   await env.KV.put(KV_KEY, JSON.stringify(payload), { expirationTtl: TTL });
 
   return cachedJson(payload, 200, 120, { 'X-Cache': 'MISS' });
+  } catch (err) {
+    console.error('[handleTexasIntelNews]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }
 
 // ─── AI Daily Digest ────────────────────────────────────────────────────────
 
 export async function handleTexasIntelDigest(env: Env): Promise<Response> {
-  const KV_KEY = 'texas-intel:digest';
-  const TTL = 86400; // 24 hours
-
-  // Check cache
-  const cached = await env.KV.get(KV_KEY);
-  if (cached) {
-    return cachedJson(JSON.parse(cached), 200, 600, { 'X-Cache': 'HIT' });
-  }
-
-  const apiKey = env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    return json(
-      withMeta({ digest: null, message: 'Digest generation unavailable' }, 'fallback'),
-      200,
-    );
-  }
-
-  // Gather source data for the digest
-  let teamContext = '';
   try {
-    const teamRes = await fetch(`https://blazesportsintel.com/api/college-baseball/teams/251`, { signal: AbortSignal.timeout(8000) });
-    if (teamRes.ok) {
-      const teamData = await teamRes.json();
-      teamContext = JSON.stringify(teamData).slice(0, 2000);
+    const KV_KEY = 'texas-intel:digest';
+    const TTL = 86400; // 24 hours
+
+    // Check cache
+    const cached = await env.KV.get(KV_KEY);
+    if (cached) {
+      return cachedJson(JSON.parse(cached), 200, 600, { 'X-Cache': 'HIT' });
     }
-  } catch { /* continue without team data */ }
 
-  let newsContext = '';
-  try {
-    const newsStr = await env.KV.get('texas-intel:news');
-    if (newsStr) {
-      const newsData = JSON.parse(newsStr);
-      newsContext = (newsData.articles ?? [])
-        .slice(0, 10)
-        .map((a: NewsItem) => `${a.title} (${a.source})`)
-        .join('\n');
+    const apiKey = env.ANTHROPIC_API_KEY;
+    if (!apiKey) {
+      return json(
+        withMeta({ digest: null, message: 'Digest generation unavailable' }, 'fallback'),
+        200,
+      );
     }
-  } catch { /* continue without news */ }
 
-  try {
+    // Gather source data for the digest
+    let teamContext = '';
+    try {
+      const teamRes = await fetch(`https://blazesportsintel.com/api/college-baseball/teams/251`, { signal: AbortSignal.timeout(8000) });
+      if (teamRes.ok) {
+        const teamData = await teamRes.json();
+        teamContext = JSON.stringify(teamData).slice(0, 2000);
+      }
+    } catch { /* continue without team data */ }
+
+    let newsContext = '';
+    try {
+      const newsStr = await env.KV.get('texas-intel:news');
+      if (newsStr) {
+        const newsData = JSON.parse(newsStr);
+        newsContext = (newsData.articles ?? [])
+          .slice(0, 10)
+          .map((a: NewsItem) => `${a.title} (${a.source})`)
+          .join('\n');
+      }
+    } catch { /* continue without news */ }
+
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -290,8 +295,8 @@ Format as JSON: { "title": "...", "date": "${new Date().toISOString().slice(0, 1
 
     return cachedJson(payload, 200, 600, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[texas-intel] Digest generation error:', err);
-    return json(withMeta({ digest: null, error: 'Digest generation failed' }, 'error'), 200);
+    console.error('[handleTexasIntelDigest]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
 
@@ -483,15 +488,15 @@ function computeRadar(
 }
 
 export async function handleTexasPlayerProfile(env: Env, playerId: string): Promise<Response> {
-  const KV_KEY = `texas-intel:player:${playerId}`;
-  const TTL = 3600; // 1 hour
-
-  const cached = await kvGet<Record<string, unknown>>(env.KV, KV_KEY);
-  if (cached) {
-    return cachedJson(cached, 200, 300, { 'X-Cache': 'HIT' });
-  }
-
   try {
+    const KV_KEY = `texas-intel:player:${playerId}`;
+    const TTL = 3600; // 1 hour
+
+    const cached = await kvGet<Record<string, unknown>>(env.KV, KV_KEY);
+    if (cached) {
+      return cachedJson(cached, 200, 300, { 'X-Cache': 'HIT' });
+    }
+
     const [basicResult, battingResult, pitchingResult, havfResult, gameLogResult] = await Promise.all([
       env.DB.prepare(
         `SELECT espn_id, name, position, team, team_id, headshot, season
@@ -577,23 +582,23 @@ export async function handleTexasPlayerProfile(env: Env, playerId: string): Prom
     await kvPut(env.KV, KV_KEY, payload, TTL);
     return cachedJson(payload, 200, 300, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[texas-intel] Player profile error:', err);
-    return json(withMeta({ error: 'Failed to load player profile' }, 'error'), 500);
+    console.error('[handleTexasPlayerProfile]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
 
 // ─── Opponent Scouting Report ───────────────────────────────────────────────
 
 export async function handleTexasOpponentScout(env: Env, opponentId: string): Promise<Response> {
-  const KV_KEY = `texas-intel:scout:${opponentId}`;
-  const TTL = 21600; // 6 hours
-
-  const cached = await kvGet<Record<string, unknown>>(env.KV, KV_KEY);
-  if (cached) {
-    return cachedJson(cached, 200, 600, { 'X-Cache': 'HIT' });
-  }
-
   try {
+    const KV_KEY = `texas-intel:scout:${opponentId}`;
+    const TTL = 21600; // 6 hours
+
+    const cached = await kvGet<Record<string, unknown>>(env.KV, KV_KEY);
+    if (cached) {
+      return cachedJson(cached, 200, 600, { 'X-Cache': 'HIT' });
+    }
+
     const [teamBattingResult, teamPitchingResult, topHittersResult, topPitchersResult] = await Promise.all([
       env.DB.prepare(
         `SELECT AVG(avg) AS avg, AVG(obp) AS obp, AVG(slg) AS slg, AVG(ops) AS ops,
@@ -715,8 +720,8 @@ Respond ONLY with valid JSON in this exact structure:
     await kvPut(env.KV, KV_KEY, payload, TTL);
     return cachedJson(payload, 200, 600, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[texas-intel] Opponent scout error:', err);
-    return json(withMeta({ error: 'Failed to generate scouting report' }, 'error'), 500);
+    console.error('[handleTexasOpponentScout]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
 
@@ -729,15 +734,15 @@ interface GameAnalysis {
 }
 
 export async function handleTexasGameAnalysisGenerate(env: Env, gameId: string): Promise<Response> {
-  const ANALYSIS_KEY = `texas-intel:game-analysis:${gameId}`;
-  const ANALYSIS_TTL = 604800; // 7 days
-
-  const existing = await kvGet<GameAnalysis>(env.KV, ANALYSIS_KEY);
-  if (existing) return cachedJson(withMeta(existing, 'cache'), 200, 300, { 'X-Cache': 'HIT' });
-
-  if (!env.ANTHROPIC_API_KEY) return json(withMeta({ error: 'Analysis generation unavailable' }, 'fallback'), 200);
-
   try {
+    const ANALYSIS_KEY = `texas-intel:game-analysis:${gameId}`;
+    const ANALYSIS_TTL = 604800; // 7 days
+
+    const existing = await kvGet<GameAnalysis>(env.KV, ANALYSIS_KEY);
+    if (existing) return cachedJson(withMeta(existing, 'cache'), 200, 300, { 'X-Cache': 'HIT' });
+
+    if (!env.ANTHROPIC_API_KEY) return json(withMeta({ error: 'Analysis generation unavailable' }, 'fallback'), 200);
+
     const game = await env.DB.prepare(
       `SELECT * FROM processed_games WHERE game_id = ?`,
     ).bind(gameId).first<ProcessedGameRow>();
@@ -798,21 +803,21 @@ Respond with plain text only — no JSON, no markdown headers.`,
     await kvPut(env.KV, ANALYSIS_KEY, analysis, ANALYSIS_TTL);
     return cachedJson(withMeta(analysis, 'anthropic'), 200, 300, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[texas-intel] Game analysis generation error:', err);
-    return json(withMeta({ error: 'Analysis generation failed' }, 'error'), 500);
+    console.error('[handleTexasGameAnalysisGenerate]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
 
 export async function handleTexasGameAnalyses(env: Env): Promise<Response> {
-  const KV_KEY = 'texas-intel:game-analyses';
-  const TTL = 1800; // 30 minutes
-
-  const cached = await kvGet<Record<string, unknown>>(env.KV, KV_KEY);
-  if (cached) {
-    return cachedJson(cached, 200, 300, { 'X-Cache': 'HIT' });
-  }
-
   try {
+    const KV_KEY = 'texas-intel:game-analyses';
+    const TTL = 1800; // 30 minutes
+
+    const cached = await kvGet<Record<string, unknown>>(env.KV, KV_KEY);
+    if (cached) {
+      return cachedJson(cached, 200, 300, { 'X-Cache': 'HIT' });
+    }
+
     const gamesResult = await env.DB.prepare(
       `SELECT * FROM processed_games
        WHERE home_team_id = ? OR away_team_id = ?
@@ -847,8 +852,8 @@ export async function handleTexasGameAnalyses(env: Env): Promise<Response> {
     await kvPut(env.KV, KV_KEY, payload, TTL);
     return cachedJson(payload, 200, 300, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[texas-intel] Game analyses error:', err);
-    return json(withMeta({ error: 'Failed to load game analyses' }, 'error'), 500);
+    console.error('[handleTexasGameAnalyses]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
 
@@ -875,15 +880,15 @@ function classifyPitcherRole(pitcher: PitchingAdvancedRow): 'starter' | 'relieve
 }
 
 export async function handleTexasPitchingStaff(env: Env): Promise<Response> {
-  const KV_KEY = 'texas-intel:pitching';
-  const TTL = 3600; // 1 hour
-
-  const cached = await kvGet<Record<string, unknown>>(env.KV, KV_KEY);
-  if (cached) {
-    return cachedJson(cached, 200, 300, { 'X-Cache': 'HIT' });
-  }
-
   try {
+    const KV_KEY = 'texas-intel:pitching';
+    const TTL = 3600; // 1 hour
+
+    const cached = await kvGet<Record<string, unknown>>(env.KV, KV_KEY);
+    if (cached) {
+      return cachedJson(cached, 200, 300, { 'X-Cache': 'HIT' });
+    }
+
     const pitchersResult = await env.DB.prepare(
       `SELECT * FROM cbb_pitching_advanced
        WHERE team_id = ? OR team LIKE ?
@@ -949,8 +954,8 @@ export async function handleTexasPitchingStaff(env: Env): Promise<Response> {
     await kvPut(env.KV, KV_KEY, payload, TTL);
     return cachedJson(payload, 200, 300, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[texas-intel] Pitching staff error:', err);
-    return json(withMeta({ error: 'Failed to load pitching staff' }, 'error'), 500);
+    console.error('[handleTexasPitchingStaff]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
 
@@ -998,15 +1003,15 @@ function computeDifficulty(
 }
 
 export async function handleTexasScheduleHeatMap(env: Env): Promise<Response> {
-  const KV_KEY = 'texas-intel:schedule-heatmap';
-  const TTL = 14400; // 4 hours
-
-  const cached = await kvGet<Record<string, unknown>>(env.KV, KV_KEY);
-  if (cached) {
-    return cachedJson(cached, 200, 600, { 'X-Cache': 'HIT' });
-  }
-
   try {
+    const KV_KEY = 'texas-intel:schedule-heatmap';
+    const TTL = 14400; // 4 hours
+
+    const cached = await kvGet<Record<string, unknown>>(env.KV, KV_KEY);
+    if (cached) {
+      return cachedJson(cached, 200, 600, { 'X-Cache': 'HIT' });
+    }
+
     const scheduleRes = await fetch(
       `https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/teams/${TEXAS_TEAM_ID}/schedule`,
       {
@@ -1159,23 +1164,23 @@ export async function handleTexasScheduleHeatMap(env: Env): Promise<Response> {
     await kvPut(env.KV, KV_KEY, payload, TTL);
     return cachedJson(payload, 200, 600, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[texas-intel] Schedule heatmap error:', err);
-    return json(withMeta({ error: 'Failed to build schedule heatmap' }, 'error'), 500);
+    console.error('[handleTexasScheduleHeatMap]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
 
 // ─── Matchup Theater ────────────────────────────────────────────────────────
 
 export async function handleTexasMatchup(env: Env, opponentId: string): Promise<Response> {
-  const KV_KEY = `texas-intel:matchup:${opponentId}`;
-  const TTL = 7200; // 2 hours
-
-  const cached = await kvGet<Record<string, unknown>>(env.KV, KV_KEY);
-  if (cached) {
-    return cachedJson(cached, 200, 300, { 'X-Cache': 'HIT' });
-  }
-
   try {
+    const KV_KEY = `texas-intel:matchup:${opponentId}`;
+    const TTL = 7200; // 2 hours
+
+    const cached = await kvGet<Record<string, unknown>>(env.KV, KV_KEY);
+    if (cached) {
+      return cachedJson(cached, 200, 300, { 'X-Cache': 'HIT' });
+    }
+
     const [
       texasBatting, texasPitching, oppBatting, oppPitching,
       texasHitters, oppHitters, texasPitchers, oppPitchers, h2hGames,
@@ -1282,23 +1287,23 @@ export async function handleTexasMatchup(env: Env, opponentId: string): Promise<
     await kvPut(env.KV, KV_KEY, payload, TTL);
     return cachedJson(payload, 200, 300, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[texas-intel] Matchup error:', err);
-    return json(withMeta({ error: 'Failed to load matchup data' }, 'error'), 500);
+    console.error('[handleTexasMatchup]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
 
 // ─── Draft Board ─────────────────────────────────────────────────────────────
 
 export async function handleTexasDraftBoard(env: Env): Promise<Response> {
-  const KV_KEY = 'texas-intel:draft-board';
-  const TTL = 14400; // 4 hours
-
-  const cached = await kvGet<Record<string, unknown>>(env.KV, KV_KEY);
-  if (cached) {
-    return cachedJson(cached, 200, 600, { 'X-Cache': 'HIT' });
-  }
-
   try {
+    const KV_KEY = 'texas-intel:draft-board';
+    const TTL = 14400; // 4 hours
+
+    const cached = await kvGet<Record<string, unknown>>(env.KV, KV_KEY);
+    if (cached) {
+      return cachedJson(cached, 200, 600, { 'X-Cache': 'HIT' });
+    }
+
     const [havfResult, battingResult, pitchingResult] = await Promise.all([
       env.DB.prepare(
         `SELECT * FROM havf_scores
@@ -1355,23 +1360,23 @@ export async function handleTexasDraftBoard(env: Env): Promise<Response> {
     await kvPut(env.KV, KV_KEY, payload, TTL);
     return cachedJson(payload, 200, 600, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[texas-intel] Draft board error:', err);
-    return json(withMeta({ error: 'Failed to load draft board' }, 'error'), 500);
+    console.error('[handleTexasDraftBoard]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
 
 // ─── Transfer Portal Intelligence ────────────────────────────────────────────
 
 export async function handleTexasPortalIntel(env: Env): Promise<Response> {
-  const KV_KEY = 'texas-intel:portal';
-  const TTL = 3600; // 1 hour
-
-  const cached = await kvGet<Record<string, unknown>>(env.KV, KV_KEY);
-  if (cached) {
-    return cachedJson(cached, 200, 300, { 'X-Cache': 'HIT' });
-  }
-
   try {
+    const KV_KEY = 'texas-intel:portal';
+    const TTL = 3600; // 1 hour
+
+    const cached = await kvGet<Record<string, unknown>>(env.KV, KV_KEY);
+    if (cached) {
+      return cachedJson(cached, 200, 300, { 'X-Cache': 'HIT' });
+    }
+
     const portalRaw = await env.KV.get('portal:texas-intel');
     let portalMoves: unknown[] = [];
     if (portalRaw) {
@@ -1417,23 +1422,23 @@ export async function handleTexasPortalIntel(env: Env): Promise<Response> {
     await kvPut(env.KV, KV_KEY, payload, TTL);
     return cachedJson(payload, 200, 300, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[texas-intel] Portal error:', err);
-    return json(withMeta({ error: 'Failed to load portal intel' }, 'error'), 500);
+    console.error('[handleTexasPortalIntel]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
 
 // ─── Performance Trends ──────────────────────────────────────────────────────
 
 export async function handleTexasTrends(env: Env): Promise<Response> {
-  const KV_KEY = 'texas-intel:trends';
-  const TTL = 3600; // 1 hour
-
-  const cached = await kvGet<Record<string, unknown>>(env.KV, KV_KEY);
-  if (cached) {
-    return cachedJson(cached, 200, 300, { 'X-Cache': 'HIT' });
-  }
-
   try {
+    const KV_KEY = 'texas-intel:trends';
+    const TTL = 3600; // 1 hour
+
+    const cached = await kvGet<Record<string, unknown>>(env.KV, KV_KEY);
+    if (cached) {
+      return cachedJson(cached, 200, 300, { 'X-Cache': 'HIT' });
+    }
+
     const battersResult = await env.DB.prepare(
       `SELECT player_id, player_name, position, avg, obp, slg, woba, wrc_plus, hr, sb, pa, iso, k_pct, bb_pct
        FROM cbb_batting_advanced
@@ -1517,7 +1522,7 @@ export async function handleTexasTrends(env: Env): Promise<Response> {
     await kvPut(env.KV, KV_KEY, payload, TTL);
     return cachedJson(payload, 200, 300, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[texas-intel] Trends error:', err);
-    return json(withMeta({ error: 'Failed to load trends data' }, 'error'), 500);
+    console.error('[handleTexasTrends]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }

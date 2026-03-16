@@ -39,76 +39,91 @@ export async function handleCFBTransferPortal(env: Env): Promise<Response> {
 }
 
 export async function handleCFBScores(url: URL, env: Env): Promise<Response> {
-  const date = url.searchParams.get('date') || undefined;
-  const dateKey = date?.replace(/-/g, '') || 'today';
-  const cacheKey = `cfb:scores:${dateKey}`;
-  const sdio = getSDIOClient(env);
+  try {
+    const date = url.searchParams.get('date') || undefined;
+    const dateKey = date?.replace(/-/g, '') || 'today';
+    const cacheKey = `cfb:scores:${dateKey}`;
+    const sdio = getSDIOClient(env);
 
-  if (sdio) {
-    // ESPN primary so game IDs match handleCFBGame (which uses ESPN getGameSummary)
-    const result = await fetchWithFallback(
-      async () => transformScoreboard(await getScoreboard('cfb', toDateString(date)) as Record<string, unknown>) as unknown as BSIScoreboardResult,
-      async () => {
-        const week = parseInt(url.searchParams.get('week') || '1', 10);
-        return transformSDIOCFBScores(await sdio.getCFBScores(undefined, week));
-      },
-      cacheKey, env.KV, CACHE_TTL.scores,
-      'espn', 'sportsdataio',
-      { staleKey: `${cacheKey}:stale` },
-    );
-    return cachedJson(withMeta(result.data, result.source), 200, HTTP_CACHE.scores, {
-      'X-Cache': result.cached ? 'HIT' : 'MISS',
-      'X-Data-Source': result.source,
-    });
+    if (sdio) {
+      // ESPN primary so game IDs match handleCFBGame (which uses ESPN getGameSummary)
+      const result = await fetchWithFallback(
+        async () => transformScoreboard(await getScoreboard('cfb', toDateString(date)) as Record<string, unknown>) as unknown as BSIScoreboardResult,
+        async () => {
+          const week = parseInt(url.searchParams.get('week') || '1', 10);
+          return transformSDIOCFBScores(await sdio.getCFBScores(undefined, week));
+        },
+        cacheKey, env.KV, CACHE_TTL.scores,
+        'espn', 'sportsdataio',
+        { staleKey: `${cacheKey}:stale` },
+      );
+      return cachedJson(withMeta(result.data, result.source), 200, HTTP_CACHE.scores, {
+        'X-Cache': result.cached ? 'HIT' : 'MISS',
+        'X-Data-Source': result.source,
+      });
+    }
+
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return cachedJson(cached, 200, HTTP_CACHE.scores, cachedDataHeaders());
+
+    const raw = await getScoreboard('cfb', toDateString(date)) as Record<string, unknown>;
+    const payload = withMeta(transformScoreboard(raw));
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
+    return cachedJson(payload, 200, HTTP_CACHE.scores, freshDataHeaders());
+  } catch (err) {
+    console.error('[handleCFBScores]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
-
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.scores, cachedDataHeaders());
-
-  const raw = await getScoreboard('cfb', toDateString(date)) as Record<string, unknown>;
-  const payload = withMeta(transformScoreboard(raw));
-  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
-  return cachedJson(payload, 200, HTTP_CACHE.scores, freshDataHeaders());
 }
 
 export async function handleCFBStandings(env: Env): Promise<Response> {
-  const cacheKey = 'cfb:standings';
-  const sdio = getSDIOClient(env);
+  try {
+    const cacheKey = 'cfb:standings';
+    const sdio = getSDIOClient(env);
 
-  if (sdio) {
-    const result = await fetchWithFallback(
-      async () => transformSDIOCFBStandings(await sdio.getCFBStandings()),
-      async () => transformStandings(await getStandings('cfb') as Record<string, unknown>, 'cfb') as unknown as BSIStandingsResult,
-      cacheKey, env.KV, CACHE_TTL.standings,
-      'sportsdataio', 'espn',
-      { staleKey: `${cacheKey}:stale` },
-    );
-    return cachedJson(withMeta(result.data, result.source), 200, HTTP_CACHE.standings, {
-      'X-Cache': result.cached ? 'HIT' : 'MISS',
-      'X-Data-Source': result.source,
-    });
+    if (sdio) {
+      const result = await fetchWithFallback(
+        async () => transformSDIOCFBStandings(await sdio.getCFBStandings()),
+        async () => transformStandings(await getStandings('cfb') as Record<string, unknown>, 'cfb') as unknown as BSIStandingsResult,
+        cacheKey, env.KV, CACHE_TTL.standings,
+        'sportsdataio', 'espn',
+        { staleKey: `${cacheKey}:stale` },
+      );
+      return cachedJson(withMeta(result.data, result.source), 200, HTTP_CACHE.standings, {
+        'X-Cache': result.cached ? 'HIT' : 'MISS',
+        'X-Data-Source': result.source,
+      });
+    }
+
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, cachedDataHeaders());
+
+    const raw = await getStandings('cfb') as Record<string, unknown>;
+    const payload = withMeta(transformStandings(raw, 'cfb'));
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
+    return cachedJson(payload, 200, HTTP_CACHE.standings, freshDataHeaders());
+  } catch (err) {
+    console.error('[handleCFBStandings]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
-
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, cachedDataHeaders());
-
-  const raw = await getStandings('cfb') as Record<string, unknown>;
-  const payload = withMeta(transformStandings(raw, 'cfb'));
-  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
-  return cachedJson(payload, 200, HTTP_CACHE.standings, freshDataHeaders());
 }
 
 export async function handleCFBNews(env: Env): Promise<Response> {
-  const cacheKey = 'cfb:news';
+  try {
+    const cacheKey = 'cfb:news';
 
-  // CFB news is not available from SDIO — use ESPN directly
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.news, cachedDataHeaders());
+    // CFB news is not available from SDIO — use ESPN directly
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return cachedJson(cached, 200, HTTP_CACHE.news, cachedDataHeaders());
 
-  const raw = await getNews('cfb') as Record<string, unknown>;
-  const payload = withMeta(transformNews(raw));
-  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
-  return cachedJson(payload, 200, HTTP_CACHE.news, freshDataHeaders());
+    const raw = await getNews('cfb') as Record<string, unknown>;
+    const payload = withMeta(transformNews(raw));
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
+    return cachedJson(payload, 200, HTTP_CACHE.news, freshDataHeaders());
+  } catch (err) {
+    console.error('[handleCFBNews]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }
 
 export async function handleCFBArticle(slug: string, env: Env): Promise<Response> {
@@ -167,53 +182,73 @@ export async function handleCFBArticlesList(url: URL, env: Env): Promise<Respons
 }
 
 export async function handleCFBTeamsList(env: Env): Promise<Response> {
-  const cacheKey = 'cfb:teams:list';
+  try {
+    const cacheKey = 'cfb:teams:list';
 
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, cachedDataHeaders());
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, cachedDataHeaders());
 
-  const raw = await espnGetTeams('cfb') as Record<string, unknown>;
-  const payload = withMeta(transformTeams(raw));
-  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
-  return cachedJson(payload, 200, HTTP_CACHE.team, freshDataHeaders());
+    const raw = await espnGetTeams('cfb') as Record<string, unknown>;
+    const payload = withMeta(transformTeams(raw));
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
+    return cachedJson(payload, 200, HTTP_CACHE.team, freshDataHeaders());
+  } catch (err) {
+    console.error('[handleCFBTeamsList]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }
 
 export async function handleCFBTeam(teamId: string, env: Env): Promise<Response> {
-  const cacheKey = `cfb:team:${teamId}`;
+  try {
+    const cacheKey = `cfb:team:${teamId}`;
 
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, cachedDataHeaders());
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, cachedDataHeaders());
 
-  const [teamRaw, rosterRaw] = await Promise.all([
-    getTeamDetail('cfb', teamId),
-    getTeamRoster('cfb', teamId),
-  ]);
+    const [teamRaw, rosterRaw] = await Promise.all([
+      getTeamDetail('cfb', teamId),
+      getTeamRoster('cfb', teamId),
+    ]);
 
-  const payload = withMeta(transformTeamDetail(teamRaw as Record<string, unknown>, rosterRaw as Record<string, unknown>));
-  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
-  return cachedJson(payload, 200, HTTP_CACHE.team, freshDataHeaders());
+    const payload = withMeta(transformTeamDetail(teamRaw as Record<string, unknown>, rosterRaw as Record<string, unknown>));
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
+    return cachedJson(payload, 200, HTTP_CACHE.team, freshDataHeaders());
+  } catch (err) {
+    console.error('[handleCFBTeam]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }
 
 export async function handleCFBGame(gameId: string, env: Env): Promise<Response> {
-  const cacheKey = `cfb:game:${gameId}`;
+  try {
+    const cacheKey = `cfb:game:${gameId}`;
 
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.game, cachedDataHeaders());
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return cachedJson(cached, 200, HTTP_CACHE.game, cachedDataHeaders());
 
-  const raw = await getGameSummary('cfb', gameId) as Record<string, unknown>;
-  const payload = withMeta(transformGameSummary(raw));
-  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
-  return cachedJson(payload, 200, HTTP_CACHE.game, freshDataHeaders());
+    const raw = await getGameSummary('cfb', gameId) as Record<string, unknown>;
+    const payload = withMeta(transformGameSummary(raw));
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
+    return cachedJson(payload, 200, HTTP_CACHE.game, freshDataHeaders());
+  } catch (err) {
+    console.error('[handleCFBGame]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }
 
 export async function handleCFBPlayer(playerId: string, env: Env): Promise<Response> {
-  const cacheKey = `cfb:player:${playerId}`;
+  try {
+    const cacheKey = `cfb:player:${playerId}`;
 
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.player, cachedDataHeaders());
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return cachedJson(cached, 200, HTTP_CACHE.player, cachedDataHeaders());
 
-  const raw = await getAthlete('cfb', playerId) as Record<string, unknown>;
-  const payload = withMeta(transformAthlete(raw));
-  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
-  return cachedJson(payload, 200, HTTP_CACHE.player, freshDataHeaders());
+    const raw = await getAthlete('cfb', playerId) as Record<string, unknown>;
+    const payload = withMeta(transformAthlete(raw));
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
+    return cachedJson(payload, 200, HTTP_CACHE.player, freshDataHeaders());
+  } catch (err) {
+    console.error('[handleCFBPlayer]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }

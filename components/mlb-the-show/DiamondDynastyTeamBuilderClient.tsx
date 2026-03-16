@@ -217,7 +217,7 @@ export function DiamondDynastyTeamBuilderClient() {
                         type="button"
                         onClick={handleSaveBuild}
                         disabled={saving || selections.length === 0}
-                        className="rounded-full border border-burnt-orange bg-burnt-orange/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-burnt-orange disabled:opacity-50"
+                        className="rounded-sm border border-burnt-orange bg-burnt-orange/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-burnt-orange disabled:opacity-50"
                       >
                         {saving ? 'Saving…' : 'Save public build'}
                       </button>
@@ -399,7 +399,7 @@ export function DiamondDynastyTeamBuilderClient() {
                             <button
                               type="button"
                               onClick={() => assignCard(activeSlot, card, card.market)}
-                              className="mt-3 rounded-full border border-burnt-orange bg-burnt-orange/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-burnt-orange"
+                              className="mt-3 rounded-sm border border-burnt-orange bg-burnt-orange/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-burnt-orange"
                             >
                               Assign card
                             </button>

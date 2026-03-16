@@ -42,9 +42,9 @@ function classifyBubbleZone(rank: number | undefined): BubbleZone {
 }
 
 const zoneStyles: Record<BubbleZone, string> = {
-  Lock: 'text-success border-green-500/20 bg-green-500/5',
-  Bubble: 'text-yellow-400/70 border-yellow-500/20 bg-yellow-500/5',
-  'Work to Do': 'text-error border-red-500/20 bg-red-500/5',
+  Lock: 'text-success border-[var(--bsi-success)]/20 bg-[var(--bsi-success)]/5',
+  Bubble: 'text-[var(--bsi-warning)]/70 border-[var(--bsi-warning)]/20 bg-[var(--bsi-warning)]/5',
+  'Work to Do': 'text-error border-[var(--bsi-danger)]/20 bg-[var(--bsi-danger)]/5',
 };
 
 // ---------------------------------------------------------------------------

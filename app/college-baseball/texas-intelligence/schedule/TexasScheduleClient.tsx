@@ -341,8 +341,8 @@ export default function TexasScheduleClient() {
                                     <span className={`text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded-sm ${
                                       isDone
                                         ? isWin
-                                          ? 'bg-green-500/10 text-green-400'
-                                          : 'bg-red-500/10 text-red-400'
+                                          ? 'bg-[var(--bsi-success)]/10 text-[var(--bsi-success)]'
+                                          : 'bg-[var(--bsi-danger)]/10 text-[var(--bsi-danger)]'
                                         : 'bg-surface-light text-text-muted'
                                     }`}>
                                       {isDone ? g.result : formatDate(g.date).split(',')[0]}

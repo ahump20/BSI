@@ -156,11 +156,11 @@ export default function CollegeBaseballAnalyticsPage() {
                         <div className="h-4 w-6 bg-surface-light rounded-sm animate-pulse" />
                         <div className="h-4 flex-1 max-w-[200px] bg-surface-light rounded-sm animate-pulse" />
                         <div className="h-4 w-16 bg-surface-light rounded-sm animate-pulse hidden sm:block" />
-                        <div className="h-6 w-12 bg-surface-light rounded-full animate-pulse ml-auto" />
-                        <div className="h-[6px] w-16 bg-surface-light rounded-full animate-pulse hidden md:block" />
-                        <div className="h-[6px] w-16 bg-surface-light rounded-full animate-pulse hidden md:block" />
-                        <div className="h-[6px] w-16 bg-surface-light rounded-full animate-pulse hidden md:block" />
-                        <div className="h-[6px] w-16 bg-surface-light rounded-full animate-pulse hidden md:block" />
+                        <div className="h-6 w-12 bg-surface-light rounded-sm animate-pulse ml-auto" />
+                        <div className="h-[6px] w-16 bg-surface-light rounded-sm animate-pulse hidden md:block" />
+                        <div className="h-[6px] w-16 bg-surface-light rounded-sm animate-pulse hidden md:block" />
+                        <div className="h-[6px] w-16 bg-surface-light rounded-sm animate-pulse hidden md:block" />
+                        <div className="h-[6px] w-16 bg-surface-light rounded-sm animate-pulse hidden md:block" />
                       </div>
                     ))}
                   </div>

@@ -55,7 +55,7 @@ function TagFilterBar({ activeTag, onTagChange }: { activeTag: FilterTag; onTagC
                 key={tag}
                 onClick={() => onTagChange(tag)}
                 className={`
-                  shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider
+                  shrink-0 px-3 py-1.5 rounded-sm text-xs font-semibold uppercase tracking-wider
                   border transition-all whitespace-nowrap
                   ${isActive
                     ? 'bg-burnt-orange/20 text-burnt-orange border-burnt-orange/40'

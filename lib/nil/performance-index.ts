@@ -63,8 +63,6 @@ export interface NILIndexResult {
 
 const LEAGUE_AVG_WOBA = 0.320;
 const LEAGUE_AVG_WRC_PLUS = 100;
-const LEAGUE_AVG_FIP = 4.20;
-const LEAGUE_AVG_ERA_MINUS = 100;
 
 /* ── Scoring Functions ─────────────────────────────────────────── */
 

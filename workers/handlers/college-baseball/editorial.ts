@@ -6,94 +6,104 @@ import type { Env, EnhancedArticle } from './shared';
 import { json, cachedJson, kvGet, kvPut, dataHeaders, getCollegeClient, getHighlightlyClient, HTTP_CACHE, CACHE_TTL, categorizeArticle, titleSimilarity, CATEGORY_KEYWORDS } from './shared';
 
 export async function handleCollegeBaseballTrending(env: Env): Promise<Response> {
-  const cacheKey = 'cb:trending';
+  try {
+    const cacheKey = 'cb:trending';
 
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(cached, 200, HTTP_CACHE.trending, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'HIT' });
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(cached, 200, HTTP_CACHE.trending, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'HIT' });
+    }
+
+    // Trending is computed from recent scores — fetch today's games and derive
+    const client = getCollegeClient();
+    const result = await client.getMatches('NCAA');
+
+    if (!result.success || !result.data) {
+      return json({ trendingPlayers: [], topGames: [] }, 502, dataHeaders(result.timestamp));
+    }
+
+    const games = (result.data.data || []) as HighlightlyMatch[];
+
+    // Top games: highest combined score, closest margin
+    const finishedGames = games
+      .filter((g: HighlightlyMatch) => g.status?.type === 'finished')
+      .sort((a: HighlightlyMatch, b: HighlightlyMatch) => {
+        const marginA = Math.abs(a.homeScore - a.awayScore);
+        const marginB = Math.abs(b.homeScore - b.awayScore);
+        return marginA - marginB;
+      });
+
+    const topGames = finishedGames.slice(0, 5).map((g: HighlightlyMatch) => ({
+      id: g.id,
+      homeTeam: g.homeTeam?.name,
+      awayTeam: g.awayTeam?.name,
+      homeScore: g.homeScore,
+      awayScore: g.awayScore,
+      margin: Math.abs(g.homeScore - g.awayScore),
+    }));
+
+    const payload = { trendingPlayers: [], topGames };
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
+
+    return cachedJson(payload, 200, HTTP_CACHE.trending, { ...dataHeaders(result.timestamp), 'X-Cache': 'MISS' });
+  } catch (err) {
+    console.error('[handleCollegeBaseballTrending]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
-
-  // Trending is computed from recent scores — fetch today's games and derive
-  const client = getCollegeClient();
-  const result = await client.getMatches('NCAA');
-
-  if (!result.success || !result.data) {
-    return json({ trendingPlayers: [], topGames: [] }, 502, dataHeaders(result.timestamp));
-  }
-
-  const games = (result.data.data || []) as HighlightlyMatch[];
-
-  // Top games: highest combined score, closest margin
-  const finishedGames = games
-    .filter((g: HighlightlyMatch) => g.status?.type === 'finished')
-    .sort((a: HighlightlyMatch, b: HighlightlyMatch) => {
-      const marginA = Math.abs(a.homeScore - a.awayScore);
-      const marginB = Math.abs(b.homeScore - b.awayScore);
-      return marginA - marginB;
-    });
-
-  const topGames = finishedGames.slice(0, 5).map((g: HighlightlyMatch) => ({
-    id: g.id,
-    homeTeam: g.homeTeam?.name,
-    awayTeam: g.awayTeam?.name,
-    homeScore: g.homeScore,
-    awayScore: g.awayScore,
-    margin: Math.abs(g.homeScore - g.awayScore),
-  }));
-
-  const payload = { trendingPlayers: [], topGames };
-  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
-
-  return cachedJson(payload, 200, HTTP_CACHE.trending, { ...dataHeaders(result.timestamp), 'X-Cache': 'MISS' });
 }
 
 export async function handleCollegeBaseballDaily(url: URL, env: Env): Promise<Response> {
-  const edition = url.searchParams.get('edition') ?? 'latest';
-  const date = url.searchParams.get('date');
+  try {
+    const edition = url.searchParams.get('edition') ?? 'latest';
+    const date = url.searchParams.get('date');
 
-  // Resolve KV key: either specific edition+date, or latest
-  let kvKey: string;
-  if (edition === 'latest' || (!date && edition === 'latest')) {
-    kvKey = 'cb:daily:latest';
-  } else {
-    const resolvedDate = date ?? new Date().toLocaleDateString('en-CA', { timeZone: 'America/Chicago' });
-    kvKey = `cb:daily:${edition}:${resolvedDate}`;
-  }
+    // Resolve KV key: either specific edition+date, or latest
+    let kvKey: string;
+    if (edition === 'latest' || (!date && edition === 'latest')) {
+      kvKey = 'cb:daily:latest';
+    } else {
+      const resolvedDate = date ?? new Date().toLocaleDateString('en-CA', { timeZone: 'America/Chicago' });
+      kvKey = `cb:daily:${edition}:${resolvedDate}`;
+    }
 
-  const cached = await kvGet<unknown>(env.KV, kvKey);
-  if (cached) {
-    return cachedJson(cached, 200, 300, {
-      ...dataHeaders(new Date().toISOString(), 'bsi-college-baseball-daily'),
-      'X-Cache': 'HIT',
-    });
-  }
-
-  // Fallback to latest if specific key not found
-  if (kvKey !== 'cb:daily:latest') {
-    const latest = await kvGet<unknown>(env.KV, 'cb:daily:latest');
-    if (latest) {
-      return cachedJson(latest, 200, 300, {
+    const cached = await kvGet<unknown>(env.KV, kvKey);
+    if (cached) {
+      return cachedJson(cached, 200, 300, {
         ...dataHeaders(new Date().toISOString(), 'bsi-college-baseball-daily'),
-        'X-Cache': 'FALLBACK',
+        'X-Cache': 'HIT',
       });
     }
-  }
 
-  return json({
-    error: 'Daily digest not yet generated. The pipeline runs at 5 AM and 11 PM CT.',
-    meta: { source: 'bsi-college-baseball-daily', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
-  }, 404);
+    // Fallback to latest if specific key not found
+    if (kvKey !== 'cb:daily:latest') {
+      const latest = await kvGet<unknown>(env.KV, 'cb:daily:latest');
+      if (latest) {
+        return cachedJson(latest, 200, 300, {
+          ...dataHeaders(new Date().toISOString(), 'bsi-college-baseball-daily'),
+          'X-Cache': 'FALLBACK',
+        });
+      }
+    }
+
+    return json({
+      error: 'Daily digest not yet generated. The pipeline runs at 5 AM and 11 PM CT.',
+      meta: { source: 'bsi-college-baseball-daily', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
+    }, 404);
+  } catch (err) {
+    console.error('[handleCollegeBaseballDaily]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }
 
 export async function handleCollegeBaseballNews(env: Env): Promise<Response> {
-  const cacheKey = 'cb:news';
-
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(cached, 200, HTTP_CACHE.news, { ...dataHeaders(new Date().toISOString(), 'cache'), 'X-Cache': 'HIT' });
-  }
-
   try {
+    const cacheKey = 'cb:news';
+
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(cached, 200, HTTP_CACHE.news, { ...dataHeaders(new Date().toISOString(), 'cache'), 'X-Cache': 'HIT' });
+    }
+
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 8000);
     const res = await fetch(
@@ -151,12 +161,14 @@ export async function handleCollegeBaseballNews(env: Env): Promise<Response> {
 
     await kvPut(env.KV, cacheKey, payload, 300); // 5 min cache
     return cachedJson(payload, 200, HTTP_CACHE.news, { ...dataHeaders(new Date().toISOString(), 'espn'), 'X-Cache': 'MISS' });
-  } catch {
+  } catch (err) {
+    console.error('[handleCollegeBaseballNews]', err instanceof Error ? err.message : err);
     return json({ articles: [], meta: { source: 'espn', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' } }, 502);
   }
 }
 
 export async function handleCollegeBaseballNewsEnhanced(env: Env): Promise<Response> {
+  try {
   const now = new Date().toISOString();
   const cacheKey = 'cb:news:enhanced';
   const cached = await kvGet<string>(env.KV, cacheKey);
@@ -237,43 +249,53 @@ export async function handleCollegeBaseballNewsEnhanced(env: Env): Promise<Respo
   await kvPut(env.KV, cacheKey, JSON.stringify(payload), 120);
 
   return cachedJson(payload, 200, HTTP_CACHE.news);
+  } catch (err) {
+    console.error('[handleCollegeBaseballNewsEnhanced]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
 }
 
 export async function handleCollegeBaseballTransferPortal(env: Env): Promise<Response> {
-  const raw = await env.KV.get('portal:college-baseball:entries', 'text');
-  if (raw) {
-    try {
-      const data = JSON.parse(raw) as Record<string, unknown>;
-      const entries = (data.entries ?? []) as unknown[];
-      return cachedJson({
-        entries,
-        totalEntries: entries.length,
-        lastUpdated: data.lastUpdated ?? null,
-        meta: { source: 'portal-sync', fetched_at: (data.lastUpdated as string) ?? new Date().toISOString(), timezone: 'America/Chicago' },
-      }, 200, HTTP_CACHE.trending);
-    } catch {
-      // Corrupt KV entry — fall through
+  try {
+    const raw = await env.KV.get('portal:college-baseball:entries', 'text');
+    if (raw) {
+      try {
+        const data = JSON.parse(raw) as Record<string, unknown>;
+        const entries = (data.entries ?? []) as unknown[];
+        return cachedJson({
+          entries,
+          totalEntries: entries.length,
+          lastUpdated: data.lastUpdated ?? null,
+          meta: { source: 'portal-sync', fetched_at: (data.lastUpdated as string) ?? new Date().toISOString(), timezone: 'America/Chicago' },
+        }, 200, HTTP_CACHE.trending);
+      } catch {
+        // Corrupt KV entry — fall through
+      }
     }
+    return json({
+      entries: [], totalEntries: 0, lastUpdated: null,
+      meta: { source: 'none', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
+      message: 'No portal data available yet',
+    }, 200);
+  } catch (err) {
+    console.error('[handleCollegeBaseballTransferPortal]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
   }
-  return json({
-    entries: [], totalEntries: 0, lastUpdated: null,
-    meta: { source: 'none', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
-    message: 'No portal data available yet',
-  }, 200);
 }
 
 export async function handleCollegeBaseballEditorialList(env: Env): Promise<Response> {
-  const cacheKey = 'cb:editorial:list';
   const now = new Date().toISOString();
 
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(cached, 200, HTTP_CACHE.news, {
-      ...dataHeaders(now, 'cache'), 'X-Cache': 'HIT',
-    });
-  }
-
   try {
+    const cacheKey = 'cb:editorial:list';
+
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(cached, 200, HTTP_CACHE.news, {
+        ...dataHeaders(now, 'cache'), 'X-Cache': 'HIT',
+      });
+    }
+
     const { results } = await env.DB.prepare(
       `SELECT id, slug, date, title, preview, teams, word_count, created_at
        FROM editorials
@@ -316,7 +338,7 @@ export async function handleCollegeBaseballEditorialList(env: Env): Promise<Resp
       ...dataHeaders(now, 'bsi-d1'), 'X-Cache': 'MISS',
     });
   } catch (err) {
-    console.error('[editorial] D1 query failed:', err instanceof Error ? err.message : err);
+    console.error('[handleCollegeBaseballEditorialList]', err instanceof Error ? err.message : err);
     return json({
       editorials: [],
       meta: { source: 'bsi-d1', fetched_at: now, timezone: 'America/Chicago' },

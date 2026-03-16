@@ -98,9 +98,9 @@ export default function TexasNILClient() {
                   <CardContent>
                     <div className="grid grid-cols-2 gap-px bg-border-subtle rounded-sm overflow-hidden">
                       {[
-                        { label: 'Elite + Paid', desc: 'High performance, high NIL', bg: 'bg-green-500/5', check: (p: DraftLeveragePlayer) => p.nil_index >= 60 && p.draft_round_projection <= 5 },
+                        { label: 'Elite + Paid', desc: 'High performance, high NIL', bg: 'bg-[var(--bsi-success)]/5', check: (p: DraftLeveragePlayer) => p.nil_index >= 60 && p.draft_round_projection <= 5 },
                         { label: 'Undervalued', desc: 'High performance, low NIL', bg: 'bg-burnt-orange/5', check: (p: DraftLeveragePlayer) => p.nil_index >= 60 && p.draft_round_projection > 5 },
-                        { label: 'Overvalued', desc: 'Low performance, high NIL', bg: 'bg-red-500/5', check: (p: DraftLeveragePlayer) => p.nil_index < 60 && p.draft_round_projection <= 5 },
+                        { label: 'Overvalued', desc: 'Low performance, high NIL', bg: 'bg-[var(--bsi-danger)]/5', check: (p: DraftLeveragePlayer) => p.nil_index < 60 && p.draft_round_projection <= 5 },
                         { label: 'Development', desc: 'Building both', bg: 'bg-[var(--surface-dugout)]', check: (p: DraftLeveragePlayer) => p.nil_index < 60 && p.draft_round_projection > 5 },
                       ].map((q) => (
                         <div key={q.label} className={`${q.bg} p-4`}>
