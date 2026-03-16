@@ -306,35 +306,46 @@ export async function handleNFLLeaders(env: Env): Promise<Response> {
     }
 
     // Fallback: ESPN leaders
-    const raw = await getLeaders('nfl') as Record<string, unknown>;
+    try {
+      const raw = await getLeaders('nfl') as Record<string, unknown>;
 
-    const categories = ((raw?.leaders || []) as Record<string, unknown>[]).map((cat) => {
-      const catLeaders = (cat.leaders || []) as Record<string, unknown>[];
-      return {
-        name: (cat.name as string) || (cat.displayName as string) || '',
-        abbreviation: (cat.abbreviation as string) || '',
-        leaders: catLeaders.slice(0, 10).map((leader) => {
-          const athlete = (leader.athlete || {}) as Record<string, unknown>;
-          const team = (athlete.team || {}) as Record<string, unknown>;
-          const headshot = (athlete.headshot || {}) as Record<string, unknown>;
-          return {
-            name: (athlete.displayName as string) || '',
-            id: athlete.id,
-            team: (team.abbreviation as string) || '',
-            teamId: team.id,
-            headshot: (headshot.href as string) || '',
-            value: (leader.displayValue as string) || leader.value || '',
-            stat: (cat.abbreviation as string) || (cat.name as string) || '',
-          };
-        }),
-      };
-    });
+      const categories = ((raw?.leaders || []) as Record<string, unknown>[]).map((cat) => {
+        const catLeaders = (cat.leaders || []) as Record<string, unknown>[];
+        return {
+          name: (cat.name as string) || (cat.displayName as string) || '',
+          abbreviation: (cat.abbreviation as string) || '',
+          leaders: catLeaders.slice(0, 10).map((leader) => {
+            const athlete = (leader.athlete || {}) as Record<string, unknown>;
+            const team = (athlete.team || {}) as Record<string, unknown>;
+            const headshot = (athlete.headshot || {}) as Record<string, unknown>;
+            return {
+              name: (athlete.displayName as string) || '',
+              id: athlete.id,
+              team: (team.abbreviation as string) || '',
+              teamId: team.id,
+              headshot: (headshot.href as string) || '',
+              value: (leader.displayValue as string) || leader.value || '',
+              stat: (cat.abbreviation as string) || (cat.name as string) || '',
+            };
+          }),
+        };
+      });
 
-    const payload = withMeta({ categories }, 'espn');
-    await kvPut(env.KV, cacheKey, payload, LEADERS_TTL);
-    return cachedJson(payload, 200, HTTP_CACHE.standings, freshDataHeaders('espn'));
+      if (categories.length > 0) {
+        const payload = withMeta({ categories }, 'espn');
+        await kvPut(env.KV, cacheKey, payload, LEADERS_TTL);
+        return cachedJson(payload, 200, HTTP_CACHE.standings, freshDataHeaders('espn'));
+      }
+    } catch {
+      // ESPN leaders unavailable (offseason or endpoint removed)
+    }
+
+    // Both sources unavailable — return empty categories (frontend shows offseason state)
+    const empty = withMeta({ categories: [], offseason: true }, 'none');
+    await kvPut(env.KV, cacheKey, empty, 300); // Cache empty for 5 min
+    return cachedJson(empty, 200, HTTP_CACHE.standings, freshDataHeaders('none'));
   } catch (err) {
     console.error('handleNFLLeaders error:', err);
-    return cachedJson({ error: 'Internal server error', status: 500 }, 500, 0);
+    return cachedJson(withMeta({ categories: [], offseason: true }, 'none'), 200, 0);
   }
 }
