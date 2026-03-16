@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { ogImage } from '@/lib/metadata';
+import { SportHubJsonLd } from '@/components/seo/SportHubJsonLd';
 
 export const metadata: Metadata = {
   title: 'NBA | Blaze Sports Intel',
@@ -23,5 +24,18 @@ export const metadata: Metadata = {
 };
 
 export default function NBALayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return (
+    <>
+      <SportHubJsonLd
+        sport="NBA"
+        url="/nba"
+        description="Live NBA scores, standings, and full-league analytics."
+        breadcrumbs={[
+          { name: 'Home', url: '/' },
+          { name: 'NBA', url: '/nba' },
+        ]}
+      />
+      {children}
+    </>
+  );
 }

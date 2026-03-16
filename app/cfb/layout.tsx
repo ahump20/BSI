@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { ogImage } from '@/lib/metadata';
+import { SportHubJsonLd } from '@/components/seo/SportHubJsonLd';
 
 export const metadata: Metadata = {
   title: 'College Football | Blaze Sports Intel',
@@ -23,5 +24,18 @@ export const metadata: Metadata = {
 };
 
 export default function CFBLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return (
+    <>
+      <SportHubJsonLd
+        sport="College Football"
+        url="/cfb"
+        description="Live college football scores, standings, and conference analytics."
+        breadcrumbs={[
+          { name: 'Home', url: '/' },
+          { name: 'College Football', url: '/cfb' },
+        ]}
+      />
+      {children}
+    </>
+  );
 }

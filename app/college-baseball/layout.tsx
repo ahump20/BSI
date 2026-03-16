@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { ogImage } from '@/lib/metadata';
+import { SportHubJsonLd } from '@/components/seo/SportHubJsonLd';
 
 export const metadata: Metadata = {
   title: 'College Baseball | Blaze Sports Intel',
@@ -24,5 +25,18 @@ export const metadata: Metadata = {
 };
 
 export default function CollegeBaseballLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return (
+    <>
+      <SportHubJsonLd
+        sport="College Baseball"
+        url="/college-baseball"
+        description="Live scores, standings, rankings, and advanced analytics for every D1 college baseball team."
+        breadcrumbs={[
+          { name: 'Home', url: '/' },
+          { name: 'College Baseball', url: '/college-baseball' },
+        ]}
+      />
+      {children}
+    </>
+  );
 }
