@@ -291,6 +291,9 @@ export default function SavantHubPage() {
             <div className="mb-8 flex items-start gap-3 pl-4" style={{ borderLeft: '2px solid rgba(191, 87, 0, 0.2)' }}>
               <p className="text-[11px] leading-relaxed" style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--bsi-dust)' }}>
                 {confLoading ? '...' : `${confRes?.total ?? confRes?.data?.length ?? 22} conferences tracked`} · ESPN box scores + Highlightly Pro · Recomputed every 6 hours
+                {battingRes?.meta?.fetched_at && (
+                  <> · Last computed: {new Date(battingRes.meta.fetched_at).toLocaleString('en-US', { timeZone: 'America/Chicago', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })} CT</>
+                )}
               </p>
             </div>
 
