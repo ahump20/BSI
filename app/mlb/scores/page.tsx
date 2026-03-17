@@ -15,8 +15,49 @@ import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import type { DataMeta } from '@/lib/types/data-meta';
 
+/* ── ESPN competitor shape (what the API actually returns) ── */
+interface ESPNCompetitor {
+  id?: string;
+  team?: { id?: string; displayName?: string; abbreviation?: string; logo?: string; shortDisplayName?: string };
+  score?: string;
+  homeAway?: 'home' | 'away';
+  winner?: boolean;
+  records?: Array<{ summary?: string; type?: string }>;
+}
+
+interface ESPNStatus {
+  type?: { state?: string; detail?: string; shortDetail?: string; description?: string };
+  period?: number;
+  displayClock?: string;
+}
+
+interface RawGame {
+  id?: string;
+  gamePk?: number;
+  name?: string;
+  shortName?: string;
+  date?: string;
+  status?: ESPNStatus;
+  teams?: ESPNCompetitor[] | { away?: TeamSide; home?: TeamSide };
+  venue?: { name?: string; fullName?: string } | string;
+  probablePitchers?: { away?: { name: string; stats?: string }; home?: { name: string; stats?: string } };
+  broadcasts?: unknown;
+}
+
+/* ── Normalized shape for GameCard ── */
+interface TeamSide {
+  name: string;
+  abbreviation: string;
+  score: number;
+  isWinner: boolean;
+  hits: number;
+  errors: number;
+  record?: string;
+  logo?: string;
+}
+
 interface Game {
-  id: number;
+  id: string;
   gamePk?: number;
   date: string;
   status: {
@@ -27,30 +68,78 @@ interface Game {
     isLive: boolean;
     isFinal: boolean;
   };
-  teams: {
-    away: {
-      name: string;
-      abbreviation: string;
-      score: number;
-      isWinner: boolean;
-      hits: number;
-      errors: number;
-      record?: string;
-    };
-    home: {
-      name: string;
-      abbreviation: string;
-      score: number;
-      isWinner: boolean;
-      hits: number;
-      errors: number;
-      record?: string;
-    };
-  };
+  teams: { away: TeamSide; home: TeamSide };
   venue: { name: string };
-  probablePitchers?: {
-    away?: { name: string; stats?: string };
-    home?: { name: string; stats?: string };
+  probablePitchers?: { away?: { name: string; stats?: string }; home?: { name: string; stats?: string } };
+}
+
+/** Convert ESPN competitor array OR pre-normalized object into {away, home} */
+function normalizeGame(raw: RawGame): Game {
+  const status = raw.status || {};
+  const stateType = status.type || {};
+  const stateStr = (stateType.state || '').toLowerCase();
+
+  const isLive = stateStr === 'in';
+  const isFinal = stateStr === 'post';
+
+  // Parse inning from detail like "Bottom 3rd" or "Top 5th"
+  let inning: number | undefined;
+  let inningState: string | undefined;
+  if (isLive && stateType.shortDetail) {
+    const match = stateType.shortDetail.match(/(Top|Bot|Mid)\s+(\d+)/i);
+    if (match) {
+      inningState = match[1] === 'Bot' ? 'Bottom' : match[1] === 'Mid' ? 'Middle' : 'Top';
+      inning = parseInt(match[2], 10);
+    }
+  }
+
+  // Normalize teams — handle both ESPN array and pre-normalized object
+  let away: TeamSide = { name: '', abbreviation: '', score: 0, isWinner: false, hits: 0, errors: 0 };
+  let home: TeamSide = { name: '', abbreviation: '', score: 0, isWinner: false, hits: 0, errors: 0 };
+
+  if (Array.isArray(raw.teams)) {
+    for (const c of raw.teams as ESPNCompetitor[]) {
+      const side: TeamSide = {
+        name: c.team?.displayName || c.team?.shortDisplayName || '',
+        abbreviation: c.team?.abbreviation || '',
+        score: parseInt(String(c.score || '0'), 10),
+        isWinner: !!c.winner,
+        hits: 0,
+        errors: 0,
+        record: c.records?.find((r) => r.type === 'total')?.summary,
+        logo: c.team?.logo,
+      };
+      if (c.homeAway === 'away') away = side;
+      else home = side;
+    }
+  } else if (raw.teams && typeof raw.teams === 'object') {
+    const t = raw.teams as { away?: TeamSide; home?: TeamSide };
+    if (t.away) away = t.away;
+    if (t.home) home = t.home;
+  }
+
+  // Normalize venue
+  const venueName = typeof raw.venue === 'string'
+    ? raw.venue
+    : (raw.venue as Record<string, string> | undefined)?.fullName
+      || (raw.venue as Record<string, string> | undefined)?.name
+      || '';
+
+  return {
+    id: String(raw.id || raw.gamePk || '0'),
+    gamePk: raw.gamePk,
+    date: raw.date || '',
+    status: {
+      state: stateStr,
+      detailedState: stateType.detail || stateType.description || (isFinal ? 'Final' : isLive ? 'In Progress' : 'Scheduled'),
+      inning,
+      inningState,
+      isLive,
+      isFinal,
+    },
+    teams: { away, home },
+    venue: { name: venueName },
+    probablePitchers: raw.probablePitchers,
   };
 }
 
@@ -92,7 +181,9 @@ function GameCard({ game }: { game: Game }) {
               game.status?.detailedState
             )}
           </span>
-          <span className="text-xs text-text-tertiary">{game.venue?.name || 'TBD'}</span>
+          {game.venue?.name && (
+            <span className="text-xs text-text-tertiary">{game.venue.name}</span>
+          )}
         </div>
 
         {/* Teams */}
@@ -101,13 +192,13 @@ function GameCard({ game }: { game: Game }) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
-                {away?.abbreviation ?? '???'}
+                {away?.abbreviation || '—'}
               </div>
               <div>
                 <p
                   className={`font-semibold ${isFinal && away?.isWinner ? 'text-text-primary' : 'text-text-secondary'}`}
                 >
-                  {away?.name ?? 'Away'}
+                  {away?.name || 'Unknown'}
                 </p>
                 {away?.record && (
                   <p className="text-xs text-text-tertiary">{away.record}</p>
@@ -138,13 +229,13 @@ function GameCard({ game }: { game: Game }) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
-                {home?.abbreviation ?? '???'}
+                {home?.abbreviation || '—'}
               </div>
               <div>
                 <p
                   className={`font-semibold ${isFinal && home?.isWinner ? 'text-text-primary' : 'text-text-secondary'}`}
                 >
-                  {home?.name ?? 'Home'}
+                  {home?.name || 'Unknown'}
                 </p>
                 {home?.record && (
                   <p className="text-xs text-text-tertiary">{home.record}</p>
@@ -189,9 +280,9 @@ function GameCard({ game }: { game: Game }) {
         {isScheduled && game.probablePitchers && (
           <div className="px-4 pb-3 text-xs text-text-tertiary border-t border-border-subtle pt-3">
             <div className="flex justify-between">
-              <span>{game.probablePitchers.away?.name || 'TBD'}</span>
+              <span>{game.probablePitchers.away?.name || 'Not Announced'}</span>
               <span>vs</span>
-              <span>{game.probablePitchers.home?.name || 'TBD'}</span>
+              <span>{game.probablePitchers.home?.name || 'Not Announced'}</span>
             </div>
           </div>
         )}
@@ -204,12 +295,12 @@ export default function MLBScoresPage() {
   const [selectedDate, setSelectedDate] = useState<string>(getDateOffset(0));
   const [liveGamesDetected, setLiveGamesDetected] = useState(false);
 
-  const { data: rawData, loading, error, retry } = useSportData<{ games?: Game[]; live?: boolean; meta?: DataMeta }>(
+  const { data: rawData, loading, error, retry } = useSportData<{ games?: RawGame[]; live?: boolean; meta?: DataMeta }>(
     `/api/mlb/scores?date=${selectedDate}`,
     { refreshInterval: 30000, refreshWhen: liveGamesDetected, timeout: 10000 }
   );
 
-  const games = useMemo(() => rawData?.games || [], [rawData]);
+  const games = useMemo(() => (rawData?.games || []).map(normalizeGame), [rawData]);
   const hasLiveGames = useMemo(() => rawData?.live || games.some((g) => g.status.isLive), [rawData, games]);
   const meta = rawData?.meta || null;
 
