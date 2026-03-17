@@ -71,7 +71,8 @@
     "rollback:pages": "node scripts/pages-rollback.mjs",
     "rollback:pages:list": "node scripts/pages-rollback.mjs --list",
     "scan:secrets": "npx --no-install secretlint --secretlintrc .secretlintrc.json --secretlintignore .secretlintignore .",
-    "scan:secrets:staged": "node scripts/secretlint-staged.mjs"
+    "scan:secrets:staged": "node scripts/secretlint-staged.mjs",
+    "scan:prod-data": "node scripts/check-production-data-integrity.mjs"
   },
   "dependencies": {
     "@mediapipe/tasks-vision": "^0.10.32",
