@@ -1,6 +1,9 @@
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://127.0.0.1:3000';
+const BASE_URL =
+  process.env.BASE_URL ??
+  process.env.PLAYWRIGHT_BASE_URL ??
+  'https://blazesportsintel.com';
 
 test.describe('Scores hub overview aggregation', () => {
   test('renders featured content from /api/scores/overview without fan-out to legacy score endpoints', async ({
