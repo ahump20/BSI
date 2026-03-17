@@ -1,0 +1,25 @@
+{
+  "skill_name": "blaze-platform-visual-design",
+  "evals": [
+    {
+      "id": "bsi-home-redesign",
+      "prompt": "Redesign the Blaze Sports Intel homepage hero and first three modules for launch week. Keep it serious, information-dense, and explicitly brand-tied."
+    },
+    {
+      "id": "live-scoreboard-surface",
+      "prompt": "Design a college baseball live scoreboard page for mobile-first scanning with dense game data. Require interaction states and contrast rationale."
+    },
+    {
+      "id": "savant-analytics-panel",
+      "prompt": "Create visual direction for a Savant analytics dashboard in Next.js + Tailwind + Recharts + Framer Motion. Provide design spec before any code advice."
+    },
+    {
+      "id": "editorial-feature-brief",
+      "prompt": "Give me visual direction for an editorial deep-dive page combining narrative and advanced baseball metrics without looking like a generic SaaS blog."
+    },
+    {
+      "id": "team-detail-surface",
+      "prompt": "Define UI spec for a team detail page with schedule, form trend, key player panels, and data caveats. Keep BSI typography and token discipline strict."
+    }
+  ]
+}
