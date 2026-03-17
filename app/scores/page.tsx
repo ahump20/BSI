@@ -4,6 +4,7 @@ import { Suspense, useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { streamAnalysis } from '@/lib/bsi-stream-client';
+import { useScoresOverview } from '@/lib/hooks/useScoresOverview';
 import type { Sport } from '@/lib/bsi-stream-client';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -373,7 +374,10 @@ function ScoresLoading() {
 // ── Main Component ──
 
 function ScoresHubContent() {
-  const [sports, setSports] = useState<SportSection[]>([
+  // Aggregated scores from /api/scores/overview (auto-refreshes every 60s)
+  const { data: overviewData, loading: overviewLoading } = useScoresOverview();
+
+  const [sports, setSports] = useState<SportSection[]>(() => [
     {
       id: 'college-baseball', name: 'College Baseball', href: '/college-baseball/scores',
       description: 'All 300+ D1 programs — live scores, box scores, and recaps',
@@ -408,82 +412,77 @@ function ScoresHubContent() {
   const sportParam = searchParams.get('sport');
   const [activeSport, setActiveSport] = useState<string | null>(sportParam);
 
-  const fetchLiveCounts = useCallback(async (signal?: AbortSignal) => {
-    try {
-      const [mlbResult, cbResult, nflResult, nbaResult, cfbResult] = await Promise.allSettled([
-        fetch('/api/mlb/scores', { signal }).then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),
-        fetch(`/api/college-baseball/schedule?date=${new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' }).format(new Date())}`, { signal }).then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),
-        fetch('/api/nfl/scores', { signal }).then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),
-        fetch('/api/nba/scoreboard', { signal }).then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),
-        fetch('/api/cfb/scores', { signal }).then(r => r.ok ? r.json() as Promise<Record<string, unknown>> : null),
-      ]);
-
-      let live = 0;
-
-      setSports(prev => prev.map(s => {
-        if (s.id === 'mlb' && mlbResult.status === 'fulfilled' && mlbResult.value) {
-          const d = mlbResult.value;
-          const games = (d.games as Array<Record<string, unknown>>) || [];
-          const mlbLive = games.filter(g => (g.status as Record<string, boolean>)?.isLive).length;
-          live += mlbLive;
-          return { ...s, liveCount: mlbLive, todayCount: games.length, isActive: games.length > 0, loaded: true, featured: extractMLBGames(d) };
-        }
-        if (s.id === 'college-baseball' && cbResult.status === 'fulfilled' && cbResult.value) {
-          const d = cbResult.value;
-          const games = ((d.data || d.games) as Array<Record<string, unknown>>) || [];
-          const cbLive = games.filter(g => g.status === 'live').length;
-          live += cbLive;
-          return { ...s, liveCount: cbLive, todayCount: games.length, isActive: games.length > 0, loaded: true, featured: extractCBBGames(d) };
-        }
-        if (s.id === 'nfl' && nflResult.status === 'fulfilled' && nflResult.value) {
-          const d = nflResult.value;
-          const games = (d.games as Array<Record<string, unknown>>) || [];
-          const nflLive = games.filter(g => {
-            const st = (g.status as Record<string, unknown>) || {};
-            const stType = (st as Record<string, Record<string, unknown>>).type || {};
-            return !stType.completed && Number((st as Record<string, unknown>).period || 0) > 0;
-          }).length;
-          live += nflLive;
-          return { ...s, liveCount: nflLive, todayCount: games.length, isActive: games.length > 0, loaded: true, featured: extractESPNGames(d, 'nfl') };
-        }
-        if (s.id === 'nba' && nbaResult.status === 'fulfilled' && nbaResult.value) {
-          const d = nbaResult.value;
-          const games = (d.games as Array<Record<string, unknown>>) || [];
-          const nbaLive = games.filter(g => {
-            const st = (g.status as Record<string, unknown>) || {};
-            const stType = (st as Record<string, Record<string, unknown>>).type || {};
-            return !stType.completed && Number((st as Record<string, unknown>).period || 0) > 0;
-          }).length;
-          live += nbaLive;
-          return { ...s, liveCount: nbaLive, todayCount: games.length, isActive: games.length > 0, loaded: true, featured: extractESPNGames(d, 'nba') };
-        }
-        if (s.id === 'cfb' && cfbResult.status === 'fulfilled' && cfbResult.value) {
-          const d = cfbResult.value;
-          const games = (d.games as Array<Record<string, unknown>>) || [];
-          const cfbLive = games.filter(g => {
-            const st = (g.status as Record<string, Record<string, unknown>>) || {};
-            return String(st.type?.state) === 'in';
-          }).length;
-          live += cfbLive;
-          return { ...s, liveCount: cfbLive, todayCount: games.length, isActive: games.length > 0, loaded: true, featured: extractESPNGames(d, 'cfb') };
-        }
-        return { ...s, loaded: true };
-      }));
-
-      setTotalLive(live);
-      setFetchedAt(new Date().toISOString());
-    } catch {
-      setSports(prev => prev.map(s => ({ ...s, loaded: true, fetchError: true })));
-    }
-  }, []);
-
+  // Derive sport metadata from the aggregate response
   useEffect(() => {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 8000);
-    fetchLiveCounts(controller.signal).finally(() => clearTimeout(timeout));
-    const interval = setInterval(() => fetchLiveCounts(), 60000);
-    return () => { controller.abort(); clearTimeout(timeout); clearInterval(interval); };
-  }, [fetchLiveCounts]);
+    if (!overviewData || overviewLoading) return;
+    const { data, errors } = overviewData;
+    let liveTotal = 0;
+
+    setSports(prev =>
+      prev.map(s => {
+        const sportData = data?.[s.id] as Record<string, unknown> | undefined;
+        if (sportData && !errors?.[s.id]) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const games = ((sportData.data || sportData.games) as any[]) || [];
+          let liveCount = 0;
+
+          switch (s.id) {
+            case 'mlb':
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              liveCount = games.filter((g: any) => g.status?.isLive).length;
+              break;
+            case 'college-baseball':
+              liveCount = games.filter((g: Record<string, unknown>) => g.status === 'live').length;
+              break;
+            case 'nfl':
+            case 'nba':
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              liveCount = games.filter((g: any) => {
+                const st = g.status || {};
+                const stType = st.type || {};
+                return !stType.completed && Number(st.period || 0) > 0;
+              }).length;
+              break;
+            case 'cfb':
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              liveCount = games.filter((g: any) => {
+                const st = g.status || {};
+                return String(st.type?.state) === 'in';
+              }).length;
+              break;
+          }
+
+          liveTotal += liveCount;
+
+          const featured =
+            s.id === 'mlb'
+              ? extractMLBGames(sportData)
+              : s.id === 'college-baseball'
+                ? extractCBBGames(sportData)
+                : ['nfl', 'nba', 'cfb'].includes(s.id)
+                  ? extractESPNGames(sportData, s.id)
+                  : [];
+
+          return {
+            ...s,
+            liveCount,
+            todayCount: games.length,
+            isActive: games.length > 0,
+            loaded: true,
+            fetchError: false,
+            featured,
+          };
+        }
+        if (errors?.[s.id]) {
+          return { ...s, loaded: true, fetchError: true, featured: [] };
+        }
+        return s;
+      }),
+    );
+
+    setTotalLive(liveTotal);
+    setFetchedAt(new Date().toISOString());
+  }, [overviewData, overviewLoading]);
 
   const hasAnyLive = totalLive > 0;
 
