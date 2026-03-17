@@ -31,7 +31,7 @@ export function ToggleGroup<T extends string>({
             aria-checked={active}
             onClick={() => onValueChange(opt.value)}
             className={clsx(
-              'px-3 py-1.5 rounded-sm text-xs font-mono uppercase tracking-[0.12em] transition-all',
+              'px-3 py-1.5 min-h-[44px] rounded-sm text-xs font-mono uppercase tracking-[0.12em] transition-all',
               active ? 'border shadow-sm' : 'text-text-muted hover:text-text-secondary border border-transparent',
             )}
             style={

@@ -1,0 +1,42 @@
+# BSI Baseball Agent — Stateful AI chat agent for college baseball analytics
+# Deploy: wrangler deploy --config workers/bsi-baseball-agent/wrangler.toml
+# Secrets: wrangler secret put ANTHROPIC_API_KEY --config workers/bsi-baseball-agent/wrangler.toml
+
+name = "bsi-baseball-agent"
+main = "index.ts"
+compatibility_date = "2026-03-14"
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+[[durable_objects.bindings]]
+name = "BSI_BASEBALL_AGENT"
+class_name = "BaseballChatAgent"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["BaseballChatAgent"]
+
+workers_dev = true
+
+[[kv_namespaces]]
+binding = "BSI_KEYS"
+id = "b7ff9178798d4a238afff79522f651e8"
+
+# Uncomment after adding CNAME in Cloudflare dashboard:
+# DNS → Add Record → CNAME → name: agent → target: bsi-baseball-agent.humphrey-austin20.workers.dev → Proxied
+# [[routes]]
+# pattern = "agent.blazesportsintel.com/*"
+# zone_name = "blazesportsintel.com"
+
+[[tail_consumers]]
+service = "bsi-error-tracker"
+
+[vars]
+ENVIRONMENT = "production"
+BSI_API_BASE = "https://blazesportsintel.com/api"
+
+[dev]
+port = 8797

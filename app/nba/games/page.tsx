@@ -11,6 +11,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { formatTimestamp, formatScheduleDate, getDateOffset, formatGameTime } from '@/lib/utils/timezone';
 import type { DataMeta } from '@/lib/types/data-meta';
 
@@ -318,7 +319,7 @@ export default function NBAGamesPage() {
             <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
               <button
                 onClick={() => setSelectedDate(getDateOffset(-3))}
-                className="p-2 text-text-tertiary hover:text-text-primary transition-colors"
+                className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-text-tertiary hover:text-text-primary transition-colors"
                 aria-label="Previous days"
               >
                 <svg
@@ -340,7 +341,7 @@ export default function NBAGamesPage() {
                   <button
                     key={option.offset}
                     onClick={() => setSelectedDate(dateValue)}
-                    className={`px-4 py-2 rounded-sm font-semibold text-sm whitespace-nowrap transition-all ${
+                    className={`px-4 py-2 min-h-[44px] rounded-sm font-semibold text-sm whitespace-nowrap transition-all ${
                       isSelected
                         ? 'bg-burnt-orange text-white'
                         : 'bg-background-tertiary text-text-secondary hover:bg-surface-light hover:text-text-primary'
@@ -353,7 +354,7 @@ export default function NBAGamesPage() {
 
               <button
                 onClick={() => setSelectedDate(getDateOffset(3))}
-                className="p-2 text-text-tertiary hover:text-text-primary transition-colors"
+                className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-text-tertiary hover:text-text-primary transition-colors"
                 aria-label="Next days"
               >
                 <svg
@@ -374,7 +375,7 @@ export default function NBAGamesPage() {
                 <button
                   key={conf}
                   onClick={() => setSelectedConference(conf)}
-                  className={`px-4 py-2 rounded-sm text-sm font-medium transition-all ${
+                  className={`px-4 py-2 min-h-[44px] rounded-sm text-sm font-medium transition-all ${
                     selectedConference === conf
                       ? 'bg-burnt-orange text-white'
                       : 'bg-background-tertiary text-text-secondary hover:text-text-primary hover:bg-slate'
@@ -404,24 +405,12 @@ export default function NBAGamesPage() {
                 </button>
               </Card>
             ) : games.length === 0 ? (
-              <Card variant="default" padding="lg">
-                <div className="text-center py-8">
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="w-16 h-16 text-text-tertiary mx-auto mb-4"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20M2 12h20" />
-                  </svg>
-                  <p className="text-text-secondary">No games scheduled for this date</p>
-                  <p className="text-text-tertiary text-sm mt-2">
-                    NBA season runs October through June
-                  </p>
-                </div>
-              </Card>
+              <EmptyState
+                type="no-games"
+                sport="NBA"
+                message="No games scheduled for this date. NBA season runs October through June."
+                action={{ label: 'View NBA Standings', href: '/nba/standings' }}
+              />
             ) : (
               <>
                 {/* Live Games Section */}

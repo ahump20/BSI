@@ -316,7 +316,7 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
                       <Card variant="default" padding="lg">
                         <CardHeader>
                           <CardTitle className="flex items-center gap-2">
-                            <img src={texasLogo} alt="" className="w-5 h-5 object-contain" />
+                            <img src={texasLogo} alt="" className="w-5 h-5 object-contain" loading="lazy" />
                             <span>Texas Top Hitters</span>
                           </CardTitle>
                         </CardHeader>
@@ -346,7 +346,7 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
                       <Card variant="default" padding="lg">
                         <CardHeader>
                           <CardTitle className="flex items-center gap-2">
-                            <img src={oppLogo} alt="" className="w-5 h-5 object-contain" />
+                            <img src={oppLogo} alt="" className="w-5 h-5 object-contain" loading="lazy" />
                             <span>{oppName} Top Hitters</span>
                           </CardTitle>
                         </CardHeader>

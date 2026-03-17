@@ -226,8 +226,8 @@ export default function CFBPage() {
         .slice(0, 6);
     }
 
-    return (scoresRaw?.scores || []).map((score) => ({
-      id: score.id || Math.random(),
+    return (scoresRaw?.scores || []).map((score, idx) => ({
+      id: score.id || `cfb-game-${idx}`,
       status: score.status || score.state || 'Final',
       isLive: (score.status || score.state || '').toLowerCase().includes('live') || (score.status || score.state || '').toLowerCase().includes('in progress'),
       isFinal: (score.status || score.state || '').toLowerCase().includes('final'),
@@ -559,7 +559,7 @@ export default function CFBPage() {
                       <CardHeader>
                         <CardTitle className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
-                            <Image src="/icons/football.svg" alt="" width={20} height={20} className="opacity-60" />
+                            <Image src="/icons/football.svg" alt="" width={20} height={20} className="opacity-60" aria-hidden="true" />
                             AP Top 25 Rankings
                           </div>
                           <Badge variant="primary">2025-26 Season</Badge>

@@ -468,7 +468,7 @@ export default function NBAStandingsPage() {
                 <button
                   key={conf}
                   onClick={() => setSelectedConference(conf)}
-                  className={`px-6 py-3 rounded-sm font-semibold transition-all ${
+                  className={`px-6 py-3 min-h-[44px] rounded-sm font-semibold transition-all ${
                     selectedConference === conf
                       ? 'bg-burnt-orange text-white'
                       : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
@@ -494,8 +494,8 @@ export default function NBAStandingsPage() {
               </Card>
             ) : !dataFresh && currentConference?.teams.every((t) => t.wins === 0 && t.losses === 0) ? (
               <div className="text-center py-12">
-                <p className="text-text-tertiary text-sm">
-                  Live standings data is temporarily unavailable. Check back shortly.
+                <p className="italic" style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--bsi-dust, #C4B8A5)' }}>
+                  Standings update during the season
                 </p>
               </div>
             ) : (

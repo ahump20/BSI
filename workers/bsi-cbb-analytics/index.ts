@@ -757,7 +757,7 @@ async function runAnalytics(env: Env, includeWeekly: boolean) {
 
     results.durationMs = Date.now() - start;
     results.success = true;
-    console.log('[bsi-cbb-analytics] Complete:', JSON.stringify(results));
+    console.info('[bsi-cbb-analytics] Complete:', JSON.stringify(results));
   } catch (err) {
     results.error = err instanceof Error ? err.message : 'Unknown error';
     results.success = false;

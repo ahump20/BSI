@@ -88,7 +88,7 @@ export function MobileBottomNav({ onMorePress }: { onMorePress?: () => void }) {
               key={href}
               href={href}
               aria-current={active ? 'page' : undefined}
-              className={`relative flex flex-col items-center justify-center gap-1 flex-1 py-2.5 px-1 transition-colors ${
+              className={`relative flex flex-col items-center justify-center gap-1 flex-1 min-h-[48px] py-2.5 px-1 transition-colors ${
                 active
                   ? 'text-[#BF5700]'
                   : 'text-[rgba(245,240,235,0.35)] hover:text-[rgba(245,240,235,0.65)]'
@@ -129,7 +129,7 @@ export function MobileBottomNav({ onMorePress }: { onMorePress?: () => void }) {
         {/* More button — toggles the slide-up panel */}
         <button
           onClick={onMorePress}
-          className="flex flex-col items-center justify-center gap-1 flex-1 py-2.5 px-1 transition-colors text-[rgba(245,240,235,0.35)] hover:text-[rgba(245,240,235,0.65)]"
+          className="flex flex-col items-center justify-center gap-1 flex-1 min-h-[48px] py-2.5 px-1 transition-colors text-[rgba(245,240,235,0.35)] hover:text-[rgba(245,240,235,0.65)]"
           aria-label="More navigation options"
         >
           <span aria-hidden="true" className="relative">

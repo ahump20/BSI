@@ -20,6 +20,7 @@ import { securityMiddleware } from './shared/security';
 import { checkInMemoryRateLimit, checkPostRateLimit, maybeCleanupRateLimit } from './shared/rate-limit';
 import { proxyToPages } from './shared/proxy';
 import { requireApiKey, provisionKey, emailKey } from './shared/auth';
+import { handleScoutingReport } from './handlers/scouting';
 
 // --- Handlers ---
 import {
@@ -268,7 +269,7 @@ app.use('*', async (c, next) => {
   c.res.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   c.res.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Request-ID, X-BSI-Key');
   c.res.headers.set('Access-Control-Max-Age', '86400');
-  c.res.headers.set('Vary', 'Origin');
+  c.res.headers.set('Vary', 'Origin, Accept-Encoding');
 });
 
 // --- Middleware: Security headers ---
@@ -307,7 +308,7 @@ app.onError(async (err, c) => {
   const detail = err instanceof Error ? err.message : 'Internal server error';
   await logError(c.env, detail, c.req.path);
   const publicMessage = c.env.ENVIRONMENT === 'production' ? 'Internal server error' : detail;
-  return c.json({ error: publicMessage }, 500);
+  return c.json({ error: publicMessage, code: 'INTERNAL_ERROR', status: 500 }, 500);
 });
 
 // =============================================================================
@@ -432,6 +433,7 @@ app.get('/api/college-baseball/teams/:teamId', (c) => {
 });
 app.get('/api/college-baseball/players/compare/:p1/:p2', (c) => handleCollegeBaseballPlayerCompare(c.req.param('p1'), c.req.param('p2'), c.env));
 app.get('/api/college-baseball/players/:playerId/game-log', (c) => handlePlayerGameLog(c.req.param('playerId'), c.env));
+app.get('/api/college-baseball/players/:playerId/scouting-report', (c) => handleScoutingReport(c.req.param('playerId'), c.req.raw, c.env));
 app.get('/api/college-baseball/players/:playerId', (c) => handleCollegeBaseballPlayer(c.req.param('playerId'), c.env));
 app.get('/api/college-baseball/game/:gameId', (c) => handleCollegeBaseballGame(c.req.param('gameId'), c.env));
 app.get('/api/college-baseball/games/:gameId', (c) => handleCollegeBaseballGame(c.req.param('gameId'), c.env));
@@ -785,7 +787,7 @@ app.post('/webhooks/stripe', async (c) => {
         if (keyUuid) await kv.delete(`key:${keyUuid}`);
         await kv.delete(`email:${email}`);
         await kv.delete(`stripe:${customerId}`);
-        console.log(`[webhook] Revoked access for ${email} (subscription deleted)`);
+        console.info(`[webhook] Revoked access for ${email} (subscription deleted)`);
       }
     }
   }
@@ -808,7 +810,7 @@ app.post('/webhooks/stripe', async (c) => {
             const keyData = JSON.parse(raw) as import('./shared/auth').KeyData;
             keyData.tier = newTier;
             await kv.put(`key:${keyUuid}`, JSON.stringify(keyData));
-            console.log(`[webhook] Updated tier to ${newTier} for ${email}`);
+            console.info(`[webhook] Updated tier to ${newTier} for ${email}`);
           }
         }
       }
@@ -861,7 +863,7 @@ app.post('/webhooks/stripe', async (c) => {
             }),
           });
           if (emailRes.ok) {
-            console.log(`[webhook] Trial ending email sent to ${email}`);
+            console.info(`[webhook] Trial ending email sent to ${email}`);
           } else {
             const errBody = await emailRes.text().catch(() => 'unknown');
             console.error(`[webhook] Trial email failed for ${email}: ${emailRes.status} — ${errBody}`);
@@ -893,7 +895,7 @@ app.post('/webhooks/stripe', async (c) => {
             const keyData = JSON.parse(raw) as import('./shared/auth').KeyData;
             keyData.expires = Date.now() + 365 * 24 * 60 * 60 * 1000;
             await kv.put(`key:${keyUuid}`, JSON.stringify(keyData));
-            console.log(`[webhook] Extended expiry for ${email} (renewal paid)`);
+            console.info(`[webhook] Extended expiry for ${email} (renewal paid)`);
           }
         }
       }

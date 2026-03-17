@@ -1,41 +1,70 @@
 import Link from 'next/link';
-import { Container } from '@/components/ui/Container';
-import { Section } from '@/components/ui/Section';
-import { Button } from '@/components/ui/Button';
-import { Footer } from '@/components/layout-ds/Footer';
 
 export default function NotFound() {
   return (
-    <>
-      <div>
-        <Section padding="lg" className="pt-6 min-h-[70vh] flex items-center">
-          <Container center>
-            <div className="max-w-lg mx-auto text-center">
-              <h1 className="font-display text-8xl font-bold text-burnt-orange mb-4">404</h1>
-              <h2 className="font-display text-2xl font-bold uppercase tracking-display mb-4">
-                Page Not <span className="text-gradient-blaze">Found</span>
-              </h2>
-              <p className="text-text-secondary mb-8">
-                Looks like this play got called back. The page you are looking for does not exist or
-                has been moved.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/">
-                  <Button variant="primary" size="lg">
-                    Back to Home
-                  </Button>
-                </Link>
-                <Link href="/college-baseball">
-                  <Button variant="secondary" size="lg">
-                    College Baseball
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </Container>
-        </Section>
+    <div
+      className="min-h-[80vh] flex items-center justify-center px-4"
+      style={{ background: 'var(--surface-scoreboard, #0A0A0A)' }}
+    >
+      <div className="max-w-lg mx-auto text-center">
+        {/* 404 number — Bebas Neue hero scale */}
+        <h1
+          className="font-bold leading-none mb-4"
+          style={{
+            fontFamily: 'var(--bsi-font-display-hero, var(--font-bebas))',
+            fontSize: 'clamp(6rem, 20vw, 12rem)',
+            color: 'var(--bsi-primary)',
+            textShadow: '0 0 60px rgba(191, 87, 0, 0.25)',
+          }}
+        >
+          404
+        </h1>
+
+        {/* Heading — Oswald */}
+        <h2
+          className="font-bold uppercase mb-4"
+          style={{
+            fontFamily: 'var(--bsi-font-display, var(--font-oswald))',
+            fontSize: 'clamp(1.25rem, 4vw, 2rem)',
+            letterSpacing: '0.08em',
+            color: 'var(--bsi-bone)',
+          }}
+        >
+          Page Not Found
+        </h2>
+
+        {/* Body — Cormorant Garamond */}
+        <p
+          className="mb-3 italic"
+          style={{
+            fontFamily: 'var(--bsi-font-body, var(--font-cormorant))',
+            fontSize: 'clamp(1rem, 2.5vw, 1.25rem)',
+            color: 'var(--bsi-dust)',
+            lineHeight: 1.6,
+          }}
+        >
+          Looks like this play got called back. The page you are looking for does not exist or has
+          been moved.
+        </p>
+
+        {/* Tagline */}
+        <p
+          className="italic mb-10"
+          style={{
+            fontFamily: 'var(--bsi-font-body, var(--font-cormorant))',
+            fontSize: 'clamp(0.85rem, 2vw, 1rem)',
+            color: 'var(--bsi-primary)',
+            opacity: 0.75,
+          }}
+        >
+          Born to Blaze the Path Beaten Less
+        </p>
+
+        {/* CTA — heritage button */}
+        <Link href="/" className="btn-heritage-fill px-8 py-3 text-sm inline-block">
+          Back to Home
+        </Link>
       </div>
-      <Footer />
-    </>
+    </div>
   );
 }

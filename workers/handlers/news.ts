@@ -7,67 +7,71 @@ import { json, cachedJson, kvGet, kvPut } from '../shared/helpers';
 import { HTTP_CACHE, ESPN_NEWS_ENDPOINTS, INTEL_ESPN_NEWS } from '../shared/constants';
 
 export async function handleIntelNews(url: URL, env: Env): Promise<Response> {
-  const sportParam = url.searchParams.get('sport') || 'all';
+  try {
+    const sportParam = url.searchParams.get('sport') || 'all';
 
-  // Determine which sports to fetch news for
-  const sportsToFetch = sportParam === 'all'
-    ? Object.keys(INTEL_ESPN_NEWS)
-    : sportParam.split(',').filter((s) => s in INTEL_ESPN_NEWS);
+    // Determine which sports to fetch news for
+    const sportsToFetch = sportParam === 'all'
+      ? Object.keys(INTEL_ESPN_NEWS)
+      : sportParam.split(',').filter((s) => s in INTEL_ESPN_NEWS);
 
-  if (sportsToFetch.length === 0) {
-    return json({ articles: [], error: 'Invalid sport parameter' }, 400);
-  }
-
-  const results: Array<{ sport: string; data: Record<string, unknown> }> = [];
-
-  for (const sport of sportsToFetch) {
-    const cacheKey = `intel:news:${sport}`;
-
-    // Check KV cache first
-    const cached = await kvGet<Record<string, unknown>>(env.KV, cacheKey);
-    if (cached) {
-      results.push({ sport, data: cached });
-      continue;
+    if (sportsToFetch.length === 0) {
+      return json({ articles: [], error: 'Invalid sport parameter' }, 400);
     }
 
-    // Fetch from ESPN
-    try {
-      const espnUrl = INTEL_ESPN_NEWS[sport];
-      if (!espnUrl) continue;
+    const results: Array<{ sport: string; data: Record<string, unknown> }> = [];
 
-      const res = await fetch(espnUrl, {
-        headers: { Accept: 'application/json' },
-      });
+    for (const sport of sportsToFetch) {
+      const cacheKey = `intel:news:${sport}`;
 
-      if (res.ok) {
-        const data = (await res.json()) as Record<string, unknown>;
-        // Cache in KV for 2 minutes
-        await kvPut(env.KV, cacheKey, data, 120);
-        results.push({ sport, data });
-      } else {
+      // Check KV cache first
+      const cached = await kvGet<Record<string, unknown>>(env.KV, cacheKey);
+      if (cached) {
+        results.push({ sport, data: cached });
+        continue;
+      }
+
+      // Fetch from ESPN
+      try {
+        const espnUrl = INTEL_ESPN_NEWS[sport];
+        if (!espnUrl) continue;
+
+        const res = await fetch(espnUrl, {
+          headers: { Accept: 'application/json' },
+        });
+
+        if (res.ok) {
+          const data = (await res.json()) as Record<string, unknown>;
+          // Cache in KV for 2 minutes
+          await kvPut(env.KV, cacheKey, data, 120);
+          results.push({ sport, data });
+        } else {
+          results.push({ sport, data: { articles: [] } });
+        }
+      } catch {
         results.push({ sport, data: { articles: [] } });
       }
-    } catch {
-      results.push({ sport, data: { articles: [] } });
     }
-  }
 
-  return cachedJson(results, 200, HTTP_CACHE.news);
+    return cachedJson(results, 200, HTTP_CACHE.news);
+  } catch (err) {
+    console.error('[handleIntelNews]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', code: 'INTERNAL_ERROR', status: 500 }, 500);
+  }
 }
 
 export async function handleESPNNews(sport: string, env: Env): Promise<Response> {
-  const endpoint = ESPN_NEWS_ENDPOINTS[sport];
-  if (!endpoint) {
-    return json({ error: `Unknown sport: ${sport}` }, 400);
-  }
-
-  const cacheKey = `espn-news:${sport}`;
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(cached, 200, HTTP_CACHE.news, { 'X-Cache': 'HIT' });
-  }
-
   try {
+    const endpoint = ESPN_NEWS_ENDPOINTS[sport];
+    if (!endpoint) {
+      return json({ error: `Unknown sport: ${sport}` }, 400);
+    }
+
+    const cacheKey = `espn-news:${sport}`;
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(cached, 200, HTTP_CACHE.news, { 'X-Cache': 'HIT' });
+    }
     const res = await fetch(endpoint, {
       headers: { 'User-Agent': 'BlazeSportsIntel/1.0' },
     });
@@ -94,7 +98,8 @@ export async function handleESPNNews(sport: string, env: Env): Promise<Response>
     const payload = { articles, lastUpdated: new Date().toISOString() };
     await kvPut(env.KV, cacheKey, payload, 900); // 15 min TTL
     return cachedJson(payload, 200, HTTP_CACHE.news, { 'X-Cache': 'MISS' });
-  } catch {
+  } catch (err) {
+    console.error('[handleESPNNews]', err instanceof Error ? err.message : err);
     return json({ error: 'ESPN news fetch failed', articles: [] }, 502);
   }
 }

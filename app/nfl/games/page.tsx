@@ -369,7 +369,7 @@ export default function NFLGamesPage() {
             <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
               <button
                 onClick={() => setSelectedDate(getDateOffset(-3))}
-                className="p-2 text-text-tertiary hover:text-text-primary transition-colors"
+                className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-text-tertiary hover:text-text-primary transition-colors"
                 aria-label="Previous days"
               >
                 <svg
@@ -391,7 +391,7 @@ export default function NFLGamesPage() {
                   <button
                     key={option.offset}
                     onClick={() => setSelectedDate(dateValue)}
-                    className={`px-4 py-2 rounded-sm font-semibold text-sm whitespace-nowrap transition-all ${
+                    className={`px-4 py-2 min-h-[44px] rounded-sm font-semibold text-sm whitespace-nowrap transition-all ${
                       isSelected
                         ? 'bg-burnt-orange text-white'
                         : 'bg-background-tertiary text-text-secondary hover:bg-surface-light hover:text-text-primary'
@@ -404,7 +404,7 @@ export default function NFLGamesPage() {
 
               <button
                 onClick={() => setSelectedDate(getDateOffset(3))}
-                className="p-2 text-text-tertiary hover:text-text-primary transition-colors"
+                className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-text-tertiary hover:text-text-primary transition-colors"
                 aria-label="Next days"
               >
                 <svg

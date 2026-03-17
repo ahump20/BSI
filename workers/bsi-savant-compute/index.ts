@@ -1208,7 +1208,7 @@ export default {
     try {
       const result = await compute(env.DB, env.KV);
       const nilResult = await computeNIL(env.DB, env.KV);
-      console.log(`[savant-compute] Cron complete: ${result.batters} batters, ${result.pitchers} pitchers, ${result.conferences} conferences, ${result.venues} venues, ${nilResult.nilScored} NIL scored`);
+      console.info(`[savant-compute] Cron complete: ${result.batters} batters, ${result.pitchers} pitchers, ${result.conferences} conferences, ${result.venues} venues, ${nilResult.nilScored} NIL scored`);
     } catch (err) {
       console.error(`[savant-compute] Cron failed:`, err);
     }

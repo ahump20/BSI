@@ -1,0 +1,11 @@
+{
+  "name": "bsi-baseball-agent",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "agents": "^0.2.0",
+    "ai": "^4.3.0",
+    "@ai-sdk/anthropic": "^1.2.0",
+    "zod": "^3.23.0"
+  }
+}

@@ -72,7 +72,7 @@ function GameCard({ game }: { game: ESPNGame }) {
             <div key={team.id} className="flex items-center justify-between">
               <div className="flex items-center gap-3 min-w-0">
                 {logoUrl ? (
-                  <img src={logoUrl} alt="" className="w-8 h-8 object-contain" loading="lazy" decoding="async" />
+                  <img src={logoUrl} alt={`${team.team.displayName || team.team.abbreviation} logo`} className="w-8 h-8 object-contain" loading="lazy" decoding="async" />
                 ) : (
                   <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
                     {team.team.abbreviation}
@@ -158,7 +158,7 @@ export default function CFBScoresPage() {
                   <button
                     key={opt.offset}
                     onClick={() => setSelectedDate(val)}
-                    className={`px-4 py-2 rounded-sm font-semibold text-sm whitespace-nowrap transition-all ${
+                    className={`px-4 py-2 min-h-[44px] rounded-sm font-semibold text-sm whitespace-nowrap transition-all ${
                       selectedDate === val
                         ? 'bg-burnt-orange text-white'
                         : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
@@ -187,9 +187,15 @@ export default function CFBScoresPage() {
             ) : games.length === 0 ? (
               <Card padding="lg" className="text-center">
                 <div className="py-8">
-                  <SportIcon sport="cfb" className="w-16 h-16 mx-auto mb-4 text-text-tertiary" />
-                  <p className="text-text-secondary text-lg">No games scheduled for this date</p>
-                  <p className="text-text-tertiary text-sm mt-2">College football season typically runs August through January</p>
+                  <span className="block mx-auto mb-4 w-16 h-16" style={{ color: 'var(--bsi-dust, #C4B8A5)' }}>
+                    <SportIcon sport="cfb" className="w-16 h-16" />
+                  </span>
+                  <p className="italic" style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--bsi-dust, #C4B8A5)' }}>
+                    No games scheduled for this date
+                  </p>
+                  <p className="text-sm mt-2" style={{ color: 'var(--bsi-dust, #C4B8A5)', opacity: 0.7 }}>
+                    College football season typically runs August through January
+                  </p>
                 </div>
               </Card>
             ) : (

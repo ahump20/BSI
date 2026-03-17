@@ -13,6 +13,7 @@ import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
 import { AdvancedStatsCard } from '@/components/analytics/AdvancedStatsCard';
 import { PlayerScoutingComposite } from '@/components/college-baseball/PlayerScoutingComposite';
+import { ScoutingReport } from '@/components/college-baseball/ScoutingReport';
 import { fmt3 } from '@/lib/utils/format';
 import { getPlayerHighlights } from '@/lib/data/player-highlights';
 import { useWatchlist } from '@/lib/hooks/useWatchlist';
@@ -586,6 +587,9 @@ export default function PlayerDetailClient() {
                 className="mb-6"
               />
             )}
+
+            {/* AI Scouting Report — Pro feature */}
+            <ScoutingReport playerId={String(playerId)} className="mb-6" />
 
             {/* Stats Tabs — Season / Game Log */}
             {(stats?.batting || stats?.pitching) && (

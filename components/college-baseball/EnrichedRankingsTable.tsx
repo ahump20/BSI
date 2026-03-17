@@ -188,7 +188,7 @@ export function EnrichedRankingsTable({
                           {team.logoUrl && (
                             <Image
                               src={team.logoUrl}
-                              alt=""
+                              alt={`${team.team} logo`}
                               width={28}
                               height={28}
                               className="w-7 h-7 object-contain flex-shrink-0"

@@ -30,13 +30,12 @@ export async function handlePredictionSubmit(request: Request, env: Env): Promis
 
 
 export async function handlePredictionAccuracy(env: Env): Promise<Response> {
-  const cacheKey = 'predictions:accuracy';
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(cached, 200, 300, { 'X-Cache': 'HIT' });
-  }
-
   try {
+    const cacheKey = 'predictions:accuracy';
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(cached, 200, 300, { 'X-Cache': 'HIT' });
+    }
     const result = await env.DB
       .prepare(
         `SELECT

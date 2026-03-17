@@ -140,7 +140,7 @@ const jsonLdContent = JSON.stringify({
       url: 'https://blazesportsintel.com',
       potentialAction: {
         '@type': 'SearchAction',
-        target: 'https://blazesportsintel.com/search?q={search_term_string}',
+        target: 'https://blazesportsintel.com/scores?q={search_term_string}',
         'query-input': 'required name=search_term_string',
       },
     },

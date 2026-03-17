@@ -18,6 +18,16 @@ export function errorJson(message: string, status = 500): Response {
   return json({ error: true, message, status }, status);
 }
 
+/**
+ * Standardized error response with machine-readable error codes.
+ * All Worker error responses follow the same shape: { error, code, status }
+ */
+export type ErrorCode = 'NOT_FOUND' | 'BAD_REQUEST' | 'RATE_LIMITED' | 'INTERNAL_ERROR' | 'UPSTREAM_ERROR' | 'UNAUTHORIZED' | 'FORBIDDEN';
+
+export function apiError(message: string, code: ErrorCode, status: number): Response {
+  return json({ error: message, code, status }, status);
+}
+
 export function cachedJson(data: unknown, status: number, maxAge: number, extra: Record<string, string> = {}): Response {
   const headers: Record<string, string> = { 'Cache-Control': `public, max-age=${maxAge}`, ...extra };
   const meta = getPayloadMeta(data);

@@ -69,7 +69,7 @@ export function Tab({ value, children, className }: TabProps) {
       tabIndex={isActive ? 0 : -1}
       onClick={() => setActive(value)}
       className={clsx(
-        'px-3 py-1.5 rounded-sm text-xs font-mono uppercase tracking-[0.15em] transition-all',
+        'px-3 py-1.5 min-h-[44px] rounded-sm text-xs font-mono uppercase tracking-[0.15em] transition-all',
         isActive
           ? 'bg-burnt-orange/15 text-burnt-orange border border-burnt-orange/30'
           : 'text-text-muted hover:text-text-secondary border border-transparent',

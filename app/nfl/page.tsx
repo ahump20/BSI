@@ -316,7 +316,7 @@ export default function NFLPage() {
                                 {player.headshot && (
                                   <Image
                                     src={player.headshot}
-                                    alt={player.name}
+                                    alt={`${player.name} headshot`}
                                     width={32}
                                     height={32}
                                     className="rounded-full object-cover shrink-0"
@@ -437,7 +437,7 @@ export default function NFLPage() {
                     <Card variant="default" padding="lg" className="mb-6">
                       <CardHeader>
                         <CardTitle className="flex items-center gap-3">
-                          <Image src="/icons/football.svg" alt="" width={20} height={20} className="opacity-60" />
+                          <Image src="/icons/football.svg" alt="" width={20} height={20} className="opacity-60" aria-hidden="true" />
                           {division}
                         </CardTitle>
                       </CardHeader>
@@ -526,7 +526,7 @@ export default function NFLPage() {
                 {['AFC', 'NFC'].map((conf) => (
                   <div key={conf}>
                     <h3 className="text-xl font-display font-bold text-burnt-orange mb-4 flex items-center gap-2">
-                      <Image src="/icons/football.svg" alt="" width={18} height={18} className="opacity-60" />
+                      <Image src="/icons/football.svg" alt="" width={18} height={18} className="opacity-60" aria-hidden="true" />
                       {conf}
                     </h3>
                     <div className="space-y-3">

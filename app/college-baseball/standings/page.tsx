@@ -13,6 +13,7 @@ import { FilterPill } from '@/components/ui/FilterPill';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { DataAttribution } from '@/components/ui/DataAttribution';
 import { HeroGlow } from '@/components/ui/HeroGlow';
 import { SkeletonStandingsTable } from '@/components/ui/Skeleton';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
@@ -482,10 +483,11 @@ export default function CollegeBaseballStandingsPage() {
               )}
 
               {/* Data Attribution */}
-              <div className="mt-8 pt-4 border-t border-white/[0.06]">
-                <p className="text-[11px] font-mono text-text-muted/50 text-center">
-                  ESPN College Baseball API{lastUpdated && <> &middot; {new Date(lastUpdated).toLocaleString('en-US', { timeZone: 'America/Chicago' })} CT</>}
-                </p>
+              <div className="mt-8 pt-4 border-t border-white/[0.06] flex justify-center">
+                <DataAttribution
+                  source={meta?.source || (meta?.sources ? meta.sources.join(' + ') : 'ESPN')}
+                  lastUpdated={lastUpdated || undefined}
+                />
               </div>
             </DataErrorBoundary>
           </Container>

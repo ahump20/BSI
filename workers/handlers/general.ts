@@ -30,17 +30,17 @@ export function emitOpsEvent(
 }
 
 export async function handleTeams(league: string, env: Env): Promise<Response> {
-  const key = league.toUpperCase();
-  const sportMap: Record<string, ESPNSport> = { MLB: 'mlb', NFL: 'nfl', NBA: 'nba' };
-  const sport = sportMap[key];
-
-  if (!sport) return json([], 200);
-
-  const cacheKey = `teams:list:${key}`;
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
-
   try {
+    const key = league.toUpperCase();
+    const sportMap: Record<string, ESPNSport> = { MLB: 'mlb', NFL: 'nfl', NBA: 'nba' };
+    const sport = sportMap[key];
+
+    if (!sport) return json([], 200);
+
+    const cacheKey = `teams:list:${key}`;
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
+
     const raw = await espnGetTeams(sport) as Record<string, unknown>;
     const { teams } = transformTeams(raw);
     const result = teams.map((t) => ({
@@ -60,13 +60,12 @@ export async function handleTeams(league: string, env: Env): Promise<Response> {
 }
 
 export async function handleModelHealth(env: Env): Promise<Response> {
-  const cacheKey = 'model-health:all';
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(cached, 200, 600, { 'X-Cache': 'HIT' });
-  }
-
   try {
+    const cacheKey = 'model-health:all';
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(cached, 200, 600, { 'X-Cache': 'HIT' });
+    }
     const result = await env.DB
       .prepare(
         `SELECT week, accuracy, sport, recorded_at as recordedAt
@@ -144,13 +143,12 @@ export async function handleWeeklyBrief(env: Env): Promise<Response> {
 }
 
 export async function handlePredictionAccuracy(env: Env): Promise<Response> {
-  const cacheKey = 'predictions:accuracy';
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
-    return cachedJson(cached, 200, 300, { 'X-Cache': 'HIT' });
-  }
-
   try {
+    const cacheKey = 'predictions:accuracy';
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(cached, 200, 300, { 'X-Cache': 'HIT' });
+    }
     const result = await env.DB
       .prepare(
         `SELECT

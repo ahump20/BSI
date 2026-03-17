@@ -14,6 +14,7 @@ import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { HeroGlow } from '@/components/ui/HeroGlow';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { teamMetadata } from '@/lib/data/team-metadata';
+import { DataAttribution } from '@/components/ui/DataAttribution';
 import { formatTimestamp } from '@/lib/utils/timezone';
 
 /** Map a full team name (e.g. "Texas Longhorns") to its teamMetadata slug (e.g. "texas"). */
@@ -479,10 +480,11 @@ export default function CollegeBaseballRankingsPage() {
             </div>
 
             {/* Data Attribution */}
-            <div className="mt-6 pt-4 border-t border-white/[0.06]">
-              <p className="text-[11px] font-mono text-text-muted/50 text-center">
-                Official polls &middot; D1Baseball{rankings && <> &middot; {formatTimestamp(rankings.lastUpdated)}</>} &middot; Updated weekly
-              </p>
+            <div className="mt-6 pt-4 border-t border-white/[0.06] flex justify-center">
+              <DataAttribution
+                source="D1Baseball"
+                lastUpdated={rankings?.lastUpdated}
+              />
             </div>
             </DataErrorBoundary>
           </Container>

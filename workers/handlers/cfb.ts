@@ -26,16 +26,21 @@ import type { BSIScoreboardResult, BSIStandingsResult } from '../../lib/api-clie
 import { fetchWithFallback } from '../../lib/api-clients/data-fetcher';
 
 export async function handleCFBTransferPortal(env: Env): Promise<Response> {
-  const raw = await env.KV.get('portal:cfb:entries', 'text');
-  if (raw) {
-    try {
-      const data = JSON.parse(raw);
-      return cachedJson(data, 200, HTTP_CACHE.trending);
-    } catch {
-      // Corrupt KV entry — fall through
+  try {
+    const raw = await env.KV.get('portal:cfb:entries', 'text');
+    if (raw) {
+      try {
+        const data = JSON.parse(raw);
+        return cachedJson(data, 200, HTTP_CACHE.trending);
+      } catch {
+        // Corrupt KV entry — fall through
+      }
     }
+    return json({ entries: [], lastUpdated: null, message: 'No portal data available yet' }, 200);
+  } catch (err) {
+    console.error('[handleCFBTransferPortal]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', code: 'INTERNAL_ERROR', status: 500 }, 500);
   }
-  return json({ entries: [], lastUpdated: null, message: 'No portal data available yet' }, 200);
 }
 
 export async function handleCFBScores(url: URL, env: Env): Promise<Response> {
@@ -127,18 +132,18 @@ export async function handleCFBNews(env: Env): Promise<Response> {
 }
 
 export async function handleCFBArticle(slug: string, env: Env): Promise<Response> {
-  const cacheKey = `cfb:article:${slug}`;
-
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.news, { 'X-Cache': 'HIT' });
-
   try {
+    const cacheKey = `cfb:article:${slug}`;
+
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return cachedJson(cached, 200, HTTP_CACHE.news, { 'X-Cache': 'HIT' });
+
     const row = await env.DB.prepare(
       `SELECT * FROM articles WHERE slug = ? AND sport = 'college-football' LIMIT 1`
     ).bind(slug).first();
 
     if (!row) {
-      return json({ error: 'Article not found' }, 404);
+      return json({ error: 'Article not found', code: 'NOT_FOUND', status: 404 }, 404);
     }
 
     const payload = {
@@ -147,20 +152,21 @@ export async function handleCFBArticle(slug: string, env: Env): Promise<Response
     };
     await kvPut(env.KV, cacheKey, payload, 900);
     return cachedJson(payload, 200, HTTP_CACHE.news, { 'X-Cache': 'MISS' });
-  } catch {
-    return json({ error: 'Article not found' }, 404);
+  } catch (err) {
+    console.error('[handleCFBArticle]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', code: 'INTERNAL_ERROR', status: 500 }, 500);
   }
 }
 
 export async function handleCFBArticlesList(url: URL, env: Env): Promise<Response> {
-  const type = url.searchParams.get('type') || 'all';
-  const limit = Math.min(parseInt(url.searchParams.get('limit') || '20'), 50);
-  const cacheKey = `cfb:articles:${type}:${limit}`;
-
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.news, { 'X-Cache': 'HIT' });
-
   try {
+    const type = url.searchParams.get('type') || 'all';
+    const limit = Math.min(parseInt(url.searchParams.get('limit') || '20'), 50);
+    const cacheKey = `cfb:articles:${type}:${limit}`;
+
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return cachedJson(cached, 200, HTTP_CACHE.news, { 'X-Cache': 'HIT' });
+
     const whereClause = type !== 'all'
       ? `WHERE sport = 'college-football' AND article_type = ?`
       : `WHERE sport = 'college-football'`;
@@ -176,7 +182,8 @@ export async function handleCFBArticlesList(url: URL, env: Env): Promise<Respons
     const payload = { articles: results || [], meta: { source: 'BSI D1' } };
     await kvPut(env.KV, cacheKey, payload, 300);
     return cachedJson(payload, 200, HTTP_CACHE.news, { 'X-Cache': 'MISS' });
-  } catch {
+  } catch (err) {
+    console.error('[handleCFBArticlesList]', err instanceof Error ? err.message : err);
     return json({ articles: [], meta: { source: 'BSI D1' } }, 200);
   }
 }

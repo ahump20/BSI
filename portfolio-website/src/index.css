@@ -1,3 +1,5 @@
+@import './portfolio-heritage-bridge.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -73,6 +75,13 @@
     background-color: var(--color-bg);
     color: var(--color-text);
     overflow-x: hidden;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+
+  img, video, svg {
+    max-width: 100%;
+    height: auto;
   }
 
   main {
@@ -218,6 +227,23 @@
     @apply border border-bone/30 text-bone/70 px-6 py-3 rounded-sm
            hover:border-burnt-orange hover:text-burnt-orange active:scale-95
            transition-all duration-300 cursor-pointer inline-block text-center;
+  }
+
+  /* ── Link styling: burnt-orange with hover/focus states ── */
+  a:not(.btn-primary):not(.btn-outline):not(.skip-link):not([class*="group"]):not([class*="nav"]):not([class*="card"]) {
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color 0.2s ease, text-decoration-color 0.2s ease;
+  }
+  a:not(.btn-primary):not(.btn-outline):not(.skip-link):not([class*="group"]):not([class*="nav"]):not([class*="card"]):hover {
+    color: #FF6B35;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  a:not(.btn-primary):not(.btn-outline):not(.skip-link):focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
   }
 
   /* Section top border */
@@ -536,4 +562,9 @@
   h2 { font-size: 1.5rem !important; }
   section { padding: 2rem 0.75rem !important; }
   button, .btn { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
+
+  /* Prevent horizontal scroll on narrow viewports */
+  .flex { flex-wrap: wrap; }
+  .grid { min-width: 0; }
+  .grid > * { min-width: 0; }
 }

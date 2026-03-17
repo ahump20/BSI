@@ -102,7 +102,7 @@ async function fetchMLBScores(env: Env): Promise<unknown> {
     try {
       return transformSDIOMLBScores(await sdio.getMLBScores());
     } catch (err) {
-      console.log(`[cron] SDIO MLB failed, falling back to ESPN: ${err instanceof Error ? err.message : 'unknown'}`);
+      console.warn(`[cron] SDIO MLB failed, falling back to ESPN: ${err instanceof Error ? err.message : 'unknown'}`);
     }
   }
   const raw = await getScoreboard('mlb', todayESPN());
@@ -116,7 +116,7 @@ async function fetchNFLScores(env: Env): Promise<unknown> {
     try {
       return transformSDIONFLScores(await sdio.getNFLScoresByDate());
     } catch (err) {
-      console.log(`[cron] SDIO NFL failed, falling back to ESPN: ${err instanceof Error ? err.message : 'unknown'}`);
+      console.warn(`[cron] SDIO NFL failed, falling back to ESPN: ${err instanceof Error ? err.message : 'unknown'}`);
     }
   }
   const raw = await getScoreboard('nfl', todayESPN());
@@ -130,7 +130,7 @@ async function fetchNBAScores(env: Env): Promise<unknown> {
     try {
       return transformSDIONBAScores(await sdio.getNBAScores());
     } catch (err) {
-      console.log(`[cron] SDIO NBA failed, falling back to ESPN: ${err instanceof Error ? err.message : 'unknown'}`);
+      console.warn(`[cron] SDIO NBA failed, falling back to ESPN: ${err instanceof Error ? err.message : 'unknown'}`);
     }
   }
   const raw = await getScoreboard('nba', todayESPN());
@@ -182,7 +182,7 @@ async function cacheRankings(env: Env): Promise<boolean> {
           return true;
         }
       } catch (err) {
-        console.log(`[cron] Highlightly rankings failed, falling back to ESPN: ${err instanceof Error ? err.message : 'unknown'}`);
+        console.warn(`[cron] Highlightly rankings failed, falling back to ESPN: ${err instanceof Error ? err.message : 'unknown'}`);
       }
     }
 
@@ -809,7 +809,7 @@ export async function handleScheduled(env: Env): Promise<void> {
   const date = todayCST();
   const activeSports = getActiveSportKeys();
 
-  console.log(`[cron] Warming cache for ${activeSports.length} active sports: ${activeSports.join(', ')}`);
+  console.info(`[cron] Warming cache for ${activeSports.length} active sports: ${activeSports.join(', ')}`);
 
   // Cache scores for all active sports in parallel
   const scoreResults = await Promise.allSettled(
@@ -831,7 +831,7 @@ export async function handleScheduled(env: Env): Promise<void> {
     rankingsCached = await cacheRankings(env);
   }
 
-  console.log(`[cron] Done: ${scoreSuccesses}/${activeSports.length} scores cached, rankings=${rankingsCached}`);
+  console.info(`[cron] Done: ${scoreSuccesses}/${activeSports.length} scores cached, rankings=${rankingsCached}`);
 
   // Write provider health summary to KV for the dashboard health panel
   const now = new Date().toISOString();
@@ -871,7 +871,7 @@ export async function handleScheduled(env: Env): Promise<void> {
       if (!lastIngest || lastIngest < tenMinAgo) {
         const ingestResult = await processFinishedGames(env, date);
         await kvPut(env.KV, ingestGateKey, now, 900); // 15-min TTL
-        console.log(`[cron] Stats ingested: ${ingestResult.processed} games, ${ingestResult.skipped} skipped, ${ingestResult.errors.length} errors`);
+        console.info(`[cron] Stats ingested: ${ingestResult.processed} games, ${ingestResult.skipped} skipped, ${ingestResult.errors.length} errors`);
 
         // Invalidate caches so next request picks up fresh data + sabermetrics derivation
         if (ingestResult.processed > 0) {
@@ -901,17 +901,17 @@ export async function handleScheduled(env: Env): Promise<void> {
             const failedDeletes = deleteResults.filter(r => r.status === 'rejected').length;
 
             if (invalidated.length > 0) {
-              console.log(`[cron] Invalidated team caches: ${invalidated.join(', ')}`);
+              console.info(`[cron] Invalidated team caches: ${invalidated.join(', ')}`);
             }
             if (failedDeletes > 0) {
-              console.log(`[cron] Failed to invalidate ${failedDeletes} team cache(s)`);
+              console.warn(`[cron] Failed to invalidate ${failedDeletes} team cache(s)`);
             }
             if (unmapped.length > 0) {
-              console.log(`[cron] Unmapped espnIds (no teamMetadata): ${unmapped.join(', ')}`);
+              console.warn(`[cron] Unmapped espnIds (no teamMetadata): ${unmapped.join(', ')}`);
             }
           }
 
-          console.log('[cron] Invalidated leaders + sabermetrics caches after ingest');
+          console.info('[cron] Invalidated leaders + sabermetrics caches after ingest');
         }
       }
     } catch (err) {
@@ -924,7 +924,7 @@ export async function handleScheduled(env: Env): Promise<void> {
     try {
       const mmiComputed = await computeMMIForNewGames(env, date);
       if (mmiComputed > 0) {
-        console.log(`[cron] MMI computed for ${mmiComputed} game(s)`);
+        console.info(`[cron] MMI computed for ${mmiComputed} game(s)`);
       }
     } catch (err) {
       await logError(env, `cron:mmi: ${err instanceof Error ? err.message : 'unknown'}`, 'cron-mmi');
@@ -945,7 +945,7 @@ export async function handleScheduled(env: Env): Promise<void> {
       if (!lastComputed || lastComputed.slice(0, 10) !== date) {
         await computeHAVFDaily(env);
         await kvPut(env.KV, havfGateKey, now, 86400);
-        console.log('[cron] HAV-F scores computed');
+        console.info('[cron] HAV-F scores computed');
       }
     } catch (err) {
       await logError(env, `cron:havf: ${err instanceof Error ? err.message : 'unknown'}`, 'cron-havf');
@@ -959,7 +959,7 @@ export async function handleScheduled(env: Env): Promise<void> {
     if (!lastPopulated || lastPopulated.slice(0, 10) !== date) {
       await populateSearchIndex(env);
       await kvPut(env.KV, searchGateKey, now, 86400);
-      console.log('[cron] Search index populated');
+      console.info('[cron] Search index populated');
     }
   } catch (err) {
     await logError(env, `cron:search-index: ${err instanceof Error ? err.message : 'unknown'}`, 'cron-search');
@@ -977,10 +977,10 @@ export async function handleScheduled(env: Env): Promise<void> {
         if (mmiResult.processed > 0) {
           // Clear trending cache so next request picks up new data
           await env.KV.delete('mmi:trending');
-          console.log(`[cron] MMI computed: ${mmiResult.processed} games`);
+          console.info(`[cron] MMI computed: ${mmiResult.processed} games`);
         }
         if (mmiResult.errors.length > 0) {
-          console.log(`[cron] MMI errors: ${mmiResult.errors.join('; ')}`);
+          console.warn(`[cron] MMI errors: ${mmiResult.errors.join('; ')}`);
         }
       }
     } catch (err) {

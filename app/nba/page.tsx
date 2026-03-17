@@ -370,7 +370,7 @@ export default function NBAPage() {
                       <Card variant="default" padding="lg" className="mb-6">
                         <CardHeader>
                           <CardTitle className="flex items-center gap-3">
-                            <Image src="/icons/basketball.svg" alt="" width={20} height={20} className="opacity-60" />
+                            <Image src="/icons/basketball.svg" alt="" width={20} height={20} className="opacity-60" aria-hidden="true" />
                             {conf.label}
                           </CardTitle>
                         </CardHeader>
@@ -460,7 +460,7 @@ export default function NBAPage() {
                     <Card variant="default" padding="lg">
                       <CardHeader>
                         <CardTitle className="flex items-center gap-3">
-                          <Image src="/icons/basketball.svg" alt="" width={20} height={20} className="opacity-60" />
+                          <Image src="/icons/basketball.svg" alt="" width={20} height={20} className="opacity-60" aria-hidden="true" />
                           {conf.label}
                         </CardTitle>
                         <p className="text-xs text-text-tertiary mt-1">{conf.teams.length} teams</p>

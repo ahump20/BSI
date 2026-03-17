@@ -204,7 +204,7 @@ export function websiteJsonLd() {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: `${BASE_URL}/search?q={search_term_string}`,
+        urlTemplate: `${BASE_URL}/scores?q={search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
     },

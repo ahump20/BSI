@@ -155,14 +155,13 @@ function extractGames(
 }
 
 export async function handleHeroScores(url: URL, env: Env): Promise<Response> {
-  const cached = await kvGet<HeroScoresResponse>(env.KV, HERO_SCORES_CACHE_KEY);
-  if (cached) {
-    return cachedJson(cached, 200, 30, cachedPayloadHeaders(cached));
-  }
-
-  const fetchedAt = new Date().toISOString();
-
   try {
+    const cached = await kvGet<HeroScoresResponse>(env.KV, HERO_SCORES_CACHE_KEY);
+    if (cached) {
+      return cachedJson(cached, 200, 30, cachedPayloadHeaders(cached));
+    }
+
+    const fetchedAt = new Date().toISOString();
     const inSeason = getInSeasonSports();
     if (inSeason.length === 0) {
       const payload = {

@@ -56,11 +56,17 @@ export function EmptyState({ type, sport: _sport, message, action, onRetry }: Em
 
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4">
-      <Icon className="w-16 h-16 text-text-muted mb-4" />
-      <h3 className="text-xl md:text-2xl font-semibold text-text-primary mb-2">
+      <Icon className="w-16 h-16 mb-4" style={{ color: 'var(--bsi-dust, #C4B8A5)' }} />
+      <h3
+        className="text-xl md:text-2xl font-semibold mb-2"
+        style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone, #F5F2EB)' }}
+      >
         {config.title}
       </h3>
-      <p className="text-text-secondary text-center max-w-sm mb-6">
+      <p
+        className="text-center max-w-sm mb-6 italic"
+        style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--bsi-dust, #C4B8A5)' }}
+      >
         {message || config.message}
       </p>
       {showRetry && (

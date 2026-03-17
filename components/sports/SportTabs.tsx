@@ -36,7 +36,7 @@ export function SportTabs({ defaultSport = 'mlb', onSportChange }: SportTabsProp
           key={sport.id}
           data-sport={sport.dataSport}
           onClick={() => handleChange(sport.id)}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-[2px] text-sm font-semibold transition-all ${
+          className={`flex items-center gap-2 px-5 py-2.5 min-h-[44px] rounded-[2px] text-sm font-semibold transition-all ${
             active === sport.id
               ? 'bg-burnt-orange text-white shadow-lg'
               : 'text-text-muted hover:text-text-primary hover:bg-surface-light'
@@ -69,7 +69,7 @@ export function SportTabsCompact({ defaultSport = 'mlb', onSportChange }: SportT
           key={sport.id}
           data-sport={sport.dataSport}
           onClick={() => handleChange(sport.id)}
-          className={`px-4 py-2 rounded-[2px] text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all ${
+          className={`px-4 py-2 min-h-[44px] rounded-[2px] text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all ${
             active === sport.id
               ? 'bg-burnt-orange text-white'
               : 'bg-surface-light text-text-muted hover:text-text-secondary'

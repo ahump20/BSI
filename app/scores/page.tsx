@@ -182,7 +182,7 @@ function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {game.away.logo ? (
-              <img src={game.away.logo} alt="" className="w-4 h-4 object-contain" loading="lazy" />
+              <img src={game.away.logo} alt={`${game.away.name || game.away.abbreviation} logo`} className="w-4 h-4 object-contain" loading="lazy" />
             ) : (
               <span className="text-[10px] font-bold text-bsi-dust w-4">{game.away.abbreviation}</span>
             )}
@@ -199,7 +199,7 @@ function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {game.home.logo ? (
-              <img src={game.home.logo} alt="" className="w-4 h-4 object-contain" loading="lazy" />
+              <img src={game.home.logo} alt={`${game.home.name || game.home.abbreviation} logo`} className="w-4 h-4 object-contain" loading="lazy" />
             ) : (
               <span className="text-[10px] font-bold text-bsi-dust w-4">{game.home.abbreviation}</span>
             )}

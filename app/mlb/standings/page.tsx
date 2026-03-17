@@ -164,8 +164,12 @@ export default function MLBStandingsPage() {
   }) => (
     <th
       scope="col"
+      tabIndex={0}
+      role="columnheader"
+      aria-sort={sortColumn === column ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'}
       className={`text-left p-3 text-text-tertiary font-semibold cursor-pointer hover:text-burnt-orange transition-colors ${className}`}
       onClick={() => handleSort(column)}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSort(column); } }}
     >
       <div className="flex items-center gap-1">
         {label}
@@ -406,7 +410,7 @@ export default function MLBStandingsPage() {
                 <button
                   key={view.id}
                   onClick={() => setViewType(view.id)}
-                  className={`px-6 py-2.5 rounded-sm font-semibold text-sm transition-all ${
+                  className={`px-6 py-2.5 min-h-[44px] rounded-sm font-semibold text-sm transition-all ${
                     viewType === view.id
                       ? 'bg-burnt-orange text-white'
                       : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium hover:text-text-primary'
@@ -476,8 +480,10 @@ export default function MLBStandingsPage() {
             ) : standings.length === 0 ? (
               <Card variant="default" padding="lg">
                 <div className="text-center py-8">
-                  <p className="text-text-secondary">Standings update once the season begins</p>
-                  <p className="text-text-tertiary text-sm mt-2">
+                  <p className="italic" style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--bsi-dust, #C4B8A5)' }}>
+                    Standings update once the season begins
+                  </p>
+                  <p className="text-sm mt-2" style={{ color: 'var(--bsi-dust, #C4B8A5)', opacity: 0.7 }}>
                     Division and league standings refresh daily during the season
                   </p>
                 </div>

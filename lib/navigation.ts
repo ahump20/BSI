@@ -84,6 +84,7 @@ export function getMainNavItems(date?: Date): {
     { label: 'Scores', href: '/scores' },
     { label: 'College Baseball', href: '/college-baseball' },
     { label: 'Intel', href: '/intel' },
+    { label: 'Agent', href: '/agent' },
     { label: 'Pricing', href: '/pricing' },
   ];
 
@@ -158,6 +159,7 @@ export function getSidebarNav(): readonly NavGroup[] {
         { href: '/', label: 'Dashboard', iconKey: 'grid' },
         { href: '/scores', label: 'Live Scores', iconKey: 'activity' },
         { href: '/intel', label: 'Intelligence', iconKey: 'brain' },
+        { href: '/agent', label: 'Agent', iconKey: 'brain' },
         ...wbcItems,
       ],
     },

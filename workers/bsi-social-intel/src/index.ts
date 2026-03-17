@@ -46,7 +46,7 @@ async function runPipeline(env: Env): Promise<{ reddit: number; twitter: number;
   const allPosts = [...redditPosts, ...twitterPosts];
   const relevant = allPosts.filter(p => isCollegeBaseballRelevant(p.post_text));
 
-  console.log(`[pipeline] fetched reddit=${redditPosts.length} twitter=${twitterPosts.length} relevant=${relevant.length}`);
+  console.info(`[pipeline] fetched reddit=${redditPosts.length} twitter=${twitterPosts.length} relevant=${relevant.length}`);
 
   if (relevant.length === 0) {
     return { reddit: redditPosts.length, twitter: twitterPosts.length, classified: 0, stored: 0 };
@@ -60,7 +60,7 @@ async function runPipeline(env: Env): Promise<{ reddit: number; twitter: number;
     writeTeamSummaries(classified, env),
   ]);
 
-  console.log(`[pipeline] classified=${classified.length} stored=${stored}`);
+  console.info(`[pipeline] classified=${classified.length} stored=${stored}`);
 
   return {
     reddit: redditPosts.length,

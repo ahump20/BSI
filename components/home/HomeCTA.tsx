@@ -20,6 +20,7 @@ export function HomeCTA() {
                 alt="Blaze Sports Intel"
                 fill
                 className="object-contain opacity-80"
+                loading="lazy"
               />
             </div>
           </div>

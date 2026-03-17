@@ -12,9 +12,9 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-12">
           {FOOTER_LINK_GROUPS.map((group) => (
             <div key={group.title}>
-              <h4 className="font-sans text-xs uppercase tracking-[0.2em] text-bone font-medium mb-4">
+              <p className="font-sans text-xs uppercase tracking-[0.2em] text-bone font-medium mb-4">
                 {group.title}
-              </h4>
+              </p>
               <ul className="space-y-2">
                 {group.links.map((link) => {
                   const isExternal = 'external' in link && Boolean(link.external);
@@ -38,9 +38,9 @@ export default function Footer() {
 
           {/* Legal / Info */}
           <div>
-            <h4 className="font-sans text-xs uppercase tracking-[0.2em] text-bone font-medium mb-4">
+            <p className="font-sans text-xs uppercase tracking-[0.2em] text-bone font-medium mb-4">
               Info
-            </h4>
+            </p>
             <ul className="space-y-2">
               <li className="text-sm text-warm-gray">{SITE_LOCATION}</li>
               <li>

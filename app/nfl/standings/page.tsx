@@ -604,7 +604,7 @@ export default function NFLStandingsPage() {
                 <button
                   key={conf}
                   onClick={() => setSelectedConference(conf)}
-                  className={`px-6 py-3 rounded-sm font-semibold transition-all ${
+                  className={`px-6 py-3 min-h-[44px] rounded-sm font-semibold transition-all ${
                     selectedConference === conf
                       ? 'bg-burnt-orange text-white'
                       : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
@@ -647,8 +647,11 @@ export default function NFLStandingsPage() {
               </div>
             ) : isOffSeason ? (
               <div className="text-center py-12">
-                <p className="text-text-tertiary text-sm">
-                  Standings will populate automatically when the 2026 NFL season begins.
+                <p className="italic" style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--bsi-dust, #C4B8A5)' }}>
+                  Standings update during the season
+                </p>
+                <p className="text-sm mt-2" style={{ color: 'var(--bsi-dust, #C4B8A5)', opacity: 0.7 }}>
+                  The 2026 NFL season kicks off in September
                 </p>
               </div>
             ) : (

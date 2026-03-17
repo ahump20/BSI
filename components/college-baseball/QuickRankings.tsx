@@ -67,7 +67,7 @@ export function QuickRankings({ rankings, loading }: QuickRankingsProps) {
                   {meta ? (
                     <img
                       src={getLogoUrl(meta.espnId, meta.logoId)}
-                      alt=""
+                      alt={`${entry.team} logo`}
                       className="w-5 h-5 object-contain shrink-0"
                       loading="lazy"
                       decoding="async"

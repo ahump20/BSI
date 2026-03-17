@@ -20,6 +20,7 @@ export function QuoteSection() {
             fill
             className="object-contain"
             aria-hidden="true"
+            loading="lazy"
           />
         </div>
       </div>

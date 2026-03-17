@@ -57,24 +57,23 @@ export function HeroSection() {
         </div>
 
         {/* H1 — Bebas Neue hero display, larger scale */}
-        <h1
-          className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.25s_forwards] font-bold uppercase tracking-tight leading-none mb-2 text-[var(--bsi-bone)] text-[clamp(3rem,8vw,6rem)]"
-          style={{ fontFamily: 'var(--bsi-font-display-hero)', textShadow: '2px 2px 0px rgba(0,0,0,0.7)' }}
-        >
-          Blaze Sports
-        </h1>
-
-        {/* INTEL — text-stroke with amber glow */}
-        <h1
-          className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.35s_forwards] font-bold uppercase tracking-tight leading-none mb-6 text-[clamp(3rem,8vw,6rem)]"
-          style={{
-            fontFamily: 'var(--bsi-font-display-hero)',
-            WebkitTextStroke: '2px var(--bsi-primary)',
-            WebkitTextFillColor: 'transparent',
-            textShadow: '0 0 40px rgba(191, 87, 0, 0.3), 0 0 80px rgba(191, 87, 0, 0.1)',
-          }}
-        >
-          Intel
+        <h1 className="font-bold uppercase tracking-tight leading-none mb-6 text-[clamp(3rem,8vw,6rem)]" style={{ fontFamily: 'var(--bsi-font-display-hero)' }}>
+          <span
+            className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.25s_forwards] block mb-2 text-[var(--bsi-bone)]"
+            style={{ textShadow: '2px 2px 0px rgba(0,0,0,0.7)' }}
+          >
+            Blaze Sports
+          </span>
+          <span
+            className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.35s_forwards] block"
+            style={{
+              WebkitTextStroke: '2px var(--bsi-primary)',
+              WebkitTextFillColor: 'transparent',
+              textShadow: '0 0 40px rgba(191, 87, 0, 0.3), 0 0 80px rgba(191, 87, 0, 0.1)',
+            }}
+          >
+            Intel
+          </span>
         </h1>
 
         {/* Slogan — front and center */}

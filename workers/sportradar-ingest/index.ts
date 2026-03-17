@@ -508,7 +508,7 @@ export default {
       if (frequent) {
         // Full ingest: schedule → PBP → pitch events → aggregates
         const result = await ingestDailyGames(env);
-        console.log(`Ingest complete: ${result.gamesProcessed} games, ${result.pitchesStored} pitches`);
+        console.info(`Ingest complete: ${result.gamesProcessed} games, ${result.pitchesStored} pitches`);
         if (result.errors.length > 0) {
           console.warn('Ingest errors:', result.errors);
         }
@@ -523,7 +523,7 @@ export default {
         );
 
         if (changesResult.ok && changesResult.data?.changes?.length) {
-          console.log(`${changesResult.data.changes.length} changes detected, triggering re-ingest`);
+          console.info(`${changesResult.data.changes.length} changes detected, triggering re-ingest`);
           await ingestDailyGames(env);
         }
       }

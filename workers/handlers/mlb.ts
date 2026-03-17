@@ -361,22 +361,21 @@ export async function handleMLBNews(env: Env): Promise<Response> {
  * GET /api/mlb/spring-training/scores?date=2026-02-25
  */
 export async function handleMLBSpringScores(url: URL, env: Env): Promise<Response> {
-  const date = url.searchParams.get('date') || undefined;
-  const league = url.searchParams.get('league') as STLeague | null;
-  const dateKey = date?.replace(/-/g, '') || 'today';
-  const cacheKey = `mlb:st:scores:${dateKey}`;
-
-  const cached = await kvGet<Record<string, unknown>>(env.KV, cacheKey);
-  if (cached) {
-    const filtered = league ? filterByLeague(cached, league) : cached;
-    return cachedJson(filtered, 200, 30, cachedPayloadHeaders(filtered));
-  }
-
-  // Use ESPN with seasontype=1 (preseason/spring training)
-  const espnDate = date ? date.replace(/-/g, '') : undefined;
-  const espnUrl = `https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard${espnDate ? `?dates=${espnDate}&seasontype=1` : '?seasontype=1'}`;
-
   try {
+    const date = url.searchParams.get('date') || undefined;
+    const league = url.searchParams.get('league') as STLeague | null;
+    const dateKey = date?.replace(/-/g, '') || 'today';
+    const cacheKey = `mlb:st:scores:${dateKey}`;
+
+    const cached = await kvGet<Record<string, unknown>>(env.KV, cacheKey);
+    if (cached) {
+      const filtered = league ? filterByLeague(cached, league) : cached;
+      return cachedJson(filtered, 200, 30, cachedPayloadHeaders(filtered));
+    }
+
+    // Use ESPN with seasontype=1 (preseason/spring training)
+    const espnDate = date ? date.replace(/-/g, '') : undefined;
+    const espnUrl = `https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard${espnDate ? `?dates=${espnDate}&seasontype=1` : '?seasontype=1'}`;
     const res = await fetch(espnUrl, { headers: { 'User-Agent': 'BSI/1.0' } });
     if (!res.ok) throw new Error(`ESPN ${res.status}`);
     const raw = await res.json() as Record<string, unknown>;
@@ -435,6 +434,7 @@ export async function handleMLBSpringScores(url: URL, env: Env): Promise<Respons
     const filtered = league ? filterByLeague(payload, league) : payload;
     return cachedJson(filtered, 200, ttl, { 'X-Cache': 'MISS' });
   } catch (err) {
+    console.error('[handleMLBSpringScores]', err instanceof Error ? err.message : err);
     return json({ games: [], error: err instanceof Error ? err.message : 'Failed to fetch spring scores' }, 502);
   }
 }
@@ -450,14 +450,14 @@ function filterByLeague(data: Record<string, unknown>, league: STLeague): Record
  * GET /api/mlb/spring-training/standings
  */
 export async function handleMLBSpringStandings(env: Env): Promise<Response> {
-  const today = new Date().toISOString().split('T')[0];
-  const cacheKey = `mlb:st:standings:${today.replace(/-/g, '')}`;
-
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, cachedPayloadHeaders(cached));
-
-  // ESPN standings with seasontype=1
   try {
+    const today = new Date().toISOString().split('T')[0];
+    const cacheKey = `mlb:st:standings:${today.replace(/-/g, '')}`;
+
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, cachedPayloadHeaders(cached));
+
+    // ESPN standings with seasontype=1
     const res = await fetch(
       'https://site.api.espn.com/apis/v2/sports/baseball/mlb/standings?seasontype=1',
       { headers: { 'User-Agent': 'BSI/1.0' } }
@@ -512,6 +512,7 @@ export async function handleMLBSpringStandings(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, 1800);
     return cachedJson(payload, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' });
   } catch (err) {
+    console.error('[handleMLBSpringStandings]', err instanceof Error ? err.message : err);
     return json({ cactus: [], grapefruit: [], error: err instanceof Error ? err.message : 'Failed' }, 502);
   }
 }
@@ -521,16 +522,16 @@ export async function handleMLBSpringStandings(env: Env): Promise<Response> {
  * GET /api/mlb/spring-training/schedule?team=TEX
  */
 export async function handleMLBSpringSchedule(url: URL, env: Env): Promise<Response> {
-  const teamFilter = url.searchParams.get('team')?.toUpperCase() || null;
-  const cacheKey = 'mlb:st:schedule';
-
-  const cached = await kvGet<Record<string, unknown>>(env.KV, cacheKey);
-  if (cached) {
-    const filtered = teamFilter ? filterScheduleByTeam(cached, teamFilter) : cached;
-    return cachedJson(filtered, 200, HTTP_CACHE.schedule, cachedPayloadHeaders(filtered));
-  }
-
   try {
+    const teamFilter = url.searchParams.get('team')?.toUpperCase() || null;
+    const cacheKey = 'mlb:st:schedule';
+
+    const cached = await kvGet<Record<string, unknown>>(env.KV, cacheKey);
+    if (cached) {
+      const filtered = teamFilter ? filterScheduleByTeam(cached, teamFilter) : cached;
+      return cachedJson(filtered, 200, HTTP_CACHE.schedule, cachedPayloadHeaders(filtered));
+    }
+
     // Fetch full ST schedule from ESPN
     const res = await fetch(
       `https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard?seasontype=1&dates=20260215-20260325&limit=500`,
@@ -569,6 +570,7 @@ export async function handleMLBSpringSchedule(url: URL, env: Env): Promise<Respo
     const filtered = teamFilter ? filterScheduleByTeam(payload, teamFilter) : payload;
     return cachedJson(filtered, 200, HTTP_CACHE.schedule, { 'X-Cache': 'MISS' });
   } catch (err) {
+    console.error('[handleMLBSpringSchedule]', err instanceof Error ? err.message : err);
     return json({ schedule: [], error: err instanceof Error ? err.message : 'Failed' }, 502);
   }
 }
@@ -588,13 +590,13 @@ function filterScheduleByTeam(data: Record<string, unknown>, team: string): Reco
  * GET /api/mlb/spring-training/roster/:teamKey
  */
 export async function handleMLBSpringRoster(teamKey: string, env: Env): Promise<Response> {
-  const cacheKey = `mlb:st:roster:${teamKey.toLowerCase()}`;
-
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, cachedPayloadHeaders(cached));
-
-  // ESPN team roster
   try {
+    const cacheKey = `mlb:st:roster:${teamKey.toLowerCase()}`;
+
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, cachedPayloadHeaders(cached));
+
+    // ESPN team roster
     const res = await fetch(
       `https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/teams/${teamKey}/roster`,
       { headers: { 'User-Agent': 'BSI/1.0' } }
@@ -627,6 +629,7 @@ export async function handleMLBSpringRoster(teamKey: string, env: Env): Promise<
     await kvPut(env.KV, cacheKey, payload, 3600);
     return cachedJson(payload, 200, HTTP_CACHE.team, { 'X-Cache': 'MISS' });
   } catch (err) {
+    console.error('[handleMLBSpringRoster]', err instanceof Error ? err.message : err);
     return json({ roster: [], error: err instanceof Error ? err.message : 'Failed' }, 502);
   }
 }
@@ -654,8 +657,9 @@ const ABS_KV_KEYS = {
 };
 
 export async function handleMLBAbs(env: Env): Promise<Response> {
-  let challengesByRole: RoleStats[] = [];
-  let recentGames: GameLog[] = [];
+  try {
+    let challengesByRole: RoleStats[] = [];
+    let recentGames: GameLog[] = [];
 
   try {
     const [roleRaw, gamesRaw] = await Promise.all([
@@ -751,4 +755,8 @@ export async function handleMLBAbs(env: Env): Promise<Response> {
       source,
     ),
   );
+  } catch (err) {
+    console.error('[handleMLBAbs]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', code: 'INTERNAL_ERROR', status: 500 }, 500);
+  }
 }

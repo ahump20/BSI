@@ -15,7 +15,7 @@ export function corsHeaders(request: Request, env: Env): Record<string, string> 
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Request-ID, X-BSI-Key',
     'Access-Control-Max-Age': '86400',
-    'Vary': 'Origin',
+    'Vary': 'Origin, Accept-Encoding',
   };
 }
 
