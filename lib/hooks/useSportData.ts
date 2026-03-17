@@ -16,7 +16,7 @@ interface UseSportDataOptions {
   timeout?: number;
 }
 
-interface UseSportDataReturn<T> {
+export interface UseSportDataReturn<T> {
   data: T | null;
   meta: NormalizedDataMeta | null;
   loading: boolean;

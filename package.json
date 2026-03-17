@@ -62,6 +62,7 @@
     "deploy:guarded": "node scripts/guarded-deploy.mjs",
     "release:preview": "node scripts/guarded-deploy.mjs --preview-only",
     "smoke:homepage": "npx playwright test tests/smoke/homepage.spec.ts --config=playwright.smoke.config.ts --project=chromium",
+    "smoke:scores-overview": "npx playwright test tests/routes/scores-overview.spec.ts --config=playwright.config.ts --project=chromium",
     "smoke:release": "npx playwright test tests/smoke/homepage.spec.ts tests/smoke/public-layout.spec.ts tests/smoke/scores-integrity.spec.ts tests/smoke/mobile-overflow.spec.ts --config=playwright.smoke.config.ts --project=chromium",
     "gate:cbb": "npx playwright test tests/routes/college-baseball-critical.spec.ts tests/routes/college-baseball-api.spec.ts tests/routes/rankings.spec.ts --config=playwright.config.ts --project=chromium",
     "gate:release": "npm run smoke:release && npm run gate:cbb",

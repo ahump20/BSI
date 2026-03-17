@@ -8,7 +8,8 @@
 #
 # Current approach: build in-place with a clean .next directory. The build completes
 # in ~36 seconds — fast enough that iCloud doesn't evict .next/ files mid-build.
-# If iCloud eviction does occur, retry once (second build reuses Turbopack cache).
+# If Turbopack hits the known worktree root inference bug or iCloud evicts files,
+# retry once with webpack so release builds can still complete.
 
 set -euo pipefail
 
@@ -22,11 +23,11 @@ rm -rf "$PROJECT_DIR/.next"
 echo "→ Building from $PROJECT_DIR"
 cd "$PROJECT_DIR"
 
-# Build — retry once if iCloud evicts files mid-build
+# Build — prefer Turbopack, but fall back to webpack when worktree/root inference breaks it
 if ! npx next build 2>&1; then
-  echo "→ First build attempt failed, retrying..."
+  echo "→ First build attempt failed, retrying with webpack..."
   rm -rf "$PROJECT_DIR/.next"
-  npx next build
+  npx next build --webpack
 fi
 
 # Post-build: generate sitemap + ensure Pages control files land at out root
