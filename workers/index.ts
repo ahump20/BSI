@@ -630,6 +630,13 @@ app.get('/api/search', (c) => handleSearch(new URL(c.req.url), c.env));
 // --- ESPN News proxy ---
 app.get('/api/news/:sport', (c) => handleESPNNews(c.req.param('sport'), c.env));
 
+// --- Aggregate Scores Overview ---
+import { handleScoresOverview } from './handlers/scores';
+app.get('/api/scores/overview', (c) => {
+  const url = new URL(c.req.url);
+  return handleScoresOverview(url, c.env);
+});
+
 // --- Model Health ---
 app.get('/api/model-health', (c) => handleModelHealth(c.env));
 
