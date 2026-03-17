@@ -135,6 +135,7 @@ import { handleLogin, handleValidateKey } from './handlers/auth';
 import { handleScheduled, handleCachedScores, handleHealthProviders } from './handlers/cron';
 import { handleHealth, handleStatus, handleAdminHealth, handleAdminErrors, handleWebSocket } from './handlers/health';
 import { handleMcpRequest } from './handlers/mcp';
+import { handleScoresOverview } from './handlers/scores';
 import {
   handleCVPitcherMechanics,
   handleCVPitcherHistory,
@@ -619,6 +620,11 @@ app.get('/api/nil/draft-leverage', (c) => handleNILDraftLeverage(new URL(c.req.u
 app.get('/api/scores/cached', (c) => {
   const sport = new URL(c.req.url).searchParams.get('sport') || 'mlb';
   return handleCachedScores(sport, c.env);
+});
+app.get('/api/scores/overview', (c) => {
+  let ctx: ExecutionContext | undefined;
+  try { ctx = c.executionCtx; } catch { /* test env */ }
+  return handleScoresOverview(new URL(c.req.url), c.env, ctx);
 });
 
 // --- Provider Health (cron-tracked) ---
