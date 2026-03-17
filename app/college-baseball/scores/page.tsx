@@ -256,11 +256,14 @@ export default function CollegeBaseballScoresPage() {
   useEffect(() => { setLiveGamesDetected(hasLiveGames); }, [hasLiveGames]);
 
   // Yesterday fallback: when today has zero games, show yesterday instead
+  // rawData !== null ensures we only trigger AFTER a fetch completes,
+  // not before the first fetch starts (prevents race with useSportData loading state).
   useEffect(() => {
     if (
       mounted &&
       !loading &&
       !error &&
+      rawData !== null &&
       games.length === 0 &&
       selectedDate === getDateOffset(0) &&
       !isYesterdayFallback
@@ -268,7 +271,7 @@ export default function CollegeBaseballScoresPage() {
       setIsYesterdayFallback(true);
       setSelectedDate(getDateOffset(-1));
     }
-  }, [mounted, loading, error, games.length, selectedDate, isYesterdayFallback]);
+  }, [mounted, loading, error, rawData, games.length, selectedDate, isYesterdayFallback]);
 
   // Manual date selection resets fallback
   const handleDateSelect = useCallback((date: string) => {

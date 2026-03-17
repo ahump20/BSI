@@ -1,4 +1,5 @@
 import type { Env } from '../shared/types';
+import { normalizeMLBGamePayload } from "./mlb-normalize";
 import { json, cachedJson, kvGet, kvPut, getSDIOClient, toDateString, freshDataHeaders, cachedPayloadHeaders, ensurePayloadMeta, fetchResultHeaders, withMeta } from '../shared/helpers';
 import { HTTP_CACHE, CACHE_TTL } from '../shared/constants';
 import {
@@ -123,16 +124,19 @@ export async function handleMLBGame(gameId: string, env: Env): Promise<Response>
           async () => transformGameSummary(await getGameSummary('mlb', gameId) as Record<string, unknown>) as unknown as BSIGameSummaryResult,
           cacheKey, env.KV, CACHE_TTL.games,
         );
-        const payload = ensurePayloadMeta(result.data, result.source);
+        const payload = normalizeMLBGamePayload(ensurePayloadMeta(result.data, result.source) as Record<string, unknown>);
         return cachedJson(payload, 200, HTTP_CACHE.game, fetchResultHeaders(payload, result));
       }
     }
 
-    const cached = await kvGet<unknown>(env.KV, cacheKey);
-    if (cached) return cachedJson(cached, 200, HTTP_CACHE.game, cachedPayloadHeaders(cached));
+    const cached = await kvGet<Record<string, unknown>>(env.KV, cacheKey);
+    if (cached) {
+      const normalized = normalizeMLBGamePayload(cached);
+      return cachedJson(normalized, 200, HTTP_CACHE.game, cachedPayloadHeaders(normalized));
+    }
 
     const raw = await getGameSummary('mlb', gameId);
-    const payload = withMeta(transformGameSummary(raw as Record<string, unknown>));
+    const payload = normalizeMLBGamePayload(withMeta(transformGameSummary(raw as Record<string, unknown>)) as Record<string, unknown>);
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
     return cachedJson(payload, 200, HTTP_CACHE.game, freshDataHeaders());
   } catch (err) {
