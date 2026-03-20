@@ -19,6 +19,10 @@ import { toDataMeta } from '@/lib/utils/data-meta';
 import { formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
 import type { DataMeta } from '@/lib/types/data-meta';
 import { IntelStreamCard } from '@/components/intel/IntelStreamCard';
+import {
+  COLLEGE_BASEBALL_CONFERENCES,
+  normalizeCollegeBaseballConference,
+} from '@/lib/data/collegeBaseballConferences';
 
 interface Team {
   id: string;
@@ -52,7 +56,7 @@ interface ScoresApiResponse {
   timestamp?: string;
 }
 
-const conferences = ['All', 'SEC', 'ACC', 'Big 12', 'Big Ten', 'Sun Belt', 'AAC'];
+const conferences = ['All', ...COLLEGE_BASEBALL_CONFERENCES.map((conference) => conference.id)];
 
 function GameIntelTrigger({ game }: { game: Game }) {
   const [open, setOpen] = useState(false);
@@ -64,10 +68,7 @@ function GameIntelTrigger({ game }: { game: Game }) {
         onClick={() => setOpen((p) => !p)}
         className="w-full flex items-center justify-center gap-1.5 py-2 text-xs font-display uppercase tracking-widest text-text-tertiary hover:text-burnt-orange transition-colors"
       >
-        <span
-          className="w-1 h-1 rounded-full bg-current"
-          style={{ opacity: open ? 1 : 0.5 }}
-        />
+        <span className="w-1 h-1 rounded-full bg-current" style={{ opacity: open ? 1 : 0.5 }} />
         {open ? 'Hide Intel' : 'Pregame Intel'}
       </button>
       {open && (
@@ -103,11 +104,18 @@ function TeamRow({
     <div className="flex items-center gap-3">
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <span className={`truncate font-semibold ${won ? 'text-text-primary' : 'text-text-secondary'}`}>
+          <span
+            className={`truncate font-semibold ${won ? 'text-text-primary' : 'text-text-secondary'}`}
+          >
             {displayName}
           </span>
           {won && (
-            <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-success" fill="currentColor" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              className="h-4 w-4 shrink-0 text-success"
+              fill="currentColor"
+              aria-hidden="true"
+            >
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
             </svg>
           )}
@@ -175,8 +183,18 @@ function GameCard({ game }: { game: Game }) {
 
         {/* Teams */}
         <div className="p-4 space-y-3">
-          <TeamRow team={game.awayTeam} won={awayWon} isScheduled={isScheduled} fallbackAbbr="AWY" />
-          <TeamRow team={game.homeTeam} won={homeWon} isScheduled={isScheduled} fallbackAbbr="HME" />
+          <TeamRow
+            team={game.awayTeam}
+            won={awayWon}
+            isScheduled={isScheduled}
+            fallbackAbbr="AWY"
+          />
+          <TeamRow
+            team={game.homeTeam}
+            won={homeWon}
+            isScheduled={isScheduled}
+            fallbackAbbr="HME"
+          />
         </div>
 
         {/* Venue Footer */}
@@ -221,7 +239,7 @@ function GameSection({ games, status, label, showPulse, className }: GameSection
 }
 
 export default function CollegeBaseballScoresPage() {
-  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [selectedDate, setSelectedDate] = useState<string>('');
   const [mounted, setMounted] = useState(false);
   const [selectedConference, setSelectedConference] = useState('All');
   const [liveGamesDetected, setLiveGamesDetected] = useState(false);
@@ -235,16 +253,23 @@ export default function CollegeBaseballScoresPage() {
 
     // Read conference filter from URL param
     const params = new URLSearchParams(window.location.search);
-    const confParam = params.get('conf');
-    if (confParam && conferences.includes(confParam)) {
-      setSelectedConference(confParam);
+    const confParam = params.get('conference') ?? params.get('conf');
+    const normalizedConference = normalizeCollegeBaseballConference(confParam);
+    if (normalizedConference) {
+      setSelectedConference(normalizedConference);
     }
   }, []);
 
   const confParam = selectedConference !== 'All' ? `&conference=${selectedConference}` : '';
-  const { data: rawData, meta: responseMeta, loading, error, retry } = useSportData<ScoresApiResponse>(
+  const {
+    data: rawData,
+    meta: responseMeta,
+    loading,
+    error,
+    retry,
+  } = useSportData<ScoresApiResponse>(
     selectedDate ? `/api/college-baseball/schedule?date=${selectedDate}${confParam}` : null,
-    { refreshInterval: 30000, refreshWhen: liveGamesDetected, timeout: 10000 }
+    { refreshInterval: 30000, refreshWhen: liveGamesDetected, timeout: 10000 },
   );
 
   const games = useMemo(() => rawData?.data || rawData?.games || [], [rawData]);
@@ -253,7 +278,9 @@ export default function CollegeBaseballScoresPage() {
   const meta: DataMeta | null = useMemo(() => toDataMeta(responseMeta), [responseMeta]);
 
   // Sync live detection to enable auto-refresh
-  useEffect(() => { setLiveGamesDetected(hasLiveGames); }, [hasLiveGames]);
+  useEffect(() => {
+    setLiveGamesDetected(hasLiveGames);
+  }, [hasLiveGames]);
 
   // Yesterday fallback: when today has zero games, show yesterday instead
   // rawData !== null ensures we only trigger AFTER a fetch completes,
@@ -306,19 +333,25 @@ export default function CollegeBaseballScoresPage() {
   const liveCount = useMemo(() => games.filter((g) => g.status === 'live').length, [games]);
 
   // Date navigation — computed client-side only to avoid hydration mismatch
-  const dateOptions = useMemo(() => mounted ? [
-    { offset: -2, label: formatScheduleDate(getDateOffset(-2)) },
-    { offset: -1, label: 'Yesterday' },
-    { offset: 0, label: 'Today' },
-    { offset: 1, label: 'Tomorrow' },
-    { offset: 2, label: formatScheduleDate(getDateOffset(2)) },
-  ] : [
-    { offset: -2, label: '\u00A0' },
-    { offset: -1, label: 'Yesterday' },
-    { offset: 0, label: 'Today' },
-    { offset: 1, label: 'Tomorrow' },
-    { offset: 2, label: '\u00A0' },
-  ], [mounted]);
+  const dateOptions = useMemo(
+    () =>
+      mounted
+        ? [
+            { offset: -2, label: formatScheduleDate(getDateOffset(-2)) },
+            { offset: -1, label: 'Yesterday' },
+            { offset: 0, label: 'Today' },
+            { offset: 1, label: 'Tomorrow' },
+            { offset: 2, label: formatScheduleDate(getDateOffset(2)) },
+          ]
+        : [
+            { offset: -2, label: '\u00A0' },
+            { offset: -1, label: 'Yesterday' },
+            { offset: 0, label: 'Today' },
+            { offset: 1, label: 'Tomorrow' },
+            { offset: 2, label: '\u00A0' },
+          ],
+    [mounted],
+  );
 
   return (
     <>
@@ -373,192 +406,200 @@ export default function CollegeBaseballScoresPage() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <DataErrorBoundary name="College Baseball Scores">
-            {/* Date Selector */}
-            <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
-              <button
-                onClick={() => handleDateSelect(getDateOffset(-3))}
-                className="p-2 text-text-tertiary hover:text-text-primary transition-colors"
-                aria-label="Previous days"
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M15 18l-6-6 6-6" />
-                </svg>
-              </button>
-
-              {dateOptions.map((option) => {
-                const dateValue = getDateOffset(option.offset);
-
-                return (
-                  <FilterPill
-                    key={option.offset}
-                    active={selectedDate === dateValue}
-                    onClick={() => handleDateSelect(dateValue)}
-                    uppercase={false}
-                    className="whitespace-nowrap"
-                  >
-                    {option.label}
-                  </FilterPill>
-                );
-              })}
-
-              <button
-                onClick={() => handleDateSelect(getDateOffset(3))}
-                className="p-2 text-text-tertiary hover:text-text-primary transition-colors"
-                aria-label="Next days"
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M9 18l6-6-6-6" />
-                </svg>
-              </button>
-            </div>
-
-            {/* Conference Filter */}
-            <div className="flex flex-wrap gap-2 mb-8">
-              {conferences.map((conf) => {
-                const count = conf === 'All' ? games.length : (conferenceCounts[conf] || 0);
-                return (
-                  <FilterPill
-                    key={conf}
-                    active={selectedConference === conf}
-                    onClick={() => setSelectedConference(conf)}
-                    aria-pressed={selectedConference === conf}
-                  >
-                    {conf}{count > 0 ? ` (${count})` : ''}
-                  </FilterPill>
-                );
-              })}
-            </div>
-
-            {/* Game Status Header */}
-            {!loading && !error && games.length > 0 && (
-              <div className="mb-6 flex items-center gap-2 text-sm text-text-secondary">
-                {isYesterdayFallback ? (
-                  <span className="flex items-center gap-2">
-                    <span className="text-text-tertiary">Yesterday&apos;s Results</span>
-                    <span className="text-burnt-orange font-semibold">{games.length} {games.length === 1 ? 'game' : 'games'}</span>
-                  </span>
-                ) : hasLiveGames ? (
-                  <span className="flex items-center gap-2">
-                    <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
-                    <span className="text-success font-semibold">{liveCount} live</span>
-                    <span className="text-text-tertiary">&middot; {games.length} total {games.length === 1 ? 'game' : 'games'} today</span>
-                  </span>
-                ) : (
-                  <span>{games.length} {games.length === 1 ? 'game' : 'games'}</span>
-                )}
-              </div>
-            )}
-
-            {/* Games Grid */}
-            {loading ? (
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <SkeletonScoreCard key={i} />
-                ))}
-              </div>
-            ) : error ? (
-              <Card variant="default" padding="lg" className="bg-warning/10 border-warning/30">
-                <p className="text-warning font-semibold">Unable to Load Scores</p>
-                <p className="text-text-secondary text-sm mt-1">
-                  The scores API returned an error. This is usually temporary — try again in a moment.
-                </p>
+              {/* Date Selector */}
+              <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
                 <button
-                  onClick={() => retry()}
-                  className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange/80 transition-colors"
+                  onClick={() => handleDateSelect(getDateOffset(-3))}
+                  className="p-2 text-text-tertiary hover:text-text-primary transition-colors"
+                  aria-label="Previous days"
                 >
-                  Retry
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M15 18l-6-6 6-6" />
+                  </svg>
                 </button>
-              </Card>
-            ) : games.length === 0 ? (
-              <EmptyState
-                type={meta?.degraded ? 'source-unavailable' : 'no-games'}
-                sport="college-baseball"
-                onRetry={meta?.degraded ? () => retry() : undefined}
-              />
-            ) : (
-              <>
-                {/* Live Games Section */}
-                {games.some((g) => g.status === 'live') && (
-                  <div className="mb-8">
-                    <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+
+                {dateOptions.map((option) => {
+                  const dateValue = getDateOffset(option.offset);
+
+                  return (
+                    <FilterPill
+                      key={option.offset}
+                      active={selectedDate === dateValue}
+                      onClick={() => handleDateSelect(dateValue)}
+                      uppercase={false}
+                      className="whitespace-nowrap"
+                    >
+                      {option.label}
+                    </FilterPill>
+                  );
+                })}
+
+                <button
+                  onClick={() => handleDateSelect(getDateOffset(3))}
+                  className="p-2 text-text-tertiary hover:text-text-primary transition-colors"
+                  aria-label="Next days"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M9 18l6-6-6-6" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Conference Filter */}
+              <div className="flex flex-wrap gap-2 mb-8">
+                {conferences.map((conf) => {
+                  const count = conf === 'All' ? games.length : conferenceCounts[conf] || 0;
+                  return (
+                    <FilterPill
+                      key={conf}
+                      active={selectedConference === conf}
+                      onClick={() => setSelectedConference(conf)}
+                      aria-pressed={selectedConference === conf}
+                    >
+                      {conf}
+                      {count > 0 ? ` (${count})` : ''}
+                    </FilterPill>
+                  );
+                })}
+              </div>
+
+              {/* Game Status Header */}
+              {!loading && !error && games.length > 0 && (
+                <div className="mb-6 flex items-center gap-2 text-sm text-text-secondary">
+                  {isYesterdayFallback ? (
+                    <span className="flex items-center gap-2">
+                      <span className="text-text-tertiary">Yesterday&apos;s Results</span>
+                      <span className="text-burnt-orange font-semibold">
+                        {games.length} {games.length === 1 ? 'game' : 'games'}
+                      </span>
+                    </span>
+                  ) : hasLiveGames ? (
+                    <span className="flex items-center gap-2">
                       <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
-                      Live Games
-                    </h2>
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {games
-                        .filter((g) => g.status === 'live')
-                        .map((game) => (
-                          <ScrollReveal key={game.id}>
-                            <GameCard game={game} />
-                          </ScrollReveal>
-                        ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Final Games */}
-                {games.some((g) => g.status === 'final') && (
-                  <div className="mb-8">
-                    <h2 className="text-lg font-semibold text-text-primary mb-4">Final</h2>
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {games
-                        .filter((g) => g.status === 'final')
-                        .map((game) => (
-                          <ScrollReveal key={game.id}>
-                            <GameCard game={game} />
-                          </ScrollReveal>
-                        ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Scheduled Games */}
-                {games.some((g) => g.status === 'scheduled') && (
-                  <div>
-                    <h2 className="text-lg font-semibold text-text-primary mb-4">Upcoming</h2>
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {games
-                        .filter((g) => g.status === 'scheduled')
-                        .map((game) => (
-                          <div key={game.id}>
-                            <ScrollReveal>
-                              <GameCard game={game} />
-                            </ScrollReveal>
-                            <GameIntelTrigger game={game} />
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Data Freshness Footer */}
-                <div className="mt-8 pt-4 border-t border-border-subtle space-y-2">
-                  <DataFreshnessIndicator
-                    lastUpdated={meta?.fetched_at ? new Date(meta.fetched_at) : undefined}
-                    source={meta?.source || 'ESPN'}
-                    refreshInterval={hasLiveGames ? 30 : undefined}
-                    isCached={!hasLiveGames && !!rawData}
-                  />
-                  {meta?.degraded && (
-                    <p className="text-xs text-[var(--bsi-warning)]/60 text-center">
-                      Limited data — advanced stats unavailable
-                    </p>
+                      <span className="text-success font-semibold">{liveCount} live</span>
+                      <span className="text-text-tertiary">
+                        &middot; {games.length} total {games.length === 1 ? 'game' : 'games'} today
+                      </span>
+                    </span>
+                  ) : (
+                    <span>
+                      {games.length} {games.length === 1 ? 'game' : 'games'}
+                    </span>
                   )}
                 </div>
-              </>
-            )}
+              )}
+
+              {/* Games Grid */}
+              {loading ? (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <SkeletonScoreCard key={i} />
+                  ))}
+                </div>
+              ) : error ? (
+                <Card variant="default" padding="lg" className="bg-warning/10 border-warning/30">
+                  <p className="text-warning font-semibold">Unable to Load Scores</p>
+                  <p className="text-text-secondary text-sm mt-1">
+                    The scores API returned an error. This is usually temporary — try again in a
+                    moment.
+                  </p>
+                  <button
+                    onClick={() => retry()}
+                    className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange/80 transition-colors"
+                  >
+                    Retry
+                  </button>
+                </Card>
+              ) : games.length === 0 ? (
+                <EmptyState
+                  type={meta?.degraded ? 'source-unavailable' : 'no-games'}
+                  sport="college-baseball"
+                  onRetry={meta?.degraded ? () => retry() : undefined}
+                />
+              ) : (
+                <>
+                  {/* Live Games Section */}
+                  {games.some((g) => g.status === 'live') && (
+                    <div className="mb-8">
+                      <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+                        <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
+                        Live Games
+                      </h2>
+                      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        {games
+                          .filter((g) => g.status === 'live')
+                          .map((game) => (
+                            <ScrollReveal key={game.id}>
+                              <GameCard game={game} />
+                            </ScrollReveal>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Final Games */}
+                  {games.some((g) => g.status === 'final') && (
+                    <div className="mb-8">
+                      <h2 className="text-lg font-semibold text-text-primary mb-4">Final</h2>
+                      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        {games
+                          .filter((g) => g.status === 'final')
+                          .map((game) => (
+                            <ScrollReveal key={game.id}>
+                              <GameCard game={game} />
+                            </ScrollReveal>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Scheduled Games */}
+                  {games.some((g) => g.status === 'scheduled') && (
+                    <div>
+                      <h2 className="text-lg font-semibold text-text-primary mb-4">Upcoming</h2>
+                      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        {games
+                          .filter((g) => g.status === 'scheduled')
+                          .map((game) => (
+                            <div key={game.id}>
+                              <ScrollReveal>
+                                <GameCard game={game} />
+                              </ScrollReveal>
+                              <GameIntelTrigger game={game} />
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Data Freshness Footer */}
+                  <div className="mt-8 pt-4 border-t border-border-subtle space-y-2">
+                    <DataFreshnessIndicator
+                      lastUpdated={meta?.fetched_at ? new Date(meta.fetched_at) : undefined}
+                      source={meta?.source || 'ESPN'}
+                      refreshInterval={hasLiveGames ? 30 : undefined}
+                      isCached={!hasLiveGames && !!rawData}
+                    />
+                    {meta?.degraded && (
+                      <p className="text-xs text-[var(--bsi-warning)]/60 text-center">
+                        Limited data — advanced stats unavailable
+                      </p>
+                    )}
+                  </div>
+                </>
+              )}
             </DataErrorBoundary>
 
             {/* Savant Cross-Link */}
@@ -566,19 +607,40 @@ export default function CollegeBaseballScoresPage() {
               <Link
                 href="/college-baseball/savant"
                 className="block p-4 transition-colors group"
-                style={{ background: 'var(--surface-dugout, #161616)', border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))' }}
+                style={{
+                  background: 'var(--surface-dugout, #161616)',
+                  border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))',
+                }}
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="heritage-stamp text-[10px]" style={{ color: 'var(--bsi-primary, #BF5700)' }}>BSI SAVANT</span>
-                    <p className="font-oswald uppercase text-sm tracking-wider mt-1" style={{ color: 'var(--bsi-bone, #F5F2EB)' }}>
+                    <span
+                      className="heritage-stamp text-[10px]"
+                      style={{ color: 'var(--bsi-primary, #BF5700)' }}
+                    >
+                      BSI SAVANT
+                    </span>
+                    <p
+                      className="font-oswald uppercase text-sm tracking-wider mt-1"
+                      style={{ color: 'var(--bsi-bone, #F5F2EB)' }}
+                    >
                       The box score is just the beginning
                     </p>
-                    <p className="font-cormorant text-xs mt-1" style={{ color: 'var(--bsi-dust, #C4B8A5)' }}>
+                    <p
+                      className="font-cormorant text-xs mt-1"
+                      style={{ color: 'var(--bsi-dust, #C4B8A5)' }}
+                    >
                       Park-adjusted wOBA, wRC+, FIP for 300+ D1 programs — updated every 6 hours
                     </p>
                   </div>
-                  <svg viewBox="0 0 24 24" className="w-5 h-5 opacity-40 group-hover:opacity-70 group-hover:translate-x-1 transition-all shrink-0" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: 'var(--bsi-primary, #BF5700)' }}>
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="w-5 h-5 opacity-40 group-hover:opacity-70 group-hover:translate-x-1 transition-all shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    style={{ color: 'var(--bsi-primary, #BF5700)' }}
+                  >
                     <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
                 </div>
