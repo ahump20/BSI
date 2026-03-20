@@ -6,7 +6,7 @@ import { defineConfig, devices } from '@playwright/test';
  * Set BASE_URL to target a preview deploy or production for post-deploy audit.
  */
 export default defineConfig({
-  testDir: './tests',
+  testDir: './tests/smoke',
   timeout: 30_000,
   expect: { timeout: 10_000 },
   fullyParallel: true,
