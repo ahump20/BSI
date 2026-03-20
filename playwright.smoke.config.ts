@@ -27,12 +27,14 @@ export default defineConfig({
       use: { ...devices['iPhone 13'] },
     },
   ],
-  ...(!process.env.BASE_URL && {
-    webServer: {
-      command: 'npx next dev --webpack',
-      url: 'http://localhost:3000',
-      reuseExistingServer: !process.env.CI,
-      timeout: 60_000,
-    },
-  }),
+  ...(process.env.BASE_URL
+    ? {}
+    : {
+        webServer: {
+          command: 'npx next dev --webpack',
+          url: 'http://localhost:3000',
+          reuseExistingServer: true,
+          timeout: 60_000,
+        },
+      }),
 });
