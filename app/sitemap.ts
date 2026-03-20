@@ -28,7 +28,6 @@ const flagship: SitemapEntry[] = [
   { path: '/college-baseball/conferences', changeFrequency: 'daily', priority: 0.8 },
   { path: '/college-baseball/compare', changeFrequency: 'daily', priority: 0.7 },
   { path: '/college-baseball/savant', changeFrequency: 'daily', priority: 0.9 },
-  { path: '/college-baseball/sabermetrics', changeFrequency: 'daily', priority: 0.9 },
   { path: '/college-baseball/savant/park-factors', changeFrequency: 'weekly', priority: 0.8 },
   { path: '/college-baseball/savant/conference-index', changeFrequency: 'weekly', priority: 0.8 },
   { path: '/college-baseball/preseason', changeFrequency: 'weekly', priority: 0.8 },
@@ -142,7 +141,6 @@ const proSports: SitemapEntry[] = [
   { path: '/mlb/players', changeFrequency: 'daily', priority: 0.6 },
   { path: '/mlb/teams', changeFrequency: 'daily', priority: 0.6 },
   { path: '/mlb/stats', changeFrequency: 'daily', priority: 0.6 },
-  { path: '/mlb/abs', changeFrequency: 'daily', priority: 0.5 },
   // NFL
   { path: '/nfl', changeFrequency: 'daily', priority: 0.7 },
   { path: '/nfl/scores', changeFrequency: 'hourly', priority: 0.7 },
@@ -190,15 +188,12 @@ const features: SitemapEntry[] = [
   { path: '/intel', changeFrequency: 'daily', priority: 0.7 },
   { path: '/nil-valuation', changeFrequency: 'daily', priority: 0.7 },
   { path: '/nil-valuation/methodology', changeFrequency: 'monthly', priority: 0.5 },
-  { path: '/analytics', changeFrequency: 'daily', priority: 0.6 },
-  { path: '/college-baseball/analytics/playground', changeFrequency: 'weekly', priority: 0.5 },
   { path: '/vision-ai', changeFrequency: 'weekly', priority: 0.5 },
   { path: '/search', changeFrequency: 'daily', priority: 0.5 },
   { path: '/college-baseball/tournament', changeFrequency: 'daily', priority: 0.8 },
   { path: '/college-baseball/tournament/regionals', changeFrequency: 'daily', priority: 0.7 },
   { path: '/college-baseball/tournament/cws', changeFrequency: 'daily', priority: 0.7 },
   { path: '/college-baseball/savant/visuals', changeFrequency: 'weekly', priority: 0.6 },
-  { path: '/wbc', changeFrequency: 'daily', priority: 0.6 },
 ];
 
 const arcade: SitemapEntry[] = [
@@ -209,7 +204,6 @@ const arcade: SitemapEntry[] = [
   { path: '/arcade/games/blitz', changeFrequency: 'monthly', priority: 0.4 },
   { path: '/arcade/games/downtown-doggies', changeFrequency: 'monthly', priority: 0.4 },
   { path: '/arcade/games/leadership-capital', changeFrequency: 'monthly', priority: 0.4 },
-  { path: '/arcade/wc3-dashboard', changeFrequency: 'monthly', priority: 0.3 },
 ];
 
 const research: SitemapEntry[] = [
@@ -221,7 +215,6 @@ const marketing: SitemapEntry[] = [
   { path: '/about', changeFrequency: 'monthly', priority: 0.5 },
   { path: '/contact', changeFrequency: 'monthly', priority: 0.5 },
   { path: '/pricing', changeFrequency: 'weekly', priority: 0.7 },
-  { path: '/coverage', changeFrequency: 'monthly', priority: 0.5 },
   { path: '/privacy', changeFrequency: 'yearly', priority: 0.3 },
   { path: '/terms', changeFrequency: 'yearly', priority: 0.3 },
 ];

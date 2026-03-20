@@ -17,6 +17,16 @@ Disallow: /auth/
 Disallow: /checkout/
 Disallow: /dashboard/
 Disallow: /settings/
+Disallow: /analytics/
+Disallow: /models/
+Disallow: /coverage/
+Disallow: /blog-post-feed/
+Disallow: /college-baseball/analytics/
+Disallow: /college-baseball/sabermetrics/
+Disallow: /arcade/wc3-dashboard/
+Disallow: /mlb/abs/
+Disallow: /wbc/
+Disallow: /intelligence/
 Disallow: /status/
 
 # Allow AI crawlers for AI Search

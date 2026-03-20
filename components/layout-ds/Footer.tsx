@@ -26,8 +26,7 @@ export function Footer() {
               Born to Blaze the Path Beaten Less
             </p>
             <p className="text-xs leading-relaxed font-serif italic" style={{ color: 'var(--bsi-dust)' }}>
-              The only free, park-adjusted sabermetrics platform for D1 college baseball.
-              Plus live scores across MLB, NFL, NBA, and NCAA.
+              Park-adjusted sabermetrics, live scores, and original editorial for college baseball.
             </p>
           </div>
           <div className="flex items-center gap-4">
@@ -74,8 +73,7 @@ export function Footer() {
             <ul className="space-y-2">
               <li><Link href="/college-baseball/transfer-portal" className={footerLink}>Transfer Portal</Link></li>
               <li><Link href="/nil-valuation" className={footerLink}>NIL Valuation</Link></li>
-              <li><Link href="/models" className={footerLink}>Models</Link></li>
-              <li><Link href="/glossary" className={footerLink}>Glossary</Link></li>
+              <li><Link href="/college-baseball/savant/glossary" className={footerLink}>Glossary</Link></li>
               <li><Link href="/pricing" className={footerLink}>Pricing</Link></li>
             </ul>
           </div>

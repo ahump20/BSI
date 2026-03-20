@@ -47,7 +47,7 @@ export default function TermsPage() {
                 <section>
                   <h2 className="text-xl font-semibold text-text-primary mb-4">3. Subscriptions and Payment</h2>
                   <ul className="list-disc pl-5 space-y-2 text-text-secondary">
-                    <li><strong className="text-text-primary">Plans:</strong> Pro ($29/month), Enterprise ($199/month). Pricing is subject to change with 30 days&apos; notice.</li>
+                    <li><strong className="text-text-primary">Plans:</strong> Free (no signup required), Pro ($12/month). Pricing is subject to change with 30 days&apos; notice.</li>
                     <li><strong className="text-text-primary">Free trial:</strong> Pro plan includes a 14-day free trial. You will not be charged until the trial ends.</li>
                     <li><strong className="text-text-primary">Billing:</strong> Subscriptions renew automatically. You authorize recurring charges to your payment method on file.</li>
                     <li><strong className="text-text-primary">Cancellation:</strong> You may cancel at any time. Access continues through the end of your current billing period. No refunds for partial periods.</li>

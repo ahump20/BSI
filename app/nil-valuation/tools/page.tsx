@@ -185,11 +185,10 @@ export default function NILToolsPage() {
                   Need a Custom Analysis?
                 </h3>
                 <p className="text-text-secondary mb-6 max-w-xl mx-auto">
-                  Our enterprise tier includes custom valuation reports, market analysis, and direct
-                  consultation with our NIL experts.
+                  Our Pro tier includes valuation reports, market analysis, and advanced NIL tools.
                 </p>
                 <Link href="/pricing">
-                  <Button variant="primary">View Enterprise Options</Button>
+                  <Button variant="primary">View Pro Options</Button>
                 </Link>
               </Card>
             </ScrollReveal>
