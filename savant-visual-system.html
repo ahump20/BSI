@@ -8,54 +8,59 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://d3js.org/d3.v7.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Oswald:wght@300;400;600;700&display=swap" rel="stylesheet" />
   <style>
-    :root {
+    :root { --radius-sm: 2px; --tracking-stamp: 0.08em; --shadow-glow-primary: 0 0 20px rgba(191, 87, 0, 0.15); }
+
+    .savant-theme {
+      --svt-bg: #0a0c10;
+      --svt-surface: #12151c;
+      --svt-card: #181c26;
+      --svt-border: #242a38;
+      --svt-accent: #e85d26;
+      --svt-text: #e8eaf0;
+      --svt-text-muted: #8890a4;
+      --svt-text-dim: #555d73;
       --bsi-primary: #BF5700;
-      --bsi-accent: #FF6B35;
-      --bsi-surface: #0D0D0D;
-      --bsi-surface-raised: #1A1A1A;
-      --bsi-surface-overlay: #242424;
-      --bsi-text: #F5F0EB;
-      --bsi-text-muted: #A89F95;
-      --bsi-border: rgba(245, 240, 235, 0.04);
-      --bsi-border-hover: rgba(191, 87, 0, 0.3);
-      --savant-elite: #c0392b;
-      --savant-great: #e74c3c;
-      --savant-above: #d4775c;
-      --savant-avg: #aaaaaa;
-      --savant-below: #5b9bd5;
-      --savant-poor: #2980b9;
-      --savant-very-poor: #1a5276;
+      --bsi-bone: #F5F2EB;
+      --bsi-dust: #C4B8A5;
+      --savant-elite: #ef4444;
+      --savant-great: #f97316;
+      --savant-above: #eab308;
+      --savant-avg: #8890a4;
+      --savant-below: #3b82f6;
+      --savant-poor: #6366f1;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      background: var(--bsi-surface);
-      color: var(--bsi-text);
-      font-family: 'JetBrains Mono', monospace;
+      background: var(--svt-bg);
+      color: var(--svt-text);
+      font-family: 'Cormorant Garamond', serif;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
 
-    .card {
-      background: var(--bsi-surface-raised);
-      border: 1px solid rgba(255,255,255,0.04);
-      border-radius: 12px;
+    .savant-card {
+      background: var(--svt-card);
+      border: 1px solid var(--svt-border);
+      border-radius: var(--radius-sm);
       overflow: hidden;
-      transition: border-color 0.3s;
+      transition: border-color 0.3s, box-shadow 0.3s;
     }
-    .card:hover { border-color: rgba(255,255,255,0.08); }
+    .savant-card:hover { border-color: color-mix(in srgb, var(--svt-border) 40%, var(--svt-accent)); }
+    .savant-card-feature { border-top: 2px solid var(--svt-accent); }
+    .savant-fade-in { animation: savant-fade-in 0.6s ease both; }
 
     .card-header {
       padding: 16px 20px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
+      border-bottom: 1px solid var(--svt-border);
     }
     .card-body { padding: 12px; }
 
     .font-display {
-      font-family: 'Oswald', sans-serif;
+      font-family: 'Bebas Neue', sans-serif;
       text-transform: uppercase;
       letter-spacing: 0.08em;
     }
@@ -63,27 +68,24 @@
     .section-title {
       font-family: 'Oswald', sans-serif;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
-      font-size: 10px;
-      color: var(--bsi-text-muted);
+      letter-spacing: var(--tracking-stamp);
+      font-size: 11px;
+      color: var(--svt-text-muted);
       margin-bottom: 16px;
     }
+
+    .btn-heritage { border-radius: var(--radius-sm); border: 1px solid transparent; font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: var(--tracking-stamp); font-size: 13px; }
+    .btn-heritage--ghost { color: var(--svt-text-muted); background: transparent; }
+    .btn-heritage--ghost:hover { color: var(--svt-text); }
+    .btn-heritage--primary { color: var(--bsi-bone); background: var(--bsi-primary); border-color: var(--bsi-primary); box-shadow: var(--shadow-glow-primary); }
 
     .nav-tab {
       padding: 12px 20px;
       cursor: pointer;
-      border: none;
-      background: none;
-      color: var(--bsi-text-muted);
-      font-family: 'Oswald', sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-size: 13px;
       border-bottom: 2px solid transparent;
       transition: all 0.2s;
     }
-    .nav-tab:hover { color: var(--bsi-text); }
-    .nav-tab.active { color: var(--bsi-primary); border-bottom-color: var(--bsi-primary); }
+    .nav-tab.active { border-bottom-color: var(--bsi-primary); }
 
     .legend-item {
       display: inline-flex;
@@ -97,21 +99,52 @@
     }
 
     .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
-    .badge {
+    .heritage-stamp {
       display: inline-block;
       padding: 2px 8px;
-      border-radius: 4px;
+      border-radius: var(--radius-sm);
       font-size: 9px;
       font-weight: 600;
-      background: rgba(191, 87, 0, 0.15);
+      background: color-mix(in srgb, var(--svt-card) 80%, var(--bsi-primary));
       color: var(--bsi-primary);
       font-family: 'Oswald', sans-serif;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
+      letter-spacing: var(--tracking-stamp);
+      border: 1px solid var(--svt-border);
+    }
+
+    .savant-ambient {
+      background: radial-gradient(ellipse at 80% 20%, rgba(232, 93, 38, 0.06) 0%, transparent 50%), radial-gradient(ellipse at 20% 80%, rgba(59, 130, 246, 0.04) 0%, transparent 50%), var(--svt-bg);
+    }
+
+    .corner-marks, .grain-overlay { position: relative; }
+    .corner-marks::before, .corner-marks::after {
+      content: "";
+      position: absolute;
+      inset: 20px;
+      border: 1px solid rgba(196, 184, 165, 0.16);
+      pointer-events: none;
+    }
+    .grain-overlay::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.05;
+      pointer-events: none;
+      background-image: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.03), transparent 40%), radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.02), transparent 35%);
+    }
+
+    @keyframes savant-fade-in {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .savant-fade-in { animation: none; }
     }
   </style>
 </head>
-<body>
+<body class="savant-theme savant-ambient">
   <div id="root"></div>
 
   <script type="text/babel">
@@ -120,13 +153,17 @@
     // ── Color helpers ──
     function getPercentileColor(pct, higherIsBetter) {
       const effective = higherIsBetter ? pct : 100 - pct;
-      if (effective >= 90) return '#c0392b';
-      if (effective >= 75) return '#e74c3c';
-      if (effective >= 60) return '#d4775c';
-      if (effective >= 40) return '#aaaaaa';
-      if (effective >= 25) return '#5b9bd5';
-      if (effective >= 10) return '#2980b9';
-      return '#1a5276';
+      if (effective >= 90) return 'var(--savant-elite)';
+      if (effective >= 75) return 'var(--savant-great)';
+      if (effective >= 60) return 'var(--savant-above)';
+      if (effective >= 40) return 'var(--savant-avg)';
+      if (effective >= 25) return 'var(--savant-below)';
+      return 'var(--savant-poor)';
+    }
+
+    function getConfColor(conf) {
+      const confColors = { SEC:'#BF5700', 'Big 12':'#D4722A', ACC:'#5b9bd5', 'Big Ten':'#2980b9', 'Pac-12':'#6B8E23', AAC:'#c0392b', 'Mountain West':'#e74c3c', 'Sun Belt':'#F59E0B', 'Conference USA':'#aaaaaa', WCC:'#10B981' };
+      return confColors[conf] || '#666666';
     }
 
     // ── Mock Data ──
@@ -193,12 +230,12 @@
           const color = getPercentileColor(s.pctl, s.hib);
 
           g.append('text').attr('x', 0).attr('y', y + 16)
-            .attr('fill', '#A89F95').attr('font-size', '10px')
-            .attr('font-family', "'JetBrains Mono'").text(s.label);
+            .attr('fill', 'var(--svt-text-muted)').attr('font-size', '10px')
+            .attr('font-family', "'IBM Plex Mono'").text(s.label);
 
           g.append('rect').attr('x', padL).attr('y', y + 2)
             .attr('width', barW).attr('height', barH - 4)
-            .attr('rx', 3).attr('fill', 'rgba(255,255,255,0.03)');
+            .attr('rx', 3).attr('fill', 'var(--svt-surface)');
 
           g.append('rect').attr('x', padL).attr('y', y + 2)
             .attr('width', 0).attr('height', barH - 4)
@@ -207,37 +244,37 @@
             .attr('width', Math.max(4, x(s.pctl)));
 
           g.append('text').attr('x', padL + barW + 6).attr('y', y + 16)
-            .attr('fill', '#F5F0EB').attr('font-size', '11px')
-            .attr('font-weight', 600).attr('font-family', "'JetBrains Mono'")
+            .attr('fill', 'var(--svt-text)').attr('font-size', '11px')
+            .attr('font-weight', 600).attr('font-family', "'IBM Plex Mono'")
             .text(s.fmt(s.val));
 
           g.append('text').attr('x', w).attr('y', y + 16)
             .attr('text-anchor', 'end').attr('fill', color)
             .attr('font-size', '11px').attr('font-weight', 700)
-            .attr('font-family', "'JetBrains Mono'")
+            .attr('font-family', "'IBM Plex Mono'")
             .text(Math.round(s.pctl));
         });
       }, []);
 
       return (
-        <div className="card">
+        <div className="savant-card savant-fade-in">
           <div className="card-header">
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
               <div>
-                <div className="font-display" style={{fontSize:18,fontWeight:700,color:'#F5F0EB'}}>{player.name}</div>
-                <div style={{fontSize:11,color:'#A89F95',marginTop:2}}>{player.team} · {player.conf}</div>
+                <div className="font-display" style={{fontSize:18,fontWeight:700,color:'var(--svt-text)'}}>{player.name}</div>
+                <div style={{fontSize:11,color:'var(--svt-text-muted)',marginTop:2}}>{player.team} · {player.conf}</div>
               </div>
-              <div style={{fontSize:9,color:'#A89F95',fontFamily:"'Oswald'",textTransform:'uppercase',letterSpacing:'0.1em'}}>Percentile Rankings</div>
+              <div style={{fontSize:9,color:'var(--svt-text-muted)',fontFamily:"'Oswald'",textTransform:'uppercase',letterSpacing:'0.1em'}}>Percentile Rankings</div>
             </div>
           </div>
           <div className="card-body" style={{padding:'12px 16px'}}>
             <svg ref={svgRef} width="100%" height={300} style={{display:'block'}} />
           </div>
-          <div style={{padding:'12px 20px',borderTop:'1px solid rgba(255,255,255,0.04)',display:'flex',justifyContent:'center',gap:16}}>
-            {[{l:'Elite',c:'#c0392b'},{l:'Great',c:'#e74c3c'},{l:'Avg',c:'#aaaaaa'},{l:'Below',c:'#5b9bd5'},{l:'Poor',c:'#1a5276'}].map(i =>
+          <div style={{padding:'12px 20px',borderTop:'1px solid var(--svt-border)',display:'flex',justifyContent:'center',gap:16}}>
+            {[{l:'Elite',c:'var(--savant-elite)'},{l:'Great',c:'var(--savant-great)'},{l:'Avg',c:'var(--savant-avg)'},{l:'Below',c:'var(--savant-below)'},{l:'Poor',c:'var(--savant-poor)'}].map(i =>
               <span key={i.l} className="legend-item">
                 <span className="legend-dot" style={{background:i.c}} />
-                <span style={{fontSize:9,color:'#A89F95'}}>{i.l}</span>
+                <span style={{fontSize:9,color:'var(--svt-text-muted)'}}>{i.l}</span>
               </span>
             )}
           </div>
@@ -251,7 +288,7 @@
       const containerRef = useRef(null);
       const [tip, setTip] = useState(null);
 
-      const confColors = { SEC:'#BF5700', ACC:'#5b9bd5', 'Big 12':'#D4722A', 'Big Ten':'#2980b9', 'Pac-12':'#6B8E23', AAC:'#c0392b' };
+      const confColors = { SEC:'#BF5700', 'Big 12':'#D4722A', ACC:'#5b9bd5', 'Big Ten':'#2980b9', 'Pac-12':'#6B8E23', AAC:'#c0392b', 'Mountain West':'#e74c3c', 'Sun Belt':'#F59E0B', 'Conference USA':'#aaaaaa', WCC:'#10B981' };
 
       useEffect(() => {
         const svg = d3.select(svgRef.current);
@@ -276,29 +313,29 @@
         ].forEach(q => g.append('rect').attr('x',q.x1).attr('y',q.y1).attr('width',q.x2-q.x1).attr('height',q.y2-q.y1).attr('fill',q.f));
 
         // Median lines
-        g.append('line').attr('x1',x(medK)).attr('x2',x(medK)).attr('y1',0).attr('y2',ih).attr('stroke','rgba(255,255,255,0.12)').attr('stroke-dasharray','4,3');
-        g.append('line').attr('x1',0).attr('x2',iw).attr('y1',y(medBB)).attr('y2',y(medBB)).attr('stroke','rgba(255,255,255,0.12)').attr('stroke-dasharray','4,3');
+        g.append('line').attr('x1',x(medK)).attr('x2',x(medK)).attr('y1',0).attr('y2',ih).attr('stroke','color-mix(in srgb, var(--svt-border) 35%, white)').attr('stroke-dasharray','4,3');
+        g.append('line').attr('x1',0).attr('x2',iw).attr('y1',y(medBB)).attr('y2',y(medBB)).attr('stroke','color-mix(in srgb, var(--svt-border) 35%, white)').attr('stroke-dasharray','4,3');
 
         // Quadrant labels
         [{t:'ELITE EYE',x:8,y:14},{t:'PATIENT CONTACT',x:8,y:ih-8},{t:'AGGRESSIVE POWER',x:iw-8,y:14,a:'end'},{t:'FREE SWINGER',x:iw-8,y:ih-8,a:'end'}]
-          .forEach(l => g.append('text').attr('x',l.x).attr('y',l.y).attr('text-anchor',l.a||'start').attr('fill','rgba(255,255,255,0.15)').attr('font-family',"'Oswald'").attr('font-size',9).attr('letter-spacing','0.12em').text(l.t));
+          .forEach(l => g.append('text').attr('x',l.x).attr('y',l.y).attr('text-anchor',l.a||'start').attr('fill','var(--svt-text-dim)').attr('font-family',"'Oswald'").attr('font-size',9).attr('letter-spacing','0.12em').text(l.t));
 
         // Axes
         g.append('g').attr('transform',`translate(0,${ih})`).call(d3.axisBottom(x).ticks(6).tickFormat(d=>`${(d*100).toFixed(0)}%`))
-          .call(g=>{g.selectAll('text').attr('fill','#A89F95').attr('font-size',10);g.selectAll('line').attr('stroke','rgba(255,255,255,0.08)');g.select('.domain').attr('stroke','rgba(255,255,255,0.08)')});
+          .call(g=>{g.selectAll('text').attr('fill','var(--svt-text-muted)').attr('font-size',10);g.selectAll('line').attr('stroke','color-mix(in srgb, var(--svt-border) 40%, var(--svt-accent))');g.select('.domain').attr('stroke','color-mix(in srgb, var(--svt-border) 40%, var(--svt-accent))')});
         g.append('g').call(d3.axisLeft(y).ticks(5).tickFormat(d=>`${(d*100).toFixed(0)}%`))
-          .call(g=>{g.selectAll('text').attr('fill','#A89F95').attr('font-size',10);g.selectAll('line').attr('stroke','rgba(255,255,255,0.08)');g.select('.domain').attr('stroke','rgba(255,255,255,0.08)')});
+          .call(g=>{g.selectAll('text').attr('fill','var(--svt-text-muted)').attr('font-size',10);g.selectAll('line').attr('stroke','color-mix(in srgb, var(--svt-border) 40%, var(--svt-accent))');g.select('.domain').attr('stroke','color-mix(in srgb, var(--svt-border) 40%, var(--svt-accent))')});
 
-        g.append('text').attr('x',iw/2).attr('y',ih+38).attr('text-anchor','middle').attr('fill','#A89F95').attr('font-family',"'Oswald'").attr('font-size',11).attr('letter-spacing','0.08em').text('STRIKEOUT RATE (K%)');
-        g.append('text').attr('transform',`translate(-40,${ih/2}) rotate(-90)`).attr('text-anchor','middle').attr('fill','#A89F95').attr('font-family',"'Oswald'").attr('font-size',11).attr('letter-spacing','0.08em').text('WALK RATE (BB%)');
+        g.append('text').attr('x',iw/2).attr('y',ih+38).attr('text-anchor','middle').attr('fill','var(--svt-text-muted)').attr('font-family',"'Oswald'").attr('font-size',11).attr('letter-spacing','0.08em').text('STRIKEOUT RATE (K%)');
+        g.append('text').attr('transform',`translate(-40,${ih/2}) rotate(-90)`).attr('text-anchor','middle').attr('fill','var(--svt-text-muted)').attr('font-family',"'Oswald'").attr('font-size',11).attr('letter-spacing','0.08em').text('WALK RATE (BB%)');
 
         // Dots
         g.selectAll('.dot').data(data).enter().append('circle')
           .attr('cx', d=>x(d.k_pct)).attr('cy', d=>y(d.bb_pct))
           .attr('r', 0)
-          .attr('fill', d=>confColors[d.conf]||'#666')
+          .attr('fill', d=>getConfColor(d.conf))
           .attr('fill-opacity', 0.7)
-          .attr('stroke', d=>confColors[d.conf]||'#666')
+          .attr('stroke', d=>getConfColor(d.conf))
           .attr('stroke-opacity', 0.3)
           .attr('cursor', 'pointer')
           .on('mouseenter', function(e, d) {
@@ -315,30 +352,30 @@
       }, [data]);
 
       return (
-        <div className="card">
+        <div className="savant-card savant-fade-in">
           <div className="card-header">
             <div className="font-display" style={{fontSize:14}}>Plate Discipline</div>
-            <div style={{fontSize:10,color:'#A89F95',marginTop:2}}>K% vs BB% · Bubble size = plate appearances</div>
+            <div style={{fontSize:10,color:'var(--svt-text-muted)',marginTop:2}}>K% vs BB% · Bubble size = plate appearances</div>
           </div>
           <div ref={containerRef} className="card-body" style={{position:'relative'}}>
             <svg ref={svgRef} width="100%" height={420} style={{display:'block'}} />
             {tip && (
-              <div style={{position:'absolute',left:tip.x+12,top:tip.y-10,background:'#1A1A1A',border:'1px solid rgba(255,255,255,0.08)',borderRadius:8,padding:'8px 12px',pointerEvents:'none',zIndex:50}}>
-                <div style={{fontSize:13,fontWeight:500,color:'#F5F0EB'}}>{tip.p.name}</div>
-                <div style={{fontSize:10,color:'#A89F95'}}>{tip.p.team} · {tip.p.conf}</div>
+              <div style={{position:'absolute',left:tip.x+12,top:tip.y-10,background:'var(--svt-card)',border:'1px solid color-mix(in srgb, var(--svt-border) 40%, var(--svt-accent))',borderRadius:2,padding:'8px 12px',pointerEvents:'none',zIndex:50}}>
+                <div style={{fontSize:13,fontWeight:500,color:'var(--svt-text)'}}>{tip.p.name}</div>
+                <div style={{fontSize:10,color:'var(--svt-text-muted)'}}>{tip.p.team} · {tip.p.conf}</div>
                 <div style={{display:'flex',gap:12,marginTop:6}}>
-                  <div><span style={{fontSize:9,color:'#A89F95'}}>K%</span><div style={{fontSize:12,fontWeight:600}}>{(tip.p.k_pct*100).toFixed(1)}%</div></div>
-                  <div><span style={{fontSize:9,color:'#A89F95'}}>BB%</span><div style={{fontSize:12,fontWeight:600}}>{(tip.p.bb_pct*100).toFixed(1)}%</div></div>
-                  <div><span style={{fontSize:9,color:'#A89F95'}}>PA</span><div style={{fontSize:12,fontWeight:600}}>{tip.p.pa}</div></div>
+                  <div><span style={{fontSize:9,color:'var(--svt-text-muted)'}}>K%</span><div style={{fontSize:12,fontWeight:600}}>{(tip.p.k_pct*100).toFixed(1)}%</div></div>
+                  <div><span style={{fontSize:9,color:'var(--svt-text-muted)'}}>BB%</span><div style={{fontSize:12,fontWeight:600}}>{(tip.p.bb_pct*100).toFixed(1)}%</div></div>
+                  <div><span style={{fontSize:9,color:'var(--svt-text-muted)'}}>PA</span><div style={{fontSize:12,fontWeight:600}}>{tip.p.pa}</div></div>
                 </div>
               </div>
             )}
           </div>
-          <div style={{padding:'12px 20px',borderTop:'1px solid rgba(255,255,255,0.04)',display:'flex',justifyContent:'center',gap:12,flexWrap:'wrap'}}>
+          <div style={{padding:'12px 20px',borderTop:'1px solid var(--svt-border)',display:'flex',justifyContent:'center',gap:12,flexWrap:'wrap'}}>
             {Object.entries(confColors).map(([c,color]) =>
               <span key={c} className="legend-item">
                 <span style={{width:8,height:8,borderRadius:'50%',background:color}} />
-                <span style={{fontSize:9,color:'#A89F95'}}>{c}</span>
+                <span style={{fontSize:9,color:'var(--svt-text-muted)'}}>{c}</span>
               </span>
             )}
           </div>
@@ -386,7 +423,7 @@
         // Headers
         metrics.forEach((m,i) => {
           g.append('text').attr('x', lw+i*cw+cw/2).attr('y', 22)
-            .attr('text-anchor','middle').attr('fill','#A89F95')
+            .attr('text-anchor','middle').attr('fill','var(--svt-text-muted)')
             .attr('font-family',"'Oswald'").attr('font-size',10)
             .attr('letter-spacing','0.1em').text(m.label);
         });
@@ -395,13 +432,13 @@
         sorted.forEach((row, ri) => {
           const y = hh + ri * rh;
           g.append('text').attr('x',12).attr('y',y+rh/2+4)
-            .attr('fill','#F5F0EB').attr('font-family',"'JetBrains Mono'")
+            .attr('fill','var(--svt-text)').attr('font-family',"'IBM Plex Mono'")
             .attr('font-size',11).text(row.conference);
 
           if (row.is_power) {
             g.append('text').attr('x',lw-8).attr('y',y+rh/2+3)
               .attr('text-anchor','end').attr('fill','#BF5700')
-              .attr('font-family',"'JetBrains Mono'").attr('font-size',7).text('P5');
+              .attr('font-family',"'IBM Plex Mono'").attr('font-size',7).text('P5');
           }
 
           metrics.forEach((m,mi) => {
@@ -417,26 +454,26 @@
 
             g.append('text').attr('x',cx+cellW/2).attr('y',cy+cellH/2+4)
               .attr('text-anchor','middle').attr('fill',color)
-              .attr('font-family',"'JetBrains Mono'").attr('font-size',11)
+              .attr('font-family',"'IBM Plex Mono'").attr('font-size',11)
               .attr('font-weight',600).text(m.fmt(v));
           });
         });
       }, []);
 
       return (
-        <div className="card">
+        <div className="savant-card savant-fade-in">
           <div className="card-header">
             <div className="font-display" style={{fontSize:14}}>Conference Strength Heatmap</div>
-            <div style={{fontSize:10,color:'#A89F95',marginTop:2}}>Ranked by composite index · Cell color = percentile</div>
+            <div style={{fontSize:10,color:'var(--svt-text-muted)',marginTop:2}}>Ranked by composite index · Cell color = percentile</div>
           </div>
           <div ref={containerRef} className="card-body" style={{overflowX:'auto'}}>
             <svg ref={svgRef} width="100%" height={400} style={{display:'block',minWidth:380}} />
           </div>
-          <div style={{padding:'12px 20px',borderTop:'1px solid rgba(255,255,255,0.04)',display:'flex',justifyContent:'center',gap:12}}>
-            {[{l:'Elite',c:'#c0392b'},{l:'Above Avg',c:'#d4775c'},{l:'Average',c:'#aaaaaa'},{l:'Below Avg',c:'#5b9bd5'},{l:'Poor',c:'#1a5276'}].map(i =>
+          <div style={{padding:'12px 20px',borderTop:'1px solid var(--svt-border)',display:'flex',justifyContent:'center',gap:12}}>
+            {[{l:'Elite',c:'var(--savant-elite)'},{l:'Above Avg',c:'var(--savant-above)'},{l:'Average',c:'var(--savant-avg)'},{l:'Below Avg',c:'var(--savant-below)'},{l:'Poor',c:'var(--savant-poor)'}].map(i =>
               <span key={i.l} className="legend-item">
                 <span className="legend-dot" style={{background:i.c}} />
-                <span style={{fontSize:9,color:'#A89F95'}}>{i.l}</span>
+                <span style={{fontSize:9,color:'var(--svt-text-muted)'}}>{i.l}</span>
               </span>
             )}
           </div>
@@ -461,8 +498,8 @@
             <button key={t.id} onClick={()=>t.avail&&onSelect(t.id)}
               disabled={!t.avail}
               style={{textAlign:'left',border:'none',background:'none',cursor:t.avail?'pointer':'not-allowed',opacity:t.avail?1:0.35}}>
-              <div className="card" style={{height:'100%',borderColor:active===t.id?'rgba(191,87,0,0.4)':'rgba(255,255,255,0.04)',boxShadow:active===t.id?'0 0 20px rgba(191,87,0,0.1)':'none'}}>
-                <div style={{height:80,background:'linear-gradient(135deg, #1A1A1A, #242424)',display:'flex',alignItems:'center',justifyContent:'center',borderRadius:'12px 12px 0 0'}}>
+              <div className="savant-card savant-fade-in" style={{height:'100%',borderColor:active===t.id?'var(--svt-accent)':'var(--svt-border)',boxShadow:active===t.id?'var(--shadow-glow-primary)':'none'}}>
+                <div style={{height:80,background:'var(--svt-surface)',display:'flex',alignItems:'center',justifyContent:'center',borderRadius:'2px 2px 0 0'}}>
                   {t.avail ? (
                     <svg viewBox="0 0 48 48" style={{width:36,height:36,color:'rgba(191,87,0,0.4)'}}>
                       <rect x="4" y="4" width="40" height="40" rx="4" fill="none" stroke="currentColor" strokeWidth="1.5" />
@@ -471,17 +508,17 @@
                       <circle cx="36" cy="32" r="5" fill="currentColor" opacity="0.4" />
                     </svg>
                   ) : (
-                    <span style={{fontSize:9,fontFamily:"'Oswald'",textTransform:'uppercase',letterSpacing:'0.1em',color:'#A89F95'}}>Coming Soon</span>
+                    <span style={{fontSize:9,fontFamily:"'Oswald'",textTransform:'uppercase',letterSpacing:'0.1em',color:'var(--svt-text-muted)'}}>Coming Soon</span>
                   )}
                 </div>
                 <div style={{padding:'12px 16px'}}>
-                  <span className="badge" style={{marginBottom:6,display:'inline-block'}}>{t.cat}</span>
-                  <div className="font-display" style={{fontSize:13,color:'#F5F0EB',marginBottom:4}}>{t.title}</div>
-                  <div style={{fontSize:10,color:'#A89F95',lineHeight:1.5}}>{t.desc}</div>
+                  <span className="heritage-stamp" style={{marginBottom:6,display:'inline-block'}}>{t.cat}</span>
+                  <div className="font-display" style={{fontSize:13,color:'var(--svt-text)',marginBottom:4}}>{t.title}</div>
+                  <div style={{fontSize:10,color:'var(--svt-text-muted)',lineHeight:1.5}}>{t.desc}</div>
                   {t.avail && (
                     <div style={{marginTop:8,display:'flex',alignItems:'center',gap:4}}>
-                      <span style={{width:5,height:5,borderRadius:'50%',background:'#10B981'}} />
-                      <span style={{fontSize:8,color:'#A89F95',textTransform:'uppercase',letterSpacing:'0.1em'}}>
+                      <span style={{width:5,height:5,borderRadius:'50%',background:'var(--svt-accent)'}} />
+                      <span style={{fontSize:8,color:'var(--svt-text-muted)',textTransform:'uppercase',letterSpacing:'0.1em'}}>
                         {active===t.id?'Active':'Click to explore'}
                       </span>
                     </div>
@@ -517,34 +554,34 @@
       const sorted = [...data].sort((a,b)=>b.woba-a.woba).slice(0,10);
 
       return (
-        <div className="card">
+        <div className="savant-card savant-fade-in">
           <div className="card-header" style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
             <div className="font-display" style={{fontSize:14}}>Batting Leaders — Enhanced</div>
-            <span style={{fontSize:10,color:'#A89F95'}}>{data.length} players</span>
+            <span style={{fontSize:10,color:'var(--svt-text-muted)'}}>{data.length} players</span>
           </div>
           <div style={{overflowX:'auto'}}>
             <table style={{width:'100%',borderCollapse:'collapse',fontSize:12}}>
               <thead>
-                <tr style={{borderBottom:'1px solid rgba(255,255,255,0.04)'}}>
-                  <th style={{padding:'10px 16px',textAlign:'left',fontSize:10,color:'#A89F95',fontFamily:"'Oswald'",textTransform:'uppercase',letterSpacing:'0.1em'}}>#</th>
-                  <th style={{padding:'10px 8px',textAlign:'left',fontSize:10,color:'#A89F95',fontFamily:"'Oswald'",textTransform:'uppercase',letterSpacing:'0.1em'}}>Player</th>
-                  {cols.map(c=> <th key={c.key} style={{padding:'10px 6px',textAlign:'center',fontSize:10,color:'#A89F95',fontFamily:"'Oswald'",textTransform:'uppercase',letterSpacing:'0.1em'}}>{c.label}</th>)}
+                <tr style={{borderBottom:'1px solid var(--svt-border)'}}>
+                  <th style={{padding:'10px 16px',textAlign:'left',fontSize:10,color:'var(--svt-text-muted)',fontFamily:"'Oswald'",textTransform:'uppercase',letterSpacing:'0.1em'}}>#</th>
+                  <th style={{padding:'10px 8px',textAlign:'left',fontSize:10,color:'var(--svt-text-muted)',fontFamily:"'Oswald'",textTransform:'uppercase',letterSpacing:'0.1em'}}>Player</th>
+                  {cols.map(c=> <th key={c.key} style={{padding:'10px 6px',textAlign:'center',fontSize:10,color:'var(--svt-text-muted)',fontFamily:"'Oswald'",textTransform:'uppercase',letterSpacing:'0.1em'}}>{c.label}</th>)}
                 </tr>
               </thead>
               <tbody>
                 {sorted.map((row, i) => {
                   const origIdx = data.indexOf(row);
                   return (
-                    <tr key={row.name} style={{borderBottom:'1px solid rgba(255,255,255,0.04)'}}>
-                      <td style={{padding:'8px 16px',color:i<3?'#BF5700':'#A89F95',fontWeight:i<3?700:400}}>{i+1}</td>
+                    <tr key={row.name} style={{borderBottom:'1px solid var(--svt-border)'}}>
+                      <td style={{padding:'8px 16px',color:i<3?'var(--svt-accent)':'var(--svt-text-muted)',fontWeight:i<3?700:400}}>{i+1}</td>
                       <td style={{padding:'8px 8px'}}>
                         <div style={{display:'flex',alignItems:'center',gap:8}}>
-                          <div style={{width:24,height:24,borderRadius:4,background:'rgba(255,255,255,0.05)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:8,color:'#A89F95'}}>
+                          <div style={{width:24,height:24,borderRadius:2,background:'color-mix(in srgb, var(--svt-card) 90%, white)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:8,color:'var(--svt-text-muted)'}}>
                             {row.team.slice(0,2).toUpperCase()}
                           </div>
                           <div>
-                            <div style={{fontWeight:500,color:'#F5F0EB'}}>{row.name}</div>
-                            <div style={{fontSize:10,color:'#A89F95'}}>{row.team}</div>
+                            <div style={{fontWeight:500,color:'var(--svt-text)'}}>{row.name}</div>
+                            <div style={{fontSize:10,color:'var(--svt-text-muted)'}}>{row.team}</div>
                           </div>
                         </div>
                       </td>
@@ -553,8 +590,8 @@
                         const color = getPercentileColor(p, c.hib);
                         return (
                           <td key={c.key} style={{padding:'8px 6px',textAlign:'center'}}>
-                            <div style={{position:'relative',display:'inline-block',padding:'2px 6px',borderRadius:4}}>
-                              <div style={{position:'absolute',inset:0,backgroundColor:color,opacity:0.12,borderRadius:4}} />
+                            <div style={{position:'relative',display:'inline-block',padding:'2px 6px',borderRadius:2}}>
+                              <div style={{position:'absolute',inset:0,backgroundColor:color,opacity:0.12,borderRadius:2}} />
                               <span style={{position:'relative',color,fontWeight:500}}>{c.fmt(row[c.key])}</span>
                             </div>
                           </td>
@@ -585,19 +622,19 @@
       return (
         <div>
           {/* Header */}
-          <div style={{borderBottom:'1px solid rgba(255,255,255,0.04)',padding:'40px 0 0'}}>
+          <div className="corner-marks grain-overlay" style={{borderBottom:'1px solid var(--svt-border)',padding:'40px 0 0'}}>
             <div className="container">
-              <span className="badge" style={{marginBottom:12}}>PLAYGROUND</span>
-              <h1 className="font-display" style={{fontSize:32,fontWeight:700,color:'#F5F0EB',marginBottom:4}}>
-                Savant <span style={{color:'#BF5700'}}>Visual System</span>
+              <span className="heritage-stamp" style={{marginBottom:12}}>PLAYGROUND</span>
+              <h1 className="font-display" style={{fontSize:'clamp(2.5rem,6vw,5rem)',fontWeight:700,color:'var(--svt-text)',marginBottom:4}}>
+                Savant <span style={{color:'var(--svt-accent)'}}>Visual System</span>
               </h1>
-              <p style={{fontSize:13,color:'#A89F95',maxWidth:560,lineHeight:1.7,marginBottom:20}}>
+              <p style={{fontSize:13,color:'var(--svt-text-muted)',maxWidth:560,lineHeight:1.7,marginBottom:20}}>
                 Interactive prototypes for BSI College Baseball Savant visualizations.
                 D3 + React rendering against mock data. Each view below becomes a production component.
               </p>
               <div style={{display:'flex',gap:0,overflowX:'auto'}}>
                 {tabs.map(t =>
-                  <button key={t.key} className={`nav-tab ${activeTab===t.key?'active':''}`}
+                  <button key={t.key} className={`nav-tab btn-heritage ${activeTab===t.key?'btn-heritage--primary active':'btn-heritage--ghost'}`}
                     onClick={()=>{setActiveTab(t.key);setActiveViz(null)}}>
                     {t.label}
                   </button>
@@ -640,7 +677,7 @@
             )}
 
             {/* Attribution */}
-            <div style={{textAlign:'center',marginTop:48,fontSize:10,color:'#A89F95'}}>
+            <div style={{textAlign:'center',marginTop:48,fontSize:10,color:'var(--svt-text-muted)'}}>
               BSI Savant Visual System · Prototype · blazesportsintel.com
             </div>
           </div>
