@@ -1,0 +1,12 @@
+[
+  { "query": "Need a new scoreboard visual system for our BSI college baseball page in Next.js", "should_trigger": true },
+  { "query": "Polish this React dashboard look-and-feel to match Blaze Sports Intel branding", "should_trigger": true },
+  { "query": "Draft visual specs for editorial + analytics hybrid page with Oswald headers", "should_trigger": true },
+  { "query": "Build a SQL migration for standings cache keys", "should_trigger": false },
+  { "query": "Fix the Cloudflare Worker auth token parsing bug", "should_trigger": false },
+  { "query": "Write a Python script to parse CSV into JSON", "should_trigger": false },
+  { "query": "I need component-level visual guidance for Recharts cards and interaction states", "should_trigger": true },
+  { "query": "Set up Wrangler deploy workflow for preview branches", "should_trigger": false },
+  { "query": "Make this page less generic and more BSI heritage sports style", "should_trigger": true },
+  { "query": "Refactor API handlers for NFL standings", "should_trigger": false }
+]
