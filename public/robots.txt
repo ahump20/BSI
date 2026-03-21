@@ -22,6 +22,7 @@ Disallow: /models/
 Disallow: /coverage/
 Disallow: /blog-post-feed/
 Disallow: /college-baseball/analytics/
+Disallow: /college-baseball/analytics/playground/
 Disallow: /college-baseball/sabermetrics/
 Disallow: /arcade/wc3-dashboard/
 Disallow: /mlb/abs/

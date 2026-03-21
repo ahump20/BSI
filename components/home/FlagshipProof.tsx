@@ -18,7 +18,7 @@ const PROOF_POINTS = [
   {
     stat: 'Park-Adjusted',
     label: 'Sabermetrics',
-    detail: 'wOBA, wRC+, FIP corrected for ballpark factors. The only free source.',
+    detail: 'Park-adjusted sabermetrics, live scores, and original editorial for college baseball.',
   },
   {
     stat: '6h',
