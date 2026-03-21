@@ -130,19 +130,27 @@ export default function IntelDashboard() {
     }, [setTeamLens]);
 
   // ——— Render ————————————————————————————————————————————————————————————
-  if (isLoading) return <IntelSkeleton />;
+  if (isLoading) {
+    return (
+      <DataErrorBoundary name="Intel Dashboard">
+        <IntelSkeleton />
+      </DataErrorBoundary>
+    );
+  }
 
   if (isError) {
-        return (
-                <div className="flex min-h-[60vh] items-center justify-center">
-                        <div className="text-center">
-                                  <p className="font-display text-lg text-text-secondary">Unable to load intel data</p>
-                                  <p className="mt-1 font-mono text-[12px] text-text-muted">
-                                              Check network connection or try refreshing
-                                  </p>
-                        </div>
-                </div>
-              );
+    return (
+      <DataErrorBoundary name="Intel Dashboard">
+        <div className="flex min-h-[60vh] items-center justify-center">
+          <div className="text-center">
+            <p className="font-display text-lg text-text-secondary">Unable to load intel data</p>
+            <p className="mt-1 font-mono text-[12px] text-text-muted">
+              Check network connection or try refreshing
+            </p>
+          </div>
+        </div>
+      </DataErrorBoundary>
+    );
   }
   
     return (

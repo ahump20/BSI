@@ -36,6 +36,7 @@ import {
   handleCollegeBaseballNews,
   handleCollegeBaseballPlayersList,
   handleCollegeBaseballTransferPortal,
+  handlePortalPlayerDetail,
   handleCollegeBaseballEditorialList,
   handleCollegeBaseballEditorialContent,
   handleCollegeBaseballNewsEnhanced,
@@ -415,6 +416,7 @@ app.get('/api/college-baseball/news', (c) => handleCollegeBaseballNews(c.env));
 app.get('/api/college-baseball/news/enhanced', (c) => handleCollegeBaseballNewsEnhanced(c.env));
 app.get('/api/college-baseball/players', (c) => handleCollegeBaseballPlayersList(new URL(c.req.url), c.env));
 app.get('/api/college-baseball/transfer-portal', (c) => handleCollegeBaseballTransferPortal(c.env));
+app.get('/api/portal/player/:playerId', (c) => handlePortalPlayerDetail(c.req.param('playerId'), c.env));
 app.get('/api/college-baseball/daily', (c) => handleCollegeBaseballDaily(new URL(c.req.url), c.env));
 app.get('/api/college-baseball/sabermetrics', (c) => handleCBBLeagueSabermetrics(c.env));
 app.get('/api/college-baseball/teams/all', (c) => handleCollegeBaseballTeamsAll(c.env));

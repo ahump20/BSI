@@ -283,6 +283,91 @@ export async function handleCollegeBaseballTransferPortal(env: Env): Promise<Res
   }
 }
 
+/**
+ * Portal player detail — serves /api/portal/player/:playerId
+ *
+ * Looks up a player by slug (e.g. "jace-laviolette") from the KV portal entries
+ * written by bsi-portal-sync. Returns the shape PlayerDetailClient.tsx expects.
+ */
+export async function handlePortalPlayerDetail(
+  playerId: string,
+  env: Env,
+): Promise<Response> {
+  const now = new Date().toISOString();
+
+  try {
+    const raw = await env.KV.get('portal:college-baseball:entries', 'text');
+    if (!raw) {
+      return json({
+        player: null,
+        meta: { source: 'portal-sync', fetched_at: now, timezone: 'America/Chicago' },
+        error: 'No portal data available',
+      }, 404);
+    }
+
+    const data = JSON.parse(raw) as { entries?: Array<Record<string, unknown>>; lastUpdated?: string };
+    const entries = data.entries ?? [];
+
+    // Convert slug to comparable form: "jace-laviolette" → "jace laviolette"
+    const slugNormalized = playerId.toLowerCase().replace(/-/g, ' ').trim();
+
+    // Find matching entry by name slug comparison
+    const entry = entries.find((e) => {
+      const name = ((e.playerName ?? e.player_name ?? '') as string).toLowerCase().trim();
+      // Exact slug match: "Jace LaViolette" → "jace laviolette"
+      const nameSlug = name.replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ');
+      const nameSlugDashed = name.replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-');
+      return nameSlug === slugNormalized || nameSlugDashed === playerId.toLowerCase();
+    });
+
+    // Also try matching by ID directly (numeric or string)
+    const entryById = !entry ? entries.find((e) => String(e.id) === playerId) : null;
+    const matched = entry || entryById;
+
+    if (!matched) {
+      return json({
+        player: null,
+        meta: { source: 'portal-sync', fetched_at: now, timezone: 'America/Chicago' },
+        error: 'Player not found in transfer portal',
+      }, 404);
+    }
+
+    // Map KV entry to the PlayerProfile shape the client expects
+    const playerName = (matched.playerName ?? matched.player_name ?? '') as string;
+    const status = ((matched.status ?? 'in_portal') as string).toLowerCase();
+    const portalStatus = status.includes('commit') ? 'committed'
+      : status.includes('withdraw') ? 'withdrawn'
+      : 'in_portal';
+
+    const player = {
+      id: String(matched.id ?? playerId),
+      player_name: playerName,
+      school_from: (matched.fromSchool ?? matched.school_from ?? '') as string,
+      school_to: (matched.toSchool ?? matched.school_to ?? null) as string | null,
+      position: (matched.position ?? '') as string,
+      conference: (matched.conference ?? '') as string,
+      class_year: (matched.classification ?? matched.class_year ?? '') as string,
+      status: portalStatus,
+      portal_date: (matched.enteredDate ?? matched.portal_date ?? now) as string,
+      engagement_score: (matched.engagement_score ?? undefined) as number | undefined,
+      source: 'portal-sync',
+      verified: false,
+    };
+
+    return json({
+      player,
+      meta: { source: 'portal-sync', fetched_at: data.lastUpdated ?? now, timezone: 'America/Chicago' },
+    }, 200);
+  } catch (err) {
+    console.error('[handlePortalPlayerDetail]', err instanceof Error ? err.message : err);
+    return json({
+      player: null,
+      meta: { source: 'error', fetched_at: now, timezone: 'America/Chicago' },
+      error: 'Internal server error',
+    }, 500);
+  }
+}
+
 export async function handleCollegeBaseballEditorialList(env: Env): Promise<Response> {
   const now = new Date().toISOString();
 

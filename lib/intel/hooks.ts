@@ -259,7 +259,7 @@ function estimatePregameWinProbability(
 
 function normalizeToIntelGames(sport: Exclude<IntelSport, 'all'>, data: Record<string, unknown>): IntelGame[] {
   const sb = data.scoreboard as Record<string, unknown> | undefined;
-  const raw = (data.games || sb?.games || []) as Record<string, unknown>[];
+  const raw = (data.games || sb?.games || data.events || []) as Record<string, unknown>[];
 
   return raw.map((g, i) => {
     // Handle teams as either object {away, home} or array [{homeAway: 'home'}, ...]
@@ -850,6 +850,10 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
     queries: ACTIVE_SPORTS.map((s) => ({
       queryKey: ['intel-scores', s],
       queryFn: async () => {
+        // CBB has no worker route — go straight to ESPN
+        if (s === 'cbb') {
+          return fetchJson<Record<string, unknown>>(ESPN_SCORES_MAP[s]);
+        }
         try {
           return await fetchJson<Record<string, unknown>>(scoresEndpoint(s));
         } catch {
@@ -887,6 +891,10 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
   const standingsQuery = useQuery({
     queryKey: ['intel-standings', standingsSport],
     queryFn: async () => {
+      // CBB has no worker route — go straight to ESPN
+      if (standingsSport === 'cbb') {
+        return fetchJson<Record<string, unknown>>(ESPN_STANDINGS_MAP[standingsSport]);
+      }
       try {
         return await fetchJson<Record<string, unknown>>(standingsEndpoint(standingsSport));
       } catch {
@@ -904,10 +912,16 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
     const allGames: IntelGame[] = [];
     for (const q of scoreQueries) {
       if (q.data) {
-        // College baseball: use Highlightly normalizer if data has that shape,
-        // otherwise fall through to ESPN normalizer (shared format).
-        if (q.sport === 'd1bb' && (q.data.data || q.data.matches)) {
-          allGames.push(...normalizeCollegeBaseballGames(q.data));
+        if (q.sport === 'd1bb') {
+          const items = asArray(q.data.data || q.data.matches || []);
+          const firstItem = items.length > 0 ? asObject(items[0]) : null;
+          const isHighlightly = firstItem && ('homeTeam' in firstItem || 'awayTeam' in firstItem);
+          if (isHighlightly) {
+            allGames.push(...normalizeCollegeBaseballGames(q.data));
+          } else {
+            const normalized = q.data.data ? { ...q.data, events: q.data.data } : q.data;
+            allGames.push(...normalizeToIntelGames(q.sport, normalized as Record<string, unknown>));
+          }
         } else {
           allGames.push(...normalizeToIntelGames(q.sport, q.data));
         }
@@ -1011,7 +1025,7 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
     return normalizeNews(newsQuery.data);
   }, [newsQuery.data]);
 
-  const isLoading = scoreQueries.some((q) => q.isLoading || q.isFetching);
+  const isLoading = scoreQueries.some((q) => q.isLoading && !q.data);
   const isError = scoreQueries.length > 0 && scoreQueries.every((q) => q.isError);
 
   const hero = useMemo(() => enrichedGames.find((g) => g.tier === 'hero'), [enrichedGames]);

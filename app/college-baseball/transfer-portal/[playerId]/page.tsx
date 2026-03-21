@@ -5,7 +5,9 @@ import { PlayerDetailClient } from './PlayerDetailClient';
 export const dynamicParams = false;
 
 export async function generateStaticParams() {
-  return [];
+  // Placeholder params satisfy static export; real player IDs resolve
+  // at runtime via the Worker placeholder fallback pattern.
+  return [{ playerId: 'sample-player-1' }, { playerId: 'sample-player-2' }];
 }
 
 export default function PlayerDetailPage() {
