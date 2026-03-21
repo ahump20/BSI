@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
 import { ogImage } from '@/lib/metadata';
-import { SavantSubNav } from '@/components/analytics/SavantSubNav';
 
 export const metadata: Metadata = {
   title: 'College Baseball Savant | Free Park-Adjusted Sabermetrics | BSI',
@@ -24,10 +23,5 @@ export const metadata: Metadata = {
 };
 
 export default function SavantLayout({ children }: { children: ReactNode }) {
-  return (
-    <div className="savant-theme">
-      <SavantSubNav />
-      {children}
-    </div>
-  );
+  return <>{children}</>;
 }
