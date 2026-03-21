@@ -116,6 +116,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Production data integrity scan
+        run: npm run scan:prod-data
+
       - name: Run unit tests
         run: npm run test:all
 
