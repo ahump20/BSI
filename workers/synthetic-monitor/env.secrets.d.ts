@@ -1,4 +1,4 @@
-// Optional: set via wrangler secret put ALERT_WEBHOOK_URL
+// Set via: wrangler secret put RESEND_API_KEY --config workers/synthetic-monitor/wrangler.toml
 interface Env {
-  ALERT_WEBHOOK_URL?: string;
+  RESEND_API_KEY?: string;
 }

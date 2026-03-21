@@ -13,6 +13,9 @@ main = "index.ts"
 compatibility_date = "2025-12-01"
 compatibility_flags = ["nodejs_compat"]
 
+[observability]
+enabled = true
+
 [[durable_objects.bindings]]
 name = "LIVE_SCORES"
 class_name = "LiveScoresBroadcaster"

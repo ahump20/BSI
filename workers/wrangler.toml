@@ -11,6 +11,9 @@ main = "index.ts"
 compatibility_date = "2025-12-01"
 compatibility_flags = ["nodejs_compat"]
 
+[observability]
+enabled = true
+
 # ---------------------------------------------------------------------------
 # Development (default environment — `wrangler dev`)
 # ---------------------------------------------------------------------------
@@ -101,6 +104,9 @@ routes = [
   { pattern = "www.blazesportsintel.com/*", zone_name = "blazesportsintel.com" },
   { pattern = "wbc.blazesportsintel.com/*", zone_name = "blazesportsintel.com" }
 ]
+
+[env.production.observability]
+enabled = true
 
 [env.production.vars]
 ENVIRONMENT = "production"

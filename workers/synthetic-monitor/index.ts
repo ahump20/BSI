@@ -183,16 +183,27 @@ async function checkEndpoint(
 // Alert helpers
 // ---------------------------------------------------------------------------
 
+const ALERT_TO_EMAIL = 'humphrey.austin20@gmail.com';
+
 async function sendAlert(env: Env, message: string): Promise<void> {
-  if (!env.ALERT_WEBHOOK_URL) return;
+  if (!env.RESEND_API_KEY) return;
+  const subject = message.split('\n')[0]; // First line becomes subject
   try {
-    await fetch(env.ALERT_WEBHOOK_URL, {
+    await fetch('https://api.resend.com/emails', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content: message }),
+      headers: {
+        Authorization: `Bearer ${env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: 'BSI Monitor <noreply@blazesportsintel.com>',
+        to: ALERT_TO_EMAIL,
+        subject,
+        html: `<pre style="background:#111;color:#F5F2EB;padding:16px;border-radius:4px;font-family:monospace;font-size:14px;line-height:1.6;">${message}</pre>`,
+      }),
     });
   } catch {
-    // Alert failure is non-critical
+    // Alert failure is non-critical — don't crash the monitor
   }
 }
 
