@@ -21,11 +21,13 @@ echo "  stripping: $DS_STORE_FILES .DS_Store"
 rm -rf "$STAGE_DIR"
 mkdir -p "$STAGE_DIR"
 
-# NOTE: .txt files are Next.js RSC (React Server Component) payloads required
-# for client-side navigation and Suspense hydration. They MUST be deployed.
-# Stripping them causes blank pages on routes that rely on Suspense boundaries.
+# NOTE: index.txt files are Next.js RSC payloads required for client-side
+# navigation and Suspense hydration. They MUST be deployed.
+# __next.*.txt files are internal RSC metadata the browser never requests —
+# excluding them cuts ~15K files and prevents Cloudflare Pages upload timeouts.
 rsync -a --delete \
   --exclude='.DS_Store' \
+  --exclude='__next.*' \
   "$OUT_DIR/" "$STAGE_DIR/"
 
 STAGED_FILES=$(find "$STAGE_DIR" -type f | wc -l | tr -d ' ')
