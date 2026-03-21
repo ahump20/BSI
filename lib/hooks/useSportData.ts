@@ -74,11 +74,17 @@ export function useSportData<T>(
 
         setData(json);
         setMeta(normalizedMeta);
+        setError(null);
         setLastUpdated(effectiveLastUpdated);
         hasFetchedRef.current = true;
       } catch (err) {
         if (err instanceof DOMException && err.name === 'AbortError') {
-          setError('Request timed out');
+          // Only treat as error if this controller is still the active one.
+          // If it was replaced (abortRef points elsewhere), the abort was
+          // intentional — a newer request superseded this one.
+          if (abortRef.current === controller) {
+            setError('Request timed out');
+          }
           return;
         }
         setError(err instanceof Error ? err.message : 'Unknown error');
