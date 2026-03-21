@@ -1,11 +1,11 @@
 import { PlayerDetailClient } from './PlayerDetailClient';
 
-// For static export: only pre-render params from generateStaticParams
+// Static export requires dynamicParams = false; real player IDs resolve
+// at runtime via the Worker placeholder fallback pattern.
 export const dynamicParams = false;
 
 export async function generateStaticParams() {
-  // Sample player IDs for static export
-  return [{ playerId: 'sample-player-1' }, { playerId: 'sample-player-2' }];
+  return [];
 }
 
 export default function PlayerDetailPage() {
