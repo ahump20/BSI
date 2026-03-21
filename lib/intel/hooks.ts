@@ -76,14 +76,12 @@ function sportApiBase(sport: Exclude<IntelSport, 'all'>): string {
 }
 
 function scoresEndpoint(sport: Exclude<IntelSport, 'all'>): string {
-  if (sport === 'cbb') return ESPN_SCORES_MAP[sport];
   const base = sportApiBase(sport);
   if (sport === 'd1bb') return `${base}/scores`;
   return sport === 'nba' ? `${base}/scoreboard` : `${base}/scores`;
 }
 
 function standingsEndpoint(sport: Exclude<IntelSport, 'all'>): string {
-  if (sport === 'cbb') return ESPN_STANDINGS_MAP[sport];
   return `${sportApiBase(sport)}/standings`;
 }
 
@@ -177,21 +175,24 @@ function extractRecordSummary(raw: Record<string, unknown>): string {
   return summary;
 }
 
-function normalizeTeam(raw: Record<string, unknown>, fallbackName: string): IntelGame['home'] {
-  const _team = asObject(raw.team) ?? {};
+/** Merge nested .team fields to top level so normalizeTeam finds them directly. */
+function unwrapCompetitor(raw: Record<string, unknown>): Record<string, unknown> {
+  const team = asObject(raw.team);
+  if (!team) return raw;
+  return { ...team, ...raw };
+}
 
-  const displayName =
-    String(
-      dig(
-        raw,
-        'displayName',
-        'name',
-        'team.displayName',
-        'team.name',
-        'team.shortDisplayName',
-        'abbreviation',
-      ) || fallbackName,
-    ).trim();
+function normalizeTeam(raw: Record<string, unknown>, fallbackName: string): IntelGame['home'] {
+  const nameCandidate = dig(
+    raw,
+    'displayName',
+    'name',
+    'team.displayName',
+    'team.name',
+    'team.shortDisplayName',
+    'abbreviation',
+  );
+  const displayName = (typeof nameCandidate === 'string' ? nameCandidate : String(nameCandidate || fallbackName)).trim();
 
   const abbreviation = String(dig(raw, 'abbreviation', 'team.abbreviation') || '').trim().toUpperCase();
   const score = asNumber(dig(raw, 'score', 'team.score')) ?? 0;
@@ -261,37 +262,46 @@ function normalizeToIntelGames(sport: Exclude<IntelSport, 'all'>, data: Record<s
   const raw = (data.games || sb?.games || []) as Record<string, unknown>[];
 
   return raw.map((g, i) => {
-    const teams = asObject(g.teams) as Record<string, Record<string, unknown>> | null;
+    // Handle teams as either object {away, home} or array [{homeAway: 'home'}, ...]
+    const teamsValue = g.teams;
+    const teamsObj = !Array.isArray(teamsValue) ? asObject(teamsValue) as Record<string, Record<string, unknown>> | null : null;
+    const teamsArr = Array.isArray(teamsValue)
+      ? teamsValue.map((t) => asObject(t)).filter((t): t is Record<string, unknown> => t !== null)
+      : [];
+
     const competition = asObject(asArray(g.competitions)[0]) ?? {};
     const competitors = asArray(competition.competitors)
       .map((c) => asObject(c))
       .filter((c): c is Record<string, unknown> => c !== null);
 
-    const awayFromComp = competitors.find((c) => String(c.homeAway || '').toLowerCase() === 'away');
-    const homeFromComp = competitors.find((c) => String(c.homeAway || '').toLowerCase() === 'home');
+    // Merge teams-array and competitors into a single pool for home/away lookup
+    const allCandidates = [...teamsArr, ...competitors];
+    const awayFromPool = allCandidates.find((c) => String(c.homeAway || '').toLowerCase() === 'away');
+    const homeFromPool = allCandidates.find((c) => String(c.homeAway || '').toLowerCase() === 'home');
 
     const awayRaw =
-      teams?.away ||
+      teamsObj?.away ||
       asObject(g.awayTeam) ||
-      awayFromComp ||
-      competitors[1] ||
+      awayFromPool ||
+      allCandidates[1] ||
       {};
     const homeRaw =
-      teams?.home ||
+      teamsObj?.home ||
       asObject(g.homeTeam) ||
-      homeFromComp ||
-      competitors[0] ||
+      homeFromPool ||
+      allCandidates[0] ||
       {};
 
-    const away = normalizeTeam(awayRaw, 'Away');
-    const home = normalizeTeam(homeRaw, 'Home');
+    const away = normalizeTeam(unwrapCompetitor(awayRaw), 'Away');
+    const home = normalizeTeam(unwrapCompetitor(homeRaw), 'Home');
     const { gameStatus, detail } = parseStatus(g.status || competition.status);
     const headline = String(
       dig(g, 'competitions.0.notes.0.headline', 'notes.0.headline', 'headline', 'shortDetail') || '',
     ).trim();
-    const venue = String(
-      dig(g, 'venue', 'competitions.0.venue.fullName', 'competitions.0.venue.address.city') || '',
-    ).trim();
+    const venueRaw = dig(g, 'venue', 'competitions.0.venue');
+    const venue = typeof venueRaw === 'string'
+      ? venueRaw.trim()
+      : String((asObject(venueRaw) as Record<string, unknown> | null)?.fullName || (asObject(venueRaw) as Record<string, unknown> | null)?.name || '').trim();
     const startTime = String(
       dig(g, 'startTime', 'time', 'startDate', 'date', 'competitions.0.date') || '',
     ).trim();
