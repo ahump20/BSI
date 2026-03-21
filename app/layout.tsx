@@ -3,6 +3,7 @@ import { Bebas_Neue, Cormorant_Garamond, DM_Sans, IBM_Plex_Mono, JetBrains_Mono,
 import './globals.css';
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd';
 import { SiteFrame } from '@/components/layout-ds/SiteFrame';
+import { Providers } from './providers';
 
 // Heritage v2.1 font system: Display (Oswald/Bebas Neue) + Body (Cormorant Garamond) + Data (IBM Plex Mono) + Code (JetBrains Mono) + Savant (Syne/DM Sans)
 const cormorant = Cormorant_Garamond({
@@ -162,7 +163,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <BreadcrumbJsonLd />
       </head>
       <body className="bg-midnight text-bsi-bone antialiased min-h-screen">
-        <SiteFrame>{children}</SiteFrame>
+        <Providers><SiteFrame>{children}</SiteFrame></Providers>
       </body>
     </html>
   );
