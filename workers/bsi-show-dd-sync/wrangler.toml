@@ -6,6 +6,9 @@ compatibility_flags = ["nodejs_compat"]
 [observability]
 enabled = true
 
+[[tail_consumers]]
+service = "bsi-error-tracker"
+
 [[kv_namespaces]]
 binding = "KV"
 id = "e6cb68e815cd45babeee0e10460dbfee"
