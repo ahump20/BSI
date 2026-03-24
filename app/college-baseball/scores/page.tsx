@@ -394,7 +394,7 @@ export default function CollegeBaseballScoresPage() {
 
                 <ScrollReveal direction="up" delay={150}>
                   <p className="text-burnt-orange font-serif italic text-lg mt-2">
-                    All 300+ D1 programs. Updated every 30 seconds during live games.
+                    Every D1 program. Updated every 30 seconds during live games.
                   </p>
                 </ScrollReveal>
               </div>
@@ -630,7 +630,7 @@ export default function CollegeBaseballScoresPage() {
                       className="font-cormorant text-xs mt-1"
                       style={{ color: 'var(--bsi-dust, #C4B8A5)' }}
                     >
-                      Park-adjusted wOBA, wRC+, FIP for 300+ D1 programs — updated every 6 hours
+                      Park-adjusted wOBA, wRC+, FIP for every D1 program — updated every 6 hours
                     </p>
                   </div>
                   <svg

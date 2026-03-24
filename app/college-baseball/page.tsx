@@ -1058,7 +1058,7 @@ export default function CollegeBaseballPage() {
                         <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
                         <span>
                           <strong className="text-text-primary">TrackMan:</strong> pitch velocity,
-                          spin rate, extension — D1 standard since 2018, installed at 300+ programs
+                          spin rate, extension — D1 standard since 2018, installed at most programs
                         </span>
                       </li>
                       <li className="flex gap-2">

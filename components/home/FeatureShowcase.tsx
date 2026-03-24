@@ -14,7 +14,7 @@ interface FeatureItem {
 const FEATURES: FeatureItem[] = [
   {
     label: 'BSI Savant',
-    description: 'Find the real best hitters and pitchers using park-adjusted wOBA, wRC+, and FIP across 300+ D1 teams.',
+    description: 'Find the real best hitters and pitchers using park-adjusted wOBA, wRC+, and FIP across every D1 team.',
     href: '/college-baseball/savant',
     hero: true,
     icon: (

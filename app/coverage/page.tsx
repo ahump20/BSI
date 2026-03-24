@@ -59,7 +59,7 @@ const sportsCoverage = [
     status: 'Full Coverage',
     statusColor: 'var(--bsi-success, #22C55E)',
     href: '/college-baseball',
-    teams: '300+ D1 Programs',
+    teams: 'Every D1 Program',
     features: [
       'Live scores (30-second updates)',
       'Complete box scores',

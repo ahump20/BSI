@@ -92,7 +92,7 @@ interface SportSection {
 const SPORT_SECTIONS: SportSection[] = [
   {
     id: 'college-baseball', name: 'College Baseball', href: '/college-baseball/scores',
-    description: 'All 300+ D1 programs — live scores, box scores, and recaps',
+    description: 'Every D1 program — live scores, box scores, and recaps',
     liveCount: 0, todayCount: 0, season: 'Feb - Jun', isActive: false, loaded: false, featured: [],
   },
   {
@@ -632,7 +632,7 @@ function ScoresHubContent() {
             </ScrollReveal>
             <ScrollReveal direction="up" delay={150}>
               <p className="mt-2 text-base max-w-2xl font-serif" style={{ color: 'var(--bsi-dust)' }}>
-                Real-time scores across MLB, NFL, NBA, college football, and 300+ college baseball programs.
+                Real-time scores across MLB, NFL, NBA, college football, and every D1 college baseball program.
               </p>
             </ScrollReveal>
             {hasAnyLive && (
@@ -878,7 +878,7 @@ function ScoresHubContent() {
                         Go deeper with advanced analytics
                       </p>
                       <p className="font-cormorant text-xs mt-1" style={{ color: 'var(--bsi-dust, #C4B8A5)' }}>
-                        Park-adjusted wOBA, wRC+, FIP, and conference strength for 300+ D1 programs
+                        Park-adjusted wOBA, wRC+, FIP, and conference strength for every D1 program
                       </p>
                     </div>
                     <svg viewBox="0 0 24 24" className="w-5 h-5 opacity-40 group-hover:opacity-70 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: 'var(--bsi-primary, #BF5700)' }}>

@@ -101,7 +101,7 @@ export function HeroSection() {
             }}
           >
             <span className="text-[var(--heritage-bronze)]">&mdash;</span>{' '}
-            Park-adjusted sabermetrics across college baseball &amp; football, MLB, NBA &amp; NFL &mdash; built for athletes, fans, and front offices who trust data on game day.{' '}
+            Park-adjusted sabermetrics across college baseball, college football, MLB, NBA &amp; NFL &mdash; built for athletes, fans, and front offices who trust data on game day.{' '}
             <span className="text-[var(--heritage-bronze)]">&mdash;</span>
           </p>
         </div>
@@ -133,7 +133,7 @@ export function HeroSection() {
               <span key={i} className="inline-flex items-center gap-6 mr-6 text-[10px] uppercase tracking-[0.15em] text-[var(--bsi-dust)]">
                 <span>Free</span>
                 <span className="text-[var(--heritage-bronze)]">&#9670;</span>
-                <span>300+ D1 Teams</span>
+                <span>Every D1 Team</span>
                 <span className="text-[var(--heritage-bronze)]">&#9670;</span>
                 <span>wOBA</span>
                 <span className="text-[var(--heritage-bronze)]">&#9670;</span>

@@ -9,7 +9,7 @@ const DIFFERENTIATORS = [
   },
   {
     label: 'Live Sabermetrics',
-    body: 'Park-adjusted metrics — wOBA, FIP, ERA− — computed every six hours across all 300+ D1 programs. Free.',
+    body: 'Park-adjusted metrics — wOBA, FIP, ERA− — computed every six hours across every D1 program. Free.',
   },
   {
     label: 'Five Sports, One Standard',

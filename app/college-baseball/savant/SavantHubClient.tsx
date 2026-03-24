@@ -217,7 +217,7 @@ export default function SavantHubPage() {
                 </h1>
                 <p className="mt-3 max-w-2xl text-base leading-relaxed font-serif italic" style={{ color: 'var(--bsi-dust)' }}>
                   The metrics MLB Savant tracks — wOBA, FIP, wRC+, park factors, conference
-                  strength indices — applied to 300+ D1 programs. No other public platform
+                  strength indices — applied to every D1 program. No other public platform
                   does this for the college game.
                 </p>
                 <div className="mt-5 flex items-center gap-6 flex-wrap">

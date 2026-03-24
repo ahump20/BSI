@@ -11,8 +11,8 @@ import { ScrollReveal } from '@/components/cinematic';
 
 const PROOF_POINTS = [
   {
-    stat: '300+',
-    label: 'D1 Teams',
+    stat: 'Every',
+    label: 'D1 Team',
     detail: 'Every conference, every team — not just the coastal powers.',
   },
   {

@@ -4,12 +4,12 @@ import { ogImage } from '@/lib/metadata';
 export const metadata: Metadata = {
   title: 'Methodology | College Baseball Savant | BSI',
   description:
-    'How BSI computes park-adjusted college baseball sabermetrics — wOBA linear weights, wRC+ normalization, FIP constants, park factor regression, and conference strength indexing for 300+ D1 programs.',
+    'How BSI computes park-adjusted college baseball sabermetrics — wOBA linear weights, wRC+ normalization, FIP constants, park factor regression, and conference strength indexing for every D1 programs.',
   alternates: { canonical: '/college-baseball/savant/methodology' },
   openGraph: {
     title: 'Methodology | College Baseball Savant',
     description:
-      'How BSI computes wOBA, wRC+, FIP, park factors, and conference strength for 300+ D1 programs.',
+      'How BSI computes wOBA, wRC+, FIP, park factors, and conference strength for every D1 programs.',
     images: ogImage('/images/og-college-baseball.png'),
   },
 };
@@ -19,7 +19,7 @@ const jsonLd = {
   '@type': 'TechArticle',
   headline: 'BSI Savant Methodology — Park-Adjusted College Baseball Sabermetrics',
   description:
-    'How BSI computes wOBA, wRC+, FIP, ERA-, park factors, and conference strength for 300+ D1 programs using Tango-methodology linear weights.',
+    'How BSI computes wOBA, wRC+, FIP, ERA-, park factors, and conference strength for every D1 programs using Tango-methodology linear weights.',
   author: {
     '@type': 'Person',
     name: 'Austin Humphrey',
@@ -34,7 +34,7 @@ const jsonLd = {
   about: {
     '@type': 'Dataset',
     name: 'BSI College Baseball Sabermetrics',
-    description: 'Park-adjusted advanced metrics for 300+ D1 college baseball programs',
+    description: 'Park-adjusted advanced metrics for every D1 college baseball programs',
     license: 'https://blazesportsintel.com/terms/',
   },
 };
@@ -76,7 +76,7 @@ export default function MethodologyPage() {
             className="font-cormorant text-lg sm:text-xl leading-relaxed max-w-2xl"
             style={{ color: 'var(--bsi-dust, #C4B8A5)', lineHeight: 1.7 }}
           >
-            How BSI computes park-adjusted sabermetrics for 300+ D1 college baseball
+            How BSI computes park-adjusted sabermetrics for every D1 college baseball
             programs. Every number on the Savant Explorer traces back to a specific
             methodology documented here.
           </p>
