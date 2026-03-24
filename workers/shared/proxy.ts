@@ -8,15 +8,33 @@ import { SECURITY_HEADERS } from './constants';
  * from the browser URL and fetches data dynamically, so this works
  * seamlessly for any game ID — even those not present at build time.
  */
+/** Matches game detail HTML routes: /{sport}/game/{id}/ or /{sport}/game/{id}/{tab}/ */
 const GAME_DETAIL_PATTERN = /^\/(college-baseball|mlb|nfl|nba|cfb)\/game\/[^/]+\/(box-score|play-by-play|team-stats|recap|live)?\/?$/;
 
+/** Matches Next.js RSC metadata requests for game detail routes.
+ *  e.g. /mlb/game/401833325/recap/__next._tree.txt?_rsc=... */
+const GAME_RSC_PATTERN = /^\/(college-baseball|mlb|nfl|nba|cfb)\/game\/[^/]+\/((?:box-score|play-by-play|team-stats|recap|live)\/)?(__next\.[^?]+)/;
+
 function buildPlaceholderPath(pathname: string): string | null {
-  const match = pathname.match(GAME_DETAIL_PATTERN);
-  if (!match) return null;
-  const sport = match[1];
-  const subRoute = match[2] || '';
-  const trailing = subRoute ? `${subRoute}/` : '';
-  return `/${sport}/game/placeholder/${trailing}`;
+  // Try HTML page match first
+  const htmlMatch = pathname.match(GAME_DETAIL_PATTERN);
+  if (htmlMatch) {
+    const sport = htmlMatch[1];
+    const subRoute = htmlMatch[2] || '';
+    const trailing = subRoute ? `${subRoute}/` : '';
+    return `/${sport}/game/placeholder/${trailing}`;
+  }
+
+  // Try RSC metadata file match
+  const rscMatch = pathname.match(GAME_RSC_PATTERN);
+  if (rscMatch) {
+    const sport = rscMatch[1];
+    const subRoute = rscMatch[2] || '';   // e.g. "recap/" or ""
+    const rscFile = rscMatch[3];          // e.g. "__next._tree.txt"
+    return `/${sport}/game/placeholder/${subRoute}${rscFile}`;
+  }
+
+  return null;
 }
 
 export async function proxyToPages(request: Request, env: Env): Promise<Response> {

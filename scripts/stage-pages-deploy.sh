@@ -21,19 +21,12 @@ echo "  stripping: $DS_STORE_FILES .DS_Store"
 rm -rf "$STAGE_DIR"
 mkdir -p "$STAGE_DIR"
 
-# NOTE: index.txt files are Next.js RSC payloads required for client-side
-# navigation and Suspense hydration. They MUST be deployed.
-# __next._tree.txt files are requested by the browser for route prefetch —
-# they MUST be deployed or every page logs 404 console errors.
-# Other __next.*.txt files (_head, _full, _index, route-specific) are internal
-# RSC metadata the browser does not request. Excluding them cuts ~12K files
-# and prevents Cloudflare Pages upload timeouts.
+# Deploy ALL Next.js RSC metadata files (__next.*.txt). The browser requests
+# these for client-side route prefetch. Stripping them causes 404 console
+# errors on every page load. The file count is high (~16K+) which makes the
+# first Cloudflare Pages upload slow — subsequent deploys are fast (hash dedup).
 rsync -a --delete \
   --exclude='.DS_Store' \
-  --exclude='__next._head.txt' \
-  --exclude='__next._full.txt' \
-  --exclude='__next._index.txt' \
-  --exclude='__next.*.*.txt' \
   "$OUT_DIR/" "$STAGE_DIR/"
 
 STAGED_FILES=$(find "$STAGE_DIR" -type f | wc -l | tr -d ' ')
