@@ -19,7 +19,7 @@ function createMockKV() {
 function createMockEnv(overrides: Record<string, unknown> = {}) {
   return {
     MONITOR_KV: createMockKV(),
-    ALERT_WEBHOOK_URL: undefined as string | undefined,
+    RESEND_API_KEY: undefined as string | undefined,
     ...overrides,
   };
 }
@@ -76,25 +76,32 @@ describe('bsi-synthetic-monitor', () => {
     expect(checkCalls[0][2]?.expirationTtl).toBe(7 * 24 * 60 * 60);
   });
 
-  it('sends webhook alert on endpoint failure', async () => {
-    env.ALERT_WEBHOOK_URL = 'https://hooks.example.com/alert';
-    // First call succeeds (for endpoints), then fails for one
+  it('sends alert email on endpoint failure', async () => {
+    env.RESEND_API_KEY = 'test-key';
+    // Mock fetch: first N calls for endpoints (some succeed, one fails), then Resend email
     const mockFetch = vi.fn()
       .mockResolvedValueOnce(new Response('ok', { status: 200 }))
       .mockResolvedValueOnce(new Response('ok', { status: 200 }))
       .mockRejectedValueOnce(new Error('Connection refused'))
       .mockResolvedValueOnce(new Response('ok', { status: 200 }))
       .mockResolvedValueOnce(new Response('ok', { status: 200 }))
-      .mockResolvedValue(new Response('ok')); // webhook call
+      .mockResolvedValueOnce(new Response('ok', { status: 200 }))
+      .mockResolvedValueOnce(new Response('ok', { status: 200 }))
+      .mockResolvedValueOnce(new Response('ok', { status: 200 }))
+      .mockResolvedValueOnce(new Response('ok', { status: 200 }))
+      .mockResolvedValueOnce(new Response('ok', { status: 200 }))
+      .mockResolvedValueOnce(new Response('ok', { status: 200 }))
+      .mockResolvedValueOnce(new Response('ok', { status: 200 }))
+      .mockResolvedValue(new Response('ok')); // Resend API call
     vi.stubGlobal('fetch', mockFetch);
 
     await worker.scheduled({} as any, env, mockCtx);
 
-    // Should have sent an alert webhook
-    const webhookCall = mockFetch.mock.calls.find(
-      (c: any[]) => typeof c[0] === 'string' && c[0].includes('hooks.example.com'),
+    // Should have sent an alert via Resend email API
+    const resendCall = mockFetch.mock.calls.find(
+      (c: any[]) => typeof c[0] === 'string' && c[0].includes('api.resend.com'),
     );
-    expect(webhookCall).toBeDefined();
+    expect(resendCall).toBeDefined();
   });
 
   it('GET /status returns latest summary from KV', async () => {

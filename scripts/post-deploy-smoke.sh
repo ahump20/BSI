@@ -74,13 +74,18 @@ else
   echo "OK"
 fi
 
-# ── 7. College baseball page keeps public footer ─────────────────────
-echo -n "[7/9] College baseball footer... "
+# ── 7. College baseball page served correctly ────────────────────────
+# Note: Footer content ("Start Here", "Ecosystem") renders client-side
+# via React and is NOT present in the static HTML skeleton that curl
+# receives. This check verifies the correct static file was served
+# (200 status + page title present), not that client-side rendering works.
+echo -n "[7/9] College baseball page... "
+CBB_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 "$BASE/college-baseball/")
 CBB_HTML=$(curl -s --max-time 15 "$BASE/college-baseball/")
-if echo "$CBB_HTML" | grep -q "Start Here" && echo "$CBB_HTML" | grep -q "Ecosystem"; then
-  echo "OK"
+if [ "$CBB_STATUS" = "200" ] && echo "$CBB_HTML" | grep -q "College Baseball" && echo "$CBB_HTML" | grep -q "Blaze Sports Intel"; then
+  echo "OK ($CBB_STATUS)"
 else
-  echo "FAIL (public footer missing)"
+  echo "FAIL (status=$CBB_STATUS, page title or brand missing)"
   FAILURES=$((FAILURES + 1))
 fi
 
