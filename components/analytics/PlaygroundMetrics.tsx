@@ -29,6 +29,7 @@ import {
   MLB_WOBA_WEIGHTS,
   type LeagueContext,
 } from '@/lib/analytics/savant-metrics';
+import { fmt1, fmt2, fmtPct, fmtInt } from '@/lib/utils/format';
 
 // ---------------------------------------------------------------------------
 // Default league context (D1 2026 derived from cbb_league_context)
@@ -267,8 +268,6 @@ function BattingCalculator() {
   }, [stats, parkFactor]);
 
   const fmt3 = (n: number) => n.toFixed(3);
-  const fmtPct = (n: number) => (n * 100).toFixed(1) + '%';
-  const fmtInt = (n: number) => Math.round(n).toString();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -372,11 +371,6 @@ function PitchingCalculator() {
     const workload = calculateWorkloadScore(g, gs, ip, last7d);
     return { era, whip, k9, bb9, hr9, kbb, fip, xfip, eraminus, lobpct, siera, workload };
   }, [ip, h, er, hr, bb, hbp, so, g, gs, last7d, fb, parkFactor]);
-
-  const fmt2 = (n: number) => n.toFixed(2);
-  const fmt1 = (n: number) => n.toFixed(1);
-  const fmtPct = (n: number) => (n * 100).toFixed(1) + '%';
-  const fmtInt = (n: number) => Math.round(n).toString();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>

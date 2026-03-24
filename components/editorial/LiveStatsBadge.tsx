@@ -1,7 +1,7 @@
 'use client';
 
 import { useSportData } from '@/lib/hooks/useSportData';
-import { fmt3 } from '@/lib/utils/format';
+import { fmt3, fmtPct } from '@/lib/utils/format';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -31,7 +31,6 @@ export function LiveStatsBadge({ espnId }: LiveStatsBadgeProps) {
   // Hide completely if loading, error, or no data
   if (loading || error || !data) return null;
 
-  const fmtPct = (n: number) => `${(n * 100).toFixed(1)}%`;
   const aboveAvgWoba = data.batting.woba > data.league.woba;
   const aboveAvgFip = data.pitching.fip < data.league.fip;
 
