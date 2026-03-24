@@ -12,8 +12,7 @@
  * - Starters/bench/DNP sections render correctly
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, within } from '@testing-library/react';
-import React from 'react';
+import { render, screen } from '@testing-library/react';
 
 // Mock the layout context that provides game data
 const mockGameData = {
@@ -30,15 +29,7 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({ replace: vi.fn() }),
 }));
 
-// We need to mock the layout module that exports useGameData
 // Both NBA and CFB BoxScoreClient import { useGameData } from '../layout'
-// which re-exports from GameLayoutShell. We mock the context directly.
-vi.mock('@/components/sports/GameLayoutShell', () => ({
-  default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  useGameData: () => mockGameData,
-}));
-
-// Mock NBA layout to re-export useGameData
 vi.mock('@/app/nba/game/[gameId]/layout', () => ({
   useGameData: () => mockGameData,
 }));
@@ -86,7 +77,6 @@ function makeEspnGame(overrides: Record<string, unknown> = {}) {
                 {
                   athlete: { displayName: 'Player A', shortName: 'P. A', position: { abbreviation: 'QB' }, starter: true },
                   stats: ['20/30', '250', '2', '1'],
-                  didNotPlay: false,
                 },
               ],
             },
@@ -99,7 +89,6 @@ function makeEspnGame(overrides: Record<string, unknown> = {}) {
                 {
                   athlete: { displayName: 'Player B', shortName: 'P. B', position: { abbreviation: 'RB' }, starter: true },
                   stats: ['15', '85', '1'],
-                  didNotPlay: false,
                 },
               ],
             },
@@ -117,7 +106,6 @@ function makeEspnGame(overrides: Record<string, unknown> = {}) {
                 {
                   athlete: { displayName: 'Player C', shortName: 'P. C', position: { abbreviation: 'QB' }, starter: true },
                   stats: ['18/28', '200', '1', '2'],
-                  didNotPlay: false,
                 },
               ],
             },
@@ -223,5 +211,18 @@ describe('CFB BoxScoreClient', () => {
     game.boxscore.players[0].statistics = [];
     mockGameData.game = game;
     expect(() => render(<CFBBoxScoreClient />)).not.toThrow();
+  });
+
+  it('handles missing boxscore gracefully', () => {
+    mockGameData.game = makeEspnGame({ boxscore: undefined });
+    render(<CFBBoxScoreClient />);
+    expect(screen.getByText(/not available/i)).toBeDefined();
+  });
+
+  it('returns null when loading', () => {
+    mockGameData.loading = true;
+    mockGameData.game = null;
+    const { container } = render(<CFBBoxScoreClient />);
+    expect(container.innerHTML).toBe('');
   });
 });

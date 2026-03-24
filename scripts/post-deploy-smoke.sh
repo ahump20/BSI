@@ -80,8 +80,9 @@ fi
 # receives. This check verifies the correct static file was served
 # (200 status + page title present), not that client-side rendering works.
 echo -n "[7/9] College baseball page... "
-CBB_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 "$BASE/college-baseball/")
-CBB_HTML=$(curl -s --max-time 15 "$BASE/college-baseball/")
+CBB_HTML=$(curl -s -w '\n%{http_code}' --max-time 15 "$BASE/college-baseball/")
+CBB_STATUS="${CBB_HTML##*$'\n'}"
+CBB_HTML="${CBB_HTML%$'\n'*}"
 if [ "$CBB_STATUS" = "200" ] && echo "$CBB_HTML" | grep -q "College Baseball" && echo "$CBB_HTML" | grep -q "Blaze Sports Intel"; then
   echo "OK ($CBB_STATUS)"
 else

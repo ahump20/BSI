@@ -155,7 +155,7 @@ export default function BoxScoreClient() {
         const teamName = teamGroup.team?.displayName || teamAbbr;
 
         // NFL boxscore can have multiple stat groups per team (passing, rushing, receiving, etc.)
-        const statGroups = teamGroup.statistics || [];
+        const statGroups = (teamGroup.statistics || []).filter(Boolean);
         if (statGroups.length === 0) return null;
 
         return (
