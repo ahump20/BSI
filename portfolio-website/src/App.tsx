@@ -1,5 +1,4 @@
 import { lazy, Suspense, useEffect } from 'react';
-import ErrorBoundary from './components/ErrorBoundary';
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
 import BSIShowcase from './components/BSIShowcase';
@@ -37,7 +36,6 @@ function App() {
   }, []);
 
   return (
-    <ErrorBoundary>
       <div className="min-h-screen bg-midnight text-bone">
         <a href="#main" className="skip-link">
         Skip to content
@@ -79,7 +77,6 @@ function App() {
           <AIChatWidget />
         </Suspense>
       </div>
-    </ErrorBoundary>
   );
 }
 

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import {
   AI_CHAT_FALLBACK_RESPONSES,
   AI_CHAT_GREETING,
@@ -40,6 +41,7 @@ function shouldUseFallbackConcierge() {
 }
 
 export default function AIChatWidget() {
+  const prefersReducedMotion = usePrefersReducedMotion();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -228,10 +230,10 @@ export default function AIChatWidget() {
             role="dialog"
             aria-modal="true"
             aria-label="Austin concierge"
-            initial={{ opacity: 0, y: 24, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 24, scale: 0.96 }}
-            transition={{ duration: 0.25, ease: [0.19, 1, 0.22, 1] }}
+            initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.96 }}
+            animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
+            exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.96 }}
+            transition={{ duration: prefersReducedMotion ? 0.1 : 0.25, ease: [0.19, 1, 0.22, 1] }}
             className="fixed z-50 flex flex-col overflow-hidden border border-bone/10 bg-charcoal shadow-[0_20px_60px_rgba(0,0,0,0.5)] chat-panel-border
               inset-x-0 bottom-0 w-full rounded-t-sm max-h-[70vh]
               sm:inset-auto sm:bottom-20 sm:right-5 sm:w-[min(24rem,calc(100vw-2.5rem))] sm:max-h-[28rem] sm:rounded-sm"
