@@ -9,9 +9,29 @@
       "Bash(ls:*)",
       "Bash(grep:*)",
       "Skill(superpowers:brainstorming)",
-      "Bash(xargs ls:*)"
+      "Bash(xargs ls:*)",
+      "WebFetch(domain:fonts.googleapis.com)",
+      "Bash(npm run build:*)",
+      "Bash(npm create vite@latest trackman-audit-lab -- --template react-ts)",
+      "Bash(npm install)",
+      "Bash(npm install:*)",
+      "Bash(npm run typecheck)",
+      "Bash(npx tsc --noEmit --skipLibCheck)",
+      "Bash(git add app/college-baseball/analytics/playground/ components/analytics/PlaygroundApiSim.tsx components/analytics/PlaygroundERD.tsx components/analytics/PlaygroundMetrics.tsx app/sitemap.ts lib/analytics/savant-metrics.ts public/sitemap.xml)",
+      "Bash(git commit:*)",
+      "Bash(git push origin main)",
+      "Bash(git pull --rebase origin main)",
+      "Bash(npm run deploy:production)",
+      "Bash(npx wrangler pages deploy dist --project-name=trackman-audit-lab)",
+      "Bash(npx vite build)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:blazesportsintel.com)",
+      "WebFetch(domain:labs.blazesportsintel.com)",
+      "WebFetch(domain:austinhumphrey.com)",
+      "Bash(npx wrangler pages deploy dist --project-name=bsi-labs)",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__resize_page"
     ],
-    "defaultMode": "plan"
+    "defaultMode": "dontAsk"
   },
   "hooks": {
     "PostToolUse": [
@@ -108,14 +128,13 @@
     "qodo-skills@claude-plugins-official": false,
     "gopls-lsp@claude-plugins-official": false,
     "laravel-boost@claude-plugins-official": false,
-    "csharp-lsp@claude-plugins-official": false,
     "php-lsp@claude-plugins-official": false,
-    "firebase@claude-plugins-official": false,
     "swift-lsp@claude-plugins-official": false,
     "lua-lsp@claude-plugins-official": false,
     "kotlin-lsp@claude-plugins-official": false,
     "postman@claude-plugins-official": true,
-    "cloudflare@cloudflare-skills": true
+    "cloudflare@cloudflare-skills": true,
+    "chrome-devtools-mcp@claude-plugins-official": true
   },
   "effortLevel": "high",
   "autoUpdatesChannel": "latest",
