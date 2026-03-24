@@ -1245,6 +1245,82 @@ textarea:focus-visible,
   animation: hero-mesh 12s ease-in-out infinite;
 }
 
+/* ─── BSI logo float — gentle vertical drift (6s, ease-in-out) ─── */
+@keyframes bsi-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* ─── Score ticker edge fade — CSS mask, works on any background ─── */
+.ticker-fade-edges {
+  -webkit-mask-image: linear-gradient(to right,
+    transparent 0%,
+    black 56px,
+    black calc(100% - 56px),
+    transparent 100%
+  );
+  mask-image: linear-gradient(to right,
+    transparent 0%,
+    black 56px,
+    black calc(100% - 56px),
+    transparent 100%
+  );
+}
+
+/* ─── Stat LED glow on card hover ─── */
+.stat-led-glow {
+  transition: text-shadow var(--bsi-duration-normal, 300ms) var(--bsi-ease-out, cubic-bezier(0, 0, 0.2, 1));
+}
+.heritage-card:hover .stat-led-glow {
+  text-shadow: 0 0 24px rgba(191, 87, 0, 0.55), 0 0 48px rgba(191, 87, 0, 0.18);
+}
+
+/* ─── Stat pop reveal — triggered by JS adding .stat-visible ─── */
+@keyframes stat-pop {
+  0%   { opacity: 0; transform: scale(0.88) translateY(10px); }
+  65%  { opacity: 1; transform: scale(1.03) translateY(-1px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+.stat-pop-init {
+  opacity: 0;
+}
+.stat-pop-init.stat-visible {
+  animation: stat-pop 0.55s var(--bsi-ease-out, cubic-bezier(0, 0, 0.2, 1)) both;
+}
+
+/* ─── Feature card gradient border (enhanced hover) ─── */
+.feature-card-border {
+  position: relative;
+  overflow: hidden;
+}
+.feature-card-border::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 2px;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(191, 87, 0, 0.0) 0%, rgba(191, 87, 0, 0.4) 50%, rgba(191, 87, 0, 0.0) 100%);
+  background-size: 200% 200%;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--bsi-duration-normal, 300ms) ease,
+              background-position var(--bsi-duration-slow, 500ms) ease;
+}
+.feature-card-border:hover::after {
+  opacity: 1;
+  background-position: 100% 100%;
+}
+
+/* ─── Reduced motion overrides ─── */
+@media (prefers-reduced-motion: reduce) {
+  .stat-pop-init.stat-visible { animation: none; opacity: 1; }
+  [style*='bsi-float'] { animation: none !important; }
+}
+
 /* ========================================================================== */
 /* SCROLL REVEAL                                                               */
 /* ========================================================================== */

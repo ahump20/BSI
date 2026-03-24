@@ -110,7 +110,7 @@ export function FeatureShowcase() {
             <ScrollReveal key={feat.label} direction="up" delay={idx * 80}>
               <Link href={feat.href} className="group block h-full">
                 <div
-                  className="heritage-card relative p-6 h-full flex flex-col transition-all duration-300 hover:-translate-y-1 overflow-hidden"
+                  className="heritage-card feature-card-border relative p-6 h-full flex flex-col transition-all duration-300 hover:-translate-y-[4px] overflow-hidden"
                   style={{ borderTop: '2px solid var(--bsi-primary)' }}
                 >
                   {/* Icon background watermark */}
@@ -119,13 +119,13 @@ export function FeatureShowcase() {
                       {feat.icon}
                     </div>
                   </div>
-                  {/* Hover glow */}
+                  {/* Hover glow — elevated box-shadow for card depth */}
                   <div
                     className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
                     style={{
-                      border: '1px solid rgba(191, 87, 0, 0.35)',
+                      border: '1px solid rgba(191, 87, 0, 0.45)',
                       borderRadius: '2px',
-                      boxShadow: 'inset 0 1px 0 rgba(191, 87, 0, 0.1), 0 0 24px rgba(191, 87, 0, 0.06)',
+                      boxShadow: 'inset 0 1px 0 rgba(191, 87, 0, 0.12), 0 8px 28px rgba(191, 87, 0, 0.09), 0 2px 8px rgba(0,0,0,0.4)',
                     }}
                     aria-hidden="true"
                   />
