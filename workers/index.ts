@@ -131,6 +131,7 @@ import {
 
 import { handleBlogPostFeedList, handleBlogPostFeedItem } from './handlers/blog-post-feed';
 import { handleSearch } from './handlers/search';
+import { handlePushRegister, handlePushSend } from './handlers/push';
 import { handleCreateEmbeddedCheckout, handleSessionStatus, handleCustomerPortal } from './handlers/stripe';
 import { handleLogin, handleValidateKey } from './handlers/auth';
 import { handleScheduled, handleCachedScores, handleHealthProviders } from './handlers/cron';
@@ -635,6 +636,10 @@ app.get('/api/scores/overview', (c) => {
 
 // --- Provider Health (cron-tracked) ---
 app.get('/api/health/providers', (c) => handleHealthProviders(c.env));
+
+// --- Push Notifications ---
+app.post('/api/push/register', (c) => handlePushRegister(c.req.raw, c.env));
+app.post('/api/push/send', (c) => handlePushSend(c.env));
 
 // --- Search ---
 app.get('/api/search', (c) => handleSearch(new URL(c.req.url), c.env));
