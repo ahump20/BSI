@@ -10,6 +10,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
+import { fmt2, fmt3, fmtPct } from '@/lib/utils/format';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -108,9 +109,6 @@ const ACCENT = '#BF5700';
 
 // ─── Formatting Helpers ─────────────────────────────────────────────────────
 
-const fmt2 = (n: number): string => n.toFixed(2);
-const fmt3 = (n: number): string => n.toFixed(3).replace(/^0/, '');
-const fmtPct = (n: number): string => `${(n * 100).toFixed(1)}%`;
 
 // ─── Radar Chart ────────────────────────────────────────────────────────────
 

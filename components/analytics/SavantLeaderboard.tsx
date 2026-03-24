@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import { MetricTooltip, METRIC_DEFS } from './MetricTooltip';
 import { getPercentileColor } from './PercentileBar';
 import { withAlpha } from '@/lib/utils/color';
-import { fmt3 } from '@/lib/utils/format';
+import { fmt3, fmt2, fmt1, fmtPct, fmtInt } from '@/lib/utils/format';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -38,13 +38,9 @@ interface SavantLeaderboardProps {
 type SortDir = 'asc' | 'desc';
 
 // ---------------------------------------------------------------------------
-// Format helpers
+// Format helpers — re-exported so callers of SavantLeaderboard can use them
+// without a separate import of lib/utils/format.
 // ---------------------------------------------------------------------------
-
-const fmt2 = (v: number) => v.toFixed(2);
-const fmt1 = (v: number) => v.toFixed(1);
-const fmtPct = (v: number) => `${(v * 100).toFixed(1)}%`;
-const fmtInt = (v: number) => String(Math.round(v));
 
 export { fmt3, fmt2, fmt1, fmtPct, fmtInt };
 

@@ -11,7 +11,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
-import { fmt3 } from '@/lib/utils/format';
+import { fmt3, fmt2 } from '@/lib/utils/format';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -86,8 +86,6 @@ export default function TexasDraftClient() {
     }
     return counts;
   }, [data]);
-
-  const fmt2 = (n: number) => n.toFixed(2);
 
   return (
     <>

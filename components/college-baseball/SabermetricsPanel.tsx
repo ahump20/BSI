@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { useSportData } from '@/lib/hooks/useSportData';
-import { fmt3 } from '@/lib/utils/format';
+import { fmt3, fmt1, fmt2, fmtPct } from '@/lib/utils/format';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -158,10 +158,6 @@ export function SabermetricsPanel({ teamId, espnId, accent = 'var(--bsi-primary)
       </Card>
     );
   }
-
-  const fmt1 = (n: number) => n.toFixed(1);
-  const fmt2 = (n: number) => n.toFixed(2);
-  const fmtPct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
   // Sort full roster arrays
   const sortedHitters = data.all_hitters

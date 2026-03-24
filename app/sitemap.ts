@@ -30,6 +30,8 @@ const flagship: SitemapEntry[] = [
   { path: '/college-baseball/savant', changeFrequency: 'daily', priority: 0.9 },
   { path: '/college-baseball/savant/park-factors', changeFrequency: 'weekly', priority: 0.8 },
   { path: '/college-baseball/savant/conference-index', changeFrequency: 'weekly', priority: 0.8 },
+  { path: '/college-baseball/savant/methodology', changeFrequency: 'monthly', priority: 0.7 },
+  { path: '/college-baseball/savant/glossary', changeFrequency: 'monthly', priority: 0.7 },
   { path: '/college-baseball/preseason', changeFrequency: 'weekly', priority: 0.8 },
   { path: '/college-baseball/preseason/power-25', changeFrequency: 'weekly', priority: 0.8 },
   { path: '/college-baseball/preseason/sec-preview', changeFrequency: 'weekly', priority: 0.8 },
@@ -43,6 +45,9 @@ const editorial: SitemapEntry[] = [
   { path: '/college-baseball/editorial/big-12', changeFrequency: 'weekly', priority: 0.8 },
   { path: '/college-baseball/editorial/big-ten', changeFrequency: 'weekly', priority: 0.8 },
   { path: '/college-baseball/editorial/sec', changeFrequency: 'weekly', priority: 0.8 },
+  // Weekend recaps
+  { path: '/college-baseball/editorial/weekend-5-recap', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/texas-texas-state-recap', changeFrequency: 'monthly', priority: 0.8 },
   // Opening weekend recaps
   { path: '/college-baseball/editorial/national-opening-weekend', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/acc-opening-weekend', changeFrequency: 'monthly', priority: 0.8 },
@@ -129,6 +134,26 @@ const mlbEditorial: SitemapEntry[] = [
   { path: '/mlb/editorial/2026-season-preview', changeFrequency: 'monthly', priority: 0.8 },
 ];
 
+const wbc: SitemapEntry[] = [
+  { path: '/wbc', changeFrequency: 'daily', priority: 0.8 },
+  { path: '/wbc/pool/a', changeFrequency: 'weekly', priority: 0.7 },
+  { path: '/wbc/pool/b', changeFrequency: 'weekly', priority: 0.7 },
+  { path: '/wbc/pool/c', changeFrequency: 'weekly', priority: 0.7 },
+  { path: '/wbc/pool/d', changeFrequency: 'weekly', priority: 0.7 },
+  { path: '/wbc/editorial/pool-c-preview', changeFrequency: 'monthly', priority: 0.7 },
+];
+
+const mlbTheShow26: SitemapEntry[] = [
+  { path: '/mlb/the-show-26', changeFrequency: 'daily', priority: 0.6 },
+  { path: '/mlb/the-show-26/diamond-dynasty', changeFrequency: 'daily', priority: 0.6 },
+  { path: '/mlb/the-show-26/diamond-dynasty/marketplace', changeFrequency: 'daily', priority: 0.5 },
+  { path: '/mlb/the-show-26/diamond-dynasty/team-builder', changeFrequency: 'weekly', priority: 0.5 },
+  { path: '/mlb/the-show-26/diamond-dynasty/builds', changeFrequency: 'weekly', priority: 0.5 },
+  { path: '/mlb/the-show-26/diamond-dynasty/card', changeFrequency: 'daily', priority: 0.5 },
+  { path: '/mlb/the-show-26/diamond-dynasty/collections', changeFrequency: 'weekly', priority: 0.5 },
+  { path: '/mlb/the-show-26/diamond-dynasty/watchlist', changeFrequency: 'daily', priority: 0.5 },
+];
+
 const proSports: SitemapEntry[] = [
   // MLB
   { path: '/mlb', changeFrequency: 'daily', priority: 0.7 },
@@ -213,10 +238,15 @@ const research: SitemapEntry[] = [
 
 const marketing: SitemapEntry[] = [
   { path: '/about', changeFrequency: 'monthly', priority: 0.5 },
+  { path: '/about/methodology', changeFrequency: 'monthly', priority: 0.5 },
+  { path: '/about/partnerships', changeFrequency: 'monthly', priority: 0.5 },
   { path: '/contact', changeFrequency: 'monthly', priority: 0.5 },
   { path: '/pricing', changeFrequency: 'weekly', priority: 0.7 },
   { path: '/privacy', changeFrequency: 'yearly', priority: 0.3 },
   { path: '/terms', changeFrequency: 'yearly', priority: 0.3 },
+  { path: '/data-sources', changeFrequency: 'monthly', priority: 0.5 },
+  { path: '/glossary', changeFrequency: 'monthly', priority: 0.6 },
+  { path: '/nil-valuation/performance-index', changeFrequency: 'daily', priority: 0.7 },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -225,6 +255,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...texasIntelligence,
     ...editorial,
     ...mlbEditorial,
+    ...wbc,
+    ...mlbTheShow26,
     ...proSports,
     ...features,
     ...research,

@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Footer } from '@/components/layout-ds/Footer';
+import { BSI_TIMEZONE } from '@/lib/utils/timezone';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -63,7 +64,7 @@ function formatTimestamp(iso: string): string {
       hour: '2-digit',
       minute: '2-digit',
       hour12: false,
-      timeZone: 'America/Chicago',
+      timeZone: BSI_TIMEZONE,
     });
   } catch {
     return '';
