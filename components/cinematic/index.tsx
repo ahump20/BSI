@@ -3,8 +3,7 @@
 import { useEffect, useRef, ReactNode } from 'react';
 
 /* ==========================================================================
-   Cinematic barrel — ScrollReveal is real, NoiseOverlay/CustomCursor are stubs
-   (noise and cursor removed in the Labs-structure redesign)
+   Cinematic barrel — ScrollReveal (intersection-observer reveal)
    ========================================================================== */
 
 interface ScrollRevealProps {
@@ -89,12 +88,3 @@ export function ScrollReveal({ children, direction = 'up', delay = 0, className 
   );
 }
 
-/** Stub — noise overlay removed in redesign */
-export function NoiseOverlay(_props: { cssOnly?: boolean }) {
-  return null;
-}
-
-/** Stub — custom cursor removed in redesign */
-export function CustomCursor() {
-  return null;
-}
