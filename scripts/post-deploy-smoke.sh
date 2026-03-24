@@ -55,7 +55,7 @@ else
   FAILURES=$((FAILURES + 1))
 fi
 
-# ── 5. Cache headers — static assets should have cache-control ───────
+# ── 5. Homepage Heritage slogan — verifies branded text in static HTML ───────
 echo -n "[5/9] Homepage Heritage slogan... "
 HOME_HTML=$(curl -s --max-time 15 "$BASE/")
 if echo "$HOME_HTML" | grep -q "Born to Blaze the Path Beaten Less"; then

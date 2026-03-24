@@ -1,28 +1,12 @@
 /**
- * Vitest Configuration
- *
- * Test configuration for BlazeSportsIntel college baseball analytics platform.
+ * Vitest Configuration — BlazeSportsIntel
  *
  * Test Structure:
- * - /tests/analytics/ - Analytics library tests (ConferenceStrengthModel)
- * - /tests/api/ - API endpoint tests (scheduling/optimize)
- * - /tests/components/ - React component tests (future)
- *
- * Environment:
- * - jsdom for React component testing
- * - node for API and analytics library testing
- *
- * Timeouts:
- * - Default: 10 seconds
- * - API tests: 30 seconds (configured in test files)
- *
- * Coverage:
- * - Target: >80% coverage for all code
- * - Includes: lib/, workers/
- * - Excludes: node_modules, dist, tests
- *
- * Last Updated: October 19, 2025
- * Timezone: America/Chicago
+ * - /tests/analytics/ — Analytics library tests (ConferenceStrengthModel)
+ * - /tests/api/ — API endpoint tests
+ * - /tests/components/ — React component tests (ESPN box scores, etc.)
+ * - /tests/workers/ — Worker handler tests
+ * - /tests/e2e/ — Playwright specs (excluded from Vitest, run separately)
  */
 
 import { defineConfig } from 'vitest/config';

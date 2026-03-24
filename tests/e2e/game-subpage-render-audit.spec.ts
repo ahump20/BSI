@@ -13,7 +13,10 @@ import { test, expect } from '@playwright/test';
 
 const BASE = 'https://blazesportsintel.com';
 
-// Use games with known data
+// Pinned ESPN game IDs for completed/known games. ESPN retains completed game data
+// indefinitely, so these should be stable. If tests start failing, verify the IDs
+// still return data from production, then replace with current-season completed games.
+// Last verified: 2026-03-24
 const MLB_GAME = '401833325'; // TB @ PHI, Final
 const NBA_GAME = '401810893'; // LAL @ DET, Final
 const NFL_GAME = '401772988'; // SEA @ NE, Final (Super Bowl)

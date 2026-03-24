@@ -2,7 +2,7 @@
  * BSI Synthetic Monitor — Cron Worker
  *
  * Hits critical endpoints every 5 minutes, stores results in KV.
- * Sends failure alerts via webhook (Discord/Slack/email service).
+ * Sends failure alerts via Resend email API.
  * Detects schema drift on JSON API responses and archives raw data to R2.
  *
  * Deploy: wrangler deploy --config workers/synthetic-monitor/wrangler.toml
@@ -202,8 +202,8 @@ async function sendAlert(env: Env, message: string): Promise<void> {
         html: `<pre style="background:#111;color:#F5F2EB;padding:16px;border-radius:4px;font-family:monospace;font-size:14px;line-height:1.6;">${message}</pre>`,
       }),
     });
-  } catch {
-    // Alert failure is non-critical — don't crash the monitor
+  } catch (err) {
+    console.error('[monitor] Alert send failed:', err instanceof Error ? err.message : err);
   }
 }
 
