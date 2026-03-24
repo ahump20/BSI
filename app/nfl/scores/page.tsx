@@ -7,6 +7,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'NFL Scores | Blaze Sports Intel',
     description: 'Live NFL scores, game results, and weekly matchups.',
+    images: [{ url: '/images/og-nfl.png', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'NFL Scores | Blaze Sports Intel',
+    description: 'Live NFL scores, game results, and weekly matchups.',
+    images: ['/images/og-nfl.png'],
   },
 };
 

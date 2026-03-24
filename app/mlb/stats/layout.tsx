@@ -10,6 +10,12 @@ export const metadata: Metadata = {
     title: 'MLB Stats | Blaze Sports Intel',
     description: 'MLB stat leaderboards and advanced metrics.',
    images: ogImage('/images/og-mlb.png') },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'MLB Stats | Blaze Sports Intel',
+    description: 'MLB stat leaderboards and advanced metrics.',
+    images: ['/images/og-mlb.png'],
+  },
 };
 
 export default function MLBStatsLayout({ children }: { children: ReactNode }) {

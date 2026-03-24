@@ -10,6 +10,12 @@ export const metadata: Metadata = {
     title: 'MLB Standings 2026 | Blaze Sports Intel',
     description: 'MLB division standings with records and wild card race.',
    images: ogImage('/images/og-mlb.png') },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'MLB Standings 2026 | Blaze Sports Intel',
+    description: 'MLB division standings with records and wild card race.',
+    images: ['/images/og-mlb.png'],
+  },
 };
 
 export default function MLBStandingsLayout({ children }: { children: ReactNode }) {

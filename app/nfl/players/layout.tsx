@@ -10,6 +10,12 @@ export const metadata: Metadata = {
     title: 'NFL Players | Blaze Sports Intel',
     description: 'NFL player stats and performance analytics.',
    images: ogImage('/images/og-nfl.png') },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'NFL Players | Blaze Sports Intel',
+    description: 'NFL player stats and performance analytics.',
+    images: ['/images/og-nfl.png'],
+  },
 };
 
 export default function NFLPlayersLayout({ children }: { children: ReactNode }) {

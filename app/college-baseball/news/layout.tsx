@@ -10,6 +10,12 @@ export const metadata: Metadata = {
     title: 'College Baseball News | Blaze Sports Intel',
     description: 'NCAA D1 baseball news and headlines.',
    images: ogImage('/images/og-college-baseball.png') },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'College Baseball News | Blaze Sports Intel',
+    description: 'NCAA D1 baseball news and headlines.',
+    images: ['/images/og-college-baseball.png'],
+  },
 };
 
 export default function CollegeBaseballNewsLayout({ children }: { children: ReactNode }) {
