@@ -86,7 +86,8 @@ export const INTEL_ESPN_NEWS: Record<string, string> = {
 };
 
 export const GHOST_REDIRECTS: Record<string, string> = {
-  '/coverage': '/analytics',
+  '/coverage': '/data-sources',
+  '/mlb/games': '/mlb/scores',
   '/daily': '/',
   '/hourly': '/',
   '/dashboard/daily': '/dashboard',

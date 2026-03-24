@@ -173,6 +173,10 @@ import {
   handleNILCollectiveROI,
   handleNILDraftLeverage,
 } from './handlers/nil';
+import { handleSwingAnalyze } from './handlers/swing/analyze';
+import { handleSwingChat } from './handlers/swing/chat';
+import { handleSwingHistory } from './handlers/swing/history';
+import { handleSwingUsage } from './handlers/swing/usage';
 import {
   handleLeaderboard,
   handleLeaderboardSubmit,
@@ -407,6 +411,9 @@ app.get('/api/college-baseball/standings', (c) => {
 app.get('/api/college-baseball/rankings', (c) => handleCollegeBaseballRankings(c.env));
 app.get('/api/college-baseball/leaders', (c) => handleCollegeBaseballLeaders(c.env));
 app.get('/api/college-baseball/ingest-stats', (c) => {
+  const adminKey = c.env.ADMIN_KEY;
+  const provided = c.req.header('X-Admin-Key') ?? c.req.query('key');
+  if (!adminKey || provided !== adminKey) return c.json({ error: 'Unauthorized' }, 401);
   const url = new URL(c.req.url);
   return handleIngestStats(c.env, url.searchParams.get('date') || undefined);
 });
@@ -422,10 +429,22 @@ app.get('/api/college-baseball/sabermetrics', (c) => handleCBBLeagueSabermetrics
 app.get('/api/college-baseball/teams/all', (c) => handleCollegeBaseballTeamsAll(c.env));
 app.get('/api/college-baseball/teams/:teamId/schedule', (c) => handleCollegeBaseballTeamSchedule(c.req.param('teamId'), c.env));
 app.get('/api/college-baseball/teams/:teamId/sabermetrics', (c) => handleCBBTeamSabermetrics(c.req.param('teamId'), c.env));
-// Diagnostics endpoint removed after ESPN verification (2026-02-25)
-app.get('/api/college-baseball/sync-stats', (c) => handleCBBBulkSync(new URL(c.req.url), c.env));
-app.get('/api/college-baseball/sync-highlightly', (c) => handleHighlightlySync(new URL(c.req.url), c.env));
-app.get('/api/college-baseball/backfill-game-log', (c) => handleGameLogBackfill(new URL(c.req.url), c.env));
+// Admin-only sync/ingest triggers — require X-Admin-Key header
+app.get('/api/college-baseball/sync-stats', (c) => {
+  const provided = c.req.header('X-Admin-Key') ?? c.req.query('key');
+  if (!c.env.ADMIN_KEY || provided !== c.env.ADMIN_KEY) return c.json({ error: 'Unauthorized' }, 401);
+  return handleCBBBulkSync(new URL(c.req.url), c.env);
+});
+app.get('/api/college-baseball/sync-highlightly', (c) => {
+  const provided = c.req.header('X-Admin-Key') ?? c.req.query('key');
+  if (!c.env.ADMIN_KEY || provided !== c.env.ADMIN_KEY) return c.json({ error: 'Unauthorized' }, 401);
+  return handleHighlightlySync(new URL(c.req.url), c.env);
+});
+app.get('/api/college-baseball/backfill-game-log', (c) => {
+  const provided = c.req.header('X-Admin-Key') ?? c.req.query('key');
+  if (!c.env.ADMIN_KEY || provided !== c.env.ADMIN_KEY) return c.json({ error: 'Unauthorized' }, 401);
+  return handleGameLogBackfill(new URL(c.req.url), c.env);
+});
 app.get('/api/college-baseball/teams/:teamId/sos', (c) => handleCBBTeamSOS(c.req.param('teamId'), c.env));
 app.get('/api/college-baseball/teams/:teamId/season-arc', (c) => handleCBBSeasonArc(c.req.param('teamId'), new URL(c.req.url), c.env));
 app.get('/api/college-baseball/conferences/:conf/power-index', (c) => handleCBBConferencePowerIndex(c.req.param('conf'), c.env));
@@ -586,6 +605,12 @@ app.get('/api/cv/pitcher/:playerId/mechanics/history', (c) => handleCVPitcherHis
 app.get('/api/cv/pitcher/:playerId/mechanics', (c) => handleCVPitcherMechanics(c.req.param('playerId'), c.env));
 app.get('/api/cv/alerts/injury-risk', (c) => handleCVInjuryAlerts(new URL(c.req.url), c.env));
 app.get('/api/cv/adoption', (c) => handleCVAdoption(new URL(c.req.url), c.env));
+
+// --- Swing Intelligence ---
+app.post('/api/swing/analyze', (c) => handleSwingAnalyze(c.req.raw, c.env, c.executionCtx));
+app.post('/api/swing/chat', (c) => handleSwingChat(c.req.raw, c.env));
+app.get('/api/swing/history', (c) => handleSwingHistory(c.req.raw, c.env));
+app.get('/api/swing/usage', (c) => handleSwingUsage(c.req.raw, c.env));
 
 // --- Analytics: HAV-F ---
 app.get('/api/analytics/havf/leaderboard', (c) => handleHAVFLeaderboard(new URL(c.req.url), c.env));

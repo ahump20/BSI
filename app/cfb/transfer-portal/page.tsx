@@ -18,113 +18,6 @@ import {
   type FilterState,
 } from '@/components/portal';
 
-// Fallback data shown until the API returns real entries
-const FALLBACK_ENTRIES: PortalEntry[] = [
-  {
-    id: 'cfb-2025-001',
-    player_name: 'Jaylen Carter',
-    school_from: 'Georgia',
-    school_to: null,
-    position: 'QB',
-    conference: 'SEC',
-    class_year: 'Jr',
-    status: 'in_portal',
-    portal_date: '2025-12-09',
-    engagement_score: 98,
-    stars: 4,
-  },
-  {
-    id: 'cfb-2025-002',
-    player_name: 'Marcus Williams',
-    school_from: 'Ohio State',
-    school_to: 'Texas',
-    position: 'WR',
-    conference: 'Big Ten',
-    class_year: 'Sr',
-    status: 'committed',
-    portal_date: '2025-12-09',
-    engagement_score: 94,
-    stars: 5,
-  },
-  {
-    id: 'cfb-2025-003',
-    player_name: 'Darius Jackson',
-    school_from: 'Alabama',
-    school_to: null,
-    position: 'RB',
-    conference: 'SEC',
-    class_year: 'So',
-    status: 'in_portal',
-    portal_date: '2025-12-10',
-    engagement_score: 87,
-    stars: 4,
-  },
-  {
-    id: 'cfb-2025-004',
-    player_name: 'Tyler Henderson',
-    school_from: 'USC',
-    school_to: 'Colorado',
-    position: 'DB',
-    conference: 'Big 12',
-    class_year: 'Jr',
-    status: 'committed',
-    portal_date: '2025-12-09',
-    engagement_score: 82,
-    stars: 3,
-  },
-  {
-    id: 'cfb-2025-005',
-    player_name: 'Jordan Mitchell',
-    school_from: 'Michigan',
-    school_to: null,
-    position: 'LB',
-    conference: 'Big Ten',
-    class_year: 'Jr',
-    status: 'in_portal',
-    portal_date: '2025-12-11',
-    engagement_score: 79,
-    stars: 4,
-  },
-  {
-    id: 'cfb-2025-006',
-    player_name: 'Brandon Thomas',
-    school_from: 'Oklahoma',
-    school_to: null,
-    position: 'OL',
-    conference: 'SEC',
-    class_year: 'Sr',
-    status: 'withdrawn',
-    portal_date: '2025-12-09',
-    engagement_score: 55,
-    stars: 3,
-  },
-  {
-    id: 'cfb-2025-007',
-    player_name: 'Chris Davis',
-    school_from: 'Clemson',
-    school_to: null,
-    position: 'DL',
-    conference: 'ACC',
-    class_year: 'Jr',
-    status: 'in_portal',
-    portal_date: '2025-12-12',
-    engagement_score: 91,
-    stars: 5,
-  },
-  {
-    id: 'cfb-2025-008',
-    player_name: 'DeShawn Brown',
-    school_from: 'Oregon',
-    school_to: 'Tennessee',
-    position: 'QB',
-    conference: 'Big Ten',
-    class_year: 'Sr',
-    status: 'committed',
-    portal_date: '2025-12-10',
-    engagement_score: 96,
-    stars: 4,
-  },
-];
 
 // Stats card component (page-specific)
 function StatCard({
@@ -174,10 +67,7 @@ export default function CFBTransferPortalPage() {
   const { data: portalData } = useSportData<{ entries?: PortalEntry[] }>('/api/cfb/transfer-portal');
 
   const entries = useMemo(() => {
-    if (portalData?.entries && portalData.entries.length > 0) {
-      return portalData.entries;
-    }
-    return FALLBACK_ENTRIES;
+    return portalData?.entries ?? [];
   }, [portalData]);
 
   // Filter entries locally
