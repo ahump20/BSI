@@ -2,6 +2,7 @@
 
 import { useEffect, type ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { lockScroll, unlockScroll } from '@/lib/utils/scroll-lock';
 
 interface SheetProps {
   open: boolean;
@@ -28,8 +29,8 @@ export function Sheet({ open, onClose, children, side = 'right', className = '' 
   // Lock body scroll when open
   useEffect(() => {
     if (open) {
-      document.body.classList.add('scroll-locked');
-      return () => document.body.classList.remove('scroll-locked');
+      lockScroll();
+      return () => unlockScroll();
     }
   }, [open]);
 

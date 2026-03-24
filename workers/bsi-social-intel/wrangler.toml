@@ -15,6 +15,9 @@ compatibility_flags = ["nodejs_compat"]
 [observability]
 enabled = true
 
+[[tail_consumers]]
+service = "bsi-error-tracker"
+
 # Run every 30 minutes — social signal cadence matches portal-sync
 [triggers]
 crons = ["*/30 * * * *"]

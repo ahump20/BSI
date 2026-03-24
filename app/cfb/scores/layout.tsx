@@ -10,6 +10,12 @@ export const metadata: Metadata = {
     title: 'College Football Scores | Blaze Sports Intel',
     description: 'Live college football scores with real-time updates.',
    images: ogImage('/images/og-cfb.png') },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'College Football Scores | Blaze Sports Intel',
+    description: 'Live college football scores with real-time updates.',
+    images: ['/images/og-cfb.png'],
+  },
 };
 
 export default function CFBScoresLayout({ children }: { children: ReactNode }) {

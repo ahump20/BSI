@@ -4,8 +4,8 @@ import { JsonLd } from '@/components/JsonLd';
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | BSI Models',
-    default: 'Models & Methodology | BSI',
+    template: '%s | Blaze Sports Intel Models',
+    default: 'Models & Methodology | Blaze Sports Intel',
   },
   description:
     'How BSI builds its analytics models — win probability, Monte Carlo simulations, data quality methodology. Every assumption documented, every input sourced.',

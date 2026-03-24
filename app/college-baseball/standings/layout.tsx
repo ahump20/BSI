@@ -10,6 +10,12 @@ export const metadata: Metadata = {
     title: 'College Baseball Standings | Blaze Sports Intel',
     description: 'D1 baseball conference standings updated daily.',
    images: ogImage('/images/og-college-baseball.png') },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'College Baseball Standings | Blaze Sports Intel',
+    description: 'D1 baseball conference standings updated daily.',
+    images: ['/images/og-college-baseball.png'],
+  },
 };
 
 export default function CollegeBaseballStandingsLayout({ children }: { children: ReactNode }) {

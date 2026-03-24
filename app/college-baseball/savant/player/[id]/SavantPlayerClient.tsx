@@ -11,7 +11,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { PercentileBar } from '@/components/analytics/PercentileBar';
 import { MetricGate } from '@/components/analytics/MetricGate';
 import { PlayerScoutingComposite } from '@/components/college-baseball/PlayerScoutingComposite';
-import { fmt3 } from '@/lib/utils/format';
+import { fmt1, fmt2, fmtPct, fmtInt, fmt3 } from '@/lib/utils/format';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -64,10 +64,6 @@ interface SavantPlayerResponse {
 // Helpers
 // ---------------------------------------------------------------------------
 
-const fmt2 = (v: number) => v.toFixed(2);
-const fmt1 = (v: number) => v.toFixed(1);
-const fmtPct = (v: number) => `${(v * 100).toFixed(1)}%`;
-const fmtInt = (v: number) => String(Math.round(v));
 
 /** Convert a raw stat value to 0-100 percentile estimate (basic linear mapping). */
 function estimatePercentile(

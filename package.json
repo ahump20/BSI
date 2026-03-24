@@ -38,6 +38,7 @@
     "typecheck:strict": "tsc --project tsconfig.strict.json",
     "deploy:show-dd-sync": "wrangler deploy --config workers/bsi-show-dd-sync/wrangler.toml",
     "typecheck:workers": "for d in workers/blaze-field-do workers/blaze-field-site workers/bsi-savant-compute workers/bsi-cbb-analytics workers/bsi-cbb-ingest workers/bsi-college-baseball-daily workers/bsi-live-scores workers/bsi-show-dd-sync workers/bsi-portal-sync workers/sportradar-ingest workers/synthetic-monitor workers/error-tracker workers/bsi-analytics-events workers/bsi-intelligence-stream workers/bsi-social-intel workers/college-baseball-mcp workers/mini-games-api; do echo \"Checking $d...\" && tsc --noEmit -p $d/tsconfig.json || exit 1; done && echo 'All workers pass.'",
+    "typecheck:agent": "cd workers/bsi-baseball-agent && npm install --silent && tsc --noEmit -p tsconfig.json && cd ../..",
     "lint": "eslint app lib components tests scripts --ext .js,.jsx,.ts,.tsx,.mjs --ignore-pattern 'node_modules/**'",
     "lint:fix": "eslint app lib components tests scripts --ext .js,.jsx,.ts,.tsx,.mjs --fix --ignore-pattern 'node_modules/**'",
     "format": "prettier --check \"app/**/*.{js,jsx,ts,tsx,json,css,md}\" \"lib/**/*.{js,jsx,ts,tsx,json,css,md}\" \"hooks/**/*.{js,jsx,ts,tsx,json,css,md}\" \"components/**/*.{js,jsx,ts,tsx,json,css,md}\" \"workers/**/*.{js,jsx,ts,tsx,json,css,md}\" \"tests/**/*.{js,jsx,ts,tsx,json,css,md}\" \"scripts/**/*.{js,mjs,ts,tsx,sh}\"",

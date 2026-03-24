@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: 'Win Probability Model',
   description:
     'How BSI calculates real-time win probability — inputs, assumptions, validation, and failure modes.',
-  alternates: { canonical: 'https://blazesportsintel.com/models/win-probability' },
+  alternates: { canonical: '/models/win-probability' },
 };
 
 export default function WinProbabilityPage() {

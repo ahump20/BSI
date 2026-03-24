@@ -10,7 +10,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
-import { fmt3 } from '@/lib/utils/format';
+import { fmt3, fmt2, fmt1, fmtPct } from '@/lib/utils/format';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -39,10 +39,6 @@ const TEXAS_ID = 'texas';
 function formatName(slug: string): string {
   return slug.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 }
-
-const fmt2 = (n: number) => n.toFixed(2);
-const fmtPct = (n: number) => `${(n * 100).toFixed(1)}%`;
-const fmt1 = (n: number) => n.toFixed(1);
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
