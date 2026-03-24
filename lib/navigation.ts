@@ -77,6 +77,7 @@ export function getMainNavItems(date?: Date): {
     { label: 'Scores', href: '/scores' },
     { label: 'College Baseball', href: '/college-baseball' },
     { label: 'Intel', href: '/intel' },
+    { label: 'Ask BSI', href: '/ask' },
     { label: 'Agent', href: '/agent' },
     { label: 'Pricing', href: '/pricing' },
   ];
