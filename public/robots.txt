@@ -7,7 +7,7 @@ Allow: /
 # Sitemap location
 Sitemap: https://blazesportsintel.com/sitemap.xml
 
-# Disallow demo/test pages and internal paths
+# Disallow auth, internal tools, and unlisted product routes
 Disallow: /components/
 Disallow: /*-demo.html
 Disallow: /*-optimized.html
@@ -18,6 +18,15 @@ Disallow: /checkout/
 Disallow: /dashboard/
 Disallow: /settings/
 Disallow: /intelligence/
+Disallow: /analytics/
+Disallow: /models/
+Disallow: /coverage/
+Disallow: /blog-post-feed/
+Disallow: /college-baseball/analytics/
+Disallow: /college-baseball/sabermetrics/
+Disallow: /arcade/wc3-dashboard/
+Disallow: /mlb/abs/
+Disallow: /wbc/
 Disallow: /status/
 
 # Allow AI crawlers for AI Search

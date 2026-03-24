@@ -184,7 +184,6 @@ const texasIntelligence: SitemapEntry[] = [
 
 const features: SitemapEntry[] = [
   { path: '/status', changeFrequency: 'always', priority: 0.4 },
-  { path: '/dashboard', changeFrequency: 'daily', priority: 0.7 },
   { path: '/intel', changeFrequency: 'daily', priority: 0.7 },
   { path: '/nil-valuation', changeFrequency: 'daily', priority: 0.7 },
   { path: '/nil-valuation/methodology', changeFrequency: 'monthly', priority: 0.5 },
