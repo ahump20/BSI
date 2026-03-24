@@ -36,13 +36,23 @@ export async function proxyToPages(request: Request, env: Env): Promise<Response
   // If Pages returns 404 for a game detail route, serve the placeholder
   // shell instead. The client-side Next.js router reads the real game ID
   // from window.location, so the page will load the correct game data.
-  if (pagesResponse.status === 404 && request.method === 'GET') {
+  // Handle both GET and HEAD — Next.js client router uses HEAD to check
+  // if a route exists before prefetching. A HEAD 404 causes console errors
+  // and breaks the client-side navigation optimization.
+  if (pagesResponse.status === 404 && (request.method === 'GET' || request.method === 'HEAD')) {
     const placeholderPath = buildPlaceholderPath(url.pathname);
     if (placeholderPath) {
       const fallbackUrl = `${origin}${placeholderPath}`;
-      const fallbackResponse = await fetch(fallbackUrl, { headers });
+      // Always fetch as GET — Pages needs the full request to resolve the file.
+      // For HEAD requests we strip the body from the response below.
+      const fallbackResponse = await fetch(fallbackUrl, { method: 'GET', headers });
       if (fallbackResponse.ok) {
-        const response = new Response(fallbackResponse.body, fallbackResponse);
+        const body = request.method === 'HEAD' ? null : fallbackResponse.body;
+        const response = new Response(body, {
+          status: fallbackResponse.status,
+          statusText: fallbackResponse.statusText,
+          headers: fallbackResponse.headers,
+        });
         for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
           response.headers.set(key, value);
         }

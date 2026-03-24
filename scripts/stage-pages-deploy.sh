@@ -23,11 +23,17 @@ mkdir -p "$STAGE_DIR"
 
 # NOTE: index.txt files are Next.js RSC payloads required for client-side
 # navigation and Suspense hydration. They MUST be deployed.
-# __next.*.txt files are internal RSC metadata the browser never requests —
-# excluding them cuts ~15K files and prevents Cloudflare Pages upload timeouts.
+# __next._tree.txt files are requested by the browser for route prefetch —
+# they MUST be deployed or every page logs 404 console errors.
+# Other __next.*.txt files (_head, _full, _index, route-specific) are internal
+# RSC metadata the browser does not request. Excluding them cuts ~12K files
+# and prevents Cloudflare Pages upload timeouts.
 rsync -a --delete \
   --exclude='.DS_Store' \
-  --exclude='__next.*' \
+  --exclude='__next._head.txt' \
+  --exclude='__next._full.txt' \
+  --exclude='__next._index.txt' \
+  --exclude='__next.*.*.txt' \
   "$OUT_DIR/" "$STAGE_DIR/"
 
 STAGED_FILES=$(find "$STAGE_DIR" -type f | wc -l | tr -d ' ')
