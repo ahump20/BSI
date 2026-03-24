@@ -145,7 +145,7 @@ export default function Contact() {
               </div>
 
               {/* Direct Line card — prominent, above link grid */}
-              <div className="relative rounded-sm border border-bone/10 bg-midnight/70 px-6 py-6 overflow-hidden">
+              <div className="relative rounded-sm border border-bone/10 border-l-2 border-l-burnt-orange/50 bg-midnight/70 px-6 py-6 overflow-hidden">
                 <div
                   className="pointer-events-none absolute inset-x-0 top-0 h-px accent-line-narrow"
                 />
