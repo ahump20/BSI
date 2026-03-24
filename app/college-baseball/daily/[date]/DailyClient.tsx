@@ -180,19 +180,24 @@ function ResultCard({ result }: { result: PriorNightResult }) {
 // Main page component
 // ---------------------------------------------------------------------------
 
-export function DailyClient({ date }: { date: string }) {
+export function DailyClient({ date: dateProp }: { date: string }) {
+  // Resolve the real date: if served via the placeholder shell, read from URL.
+  const resolvedDate = typeof window !== 'undefined' && dateProp === 'placeholder'
+    ? window.location.pathname.split('/').filter(Boolean).pop() || dateProp
+    : dateProp;
   const [data, setData] = useState<DailyBundle | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (resolvedDate === 'placeholder') { setLoading(false); return; }
     const controller = new AbortController();
-    fetch(`/api/college-baseball/daily/${date}`, { signal: controller.signal })
+    fetch(`/api/college-baseball/daily/${resolvedDate}`, { signal: controller.signal })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`${r.status}`))))
       .then((d) => { setData(d as DailyBundle); setLoading(false); })
       .catch((e) => { if (e.name !== 'AbortError') { setErr(e.message); setLoading(false); } });
     return () => controller.abort();
-  }, [date]);
+  }, [resolvedDate]);
 
   if (loading) {
     return (
@@ -221,7 +226,7 @@ export function DailyClient({ date }: { date: string }) {
             <Container>
               <h1 className="font-display text-3xl font-bold uppercase text-text-primary mb-4">Daily Report Unavailable</h1>
               <p className="text-text-tertiary">
-                No daily bundle is available for {formatDate(date)}.{' '}
+                No daily bundle is available for {formatDate(resolvedDate)}.{' '}
                 {err && <span className="text-error">Error: {err}</span>}
               </p>
               <Link href="/college-baseball" className="text-burnt-orange hover:text-ember transition-colors mt-4 inline-block">

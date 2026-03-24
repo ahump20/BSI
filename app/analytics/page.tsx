@@ -100,7 +100,7 @@ const analyticsTools = [
       'Calculate expected win percentage based on runs scored vs. allowed. See which teams are over/underperforming their run differential.',
     sport: 'MLB',
     status: 'available',
-    href: '/analytics/pythagorean',
+    href: '/college-baseball/teams',
   },
   {
     id: 'win-probability',
@@ -109,7 +109,7 @@ const analyticsTools = [
       'Real-time win probability calculations during games. Track momentum shifts and critical moments.',
     sport: 'All',
     status: 'available',
-    href: '/analytics/win-probability',
+    href: '/models/win-probability',
   },
   {
     id: 'player-comparison',
@@ -163,7 +163,7 @@ const analyticsTools = [
       'Run thousands of simulations to project season outcomes. Playoff odds, division winners, and more.',
     sport: 'MLB',
     status: 'coming-soon',
-    href: '#',
+    href: '/models/monte-carlo',
   },
   {
     id: 'historical',
@@ -171,8 +171,8 @@ const analyticsTools = [
     description:
       'Deep dive into 5+ years of historical data. Compare current performance to past seasons.',
     sport: 'All',
-    status: 'enterprise',
-    href: '/analytics/historical',
+    status: 'coming-soon',
+    href: '/college-baseball/savant',
   },
   {
     id: 'nil-valuation',
