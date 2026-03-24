@@ -114,6 +114,7 @@ export function getMainNavItems(date?: Date): {
 
 export function getAnalyticsNavItems(): MainNavItem[] {
   return [
+    { label: 'Player Evaluation', href: '/evaluate' },
     { label: 'Savant', href: '/college-baseball/savant' },
     { label: 'Transfer Portal', href: '/college-baseball/transfer-portal' },
     { label: 'NIL Valuation', href: '/nil-valuation' },

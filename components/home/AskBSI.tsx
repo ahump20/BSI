@@ -136,7 +136,11 @@ function ActionStrip({ links }: { links: Array<{ label: string; href: string }> 
 
 // ─── Main component ──────────────────────────────────────────────────────────
 
-export function AskBSI() {
+interface AskBSIProps {
+  embedded?: boolean;
+}
+
+export function AskBSI({ embedded = false }: AskBSIProps) {
   const [question, setQuestion] = useState('');
   const [response, setResponse] = useState('');
   const [streaming, setStreaming] = useState(false);
@@ -224,10 +228,12 @@ export function AskBSI() {
 
   const responseLinks = response ? extractLinks(response) : [];
 
-  return (
-    <section className="py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        <div className="heritage-card p-5 sm:p-6" style={{ borderLeftWidth: '2px', borderLeftColor: 'var(--heritage-bronze)' }}>
+  const panel = (
+    <div
+      data-home-ask={embedded ? 'embedded' : 'standalone'}
+      className={`heritage-card p-5 sm:p-6 ${embedded ? 'h-full' : ''}`}
+      style={{ borderLeftWidth: '2px', borderLeftColor: 'var(--heritage-bronze)' }}
+    >
           {/* Header */}
           <div className="flex items-center gap-3 mb-4">
             <div className="w-8 h-8 flex items-center justify-center shrink-0" style={{ border: '1px solid var(--border-vintage)', borderRadius: '2px', background: 'rgba(191, 87, 0, 0.08)' }}>
@@ -323,8 +329,14 @@ export function AskBSI() {
               {MAX_FREE_QUESTIONS - usageCount} / {MAX_FREE_QUESTIONS} remaining
             </span>
           </div>
-        </div>
-      </div>
+    </div>
+  );
+
+  if (embedded) return panel;
+
+  return (
+    <section className="py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">{panel}</div>
     </section>
   );
 }

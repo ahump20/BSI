@@ -2,187 +2,149 @@
 
 import Link from 'next/link';
 import { ScrollReveal } from '@/components/cinematic';
+import { AskBSI } from './AskBSI';
 
-interface FeatureItem {
-  label: string;
-  description: string;
-  href: string;
-  icon: React.ReactNode;
-  hero?: boolean;
-}
-
-const FEATURES: FeatureItem[] = [
-  {
-    label: 'BSI Savant',
-    description: 'Find the real best hitters and pitchers using park-adjusted wOBA, wRC+, and FIP across every D1 team.',
-    href: '/college-baseball/savant',
-    hero: true,
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <path d="M3 3v18h18" /><path d="M7 16l4-8 4 4 5-9" />
-      </svg>
-    ),
-  },
-  {
-    label: 'Intelligence',
-    description: 'AI-generated game briefs and matchup breakdowns before first pitch — walk in knowing what to watch.',
-    href: '/intel',
-    hero: true,
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <circle cx="12" cy="12" r="3" /><path d="M12 1v4m0 14v4M4.22 4.22l2.83 2.83m9.9 9.9l2.83 2.83M1 12h4m14 0h4M4.22 19.78l2.83-2.83m9.9-9.9l2.83-2.83" />
-      </svg>
-    ),
-  },
-  {
-    label: 'Editorial',
-    description: 'Read weekend recaps, series previews, and conference deep dives written with real scouting context.',
-    href: '/college-baseball/editorial',
-    hero: true,
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <path d="M4 4h16v16H4z" /><path d="M8 8h8M8 12h5" />
-      </svg>
-    ),
-  },
+const SUPPORT_RAIL = [
   {
     label: 'Transfer Portal',
-    description: 'See who entered the portal, where they landed, and what it means for your team.',
     href: '/college-baseball/transfer-portal',
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <path d="M16 3h5v5M14 10l7-7M8 21H3v-5M10 14l-7 7" />
-      </svg>
-    ),
+    description: 'Track movement, fit, and roster pressure as players change the league.',
   },
   {
     label: 'NIL Valuation',
-    description: 'Data-driven NIL valuations — see what players are actually worth, not what agents claim.',
     href: '/nil-valuation',
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
-      </svg>
-    ),
+    description: 'See where market leverage, performance, and visibility meet in one board.',
   },
   {
     label: 'Models',
-    description: 'Win probability simulations that show how games are likely to unfold — before they start.',
     href: '/models',
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-      </svg>
-    ),
-  },
-  {
-    label: 'Arcade',
-    description: 'Play college baseball games in the browser. Pick your team, step up to the plate.',
-    href: 'https://arcade.blazesportsintel.com',
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <rect x="2" y="6" width="20" height="12" rx="2" /><path d="M6 12h4m-2-2v4M15 11h.01M18 13h.01" />
-      </svg>
-    ),
+    description: 'Move from static numbers to scenario thinking before the game starts.',
   },
 ];
 
 export function FeatureShowcase() {
-  const heroFeatures = FEATURES.filter(f => f.hero);
-  const compactFeatures = FEATURES.filter(f => !f.hero);
-
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 relative surface-deep accent-glow-warm-right">
+    <section
+      data-home-platform
+      className="relative overflow-hidden px-4 py-20 sm:px-6 lg:px-8"
+      style={{ background: 'linear-gradient(180deg, rgba(14,14,14,1) 0%, rgba(18,16,14,1) 100%)' }}
+    >
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(191,87,0,0.18)] to-transparent" />
       <div className="max-w-6xl mx-auto relative z-10">
         <ScrollReveal direction="up">
           <span className="heritage-stamp mb-2">Platform</span>
           <div className="flex items-center gap-3 mt-2 mb-8">
             <div className="section-rule-thick" />
             <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide" style={{ color: 'var(--bsi-bone)' }}>
-              What You Can Do Here
+              One Platform, Four Ways In
             </h2>
           </div>
         </ScrollReveal>
 
-        {/* Hero tier — 3 crown jewels */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          {heroFeatures.map((feat, idx) => (
-            <ScrollReveal key={feat.label} direction="up" delay={idx * 80}>
-              <Link href={feat.href} className="group block h-full">
-                <div
-                  className="heritage-card feature-card-border relative p-6 h-full flex flex-col transition-all duration-300 hover:-translate-y-[4px] overflow-hidden"
-                  style={{ borderTop: '2px solid var(--bsi-primary)' }}
-                >
-                  {/* Icon background watermark */}
-                  <div className="absolute top-3 right-3 opacity-[0.04] group-hover:opacity-[0.08] transition-opacity duration-300" aria-hidden="true">
-                    <div className="w-20 h-20" style={{ color: 'var(--bsi-primary)' }}>
-                      {feat.icon}
-                    </div>
-                  </div>
-                  {/* Hover glow — elevated box-shadow for card depth */}
-                  <div
-                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                    style={{
-                      border: '1px solid rgba(191, 87, 0, 0.45)',
-                      borderRadius: '2px',
-                      boxShadow: 'inset 0 1px 0 rgba(191, 87, 0, 0.12), 0 8px 28px rgba(191, 87, 0, 0.09), 0 2px 8px rgba(0,0,0,0.4)',
-                    }}
-                    aria-hidden="true"
-                  />
-                  <div className="mb-4 transition-colors" style={{ color: 'var(--bsi-primary)' }}>
-                    {feat.icon}
-                  </div>
-                  <h3 className="text-base font-semibold uppercase tracking-wider mb-2 transition-colors" style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--bsi-bone)' }}>
-                    {feat.label}
-                  </h3>
-                  <p className="text-sm leading-relaxed font-serif flex-1" style={{ color: 'var(--bsi-dust)' }}>
-                    {feat.description}
+        <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+          <ScrollReveal direction="up" delay={80}>
+            <div className="heritage-card overflow-hidden p-6 sm:p-8" style={{ borderTop: '2px solid var(--bsi-primary)' }}>
+              <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.22em]" style={{ color: 'var(--bsi-primary)', fontFamily: 'var(--bsi-font-data)' }}>
+                    Core Entry Points
                   </p>
-                  <span className="mt-4 text-xs font-semibold uppercase tracking-wider flex items-center gap-2 group-hover:gap-3 transition-all" style={{ color: 'var(--bsi-primary)' }}>
-                    Explore &rarr;
+                  <h3 className="mt-3 font-display text-2xl font-bold uppercase tracking-[0.06em]" style={{ color: 'var(--bsi-bone)' }}>
+                    Savant And Intelligence Carry The Front Door
+                  </h3>
+                  <p className="mt-4 font-serif text-sm leading-relaxed sm:text-base" style={{ color: 'var(--bsi-dust)' }}>
+                    Savant tells you who is actually producing. Intelligence tells you what the matchup means before first pitch.
+                    Together they turn a scoreboard visit into a scouting pass.
+                  </p>
+
+                  <div className="mt-8 space-y-5">
+                    <Link href="/college-baseball/savant" className="group block border-t border-[rgba(245,240,235,0.1)] pt-4">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <p className="text-[10px] uppercase tracking-[0.18em]" style={{ color: 'var(--bsi-primary)', fontFamily: 'var(--bsi-font-data)' }}>
+                            BSI Savant
+                          </p>
+                          <p className="mt-2 font-serif text-sm leading-relaxed sm:text-base" style={{ color: 'var(--bsi-bone)' }}>
+                            Park-adjusted batting and pitching leaderboards, conference strength, and venue context.
+                          </p>
+                        </div>
+                        <span className="mt-1 text-sm font-semibold uppercase tracking-[0.16em] transition-transform duration-300 group-hover:translate-x-1" style={{ color: 'var(--heritage-columbia-blue)' }}>
+                          Open
+                        </span>
+                      </div>
+                    </Link>
+
+                    <Link href="/intel" className="group block border-t border-[rgba(245,240,235,0.1)] pt-4">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <p className="text-[10px] uppercase tracking-[0.18em]" style={{ color: 'var(--bsi-primary)', fontFamily: 'var(--bsi-font-data)' }}>
+                            Intelligence
+                          </p>
+                          <p className="mt-2 font-serif text-sm leading-relaxed sm:text-base" style={{ color: 'var(--bsi-bone)' }}>
+                            Briefs, editorial, and matchup framing that keep the data tied to baseball decisions.
+                          </p>
+                        </div>
+                        <span className="mt-1 text-sm font-semibold uppercase tracking-[0.16em] transition-transform duration-300 group-hover:translate-x-1" style={{ color: 'var(--heritage-columbia-blue)' }}>
+                          Read
+                        </span>
+                      </div>
+                    </Link>
+                  </div>
+                </div>
+
+                <div className="border-t border-[rgba(245,240,235,0.1)] pt-4 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
+                  <p className="text-[10px] uppercase tracking-[0.18em]" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
+                    Operating Thesis
+                  </p>
+                  <p className="mt-3 font-serif text-lg leading-relaxed italic" style={{ color: 'var(--bsi-bone)' }}>
+                    The numbers are useful only if they hold up once the game starts moving.
+                  </p>
+                  <div className="mt-6 space-y-3">
+                    {[
+                      'Live boards stay visible during the game.',
+                      'Analytic surfaces stay source-tagged and timestamped.',
+                      'The same platform reaches from scoreboard to scouting context.',
+                    ].map((item) => (
+                      <div key={item} className="flex gap-3">
+                        <span className="mt-1 text-[11px]" style={{ color: 'var(--bsi-primary)' }}>
+                          &#9670;
+                        </span>
+                        <p className="font-serif text-sm leading-relaxed" style={{ color: 'var(--bsi-dust)' }}>
+                          {item}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal direction="up" delay={140}>
+            <AskBSI embedded />
+          </ScrollReveal>
+        </div>
+
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {SUPPORT_RAIL.map((item, index) => (
+            <ScrollReveal key={item.label} direction="up" delay={180 + index * 60}>
+              <Link href={item.href} className="group block border-t border-[rgba(245,240,235,0.1)] py-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-[0.18em]" style={{ color: 'var(--bsi-primary)', fontFamily: 'var(--bsi-font-data)' }}>
+                      {item.label}
+                    </p>
+                    <p className="mt-2 font-serif text-sm leading-relaxed" style={{ color: 'var(--bsi-bone)' }}>
+                      {item.description}
+                    </p>
+                  </div>
+                  <span className="mt-1 text-sm font-semibold uppercase tracking-[0.16em] transition-transform duration-300 group-hover:translate-x-1" style={{ color: 'var(--heritage-columbia-blue)' }}>
+                    &rarr;
                   </span>
                 </div>
               </Link>
             </ScrollReveal>
           ))}
-        </div>
-
-        {/* Compact tier — remaining tools */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {compactFeatures.map((feat, idx) => {
-            const isExternal = feat.href.startsWith('http');
-            const Tag = isExternal ? 'a' : Link;
-            const extra = isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {};
-            return (
-              <ScrollReveal key={feat.label} direction="up" delay={idx * 60}>
-                <Tag
-                  href={feat.href}
-                  {...extra}
-                  className="group heritage-card flex items-start gap-3 p-4 hover:border-[rgba(191,87,0,0.4)] transition-all duration-300"
-                >
-                  <div className="mt-0.5 shrink-0 transition-colors" style={{ color: 'var(--bsi-dust)' }}>
-                    {feat.icon}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs font-semibold uppercase tracking-wider transition-colors" style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--bsi-bone)' }}>
-                        {feat.label}
-                      </span>
-                      {isExternal && (
-                        <span className="text-[9px] opacity-40" style={{ color: 'var(--bsi-dust)' }}>{'\u2197'}</span>
-                      )}
-                    </div>
-                    <p className="text-xs leading-relaxed font-serif" style={{ color: 'var(--bsi-dust)' }}>
-                      {feat.description}
-                    </p>
-                  </div>
-                  <span className="shrink-0 mt-1 transition-colors" style={{ color: 'rgba(191, 87, 0, 0.3)' }}>
-                    &rarr;
-                  </span>
-                </Tag>
-              </ScrollReveal>
-            );
-          })}
         </div>
       </div>
     </section>
