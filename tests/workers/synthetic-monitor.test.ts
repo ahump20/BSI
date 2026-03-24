@@ -78,21 +78,12 @@ describe('bsi-synthetic-monitor', () => {
 
   it('sends alert email on endpoint failure', async () => {
     env.RESEND_API_KEY = 'test-key';
-    // Mock fetch: first N calls for endpoints (some succeed, one fails), then Resend email
+    // First 2 endpoints succeed, 3rd fails, rest succeed (including Resend API call)
     const mockFetch = vi.fn()
       .mockResolvedValueOnce(new Response('ok', { status: 200 }))
       .mockResolvedValueOnce(new Response('ok', { status: 200 }))
       .mockRejectedValueOnce(new Error('Connection refused'))
-      .mockResolvedValueOnce(new Response('ok', { status: 200 }))
-      .mockResolvedValueOnce(new Response('ok', { status: 200 }))
-      .mockResolvedValueOnce(new Response('ok', { status: 200 }))
-      .mockResolvedValueOnce(new Response('ok', { status: 200 }))
-      .mockResolvedValueOnce(new Response('ok', { status: 200 }))
-      .mockResolvedValueOnce(new Response('ok', { status: 200 }))
-      .mockResolvedValueOnce(new Response('ok', { status: 200 }))
-      .mockResolvedValueOnce(new Response('ok', { status: 200 }))
-      .mockResolvedValueOnce(new Response('ok', { status: 200 }))
-      .mockResolvedValue(new Response('ok')); // Resend API call
+      .mockResolvedValue(new Response('ok', { status: 200 }));
     vi.stubGlobal('fetch', mockFetch);
 
     await worker.scheduled({} as any, env, mockCtx);

@@ -65,11 +65,8 @@ export default function BoxScoreClient() {
     return { away, home };
   }, [boxscore, game?.competitors]);
 
-  // Extract player stats
-  const playerStats = useMemo(() => {
-    if (!boxscore?.players || boxscore.players.length < 2) return null;
-    return boxscore.players;
-  }, [boxscore]);
+  const playerStats =
+    boxscore?.players && boxscore.players.length >= 2 ? boxscore.players : null;
 
   if (loading || error || !game) {
     return null; // Layout handles loading/error states
