@@ -15,8 +15,14 @@ const GAME_DETAIL_PATTERN = /^\/(college-baseball|mlb|nfl|nba|cfb)\/game\/[^/]+\
  *  e.g. /mlb/game/401833325/recap/__next._tree.txt?_rsc=... */
 const GAME_RSC_PATTERN = /^\/(college-baseball|mlb|nfl|nba|cfb)\/game\/[^/]+\/((?:box-score|play-by-play|team-stats|recap|live)\/)?(__next\.[^?]+)/;
 
+/** Matches player evaluation routes: /evaluate/{sport}/{playerId}/ */
+const EVALUATE_DETAIL_PATTERN = /^\/evaluate\/(college-baseball|mlb|nfl|nba)\/[^/]+\/?$/;
+
+/** Matches RSC metadata for evaluate routes */
+const EVALUATE_RSC_PATTERN = /^\/evaluate\/(college-baseball|mlb|nfl|nba)\/[^/]+\/(__next\.[^?]+)/;
+
 function buildPlaceholderPath(pathname: string): string | null {
-  // Try HTML page match first
+  // Try game detail HTML page match first
   const htmlMatch = pathname.match(GAME_DETAIL_PATTERN);
   if (htmlMatch) {
     const sport = htmlMatch[1];
@@ -25,13 +31,26 @@ function buildPlaceholderPath(pathname: string): string | null {
     return `/${sport}/game/placeholder/${trailing}`;
   }
 
-  // Try RSC metadata file match
+  // Try game detail RSC metadata file match
   const rscMatch = pathname.match(GAME_RSC_PATTERN);
   if (rscMatch) {
     const sport = rscMatch[1];
     const subRoute = rscMatch[2] || '';   // e.g. "recap/" or ""
     const rscFile = rscMatch[3];          // e.g. "__next._tree.txt"
     return `/${sport}/game/placeholder/${subRoute}${rscFile}`;
+  }
+
+  // Try evaluate detail HTML page match
+  const evalMatch = pathname.match(EVALUATE_DETAIL_PATTERN);
+  if (evalMatch) {
+    return '/evaluate/placeholder/placeholder/';
+  }
+
+  // Try evaluate RSC metadata match
+  const evalRscMatch = pathname.match(EVALUATE_RSC_PATTERN);
+  if (evalRscMatch) {
+    const rscFile = evalRscMatch[2];
+    return `/evaluate/placeholder/placeholder/${rscFile}`;
   }
 
   return null;
