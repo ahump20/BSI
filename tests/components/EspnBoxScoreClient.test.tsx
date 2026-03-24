@@ -1,20 +1,21 @@
 /**
- * ESPN BoxScoreClient Tests — NBA and CFB
+ * ESPN BoxScoreClient Tests — NBA, CFB, and NFL
  *
- * Tests the multi-stat-group rendering logic that was changed from
- * statistics?.[0] (single group) to statGroups.map() (all groups).
- *
- * Tests verify:
+ * Tests the shared EspnPlayerStatsTable + EspnTeamStatsTable components
+ * via each sport's BoxScoreClient thin wrapper. Verifies:
  * - Multiple stat groups render separate tables
  * - Group name headings appear when present
  * - Null/undefined stat entries in the array are filtered safely
  * - Empty statistics arrays don't crash
- * - Starters/bench/DNP sections render correctly
+ * - DNP-only groups still render (not silently dropped)
+ * - Null game without error shows "not available" card (not blank page)
+ *
+ * Uses NBA team names with football stat categories — both components
+ * parse identical ESPN shapes regardless of sport-specific stat names.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
-// Mock the layout context that provides game data
 const mockGameData = {
   game: null as unknown,
   loading: false,
@@ -29,19 +30,13 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({ replace: vi.fn() }),
 }));
 
-// Both NBA and CFB BoxScoreClient import { useGameData } from '../layout'
-vi.mock('@/app/nba/game/[gameId]/layout', () => ({
-  useGameData: () => mockGameData,
-}));
+vi.mock('@/app/nba/game/[gameId]/layout', () => ({ useGameData: () => mockGameData }));
+vi.mock('@/app/cfb/game/[gameId]/layout', () => ({ useGameData: () => mockGameData }));
+vi.mock('@/app/nfl/game/[gameId]/layout', () => ({ useGameData: () => mockGameData }));
 
-// Mock CFB layout
-vi.mock('@/app/cfb/game/[gameId]/layout', () => ({
-  useGameData: () => mockGameData,
-}));
-
-// Import after mocks
 import NBABoxScoreClient from '@/app/nba/game/[gameId]/box-score/BoxScoreClient';
 import CFBBoxScoreClient from '@/app/cfb/game/[gameId]/box-score/BoxScoreClient';
+import NFLBoxScoreClient from '@/app/nfl/game/[gameId]/box-score/BoxScoreClient';
 
 function makeEspnGame(overrides: Record<string, unknown> = {}) {
   return {
@@ -117,112 +112,118 @@ function makeEspnGame(overrides: Record<string, unknown> = {}) {
   };
 }
 
-describe('NBA BoxScoreClient', () => {
+function makeGameWithDNPOnly() {
+  const game = makeEspnGame();
+  // All athletes in the first group are DNP — should still render the DNP section
+  game.boxscore.players[0].statistics = [
+    {
+      name: 'passing',
+      type: 'passing',
+      labels: ['C/ATT', 'YDS'],
+      names: ['completionAttempts', 'passingYards'],
+      athletes: [
+        { athlete: { displayName: 'Injured QB', shortName: 'I. QB' }, stats: [], didNotPlay: true, reason: 'Knee' },
+        { athlete: { displayName: 'Backup QB', shortName: 'B. QB' }, stats: [], didNotPlay: true, reason: 'Coach Decision' },
+      ],
+    },
+  ];
+  return game;
+}
+
+// ---------- Shared test suite for each sport ----------
+
+function testSuite(name: string, Component: React.ComponentType) {
+  describe(name, () => {
+    beforeEach(() => {
+      mockGameData.loading = false;
+      mockGameData.error = null;
+      mockGameData.game = null;
+    });
+
+    it('renders multiple stat groups when present', () => {
+      mockGameData.game = makeEspnGame();
+      render(<Component />);
+      expect(screen.getByText('P. A')).toBeDefined();
+      expect(screen.getByText('P. B')).toBeDefined();
+    });
+
+    it('renders group name headings', () => {
+      mockGameData.game = makeEspnGame();
+      render(<Component />);
+      const headings = screen.getAllByText(/passing|rushing/i);
+      expect(headings.length).toBeGreaterThanOrEqual(2);
+    });
+
+    it('filters null statistics entries safely', () => {
+      const game = makeEspnGame();
+      (game.boxscore.players[0] as Record<string, unknown>).statistics = [
+        null,
+        game.boxscore.players[0].statistics[0],
+        undefined,
+        game.boxscore.players[0].statistics[1],
+      ];
+      mockGameData.game = game;
+      expect(() => render(<Component />)).not.toThrow();
+      expect(screen.getByText('P. A')).toBeDefined();
+    });
+
+    it('handles empty statistics without crash', () => {
+      const game = makeEspnGame();
+      game.boxscore.players[0].statistics = [];
+      mockGameData.game = game;
+      expect(() => render(<Component />)).not.toThrow();
+    });
+
+    it('shows "not available" when boxscore is missing', () => {
+      mockGameData.game = makeEspnGame({ boxscore: undefined });
+      render(<Component />);
+      expect(screen.getByText(/not available/i)).toBeDefined();
+    });
+
+    it('shows "not available" when game is null (not blank page)', () => {
+      mockGameData.game = null;
+      render(<Component />);
+      expect(screen.getByText(/not available/i)).toBeDefined();
+    });
+
+    it('returns null when loading', () => {
+      mockGameData.loading = true;
+      const { container } = render(<Component />);
+      expect(container.innerHTML).toBe('');
+    });
+
+    it('returns null when error', () => {
+      mockGameData.error = 'fetch failed';
+      const { container } = render(<Component />);
+      expect(container.innerHTML).toBe('');
+    });
+  });
+}
+
+testSuite('NBA BoxScoreClient', NBABoxScoreClient);
+testSuite('CFB BoxScoreClient', CFBBoxScoreClient);
+testSuite('NFL BoxScoreClient', NFLBoxScoreClient);
+
+// Split-mode specific tests (CFB/NBA only — DNP handling)
+describe('Split mode: DNP-only groups', () => {
   beforeEach(() => {
     mockGameData.loading = false;
     mockGameData.error = null;
-  });
-
-  it('renders multiple stat groups when present', () => {
-    mockGameData.game = makeEspnGame();
-    render(<NBABoxScoreClient />);
-    // Away team has 2 stat groups (passing + rushing), both should render
-    expect(screen.getByText('P. A')).toBeDefined();
-    expect(screen.getByText('P. B')).toBeDefined();
-  });
-
-  it('renders group name headings when name/type is present', () => {
-    mockGameData.game = makeEspnGame();
-    render(<NBABoxScoreClient />);
-    // Group names from statGroup.name should appear as headings
-    const headings = screen.getAllByText(/passing|rushing/i);
-    expect(headings.length).toBeGreaterThanOrEqual(2);
-  });
-
-  it('filters null entries in statistics array safely', () => {
-    const game = makeEspnGame();
-    // Insert null entries into statistics array
-    (game.boxscore.players[0] as Record<string, unknown>).statistics = [
-      null,
-      game.boxscore.players[0].statistics[0],
-      undefined,
-      game.boxscore.players[0].statistics[1],
-    ];
-    mockGameData.game = game;
-    // Should not crash
-    expect(() => render(<NBABoxScoreClient />)).not.toThrow();
-    // Valid groups should still render
-    expect(screen.getByText('P. A')).toBeDefined();
-  });
-
-  it('handles empty statistics array without crashing', () => {
-    const game = makeEspnGame();
-    game.boxscore.players[0].statistics = [];
-    mockGameData.game = game;
-    expect(() => render(<NBABoxScoreClient />)).not.toThrow();
-  });
-
-  it('handles missing boxscore gracefully', () => {
-    mockGameData.game = makeEspnGame({ boxscore: undefined });
-    render(<NBABoxScoreClient />);
-    expect(screen.getByText(/not available/i)).toBeDefined();
-  });
-
-  it('returns null when loading', () => {
-    mockGameData.loading = true;
     mockGameData.game = null;
-    const { container } = render(<NBABoxScoreClient />);
-    expect(container.innerHTML).toBe('');
-  });
-});
-
-describe('CFB BoxScoreClient', () => {
-  beforeEach(() => {
-    mockGameData.loading = false;
-    mockGameData.error = null;
   });
 
-  it('renders multiple stat groups when present', () => {
-    mockGameData.game = makeEspnGame();
+  it('renders DNP section when all athletes are DNP (NBA)', () => {
+    mockGameData.game = makeGameWithDNPOnly();
+    render(<NBABoxScoreClient />);
+    expect(screen.getByText('Did Not Play')).toBeDefined();
+    expect(screen.getByText('Knee')).toBeDefined();
+    expect(screen.getByText('Coach Decision')).toBeDefined();
+  });
+
+  it('renders DNP section when all athletes are DNP (CFB)', () => {
+    mockGameData.game = makeGameWithDNPOnly();
     render(<CFBBoxScoreClient />);
-    expect(screen.getByText('P. A')).toBeDefined();
-    expect(screen.getByText('P. B')).toBeDefined();
-  });
-
-  it('renders group name headings', () => {
-    mockGameData.game = makeEspnGame();
-    render(<CFBBoxScoreClient />);
-    const headings = screen.getAllByText(/passing|rushing/i);
-    expect(headings.length).toBeGreaterThanOrEqual(2);
-  });
-
-  it('filters null statistics entries safely', () => {
-    const game = makeEspnGame();
-    (game.boxscore.players[0] as Record<string, unknown>).statistics = [
-      null,
-      game.boxscore.players[0].statistics[0],
-    ];
-    mockGameData.game = game;
-    expect(() => render(<CFBBoxScoreClient />)).not.toThrow();
-  });
-
-  it('handles empty statistics without crash', () => {
-    const game = makeEspnGame();
-    game.boxscore.players[0].statistics = [];
-    mockGameData.game = game;
-    expect(() => render(<CFBBoxScoreClient />)).not.toThrow();
-  });
-
-  it('handles missing boxscore gracefully', () => {
-    mockGameData.game = makeEspnGame({ boxscore: undefined });
-    render(<CFBBoxScoreClient />);
-    expect(screen.getByText(/not available/i)).toBeDefined();
-  });
-
-  it('returns null when loading', () => {
-    mockGameData.loading = true;
-    mockGameData.game = null;
-    const { container } = render(<CFBBoxScoreClient />);
-    expect(container.innerHTML).toBe('');
+    expect(screen.getByText('Did Not Play')).toBeDefined();
+    expect(screen.getByText('I. QB')).toBeDefined();
   });
 });
