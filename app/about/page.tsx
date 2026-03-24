@@ -251,13 +251,15 @@ export default function AboutPage() {
               <Link href="/college-baseball" className="btn-heritage-fill px-8 py-3.5 text-base">
                 College Baseball Hub
               </Link>
-              <a
-                href="mailto:Austin@blazesportsintel.com"
-                className="btn-heritage px-8 py-3.5 text-base"
-              >
+              <Link href="/about/partnerships" className="btn-heritage px-8 py-3.5 text-base">
+                Partnerships
+              </Link>
+            </div>
+            <p className="text-sm mb-4" style={{ color: 'var(--bsi-dust)' }}>
+              <a href="mailto:Austin@blazesportsintel.com" className="hover:text-burnt-orange transition-colors">
                 Austin@blazesportsintel.com
               </a>
-            </div>
+            </p>
 
             <p className="font-serif italic text-sm tracking-wide" style={{ color: 'var(--bsi-primary)', opacity: 0.7 }}>
               Born to Blaze the Path Beaten Less

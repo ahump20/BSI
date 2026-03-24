@@ -98,6 +98,8 @@ export const GHOST_REDIRECTS: Record<string, string> = {
   '/college-baseball/preseason/lone-star-rivalry': '/college-baseball/editorial',
   '/college-baseball/preseason/power-25': '/college-baseball/editorial',
   '/college-baseball/preseason/sec-preview': '/college-baseball/editorial/sec',
+  '/college-baseball/teams/texas/intelligence': '/college-baseball/texas-intelligence',
+  '/college-baseball/players/compare': '/college-baseball/compare',
   '/daily': '/',
   '/hourly': '/',
   '/dashboard/daily': '/dashboard',
