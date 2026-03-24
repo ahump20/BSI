@@ -1,0 +1,37 @@
+# =============================================================================
+# BSI Push Notifications — Expo Push API Worker
+# =============================================================================
+# Manages push token registration and sends game alerts via Expo Push API.
+# Cron: every 5 minutes during game hours (13:00-01:00 CT).
+#
+# Deploy: wrangler deploy --config workers/bsi-push-notifications/wrangler.toml
+# =============================================================================
+
+name = "bsi-push-notifications"
+main = "index.ts"
+compatibility_date = "2025-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+[triggers]
+crons = ["*/5 13-23 * * *", "*/5 0-1 * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "bsi-prod-db"
+database_id = "6921617f-5351-4df3-aeab-07425e72ec6b"
+
+[[kv_namespaces]]
+binding = "CACHE"
+id = "BSI_PROD_CACHE"
+
+[vars]
+ENVIRONMENT = "production"
+EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send"
+RATE_LIMIT_MINUTES = "15"
+
+[[tail_consumers]]
+service = "bsi-error-tracker"
+
+[dev]
+port = 8795
+local_protocol = "http"
