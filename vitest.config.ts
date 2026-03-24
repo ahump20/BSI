@@ -48,6 +48,7 @@ export default defineConfig({
       'tests/a11y/**',
       'tests/flows/**',
       'tests/smoke/**',
+      'tests/e2e/**',
       'node_modules/**',
     ],
 

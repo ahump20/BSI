@@ -41,6 +41,8 @@ interface BoxscorePlayerGroup {
     names?: string[];
     labels?: string[];
     athletes?: BoxscorePlayerAthlete[];
+    name?: string;
+    type?: string;
   }>;
 }
 
@@ -146,37 +148,12 @@ export default function BoxScoreClient() {
         </Card>
       )}
 
-      {/* Player Stats */}
+      {/* Player Stats — each team, each stat group (passing, rushing, receiving, etc.) */}
       {playerStats && playerStats.map((teamGroup, tIdx) => {
         const teamAbbr = teamGroup.team?.abbreviation || (tIdx === 0 ? 'Away' : 'Home');
         const teamName = teamGroup.team?.displayName || teamAbbr;
-        const statGroup = teamGroup.statistics?.[0];
-        if (!statGroup) return null;
-
-        const headers = statGroup.labels || statGroup.names || [];
-        const athletes = statGroup.athletes || [];
-        const starters = athletes.filter((a) => a.athlete?.starter && !a.didNotPlay);
-        const bench = athletes.filter((a) => !a.athlete?.starter && !a.didNotPlay);
-        const dnp = athletes.filter((a) => a.didNotPlay);
-
-        const renderPlayerRows = (players: BoxscorePlayerAthlete[]) =>
-          players.map((player, pIdx) => (
-            <tr key={pIdx} className="border-b border-border-subtle last:border-0 hover:bg-surface-light">
-              <td className="p-2 text-text-primary font-medium whitespace-nowrap sticky left-0 bg-inherit">
-                <span>{player.athlete?.shortName || player.athlete?.displayName || '-'}</span>
-                {player.athlete?.position?.abbreviation && (
-                  <span className="text-text-tertiary text-xs ml-1.5">
-                    {player.athlete.position.abbreviation}
-                  </span>
-                )}
-              </td>
-              {(player.stats || []).map((val, sIdx) => (
-                <td key={sIdx} className="p-2 text-center font-mono text-text-secondary text-xs">
-                  {val}
-                </td>
-              ))}
-            </tr>
-          ));
+        const statGroups = (teamGroup.statistics || []).filter(Boolean);
+        if (statGroups.length === 0) return null;
 
         return (
           <Card key={tIdx} variant="default" padding="md">
@@ -184,77 +161,118 @@ export default function BoxScoreClient() {
               <CardTitle>{teamName}</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-border-subtle">
-                      <th className="text-left p-2 text-text-tertiary sticky left-0 bg-inherit">
-                        Player
-                      </th>
-                      {headers.map((h, hIdx) => (
-                        <th
-                          key={hIdx}
-                          className="text-center p-2 text-text-tertiary text-xs uppercase"
-                        >
-                          {h}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {starters.length > 0 && (
-                      <>
-                        <tr>
-                          <td
-                            colSpan={headers.length + 1}
-                            className="px-2 py-1 text-xs text-burnt-orange font-semibold uppercase tracking-wide bg-background-tertiary"
-                          >
-                            Starters
+              <div className="space-y-6">
+                {statGroups.map((statGroup, gIdx) => {
+                  const headers = statGroup.labels || statGroup.names || [];
+                  const athletes = statGroup.athletes || [];
+                  const groupName = statGroup.name || statGroup.type || '';
+                  const starters = athletes.filter((a) => a.athlete?.starter && !a.didNotPlay);
+                  const bench = athletes.filter((a) => !a.athlete?.starter && !a.didNotPlay);
+                  const dnp = athletes.filter((a) => a.didNotPlay);
+
+                  if (starters.length + bench.length === 0) return null;
+
+                  const renderPlayerRows = (players: BoxscorePlayerAthlete[]) =>
+                    players.map((player, pIdx) => (
+                      <tr key={pIdx} className="border-b border-border-subtle last:border-0 hover:bg-surface-light">
+                        <td className="p-2 text-text-primary font-medium whitespace-nowrap sticky left-0 bg-inherit">
+                          <span>{player.athlete?.shortName || player.athlete?.displayName || '-'}</span>
+                          {player.athlete?.position?.abbreviation && (
+                            <span className="text-text-tertiary text-xs ml-1.5">
+                              {player.athlete.position.abbreviation}
+                            </span>
+                          )}
+                        </td>
+                        {(player.stats || []).map((val, sIdx) => (
+                          <td key={sIdx} className="p-2 text-center font-mono text-text-secondary text-xs">
+                            {val}
                           </td>
-                        </tr>
-                        {renderPlayerRows(starters)}
-                      </>
-                    )}
-                    {bench.length > 0 && (
-                      <>
-                        <tr>
-                          <td
-                            colSpan={headers.length + 1}
-                            className="px-2 py-1 text-xs text-burnt-orange font-semibold uppercase tracking-wide bg-background-tertiary"
-                          >
-                            Reserves
-                          </td>
-                        </tr>
-                        {renderPlayerRows(bench)}
-                      </>
-                    )}
-                    {dnp.length > 0 && (
-                      <>
-                        <tr>
-                          <td
-                            colSpan={headers.length + 1}
-                            className="px-2 py-1 text-xs text-text-tertiary font-semibold uppercase tracking-wide bg-background-tertiary"
-                          >
-                            Did Not Play
-                          </td>
-                        </tr>
-                        {dnp.map((player, dIdx) => (
-                          <tr key={dIdx} className="border-b border-border-subtle last:border-0">
-                            <td className="p-2 text-text-tertiary whitespace-nowrap">
-                              {player.athlete?.shortName || player.athlete?.displayName || '-'}
-                            </td>
-                            <td
-                              colSpan={headers.length}
-                              className="p-2 text-text-tertiary text-xs italic"
-                            >
-                              {player.reason || 'DNP'}
-                            </td>
-                          </tr>
                         ))}
-                      </>
-                    )}
-                  </tbody>
-                </table>
+                      </tr>
+                    ));
+
+                  return (
+                    <div key={gIdx}>
+                      {groupName && (
+                        <div className="px-2 py-1.5 mb-2 text-xs text-burnt-orange font-semibold uppercase tracking-wide bg-background-tertiary rounded-sm">
+                          {groupName}
+                        </div>
+                      )}
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-border-subtle">
+                              <th className="text-left p-2 text-text-tertiary sticky left-0 bg-inherit">
+                                Player
+                              </th>
+                              {headers.map((h, hIdx) => (
+                                <th
+                                  key={hIdx}
+                                  className="text-center p-2 text-text-tertiary text-xs uppercase"
+                                >
+                                  {h}
+                                </th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {starters.length > 0 && (
+                              <>
+                                <tr>
+                                  <td
+                                    colSpan={headers.length + 1}
+                                    className="px-2 py-1 text-xs text-burnt-orange font-semibold uppercase tracking-wide bg-background-tertiary"
+                                  >
+                                    Starters
+                                  </td>
+                                </tr>
+                                {renderPlayerRows(starters)}
+                              </>
+                            )}
+                            {bench.length > 0 && (
+                              <>
+                                <tr>
+                                  <td
+                                    colSpan={headers.length + 1}
+                                    className="px-2 py-1 text-xs text-burnt-orange font-semibold uppercase tracking-wide bg-background-tertiary"
+                                  >
+                                    Reserves
+                                  </td>
+                                </tr>
+                                {renderPlayerRows(bench)}
+                              </>
+                            )}
+                            {dnp.length > 0 && (
+                              <>
+                                <tr>
+                                  <td
+                                    colSpan={headers.length + 1}
+                                    className="px-2 py-1 text-xs text-text-tertiary font-semibold uppercase tracking-wide bg-background-tertiary"
+                                  >
+                                    Did Not Play
+                                  </td>
+                                </tr>
+                                {dnp.map((player, dIdx) => (
+                                  <tr key={dIdx} className="border-b border-border-subtle last:border-0">
+                                    <td className="p-2 text-text-tertiary whitespace-nowrap">
+                                      {player.athlete?.shortName || player.athlete?.displayName || '-'}
+                                    </td>
+                                    <td
+                                      colSpan={headers.length}
+                                      className="p-2 text-text-tertiary text-xs italic"
+                                    >
+                                      {player.reason || 'DNP'}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </CardContent>
           </Card>
