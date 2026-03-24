@@ -1,0 +1,17 @@
+{
+<<<<<<< ours
+  "extends": "../tsconfig.worker.json",
+  "include": ["*.ts", "env.d.ts", "env.secrets.d.ts"]
+=======
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "lib": ["ES2022"],
+    "types": ["@cloudflare/workers-types"]
+  },
+  "include": ["index.ts", "env.d.ts"]
+>>>>>>> theirs
+}

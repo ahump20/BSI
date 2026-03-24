@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "Blaze Sports Intel",
+    "slug": "blazesportsintel-mobile",
+    "scheme": "blazesportsintel",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#0D0D0D"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.blazesportsintel.mobile"
+    },
+    "plugins": ["expo-router", "expo-font", "expo-notifications", "expo-sqlite"]
+  }
+}
