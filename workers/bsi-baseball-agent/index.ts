@@ -2,14 +2,13 @@
  * bsi-baseball-agent
  *
  * Stateful AI chat agent for college baseball analytics.
- * Extends Cloudflare Agents SDK AIChatAgent with BSI data tools.
- * Each session gets its own Durable Object with persistent conversation history.
+ * Currently a stub — the BaseballChatAgent DO class is minimal.
+ * Full Agents SDK integration to be added in a future session.
  *
  * Deploy: wrangler deploy --config workers/bsi-baseball-agent/wrangler.toml
  * Worker name: bsi-baseball-agent
  */
 
-import { routeAgentRequest } from 'agents';
 import type { AgentEnv } from './types';
 import { applySecurityHeaders } from '../shared/security';
 
@@ -50,7 +49,7 @@ export default {
       const body = {
         service: 'bsi-baseball-agent',
         status: 'ok',
-        model: 'claude-sonnet-4-6',
+        mode: 'stub',
         timestamp: new Date().toISOString(),
       };
       return applySecurityHeaders(new Response(JSON.stringify(body), {
@@ -58,20 +57,21 @@ export default {
       }));
     }
 
-    // Route all /agents/* requests to the Durable Object via Agents SDK
-    const agentResponse = await routeAgentRequest(request, env);
-    if (agentResponse) {
-      // Add CORS headers to non-WebSocket responses (skip WebSocket upgrades)
-      if (!request.headers.get('Upgrade')) {
-        const headers = new Headers(agentResponse.headers);
-        for (const [k, v] of Object.entries(corsHeaders(origin))) {
-          headers.set(k, v);
-        }
-        return applySecurityHeaders(new Response(agentResponse.body, { status: agentResponse.status, headers }));
+    // Route /agent/* requests to the Durable Object
+    if (url.pathname.startsWith('/agent')) {
+      const id = env.BSI_BASEBALL_AGENT.idFromName('default');
+      const stub = env.BSI_BASEBALL_AGENT.get(id);
+      const doResponse = await stub.fetch(request);
+      const headers = new Headers(doResponse.headers);
+      for (const [k, v] of Object.entries(corsHeaders(origin))) {
+        headers.set(k, v);
       }
-      return agentResponse;
+      return applySecurityHeaders(new Response(doResponse.body, { status: doResponse.status, headers }));
     }
 
-    return applySecurityHeaders(new Response('Not found', { status: 404, headers: corsHeaders(origin) }));
+    return applySecurityHeaders(new Response(JSON.stringify({ error: 'Not found' }), {
+      status: 404,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) },
+    }));
   },
 };

@@ -14,6 +14,7 @@ import type {
   SDIOMLBPlayer,
   SDIOMLBBoxScore,
   SDIOMLBNews,
+  SDIOMLBPlayerSeason,
   SDIONFLGame,
   SDIONFLStanding,
   SDIONFLTeam,
@@ -174,6 +175,11 @@ export class SportsDataIOClient {
 
   async getMLBNews(): Promise<SDIOMLBNews[]> {
     return this.fetch<SDIOMLBNews[]>('mlb', 'News');
+  }
+
+  async getMLBPlayerSeasonStats(season?: number): Promise<SDIOMLBPlayerSeason[]> {
+    const s = season || currentYear();
+    return this.fetchStats<SDIOMLBPlayerSeason[]>('mlb', `PlayerSeasonStats/${s}`);
   }
 
   // -------------------------------------------------------------------------
@@ -791,6 +797,116 @@ export function transformSDIOPlayer(
       stats: [],
     },
     meta: makeMeta(),
+  };
+}
+
+/** Transform SDIO MLB player season stats into league leader categories */
+export function transformSDIOMLBLeaders(
+  players: SDIOMLBPlayerSeason[],
+): { categories: Array<{ name: string; abbreviation: string; leaders: Array<{ name: string; id?: string; team: string; teamId?: string; headshot: string; value: string | number; stat: string }> }> } {
+  const batters = players.filter((p) => (p.AtBats ?? 0) >= 50);
+  const pitchers = players.filter((p) => (p.InningsPitchedFull ?? 0) >= 20);
+
+  const battingCats = [
+    {
+      name: 'Batting Average',
+      abbreviation: 'AVG',
+      pool: batters,
+      extract: (p: SDIOMLBPlayerSeason) => p.BattingAverage ?? 0,
+      format: (v: number) => v.toFixed(3),
+    },
+    {
+      name: 'Home Runs',
+      abbreviation: 'HR',
+      pool: batters,
+      extract: (p: SDIOMLBPlayerSeason) => p.HomeRuns ?? 0,
+      format: (v: number) => String(v),
+    },
+    {
+      name: 'Runs Batted In',
+      abbreviation: 'RBI',
+      pool: batters,
+      extract: (p: SDIOMLBPlayerSeason) => p.RunsBattedIn ?? 0,
+      format: (v: number) => String(v),
+    },
+    {
+      name: 'Stolen Bases',
+      abbreviation: 'SB',
+      pool: batters,
+      extract: (p: SDIOMLBPlayerSeason) => p.StolenBases ?? 0,
+      format: (v: number) => String(v),
+    },
+    {
+      name: 'OPS',
+      abbreviation: 'OPS',
+      pool: batters,
+      extract: (p: SDIOMLBPlayerSeason) => p.OnBasePlusSlugging ?? 0,
+      format: (v: number) => v.toFixed(3),
+    },
+  ];
+
+  const pitchingCats = [
+    {
+      name: 'Earned Run Average',
+      abbreviation: 'ERA',
+      pool: pitchers,
+      extract: (p: SDIOMLBPlayerSeason) => p.EarnedRunAverage ?? 99,
+      format: (v: number) => v.toFixed(2),
+      ascending: true,
+    },
+    {
+      name: 'Wins',
+      abbreviation: 'W',
+      pool: pitchers,
+      extract: (p: SDIOMLBPlayerSeason) => p.Wins ?? 0,
+      format: (v: number) => String(v),
+    },
+    {
+      name: 'Strikeouts',
+      abbreviation: 'SO',
+      pool: pitchers,
+      extract: (p: SDIOMLBPlayerSeason) => p.PitchingStrikeouts ?? 0,
+      format: (v: number) => String(v),
+    },
+    {
+      name: 'Saves',
+      abbreviation: 'SV',
+      pool: pitchers,
+      extract: (p: SDIOMLBPlayerSeason) => p.Saves ?? 0,
+      format: (v: number) => String(v),
+    },
+    {
+      name: 'WHIP',
+      abbreviation: 'WHIP',
+      pool: pitchers,
+      extract: (p: SDIOMLBPlayerSeason) => p.WhipPerInningsPitched ?? 99,
+      format: (v: number) => v.toFixed(2),
+      ascending: true,
+    },
+  ];
+
+  const allCats = [...battingCats, ...pitchingCats];
+
+  return {
+    categories: allCats.map((cat) => {
+      const ascending = 'ascending' in cat && cat.ascending;
+      const sorted = [...cat.pool].sort((a, b) =>
+        ascending ? cat.extract(a) - cat.extract(b) : cat.extract(b) - cat.extract(a),
+      );
+      return {
+        name: cat.name,
+        abbreviation: cat.abbreviation,
+        leaders: sorted.slice(0, 10).map((p) => ({
+          name: p.Name || '',
+          id: p.PlayerID?.toString(),
+          team: p.Team || '',
+          teamId: undefined,
+          headshot: p.PhotoUrl || '',
+          value: cat.format(cat.extract(p)),
+          stat: cat.abbreviation,
+        })),
+      };
+    }),
   };
 }
 

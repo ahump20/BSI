@@ -145,6 +145,39 @@ export interface SDIOMLBNews {
   TeamID?: number;
 }
 
+export interface SDIOMLBPlayerSeason {
+  PlayerID?: number;
+  Name?: string;
+  Team?: string;
+  Position?: string;
+  PhotoUrl?: string;
+  Games?: number;
+  AtBats?: number;
+  Runs?: number;
+  Hits?: number;
+  Doubles?: number;
+  Triples?: number;
+  HomeRuns?: number;
+  RunsBattedIn?: number;
+  StolenBases?: number;
+  Walks?: number;
+  Strikeouts?: number;
+  BattingAverage?: number;
+  OnBasePercentage?: number;
+  SluggingPercentage?: number;
+  OnBasePlusSlugging?: number;
+  Wins?: number;
+  Losses?: number;
+  EarnedRunAverage?: number;
+  InningsPitchedFull?: number;
+  PitchingStrikeouts?: number;
+  PitchingWalks?: number;
+  PitchingHits?: number;
+  Saves?: number;
+  WhipPerInningsPitched?: number;
+  PitchingEarnedRuns?: number;
+}
+
 // ---------------------------------------------------------------------------
 // NFL
 // ---------------------------------------------------------------------------

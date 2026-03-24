@@ -25,6 +25,7 @@ import {
   transformSDIOTeams,
   transformSDIONews,
   transformSDIOMLBBoxScore,
+  transformSDIOMLBLeaders,
 } from '../../lib/api-clients/sportsdataio-api';
 import type {
   BSIGameSummaryResult,
@@ -273,58 +274,86 @@ export async function handleMLBStatsLeaders(url: URL, env: Env): Promise<Respons
 
 export async function handleMLBLeaderboard(category: string, url: URL, env: Env): Promise<Response> {
   try {
-    const stat = url.searchParams.get('stat') || (category === 'pitching' ? 'pit' : 'bat');
-    const sortBy = url.searchParams.get('sortby') || 'WAR';
     const season = url.searchParams.get('season') || String(new Date().getFullYear());
     const limit = Math.min(50, Math.max(1, Number(url.searchParams.get('limit') || '50')));
-    const cacheKey = `mlb:leaderboard:${category}:${sortBy}:${season}`;
+    const cacheKey = `mlb:leaderboard:${category}:${season}`;
+    const LEADERBOARD_TTL = 1800; // 30 min
 
     const cached = await kvGet<unknown>(env.KV, cacheKey);
     if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, cachedPayloadHeaders(cached));
 
-    const espnUrl = `https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/leaders?season=${season}&seasontype=2`;
-    const res = await fetch(espnUrl, { headers: { 'User-Agent': 'BSI/1.0' } });
-    if (!res.ok) throw new Error(`ESPN ${res.status}`);
-    const raw = await res.json() as Record<string, unknown>;
+    // Primary: SportsDataIO player season stats
+    const sdio = getSDIOClient(env);
+    if (sdio) {
+      try {
+        const stats = await sdio.getMLBPlayerSeasonStats(Number(season));
+        const { categories } = transformSDIOMLBLeaders(stats);
+        // Filter to requested category (batting vs pitching) if specified
+        const filtered = category === 'pitching'
+          ? categories.filter((c) => ['ERA', 'W', 'SO', 'SV', 'WHIP'].includes(c.abbreviation))
+          : category === 'batting'
+            ? categories.filter((c) => ['AVG', 'HR', 'RBI', 'SB', 'OPS'].includes(c.abbreviation))
+            : categories;
+        // Apply limit to each category's leaders
+        const limited = filtered.map((c) => ({ ...c, leaders: c.leaders.slice(0, limit) }));
+        const payload = withMeta({ categories: limited, season: Number(season), category }, 'sportsdataio');
+        await kvPut(env.KV, cacheKey, payload, LEADERBOARD_TTL);
+        return cachedJson(payload, 200, HTTP_CACHE.standings, freshDataHeaders('sportsdataio'));
+      } catch {
+        // Fall through to ESPN
+      }
+    }
 
-    const categories = (raw.leaders ?? []) as Array<Record<string, unknown>>;
-    const catIdx = category === 'pitching' ? 1 : 0;
-    const selectedCategory = categories[catIdx] ?? categories[0];
-    const leaderGroups = (selectedCategory?.leaders ?? []) as Array<Record<string, unknown>>;
+    // Fallback: ESPN leaders
+    try {
+      const espnUrl = `https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/leaders?season=${season}&seasontype=2`;
+      const res = await fetch(espnUrl, { headers: { 'User-Agent': 'BSI/1.0' } });
+      if (!res.ok) throw new Error(`ESPN ${res.status}`);
+      const raw = await res.json() as Record<string, unknown>;
 
-    const data = leaderGroups.flatMap((group) => {
-      const athletes = (group.leaders ?? []) as Array<Record<string, unknown>>;
-      return athletes.map((a, i) => {
-        const athlete = (a.athlete ?? {}) as Record<string, unknown>;
-        const team = (athlete.team ?? {}) as Record<string, unknown>;
-        const position = (athlete.position ?? {}) as Record<string, unknown>;
-        return {
-          rank: i + 1,
-          player: {
-            id: String(athlete.id ?? ''),
+      const espnCategories = (raw.leaders ?? []) as Array<Record<string, unknown>>;
+      const catIdx = category === 'pitching' ? 1 : 0;
+      const selectedCategory = espnCategories[catIdx] ?? espnCategories[0];
+      const leaderGroups = (selectedCategory?.leaders ?? []) as Array<Record<string, unknown>>;
+
+      const data = leaderGroups.flatMap((group) => {
+        const athletes = (group.leaders ?? []) as Array<Record<string, unknown>>;
+        return athletes.map((a, i) => {
+          const athlete = (a.athlete ?? {}) as Record<string, unknown>;
+          const team = (athlete.team ?? {}) as Record<string, unknown>;
+          return {
             name: (athlete.displayName as string) ?? '',
-            team: (team.displayName as string) ?? '',
-            position: (position.abbreviation as string) ?? '',
-          },
-          value: a.value ?? a.displayValue,
-          displayValue: (a.displayValue as string) ?? '',
-          statName: (group.name as string) ?? '',
-        };
-      });
-    }).slice(0, limit);
+            id: athlete.id?.toString(),
+            team: (team.abbreviation as string) ?? '',
+            teamId: team.id?.toString(),
+            headshot: ((athlete.headshot as Record<string, unknown>)?.href as string) ?? '',
+            value: (a.displayValue as string) ?? String(a.value ?? ''),
+            stat: (group.name as string) ?? '',
+            rank: i + 1,
+          };
+        });
+      }).slice(0, limit);
 
-    const fetchedAt = new Date().toISOString();
-    const payload = withMeta({
-      leaderboard: { category, type: stat, season: Number(season), sortBy },
-      data,
-      pagination: { page: 1, pageSize: limit, totalResults: data.length, totalPages: 1 },
-    }, 'espn', { fetchedAt });
+      if (data.length > 0) {
+        const payload = withMeta({
+          categories: [{ name: category, abbreviation: category.toUpperCase(), leaders: data }],
+          season: Number(season),
+          category,
+        }, 'espn');
+        await kvPut(env.KV, cacheKey, payload, LEADERBOARD_TTL);
+        return cachedJson(payload, 200, HTTP_CACHE.standings, freshDataHeaders('espn'));
+      }
+    } catch {
+      // ESPN leaders unavailable
+    }
 
-    await kvPut(env.KV, cacheKey, payload, 1800);
-    return cachedJson(payload, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS', 'X-Data-Source': 'ESPN' });
+    // Both sources unavailable — return empty (frontend shows offseason/unavailable state)
+    const empty = withMeta({ categories: [], season: Number(season), category, unavailable: true }, 'none');
+    await kvPut(env.KV, cacheKey, empty, 300); // Cache empty for 5 min
+    return cachedJson(empty, 200, HTTP_CACHE.standings, freshDataHeaders('none'));
   } catch (err) {
     console.error('[handleMLBLeaderboard]', err instanceof Error ? err.message : err);
-    return json({ error: 'Internal server error', status: 500 }, 500);
+    return cachedJson(withMeta({ categories: [], unavailable: true }, 'none'), 200, 0);
   }
 }
 
