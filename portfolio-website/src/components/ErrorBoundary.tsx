@@ -18,6 +18,15 @@ export default class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, info: ErrorInfo) {
     console.error('[ErrorBoundary]', error, info.componentStack);
+    try {
+      (window as Record<string, unknown>).posthog?.capture?.('react_error_boundary', {
+        error_message: error.message,
+        error_name: error.name,
+        component_stack: info.componentStack?.slice(0, 1000),
+      });
+    } catch {
+      // PostHog not loaded — acceptable
+    }
   }
 
   render() {

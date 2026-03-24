@@ -634,11 +634,6 @@ footer a {
   .section-padding { padding: 3rem 1rem; }
   .section-content { padding: 0 1rem; }
 
-  /* Experience: stack location/date on tablet */
-  .experience-meta-row {
-    flex-direction: column;
-    gap: 0.25rem;
-  }
 }
 
 /* ─── Responsive: Mobile (480px) ─── */
@@ -648,9 +643,6 @@ footer a {
   /* Prevent horizontal scroll on narrow viewports */
   .grid { min-width: 0; }
   .grid > * { min-width: 0; }
-
-  /* Hero buttons: ensure full width stacking */
-  .hero-cta-wrap > a { width: 100%; }
 
   /* Section titles: tighter on mobile */
   .section-title { margin-bottom: 1.5rem; }

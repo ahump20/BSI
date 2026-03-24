@@ -166,7 +166,8 @@ export default function AIChatWidget() {
             },
           ]);
         }
-      } catch {
+      } catch (err) {
+        console.warn('[AIChatWidget] API failed, using fallback', err);
         const fallback = getFallbackResponse(trimmed);
         setMessages((prev) => [
           ...prev,

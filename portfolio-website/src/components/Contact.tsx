@@ -44,6 +44,7 @@ function ContactIcon({ kind }: { kind: typeof CONTACT_CHANNELS[number]['icon'] }
 
 export default function Contact() {
   const [formState, setFormState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
@@ -111,9 +112,11 @@ export default function Contact() {
       setTurnstileToken('');
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') {
+        setErrorMsg('Request timed out. Try again.');
         setFormState('error');
         return;
       }
+      setErrorMsg(err instanceof Error ? err.message : 'Unable to send your message right now.');
       setFormState('error');
     } finally {
       clearTimeout(timeoutId);
@@ -291,7 +294,7 @@ export default function Contact() {
               )}
               {formState === 'error' && (
                 <p className="text-orange-400 text-xs font-mono mt-3 text-center" aria-live="polite">
-                  Couldn&apos;t send that. Try again or email {PRIMARY_EMAIL} directly.
+                  {errorMsg || `Couldn't send that. Try again or email ${PRIMARY_EMAIL} directly.`}
                 </p>
               )}
             </motion.form>

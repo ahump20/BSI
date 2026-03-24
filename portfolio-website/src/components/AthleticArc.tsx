@@ -73,7 +73,7 @@ export default function AthleticArc() {
                   className={`${colSpan} relative group ${isLastGame ? 'grid-full-span' : ''}`}
                 >
                   <div
-                    className={`overflow-hidden rounded-sm ${
+                    className={`relative overflow-hidden rounded-sm ${
                       isLastGame ? 'max-h-[400px]' : 'max-h-[320px]'
                     }`}
                   >
