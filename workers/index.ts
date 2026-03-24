@@ -136,6 +136,7 @@ import { handleLogin, handleValidateKey } from './handlers/auth';
 import { handleScheduled, handleCachedScores, handleHealthProviders } from './handlers/cron';
 import { handleHealth, handleStatus, handleAdminHealth, handleAdminErrors, handleWebSocket } from './handlers/health';
 import { handleMcpRequest } from './handlers/mcp';
+import { handleHeroScores } from './handlers/hero-scores';
 import { handleScoresOverview } from './handlers/scores';
 import {
   handleCVPitcherMechanics,
@@ -324,6 +325,9 @@ app.all('/mcp', (c) => handleMcpRequest(c.req.raw, c.env));
 app.post('/api/auth/login', (c) => handleLogin(c.req.raw, c.env));
 app.get('/api/auth/validate', (c) => handleValidateKey(c.req.raw, c.env));
 app.all('/api/auth/signup', (c) => c.redirect('/pricing', 302));
+
+// --- Hero Scores (homepage strip) ---
+app.get('/api/hero-scores', (c) => handleHeroScores(new URL(c.req.url), c.env));
 
 // --- Health ---
 app.get('/health', (c) => handleHealth(c.env));

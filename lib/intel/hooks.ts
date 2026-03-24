@@ -86,7 +86,7 @@ function standingsEndpoint(sport: Exclude<IntelSport, 'all'>): string {
 }
 
 async function fetchJson<T = unknown>(url: string): Promise<T> {
-  const res = await fetch(url);
+  const res = await fetch(url, { signal: AbortSignal.timeout(10_000) });
   if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
   return res.json() as Promise<T>;
 }
@@ -1025,7 +1025,10 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
     return normalizeNews(newsQuery.data);
   }, [newsQuery.data]);
 
-  const isLoading = scoreQueries.some((q) => q.isLoading && !q.data);
+  // Show dashboard as soon as ANY sport has data — don't block on all 6
+  const hasAnyData = scoreQueries.some((q) => !!q.data);
+  const allStillLoading = scoreQueries.every((q) => q.isLoading && !q.data);
+  const isLoading = !hasAnyData && allStillLoading;
   const isError = scoreQueries.length > 0 && scoreQueries.every((q) => q.isError);
 
   const hero = useMemo(() => enrichedGames.find((g) => g.tier === 'hero'), [enrichedGames]);

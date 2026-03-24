@@ -65,6 +65,7 @@ const editorial: SitemapEntry[] = [
   { path: '/college-baseball/editorial/weekend-3-preview', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/weekend-3-recap', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/texas-week-3-recap', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/texas-week-6-recap', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/texas-houston-christian-preview', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/texas-houston-christian-recap', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/week-4-preview', changeFrequency: 'monthly', priority: 0.8 },

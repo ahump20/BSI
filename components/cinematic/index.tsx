@@ -23,20 +23,50 @@ export function ScrollReveal({ children, direction = 'up', delay = 0, className 
 
   useEffect(() => {
     const el = ref.current;
-    if (!el || typeof IntersectionObserver === 'undefined') return;
+    if (!el) return;
+
+    // No IntersectionObserver — reveal immediately
+    if (typeof IntersectionObserver === 'undefined') {
+      el.classList.add('revealed');
+      return;
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           el.classList.add('revealed');
           observer.unobserve(el);
+          clearTimeout(fallbackTimer);
         }
       },
       { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
     );
 
     observer.observe(el);
-    return () => observer.disconnect();
+
+    // Above-fold elements: reveal on next frame if already in viewport
+    requestAnimationFrame(() => {
+      if (el && !el.classList.contains('revealed')) {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight) {
+          el.classList.add('revealed');
+          observer.unobserve(el);
+        }
+      }
+    });
+
+    // Fallback: force reveal after 1.5s if observer never fired
+    const fallbackTimer = setTimeout(() => {
+      if (!el.classList.contains('revealed')) {
+        el.classList.add('revealed');
+        observer.unobserve(el);
+      }
+    }, 1500);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(fallbackTimer);
+    };
   }, []);
 
   const dirClass =
