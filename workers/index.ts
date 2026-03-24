@@ -131,6 +131,7 @@ import {
 
 import { handleBlogPostFeedList, handleBlogPostFeedItem } from './handlers/blog-post-feed';
 import { handleSearch } from './handlers/search';
+import { handleEvaluatePlayer, handleEvaluateSearch } from './handlers/evaluate';
 import { handlePushRegister, handlePushSend } from './handlers/push';
 import { handleCreateEmbeddedCheckout, handleSessionStatus, handleCustomerPortal } from './handlers/stripe';
 import { handleLogin, handleValidateKey } from './handlers/auth';
@@ -643,6 +644,10 @@ app.post('/api/push/send', (c) => handlePushSend(c.env));
 
 // --- Search ---
 app.get('/api/search', (c) => handleSearch(new URL(c.req.url), c.env));
+
+// --- Player Evaluation ---
+app.get('/api/evaluate/player/:sport/:playerId', (c) => handleEvaluatePlayer(c.req.param('sport'), c.req.param('playerId'), c.env));
+app.get('/api/evaluate/search', (c) => handleEvaluateSearch(new URL(c.req.url), c.env));
 
 // --- ESPN News proxy ---
 app.get('/api/news/:sport', (c) => handleESPNNews(c.req.param('sport'), c.env));
