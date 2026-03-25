@@ -1,6 +1,6 @@
 -- Migration 044: League context table for D1-derived baselines
 -- Stores daily-computed league-wide averages that feed wRC+, OPS+, ERA-, FIP.
--- Populated by bsi-cbb-analytics cron; synced to cbb-api-db for public API.
+-- Populated by bsi-cbb-analytics cron.
 -- Run: wrangler d1 execute bsi-prod-db --remote --file=workers/migrations/044_cbb_league_context.sql
 
 CREATE TABLE IF NOT EXISTS cbb_league_context (
