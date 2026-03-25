@@ -23,9 +23,9 @@ export default function ScoresTab() {
   const query = useScores(activeSport);
 
   const sorted = useMemo(() => {
-    const data = query.data ?? [];
+    const data = Array.isArray(query.data) ? query.data : [];
     const rank: Record<string, number> = { live: 0, final: 1, upcoming: 2 };
-    return [...data].sort((a, b) => rank[a.status] - rank[b.status]);
+    return [...data].sort((a, b) => (rank[a.status] ?? 2) - (rank[b.status] ?? 2));
   }, [query.data]);
 
   const renderEmpty = () => {

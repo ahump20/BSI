@@ -11,10 +11,21 @@ const endpointMap: Record<string, string> = {
   nba: '/api/nba/scores'
 };
 
+type ScoresEnvelope = { games?: Score[] } | Score[];
+
+function normalizeScores(payload: ScoresEnvelope): Score[] {
+  if (Array.isArray(payload)) return payload;
+  const envelope = payload as { games?: Score[] };
+  return Array.isArray(envelope.games) ? envelope.games : [];
+}
+
 export function useScores(sport: string) {
   return useQuery({
     queryKey: ['scores', sport],
-    queryFn: () => apiGet<Score[]>(endpointMap[sport] ?? endpointMap.all),
+    queryFn: async () => {
+      const payload = await apiGet<ScoresEnvelope>(endpointMap[sport] ?? endpointMap.all);
+      return normalizeScores(payload);
+    },
     refetchInterval: 30_000,
     staleTime: 15_000
   });
