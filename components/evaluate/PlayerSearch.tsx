@@ -14,8 +14,6 @@ export interface SearchResult {
   id: string;
   name: string;
   sport: string;
-  team: string;
-  position: string;
   url: string;
   sportLabel: string;
 }
@@ -54,10 +52,12 @@ function SportPills({
   onChange: (v: EvaluationSport | '') => void;
 }) {
   return (
-    <div className="flex items-center gap-1.5 flex-wrap">
+    <div className="flex items-center gap-1.5 flex-wrap" role="radiogroup" aria-label="Filter by sport">
       {SPORT_OPTIONS.map((opt) => (
         <button
           key={opt.value}
+          role="radio"
+          aria-checked={selected === opt.value}
           onClick={() => onChange(opt.value)}
           className={`px-3 py-1 text-xs font-mono uppercase tracking-wide rounded-sm border transition-colors ${
             selected === opt.value
@@ -194,12 +194,7 @@ export function PlayerSearch({
             {results.map((r) => {
               const content = (
                 <div className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-surface-press-box transition-colors cursor-pointer border-b border-border-subtle last:border-b-0">
-                  <div>
-                    <p className="text-sm font-semibold text-text-primary">{r.name}</p>
-                    <p className="text-[11px] text-text-muted">
-                      {r.position && `${r.position} · `}{r.team}
-                    </p>
-                  </div>
+                  <p className="text-sm font-semibold text-text-primary">{r.name}</p>
                   <Badge variant={sportBadgeVariant(r.sport)} size="sm">
                     {r.sportLabel}
                   </Badge>
