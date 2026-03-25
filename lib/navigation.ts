@@ -143,6 +143,7 @@ export function getSidebarNav(): readonly NavGroup[] {
       label: 'College Baseball',
       items: [
         { href: '/college-baseball', label: 'Hub', iconKey: 'baseball' },
+        { href: '/college-baseball/power-rankings', label: 'Power Rankings', iconKey: 'star' },
         { href: '/college-baseball/rankings', label: 'Rankings', iconKey: 'list' },
         { href: '/college-baseball/standings', label: 'Standings', iconKey: 'list' },
         { href: '/college-baseball/savant', label: 'Savant', iconKey: 'target' },

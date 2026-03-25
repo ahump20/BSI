@@ -138,6 +138,7 @@ import { handleLogin, handleValidateKey } from './handlers/auth';
 import { handleScheduled, handleCachedScores, handleHealthProviders } from './handlers/cron';
 import { handleHealth, handleStatus, handleAdminHealth, handleAdminErrors, handleWebSocket } from './handlers/health';
 import { handleFreshness } from './handlers/freshness';
+import { handlePowerRankings } from './handlers/college-baseball/power-rankings';
 import { handleMcpRequest } from './handlers/mcp';
 import { handleHeroScores } from './handlers/hero-scores';
 import { handleScoresOverview } from './handlers/scores';
@@ -413,6 +414,7 @@ app.get('/api/college-baseball/standings', (c) => {
   return handleCollegeBaseballStandings(new URL(c.req.url), c.env, ctx);
 });
 app.get('/api/college-baseball/rankings', (c) => handleCollegeBaseballRankings(c.env));
+app.get('/api/college-baseball/power-rankings', (c) => handlePowerRankings(new URL(c.req.url), c.env));
 app.get('/api/college-baseball/leaders', (c) => handleCollegeBaseballLeaders(c.env));
 app.get('/api/college-baseball/ingest-stats', (c) => {
   const url = new URL(c.req.url);
