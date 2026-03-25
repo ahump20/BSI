@@ -987,6 +987,58 @@ export async function handleScheduled(env: Env): Promise<void> {
       await logError(env, `cron:mmi: ${err instanceof Error ? err.message : 'unknown'}`, 'cron-mmi');
     }
   }
+
+  // Self-healing monitor: check D1 sabermetric tables for staleness.
+  // Runs every 5 minutes (gated). Writes status to KV for the freshness
+  // dashboard. When tables go stale, logs a healing alert.
+  try {
+    const healGateKey = 'healing:last-check';
+    const lastHealCheck = await kvGet<string>(env.KV, healGateKey);
+    const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    if (!lastHealCheck || lastHealCheck < fiveMinAgo) {
+      const tables = [
+        { name: 'cbb_batting_advanced', threshold: 7 },   // 6h cron + 1h buffer
+        { name: 'cbb_pitching_advanced', threshold: 7 },
+        { name: 'cbb_conference_strength', threshold: 25 }, // daily cron + 1h buffer
+        { name: 'cbb_park_factors', threshold: 170 },       // weekly (Sunday)
+      ];
+
+      const staleAlerts: string[] = [];
+      for (const t of tables) {
+        try {
+          const row = await env.DB.prepare(
+            `SELECT MAX(computed_at) as latest FROM ${t.name}`
+          ).first<{ latest: string | null }>();
+
+          if (row?.latest) {
+            const computed = new Date(row.latest).getTime();
+            const hoursAgo = (Date.now() - computed) / (1000 * 60 * 60);
+            if (hoursAgo > t.threshold) {
+              staleAlerts.push(`${t.name}: ${Math.round(hoursAgo)}h stale (threshold: ${t.threshold}h)`);
+            }
+          }
+        } catch {
+          // Table may not exist yet — non-fatal
+        }
+      }
+
+      const healStatus = {
+        checkedAt: now,
+        stale: staleAlerts,
+        healthy: staleAlerts.length === 0,
+      };
+
+      await kvPut(env.KV, 'healing:d1:status', healStatus, 600); // 10-min TTL
+      await kvPut(env.KV, healGateKey, now, 300); // 5-min gate
+
+      if (staleAlerts.length > 0) {
+        console.warn(`[cron:healing] Stale D1 tables detected: ${staleAlerts.join(', ')}`);
+      }
+    }
+  } catch (err) {
+    // Non-critical — don't break the cron for healing checks
+    console.error('[cron:healing]', err instanceof Error ? err.message : err);
+  }
 }
 
 /**
