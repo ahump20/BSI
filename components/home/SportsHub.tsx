@@ -180,19 +180,19 @@ export function SportsHub({ sportCounts }: SportsHubProps) {
           <ScrollReveal direction="up" className="mb-4">
             <Link href={flagship.href} className="group block">
               <div
-                className="heritage-card relative p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-5 transition-all duration-300 hover:-translate-y-1 overflow-hidden"
+                className="heritage-card relative p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-5 transition-all duration-300 hover:-translate-y-[5px] overflow-hidden"
                 style={{
                   borderLeft: `3px solid ${flagship.color}`,
-                  background: `linear-gradient(135deg, var(--surface-dugout) 0%, ${withAlpha(flagship.color, 0.03)} 100%)`,
+                  background: `linear-gradient(135deg, var(--surface-dugout) 0%, ${withAlpha(flagship.color, 0.04)} 100%)`,
                 }}
               >
-                {/* Accent glow on hover */}
+                {/* Accent glow on hover — elevated shadow + border */}
                 <div
                   className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
                   style={{
-                    border: `1px solid ${withAlpha(flagship.color, 0.35)}`,
+                    border: `1px solid ${withAlpha(flagship.color, 0.5)}`,
                     borderRadius: '2px',
-                    boxShadow: `inset 0 1px 0 ${withAlpha(flagship.color, 0.1)}, 0 0 24px ${withAlpha(flagship.color, 0.06)}`,
+                    boxShadow: `inset 0 1px 0 ${withAlpha(flagship.color, 0.15)}, 0 8px 32px ${withAlpha(flagship.color, 0.12)}, 0 2px 8px rgba(0,0,0,0.4)`,
                   }}
                   aria-hidden="true"
                 />
@@ -245,18 +245,18 @@ export function SportsHub({ sportCounts }: SportsHubProps) {
                 >
                   <Link href={sport.href} className="group block h-full">
                     <div
-                      className="heritage-card relative p-5 h-full flex items-start gap-4 transition-all duration-300 hover:-translate-y-1 overflow-hidden"
+                      className="heritage-card relative p-5 h-full flex items-start gap-4 transition-all duration-300 hover:-translate-y-[4px] overflow-hidden"
                       style={{
                         borderLeft: `2px solid ${sport.color}`,
-                        background: `linear-gradient(135deg, var(--surface-dugout) 0%, ${withAlpha(sport.color, 0.02)} 100%)`,
+                        background: `linear-gradient(135deg, var(--surface-dugout) 0%, ${withAlpha(sport.color, 0.03)} 100%)`,
                       }}
                     >
                       <div
                         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
                         style={{
-                          border: `1px solid ${withAlpha(sport.color, 0.35)}`,
+                          border: `1px solid ${withAlpha(sport.color, 0.5)}`,
                           borderRadius: '2px',
-                          boxShadow: `inset 0 1px 0 ${withAlpha(sport.color, 0.1)}, 0 0 20px ${withAlpha(sport.color, 0.06)}`,
+                          boxShadow: `inset 0 1px 0 ${withAlpha(sport.color, 0.12)}, 0 6px 24px ${withAlpha(sport.color, 0.1)}, 0 2px 8px rgba(0,0,0,0.35)`,
                         }}
                         aria-hidden="true"
                       />

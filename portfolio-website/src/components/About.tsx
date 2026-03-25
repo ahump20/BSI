@@ -75,7 +75,7 @@ export default function About() {
             <h2 id="origin-heading" className="section-title">
               Born in Memphis. Rooted in Texas Soil.
             </h2>
-            <p className="editorial-lead max-w-3xl">
+            <p className="editorial-lead max-w-3xl mb-4">
               Texas was never a backdrop. It was the standard behind the family, the sports, the
               identity, and eventually the work.
             </p>

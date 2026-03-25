@@ -10,6 +10,12 @@ export const metadata: Metadata = {
     title: 'NFL Standings | Blaze Sports Intel',
     description: 'NFL division standings and playoff positioning.',
    images: ogImage('/images/og-nfl.png') },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'NFL Standings | Blaze Sports Intel',
+    description: 'NFL division standings and playoff positioning.',
+    images: ['/images/og-nfl.png'],
+  },
 };
 
 export default function NFLStandingsLayout({ children }: { children: ReactNode }) {

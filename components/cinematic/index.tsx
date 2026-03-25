@@ -3,8 +3,7 @@
 import { useEffect, useRef, ReactNode } from 'react';
 
 /* ==========================================================================
-   Cinematic barrel — ScrollReveal is real, NoiseOverlay/CustomCursor are stubs
-   (noise and cursor removed in the Labs-structure redesign)
+   Cinematic barrel — ScrollReveal (intersection-observer reveal)
    ========================================================================== */
 
 interface ScrollRevealProps {
@@ -20,53 +19,61 @@ interface ScrollRevealProps {
  */
 export function ScrollReveal({ children, direction = 'up', delay = 0, className = '' }: ScrollRevealProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const revealed = useRef(false);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || revealed.current) return;
+
+    const reveal = () => {
+      if (revealed.current) return;
+      revealed.current = true;
+      el.classList.add('revealed');
+    };
 
     // No IntersectionObserver — reveal immediately
     if (typeof IntersectionObserver === 'undefined') {
-      el.classList.add('revealed');
+      reveal();
       return;
     }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          el.classList.add('revealed');
-          observer.unobserve(el);
-          clearTimeout(fallbackTimer);
+          reveal();
+          observer.disconnect();
         }
       },
-      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+      { threshold: 0.05, rootMargin: '0px 0px -20px 0px' }
     );
 
     observer.observe(el);
 
-    // Above-fold elements: reveal on next frame if already in viewport
+    // Above-fold: check on next frame
     requestAnimationFrame(() => {
-      if (el && !el.classList.contains('revealed')) {
-        const rect = el.getBoundingClientRect();
-        if (rect.top < window.innerHeight) {
-          el.classList.add('revealed');
-          observer.unobserve(el);
-        }
+      if (!revealed.current && el.getBoundingClientRect().top < window.innerHeight) {
+        reveal();
+        observer.disconnect();
       }
     });
 
-    // Fallback: force reveal after 1.5s if observer never fired
-    const fallbackTimer = setTimeout(() => {
-      if (!el.classList.contains('revealed')) {
-        el.classList.add('revealed');
-        observer.unobserve(el);
-      }
-    }, 1500);
+    return () => { observer.disconnect(); };
+  }, []);
 
-    return () => {
-      observer.disconnect();
-      clearTimeout(fallbackTimer);
-    };
+  // Fallback outside effect cleanup — survives React strict mode double-mount.
+  // Polls briefly to catch elements freed from Suspense hidden containers.
+  useEffect(() => {
+    if (revealed.current) return;
+    const checks = [500, 1200, 2500];
+    const timers = checks.map(ms =>
+      setTimeout(() => {
+        if (!revealed.current && ref.current) {
+          ref.current.classList.add('revealed');
+          revealed.current = true;
+        }
+      }, ms)
+    );
+    return () => { timers.forEach(clearTimeout); };
   }, []);
 
   const dirClass =
@@ -89,12 +96,3 @@ export function ScrollReveal({ children, direction = 'up', delay = 0, className 
   );
 }
 
-/** Stub — noise overlay removed in redesign */
-export function NoiseOverlay(_props: { cssOnly?: boolean }) {
-  return null;
-}
-
-/** Stub — custom cursor removed in redesign */
-export function CustomCursor() {
-  return null;
-}

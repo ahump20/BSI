@@ -10,6 +10,12 @@ export const metadata: Metadata = {
     title: 'College Baseball Transfer Portal | Blaze Sports Intel',
     description: 'NCAA baseball transfer portal tracker with player stats.',
    images: ogImage('/images/og-college-baseball.png') },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'College Baseball Transfer Portal | Blaze Sports Intel',
+    description: 'NCAA baseball transfer portal tracker with player stats.',
+    images: ['/images/og-college-baseball.png'],
+  },
 };
 
 export default function CollegeBaseballTransferPortalLayout({ children }: { children: ReactNode }) {

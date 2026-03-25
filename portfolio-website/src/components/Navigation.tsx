@@ -105,8 +105,8 @@ export default function Navigation() {
         transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           scrolled
-            ? 'bg-midnight/96 border-b border-burnt-orange/15 shadow-[0_10px_32px_rgba(0,0,0,0.35)]'
-            : 'bg-transparent'
+            ? 'bg-midnight/96 backdrop-blur-md border-b border-burnt-orange/15 shadow-[0_10px_32px_rgba(0,0,0,0.35)]'
+            : 'bg-transparent border-b border-transparent'
         }`}
       >
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -119,7 +119,7 @@ export default function Navigation() {
               scrollToSection('hero');
             }}
           >
-            <div className="w-9 h-9 bg-burnt-orange rounded-full flex items-center justify-center font-sans font-bold text-white text-xs group-hover:scale-110 transition-transform duration-300">
+            <div className="w-9 h-9 bg-burnt-orange rounded-full flex items-center justify-center font-sans font-bold text-white text-xs group-hover:scale-110 group-hover:shadow-[0_0_16px_rgba(191,87,0,0.4)] transition-all duration-300">
               AH
             </div>
             <span className="font-mono text-sm text-bone/70 hidden sm:block group-hover:text-burnt-orange transition-colors duration-300">
@@ -148,7 +148,7 @@ export default function Navigation() {
                   {activeSection === item.id && (
                     <motion.div
                       layoutId="nav-indicator"
-                      className="absolute -bottom-1 left-0 right-0 h-[2px] bg-burnt-orange rounded-full"
+                      className="absolute -bottom-1 left-1 right-1 h-[2px] bg-burnt-orange rounded-full shadow-[0_0_8px_rgba(191,87,0,0.5)]"
                       transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                     />
                   )}
@@ -189,7 +189,7 @@ export default function Navigation() {
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.3, ease: [0.19, 1, 0.22, 1] }}
-              className="overflow-hidden md:hidden bg-midnight/98 border-t border-burnt-orange/10"
+              className="overflow-hidden md:hidden bg-midnight/98 backdrop-blur-lg border-t border-burnt-orange/10"
             >
               <ul className="px-6 py-4 space-y-1">
                 {NAV_ITEMS.map((item) => (
@@ -201,10 +201,10 @@ export default function Navigation() {
                         scrollToSection(item.id);
                       }}
                       aria-current={activeSection === item.id ? 'location' : undefined}
-                      className={`block px-4 py-3 font-sans text-xs uppercase tracking-[0.2em] rounded-sm transition-colors duration-300 ${
+                      className={`block px-4 py-3.5 font-sans text-xs uppercase tracking-[0.2em] rounded-sm transition-all duration-300 ${
                         activeSection === item.id
-                          ? 'text-burnt-orange bg-burnt-orange/10'
-                          : 'text-bone/50 hover:text-bone hover:bg-white/5'
+                          ? 'text-burnt-orange bg-burnt-orange/10 border-l-2 border-burnt-orange'
+                          : 'text-bone/50 hover:text-bone hover:bg-white/5 border-l-2 border-transparent'
                       }`}
                     >
                       {item.label}

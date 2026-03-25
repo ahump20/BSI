@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Analytics | College Baseball | BSI',
+  title: 'Analytics | College Baseball | Blaze Sports Intel',
   description:
     'College baseball analytics tools — advanced metric breakdowns, performance modeling, and data-driven scouting.',
 };

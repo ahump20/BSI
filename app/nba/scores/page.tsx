@@ -7,6 +7,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'NBA Scores | Blaze Sports Intel',
     description: 'Live NBA scores, game results, and standings.',
+    images: [{ url: '/images/og-nba.png', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'NBA Scores | Blaze Sports Intel',
+    description: 'Live NBA scores, game results, and standings.',
+    images: ['/images/og-nba.png'],
   },
 };
 

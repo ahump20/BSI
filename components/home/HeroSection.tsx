@@ -38,14 +38,16 @@ export function HeroSection() {
           </span>
         </div>
 
-        {/* BSI Shield Logo — visual anchor */}
+        {/* BSI Shield Logo — visual anchor with subtle float */}
         <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-scale-in_0.8s_ease-out_0.1s_forwards] mb-8 flex justify-center">
-          <div className="relative w-[140px] h-[140px] sm:w-[180px] sm:h-[180px] md:w-[200px] md:h-[200px]">
+          <div
+            className="relative w-[140px] h-[140px] sm:w-[180px] sm:h-[180px] md:w-[200px] md:h-[200px] motion-safe:animate-[bsi-float_6s_ease-in-out_2s_infinite]"
+          >
             <Image
               src="/images/brand/bsi-mascot-400.png"
               alt="Blaze Sports Intel"
               fill
-              className="object-contain drop-shadow-[0_0_40px_rgba(191,87,0,0.3)]"
+              className="object-contain drop-shadow-[0_0_50px_rgba(191,87,0,0.35)]"
               priority
             />
           </div>
@@ -113,21 +115,26 @@ export function HeroSection() {
           </DataErrorBoundary>
         </div>
 
-        {/* CTAs — 1 primary + 2 supporting */}
+        {/* CTAs — primary has ember glow; secondaries are outline-only */}
         <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.65s_forwards] flex flex-col sm:flex-row gap-4 justify-center">
-          <Link href="/scores" className="btn-heritage-fill px-6 py-3 text-sm">
+          <Link
+            href="/scores"
+            className="btn-heritage-fill px-7 py-3.5 text-sm"
+            style={{ boxShadow: '0 0 20px rgba(191, 87, 0, 0.28), 0 2px 8px rgba(0,0,0,0.5)' }}
+          >
             Live Scores
           </Link>
-          <Link href="/college-baseball" className="btn-heritage px-6 py-3 text-sm">
+          <Link href="/college-baseball" className="btn-heritage px-6 py-3 text-sm" style={{ opacity: 0.85 }}>
             College Baseball
           </Link>
-          <Link href="/college-baseball/savant" className="btn-heritage px-6 py-3 text-sm">
+          <Link href="/college-baseball/savant" className="btn-heritage px-6 py-3 text-sm" style={{ opacity: 0.85 }}>
             BSI Savant
           </Link>
         </div>
 
-        {/* Heritage stat marquee — no slogan repetition */}
-        <div className="mt-10 overflow-hidden score-ticker py-2 opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-fade-in_0.8s_ease-out_0.9s_forwards]">
+        {/* Heritage stat marquee — edge-faded broadcast crawl */}
+        <div className="mt-10 score-ticker py-2 opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-fade-in_0.8s_ease-out_0.9s_forwards]">
+          <div className="ticker-fade-edges overflow-hidden">
           <div className="marquee-track whitespace-nowrap">
             {[0, 1].map((i) => (
               <span key={i} className="inline-flex items-center gap-6 mr-6 text-[10px] uppercase tracking-[0.15em] text-[var(--bsi-dust)]">
@@ -149,6 +156,7 @@ export function HeroSection() {
                 <span className="text-[var(--heritage-bronze)]">&#9670;</span>
               </span>
             ))}
+          </div>
           </div>
         </div>
       </div>

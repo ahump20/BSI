@@ -6,6 +6,7 @@ name = "bsi-baseball-agent"
 main = "index.ts"
 compatibility_date = "2026-03-14"
 compatibility_flags = ["nodejs_compat"]
+workers_dev = true
 
 [observability]
 enabled = true
@@ -18,8 +19,6 @@ class_name = "BaseballChatAgent"
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["BaseballChatAgent"]
-
-workers_dev = true
 
 [[kv_namespaces]]
 binding = "BSI_KEYS"

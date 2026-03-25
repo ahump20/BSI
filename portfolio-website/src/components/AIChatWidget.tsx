@@ -188,10 +188,10 @@ export default function AIChatWidget() {
           if (!open) window.posthog?.capture('chat_opened');
           setOpen(!open);
         }}
-        className={`fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-full border px-3 py-2 backdrop-blur-md transition-all duration-300 cursor-pointer group ${
+        className={`fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-full border px-3 py-2.5 backdrop-blur-md transition-all duration-300 cursor-pointer group ${
           open
-            ? 'border-burnt-orange/40 bg-burnt-orange text-white shadow-lg'
-            : 'border-bone/10 bg-charcoal/80 text-bone/85 hover:border-burnt-orange/30 hover:text-burnt-orange'
+            ? 'border-burnt-orange/40 bg-burnt-orange text-white shadow-lg shadow-burnt-orange/20'
+            : 'border-bone/10 bg-charcoal/80 text-bone/85 hover:border-burnt-orange/30 hover:text-burnt-orange fab-idle-glow'
         }`}
         aria-label={open ? 'Close concierge' : 'Open concierge'}
       >
@@ -227,11 +227,11 @@ export default function AIChatWidget() {
             role="dialog"
             aria-modal="true"
             aria-label="Austin concierge"
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            initial={{ opacity: 0, y: 24, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            className="fixed z-50 flex flex-col overflow-hidden border border-bone/10 bg-charcoal shadow-2xl
+            exit={{ opacity: 0, y: 24, scale: 0.96 }}
+            transition={{ duration: 0.25, ease: [0.19, 1, 0.22, 1] }}
+            className="fixed z-50 flex flex-col overflow-hidden border border-bone/10 bg-charcoal shadow-[0_20px_60px_rgba(0,0,0,0.5)] chat-panel-border
               inset-x-0 bottom-0 w-full rounded-t-sm max-h-[70vh]
               sm:inset-auto sm:bottom-20 sm:right-5 sm:w-[min(24rem,calc(100vw-2.5rem))] sm:max-h-[28rem] sm:rounded-sm"
           >
@@ -257,7 +257,7 @@ export default function AIChatWidget() {
                   key={msg.id}
                   className={`text-sm leading-relaxed ${
                     msg.role === 'user'
-                      ? 'text-bone ml-8 text-right'
+                      ? 'text-bone ml-8 text-right bg-bone/[0.04] rounded-sm px-3 py-2 border border-bone/5'
                       : 'text-warm-gray mr-8'
                   }`}
                 >
@@ -278,7 +278,7 @@ export default function AIChatWidget() {
                       key={prompt}
                       type="button"
                       onClick={() => send(prompt)}
-                      className="font-mono text-[0.6rem] rounded-sm border border-bone/10 px-3 py-1.5 text-bone/60 hover:border-burnt-orange/30 hover:text-burnt-orange transition-colors duration-200 cursor-pointer"
+                      className="font-mono text-[0.6rem] rounded-sm border border-bone/10 px-3 py-2 text-bone/60 hover:border-burnt-orange/30 hover:text-burnt-orange hover:bg-burnt-orange/5 transition-all duration-200 cursor-pointer"
                     >
                       {prompt}
                     </button>

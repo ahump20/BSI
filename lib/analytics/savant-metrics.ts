@@ -9,7 +9,6 @@
  * Estimated: eBA, eSLG, ewOBA (regression from box-score proxies)
  * Park/Conference: single-factor park adjustment, conference strength index
  *
- * Separate from lib/analytics/sabermetrics.ts (Tank01-coupled pipeline).
  * This file works with primitive inputs only — any data shape can feed it.
  */
 

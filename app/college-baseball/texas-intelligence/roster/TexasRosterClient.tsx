@@ -11,7 +11,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
-import { fmt3 } from '@/lib/utils/format';
+import { fmt3, fmt1, fmt2, fmtPct } from '@/lib/utils/format';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -108,10 +108,6 @@ export default function TexasRosterClient() {
       return b[pitcherSort] - a[pitcherSort];
     });
   }, [data, pitcherSort]);
-
-  const fmt1 = (n: number) => n.toFixed(1);
-  const fmt2 = (n: number) => n.toFixed(2);
-  const fmtPct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
   return (
     <>

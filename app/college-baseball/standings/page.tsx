@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { Suspense, useState, useMemo, useCallback, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -77,7 +77,7 @@ const seasonYear =
 const currentMonth = new Date().getMonth(); // 0-indexed: Jan=0, Feb=1, ..., Jun=5
 const isInSeason = currentMonth >= 1 && currentMonth <= 5; // Feb through June
 
-export default function CollegeBaseballStandingsPage() {
+function CollegeBaseballStandingsPageInner() {
   const searchParams = useSearchParams();
   const [selectedConference, setSelectedConference] = useState('SEC');
   const [showMoreConferences, setShowMoreConferences] = useState(false);
@@ -590,5 +590,13 @@ export default function CollegeBaseballStandingsPage() {
 
       <Footer />
     </>
+  );
+}
+
+export default function CollegeBaseballStandingsPage() {
+  return (
+    <Suspense>
+      <CollegeBaseballStandingsPageInner />
+    </Suspense>
   );
 }

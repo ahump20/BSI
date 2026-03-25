@@ -41,6 +41,11 @@ id = "b7ff9178798d4a238afff79522f651e8"
 binding = "PREDICTION_CACHE"
 id = "eebf04d329c0419e92eec884f39a636d"
 
+# BSI_PROD_CACHE is intentionally bound to the same namespace ID as KV above.
+# This is aliasing — the same KV namespace exposed under two binding names so
+# that handlers that expect "KV" and handlers that expect "BSI_PROD_CACHE" can
+# both access the same underlying data without changing call sites. Do not
+# change one without updating the other.
 [[kv_namespaces]]
 binding = "BSI_PROD_CACHE"
 id = "e6cb68e815cd45babeee0e10460dbfee"
@@ -81,6 +86,8 @@ dataset = "bsi_ops_events"
 ENVIRONMENT = "development"
 API_VERSION = "1.0.0"
 PAGES_ORIGIN = "https://blazesportsintel.pages.dev"
+SHOW_API_HOST = "mlb26.theshow.com"
+SHOW_MARKET_WEB_HOST = "mlb26.theshow.com"
 
 # Cron trigger — warm KV cache for scores + rankings
 [triggers]
@@ -112,6 +119,8 @@ enabled = true
 ENVIRONMENT = "production"
 API_VERSION = "1.0.0"
 PAGES_ORIGIN = "https://blazesportsintel.pages.dev"
+SHOW_API_HOST = "mlb26.theshow.com"
+SHOW_MARKET_WEB_HOST = "mlb26.theshow.com"
 
 [[env.production.kv_namespaces]]
 binding = "KV"
@@ -134,6 +143,7 @@ id = "b7ff9178798d4a238afff79522f651e8"
 binding = "PREDICTION_CACHE"
 id = "eebf04d329c0419e92eec884f39a636d"
 
+# See top-level KV/BSI_PROD_CACHE note — same intentional alias applies here.
 [[env.production.kv_namespaces]]
 binding = "BSI_PROD_CACHE"
 id = "e6cb68e815cd45babeee0e10460dbfee"

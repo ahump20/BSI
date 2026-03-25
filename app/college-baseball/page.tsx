@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { Suspense, useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useSportData } from '@/lib/hooks/useSportData';
@@ -117,7 +117,7 @@ const scheduleConferences = [
 
 const VALID_TABS: TabType[] = ['rankings', 'standings', 'schedule', 'teams', 'players'];
 
-export default function CollegeBaseballPage() {
+function CollegeBaseballPageInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -1094,5 +1094,13 @@ export default function CollegeBaseballPage() {
         </>
       </div>
     </ErrorBoundary>
+  );
+}
+
+export default function CollegeBaseballPage() {
+  return (
+    <Suspense>
+      <CollegeBaseballPageInner />
+    </Suspense>
   );
 }

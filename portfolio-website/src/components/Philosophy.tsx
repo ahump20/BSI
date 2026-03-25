@@ -28,7 +28,7 @@ export default function Philosophy() {
           </motion.div>
 
           <motion.blockquote variants={staggerItem} className="mb-12">
-            <p className="font-display italic text-bone/90 text-3xl md:text-5xl leading-relaxed mb-6">
+            <p className="font-display italic text-bone/90 leading-[1.3] mb-6" style={{ fontSize: 'clamp(1.75rem, 4.5vw, 3.5rem)' }}>
               "For me, personally, I believe Texas is how you choose to treat
               the best and worst of us."
             </p>

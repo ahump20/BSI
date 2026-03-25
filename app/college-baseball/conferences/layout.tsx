@@ -10,6 +10,12 @@ export const metadata: Metadata = {
     title: 'College Baseball Conferences | Blaze Sports Intel',
     description: 'D1 baseball conference standings and schedules.',
    images: ogImage('/images/og-college-baseball.png') },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'College Baseball Conferences | Blaze Sports Intel',
+    description: 'D1 baseball conference standings and schedules.',
+    images: ['/images/og-college-baseball.png'],
+  },
 };
 
 export default function CollegeBaseballConferencesLayout({ children }: { children: ReactNode }) {

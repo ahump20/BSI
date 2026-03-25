@@ -10,6 +10,12 @@ export const metadata: Metadata = {
     title: 'College Baseball Preseason | Blaze Sports Intel',
     description: 'Preseason college baseball previews and rankings.',
    images: ogImage('/images/og-college-baseball.png') },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'College Baseball Preseason | Blaze Sports Intel',
+    description: 'Preseason college baseball previews and rankings.',
+    images: ['/images/og-college-baseball.png'],
+  },
 };
 
 export default function CollegeBaseballPreseasonLayout({ children }: { children: ReactNode }) {

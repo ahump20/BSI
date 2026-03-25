@@ -12,6 +12,7 @@ import { DataAttribution } from '@/components/ui/DataAttribution';
 import { ConferenceBaseline } from '@/components/analytics/ConferenceBaseline';
 import { ArrowLeftRight, ChevronDown } from 'lucide-react';
 import { getReadApiUrl } from '@/lib/utils/public-api';
+import { fmt1, fmt2, fmt3, normalizeTeamName } from '@/lib/utils/format';
 
 /* ── Types ─────────────────────────────────────────────────────────── */
 
@@ -66,38 +67,19 @@ interface NILEntry {
 
 /* ── Helpers ───────────────────────────────────────────────────────── */
 
-function normalize(s: string): string {
-  return s.toLowerCase().replace(/[^a-z0-9]/g, '');
-}
-
 function matchTeam<T extends { team_name?: string; school?: string }>(
   list: T[],
   name: string,
 ): T | undefined {
-  const n = normalize(name);
+  const n = normalizeTeamName(name);
   return list.find(
-    (e) => normalize(e.team_name || e.school || '') === n,
+    (e) => normalizeTeamName(e.team_name || e.school || '') === n,
   );
 }
 
 function record(w?: number, l?: number): string {
   if (w === undefined || l === undefined) return '—';
   return `${w}-${l}`;
-}
-
-function fmt3(v?: number): string {
-  if (v === undefined || v === null) return '—';
-  return v.toFixed(3);
-}
-
-function fmt2(v?: number): string {
-  if (v === undefined || v === null) return '—';
-  return v.toFixed(2);
-}
-
-function fmt1(v?: number): string {
-  if (v === undefined || v === null) return '—';
-  return v.toFixed(1);
 }
 
 function fmtDollars(v?: number): string {
@@ -132,7 +114,7 @@ function aggregateSavantTeamMetrics(
   for (const row of battingRows) {
     const teamName = row.team?.trim();
     if (!teamName) continue;
-    const key = normalize(teamName);
+    const key = normalizeTeamName(teamName);
     const entry = teams.get(key) || {
       team_name: teamName,
       conference: row.conference,
@@ -152,7 +134,7 @@ function aggregateSavantTeamMetrics(
   for (const row of pitchingRows) {
     const teamName = row.team?.trim();
     if (!teamName) continue;
-    const key = normalize(teamName);
+    const key = normalizeTeamName(teamName);
     const entry = teams.get(key) || {
       team_name: teamName,
       conference: row.conference,

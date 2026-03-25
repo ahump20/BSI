@@ -10,6 +10,12 @@ export const metadata: Metadata = {
     title: 'College Football Transfer Portal | Blaze Sports Intel',
     description: 'CFB transfer portal tracker with player profiles.',
    images: ogImage('/images/og-cfb.png') },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'College Football Transfer Portal | Blaze Sports Intel',
+    description: 'CFB transfer portal tracker with player profiles.',
+    images: ['/images/og-cfb.png'],
+  },
 };
 
 export default function CFBTransferPortalLayout({ children }: { children: ReactNode }) {
