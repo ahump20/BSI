@@ -15,7 +15,7 @@
 
 import type { Env } from '../shared/types';
 import { json, cachedJson, kvGet, kvPut, apiError } from '../shared/helpers';
-import { HTTP_CACHE, CACHE_TTL } from '../shared/constants';
+import { HTTP_CACHE } from '../shared/constants';
 import {
   getAthlete,
   transformAthlete,
@@ -24,13 +24,13 @@ import type {
   EvaluationProfile,
   EvaluationMetric,
   EvaluationSport,
-  EvaluationTier,
 } from '../../lib/evaluate/metrics';
 import {
   getMetricsForPlayer,
   classifyTier,
   SPORT_LABELS,
 } from '../../lib/evaluate/metrics';
+import { handleSearch } from './search';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -73,21 +73,33 @@ async function evaluateCollegeBaseball(
   const metricDefs = getMetricsForPlayer('college-baseball', position);
   const metrics: EvaluationMetric[] = [];
 
-  // Compute percentiles against full population for each metric
+  // Batch query: fetch entire qualified population in one trip, then
+  // compute percentiles for all metrics in memory. Eliminates N+1 pattern
+  // where N = number of metrics (up to 11 per player).
+  const table = isPitcher ? 'cbb_pitching_advanced' : 'cbb_batting_advanced';
+  const minFilter = isPitcher ? 'ip >= 10' : 'pa >= 25';
+
+  // Validate column names against known metric keys before SQL interpolation.
+  // These keys come from hardcoded SportMetricDef arrays in metrics.ts, but
+  // defense-in-depth means we never trust interpolated values without checking.
+  const allowedColumns = new Set(metricDefs.map((d) => d.key));
+  const selectCols = metricDefs
+    .filter((d) => allowedColumns.has(d.key) && /^[a-z_]+$/.test(d.key))
+    .map((d) => d.key)
+    .join(', ');
+
+  const { results: popResults } = await env.DB.prepare(
+    `SELECT ${selectCols} FROM ${table} WHERE season = ? AND ${minFilter}`
+  ).bind(SEASON).all();
+
   for (const def of metricDefs) {
     const value = primary[def.key];
     if (value == null || typeof value !== 'number' || !Number.isFinite(value)) continue;
-
-    const table = isPitcher ? 'cbb_pitching_advanced' : 'cbb_batting_advanced';
-    const minFilter = isPitcher ? 'ip >= 10' : 'pa >= 25';
-
-    const { results: popResults } = await env.DB.prepare(
-      `SELECT ${def.key} FROM ${table} WHERE season = ? AND ${minFilter} AND ${def.key} IS NOT NULL`
-    ).bind(SEASON).all();
+    if (!allowedColumns.has(def.key) || !/^[a-z_]+$/.test(def.key)) continue;
 
     const sorted = popResults
       .map((r) => r[def.key] as number)
-      .filter((v) => Number.isFinite(v))
+      .filter((v) => v != null && Number.isFinite(v))
       .sort((a, b) => a - b);
 
     let percentile = 50;
@@ -194,11 +206,26 @@ const LEAGUE_BASELINES: Record<string, { mean: number; stdDev: number }> = {
   'nba:blocks': { mean: 0.5, stdDev: 0.4 },
 };
 
-/** Estimate percentile from a z-score against league baselines. */
+/**
+ * Normal CDF approximation (Abramowitz & Stegun, error < 1.5e-7).
+ * Converts a z-score to the cumulative probability [0, 1].
+ */
+function normalCDF(z: number): number {
+  const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741;
+  const a4 = -1.453152027, a5 = 1.061405429, p = 0.3275911;
+  const sign = z < 0 ? -1 : 1;
+  const x = Math.abs(z) / Math.SQRT2;
+  const t = 1 / (1 + p * x);
+  const y = 1 - ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+  return 0.5 * (1 + sign * y);
+}
+
+/** Estimate percentile from value against league baselines using normal CDF. */
 function estimatePercentile(value: number, mean: number, stdDev: number, higherIsBetter: boolean): number {
   const z = (value - mean) / stdDev;
-  const p = Math.min(Math.max((z + 2) / 4 * 100, 1), 99);
-  return Math.round(higherIsBetter ? p : 100 - p);
+  const cdf = normalCDF(z);
+  const p = Math.min(Math.max(Math.round(cdf * 100), 1), 99);
+  return higherIsBetter ? p : 100 - p;
 }
 
 /** Extract stat value from ESPN's nested statistics arrays. */
@@ -367,22 +394,24 @@ export async function handleEvaluateSearch(
     return json({ results: [], meta: evalMeta('evaluate-search') });
   }
 
-  // Build internal search URL
+  // Call handleSearch directly instead of self-referencing HTTP fetch.
+  // Avoids consuming a subrequest and eliminates unnecessary network latency.
   const searchUrl = new URL(`${url.origin}/api/search`);
   searchUrl.searchParams.set('q', query);
-  searchUrl.searchParams.set('type', 'player');
   if (sportFilter) searchUrl.searchParams.set('sport', sportFilter);
 
   try {
-    // Fetch from the internal search endpoint
-    const searchRes = await fetch(searchUrl.toString());
+    const searchRes = await handleSearch(searchUrl, env);
     if (!searchRes.ok) {
       return json({ results: [], meta: evalMeta('evaluate-search') });
     }
     const searchData = (await searchRes.json()) as { results?: Array<Record<string, unknown>> };
     const rawResults = searchData.results || [];
 
-    // Map results to evaluation-specific shape
+    // Map results to evaluation-specific shape.
+    // Note: search results only carry type/id/name/url/sport/score.
+    // Team and position are not available from the search index — the
+    // player detail page fetches those when the visitor clicks through.
     const results = rawResults
       .filter((r) => r.type === 'player')
       .slice(0, 10)
@@ -390,10 +419,8 @@ export async function handleEvaluateSearch(
         id: r.id as string,
         name: r.name as string,
         sport: r.sport as string,
-        team: (r.team as string) || '',
-        position: (r.position as string) || '',
         url: `/evaluate/${r.sport}/${r.id}`,
-        sportLabel: SPORT_LABELS[(r.sport as EvaluationSport)] || r.sport,
+        sportLabel: SPORT_LABELS[(r.sport as EvaluationSport)] || (r.sport as string),
       }));
 
     return json({ results, meta: evalMeta('evaluate-search') });
