@@ -25,3 +25,7 @@ bucket_name = "blaze-sports-data-lake"
 
 [[tail_consumers]]
 service = "bsi-error-tracker"
+
+# Secrets (set via `wrangler secret put`):
+# RESEND_API_KEY — Resend email API key for alerting
+# ADMIN_KEY     — Admin key for /api/admin/freshness endpoint
