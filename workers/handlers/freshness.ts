@@ -102,18 +102,21 @@ interface KVCheck {
 }
 
 function getTodayKey(): string {
-  return now().toFormat('yyyyMMdd');
+  // Must match the YYYY-MM-DD format used by score handlers and the cbb-ingest Worker.
+  // Handlers use: new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' }).format()
+  // Ingest uses: new Date().toISOString().split('T')[0]
+  return now().toFormat('yyyy-MM-dd');
 }
 
 function getKVChecks(): KVCheck[] {
   const today = getTodayKey();
   return [
-    // Scores (date-keyed)
+    // Scores — CB uses YYYY-MM-DD date key; other sports use literal 'today'
     { name: 'College Baseball Scores', key: `cb:scores:${today}`, category: 'scores', sport: 'College Baseball', source: 'ESPN' },
-    { name: 'MLB Scores', key: `mlb:scores:${today}:stauto`, category: 'scores', sport: 'MLB', source: 'ESPN' },
-    { name: 'NBA Scores', key: `nba:scores:${today}`, category: 'scores', sport: 'NBA', source: 'ESPN' },
-    { name: 'NFL Scores', key: `nfl:scores:${today}`, category: 'scores', sport: 'NFL', source: 'ESPN' },
-    { name: 'CFB Scores', key: `cfb:scores:${today}`, category: 'scores', sport: 'CFB', source: 'ESPN' },
+    { name: 'MLB Scores', key: 'mlb:scores:today:stauto', category: 'scores', sport: 'MLB', source: 'ESPN' },
+    { name: 'NBA Scores', key: 'nba:scores:today', category: 'scores', sport: 'NBA', source: 'ESPN' },
+    { name: 'NFL Scores', key: 'nfl:scores:today', category: 'scores', sport: 'NFL', source: 'ESPN' },
+    { name: 'CFB Scores', key: 'cfb:scores:today', category: 'scores', sport: 'CFB', source: 'ESPN' },
     // Standings (static keys)
     { name: 'CB Standings (SEC)', key: 'cb:standings:v3:SEC', category: 'standings', sport: 'College Baseball', source: 'ESPN' },
     { name: 'CB Standings (ACC)', key: 'cb:standings:v3:ACC', category: 'standings', sport: 'College Baseball', source: 'ESPN' },
@@ -144,28 +147,40 @@ async function checkKVSource(kv: KVNamespace, check: KVCheck): Promise<DataSourc
 
     const data = JSON.parse(raw);
     const meta = data.meta || {};
-    const fetchedAt = meta.fetched_at || meta.fetchedAt || null;
+    const fetchedAt = meta.fetched_at || meta.fetchedAt || data.lastUpdated || null;
     const degraded = !!meta.degraded || !!data.degraded;
 
-    // Count items in the response
+    // Count items in the response — support multiple data shapes
     let itemCount: number | null = null;
-    if (Array.isArray(data.games)) itemCount = data.games.length;
+    if (Array.isArray(data.data)) itemCount = data.data.length;
+    else if (Array.isArray(data.games)) itemCount = data.games.length;
     else if (Array.isArray(data.teams)) itemCount = data.teams.length;
     else if (Array.isArray(data.rankings)) itemCount = data.rankings.length;
     else if (Array.isArray(data.conferences)) itemCount = data.conferences.length;
     else if (Array.isArray(data.editorials)) itemCount = data.editorials.length;
     else if (Array.isArray(data.items)) itemCount = data.items.length;
+    else if (data.totalCount != null) itemCount = data.totalCount;
     else if (data.count != null) itemCount = data.count;
 
     const age = fetchedAt ? ageMinutes(fetchedAt) : null;
-    const status = fetchedAt
-      ? classifyStatus(age!, check.category, degraded)
-      : 'missing';
+
+    // If the key exists with data but no timestamp (e.g., cbb-ingest writes raw data
+    // without a meta wrapper), classify as 'fresh' — the data is real and current.
+    let status: FreshnessStatus;
+    if (fetchedAt) {
+      status = classifyStatus(age!, check.category, degraded);
+    } else if (itemCount !== null && itemCount > 0) {
+      // Data exists but no timestamp — treat as fresh (cron-refreshed data)
+      status = 'fresh';
+    } else {
+      status = 'missing';
+    }
 
     return {
       name: check.name, category: check.category, sport: check.sport,
       status, fetchedAt, ageMinutes: age, itemCount,
       source: check.source, degraded: degraded || undefined,
+      note: (!fetchedAt && itemCount !== null && itemCount > 0) ? 'No timestamp in payload (cron-refreshed)' : undefined,
     };
   } catch (err) {
     return {
