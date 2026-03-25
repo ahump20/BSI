@@ -80,6 +80,23 @@ describe('Worker API route handling', () => {
     );
   });
 
+  it('returns a degraded 200 payload when ESPN MLB leaders return 404', async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue(
+      new Response('{}', {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    ) as unknown as typeof fetch;
+
+    const req = new Request('https://blazesportsintel.com/api/mlb/stats/leaders?category=batting&stat=avg');
+    const res = await worker.fetch(req, env);
+    const body = await res.json() as Record<string, unknown>;
+
+    expect(res.status).toBe(200);
+    expect(body.unavailable).toBe(true);
+    expect(body.message).toBe('MLB leaders temporarily unavailable from ESPN.');
+  });
+
   it('handles /api/nba/game/:id directly', async () => {
     mockESPNResponse({ header: {}, boxscore: {} });
 

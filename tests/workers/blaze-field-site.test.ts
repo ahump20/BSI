@@ -40,6 +40,7 @@ function createEnv(overrides: Record<string, unknown> = {}) {
   return {
     ASSETS: createMockR2(),
     MONITOR_KV: createMockKV(),
+    ERROR_LOG: createMockKV(),
     ...overrides,
   };
 }
@@ -153,5 +154,92 @@ describe('blaze-field-site', () => {
     const body = await res.json() as any;
     expect(body.events).toEqual([]);
     expect(body.count).toBe(0);
+  });
+
+  it('sanitizes public agent events so raw names, session ids, and file paths do not leak', async () => {
+    env.MONITOR_KV._store.set(
+      'agent:sessions',
+      JSON.stringify([{ id: 'sess-secret-1', lastSeen: '2026-03-24T12:00:00.000Z' }]),
+    );
+    env.MONITOR_KV._store.set(
+      'agent:session:sess-secret-1',
+      JSON.stringify([
+        {
+          type: 'task_complete',
+          agentId: 'cc-1234567890',
+          agentName: 'AustinHumphrey',
+          sessionId: 'sess-secret-1',
+          timestamp: '2026-03-24T12:00:00.000Z',
+          data: {
+            tool: 'Bash',
+            buildingKind: 'barracks',
+            filePath: '/Users/AustinHumphrey/bsi-repo/workers/handlers/mlb.ts',
+            taskDescription: 'Close WIP console.error PR #671',
+            files: ['/Users/AustinHumphrey/bsi-repo/workers/index.ts'],
+          },
+          receivedAt: '2026-03-24T12:00:01.000Z',
+        },
+      ]),
+    );
+
+    const res = await worker.fetch(new Request('https://blazecraft.app/api/agent-events'), env);
+    expect(res.status).toBe(200);
+
+    const body = await res.json() as any;
+    expect(body.count).toBe(1);
+    expect(JSON.stringify(body)).not.toContain('/Users/AustinHumphrey');
+    expect(JSON.stringify(body)).not.toContain('AustinHumphrey');
+    expect(body.events[0].agentId).toBe('field-unit-01');
+    expect(body.events[0].sessionId).toBeUndefined();
+    expect(body.events[0].agentName).toBe('Field Unit 01');
+    expect(body.events[0].data.filePath).toBeUndefined();
+    expect(body.events[0].data.taskDescription).toBeUndefined();
+    expect(body.events[0].data.files).toBeUndefined();
+    expect(body.events[0].data.tool).toBeUndefined();
+    expect(body.events[0].data.buildingKind).toBe('barracks');
+    expect(body.events[0].data.message).toBe('barracks action');
+  });
+
+  it('marks /api/status unhealthy when high-severity bug data exists', async () => {
+    env.MONITOR_KV._store.set(
+      'summary:latest',
+      JSON.stringify({
+        timestamp: '2026-03-24T12:10:20.846Z',
+        results: [
+          {
+            name: 'Homepage',
+            url: 'https://blazesportsintel.com/',
+            status: 200,
+            latencyMs: 120,
+            ok: true,
+            checkedAt: '2026-03-24T12:10:19.590Z',
+          },
+        ],
+        allHealthy: true,
+        driftDetected: false,
+      }),
+    );
+    env.ERROR_LOG._store.set('err-clusters:index', JSON.stringify(['fp-1']));
+    env.ERROR_LOG._store.set(
+      'err-cluster:fp-1',
+      JSON.stringify({
+        fingerprint: 'fp-1',
+        worker: 'blazesportsintel-worker-prod',
+        kind: 'error',
+        message: '[handleMLBLeaderboard] ESPN 404',
+        sample: '[handleMLBLeaderboard] ESPN 404',
+        count: 29,
+        firstSeen: '2026-03-16T10:18:53.172Z',
+        lastSeen: '2026-03-24T09:37:10.791Z',
+      }),
+    );
+
+    const res = await worker.fetch(new Request('https://blazecraft.app/api/status'), env);
+    expect(res.status).toBe(200);
+
+    const body = await res.json() as any;
+    expect(body.allHealthy).toBe(false);
+    expect(body.issueSummary.activeBugs).toBeGreaterThan(0);
+    expect(body.issueSummary.highSeverityBugs).toBeGreaterThan(0);
   });
 });

@@ -48,6 +48,41 @@ function getESPNSeasonType(date?: Date): number | undefined {
   }
 }
 
+function degradedMlbLeadersPayload(category: string, stat: string, fetchedAt: string) {
+  return withMeta(
+    {
+      leaders: [],
+      category,
+      stat,
+      unavailable: true,
+      message: 'MLB leaders temporarily unavailable from ESPN.',
+    },
+    'espn',
+    { fetchedAt },
+  );
+}
+
+function degradedMlbLeaderboardPayload(
+  category: string,
+  stat: string,
+  season: string,
+  sortBy: string,
+  limit: number,
+  fetchedAt: string,
+) {
+  return withMeta(
+    {
+      leaderboard: { category, type: stat, season: Number(season), sortBy },
+      data: [],
+      pagination: { page: 1, pageSize: limit, totalResults: 0, totalPages: 0 },
+      unavailable: true,
+      message: 'MLB leaderboard temporarily unavailable from ESPN.',
+    },
+    'espn',
+    { fetchedAt },
+  );
+}
+
 export async function handleMLBScores(url: URL, env: Env): Promise<Response> {
   try {
     const date = url.searchParams.get('date') || undefined;
@@ -225,6 +260,15 @@ export async function handleMLBStatsLeaders(url: URL, env: Env): Promise<Respons
     const espnUrl = `https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/leaders?season=${new Date().getFullYear()}&seasontype=2`;
 
     const res = await fetch(espnUrl, { headers: { 'User-Agent': 'BSI/1.0' } });
+    if (res.status === 404) {
+      const fetchedAt = new Date().toISOString();
+      const payload = degradedMlbLeadersPayload(category, stat, fetchedAt);
+      await kvPut(env.KV, cacheKey, payload, 300);
+      return cachedJson(payload, 200, HTTP_CACHE.standings, {
+        'X-Cache': 'MISS',
+        'X-Data-State': 'degraded',
+      });
+    }
     if (!res.ok) throw new Error(`ESPN ${res.status}`);
     const raw = await res.json() as Record<string, unknown>;
 
@@ -284,6 +328,16 @@ export async function handleMLBLeaderboard(category: string, url: URL, env: Env)
 
     const espnUrl = `https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/leaders?season=${season}&seasontype=2`;
     const res = await fetch(espnUrl, { headers: { 'User-Agent': 'BSI/1.0' } });
+    if (res.status === 404) {
+      const fetchedAt = new Date().toISOString();
+      const payload = degradedMlbLeaderboardPayload(category, stat, season, sortBy, limit, fetchedAt);
+      await kvPut(env.KV, cacheKey, payload, 300);
+      return cachedJson(payload, 200, HTTP_CACHE.standings, {
+        'X-Cache': 'MISS',
+        'X-Data-Source': 'ESPN',
+        'X-Data-State': 'degraded',
+      });
+    }
     if (!res.ok) throw new Error(`ESPN ${res.status}`);
     const raw = await res.json() as Record<string, unknown>;
 

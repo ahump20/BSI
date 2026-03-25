@@ -114,7 +114,21 @@ export default {
           },
         });
       }
-      return new Response(latest, {
+      const parsed = JSON.parse(latest) as Record<string, unknown>;
+      const bugReport = await collectBugReport(env);
+      const blockingIssues = bugReport.bugs.filter(
+        (bug) => bug.severity === 'high' || bug.severity === 'critical',
+      ).length;
+      const statusPayload = {
+        ...parsed,
+        allHealthy: Boolean(parsed.allHealthy) && blockingIssues === 0,
+        issueSummary: {
+          activeBugs: bugReport.summary.active,
+          highSeverityBugs: blockingIssues,
+          updatedAt: bugReport.timestamp,
+        },
+      };
+      return new Response(JSON.stringify(statusPayload), {
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
@@ -167,6 +181,52 @@ interface AgentEvent {
 interface SessionEntry {
   id: string;
   lastSeen: string;
+}
+
+interface PublicAgentAlias {
+  agentId: string;
+  agentName: string;
+}
+
+function createPublicAgentAlias(index: number): PublicAgentAlias {
+  const suffix = String(index).padStart(2, '0');
+  return {
+    agentId: `field-unit-${suffix}`,
+    agentName: `Field Unit ${suffix}`,
+  };
+}
+
+function describePublicEvent(type: string): string {
+  const normalized = type.replace(/[_-]+/g, ' ').trim();
+  return normalized.length > 0 ? normalized : 'activity';
+}
+
+function sanitizeEventData(data: Record<string, unknown> | undefined, fallbackType: string) {
+  const fallbackMessage = describePublicEvent(fallbackType);
+  if (!data) {
+    return {
+      message: fallbackMessage,
+    };
+  }
+
+  const buildingKind =
+    typeof data.buildingKind === 'string' ? data.buildingKind.slice(0, 40) : undefined;
+
+  return {
+    ...(buildingKind ? { buildingKind } : {}),
+    message: buildingKind ? `${buildingKind} action` : fallbackMessage,
+  };
+}
+
+function sanitizeAgentEvent(event: AgentEvent, alias: PublicAgentAlias): AgentEvent {
+  return {
+    type: event.type,
+    agentId: alias.agentId,
+    agentName: alias.agentName,
+    timestamp: event.timestamp,
+    data: sanitizeEventData(event.data, event.type),
+    receivedAt: event.receivedAt,
+  };
 }
 
 /** Headers for GET API responses — public data, open CORS. */
@@ -267,7 +327,16 @@ async function handleAgentEvents(env: Env): Promise<Response> {
   }
 
   allEvents.sort((a, b) => b.timestamp.localeCompare(a.timestamp));
-  const capped = allEvents.slice(0, 100);
+  const publicAliases = new Map<string, PublicAgentAlias>();
+  const capped = allEvents.slice(0, 100).map((event) => {
+    const aliasKey = event.sessionId ?? event.agentId;
+    let alias = publicAliases.get(aliasKey);
+    if (!alias) {
+      alias = createPublicAgentAlias(publicAliases.size + 1);
+      publicAliases.set(aliasKey, alias);
+    }
+    return sanitizeAgentEvent(event, alias);
+  });
 
   return new Response(JSON.stringify({ events: capped, count: capped.length }), {
     headers: API_HEADERS_PUBLIC,
@@ -343,7 +412,13 @@ interface BugSnapshot {
   timestamp: string;
 }
 
-async function handleBugs(env: Env): Promise<Response> {
+interface BugReportPayload {
+  bugs: BugEntry[];
+  summary: BugSummary;
+  timestamp: string;
+}
+
+async function collectBugReport(env: Env): Promise<BugReportPayload> {
   const bugs: BugEntry[] = [];
   let totalEndpoints = 0;
   let healthyEndpoints = 0;
@@ -683,16 +758,18 @@ async function handleBugs(env: Env): Promise<Response> {
     resolved,
   };
 
-  return new Response(
-    JSON.stringify({ bugs: dedupedBugs, summary, timestamp: new Date().toISOString() }),
-    {
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'public, max-age=15',
-      },
+  return { bugs: dedupedBugs, summary, timestamp: new Date().toISOString() };
+}
+
+async function handleBugs(env: Env): Promise<Response> {
+  const payload = await collectBugReport(env);
+  return new Response(JSON.stringify(payload), {
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Cache-Control': 'public, max-age=15',
     },
-  );
+  });
 }
 
 function buildResponse(object: R2ObjectBody, path: string, immutable: boolean): Response {

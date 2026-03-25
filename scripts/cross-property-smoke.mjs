@@ -65,14 +65,14 @@ function createChecks(args) {
       id: 'bsi-college-baseball',
       url: `${bsiBase}/college-baseball`,
       expectedStatus: 200,
-      mustContain: ['Start Here', 'Ecosystem'],
+      mustContain: ['College Baseball', 'Analytics', 'Scores'],
       mustNotContain: [],
     },
     {
       id: 'austin-home',
       url: `${austinBase}/`,
       expectedStatus: 200,
-      mustContain: ['Austin Humphrey', 'Blaze Sports Intel'],
+      mustContain: ['Austin Humphrey', 'Sports Intelligence', 'Product Strategy'],
       mustNotContain: [],
     },
     {

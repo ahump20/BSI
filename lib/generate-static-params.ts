@@ -1,19 +1,33 @@
 /**
  * Shared helpers for generateStaticParams in static export.
  *
- * These run at build time — the production Worker must be reachable.
+ * These run at build time. They may read from an explicitly configured API base,
+ * but they must never depend on the live production site by default.
  * Module-level promises are used as a cache so each endpoint is fetched
  * only once per build process, regardless of how many pages import the helper.
- * Each helper falls back to a single placeholder entry on any network failure
+ * Each helper falls back to a minimal placeholder/static entry on network failure
  * so the build never hard-fails.
  */
 
-const WORKER_BASE = 'https://blazesportsintel.com';
+const STATIC_PARAMS_BASE =
+  (process.env.BSI_STATIC_PARAMS_BASE_URL || process.env.BASE_URL || '').replace(/\/+$/, '');
 
 // Module-level cache — shared across all imports in the same build process
 const cache = new Map<string, Promise<unknown>>();
+let warnedAboutMissingBase = false;
 
-function cachedFetch<T>(url: string): Promise<T> {
+function cachedFetch<T>(path: string): Promise<T> {
+  if (!STATIC_PARAMS_BASE) {
+    if (!warnedAboutMissingBase) {
+      warnedAboutMissingBase = true;
+      console.warn(
+        '[generate-static-params] BSI_STATIC_PARAMS_BASE_URL not set; using placeholder-only params.'
+      );
+    }
+    return Promise.resolve(null as T);
+  }
+
+  const url = `${STATIC_PARAMS_BASE}${path}`;
   if (!cache.has(url)) {
     cache.set(
       url,
@@ -30,7 +44,7 @@ function cachedFetch<T>(url: string): Promise<T> {
  *  as a fallback for game IDs that weren't present at build time. */
 export async function cbbGameParams(): Promise<{ gameId: string }[]> {
   const body = await cachedFetch<{ data?: { id: string }[] }>(
-    `${WORKER_BASE}/api/college-baseball/scores`,
+    '/api/college-baseball/scores',
   );
   const games = body?.data ?? [];
   const ids = games.map((g) => ({ gameId: String(g.id) }));
@@ -44,7 +58,7 @@ export async function cbbGameParams(): Promise<{ gameId: string }[]> {
 
 /** Returns [teamId] params for NBA team detail pages (all 30 teams). */
 export async function nbaTeamParams(): Promise<{ teamId: string }[]> {
-  const body = await cachedFetch<{ teams?: { id: string }[] }>(`${WORKER_BASE}/api/nba/teams`);
+  const body = await cachedFetch<{ teams?: { id: string }[] }>('/api/nba/teams');
   const teams = body?.teams ?? [];
   const ids = teams.map((t) => ({ teamId: String(t.id) }));
   return ids.length > 0 ? ids : [{ teamId: 'placeholder' }];
@@ -53,7 +67,7 @@ export async function nbaTeamParams(): Promise<{ teamId: string }[]> {
 /** Returns [gameId] params for MLB game detail pages.
  *  Always includes "placeholder" for the Worker proxy fallback shell. */
 export async function mlbGameParams(): Promise<{ gameId: string }[]> {
-  const body = await cachedFetch<{ games?: { id: string }[] }>(`${WORKER_BASE}/api/mlb/scores`);
+  const body = await cachedFetch<{ games?: { id: string }[] }>('/api/mlb/scores');
   const games = body?.games ?? [];
   const ids = games.map((g) => ({ gameId: String(g.id) }));
   if (!ids.some((p) => p.gameId === 'placeholder')) {
@@ -64,7 +78,7 @@ export async function mlbGameParams(): Promise<{ gameId: string }[]> {
 
 /** Returns [playerId] params for NFL player detail pages. */
 export async function nflPlayerParams(): Promise<{ playerId: string }[]> {
-  const body = await cachedFetch<{ players?: { id: string }[] }>(`${WORKER_BASE}/api/nfl/players`);
+  const body = await cachedFetch<{ players?: { id: string }[] }>('/api/nfl/players');
   const players = body?.players ?? [];
   const ids = players.map((p) => ({ playerId: String(p.id) }));
   return ids.length > 0 ? ids : [{ playerId: 'placeholder' }];
@@ -76,7 +90,7 @@ const ESPN_MLB_ROSTER = (teamId: string) =>
 /** Returns [playerId] params for MLB player detail pages via ESPN team rosters. */
 export async function mlbPlayerParams(): Promise<{ playerId: string }[]> {
   try {
-    const teamsBody = await cachedFetch<{ teams?: { id: string }[] }>(`${WORKER_BASE}/api/mlb/teams`);
+    const teamsBody = await cachedFetch<{ teams?: { id: string }[] }>('/api/mlb/teams');
     const teamIds = (teamsBody?.teams ?? []).map((t) => String(t.id));
     if (teamIds.length === 0) return [{ playerId: 'placeholder' }];
 
@@ -109,7 +123,7 @@ export async function mlbPlayerParams(): Promise<{ playerId: string }[]> {
 /** Returns [playerId] params for college baseball player detail pages. */
 export async function cbbPlayerParams(): Promise<{ playerId: string }[]> {
   const body = await cachedFetch<{ players?: { id: string }[] }>(
-    `${WORKER_BASE}/api/college-baseball/players`,
+    '/api/college-baseball/players',
   );
   const players = body?.players ?? [];
   const ids = players.map((p) => ({ playerId: String(p.id) }));
@@ -126,7 +140,7 @@ const ESPN_ROSTER = (teamId: string) =>
  */
 export async function nbaPlayerParams(): Promise<{ playerId: string }[]> {
   try {
-    const teamsBody = await cachedFetch<{ teams?: { id: string }[] }>(`${WORKER_BASE}/api/nba/teams`);
+    const teamsBody = await cachedFetch<{ teams?: { id: string }[] }>('/api/nba/teams');
     const teamIds = (teamsBody?.teams ?? []).map((t) => String(t.id));
     if (teamIds.length === 0) return [{ playerId: 'placeholder' }];
 
@@ -157,7 +171,7 @@ export async function nbaPlayerParams(): Promise<{ playerId: string }[]> {
 /** Returns [slug] params for blog-post-feed detail pages. */
 export async function blogPostFeedParams(): Promise<{ slug: string }[]> {
   const body = await cachedFetch<{ posts?: { slug: string }[] }>(
-    `${WORKER_BASE}/api/blog-post-feed?limit=50`,
+    '/api/blog-post-feed?limit=50',
   );
   const posts = body?.posts ?? [];
   const slugs = posts.map((p) => ({ slug: p.slug }));
@@ -188,7 +202,7 @@ export function dailyEditorialDateParams(): { date: string }[] {
 /** Returns [playerId] params for Texas intelligence player profiles. */
 export async function texasPlayerParams(): Promise<{ playerId: string }[]> {
   const body = await cachedFetch<{ players?: { id: string }[] }>(
-    `${WORKER_BASE}/api/college-baseball/players?team=Texas+Longhorns`,
+    '/api/college-baseball/players?team=Texas+Longhorns',
   );
   const players = body?.players ?? [];
   const ids = players.map((p) => ({ playerId: String(p.id) }));
