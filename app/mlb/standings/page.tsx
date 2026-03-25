@@ -12,6 +12,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton, SkeletonTableRow } from '@/components/ui/Skeleton';
 import { formatTimestamp } from '@/lib/utils/timezone';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { DegradedDataBanner } from '@/components/ui/DegradedDataBanner';
 import type { DataMeta } from '@/lib/types/data-meta';
 
 interface Team {
@@ -404,6 +405,8 @@ export default function MLBStandingsPage() {
         {/* View Toggle & Content */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
+            <DegradedDataBanner degraded={!!meta?.degraded} source={meta?.dataSource} />
+
             {/* View Toggle */}
             <div className="flex flex-wrap gap-2 mb-8">
               {views.map((view) => (

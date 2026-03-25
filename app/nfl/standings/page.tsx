@@ -9,8 +9,10 @@ import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { DegradedDataBanner } from '@/components/ui/DegradedDataBanner';
 import { formatTimestamp } from '@/lib/utils/timezone';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import type { DataMeta } from '@/lib/types/data-meta';
 
 interface Team {
   name: string;
@@ -543,7 +545,7 @@ const staticStandings: Conference[] = [
 export default function NFLStandingsPage() {
   const [selectedConference, setSelectedConference] = useState<string>('AFC');
 
-  const { data: standingsData, loading } = useSportData<{ standings?: Conference[] }>('/api/nfl/standings');
+  const { data: standingsData, loading } = useSportData<{ standings?: Conference[]; meta?: DataMeta }>('/api/nfl/standings');
 
   const standings = standingsData?.standings && standingsData.standings.length > 0
     ? standingsData.standings
@@ -620,6 +622,8 @@ export default function NFLStandingsPage() {
         {/* Standings Tables */}
         <Section padding="lg" background="charcoal">
           <Container>
+            <DegradedDataBanner degraded={!!standingsData?.meta?.degraded} source={standingsData?.meta?.dataSource} />
+
             <DataErrorBoundary name="NFL Standings">
             {isOffSeason && (
               <Card variant="default" padding="md" className="mb-6 bg-surface-light border-border-subtle">
