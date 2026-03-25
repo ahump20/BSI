@@ -1,0 +1,88 @@
+name: Guarded Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      preview_branch:
+        description: Preview Pages branch to deploy before production promotion
+        required: false
+        default: ''
+      preview_only:
+        description: Stop after the preview deploy and artifact capture
+        required: false
+        default: false
+        type: boolean
+      production_url:
+        description: Production URL to compare against before promotion
+        required: false
+        default: https://austinhumphrey.com
+      skip_post_production_smoke:
+        description: Skip the post-production smoke pass after promotion
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: austinhumphrey-guarded-release
+  cancel-in-progress: false
+
+jobs:
+  guarded-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browser
+        run: npx playwright install chromium
+
+      - name: Verify Wrangler authentication
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: npx wrangler whoami
+
+      - name: Run guarded release
+        shell: bash
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          args=()
+
+          if [ -n "${{ inputs.preview_branch }}" ]; then
+            args+=(--preview-branch "${{ inputs.preview_branch }}")
+          fi
+
+          if [ "${{ inputs.preview_only }}" = "true" ]; then
+            args+=(--preview-only)
+          fi
+
+          if [ -n "${{ inputs.production_url }}" ]; then
+            args+=(--production-url "${{ inputs.production_url }}")
+          fi
+
+          if [ "${{ inputs.skip_post_production_smoke }}" = "true" ]; then
+            args+=(--skip-post-production-smoke)
+          fi
+
+          npm run release:guarded -- "${args[@]}"
+
+      - name: Upload release artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: guarded-release-artifacts
+          path: .release-artifacts/releases/**
+          if-no-files-found: warn
