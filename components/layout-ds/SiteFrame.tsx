@@ -68,7 +68,7 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
             <KonamiCodeWrapper />
             <PageTracker />
             <PostHogProvider />
-            <main id="main-content" className="min-h-screen">
+            <main id="main-content" className="min-h-screen pb-24 md:pb-0">
               <PageTransition>{children}</PageTransition>
             </main>
             <BottomNavWrapper />

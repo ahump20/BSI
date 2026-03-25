@@ -227,23 +227,35 @@ function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) 
   }, []);
 
   const cardContent = (
-    <div className={`p-3 rounded-sm border transition-all hover:border-burnt-orange/50 ${
-      game.state === 'live' ? 'border-success/30 bg-success/5' : 'border-border-vintage bg-surface-dugout'
+    <div className={`rounded-sm border p-3.5 transition-all ${
+      game.state === 'live'
+        ? 'border-success/30 bg-[linear-gradient(180deg,rgba(16,185,129,0.09)_0%,rgba(14,15,18,0.96)_100%)]'
+        : 'border-border-vintage bg-[linear-gradient(180deg,rgba(191,87,0,0.08)_0%,rgba(20,20,20,0.94)_100%)] hover:border-burnt-orange/50'
     }`}>
-      <div className="flex items-center justify-between mb-1">
+      <div className="mb-3 flex items-start justify-between gap-3">
         <GameStateBadge state={game.state} detail={game.detail} />
+        <span className="max-w-[120px] text-right text-[10px] uppercase tracking-[0.12em] text-bsi-dust/60">
+          {game.detail || 'Matchup'}
+        </span>
       </div>
-      <div className="space-y-1">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+      <div className="space-y-2.5">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex min-w-0 items-start gap-2.5">
             {game.away.logo ? (
               <img src={game.away.logo} alt={`${game.away.name || game.away.abbreviation} logo`} className="w-4 h-4 object-contain" loading="lazy" />
             ) : (
-              <span className="text-[10px] font-bold text-bsi-dust w-4">{game.away.abbreviation}</span>
+              <span className="mt-0.5 inline-flex min-w-[2rem] justify-center rounded-sm border border-border-vintage px-1.5 py-1 text-[10px] font-bold text-bsi-dust">
+                {game.away.abbreviation}
+              </span>
             )}
-            <span className="text-sm text-bsi-bone font-medium truncate max-w-[120px]">
-              {game.away.name || game.away.abbreviation}
-            </span>
+            <div className="min-w-0">
+              <span className="block text-sm font-medium leading-tight text-bsi-bone line-clamp-2">
+                {game.away.name || game.away.abbreviation}
+              </span>
+              <span className="mt-1 block text-[10px] uppercase tracking-[0.12em] text-bsi-dust/60">
+                Away club
+              </span>
+            </div>
           </div>
           <span className={`font-mono text-sm font-bold ${
             game.state === 'final' && Number(game.away.score) > Number(game.home.score) ? 'text-bsi-bone' : 'text-bsi-dust'
@@ -251,16 +263,23 @@ function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) 
             {game.away.score ?? '-'}
           </span>
         </div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        <div className="flex items-start justify-between gap-3 border-t border-border-vintage/60 pt-2.5">
+          <div className="flex min-w-0 items-start gap-2.5">
             {game.home.logo ? (
               <img src={game.home.logo} alt={`${game.home.name || game.home.abbreviation} logo`} className="w-4 h-4 object-contain" loading="lazy" />
             ) : (
-              <span className="text-[10px] font-bold text-bsi-dust w-4">{game.home.abbreviation}</span>
+              <span className="mt-0.5 inline-flex min-w-[2rem] justify-center rounded-sm border border-border-vintage px-1.5 py-1 text-[10px] font-bold text-bsi-dust">
+                {game.home.abbreviation}
+              </span>
             )}
-            <span className="text-sm text-bsi-bone font-medium truncate max-w-[120px]">
-              {game.home.name || game.home.abbreviation}
-            </span>
+            <div className="min-w-0">
+              <span className="block text-sm font-medium leading-tight text-bsi-bone line-clamp-2">
+                {game.home.name || game.home.abbreviation}
+              </span>
+              <span className="mt-1 block text-[10px] uppercase tracking-[0.12em] text-bsi-dust/60">
+                Home club
+              </span>
+            </div>
           </div>
           <span className={`font-mono text-sm font-bold ${
             game.state === 'final' && Number(game.home.score) > Number(game.away.score) ? 'text-bsi-bone' : 'text-bsi-dust'
@@ -555,6 +574,13 @@ function ScoresHubContent() {
 
   const hasAnyLive = totalLive > 0;
   const fetchedAt = overviewMeta?.lastUpdated ?? overviewLastUpdated?.toISOString() ?? '';
+  const totalGamesToday = sports.reduce((sum, sport) => sum + sport.todayCount, 0);
+  const sportsInAction = sports.filter((sport) => sport.todayCount > 0).length;
+  const mostActiveSport = sports.reduce<SportSection | null>((best, sport) => {
+    if (!best) return sport;
+    return sport.todayCount > best.todayCount ? sport : best;
+  }, null);
+  const overviewSource = overview?.meta?.source || overviewMeta?.source || 'BSI Multi-Source';
 
   // Sync activeSport to URL search params
   const handleSetActiveSport = useCallback((id: string | null) => {
@@ -645,6 +671,60 @@ function ScoresHubContent() {
                 </div>
               </ScrollReveal>
             )}
+            <ScrollReveal direction="up" delay={240}>
+              <div className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                {[
+                  {
+                    label: 'Live Right Now',
+                    value: `${totalLive}`,
+                    note: hasAnyLive ? 'Games already underway' : 'Pre-game board',
+                  },
+                  {
+                    label: 'Today’s Slate',
+                    value: `${totalGamesToday}`,
+                    note: 'Tracked across the full board',
+                  },
+                  {
+                    label: 'Sports Active',
+                    value: `${sportsInAction}`,
+                    note: mostActiveSport ? `${mostActiveSport.name} leads the slate` : 'Waiting on first pitch',
+                  },
+                  {
+                    label: 'Refresh Rhythm',
+                    value: '60s',
+                    note: `${overviewSource} with America/Chicago timestamps`,
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.label}
+                    className="heritage-card p-4"
+                    style={{
+                      background:
+                        'linear-gradient(180deg, rgba(191, 87, 0, 0.08) 0%, rgba(16, 16, 16, 0.94) 100%)',
+                    }}
+                  >
+                    <p className="text-[10px] uppercase tracking-[0.18em] text-bsi-dust/70">
+                      {item.label}
+                    </p>
+                    <div className="mt-3 flex items-end justify-between gap-4">
+                      <span
+                        className="font-bold uppercase leading-none"
+                        style={{
+                          fontFamily: 'var(--bsi-font-display-hero)',
+                          fontSize: 'clamp(1.75rem, 4vw, 2.5rem)',
+                          color: 'var(--bsi-bone)',
+                        }}
+                      >
+                        {item.value}
+                      </span>
+                      <span className="max-w-[10rem] text-right text-[11px] leading-snug text-bsi-dust">
+                        {item.note}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ScrollReveal>
           </div>
         </section>
 
@@ -800,9 +880,14 @@ function ScoresHubContent() {
                     <ScrollReveal key={sport.id} direction="up" delay={index * 60}>
                       <Link href={sport.href} className="block h-full">
                         <div
-                          className={`heritage-card p-4 h-full transition-all ${
+                          className={`heritage-card h-full p-5 transition-all ${
                             sport.liveCount > 0 ? 'border-success/50 bg-success/5' : ''
                           }`}
+                          style={{
+                            borderLeft: `2px solid ${
+                              sport.liveCount > 0 ? 'var(--bsi-success)' : 'var(--bsi-primary)'
+                            }`,
+                          }}
                         >
                           <div className="flex items-start justify-between mb-3">
                             <div className="flex items-center gap-2.5">
@@ -829,7 +914,13 @@ function ScoresHubContent() {
                               <Badge variant={sport.fetchError ? 'error' : 'default'}>{sport.fetchError ? 'Unavailable' : sport.isActive ? 'No games' : 'Off-season'}</Badge>
                             )}
                           </div>
-                          <p className="text-bsi-dust text-xs">{sport.description}</p>
+                          <p className="text-bsi-dust text-xs leading-relaxed">{sport.description}</p>
+                          <div className="mt-4 flex items-center justify-between border-t border-border-vintage/60 pt-3 text-[11px] uppercase tracking-[0.12em]">
+                            <span className="text-bsi-dust/70">
+                              {sport.todayCount > 0 ? `${sport.todayCount} games on deck` : sport.season}
+                            </span>
+                            <span className="text-burnt-orange">Open hub →</span>
+                          </div>
                         </div>
                       </Link>
                     </ScrollReveal>

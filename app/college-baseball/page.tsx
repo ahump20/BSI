@@ -407,6 +407,9 @@ function CollegeBaseballPageInner() {
               hasResults={allSearchResults.length > 0}
               lastUpdated={lastUpdated}
               dataSource={dataSource}
+              coverageCount={Object.keys(teamMetadata).length}
+              conferenceCount={conferenceList.length - 1}
+              rankingsCount={rankings.length}
             />
 
             {/* Live Score Strip — today's games at a glance */}

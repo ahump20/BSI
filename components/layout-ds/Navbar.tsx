@@ -402,7 +402,7 @@ export function Navbar({ primary, leagues, secondary, analytics = [] }: NavbarPr
               {/* Mobile: search icon */}
               <button
                 onClick={openCommandPalette}
-                className="md:hidden p-2 text-text-muted hover:text-text-primary transition-colors"
+                className="md:hidden h-11 w-11 flex items-center justify-center rounded-sm border border-border-subtle bg-surface-light/70 text-text-muted hover:text-text-primary hover:bg-surface-medium transition-colors"
                 aria-label="Open search"
               >
                 <Search className="w-5 h-5" />
@@ -411,7 +411,7 @@ export function Navbar({ primary, leagues, secondary, analytics = [] }: NavbarPr
               {/* Mobile hamburger */}
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="md:hidden p-2 text-text-secondary hover:text-text-primary transition-colors"
+                className="md:hidden h-11 w-11 flex items-center justify-center rounded-sm border border-border-subtle bg-surface-light/70 text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-colors"
                 aria-label={menuOpen ? 'Close menu' : 'Open menu'}
                 aria-expanded={menuOpen}
               >

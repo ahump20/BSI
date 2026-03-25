@@ -5,11 +5,12 @@ import { SportHubJsonLd } from '@/components/seo/SportHubJsonLd';
 export const metadata: Metadata = {
   title: 'College Baseball | Blaze Sports Intel',
   description:
-    'Every D1 team. Live scores, box scores, standings, rankings, portal tracking, advanced sabermetrics, and weekly editorial — college baseball covered like it matters.',
+    'Live college baseball scores, standings, rankings, teams, players, and advanced sabermetrics from Blaze Sports Intel.',
+  alternates: { canonical: '/college-baseball' },
   openGraph: {
     title: 'College Baseball | Blaze Sports Intel',
     description:
-      'Live scores, standings, rankings, and advanced analytics for every D1 college baseball team.',
+      'Live college baseball scores, standings, rankings, teams, players, and advanced sabermetrics from Blaze Sports Intel.',
     type: 'website',
     url: 'https://blazesportsintel.com/college-baseball',
     siteName: 'Blaze Sports Intel',
@@ -18,10 +19,10 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'College Baseball | Blaze Sports Intel',
-    description: 'Live scores, standings, rankings, and advanced analytics for D1 college baseball.',
+    description:
+      'Live college baseball scores, standings, rankings, teams, players, and advanced sabermetrics from Blaze Sports Intel.',
     images: ['/images/og-college-baseball.png'],
   },
-  alternates: { canonical: '/college-baseball' },
 };
 
 export default function CollegeBaseballLayout({ children }: { children: React.ReactNode }) {
@@ -30,7 +31,7 @@ export default function CollegeBaseballLayout({ children }: { children: React.Re
       <SportHubJsonLd
         sport="College Baseball"
         url="/college-baseball"
-        description="Live scores, standings, rankings, and advanced analytics for every D1 college baseball team."
+        description="Live college baseball scores, standings, rankings, teams, players, and advanced sabermetrics from Blaze Sports Intel."
         breadcrumbs={[
           { name: 'Home', url: '/' },
           { name: 'College Baseball', url: '/college-baseball' },

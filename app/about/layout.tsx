@@ -4,7 +4,7 @@ import { JsonLd } from '@/components/JsonLd';
 import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
-  title: 'About Blaze Sports Intel | Independent College Baseball & Pro Sports Analytics',
+  title: 'About | Blaze Sports Intel',
   description:
     'Founded by Austin Humphrey. Live scores, advanced sabermetrics, and independent editorial for college baseball, MLB, NFL, NBA, and college football. One platform. Every game.',
   openGraph: {
