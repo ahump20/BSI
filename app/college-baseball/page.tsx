@@ -4,6 +4,7 @@ import { Suspense, useState, useEffect, useMemo, useRef, useCallback } from 'rea
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useSportData } from '@/lib/hooks/useSportData';
+import { DegradedNotice } from '@/components/ui/DegradedNotice';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
@@ -565,6 +566,16 @@ function CollegeBaseballPageInner() {
                     </Link>
                   ))}
                 </div>
+
+                <DegradedNotice
+                  meta={
+                    activeTab === 'rankings'
+                      ? rankingsRaw?.meta ? { source: rankingsRaw.meta.dataSource || '', sources: [], lastUpdated: rankingsRaw.meta.lastUpdated || null, timezone: 'America/Chicago', degraded: !!(rankingsRaw.meta as Record<string, unknown>).degraded } : null
+                      : activeTab === 'standings'
+                        ? standingsRaw?.meta ? { source: standingsRaw.meta.dataSource || '', sources: [], lastUpdated: standingsRaw.meta.lastUpdated || null, timezone: 'America/Chicago', degraded: !!(standingsRaw.meta as Record<string, unknown>).degraded } : null
+                        : null
+                  }
+                />
 
                 {/* Rankings Tab */}
                 <TabPanel id="rankings" activeTab={activeTab}>
