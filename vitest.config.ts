@@ -5,7 +5,7 @@
  * - /tests/analytics/ — Analytics library tests (ConferenceStrengthModel)
  * - /tests/api/ — API endpoint tests
  * - /tests/components/ — React component tests (ESPN box scores, etc.)
- * - /tests/workers/ — Worker handler tests
+ * - /tests/workers/ — Worker handler tests (run via vitest.workers.config.ts)
  * - /tests/e2e/ — Playwright specs (excluded from Vitest, run separately)
  */
 
@@ -32,6 +32,7 @@ export default defineConfig({
       'tests/a11y/**',
       'tests/flows/**',
       'tests/smoke/**',
+      'tests/workers/**',
       'tests/e2e/**',
       'node_modules/**',
     ],
