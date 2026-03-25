@@ -137,6 +137,7 @@ import { handleCreateEmbeddedCheckout, handleSessionStatus, handleCustomerPortal
 import { handleLogin, handleValidateKey } from './handlers/auth';
 import { handleScheduled, handleCachedScores, handleHealthProviders } from './handlers/cron';
 import { handleHealth, handleStatus, handleAdminHealth, handleAdminErrors, handleWebSocket } from './handlers/health';
+import { handleFreshness } from './handlers/freshness';
 import { handleMcpRequest } from './handlers/mcp';
 import { handleHeroScores } from './handlers/hero-scores';
 import { handleScoresOverview } from './handlers/scores';
@@ -345,6 +346,7 @@ app.use('/api/admin/*', async (c, next) => {
 });
 
 app.get('/api/admin/health', (c) => handleAdminHealth(c.env));
+app.get('/api/admin/freshness', (c) => handleFreshness(c.req.raw, c.env));
 app.get('/api/admin/errors', (c) => handleAdminErrors(new URL(c.req.url), c.env));
 
 // --- Intel news ---
