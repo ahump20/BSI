@@ -36,6 +36,7 @@ import {
   handleCollegeBaseballNews,
   handleCollegeBaseballPlayersList,
   handleCollegeBaseballTransferPortal,
+  handlePortalPlayerDetail,
   handleCollegeBaseballEditorialList,
   handleCollegeBaseballEditorialContent,
   handleCollegeBaseballNewsEnhanced,
@@ -130,11 +131,16 @@ import {
 
 import { handleBlogPostFeedList, handleBlogPostFeedItem } from './handlers/blog-post-feed';
 import { handleSearch } from './handlers/search';
+import { handleEvaluatePlayer, handleEvaluateSearch } from './handlers/evaluate';
+import { handlePushRegister, handlePushSend } from './handlers/push';
 import { handleCreateEmbeddedCheckout, handleSessionStatus, handleCustomerPortal } from './handlers/stripe';
 import { handleLogin, handleValidateKey } from './handlers/auth';
 import { handleScheduled, handleCachedScores, handleHealthProviders } from './handlers/cron';
 import { handleHealth, handleStatus, handleAdminHealth, handleAdminErrors, handleWebSocket } from './handlers/health';
+import { handleFreshness } from './handlers/freshness';
+import { handlePowerRankings } from './handlers/college-baseball/power-rankings';
 import { handleMcpRequest } from './handlers/mcp';
+import { handleHeroScores } from './handlers/hero-scores';
 import { handleScoresOverview } from './handlers/scores';
 import {
   handleCVPitcherMechanics,
@@ -324,6 +330,9 @@ app.post('/api/auth/login', (c) => handleLogin(c.req.raw, c.env));
 app.get('/api/auth/validate', (c) => handleValidateKey(c.req.raw, c.env));
 app.all('/api/auth/signup', (c) => c.redirect('/pricing', 302));
 
+// --- Hero Scores (homepage strip) ---
+app.get('/api/hero-scores', (c) => handleHeroScores(new URL(c.req.url), c.env));
+
 // --- Health ---
 app.get('/health', (c) => handleHealth(c.env));
 app.get('/api/health', (c) => handleHealth(c.env));
@@ -338,6 +347,7 @@ app.use('/api/admin/*', async (c, next) => {
 });
 
 app.get('/api/admin/health', (c) => handleAdminHealth(c.env));
+app.get('/api/admin/freshness', (c) => handleFreshness(c.req.raw, c.env));
 app.get('/api/admin/errors', (c) => handleAdminErrors(new URL(c.req.url), c.env));
 
 // --- Intel news ---
@@ -404,6 +414,7 @@ app.get('/api/college-baseball/standings', (c) => {
   return handleCollegeBaseballStandings(new URL(c.req.url), c.env, ctx);
 });
 app.get('/api/college-baseball/rankings', (c) => handleCollegeBaseballRankings(c.env));
+app.get('/api/college-baseball/power-rankings', (c) => handlePowerRankings(new URL(c.req.url), c.env));
 app.get('/api/college-baseball/leaders', (c) => handleCollegeBaseballLeaders(c.env));
 app.get('/api/college-baseball/ingest-stats', (c) => {
   const url = new URL(c.req.url);
@@ -415,6 +426,7 @@ app.get('/api/college-baseball/news', (c) => handleCollegeBaseballNews(c.env));
 app.get('/api/college-baseball/news/enhanced', (c) => handleCollegeBaseballNewsEnhanced(c.env));
 app.get('/api/college-baseball/players', (c) => handleCollegeBaseballPlayersList(new URL(c.req.url), c.env));
 app.get('/api/college-baseball/transfer-portal', (c) => handleCollegeBaseballTransferPortal(c.env));
+app.get('/api/portal/player/:playerId', (c) => handlePortalPlayerDetail(c.req.param('playerId'), c.env));
 app.get('/api/college-baseball/daily', (c) => handleCollegeBaseballDaily(new URL(c.req.url), c.env));
 app.get('/api/college-baseball/sabermetrics', (c) => handleCBBLeagueSabermetrics(c.env));
 app.get('/api/college-baseball/teams/all', (c) => handleCollegeBaseballTeamsAll(c.env));
@@ -630,8 +642,16 @@ app.get('/api/scores/overview', (c) => {
 // --- Provider Health (cron-tracked) ---
 app.get('/api/health/providers', (c) => handleHealthProviders(c.env));
 
+// --- Push Notifications ---
+app.post('/api/push/register', (c) => handlePushRegister(c.req.raw, c.env));
+app.post('/api/push/send', (c) => handlePushSend(c.env));
+
 // --- Search ---
 app.get('/api/search', (c) => handleSearch(new URL(c.req.url), c.env));
+
+// --- Player Evaluation ---
+app.get('/api/evaluate/player/:sport/:playerId', (c) => handleEvaluatePlayer(c.req.param('sport'), c.req.param('playerId'), c.env));
+app.get('/api/evaluate/search', (c) => handleEvaluateSearch(new URL(c.req.url), c.env));
 
 // --- ESPN News proxy ---
 app.get('/api/news/:sport', (c) => handleESPNNews(c.req.param('sport'), c.env));

@@ -4,6 +4,7 @@ import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import Link from 'next/link';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata } from '@/lib/data/team-metadata';
+import { normalizeTeamName } from '@/lib/utils/format';
 
 /* ── Types ──────────────────────────────────────────────────────────── */
 
@@ -67,24 +68,20 @@ interface StandingsEntry {
 
 const MIN_BLOCK_WIDTH_PX = 40;
 
-function normalize(s: string): string {
-  return s.toLowerCase().replace(/[^a-z0-9]/g, '');
-}
-
 function findTeamMeta(name: string): { slug: string; abbreviation: string } | null {
-  const n = normalize(name);
+  const n = normalizeTeamName(name);
   for (const [slug, meta] of Object.entries(teamMetadata)) {
     if (
-      normalize(meta.name) === n ||
-      normalize(meta.shortName) === n ||
-      normalize(meta.abbreviation) === n
+      normalizeTeamName(meta.name) === n ||
+      normalizeTeamName(meta.shortName) === n ||
+      normalizeTeamName(meta.abbreviation) === n
     ) {
       return { slug, abbreviation: meta.abbreviation };
     }
   }
   // Partial match fallback
   for (const [slug, meta] of Object.entries(teamMetadata)) {
-    if (normalize(meta.name).includes(n) || n.includes(normalize(meta.shortName))) {
+    if (normalizeTeamName(meta.name).includes(n) || n.includes(normalizeTeamName(meta.shortName))) {
       return { slug, abbreviation: meta.abbreviation };
     }
   }
@@ -186,7 +183,7 @@ export function ConferencePowerStrip({
 
         // Resolve slug + abbreviation from metadata
         const meta = findTeamMeta(teamName) || findTeamMeta(shortName);
-        const slug = meta?.slug || teamId || normalize(teamName);
+        const slug = meta?.slug || teamId || normalizeTeamName(teamName);
         const abbr = meta?.abbreviation || shortName.slice(0, 4).toUpperCase() || teamName.slice(0, 4).toUpperCase();
 
         const compositeScore = winPct * 100;

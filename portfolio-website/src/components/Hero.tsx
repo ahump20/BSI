@@ -17,7 +17,7 @@ export default function Hero() {
   const prefersReducedMotion = usePrefersReducedMotion();
 
   return (
-    <section id="hero" aria-labelledby="hero-heading" className="relative min-h-screen flex items-center overflow-hidden bg-midnight">
+    <section id="hero" aria-labelledby="hero-heading" className="relative min-h-screen flex items-center overflow-hidden bg-midnight hero-grain">
       {/* Static editorial gradient — deliberate burnt-orange anchor at top-right */}
       <div className="absolute inset-0 pointer-events-none">
         <div
@@ -69,7 +69,7 @@ export default function Hero() {
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.4, ease: EASE_OUT_EXPO }}
+          transition={{ duration: 0.7, delay: 0.5, ease: EASE_OUT_EXPO }}
           className="text-warm-gray text-lg md:text-xl max-w-xl mb-10 leading-relaxed text-center md:text-left"
         >
           Blaze Sports Intel — six leagues of live analytics and original editorial, built solo because the athletes outside the spotlight deserved real coverage.
@@ -78,7 +78,7 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.6, ease: EASE_OUT_EXPO }}
+          transition={{ duration: 0.7, delay: 0.7, ease: EASE_OUT_EXPO }}
           className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start"
         >
           <a

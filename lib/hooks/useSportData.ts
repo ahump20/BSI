@@ -81,7 +81,8 @@ export function useSportData<T>(
         if (err instanceof DOMException && err.name === 'AbortError') {
           // Only treat as error if this controller is still the active one.
           // If it was replaced (abortRef points elsewhere), the abort was
-          // intentional — a newer request superseded this one.
+          // intentional — a newer request superseded this one. Don't touch
+          // loading/error state because the replacement fetch owns it now.
           if (abortRef.current === controller) {
             setError('Request timed out');
           }
@@ -90,8 +91,13 @@ export function useSportData<T>(
         setError(err instanceof Error ? err.message : 'Unknown error');
       } finally {
         if (timeoutId) clearTimeout(timeoutId);
-        setLoading(false);
-        setIsRefreshing(false);
+        // Only clear loading/refreshing if this is still the active request.
+        // Intentional aborts (controller replaced) must not reset loading
+        // because the replacement fetch is still in flight.
+        if (abortRef.current === controller) {
+          setLoading(false);
+          setIsRefreshing(false);
+        }
       }
     },
     [url, skip, timeout]

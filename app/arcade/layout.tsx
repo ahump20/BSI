@@ -4,9 +4,9 @@ import { JsonLd } from '@/components/JsonLd';
 import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
-  title: 'Arcade | BSI',
+  title: 'Arcade | Blaze Sports Intel',
   description: 'Browser-based sports games powered by BSI.',
-  openGraph: { title: 'Arcade | BSI', description: 'Browser-based sports games powered by BSI.' , images: ogImage() },
+  openGraph: { title: 'Arcade | Blaze Sports Intel', description: 'Browser-based sports games powered by BSI.' , images: ogImage() },
 };
 
 export default function ArcadeLayout({ children }: { children: ReactNode }) {

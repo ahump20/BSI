@@ -10,6 +10,12 @@ export const metadata: Metadata = {
     title: 'College Baseball Teams | Blaze Sports Intel',
     description: 'All D1 baseball team pages with rosters and stats.',
    images: ogImage('/images/og-college-baseball.png') },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'College Baseball Teams | Blaze Sports Intel',
+    description: 'All D1 baseball team pages with rosters and stats.',
+    images: ['/images/og-college-baseball.png'],
+  },
 };
 
 export default function CollegeBaseballTeamsLayout({ children }: { children: ReactNode }) {

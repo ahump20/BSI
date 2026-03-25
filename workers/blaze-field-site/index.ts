@@ -5,7 +5,7 @@
  * - /api/status — synthetic monitor results from MONITOR_KV
  * - /api/agent-events — recent Claude Code hook events for wisp rendering
  * - /api/events/ingest — POST endpoint for hook event ingestion
- * - Cache-Control: immutable for hashed assets, 5min for index.html
+ * - Cache-Control: immutable for hashed assets, no-cache for index.html/manifest.json, 5min for other static files
  * - COOP/COEP security headers, custom 404
  */
 
@@ -695,12 +695,17 @@ async function handleBugs(env: Env): Promise<Response> {
   );
 }
 
+// Files that must revalidate on every request — they reference hashed asset filenames.
+// Stale index.html pointing to a deleted JS bundle causes a blank screen after deploy.
+const NO_CACHE_FILES = new Set(['index.html', 'manifest.json']);
+
 function buildResponse(object: R2ObjectBody, path: string, immutable: boolean): Response {
   const ext = path.includes('.') ? path.slice(path.lastIndexOf('.')) : '.html';
   const contentType = MIME_TYPES[ext] ?? 'application/octet-stream';
 
   const cacheControl = immutable
     ? 'public, max-age=31536000, immutable'
+    : NO_CACHE_FILES.has(path) ? 'no-cache'
     : 'public, max-age=300';
 
   return new Response(object.body, {

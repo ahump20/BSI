@@ -23,7 +23,7 @@ export default function Projects() {
     >
       <div className="container-custom">
         <motion.div
-          initial="visible"
+          initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.05 }}
           variants={staggerContainer}
@@ -43,7 +43,7 @@ export default function Projects() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => window.posthog?.capture('project_clicked', { project: project.name })}
-                className="card p-8 group block gradient-border-hover rounded-sm project-card-featured-bg"
+                className="card card-featured p-8 group block gradient-border-hover rounded-sm project-card-featured-bg"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">

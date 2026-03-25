@@ -49,11 +49,11 @@ export default function Experience() {
     <section
       id="experience"
       aria-labelledby="experience-heading"
-      className="section-padding section-border"
+      className="section-padding section-border experience-bg"
     >
       <div className="container-custom">
         <motion.div
-          initial="visible"
+          initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.05 }}
           variants={staggerContainer}
@@ -74,7 +74,7 @@ export default function Experience() {
                 {/* Timeline dot */}
                 <div className="absolute left-0 top-8 -translate-x-1/2">
                   <span
-                    className={`block w-2.5 h-2.5 rounded-full ${exp.bgAccent}`}
+                    className={`block w-2.5 h-2.5 rounded-full ${exp.bgAccent} timeline-dot`}
                   />
                 </div>
 
@@ -85,9 +85,9 @@ export default function Experience() {
                     </h3>
                     <p className={`text-sm font-semibold ${exp.textAccent}`}>{exp.company}</p>
                   </div>
-                  <div className="flex items-center gap-3 text-sm font-mono text-warm-gray shrink-0">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-sm font-mono text-warm-gray shrink-0">
                     <span>{exp.location}</span>
-                    <span className="text-bone/10">|</span>
+                    <span className="text-bone/10 hidden sm:inline">|</span>
                     <span>{exp.period}</span>
                   </div>
                 </div>

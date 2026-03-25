@@ -3,6 +3,7 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { useSportData } from '@/lib/hooks/useSportData';
+import { fmt2, fmt3 } from '@/lib/utils/format';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -76,8 +77,6 @@ export function ConferencePositionCard({
   const wobaRank = sortedByWoba.findIndex((t) => t.team_id === lookupId) + 1;
   const fipRank = sortedByFip.findIndex((t) => t.team_id === lookupId) + 1;
 
-  const fmt2 = (n: number) => n.toFixed(2);
-  const fmt3 = (n: number) => n.toFixed(3);
   const confDisplay = conference.toUpperCase();
 
   return (

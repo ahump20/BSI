@@ -5,153 +5,147 @@ import Link from 'next/link';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { HeroScoreStrip } from './HeroScoreStrip';
 
-/**
- * HeroSection — Heritage broadcast-open with logo visual anchor.
- * BSI shield mascot as hero centerpiece, pulsing ember glow,
- * massive headline, score strip as live proof, slogan front-and-center.
- */
 export function HeroSection() {
   return (
-    <section className="heritage-hero relative min-h-[70vh] flex items-center justify-center overflow-hidden">
-      {/* Scanlines overlay */}
-      <div className="scanlines" aria-hidden="true" />
-      {/* Warm vignette */}
-      <div className="vignette-warm" aria-hidden="true" />
+    <>
+      <section
+        data-home-hero
+        className="relative isolate overflow-hidden bg-midnight text-[var(--bsi-bone)]"
+      >
+        <div className="absolute inset-0">
+          <Image
+            src="/images/baseball-sliders-texas-tech.webp"
+            alt="College baseball under the lights"
+            fill
+            priority
+            className="object-cover object-[68%_center]"
+          />
+        </div>
+        <div
+          className="absolute inset-0"
+          aria-hidden="true"
+          style={{
+            background:
+              'linear-gradient(90deg, rgba(8,8,8,0.92) 0%, rgba(8,8,8,0.82) 34%, rgba(8,8,8,0.52) 58%, rgba(8,8,8,0.22) 78%, rgba(8,8,8,0.38) 100%)',
+          }}
+        />
+        <div
+          className="absolute inset-0"
+          aria-hidden="true"
+          style={{
+            background:
+              'linear-gradient(180deg, rgba(0,0,0,0.64) 0%, rgba(0,0,0,0.12) 34%, rgba(0,0,0,0.48) 100%)',
+          }}
+        />
+        <div
+          className="absolute -left-20 top-20 h-64 w-64 rounded-full blur-3xl"
+          aria-hidden="true"
+          style={{ background: 'rgba(191, 87, 0, 0.16)' }}
+        />
 
-      {/* Pulsing ember glow behind logo */}
+        <div className="relative z-10 mx-auto flex min-h-[calc(100svh-3.5rem)] w-full min-w-0 max-w-7xl items-end px-4 pb-20 pt-28 sm:px-6 sm:pb-24 sm:pt-32 lg:px-8 lg:pb-28 lg:pt-36">
+          <div className="grid w-full items-end gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(260px,0.55fr)]">
+            <div className="max-w-3xl">
+              <div className="mb-5 overflow-hidden">
+                <p
+                  className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.55s_ease-out_0.05s_forwards] text-[10px] uppercase tracking-[0.28em] sm:text-xs"
+                  style={{ color: 'rgba(245, 240, 235, 0.76)', fontFamily: 'var(--bsi-font-data)' }}
+                >
+                  Austin, Texas // Est. 2024
+                </p>
+              </div>
+
+              <div className="mb-4 overflow-hidden">
+                <p
+                  className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.6s_ease-out_0.12s_forwards] font-display text-lg font-semibold uppercase tracking-[0.22em] sm:text-xl"
+                  style={{ color: 'var(--bsi-bone)' }}
+                >
+                  Blaze Sports Intel
+                </p>
+              </div>
+
+              <div className="overflow-hidden">
+                <h1
+                  className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.72s_ease-out_0.2s_forwards] font-bold uppercase leading-[0.92] tracking-[0.01em]"
+                  style={{
+                    fontFamily: 'var(--bsi-font-display-hero)',
+                    fontSize: 'clamp(3.1rem, 8vw, 6.8rem)',
+                    textShadow: '0 10px 50px rgba(0,0,0,0.55)',
+                  }}
+                >
+                  The Real Game
+                  <span className="block text-[var(--bsi-primary)]">Lives Between</span>
+                  <span className="block">The Coasts</span>
+                </h1>
+              </div>
+
+              <div className="mt-6 max-w-2xl overflow-hidden">
+                <p
+                  className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.72s_ease-out_0.34s_forwards] font-serif text-base leading-relaxed sm:text-lg"
+                  style={{ color: 'rgba(245, 240, 235, 0.88)' }}
+                >
+                  Live boards, park-adjusted analytics, and original reporting for the programs the prestige platforms keep skipping.
+                  BSI treats Tuesday night in the middle of the country like it matters, because it does.
+                </p>
+              </div>
+
+              <div className="mt-6 overflow-hidden">
+                <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.72s_ease-out_0.44s_forwards] flex flex-wrap items-center gap-3 text-[11px] uppercase tracking-[0.2em] sm:text-xs">
+                  <span className="heritage-stamp">Live Boards</span>
+                  <span style={{ color: 'rgba(245, 240, 235, 0.36)' }}>&#9670;</span>
+                  <span style={{ color: 'rgba(245, 240, 235, 0.72)' }}>Park-Adjusted Sabermetrics</span>
+                  <span style={{ color: 'rgba(245, 240, 235, 0.36)' }}>&#9670;</span>
+                  <span style={{ color: 'rgba(245, 240, 235, 0.72)' }}>Five Sports, One Standard</span>
+                </div>
+              </div>
+
+              <div className="mt-8 overflow-hidden">
+                <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.72s_ease-out_0.56s_forwards] flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                  <Link
+                    href="/scores"
+                    className="btn-heritage-fill px-7 py-3.5 text-sm"
+                    style={{ boxShadow: '0 18px 48px rgba(191, 87, 0, 0.22)' }}
+                  >
+                    Open Scores
+                  </Link>
+                  <Link href="/college-baseball" className="btn-heritage px-7 py-3.5 text-sm">
+                    Start With College Baseball
+                  </Link>
+                  <Link href="/college-baseball/savant" className="btn-heritage px-7 py-3.5 text-sm">
+                    See BSI Savant
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative hidden min-h-[360px] lg:block">
+              <div
+                className="absolute inset-y-8 right-0 w-full rounded-full blur-3xl"
+                aria-hidden="true"
+                style={{ background: 'radial-gradient(circle, rgba(191, 87, 0, 0.24) 0%, rgba(191, 87, 0, 0.02) 68%, transparent 100%)' }}
+              />
+              <div className="absolute bottom-0 right-0 h-[380px] w-[300px] opacity-80">
+                <Image
+                  src="/images/brand/bsi-mascot-400.png"
+                  alt=""
+                  fill
+                  aria-hidden="true"
+                  className="object-contain object-bottom drop-shadow-[0_25px_45px_rgba(0,0,0,0.45)]"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full animate-[ember-pulse_4s_ease-in-out_infinite]"
-        style={{
-          background: 'radial-gradient(circle, rgba(191, 87, 0, 0.12) 0%, rgba(191, 87, 0, 0.04) 40%, transparent 70%)',
-        }}
-        aria-hidden="true"
-      />
-
-      <div className="relative z-10 w-full min-w-0 max-w-5xl mx-auto text-center px-4 sm:px-6 lg:px-8 corner-marks py-16 sm:py-24">
-        {/* Heritage stamp kicker */}
-        <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-fade-in_0.6s_ease-out_forwards] mb-6 flex flex-col items-center gap-1">
-          <span className="text-[10px] uppercase tracking-[0.2em] font-semibold" style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-dust)', opacity: 0.7 }}>
-            Est. 2024
-          </span>
-          <span className="heritage-stamp">
-            Courage <span className="text-bsi-dust">//</span> Grit <span className="text-bsi-dust">//</span> Leadership
-          </span>
-        </div>
-
-        {/* BSI Shield Logo — visual anchor */}
-        <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-scale-in_0.8s_ease-out_0.1s_forwards] mb-8 flex justify-center">
-          <div className="relative w-[140px] h-[140px] sm:w-[180px] sm:h-[180px] md:w-[200px] md:h-[200px]">
-            <Image
-              src="/images/brand/bsi-mascot-400.png"
-              alt="Blaze Sports Intel"
-              fill
-              className="object-contain drop-shadow-[0_0_40px_rgba(191,87,0,0.3)]"
-              priority
-            />
-          </div>
-        </div>
-
-        {/* Section rule */}
-        <div className="flex justify-center mb-5 opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-fade-in_0.5s_ease-out_0.2s_forwards]">
-          <div className="section-rule-thick w-16" />
-        </div>
-
-        {/* H1 — Bebas Neue hero display, larger scale */}
-        <h1 className="font-bold uppercase tracking-tight leading-none mb-6 text-[clamp(3rem,8vw,6rem)]" style={{ fontFamily: 'var(--bsi-font-display-hero)' }}>
-          <span
-            className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.25s_forwards] block mb-2 text-[var(--bsi-bone)]"
-            style={{ textShadow: '2px 2px 0px rgba(0,0,0,0.7)' }}
-          >
-            Blaze Sports
-          </span>
-          <span
-            className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.35s_forwards] block"
-            style={{
-              WebkitTextStroke: '2px var(--bsi-primary)',
-              WebkitTextFillColor: 'transparent',
-              textShadow: '0 0 40px rgba(191, 87, 0, 0.3), 0 0 80px rgba(191, 87, 0, 0.1)',
-            }}
-          >
-            Intel
-          </span>
-        </h1>
-
-        {/* Slogan — front and center */}
-        <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.4s_forwards] mb-5 sm:mb-6">
-          <p
-            className="font-serif italic tracking-wide leading-none"
-            style={{
-              fontSize: 'clamp(1.05rem, 3vw, 1.5rem)',
-              color: 'var(--bsi-primary)',
-              textShadow: '0 0 30px rgba(191, 87, 0, 0.22)',
-              opacity: 0.92,
-            }}
-          >
-            Born to Blaze the Path Beaten Less
-          </p>
-        </div>
-
-        {/* Cormorant italic subhead — what's here today, why come back */}
-        <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.5s_forwards] max-w-[22rem] sm:max-w-2xl mx-auto mb-8 px-4 sm:px-4">
-          <p
-            className="font-serif italic text-[15px] sm:text-lg md:text-xl tracking-[0.04em] leading-7 sm:leading-relaxed"
-            style={{
-              color: 'rgba(245, 240, 235, 0.82)',
-              textShadow: '0 1px 12px rgba(0, 0, 0, 0.28)',
-            }}
-          >
-            <span className="text-[var(--heritage-bronze)]">&mdash;</span>{' '}
-            Park-adjusted sabermetrics across college baseball &amp; football, MLB, NBA &amp; NFL &mdash; built for athletes, fans, and front offices who trust data on game day.{' '}
-            <span className="text-[var(--heritage-bronze)]">&mdash;</span>
-          </p>
-        </div>
-
-        {/* Live proof — score strip */}
-        <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.55s_forwards] mb-10">
-          <DataErrorBoundary name="Score Strip" compact>
-            <HeroScoreStrip />
-          </DataErrorBoundary>
-        </div>
-
-        {/* CTAs — 1 primary + 2 supporting */}
-        <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.65s_forwards] flex flex-col sm:flex-row gap-4 justify-center">
-          <Link href="/scores" className="btn-heritage-fill px-6 py-3 text-sm">
-            Live Scores
-          </Link>
-          <Link href="/college-baseball" className="btn-heritage px-6 py-3 text-sm">
-            College Baseball
-          </Link>
-          <Link href="/college-baseball/savant" className="btn-heritage px-6 py-3 text-sm">
-            BSI Savant
-          </Link>
-        </div>
-
-        {/* Heritage stat marquee — no slogan repetition */}
-        <div className="mt-10 overflow-hidden score-ticker py-2 opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-fade-in_0.8s_ease-out_0.9s_forwards]">
-          <div className="marquee-track whitespace-nowrap">
-            {[0, 1].map((i) => (
-              <span key={i} className="inline-flex items-center gap-6 mr-6 text-[10px] uppercase tracking-[0.15em] text-[var(--bsi-dust)]">
-                <span>Free</span>
-                <span className="text-[var(--heritage-bronze)]">&#9670;</span>
-                <span>300+ D1 Teams</span>
-                <span className="text-[var(--heritage-bronze)]">&#9670;</span>
-                <span>wOBA</span>
-                <span className="text-[var(--heritage-bronze)]">&#9670;</span>
-                <span>wRC+</span>
-                <span className="text-[var(--heritage-bronze)]">&#9670;</span>
-                <span>FIP</span>
-                <span className="text-[var(--heritage-bronze)]">&#9670;</span>
-                <span>Live Scores</span>
-                <span className="text-[var(--heritage-bronze)]">&#9670;</span>
-                <span>Editorial</span>
-                <span className="text-[var(--heritage-bronze)]">&#9670;</span>
-                <span>5 Sports</span>
-                <span className="text-[var(--heritage-bronze)]">&#9670;</span>
-              </span>
-            ))}
-          </div>
-        </div>
+        data-home-proof-ribbon
+        className="relative z-20 mx-auto -mt-8 w-full max-w-6xl px-4 sm:-mt-10 sm:px-6 lg:-mt-12 lg:px-8"
+      >
+        <DataErrorBoundary name="Score Strip" compact>
+          <HeroScoreStrip />
+        </DataErrorBoundary>
       </div>
-    </section>
+    </>
   );
 }

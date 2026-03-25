@@ -10,6 +10,12 @@ export const metadata: Metadata = {
     title: 'NFL News | Blaze Sports Intel',
     description: 'NFL news, trade rumors, and injury updates.',
    images: ogImage('/images/og-nfl.png') },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'NFL News | Blaze Sports Intel',
+    description: 'NFL news, trade rumors, and injury updates.',
+    images: ['/images/og-nfl.png'],
+  },
 };
 
 export default function NFLNewsLayout({ children }: { children: ReactNode }) {

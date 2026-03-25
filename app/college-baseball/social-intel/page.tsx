@@ -8,6 +8,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Social Intelligence — College Baseball',
     description: 'Live injury, portal, and recruiting signals from the social web.',
+    images: [{ url: '/images/og-college-baseball.png', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Social Intelligence — College Baseball',
+    description: 'Live injury, portal, and recruiting signals from the social web.',
+    images: ['/images/og-college-baseball.png'],
   },
 };
 

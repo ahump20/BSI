@@ -18,8 +18,10 @@ import { SportInfoCard } from '@/components/sports/SportInfoCard';
 import { formatTimestamp } from '@/lib/utils/timezone';
 import { getSeasonPhase } from '@/lib/season';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { DegradedNotice } from '@/components/ui/DegradedNotice';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useSportData } from '@/lib/hooks/useSportData';
+import { normalizeDataMeta } from '@/lib/utils/data-meta';
 import type { DataMeta } from '@/lib/types/data-meta';
 
 const mlbFeatures = [
@@ -336,6 +338,8 @@ export default function MLBPage() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <TabBar tabs={tabs} active={activeTab} onChange={(id) => setActiveTab(id as TabType)} size="sm" />
+
+            {meta && <DegradedNotice meta={normalizeDataMeta(meta)} />}
 
             {/* Standings Tab */}
             <TabPanel id="standings" activeTab={activeTab}>

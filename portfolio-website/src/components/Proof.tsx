@@ -56,7 +56,7 @@ export default function Proof() {
     >
       <div className="container-custom">
         <motion.div
-          initial="visible"
+          initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.05 }}
           variants={staggerContainer}
@@ -98,7 +98,7 @@ export default function Proof() {
                 </p>
               </a>
 
-              <div className="space-y-4 border-l border-bone/10 pl-0 lg:pl-8">
+              <div className="space-y-4 border-t border-bone/10 pt-6 lg:border-t-0 lg:pt-0 lg:border-l lg:pl-8">
                 <p className="font-mono text-[0.6rem] uppercase tracking-[0.28em] text-warm-gray/70">
                   Why It Matters
                 </p>

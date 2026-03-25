@@ -333,8 +333,8 @@ export default function AnalyticsPage() {
                   Unlock Full Analytics Access
                 </h2>
                 <p className="text-text-secondary max-w-xl mx-auto mb-6">
-                  Pro subscribers get access to all analytics tools. Enterprise unlocks historical
-                  data, API access, and custom exports.
+                  Pro subscribers get access to all analytics tools, including historical
+                  data and advanced exports.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button href="/pricing" variant="primary" size="lg">

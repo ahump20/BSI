@@ -119,7 +119,21 @@ export default function GameLayoutShell({ config, children }: GameLayoutShellPro
   const params = useParams();
   const pathname = usePathname();
   const router = useRouter();
-  const gameId = params?.gameId as string;
+
+  // Static export serves a "placeholder" shell for game IDs that weren't
+  // pre-rendered. useParams() returns "placeholder" in that case, but the
+  // browser URL has the real game ID. Extract it from the pathname.
+  const rawParamId = params?.gameId as string;
+  const gameId = (() => {
+    if (rawParamId && rawParamId !== 'placeholder') return rawParamId;
+    // pathname looks like /{sportSlug}/game/{realId}/... — extract segment [3]
+    const segments = pathname?.split('/').filter(Boolean) ?? [];
+    const gameIdx = segments.indexOf('game');
+    if (gameIdx >= 0 && segments[gameIdx + 1] && segments[gameIdx + 1] !== 'placeholder') {
+      return segments[gameIdx + 1];
+    }
+    return rawParamId; // fallback
+  })();
 
   const [game, setGame] = useState<AnyGameData | null>(null);
   const [loading, setLoading] = useState(true);

@@ -4,6 +4,10 @@
 # Redirect www to apex domain (301 permanent)
 https://www.blazesportsintel.com/* https://blazesportsintel.com/:splat 301
 
+# Route truth collapse — confirmed redirects
+/intelligence/* /intel/:splat 301
+/glossary /college-baseball/savant/glossary 301
+
 # Handle common typos and legacy URLs
 /home /dashboard 301
 /sports /dashboard 301

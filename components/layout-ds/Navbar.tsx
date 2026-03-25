@@ -288,8 +288,27 @@ function MoreDropdown({ items }: { items: NavItem[] }) {
 
 export function Navbar({ primary, leagues, secondary, analytics = [] }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const tickerText = useNewsTicker();
+  const isHome = pathname === '/';
+
+  useEffect(() => {
+    if (!isHome) {
+      setScrolled(true);
+      return;
+    }
+
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 36);
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isHome]);
+
+  const navIsOverlay = isHome && !scrolled && !menuOpen;
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/';
@@ -304,7 +323,13 @@ export function Navbar({ primary, leagues, secondary, analytics = [] }: NavbarPr
   return (
     <>
       <nav
-        className="sticky top-0 z-40 bg-midnight/95 backdrop-blur-xl border-b border-border-subtle"
+        className={`transition-all duration-500 ${
+          isHome ? 'fixed inset-x-0 top-0 z-50' : 'sticky top-0 z-40'
+        } ${
+          navIsOverlay
+            ? 'border-transparent bg-gradient-to-b from-black/80 via-black/35 to-transparent'
+            : 'border-b border-border-subtle bg-midnight/92 backdrop-blur-xl shadow-[0_18px_50px_rgba(0,0,0,0.28)]'
+        }`}
         role="navigation"
         aria-label="Main navigation"
       >
@@ -347,7 +372,7 @@ export function Navbar({ primary, leagues, secondary, analytics = [] }: NavbarPr
             <div className="flex items-center gap-3">
               {/* News ticker — desktop only, subtle */}
               <span
-                className="hidden lg:block text-xs text-text-muted max-w-[200px] truncate"
+                className={`hidden lg:block max-w-[200px] truncate text-xs ${isHome ? 'xl:hidden' : ''} text-text-muted`}
                 aria-live="polite"
               >
                 {tickerText}
@@ -356,12 +381,20 @@ export function Navbar({ primary, leagues, secondary, analytics = [] }: NavbarPr
               {/* Cmd+K search trigger */}
               <button
                 onClick={openCommandPalette}
-                className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-sm bg-surface-light border border-border-subtle text-text-muted hover:text-text-secondary hover:bg-surface-medium transition-all text-sm"
+                className={`hidden md:flex items-center gap-2 rounded-sm border px-3 py-1.5 text-sm transition-all ${
+                  navIsOverlay
+                    ? 'border-white/10 bg-black/20 text-[rgba(245,240,235,0.78)] hover:bg-black/35 hover:text-[var(--bsi-bone)]'
+                    : 'border-border-subtle bg-surface-light text-text-muted hover:bg-surface-medium hover:text-text-secondary'
+                }`}
                 aria-label="Open search"
               >
                 <Search className="w-3.5 h-3.5" />
                 <span className="hidden lg:inline">Search...</span>
-                <kbd className="hidden lg:inline text-[10px] text-text-muted bg-surface-light px-1.5 py-0.5 rounded-sm font-mono">
+                <kbd
+                  className={`hidden rounded-sm px-1.5 py-0.5 font-mono text-[10px] lg:inline ${
+                    navIsOverlay ? 'bg-black/35 text-[rgba(245,240,235,0.65)]' : 'bg-surface-light text-text-muted'
+                  }`}
+                >
                   ⌘K
                 </kbd>
               </button>
@@ -369,7 +402,7 @@ export function Navbar({ primary, leagues, secondary, analytics = [] }: NavbarPr
               {/* Mobile: search icon */}
               <button
                 onClick={openCommandPalette}
-                className="md:hidden p-2 text-text-muted hover:text-text-primary transition-colors"
+                className="md:hidden h-11 w-11 flex items-center justify-center rounded-sm border border-border-subtle bg-surface-light/70 text-text-muted hover:text-text-primary hover:bg-surface-medium transition-colors"
                 aria-label="Open search"
               >
                 <Search className="w-5 h-5" />
@@ -378,7 +411,7 @@ export function Navbar({ primary, leagues, secondary, analytics = [] }: NavbarPr
               {/* Mobile hamburger */}
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="md:hidden p-2 text-text-secondary hover:text-text-primary transition-colors"
+                className="md:hidden h-11 w-11 flex items-center justify-center rounded-sm border border-border-subtle bg-surface-light/70 text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-colors"
                 aria-label={menuOpen ? 'Close menu' : 'Open menu'}
                 aria-expanded={menuOpen}
               >

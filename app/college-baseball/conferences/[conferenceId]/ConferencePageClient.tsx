@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { withAlpha } from '@/lib/utils/color';
 import { getReadApiUrl } from '@/lib/utils/public-api';
+import { normalizeTeamName } from '@/lib/utils/format';
 
 /* ── Live data types ───────────────────────────────────────────────── */
 
@@ -85,9 +86,6 @@ interface PortalEntry {
   [key: string]: unknown;
 }
 
-function normalize(s: string): string {
-  return s.toLowerCase().replace(/[^a-z0-9]/g, '');
-}
 
 /** Hook: fetch live standings, savant, NIL, portal data for a conference */
 function useConferenceLiveData(confName: string) {
@@ -108,12 +106,12 @@ function useConferenceLiveData(confName: string) {
           fetch(getReadApiUrl('/api/college-baseball/transfer-portal')).catch(() => null),
         ]);
 
-        const n = normalize(confName);
+        const n = normalizeTeamName(confName);
 
         if (standingsRes?.ok) {
           const data = await standingsRes.json();
           const all = data.standings || data.data || data.teams || [];
-          setStandings((Array.isArray(all) ? all : []).filter((t: StandingsTeam) => normalize(t.conference || '') === n));
+          setStandings((Array.isArray(all) ? all : []).filter((t: StandingsTeam) => normalizeTeamName(t.conference || '') === n));
           if (data.meta?.fetched_at) setLastUpdated(data.meta.fetched_at);
         }
         if (savantRes?.ok) {
@@ -129,23 +127,23 @@ function useConferenceLiveData(confName: string) {
                 wrc_plus: entry.wrc_plus,
                 ops_plus: entry.ops_plus,
               }))
-              .filter((s: SavantEntry) => normalize(s.conference || '') === n),
+              .filter((s: SavantEntry) => normalizeTeamName(s.conference || '') === n),
           );
         }
         if (nilRes?.ok) {
           const data = await nilRes.json();
           const all = data.data || [];
-          setNilPlayers((Array.isArray(all) ? all : []).filter((e: NILEntry) => normalize(e.conference || '') === n));
+          setNilPlayers((Array.isArray(all) ? all : []).filter((e: NILEntry) => normalizeTeamName(e.conference || '') === n));
         }
         if (portalRes?.ok) {
           const data = await portalRes.json();
           const entries = data.entries || data.data || [];
           setPortalEntries(
             (Array.isArray(entries) ? entries : []).filter((e: PortalEntry) => {
-              const from = normalize(e.fromSchool || e.from_school || '');
-              const to = normalize(e.toSchool || e.to_school || '');
+              const from = normalizeTeamName(e.fromSchool || e.from_school || '');
+              const to = normalizeTeamName(e.toSchool || e.to_school || '');
               // Show portal entries where the player left or arrived at a conference team
-              return standings.some((t) => normalize(t.team_name) === from || normalize(t.team_name) === to);
+              return standings.some((t) => normalizeTeamName(t.team_name) === from || normalizeTeamName(t.team_name) === to);
             }),
           );
         }

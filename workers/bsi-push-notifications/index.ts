@@ -1,310 +1,335 @@
-interface Env {
-  DB: D1Database;
-  CACHE: KVNamespace;
-  EXPO_PUSH_URL: string;
-  RATE_LIMIT_MINUTES: string;
-  ENVIRONMENT: string;
+import type { ScheduledController } from '@cloudflare/workers-types';
+import { Hono } from 'hono';
+import { securityMiddleware } from '../shared/security';
+
+type PushType = 'score_update' | 'article';
+
+interface PushRegistrationBody {
+  expoPushToken: string;
+  favoriteTeams: string[];
 }
 
-interface PushRegistration {
-  id: string;
-  expo_token: string;
-  platform: string;
-  favorite_teams: string;
-  active_sports: string;
-  enabled: number;
+interface NormalizedGame {
+  gameId: string;
+  sport: string;
+  status: string;
+  homeTeam: string;
+  awayTeam: string;
+  homeScore: number;
+  awayScore: number;
 }
 
-interface ExpoPushMessage {
-  to: string;
-  title: string;
-  body: string;
-  data?: Record<string, unknown>;
-  sound?: string;
-  badge?: number;
-  categoryId?: string;
+interface CachedScoresPayload {
+  games?: unknown[];
+  data?: unknown[];
 }
 
-interface ScoreGame {
-  id: string;
-  sport?: string;
-  status?: string;
-  homeTeam?: { name?: string; abbreviation?: string; score?: number };
-  awayTeam?: { name?: string; abbreviation?: string; score?: number };
+const app = new Hono<{ Bindings: Env }>();
+
+app.use('*', securityMiddleware);
+
+app.use('*', async (c, next) => {
+  if (c.req.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      },
+    });
+  }
+
+  await next();
+
+  c.header('Access-Control-Allow-Origin', '*');
+  c.header('Vary', 'Origin');
+});
+
+function asNonEmptyString(value: unknown): string | null {
+  return typeof value === 'string' && value.trim().length > 0 ? value.trim() : null;
 }
 
-// ── Registration Handler ──────────────────────────────────────
-async function handleRegister(request: Request, env: Env): Promise<Response> {
+function asStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((item) => (typeof item === 'string' ? item.trim().toUpperCase() : ''))
+    .filter((item) => item.length > 0)
+    .slice(0, 25);
+}
+
+function parseRegisterBody(body: unknown): PushRegistrationBody | null {
+  if (!body || typeof body !== 'object') return null;
+
+  const source = body as Record<string, unknown>;
+  const expoPushToken = asNonEmptyString(source.expoPushToken);
+  const favoriteTeams = asStringArray(source.favoriteTeams);
+
+  if (!expoPushToken) return null;
+  if (!expoPushToken.startsWith('ExponentPushToken[') && !expoPushToken.startsWith('ExpoPushToken[')) return null;
+
+  return { expoPushToken, favoriteTeams };
+}
+
+function getTextField(record: Record<string, unknown>, candidates: string[]): string {
+  for (const key of candidates) {
+    const value = record[key];
+    if (typeof value === 'string' && value.trim()) return value.trim();
+    if (typeof value === 'number') return String(value);
+  }
+  return '';
+}
+
+function getNumberField(record: Record<string, unknown>, candidates: string[]): number {
+  for (const key of candidates) {
+    const value = record[key];
+    if (typeof value === 'number' && Number.isFinite(value)) return value;
+    if (typeof value === 'string') {
+      const parsed = Number(value);
+      if (Number.isFinite(parsed)) return parsed;
+    }
+  }
+  return 0;
+}
+
+function normalizeGame(raw: unknown): NormalizedGame | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const game = raw as Record<string, unknown>;
+
+  const gameId = getTextField(game, ['gameId', 'id', 'eventId']);
+  const sport = getTextField(game, ['sport', 'league']).toLowerCase();
+  const status = getTextField(game, ['status', 'gameStatus', 'displayStatus']).toLowerCase();
+
+  const homeTeam = getTextField(game, ['homeTeamAbbr', 'home_abbr', 'homeTeam', 'home_name']);
+  const awayTeam = getTextField(game, ['awayTeamAbbr', 'away_abbr', 'awayTeam', 'away_name']);
+  const homeScore = getNumberField(game, ['homeScore', 'home_score']);
+  const awayScore = getNumberField(game, ['awayScore', 'away_score']);
+
+  if (!gameId || !sport || !homeTeam || !awayTeam) return null;
+
+  return { gameId, sport, status, homeTeam, awayTeam, homeScore, awayScore };
+}
+
+function getLeader(game: NormalizedGame): string {
+  if (game.homeScore === game.awayScore) return 'tie';
+  return game.homeScore > game.awayScore ? game.homeTeam : game.awayTeam;
+}
+
+function isLiveStatus(status: string): boolean {
+  return ['live', 'in_progress', 'in progress', 'ongoing'].some((token) => status.includes(token));
+}
+
+function isFinalStatus(status: string): boolean {
+  return ['final', 'completed'].some((token) => status.includes(token));
+}
+
+async function readState(env: Env, gameId: string): Promise<NormalizedGame | null> {
+  const value = await env.BSI_PROD_CACHE.get(`push:last:${gameId}`);
+  if (!value) return null;
+
   try {
-    const body = (await request.json()) as {
-      token?: string;
-      favoriteTeams?: string[];
-      activeSports?: string[];
+    const parsed = JSON.parse(value) as NormalizedGame;
+    if (!parsed || typeof parsed !== 'object') return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+async function writeState(env: Env, game: NormalizedGame): Promise<void> {
+  await env.BSI_PROD_CACHE.put(`push:last:${game.gameId}`, JSON.stringify(game), {
+    expirationTtl: 60 * 60 * 24,
+  });
+}
+
+function buildPushBody(game: NormalizedGame, trigger: 'game_start' | 'lead_change' | 'final'): { title: string; body: string } {
+  const score = `${game.awayTeam} ${game.awayScore} - ${game.homeTeam} ${game.homeScore}`;
+
+  if (trigger === 'game_start') {
+    return {
+      title: `${game.awayTeam} at ${game.homeTeam} is live`,
+      body: `Game start: ${score}`,
     };
-
-    if (!body.token || !body.token.startsWith('ExponentPushToken[')) {
-      return new Response(
-        JSON.stringify({ error: 'Invalid Expo push token' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } },
-      );
-    }
-
-    const favoriteTeams = JSON.stringify(body.favoriteTeams ?? []);
-    const activeSports = JSON.stringify(
-      body.activeSports ?? [
-        'college-baseball',
-        'mlb',
-        'nfl',
-        'cfb',
-        'nba',
-      ],
-    );
-
-    await env.DB.prepare(
-      `INSERT INTO push_registrations (expo_token, favorite_teams, active_sports)
-       VALUES (?, ?, ?)
-       ON CONFLICT(expo_token) DO UPDATE SET
-         favorite_teams = excluded.favorite_teams,
-         active_sports = excluded.active_sports,
-         enabled = 1,
-         updated_at = datetime('now')`,
-    )
-      .bind(body.token, favoriteTeams, activeSports)
-      .run();
-
-    return new Response(JSON.stringify({ success: true }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Unknown error';
-    return new Response(JSON.stringify({ error: message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-}
-
-// ── Internal Send Handler ─────────────────────────────────────
-async function handleSend(request: Request, env: Env): Promise<Response> {
-  const adminKey = request.headers.get('X-Admin-Key');
-  if (!adminKey) {
-    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' },
-    });
   }
 
-  try {
-    const body = (await request.json()) as {
-      title: string;
-      body: string;
-      data?: Record<string, unknown>;
-      sport?: string;
+  if (trigger === 'final') {
+    return {
+      title: 'Final score update',
+      body: score,
     };
-
-    const registrations = await env.DB.prepare(
-      'SELECT * FROM push_registrations WHERE enabled = 1',
-    )
-      .all<PushRegistration>();
-
-    const targets = registrations.results.filter((reg) => {
-      if (!body.sport) return true;
-      const sports: string[] = JSON.parse(reg.active_sports);
-      return sports.includes(body.sport);
-    });
-
-    const messages: ExpoPushMessage[] = targets.map((reg) => ({
-      to: reg.expo_token,
-      title: body.title,
-      body: body.body,
-      data: body.data,
-      sound: 'default',
-    }));
-
-    if (messages.length > 0) {
-      await sendExpoPush(messages, env);
-    }
-
-    return new Response(
-      JSON.stringify({ success: true, sent: messages.length }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } },
-    );
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Unknown error';
-    return new Response(JSON.stringify({ error: message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-}
-
-// ── Expo Push Sender ──────────────────────────────────────────
-async function sendExpoPush(
-  messages: ExpoPushMessage[],
-  env: Env,
-): Promise<void> {
-  // Expo recommends batches of 100
-  const batchSize = 100;
-  for (let i = 0; i < messages.length; i += batchSize) {
-    const batch = messages.slice(i, i + batchSize);
-    await fetch(env.EXPO_PUSH_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(batch),
-    });
-  }
-}
-
-// ── Rate Limiter ──────────────────────────────────────────────
-async function isRateLimited(
-  env: Env,
-  registrationId: string,
-  gameId: string,
-): Promise<boolean> {
-  const minutes = parseInt(env.RATE_LIMIT_MINUTES, 10) || 15;
-  const cutoff = new Date(Date.now() - minutes * 60 * 1000).toISOString();
-
-  const result = await env.DB.prepare(
-    `SELECT COUNT(*) as count FROM push_send_log
-     WHERE registration_id = ? AND game_id = ? AND sent_at > ?`,
-  )
-    .bind(registrationId, gameId, cutoff)
-    .first<{ count: number }>();
-
-  return (result?.count ?? 0) > 0;
-}
-
-async function logSend(
-  env: Env,
-  registrationId: string,
-  gameId: string,
-): Promise<void> {
-  await env.DB.prepare(
-    'INSERT INTO push_send_log (registration_id, game_id) VALUES (?, ?)',
-  )
-    .bind(registrationId, gameId)
-    .run();
-}
-
-// ── Scheduled Handler (cron) ──────────────────────────────────
-async function handleScheduled(env: Env): Promise<void> {
-  // Fetch live scores from cache
-  const cachedScores = await env.CACHE.get('scores:overview', 'json') as
-    | Record<string, ScoreGame[]>
-    | null;
-
-  if (!cachedScores) return;
-
-  // Find live games
-  const liveGames: ScoreGame[] = [];
-  for (const games of Object.values(cachedScores)) {
-    if (Array.isArray(games)) {
-      liveGames.push(
-        ...games.filter(
-          (g) => g.status === 'live' || g.status === 'in_progress',
-        ),
-      );
-    }
   }
 
-  if (liveGames.length === 0) return;
-
-  // Get all active registrations
-  const registrations = await env.DB.prepare(
-    'SELECT * FROM push_registrations WHERE enabled = 1',
-  )
-    .all<PushRegistration>();
-
-  if (registrations.results.length === 0) return;
-
-  const messages: ExpoPushMessage[] = [];
-
-  for (const game of liveGames) {
-    const home = game.homeTeam?.name ?? game.homeTeam?.abbreviation ?? 'Home';
-    const away = game.awayTeam?.name ?? game.awayTeam?.abbreviation ?? 'Away';
-    const homeScore = game.homeTeam?.score ?? 0;
-    const awayScore = game.awayTeam?.score ?? 0;
-
-    for (const reg of registrations.results) {
-      // Check sport filter
-      const activeSports: string[] = JSON.parse(reg.active_sports);
-      if (game.sport && !activeSports.includes(game.sport)) continue;
-
-      // Check rate limit
-      const limited = await isRateLimited(env, reg.id, game.id);
-      if (limited) continue;
-
-      messages.push({
-        to: reg.expo_token,
-        title: `${away} @ ${home}`,
-        body: `${away} ${awayScore} - ${home} ${homeScore}`,
-        data: {
-          gameId: game.id,
-          sport: game.sport ?? '',
-          type: 'live_score',
-        },
-        sound: 'default',
-      });
-
-      await logSend(env, reg.id, game.id);
-    }
-  }
-
-  if (messages.length > 0) {
-    await sendExpoPush(messages, env);
-  }
-}
-
-// ── CORS ──────────────────────────────────────────────────────
-function corsHeaders(): Record<string, string> {
   return {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, X-Admin-Key, X-BSI-Key',
+    title: 'Lead change alert',
+    body: score,
   };
 }
 
-// ── Worker Export ─────────────────────────────────────────────
-export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
-    if (request.method === 'OPTIONS') {
-      return new Response(null, { status: 204, headers: corsHeaders() });
+async function isRateLimited(env: Env, token: string, gameId: string, now: number): Promise<boolean> {
+  const key = `push:rate:${token}:${gameId}`;
+  const existing = await env.RATE_LIMIT_KV.get(key);
+  if (existing) return true;
+  await env.RATE_LIMIT_KV.put(key, String(now), { expirationTtl: 60 * 15 });
+  return false;
+}
+
+async function sendExpoPush(token: string, title: string, body: string, data: { type: PushType; id: string; sport: string }): Promise<void> {
+  const response = await fetch('https://exp.host/--/api/v2/push/send', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ to: token, sound: 'default', title, body, data }),
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Expo push failed: ${response.status} ${text}`);
+  }
+}
+
+app.post('/api/push/register', async (c) => {
+  try {
+    const payload = parseRegisterBody(await c.req.json());
+    if (!payload) {
+      return c.json({ error: 'Invalid payload' }, 400);
     }
 
-    const url = new URL(request.url);
+    const favoriteTeamsJson = JSON.stringify(payload.favoriteTeams);
 
-    if (url.pathname === '/api/push/register' && request.method === 'POST') {
-      const response = await handleRegister(request, env);
-      const headers = new Headers(response.headers);
-      for (const [k, v] of Object.entries(corsHeaders())) headers.set(k, v);
-      return new Response(response.body, {
-        status: response.status,
-        headers,
-      });
+    await c.env.DB.prepare(
+      `INSERT INTO push_registrations (expo_push_token, favorite_teams, platform, created_at, updated_at)
+       VALUES (?, ?, 'ios', datetime('now'), datetime('now'))
+       ON CONFLICT(expo_push_token) DO UPDATE SET
+         favorite_teams = excluded.favorite_teams,
+         updated_at = datetime('now')`
+    ).bind(payload.expoPushToken, favoriteTeamsJson).run();
+
+    return c.json({ ok: true }, 200);
+  } catch (error) {
+    console.error('[bsi-push-notifications] register failed', error);
+    return c.json({ error: 'Registration failed' }, 500);
+  }
+});
+
+app.post('/api/push/send', async (c) => {
+  const authHeader = c.req.header('Authorization') ?? '';
+  const secret = await c.env.BSI_KEYS.get('PUSH_INTERNAL_SECRET');
+
+  if (!secret || authHeader !== `Bearer ${secret}`) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+
+  try {
+    const body = await c.req.json() as { title?: unknown; body?: unknown; data?: unknown; token?: unknown };
+
+    const token = asNonEmptyString(body.token);
+    const title = asNonEmptyString(body.title);
+    const messageBody = asNonEmptyString(body.body);
+
+    if (!token || !title || !messageBody || typeof body.data !== 'object' || body.data === null) {
+      return c.json({ error: 'Invalid payload' }, 400);
     }
 
-    if (url.pathname === '/api/push/send' && request.method === 'POST') {
-      const response = await handleSend(request, env);
-      const headers = new Headers(response.headers);
-      for (const [k, v] of Object.entries(corsHeaders())) headers.set(k, v);
-      return new Response(response.body, {
-        status: response.status,
-        headers,
-      });
+    const dataRecord = body.data as Record<string, unknown>;
+    const type = dataRecord.type === 'article' ? 'article' : 'score_update';
+    const id = asNonEmptyString(dataRecord.id);
+    const sport = asNonEmptyString(dataRecord.sport) ?? 'unknown';
+
+    if (!id) {
+      return c.json({ error: 'Invalid payload' }, 400);
     }
 
-    return new Response(JSON.stringify({ error: 'Not found' }), {
-      status: 404,
-      headers: { 'Content-Type': 'application/json', ...corsHeaders() },
-    });
-  },
+    await sendExpoPush(token, title, messageBody, { type, id, sport });
+    return c.json({ ok: true }, 200);
+  } catch (error) {
+    console.error('[bsi-push-notifications] direct send failed', error);
+    return c.json({ error: 'Send failed' }, 500);
+  }
+});
 
-  async scheduled(
-    _event: ScheduledEvent,
-    env: Env,
-    _ctx: ExecutionContext,
-  ): Promise<void> {
-    await handleScheduled(env);
+app.get('/health', (c) => c.json({ ok: true, service: 'bsi-push-notifications' }));
+
+async function runScheduledTask(env: Env): Promise<void> {
+  try {
+    const response = await fetch('https://blazesportsintel.com/api/scores/cached');
+    if (!response.ok) throw new Error(`scores fetch failed (${response.status})`);
+
+    const payload = await response.json() as CachedScoresPayload;
+    const rows = Array.isArray(payload.games) ? payload.games : Array.isArray(payload.data) ? payload.data : [];
+    const games = rows.map(normalizeGame).filter((g): g is NormalizedGame => g !== null);
+
+    if (!games.length) return;
+
+    const registrationsRaw = await env.DB.prepare(
+      'SELECT expo_push_token, favorite_teams FROM push_registrations WHERE platform = ?'
+    ).bind('ios').all();
+
+    const registrations = registrationsRaw.results as Array<{ expo_push_token: string; favorite_teams: string }>;
+    if (!registrations.length) return;
+
+    const now = Date.now();
+
+    for (const game of games) {
+      const previous = await readState(env, game.gameId);
+      await writeState(env, game);
+
+      let trigger: 'game_start' | 'lead_change' | 'final' | null = null;
+
+      if (!previous && isLiveStatus(game.status)) {
+        trigger = 'game_start';
+      } else if (previous && !isFinalStatus(previous.status) && isFinalStatus(game.status)) {
+        trigger = 'final';
+      } else if (previous && getLeader(previous) !== getLeader(game) && getLeader(game) !== 'tie') {
+        trigger = 'lead_change';
+      }
+
+      if (!trigger) continue;
+
+      const pushContent = buildPushBody(game, trigger);
+
+      for (const registration of registrations) {
+        let favorites: string[] = [];
+        try {
+          const parsed = JSON.parse(registration.favorite_teams) as unknown;
+          favorites = asStringArray(parsed);
+        } catch {
+          favorites = [];
+        }
+
+        const matchesTeam = favorites.length === 0
+          ? false
+          : favorites.includes(game.homeTeam.toUpperCase()) || favorites.includes(game.awayTeam.toUpperCase());
+
+        if (!matchesTeam) continue;
+
+        const rateLimited = await isRateLimited(env, registration.expo_push_token, game.gameId, now);
+        if (rateLimited) continue;
+
+        try {
+          await sendExpoPush(registration.expo_push_token, pushContent.title, pushContent.body, {
+            type: 'score_update',
+            id: game.gameId,
+            sport: game.sport,
+          });
+        } catch (error) {
+          console.error('[bsi-push-notifications] scheduled send failed', error);
+        }
+      }
+    }
+  } catch (error) {
+    console.error('[bsi-push-notifications] scheduled task failed', error);
+  }
+}
+
+const worker: ExportedHandler<Env> = {
+  fetch: app.fetch,
+  scheduled: (event: ScheduledController, env: Env, ctx: ExecutionContext) => {
+    void event;
+    ctx.waitUntil((async () => {
+      await runScheduledTask(env);
+    })());
   },
 };
+
+export default worker;

@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Sabermetrics | College Baseball | BSI',
   description:
-    'Advanced sabermetric analytics for D1 college baseball — wOBA, wRC+, FIP, ERA-, and park-adjusted metrics across 300+ programs.',
+    'Advanced sabermetric analytics for D1 college baseball — wOBA, wRC+, FIP, ERA-, and park-adjusted metrics across every program.',
   openGraph: {
     title: 'Sabermetrics | College Baseball | BSI',
     description:

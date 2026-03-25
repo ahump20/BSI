@@ -9,7 +9,9 @@ import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { DegradedDataBanner } from '@/components/ui/DegradedDataBanner';
 import { formatTimestamp } from '@/lib/utils/timezone';
+import type { DataMeta } from '@/lib/types/data-meta';
 
 interface Team {
   name: string;
@@ -407,7 +409,7 @@ const staticStandings: Conference[] = [
 export default function NBAStandingsPage() {
   const [selectedConference, setSelectedConference] = useState<string>('Eastern Conference');
 
-  const { data: standingsData, loading } = useSportData<{ standings?: Conference[] }>('/api/nba/standings');
+  const { data: standingsData, loading } = useSportData<{ standings?: Conference[]; meta?: DataMeta }>('/api/nba/standings');
 
   const standings = standingsData?.standings && standingsData.standings.length > 0
     ? standingsData.standings
@@ -484,6 +486,8 @@ export default function NBAStandingsPage() {
         {/* Standings Table */}
         <Section padding="lg" background="charcoal">
           <Container>
+            <DegradedDataBanner degraded={!!standingsData?.meta?.degraded} source={standingsData?.meta?.dataSource} />
+
             {loading ? (
               <Card variant="default" padding="lg">
                 <div className="animate-pulse space-y-4">

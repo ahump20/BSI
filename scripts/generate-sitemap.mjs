@@ -16,13 +16,25 @@ const SITE_URL = 'https://blazesportsintel.com';
 const APP_DIR = join(import.meta.dirname, '..', 'app');
 const OUT_PATH = join(import.meta.dirname, '..', 'public', 'sitemap.xml');
 
-// Routes excluded from sitemap (auth, admin, internal)
+// Routes excluded from sitemap (auth, internal, and unlisted product routes)
 const EXCLUDED_PREFIXES = [
   '/auth/',
   '/settings',
-  '/dashboard/admin',
+  '/dashboard/',
   '/checkout/',
   '/vision-AI-Intelligence',
+  // PASS 1A: hidden/archived routes — source files kept, removed from discovery
+  '/analytics/',
+  '/models/',
+  '/coverage/',
+  '/blog-post-feed/',
+  '/college-baseball/analytics/',
+  '/college-baseball/sabermetrics/',
+  '/arcade/wc3-dashboard/',
+  '/mlb/abs/',
+  '/wbc/',
+  '/intelligence/',
+  '/glossary/',        // 301 redirects to /college-baseball/savant/glossary
 ];
 
 // Dynamic route segments — excluded (they need generateStaticParams, not sitemap entries)
@@ -63,17 +75,9 @@ function routeMeta(route) {
   if (/\/college-baseball\/[^/]+-intelligence\//.test(route))
     return { changefreq: 'daily', priority: '0.7' };
 
-  // Models/methodology
-  if (route.startsWith('/models/'))
-    return { changefreq: 'weekly', priority: '0.6' };
-
   // Editorial content
   if (/\/editorial\//.test(route) || /\/preseason\//.test(route))
     return { changefreq: 'weekly', priority: '0.7' };
-
-  // Dashboard
-  if (route === '/dashboard/')
-    return { changefreq: 'daily', priority: '0.7' };
 
   // Pricing
   if (route === '/pricing/')

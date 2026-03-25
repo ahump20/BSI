@@ -16,35 +16,23 @@ test.describe('Homepage smoke tests', () => {
     const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
     expect(response?.status()).toBe(200);
     await expect(page.locator('body')).toBeVisible();
+    await expect(page.locator('[data-home-hero]')).toBeVisible();
   });
 
-  test('hero section is visible with Blaze Sports text', async ({ page }) => {
+  test('hero section carries the new thesis and proof ribbon', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    const hero = page.locator('section').first();
-    await expect(hero).toBeVisible();
-
-    const blazeSportsText = page.getByText('Blaze Sports', { exact: false });
-    await expect(blazeSportsText.first()).toBeVisible();
+    await expect(page.locator('[data-home-hero]')).toBeVisible();
+    await expect(page.locator('[data-home-proof-ribbon]')).toBeVisible();
+    await expect(page.getByRole('heading', { name: /The Real Game Lives Between The Coasts/i })).toBeVisible();
   });
 
-  test('at least one CTA button is visible and links to a valid page', async ({ page }) => {
+  test('primary homepage CTA is visible and wired', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    const ctaButtons = page.locator('a[href]:is(.btn-heritage, .btn-heritage-fill, [class*="btn"], [role="button"])');
-    const fallbackLinks = page.locator('a[href]').filter({ hasText: /(explore|get started|subscribe|sign up|learn more|try|view|discover)/i });
-
-    const ctaCount = await ctaButtons.count();
-    const fallbackCount = await fallbackLinks.count();
-
-    expect(ctaCount + fallbackCount).toBeGreaterThan(0);
-
-    const target = ctaCount > 0 ? ctaButtons.first() : fallbackLinks.first();
+    const target = page.getByRole('link', { name: /^Open Scores$/i });
     await expect(target).toBeVisible();
-
-    const href = await target.getAttribute('href');
-    expect(href).toBeTruthy();
-    expect(href).not.toBe('#');
+    await expect(target).toHaveAttribute('href', '/scores');
   });
 
   test('mobile bottom nav renders', async ({ page, isMobile }) => {
@@ -72,25 +60,10 @@ test.describe('Homepage smoke tests', () => {
     expect(realErrors).toHaveLength(0);
   });
 
-  test('PlatformVitals section renders with non-zero numbers', async ({ page }) => {
+  test('flagship section renders on the homepage', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-
-    // Check for either specific stat text or the section containing numbers
-    const vitalsIndicators = [
-      page.getByText('300', { exact: false }),
-      page.getByText('D1 Teams', { exact: false }),
-    ];
-
-    let found = false;
-    for (const locator of vitalsIndicators) {
-      if ((await locator.count()) > 0) {
-        await expect(locator.first()).toBeVisible();
-        found = true;
-        break;
-      }
-    }
-
-    expect(found).toBe(true);
+    await expect(page.locator('[data-home-flagship]')).toBeVisible();
+    await expect(page.getByRole('link', { name: /Open BSI Savant/i })).toBeVisible();
   });
 
   test('footer renders with 6 link columns', async ({ page }) => {
@@ -108,22 +81,15 @@ test.describe('Homepage smoke tests', () => {
   test('Ask BSI input is visible', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    // Ask BSI section should have a text input and a submit button
-    const askInput = page.locator('input[type="text"], textarea').filter({ hasText: /ask|question/i });
-    const askSection = page.getByText('Ask BSI', { exact: false });
-
-    // At minimum the section heading should exist
-    if ((await askSection.count()) > 0) {
-      await expect(askSection.first()).toBeVisible();
-    }
+    await expect(page.locator('[data-home-platform]')).toBeVisible();
+    await expect(page.locator('[data-home-ask="embedded"]')).toBeVisible();
+    await expect(page.getByPlaceholder('Ask about any sport, stat, team, or feature...')).toBeVisible();
   });
 
-  test('live scores section renders or shows graceful empty state', async ({ page }) => {
+  test('freshness section renders with editorial and intel surfaces', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-
-    // Either live scores load or a "no games" message appears
-    const scoresSection = page.locator('[data-error-boundary="Live Scores"], section').filter({ hasText: /score|game|live|no games/i });
-    const count = await scoresSection.count();
-    expect(count).toBeGreaterThan(0);
+    await expect(page.locator('[data-home-freshness]')).toBeVisible();
+    await expect(page.getByText(/Trending Intel/i)).toBeVisible();
+    await expect(page.locator('[data-home-cta]')).toBeVisible();
   });
 });

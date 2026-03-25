@@ -4,9 +4,9 @@ import { JsonLd } from '@/components/JsonLd';
 import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
-  title: 'NIL Valuation | BSI',
+  title: 'NIL Valuation | Blaze Sports Intel',
   description: 'College athlete NIL valuation tools and program-level analytics.',
-  openGraph: { title: 'NIL Valuation | BSI', description: 'College athlete NIL valuation tools and program-level analytics.' , images: ogImage() },
+  openGraph: { title: 'NIL Valuation | Blaze Sports Intel', description: 'College athlete NIL valuation tools and program-level analytics.' , images: ogImage() },
 };
 
 export default function NILValuationLayout({ children }: { children: ReactNode }) {

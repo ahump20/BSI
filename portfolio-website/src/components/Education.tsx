@@ -34,7 +34,7 @@ export default function Education() {
     >
       <div className="container-custom">
         <motion.div
-          initial="visible"
+          initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.05 }}
           variants={staggerContainer}
@@ -49,11 +49,16 @@ export default function Education() {
               <motion.div
                 key={s.school}
                 variants={staggerItem}
-                className="group relative py-6 px-1"
+                className="group relative card py-7 px-6"
               >
+                {/* Top accent bar */}
+                <div
+                  className={`absolute top-0 left-0 right-0 h-[2px] opacity-60 ${s.bgAccent}`}
+                />
+
                 {/* Accent dot */}
                 <div
-                  className={`w-3 h-3 rounded-full mb-4 ${s.bgAccent}`}
+                  className={`w-2.5 h-2.5 rounded-full mb-5 ${s.bgAccent}`}
                 />
 
                 <h3 className="font-sans font-semibold text-base uppercase tracking-wider text-bone mb-2 group-hover:text-burnt-orange transition-colors duration-300">
@@ -61,11 +66,6 @@ export default function Education() {
                 </h3>
                 <p className={`font-semibold text-sm mb-2 ${s.textAccent}`}>{s.school}</p>
                 <p className="text-sm font-mono text-warm-gray">{s.detail}</p>
-
-                {/* Bottom accent line */}
-                <div
-                  className={`mt-5 h-px w-12 opacity-40 ${s.bgAccent}`}
-                />
               </motion.div>
             ))}
           </div>

@@ -4,7 +4,7 @@ import { ogImage } from '@/lib/metadata';
 export const metadata: Metadata = {
   title: 'Pricing | Blaze Sports Intel',
   description:
-    'Simple, transparent pricing. Pro at $29/month or Enterprise at $199/month. Start with a 14-day free trial.',
+    'Simple, transparent pricing. Free for live scores and editorial. Pro at $12/month for park-adjusted sabermetrics.',
   openGraph: {
     title: 'Pricing | Blaze Sports Intel',
     description: 'Simple, transparent pricing for sports intelligence.',

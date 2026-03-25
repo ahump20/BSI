@@ -8,15 +8,52 @@ import { SECURITY_HEADERS } from './constants';
  * from the browser URL and fetches data dynamically, so this works
  * seamlessly for any game ID — even those not present at build time.
  */
+/** Matches game detail HTML routes: /{sport}/game/{id}/ or /{sport}/game/{id}/{tab}/ */
 const GAME_DETAIL_PATTERN = /^\/(college-baseball|mlb|nfl|nba|cfb)\/game\/[^/]+\/(box-score|play-by-play|team-stats|recap|live)?\/?$/;
 
+/** Matches Next.js RSC metadata requests for game detail routes.
+ *  e.g. /mlb/game/401833325/recap/__next._tree.txt?_rsc=... */
+const GAME_RSC_PATTERN = /^\/(college-baseball|mlb|nfl|nba|cfb)\/game\/[^/]+\/((?:box-score|play-by-play|team-stats|recap|live)\/)?(__next\.[^?]+)/;
+
+/** Matches player evaluation routes: /evaluate/{sport}/{playerId}/ */
+const EVALUATE_DETAIL_PATTERN = /^\/evaluate\/(college-baseball|mlb|nfl|nba)\/[^/]+\/?$/;
+
+/** Matches RSC metadata for evaluate routes */
+const EVALUATE_RSC_PATTERN = /^\/evaluate\/(college-baseball|mlb|nfl|nba)\/[^/]+\/(__next\.[^?]+)/;
+
 function buildPlaceholderPath(pathname: string): string | null {
-  const match = pathname.match(GAME_DETAIL_PATTERN);
-  if (!match) return null;
-  const sport = match[1];
-  const subRoute = match[2] || '';
-  const trailing = subRoute ? `${subRoute}/` : '';
-  return `/${sport}/game/placeholder/${trailing}`;
+  // Try game detail HTML page match first
+  const htmlMatch = pathname.match(GAME_DETAIL_PATTERN);
+  if (htmlMatch) {
+    const sport = htmlMatch[1];
+    const subRoute = htmlMatch[2] || '';
+    const trailing = subRoute ? `${subRoute}/` : '';
+    return `/${sport}/game/placeholder/${trailing}`;
+  }
+
+  // Try game detail RSC metadata file match
+  const rscMatch = pathname.match(GAME_RSC_PATTERN);
+  if (rscMatch) {
+    const sport = rscMatch[1];
+    const subRoute = rscMatch[2] || '';   // e.g. "recap/" or ""
+    const rscFile = rscMatch[3];          // e.g. "__next._tree.txt"
+    return `/${sport}/game/placeholder/${subRoute}${rscFile}`;
+  }
+
+  // Try evaluate detail HTML page match
+  const evalMatch = pathname.match(EVALUATE_DETAIL_PATTERN);
+  if (evalMatch) {
+    return '/evaluate/placeholder/placeholder/';
+  }
+
+  // Try evaluate RSC metadata match
+  const evalRscMatch = pathname.match(EVALUATE_RSC_PATTERN);
+  if (evalRscMatch) {
+    const rscFile = evalRscMatch[2];
+    return `/evaluate/placeholder/placeholder/${rscFile}`;
+  }
+
+  return null;
 }
 
 export async function proxyToPages(request: Request, env: Env): Promise<Response> {
@@ -36,13 +73,23 @@ export async function proxyToPages(request: Request, env: Env): Promise<Response
   // If Pages returns 404 for a game detail route, serve the placeholder
   // shell instead. The client-side Next.js router reads the real game ID
   // from window.location, so the page will load the correct game data.
-  if (pagesResponse.status === 404 && request.method === 'GET') {
+  // Handle both GET and HEAD — Next.js client router uses HEAD to check
+  // if a route exists before prefetching. A HEAD 404 causes console errors
+  // and breaks the client-side navigation optimization.
+  if (pagesResponse.status === 404 && (request.method === 'GET' || request.method === 'HEAD')) {
     const placeholderPath = buildPlaceholderPath(url.pathname);
     if (placeholderPath) {
       const fallbackUrl = `${origin}${placeholderPath}`;
-      const fallbackResponse = await fetch(fallbackUrl, { headers });
+      // Always fetch as GET — Pages needs the full request to resolve the file.
+      // For HEAD requests we strip the body from the response below.
+      const fallbackResponse = await fetch(fallbackUrl, { method: 'GET', headers });
       if (fallbackResponse.ok) {
-        const response = new Response(fallbackResponse.body, fallbackResponse);
+        const body = request.method === 'HEAD' ? null : fallbackResponse.body;
+        const response = new Response(body, {
+          status: fallbackResponse.status,
+          statusText: fallbackResponse.statusText,
+          headers: fallbackResponse.headers,
+        });
         for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
           response.headers.set(key, value);
         }

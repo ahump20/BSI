@@ -20,32 +20,34 @@ vi.mock('@/components/home/HeroScoreStrip', () => ({
 }));
 
 describe('HeroSection', () => {
-  it('renders the current homepage hero message', () => {
-    render(<HeroSection />);
+  it('renders the cinematic homepage hero message', () => {
+    const { container } = render(<HeroSection />);
 
-    expect(screen.getByText(/Est\. 2024/i)).toBeTruthy();
-    expect(screen.getByRole('heading', { name: /Blaze Sports/i })).toBeTruthy();
-    expect(screen.getByRole('heading', { name: /Intel/i })).toBeTruthy();
-    expect(screen.getByText(/Park-adjusted sabermetrics across college baseball/i)).toBeTruthy();
-    expect(screen.getByText(/Born to Blaze the Path Beaten Less/i)).toBeTruthy();
+    expect(screen.getByText(/Austin, Texas \/\/ Est\. 2024/i)).toBeTruthy();
+    expect(screen.getByText(/Blaze Sports Intel/i)).toBeTruthy();
+    expect(screen.getByRole('heading', { name: /The Real Game Lives Between The Coasts/i })).toBeTruthy();
+    expect(screen.getByText(/Live boards, park-adjusted analytics, and original reporting/i)).toBeTruthy();
+    expect(container.querySelector('[data-home-hero]')).toBeTruthy();
+    expect(container.querySelector('[data-home-proof-ribbon]')).toBeTruthy();
   });
 
   it('keeps the primary homepage routes visible in the hero', () => {
     render(<HeroSection />);
 
-    expect(screen.getByRole('link', { name: /^College Baseball$/i }).getAttribute('href')).toBe('/college-baseball');
-    expect(screen.getByRole('link', { name: /^Live Scores$/i }).getAttribute('href')).toBe('/scores');
-    expect(screen.getByRole('link', { name: /^BSI Savant$/i }).getAttribute('href')).toBe('/college-baseball/savant');
+    expect(screen.getByRole('link', { name: /^Open Scores$/i }).getAttribute('href')).toBe('/scores');
+    expect(screen.getByRole('link', { name: /^Start With College Baseball$/i }).getAttribute('href')).toBe('/college-baseball');
+    expect(screen.getByRole('link', { name: /^See BSI Savant$/i }).getAttribute('href')).toBe('/college-baseball/savant');
     expect(screen.getByTestId('hero-score-strip')).toBeTruthy();
   });
 
-  it('keeps the hero wrapper shrinkable on mobile', () => {
-    render(<HeroSection />);
+  it('keeps the proof ribbon outside the poster viewport content', () => {
+    const { container } = render(<HeroSection />);
 
-    const heroHeading = screen.getByRole('heading', { name: /Blaze Sports/i });
-    const wrapper = heroHeading.parentElement;
+    const hero = container.querySelector('[data-home-hero]');
+    const ribbon = container.querySelector('[data-home-proof-ribbon]');
 
-    expect(wrapper?.className).toContain('w-full');
-    expect(wrapper?.className).toContain('min-w-0');
+    expect(hero).toBeTruthy();
+    expect(ribbon).toBeTruthy();
+    expect(hero?.nextElementSibling).toBe(ribbon);
   });
 });

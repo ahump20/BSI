@@ -2,7 +2,7 @@
  * BSI Savant Compute Worker
  *
  * Cron: every 6 hours — recomputes advanced metrics from player_season_stats.
- * Manual trigger: GET /compute — returns summary JSON.
+ * Manual trigger: GET /run (or /compute) — returns summary JSON.
  *
  * Bindings: DB (D1: bsi-prod-db), KV (BSI_PROD_CACHE)
  *
@@ -1170,21 +1170,24 @@ async function computeNIL(db: D1Database, kv: KVNamespace): Promise<{ nilScored:
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
-    if (url.pathname === '/compute' || url.pathname === '/') {
+
+    // Manual trigger endpoint (matches bsi-cbb-analytics /run pattern)
+    if (url.pathname === '/run' || url.pathname === '/compute') {
       try {
         const result = await compute(env.DB, env.KV);
         const nilResult = await computeNIL(env.DB, env.KV);
         return new Response(JSON.stringify({
           ok: true,
+          message: 'Savant compute triggered',
           ...result,
           ...nilResult,
           computed_at: new Date().toISOString(),
-        }), {
+        }, null, 2), {
           headers: { 'Content-Type': 'application/json' },
         });
       } catch (err) {
         const msg = err instanceof Error ? err.message : 'Unknown error';
-        return new Response(JSON.stringify({ ok: false, error: msg }), {
+        return new Response(JSON.stringify({ ok: false, error: msg }, null, 2), {
           status: 500,
           headers: { 'Content-Type': 'application/json' },
         });
@@ -1199,6 +1202,11 @@ export default {
         worker: 'bsi-savant-compute',
         last_compute: lastCompute || 'never',
       }), { headers: { 'Content-Type': 'application/json' } });
+    }
+
+    // Root info response
+    if (url.pathname === '/') {
+      return new Response('BSI Savant Compute Worker — use /run to trigger manually', { status: 200 });
     }
 
     return new Response('Not found', { status: 404 });

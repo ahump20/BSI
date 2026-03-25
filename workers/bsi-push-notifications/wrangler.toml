@@ -1,19 +1,18 @@
-# =============================================================================
-# BSI Push Notifications — Expo Push API Worker
-# =============================================================================
-# Manages push token registration and sends game alerts via Expo Push API.
-# Cron: every 5 minutes during game hours (13:00-01:00 CT).
-#
-# Deploy: wrangler deploy --config workers/bsi-push-notifications/wrangler.toml
-# =============================================================================
-
 name = "bsi-push-notifications"
 main = "index.ts"
 compatibility_date = "2025-12-01"
 compatibility_flags = ["nodejs_compat"]
 
+[observability]
+enabled = true
+
+routes = [
+  { pattern = "blazesportsintel.com/api/push/*", zone_name = "blazesportsintel.com" },
+  { pattern = "www.blazesportsintel.com/api/push/*", zone_name = "blazesportsintel.com" }
+]
+
 [triggers]
-crons = ["*/5 13-23 * * *", "*/5 0-1 * * *"]
+crons = ["*/5 14-5 * * *"]
 
 [[d1_databases]]
 binding = "DB"
@@ -21,17 +20,19 @@ database_name = "bsi-prod-db"
 database_id = "6921617f-5351-4df3-aeab-07425e72ec6b"
 
 [[kv_namespaces]]
-binding = "CACHE"
-id = "BSI_PROD_CACHE"
+binding = "BSI_KEYS"
+id = "b7ff9178798d4a238afff79522f651e8"
+preview_id = "b7ff9178798d4a238afff79522f651e8"
 
-[vars]
-ENVIRONMENT = "production"
-EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send"
-RATE_LIMIT_MINUTES = "15"
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "f5601b09f5184739b4792b86fb73151b"
+preview_id = "f5601b09f5184739b4792b86fb73151b"
+
+[[kv_namespaces]]
+binding = "BSI_PROD_CACHE"
+id = "e6cb68e815cd45babeee0e10460dbfee"
+preview_id = "e6cb68e815cd45babeee0e10460dbfee"
 
 [[tail_consumers]]
 service = "bsi-error-tracker"
-
-[dev]
-port = 8795
-local_protocol = "http"

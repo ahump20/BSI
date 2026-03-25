@@ -131,7 +131,22 @@ export async function handleCFBNews(env: Env): Promise<Response> {
   }
 }
 
+/**
+ * CFB articles feature is registered but the D1 `articles` table does not
+ * exist yet. Both handlers short-circuit with honest empty/not-found
+ * responses until the table and data pipeline are in place.
+ *
+ * When the feature is ready:
+ * 1. Create a migration for the `articles` table
+ * 2. Remove the `CFB_ARTICLES_ENABLED` guard below
+ */
+const CFB_ARTICLES_ENABLED = false;
+
 export async function handleCFBArticle(slug: string, env: Env): Promise<Response> {
+  if (!CFB_ARTICLES_ENABLED) {
+    return json({ error: 'Article not found', code: 'NOT_FOUND', status: 404 }, 404);
+  }
+
   try {
     const cacheKey = `cfb:article:${slug}`;
 
@@ -159,6 +174,13 @@ export async function handleCFBArticle(slug: string, env: Env): Promise<Response
 }
 
 export async function handleCFBArticlesList(url: URL, env: Env): Promise<Response> {
+  if (!CFB_ARTICLES_ENABLED) {
+    return json({
+      articles: [],
+      meta: { source: 'cfb', note: 'Articles feature coming soon' },
+    }, 200);
+  }
+
   try {
     const type = url.searchParams.get('type') || 'all';
     const limit = Math.min(parseInt(url.searchParams.get('limit') || '20'), 50);

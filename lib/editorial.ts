@@ -122,6 +122,7 @@ export const SLUG_OVERRIDES: Record<string, string> = {
   'texas-week-1-27-runs-one-hit-allowed-by-volantis': 'texas-week-1-recap',
   'sec-opening-weekend-preview': 'sec-opening-weekend',
   'week-1-national-recap': 'week-1-recap',
+  'texas-week-6-punched-then-answered': 'texas-week-6-recap',
 };
 
 /** Build the href for an editorial article (slug-based routing). */

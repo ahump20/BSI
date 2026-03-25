@@ -37,7 +37,8 @@
     "typecheck": "tsc --noEmit",
     "typecheck:strict": "tsc --project tsconfig.strict.json",
     "deploy:show-dd-sync": "wrangler deploy --config workers/bsi-show-dd-sync/wrangler.toml",
-    "typecheck:workers": "for d in workers/blaze-field-do workers/blaze-field-site workers/bsi-savant-compute workers/bsi-cbb-analytics workers/bsi-cbb-ingest workers/bsi-college-baseball-daily workers/bsi-live-scores workers/bsi-show-dd-sync workers/bsi-portal-sync workers/sportradar-ingest workers/synthetic-monitor workers/error-tracker workers/bsi-analytics-events workers/bsi-intelligence-stream workers/bsi-social-intel workers/college-baseball-mcp workers/mini-games-api; do echo \"Checking $d...\" && tsc --noEmit -p $d/tsconfig.json || exit 1; done && echo 'All workers pass.'",
+    "typecheck:workers": "for d in workers/blaze-field-do workers/blaze-field-site workers/bsi-savant-compute workers/bsi-cbb-analytics workers/bsi-cbb-ingest workers/bsi-college-baseball-daily workers/bsi-live-scores workers/bsi-show-dd-sync workers/bsi-portal-sync workers/sportradar-ingest workers/synthetic-monitor workers/error-tracker workers/bsi-analytics-events workers/bsi-intelligence-stream workers/bsi-social-intel workers/college-baseball-mcp workers/mini-games-api workers/bsi-push-notifications; do echo \"Checking $d...\" && tsc --noEmit -p $d/tsconfig.json || exit 1; done && echo 'All workers pass.'",
+    "typecheck:agent": "cd workers/bsi-baseball-agent && npm install --silent && tsc --noEmit -p tsconfig.json && cd ../..",
     "lint": "eslint app lib components tests scripts --ext .js,.jsx,.ts,.tsx,.mjs --ignore-pattern 'node_modules/**'",
     "lint:fix": "eslint app lib components tests scripts --ext .js,.jsx,.ts,.tsx,.mjs --fix --ignore-pattern 'node_modules/**'",
     "format": "prettier --check \"app/**/*.{js,jsx,ts,tsx,json,css,md}\" \"lib/**/*.{js,jsx,ts,tsx,json,css,md}\" \"hooks/**/*.{js,jsx,ts,tsx,json,css,md}\" \"components/**/*.{js,jsx,ts,tsx,json,css,md}\" \"workers/**/*.{js,jsx,ts,tsx,json,css,md}\" \"tests/**/*.{js,jsx,ts,tsx,json,css,md}\" \"scripts/**/*.{js,mjs,ts,tsx,sh}\"",
@@ -87,7 +88,7 @@
     "hono": "^4.11.9",
     "lucide-react": "^0.546.0",
     "luxon": "^3.7.2",
-    "next": "^16.1.6",
+    "next": "^16.1.7",
     "posthog-js": "^1.345.5",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
@@ -108,7 +109,7 @@
     "@typescript-eslint/eslint-plugin": "^8.54.0",
     "@typescript-eslint/parser": "^8.54.0",
     "@vitejs/plugin-react": "^4.7.0",
-    "@vitest/ui": "^4.0.18",
+    "@vitest/ui": "^4.1.1",
     "autoprefixer": "^10.4.24",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^9.1.2",
@@ -126,14 +127,15 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.55.0",
     "vite": "^7.3.1",
-    "vitest": "^4.0.18",
+    "vitest": "^4.1.1",
     "wrangler": "^4.35.0"
   },
   "optionalDependencies": {
     "@cloudflare/workerd-darwin-arm64": "^1.20260131.0"
   },
   "overrides": {
-    "minimatch": ">=3.1.5"
+    "minimatch": ">=3.1.5",
+    "flatted": "3.4.2"
   },
   "pnpm": {
     "overrides": {
@@ -142,11 +144,6 @@
       "form-data": ">=4.0.1",
       "tough-cookie": ">=4.1.3",
       "rollup": ">=4.59.0"
-    },
-    "pnpm": {
-      "overrides": {
-        "rollup": ">=4.59.0"
-      }
     }
   },
   "main": "vite.config.js",

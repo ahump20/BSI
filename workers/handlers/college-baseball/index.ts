@@ -21,7 +21,7 @@ export { handleCollegeBaseballTeam, handleCollegeBaseballTeamSchedule, handleCol
 export { handleCollegeBaseballPlayer, handleCollegeBaseballPlayersList, handleCollegeBaseballPlayerCompare, handlePlayerGameLog } from './players';
 
 // Editorial, news, trending
-export { handleCollegeBaseballTrending, handleCollegeBaseballDaily, handleCollegeBaseballNews, handleCollegeBaseballNewsEnhanced, handleCollegeBaseballTransferPortal, handleCollegeBaseballEditorialList, handleCollegeBaseballEditorialContent } from './editorial';
+export { handleCollegeBaseballTrending, handleCollegeBaseballDaily, handleCollegeBaseballNews, handleCollegeBaseballNewsEnhanced, handleCollegeBaseballTransferPortal, handlePortalPlayerDetail, handleCollegeBaseballEditorialList, handleCollegeBaseballEditorialContent } from './editorial';
 
 // Ingestion pipeline
 export { processFinishedGames, handleIngestStats, syncTeamCumulativeStats, handleCBBBulkSync, handleHighlightlySync, handleGameLogBackfill } from './ingest';

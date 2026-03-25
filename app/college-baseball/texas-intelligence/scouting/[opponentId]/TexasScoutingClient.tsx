@@ -10,7 +10,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
-import { fmt3 } from '@/lib/utils/format';
+import { fmt3, fmt2, fmt1, fmtPct } from '@/lib/utils/format';
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 
@@ -95,18 +95,6 @@ interface TexasSabermetrics {
 
 function formatOpponentName(slug: string): string {
   return slug.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-}
-
-function fmtPct(n: number): string {
-  return `${(n * 100).toFixed(1)}%`;
-}
-
-function fmt1(n: number): string {
-  return n.toFixed(1);
-}
-
-function fmt2(n: number): string {
-  return n.toFixed(2);
 }
 
 function getOpponentLogo(opponentId: string): string {

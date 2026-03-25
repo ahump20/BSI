@@ -10,6 +10,12 @@ export const metadata: Metadata = {
     title: 'NFL Teams | Blaze Sports Intel',
     description: 'NFL team pages with rosters, schedules, and stats.',
    images: ogImage('/images/og-nfl.png') },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'NFL Teams | Blaze Sports Intel',
+    description: 'NFL team pages with rosters, schedules, and stats.',
+    images: ['/images/og-nfl.png'],
+  },
 };
 
 export default function NFLTeamsLayout({ children }: { children: ReactNode }) {

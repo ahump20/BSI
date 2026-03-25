@@ -122,7 +122,7 @@ export default function CollegeBaseballNewsPage() {
               </h1>
               <p className="text-text-secondary max-w-2xl">
                 The transfer portal moves, recruiting wins, and game coverage ESPN won&apos;t give you.
-                All 300+ D1 programs, actually covered.
+                Every D1 program, actually covered.
               </p>
               {data?.sources && (
                 <p className="text-text-tertiary text-xs mt-2">

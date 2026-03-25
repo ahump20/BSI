@@ -44,6 +44,7 @@ function ContactIcon({ kind }: { kind: typeof CONTACT_CHANNELS[number]['icon'] }
 
 export default function Contact() {
   const [formState, setFormState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
@@ -111,9 +112,11 @@ export default function Contact() {
       setTurnstileToken('');
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') {
+        setErrorMsg('Request timed out. Try again.');
         setFormState('error');
         return;
       }
+      setErrorMsg(err instanceof Error ? err.message : 'Unable to send your message right now.');
       setFormState('error');
     } finally {
       clearTimeout(timeoutId);
@@ -128,7 +131,7 @@ export default function Contact() {
     >
       <div className="container-custom">
         <motion.div
-          initial="visible"
+          initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.05 }}
           variants={staggerContainer}
@@ -145,7 +148,7 @@ export default function Contact() {
               </div>
 
               {/* Direct Line card — prominent, above link grid */}
-              <div className="relative rounded-sm border border-bone/10 bg-midnight/70 px-6 py-6 overflow-hidden">
+              <div className="relative rounded-sm border border-bone/10 border-l-2 border-l-burnt-orange/50 bg-midnight/70 px-6 py-6 overflow-hidden">
                 <div
                   className="pointer-events-none absolute inset-x-0 top-0 h-px accent-line-narrow"
                 />
@@ -291,7 +294,7 @@ export default function Contact() {
               )}
               {formState === 'error' && (
                 <p className="text-orange-400 text-xs font-mono mt-3 text-center" aria-live="polite">
-                  Couldn&apos;t send that. Try again or email {PRIMARY_EMAIL} directly.
+                  {errorMsg || `Couldn't send that. Try again or email ${PRIMARY_EMAIL} directly.`}
                 </p>
               )}
             </motion.form>

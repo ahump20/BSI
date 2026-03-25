@@ -8,6 +8,9 @@ main = "index.ts"
 compatibility_date = "2025-12-01"
 compatibility_flags = ["nodejs_compat"]
 
+[observability]
+enabled = true
+
 # Run every 5 minutes
 [triggers]
 crons = ["*/5 * * * *"]
@@ -23,6 +26,6 @@ bucket_name = "blaze-sports-data-lake"
 [[tail_consumers]]
 service = "bsi-error-tracker"
 
-# Optional: Discord/Slack webhook for failure alerts
-# [vars]
-# ALERT_WEBHOOK_URL = ""
+# Secrets (set via `wrangler secret put`):
+# RESEND_API_KEY — Resend email API key for alerting
+# ADMIN_KEY     — Admin key for /api/admin/freshness endpoint

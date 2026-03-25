@@ -81,7 +81,7 @@ export function StandingsTable({ standings, sport }: StandingsTableProps) {
                     className="py-1.5 px-2 text-center font-semibold"
                     style={{ color: pct > 0.6 ? accent : 'var(--intel-text-body)', fontVariantNumeric: 'tabular-nums' }}
                   >
-                    .{Math.round(pct * 1000)}
+                    {pct >= 1 ? '1.000' : `.${String(Math.round(pct * 1000)).padStart(3, '0')}`}
                   </td>
                   <td
                     className="py-1.5 pl-2 text-right"

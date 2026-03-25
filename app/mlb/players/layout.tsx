@@ -10,6 +10,12 @@ export const metadata: Metadata = {
     title: 'MLB Players | Blaze Sports Intel',
     description: 'MLB player stats and advanced sabermetrics.',
    images: ogImage('/images/og-mlb.png') },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'MLB Players | Blaze Sports Intel',
+    description: 'MLB player stats and advanced sabermetrics.',
+    images: ['/images/og-mlb.png'],
+  },
 };
 
 export default function MLBPlayersLayout({ children }: { children: ReactNode }) {

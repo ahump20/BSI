@@ -28,9 +28,10 @@ const flagship: SitemapEntry[] = [
   { path: '/college-baseball/conferences', changeFrequency: 'daily', priority: 0.8 },
   { path: '/college-baseball/compare', changeFrequency: 'daily', priority: 0.7 },
   { path: '/college-baseball/savant', changeFrequency: 'daily', priority: 0.9 },
-  { path: '/college-baseball/sabermetrics', changeFrequency: 'daily', priority: 0.9 },
   { path: '/college-baseball/savant/park-factors', changeFrequency: 'weekly', priority: 0.8 },
   { path: '/college-baseball/savant/conference-index', changeFrequency: 'weekly', priority: 0.8 },
+  { path: '/college-baseball/savant/methodology', changeFrequency: 'monthly', priority: 0.7 },
+  { path: '/college-baseball/savant/glossary', changeFrequency: 'monthly', priority: 0.7 },
   { path: '/college-baseball/preseason', changeFrequency: 'weekly', priority: 0.8 },
   { path: '/college-baseball/preseason/power-25', changeFrequency: 'weekly', priority: 0.8 },
   { path: '/college-baseball/preseason/sec-preview', changeFrequency: 'weekly', priority: 0.8 },
@@ -44,6 +45,9 @@ const editorial: SitemapEntry[] = [
   { path: '/college-baseball/editorial/big-12', changeFrequency: 'weekly', priority: 0.8 },
   { path: '/college-baseball/editorial/big-ten', changeFrequency: 'weekly', priority: 0.8 },
   { path: '/college-baseball/editorial/sec', changeFrequency: 'weekly', priority: 0.8 },
+  // Weekend recaps
+  { path: '/college-baseball/editorial/weekend-5-recap', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/texas-texas-state-recap', changeFrequency: 'monthly', priority: 0.8 },
   // Opening weekend recaps
   { path: '/college-baseball/editorial/national-opening-weekend', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/acc-opening-weekend', changeFrequency: 'monthly', priority: 0.8 },
@@ -66,6 +70,7 @@ const editorial: SitemapEntry[] = [
   { path: '/college-baseball/editorial/weekend-3-preview', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/weekend-3-recap', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/texas-week-3-recap', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/texas-week-6-recap', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/texas-houston-christian-preview', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/texas-houston-christian-recap', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/week-4-preview', changeFrequency: 'monthly', priority: 0.8 },
@@ -129,6 +134,26 @@ const mlbEditorial: SitemapEntry[] = [
   { path: '/mlb/editorial/2026-season-preview', changeFrequency: 'monthly', priority: 0.8 },
 ];
 
+const wbc: SitemapEntry[] = [
+  { path: '/wbc', changeFrequency: 'daily', priority: 0.8 },
+  { path: '/wbc/pool/a', changeFrequency: 'weekly', priority: 0.7 },
+  { path: '/wbc/pool/b', changeFrequency: 'weekly', priority: 0.7 },
+  { path: '/wbc/pool/c', changeFrequency: 'weekly', priority: 0.7 },
+  { path: '/wbc/pool/d', changeFrequency: 'weekly', priority: 0.7 },
+  { path: '/wbc/editorial/pool-c-preview', changeFrequency: 'monthly', priority: 0.7 },
+];
+
+const mlbTheShow26: SitemapEntry[] = [
+  { path: '/mlb/the-show-26', changeFrequency: 'daily', priority: 0.6 },
+  { path: '/mlb/the-show-26/diamond-dynasty', changeFrequency: 'daily', priority: 0.6 },
+  { path: '/mlb/the-show-26/diamond-dynasty/marketplace', changeFrequency: 'daily', priority: 0.5 },
+  { path: '/mlb/the-show-26/diamond-dynasty/team-builder', changeFrequency: 'weekly', priority: 0.5 },
+  { path: '/mlb/the-show-26/diamond-dynasty/builds', changeFrequency: 'weekly', priority: 0.5 },
+  { path: '/mlb/the-show-26/diamond-dynasty/card', changeFrequency: 'daily', priority: 0.5 },
+  { path: '/mlb/the-show-26/diamond-dynasty/collections', changeFrequency: 'weekly', priority: 0.5 },
+  { path: '/mlb/the-show-26/diamond-dynasty/watchlist', changeFrequency: 'daily', priority: 0.5 },
+];
+
 const proSports: SitemapEntry[] = [
   // MLB
   { path: '/mlb', changeFrequency: 'daily', priority: 0.7 },
@@ -142,7 +167,6 @@ const proSports: SitemapEntry[] = [
   { path: '/mlb/players', changeFrequency: 'daily', priority: 0.6 },
   { path: '/mlb/teams', changeFrequency: 'daily', priority: 0.6 },
   { path: '/mlb/stats', changeFrequency: 'daily', priority: 0.6 },
-  { path: '/mlb/abs', changeFrequency: 'daily', priority: 0.5 },
   // NFL
   { path: '/nfl', changeFrequency: 'daily', priority: 0.7 },
   { path: '/nfl/scores', changeFrequency: 'hourly', priority: 0.7 },
@@ -186,19 +210,15 @@ const texasIntelligence: SitemapEntry[] = [
 
 const features: SitemapEntry[] = [
   { path: '/status', changeFrequency: 'always', priority: 0.4 },
-  { path: '/dashboard', changeFrequency: 'daily', priority: 0.7 },
   { path: '/intel', changeFrequency: 'daily', priority: 0.7 },
   { path: '/nil-valuation', changeFrequency: 'daily', priority: 0.7 },
   { path: '/nil-valuation/methodology', changeFrequency: 'monthly', priority: 0.5 },
-  { path: '/analytics', changeFrequency: 'daily', priority: 0.6 },
-  { path: '/college-baseball/analytics/playground', changeFrequency: 'weekly', priority: 0.5 },
   { path: '/vision-ai', changeFrequency: 'weekly', priority: 0.5 },
   { path: '/search', changeFrequency: 'daily', priority: 0.5 },
   { path: '/college-baseball/tournament', changeFrequency: 'daily', priority: 0.8 },
   { path: '/college-baseball/tournament/regionals', changeFrequency: 'daily', priority: 0.7 },
   { path: '/college-baseball/tournament/cws', changeFrequency: 'daily', priority: 0.7 },
   { path: '/college-baseball/savant/visuals', changeFrequency: 'weekly', priority: 0.6 },
-  { path: '/wbc', changeFrequency: 'daily', priority: 0.6 },
 ];
 
 const arcade: SitemapEntry[] = [
@@ -209,7 +229,6 @@ const arcade: SitemapEntry[] = [
   { path: '/arcade/games/blitz', changeFrequency: 'monthly', priority: 0.4 },
   { path: '/arcade/games/downtown-doggies', changeFrequency: 'monthly', priority: 0.4 },
   { path: '/arcade/games/leadership-capital', changeFrequency: 'monthly', priority: 0.4 },
-  { path: '/arcade/wc3-dashboard', changeFrequency: 'monthly', priority: 0.3 },
 ];
 
 const research: SitemapEntry[] = [
@@ -219,11 +238,15 @@ const research: SitemapEntry[] = [
 
 const marketing: SitemapEntry[] = [
   { path: '/about', changeFrequency: 'monthly', priority: 0.5 },
+  { path: '/about/methodology', changeFrequency: 'monthly', priority: 0.5 },
+  { path: '/about/partnerships', changeFrequency: 'monthly', priority: 0.5 },
   { path: '/contact', changeFrequency: 'monthly', priority: 0.5 },
   { path: '/pricing', changeFrequency: 'weekly', priority: 0.7 },
-  { path: '/coverage', changeFrequency: 'monthly', priority: 0.5 },
   { path: '/privacy', changeFrequency: 'yearly', priority: 0.3 },
   { path: '/terms', changeFrequency: 'yearly', priority: 0.3 },
+  { path: '/data-sources', changeFrequency: 'monthly', priority: 0.5 },
+  { path: '/glossary', changeFrequency: 'monthly', priority: 0.6 },
+  { path: '/nil-valuation/performance-index', changeFrequency: 'daily', priority: 0.7 },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -232,6 +255,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...texasIntelligence,
     ...editorial,
     ...mlbEditorial,
+    ...wbc,
+    ...mlbTheShow26,
     ...proSports,
     ...features,
     ...research,

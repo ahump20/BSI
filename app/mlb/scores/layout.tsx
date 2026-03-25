@@ -10,6 +10,12 @@ export const metadata: Metadata = {
     title: 'MLB Scores Today | Blaze Sports Intel',
     description: 'Live MLB scores with real-time box score updates.',
    images: ogImage('/images/og-mlb.png') },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'MLB Scores Today | Blaze Sports Intel',
+    description: 'Live MLB scores with real-time box score updates.',
+    images: ['/images/og-mlb.png'],
+  },
 };
 
 export default function MLBScoresLayout({ children }: { children: ReactNode }) {

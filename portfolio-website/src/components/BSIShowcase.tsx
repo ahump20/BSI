@@ -6,7 +6,7 @@ import { BSI_SHOWCASE, PLATFORM_URLS, SITE_TAGLINE } from '../content/site';
 function StatCard({ value, label }: { value: string; label: string }) {
   return (
     <div className="text-center">
-      <p className="text-3xl font-bold font-sans text-burnt-orange">{value}</p>
+      <p className="text-3xl font-bold font-sans text-burnt-orange text-shadow-glow">{value}</p>
       <p className="text-xs font-mono text-warm-gray mt-1">{label}</p>
     </div>
   );
@@ -21,7 +21,7 @@ export default function BSIShowcase() {
     >
       <div className="container-custom">
         <motion.div
-          initial="visible"
+          initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.05 }}
           variants={staggerContainer}
