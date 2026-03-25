@@ -15,6 +15,7 @@ import { HeroGlow } from '@/components/ui/HeroGlow';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { teamMetadata } from '@/lib/data/team-metadata';
 import { DataAttribution } from '@/components/ui/DataAttribution';
+import { DegradedDataBanner } from '@/components/ui/DegradedDataBanner';
 import { formatTimestamp } from '@/lib/utils/timezone';
 
 /** Map a full team name (e.g. "Texas Longhorns") to its teamMetadata slug (e.g. "texas"). */
@@ -91,6 +92,7 @@ interface RankingsApiResponse {
     dataSource: string;
     lastUpdated: string;
     sport: string;
+    degraded?: boolean;
   };
 }
 
@@ -227,6 +229,8 @@ export default function CollegeBaseballRankingsPage() {
                 </div>
               </Card>
             </ScrollReveal>
+
+            <DegradedDataBanner degraded={!!rawData?.meta?.degraded} source={rawData?.meta?.dataSource} />
 
             {/* Rankings Table */}
             <DataErrorBoundary name="Rankings">
