@@ -55,6 +55,21 @@ interface ConferenceRow {
   is_power: number;
 }
 
+interface LeagueContext {
+  season: number;
+  computed_at: string;
+  woba: number;
+  obp: number;
+  avg: number;
+  slg: number;
+  era: number;
+  fip_constant: number;
+  woba_scale: number;
+  sample_batting: number;
+  sample_pitching: number;
+  weights_source: string;
+}
+
 // ---------------------------------------------------------------------------
 // Tab config
 // ---------------------------------------------------------------------------
@@ -123,6 +138,8 @@ export default function SavantHubPage() {
     useSportData<{ data: ParkFactorRow[] }>('/api/savant/park-factors');
   const { data: confRes, loading: confLoading } =
     useSportData<{ data: ConferenceRow[]; total?: number }>('/api/savant/conference-strength');
+  const { data: leagueCtxRes } =
+    useSportData<{ context: LeagueContext }>('/api/savant/league-context');
 
   // Derive tier from API response — worker sets _tier_gated on free-tier rows
   const isPro = useMemo(() => {
@@ -362,6 +379,38 @@ export default function SavantHubPage() {
                 })}
               </div>
             </ScrollReveal>
+
+            {/* 2026 D1 Run Environment — the baseline that makes every stat meaningful */}
+            {leagueCtxRes?.context && (
+              <ScrollReveal direction="up" delay={150}>
+                <div className="mb-6 rounded-sm border border-[rgba(245,240,235,0.06)] bg-[rgba(26,26,26,0.4)] p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="heritage-stamp text-[9px]">2026 D1 Run Environment</span>
+                    <span className="text-[9px] text-text-muted font-mono">
+                      {leagueCtxRes.context.sample_batting.toLocaleString()} batters · {leagueCtxRes.context.sample_pitching.toLocaleString()} pitchers
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-4">
+                    {[
+                      { label: 'Lg wOBA', value: leagueCtxRes.context.woba.toFixed(3) },
+                      { label: 'Lg AVG', value: leagueCtxRes.context.avg.toFixed(3) },
+                      { label: 'Lg OBP', value: leagueCtxRes.context.obp.toFixed(3) },
+                      { label: 'Lg SLG', value: leagueCtxRes.context.slg.toFixed(3) },
+                      { label: 'Lg ERA', value: leagueCtxRes.context.era.toFixed(2) },
+                      { label: 'FIP Const', value: leagueCtxRes.context.fip_constant.toFixed(2) },
+                    ].map((stat) => (
+                      <div key={stat.label}>
+                        <div className="font-mono text-sm font-bold" style={{ color: 'var(--bsi-bone)' }}>{stat.value}</div>
+                        <div className="text-[9px] text-text-muted/60 uppercase tracking-wider">{stat.label}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-[9px] text-text-muted/40 mt-3 leading-relaxed">
+                    Every metric on this page is normalized against these baselines. A 100 wRC+ means exactly league average for the {leagueCtxRes.context.season} D1 season. Weights derived from actual D1 data, not MLB defaults.
+                  </p>
+                </div>
+              </ScrollReveal>
+            )}
 
             {/* Tab navigation — immediate, no animation */}
             <div className="flex items-center gap-0.5 border-b border-border mb-4 overflow-x-auto">
