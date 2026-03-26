@@ -23,7 +23,7 @@ export function WhyBSI() {
   return (
     <section
       data-home-proof
-      className="border-y border-[rgba(245,240,235,0.08)] px-4 py-14 sm:px-6 lg:px-8"
+      className="border-y border-[rgba(245,240,235,0.08)] px-4 py-16 sm:py-20 sm:px-6 lg:px-8"
       style={{ background: 'linear-gradient(180deg, rgba(18,18,18,0.98) 0%, rgba(12,12,12,1) 100%)' }}
     >
       <div className="mx-auto max-w-6xl">
