@@ -186,10 +186,10 @@ const analyticsTools = [
 ];
 
 const quickStats = [
-  { label: 'Data Points Analyzed', value: '2.4M+', sublabel: 'This season' },
-  { label: 'Prediction Accuracy', value: '67.3%', sublabel: 'Win probability' },
-  { label: 'Historical Records', value: '5+ Years', sublabel: 'MLB, NFL, NCAA' },
-  { label: 'Update Frequency', value: '30 sec', sublabel: 'Live games' },
+  { label: 'Sports Covered', value: '5', sublabel: 'MLB · NFL · NBA · CFB · D1 Baseball' },
+  { label: 'Metrics Tracked', value: '920+', sublabel: 'College baseball players' },
+  { label: 'Analytics Refresh', value: '6 hrs', sublabel: 'Automated recompute cycle' },
+  { label: 'Live Score Updates', value: '30 sec', sublabel: 'During active games' },
 ];
 
 export default function AnalyticsPage() {
@@ -340,8 +340,8 @@ export default function AnalyticsPage() {
                   <Button href="/pricing" variant="primary" size="lg">
                     View Pricing
                   </Button>
-                  <Button href="/dashboard" variant="outline" size="lg">
-                    Try Dashboard Free
+                  <Button href="/intel" variant="outline" size="lg">
+                    Try Intel Dashboard
                   </Button>
                 </div>
               </Card>

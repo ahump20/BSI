@@ -78,7 +78,6 @@ export function getMainNavItems(date?: Date): {
     { label: 'College Baseball', href: '/college-baseball' },
     { label: 'Intel', href: '/intel' },
     { label: 'Ask BSI', href: '/ask' },
-    { label: 'Agent', href: '/agent' },
     { label: 'Pricing', href: '/pricing' },
   ];
 
@@ -93,6 +92,7 @@ export function getMainNavItems(date?: Date): {
   ];
 
   const secondary: MainNavItem[] = [
+    { label: 'Baseball Agent', href: '/agent' },
     { label: 'Podcast', href: '/podcast' },
     { label: 'Editorial', href: '/college-baseball/editorial' },
     { label: 'Diamond Dynasty', href: '/mlb/the-show-26/diamond-dynasty' },

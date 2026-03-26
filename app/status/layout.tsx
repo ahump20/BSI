@@ -8,6 +8,8 @@ export const metadata: Metadata = {
     title: 'System Status | Blaze Sports Intel',
     description: 'Real-time status of BSI services, APIs, and data pipelines.',
    images: ogImage() },
+  alternates: { canonical: '/status' },
+  robots: { index: false, follow: false },
 };
 
 export default function StatusLayout({ children }: { children: React.ReactNode }) {

@@ -52,9 +52,9 @@ export function Footer() {
             <h4 className={sectionTitle} style={{ color: 'var(--heritage-bronze)' }}>Start Here</h4>
             <ul className="space-y-2">
               <li><Link href="/scores" className={footerLink}>Live Scores</Link></li>
-              <li><Link href="/college-baseball" className={footerLink}>College Baseball</Link></li>
               <li><Link href="/college-baseball/savant" className={footerLink}>BSI Savant</Link></li>
               <li><Link href="/college-baseball/editorial" className={footerLink}>Editorial</Link></li>
+              <li><Link href="/ask" className={footerLink}>Ask BSI</Link></li>
               <li><Link href="/intel" className={footerLink}>Intelligence</Link></li>
             </ul>
           </div>

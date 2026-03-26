@@ -290,11 +290,11 @@ export default function DataSourcesPage() {
 
               {/* Back links */}
               <div className="flex flex-wrap gap-4 text-sm text-text-muted">
-                <Link href="/dashboard" className="hover:text-text-secondary transition-colors">
-                  &#8592; Dashboard
+                <Link href="/college-baseball/savant" className="hover:text-text-secondary transition-colors">
+                  &#8592; BSI Savant
                 </Link>
-                <Link href="/models" className="hover:text-text-secondary transition-colors">
-                  Models & Methodology
+                <Link href="/college-baseball/savant/methodology" className="hover:text-text-secondary transition-colors">
+                  Methodology
                 </Link>
                 <Link href="/about" className="hover:text-text-secondary transition-colors">
                   About BSI

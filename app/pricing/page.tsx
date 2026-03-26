@@ -34,7 +34,7 @@ const COMPETITORS = [
     name: 'FanGraphs',
     price: 'Free',
     parkAdjusted: false,
-    updateFreq: 'Weekly',
+    updateFreq: 'Daily',
     mobile: 'Desktop-oriented',
     free: 'Free (no park adjustment)',
   },
@@ -284,7 +284,7 @@ export default function PricingPage() {
               {
                 title: 'Updated Every 6 Hours',
                 description:
-                  'FanGraphs updates college data weekly. D1Baseball updates daily. BSI recomputes wOBA, wRC+, FIP, park factors, and conference strength every 6 hours via automated pipeline.',
+                  'FanGraphs and D1Baseball update college data daily. BSI recomputes wOBA, wRC+, FIP, park factors, and conference strength every 6 hours via automated pipeline — four times more frequently.',
               },
               {
                 title: 'Built by a Fan, for Fans',
