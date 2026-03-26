@@ -145,12 +145,12 @@ const mlbEditorial: SitemapEntry[] = [
 ];
 
 const wbc: SitemapEntry[] = [
-  { path: '/wbc', changeFrequency: 'daily', priority: 0.8 },
-  { path: '/wbc/pool/a', changeFrequency: 'weekly', priority: 0.7 },
-  { path: '/wbc/pool/b', changeFrequency: 'weekly', priority: 0.7 },
-  { path: '/wbc/pool/c', changeFrequency: 'weekly', priority: 0.7 },
-  { path: '/wbc/pool/d', changeFrequency: 'weekly', priority: 0.7 },
-  { path: '/wbc/editorial/pool-c-preview', changeFrequency: 'monthly', priority: 0.7 },
+  { path: '/wbc', changeFrequency: 'monthly', priority: 0.5 },
+  { path: '/wbc/pool/a', changeFrequency: 'monthly', priority: 0.4 },
+  { path: '/wbc/pool/b', changeFrequency: 'monthly', priority: 0.4 },
+  { path: '/wbc/pool/c', changeFrequency: 'monthly', priority: 0.4 },
+  { path: '/wbc/pool/d', changeFrequency: 'monthly', priority: 0.4 },
+  { path: '/wbc/editorial/pool-c-preview', changeFrequency: 'monthly', priority: 0.4 },
 ];
 
 const mlbTheShow26: SitemapEntry[] = [
@@ -167,9 +167,9 @@ const mlbTheShow26: SitemapEntry[] = [
 const proSports: SitemapEntry[] = [
   // MLB
   { path: '/mlb', changeFrequency: 'daily', priority: 0.7 },
-  { path: '/mlb/spring-training', changeFrequency: 'daily', priority: 0.7 },
-  { path: '/mlb/spring-training/scores', changeFrequency: 'hourly', priority: 0.7 },
-  { path: '/mlb/spring-training/standings', changeFrequency: 'daily', priority: 0.7 },
+  { path: '/mlb/spring-training', changeFrequency: 'monthly', priority: 0.4 },
+  { path: '/mlb/spring-training/scores', changeFrequency: 'monthly', priority: 0.3 },
+  { path: '/mlb/spring-training/standings', changeFrequency: 'monthly', priority: 0.3 },
   { path: '/mlb/scores', changeFrequency: 'hourly', priority: 0.7 },
   { path: '/mlb/standings', changeFrequency: 'daily', priority: 0.7 },
   { path: '/mlb/games', changeFrequency: 'daily', priority: 0.7 },
