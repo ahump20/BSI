@@ -52,23 +52,31 @@ export async function handleHAVFLeaderboard(url: URL, env: Env): Promise<Respons
       );
     }
 
-    let query = 'SELECT * FROM havf_scores WHERE league = ? AND season = ?';
+    const minPa = parseInt(url.searchParams.get('min_pa') || '50', 10) || 50;
+
+    let query = `SELECT h.*, b.pa FROM havf_scores h
+      LEFT JOIN cbb_batting_advanced b ON h.player_id = b.player_id AND b.season = h.season
+      WHERE h.league = ? AND h.season = ?`;
     const binds: (string | number)[] = [league, season];
 
+    // Filter by minimum PA to exclude small-sample-size players
+    query += ' AND (b.pa IS NULL OR b.pa >= ?)';
+    binds.push(minPa);
+
     if (team) {
-      query += ' AND team = ?';
+      query += ' AND h.team = ?';
       binds.push(team);
     }
     if (position) {
-      query += ' AND position = ?';
+      query += ' AND h.position = ?';
       binds.push(position);
     }
     if (conference) {
-      query += ' AND conference = ?';
+      query += ' AND h.conference = ?';
       binds.push(conference);
     }
 
-    query += ' ORDER BY havf_composite DESC LIMIT ?';
+    query += ' ORDER BY h.havf_composite DESC LIMIT ?';
     binds.push(limit);
 
     const stmt = env.DB.prepare(query);
