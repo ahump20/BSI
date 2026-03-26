@@ -10,14 +10,14 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'About Blaze Sports Intel',
     description:
-      'Live scores, advanced sabermetrics, and independent editorial across 6 leagues. Built by one person for the fans mainstream media forgot.',
+      'Live scores, advanced sabermetrics, and independent editorial across five sports. Built by one person for the fans mainstream media forgot.',
     images: ogImage(),
   },
   twitter: {
     card: 'summary_large_image',
     title: 'About Blaze Sports Intel',
     description:
-      'Live scores, advanced sabermetrics, and independent editorial across 6 leagues. Built by one person for the fans mainstream media forgot.',
+      'Live scores, advanced sabermetrics, and independent editorial across five sports. Built by one person for the fans mainstream media forgot.',
   },
   alternates: {
     canonical: '/about',
