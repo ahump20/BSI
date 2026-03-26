@@ -79,7 +79,7 @@ export default function WeeklyPulseClient() {
       try {
         const res = await fetch(getReadApiUrl('/api/college-baseball/weekly-pulse'));
         if (!res.ok) throw new Error(`${res.status}`);
-        const data = await res.json();
+        const data = (await res.json()) as WeeklyPulseData;
         setPulse(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load');

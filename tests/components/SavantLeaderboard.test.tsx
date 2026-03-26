@@ -149,7 +149,7 @@ describe('SavantLeaderboard', () => {
         initialRows={25}
       />
     );
-    expect(screen.getByText('Upgrade to Pro')).toBeTruthy();
-    expect(screen.getByText(/Showing 10 of 25/)).toBeTruthy();
+    expect(screen.getByText('Unlock Full Leaderboard')).toBeTruthy();
+    expect(screen.getByText(/15 more players with/)).toBeTruthy();
   });
 });
