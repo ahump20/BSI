@@ -54,7 +54,7 @@ async function resolveTier(url: URL, headers: Headers, env: Env): Promise<string
  *  Core Savant metrics (wOBA, wRC+, OPS+, FIP, ERA-) stay visible — free product promise.
  *  Only expected-stats and secondary pitching extras are Pro-gated. */
 function stripProFields(row: Record<string, unknown>): Record<string, unknown> {
-  const proKeys = ['e_ba', 'e_slg', 'e_woba', 'x_fip', 'k_bb', 'lob_pct'];
+  const proKeys = ['k_bb', 'lob_pct'];
   const filtered = { ...row };
   for (const key of proKeys) {
     if (key in filtered) {
