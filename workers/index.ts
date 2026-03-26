@@ -588,6 +588,12 @@ app.get('/api/nba/game/:gameId', (c) => safeESPN(() => handleNBAGame(c.req.param
 app.get('/api/nba/players/:playerId', (c) => safeESPN(() => handleNBAPlayer(c.req.param('playerId'), c.env), 'player', null, c.env));
 app.get('/api/nba/teams/:teamId', (c) => safeESPN(() => handleNBATeamFull(c.req.param('teamId'), c.env), 'team', null, c.env));
 
+// --- CBB (College Basketball) ---
+import { handleCBBScores, handleCBBStandings, handleCBBTeams } from './handlers/cbb';
+app.get('/api/cbb/scores', (c) => handleCBBScores(new URL(c.req.url), c.env));
+app.get('/api/cbb/standings', (c) => handleCBBStandings(c.env));
+app.get('/api/cbb/teams', (c) => handleCBBTeams(c.env));
+
 // --- R2 Game assets ---
 app.get('/api/games/assets/*', (c) => {
   const path = c.req.path.replace('/api/games/assets/', '');
