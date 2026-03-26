@@ -286,6 +286,7 @@ export default function SavantPlayerClient() {
   const { batting, pitching, percentiles } = playerData;
   const playerName = batting?.player_name ?? pitching?.player_name ?? '';
   const team = batting?.team ?? pitching?.team ?? '';
+  const teamId = (batting as unknown as Record<string, unknown>)?.team_id ?? (pitching as unknown as Record<string, unknown>)?.team_id ?? '';
   const conference = batting?.conference ?? pitching?.conference ?? '';
   const position = batting?.position ?? pitching?.position ?? '';
   const classYear = batting?.class_year ?? pitching?.class_year ?? '';
@@ -293,6 +294,15 @@ export default function SavantPlayerClient() {
   const isBatter = batting !== null;
   const isPitcher = pitching !== null;
   const isTwoWay = isBatter && isPitcher;
+
+  // Team logo from ESPN CDN
+  const teamLogoUrl = teamId ? `https://a.espncdn.com/i/teamlogos/ncaa/500/${teamId}.png` : '';
+  // YouTube highlight search
+  const youtubeSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(`${playerName} ${team} baseball highlights ${season}`)}`;
+  // Headline stat for the hero card
+  const headlineStat = isBatter
+    ? { label: 'wOBA', value: batting?.woba != null ? `.${String(Math.round(batting.woba * 1000))}` : (batting ? `.${String(Math.round(batting.avg * 1000))}` : '') }
+    : { label: 'FIP', value: pitching?.fip != null ? String(pitching.fip.toFixed(2)) : (pitching ? pitching.era.toFixed(2) : '') };
 
   return (
     <>
@@ -302,6 +312,19 @@ export default function SavantPlayerClient() {
           style={{ padding: 'clamp(1.5rem, 3vw, 2.5rem) 0' }}
         >
           <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[rgba(191,87,0,0.15)] to-transparent" />
+
+          {/* Team logo watermark — large, faded behind the content */}
+          {teamLogoUrl && (
+            <div className="absolute right-0 top-0 bottom-0 w-[300px] sm:w-[400px] pointer-events-none overflow-hidden" aria-hidden="true">
+              <img
+                src={teamLogoUrl}
+                alt=""
+                className="absolute right-[-40px] top-1/2 -translate-y-1/2 w-[280px] sm:w-[360px] opacity-[0.04]"
+                loading="eager"
+              />
+            </div>
+          )}
+
           <Container size="lg">
             {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-xs mb-6" style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--bsi-dust)' }}>
@@ -315,35 +338,107 @@ export default function SavantPlayerClient() {
             </nav>
 
             <ScrollReveal direction="up" delay={50}>
-              {/* Player header */}
-              <div className="mb-8">
-                <div className="flex items-center gap-3 mb-3 flex-wrap">
-                  {position && position !== 'UN' && <Badge variant="primary">{position}</Badge>}
-                  <Badge variant="secondary">{team}</Badge>
-                  {conference && <span className="text-xs" style={{ color: 'var(--bsi-dust)' }}>{conference}</span>}
-                  {classYear && <span className="text-xs" style={{ color: 'var(--bsi-dust)' }}>{classYear}</span>}
-                  {isTwoWay && (
-                    <span
-                      className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-sm"
-                      style={{ background: 'rgba(191,87,0,0.15)', color: 'var(--bsi-primary)' }}
+              {/* Player header — scouting card layout */}
+              <div className="mb-8 flex items-start gap-5 sm:gap-8">
+                {/* Team logo + player avatar area */}
+                <div className="flex-shrink-0 relative">
+                  {teamLogoUrl && (
+                    <div
+                      className="w-20 h-20 sm:w-28 sm:h-28 rounded-sm border overflow-hidden flex items-center justify-center"
+                      style={{
+                        background: 'var(--surface-press-box, #111111)',
+                        borderColor: 'var(--border-vintage, rgba(140,98,57,0.3))',
+                      }}
                     >
-                      Two-Way
+                      <img
+                        src={teamLogoUrl}
+                        alt={`${team} logo`}
+                        className="w-14 h-14 sm:w-20 sm:h-20 object-contain"
+                        loading="eager"
+                      />
+                    </div>
+                  )}
+                  {/* Position badge overlaid on logo */}
+                  {position && position !== 'UN' && (
+                    <span
+                      className="absolute -bottom-1.5 -right-1.5 text-[10px] font-mono font-bold uppercase px-1.5 py-0.5 rounded-sm"
+                      style={{ background: 'var(--bsi-primary)', color: '#fff' }}
+                    >
+                      {position}
                     </span>
                   )}
                 </div>
-                <h1
-                  className="font-bold uppercase tracking-tight leading-none mb-2"
-                  style={{
-                    fontFamily: 'var(--font-syne, var(--bsi-font-display-hero))',
-                    fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-                    color: 'var(--bsi-bone)',
+
+                {/* Name and metadata */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                    <span className="text-xs font-medium" style={{ color: 'var(--bsi-bone)' }}>{team}</span>
+                    {conference && (
+                      <>
+                        <span className="text-[10px]" style={{ color: 'var(--bsi-dust)' }}>&middot;</span>
+                        <span className="text-xs" style={{ color: 'var(--bsi-dust)' }}>{conference}</span>
+                      </>
+                    )}
+                    {classYear && (
+                      <>
+                        <span className="text-[10px]" style={{ color: 'var(--bsi-dust)' }}>&middot;</span>
+                        <span className="text-xs" style={{ color: 'var(--bsi-dust)' }}>{classYear}</span>
+                      </>
+                    )}
+                    {isTwoWay && (
+                      <span
+                        className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-sm"
+                        style={{ background: 'rgba(191,87,0,0.15)', color: 'var(--bsi-primary)' }}
+                      >
+                        Two-Way
+                      </span>
+                    )}
+                  </div>
+                  <h1
+                    className="font-bold uppercase tracking-tight leading-none mb-2"
+                    style={{
+                      fontFamily: 'var(--font-syne, var(--bsi-font-display-hero))',
+                      fontSize: 'clamp(1.75rem, 5vw, 3.5rem)',
+                      color: 'var(--bsi-bone)',
                   }}
                 >
                   {playerName}
                 </h1>
-                <p className="text-sm" style={{ color: 'var(--bsi-dust)' }}>
-                  {season} Season &middot; Advanced Sabermetric Profile
-                </p>
+                  <div className="flex items-center gap-4 mt-3 flex-wrap">
+                    <p className="text-sm" style={{ color: 'var(--bsi-dust)' }}>
+                      {season} Season
+                    </p>
+
+                    {/* Headline stat pill */}
+                    {headlineStat.value && (
+                      <span
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-mono font-bold"
+                        style={{
+                          background: 'rgba(191,87,0,0.12)',
+                          color: 'var(--bsi-primary)',
+                          border: '1px solid rgba(191,87,0,0.2)',
+                        }}
+                      >
+                        {headlineStat.label}
+                        <span style={{ color: 'var(--bsi-bone)' }}>{headlineStat.value}</span>
+                      </span>
+                    )}
+
+                    {/* YouTube highlights link */}
+                    <a
+                      href={youtubeSearchUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs transition-colors hover:text-[var(--bsi-primary)]"
+                      style={{ color: 'var(--bsi-dust)' }}
+                    >
+                      <svg viewBox="0 0 16 16" className="w-3.5 h-3.5" fill="currentColor">
+                        <path d="M14.7 4.5a1.8 1.8 0 0 0-1.3-1.3C12.2 3 8 3 8 3s-4.2 0-5.4.3A1.8 1.8 0 0 0 1.3 4.5C1 5.7 1 8 1 8s0 2.3.3 3.5a1.8 1.8 0 0 0 1.3 1.2C3.8 13 8 13 8 13s4.2 0 5.4-.3a1.8 1.8 0 0 0 1.3-1.2c.3-1.2.3-3.5.3-3.5s0-2.3-.3-3.5zM6.5 10.2V5.8L10.2 8l-3.7 2.2z" />
+                      </svg>
+                      Highlights
+                    </a>
+                  </div>
+                </div>
               </div>
             </ScrollReveal>
 
