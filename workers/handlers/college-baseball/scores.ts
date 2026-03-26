@@ -78,10 +78,15 @@ export async function handleCollegeBaseballScores(
         ctx?.waitUntil(archiveRawResponse(env.DATA_LAKE, 'highlightly', 'college-baseball-scores', result.data));
         hlData = result.data;
         sources.push('highlightly');
+        console.info(`[highlightly] scores enrichment: ${(result.data as { data?: unknown[] })?.data?.length ?? 0} matches, ${result.duration_ms}ms`);
+      } else {
+        console.warn(`[highlightly] scores returned success=${result.success}, error=${result.error ?? 'none'}, ${result.duration_ms}ms`);
       }
     } catch (err) {
       console.error('[highlightly] scores enrichment failed:', err instanceof Error ? err.message : err);
     }
+  } else {
+    console.warn('[highlightly] client not available (RAPIDAPI_KEY missing?)');
   }
 
   // ---------------------------------------------------------------------------

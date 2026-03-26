@@ -81,6 +81,9 @@ export async function handleCollegeBaseballStandings(
         ctx?.waitUntil(archiveRawResponse(env.DATA_LAKE, 'highlightly', 'college-baseball-standings', result.data));
         hlOk = true;
         sources.push('highlightly');
+        console.info(`[highlightly] standings enrichment: ${hlData.length} conferences, ${result.duration_ms}ms`);
+      } else {
+        console.warn(`[highlightly] standings: success=${result.success}, data_length=${hlData.length}, error=${result.error ?? 'none'}, ${result.duration_ms}ms`);
       }
     } catch (err) {
       console.error('[highlightly] standings enrichment failed:', err instanceof Error ? err.message : err);
