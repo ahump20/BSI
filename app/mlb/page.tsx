@@ -114,6 +114,7 @@ interface Team {
   streakCode: string;
 }
 
+/** Normalized game shape used by the Schedule tab. */
 interface Game {
   id: number;
   date: string;
@@ -144,6 +145,88 @@ interface Game {
     };
   };
   venue: { name: string };
+}
+
+/** ESPN competitor entry (raw API shape). */
+interface ESPNCompetitor {
+  team?: { displayName?: string; shortDisplayName?: string; abbreviation?: string };
+  score?: string;
+  homeAway?: 'home' | 'away';
+  winner?: boolean;
+}
+
+/** Raw game from the scores API (teams may be array or object). */
+interface RawGame {
+  id?: number | string;
+  gamePk?: number;
+  date?: string;
+  status?: {
+    type?: { state?: string; detail?: string; shortDetail?: string; description?: string; completed?: boolean };
+    period?: number;
+  };
+  teams?: ESPNCompetitor[] | Game['teams'];
+  venue?: { name?: string; fullName?: string } | string;
+}
+
+/** Normalize a raw API game into the shape the Schedule tab expects. */
+function normalizeGame(raw: RawGame): Game {
+  const statusRaw = raw.status ?? {};
+  const stateType = statusRaw.type ?? {};
+  const stateStr = (stateType.state ?? '').toLowerCase();
+  const isLive = stateStr === 'in';
+  const isFinal = stateStr === 'post' || !!stateType.completed;
+
+  let inning: number | undefined;
+  let inningState: string | undefined;
+  if (isLive && stateType.shortDetail) {
+    const match = stateType.shortDetail.match(/(Top|Bot|Mid)\s+(\d+)/i);
+    if (match) {
+      inningState = match[1] === 'Bot' ? 'Bottom' : match[1] === 'Mid' ? 'Middle' : 'Top';
+      inning = parseInt(match[2], 10);
+    }
+  }
+
+  const emptyTeam = { name: '', abbreviation: '', score: 0, isWinner: false, hits: 0, errors: 0 };
+  let away = { ...emptyTeam };
+  let home = { ...emptyTeam };
+
+  if (Array.isArray(raw.teams)) {
+    for (const c of raw.teams as ESPNCompetitor[]) {
+      const side = {
+        name: c.team?.displayName ?? c.team?.shortDisplayName ?? '',
+        abbreviation: c.team?.abbreviation ?? '',
+        score: parseInt(String(c.score ?? '0'), 10),
+        isWinner: !!c.winner,
+        hits: 0,
+        errors: 0,
+      };
+      if (c.homeAway === 'away') away = side;
+      else home = side;
+    }
+  } else if (raw.teams && typeof raw.teams === 'object') {
+    const t = raw.teams as Game['teams'];
+    if (t.away) away = { ...emptyTeam, ...t.away };
+    if (t.home) home = { ...emptyTeam, ...t.home };
+  }
+
+  const venueName = typeof raw.venue === 'string'
+    ? raw.venue
+    : raw.venue?.fullName ?? raw.venue?.name ?? '';
+
+  return {
+    id: Number(raw.gamePk ?? raw.id ?? 0),
+    date: raw.date ?? '',
+    status: {
+      state: stateStr,
+      detailedState: stateType.detail ?? stateType.description ?? (isFinal ? 'Final' : isLive ? 'In Progress' : 'Scheduled'),
+      inning,
+      inningState,
+      isLive,
+      isFinal,
+    },
+    teams: { away, home },
+    venue: { name: venueName },
+  };
 }
 
 type TabType = 'standings' | 'teams' | 'players' | 'schedule';
@@ -182,14 +265,14 @@ export default function MLBPage() {
     loading: scheduleLoading,
     error: scheduleError,
     retry: retrySchedule,
-  } = useSportData<{ games?: Game[]; live?: boolean; meta?: DataMeta }>('/api/mlb/scores', {
+  } = useSportData<{ games?: RawGame[]; live?: boolean; meta?: DataMeta }>('/api/mlb/scores', {
     skip: activeTab !== 'schedule',
     refreshInterval: 30000,
     refreshWhen: liveGamesDetected,
   });
 
   const standings = useMemo(() => standingsData?.standings ?? [], [standingsData]);
-  const schedule = useMemo(() => scheduleData?.games ?? [], [scheduleData]);
+  const schedule = useMemo(() => (scheduleData?.games ?? []).map(normalizeGame), [scheduleData]);
   const hasLiveGames = useMemo(() => scheduleData?.live || schedule.some((g) => g.status.isLive), [scheduleData, schedule]);
 
   // Derive loading/error/meta based on active tab

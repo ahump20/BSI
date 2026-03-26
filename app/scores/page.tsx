@@ -123,7 +123,12 @@ function createSportSections(): SportSection[] {
 
 function countLiveMlbGames(payload: Record<string, unknown>): number {
   const games = (payload.games as Array<Record<string, unknown>>) || [];
-  return games.filter((game) => (game.status as Record<string, boolean>)?.isLive).length;
+  return games.filter((game) => {
+    const status = (game.status as Record<string, unknown>) || {};
+    const type = (status.type as Record<string, unknown>) || {};
+    const state = String(type.state || '').toLowerCase();
+    return state === 'in';
+  }).length;
 }
 
 function countLiveEspnGames(payload: Record<string, unknown>): number {
@@ -347,17 +352,58 @@ function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) 
 function extractMLBGames(data: Record<string, unknown>): FeaturedGame[] {
   const games = (data?.games as Array<Record<string, unknown>>) || [];
   return games.slice(0, 4).map(g => {
-    const away = (g.teams as Record<string, unknown>)?.away as Record<string, unknown> || {};
-    const home = (g.teams as Record<string, unknown>)?.home as Record<string, unknown> || {};
-    const status = g.status as Record<string, unknown> || {};
-    const isLive = Boolean((status as Record<string, boolean>)?.isLive);
-    const isFinal = Boolean((status as Record<string, unknown>)?.type && ((status as Record<string, Record<string, boolean>>).type?.completed));
+    // MLB scores API returns teams as an ESPN-format array with homeAway field,
+    // OR as a pre-normalized {away, home} object. Handle both.
+    let awayData: Record<string, unknown> = {};
+    let homeData: Record<string, unknown> = {};
+    let awayTeamName = '';
+    let homeTeamName = '';
+    let awayAbbr = 'AWY';
+    let homeAbbr = 'HME';
+    let awayLogo = '';
+    let homeLogo = '';
+    let awayScore = '';
+    let homeScore = '';
+
+    if (Array.isArray(g.teams)) {
+      const competitors = g.teams as Array<Record<string, unknown>>;
+      const awayEntry = competitors.find(t => t.homeAway === 'away') || competitors[0] || {};
+      const homeEntry = competitors.find(t => t.homeAway === 'home') || competitors[1] || {};
+      const awayTeam = (awayEntry.team || {}) as Record<string, string>;
+      const homeTeam = (homeEntry.team || {}) as Record<string, string>;
+      awayTeamName = String(awayTeam.displayName || awayTeam.shortDisplayName || '');
+      homeTeamName = String(homeTeam.displayName || homeTeam.shortDisplayName || '');
+      awayAbbr = String(awayTeam.abbreviation || 'AWY');
+      homeAbbr = String(homeTeam.abbreviation || 'HME');
+      awayLogo = String(awayTeam.logo || '');
+      homeLogo = String(homeTeam.logo || '');
+      awayScore = String(awayEntry.score ?? '');
+      homeScore = String(homeEntry.score ?? '');
+    } else if (g.teams && typeof g.teams === 'object') {
+      awayData = ((g.teams as Record<string, unknown>)?.away as Record<string, unknown>) || {};
+      homeData = ((g.teams as Record<string, unknown>)?.home as Record<string, unknown>) || {};
+      awayTeamName = String(awayData.name || '');
+      homeTeamName = String(homeData.name || '');
+      awayAbbr = String(awayData.abbreviation || 'AWY');
+      homeAbbr = String(homeData.abbreviation || 'HME');
+      awayLogo = String(awayData.logo || '');
+      homeLogo = String(homeData.logo || '');
+      awayScore = String(awayData.score ?? '');
+      homeScore = String(homeData.score ?? '');
+    }
+
+    const status = (g.status || {}) as Record<string, unknown>;
+    const statusType = (status.type || {}) as Record<string, unknown>;
+    const stateStr = String(statusType.state || '').toLowerCase();
+    const isLive = stateStr === 'in';
+    const isFinal = stateStr === 'post' || Boolean(statusType.completed);
+
     return {
       id: String(g.gamePk || g.id || ''),
-      away: { name: String(away.name || ''), abbreviation: String(away.abbreviation || 'AWY'), logo: String(away.logo || ''), score: String(away.score ?? '') },
-      home: { name: String(home.name || ''), abbreviation: String(home.abbreviation || 'HME'), logo: String(home.logo || ''), score: String(home.score ?? '') },
+      away: { name: awayTeamName, abbreviation: awayAbbr, logo: awayLogo, score: awayScore },
+      home: { name: homeTeamName, abbreviation: homeAbbr, logo: homeLogo, score: homeScore },
       state: isLive ? 'live' : isFinal ? 'final' : 'upcoming',
-      detail: String((status as Record<string, string>)?.detailedState || ''),
+      detail: String(statusType.detail || statusType.description || ''),
       href: `/mlb/game/${g.gamePk || g.id}`,
     } satisfies FeaturedGame;
   });
