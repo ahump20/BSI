@@ -57,6 +57,32 @@ const INTEL_SPORT_MAP: Record<string, Sport> = {
   cfb: 'ncaa-football',
 };
 
+// ── Helpers ──
+
+/** Filter out games that are not from today (prevents future-dated games inflating counts). */
+function isGameToday(game: Record<string, unknown>): boolean {
+  const dateStr = game.date as string | undefined;
+  if (!dateStr) return true; // if no date, include it
+  const gameDate = new Date(dateStr);
+  const now = new Date();
+  // Same calendar date (UTC)
+  return gameDate.getUTCFullYear() === now.getUTCFullYear()
+    && gameDate.getUTCMonth() === now.getUTCMonth()
+    && gameDate.getUTCDate() === now.getUTCDate();
+}
+
+/** Count only games from today (or in-progress regardless of date). */
+function countTodayGames(games: Array<Record<string, unknown>>): number {
+  return games.filter(g => {
+    // Always count live/in-progress games
+    const status = g.status as Record<string, unknown> | undefined;
+    const state = status?.type as Record<string, unknown> | undefined;
+    if (state?.state === 'in' || status?.state === 'in') return true;
+    // For pre/post games, only count if date is today
+    return isGameToday(g);
+  }).length;
+}
+
 // ── Game Types ──
 
 interface GameTeam {
@@ -610,7 +636,7 @@ function ScoresHubContent() {
         isActive: games.length > 0,
         liveCount,
         loaded: true,
-        todayCount: games.length,
+        todayCount: countTodayGames(games),
       };
     });
 
@@ -963,7 +989,7 @@ function ScoresHubContent() {
                           <p className="text-bsi-dust text-xs leading-relaxed">{sport.description}</p>
                           <div className="mt-4 flex items-center justify-between border-t border-border-vintage/60 pt-3 text-[11px] uppercase tracking-[0.12em]">
                             <span className="text-bsi-dust/70">
-                              {sport.todayCount > 0 ? `${sport.todayCount} games on deck` : sport.season}
+                              {sport.todayCount > 0 ? `${sport.todayCount} ${sport.todayCount === 1 ? 'game' : 'games'} on deck` : sport.season}
                             </span>
                             <span className="text-burnt-orange">Open hub →</span>
                           </div>

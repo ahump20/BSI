@@ -45,7 +45,11 @@ export function HealthDot() {
         if (!mounted) return;
         const raw = data as StatusApiRaw;
         const endpoints = raw.endpoints || raw.results || [];
-        const failed = endpoints.filter((e: { status: string }) => e.status !== 'ok').length;
+        const failed = endpoints.filter((e: { status: string | number }) => {
+          const s = e.status;
+          // API may return 'ok' or HTTP status codes (200, etc.)
+          return s !== 'ok' && s !== 200 && !(typeof s === 'number' && s >= 200 && s < 300);
+        }).length;
         if (failed === 0) setHealth('healthy');
         else if (failed < endpoints.length) setHealth('degraded');
         else setHealth('down');
