@@ -20,6 +20,7 @@ import {
 import { ParkFactorTable } from '@/components/analytics/ParkFactorTable';
 import { ConferenceStrengthChart } from '@/components/analytics/ConferenceStrengthChart';
 import { getPercentileColor } from '@/components/analytics/PercentileBar';
+import { SavantComparePanel } from '@/components/analytics/SavantComparePanel';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { HeroGlow } from '@/components/ui/HeroGlow';
 
@@ -112,6 +113,7 @@ export default function SavantHubPage() {
   const [positionFilter, setPositionFilter] = useState('');
   const [playerSearch, setPlayerSearch] = useState('');
   const [minPA, setMinPA] = useState(25);
+  const [compareIds, setCompareIds] = useState<Set<string>>(new Set());
 
   const { data: battingRes, loading: battingLoading } =
     useSportData<LeaderboardResponse>('/api/savant/batting/leaderboard?limit=100');
@@ -178,6 +180,27 @@ export default function SavantHubPage() {
 
   const filteredBatting = useMemo(() => applyFilters(battingRes?.data ?? []), [applyFilters, battingRes]);
   const filteredPitching = useMemo(() => applyFilters(pitchingRes?.data ?? []), [applyFilters, pitchingRes]);
+
+  // Compare mode
+  const handleCompareToggle = useCallback((playerId: string) => {
+    setCompareIds(prev => {
+      const next = new Set(prev);
+      if (next.has(playerId)) {
+        next.delete(playerId);
+      } else if (next.size < 3) {
+        next.add(playerId);
+      }
+      return next;
+    });
+  }, []);
+
+  const comparePlayers = useMemo(() => {
+    if (compareIds.size === 0) return [];
+    const source = activeTab === 'pitching'
+      ? (pitchingRes?.data ?? [])
+      : (battingRes?.data ?? []);
+    return source.filter(row => compareIds.has(row.player_id as string));
+  }, [compareIds, activeTab, battingRes, pitchingRes]);
 
   return (
     <>
@@ -345,7 +368,7 @@ export default function SavantHubPage() {
               {TABS.map((tab) => (
                 <button
                   key={tab.key}
-                  onClick={() => { setActiveTab(tab.key); setPositionFilter(''); }}
+                  onClick={() => { setActiveTab(tab.key); setPositionFilter(''); setCompareIds(new Set()); }}
                   className={`px-4 py-3 text-sm font-display uppercase tracking-wider whitespace-nowrap transition-colors border-b-2 ${
                     activeTab === tab.key
                       ? 'text-burnt-orange border-burnt-orange bg-burnt-orange/[0.04]'
@@ -452,6 +475,43 @@ export default function SavantHubPage() {
               </ScrollReveal>
             )}
 
+            {/* Compare mode indicator */}
+            {compareIds.size > 0 && (activeTab === 'batting' || activeTab === 'pitching') && (
+              <div
+                className="flex items-center justify-between px-4 py-2 mb-4 rounded-sm"
+                style={{
+                  background: 'rgba(191,87,0,0.08)',
+                  border: '1px solid rgba(191,87,0,0.2)',
+                }}
+              >
+                <span className="text-xs font-mono" style={{ color: 'var(--bsi-bone)' }}>
+                  <span style={{ color: 'var(--bsi-primary)' }}>{compareIds.size}</span> of 3 players selected
+                  {compareIds.size < 2 && ' — select at least 2 to compare'}
+                </span>
+                <button
+                  onClick={() => setCompareIds(new Set())}
+                  className="text-[10px] font-mono uppercase tracking-wider transition-colors cursor-pointer"
+                  style={{ color: 'var(--bsi-primary)' }}
+                >
+                  Clear
+                </button>
+              </div>
+            )}
+
+            {/* Compare panel */}
+            {comparePlayers.length >= 2 && (activeTab === 'batting' || activeTab === 'pitching') && (
+              <ScrollReveal direction="up" delay={175}>
+                <SavantComparePanel
+                  players={comparePlayers as { player_id: string; player_name: string; team: string; position: string; [key: string]: unknown }[]}
+                  columns={activeTab === 'pitching' ? PITCHING_COLUMNS : BATTING_COLUMNS}
+                  allData={activeTab === 'pitching' ? (pitchingRes?.data ?? []) : (battingRes?.data ?? [])}
+                  isPro={isPro}
+                  onRemove={(id) => handleCompareToggle(id)}
+                  onClear={() => setCompareIds(new Set())}
+                />
+              </ScrollReveal>
+            )}
+
             {/* Tab content */}
             <ScrollReveal direction="up" delay={200}>
               {activeTab === 'batting' && (
@@ -464,6 +524,8 @@ export default function SavantHubPage() {
                     title="Batting Leaders — Advanced"
                     isPro={isPro}
                     initialRows={25}
+                    compareSelected={compareIds}
+                    onCompareToggle={handleCompareToggle}
                   />
                 )
               )}
@@ -478,6 +540,8 @@ export default function SavantHubPage() {
                     title="Pitching Leaders — Advanced"
                     isPro={isPro}
                     initialRows={25}
+                    compareSelected={compareIds}
+                    onCompareToggle={handleCompareToggle}
                   />
                 )
               )}
