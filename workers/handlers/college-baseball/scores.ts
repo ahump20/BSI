@@ -12,7 +12,24 @@ export async function handleCollegeBaseballScores(
   ctx?: ExecutionContext,
 ): Promise<Response> {
   try {
-  const date = url.searchParams.get('date') || new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' }).format(new Date());
+  const rawDate = url.searchParams.get('date');
+  // Normalize date to YYYY-MM-DD: accept M/D/YYYY, MM/DD/YYYY, YYYYMMDD, or YYYY-MM-DD
+  let date: string;
+  if (!rawDate) {
+    date = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' }).format(new Date());
+  } else if (/^\d{4}-\d{2}-\d{2}$/.test(rawDate)) {
+    date = rawDate; // Already YYYY-MM-DD
+  } else if (/^\d{8}$/.test(rawDate)) {
+    date = `${rawDate.slice(0, 4)}-${rawDate.slice(4, 6)}-${rawDate.slice(6, 8)}`;
+  } else {
+    // Try parsing M/D/YYYY or other formats via Date constructor
+    const parsed = new Date(rawDate);
+    if (!isNaN(parsed.getTime())) {
+      date = parsed.toISOString().split('T')[0];
+    } else {
+      date = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' }).format(new Date());
+    }
+  }
   const cacheKey = `cb:scores:${date}`;
   const empty = { data: [], totalCount: 0 };
   const now = new Date().toISOString();
