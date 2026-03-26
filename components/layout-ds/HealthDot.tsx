@@ -6,15 +6,22 @@ import { getReadApiUrl } from '@/lib/utils/public-api';
 
 type HealthLevel = 'healthy' | 'degraded' | 'down' | 'unknown';
 
+interface StatusResult {
+  ok: boolean;
+  status: number | string;
+  name?: string;
+}
+
 interface StatusApiRaw {
-  endpoints?: { status: string }[];
-  results?: { status: string }[];
+  allHealthy?: boolean;
+  results?: StatusResult[];
+  endpoints?: StatusResult[];
 }
 
 const dotColors: Record<HealthLevel, string> = {
   healthy: 'bg-[var(--bsi-primary)]',
-  degraded: 'bg-[var(--bsi-warning)]',
-  down: 'bg-[var(--bsi-danger)]',
+  degraded: 'bg-[var(--bsi-warning,#f59e0b)]',
+  down: 'bg-[var(--bsi-danger,#ef4444)]',
   unknown: '', // hidden
 };
 
@@ -44,12 +51,20 @@ export function HealthDot() {
       .then((data: unknown) => {
         if (!mounted) return;
         const raw = data as StatusApiRaw;
-        const endpoints = raw.endpoints || raw.results || [];
-        const failed = endpoints.filter((e: { status: string | number }) => {
-          const s = e.status;
-          // API may return 'ok' or HTTP status codes (200, etc.)
-          return s !== 'ok' && s !== 200 && !(typeof s === 'number' && s >= 200 && s < 300);
-        }).length;
+
+        // Fast path: synthetic monitor provides allHealthy boolean
+        if (typeof raw.allHealthy === 'boolean') {
+          setHealth(raw.allHealthy ? 'healthy' : 'degraded');
+          return;
+        }
+
+        // Fallback: inspect individual results
+        const endpoints = raw.results || raw.endpoints || [];
+        if (endpoints.length === 0) {
+          setHealth('unknown');
+          return;
+        }
+        const failed = endpoints.filter((e: { ok?: boolean }) => !e.ok).length;
         if (failed === 0) setHealth('healthy');
         else if (failed < endpoints.length) setHealth('degraded');
         else setHealth('down');

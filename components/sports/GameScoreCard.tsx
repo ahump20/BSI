@@ -49,9 +49,11 @@ function TeamRow({ team, isLive }: { team: GameTeam; isLive: boolean }) {
 function CardContent({ game, showHitsErrors }: { game: GameScoreCardGame; showHitsErrors: boolean }) {
   return (
     <div
-      className={`bg-graphite rounded-sm p-4 flex justify-between items-center border ${
-        game.isLive ? 'border-success' : 'border-border-subtle'
-      }`}
+      className="rounded-sm p-4 flex justify-between items-center"
+      style={{
+        background: 'var(--surface-dugout)',
+        border: `1px solid ${game.isLive ? 'var(--bsi-primary)' : 'var(--border-vintage)'}`,
+      }}
     >
       <div className="flex-1">
         <TeamRow team={game.away} isLive={game.isLive} />

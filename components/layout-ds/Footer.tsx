@@ -87,7 +87,7 @@ export function Footer() {
             </ul>
           </div>
           <div>
-            <h4 className={sectionTitle} style={{ color: 'var(--heritage-bronze)' }}>Company</h4>
+            <h4 className={sectionTitle} style={{ color: 'var(--heritage-bronze)' }}>About</h4>
             <ul className="space-y-2">
               <li><Link href="/about" className={footerLink}>About</Link></li>
               <li><Link href="/about/methodology" className={footerLink}>Methodology</Link></li>
@@ -108,7 +108,7 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3" style={{ borderTop: '1px solid var(--border-vintage)' }}>
           <p className="text-[10px] font-mono uppercase tracking-wider" style={{ color: 'var(--bsi-dust)' }}>
-            &copy; {currentYear} Blaze Intelligence LLC
+            &copy; {currentYear} Blaze Sports Intel
           </p>
           <p className="text-[10px] font-mono uppercase tracking-wider" style={{ color: 'var(--bsi-dust)' }}>
             Built on Cloudflare &middot; Austin, TX

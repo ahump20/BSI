@@ -72,7 +72,7 @@ export function EmptyState({ type, sport: _sport, message, action, onRetry }: Em
       {showRetry && (
         <button
           onClick={onRetry}
-          className="px-6 py-2 bg-burnt-orange hover:bg-burnt-orange-700 text-white font-semibold rounded-sm transition-colors"
+          className="btn-heritage-fill px-6 py-2 font-semibold rounded-sm transition-colors"
         >
           Try Again
         </button>
@@ -80,7 +80,8 @@ export function EmptyState({ type, sport: _sport, message, action, onRetry }: Em
       {action && (
         <Link
           href={action.href}
-          className="mt-2 text-burnt-orange hover:text-ember text-sm font-semibold transition-colors"
+          className="mt-2 text-sm font-semibold transition-colors"
+          style={{ color: 'var(--heritage-columbia-blue)' }}
         >
           {action.label}
         </Link>

@@ -37,6 +37,13 @@ export function ScrollReveal({ children, direction = 'up', delay = 0, className 
       return;
     }
 
+    // Immediate check: if already in viewport on mount, reveal now
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      reveal();
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -49,7 +56,7 @@ export function ScrollReveal({ children, direction = 'up', delay = 0, className 
 
     observer.observe(el);
 
-    // Above-fold: check on next frame
+    // Above-fold double-check after layout settles (rAF + microtask)
     requestAnimationFrame(() => {
       if (!revealed.current && el.getBoundingClientRect().top < window.innerHeight) {
         reveal();
@@ -57,23 +64,18 @@ export function ScrollReveal({ children, direction = 'up', delay = 0, className 
       }
     });
 
-    return () => { observer.disconnect(); };
-  }, []);
+    // Hard fallback: if observer hasn't fired within 500ms, force reveal
+    const fallbackTimer = setTimeout(() => {
+      if (!revealed.current) {
+        reveal();
+        observer.disconnect();
+      }
+    }, 500);
 
-  // Fallback outside effect cleanup — survives React strict mode double-mount.
-  // Polls briefly to catch elements freed from Suspense hidden containers.
-  useEffect(() => {
-    if (revealed.current) return;
-    const checks = [500, 1200, 2500];
-    const timers = checks.map(ms =>
-      setTimeout(() => {
-        if (!revealed.current && ref.current) {
-          ref.current.classList.add('revealed');
-          revealed.current = true;
-        }
-      }, ms)
-    );
-    return () => { timers.forEach(clearTimeout); };
+    return () => {
+      clearTimeout(fallbackTimer);
+      observer.disconnect();
+    };
   }, []);
 
   const dirClass =
