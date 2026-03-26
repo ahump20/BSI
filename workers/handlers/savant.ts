@@ -335,11 +335,17 @@ export async function handleSavantPlayer(playerId: string, url: URL, env: Env, h
       return json({ error: 'Player not found in Savant data', player_id: playerId }, 404);
     }
 
+    // Fetch headshot from player_season_stats (ESPN CDN URL)
+    const headshotRow = await env.DB.prepare(
+      `SELECT headshot FROM player_season_stats WHERE espn_id = ? AND sport = 'college-baseball' AND season = ? AND headshot != ''`
+    ).bind(playerId, SEASON).first<{ headshot: string }>();
+
     let player: Record<string, unknown> = {
       player_id: playerId,
       batting: batting || null,
       pitching: pitching || null,
       type: batting && pitching ? 'two-way' : batting ? 'hitter' : 'pitcher',
+      headshot: headshotRow?.headshot || null,
     };
 
     // Compute per-stat percentiles against full population

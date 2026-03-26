@@ -94,6 +94,7 @@ interface SavantPlayerPayload {
   pitching: PitchingStats | null;
   type: 'hitter' | 'pitcher' | 'two-way';
   percentiles: PercentileData;
+  headshot: string | null;
 }
 
 interface SavantPlayerResponse {
@@ -170,6 +171,68 @@ function gradeColor(grade: number): string {
   if (grade >= 45) return '#8890a4';
   if (grade >= 40) return '#3b82f6';
   return '#6366f1';
+}
+
+// ---------------------------------------------------------------------------
+// Position icon SVG paths — baseball silhouettes instead of cheap initials
+// ---------------------------------------------------------------------------
+
+function PositionIcon({ position, color }: { position: string; color: string }) {
+  const pos = position?.toUpperCase() || '';
+  const isPitcherPos = ['P', 'SP', 'RP', 'LHP', 'RHP', 'LHSP', 'RHSP', 'LHRP', 'RHRP'].includes(pos);
+
+  if (isPitcherPos) {
+    // Pitcher in wind-up silhouette
+    return (
+      <svg viewBox="0 0 120 120" className="w-full h-full" aria-hidden="true">
+        <defs>
+          <linearGradient id="pitcher-grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={color} stopOpacity="0.9" />
+            <stop offset="100%" stopColor={color} stopOpacity="0.4" />
+          </linearGradient>
+        </defs>
+        {/* Head */}
+        <circle cx="55" cy="22" r="10" fill="url(#pitcher-grad)" />
+        {/* Torso — rotated for wind-up */}
+        <path d="M55 32 L50 58 L60 58 Z" fill="url(#pitcher-grad)" />
+        {/* Front leg (drive leg) — extended */}
+        <path d="M50 58 L30 90 L35 92 L52 62" fill="url(#pitcher-grad)" />
+        {/* Back leg (pivot) — bent */}
+        <path d="M60 58 L72 78 L68 88 L74 90 L78 80 L66 58" fill="url(#pitcher-grad)" />
+        {/* Throwing arm — extended back */}
+        <path d="M55 36 L82 28 L86 32 L58 40" fill="url(#pitcher-grad)" />
+        {/* Glove arm — out front */}
+        <path d="M55 38 L34 44 L30 40 L32 36 L54 34" fill="url(#pitcher-grad)" />
+        {/* Ball */}
+        <circle cx="86" cy="29" r="4" fill={color} opacity="0.7" />
+      </svg>
+    );
+  }
+
+  // Batter in swing silhouette
+  return (
+    <svg viewBox="0 0 120 120" className="w-full h-full" aria-hidden="true">
+      <defs>
+        <linearGradient id="batter-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity="0.9" />
+          <stop offset="100%" stopColor={color} stopOpacity="0.4" />
+        </linearGradient>
+      </defs>
+      {/* Head with helmet */}
+      <circle cx="60" cy="22" r="10" fill="url(#batter-grad)" />
+      <path d="M52 18 L50 14 L56 12 L62 12 L64 16" fill="url(#batter-grad)" />
+      {/* Torso — slight rotation for batting stance */}
+      <path d="M56 32 L52 60 L68 60 L64 32 Z" fill="url(#batter-grad)" />
+      {/* Front leg — striding */}
+      <path d="M52 60 L40 90 L46 92 L54 64" fill="url(#batter-grad)" />
+      {/* Back leg — loading */}
+      <path d="M68 60 L76 88 L70 90 L64 64" fill="url(#batter-grad)" />
+      {/* Arms + bat — mid-swing */}
+      <path d="M60 36 L78 30 L82 34 L62 40" fill="url(#batter-grad)" />
+      {/* Bat */}
+      <line x1="80" y1="28" x2="42" y2="8" stroke={color} strokeWidth="3" strokeLinecap="round" opacity="0.8" />
+    </svg>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -326,7 +389,7 @@ export default function SavantPlayerClient() {
     );
   }
 
-  const { batting, pitching, percentiles } = playerData;
+  const { batting, pitching, percentiles, headshot } = playerData;
   const playerName = batting?.player_name ?? pitching?.player_name ?? '';
   const team = batting?.team ?? pitching?.team ?? '';
   const conference = batting?.conference ?? pitching?.conference ?? '';
@@ -358,160 +421,366 @@ export default function SavantPlayerClient() {
     ? batting ? { label: 'OPS', value: fmt3(batting.ops) } : null
     : pitching ? { label: 'K/9', value: fmt1(pitching.k_9) } : null;
 
-  // Player initials for avatar
+  // Third headline stat
+  const thirdStat = isBatter
+    ? batting ? { label: 'HR', value: String(batting.hr) } : null
+    : isPitcher && pitching ? { label: 'SO', value: String(pitching.so) } : null;
+
+  // Player initials for avatar fallback
   const nameParts = playerName.split(' ');
   const initials = nameParts.length >= 2
     ? `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`
     : playerName.slice(0, 2);
 
+  // Split name for dramatic display
+  const firstName = nameParts.length >= 2 ? nameParts.slice(0, -1).join(' ') : '';
+  const lastName = nameParts.length >= 2 ? nameParts[nameParts.length - 1] : playerName;
+
   return (
     <>
       <div>
-        {/* ── SCOUTING CARD HERO ── */}
-        <section className="relative overflow-hidden">
-          {/* Team color top bar */}
-          <div className="absolute inset-x-0 top-0 h-1" style={{ background: teamColors.primary }} />
+        {/* ================================================================ */}
+        {/*  SCOUTING DOSSIER HERO                                           */}
+        {/* ================================================================ */}
+        <section
+          className="relative overflow-hidden grain-overlay"
+          style={{ background: 'var(--surface-scoreboard, #0A0A0A)' }}
+        >
+          {/* Team color edge accent — left vertical bar */}
+          <div
+            className="absolute left-0 top-0 bottom-0 w-[3px]"
+            style={{ background: teamColors.primary }}
+            aria-hidden="true"
+          />
 
-          {/* Large watermark logo */}
+          {/* Diagonal team color wash — top-right corner bleed */}
+          <div
+            className="absolute top-0 right-0 w-[60%] h-full pointer-events-none"
+            style={{
+              background: `linear-gradient(135deg, transparent 40%, ${teamColors.primary}08 70%, ${teamColors.primary}12 100%)`,
+            }}
+            aria-hidden="true"
+          />
+
+          {/* Large watermark logo — bleeds behind everything */}
           {teamLogoUrl && (
-            <div className="absolute right-[-60px] sm:right-[-20px] top-1/2 -translate-y-1/2 w-[300px] sm:w-[420px] pointer-events-none" aria-hidden="true">
-              <img src={teamLogoUrl} alt="" className="w-full opacity-[0.035]" loading="eager" />
+            <div
+              className="absolute right-[-40px] sm:right-[2%] top-[50%] -translate-y-1/2 w-[280px] sm:w-[380px] md:w-[440px] pointer-events-none select-none"
+              aria-hidden="true"
+            >
+              <img
+                src={teamLogoUrl}
+                alt=""
+                className="w-full opacity-[0.04]"
+                loading="eager"
+                draggable="false"
+              />
             </div>
           )}
 
-          {/* Subtle diagonal grain */}
-          <div className="absolute inset-0 pointer-events-none opacity-[0.02]" aria-hidden="true" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)' }} />
+          {/* Scanline texture overlay */}
+          <div
+            className="absolute inset-0 pointer-events-none opacity-[0.015]"
+            aria-hidden="true"
+            style={{
+              backgroundImage:
+                'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)',
+            }}
+          />
 
           <Container size="lg">
-            <div style={{ padding: 'clamp(1.5rem, 4vw, 3rem) 0 clamp(1rem, 3vw, 2rem)' }}>
+            <div style={{ padding: 'clamp(1.25rem, 3vw, 2rem) 0 clamp(1.5rem, 3vw, 2.5rem)' }}>
               {/* Breadcrumb */}
-              <nav className="flex items-center gap-2 text-xs mb-8" style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--bsi-dust)' }}>
+              <nav
+                className="flex items-center gap-2 text-xs mb-6"
+                style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--bsi-dust)' }}
+                aria-label="Breadcrumb"
+              >
                 <Link href="/" className="transition-colors hover:text-[var(--bsi-bone)]">Home</Link>
-                <span>/</span>
+                <span aria-hidden="true">/</span>
                 <Link href="/college-baseball" className="transition-colors hover:text-[var(--bsi-bone)]">College Baseball</Link>
-                <span>/</span>
+                <span aria-hidden="true">/</span>
                 <Link href="/college-baseball/savant" className="transition-colors hover:text-[var(--bsi-bone)]">Savant</Link>
-                <span>/</span>
+                <span aria-hidden="true">/</span>
                 <span style={{ color: 'var(--bsi-primary)' }}>{playerName}</span>
               </nav>
 
               <ScrollReveal direction="up" delay={50}>
-                <div className="flex items-start gap-5 sm:gap-8">
-                  {/* ── Player avatar / team logo column ── */}
-                  <div className="flex-shrink-0 flex flex-col items-center gap-3">
-                    {/* Player avatar with team color ring */}
-                    <div className="relative w-24 h-24 sm:w-32 sm:h-32 rounded-sm overflow-hidden" style={{ border: `3px solid ${teamColors.primary}`, background: 'var(--surface-press-box, #111111)' }}>
-                      <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <svg viewBox="0 0 80 80" className="w-full h-full absolute inset-0" style={{ opacity: 0.08 }}>
-                          <circle cx="40" cy="28" r="14" fill={teamColors.primary} />
-                          <ellipse cx="40" cy="68" rx="22" ry="16" fill={teamColors.primary} />
-                        </svg>
-                        <span className="relative z-10 text-2xl sm:text-3xl font-bold uppercase tracking-tighter" style={{ fontFamily: 'var(--font-syne, var(--bsi-font-display-hero))', color: teamColors.primary, opacity: 0.6 }}>
-                          {initials}
-                        </span>
+                {/* ── The Scouting Card ── */}
+                <div
+                  className="relative corner-marks overflow-hidden"
+                  style={{
+                    background: 'var(--surface-dugout, #161616)',
+                    border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))',
+                    borderTop: `2px solid ${teamColors.primary}`,
+                  }}
+                >
+                  {/* Card interior layout */}
+                  <div className="flex flex-col md:flex-row">
+                    {/* ── LEFT: Player identity column ── */}
+                    <div
+                      className="relative flex flex-col items-center justify-center p-6 md:p-8 md:w-[240px] lg:w-[280px] flex-shrink-0"
+                      style={{
+                        background: `linear-gradient(180deg, ${teamColors.primary}0A 0%, transparent 50%, ${teamColors.primary}06 100%)`,
+                        borderRight: '1px solid var(--border-vintage, rgba(140,98,57,0.3))',
+                      }}
+                    >
+                      {/* Player headshot or position silhouette fallback */}
+                      <div className="w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 mb-4 relative rounded-sm overflow-hidden" style={{ border: `2px solid ${teamColors.primary}44`, background: 'var(--surface-press-box, #111111)' }}>
+                        {headshot ? (
+                          <img
+                            src={headshot}
+                            alt={playerName}
+                            className="w-full h-full object-cover object-top"
+                            loading="eager"
+                          />
+                        ) : (
+                          <PositionIcon position={position} color={teamColors.primary} />
+                        )}
                       </div>
+
+                      {/* Team logo — real, prominent */}
+                      {teamLogoUrl && (
+                        <div className="w-14 h-14 mb-3">
+                          <img
+                            src={teamLogoUrl}
+                            alt={`${team} logo`}
+                            className="w-full h-full object-contain"
+                            loading="eager"
+                          />
+                        </div>
+                      )}
+
+                      {/* Position badge */}
                       {position && position !== 'UN' && (
-                        <span className="absolute bottom-0 right-0 text-[10px] font-mono font-bold uppercase px-2 py-1" style={{ background: teamColors.primary, color: '#fff' }}>
+                        <span
+                          className="heritage-stamp text-center"
+                          style={{
+                            color: teamColors.primary,
+                            borderColor: `${teamColors.primary}44`,
+                            fontSize: '0.8rem',
+                            letterSpacing: '0.15em',
+                          }}
+                        >
                           {position}
                         </span>
                       )}
-                    </div>
 
-                    {/* Team logo — small, below avatar */}
-                    {teamLogoUrl && (
-                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-sm border overflow-hidden flex items-center justify-center p-1" style={{ background: 'var(--surface-press-box, #111111)', borderColor: 'rgba(140,98,57,0.2)' }}>
-                        <img src={teamLogoUrl} alt={`${team} logo`} className="w-full h-full object-contain" loading="eager" />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* ── Name, metadata, and headline stats ── */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-2 flex-wrap">
-                      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: teamColors.primary }}>{team}</span>
-                      {conference && (
-                        <>
-                          <span className="text-[10px]" style={{ color: 'var(--bsi-dust)' }}>&middot;</span>
-                          <span className="text-xs" style={{ color: 'var(--bsi-dust)' }}>{conference}</span>
-                        </>
-                      )}
+                      {/* Class year tag */}
                       {classYear && (
-                        <>
-                          <span className="text-[10px]" style={{ color: 'var(--bsi-dust)' }}>&middot;</span>
-                          <span className="text-xs" style={{ color: 'var(--bsi-dust)' }}>{classYear}</span>
-                        </>
-                      )}
-                    </div>
-
-                    <h1 className="font-bold uppercase tracking-tight leading-none mb-1" style={{ fontFamily: 'var(--font-syne, var(--bsi-font-display-hero))', fontSize: 'clamp(1.75rem, 5vw, 3.5rem)', color: 'var(--bsi-bone)' }}>
-                      {playerName}
-                    </h1>
-
-                    <div className="flex items-center gap-2 mt-2 mb-4 flex-wrap">
-                      {isTwoWay && (
-                        <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-sm" style={{ background: `${teamColors.primary}22`, color: teamColors.primary, border: `1px solid ${teamColors.primary}33` }}>
-                          Two-Way
+                        <span
+                          className="text-[10px] uppercase tracking-[0.2em] mt-2"
+                          style={{
+                            fontFamily: 'var(--bsi-font-data)',
+                            color: 'var(--bsi-dust)',
+                          }}
+                        >
+                          {classYear}
                         </span>
                       )}
-                      <span className="text-xs" style={{ color: 'var(--bsi-dust)' }}>{season} Season</span>
                     </div>
 
-                    {/* ── Headline stat cards ── */}
-                    <div className="flex items-stretch gap-3 flex-wrap">
-                      {headlineStat.value && (
-                        <div className="flex flex-col items-center px-4 py-2.5 rounded-sm min-w-[80px]" style={{ background: 'var(--surface-press-box, #111111)', border: `1px solid ${teamColors.primary}33`, borderTop: `2px solid ${teamColors.primary}` }}>
-                          <span className="text-[10px] uppercase tracking-widest mb-0.5" style={{ fontFamily: 'var(--bsi-font-display)', color: teamColors.primary }}>{headlineStat.label}</span>
-                          <span className="text-xl sm:text-2xl font-mono font-bold tabular-nums" style={{ color: 'var(--bsi-bone)' }}>{headlineStat.value}</span>
+                    {/* ── RIGHT: Name + Headline Stats ── */}
+                    <div className="flex-1 min-w-0 p-5 sm:p-6 md:p-8 flex flex-col justify-between">
+                      {/* Top: Team & Conference label */}
+                      <div>
+                        <div className="flex items-center gap-3 mb-3 flex-wrap">
+                          <span
+                            className="text-xs font-semibold uppercase tracking-[0.15em]"
+                            style={{
+                              fontFamily: 'var(--bsi-font-display)',
+                              color: teamColors.primary,
+                            }}
+                          >
+                            {team}
+                          </span>
+                          {conference && (
+                            <>
+                              <span
+                                className="w-1 h-1 rounded-full"
+                                style={{ background: 'var(--bsi-dust)' }}
+                                aria-hidden="true"
+                              />
+                              <span
+                                className="text-[11px] uppercase tracking-wider"
+                                style={{
+                                  fontFamily: 'var(--bsi-font-display)',
+                                  color: 'var(--bsi-dust)',
+                                }}
+                              >
+                                {conference}
+                              </span>
+                            </>
+                          )}
+                          {isTwoWay && (
+                            <span
+                              className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5"
+                              style={{
+                                background: `${teamColors.primary}15`,
+                                color: teamColors.primary,
+                                border: `1px solid ${teamColors.primary}33`,
+                              }}
+                            >
+                              Two-Way
+                            </span>
+                          )}
                         </div>
-                      )}
-                      {secondaryStat && (
-                        <div className="flex flex-col items-center px-4 py-2.5 rounded-sm min-w-[80px]" style={{ background: 'var(--surface-press-box, #111111)', border: '1px solid rgba(140,98,57,0.2)' }}>
-                          <span className="text-[10px] uppercase tracking-widest mb-0.5" style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-dust)' }}>{secondaryStat.label}</span>
-                          <span className="text-xl sm:text-2xl font-mono font-bold tabular-nums" style={{ color: 'var(--bsi-bone)' }}>{secondaryStat.value}</span>
-                        </div>
-                      )}
-                      {isBatter && batting && (
-                        <div className="flex flex-col items-center px-4 py-2.5 rounded-sm min-w-[80px]" style={{ background: 'var(--surface-press-box, #111111)', border: '1px solid rgba(140,98,57,0.2)' }}>
-                          <span className="text-[10px] uppercase tracking-widest mb-0.5" style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-dust)' }}>HR</span>
-                          <span className="text-xl sm:text-2xl font-mono font-bold tabular-nums" style={{ color: 'var(--bsi-bone)' }}>{batting.hr}</span>
-                        </div>
-                      )}
-                      {!isBatter && isPitcher && pitching && (
-                        <div className="flex flex-col items-center px-4 py-2.5 rounded-sm min-w-[80px]" style={{ background: 'var(--surface-press-box, #111111)', border: '1px solid rgba(140,98,57,0.2)' }}>
-                          <span className="text-[10px] uppercase tracking-widest mb-0.5" style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-dust)' }}>SO</span>
-                          <span className="text-xl sm:text-2xl font-mono font-bold tabular-nums" style={{ color: 'var(--bsi-bone)' }}>{pitching.so}</span>
-                        </div>
-                      )}
-                    </div>
 
-                    {isPitcher && pitching && (
-                      <p className="text-xs font-mono mt-3" style={{ color: 'var(--bsi-dust)' }}>
-                        {pitching.w}-{pitching.l}{pitching.sv > 0 ? `, ${pitching.sv} SV` : ''} &middot; {fmt1(pitching.ip)} IP
-                      </p>
-                    )}
+                        {/* Player name — dramatic two-line treatment */}
+                        <div className="mb-1">
+                          {firstName && (
+                            <span
+                              className="block uppercase tracking-wider leading-none"
+                              style={{
+                                fontFamily: 'var(--bsi-font-display)',
+                                fontSize: 'clamp(0.875rem, 2vw, 1.125rem)',
+                                color: 'var(--bsi-dust)',
+                                letterSpacing: '0.2em',
+                              }}
+                            >
+                              {firstName}
+                            </span>
+                          )}
+                          <h1
+                            className="uppercase leading-[0.9] tracking-tight"
+                            style={{
+                              fontFamily: 'var(--bsi-font-display-hero, var(--font-bebas, "Bebas Neue"))',
+                              fontSize: 'clamp(2.5rem, 7vw, 5rem)',
+                              color: 'var(--bsi-bone)',
+                            }}
+                          >
+                            {lastName}
+                          </h1>
+                        </div>
+
+                        <div className="flex items-center gap-2 mb-5">
+                          <span
+                            className="text-xs"
+                            style={{
+                              fontFamily: 'var(--bsi-font-data)',
+                              color: 'var(--bsi-dust)',
+                            }}
+                          >
+                            {season} Season
+                          </span>
+                          {isPitcher && pitching && (
+                            <>
+                              <span className="w-1 h-1 rounded-full" style={{ background: 'var(--bsi-dust)' }} aria-hidden="true" />
+                              <span
+                                className="text-xs font-mono"
+                                style={{ color: 'var(--bsi-dust)' }}
+                              >
+                                {pitching.w}-{pitching.l}{pitching.sv > 0 ? `, ${pitching.sv} SV` : ''} &middot; {fmt1(pitching.ip)} IP
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* ── Headline stat blocks — the signature scouting card row ── */}
+                      <div className="flex items-stretch gap-0 flex-wrap">
+                        {headlineStat.value && (
+                          <HeadlineStat
+                            label={headlineStat.label}
+                            value={headlineStat.value}
+                            accent={teamColors.primary}
+                            isPrimary
+                          />
+                        )}
+                        {secondaryStat && (
+                          <HeadlineStat
+                            label={secondaryStat.label}
+                            value={secondaryStat.value}
+                          />
+                        )}
+                        {thirdStat && (
+                          <HeadlineStat
+                            label={thirdStat.label}
+                            value={thirdStat.value}
+                          />
+                        )}
+                        {isBatter && batting && (
+                          <HeadlineStat
+                            label="PA"
+                            value={String(batting.pa)}
+                          />
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </ScrollReveal>
             </div>
           </Container>
-          <div className="h-px" style={{ background: `linear-gradient(to right, transparent, ${teamColors.primary}33, transparent)` }} />
+
+          {/* Bottom edge gradient line */}
+          <div
+            className="h-px"
+            style={{ background: `linear-gradient(to right, ${teamColors.primary}, ${teamColors.primary}44, transparent)` }}
+          />
         </section>
 
-        {/* ── VIDEO HIGHLIGHTS ── */}
-        <section style={{ padding: 'clamp(0.75rem, 2vw, 1.5rem) 0' }}>
+        {/* ================================================================ */}
+        {/*  VIDEO HIGHLIGHTS — visual card, not a text row                   */}
+        {/* ================================================================ */}
+        <section style={{ padding: 'clamp(0.75rem, 2vw, 1.25rem) 0' }}>
           <Container size="lg">
             <ScrollReveal direction="up" delay={80}>
-              <a href={youtubeSearchUrl} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-4 px-5 py-4 rounded-sm border transition-all duration-200" style={{ background: 'var(--surface-dugout, #161616)', borderColor: 'rgba(140,98,57,0.2)' }}>
-                <div className="flex-shrink-0 w-12 h-12 rounded-sm flex items-center justify-center transition-transform group-hover:scale-105" style={{ background: `${teamColors.primary}15`, border: `1px solid ${teamColors.primary}33` }}>
-                  <svg viewBox="0 0 24 24" className="w-6 h-6" fill={teamColors.primary}>
-                    <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0C.488 3.45.029 5.804 0 12c.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0C23.512 20.55 23.971 18.196 24 12c-.029-6.185-.484-8.549-4.385-8.816zM9 16V8l8 4-8 4z" />
+              <a
+                href={youtubeSearchUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative flex items-center gap-5 px-5 py-4 overflow-hidden heritage-card transition-all duration-200"
+                style={{ borderLeft: `3px solid ${teamColors.primary}` }}
+              >
+                {/* Hover glow */}
+                <div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                  style={{ background: `linear-gradient(90deg, ${teamColors.primary}08, transparent)` }}
+                  aria-hidden="true"
+                />
+
+                {/* Play icon */}
+                <div
+                  className="relative flex-shrink-0 w-14 h-14 flex items-center justify-center transition-transform duration-200 group-hover:scale-110"
+                  style={{
+                    background: `${teamColors.primary}12`,
+                    border: `1px solid ${teamColors.primary}30`,
+                  }}
+                >
+                  <svg viewBox="0 0 24 24" className="w-6 h-6 ml-0.5" fill={teamColors.primary}>
+                    <path d="M8 5v14l11-7z" />
                   </svg>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <span className="text-sm font-semibold block group-hover:text-[var(--bsi-primary)] transition-colors" style={{ color: 'var(--bsi-bone)' }}>Watch {playerName} Highlights</span>
-                  <span className="text-xs" style={{ color: 'var(--bsi-dust)' }}>Search YouTube for {season} game footage, at-bats, and scouting clips</span>
+
+                <div className="relative flex-1 min-w-0">
+                  <span
+                    className="text-sm font-semibold block group-hover:text-[var(--bsi-primary)] transition-colors"
+                    style={{
+                      fontFamily: 'var(--bsi-font-display)',
+                      color: 'var(--bsi-bone)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                    }}
+                  >
+                    Watch {playerName} Highlights
+                  </span>
+                  <span
+                    className="text-xs mt-0.5 block"
+                    style={{
+                      fontFamily: 'var(--bsi-font-body, "Cormorant Garamond")',
+                      color: 'var(--bsi-dust)',
+                    }}
+                  >
+                    Search YouTube for {season} game footage, at-bats, and scouting clips
+                  </span>
                 </div>
-                <svg viewBox="0 0 20 20" className="w-5 h-5 flex-shrink-0 transition-transform group-hover:translate-x-1" fill="var(--bsi-dust)">
+
+                <svg
+                  viewBox="0 0 20 20"
+                  className="w-5 h-5 flex-shrink-0 transition-transform duration-200 group-hover:translate-x-1"
+                  fill="var(--bsi-dust)"
+                >
                   <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
                 </svg>
               </a>
@@ -519,9 +788,12 @@ export default function SavantPlayerClient() {
           </Container>
         </section>
 
-        {/* ── ANALYTICS SECTIONS ── */}
+        {/* ================================================================ */}
+        {/*  ANALYTICS BODY                                                   */}
+        {/* ================================================================ */}
         <section style={{ padding: 'clamp(0.5rem, 2vw, 1rem) 0 clamp(1rem, 3vw, 2rem)' }}>
           <Container size="lg">
+            {/* ── Percentile sections ── */}
             {isBatter && (
               <ScrollReveal direction="up" delay={100}>
                 <PercentileSection
@@ -548,6 +820,7 @@ export default function SavantPlayerClient() {
               </ScrollReveal>
             )}
 
+            {/* ── Scouting Grades ── */}
             <ScrollReveal direction="up" delay={200}>
               <ScoutingGrades
                 batting={percentiles.batting}
@@ -555,23 +828,26 @@ export default function SavantPlayerClient() {
                 isBatter={isBatter}
                 isPitcher={isPitcher}
                 isPro={isPro}
+                accentColor={teamColors.primary}
               />
             </ScrollReveal>
 
+            {/* ── Composite radar chart ── */}
             <PlayerScoutingComposite
               playerId={playerId}
               position={isBatter && !isPitcher ? 'hitter' : 'pitcher'}
               className="mb-6"
             />
 
+            {/* ── Raw stat lines ── */}
             {isBatter && (
               <ScrollReveal direction="up" delay={250}>
-                <RawStatLine title="Batting Line" stats={batting} type="batting" isPro={isPro} />
+                <RawStatLine title="Batting Line" stats={batting} type="batting" isPro={isPro} accentColor={teamColors.primary} />
               </ScrollReveal>
             )}
             {isPitcher && (
               <ScrollReveal direction="up" delay={isBatter ? 300 : 250}>
-                <RawStatLine title="Pitching Line" stats={pitching} type="pitching" isPro={isPro} />
+                <RawStatLine title="Pitching Line" stats={pitching} type="pitching" isPro={isPro} accentColor={teamColors.primary} />
               </ScrollReveal>
             )}
 
@@ -583,20 +859,35 @@ export default function SavantPlayerClient() {
                 const remaining = FREE_PROFILE_LIMIT - viewed.length;
                 if (remaining > 0 && remaining < FREE_PROFILE_LIMIT) {
                   return (
-                    <p className="text-xs mt-6 mb-2" style={{ color: 'var(--bsi-dust)' }}>
-                      {remaining} free profile{remaining === 1 ? '' : 's'} remaining &middot;{' '}
-                      <Link href="/pricing" className="text-[var(--bsi-primary)] hover:underline">
-                        Go Pro for unlimited
+                    <div
+                      className="mt-6 mb-2 px-4 py-3 flex items-center justify-between"
+                      style={{
+                        background: 'var(--surface-press-box, #111111)',
+                        border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))',
+                      }}
+                    >
+                      <p className="text-xs" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
+                        {remaining} free profile{remaining === 1 ? '' : 's'} remaining
+                      </p>
+                      <Link
+                        href="/pricing"
+                        className="text-xs uppercase tracking-wider transition-colors hover:text-[var(--bsi-bone)]"
+                        style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-primary)' }}
+                      >
+                        Go Pro
                       </Link>
-                    </p>
+                    </div>
                   );
                 }
               } catch { /* localStorage unavailable */ }
               return null;
             })()}
 
-            {/* Links */}
-            <div className="flex items-center gap-6 mt-8 mb-4">
+            {/* ── Navigation links ── */}
+            <div
+              className="flex items-center gap-6 mt-8 mb-4 pt-6"
+              style={{ borderTop: '1px solid var(--border-vintage, rgba(140,98,57,0.3))' }}
+            >
               <Link
                 href={`/college-baseball/players/${playerId}`}
                 className="text-xs uppercase tracking-widest transition-colors hover:text-[var(--bsi-primary)]"
@@ -618,6 +909,53 @@ export default function SavantPlayerClient() {
 
       <Footer />
     </>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Headline stat — large display stat with label above, used in the hero card
+// ---------------------------------------------------------------------------
+
+function HeadlineStat({
+  label,
+  value,
+  accent,
+  isPrimary = false,
+}: {
+  label: string;
+  value: string;
+  accent?: string;
+  isPrimary?: boolean;
+}) {
+  return (
+    <div
+      className="flex flex-col items-center justify-center px-5 py-3 min-w-[85px]"
+      style={{
+        background: isPrimary ? `${accent}08` : 'transparent',
+        borderRight: '1px solid var(--border-vintage, rgba(140,98,57,0.3))',
+        borderBottom: isPrimary && accent ? `2px solid ${accent}` : '2px solid transparent',
+      }}
+    >
+      <span
+        className="text-[10px] uppercase tracking-[0.2em] mb-1"
+        style={{
+          fontFamily: 'var(--bsi-font-display)',
+          color: isPrimary && accent ? accent : 'var(--bsi-dust)',
+        }}
+      >
+        {label}
+      </span>
+      <span
+        className="font-mono font-bold tabular-nums leading-none stat-led-glow"
+        style={{
+          fontSize: 'clamp(1.5rem, 3vw, 2rem)',
+          color: 'var(--bsi-bone)',
+          fontFamily: 'var(--bsi-font-data)',
+        }}
+      >
+        {value}
+      </span>
+    </div>
   );
 }
 
@@ -645,18 +983,16 @@ function PercentileSection({
 
   return (
     <div
-      className="mb-6 rounded-sm overflow-hidden border"
+      className="mb-6 overflow-hidden corner-marks"
       style={{
         background: 'var(--surface-dugout, #161616)',
-        borderColor: 'var(--border-vintage, rgba(140,98,57,0.3))',
+        border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))',
+        borderTop: `2px solid ${accentColor}`,
       }}
     >
       <div
-        className="px-5 py-3 border-b"
-        style={{
-          borderColor: 'var(--border-vintage, rgba(140,98,57,0.3))',
-          borderTop: `2px solid ${accentColor}`,
-        }}
+        className="px-5 py-3 flex items-center justify-between border-b"
+        style={{ borderColor: 'var(--border-vintage, rgba(140,98,57,0.3))' }}
       >
         <h2
           className="text-sm uppercase tracking-wider"
@@ -664,6 +1000,12 @@ function PercentileSection({
         >
           {title}
         </h2>
+        <span
+          className="heritage-stamp"
+          style={{ fontSize: '0.55rem', letterSpacing: '0.15em' }}
+        >
+          D1 Rank
+        </span>
       </div>
 
       {/* Free-tier metrics */}
@@ -723,12 +1065,14 @@ function ScoutingGrades({
   isBatter,
   isPitcher,
   isPro,
+  accentColor,
 }: {
   batting: Record<string, number> | null;
   pitching: Record<string, number> | null;
   isBatter: boolean;
   isPitcher: boolean;
   isPro: boolean;
+  accentColor: string;
 }) {
   const battingGrades = useMemo(() => {
     if (!batting) return [];
@@ -774,29 +1118,38 @@ function ScoutingGrades({
 
   return (
     <div
-      className="mb-6 rounded-sm overflow-hidden border"
+      className="mb-6 overflow-hidden corner-marks"
       style={{
         background: 'var(--surface-dugout, #161616)',
-        borderColor: 'var(--border-vintage, rgba(140,98,57,0.3))',
+        border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))',
+        borderTop: `2px solid ${accentColor}`,
       }}
     >
       <div
-        className="px-5 py-3 border-b"
+        className="px-5 py-3 border-b flex items-center justify-between"
         style={{ borderColor: 'var(--border-vintage, rgba(140,98,57,0.3))' }}
       >
-        <h2
-          className="text-sm uppercase tracking-wider"
-          style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+        <div>
+          <h2
+            className="text-sm uppercase tracking-wider"
+            style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+          >
+            Scouting Grades
+          </h2>
+          <p className="text-[10px] mt-0.5" style={{ color: 'var(--bsi-dust)' }}>
+            20-80 scale from D1 percentile rank
+          </p>
+        </div>
+        <span
+          className="heritage-stamp"
+          style={{ fontSize: '0.55rem', letterSpacing: '0.15em' }}
         >
-          Scouting Grades (20-80 Scale)
-        </h2>
-        <p className="text-[10px] mt-0.5" style={{ color: 'var(--bsi-dust)' }}>
-          Derived from percentile rank among all D1 players meeting minimum thresholds
-        </p>
+          20-80
+        </span>
       </div>
 
-      <div className="px-5 py-4">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+      <div className="px-5 py-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
           {isBatter && battingGrades.map(g => (
             <GradeCard key={g.label} label={g.label} grade={g.grade} />
           ))}
@@ -807,7 +1160,7 @@ function ScoutingGrades({
 
         {proGrades.length > 0 && (
           <MetricGate isPro={isPro} metricName="pro scouting grades" className="mt-4">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {proGrades.map(g => (
                 <GradeCard key={g.label} label={g.label} grade={g.grade} />
               ))}
@@ -823,25 +1176,33 @@ function GradeCard({ label, grade }: { label: string; grade: number }) {
   const color = gradeColor(grade);
   return (
     <div
-      className="text-center p-3 rounded-sm border"
+      className="relative text-center p-4 overflow-hidden"
       style={{
-        borderColor: 'rgba(140,98,57,0.15)',
-        background: 'rgba(255,255,255,0.01)',
+        background: 'var(--surface-press-box, #111111)',
+        border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))',
       }}
     >
+      {/* Grade color bar at top */}
+      <div
+        className="absolute top-0 left-0 right-0 h-[2px]"
+        style={{ background: color }}
+      />
       <span
-        className="text-[10px] uppercase tracking-widest block mb-1"
+        className="text-[10px] uppercase tracking-[0.15em] block mb-2"
         style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-dust)' }}
       >
         {label}
       </span>
       <span
-        className="text-2xl font-mono font-bold tabular-nums block"
-        style={{ color }}
+        className="text-3xl font-bold tabular-nums block leading-none"
+        style={{ color, fontFamily: 'var(--bsi-font-data)' }}
       >
         {grade}
       </span>
-      <span className="text-[9px] font-mono block mt-0.5" style={{ color }}>
+      <span
+        className="text-[9px] font-mono block mt-1.5 uppercase tracking-wider"
+        style={{ color }}
+      >
         {gradeLabel(grade)}
       </span>
     </div>
@@ -857,11 +1218,13 @@ function RawStatLine({
   stats,
   type,
   isPro,
+  accentColor,
 }: {
   title: string;
   stats: BattingStats | PitchingStats;
   type: 'batting' | 'pitching';
   isPro: boolean;
+  accentColor: string;
 }) {
   const battingTraditional = type === 'batting' ? [
     { label: 'G', value: String((stats as BattingStats).g) },
@@ -929,10 +1292,11 @@ function RawStatLine({
 
   return (
     <div
-      className="mb-6 rounded-sm overflow-hidden border"
+      className="mb-6 overflow-hidden"
       style={{
         background: 'var(--surface-dugout, #161616)',
-        borderColor: 'var(--border-vintage, rgba(140,98,57,0.3))',
+        border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))',
+        borderTop: `2px solid ${accentColor}`,
       }}
     >
       <div
@@ -961,8 +1325,8 @@ function RawStatLine({
           style={{ borderColor: 'rgba(140,98,57,0.15)' }}
         >
           <span
-            className="text-[9px] uppercase tracking-widest mb-2 block"
-            style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-dust)' }}
+            className="heritage-stamp mb-2 block"
+            style={{ fontSize: '0.5rem' }}
           >
             Advanced
           </span>
@@ -984,8 +1348,8 @@ function RawStatLine({
               style={{ borderColor: 'rgba(140,98,57,0.15)' }}
             >
               <span
-                className="text-[9px] uppercase tracking-widest mb-2 block"
-                style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-primary)' }}
+                className="heritage-stamp mb-2 block"
+                style={{ fontSize: '0.5rem', color: 'var(--bsi-primary)' }}
               >
                 Pro
               </span>
@@ -1015,7 +1379,10 @@ function StatCell({ label, value }: { label: string; value: string }) {
       >
         {label}
       </span>
-      <span className="text-sm font-mono tabular-nums" style={{ color: 'var(--bsi-bone)' }}>
+      <span
+        className="text-sm font-bold tabular-nums"
+        style={{ color: 'var(--bsi-bone)', fontFamily: 'var(--bsi-font-data)' }}
+      >
         {value}
       </span>
     </div>
