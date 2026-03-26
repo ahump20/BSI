@@ -335,17 +335,27 @@ export async function handleSavantPlayer(playerId: string, url: URL, env: Env, h
       return json({ error: 'Player not found in Savant data', player_id: playerId }, 404);
     }
 
-    // Fetch headshot from player_season_stats (ESPN CDN URL)
-    const headshotRow = await env.DB.prepare(
-      `SELECT headshot FROM player_season_stats WHERE espn_id = ? AND sport = 'college-baseball' AND season = ? AND headshot != ''`
-    ).bind(playerId, SEASON).first<{ headshot: string }>();
+    // Headshot: ESPN does not host college baseball player headshots (404 for all).
+    // Highlightly API also has no player photos. If a headshot URL is stored in
+    // player_season_stats from a future ingest source, use it.
+    const playerNameForLookup = (batting as Record<string, unknown> | null)?.player_name ?? (pitching as Record<string, unknown> | null)?.player_name ?? '';
+    const teamForLookup = (batting as Record<string, unknown> | null)?.team ?? (pitching as Record<string, unknown> | null)?.team ?? '';
+    let headshotUrl: string | null = null;
+    if (playerNameForLookup && teamForLookup) {
+      const hsRow = await env.DB.prepare(
+        `SELECT headshot FROM player_season_stats WHERE name = ? AND team = ? AND sport = 'college-baseball' AND season = ? AND headshot != '' LIMIT 1`
+      ).bind(playerNameForLookup, teamForLookup, SEASON).first<{ headshot: string }>();
+      if (hsRow?.headshot) {
+        headshotUrl = hsRow.headshot;
+      }
+    }
 
     let player: Record<string, unknown> = {
       player_id: playerId,
       batting: batting || null,
       pitching: pitching || null,
       type: batting && pitching ? 'two-way' : batting ? 'hitter' : 'pitcher',
-      headshot: headshotRow?.headshot || null,
+      headshot: headshotUrl,
     };
 
     // Compute per-stat percentiles against full population
