@@ -107,8 +107,27 @@ export async function handleStatus(env: Env): Promise<Response> {
     }
 
     const summary = JSON.parse(raw);
+
+    // Enrich with data pipeline freshness
+    const pipelines: Record<string, unknown> = {};
+    if (env.DB) {
+      try {
+        const havfCount = await env.DB.prepare('SELECT COUNT(*) as cnt, MAX(computed_at) as latest FROM havf_scores WHERE season = 2026').first<{ cnt: number; latest: string }>();
+        pipelines.havf = { players: havfCount?.cnt ?? 0, latest: havfCount?.latest ?? null };
+      } catch { /* table may not exist */ }
+      try {
+        const editorialCount = await env.DB.prepare('SELECT COUNT(*) as cnt, MAX(date) as latest FROM editorials').first<{ cnt: number; latest: string }>();
+        pipelines.editorials = { articles: editorialCount?.cnt ?? 0, latest: editorialCount?.latest ?? null };
+      } catch { /* table may not exist */ }
+      try {
+        const mmiCount = await env.DB.prepare('SELECT COUNT(*) as cnt, MAX(game_date) as latest FROM mmi_game_summary').first<{ cnt: number; latest: string }>();
+        pipelines.mmi = { games: mmiCount?.cnt ?? 0, latest: mmiCount?.latest ?? null };
+      } catch { /* table may not exist */ }
+    }
+
     return json({
       ...summary,
+      pipelines,
       meta: { source: 'bsi-synthetic-monitor', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
     });
   } catch (err) {
