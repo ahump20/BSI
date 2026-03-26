@@ -48,6 +48,25 @@ const PROVIDERS: ProviderRow[] = [
   },
 ];
 
+const INTERNAL_SYSTEMS: ProviderRow[] = [
+  {
+    name: 'BSI Savant',
+    url: '/college-baseball/savant',
+    role: 'Park-adjusted sabermetrics engine — wOBA, wRC+, FIP, expected stats, HAV-F scouting grades',
+    sports: ['College Baseball'],
+    refresh: 'Every 6 hours (bsi-savant-compute cron) + daily full recompute (bsi-cbb-analytics)',
+    notes: 'Reads from D1, computes park factors and league-adjusted metrics, writes back to D1. 920+ players tracked.',
+  },
+  {
+    name: 'NotebookLM',
+    url: 'https://notebooklm.google.com',
+    role: 'AI-powered podcast audio generation from curated source documents',
+    sports: ['College Baseball'],
+    refresh: 'Weekly — new Audio Overviews generated from fresh sources',
+    notes: 'Generates podcast-style audio from BSI editorial, rankings, and game recap sources. Audio hosted on R2.',
+  },
+];
+
 const STORAGE_TIERS = [
   {
     layer: 'KV (Cloudflare)',
@@ -152,6 +171,32 @@ export default function DataSourcesPage() {
                             <p className="text-text-secondary mt-0.5">{p.notes}</p>
                           </div>
                         )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              {/* Internal Systems */}
+              <section className="mb-16">
+                <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-text-primary mb-6">
+                  Internal Systems
+                </h2>
+                <div className="space-y-4">
+                  {INTERNAL_SYSTEMS.map((p) => (
+                    <div key={p.name} className="bg-surface-light border border-border-subtle rounded-sm p-5 sm:p-6">
+                      <div className="flex flex-wrap items-center gap-3 mb-3">
+                        <h3 className="font-display text-lg font-bold text-text-primary">{p.name}</h3>
+                        {p.sports.map((s) => (
+                          <span key={s} className="text-[10px] uppercase tracking-[0.15em] px-2 py-0.5 border border-border-subtle rounded-sm text-text-muted">{s}</span>
+                        ))}
+                      </div>
+                      <p className="text-text-secondary text-sm mb-3">{p.role}</p>
+                      <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-text-muted">
+                        <div>
+                          <span className="uppercase tracking-wider">Refresh</span>
+                          <p className="text-text-secondary mt-0.5">{p.refresh}</p>
+                        </div>
                       </div>
                     </div>
                   ))}
