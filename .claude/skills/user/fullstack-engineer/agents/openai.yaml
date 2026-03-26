@@ -1,0 +1,10 @@
+interface:
+  display_name: "Fullstack Engineer"
+  short_description: "Cross-stack implementation and debugging"
+  icon_small: "./assets/fullstack-engineer-small.svg"
+  icon_large: "./assets/fullstack-engineer.svg"
+  brand_color: "#BF5700"
+  default_prompt: "Use $fullstack-engineer to ship or debug a change that crosses UI, API, data, or infrastructure boundaries."
+
+policy:
+  allow_implicit_invocation: true

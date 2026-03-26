@@ -1,0 +1,537 @@
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+[WS] Client connected (total: 1)
+[WS] Client disconnected (total: 0)
+[WS] Client connected (total: 1)
+[WS] Client disconnected (total: 0)
+[WS] Client connected (total: 1)
+[WS] Client connected (total: 2)
+[WS] Client disconnected (total: 1)
+[WS] Client disconnected (total: 0)
+[WS] Client connected (total: 1)
+[WS] Client connected (total: 2)
+[WS] Client disconnected (total: 1)
+[WS] Client connected (total: 2)
+
+Shutting down...
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+[WS] Client connected (total: 1)
+[WS] Client connected (total: 2)
+[WS] Client connected (total: 3)
+[WS] Client disconnected (total: 2)
+[WS] Client connected (total: 3)
+[WS] Client disconnected (total: 2)
+[WS] Client disconnected (total: 1)
+[WS] Client disconnected (total: 0)
+[WS] Client connected (total: 1)
+[WS] Client connected (total: 2)
+[WS] Client disconnected (total: 1)
+[WS] Client disconnected (total: 0)
+[WS] Client connected (total: 1)
+[WS] Client connected (total: 2)
+[WS] Client disconnected (total: 1)
+[WS] Client disconnected (total: 0)
+[WS] Client connected (total: 1)
+[WS] Client connected (total: 2)
+[WS] Client disconnected (total: 1)
+[WS] Client disconnected (total: 0)
+[WS] Client connected (total: 1)
+[WS] Client connected (total: 2)
+[WS] Client disconnected (total: 1)
+[WS] Client disconnected (total: 0)
+[WS] Client connected (total: 1)
+[WS] Client connected (total: 2)
+[WS] Client disconnected (total: 1)
+[WS] Client disconnected (total: 0)
+[WS] Client connected (total: 1)
+[WS] Client connected (total: 2)
+[WS] Client disconnected (total: 1)
+[WS] Client disconnected (total: 0)
+[WS] Client connected (total: 1)
+[WS] Client connected (total: 2)
+[WS] Client disconnected (total: 1)
+[WS] Client connected (total: 2)
+[WS] Client disconnected (total: 1)
+[WS] Client connected (total: 2)
+[WS] Client disconnected (total: 1)
+[WS] Client connected (total: 2)
+[WS] Client connected (total: 3)
+[WS] Client connected (total: 4)
+[WS] Client disconnected (total: 3)
+[WS] Client connected (total: 4)
+[WS] Client disconnected (total: 3)
+[WS] Client connected (total: 4)
+[WS] Client disconnected (total: 3)
+[WS] Client disconnected (total: 2)
+[WS] Client disconnected (total: 1)
+[WS] Client disconnected (total: 0)
+
+Shutting down...
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+
+Shutting down...
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+
+Shutting down...
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+
+Shutting down...
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+
+Shutting down...
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+
+Shutting down...
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+
+Shutting down...
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+[WS] Client connected (total: 1)
+[WS] Client disconnected (total: 0)
+[WS] Client connected (total: 1)
+[WS] Client disconnected (total: 0)
+[WS] Client connected (total: 1)
+[WS] Client disconnected (total: 0)
+[WS] Client connected (total: 1)
+[WS] Client connected (total: 2)
+[WS] Client connected (total: 3)
+[WS] Client connected (total: 4)
+[WS] Client connected (total: 5)
+[WS] Client connected (total: 6)
+[WS] Client disconnected (total: 5)
+[WS] Client disconnected (total: 4)
+[WS] Client disconnected (total: 3)
+[WS] Client disconnected (total: 2)
+[WS] Client disconnected (total: 1)
+[WS] Client disconnected (total: 0)
+[WS] Client connected (total: 1)
+[WS] Client disconnected (total: 0)
+[WS] Client connected (total: 1)
+[WS] Client connected (total: 2)
+[WS] Client connected (total: 3)
+[WS] Client disconnected (total: 2)
+[WS] Client disconnected (total: 1)
+[WS] Client connected (total: 2)
+[WS] Client connected (total: 3)
+[WS] Client disconnected (total: 2)
+[WS] Client disconnected (total: 1)
+[WS] Client disconnected (total: 0)
+[WS] Client connected (total: 1)
+[WS] Client connected (total: 2)
+[WS] Client disconnected (total: 1)
+[WS] Client disconnected (total: 0)
+
+Shutting down...
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+[WS] Client connected (total: 1)
+[WS] Client disconnected (total: 0)
+
+Shutting down...
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+[WS] Client connected (total: 1)
+[WS] Client connected (total: 2)
+[WS] Client connected (total: 3)
+[WS] Client connected (total: 4)
+[WS] Client disconnected (total: 3)
+[WS] Client connected (total: 4)
+[WS] Client disconnected (total: 3)
+[WS] Client connected (total: 4)
+[WS] Client disconnected (total: 3)
+[WS] Client disconnected (total: 2)
+[WS] Client connected (total: 3)
+[WS] Client connected (total: 4)
+[WS] Client disconnected (total: 3)
+[WS] Client disconnected (total: 2)
+[WS] Client connected (total: 3)
+[WS] Client connected (total: 4)
+[WS] Client disconnected (total: 3)
+[WS] Client disconnected (total: 2)
+[WS] Client connected (total: 3)
+[WS] Client connected (total: 4)
+[WS] Client disconnected (total: 3)
+[WS] Client disconnected (total: 2)
+[WS] Client connected (total: 3)
+[WS] Client connected (total: 4)
+[WS] Client disconnected (total: 3)
+[WS] Client disconnected (total: 2)
+[WS] Client connected (total: 3)
+[WS] Client connected (total: 4)
+[WS] Client disconnected (total: 3)
+[WS] Client disconnected (total: 2)
+[WS] Client connected (total: 3)
+[WS] Client connected (total: 4)
+[WS] Client disconnected (total: 3)
+[WS] Client disconnected (total: 2)
+[WS] Client connected (total: 3)
+[WS] Client connected (total: 4)
+[WS] Client disconnected (total: 3)
+[WS] Client disconnected (total: 2)
+[WS] Client connected (total: 3)
+[WS] Client connected (total: 4)
+[WS] Client disconnected (total: 3)
+[WS] Client disconnected (total: 2)
+[WS] Client connected (total: 3)
+[WS] Client connected (total: 4)
+[WS] Client disconnected (total: 3)
+[WS] Client disconnected (total: 2)
+[WS] Client connected (total: 3)
+[WS] Client connected (total: 4)
+[WS] Client disconnected (total: 3)
+[WS] Client disconnected (total: 2)
+[WS] Client connected (total: 3)
+[WS] Client connected (total: 4)
+[WS] Client disconnected (total: 3)
+[WS] Client disconnected (total: 2)
+[WS] Client connected (total: 3)
+[WS] Client connected (total: 4)
+[WS] Client disconnected (total: 3)
+[WS] Client disconnected (total: 2)
+[WS] Client connected (total: 3)
+[WS] Client connected (total: 4)
+[WS] Client connected (total: 5)
+[WS] Client disconnected (total: 4)
+[WS] Client disconnected (total: 3)
+[WS] Client disconnected (total: 2)
+[WS] Client disconnected (total: 1)
+[WS] Client disconnected (total: 0)
+[WS] Client connected (total: 1)
+[WS] Client connected (total: 2)
+[WS] Client connected (total: 3)
+[WS] Client connected (total: 4)
+[WS] Client connected (total: 5)
+[WS] Client connected (total: 6)
+[WS] Client disconnected (total: 5)
+[WS] Client connected (total: 6)
+[WS] Client disconnected (total: 5)
+[WS] Client disconnected (total: 4)
+[WS] Client disconnected (total: 3)
+[WS] Client connected (total: 4)
+[WS] Client disconnected (total: 3)
+[WS] Client connected (total: 4)
+[WS] Client connected (total: 5)
+[WS] Client disconnected (total: 4)
+[WS] Client disconnected (total: 3)
+[WS] Client disconnected (total: 2)
+[WS] Client disconnected (total: 1)
+[WS] Client disconnected (total: 0)
+[WS] Client connected (total: 1)
+[WS] Client disconnected (total: 0)
+[WS] Client connected (total: 1)
+[WS] Client disconnected (total: 0)
+[WS] Client connected (total: 1)
+[WS] Client disconnected (total: 0)
+[WS] Client connected (total: 1)
+[WS] Client disconnected (total: 0)
+
+Shutting down...
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+
+Shutting down...
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+
+Shutting down...
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+
+Shutting down...
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+
+Shutting down...
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+
+Shutting down...
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+
+Shutting down...
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+
+Shutting down...
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+[EVENT] task_complete (research)
+
+Shutting down...
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+
+Shutting down...
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+
+Shutting down...
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+
+Shutting down...
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+
+Shutting down...
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+
+
+Shutting down...
+[WS] WebSocket server listening on port 7778
+[HTTP] Event receiver listening on port 7777
+
+BlazeCraft Aggregator running
+  Events: http://localhost:7777/event (POST)
+  Stats:  http://localhost:7777/stats (GET)
+  WebSocket: ws://localhost:7778
+

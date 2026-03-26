@@ -1,0 +1,11 @@
+{
+  "name": "blazecraft-aggregator",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node aggregator.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

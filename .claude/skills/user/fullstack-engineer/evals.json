@@ -1,0 +1,98 @@
+{
+  "skill_name": "fullstack-engineer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Wire the new live scores response from the Worker into the homepage cards and keep the freshness metadata visible.",
+      "expected_behavior": [
+        "Trigger the skill for a cross-stack feature request.",
+        "Map the UI, API, cache, and response boundaries before editing.",
+        "Preserve source attribution and freshness data through render."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "The form submit returns a 500 in production and the client falls back to a blank state. Trace it from click to database and fix it.",
+      "expected_behavior": [
+        "Trigger the debug lane.",
+        "Trace the bug boundary by boundary from client to data layer.",
+        "Fix both the server failure and the client-side failure handling."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I changed the D1 schema and now player names render as undefined on the page. Fix it and explain the root cause.",
+      "expected_behavior": [
+        "Trigger the skill for a cross-stack schema regression.",
+        "Check the contract between query results, API response shape, and UI consumer.",
+        "Explain the actual break point and the corrected contract."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Review this pagination change. The backend shape changed and I need to know whether the UI contract still holds.",
+      "expected_behavior": [
+        "Trigger the review lane because the risk is cross-layer.",
+        "Focus on contract drift, null handling, cache behavior, and failure propagation."
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "This request works in wrangler dev but times out in production once it hits KV and a downstream Worker. Explain what to check first.",
+      "expected_behavior": [
+        "Trigger the skill for an environment-specific boundary failure.",
+        "Compare bindings, timeouts, permissions, and downstream latency across environments."
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Make this marketing landing page look sharper and more intentional.",
+      "expected_behavior": [
+        "Do not treat this skill as the primary fit.",
+        "Prefer the dedicated frontend design skill because this is isolated visual work."
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Review the current diff and tell me if anything is risky before I merge.",
+      "expected_behavior": [
+        "Do not treat this skill as the primary fit.",
+        "Prefer the dedicated code review skill because this is diff-only review."
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Create a new skill that helps with Cloudflare Workers auth flows.",
+      "expected_behavior": [
+        "Do not treat this skill as the primary fit.",
+        "Prefer the skill creation workflow because the request is about building a skill."
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "The homepage hero lost the slogan after the last refactor. It should say 'Born to Blaze the Path Beaten Less' — find where it went and restore it.",
+      "expected_behavior": [
+        "Trigger the skill for a cross-stack regression (debug + implement).",
+        "Search for the slogan text in the codebase to find where it was removed.",
+        "Restore the slogan with exact word order, verify it renders in the hero."
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Deploy the scores worker to production.",
+      "expected_behavior": [
+        "Do not treat this skill as the primary fit.",
+        "Prefer the deploy-all skill because this is a deploy-only task."
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "The college baseball standings page uses raw hex colors instead of Heritage tokens and the cards don't match the rest of the site. Fix it.",
+      "expected_behavior": [
+        "Trigger the skill because the fix crosses design tokens and component implementation.",
+        "Load Heritage v2.1 token reference from bsi-context.md.",
+        "Replace hardcoded colors with heritage token variables, verify visual consistency."
+      ]
+    }
+  ]
+}

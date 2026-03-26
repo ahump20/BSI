@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "college-baseball-sabermetrics": {
+      "type": "http",
+      "url": "https://sabermetrics.blazesportsintel.com/mcp",
+      "headers": {
+        "Authorization": "Bearer e1cc2f1bcf5140eb82f5e503b17f3a872fd19965da207908511284824f45ea31"
+      }
+    }
+  }
+}
