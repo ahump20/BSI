@@ -65,4 +65,64 @@ describe('generate-static-params build source handling', () => {
       },
     });
   });
+
+  it('does not prefix ESPN MLB roster URLs with the static params base URL', async () => {
+    process.env.BSI_STATIC_PARAMS_BASE_URL = 'https://example.test';
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(
+        new Response('', {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      );
+
+    const { mlbPlayerParams } = await import('@/lib/generate-static-params');
+
+    try {
+      await mlbPlayerParams();
+    } catch {
+      // We only care about the URL passed to fetch, not the outcome.
+    }
+
+    expect(fetchSpy).toHaveBeenCalled();
+    const fetchUrl = fetchSpy.mock.calls[0][0] as unknown;
+    expect(typeof fetchUrl === 'string' || fetchUrl instanceof Request).toBe(true);
+
+    const urlString =
+      typeof fetchUrl === 'string' ? fetchUrl : (fetchUrl as Request).url;
+    expect(urlString.startsWith(process.env.BSI_STATIC_PARAMS_BASE_URL!)).toBe(
+      false
+    );
+  });
+
+  it('does not prefix ESPN NBA roster URLs with the static params base URL', async () => {
+    process.env.BSI_STATIC_PARAMS_BASE_URL = 'https://example.test';
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(
+        new Response('', {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      );
+
+    const { nbaPlayerParams } = await import('@/lib/generate-static-params');
+
+    try {
+      await nbaPlayerParams();
+    } catch {
+      // We only care about the URL passed to fetch, not the outcome.
+    }
+
+    expect(fetchSpy).toHaveBeenCalled();
+    const fetchUrl = fetchSpy.mock.calls[0][0] as unknown;
+    expect(typeof fetchUrl === 'string' || fetchUrl instanceof Request).toBe(true);
+
+    const urlString =
+      typeof fetchUrl === 'string' ? fetchUrl : (fetchUrl as Request).url;
+    expect(urlString.startsWith(process.env.BSI_STATIC_PARAMS_BASE_URL!)).toBe(
+      false
+    );
+  });
 });
