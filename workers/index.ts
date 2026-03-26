@@ -53,6 +53,7 @@ import {
   handleCBBTeamSOS,
   handleCBBConferencePowerIndex,
   handleCBBSeasonArc,
+  handleLeagueContext,
   handleCBBBulkSync,
   handleHighlightlySync,
   handleGameLogBackfill,
@@ -619,6 +620,7 @@ app.get('/api/savant/park-factors', (c) => handleSavantParkFactors(new URL(c.req
 app.get('/api/savant/conference-strength', (c) => handleSavantConferenceStrength(new URL(c.req.url), c.env, c.req.raw.headers));
 app.get('/api/savant/batting/export', (c) => handleSavantExport('batting', new URL(c.req.url), c.env, c.req.raw.headers));
 app.get('/api/savant/pitching/export', (c) => handleSavantExport('pitching', new URL(c.req.url), c.env, c.req.raw.headers));
+app.get('/api/savant/league-context', (c) => handleLeagueContext(c.env));
 
 // --- NIL Intelligence ---
 app.get('/api/nil/leaderboard', (c) => handleNILLeaderboard(new URL(c.req.url), c.env, c.req.raw.headers));

@@ -1147,3 +1147,39 @@ export async function handleCBBSeasonArc(espnId: string, url: URL, env: Env): Pr
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
+
+// ==========================================================================
+// League Run Environment
+// ==========================================================================
+
+/**
+ * GET /api/savant/league-context
+ *
+ * Returns the D1 run environment baseline — the numbers that make every
+ * other stat meaningful. Includes league-average wOBA, OBP, SLG, ERA,
+ * FIP constant, wOBA scale, and D1-derived linear weights.
+ */
+export async function handleLeagueContext(env: Env): Promise<Response> {
+  try {
+    const cacheKey = `savant:league-context:${SEASON}`;
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return cachedJson({ context: cached, meta: { source: 'bsi-savant-compute', fetched_at: new Date().toISOString(), timezone: 'America/Chicago', cache_hit: true } }, 200, HTTP_CACHE.standings, { 'X-Cache': 'HIT' });
+
+    const row = await env.DB.prepare(
+      'SELECT * FROM cbb_league_context WHERE season = ? ORDER BY computed_at DESC LIMIT 1'
+    ).bind(SEASON).first();
+
+    if (!row) {
+      return json({ error: 'League context not available', meta: { source: 'bsi-savant-compute', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' } }, 404);
+    }
+
+    await kvPut(env.KV, cacheKey, row, 3600);
+    return cachedJson(
+      { context: row, meta: { source: 'bsi-savant-compute', fetched_at: new Date().toISOString(), timezone: 'America/Chicago', cache_hit: false } },
+      200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' },
+    );
+  } catch (err) {
+    console.error('[handleLeagueContext]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
+}
