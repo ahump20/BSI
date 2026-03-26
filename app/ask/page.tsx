@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import AskClient from './AskClient';
 
 export const metadata: Metadata = {
@@ -14,5 +15,9 @@ export const metadata: Metadata = {
 };
 
 export default function AskPage() {
-  return <AskClient />;
+  return (
+    <Suspense>
+      <AskClient />
+    </Suspense>
+  );
 }

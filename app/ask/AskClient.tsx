@@ -1,10 +1,14 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation';
 import { AskBSI } from '@/components/home/AskBSI';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 
 export default function AskClient() {
+  const searchParams = useSearchParams();
+  const initialQuestion = searchParams.get('q') || undefined;
+
   return (
     <>
       <div className="min-h-screen bg-midnight">
@@ -35,7 +39,7 @@ export default function AskClient() {
         <section className="py-8 px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
             <ScrollReveal delay={0.1}>
-              <AskBSI />
+              <AskBSI initialQuestion={initialQuestion} />
             </ScrollReveal>
           </div>
         </section>

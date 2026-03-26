@@ -135,6 +135,7 @@ export function getSidebarNav(): readonly NavGroup[] {
       items: [
         { href: '/', label: 'Dashboard', iconKey: 'grid' },
         { href: '/scores', label: 'Live Scores', iconKey: 'activity' },
+        { href: '/ask', label: 'Ask BSI', iconKey: 'brain' },
         { href: '/intel', label: 'Intelligence', iconKey: 'brain' },
         { href: '/agent', label: 'Agent', iconKey: 'brain' },
       ],
@@ -239,6 +240,7 @@ export function getMorePanelNav(): readonly MorePanelSection[] {
       label: 'Where to Start',
       items: [
         { label: 'Live Scores', href: '/scores' },
+        { label: 'Ask BSI', href: '/ask' },
         { label: 'College Baseball', href: '/college-baseball' },
         { label: 'Intelligence', href: '/intel' },
         { label: 'Pricing', href: '/pricing' },

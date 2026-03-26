@@ -1,6 +1,7 @@
 'use client';
 
 import { HeroSection } from '@/components/home/HeroSection';
+import { HomeAskSection } from '@/components/home/HomeAskSection';
 import { WhyBSI } from '@/components/home/WhyBSI';
 import { FlagshipProof } from '@/components/home/FlagshipProof';
 import { FeatureShowcase } from '@/components/home/FeatureShowcase';
@@ -15,6 +16,8 @@ export function HomePageClient() {
       <DataErrorBoundary name="Hero" compact>
         <HeroSection />
       </DataErrorBoundary>
+
+      <HomeAskSection />
 
       <WhyBSI />
 

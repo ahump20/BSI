@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 
 // ─── Example prompts — cover routing, stats, teams, and multi-sport ──────────
@@ -138,14 +138,16 @@ function ActionStrip({ links }: { links: Array<{ label: string; href: string }> 
 
 interface AskBSIProps {
   embedded?: boolean;
+  initialQuestion?: string;
 }
 
-export function AskBSI({ embedded = false }: AskBSIProps) {
+export function AskBSI({ embedded = false, initialQuestion }: AskBSIProps) {
   const [question, setQuestion] = useState('');
   const [response, setResponse] = useState('');
   const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState('');
   const abortRef = useRef<AbortController | null>(null);
+  const initialFired = useRef(false);
   const usageCount = typeof window !== 'undefined' ? getAskCount() : 0;
 
   const askQuestion = useCallback(async (q: string) => {
@@ -220,6 +222,15 @@ export function AskBSI({ embedded = false }: AskBSIProps) {
       setStreaming(false);
     }
   }, [streaming]);
+
+  // Auto-submit if an initial question was passed (e.g. from homepage redirect)
+  useEffect(() => {
+    if (initialQuestion && !initialFired.current) {
+      initialFired.current = true;
+      setQuestion(initialQuestion);
+      askQuestion(initialQuestion);
+    }
+  }, [initialQuestion, askQuestion]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

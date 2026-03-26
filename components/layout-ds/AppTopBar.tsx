@@ -27,6 +27,7 @@ const ROUTE_TITLES: Record<string, string> = {
   '/cfb': 'College Football',
   '/college-baseball/savant/glossary': 'Glossary',
   '/pricing': 'Pricing',
+  '/ask': 'Ask BSI',
   '/search': 'Search',
   '/settings': 'Settings',
   '/intel': 'Intelligence',
