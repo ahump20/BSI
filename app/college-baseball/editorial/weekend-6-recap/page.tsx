@@ -11,12 +11,14 @@ export const metadata: Metadata = {
   title: 'Weekend 6 Recap & Weekend 7 Preview | 2026 College Baseball | BSI',
   description:
     'Tyler Fay threw Alabama\'s first solo no-hitter in 84 years to sweep Florida out of the rankings. Texas won at Auburn. Arkansas hung 22 on South Carolina and Paul Mainieri resigned mid-series. Weekend 7 preview: Oklahoma at Texas.',
+  alternates: { canonical: '/college-baseball/editorial/weekend-6-recap' },
   openGraph: {
     title: 'Weekend 6 Recap & Weekend 7 Preview | BSI',
     description:
       'Tyler Fay\'s 84-year no-hitter, Texas takes a series at Auburn, Paul Mainieri resigns mid-series, and four teams fall out of the Top 25. Weekend 7: Oklahoma at Texas.',
     type: 'article',
     publishedTime: '2026-03-25',
+    images: [{ url: '/images/og-college-baseball.png', width: 1200, height: 630 }],
   },
 };
 

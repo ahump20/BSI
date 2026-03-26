@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: 'Texas Week 6: Punched, Then Answered | Blaze Sports Intel',
   description:
     'Texas took 2-of-3 at No. 5 Auburn after a crushing Friday walk-off loss. Aiden Robbins hit 3 home runs. Sunday was the program\'s first-ever SEC shutout. Texas is 20-3, No. 2 nationally, No. 1 RPI. Full series recap, SEC landscape, and Oklahoma preview.',
+  alternates: { canonical: '/college-baseball/editorial/texas-week-6-recap' },
   openGraph: {
     title: 'Texas Week 6: Punched, Then Answered | Blaze Sports Intel',
     description:

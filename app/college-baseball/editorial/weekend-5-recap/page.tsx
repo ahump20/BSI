@@ -11,12 +11,14 @@ export const metadata: Metadata = {
   title: 'Weekend 5 Recap & Weekend 6 Preview | 2026 College Baseball | BSI',
   description:
     'Conference play arrived and reshuffled everything. Texas lost for the first time, FSU swept Wake Forest behind Trey Beard\'s 14-strikeout gem, and Cole Johnson robbed a home run that saved Georgia\'s series. Weekend 6 SEC matchups to watch.',
+  alternates: { canonical: '/college-baseball/editorial/weekend-5-recap' },
   openGraph: {
     title: 'Weekend 5 Recap & Weekend 6 Preview | BSI',
     description:
       'Conference play arrived and reshuffled everything. Texas lost for the first time, FSU swept Wake Forest, and Cole Johnson\'s robbery saved Georgia. Weekend 6 preview.',
     type: 'article',
     publishedTime: '2026-03-19',
+    images: [{ url: '/images/og-college-baseball.png', width: 1200, height: 630 }],
   },
 };
 
