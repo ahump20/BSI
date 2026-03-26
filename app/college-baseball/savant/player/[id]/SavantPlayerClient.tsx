@@ -5,13 +5,14 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
 import { Footer } from '@/components/layout-ds/Footer';
 import { PercentileBar } from '@/components/analytics/PercentileBar';
 import { MetricGate } from '@/components/analytics/MetricGate';
 import { PlayerScoutingComposite } from '@/components/college-baseball/PlayerScoutingComposite';
 import { ScrollReveal } from '@/components/cinematic';
 import { fmt1, fmt2, fmtPct, fmtInt, fmt3 } from '@/lib/utils/format';
+import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
+import type { TeamMeta } from '@/lib/data/team-metadata';
 
 // ---------------------------------------------------------------------------
 // Types — matched to worker /api/savant/player/:id response shape
@@ -98,6 +99,48 @@ interface SavantPlayerPayload {
 interface SavantPlayerResponse {
   player: SavantPlayerPayload;
   meta: { source: string; fetched_at: string; timezone: string };
+}
+
+// ---------------------------------------------------------------------------
+// Team identity resolution — matches D1 team name to teamMetadata
+// ---------------------------------------------------------------------------
+
+const teamNameIndex = new Map<string, TeamMeta>();
+
+function buildTeamIndex() {
+  if (teamNameIndex.size > 0) return;
+  for (const [, meta] of Object.entries(teamMetadata)) {
+    teamNameIndex.set(meta.name.toLowerCase(), meta);
+    teamNameIndex.set(meta.shortName.toLowerCase(), meta);
+    teamNameIndex.set(meta.abbreviation.toLowerCase(), meta);
+  }
+}
+
+function resolveTeamMeta(teamName: string): TeamMeta | null {
+  buildTeamIndex();
+  const lower = teamName.toLowerCase().trim();
+  const exact = teamNameIndex.get(lower);
+  if (exact) return exact;
+  for (const [, meta] of Object.entries(teamMetadata)) {
+    if (
+      lower.includes(meta.shortName.toLowerCase()) ||
+      meta.name.toLowerCase().includes(lower)
+    ) {
+      return meta;
+    }
+  }
+  return null;
+}
+
+function resolveTeamLogoUrl(teamName: string): string {
+  const meta = resolveTeamMeta(teamName);
+  if (!meta) return '';
+  return getLogoUrl(meta.espnId, meta.logoId, meta.localLogo);
+}
+
+function resolveTeamColors(teamName: string): { primary: string; secondary: string } {
+  const meta = resolveTeamMeta(teamName);
+  return meta?.colors ?? { primary: '#BF5700', secondary: '#FFFFFF' };
 }
 
 // ---------------------------------------------------------------------------
@@ -286,7 +329,6 @@ export default function SavantPlayerClient() {
   const { batting, pitching, percentiles } = playerData;
   const playerName = batting?.player_name ?? pitching?.player_name ?? '';
   const team = batting?.team ?? pitching?.team ?? '';
-  const teamId = (batting as unknown as Record<string, unknown>)?.team_id ?? (pitching as unknown as Record<string, unknown>)?.team_id ?? '';
   const conference = batting?.conference ?? pitching?.conference ?? '';
   const position = batting?.position ?? pitching?.position ?? '';
   const classYear = batting?.class_year ?? pitching?.class_year ?? '';
@@ -295,154 +337,191 @@ export default function SavantPlayerClient() {
   const isPitcher = pitching !== null;
   const isTwoWay = isBatter && isPitcher;
 
-  // Team logo from ESPN CDN
-  const teamLogoUrl = teamId ? `https://a.espncdn.com/i/teamlogos/ncaa/500/${teamId}.png` : '';
+  // Resolve correct team identity from teamMetadata (not raw team_id)
+  const teamLogoUrl = resolveTeamLogoUrl(team);
+  const teamColors = resolveTeamColors(team);
+
   // YouTube highlight search
   const youtubeSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(`${playerName} ${team} baseball highlights ${season}`)}`;
-  // Headline stat for the hero card
+
+  // Headline stats for scouting card
   const headlineStat = isBatter
-    ? { label: 'wOBA', value: batting?.woba != null ? `.${String(Math.round(batting.woba * 1000))}` : (batting ? `.${String(Math.round(batting.avg * 1000))}` : '') }
-    : { label: 'FIP', value: pitching?.fip != null ? String(pitching.fip.toFixed(2)) : (pitching ? pitching.era.toFixed(2) : '') };
+    ? {
+        label: batting?.woba != null ? 'wOBA' : 'AVG',
+        value: batting?.woba != null ? fmt3(batting.woba) : batting ? fmt3(batting.avg) : '',
+      }
+    : {
+        label: pitching?.fip != null ? 'FIP' : 'ERA',
+        value: pitching?.fip != null ? fmt2(pitching.fip) : pitching ? fmt2(pitching.era) : '',
+      };
+  const secondaryStat = isBatter
+    ? batting ? { label: 'OPS', value: fmt3(batting.ops) } : null
+    : pitching ? { label: 'K/9', value: fmt1(pitching.k_9) } : null;
+
+  // Player initials for avatar
+  const nameParts = playerName.split(' ');
+  const initials = nameParts.length >= 2
+    ? `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`
+    : playerName.slice(0, 2);
 
   return (
     <>
       <div>
-        <section
-          className="relative overflow-hidden"
-          style={{ padding: 'clamp(1.5rem, 3vw, 2.5rem) 0' }}
-        >
-          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[rgba(191,87,0,0.15)] to-transparent" />
+        {/* ── SCOUTING CARD HERO ── */}
+        <section className="relative overflow-hidden">
+          {/* Team color top bar */}
+          <div className="absolute inset-x-0 top-0 h-1" style={{ background: teamColors.primary }} />
 
-          {/* Team logo watermark — large, faded behind the content */}
+          {/* Large watermark logo */}
           {teamLogoUrl && (
-            <div className="absolute right-0 top-0 bottom-0 w-[300px] sm:w-[400px] pointer-events-none overflow-hidden" aria-hidden="true">
-              <img
-                src={teamLogoUrl}
-                alt=""
-                className="absolute right-[-40px] top-1/2 -translate-y-1/2 w-[280px] sm:w-[360px] opacity-[0.04]"
-                loading="eager"
-              />
+            <div className="absolute right-[-60px] sm:right-[-20px] top-1/2 -translate-y-1/2 w-[300px] sm:w-[420px] pointer-events-none" aria-hidden="true">
+              <img src={teamLogoUrl} alt="" className="w-full opacity-[0.035]" loading="eager" />
             </div>
           )}
 
+          {/* Subtle diagonal grain */}
+          <div className="absolute inset-0 pointer-events-none opacity-[0.02]" aria-hidden="true" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)' }} />
+
           <Container size="lg">
-            {/* Breadcrumb */}
-            <nav className="flex items-center gap-2 text-xs mb-6" style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--bsi-dust)' }}>
-              <Link href="/" className="transition-colors hover:text-[var(--bsi-bone)]">Home</Link>
-              <span>/</span>
-              <Link href="/college-baseball" className="transition-colors hover:text-[var(--bsi-bone)]">College Baseball</Link>
-              <span>/</span>
-              <Link href="/college-baseball/savant" className="transition-colors hover:text-[var(--bsi-bone)]">Savant</Link>
-              <span>/</span>
-              <span style={{ color: 'var(--bsi-primary)' }}>{playerName}</span>
-            </nav>
+            <div style={{ padding: 'clamp(1.5rem, 4vw, 3rem) 0 clamp(1rem, 3vw, 2rem)' }}>
+              {/* Breadcrumb */}
+              <nav className="flex items-center gap-2 text-xs mb-8" style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--bsi-dust)' }}>
+                <Link href="/" className="transition-colors hover:text-[var(--bsi-bone)]">Home</Link>
+                <span>/</span>
+                <Link href="/college-baseball" className="transition-colors hover:text-[var(--bsi-bone)]">College Baseball</Link>
+                <span>/</span>
+                <Link href="/college-baseball/savant" className="transition-colors hover:text-[var(--bsi-bone)]">Savant</Link>
+                <span>/</span>
+                <span style={{ color: 'var(--bsi-primary)' }}>{playerName}</span>
+              </nav>
 
-            <ScrollReveal direction="up" delay={50}>
-              {/* Player header — scouting card layout */}
-              <div className="mb-8 flex items-start gap-5 sm:gap-8">
-                {/* Team logo + player avatar area */}
-                <div className="flex-shrink-0 relative">
-                  {teamLogoUrl && (
-                    <div
-                      className="w-20 h-20 sm:w-28 sm:h-28 rounded-sm border overflow-hidden flex items-center justify-center"
-                      style={{
-                        background: 'var(--surface-press-box, #111111)',
-                        borderColor: 'var(--border-vintage, rgba(140,98,57,0.3))',
-                      }}
-                    >
-                      <img
-                        src={teamLogoUrl}
-                        alt={`${team} logo`}
-                        className="w-14 h-14 sm:w-20 sm:h-20 object-contain"
-                        loading="eager"
-                      />
+              <ScrollReveal direction="up" delay={50}>
+                <div className="flex items-start gap-5 sm:gap-8">
+                  {/* ── Player avatar / team logo column ── */}
+                  <div className="flex-shrink-0 flex flex-col items-center gap-3">
+                    {/* Player avatar with team color ring */}
+                    <div className="relative w-24 h-24 sm:w-32 sm:h-32 rounded-sm overflow-hidden" style={{ border: `3px solid ${teamColors.primary}`, background: 'var(--surface-press-box, #111111)' }}>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <svg viewBox="0 0 80 80" className="w-full h-full absolute inset-0" style={{ opacity: 0.08 }}>
+                          <circle cx="40" cy="28" r="14" fill={teamColors.primary} />
+                          <ellipse cx="40" cy="68" rx="22" ry="16" fill={teamColors.primary} />
+                        </svg>
+                        <span className="relative z-10 text-2xl sm:text-3xl font-bold uppercase tracking-tighter" style={{ fontFamily: 'var(--font-syne, var(--bsi-font-display-hero))', color: teamColors.primary, opacity: 0.6 }}>
+                          {initials}
+                        </span>
+                      </div>
+                      {position && position !== 'UN' && (
+                        <span className="absolute bottom-0 right-0 text-[10px] font-mono font-bold uppercase px-2 py-1" style={{ background: teamColors.primary, color: '#fff' }}>
+                          {position}
+                        </span>
+                      )}
                     </div>
-                  )}
-                  {/* Position badge overlaid on logo */}
-                  {position && position !== 'UN' && (
-                    <span
-                      className="absolute -bottom-1.5 -right-1.5 text-[10px] font-mono font-bold uppercase px-1.5 py-0.5 rounded-sm"
-                      style={{ background: 'var(--bsi-primary)', color: '#fff' }}
-                    >
-                      {position}
-                    </span>
-                  )}
-                </div>
 
-                {/* Name and metadata */}
+                    {/* Team logo — small, below avatar */}
+                    {teamLogoUrl && (
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-sm border overflow-hidden flex items-center justify-center p-1" style={{ background: 'var(--surface-press-box, #111111)', borderColor: 'rgba(140,98,57,0.2)' }}>
+                        <img src={teamLogoUrl} alt={`${team} logo`} className="w-full h-full object-contain" loading="eager" />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* ── Name, metadata, and headline stats ── */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
+                      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: teamColors.primary }}>{team}</span>
+                      {conference && (
+                        <>
+                          <span className="text-[10px]" style={{ color: 'var(--bsi-dust)' }}>&middot;</span>
+                          <span className="text-xs" style={{ color: 'var(--bsi-dust)' }}>{conference}</span>
+                        </>
+                      )}
+                      {classYear && (
+                        <>
+                          <span className="text-[10px]" style={{ color: 'var(--bsi-dust)' }}>&middot;</span>
+                          <span className="text-xs" style={{ color: 'var(--bsi-dust)' }}>{classYear}</span>
+                        </>
+                      )}
+                    </div>
+
+                    <h1 className="font-bold uppercase tracking-tight leading-none mb-1" style={{ fontFamily: 'var(--font-syne, var(--bsi-font-display-hero))', fontSize: 'clamp(1.75rem, 5vw, 3.5rem)', color: 'var(--bsi-bone)' }}>
+                      {playerName}
+                    </h1>
+
+                    <div className="flex items-center gap-2 mt-2 mb-4 flex-wrap">
+                      {isTwoWay && (
+                        <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-sm" style={{ background: `${teamColors.primary}22`, color: teamColors.primary, border: `1px solid ${teamColors.primary}33` }}>
+                          Two-Way
+                        </span>
+                      )}
+                      <span className="text-xs" style={{ color: 'var(--bsi-dust)' }}>{season} Season</span>
+                    </div>
+
+                    {/* ── Headline stat cards ── */}
+                    <div className="flex items-stretch gap-3 flex-wrap">
+                      {headlineStat.value && (
+                        <div className="flex flex-col items-center px-4 py-2.5 rounded-sm min-w-[80px]" style={{ background: 'var(--surface-press-box, #111111)', border: `1px solid ${teamColors.primary}33`, borderTop: `2px solid ${teamColors.primary}` }}>
+                          <span className="text-[10px] uppercase tracking-widest mb-0.5" style={{ fontFamily: 'var(--bsi-font-display)', color: teamColors.primary }}>{headlineStat.label}</span>
+                          <span className="text-xl sm:text-2xl font-mono font-bold tabular-nums" style={{ color: 'var(--bsi-bone)' }}>{headlineStat.value}</span>
+                        </div>
+                      )}
+                      {secondaryStat && (
+                        <div className="flex flex-col items-center px-4 py-2.5 rounded-sm min-w-[80px]" style={{ background: 'var(--surface-press-box, #111111)', border: '1px solid rgba(140,98,57,0.2)' }}>
+                          <span className="text-[10px] uppercase tracking-widest mb-0.5" style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-dust)' }}>{secondaryStat.label}</span>
+                          <span className="text-xl sm:text-2xl font-mono font-bold tabular-nums" style={{ color: 'var(--bsi-bone)' }}>{secondaryStat.value}</span>
+                        </div>
+                      )}
+                      {isBatter && batting && (
+                        <div className="flex flex-col items-center px-4 py-2.5 rounded-sm min-w-[80px]" style={{ background: 'var(--surface-press-box, #111111)', border: '1px solid rgba(140,98,57,0.2)' }}>
+                          <span className="text-[10px] uppercase tracking-widest mb-0.5" style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-dust)' }}>HR</span>
+                          <span className="text-xl sm:text-2xl font-mono font-bold tabular-nums" style={{ color: 'var(--bsi-bone)' }}>{batting.hr}</span>
+                        </div>
+                      )}
+                      {!isBatter && isPitcher && pitching && (
+                        <div className="flex flex-col items-center px-4 py-2.5 rounded-sm min-w-[80px]" style={{ background: 'var(--surface-press-box, #111111)', border: '1px solid rgba(140,98,57,0.2)' }}>
+                          <span className="text-[10px] uppercase tracking-widest mb-0.5" style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-dust)' }}>SO</span>
+                          <span className="text-xl sm:text-2xl font-mono font-bold tabular-nums" style={{ color: 'var(--bsi-bone)' }}>{pitching.so}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {isPitcher && pitching && (
+                      <p className="text-xs font-mono mt-3" style={{ color: 'var(--bsi-dust)' }}>
+                        {pitching.w}-{pitching.l}{pitching.sv > 0 ? `, ${pitching.sv} SV` : ''} &middot; {fmt1(pitching.ip)} IP
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </ScrollReveal>
+            </div>
+          </Container>
+          <div className="h-px" style={{ background: `linear-gradient(to right, transparent, ${teamColors.primary}33, transparent)` }} />
+        </section>
+
+        {/* ── VIDEO HIGHLIGHTS ── */}
+        <section style={{ padding: 'clamp(0.75rem, 2vw, 1.5rem) 0' }}>
+          <Container size="lg">
+            <ScrollReveal direction="up" delay={80}>
+              <a href={youtubeSearchUrl} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-4 px-5 py-4 rounded-sm border transition-all duration-200" style={{ background: 'var(--surface-dugout, #161616)', borderColor: 'rgba(140,98,57,0.2)' }}>
+                <div className="flex-shrink-0 w-12 h-12 rounded-sm flex items-center justify-center transition-transform group-hover:scale-105" style={{ background: `${teamColors.primary}15`, border: `1px solid ${teamColors.primary}33` }}>
+                  <svg viewBox="0 0 24 24" className="w-6 h-6" fill={teamColors.primary}>
+                    <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0C.488 3.45.029 5.804 0 12c.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0C23.512 20.55 23.971 18.196 24 12c-.029-6.185-.484-8.549-4.385-8.816zM9 16V8l8 4-8 4z" />
+                  </svg>
+                </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                    <span className="text-xs font-medium" style={{ color: 'var(--bsi-bone)' }}>{team}</span>
-                    {conference && (
-                      <>
-                        <span className="text-[10px]" style={{ color: 'var(--bsi-dust)' }}>&middot;</span>
-                        <span className="text-xs" style={{ color: 'var(--bsi-dust)' }}>{conference}</span>
-                      </>
-                    )}
-                    {classYear && (
-                      <>
-                        <span className="text-[10px]" style={{ color: 'var(--bsi-dust)' }}>&middot;</span>
-                        <span className="text-xs" style={{ color: 'var(--bsi-dust)' }}>{classYear}</span>
-                      </>
-                    )}
-                    {isTwoWay && (
-                      <span
-                        className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-sm"
-                        style={{ background: 'rgba(191,87,0,0.15)', color: 'var(--bsi-primary)' }}
-                      >
-                        Two-Way
-                      </span>
-                    )}
-                  </div>
-                  <h1
-                    className="font-bold uppercase tracking-tight leading-none mb-2"
-                    style={{
-                      fontFamily: 'var(--font-syne, var(--bsi-font-display-hero))',
-                      fontSize: 'clamp(1.75rem, 5vw, 3.5rem)',
-                      color: 'var(--bsi-bone)',
-                  }}
-                >
-                  {playerName}
-                </h1>
-                  <div className="flex items-center gap-4 mt-3 flex-wrap">
-                    <p className="text-sm" style={{ color: 'var(--bsi-dust)' }}>
-                      {season} Season
-                    </p>
-
-                    {/* Headline stat pill */}
-                    {headlineStat.value && (
-                      <span
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-mono font-bold"
-                        style={{
-                          background: 'rgba(191,87,0,0.12)',
-                          color: 'var(--bsi-primary)',
-                          border: '1px solid rgba(191,87,0,0.2)',
-                        }}
-                      >
-                        {headlineStat.label}
-                        <span style={{ color: 'var(--bsi-bone)' }}>{headlineStat.value}</span>
-                      </span>
-                    )}
-
-                    {/* YouTube highlights link */}
-                    <a
-                      href={youtubeSearchUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-xs transition-colors hover:text-[var(--bsi-primary)]"
-                      style={{ color: 'var(--bsi-dust)' }}
-                    >
-                      <svg viewBox="0 0 16 16" className="w-3.5 h-3.5" fill="currentColor">
-                        <path d="M14.7 4.5a1.8 1.8 0 0 0-1.3-1.3C12.2 3 8 3 8 3s-4.2 0-5.4.3A1.8 1.8 0 0 0 1.3 4.5C1 5.7 1 8 1 8s0 2.3.3 3.5a1.8 1.8 0 0 0 1.3 1.2C3.8 13 8 13 8 13s4.2 0 5.4-.3a1.8 1.8 0 0 0 1.3-1.2c.3-1.2.3-3.5.3-3.5s0-2.3-.3-3.5zM6.5 10.2V5.8L10.2 8l-3.7 2.2z" />
-                      </svg>
-                      Highlights
-                    </a>
-                  </div>
+                  <span className="text-sm font-semibold block group-hover:text-[var(--bsi-primary)] transition-colors" style={{ color: 'var(--bsi-bone)' }}>Watch {playerName} Highlights</span>
+                  <span className="text-xs" style={{ color: 'var(--bsi-dust)' }}>Search YouTube for {season} game footage, at-bats, and scouting clips</span>
                 </div>
-              </div>
+                <svg viewBox="0 0 20 20" className="w-5 h-5 flex-shrink-0 transition-transform group-hover:translate-x-1" fill="var(--bsi-dust)">
+                  <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                </svg>
+              </a>
             </ScrollReveal>
+          </Container>
+        </section>
 
-            {/* Batting section */}
+        {/* ── ANALYTICS SECTIONS ── */}
+        <section style={{ padding: 'clamp(0.5rem, 2vw, 1rem) 0 clamp(1rem, 3vw, 2rem)' }}>
+          <Container size="lg">
             {isBatter && (
               <ScrollReveal direction="up" delay={100}>
                 <PercentileSection
@@ -451,11 +530,11 @@ export default function SavantPlayerClient() {
                   metrics={BATTING_METRICS}
                   percentileData={percentiles.batting}
                   isPro={isPro}
+                  accentColor={teamColors.primary}
                 />
               </ScrollReveal>
             )}
 
-            {/* Pitching section */}
             {isPitcher && (
               <ScrollReveal direction="up" delay={isBatter ? 150 : 100}>
                 <PercentileSection
@@ -464,11 +543,11 @@ export default function SavantPlayerClient() {
                   metrics={PITCHING_METRICS}
                   percentileData={percentiles.pitching}
                   isPro={isPro}
+                  accentColor={teamColors.primary}
                 />
               </ScrollReveal>
             )}
 
-            {/* Scouting Grades */}
             <ScrollReveal direction="up" delay={200}>
               <ScoutingGrades
                 batting={percentiles.batting}
@@ -479,14 +558,12 @@ export default function SavantPlayerClient() {
               />
             </ScrollReveal>
 
-            {/* Scouting Composite — radar chart */}
             <PlayerScoutingComposite
               playerId={playerId}
               position={isBatter && !isPitcher ? 'hitter' : 'pitcher'}
               className="mb-6"
             />
 
-            {/* Raw stat lines */}
             {isBatter && (
               <ScrollReveal direction="up" delay={250}>
                 <RawStatLine title="Batting Line" stats={batting} type="batting" isPro={isPro} />
@@ -554,12 +631,14 @@ function PercentileSection({
   metrics,
   percentileData,
   isPro,
+  accentColor,
 }: {
   title: string;
   stats: Record<string, unknown>;
   metrics: MetricConfig[];
   percentileData: Record<string, number> | null;
   isPro: boolean;
+  accentColor: string;
 }) {
   const freeMetrics = metrics.filter(m => !m.pro);
   const proMetrics = metrics.filter(m => m.pro);
@@ -576,7 +655,7 @@ function PercentileSection({
         className="px-5 py-3 border-b"
         style={{
           borderColor: 'var(--border-vintage, rgba(140,98,57,0.3))',
-          borderTop: '2px solid var(--bsi-primary, #BF5700)',
+          borderTop: `2px solid ${accentColor}`,
         }}
       >
         <h2
