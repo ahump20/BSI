@@ -23,7 +23,7 @@ interface GlossaryCategory {
 const GLOSSARY_CATEGORIES: GlossaryCategory[] = [
   {
     label: 'Batting',
-    entries: ['wOBA', 'wRC+', 'ISO', 'OPS', 'OPS+', 'BABIP', 'K%', 'BB%'].map(key => {
+    entries: ['AVG', 'OBP', 'SLG', 'OPS', 'wOBA', 'wRC+', 'OPS+', 'ISO', 'BABIP', 'K%', 'BB%'].map(key => {
       const def = METRIC_DEFINITIONS[key];
       return def
         ? { key, abbr: def.abbr, name: def.name, description: def.description, context: def.context }
@@ -32,7 +32,7 @@ const GLOSSARY_CATEGORIES: GlossaryCategory[] = [
   },
   {
     label: 'Pitching',
-    entries: ['FIP', 'ERA-', 'xFIP', 'K/9', 'BB/9', 'HR/9', 'K/BB', 'LOB%'].map(key => {
+    entries: ['ERA', 'WHIP', 'FIP', 'xFIP', 'ERA-', 'K/9', 'BB/9', 'HR/9', 'K/BB', 'LOB%'].map(key => {
       const def = METRIC_DEFINITIONS[key];
       return def
         ? { key, abbr: def.abbr, name: def.name, description: def.description, context: def.context }

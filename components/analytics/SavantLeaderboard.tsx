@@ -71,11 +71,11 @@ function getThresholdBg(key: string, val: number): string | undefined {
 // ---------------------------------------------------------------------------
 
 export const BATTING_COLUMNS: ColumnDef[] = [
-  { key: 'avg', label: 'AVG', format: fmt3, higherIsBetter: true },
-  { key: 'obp', label: 'OBP', format: fmt3, higherIsBetter: true },
-  { key: 'slg', label: 'SLG', format: fmt3, higherIsBetter: true },
-  { key: 'k_pct', label: 'K%', format: fmtPct, higherIsBetter: false },
-  { key: 'bb_pct', label: 'BB%', format: fmtPct, higherIsBetter: true },
+  { key: 'avg', label: 'AVG', metricKey: 'AVG', format: fmt3, higherIsBetter: true },
+  { key: 'obp', label: 'OBP', metricKey: 'OBP', format: fmt3, higherIsBetter: true },
+  { key: 'slg', label: 'SLG', metricKey: 'SLG', format: fmt3, higherIsBetter: true },
+  { key: 'k_pct', label: 'K%', metricKey: 'K%', format: fmtPct, higherIsBetter: false },
+  { key: 'bb_pct', label: 'BB%', metricKey: 'BB%', format: fmtPct, higherIsBetter: true },
   { key: 'iso', label: 'ISO', metricKey: 'ISO', format: fmt3, higherIsBetter: true },
   { key: 'babip', label: 'BABIP', metricKey: 'BABIP', format: fmt3, hideMobile: true },
   { key: 'woba', label: 'wOBA', metricKey: 'wOBA', format: fmt3, higherIsBetter: true },
@@ -84,12 +84,13 @@ export const BATTING_COLUMNS: ColumnDef[] = [
 ];
 
 export const PITCHING_COLUMNS: ColumnDef[] = [
-  { key: 'era', label: 'ERA', format: fmt2, higherIsBetter: false },
-  { key: 'whip', label: 'WHIP', format: fmt2, higherIsBetter: false },
-  { key: 'k_9', label: 'K/9', format: fmt1, higherIsBetter: true },
-  { key: 'bb_9', label: 'BB/9', format: fmt1, higherIsBetter: false },
-  { key: 'hr_9', label: 'HR/9', format: fmt1, higherIsBetter: false, hideMobile: true },
+  { key: 'era', label: 'ERA', metricKey: 'ERA', format: fmt2, higherIsBetter: false },
+  { key: 'whip', label: 'WHIP', metricKey: 'WHIP', format: fmt2, higherIsBetter: false },
+  { key: 'k_9', label: 'K/9', metricKey: 'K/9', format: fmt1, higherIsBetter: true },
+  { key: 'bb_9', label: 'BB/9', metricKey: 'BB/9', format: fmt1, higherIsBetter: false },
+  { key: 'hr_9', label: 'HR/9', metricKey: 'HR/9', format: fmt1, higherIsBetter: false, hideMobile: true },
   { key: 'fip', label: 'FIP', metricKey: 'FIP', format: fmt2, higherIsBetter: false },
+  { key: 'x_fip', label: 'xFIP', metricKey: 'xFIP', format: fmt2, higherIsBetter: false, hideMobile: true },
   { key: 'era_minus', label: 'ERA-', metricKey: 'ERA-', format: fmtInt, higherIsBetter: false, hideMobile: true },
   { key: 'k_bb', label: 'K/BB', metricKey: 'K/BB', format: fmt2, pro: true, hideMobile: true, higherIsBetter: true },
   { key: 'lob_pct', label: 'LOB%', metricKey: 'LOB%', format: fmtPct, pro: true, hideMobile: true, higherIsBetter: true },
