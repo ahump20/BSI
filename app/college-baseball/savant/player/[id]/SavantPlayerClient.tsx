@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -175,8 +174,17 @@ const PITCHING_METRICS: MetricConfig[] = [
 // ---------------------------------------------------------------------------
 
 export default function SavantPlayerClient() {
-  const params = useParams();
-  const playerId = params.id as string;
+  // Read player ID from the browser URL, not useParams().
+  // With static export + placeholder fallback, useParams() returns 'placeholder'
+  // because the page was generated with that param. The real ID is in window.location.
+  const [playerId, setPlayerId] = useState<string>('');
+  useEffect(() => {
+    const segments = window.location.pathname.split('/').filter(Boolean);
+    // URL: /college-baseball/savant/player/{id}
+    const idx = segments.indexOf('player');
+    const id = idx >= 0 && segments[idx + 1] ? segments[idx + 1] : '';
+    setPlayerId(id);
+  }, []);
   const [playerData, setPlayerData] = useState<SavantPlayerPayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
