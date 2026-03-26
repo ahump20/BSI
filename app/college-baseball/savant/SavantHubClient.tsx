@@ -523,7 +523,8 @@ export default function SavantHubPage() {
                     columns={BATTING_COLUMNS}
                     title="Batting Leaders — Advanced"
                     isPro={isPro}
-                    initialRows={25}
+                    initialRows={50}
+                    defaultSortKey="woba"
                     compareSelected={compareIds}
                     onCompareToggle={handleCompareToggle}
                   />
@@ -539,7 +540,8 @@ export default function SavantHubPage() {
                     columns={PITCHING_COLUMNS}
                     title="Pitching Leaders — Advanced"
                     isPro={isPro}
-                    initialRows={25}
+                    initialRows={50}
+                    defaultSortKey="fip"
                     compareSelected={compareIds}
                     onCompareToggle={handleCompareToggle}
                   />

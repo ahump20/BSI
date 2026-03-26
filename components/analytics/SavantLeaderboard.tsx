@@ -32,6 +32,8 @@ interface SavantLeaderboardProps {
   title: string;
   isPro?: boolean;
   initialRows?: number;
+  /** Column key to sort by on first render (e.g. 'woba', 'fip') */
+  defaultSortKey?: string;
   onPlayerClick?: (playerId: string) => void;
   /** Compare mode: set of selected player IDs */
   compareSelected?: Set<string>;
@@ -144,14 +146,15 @@ export function SavantLeaderboard({
   columns,
   title,
   isPro = false,
-  initialRows = 25,
+  initialRows = 50,
+  defaultSortKey,
   onPlayerClick,
   compareSelected,
   onCompareToggle,
   maxCompare = 3,
   className = '',
 }: SavantLeaderboardProps) {
-  const [sortKey, setSortKey] = useState(columns[0]?.key || '');
+  const [sortKey, setSortKey] = useState(defaultSortKey || columns[0]?.key || '');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
   const [showAll, setShowAll] = useState(false);
 
