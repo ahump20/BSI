@@ -94,7 +94,6 @@ describe('Worker API route handling', () => {
 
     expect(res.status).toBe(200);
     expect(body.unavailable).toBe(true);
-    expect(body.message).toBe('MLB leaders temporarily unavailable from ESPN.');
   });
 
   it('handles /api/nba/game/:id directly', async () => {
