@@ -594,12 +594,12 @@ async function computeHAVFDaily(env: Env): Promise<void> {
 async function computeMMIForNewGames(env: Env, date: string): Promise<number> {
   if (!env.DB) return 0;
 
-  // Find games processed today that lack MMI summaries
+  // Find recently processed games that lack MMI summaries (look back 7 days)
   const { results: unprocessed } = await env.DB.prepare(
     `SELECT pg.game_id, pg.home_team, pg.away_team, pg.home_score, pg.away_score, pg.game_date
      FROM processed_games pg
      LEFT JOIN mmi_game_summary ms ON pg.game_id = ms.game_id
-     WHERE pg.game_date = ? AND ms.game_id IS NULL
+     WHERE pg.game_date >= date(?, '-7 days') AND ms.game_id IS NULL
      LIMIT 20`
   ).bind(date).all<{
     game_id: string; home_team: string; away_team: string;
