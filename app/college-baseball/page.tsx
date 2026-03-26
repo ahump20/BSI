@@ -652,7 +652,7 @@ function CollegeBaseballPageInner() {
                                     {['#', 'Team', 'Conf', 'W', 'L', 'Conf W-L'].map((h) => (
                                       <th
                                         key={h}
-                                        className="text-left p-3 text-text-muted font-semibold text-xs"
+                                        className="text-left p-3 text-[var(--bsi-dust)] font-semibold text-xs uppercase tracking-wider"
                                       >
                                         {h}
                                       </th>
@@ -669,12 +669,12 @@ function CollegeBaseballPageInner() {
                                       <td className="p-3 font-semibold text-text-primary">
                                         {team.teamName}
                                       </td>
-                                      <td className="p-3 text-text-tertiary">
+                                      <td className="p-3 text-text-secondary">
                                         {team.conference || '-'}
                                       </td>
-                                      <td className="p-3 text-text-tertiary">{team.wins}</td>
-                                      <td className="p-3 text-text-tertiary">{team.losses}</td>
-                                      <td className="p-3 text-text-tertiary">
+                                      <td className="p-3 text-text-primary">{team.wins}</td>
+                                      <td className="p-3 text-text-primary">{team.losses}</td>
+                                      <td className="p-3 text-text-secondary">
                                         {team.conferenceWins != null
                                           ? `${team.conferenceWins}-${team.conferenceLosses}`
                                           : '-'}

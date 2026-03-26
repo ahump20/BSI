@@ -272,40 +272,40 @@ export default function CollegeBaseballRankingsPage() {
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
-                        <tr className="bg-background-secondary border-b border-border-subtle">
-                          <th className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider w-16">
+                        <tr className="bg-[var(--surface-press-box)] border-b border-[var(--border-vintage)]">
+                          <th className="text-left py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider w-16">
                             Rank
                           </th>
-                          <th className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+                          <th className="text-left py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider">
                             Team
                           </th>
-                          <th className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden md:table-cell">
+                          <th className="text-left py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden md:table-cell">
                             Conference
                           </th>
-                          <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+                          <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider">
                             Record
                           </th>
                           {selectedPoll === 'rpi' && (
                             <>
-                              <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden lg:table-cell">
+                              <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden lg:table-cell">
                                 SOS
                               </th>
                             </>
                           )}
                           {(selectedPoll === 'd1baseball' || selectedPoll === 'coaches') && (
                             <>
-                              <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden lg:table-cell">
+                              <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden lg:table-cell">
                                 Points
                               </th>
-                              <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden lg:table-cell">
+                              <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden lg:table-cell">
                                 #1 Votes
                               </th>
                             </>
                           )}
-                          <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden md:table-cell">
+                          <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden md:table-cell">
                             Streak
                           </th>
-                          <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider w-24">
+                          <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider w-24">
                             Change
                           </th>
                         </tr>
@@ -417,8 +417,8 @@ export default function CollegeBaseballRankingsPage() {
                   </div>
 
                   {/* Legend */}
-                  <div className="px-4 py-3 bg-background-secondary border-t border-border-subtle">
-                    <div className="flex flex-wrap items-center gap-4 text-xs text-text-tertiary">
+                  <div className="px-4 py-3 bg-[var(--surface-press-box)] border-t border-[var(--border-vintage)]">
+                    <div className="flex flex-wrap items-center gap-4 text-xs text-[var(--bsi-dust)]">
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 bg-burnt-orange/20 rounded-sm" />
                         <span>Top 10 Teams</span>
@@ -437,27 +437,66 @@ export default function CollegeBaseballRankingsPage() {
               </ScrollReveal>
             )}
 
-            {/* Also Receiving Votes / Dropped Out */}
-            {rankings && rankings.teams.length > 0 && (
-              <ScrollReveal direction="up" delay={250}>
-                <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Card padding="md">
-                    <h3 className="font-display text-lg font-bold text-text-primary mb-4">
-                      Also Receiving Votes
-                    </h3>
-                    <p className="text-text-secondary text-sm">
-                      Teams receiving votes outside the Top 25 — updated weekly with each new poll.
-                    </p>
-                  </Card>
-                  <Card padding="md">
-                    <h3 className="font-display text-lg font-bold text-text-primary mb-4">Dropped Out</h3>
-                    <p className="text-text-secondary text-sm">
-                      Teams that dropped from the Top 25 this week — tracked across every poll release.
-                    </p>
-                  </Card>
-                </div>
-              </ScrollReveal>
-            )}
+            {/* Dropped Out — shows teams that fell from the Top 25 based on rank movement */}
+            {rankings && rankings.teams.length > 0 && (() => {
+              const droppedOut = rankings.teams.filter(
+                (t) => t.previousRank !== undefined && t.previousRank <= 25 && t.rank > 25
+              );
+              const alsoReceiving = rankings.teams.filter(
+                (t) => t.rank > 25 && (t.points ?? 0) > 0
+              );
+              if (droppedOut.length === 0 && alsoReceiving.length === 0) return null;
+              return (
+                <ScrollReveal direction="up" delay={250}>
+                  <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {alsoReceiving.length > 0 && (
+                      <Card padding="md">
+                        <h3 className="font-display text-lg font-bold text-text-primary mb-4">
+                          Also Receiving Votes
+                        </h3>
+                        <div className="space-y-2">
+                          {alsoReceiving.map((t) => (
+                            <div key={t.team} className="flex items-center justify-between text-sm">
+                              <Link
+                                href={`/college-baseball/teams/${teamSlug(t.team)}`}
+                                className="text-text-primary hover:text-burnt-orange transition-colors font-medium"
+                              >
+                                {t.team}
+                              </Link>
+                              <span className="text-text-secondary font-mono text-xs">
+                                {t.points} pts
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </Card>
+                    )}
+                    {droppedOut.length > 0 && (
+                      <Card padding="md">
+                        <h3 className="font-display text-lg font-bold text-text-primary mb-4">
+                          Dropped Out
+                        </h3>
+                        <div className="space-y-2">
+                          {droppedOut.map((t) => (
+                            <div key={t.team} className="flex items-center justify-between text-sm">
+                              <Link
+                                href={`/college-baseball/teams/${teamSlug(t.team)}`}
+                                className="text-text-primary hover:text-burnt-orange transition-colors font-medium"
+                              >
+                                {t.team}
+                              </Link>
+                              <span className="text-error text-xs">
+                                was #{t.previousRank}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </Card>
+                    )}
+                  </div>
+                </ScrollReveal>
+              );
+            })()}
 
             {/* Savant Cross-Link */}
             <div className="mt-10">
@@ -484,7 +523,7 @@ export default function CollegeBaseballRankingsPage() {
             </div>
 
             {/* Data Attribution */}
-            <div className="mt-6 pt-4 border-t border-white/[0.06] flex justify-center">
+            <div className="mt-6 pt-4 border-t border-[var(--border-vintage)] flex justify-center">
               <DataAttribution
                 source="D1Baseball"
                 lastUpdated={rankings?.lastUpdated}
