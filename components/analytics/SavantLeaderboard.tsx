@@ -71,9 +71,9 @@ export const BATTING_COLUMNS: ColumnDef[] = [
   { key: 'bb_pct', label: 'BB%', format: fmtPct, higherIsBetter: true },
   { key: 'iso', label: 'ISO', metricKey: 'ISO', format: fmt3, higherIsBetter: true },
   { key: 'babip', label: 'BABIP', metricKey: 'BABIP', format: fmt3, hideMobile: true },
-  { key: 'woba', label: 'wOBA', metricKey: 'wOBA', format: fmt3, pro: true, higherIsBetter: true },
-  { key: 'wrc_plus', label: 'wRC+', metricKey: 'wRC+', format: fmtInt, pro: true, hideMobile: true, higherIsBetter: true },
-  { key: 'ops_plus', label: 'OPS+', metricKey: 'OPS+', format: fmtInt, pro: true, hideMobile: true, higherIsBetter: true },
+  { key: 'woba', label: 'wOBA', metricKey: 'wOBA', format: fmt3, higherIsBetter: true },
+  { key: 'wrc_plus', label: 'wRC+', metricKey: 'wRC+', format: fmtInt, hideMobile: true, higherIsBetter: true },
+  { key: 'ops_plus', label: 'OPS+', metricKey: 'OPS+', format: fmtInt, hideMobile: true, higherIsBetter: true },
 ];
 
 export const PITCHING_COLUMNS: ColumnDef[] = [
@@ -82,8 +82,8 @@ export const PITCHING_COLUMNS: ColumnDef[] = [
   { key: 'k_9', label: 'K/9', format: fmt1, higherIsBetter: true },
   { key: 'bb_9', label: 'BB/9', format: fmt1, higherIsBetter: false },
   { key: 'hr_9', label: 'HR/9', format: fmt1, higherIsBetter: false, hideMobile: true },
-  { key: 'fip', label: 'FIP', metricKey: 'FIP', format: fmt2, higherIsBetter: false, pro: true },
-  { key: 'era_minus', label: 'ERA-', metricKey: 'ERA-', format: fmtInt, higherIsBetter: false, pro: true, hideMobile: true },
+  { key: 'fip', label: 'FIP', metricKey: 'FIP', format: fmt2, higherIsBetter: false },
+  { key: 'era_minus', label: 'ERA-', metricKey: 'ERA-', format: fmtInt, higherIsBetter: false, hideMobile: true },
   { key: 'k_bb', label: 'K/BB', metricKey: 'K/BB', format: fmt2, pro: true, hideMobile: true, higherIsBetter: true },
   { key: 'lob_pct', label: 'LOB%', metricKey: 'LOB%', format: fmtPct, pro: true, hideMobile: true, higherIsBetter: true },
 ];
@@ -144,9 +144,8 @@ export function SavantLeaderboard({
   const [sortDir, setSortDir] = useState<SortDir>('desc');
   const [showAll, setShowAll] = useState(false);
 
-  // Free-tier row cap — pro users see initialRows, free users see 10
-  const FREE_ROW_LIMIT = 10;
-  const effectiveRows = isPro ? initialRows : FREE_ROW_LIMIT;
+  // Core metrics are free — show full leaderboard on all tiers
+  const effectiveRows = initialRows;
 
   // Compute percentiles from FULL dataset (before sort/slice)
   const percentiles = useMemo(() => computePercentiles(data, columns), [data, columns]);
@@ -321,63 +320,18 @@ export function SavantLeaderboard({
             })}
           </tbody>
 
-          {/* Inline upgrade banner — shown at free-tier row boundary */}
-          {!isPro && sortedWithIndex.length >= 10 && data.length > 10 && (
-            <tbody>
-              <tr>
-                <td
-                  colSpan={columns.length + 3}
-                  className="px-0 py-0"
-                >
-                  <div className="relative overflow-hidden my-1">
-                    <div className="absolute inset-0 bg-gradient-to-r from-burnt-orange/5 via-burnt-orange/10 to-burnt-orange/5" />
-                    <div className="relative flex items-center justify-between px-5 py-3">
-                      <div className="flex items-center gap-3">
-                        <span className="text-[10px] font-display uppercase tracking-widest text-burnt-orange font-bold">
-                          PRO
-                        </span>
-                        <span className="text-xs text-text-muted">
-                          {data.length - 10} more players with wOBA, wRC+, FIP, ERA-
-                        </span>
-                      </div>
-                      <a
-                        href="/pricing"
-                        className="text-[11px] font-mono text-burnt-orange hover:text-ember transition-colors uppercase tracking-wider font-medium"
-                      >
-                        Unlock Full Leaderboard
-                      </a>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          )}
         </table>
       </div>
 
-      {/* Footer */}
+      {/* Footer — show all button */}
       {!showAll && data.length > effectiveRows && (
         <div className="px-5 py-4 border-t border-border-subtle">
-          {isPro ? (
-            <button
-              onClick={() => setShowAll(true)}
-              className="w-full text-center text-xs text-burnt-orange hover:text-ember font-medium transition-colors"
-            >
-              Show all {data.length} players
-            </button>
-          ) : (
-            <div className="flex items-center justify-center gap-4">
-              <span className="text-[10px] font-mono text-text-muted tabular-nums">
-                Showing 10 of {data.length}
-              </span>
-              <a
-                href="/pricing"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-burnt-orange/10 text-burnt-orange text-[11px] font-mono uppercase tracking-wider hover:bg-burnt-orange/20 transition-colors"
-              >
-                Upgrade to Pro
-              </a>
-            </div>
-          )}
+          <button
+            onClick={() => setShowAll(true)}
+            className="w-full text-center text-xs text-burnt-orange hover:text-ember font-medium transition-colors"
+          >
+            Show all {data.length} players
+          </button>
         </div>
       )}
     </div>

@@ -50,12 +50,11 @@ async function resolveTier(url: URL, headers: Headers, env: Env): Promise<string
   }
 }
 
-/** Strip Pro-tier fields from a row for free-tier responses. */
+/** Strip Pro-tier fields from a row for free-tier responses.
+ *  Core Savant metrics (wOBA, wRC+, OPS+, FIP, ERA-) stay visible — free product promise.
+ *  Only expected-stats and secondary pitching extras are Pro-gated. */
 function stripProFields(row: Record<string, unknown>): Record<string, unknown> {
-  const proKeys = [
-    'woba', 'wrc_plus', 'ops_plus', 'e_ba', 'e_slg', 'e_woba',
-    'fip', 'x_fip', 'era_minus', 'k_bb', 'lob_pct',
-  ];
+  const proKeys = ['e_ba', 'e_slg', 'e_woba', 'x_fip', 'k_bb', 'lob_pct'];
   const filtered = { ...row };
   for (const key of proKeys) {
     if (key in filtered) {
@@ -279,7 +278,7 @@ export async function handleSavantPitchingLeaderboard(url: URL, env: Env, header
     // Compute percentile ranks for all numeric columns
     output = computePercentileRanks(output, PITCHING_PERCENTILE_KEYS);
     if (tier !== 'pro') {
-      output = output.slice(0, 10).map(stripProFields);
+      output = output.map(stripProFields);
     }
 
     await kvPut(env.KV, cacheKey, { data: output, total: results.length }, 300);
@@ -409,7 +408,7 @@ export async function handleSavantParkFactors(url: URL, env: Env, headers?: Head
   const conference = url.searchParams.get('conference') || '';
   const tier = await resolveTier(url, headers ?? new Headers(), env);
 
-  const cacheKey = `savant:parks:${conference || 'all'}:${tier}`;
+  const cacheKey = `savant:parks:${conference || 'all'}`;
   const cached = await kvGet<{ data: unknown; total: number }>(env.KV, cacheKey);
   if (cached) {
     return cachedJson(
@@ -439,8 +438,8 @@ export async function handleSavantParkFactors(url: URL, env: Env, headers?: Head
 
     const { results } = await env.DB.prepare(query).bind(...binds).all();
 
-    // Free tier: top 5 only
-    const output = tier !== 'pro' ? results.slice(0, 5) : results;
+    // Park factors are core product — show all on every tier
+    const output = results;
 
     await kvPut(env.KV, cacheKey, { data: output, total: results.length }, 600);
     return cachedJson(
@@ -555,7 +554,7 @@ export async function handleSavantExport(
 export async function handleSavantConferenceStrength(url: URL, env: Env, headers?: Headers): Promise<Response> {
   const tier = await resolveTier(url, headers ?? new Headers(), env);
 
-  const cacheKey = `savant:conf:${tier}`;
+  const cacheKey = 'savant:conf:all';
   const cached = await kvGet<{ data: unknown; total: number }>(env.KV, cacheKey);
   if (cached) {
     return cachedJson(
@@ -575,8 +574,8 @@ export async function handleSavantConferenceStrength(url: URL, env: Env, headers
       ORDER BY strength_index DESC
     `).bind(SEASON).all();
 
-    // Free tier: top 5 only
-    const output = tier !== 'pro' ? results.slice(0, 5) : results;
+    // Conference strength is core product — show all conferences on every tier
+    const output = results;
 
     await kvPut(env.KV, cacheKey, { data: output, total: results.length }, 600);
     return cachedJson(

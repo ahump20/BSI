@@ -55,12 +55,21 @@ export function HeroSection() {
                 </p>
               </div>
 
-              <div className="mb-4 overflow-hidden">
+              <div className="mb-1 overflow-hidden">
                 <p
                   className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.6s_ease-out_0.12s_forwards] font-display text-lg font-semibold uppercase tracking-[0.22em] sm:text-xl"
                   style={{ color: 'var(--bsi-bone)' }}
                 >
                   Blaze Sports Intel
+                </p>
+              </div>
+
+              <div className="mb-4 overflow-hidden">
+                <p
+                  className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.6s_ease-out_0.16s_forwards] text-sm italic tracking-wide sm:text-base"
+                  style={{ color: 'var(--bsi-primary)', fontFamily: 'var(--bsi-font-body)' }}
+                >
+                  Born to Blaze the Path Beaten Less
                 </p>
               </div>
 

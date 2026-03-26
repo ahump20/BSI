@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
-import { MetricGate } from '@/components/analytics/MetricGate';
 import Link from 'next/link';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
@@ -317,23 +316,21 @@ export default function SavantHubPage() {
                         <span className="font-mono text-xs font-bold tracking-wide" style={{ color }}>{spot.abbr}</span>
                         <span className="text-[9px] font-mono text-text-muted uppercase">{spot.tab}</span>
                       </div>
-                      <MetricGate isPro={isPro} metricName={spot.label}>
-                        {leader ? (
-                          <div className="mb-2.5">
-                            <span className="block text-2xl font-mono font-bold tabular-nums leading-none" style={{ color }}>
-                              {spot.format(leader.value)}
-                            </span>
-                            <div className="mt-1.5">
-                              <span className="text-xs text-text-primary font-medium">{leader.name}</span>
-                              <span className="ml-1.5 text-[10px] text-text-muted">{leader.team}</span>
-                            </div>
+                      {leader ? (
+                        <div className="mb-2.5">
+                          <span className="block text-2xl font-mono font-bold tabular-nums leading-none" style={{ color }}>
+                            {spot.format(leader.value)}
+                          </span>
+                          <div className="mt-1.5">
+                            <span className="text-xs text-text-primary font-medium">{leader.name}</span>
+                            <span className="ml-1.5 text-[10px] text-text-muted">{leader.team}</span>
                           </div>
-                        ) : (
-                          <div className="mb-2.5 h-14 flex items-center">
-                            <div className="h-6 w-16 bg-surface-light rounded-sm animate-pulse" />
-                          </div>
-                        )}
-                      </MetricGate>
+                        </div>
+                      ) : (
+                        <div className="mb-2.5 h-14 flex items-center">
+                          <div className="h-6 w-16 bg-surface-light rounded-sm animate-pulse" />
+                        </div>
+                      )}
                       <p className="text-[10px] text-text-muted/70 leading-relaxed">
                         {spot.description}
                       </p>

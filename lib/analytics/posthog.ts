@@ -20,6 +20,21 @@ export async function initPostHog(): Promise<typeof posthogLib | null> {
   if (!POSTHOG_KEY) return null;
   if (initialized) return posthogInstance;
 
+  // Internal traffic opt-out: visit any BSI page with ?bsi_internal=1 to set the flag,
+  // or run localStorage.setItem('bsi_internal', 'true') in console.
+  // Once set, PostHog never loads — your visits are invisible to analytics.
+  try {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('bsi_internal') === '1') {
+      localStorage.setItem('bsi_internal', 'true');
+    }
+    if (localStorage.getItem('bsi_internal') === 'true') {
+      return null;
+    }
+  } catch {
+    // Private browsing or localStorage blocked — proceed normally
+  }
+
   const { default: posthog } = await import('posthog-js');
 
   posthog.init(POSTHOG_KEY, {

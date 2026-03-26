@@ -281,6 +281,46 @@ export async function handleCollegeBaseballTeamsAll(
     }
   }
 
+  // Step 3: Derive win/loss records from D1 processed_games
+  // ESPN bulk endpoint omits records — compute from completed game results
+  try {
+    const { results: recordRows } = await env.DB.prepare(`
+      SELECT team, SUM(wins) as wins, SUM(losses) as losses FROM (
+        SELECT home_team AS team,
+               SUM(CASE WHEN home_score > away_score THEN 1 ELSE 0 END) AS wins,
+               SUM(CASE WHEN home_score < away_score THEN 1 ELSE 0 END) AS losses
+        FROM processed_games
+        WHERE sport = 'college-baseball' AND game_date LIKE '2026-%'
+          AND home_score IS NOT NULL AND away_score IS NOT NULL
+        GROUP BY home_team
+        UNION ALL
+        SELECT away_team AS team,
+               SUM(CASE WHEN away_score > home_score THEN 1 ELSE 0 END) AS wins,
+               SUM(CASE WHEN away_score < home_score THEN 1 ELSE 0 END) AS losses
+        FROM processed_games
+        WHERE sport = 'college-baseball' AND game_date LIKE '2026-%'
+          AND home_score IS NOT NULL AND away_score IS NOT NULL
+        GROUP BY away_team
+      ) GROUP BY team
+    `).all() as { results: { team: string; wins: number; losses: number }[] };
+
+    const recordMap = new Map<string, { wins: number; losses: number }>();
+    for (const r of recordRows ?? []) {
+      recordMap.set(r.team, { wins: r.wins, losses: r.losses });
+    }
+
+    for (const t of teams) {
+      const rec = recordMap.get(t.name);
+      if (rec && (rec.wins > 0 || rec.losses > 0)) {
+        t.record = { wins: rec.wins, losses: rec.losses };
+      }
+    }
+    if (recordMap.size > 0) sources.push('bsi-d1');
+  } catch (err) {
+    // Non-fatal — records stay at ESPN values (0-0 if ESPN didn't provide)
+    console.error('[teams/all] D1 record enrichment failed:', err instanceof Error ? err.message : err);
+  }
+
   // Sort by conference then name
   teams.sort((a, b) => a.conference.localeCompare(b.conference) || a.name.localeCompare(b.name));
 
