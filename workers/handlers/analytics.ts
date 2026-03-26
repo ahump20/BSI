@@ -54,29 +54,25 @@ export async function handleHAVFLeaderboard(url: URL, env: Env): Promise<Respons
 
     const minPa = parseInt(url.searchParams.get('min_pa') || '50', 10) || 50;
 
-    let query = `SELECT h.*, b.pa FROM havf_scores h
-      LEFT JOIN cbb_batting_advanced b ON h.player_id = b.player_id AND b.season = h.season
-      WHERE h.league = ? AND h.season = ?`;
-    const binds: (string | number)[] = [league, season];
-
-    // Filter by minimum PA to exclude small-sample-size players
-    query += ' AND (b.pa IS NULL OR b.pa >= ?)';
-    binds.push(minPa);
+    let query = `SELECT * FROM havf_scores
+      WHERE league = ? AND season = ?
+      AND player_id IN (SELECT player_id FROM cbb_batting_advanced WHERE season = ? AND pa >= ?)`;
+    const binds: (string | number)[] = [league, season, season, minPa];
 
     if (team) {
-      query += ' AND h.team = ?';
+      query += ' AND team = ?';
       binds.push(team);
     }
     if (position) {
-      query += ' AND h.position = ?';
+      query += ' AND position = ?';
       binds.push(position);
     }
     if (conference) {
-      query += ' AND h.conference = ?';
+      query += ' AND conference = ?';
       binds.push(conference);
     }
 
-    query += ' ORDER BY h.havf_composite DESC LIMIT ?';
+    query += ' ORDER BY havf_composite DESC LIMIT ?';
     binds.push(limit);
 
     const stmt = env.DB.prepare(query);
