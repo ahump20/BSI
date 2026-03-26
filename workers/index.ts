@@ -187,6 +187,7 @@ import {
   handleArcadeSession,
 } from './handlers/games';
 import { handleTeams, handleModelHealth, handleAnalyticsEvent, handleWeeklyBrief } from './handlers/general';
+import { handleWeeklyPulse } from './handlers/weekly-pulse';
 import { handleContact, handleLead, handleFeedback, handleCSPReport } from './handlers/lead';
 import { handlePredictionSubmit, handlePredictionAccuracy } from './handlers/predictions';
 import { handleIntelNews, handleESPNNews } from './handlers/news';
@@ -439,6 +440,7 @@ app.get('/api/college-baseball/backfill-game-log', (c) => handleGameLogBackfill(
 app.get('/api/college-baseball/teams/:teamId/sos', (c) => handleCBBTeamSOS(c.req.param('teamId'), c.env));
 app.get('/api/college-baseball/teams/:teamId/season-arc', (c) => handleCBBSeasonArc(c.req.param('teamId'), new URL(c.req.url), c.env));
 app.get('/api/college-baseball/conferences/:conf/power-index', (c) => handleCBBConferencePowerIndex(c.req.param('conf'), c.env));
+app.get('/api/college-baseball/weekly-pulse', (c) => handleWeeklyPulse(c.env));
 app.get('/api/college-baseball/teams/:teamId', (c) => {
   let ctx: ExecutionContext | undefined;
   try { ctx = c.executionCtx; } catch { /* test env */ }

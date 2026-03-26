@@ -552,6 +552,8 @@ function CollegeBaseballPageInner() {
                     { label: 'News', href: '/college-baseball/news' },
                     { label: 'Compare', href: '/college-baseball/compare' },
                     { label: 'Conferences', href: '/college-baseball/conferences' },
+                    { label: 'Weekly Pulse', href: '/college-baseball/weekly-pulse' },
+                    { label: 'Power Rankings', href: '/college-baseball/power-rankings' },
                     { label: 'Scores', href: '/college-baseball/scores' },
                     { label: 'Texas Intel', href: '/college-baseball/texas-intelligence' },
                   ].map((link, i) => (

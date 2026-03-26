@@ -15,6 +15,8 @@ const ROUTE_TITLES: Record<string, string> = {
   '/college-baseball/rankings': 'Rankings',
   '/college-baseball/standings': 'Standings',
   '/college-baseball/conferences': 'Conferences',
+  '/college-baseball/weekly-pulse': 'Weekly Pulse',
+  '/college-baseball/power-rankings': 'Power Rankings',
   '/college-baseball/compare': 'Compare',
   '/college-baseball/transfer-portal': 'Transfer Portal',
   '/college-baseball/watchlist': 'Watchlist',

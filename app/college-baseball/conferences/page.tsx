@@ -42,6 +42,19 @@ interface NILEntry {
   [key: string]: unknown;
 }
 
+interface ConferenceStrength {
+  conference: string;
+  season: number;
+  strength_index: number;
+  run_environment: number;
+  avg_era: number;
+  avg_ops: number;
+  avg_woba: number;
+  inter_conf_win_pct: number;
+  rpi_average?: number;
+  is_power: number;
+}
+
 /* ── Static conference metadata ────────────────────────────────────── */
 
 const conferenceInfo: Record<string, { fullName: string; description: string; region: string }> = {
@@ -87,16 +100,18 @@ export default function ConferencesHubPage() {
   const [standings, setStandings] = useState<StandingsTeam[]>([]);
   const [savant, setSavant] = useState<SavantEntry[]>([]);
   const [nil, setNil] = useState<NILEntry[]>([]);
+  const [confStrength, setConfStrength] = useState<ConferenceStrength[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState('');
 
   useEffect(() => {
     async function load() {
       try {
-        const [standingsRes, savantRes, nilRes] = await Promise.all([
+        const [standingsRes, savantRes, nilRes, confStrengthRes] = await Promise.all([
           fetch(getReadApiUrl('/api/college-baseball/standings')).catch(() => null),
           fetch(getReadApiUrl('/api/savant/batting/leaderboard?limit=100')).catch(() => null),
           fetch(getReadApiUrl('/api/nil/leaderboard?limit=500')).catch(() => null),
+          fetch(getReadApiUrl('/api/savant/conference-strength')).catch(() => null),
         ]);
 
         if (standingsRes?.ok) {
@@ -129,6 +144,13 @@ export default function ConferencesHubPage() {
         if (nilRes?.ok) {
           const data = await nilRes.json();
           setNil(data.data || []);
+        }
+        if (confStrengthRes?.ok) {
+          const data = await confStrengthRes.json();
+          const ranked = (data.data || []).sort(
+            (a: ConferenceStrength, b: ConferenceStrength) => b.strength_index - a.strength_index
+          );
+          setConfStrength(ranked);
         }
       } catch {
         /* silent — page renders with static metadata */
@@ -286,6 +308,7 @@ export default function ConferencesHubPage() {
                     <thead>
                       <tr className="bg-surface-press-box text-bsi-dust text-xs uppercase tracking-wider">
                         <th className="text-left px-4 py-3">Conference</th>
+                        <th className="text-center px-3 py-3">BSI Index</th>
                         <th className="text-center px-3 py-3">Teams</th>
                         <th className="text-center px-3 py-3">Overall</th>
                         <th className="text-center px-3 py-3">Win%</th>
@@ -307,6 +330,9 @@ export default function ConferencesHubPage() {
                                 {conf.name}
                               </Link>
                             </td>
+                            <td className="text-center px-3 py-3 text-burnt-orange font-mono font-bold">
+                              {confStrength.find(cs => cs.conference === conf.name)?.strength_index.toFixed(1) || '—'}
+                            </td>
                             <td className="text-center px-3 py-3 text-bsi-bone font-mono">{a?.teamCount || '—'}</td>
                             <td className="text-center px-3 py-3 text-bsi-bone font-mono">{a ? `${a.totalWins}-${a.totalLosses}` : '—'}</td>
                             <td className="text-center px-3 py-3 text-bsi-bone font-mono">{fmtPct(winPct)}</td>
@@ -319,6 +345,70 @@ export default function ConferencesHubPage() {
                       })}
                     </tbody>
                   </table>
+                </div>
+              </ScrollReveal>
+            )}
+
+            {/* BSI Conference Strength Rankings */}
+            {!loading && confStrength.length > 0 && (
+              <ScrollReveal direction="up" delay={200}>
+                <div className="mb-10">
+                  <h2 className="font-display text-xl font-bold text-bsi-bone mb-2 uppercase tracking-wide">
+                    BSI Conference <span className="text-burnt-orange">Strength Index</span>
+                  </h2>
+                  <p className="text-bsi-dust text-sm mb-4">
+                    Every D1 conference ranked by BSI&rsquo;s composite strength index — batting, pitching, and inter-conference performance. Recomputed daily.
+                  </p>
+                  <div className="space-y-2">
+                    {confStrength.map((cs, idx) => {
+                      const maxStrength = confStrength[0]?.strength_index || 100;
+                      const barWidth = Math.max(8, (cs.strength_index / maxStrength) * 100);
+                      const slug = confNameToSlug[cs.conference];
+                      const runEnvLabel = cs.run_environment > 5 ? 'High-scoring' : cs.run_environment > 3 ? 'Moderate' : 'Pitching-dominant';
+                      return (
+                        <div key={cs.conference} className="group">
+                          <div className="flex items-center gap-3">
+                            <span className="text-bsi-dust font-mono text-xs w-6 text-right">{idx + 1}</span>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between mb-1">
+                                <div className="flex items-center gap-2">
+                                  {slug ? (
+                                    <Link
+                                      href={`/college-baseball/conferences/${slug}`}
+                                      className="text-bsi-bone hover:text-burnt-orange transition-colors font-display font-bold text-sm truncate"
+                                    >
+                                      {cs.conference}
+                                    </Link>
+                                  ) : (
+                                    <span className="text-bsi-bone font-display font-bold text-sm truncate">{cs.conference}</span>
+                                  )}
+                                  {cs.is_power === 1 && (
+                                    <span className="text-[10px] uppercase tracking-wider text-burnt-orange border border-burnt-orange/40 px-1.5 py-0.5 rounded font-bold">
+                                      P5
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-3 text-xs text-bsi-dust shrink-0">
+                                  <span>{runEnvLabel}</span>
+                                  <span className="font-mono">{cs.inter_conf_win_pct ? (cs.inter_conf_win_pct * 100).toFixed(0) + '% vs out' : ''}</span>
+                                  <span className="font-mono font-bold text-bsi-bone">{cs.strength_index.toFixed(1)}</span>
+                                </div>
+                              </div>
+                              <div className="h-1.5 bg-surface-press-box rounded-full overflow-hidden">
+                                <div
+                                  className="h-full rounded-full transition-all duration-500"
+                                  style={{
+                                    width: `${barWidth}%`,
+                                    background: cs.is_power ? 'var(--bsi-primary)' : 'var(--bsi-dust)',
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </ScrollReveal>
             )}
@@ -355,6 +445,12 @@ export default function ConferencesHubPage() {
                             </div>
                           </div>
                           <div className="md:text-right space-y-1">
+                            {(() => {
+                              const cs = confStrength.find(c => c.conference === conf.name);
+                              return cs ? (
+                                <div className="text-burnt-orange font-mono text-lg font-bold">{cs.strength_index.toFixed(1)}</div>
+                              ) : null;
+                            })()}
                             {a?.totalWins !== undefined && (
                               <div className="text-bsi-bone font-mono text-sm">{a.totalWins}-{a.totalLosses} overall</div>
                             )}
