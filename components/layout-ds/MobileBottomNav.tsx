@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { getBottomNav, type NavIconKey } from '@/lib/navigation';
@@ -67,8 +68,13 @@ const ICON_MAP: Record<NavIconKey, () => React.JSX.Element> = {
 export function MobileBottomNav({ onMorePress }: { onMorePress?: () => void }) {
   const pathname = usePathname();
   const navItems = getBottomNav();
+  // Defer active state to avoid hydration mismatch on placeholder-shell pages
+  // where the server-rendered pathname differs from the client URL.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   const isActive = (href: string) => {
+    if (!mounted) return false; // Match server render: no active state
     if (href === '/') return pathname === '/';
     return pathname.startsWith(href);
   };
