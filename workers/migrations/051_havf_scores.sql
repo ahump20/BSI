@@ -7,7 +7,7 @@
 CREATE TABLE IF NOT EXISTS havf_scores (
   id              INTEGER PRIMARY KEY AUTOINCREMENT,
   player_id       TEXT NOT NULL,
-  name            TEXT NOT NULL,
+  player_name     TEXT NOT NULL,
   team            TEXT NOT NULL,
   league          TEXT NOT NULL CHECK (league IN ('mlb', 'college-baseball')),
   season          INTEGER NOT NULL,
