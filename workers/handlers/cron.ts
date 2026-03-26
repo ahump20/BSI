@@ -565,7 +565,7 @@ async function computeHAVFDaily(env: Env): Promise<void> {
       const batter = batters[i + idx];
       return env.DB.prepare(
         `INSERT OR REPLACE INTO havf_scores
-         (player_id, player_name, team, league, season, position, conference,
+         (player_id, name, team, league, season, position, conference,
           h_score, a_score, v_score, f_score, havf_composite,
           raw_avg, raw_obp, raw_slg, raw_woba, raw_iso, raw_bb_pct, raw_k_pct, raw_babip, raw_hr_rate,
           computed_at, updated_at)
