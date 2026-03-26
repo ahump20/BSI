@@ -24,10 +24,10 @@ const PROVIDERS: ProviderRow[] = [
   {
     name: 'Highlightly Pro',
     url: 'https://highlightly.net',
-    role: 'Primary pipeline — scores, rankings, team stats, player profiles',
-    sports: ['College Baseball', 'College Football'],
-    refresh: 'Live scores every 30s; standings/rankings every 30 min',
-    notes: 'Canonical source. All new integrations wire here first.',
+    role: 'Primary pipeline — live scores, box scores, team data, player profiles',
+    sports: ['College Baseball', 'MLB'],
+    refresh: 'Live scores every 30s; box scores on completion',
+    notes: 'Serves match/score data. Standings and rankings come from ESPN. Authenticated via RapidAPI.',
   },
   {
     name: 'SportsDataIO',
@@ -40,11 +40,11 @@ const PROVIDERS: ProviderRow[] = [
   {
     name: 'ESPN Site API',
     url: 'https://site.api.espn.com',
-    role: 'Scores, rankings, and schedules for college baseball',
+    role: 'Scores, standings, rankings, and schedules for college baseball',
     sports: ['College Baseball'],
-    refresh: 'Live scores every 60s; rankings weekly',
+    refresh: 'Live scores every 60s; standings/rankings daily',
     notes:
-      'Fallback source. ESPN dates labeled UTC are actually ET — BSI normalizes to America/Chicago. No API key required.',
+      'Primary for standings and rankings. Dates labeled UTC are actually ET — BSI normalizes to America/Chicago. No API key required.',
   },
 ];
 
