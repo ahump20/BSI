@@ -26,6 +26,15 @@ const flagship: SitemapEntry[] = [
   { path: '/college-baseball/teams', changeFrequency: 'daily', priority: 0.9 },
   { path: '/college-baseball/transfer-portal', changeFrequency: 'daily', priority: 0.9 },
   { path: '/college-baseball/conferences', changeFrequency: 'daily', priority: 0.8 },
+  // Individual conference pages
+  ...['sec', 'acc', 'big-12', 'big-ten', 'big-east', 'aac', 'sun-belt', 'mountain-west',
+    'c-usa', 'a-10', 'colonial', 'missouri-valley', 'wcc', 'big-west', 'southland',
+    'asun', 'america-east', 'big-south', 'horizon', 'patriot-league', 'southern',
+    'summit', 'wac'].map((conf): SitemapEntry => ({
+    path: `/college-baseball/conferences/${conf}`,
+    changeFrequency: 'daily',
+    priority: 0.7,
+  })),
   { path: '/college-baseball/compare', changeFrequency: 'daily', priority: 0.7 },
   { path: '/college-baseball/savant', changeFrequency: 'daily', priority: 0.9 },
   { path: '/college-baseball/savant/park-factors', changeFrequency: 'weekly', priority: 0.8 },
