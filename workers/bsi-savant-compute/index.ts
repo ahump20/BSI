@@ -556,6 +556,7 @@ async function compute(db: D1Database, kv: KVNamespace): Promise<{ batters: numb
   const lgSingles = lgH - lg2B - lg3B - lgHR;
   const lgSLG = lgAB > 0 ? (lgSingles + 2 * lg2B + 3 * lg3B + 4 * lgHR) / lgAB : 0.400;
   const lgERA = lgIP > 0 ? (lgER * 9) / lgIP : 4.50;
+  const lgHR9 = lgIP > 0 ? (lgPHR * 9) / lgIP : 1.0;
   const fipC = calcFIPConst(lgERA, lgPHR, lgPBB, lgPK, lgIP);
   const rPA = lgPA > 0 ? lgR / lgPA : 0.11;
 
@@ -702,6 +703,8 @@ async function compute(db: D1Database, kv: KVNamespace): Promise<{ batters: numb
         const hr9 = safe((row.home_runs_allowed * 9) / ip);
         const kbb = row.walks_pitch > 0 ? safe(row.strikeouts_pitch / row.walks_pitch) : 0;
         const fip = calcFIP(row.home_runs_allowed, row.walks_pitch, row.hit_by_pitch, row.strikeouts_pitch, ip, fipC);
+        const expectedHR = (ip / 9) * lgHR9;
+        const xfip = Math.max(0, safe((13 * expectedHR + 3 * (row.walks_pitch + row.hit_by_pitch) - 2 * row.strikeouts_pitch) / ip + fipC));
         const eraMinus = lgERA > 0 ? safe(100 * era / lgERA) : 100;
         const runners = row.hits_allowed + row.walks_pitch + row.hit_by_pitch - row.home_runs_allowed;
         const lobPct = runners > 0 ? safe((runners - row.earned_runs) / runners) : 0;
@@ -709,15 +712,15 @@ async function compute(db: D1Database, kv: KVNamespace): Promise<{ batters: numb
         const babip = (() => { const d = bfEst - row.strikeouts_pitch - row.home_runs_allowed; return d > 0 ? safe((row.hits_allowed - row.home_runs_allowed) / d) : 0; })();
 
         pitchStmts.push(db.prepare(
-          `INSERT INTO cbb_pitching_advanced (player_id, player_name, team, team_id, conference, season, position, g, w, l, sv, ip, h, er, bb, hbp, so, era, whip, k_9, bb_9, hr_9, fip, era_minus, k_bb, lob_pct, babip, park_adjusted, data_source, computed_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 'bsi-savant', ?)
+          `INSERT INTO cbb_pitching_advanced (player_id, player_name, team, team_id, conference, season, position, g, w, l, sv, ip, h, er, bb, hbp, so, era, whip, k_9, bb_9, hr_9, fip, x_fip, era_minus, k_bb, lob_pct, babip, park_adjusted, data_source, computed_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 'bsi-savant', ?)
            ON CONFLICT(player_id, season) DO UPDATE SET
              player_name=excluded.player_name, team=excluded.team, conference=excluded.conference,
              position=CASE WHEN excluded.position IS NOT NULL AND excluded.position != '' THEN excluded.position ELSE COALESCE(cbb_pitching_advanced.position, excluded.position) END,
              g=excluded.g, w=excluded.w, l=excluded.l,
              sv=excluded.sv, ip=excluded.ip, h=excluded.h, er=excluded.er, bb=excluded.bb, hbp=excluded.hbp,
              so=excluded.so, era=excluded.era, whip=excluded.whip, k_9=excluded.k_9, bb_9=excluded.bb_9,
-             hr_9=excluded.hr_9, fip=excluded.fip, era_minus=excluded.era_minus, k_bb=excluded.k_bb,
+             hr_9=excluded.hr_9, fip=excluded.fip, x_fip=excluded.x_fip, era_minus=excluded.era_minus, k_bb=excluded.k_bb,
              lob_pct=excluded.lob_pct, babip=excluded.babip, computed_at=excluded.computed_at`
         ).bind(
           row.espn_id, row.name, row.team, row.team_id, conf, SEASON, pos,
@@ -725,7 +728,7 @@ async function compute(db: D1Database, kv: KVNamespace): Promise<{ batters: numb
           round(ip, 1), row.hits_allowed, row.earned_runs, row.walks_pitch,
           row.hit_by_pitch, row.strikeouts_pitch,
           round(era, 2), round(whip, 2), round(k9, 1), round(bb9, 1), round(hr9, 1),
-          round(fip, 2), round(eraMinus, 1), round(kbb, 2), round(lobPct), round(babip), now
+          round(fip, 2), round(xfip, 2), round(eraMinus, 1), round(kbb, 2), round(lobPct), round(babip), now
         ));
         pitchCount++;
       }
@@ -1164,6 +1167,99 @@ async function computeNIL(db: D1Database, kv: KVNamespace): Promise<{ nilScored:
 }
 
 // ---------------------------------------------------------------------------
+// Weekly Metric Snapshots — captures freeze-frame for movement tracking
+// ---------------------------------------------------------------------------
+
+function getISOWeek(): string {
+  const d = new Date();
+  d.setUTCHours(0, 0, 0, 0);
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  const weekNo = Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+  return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
+}
+
+async function captureWeeklySnapshot(db: D1Database, kv: KVNamespace): Promise<{ snapshotted: number } | null> {
+  const week = getISOWeek();
+  const now = new Date().toISOString();
+
+  // Only snapshot once per week
+  const lastSnap = await kv.get('savant:last-snapshot-week');
+  if (lastSnap === week) return null;
+
+  // Capture top batters
+  const { results: batters } = await db.prepare(`
+    SELECT player_id, player_name, team, team_id, conference,
+           woba, wrc_plus, ops, avg, iso, k_pct, bb_pct, pa
+    FROM cbb_batting_advanced
+    WHERE season = ? AND pa >= ?
+    ORDER BY wrc_plus DESC
+    LIMIT 200
+  `).bind(SEASON, MIN_PA).all();
+
+  // Capture top pitchers
+  const { results: pitchers } = await db.prepare(`
+    SELECT player_id, player_name, team, team_id, conference,
+           fip, era_minus, era, whip, k_9, bb_9, ip
+    FROM cbb_pitching_advanced
+    WHERE season = ? AND ip >= ?
+    ORDER BY fip ASC
+    LIMIT 200
+  `).bind(SEASON, MIN_IP).all();
+
+  const stmts: D1PreparedStatement[] = [];
+
+  for (const b of (batters || []) as Record<string, unknown>[]) {
+    stmts.push(db.prepare(
+      `INSERT INTO cbb_metric_snapshots
+        (snapshot_week, player_id, player_name, team, team_id, conference, season, player_type,
+         woba, wrc_plus, ops, avg, iso, k_pct, bb_pct, pa_or_ip, captured_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, 'batter', ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT(snapshot_week, player_id, player_type) DO UPDATE SET
+         woba=excluded.woba, wrc_plus=excluded.wrc_plus, ops=excluded.ops,
+         avg=excluded.avg, iso=excluded.iso, k_pct=excluded.k_pct,
+         bb_pct=excluded.bb_pct, pa_or_ip=excluded.pa_or_ip, captured_at=excluded.captured_at`
+    ).bind(
+      week, b.player_id, b.player_name, b.team, b.team_id || null,
+      b.conference || null, SEASON,
+      b.woba || 0, b.wrc_plus || 0, b.ops || 0, b.avg || 0,
+      b.iso || 0, b.k_pct || 0, b.bb_pct || 0, b.pa || 0, now
+    ));
+  }
+
+  for (const p of (pitchers || []) as Record<string, unknown>[]) {
+    stmts.push(db.prepare(
+      `INSERT INTO cbb_metric_snapshots
+        (snapshot_week, player_id, player_name, team, team_id, conference, season, player_type,
+         fip, era_minus, era, whip, k_9, bb_9, pa_or_ip, captured_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, 'pitcher', ?, ?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT(snapshot_week, player_id, player_type) DO UPDATE SET
+         fip=excluded.fip, era_minus=excluded.era_minus, era=excluded.era,
+         whip=excluded.whip, k_9=excluded.k_9, bb_9=excluded.bb_9,
+         pa_or_ip=excluded.pa_or_ip, captured_at=excluded.captured_at`
+    ).bind(
+      week, p.player_id, p.player_name, p.team, p.team_id || null,
+      p.conference || null, SEASON,
+      p.fip || 0, p.era_minus || 0, p.era || 0, p.whip || 0,
+      p.k_9 || 0, p.bb_9 || 0, p.ip || 0, now
+    ));
+  }
+
+  const BATCH_SIZE = 80;
+  for (let i = 0; i < stmts.length; i += BATCH_SIZE) {
+    try {
+      await db.batch(stmts.slice(i, i + BATCH_SIZE));
+    } catch (err) {
+      console.error(`[snapshot] Batch ${Math.floor(i / BATCH_SIZE)} failed:`, err instanceof Error ? err.message : err);
+    }
+  }
+
+  await kv.put('savant:last-snapshot-week', week);
+  console.info(`[savant-compute] Weekly snapshot captured: week ${week}, ${stmts.length} players`);
+  return { snapshotted: stmts.length };
+}
+
+// ---------------------------------------------------------------------------
 // Worker entry
 // ---------------------------------------------------------------------------
 
@@ -1176,11 +1272,13 @@ export default {
       try {
         const result = await compute(env.DB, env.KV);
         const nilResult = await computeNIL(env.DB, env.KV);
+        const snapResult = await captureWeeklySnapshot(env.DB, env.KV);
         return new Response(JSON.stringify({
           ok: true,
           message: 'Savant compute triggered',
           ...result,
           ...nilResult,
+          snapshot: snapResult || 'already captured this week',
           computed_at: new Date().toISOString(),
         }, null, 2), {
           headers: { 'Content-Type': 'application/json' },
@@ -1216,7 +1314,9 @@ export default {
     try {
       const result = await compute(env.DB, env.KV);
       const nilResult = await computeNIL(env.DB, env.KV);
-      console.info(`[savant-compute] Cron complete: ${result.batters} batters, ${result.pitchers} pitchers, ${result.conferences} conferences, ${result.venues} venues, ${nilResult.nilScored} NIL scored`);
+      const snapResult = await captureWeeklySnapshot(env.DB, env.KV);
+      const snapMsg = snapResult ? `, snapshot: ${snapResult.snapshotted} players` : '';
+      console.info(`[savant-compute] Cron complete: ${result.batters} batters, ${result.pitchers} pitchers, ${result.conferences} conferences, ${result.venues} venues, ${nilResult.nilScored} NIL scored${snapMsg}`);
     } catch (err) {
       console.error(`[savant-compute] Cron failed:`, err);
     }

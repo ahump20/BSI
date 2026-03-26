@@ -27,6 +27,7 @@ import {
   calculateKPct,
   calculateBBPct,
   calculateFIP,
+  calculateXFIPFromHR9,
   calculateERAMinus,
   calculateK9,
   calculateBB9,
@@ -278,6 +279,8 @@ async function computeLeagueContext(db: D1Database): Promise<LeagueContextResult
     ip,
   );
 
+  const lgHR9 = ip > 0 ? ((pitching.total_hr || 0) * 9) / ip : 1.0;
+
   return {
     context: {
       woba: leagueWoba,
@@ -288,6 +291,7 @@ async function computeLeagueContext(db: D1Database): Promise<LeagueContextResult
       runsPerPA,
       wobaScale,
       fipConstant,
+      hr9: lgHR9,
     },
     sampleBatting: batting.n || 0,
     samplePitching: pitching.n || 0,
@@ -458,6 +462,7 @@ async function computePitching(db: D1Database, kv: KVNamespace, league: LeagueCo
     const bb9 = calculateBB9(bb, ip);
     const hr9 = calculateHR9(hr, ip);
     const fip = calculateFIP(hr, bb, hbp, so, ip, league.fipConstant);
+    const xfip = calculateXFIPFromHR9(league.hr9 ?? 1.0, bb, hbp, so, ip, league.fipConstant);
     const eraMinus = calculateERAMinus(era, league.era);
     const kBB = calculateKBB(so, bb);
     const lobPct = calculateLOBPct(h, bb, hbp, er, hr);
@@ -474,7 +479,7 @@ async function computePitching(db: D1Database, kv: KVNamespace, league: LeagueCo
       p.games_pitch || 0, 0,
       p.wins ?? 0, p.losses ?? 0, p.saves ?? 0,
       r2(ip), h, er, bb, hbp, so, r2(era), r3(whip),
-      r1(k9), r1(bb9), r1(hr9), r2(fip), null, r1(eraMinus), r2(kBB), r3(lobPct), r3(babip),
+      r1(k9), r1(bb9), r1(hr9), r2(fip), r2(xfip), r1(eraMinus), r2(kBB), r3(lobPct), r3(babip),
       0, 'bsi-savant', now,
     ));
   }
