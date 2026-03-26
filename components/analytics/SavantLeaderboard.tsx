@@ -83,6 +83,9 @@ export const BATTING_COLUMNS: ColumnDef[] = [
   { key: 'woba', label: 'wOBA', metricKey: 'wOBA', format: fmt3, higherIsBetter: true },
   { key: 'wrc_plus', label: 'wRC+', metricKey: 'wRC+', format: fmtInt, hideMobile: true, higherIsBetter: true },
   { key: 'ops_plus', label: 'OPS+', metricKey: 'OPS+', format: fmtInt, hideMobile: true, higherIsBetter: true },
+  { key: 'e_ba', label: 'xBA', metricKey: 'xBA', format: fmt3, hideMobile: true, higherIsBetter: true },
+  { key: 'e_slg', label: 'xSLG', metricKey: 'xSLG', format: fmt3, hideMobile: true, higherIsBetter: true },
+  { key: 'e_woba', label: 'xwOBA', metricKey: 'xwOBA', format: fmt3, hideMobile: true, higherIsBetter: true },
 ];
 
 export const PITCHING_COLUMNS: ColumnDef[] = [
