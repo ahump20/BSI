@@ -2,6 +2,22 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Reporting Standard
+
+Global instructions (`~/.claude/CLAUDE.md`) govern how you communicate. In BSI context, these BSI-specific examples apply:
+
+**After deploying a site change:**
+- WRONG: "Deployed blazesportsintel-worker-prod with updated Hono handlers. Build passed with zero TypeScript errors. Wrangler output confirmed routes registered."
+- RIGHT: "The change is live. Visitors at blazesportsintel.com/scores now see the full scoreboard with real game data. NBA in-season games are populating."
+
+**After fixing a data issue:**
+- WRONG: "Fixed null pointer in getPlayerStats() where player.season_stats was undefined. Added optional chaining and fallback."
+- RIGHT: "Player pages were breaking when a data source returned nothing. Now they show a clean empty state instead of crashing. Tested with a player who had missing stats — works."
+
+**After running analytics:**
+- WRONG: "bsi-savant-compute cron executed successfully. 247 rows written to cbb_batting_advanced. D1 query confirmed fresh wOBA values."
+- RIGHT: "Advanced stats just recalculated. The Savant leaderboard shows fresh numbers for 247 batters. Recomputes automatically every 6 hours."
+
 # Blaze Sports Intel
 
 BSI covers what mainstream sports media overlook — athletes, programs, and markets outside the East/West Coast spotlight. Old-school scouting instinct fused with new-school sabermetrics, powered by AI. Coverage spans MLB, NFL, NBA, NCAA football, NCAA baseball, and NCAA basketball.

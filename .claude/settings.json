@@ -43,16 +43,6 @@
             "command": "node ~/.claude/hooks/blazecraft/emit.js task_complete production"
           }
         ]
-      },
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if echo \"$CLAUDE_FILE_PATH\" | grep -qE '\\.(js|jsx|ts|tsx|json|css|md)$'; then npx prettier --write \"$CLAUDE_FILE_PATH\" 2>/dev/null; fi",
-            "statusMessage": "Formatting with Prettier"
-          }
-        ]
       }
     ],
     "PreToolUse": [
@@ -62,15 +52,6 @@
           {
             "type": "command",
             "command": "node ~/.claude/hooks/blazecraft/emit.js spawn spawns"
-          }
-        ]
-      },
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if echo \"$CLAUDE_FILE_PATH\" | grep -q '.env'; then echo 'BLOCKED: .env files must be edited manually' >&2; exit 1; fi"
           }
         ]
       }

@@ -692,7 +692,7 @@ function ScoresHubContent() {
                   {
                     label: 'Refresh Rhythm',
                     value: '60s',
-                    note: `${overviewSource} with America/Chicago timestamps`,
+                    note: 'Auto-refreshes every minute · Central Time',
                   },
                 ].map((item) => (
                   <div
