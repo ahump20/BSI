@@ -6,6 +6,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { Footer } from '@/components/layout-ds/Footer';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 import type { Metadata } from 'next';
 
 import { ogImage } from '@/lib/metadata';
@@ -49,6 +50,13 @@ const STATS = [
 export default function Weekend3PreviewPage() {
   return (
     <>
+      <ArticleJsonLd
+        headline="Weekend 3 Preview: Globe Life Gets the Real Test"
+        description="Weekend 3 preview: No. 1 UCLA and No. 4 Mississippi State headline the Amegy Bank College Baseball Series at Globe Life Field. Tennessee needs answers. Texas A&M faces its first Power 4 test."
+        datePublished="2026-02-25"
+        url="/college-baseball/editorial/weekend-3-preview"
+        sport="College Baseball"
+      />
       <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">

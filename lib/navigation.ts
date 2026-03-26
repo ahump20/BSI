@@ -117,6 +117,8 @@ export function getAnalyticsNavItems(): MainNavItem[] {
   return [
     { label: 'Player Evaluation', href: '/evaluate' },
     { label: 'Savant', href: '/college-baseball/savant' },
+    { label: 'Power Rankings', href: '/college-baseball/power-rankings' },
+    { label: 'Weekly Pulse', href: '/college-baseball/weekly-pulse' },
     { label: 'Transfer Portal', href: '/college-baseball/transfer-portal' },
     { label: 'NIL Valuation', href: '/nil-valuation' },
     { label: 'Compare', href: '/college-baseball/compare' },
@@ -250,6 +252,8 @@ export function getMorePanelNav(): readonly MorePanelSection[] {
       label: 'Analytics & Tools',
       items: [
         { label: 'Savant', href: '/college-baseball/savant' },
+        { label: 'Power Rankings', href: '/college-baseball/power-rankings' },
+        { label: 'Weekly Pulse', href: '/college-baseball/weekly-pulse' },
         { label: 'Transfer Portal', href: '/college-baseball/transfer-portal' },
         { label: 'NIL Valuation', href: '/nil-valuation' },
         { label: 'Compare', href: '/college-baseball/compare' },

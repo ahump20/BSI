@@ -7,6 +7,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 import type { Metadata } from 'next';
 
 import { ogImage } from '@/lib/metadata';
@@ -124,6 +125,13 @@ const UCLA_TCU_SERIES: GameLog[] = [
 export default function CholowskyDraftProfilePage() {
   return (
     <>
+      <ArticleJsonLd
+        headline="Roch Cholowsky 2026 MLB Draft Profile | UCLA SS"
+        description="Roch Cholowsky draft profile — consensus No. 1 overall pick in the 2026 MLB Draft. UCLA shortstop with 6 HR through 7 games, including 3 HR vs No. 7 TCU. Scouting report and statistical analysis."
+        datePublished="2026-02-25"
+        url="/college-baseball/editorial/roch-cholowsky-2026-draft-profile"
+        sport="College Baseball"
+      />
       <div className="pt-6 bg-midnight">
         {/* ── Hero ── */}
         <Section padding="lg">

@@ -6,6 +6,7 @@ import { Card, StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
 export const metadata: Metadata = {
   title: 'Weekend 5 Recap & Weekend 6 Preview | 2026 College Baseball | BSI',
@@ -69,6 +70,13 @@ function MovementBadge({ movement }: { movement: number }) {
 export default function Weekend5RecapPage() {
   return (
     <>
+      <ArticleJsonLd
+        headline="Weekend 5 Recap & Weekend 6 Preview | 2026 College Baseball"
+        description="Conference play arrived and reshuffled everything. Texas lost for the first time, FSU swept Wake Forest behind Trey Beard's 14-strikeout gem, and Cole Johnson robbed a home run that saved Georgia's series."
+        datePublished="2026-03-19"
+        url="/college-baseball/editorial/weekend-5-recap"
+        sport="College Baseball"
+      />
       <main id="main-content">
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-white/10">

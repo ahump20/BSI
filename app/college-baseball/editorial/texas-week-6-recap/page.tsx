@@ -12,6 +12,7 @@ import { GameRecapToolbar } from '@/components/editorial/GameRecapToolbar';
 import { AIAnalysisPanel } from '@/components/editorial/AIAnalysisPanel';
 import { NotebookLMExport } from '@/components/editorial/NotebookLMExport';
 import { BSIVerdict } from '@/components/editorial/BSIVerdict';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
 /* ────────────────────────────────────────────
    Types
@@ -229,6 +230,13 @@ export default function TexasWeek6RecapPage() {
 
   return (
     <>
+      <ArticleJsonLd
+        headline="Texas Week 6: Punched, Then Answered"
+        description="Texas took 2-of-3 at No. 5 Auburn after a crushing Friday walk-off loss. Aiden Robbins hit 3 home runs. Sunday was the program's first-ever SEC shutout. Texas is 20-3, No. 2 nationally, No. 1 RPI."
+        datePublished="2026-03-24"
+        url="/college-baseball/editorial/texas-week-6-recap"
+        sport="College Baseball"
+      />
       <div>
         {/* ── Breadcrumb ── */}
         <Section padding="sm" className="border-b border-border">

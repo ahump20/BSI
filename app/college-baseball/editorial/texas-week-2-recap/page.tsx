@@ -12,6 +12,7 @@ import { GameRecapToolbar } from '@/components/editorial/GameRecapToolbar';
 import { AIAnalysisPanel } from '@/components/editorial/AIAnalysisPanel';
 import { NotebookLMExport } from '@/components/editorial/NotebookLMExport';
 import { BSIVerdict } from '@/components/editorial/BSIVerdict';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
 /* ────────────────────────────────────────────
    Types
@@ -269,6 +270,13 @@ export default function TexasWeek2RecapPage() {
 
   return (
     <>
+      <ArticleJsonLd
+        headline="Texas Week 2 Recap: The Cycle, The Shutout, The Statement"
+        description="Texas swept Michigan State 3-0 at UFCU Disch-Falk Field to open 8-0. Robbins hit for the cycle. Riojas struck out 10. Volantis threw a complete-game shutout. Full box scores and analysis."
+        datePublished="2026-02-24"
+        url="/college-baseball/editorial/texas-week-2-recap"
+        sport="College Baseball"
+      />
       <div>
         {/* ── Breadcrumb ── */}
         <Section padding="sm" className="border-b border-border">

@@ -554,6 +554,8 @@ function CollegeBaseballPageInner() {
                     { label: 'Conferences', href: '/college-baseball/conferences' },
                     { label: 'Weekly Pulse', href: '/college-baseball/weekly-pulse' },
                     { label: 'Power Rankings', href: '/college-baseball/power-rankings' },
+                    { label: 'Tournament', href: '/college-baseball/tournament' },
+                    { label: 'HAV-F Grades', href: '/models/havf' },
                     { label: 'Scores', href: '/college-baseball/scores' },
                     { label: 'Texas Intel', href: '/college-baseball/texas-intelligence' },
                   ].map((link, i) => (

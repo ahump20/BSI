@@ -6,6 +6,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { Footer } from '@/components/layout-ds/Footer';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 import type { Metadata } from 'next';
 
 import { ogImage } from '@/lib/metadata';
@@ -44,6 +45,13 @@ const STATS = [
 export default function TexasHoustonChristianPreviewPage() {
   return (
     <>
+      <ArticleJsonLd
+        headline="No. 3 Texas vs. Houston Christian: Tuesday Night at Disch-Falk"
+        description="Texas (11-0) hosts Houston Christian in a Tuesday midweek game at UFCU Disch-Falk Field. Sam Cozart vs. Kenan Elarton. The Longhorns stay perfect heading into the final non-conference weekend."
+        datePublished="2026-03-03"
+        url="/college-baseball/editorial/texas-houston-christian-preview"
+        sport="College Baseball"
+      />
       <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">

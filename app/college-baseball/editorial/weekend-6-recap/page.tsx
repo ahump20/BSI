@@ -6,6 +6,7 @@ import { Card, StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
 export const metadata: Metadata = {
   title: 'Weekend 6 Recap & Weekend 7 Preview | 2026 College Baseball | BSI',
@@ -69,6 +70,13 @@ function MovementBadge({ movement }: { movement: number }) {
 export default function Weekend6RecapPage() {
   return (
     <>
+      <ArticleJsonLd
+        headline="Weekend 6 Recap & Weekend 7 Preview | 2026 College Baseball"
+        description="Tyler Fay threw Alabama's first solo no-hitter in 84 years to sweep Florida out of the rankings. Texas won at Auburn. Arkansas hung 22 on South Carolina and Paul Mainieri resigned mid-series."
+        datePublished="2026-03-25"
+        url="/college-baseball/editorial/weekend-6-recap"
+        sport="College Baseball"
+      />
       <main id="main-content">
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-white/10">
