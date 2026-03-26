@@ -190,12 +190,6 @@ interface KVListResult {
   cursor?: string;
 }
 
-interface R2ListResult {
-  objects: { key: string; size: number; uploaded: string }[];
-  truncated: boolean;
-  cursor?: string;
-}
-
 function requireAdmin(request: Request, env: Env): Response | null {
   if (!env.ADMIN_KEY) {
     return json({ error: 'Admin auth secret not configured' }, 500);
@@ -251,7 +245,7 @@ async function paginateR2List(
 
   do {
     rounds += 1;
-    const result = await (bucket.list as (opts: Record<string, unknown>) => Promise<R2ListResult>)({
+    const result = await bucket.list({
       limit: LIST_PAGE_SIZE,
       ...(prefix ? { prefix } : {}),
       ...(cursor ? { cursor } : {}),

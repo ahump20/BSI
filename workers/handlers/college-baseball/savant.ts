@@ -1052,7 +1052,7 @@ export async function handleCBBSeasonArc(espnId: string, url: URL, env: Env): Pr
     let foundConferenceStart = false;
 
     const dataPoints: SeasonDataPoint[] = games.results.map((g, idx) => {
-      const isHome = g.home_team_id === espnId;
+      const isHome = String(g.home_team_id) === String(espnId);
       const teamScore = isHome ? g.home_score : g.away_score;
       const oppScore = isHome ? g.away_score : g.home_score;
       const oppTeamId = isHome ? g.away_team_id : g.home_team_id;
@@ -1110,8 +1110,8 @@ export async function handleCBBSeasonArc(espnId: string, url: URL, env: Env): Pr
 
       if (progressWrcPlus !== null) {
         const varianceFactor = Math.max(2, 20 * (1 - fraction));
-        const seed = ((idx + 1) * 6364136223846793005n % 1000n);
-        const seedFloat = Number(seed) / 1000 - 0.5;
+        const seed = ((idx + 1) * 6364136223) % 1000;
+        const seedFloat = seed / 1000 - 0.5;
         wrcPlus = Math.round(progressWrcPlus + seedFloat * varianceFactor);
         wrcPlus = Math.max(20, Math.min(250, wrcPlus));
       }

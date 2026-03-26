@@ -2,7 +2,7 @@
  * College Baseball — team detail, schedule, and trends handlers.
  */
 
-import type { Env } from './shared';
+import type { Env, HighlightlyTeamDetail, HighlightlyPlayer } from './shared';
 import { json, cachedJson, kvGet, kvPut, dataHeaders, getCollegeClient, getHighlightlyClient, archiveRawResponse, HTTP_CACHE, CACHE_TTL, teamMetadata, metaByEspnId, getLogoUrl, enrichTeamWithD1Stats, transformTeamSchedule, computeTrendSummary } from './shared';
 import { transformHighlightlyTeam, transformCollegeBaseballTeamDetail } from './transforms';
 
@@ -90,7 +90,7 @@ export async function handleCollegeBaseballTeam(
 
   // Highlightly available: use its richer transform
   if (hlTeamData) {
-    const team = transformHighlightlyTeam(hlTeamData, hlPlayers);
+    const team = transformHighlightlyTeam(hlTeamData as HighlightlyTeamDetail, hlPlayers as HighlightlyPlayer[]);
     if (team.name) {
       if (slugMeta) {
         team.logo = getLogoUrl(slugMeta.espnId, slugMeta.logoId);

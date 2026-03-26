@@ -8,6 +8,7 @@
  * GET /api/college-baseball/weekly-pulse
  */
 
+import type { Env } from '../shared/types';
 import { cachedJson, json, kvGet, kvPut } from '../shared/helpers';
 import { HTTP_CACHE } from '../shared/constants';
 

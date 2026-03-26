@@ -94,7 +94,7 @@ export async function handleNBAStandings(env: Env): Promise<Response> {
     return cachedJson(payload, 200, HTTP_CACHE.standings, freshDataHeaders());
   } catch (err) {
     console.error('handleNBAStandings error:', err);
-    return cachedJson({ error: 'Failed to fetch NBA standings' }, 500, 'no-store');
+    return cachedJson({ error: 'Failed to fetch NBA standings' }, 500, 0);
   }
 }
 
@@ -111,7 +111,7 @@ export async function handleNBAGame(gameId: string, env: Env): Promise<Response>
     return cachedJson(payload, 200, HTTP_CACHE.game, freshDataHeaders());
   } catch (err) {
     console.error('handleNBAGame error:', err);
-    return cachedJson({ error: 'Failed to fetch NBA game' }, 500, 'no-store');
+    return cachedJson({ error: 'Failed to fetch NBA game' }, 500, 0);
   }
 }
 
@@ -128,7 +128,7 @@ export async function handleNBAPlayer(playerId: string, env: Env): Promise<Respo
     return cachedJson(payload, 200, HTTP_CACHE.player, freshDataHeaders());
   } catch (err) {
     console.error('handleNBAPlayer error:', err);
-    return cachedJson({ error: 'Failed to fetch NBA player' }, 500, 'no-store');
+    return cachedJson({ error: 'Failed to fetch NBA player' }, 500, 0);
   }
 }
 
@@ -149,7 +149,7 @@ export async function handleNBATeam(teamId: string, env: Env): Promise<Response>
     return cachedJson(payload, 200, HTTP_CACHE.team, freshDataHeaders());
   } catch (err) {
     console.error('handleNBATeam error:', err);
-    return cachedJson({ error: 'Failed to fetch NBA team' }, 500, 'no-store');
+    return cachedJson({ error: 'Failed to fetch NBA team' }, 500, 0);
   }
 }
 
@@ -177,7 +177,7 @@ export async function handleNBATeamsList(env: Env): Promise<Response> {
     return cachedJson(payload, 200, HTTP_CACHE.team, freshDataHeaders());
   } catch (err) {
     console.error('handleNBATeamsList error:', err);
-    return cachedJson({ error: 'Failed to fetch NBA teams' }, 500, 'no-store');
+    return cachedJson({ error: 'Failed to fetch NBA teams' }, 500, 0);
   }
 }
 
@@ -205,7 +205,7 @@ export async function handleNBANews(env: Env): Promise<Response> {
     return cachedJson(payload, 200, HTTP_CACHE.news, freshDataHeaders());
   } catch (err) {
     console.error('handleNBANews error:', err);
-    return cachedJson({ error: 'Failed to fetch NBA news' }, 500, 'no-store');
+    return cachedJson({ error: 'Failed to fetch NBA news' }, 500, 0);
   }
 }
 
@@ -274,7 +274,7 @@ export async function handleNBATeamFull(teamId: string, env: Env): Promise<Respo
     return cachedJson(payload, 200, HTTP_CACHE.team, { 'X-Cache': 'MISS' });
   } catch (err) {
     console.error('handleNBATeamFull error:', err);
-    return cachedJson({ error: 'Failed to fetch NBA team details' }, 500, 'no-store');
+    return cachedJson({ error: 'Failed to fetch NBA team details' }, 500, 0);
   }
 }
 

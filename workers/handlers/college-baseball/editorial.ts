@@ -2,7 +2,7 @@
  * College Baseball — editorial, news, trending, and daily handlers.
  */
 
-import type { Env, EnhancedArticle } from './shared';
+import type { Env, EnhancedArticle, HighlightlyMatch } from './shared';
 import { json, cachedJson, kvGet, kvPut, dataHeaders, getCollegeClient, getHighlightlyClient, HTTP_CACHE, CACHE_TTL, categorizeArticle, titleSimilarity, CATEGORY_KEYWORDS } from './shared';
 
 export async function handleCollegeBaseballTrending(env: Env): Promise<Response> {

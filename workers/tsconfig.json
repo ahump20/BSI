@@ -10,8 +10,12 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "baseUrl": "..",
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
-  "include": ["*.ts", "shared/**/*.ts", "handlers/**/*.ts", "../lib/api-clients/**/*.ts", "../lib/adapters/**/*.ts", "../lib/sportsdata/**/*.ts"],
+  "include": ["*.ts", "shared/**/*.ts", "handlers/**/*.ts", "../lib/api-clients/**/*.ts", "../lib/adapters/**/*.ts", "../lib/sportsdata/**/*.ts", "../lib/evaluate/**/*.ts", "../lib/utils/format.ts"],
   "exclude": ["node_modules"]
 }
