@@ -29,7 +29,6 @@ Disallow: /college-baseball/analytics/
 Disallow: /college-baseball/sabermetrics/
 Disallow: /arcade/wc3-dashboard/
 Disallow: /mlb/abs/
-Disallow: /status/
 
 # Allow AI crawlers for AI Search visibility
 User-agent: GPTBot

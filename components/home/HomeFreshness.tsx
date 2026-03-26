@@ -20,7 +20,7 @@ const FALLBACK_FEATURED: Editorial = {
   preview:
     'The read was simple: Texas got tested, responded inside the game, and looked like a club with enough balance to hold up once league play turns heavy.',
   teams: ['Texas'],
-  wordCount: 1900,
+  wordCount: 1850,
   createdAt: '2026-03-24',
 };
 
