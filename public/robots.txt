@@ -19,7 +19,10 @@ Disallow: /dashboard/
 Disallow: /settings/
 Disallow: /intelligence/
 Disallow: /analytics/
-Disallow: /models/
+Disallow: /models/monte-carlo/
+Disallow: /models/data-quality/
+Allow: /models/havf/
+Allow: /models/win-probability/
 Disallow: /coverage/
 Disallow: /blog-post-feed/
 Disallow: /college-baseball/analytics/
@@ -28,7 +31,7 @@ Disallow: /arcade/wc3-dashboard/
 Disallow: /mlb/abs/
 Disallow: /status/
 
-# Allow AI crawlers for AI Search
+# Allow AI crawlers for AI Search visibility
 User-agent: GPTBot
 Allow: /
 
@@ -39,4 +42,13 @@ User-agent: Claude-Web
 Allow: /
 
 User-agent: Cloudflare-AI
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: Applebot
 Allow: /
