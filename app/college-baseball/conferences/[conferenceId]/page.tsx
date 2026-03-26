@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: { params: Promise<{ conferenc
   const { conferenceId } = await params;
   const conf = CONF_META[conferenceId] || { name: conferenceId.toUpperCase(), full: conferenceId };
   return {
-    title: `${conf.full} Baseball | Standings, Teams & Stats | BSI`,
+    title: { absolute: `${conf.full} Baseball | Standings, Teams & Stats | BSI` },
     description: `${conf.full} college baseball standings, team rankings, conference strength index, and advanced analytics. Updated daily with live scores and sabermetrics from Blaze Sports Intel.`,
     alternates: { canonical: `/college-baseball/conferences/${conferenceId}` },
     openGraph: {
