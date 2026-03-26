@@ -62,8 +62,9 @@ const INTEL_SPORT_MAP: Record<string, Sport> = {
 /** Filter out games that are not from today (prevents future-dated games inflating counts). */
 function isGameToday(game: Record<string, unknown>): boolean {
   const dateStr = game.date as string | undefined;
-  if (!dateStr) return true; // if no date, include it
+  if (!dateStr) return false; // no date = can't confirm it's today
   const gameDate = new Date(dateStr);
+  if (Number.isNaN(gameDate.getTime())) return false;
   const now = new Date();
   // Same calendar date (UTC)
   return gameDate.getUTCFullYear() === now.getUTCFullYear()
@@ -599,44 +600,47 @@ function ScoresHubContent() {
       if (sport.id === 'nfl') {
         const games = (payload.games as Array<Record<string, unknown>>) || [];
         const liveCount = countLiveEspnGames(payload);
+        const todayGames = countTodayGames(games);
         live += liveCount;
         return {
           ...sport,
           featured: extractESPNGames(payload, 'nfl'),
           fetchError: sportError,
-          isActive: games.length > 0,
+          isActive: todayGames > 0,
           liveCount,
           loaded: true,
-          todayCount: games.length,
+          todayCount: todayGames,
         };
       }
 
       if (sport.id === 'nba') {
         const games = (payload.games as Array<Record<string, unknown>>) || [];
         const liveCount = countLiveEspnGames(payload);
+        const todayGames = countTodayGames(games);
         live += liveCount;
         return {
           ...sport,
           featured: extractESPNGames(payload, 'nba'),
           fetchError: sportError,
-          isActive: games.length > 0,
+          isActive: todayGames > 0,
           liveCount,
           loaded: true,
-          todayCount: games.length,
+          todayCount: todayGames,
         };
       }
 
       const games = (payload.games as Array<Record<string, unknown>>) || [];
       const liveCount = countLiveCfbGames(payload);
+      const todayGames = countTodayGames(games);
       live += liveCount;
       return {
         ...sport,
         featured: extractESPNGames(payload, 'cfb'),
         fetchError: sportError,
-        isActive: games.length > 0,
+        isActive: todayGames > 0,
         liveCount,
         loaded: true,
-        todayCount: countTodayGames(games),
+        todayCount: todayGames,
       };
     });
 
@@ -912,7 +916,7 @@ function ScoresHubContent() {
                       href={activeSportData.href}
                       className="text-burnt-orange text-sm font-semibold hover:text-ember transition-colors"
                     >
-                      View All {activeSportData.todayCount} Games
+                      View All {activeSportData.todayCount} {activeSportData.todayCount === 1 ? 'Game' : 'Games'}
                     </Link>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">

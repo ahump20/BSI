@@ -129,7 +129,7 @@ export default function SpringTrainingPage() {
                           Today&apos;s Spring Training Games
                           {hasLive && <FreshnessBadge isLive fetchedAt={scoresData?.meta?.lastUpdated} />}
                         </span>
-                        <Badge variant="primary">{filteredGames.length} Games</Badge>
+                        <Badge variant="primary">{filteredGames.length} {filteredGames.length === 1 ? 'Game' : 'Games'}</Badge>
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -222,7 +222,7 @@ export default function SpringTrainingPage() {
                   <Card variant="default" padding="lg">
                     <CardHeader>
                       <CardTitle>
-                        Full Schedule ({filteredSchedule.length} games)
+                        Full Schedule ({filteredSchedule.length} {filteredSchedule.length === 1 ? 'game' : 'games'})
                       </CardTitle>
                     </CardHeader>
                     <CardContent>

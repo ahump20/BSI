@@ -251,15 +251,21 @@ export default function CFBPage() {
     const targetConfs = ['SEC', 'Big Ten', 'Big 12', 'ACC'];
     const allTeams: StandingsTeam[] = [];
 
-    // Handle different response shapes
-    if (standingsRaw?.conferences) {
-      for (const conf of standingsRaw.conferences) {
-        for (const team of conf.teams) {
+    // Handle different response shapes — the API may return:
+    // 1. { conferences: [{ name, teams }] }
+    // 2. { standings: [{ name, teams }] } — nested conference groups
+    // 3. { standings: [flat team objects] } or { teams: [flat team objects] }
+    const confs = standingsRaw?.conferences || standingsRaw?.standings || [];
+    const isNested = Array.isArray(confs) && confs.length > 0 && 'teams' in (confs[0] as Record<string, unknown>);
+
+    if (isNested) {
+      for (const conf of confs as Array<{ name: string; teams: StandingsTeam[] }>) {
+        for (const team of conf.teams || []) {
           allTeams.push({ ...team, conference: team.conference || conf.name });
         }
       }
     } else {
-      allTeams.push(...(standingsRaw?.standings || standingsRaw?.teams || []));
+      allTeams.push(...(standingsRaw?.teams || (confs as StandingsTeam[]) || []));
     }
 
     const grouped: Record<string, StandingsTeam[]> = {};
