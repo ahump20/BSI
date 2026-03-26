@@ -162,8 +162,8 @@ const analyticsTools = [
     description:
       'Run thousands of simulations to project season outcomes. Playoff odds, division winners, and more.',
     sport: 'MLB',
-    status: 'coming-soon',
-    href: '#',
+    status: 'available',
+    href: '/models/monte-carlo',
   },
   {
     id: 'historical',
