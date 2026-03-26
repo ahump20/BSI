@@ -298,6 +298,59 @@ async function populateSearchIndex(env: Env): Promise<void> {
     // Non-fatal — articles are supplementary
   }
 
+  // Editorial articles from D1
+  try {
+    const { results: editorials } = await env.DB.prepare(
+      'SELECT slug, title, category FROM editorials ORDER BY date DESC LIMIT 100'
+    ).all<{ slug: string; title: string; category: string }>();
+    if (editorials) {
+      for (const ed of editorials) {
+        rows.push({
+          name: ed.title,
+          type: 'article',
+          sport: 'College Baseball',
+          url: `/college-baseball/editorial/${ed.slug}`,
+        });
+      }
+    }
+  } catch {
+    // editorials table may not exist yet
+  }
+
+  // Conferences
+  const conferences = ['SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12', 'Sun Belt', 'AAC', 'Big East', 'Big West', 'C-USA', 'Mountain West'];
+  for (const conf of conferences) {
+    const slug = conf.toLowerCase().replace(/\s+/g, '-');
+    rows.push({
+      name: `${conf} Conference Baseball`,
+      type: 'page',
+      sport: 'College Baseball',
+      url: `/college-baseball/conferences/${slug}`,
+    });
+  }
+
+  // Pro teams (MLB, NFL, NBA)
+  const proTeams: Array<{ name: string; sport: string; slug: string }> = [
+    { name: 'New York Yankees', sport: 'MLB', slug: 'nyy' },
+    { name: 'Los Angeles Dodgers', sport: 'MLB', slug: 'lad' },
+    { name: 'Houston Astros', sport: 'MLB', slug: 'hou' },
+    { name: 'Texas Rangers', sport: 'MLB', slug: 'tex' },
+    { name: 'St. Louis Cardinals', sport: 'MLB', slug: 'stl' },
+    { name: 'Kansas City Chiefs', sport: 'NFL', slug: 'chiefs' },
+    { name: 'Dallas Cowboys', sport: 'NFL', slug: 'cowboys' },
+    { name: 'San Francisco 49ers', sport: 'NFL', slug: '49ers' },
+    { name: 'Boston Celtics', sport: 'NBA', slug: 'bos' },
+    { name: 'Los Angeles Lakers', sport: 'NBA', slug: 'lal' },
+  ];
+  for (const team of proTeams) {
+    rows.push({
+      name: team.name,
+      type: 'team',
+      sport: team.sport,
+      url: `/${team.sport.toLowerCase()}/teams/${team.slug}`,
+    });
+  }
+
   // Batch insert in chunks of 50 (D1 batch limit considerations)
   const CHUNK_SIZE = 50;
   for (let i = 0; i < rows.length; i += CHUNK_SIZE) {
