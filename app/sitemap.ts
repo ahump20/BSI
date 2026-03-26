@@ -30,7 +30,7 @@ const flagship: SitemapEntry[] = [
   ...['sec', 'acc', 'big-12', 'big-ten', 'big-east', 'aac', 'sun-belt', 'mountain-west',
     'c-usa', 'a-10', 'colonial', 'missouri-valley', 'wcc', 'big-west', 'southland',
     'asun', 'america-east', 'big-south', 'horizon', 'patriot-league', 'southern',
-    'summit', 'wac'].map((conf): SitemapEntry => ({
+    'summit', 'wac', 'independent'].map((conf): SitemapEntry => ({
     path: `/college-baseball/conferences/${conf}`,
     changeFrequency: 'daily',
     priority: 0.7,
