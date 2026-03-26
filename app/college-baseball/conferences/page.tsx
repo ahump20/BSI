@@ -101,8 +101,25 @@ export default function ConferencesHubPage() {
 
         if (standingsRes?.ok) {
           const data = await standingsRes.json();
-          const teams = data.standings || data.data || data.teams || [];
-          setStandings(Array.isArray(teams) ? teams : []);
+          const raw = data.standings || data.data || data.teams || [];
+          // Normalize nested API shape → flat StandingsTeam
+          const teams = (Array.isArray(raw) ? raw : []).map((t: Record<string, unknown>) => {
+            const teamObj = t.team as Record<string, unknown> | undefined;
+            const overallRec = t.overallRecord as Record<string, unknown> | undefined;
+            const teamName = (t.team_name as string) || (teamObj?.name as string) || '';
+            const teamId = (teamObj?.id as string) || '';
+            // Look up conference: try direct slug match, then shortName match
+            const meta = teamMetadata[teamId] ||
+              Object.values(teamMetadata).find(m => m.name === teamName || m.abbreviation === (teamObj?.shortName as string || ''));
+            const conf = meta?.conference || (t.conference as string) || '';
+            return {
+              team_name: teamName,
+              conference: conf,
+              overall_wins: (t.overall_wins as number) ?? (overallRec?.wins as number) ?? 0,
+              overall_losses: (t.overall_losses as number) ?? (overallRec?.losses as number) ?? 0,
+            } as StandingsTeam;
+          });
+          setStandings(teams);
           if (data.meta?.fetched_at) setLastUpdated(data.meta.fetched_at);
         }
         if (savantRes?.ok) {
