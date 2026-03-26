@@ -150,10 +150,13 @@ export async function handleCollegeBaseballStandings(
 
     if (!hlOk) degraded = true;
 
+    // Always use ESPN-built standings as the structural data source.
+    // Highlightly enrichment (conference W-L, rankings) can overlay later,
+    // but raw hlData has a different shape and may contain stale season data.
     const source = hlOk ? 'highlightly+espn-v2' : 'espn-v2';
     const payload = withMeta({
       success: true,
-      data: hlOk ? hlData : standings,
+      data: standings,
       conference,
       timestamp: espnTimestamp,
     }, source, {
