@@ -74,6 +74,7 @@ const editorial: SitemapEntry[] = [
   { path: '/college-baseball/editorial/texas-houston-christian-preview', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/texas-houston-christian-recap', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/week-4-preview', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/weekend-6-recap', changeFrequency: 'monthly', priority: 0.8 },
   // Game features
   { path: '/college-baseball/editorial/texas-uc-davis-opener-2026', changeFrequency: 'monthly', priority: 0.7 },
   // 2026 team previews (SEC)
@@ -167,6 +168,7 @@ const proSports: SitemapEntry[] = [
   { path: '/mlb/players', changeFrequency: 'daily', priority: 0.6 },
   { path: '/mlb/teams', changeFrequency: 'daily', priority: 0.6 },
   { path: '/mlb/stats', changeFrequency: 'daily', priority: 0.6 },
+  { path: '/mlb/abs', changeFrequency: 'daily', priority: 0.5 },
   // NFL
   { path: '/nfl', changeFrequency: 'daily', priority: 0.7 },
   { path: '/nfl/scores', changeFrequency: 'hourly', priority: 0.7 },
@@ -211,14 +213,34 @@ const texasIntelligence: SitemapEntry[] = [
 const features: SitemapEntry[] = [
   { path: '/status', changeFrequency: 'always', priority: 0.4 },
   { path: '/intel', changeFrequency: 'daily', priority: 0.7 },
+  { path: '/ask', changeFrequency: 'daily', priority: 0.8 },
+  { path: '/evaluate', changeFrequency: 'daily', priority: 0.7 },
   { path: '/nil-valuation', changeFrequency: 'daily', priority: 0.7 },
   { path: '/nil-valuation/methodology', changeFrequency: 'monthly', priority: 0.5 },
-  { path: '/vision-ai', changeFrequency: 'weekly', priority: 0.5 },
+  { path: '/nil-valuation/performance-index', changeFrequency: 'daily', priority: 0.7 },
+  { path: '/nil-valuation/undervalued', changeFrequency: 'daily', priority: 0.6 },
+  { path: '/nil-valuation/comparables', changeFrequency: 'daily', priority: 0.6 },
+  { path: '/nil-valuation/market-trends', changeFrequency: 'daily', priority: 0.6 },
+  { path: '/nil-valuation/war-to-nil', changeFrequency: 'weekly', priority: 0.6 },
+  { path: '/nil-valuation/draft-leverage', changeFrequency: 'weekly', priority: 0.6 },
+  { path: '/nil-valuation/tools', changeFrequency: 'monthly', priority: 0.5 },
   { path: '/search', changeFrequency: 'daily', priority: 0.5 },
+  { path: '/college-baseball/weekly-pulse', changeFrequency: 'weekly', priority: 0.8 },
+  { path: '/college-baseball/power-rankings', changeFrequency: 'weekly', priority: 0.8 },
   { path: '/college-baseball/tournament', changeFrequency: 'daily', priority: 0.8 },
   { path: '/college-baseball/tournament/regionals', changeFrequency: 'daily', priority: 0.7 },
   { path: '/college-baseball/tournament/cws', changeFrequency: 'daily', priority: 0.7 },
+  { path: '/college-baseball/tournament/bubble', changeFrequency: 'daily', priority: 0.7 },
   { path: '/college-baseball/savant/visuals', changeFrequency: 'weekly', priority: 0.6 },
+  { path: '/college-baseball/savant/conference-comparison', changeFrequency: 'weekly', priority: 0.6 },
+  { path: '/college-baseball/savant/team-compare', changeFrequency: 'weekly', priority: 0.6 },
+  { path: '/college-baseball/analytics', changeFrequency: 'weekly', priority: 0.6 },
+  { path: '/models/havf', changeFrequency: 'weekly', priority: 0.7 },
+  { path: '/models/win-probability', changeFrequency: 'weekly', priority: 0.6 },
+  { path: '/models/data-quality', changeFrequency: 'monthly', priority: 0.5 },
+  { path: '/college-baseball/watchlist', changeFrequency: 'daily', priority: 0.6 },
+  { path: '/college-baseball/trends', changeFrequency: 'daily', priority: 0.6 },
+  { path: '/college-baseball/sabermetrics', changeFrequency: 'weekly', priority: 0.7 },
 ];
 
 const arcade: SitemapEntry[] = [
@@ -246,7 +268,6 @@ const marketing: SitemapEntry[] = [
   { path: '/terms', changeFrequency: 'yearly', priority: 0.3 },
   { path: '/data-sources', changeFrequency: 'monthly', priority: 0.5 },
   { path: '/glossary', changeFrequency: 'monthly', priority: 0.6 },
-  { path: '/nil-valuation/performance-index', changeFrequency: 'daily', priority: 0.7 },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

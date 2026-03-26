@@ -142,6 +142,37 @@ export async function handleCollegeBaseballStandings(
       };
     });
 
+    // Enrich with Highlightly conference records when available
+    if (hlOk && hlData.length > 0) {
+      // Build lookup: lowercase team name → Highlightly conference W-L
+      const hlLookup = new Map<string, { confWins: number; confLosses: number; streak?: string }>();
+      for (const conf of hlData as Array<Record<string, unknown>>) {
+        const teams = (conf.teams as Array<Record<string, unknown>>) || [];
+        for (const t of teams) {
+          const teamDetail = (t.team as Record<string, unknown>) || {};
+          const name = String(teamDetail.name ?? '').toLowerCase();
+          if (name) {
+            hlLookup.set(name, {
+              confWins: Number(t.conferenceWins ?? 0),
+              confLosses: Number(t.conferenceLosses ?? 0),
+              streak: t.streak ? String(t.streak) : undefined,
+            });
+          }
+        }
+      }
+
+      for (const s of standings) {
+        const hl = hlLookup.get(s.team.name.toLowerCase());
+        if (hl) {
+          s.conferenceRecord.wins = hl.confWins;
+          s.conferenceRecord.losses = hl.confLosses;
+          const ct = hl.confWins + hl.confLosses;
+          s.conferenceRecord.pct = ct > 0 ? hl.confWins / ct : 0;
+          if (hl.streak && !s.streak) s.streak = hl.streak;
+        }
+      }
+    }
+
     standings.sort((a, b) => {
       if (b.winPct !== a.winPct) return b.winPct - a.winPct;
       return b.pointDifferential - a.pointDifferential;
@@ -150,9 +181,8 @@ export async function handleCollegeBaseballStandings(
 
     if (!hlOk) degraded = true;
 
-    // Always use ESPN-built standings as the structural data source.
-    // Highlightly enrichment (conference W-L, rankings) can overlay later,
-    // but raw hlData has a different shape and may contain stale season data.
+    // ESPN provides structure (teams, overall records).
+    // Highlightly provides conference records when available.
     const source = hlOk ? 'highlightly+espn-v2' : 'espn-v2';
     const payload = withMeta({
       success: true,
