@@ -32,10 +32,10 @@ export function FeatureShowcase() {
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(191,87,0,0.18)] to-transparent" />
       <div className="max-w-6xl mx-auto relative z-10">
         <ScrollReveal direction="up">
-          <span className="heritage-stamp mb-2">Platform</span>
-          <div className="flex items-center gap-3 mt-2 mb-8">
+          <span className="heritage-stamp mb-4">Platform</span>
+          <div className="flex items-center gap-3 mt-4 mb-8">
             <div className="section-rule-thick" />
-            <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide" style={{ color: 'var(--bsi-bone)' }}>
+            <h2 className="font-display text-3xl sm:text-4xl font-bold uppercase tracking-[0.05em]" style={{ color: 'var(--bsi-bone)' }}>
               One Platform, Four Ways In
             </h2>
           </div>
