@@ -212,12 +212,34 @@ export default function SavantPlayerClient() {
     }
   }, [playerId]);
 
-  // Derive tier from API response
+  // Free-tier: first 10 unique player profile views are fully unlocked (no signup).
+  // After that, pro stats are gated behind the upgrade prompt.
+  const FREE_PROFILE_LIMIT = 10;
   const isPro = useMemo(() => {
-    if (!playerData) return false;
+    if (!playerData || !playerId) return false;
+    // If the API says it's already pro (authenticated user), use that
     const sample = (playerData.batting || playerData.pitching) as (BattingStats | PitchingStats | null);
-    return sample ? !sample._tier_gated : false;
-  }, [playerData]);
+    if (sample && !sample._tier_gated) return true;
+    // Otherwise check free-tier allowance via localStorage
+    if (typeof window === 'undefined') return false;
+    try {
+      const storageKey = 'bsi_savant_free_views';
+      const raw = localStorage.getItem(storageKey);
+      const viewed: string[] = raw ? JSON.parse(raw) : [];
+      // If this player was already viewed, it's still free
+      if (viewed.includes(playerId)) return true;
+      // If under the limit, add this player and grant access
+      if (viewed.length < FREE_PROFILE_LIMIT) {
+        viewed.push(playerId);
+        localStorage.setItem(storageKey, JSON.stringify(viewed));
+        return true;
+      }
+      // Over limit — gated
+      return false;
+    } catch {
+      return false;
+    }
+  }, [playerData, playerId]);
 
   if (loading) {
     return (
@@ -380,6 +402,26 @@ export default function SavantPlayerClient() {
                 <RawStatLine title="Pitching Line" stats={pitching} type="pitching" isPro={isPro} />
               </ScrollReveal>
             )}
+
+            {/* Free-tier view counter */}
+            {isPro && (() => {
+              try {
+                const raw = localStorage.getItem('bsi_savant_free_views');
+                const viewed: string[] = raw ? JSON.parse(raw) : [];
+                const remaining = FREE_PROFILE_LIMIT - viewed.length;
+                if (remaining > 0 && remaining < FREE_PROFILE_LIMIT) {
+                  return (
+                    <p className="text-xs mt-6 mb-2" style={{ color: 'var(--bsi-dust)' }}>
+                      {remaining} free profile{remaining === 1 ? '' : 's'} remaining &middot;{' '}
+                      <Link href="/pricing" className="text-[var(--bsi-primary)] hover:underline">
+                        Go Pro for unlimited
+                      </Link>
+                    </p>
+                  );
+                }
+              } catch { /* localStorage unavailable */ }
+              return null;
+            })()}
 
             {/* Links */}
             <div className="flex items-center gap-6 mt-8 mb-4">
