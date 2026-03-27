@@ -87,11 +87,67 @@ html {
 }
 
 body {
-  background-color: #0d0d0d;
+  background-color: var(--surface-scoreboard);
   color: var(--color-text-primary);
   min-height: 100vh;
   overflow-x: hidden;
   font-family: var(--font-cormorant), 'Cormorant Garamond', 'Georgia', serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Atmospheric grid texture — subtle warm lines */
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      var(--grid-line-color) 0,
+      var(--grid-line-color) 1px,
+      transparent 1px,
+      transparent 80px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      var(--grid-line-color) 0,
+      var(--grid-line-color) 1px,
+      transparent 1px,
+      transparent 80px
+    );
+  background-size: 80px 80px;
+  position: relative;
+}
+
+/* Radial atmospheric depth — warm zones that ground the viewport */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 600px 400px at 15% 20%, rgba(191, 87, 0, 0.04), transparent),
+    radial-gradient(ellipse 500px 500px at 85% 80%, rgba(59, 130, 246, 0.03), transparent),
+    radial-gradient(ellipse 800px 300px at 50% 50%, rgba(255, 255, 255, 0.01), transparent);
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Bottom-edge atmospheric glow — grounds the viewport */
+body::after {
+  content: '';
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  pointer-events: none;
+  z-index: 0;
+  background: linear-gradient(to top, rgba(191, 87, 0, 0.04), transparent);
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Content sits above atmosphere */
+#__next {
+  position: relative;
+  z-index: 1;
 }
 
 /* ---- Selection (portfolio orange) ---- */
