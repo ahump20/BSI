@@ -9,8 +9,8 @@ const STARTER_PROMPTS = [
   "Who's leading the SEC in batting?",
   'When does Texas play next?',
   'Top pitchers by FIP',
-  'NFL draft order',
-  'NBA standings right now',
+  'Best wRC+ in the ACC this week',
+  'Conference strength rankings',
 ];
 
 export function HomeAskSection(): React.JSX.Element {
@@ -60,7 +60,7 @@ export function HomeAskSection(): React.JSX.Element {
             className="mx-auto mt-3 max-w-lg text-sm font-serif leading-relaxed sm:text-base"
             style={{ color: 'var(--bsi-dust)' }}
           >
-            Scores, standings, stats, rankings, schedules — across five sports. Ask a question
+            Scores, standings, sabermetrics, rankings, schedules — ask a question
             and get a real answer backed by live data.
           </p>
         </ScrollReveal>
