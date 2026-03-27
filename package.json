@@ -51,7 +51,7 @@
     "prepare": "husky",
     "db:migrate:production": "wrangler d1 execute blazesports-historical --remote --file=schema/003_migration_drop_and_recreate.sql",
     "db:seed:production": "wrangler d1 execute blazesports-historical --remote --file=scripts/insert-test-teams-fixed.sql",
-    "build:arcade": "cd games/blitz && npm run build && cd ../hotdog-dash && npm run build && cd ../.. && npm run arcade:copy",
+    "build:arcade": "cd games/blitz && npm run build && cd ../hotdog-dash && npm run build && cd ../sandlot-sluggers && npm run build && cd ../.. && npm run arcade:copy",
     "arcade:copy": "echo 'Games are self-hosted in public/games/ -- no copy needed'",
     "deploy:arcade": "echo 'Games deploy with Pages -- use deploy:pages'",
     "deploy:arcade-api": "wrangler deploy --config workers/mini-games-api/wrangler.toml",

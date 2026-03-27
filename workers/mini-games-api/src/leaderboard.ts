@@ -2,6 +2,9 @@ import type { ScoreSubmission } from './types';
 
 const VALID_GAME_IDS = ['blitz', 'hotdog-dash', 'sandlot-sluggers'];
 const MAX_NAME_LENGTH = 24;
+const DEFAULT_LEADERBOARD_MODE = 'quick-play';
+const DEFAULT_LEADERBOARD_DIFFICULTY = 'medium';
+const DEFAULT_SCORE_VERSION = 1;
 
 /** Per-game score bounds and minimum play duration (seconds) for anti-cheat */
 const GAME_RULES: Record<string, { maxScore: number; minDurationSec: number }> = {
@@ -14,6 +17,11 @@ const DEFAULT_RULES = { maxScore: 999_999, minDurationSec: 5 };
 /** Max submissions per IP per game per hour */
 const RATE_LIMIT_PER_HOUR = 20;
 
+interface LeaderboardFilters {
+  mode?: string | null;
+  difficulty?: string | null;
+}
+
 function hashIp(ip: string): string {
   // Simple non-reversible hash for storage (not crypto-grade, just privacy)
   let hash = 0;
@@ -23,9 +31,45 @@ function hashIp(ip: string): string {
   return hash.toString(36);
 }
 
+export function normalizeSubmissionMetadata(
+  metadata?: Record<string, unknown>,
+): Record<string, unknown> {
+  const normalized =
+    metadata && typeof metadata === 'object' ? { ...metadata } : {};
+
+  if (typeof normalized.mode !== 'string' || normalized.mode.length === 0) {
+    normalized.mode = DEFAULT_LEADERBOARD_MODE;
+  }
+  if (
+    typeof normalized.difficulty !== 'string' ||
+    normalized.difficulty.length === 0
+  ) {
+    normalized.difficulty = DEFAULT_LEADERBOARD_DIFFICULTY;
+  }
+  if (typeof normalized.scoreVersion !== 'number') {
+    normalized.scoreVersion = DEFAULT_SCORE_VERSION;
+  }
+
+  return normalized;
+}
+
+function parseMetadata(metadata: unknown): Record<string, unknown> | null {
+  if (!metadata || typeof metadata !== 'string') return null;
+
+  try {
+    const parsed = JSON.parse(metadata);
+    return parsed && typeof parsed === 'object'
+      ? (parsed as Record<string, unknown>)
+      : null;
+  } catch {
+    return null;
+  }
+}
+
 /** Validate and insert a score */
 export async function submitScore(body: ScoreSubmission, ip: string, env: Env): Promise<Response> {
-  const { gameId, playerName, score, metadata } = body;
+  const { gameId, playerName, score } = body;
+  const metadata = normalizeSubmissionMetadata(body.metadata);
 
   // Validate
   if (!gameId || !VALID_GAME_IDS.includes(gameId)) {
@@ -60,7 +104,7 @@ export async function submitScore(body: ScoreSubmission, ip: string, env: Env): 
   }
   await env.RATE_LIMIT.put(rlKey, String(rlCount + 1), { expirationTtl: 3600 });
 
-  const metaJson = metadata ? JSON.stringify(metadata) : null;
+  const metaJson = JSON.stringify(metadata);
 
   await env.DB.prepare(
     `INSERT INTO leaderboard_entries (game_id, player_name, score, metadata, submitted_at, ip_hash)
@@ -71,22 +115,48 @@ export async function submitScore(body: ScoreSubmission, ip: string, env: Env): 
 }
 
 /** Get top scores for a specific game */
-export async function getGameLeaderboard(gameId: string, limit: number, env: Env): Promise<Response> {
+export async function getGameLeaderboard(
+  gameId: string,
+  limit: number,
+  env: Env,
+  filters: LeaderboardFilters = {},
+): Promise<Response> {
   if (!VALID_GAME_IDS.includes(gameId)) {
     return json({ error: 'Invalid gameId' }, 400);
   }
 
   const clampedLimit = Math.min(Math.max(1, limit), 50);
+  const whereClauses = ['game_id = ?'];
+  const binds: Array<string | number> = [gameId];
+
+  if (filters.mode) {
+    whereClauses.push(`coalesce(json_extract(metadata, '$.mode'), '${DEFAULT_LEADERBOARD_MODE}') = ?`);
+    binds.push(filters.mode);
+  }
+
+  if (filters.difficulty) {
+    whereClauses.push(
+      `coalesce(json_extract(metadata, '$.difficulty'), '${DEFAULT_LEADERBOARD_DIFFICULTY}') = ?`,
+    );
+    binds.push(filters.difficulty);
+  }
 
   const { results } = await env.DB.prepare(
-    `SELECT id, game_id, player_name, score, submitted_at
+    `SELECT id, game_id, player_name, score, metadata, submitted_at
      FROM leaderboard_entries
-     WHERE game_id = ?
+     WHERE ${whereClauses.join(' AND ')}
      ORDER BY score DESC, submitted_at ASC
-     LIMIT ?`
-  ).bind(gameId, clampedLimit).all();
+     LIMIT ?`,
+  )
+    .bind(...binds, clampedLimit)
+    .all();
 
-  return json({ entries: results });
+  return json({
+    entries: (results ?? []).map((entry) => ({
+      ...entry,
+      metadata: parseMetadata(entry.metadata),
+    })),
+  });
 }
 
 /** Get global top scores across all games */
@@ -94,13 +164,18 @@ export async function getGlobalLeaderboard(limit: number, env: Env): Promise<Res
   const clampedLimit = Math.min(Math.max(1, limit), 50);
 
   const { results } = await env.DB.prepare(
-    `SELECT id, game_id, player_name, score, submitted_at
+    `SELECT id, game_id, player_name, score, metadata, submitted_at
      FROM leaderboard_entries
      ORDER BY score DESC, submitted_at ASC
      LIMIT ?`
   ).bind(clampedLimit).all();
 
-  return json({ entries: results });
+  return json({
+    entries: (results ?? []).map((entry) => ({
+      ...entry,
+      metadata: parseMetadata(entry.metadata),
+    })),
+  });
 }
 
 function json(data: unknown, status = 200): Response {
