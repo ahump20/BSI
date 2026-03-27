@@ -1,0 +1,48 @@
+name = "bsi-push-notifications-dev"
+main = "index.ts"
+compatibility_date = "2026-03-24"
+compatibility_flags = ["nodejs_compat"]
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+[[d1_databases]]
+binding = "BSI_PROD_DB"
+database_name = "bsi-prod-db"
+database_id = "6921617f-5351-4df3-aeab-07425e72ec6b"
+
+[[kv_namespaces]]
+binding = "BSI_KEYS"
+id = "placeholder"
+
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "placeholder"
+
+[[kv_namespaces]]
+binding = "BSI_PROD_CACHE"
+id = "placeholder"
+
+[env.production]
+name = "bsi-push-notifications"
+routes = [
+  { pattern = "blazesportsintel.com/api/push/register", zone_name = "blazesportsintel.com" },
+  { pattern = "blazesportsintel.com/api/push/send", zone_name = "blazesportsintel.com" }
+]
+
+[[env.production.d1_databases]]
+binding = "BSI_PROD_DB"
+database_name = "bsi-prod-db"
+database_id = "6921617f-5351-4df3-aeab-07425e72ec6b"
+
+[[env.production.kv_namespaces]]
+binding = "BSI_KEYS"
+id = "placeholder"
+
+[[env.production.kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "placeholder"
+
+[[env.production.kv_namespaces]]
+binding = "BSI_PROD_CACHE"
+id = "placeholder"
