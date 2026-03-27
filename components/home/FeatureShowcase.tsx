@@ -6,19 +6,19 @@ import { AskBSI } from './AskBSI';
 
 const SUPPORT_RAIL = [
   {
-    label: 'Transfer Portal',
-    href: '/college-baseball/transfer-portal',
-    description: 'Track movement, fit, and roster pressure as players change the league.',
+    label: 'Glossary',
+    href: '/college-baseball/savant/glossary',
+    description: 'Every metric defined in plain English — what it measures, why it matters, and where to find it.',
   },
   {
-    label: 'NIL Valuation',
-    href: '/nil-valuation',
-    description: 'See where market leverage, performance, and visibility meet in one board.',
+    label: 'Methodology',
+    href: '/college-baseball/savant/methodology',
+    description: 'How BSI computes park factors, conference strength, and run-value metrics.',
   },
   {
-    label: 'Models',
-    href: '/models',
-    description: 'Move from static numbers to scenario thinking before the game starts.',
+    label: 'Editorial',
+    href: '/college-baseball/editorial',
+    description: 'Series recaps, scouting reads, and matchup framing tied to the numbers.',
   },
 ];
 

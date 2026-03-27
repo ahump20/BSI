@@ -30,7 +30,7 @@ export const PRICING_TIERS: PricingTier[] = [
     description: 'Everything ESPN gives you, but faster and mobile-first. No signup required.',
     audience: 'Casual fans',
     features: [
-      'Live scores across MLB, NFL, NBA, NCAA',
+      'Live college baseball scores',
       'Conference standings and rankings',
       'Park-adjusted wOBA, wRC+, FIP, xFIP leaderboards',
       'Expected stats (xBA, xSLG, xwOBA)',

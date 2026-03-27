@@ -104,8 +104,8 @@ export default function PricingPage() {
               <div className="section-rule-thick w-16" />
             </div>
             <p className="font-serif italic text-lg leading-relaxed max-w-2xl mx-auto" style={{ color: 'var(--bsi-dust)' }}>
-              Scores, standings, and box scores are free — no signup, no paywall. Pro unlocks
-              park-adjusted sabermetrics, conference strength, and the full analytical depth.
+              Scores, standings, sabermetric leaderboards, and editorial are free — no signup, no paywall.
+              Pro unlocks data exports, unlimited player comparison, and transfer portal tracking.
             </p>
           </ScrollReveal>
         </div>

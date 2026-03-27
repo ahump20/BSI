@@ -12,12 +12,12 @@ const DIFFERENTIATORS = [
     body: 'Park-adjusted metrics — wOBA, FIP, ERA− — computed every six hours across every D1 program. Free.',
   },
   {
-    label: 'Five Sports, One Standard',
-    body: 'MLB, NFL, NBA, college football, college baseball. Same rigor, same data infrastructure, same instinct for what the numbers actually mean.',
+    label: 'Deep Where It Counts',
+    body: 'College baseball is the flagship — 330 D1 programs tracked with park-adjusted metrics no one else computes publicly. Pro league coverage is building behind the same infrastructure.',
   },
 ];
 
-const SPORTS_RAIL = ['College Baseball', 'College Football', 'MLB', 'NFL', 'NBA'];
+const SPORTS_RAIL = ['College Baseball'];
 
 export function WhyBSI() {
   return (
