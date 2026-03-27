@@ -22,6 +22,12 @@ import { MomentumFlow, type MomentumSnapshot } from '@/components/analytics/Mome
 import { MatchupTheater, type BatterProfile, type PitcherProfile } from '@/components/analytics/MatchupTheater';
 import { BattedBallScatter, type BattedBallPlayer } from '@/components/analytics/BattedBallScatter';
 import { PitchingCommandScatter, type PitchingCommandPlayer } from '@/components/analytics/PitchingCommandScatter';
+import { ScoutingRadar } from '@/components/analytics/ScoutingRadar';
+import { SimilarityMap } from '@/components/analytics/SimilarityMap';
+import { StatDistribution } from '@/components/analytics/StatDistribution';
+import { TeamPercentileCard } from '@/components/analytics/TeamPercentileCard';
+import { CompareScatter } from '@/components/analytics/CompareScatter';
+import type { EnrichedBatter, EnrichedPitcher } from '@/lib/analytics/types';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -91,11 +97,39 @@ const VISUAL_TOOLS: VisualTool[] = [
     available: true,
   },
   {
+    id: 'scouting-radar',
+    title: 'Scouting Radar',
+    description: '6-axis percentile radar — wOBA, ISO, BB%, K%, BABIP, wRC+. Concentric bands mark 50th/75th/90th/99th. Player polygon animates from center.',
+    category: 'player',
+    available: true,
+  },
+  {
     id: 'similarity-map',
     title: 'Player Similarity Map',
-    description: 'Dimensionality-reduced scatter grouping players by statistical profile. Find comps across the college game.',
+    description: 'Z-score Euclidean distance in stat space as a radial force network. Click any satellite to re-center — find comps across D1.',
     category: 'player',
-    available: false,
+    available: true,
+  },
+  {
+    id: 'stat-distribution',
+    title: 'Stat Distribution',
+    description: 'KDE density curve for any stat — see where a player falls in the D1 population. Highlights elite and poor thresholds.',
+    category: 'batting',
+    available: true,
+  },
+  {
+    id: 'team-percentile',
+    title: 'Team Percentile Card',
+    description: 'Aggregate percentile bars for any team — how their batting collective ranks across key metrics vs all D1 programs.',
+    category: 'team',
+    available: true,
+  },
+  {
+    id: 'compare-scatter',
+    title: 'Head-to-Head Scatter',
+    description: 'Two-team scatter overlay — see how each roster stacks up against the other across any stat pair.',
+    category: 'team',
+    available: true,
   },
   {
     id: 'era-fip-gap',
@@ -357,6 +391,56 @@ export default function SavantVisualsPage() {
         fip: (r.fip as number) ?? undefined,
         ip: (r.ip as number) ?? undefined,
         player_id: r.player_id as string | undefined,
+      }));
+  }, [pitchingRes]);
+
+  // Enriched batter/pitcher arrays for Labs-ported charts (ScoutingRadar, SimilarityMap, etc.)
+  const enrichedBatters: EnrichedBatter[] = useMemo(() => {
+    if (!battingRes?.data) return [];
+    return battingRes.data
+      .filter(r => r.player_id && r.player_name && r.pa != null)
+      .map(r => ({
+        player_id: r.player_id as string,
+        player_name: r.player_name as string,
+        team: r.team as string,
+        team_slug: r.team_slug as string | undefined,
+        position: (r.position as string) ?? '',
+        pa: (r.pa as number) ?? 0,
+        avg: (r.avg as number) ?? 0,
+        obp: (r.obp as number) ?? 0,
+        slg: (r.slg as number) ?? 0,
+        woba: (r.woba as number) ?? 0,
+        wrc_plus: (r.wrc_plus as number) ?? 0,
+        ops_plus: (r.ops_plus as number) ?? 0,
+        iso: (r.iso as number) ?? 0,
+        babip: (r.babip as number) ?? 0,
+        k_pct: (r.k_pct as number) ?? 0,
+        bb_pct: (r.bb_pct as number) ?? 0,
+        conference: (r.conference as string) ?? '',
+      }));
+  }, [battingRes]);
+
+  const enrichedPitchers: EnrichedPitcher[] = useMemo(() => {
+    if (!pitchingRes?.data) return [];
+    return pitchingRes.data
+      .filter(r => r.player_id && r.player_name && r.ip != null)
+      .map(r => ({
+        player_id: r.player_id as string,
+        player_name: r.player_name as string,
+        team: r.team as string,
+        team_slug: r.team_slug as string | undefined,
+        position: (r.position as string) ?? 'P',
+        ip: (r.ip as number) ?? 0,
+        era: (r.era as number) ?? 0,
+        whip: (r.whip as number) ?? 0,
+        fip: (r.fip as number) ?? 0,
+        era_minus: (r.era_minus as number) ?? 0,
+        k_9: (r.k_9 as number) ?? 0,
+        bb_9: (r.bb_9 as number) ?? 0,
+        hr_9: (r.hr_9 as number) ?? 0,
+        k_bb: (r.k_bb as number) ?? 0,
+        lob_pct: (r.lob_pct as number) ?? 0,
+        conference: (r.conference as string) ?? '',
       }));
   }, [pitchingRes]);
 
@@ -799,6 +883,71 @@ export default function SavantVisualsPage() {
                         pitchers={pitcherOptions}
                         onSelectBatter={setMatchupBatterId}
                         onSelectPitcher={setMatchupPitcherId}
+                      />
+                    )
+                  )}
+
+                  {activeViz === 'scouting-radar' && (
+                    battingLoading ? (
+                      <Card padding="lg" className="text-center">
+                        <span className="text-xs text-text-muted font-mono">Loading batting data...</span>
+                      </Card>
+                    ) : (
+                      <ScoutingRadar
+                        data={enrichedBatters}
+                        onPlayerClick={(id) => window.open(`/college-baseball/savant/player/${id}/`, '_blank')}
+                      />
+                    )
+                  )}
+
+                  {activeViz === 'similarity-map' && (
+                    battingLoading ? (
+                      <Card padding="lg" className="text-center">
+                        <span className="text-xs text-text-muted font-mono">Loading batting data...</span>
+                      </Card>
+                    ) : (
+                      <SimilarityMap
+                        batters={enrichedBatters}
+                        pitchers={enrichedPitchers}
+                        onPlayerClick={(id) => window.open(`/college-baseball/savant/player/${id}/`, '_blank')}
+                      />
+                    )
+                  )}
+
+                  {activeViz === 'stat-distribution' && (
+                    battingLoading ? (
+                      <Card padding="lg" className="text-center">
+                        <span className="text-xs text-text-muted font-mono">Loading batting data...</span>
+                      </Card>
+                    ) : (
+                      <StatDistribution
+                        data={enrichedBatters}
+                        onPlayerClick={(id) => window.open(`/college-baseball/savant/player/${id}/`, '_blank')}
+                      />
+                    )
+                  )}
+
+                  {activeViz === 'team-percentile' && (
+                    battingLoading ? (
+                      <Card padding="lg" className="text-center">
+                        <span className="text-xs text-text-muted font-mono">Loading batting data...</span>
+                      </Card>
+                    ) : (
+                      <TeamPercentileCard
+                        data={enrichedBatters}
+                      />
+                    )
+                  )}
+
+                  {activeViz === 'compare-scatter' && (
+                    battingLoading ? (
+                      <Card padding="lg" className="text-center">
+                        <span className="text-xs text-text-muted font-mono">Loading batting data...</span>
+                      </Card>
+                    ) : (
+                      <CompareScatter
+                        data={enrichedBatters}
+                        onPlayerClick={(id) => window.open(`/college-baseball/savant/player/${id}/`, '_blank')}
                       />
                     )
                   )}

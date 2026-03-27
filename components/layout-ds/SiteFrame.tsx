@@ -21,19 +21,28 @@ const PageTracker = dynamic(() => import('@/components/analytics/PageTracker').t
 const PostHogProvider = dynamic(() => import('@/components/analytics/PostHogProvider').then((mod) => ({ default: mod.PostHogProvider })));
 
 const APP_SHELL_PREFIXES = [
+  '/',
   '/college-baseball/savant',
   '/college-baseball/standings',
   '/college-baseball/rankings',
   '/college-baseball/power-rankings',
   '/college-baseball/weekly-pulse',
+  '/college-baseball/compare',
+  '/college-baseball/conferences',
+  '/college-baseball/games',
   '/scores',
   '/dashboard',
   '/search',
   '/settings',
+  '/nil-valuation',
 ];
 
 function usesAppShell(pathname: string): boolean {
-  return APP_SHELL_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+  // Special case: exact match for root
+  if (pathname === '/') return true;
+  return APP_SHELL_PREFIXES
+    .filter((p) => p !== '/')
+    .some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
 }
 
 export function SiteFrame({ children }: { children: React.ReactNode }) {

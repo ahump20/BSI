@@ -253,7 +253,7 @@ app.use('*', async (c, next) => {
       '/park-factors': '/college-baseball/savant/park-factors/',
       '/glossary': '/college-baseball/savant/glossary/',
       '/visuals': '/college-baseball/savant/visuals/',
-      '/bubble': '/college-baseball/savant/',
+      '/bubble': '/college-baseball/savant/bubble/',
       '/radar-lab': '/college-baseball/savant/',
       '/nil-explorer': '/nil-valuation/',
       '/athletic-analysis': '/college-baseball/savant/',

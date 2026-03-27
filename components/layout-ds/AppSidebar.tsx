@@ -301,12 +301,14 @@ export function AppSidebar() {
       >
         {/* Logo bar */}
         <div className="flex items-center gap-3 px-4 h-14 border-b border-white/[0.05]">
-          <span
-            className="text-xl font-bold font-display text-burnt-orange"
-            style={{ textShadow: '0 0 20px rgba(191, 87, 0, 0.3)' }}
-          >
-            B
-          </span>
+          <img
+            src="/images/brand/bsi-lettermark-square.png"
+            alt="BSI"
+            width={28}
+            height={28}
+            className="rounded-sm"
+            style={{ filter: 'drop-shadow(0 0 12px rgba(191, 87, 0, 0.3))' }}
+          />
           {!collapsed && (
             <div className="flex flex-col">
               <span

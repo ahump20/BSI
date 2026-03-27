@@ -255,17 +255,15 @@ export function HubHero({
           </div>
         </ScrollReveal>
 
-        {/* Labs Portal CTA */}
+        {/* Savant Visuals CTA */}
         <ScrollReveal direction="up" delay={280}>
           <div className="mt-4 text-center">
             <a
-              href="https://labs.blazesportsintel.com"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/college-baseball/savant/visuals/"
               className="btn-heritage inline-flex items-center gap-2 px-5 py-2.5 text-sm group"
             >
-              <span className="uppercase tracking-wider font-semibold" style={{ fontFamily: 'var(--bsi-font-display)' }}>BSI Labs Portal</span>
-              <span className="text-xs" style={{ color: 'var(--bsi-dust)' }}>Sabermetrics · Leaderboards · Compare</span>
+              <span className="uppercase tracking-wider font-semibold" style={{ fontFamily: 'var(--bsi-font-display)' }}>Visualization Tools</span>
+              <span className="text-xs" style={{ color: 'var(--bsi-dust)' }}>16 interactive charts · D3 · Live data</span>
               <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M7 17L17 7M17 7H7M17 7v10" />
               </svg>
