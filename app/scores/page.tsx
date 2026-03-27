@@ -715,7 +715,7 @@ function ScoresHubContent() {
             </ScrollReveal>
             <ScrollReveal direction="up" delay={150}>
               <p className="mt-2 text-base max-w-2xl font-serif" style={{ color: 'var(--bsi-dust)' }}>
-                Real-time scores across MLB, NFL, NBA, college football, and every D1 college baseball program.
+                Live college baseball scores for every D1 program — updated in real time.
               </p>
             </ScrollReveal>
             {hasAnyLive && (
@@ -992,13 +992,10 @@ function ScoresHubContent() {
                   <div className="flex flex-wrap gap-2">
                     {[
                       { href: '/college-baseball/scores', label: 'College Baseball Scores' },
-                      { href: '/mlb/scores', label: 'MLB Scores' },
-                      { href: '/nfl/games', label: 'NFL Scores' },
-                      { href: '/nba/games', label: 'NBA Scores' },
-                      { href: '/college-baseball/standings', label: 'CBB Standings' },
-                      { href: '/mlb/standings', label: 'MLB Standings' },
-                      { href: '/nfl/standings', label: 'NFL Standings' },
-                      { href: '/nba/standings', label: 'NBA Standings' },
+                      { href: '/college-baseball/standings', label: 'Standings' },
+                      { href: '/college-baseball/rankings', label: 'Rankings' },
+                      { href: '/college-baseball/savant', label: 'BSI Savant' },
+                      { href: '/college-baseball/editorial', label: 'Editorial' },
                     ].map(link => (
                       <Link
                         key={link.href}
