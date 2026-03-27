@@ -922,7 +922,6 @@ export default function SavantVisualsPage() {
                     ) : (
                       <StatDistribution
                         data={enrichedBatters}
-                        onPlayerClick={(id) => window.open(`/college-baseball/savant/player/${id}/`, '_blank')}
                       />
                     )
                   )}
@@ -944,12 +943,17 @@ export default function SavantVisualsPage() {
                       <Card padding="lg" className="text-center">
                         <span className="text-xs text-text-muted font-mono">Loading batting data...</span>
                       </Card>
-                    ) : (
-                      <CompareScatter
-                        data={enrichedBatters}
-                        onPlayerClick={(id) => window.open(`/college-baseball/savant/player/${id}/`, '_blank')}
-                      />
-                    )
+                    ) : (() => {
+                      const teams = [...new Set(enrichedBatters.map(b => b.team))].slice(0, 2);
+                      if (teams.length < 2) return null;
+                      return (
+                        <CompareScatter
+                          teamA={{ name: teams[0], color: '#BF5700', batters: enrichedBatters.filter(b => b.team === teams[0]) }}
+                          teamB={{ name: teams[1], color: '#4B9CD3', batters: enrichedBatters.filter(b => b.team === teams[1]) }}
+                          onPlayerClick={(id) => window.open(`/college-baseball/savant/player/${id}/`, '_blank')}
+                        />
+                      );
+                    })()
                   )}
                 </div>
               </ScrollReveal>
