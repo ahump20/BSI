@@ -122,26 +122,7 @@ const SPORT_SECTIONS: SportSection[] = [
     description: 'Every D1 program — live scores, box scores, and recaps',
     liveCount: 0, todayCount: 0, season: 'Feb - Jun', isActive: false, loaded: false, featured: [],
   },
-  {
-    id: 'mlb', name: 'MLB', href: '/mlb/scores',
-    description: 'Real-time MLB scores from the official Stats API',
-    liveCount: 0, todayCount: 0, season: 'Mar - Oct', isActive: true, loaded: false, featured: [],
-  },
-  {
-    id: 'nfl', name: 'NFL', href: '/nfl/games',
-    description: 'NFL scores, standings, and game analysis',
-    liveCount: 0, todayCount: 0, season: 'Sep - Feb', isActive: false, loaded: false, featured: [],
-  },
-  {
-    id: 'nba', name: 'NBA', href: '/nba/games',
-    description: 'NBA scores and standings',
-    liveCount: 0, todayCount: 0, season: 'Oct - Jun', isActive: false, loaded: false, featured: [],
-  },
-  {
-    id: 'cfb', name: 'College Football', href: '/cfb/scores',
-    description: 'FBS conference scores and matchups',
-    liveCount: 0, todayCount: 0, season: 'Aug - Jan', isActive: false, loaded: false, featured: [],
-  },
+  // Other sports hidden until their data surfaces are functional
 ];
 
 function createSportSections(): SportSection[] {
