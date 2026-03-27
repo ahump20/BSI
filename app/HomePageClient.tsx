@@ -1,15 +1,15 @@
 'use client';
 
 /**
- * Homepage Dashboard — the grown-up version of Labs' Dashboard.
- * Data-first, dense, live. Designed for the sidebar shell.
+ * Homepage Dashboard — operational data surface.
+ * Two-column layout: orientation (nav + standouts) left, live data right.
+ * No marketing copy. The data IS the homepage.
  */
 import { useMemo } from 'react';
 import Link from 'next/link';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { HeroScoreStrip } from '@/components/home/HeroScoreStrip';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { fmt3, fmt2 } from '@/lib/analytics/viz';
 
@@ -37,7 +37,6 @@ interface LeaderboardEntry {
   whip?: number;
   k_9?: number;
   bb_9?: number;
-  era_minus?: number;
   [key: string]: unknown;
 }
 
@@ -47,100 +46,60 @@ interface LeaderboardResponse {
 }
 
 // ---------------------------------------------------------------------------
-// Nav Cards
+// Nav Items — product entry points
 // ---------------------------------------------------------------------------
 
-const NAV_CARDS = [
-  { title: 'Savant', subtitle: 'Batting & pitching leaderboards', href: '/college-baseball/savant/', icon: '◈', color: 'var(--bsi-primary)' },
-  { title: 'Live Scores', subtitle: 'Every D1 game, real-time', href: '/scores/', icon: '⚾', color: '#10B981' },
-  { title: 'Rankings', subtitle: 'National poll + RPI', href: '/college-baseball/rankings/', icon: '▲', color: '#F59E0B' },
-  { title: 'Visuals', subtitle: '16 interactive charts', href: '/college-baseball/savant/visuals/', icon: '◆', color: 'var(--heritage-columbia-blue)' },
-  { title: 'Bubble Watch', subtitle: 'Tournament field projection', href: '/college-baseball/savant/bubble/', icon: '◉', color: '#EF4444' },
-  { title: 'Ask BSI', subtitle: 'AI-powered baseball analysis', href: '/ask/', icon: '✦', color: '#A855F7' },
+const NAV_ITEMS = [
+  { title: 'Savant', href: '/college-baseball/savant/', icon: '◈', desc: 'Leaderboards' },
+  { title: 'Scores', href: '/scores/', icon: '⚾', desc: 'Live games' },
+  { title: 'Rankings', href: '/college-baseball/rankings/', icon: '▲', desc: 'National poll' },
+  { title: 'Visuals', href: '/college-baseball/savant/visuals/', icon: '◆', desc: '16 charts' },
+  { title: 'Bubble', href: '/college-baseball/savant/bubble/', icon: '◉', desc: 'Tournament' },
+  { title: 'Ask BSI', href: '/ask/', icon: '✦', desc: 'AI analysis' },
+  { title: 'Standings', href: '/college-baseball/standings/', icon: '≡', desc: 'Conferences' },
+  { title: 'Compare', href: '/college-baseball/compare/', icon: '⇔', desc: 'Head-to-head' },
 ] as const;
 
 // ---------------------------------------------------------------------------
-// Standout Card
+// Compact Leaderboard
 // ---------------------------------------------------------------------------
 
-function StandoutCard({ player, statLabel, statValue, statColor, subtitle }: {
-  player: LeaderboardEntry;
-  statLabel: string;
-  statValue: string;
-  statColor: string;
-  subtitle: string;
-}) {
-  return (
-    <Card padding="none" className="overflow-hidden">
-      <div className="px-4 py-3">
-        <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0">
-            <Link
-              href={player.player_id ? `/college-baseball/savant/player/${player.player_id}/` : '/college-baseball/savant/'}
-              className="text-base font-bold block truncate transition-colors hover:text-[var(--bsi-primary)]"
-              style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-bone)' }}
-            >
-              {player.player_name}
-            </Link>
-            <span className="text-[10px] font-mono block mt-0.5" style={{ color: 'var(--bsi-dust)' }}>
-              {player.team}{player.conference ? ` · ${player.conference}` : ''}
-            </span>
-          </div>
-          <div className="text-right shrink-0">
-            <span
-              className="text-xl font-bold font-mono block"
-              style={{ color: statColor }}
-            >
-              {statValue}
-            </span>
-            <span className="text-[9px] font-mono uppercase tracking-wider block" style={{ color: 'var(--bsi-dust)' }}>
-              {statLabel}
-            </span>
-          </div>
-        </div>
-        <p className="text-[10px] mt-2" style={{ color: 'var(--bsi-dust)' }}>{subtitle}</p>
-      </div>
-    </Card>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Compact Leaderboard Table
-// ---------------------------------------------------------------------------
-
-function CompactLeaderboard({ title, data, columns }: {
+function LeaderboardTable({ title, href, data, columns }: {
   title: string;
+  href: string;
   data: LeaderboardEntry[];
-  columns: { key: string; label: string; format: (v: number) => string }[];
+  columns: { key: string; label: string; format: (v: number) => string; accent?: boolean }[];
 }) {
   return (
-    <Card padding="none">
-      <div className="px-4 py-3 border-b" style={{ borderColor: 'var(--border-vintage)' }}>
-        <div className="flex items-center justify-between">
-          <h3
-            className="text-xs uppercase tracking-wider font-bold"
-            style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-bone)' }}
-          >
-            {title}
-          </h3>
-          <Link
-            href="/college-baseball/savant/"
-            className="text-[10px] font-mono transition-colors hover:text-[var(--bsi-primary)]"
-            style={{ color: 'var(--bsi-dust)' }}
-          >
-            Full leaderboard →
-          </Link>
-        </div>
+    <div>
+      <div className="flex items-baseline justify-between mb-2">
+        <h2
+          className="text-[11px] uppercase tracking-[0.15em] font-bold"
+          style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-primary)' }}
+        >
+          {title}
+        </h2>
+        <Link
+          href={href}
+          className="text-[9px] font-mono uppercase tracking-wider transition-colors"
+          style={{ color: 'var(--bsi-dust)' }}
+        >
+          Full board &rarr;
+        </Link>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-[11px] font-mono">
+
+      <div className="border rounded-sm overflow-hidden" style={{ borderColor: 'var(--border-vintage)' }}>
+        <table className="w-full text-[11px]" style={{ fontFamily: 'var(--font-mono)' }}>
           <thead>
             <tr style={{ background: 'var(--surface-press-box)' }}>
-              <th className="text-left px-4 py-2 font-bold uppercase tracking-wider" style={{ color: 'var(--bsi-dust)', fontSize: '9px' }}>#</th>
-              <th className="text-left px-2 py-2 font-bold uppercase tracking-wider" style={{ color: 'var(--bsi-dust)', fontSize: '9px' }}>Player</th>
-              <th className="text-left px-2 py-2 font-bold uppercase tracking-wider" style={{ color: 'var(--bsi-dust)', fontSize: '9px' }}>Team</th>
+              <th className="text-left pl-3 pr-1 py-1.5 font-bold" style={{ color: 'var(--bsi-dust)', fontSize: '9px' }}>#</th>
+              <th className="text-left px-1 py-1.5 font-bold" style={{ color: 'var(--bsi-dust)', fontSize: '9px' }}>PLAYER</th>
               {columns.map((col) => (
-                <th key={col.key} className="text-right px-2 py-2 font-bold uppercase tracking-wider" style={{ color: 'var(--bsi-dust)', fontSize: '9px' }}>
+                <th
+                  key={col.key}
+                  className="text-right px-1 py-1.5 font-bold"
+                  style={{ color: col.accent ? 'var(--bsi-primary)' : 'var(--bsi-dust)', fontSize: '9px' }}
+                >
                   {col.label}
                 </th>
               ))}
@@ -150,24 +109,30 @@ function CompactLeaderboard({ title, data, columns }: {
             {data.slice(0, 10).map((row, idx) => (
               <tr
                 key={row.player_id ?? idx}
-                className="border-t transition-colors hover:bg-[rgba(196,184,165,0.04)]"
+                className="border-t transition-colors duration-100 hover:bg-[rgba(191,87,0,0.04)]"
                 style={{ borderColor: 'rgba(196,184,165,0.06)' }}
               >
-                <td className="px-4 py-2" style={{ color: 'var(--bsi-dust)' }}>{idx + 1}</td>
-                <td className="px-2 py-2">
+                <td className="pl-3 pr-1 py-1.5 tabular-nums" style={{ color: 'var(--bsi-dust)' }}>{idx + 1}</td>
+                <td className="px-1 py-1.5">
                   <Link
                     href={row.player_id ? `/college-baseball/savant/player/${row.player_id}/` : '#'}
-                    className="transition-colors hover:text-[var(--bsi-primary)]"
+                    className="transition-colors duration-100 hover:text-[var(--bsi-primary)]"
                     style={{ color: 'var(--bsi-bone)' }}
                   >
                     {row.player_name}
                   </Link>
+                  <span className="block text-[9px] mt-px" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                    {row.team}
+                  </span>
                 </td>
-                <td className="px-2 py-2" style={{ color: 'var(--bsi-dust)' }}>{row.team}</td>
                 {columns.map((col) => {
                   const val = row[col.key];
                   return (
-                    <td key={col.key} className="text-right px-2 py-2" style={{ color: 'var(--bsi-bone)' }}>
+                    <td
+                      key={col.key}
+                      className="text-right px-1 py-1.5 tabular-nums"
+                      style={{ color: col.accent ? 'var(--bsi-bone)' : 'var(--bsi-dust)' }}
+                    >
                       {typeof val === 'number' ? col.format(val) : '--'}
                     </td>
                   );
@@ -177,7 +142,26 @@ function CompactLeaderboard({ title, data, columns }: {
           </tbody>
         </table>
       </div>
-    </Card>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Skeleton
+// ---------------------------------------------------------------------------
+
+function TableSkeleton() {
+  return (
+    <div className="border rounded-sm overflow-hidden animate-pulse" style={{ borderColor: 'var(--border-vintage)' }}>
+      <div className="h-7" style={{ background: 'var(--surface-press-box)' }} />
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div key={i} className="flex items-center gap-2 px-3 py-2 border-t" style={{ borderColor: 'rgba(196,184,165,0.06)' }}>
+          <div className="h-3 w-4 rounded" style={{ background: 'rgba(196,184,165,0.08)' }} />
+          <div className="h-3 flex-1 rounded" style={{ background: 'rgba(196,184,165,0.1)' }} />
+          <div className="h-3 w-10 rounded" style={{ background: 'rgba(196,184,165,0.08)' }} />
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -186,20 +170,14 @@ function CompactLeaderboard({ title, data, columns }: {
 // ---------------------------------------------------------------------------
 
 export function HomePageClient() {
-  const { data: battingRes, loading: battingLoading, meta: battingMeta } =
-    useSportData<LeaderboardResponse>('/api/savant/batting/leaderboard?limit=50', {
-      refreshInterval: 300_000,
-    });
-
+  const { data: battingRes, loading: battingLoading } =
+    useSportData<LeaderboardResponse>('/api/savant/batting/leaderboard?limit=50', { refreshInterval: 300_000 });
   const { data: pitchingRes, loading: pitchingLoading } =
-    useSportData<LeaderboardResponse>('/api/savant/pitching/leaderboard?limit=50', {
-      refreshInterval: 300_000,
-    });
+    useSportData<LeaderboardResponse>('/api/savant/pitching/leaderboard?limit=50', { refreshInterval: 300_000 });
 
   const batters = battingRes?.data ?? [];
   const pitchers = pitchingRes?.data ?? [];
 
-  // Top standouts
   const topHitter = useMemo(() => {
     return [...batters]
       .filter((b) => b.wrc_plus != null && (b.pa ?? 0) >= 30)
@@ -212,185 +190,205 @@ export function HomePageClient() {
       .sort((a, b) => (a.fip ?? 99) - (b.fip ?? 99))[0] ?? null;
   }, [pitchers]);
 
-  const isLoading = battingLoading || pitchingLoading;
-
   return (
-    <div className="min-h-screen pb-8">
-      {/* Score ticker */}
-      <div className="border-b" style={{ borderColor: 'var(--border-vintage)' }}>
-        <DataErrorBoundary name="ScoreTicker" compact>
-          <HeroScoreStrip />
-        </DataErrorBoundary>
-      </div>
+    <div className="min-h-screen">
+      {/* ── Main grid: two-column on desktop ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-0 lg:gap-6 p-4 md:p-6">
 
-      {/* Content */}
-      <div className="px-4 md:px-6 pt-5 space-y-5">
-        {/* Hero strip — brand + live indicator */}
-        <div className="flex items-center justify-between flex-wrap gap-3">
+        {/* ── Left column: orientation ── */}
+        <div className="space-y-4">
+
+          {/* Brand mark */}
           <div>
             <h1
-              className="text-xl md:text-2xl font-bold uppercase tracking-wider"
-              style={{ fontFamily: 'var(--font-hero)', color: 'var(--bsi-bone)' }}
+              className="text-lg font-bold uppercase tracking-[0.2em]"
+              style={{ fontFamily: 'var(--font-hero)', color: 'var(--bsi-bone)', lineHeight: 1.1 }}
             >
               Blaze Sports Intel
             </h1>
-            <p className="text-[11px] font-mono mt-0.5" style={{ color: 'var(--bsi-dust)' }}>
-              College baseball sabermetrics · live scores · scouting
+            <p className="text-[10px] font-mono mt-1" style={{ color: 'var(--bsi-dust)' }}>
+              D1 baseball sabermetrics &middot; live scores &middot; scouting
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            {battingMeta?.lastUpdated && (
-              <span className="text-[9px] font-mono" style={{ color: 'var(--bsi-dust)' }}>
-                Updated {new Date(battingMeta.lastUpdated).toLocaleTimeString('en-US', {
-                  hour: 'numeric',
-                  minute: '2-digit',
-                  timeZone: 'America/Chicago',
-                })} CT
-              </span>
-            )}
-            <Badge variant="accent" className="text-[9px]">LIVE</Badge>
-          </div>
-        </div>
 
-        {/* Nav grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-          {NAV_CARDS.map((card) => (
-            <Link
-              key={card.href}
-              href={card.href}
-              className="group flex items-center gap-3 px-3 py-2.5 rounded-sm transition-all hover:bg-[rgba(196,184,165,0.04)]"
-              style={{
-                background: 'var(--surface-dugout)',
-                border: '1px solid var(--border-vintage)',
-              }}
-            >
-              <span className="text-base shrink-0" style={{ color: card.color }}>
-                {card.icon}
-              </span>
-              <div className="min-w-0">
-                <span
-                  className="text-xs font-bold uppercase tracking-wider block group-hover:text-[var(--bsi-primary)] transition-colors"
-                  style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-bone)' }}
-                >
-                  {card.title}
+          {/* Nav grid */}
+          <nav className="grid grid-cols-2 gap-1.5" aria-label="Quick navigation">
+            {NAV_ITEMS.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="group flex items-center gap-2 px-2.5 py-2 rounded-sm transition-all duration-100
+                           hover:bg-[rgba(191,87,0,0.06)] border"
+                style={{ borderColor: 'rgba(196,184,165,0.06)', background: 'transparent' }}
+              >
+                <span className="text-sm shrink-0 opacity-50 group-hover:opacity-100 transition-opacity" style={{ color: 'var(--bsi-primary)' }}>
+                  {item.icon}
                 </span>
-                <span className="text-[9px] font-mono block" style={{ color: 'var(--bsi-dust)' }}>
-                  {card.subtitle}
+                <div className="min-w-0">
+                  <span
+                    className="text-[10px] font-bold uppercase tracking-wider block group-hover:text-[var(--bsi-primary)] transition-colors"
+                    style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-bone)' }}
+                  >
+                    {item.title}
+                  </span>
+                  <span className="text-[8px] font-mono block" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                    {item.desc}
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </nav>
+
+          {/* Standout hitter */}
+          {topHitter && (
+            <div className="border rounded-sm p-3" style={{ borderColor: 'var(--border-vintage)' }}>
+              <div className="flex items-center gap-1.5 mb-2">
+                <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#10B981' }} />
+                <span className="text-[9px] font-mono uppercase tracking-wider" style={{ color: 'var(--bsi-dust)' }}>
+                  Top hitter
                 </span>
               </div>
-            </Link>
-          ))}
-        </div>
-
-        {/* Standouts */}
-        {!isLoading && (topHitter || topPitcher) && (
-          <div>
-            <h2 className="text-[10px] font-mono uppercase tracking-widest mb-2" style={{ color: 'var(--bsi-dust)' }}>
-              Today&apos;s Standouts
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {topHitter && (
-                <StandoutCard
-                  player={topHitter}
-                  statLabel="wRC+"
-                  statValue={String(Math.round(topHitter.wrc_plus ?? 0))}
-                  statColor="#10B981"
-                  subtitle={`${fmt3(topHitter.woba ?? 0)} wOBA · ${fmt3(topHitter.avg ?? 0)} AVG · ${topHitter.pa} PA`}
-                />
-              )}
-              {topPitcher && (
-                <StandoutCard
-                  player={topPitcher}
-                  statLabel="FIP"
-                  statValue={fmt2(topPitcher.fip ?? 0)}
-                  statColor="var(--heritage-columbia-blue)"
-                  subtitle={`${fmt2(topPitcher.era ?? 0)} ERA · ${fmt2(topPitcher.k_9 ?? 0)} K/9 · ${topPitcher.ip} IP`}
-                />
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Loading skeleton for standouts */}
-        {isLoading && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {[1, 2].map((i) => (
-              <Card key={i} padding="md" className="animate-pulse">
-                <div className="flex justify-between">
-                  <div>
-                    <div className="h-4 w-28 rounded" style={{ background: 'var(--surface-press-box)' }} />
-                    <div className="h-3 w-20 rounded mt-2" style={{ background: 'var(--surface-press-box)' }} />
-                  </div>
-                  <div className="h-8 w-12 rounded" style={{ background: 'var(--surface-press-box)' }} />
+              <Link
+                href={topHitter.player_id ? `/college-baseball/savant/player/${topHitter.player_id}/` : '/college-baseball/savant/'}
+                className="block group"
+              >
+                <div className="flex items-baseline justify-between">
+                  <span
+                    className="text-sm font-bold group-hover:text-[var(--bsi-primary)] transition-colors"
+                    style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-bone)' }}
+                  >
+                    {topHitter.player_name}
+                  </span>
+                  <span className="text-lg font-bold font-mono tabular-nums" style={{ color: '#10B981' }}>
+                    {Math.round(topHitter.wrc_plus ?? 0)}
+                  </span>
                 </div>
-              </Card>
-            ))}
-          </div>
-        )}
+                <div className="flex items-center justify-between mt-0.5">
+                  <span className="text-[9px] font-mono" style={{ color: 'var(--bsi-dust)' }}>
+                    {topHitter.team} &middot; {topHitter.pa} PA
+                  </span>
+                  <span className="text-[9px] font-mono" style={{ color: 'var(--bsi-dust)' }}>wRC+</span>
+                </div>
+              </Link>
+              <div className="flex gap-3 mt-2 pt-2 border-t" style={{ borderColor: 'rgba(196,184,165,0.06)' }}>
+                <span className="text-[9px] font-mono" style={{ color: 'var(--bsi-dust)' }}>
+                  {fmt3(topHitter.woba ?? 0)} wOBA
+                </span>
+                <span className="text-[9px] font-mono" style={{ color: 'var(--bsi-dust)' }}>
+                  {fmt3(topHitter.avg ?? 0)} AVG
+                </span>
+                <span className="text-[9px] font-mono" style={{ color: 'var(--bsi-dust)' }}>
+                  {fmt3(topHitter.iso ?? 0)} ISO
+                </span>
+              </div>
+            </div>
+          )}
 
-        {/* Batting leaderboard */}
-        {!battingLoading && batters.length > 0 && (
-          <CompactLeaderboard
-            title="Batting Leaders"
-            data={batters}
-            columns={[
-              { key: 'woba', label: 'wOBA', format: fmt3 },
-              { key: 'wrc_plus', label: 'wRC+', format: (v) => String(Math.round(v)) },
-              { key: 'avg', label: 'AVG', format: fmt3 },
-              { key: 'slg', label: 'SLG', format: fmt3 },
-            ]}
-          />
-        )}
+          {/* Standout pitcher */}
+          {topPitcher && (
+            <div className="border rounded-sm p-3" style={{ borderColor: 'var(--border-vintage)' }}>
+              <div className="flex items-center gap-1.5 mb-2">
+                <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--heritage-columbia-blue)' }} />
+                <span className="text-[9px] font-mono uppercase tracking-wider" style={{ color: 'var(--bsi-dust)' }}>
+                  Top pitcher
+                </span>
+              </div>
+              <Link
+                href={topPitcher.player_id ? `/college-baseball/savant/player/${topPitcher.player_id}/` : '/college-baseball/savant/'}
+                className="block group"
+              >
+                <div className="flex items-baseline justify-between">
+                  <span
+                    className="text-sm font-bold group-hover:text-[var(--bsi-primary)] transition-colors"
+                    style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-bone)' }}
+                  >
+                    {topPitcher.player_name}
+                  </span>
+                  <span className="text-lg font-bold font-mono tabular-nums" style={{ color: 'var(--heritage-columbia-blue)' }}>
+                    {fmt2(topPitcher.fip ?? 0)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between mt-0.5">
+                  <span className="text-[9px] font-mono" style={{ color: 'var(--bsi-dust)' }}>
+                    {topPitcher.team} &middot; {topPitcher.ip} IP
+                  </span>
+                  <span className="text-[9px] font-mono" style={{ color: 'var(--bsi-dust)' }}>FIP</span>
+                </div>
+              </Link>
+              <div className="flex gap-3 mt-2 pt-2 border-t" style={{ borderColor: 'rgba(196,184,165,0.06)' }}>
+                <span className="text-[9px] font-mono" style={{ color: 'var(--bsi-dust)' }}>
+                  {fmt2(topPitcher.era ?? 0)} ERA
+                </span>
+                <span className="text-[9px] font-mono" style={{ color: 'var(--bsi-dust)' }}>
+                  {fmt2(topPitcher.k_9 ?? 0)} K/9
+                </span>
+                <span className="text-[9px] font-mono" style={{ color: 'var(--bsi-dust)' }}>
+                  {fmt2(topPitcher.whip ?? 0)} WHIP
+                </span>
+              </div>
+            </div>
+          )}
 
-        {/* Pitching leaderboard */}
-        {!pitchingLoading && pitchers.length > 0 && (
-          <CompactLeaderboard
-            title="Pitching Leaders"
-            data={pitchers}
-            columns={[
-              { key: 'fip', label: 'FIP', format: fmt2 },
-              { key: 'era', label: 'ERA', format: fmt2 },
-              { key: 'k_9', label: 'K/9', format: fmt2 },
-              { key: 'whip', label: 'WHIP', format: fmt2 },
-            ]}
-          />
-        )}
-
-        {/* Ask BSI entry point */}
-        <Card padding="none">
+          {/* Ask BSI */}
           <Link
             href="/ask/"
-            className="flex items-center gap-4 px-4 py-4 transition-colors hover:bg-[rgba(196,184,165,0.04)]"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-sm border transition-all duration-100
+                       hover:bg-[rgba(191,87,0,0.04)] hover:border-[rgba(191,87,0,0.2)]"
+            style={{ borderColor: 'rgba(196,184,165,0.06)' }}
           >
-            <span className="text-xl" style={{ color: '#A855F7' }}>✦</span>
-            <div className="flex-1 min-w-0">
+            <span className="text-base" style={{ color: '#A855F7' }}>✦</span>
+            <div>
               <span
-                className="text-sm font-bold uppercase tracking-wider block"
+                className="text-[10px] font-bold uppercase tracking-wider block"
                 style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-bone)' }}
               >
                 Ask BSI
               </span>
-              <span className="text-[10px] font-mono block mt-0.5" style={{ color: 'var(--bsi-dust)' }}>
-                AI-powered college baseball analysis — ask anything about stats, matchups, or scouting
+              <span className="text-[8px] font-mono" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                AI-powered analysis
               </span>
             </div>
-            <svg
-              viewBox="0 0 24 24"
-              className="w-4 h-4 shrink-0 opacity-40"
-              fill="none"
-              stroke="var(--bsi-dust)"
-              strokeWidth="2"
-            >
-              <path d="M9 18l6-6-6-6" />
-            </svg>
           </Link>
-        </Card>
 
-        {/* Attribution */}
-        <div className="text-center py-2">
-          <p className="text-[10px] font-mono" style={{ color: 'rgba(196,184,165,0.4)' }}>
+          {/* Attribution */}
+          <p className="text-[9px] font-mono pt-2" style={{ color: 'rgba(196,184,165,0.3)' }}>
             Born to Blaze the Path Beaten Less
           </p>
+        </div>
+
+        {/* ── Right column: live data ── */}
+        <div className="space-y-5 mt-4 lg:mt-0">
+          <DataErrorBoundary name="BattingLeaderboard" compact>
+            {battingLoading ? <TableSkeleton /> : batters.length > 0 ? (
+              <LeaderboardTable
+                title="Batting Leaders"
+                href="/college-baseball/savant/"
+                data={batters}
+                columns={[
+                  { key: 'woba', label: 'wOBA', format: fmt3, accent: true },
+                  { key: 'wrc_plus', label: 'wRC+', format: (v) => String(Math.round(v)) },
+                  { key: 'avg', label: 'AVG', format: fmt3 },
+                  { key: 'slg', label: 'SLG', format: fmt3 },
+                ]}
+              />
+            ) : null}
+          </DataErrorBoundary>
+
+          <DataErrorBoundary name="PitchingLeaderboard" compact>
+            {pitchingLoading ? <TableSkeleton /> : pitchers.length > 0 ? (
+              <LeaderboardTable
+                title="Pitching Leaders"
+                href="/college-baseball/savant/"
+                data={pitchers}
+                columns={[
+                  { key: 'fip', label: 'FIP', format: fmt2, accent: true },
+                  { key: 'era', label: 'ERA', format: fmt2 },
+                  { key: 'k_9', label: 'K/9', format: fmt2 },
+                  { key: 'whip', label: 'WHIP', format: fmt2 },
+                ]}
+              />
+            ) : null}
+          </DataErrorBoundary>
         </div>
       </div>
     </div>
