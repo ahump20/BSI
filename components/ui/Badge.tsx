@@ -2,9 +2,13 @@ import React, { ReactNode } from 'react';
 import type { DataMetaLike } from '@/lib/utils/data-meta';
 import { getDataSourceLabel, normalizeDataMeta } from '@/lib/utils/data-meta';
 
+/** Savant percentile tier — maps to the 6-tier scale */
+export type PercentileTier = 'elite' | 'great' | 'above' | 'avg' | 'below' | 'poor';
+
 export interface BadgeProps {
   children: ReactNode;
-  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'outline' | 'default' | 'info' | 'accent';
+  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'outline' | 'default' | 'info' | 'accent'
+    | 'elite' | 'great' | 'above' | 'avg' | 'below' | 'poor';
   size?: 'sm' | 'md';
   style?: React.CSSProperties;
   className?: string;
@@ -20,7 +24,25 @@ const variantClasses: Record<string, string> = {
   default: 'bg-surface text-text-secondary border-border-strong',
   info: 'bg-info/20 text-info-light border-info/30',
   accent: 'bg-burnt-orange/20 text-ember border-burnt-orange/30',
+  /* Savant percentile tiers */
+  elite: 'bg-[#ef4444]/20 text-[#ef4444] border-[#ef4444]/30',
+  great: 'bg-[#f97316]/20 text-[#f97316] border-[#f97316]/30',
+  above: 'bg-[#eab308]/20 text-[#eab308] border-[#eab308]/30',
+  avg: 'bg-[#8890a4]/20 text-[#8890a4] border-[#8890a4]/30',
+  below: 'bg-[#3b82f6]/20 text-[#3b82f6] border-[#3b82f6]/30',
+  poor: 'bg-[#6366f1]/20 text-[#6366f1] border-[#6366f1]/30',
 };
+
+/** Get the percentile tier for a given percentile value */
+export function getPercentileTier(pct: number, higherIsBetter = true): PercentileTier {
+  const effective = higherIsBetter ? pct : 100 - pct;
+  if (effective >= 90) return 'elite';
+  if (effective >= 75) return 'great';
+  if (effective >= 60) return 'above';
+  if (effective >= 40) return 'avg';
+  if (effective >= 25) return 'below';
+  return 'poor';
+}
 
 const sizeClasses: Record<string, string> = {
   sm: 'px-2 py-0.5 text-[10px]',

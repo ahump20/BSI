@@ -5,8 +5,8 @@
  */
 
 // Badge components
-export { Badge, LiveBadge, FreshnessBadge, DataSourceBadge } from './Badge';
-export type { BadgeProps } from './Badge';
+export { Badge, LiveBadge, FreshnessBadge, DataSourceBadge, getPercentileTier } from './Badge';
+export type { BadgeProps, PercentileTier } from './Badge';
 
 // Button
 export { Button } from './Button';
@@ -14,6 +14,9 @@ export type { ButtonProps } from './Button';
 
 // Card components
 export { Card, CardHeader, CardTitle, CardContent } from './Card';
+
+// Stat display
+export { StatValue } from './StatValue';
 
 // Layout
 export { Container } from './Container';
