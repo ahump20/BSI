@@ -484,7 +484,7 @@ export default function SavantPlayerClient() {
             aria-hidden="true"
             style={{
               backgroundImage:
-                'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)',
+                'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(140,98,57,0.04) 2px, rgba(140,98,57,0.04) 4px)',
             }}
           />
 
