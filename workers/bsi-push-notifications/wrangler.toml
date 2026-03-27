@@ -1,3 +1,6 @@
+<<<<<<< ours
+<<<<<<< ours
+<<<<<<< ours
 # BSI Push Notifications — Cron Worker
 # Sends push notifications for live game events via Expo Push API.
 #
@@ -26,6 +29,25 @@ crons = ["*/5 14-5 * * *"]
 binding = "DB"
 database_name = "bsi-prod-db"
 database_id = "6921617f-5351-4df3-aeab-07425e72ec6b"
+=======
+=======
+>>>>>>> theirs
+=======
+>>>>>>> theirs
+name = "bsi-push-notifications-dev"
+main = "index.ts"
+compatibility_date = "2026-03-24"
+compatibility_flags = ["nodejs_compat"]
+
+[triggers]
+crons = ["*/5 * * * *"]
+<<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
+>>>>>>> theirs
+=======
+>>>>>>> theirs
 
 [[d1_databases]]
 binding = "BSI_PROD_DB"
@@ -34,6 +56,9 @@ database_id = "6921617f-5351-4df3-aeab-07425e72ec6b"
 
 [[kv_namespaces]]
 binding = "BSI_KEYS"
+<<<<<<< ours
+<<<<<<< ours
+<<<<<<< ours
 id = "b7ff9178798d4a238afff79522f651e8"
 preview_id = "b7ff9178798d4a238afff79522f651e8"
 
@@ -52,3 +77,48 @@ service = "bsi-error-tracker"
 
 [dev]
 port = 8798
+=======
+=======
+>>>>>>> theirs
+=======
+>>>>>>> theirs
+id = "placeholder"
+
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "placeholder"
+
+[[kv_namespaces]]
+binding = "BSI_PROD_CACHE"
+id = "placeholder"
+
+[env.production]
+name = "bsi-push-notifications"
+routes = [
+  { pattern = "blazesportsintel.com/api/push/register", zone_name = "blazesportsintel.com" },
+  { pattern = "blazesportsintel.com/api/push/send", zone_name = "blazesportsintel.com" }
+]
+
+[[env.production.d1_databases]]
+binding = "BSI_PROD_DB"
+database_name = "bsi-prod-db"
+database_id = "6921617f-5351-4df3-aeab-07425e72ec6b"
+
+[[env.production.kv_namespaces]]
+binding = "BSI_KEYS"
+id = "placeholder"
+
+[[env.production.kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "placeholder"
+
+[[env.production.kv_namespaces]]
+binding = "BSI_PROD_CACHE"
+id = "placeholder"
+<<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
+>>>>>>> theirs
+=======
+>>>>>>> theirs

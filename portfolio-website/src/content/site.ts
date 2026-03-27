@@ -21,13 +21,15 @@ export const PLATFORM_URLS = {
   email: `mailto:${PRIMARY_EMAIL}`,
 } as const;
 
+/* ── Navigation ── */
+
 export const NAV_ITEMS = [
   { id: 'hero', label: 'Home' },
-  { id: 'bsi', label: 'BSI' },
-  { id: 'projects', label: 'Work' },
+  { id: 'work', label: 'Work' },
   { id: 'proof', label: 'Proof' },
+  { id: 'platform', label: 'Platform' },
   { id: 'origin', label: 'Origin' },
-  { id: 'covenant', label: 'Covenant' },
+  { id: 'career', label: 'Career' },
   { id: 'contact', label: 'Contact' },
 ] as const;
 
@@ -35,11 +37,11 @@ export const FOOTER_LINK_GROUPS = [
   {
     title: 'Navigate',
     links: [
-      { label: 'BSI', href: '#bsi' },
-      { label: 'Work', href: '#projects' },
+      { label: 'Work', href: '#work' },
       { label: 'Proof', href: '#proof' },
+      { label: 'Platform', href: '#platform' },
       { label: 'Origin', href: '#origin' },
-      { label: 'Covenant', href: '#covenant' },
+      { label: 'Career', href: '#career' },
       { label: 'Contact', href: '#contact' },
     ] satisfies SiteLink[],
   },
@@ -63,6 +65,8 @@ export const FOOTER_LINK_GROUPS = [
     ] satisfies SiteLink[],
   },
 ] as const;
+
+/* ── Contact ── */
 
 export type ContactChannelIcon = 'email' | 'linkedin' | 'bsi' | 'github' | 'x';
 
@@ -104,61 +108,67 @@ export const CONTACT_CHANNELS: Array<{
   },
 ];
 
-export const PORTFOLIO_PROJECTS = {
-  featured: [
-    {
-      name: 'A Documented Heritage',
-      description:
-        'Personal data archive with 12+ interactive D3 charts, a Three.js swing biomechanics viewer, and an ancestry globe. Cross-references 8 data sources — Spotify, 23andMe, natal chart, personality instruments, writing corpus, and more.',
-      tech: ['React', 'D3.js', 'Three.js', 'TypeScript', 'Tailwind'],
-      url: PLATFORM_URLS.dna,
-      highlight: 'Data Viz',
-      live: false,
-    },
-    {
-      name: 'BSI Radar Lab',
-      description:
-        'Physics-based quality auditor for TrackMan pitch data. Six validation layers — Magnus model, SSW detection, calibration drift, physical bounds, release clustering, and fatigue tracking. All processing runs locally in the browser.',
-      tech: ['React', 'Recharts', 'TypeScript', 'Vite'],
-      url: PLATFORM_URLS.labs,
-      highlight: 'Analytics',
-      live: true,
-    },
-  ],
-  supporting: [
-    {
-      name: 'BlazeCraft',
-      description:
-        'Warcraft 3: Frozen Throne-style system health dashboard for BSI infrastructure. Real-time monitoring with game-inspired UI and Durable Object state management.',
-      tech: ['Cloudflare Pages', 'Workers', 'Durable Objects', 'Canvas2D'],
-      url: PLATFORM_URLS.blazecraft,
-      highlight: 'DevOps',
-      live: true,
-    },
-    {
-      name: 'Sandlot Sluggers',
-      description:
-        'Browser-based 3D baseball arcade with four game modes, real college baseball rosters via BSI API, and leaderboard integration.',
-      tech: ['Three.js', 'JavaScript', 'Cloudflare Pages'],
-      url: PLATFORM_URLS.arcade,
-      highlight: 'Game',
-      live: true,
-    },
-  ],
-} as const;
+/* ── Projects (flat flagship grid) ── */
 
-export const BSI_SHOWCASE = {
+export type Project = {
+  name: string;
+  category: string;
+  outcome: string;
+  href: string;
+  techs: string[];
+  state: 'live' | 'building';
+};
+
+export const PORTFOLIO_PROJECTS: Project[] = [
+  {
+    name: 'Blaze Sports Intel',
+    category: 'Analytics Platform',
+    outcome: 'Six leagues, solo-built, live in production.',
+    href: PLATFORM_URLS.bsi,
+    techs: ['Cloudflare Workers', 'Next.js', 'D1'],
+    state: 'live',
+  },
+  {
+    name: 'BSI Radar Lab',
+    category: 'Pitch Analytics',
+    outcome: 'Physics-based TrackMan quality auditor — six validation layers, all client-side.',
+    href: PLATFORM_URLS.labs,
+    techs: ['React', 'Recharts', 'TypeScript'],
+    state: 'live',
+  },
+  {
+    name: 'BlazeCraft',
+    category: 'System Health',
+    outcome: 'Game-inspired infrastructure dashboard with real-time Durable Object monitoring.',
+    href: PLATFORM_URLS.blazecraft,
+    techs: ['Workers', 'Durable Objects', 'Canvas2D'],
+    state: 'live',
+  },
+  {
+    name: 'Sandlot Sluggers',
+    category: 'Browser Game',
+    outcome: '3D baseball arcade with real college rosters via BSI API and leaderboard integration.',
+    href: PLATFORM_URLS.arcade,
+    techs: ['Three.js', 'JavaScript', 'Workers'],
+    state: 'live',
+  },
+  {
+    name: 'A Documented Heritage',
+    category: 'Personal Archive',
+    outcome: '12+ D3 visualizations cross-referencing 8 data sources into an interactive self-portrait.',
+    href: PLATFORM_URLS.dna,
+    techs: ['D3.js', 'Three.js', 'React'],
+    state: 'building',
+  },
+];
+
+/* ── BSI Platform (lean evidence section) ── */
+
+export const BSI_PLATFORM = {
   stats: [
     { value: '6', label: 'Leagues' },
     { value: '330+', label: 'D1 Programs' },
     { value: '58+', label: 'Articles' },
-    { value: '558', label: 'Tests Passing' },
-  ],
-  architecture: [
-    { label: 'External APIs', sub: 'Highlightly · SportsDataIO · ESPN' },
-    { label: 'Workers', sub: 'Dozens of edge-powered specialists' },
-    { label: 'Storage', sub: 'D1 · KV · R2' },
-    { label: 'UI', sub: 'Next.js static export' },
   ],
   leagues: [
     { name: 'College Baseball', note: 'Flagship' },
@@ -168,41 +178,64 @@ export const BSI_SHOWCASE = {
     { name: 'NBA', note: 'Full Coverage' },
     { name: 'NCAA Basketball', note: 'Full Coverage' },
   ],
-  techStack: [
-    'Cloudflare Workers',
-    'D1',
-    'KV',
-    'R2',
-    'Hono',
-    'Next.js',
-    'React',
-    'TypeScript',
-    'Claude API',
-    'SportsDataIO',
-    'Highlightly',
-    'Vitest',
-    'Playwright',
-  ],
-  capabilities: [
-    {
-      title: 'AI-Powered Analysis',
-      description:
-        'Claude-driven editorial generation, predictive modeling, and analytical depth — AI as a force multiplier for coverage, not a gimmick.',
-    },
-    {
-      title: 'Predictive Intelligence',
-      description:
-        'Machine learning models trained on historical performance, matchup dynamics, and contextual factors. Predictions grounded in real signal.',
-    },
-    {
-      title: 'Edge-First Architecture',
-      description:
-        'Dozens of edge-powered specialists deliver sub-50ms response times globally. Data pipelines that fetch, transform, and cache without a traditional server.',
-    },
-    {
-      title: 'Podcast Export',
-      description:
-        'NotebookLM integration transforms written analytics into audio. Coverage extends beyond readers to listeners through a second medium.',
-    },
-  ],
+  techStackSentence:
+    'Built on Cloudflare Workers, D1, KV, R2, Hono, Next.js, React, and TypeScript.',
 } as const;
+
+/* ── Origin sidebar ── */
+
+export const ORIGIN_FACTS = [
+  { label: 'Born', value: 'August 17, 1995' },
+  { label: 'Birth Soil', value: 'West Columbia, TX' },
+  { label: 'Named After', value: 'Austin, Texas' },
+];
+
+export const ORIGIN_MOMENTS = [
+  {
+    title: 'The soil came first',
+    text: 'Austin was born in Memphis on August 17, 1995, but his parents brought Texas soil from West Columbia and placed it beneath his mother before he was born. The doctor told the family, "You know you ain\'t the first to do this, but they\'ve ALL been from Texas." The next day the El Campo Leader-News ran the headline "Tennessee Birth Will Be on Texas Soil." Not a gesture for a story later — a family continuation.',
+  },
+  {
+    title: 'Sports culture was native, not added',
+    text: 'Ricky Williams, UT season tickets, youth baseball, Friday night lights, and the Forty Acres all formed the same worldview: Texas was never only geography. It was a standard for how to show up.',
+  },
+  {
+    title: 'BSI came out of lived history',
+    text: 'Blaze Sports Intel was named from Bartlett Blaze, Austin\'s dachshund, whose name traces back to his first youth baseball team. The brand was not invented in a vacuum. It was remembered into form.',
+  },
+];
+
+/* ── Career ── */
+
+export const CAREER_ENTRIES = [
+  {
+    title: 'Founder & Builder',
+    company: 'Blaze Sports Intel',
+    location: 'San Antonio, TX',
+    period: '2023 – Present',
+    accent: 'burnt-orange',
+    description:
+      'Production-grade sports analytics platform covering six leagues — dozens of specialized systems, multiple databases, 58+ editorial deep-dives. Full architecture designed, deployed, and maintained solo.',
+  },
+  {
+    title: 'Advertising Account Executive',
+    company: 'Spectrum Reach',
+    location: 'Austin / San Antonio, TX',
+    period: 'Nov 2022 – Dec 2025',
+    accent: 'spectrum-blue',
+    description:
+      'Advertising strategy across Austin and San Antonio — two of the fastest-growing markets in Texas — spanning linear TV, OTT/CTV, streaming, and digital. Turned raw campaign data into revenue decisions for local and regional businesses.',
+  },
+  {
+    title: 'Financial Representative',
+    company: 'Northwestern Mutual',
+    location: 'Austin, TX',
+    period: 'Dec 2020 – Aug 2022',
+    accent: 'nw-navy',
+    description:
+      'Top-5 nationally ranked intern program to full-time. Only person in the office daily during COVID. Nearly tripled the referral production of every other advisor. "Power of 10" Award — top 10% national performance.',
+  },
+];
+
+export const EDUCATION_LINE =
+  'Full Sail M.S. (2026) · UT Austin B.A. (2020) · McCombs AI/ML Certificate (in progress) · ATO Rush Captain, UT Austin';

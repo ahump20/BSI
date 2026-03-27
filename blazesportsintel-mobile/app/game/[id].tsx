@@ -20,7 +20,19 @@ export default function GameDetailScreen() {
     queryFn: async () => {
       const data = await apiGet<Game | Game[]>(resolvePath(sport ?? '', id ?? ''));
       if (Array.isArray(data)) {
+<<<<<<< ours
+<<<<<<< ours
+<<<<<<< ours
         return data.find((game) => game.id === id) ?? null;
+=======
+        return data.find((game) => game.id === id || ('gameId' in game && (game as unknown as { gameId?: string }).gameId === id)) ?? null;
+>>>>>>> theirs
+=======
+        return data.find((game) => game.id === id || ('gameId' in game && (game as unknown as { gameId?: string }).gameId === id)) ?? null;
+>>>>>>> theirs
+=======
+        return data.find((game) => game.id === id || ('gameId' in game && (game as unknown as { gameId?: string }).gameId === id)) ?? null;
+>>>>>>> theirs
       }
       return data;
     },

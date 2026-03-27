@@ -78,6 +78,7 @@ export default function Navigation() {
           : sectionId === 'contact'
             ? '/contact'
             : `/#${sectionId}`;
+    // Section IDs updated: work, proof, platform, origin, career, contact
 
     window.history.replaceState(null, '', nextPath);
     const scrollTarget = Math.max(window.scrollY + target.getBoundingClientRect().top - 88, 0);

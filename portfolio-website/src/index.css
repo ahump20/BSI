@@ -256,28 +256,6 @@
     border-top: 1px solid rgba(245, 240, 235, 0.06);
   }
 
-  /* Section divider — burnt-orange gradient hairline with vertical breathing room */
-  .section-divider {
-    height: 1px;
-    max-width: 64rem;
-    margin: 1.5rem auto;
-    background: linear-gradient(90deg, transparent 2%, rgba(191, 87, 0, 0.45) 50%, transparent 98%);
-  }
-
-  .section-seam {
-    height: 1px;
-    margin: 0.5rem 0;
-    background: linear-gradient(90deg, transparent 2%, rgba(191, 87, 0, 0.55) 50%, transparent 98%);
-  }
-
-  .origin-bridge-shell {
-    position: relative;
-    background:
-      radial-gradient(ellipse 120% 50% at 15% 20%, rgba(191, 87, 0, 0.04) 0%, transparent 60%),
-      radial-gradient(ellipse 80% 40% at 85% 80%, rgba(139, 69, 19, 0.03) 0%, transparent 50%),
-      linear-gradient(180deg, var(--surface-deep) 0%, var(--surface-mid) 8%, var(--surface-mid) 92%, var(--surface-deep) 100%);
-  }
-
   .section-glow {
     position: relative;
     isolation: isolate;
@@ -314,18 +292,6 @@
     background: linear-gradient(to right, #BF5700, #FF6B35);
     z-index: 9998;
     transform-origin: left;
-  }
-
-  /* Stats marquee */
-  .marquee-track {
-    display: flex;
-    width: max-content;
-    animation: marquee 25s linear infinite;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .marquee-track {
-      animation: none;
-    }
   }
 
   /* Photo polaroid treatment */
@@ -414,25 +380,8 @@
 
 /* ─── AIChatWidget — see responsive section for bounce-delay and fab-glow ─── */
 
-/* ─── AthleticArc ─── */
-.athletic-arc-bg {
-  background: linear-gradient(180deg, #0D0D0D 0%, rgba(26,26,26,0.4) 50%, #0D0D0D 100%);
-}
-
-.accent-line-horizontal {
-  background: linear-gradient(90deg, transparent 10%, rgba(191,87,0,0.3) 50%, transparent 90%);
-}
-
-.vignette-inset {
-  box-shadow: inset 0 0 60px rgba(0,0,0,0.4);
-}
-
-.mobile-scroll-track {
-  width: max-content;
-}
-
-/* ─── BSIShowcase ─── */
-.bsi-showcase-bg {
+/* ─── Platform Depth ─── */
+.platform-depth-bg {
   background: linear-gradient(180deg, var(--surface-deep) 0%, var(--surface-elevated) 50%, var(--surface-deep) 100%);
 }
 
@@ -445,14 +394,9 @@
   background: linear-gradient(90deg, transparent 8%, rgba(191,87,0,0.45) 50%, transparent 92%);
 }
 
-/* ─── Experience ─── */
-.experience-bg {
+/* ─── Career ─── */
+.career-bg {
   background: linear-gradient(180deg, var(--surface-mid) 0%, var(--surface-deep) 50%, var(--surface-mid) 100%);
-}
-
-/* ─── Education ─── */
-.education-bg {
-  background: linear-gradient(180deg, var(--surface-mid) 0%, var(--surface-elevated) 50%, var(--surface-mid) 100%);
 }
 
 /* ─── ErrorBoundary ─── */
@@ -524,15 +468,6 @@
   letter-spacing: 0.04em;
 }
 
-/* ─── Philosophy ─── */
-.philosophy-bg {
-  background: radial-gradient(ellipse 80% 50% at 50% 50%, rgba(191,87,0,0.03) 0%, transparent 60%);
-}
-
-/* ─── Projects ─── */
-.project-card-featured-bg {
-  background: linear-gradient(135deg, rgba(26,26,26,0.8) 0%, rgba(191,87,0,0.04) 100%);
-}
 
 /* ─── Proof ─── */
 .proof-section-bottom {
@@ -546,15 +481,6 @@
 
 .vignette-deep {
   box-shadow: inset 0 0 110px rgba(0,0,0,0.62);
-}
-
-/* ─── Shared: full-span grid item ─── */
-.grid-full-span {
-  grid-column: 1 / -1;
-}
-
-.min-h-photo {
-  min-height: 300px;
 }
 
 /* Keyframes outside layers for broad compat */

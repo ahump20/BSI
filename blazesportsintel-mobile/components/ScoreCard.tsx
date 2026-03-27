@@ -25,6 +25,9 @@ export function ScoreCard({ score }: ScoreCardProps) {
         <Text style={styles.team}>{score.homeTeam.abbreviation || score.homeTeam.name}</Text>
         <Text style={[styles.points, homeLeading && styles.leading]}>{score.homeTeam.score}</Text>
       </View>
+<<<<<<< ours
+<<<<<<< ours
+<<<<<<< ours
       <Text style={styles.status}>
         {score.status === 'live'
           ? `● LIVE ${score.periodLabel ?? ''}`
@@ -32,6 +35,26 @@ export function ScoreCard({ score }: ScoreCardProps) {
             ? 'FINAL'
             : score.startTime}
       </Text>
+=======
+=======
+>>>>>>> theirs
+=======
+>>>>>>> theirs
+      {score.status === 'live' ? (
+        <View style={styles.liveRow}>
+          <View style={styles.liveDot} />
+          <Text style={[styles.status, styles.liveText]}>LIVE {score.periodLabel ?? ''}</Text>
+        </View>
+      ) : (
+        <Text style={styles.status}>{score.status === 'final' ? 'FINAL' : score.startTime}</Text>
+      )}
+<<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
+>>>>>>> theirs
+=======
+>>>>>>> theirs
     </Pressable>
   );
 }
@@ -42,5 +65,24 @@ const styles = StyleSheet.create({
   team: { color: colors.bone, fontFamily: fonts.oswald, letterSpacing: 1.2, textTransform: 'uppercase' },
   points: { color: colors.bone, fontFamily: fonts.bebas, fontSize: 32 },
   leading: { color: colors.burntOrange },
+<<<<<<< ours
+<<<<<<< ours
+<<<<<<< ours
   status: { color: colors.dust, fontFamily: fonts.mono, fontSize: 12 }
+=======
+=======
+>>>>>>> theirs
+=======
+>>>>>>> theirs
+  status: { color: colors.dust, fontFamily: fonts.mono, fontSize: 12 },
+  liveRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  liveDot: { width: 8, height: 8, borderRadius: 2, backgroundColor: colors.ember },
+  liveText: { color: colors.ember }
+<<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
+>>>>>>> theirs
+=======
+>>>>>>> theirs
 });

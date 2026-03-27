@@ -1,24 +1,60 @@
 import { motion } from 'framer-motion';
 import { staggerContainer, staggerItem } from '../utils/animations';
-import { PORTFOLIO_PROJECTS } from '../content/site';
+import { PORTFOLIO_PROJECTS, type Project } from '../content/site';
 
-function LiveBadge() {
+function ProjectCard({ project, flagship }: { project: Project; flagship?: boolean }) {
   return (
-    <span className="flex items-center gap-1.5 text-[0.6rem] font-mono text-emerald-400 uppercase tracking-widest">
-      <span className="relative flex h-2 w-2">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
-      </span>
-      Live
-    </span>
+    <motion.a
+      variants={staggerItem}
+      href={project.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={() => window.posthog?.capture('project_clicked', { project: project.name })}
+      className={`group block rounded-sm transition-all duration-300 ${
+        flagship
+          ? 'md:col-span-2 border-l-2 border-l-burnt-orange/50 border border-bone/5 bg-charcoal/30 p-8 hover:bg-charcoal/50 hover:border-bone/10'
+          : 'border border-bone/5 bg-charcoal/20 p-6 hover:bg-charcoal/40 hover:border-bone/10'
+      }`}
+    >
+      <div className="flex items-start justify-between mb-3">
+        <h3
+          className={`font-sans font-bold uppercase tracking-wider text-bone group-hover:text-burnt-orange transition-colors duration-300 ${
+            flagship ? 'text-xl' : 'text-base'
+          }`}
+        >
+          {project.name}
+        </h3>
+        <svg
+          className="w-4 h-4 text-bone/20 group-hover:text-burnt-orange group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 shrink-0 mt-1"
+          viewBox="0 0 20 20"
+          fill="none"
+        >
+          <path d="M5 15L15 5M15 5H8M15 5V12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
+
+      <p className="font-mono text-[0.65rem] uppercase tracking-[0.25em] text-burnt-orange/80 mb-2">
+        {project.category}
+      </p>
+
+      <p className="text-bone/70 text-sm leading-relaxed mb-4">
+        {project.outcome}
+      </p>
+
+      <p className="font-mono text-[0.6rem] text-warm-gray/60 tracking-wider">
+        {project.techs.join(' · ')}
+      </p>
+    </motion.a>
   );
 }
 
 export default function Projects() {
+  const [flagship, ...rest] = PORTFOLIO_PROJECTS;
+
   return (
     <section
-      id="projects"
-      aria-labelledby="projects-heading"
+      id="work"
+      aria-labelledby="work-heading"
       className="section-padding"
     >
       <div className="container-custom">
@@ -30,75 +66,13 @@ export default function Projects() {
         >
           <motion.div variants={staggerItem}>
             <p className="section-label">// The Work</p>
-            <h2 id="projects-heading" className="section-title">Projects</h2>
+            <h2 id="work-heading" className="section-title">Projects</h2>
           </motion.div>
 
-          {/* Heavy-weight projects — larger cards, more visual space */}
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
-            {PORTFOLIO_PROJECTS.featured.map((project) => (
-              <motion.a
-                key={project.name}
-                variants={staggerItem}
-                href={project.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => window.posthog?.capture('project_clicked', { project: project.name })}
-                className="card card-featured p-8 group block gradient-border-hover rounded-sm project-card-featured-bg"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <span className="text-[0.6rem] font-mono text-burnt-orange bg-burnt-orange/10 border border-burnt-orange/20 px-3 py-1 rounded-sm uppercase tracking-widest">
-                      {project.highlight}
-                    </span>
-                    {project.live && <LiveBadge />}
-                  </div>
-                  <svg className="w-5 h-5 text-bone/20 group-hover:text-burnt-orange group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-300 shrink-0" viewBox="0 0 20 20" fill="none">
-                    <path d="M5 15L15 5M15 5H8M15 5V12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </div>
-
-                <h3 className="font-sans font-bold text-xl uppercase tracking-wider text-bone mb-3 group-hover:text-burnt-orange transition-colors duration-300">
-                  {project.name}
-                </h3>
-                <p className="text-bone/75 text-base leading-relaxed mb-5">{project.description}</p>
-                <div className="flex flex-wrap gap-2">
-                  {project.tech.map((t) => (
-                    <span key={t} className="text-[0.65rem] font-mono text-warm-gray bg-bone/5 px-3 py-1 rounded-sm">
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </motion.a>
-            ))}
-          </div>
-
-          {/* Light-weight projects — compact treatment */}
-          <div className="grid md:grid-cols-2 gap-4">
-            {PORTFOLIO_PROJECTS.supporting.map((project) => (
-              <motion.a
-                key={project.name}
-                variants={staggerItem}
-                href={project.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => window.posthog?.capture('project_clicked', { project: project.name })}
-                className="group flex items-start gap-4 py-4 px-4 rounded-sm hover:bg-bone/[0.02] transition-colors duration-300 border border-transparent hover:border-bone/5"
-              >
-                <div className="shrink-0 mt-1">
-                  <span className="text-[0.55rem] font-mono text-burnt-orange bg-burnt-orange/10 border border-burnt-orange/20 px-2 py-0.5 rounded-sm uppercase tracking-widest">
-                    {project.highlight}
-                  </span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-sans font-semibold text-sm uppercase tracking-wider text-bone group-hover:text-burnt-orange transition-colors duration-300">
-                      {project.name}
-                    </h3>
-                    {project.live && <LiveBadge />}
-                  </div>
-                  <p className="text-bone/60 text-sm leading-relaxed">{project.description}</p>
-                </div>
-              </motion.a>
+          <div className="grid md:grid-cols-2 gap-5">
+            <ProjectCard project={flagship} flagship />
+            {rest.map((project) => (
+              <ProjectCard key={project.name} project={project} />
             ))}
           </div>
         </motion.div>

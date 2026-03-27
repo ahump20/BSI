@@ -68,16 +68,15 @@ export default function Proof() {
               Writing & Film
             </h2>
             <p className="editorial-lead">
-              BSI proves itself in public. The work is not a pitch deck. It is
-              published, argued, spoken, and shipped in plain view for anyone
-              willing to read the tape.
+              BSI proves itself in public. The work is published, argued, spoken,
+              and shipped in plain view.
             </p>
           </motion.div>
 
           {lead && (
             <motion.div
               variants={staggerItem}
-              className="grid gap-8 border-t border-b border-bone/5 py-10 lg:grid-cols-[minmax(0,1.3fr)_minmax(250px,0.7fr)] lg:items-end"
+              className="border-t border-b border-bone/5 py-10"
             >
               <a
                 href={lead.url}
@@ -97,59 +96,18 @@ export default function Proof() {
                   {lead.excerpt}
                 </p>
               </a>
-
-              <div className="space-y-4 border-t border-bone/10 pt-6 lg:border-t-0 lg:pt-0 lg:border-l lg:pl-8">
-                <p className="font-mono text-[0.6rem] uppercase tracking-[0.28em] text-warm-gray/70">
-                  Why It Matters
-                </p>
-                <p className="text-sm leading-7 text-bone/70">
-                  This is the public proof layer behind the platform: editorial
-                  coverage, film, and voice all pushing the same thesis with
-                  different instruments.
-                </p>
-                <a
-                  href={lead.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 font-mono text-[0.62rem] uppercase tracking-[0.28em] text-burnt-orange"
-                >
-                  Read the feature
-                  <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none">
-                    <path
-                      d="M5 15L15 5M15 5H8M15 5V12"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </a>
-              </div>
             </motion.div>
           )}
 
-          <motion.div
-            variants={staggerItem}
-            className="grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]"
-          >
+          <motion.div variants={staggerItem}>
             <div className="space-y-3">
-              <p className="font-mono text-[0.6rem] uppercase tracking-[0.28em] text-warm-gray/60">
-                Editorial Ledger
-              </p>
-              <p className="max-w-sm text-sm leading-7 text-bone/65">
-                The deeper pieces carry the same job: show range, show signal,
-                and make the platform legible through repeatable public work.
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              {rest.map((piece, index) => (
+              {rest.map((piece) => (
                 <a
                   key={piece.title}
                   href={piece.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group grid gap-4 border-b border-bone/5 py-4 md:grid-cols-[9rem_minmax(0,1fr)_1.5rem]"
+                  className="group grid gap-4 border-b border-bone/5 py-4 md:grid-cols-[9rem_minmax(0,1fr)]"
                 >
                   <span className="font-mono text-[0.58rem] uppercase tracking-[0.24em] text-burnt-orange/85">
                     {piece.tag}
@@ -160,20 +118,12 @@ export default function Proof() {
                     </h3>
                     <p className="text-sm leading-7 text-bone/60">{piece.excerpt}</p>
                   </div>
-                  <div className="flex items-start justify-end pt-1">
-                    <span className="font-mono text-xs text-bone/20 transition-all duration-300 group-hover:translate-x-1 group-hover:text-burnt-orange">
-                      {String(index + 1).padStart(2, '0')}
-                    </span>
-                  </div>
                 </a>
               ))}
             </div>
           </motion.div>
 
-          <motion.div
-            variants={staggerItem}
-            className="flex flex-col gap-4 border-b border-bone/5 pb-10 md:flex-row md:items-center md:justify-between"
-          >
+          <motion.div variants={staggerItem}>
             <a
               href="https://blazesportsintel.com/blog-post-feed"
               target="_blank"
@@ -191,11 +141,9 @@ export default function Proof() {
                 />
               </svg>
             </a>
-            <p className="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-warm-gray/65">
-              Also exported as audio via NotebookLM
-            </p>
           </motion.div>
 
+          {/* Video reel */}
           <motion.div
             variants={staggerItem}
             className="mt-12 border-t border-bone/5 pt-12"
@@ -207,19 +155,14 @@ export default function Proof() {
                   Talking Sports: The Analytical Lens
                 </h3>
                 <p className="max-w-2xl text-base leading-8 text-bone/70">
-                  The same argument, spoken instead of typed. Film matters here
-                  because credibility is not only what gets published. It is how
-                  the thinking sounds when the notes are gone.
-                </p>
-                <p className="font-mono text-[0.68rem] uppercase tracking-[0.24em] text-warm-gray/60">
-                  Short-form editorial proof from the same operating system.
+                  The same argument, spoken instead of typed. Credibility is not
+                  only what gets published — it is how the thinking sounds when
+                  the notes are gone.
                 </p>
               </div>
 
               <div className="relative overflow-hidden rounded-sm border border-bone/10 bg-midnight shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
-                <div
-                  className="pointer-events-none absolute inset-0 z-10 vignette-deep"
-                />
+                <div className="pointer-events-none absolute inset-0 z-10 vignette-deep" />
                 <div className="aspect-video">
                   <video
                     ref={videoRef}
@@ -252,9 +195,6 @@ export default function Proof() {
                 <div className="flex items-center justify-between border-t border-bone/10 px-4 py-3">
                   <p className="font-mono text-[0.62rem] uppercase tracking-[0.24em] text-warm-gray/70">
                     Speaking Reel
-                  </p>
-                  <p className="font-mono text-[0.58rem] uppercase tracking-[0.22em] text-burnt-orange/75">
-                    Proof in motion
                   </p>
                 </div>
               </div>
