@@ -20,7 +20,17 @@ const ScrollToTopButton = dynamic(() => import('@/components/ui/ScrollToTopButto
 const PageTracker = dynamic(() => import('@/components/analytics/PageTracker').then((mod) => ({ default: mod.PageTracker })));
 const PostHogProvider = dynamic(() => import('@/components/analytics/PostHogProvider').then((mod) => ({ default: mod.PostHogProvider })));
 
-const APP_SHELL_PREFIXES = ['/dashboard', '/search', '/settings'];
+const APP_SHELL_PREFIXES = [
+  '/college-baseball/savant',
+  '/college-baseball/standings',
+  '/college-baseball/rankings',
+  '/college-baseball/power-rankings',
+  '/college-baseball/weekly-pulse',
+  '/scores',
+  '/dashboard',
+  '/search',
+  '/settings',
+];
 
 function usesAppShell(pathname: string): boolean {
   return APP_SHELL_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
