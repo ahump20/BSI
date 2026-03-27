@@ -240,6 +240,38 @@ app.use('*', async (c, next) => {
     const target = `https://blazesportsintel.com/wbc${url.pathname === '/' ? '' : url.pathname}${url.search}`;
     return new Response(null, { status: 301, headers: { Location: target } });
   }
+  // labs.blazesportsintel.com → blazesportsintel.com (301 redirect, consolidated)
+  if (url.hostname === 'labs.blazesportsintel.com') {
+    const labsRouteMap: Record<string, string> = {
+      '/': '/college-baseball/savant/',
+      '/leaderboards': '/college-baseball/savant/',
+      '/standings': '/college-baseball/standings/',
+      '/rankings': '/college-baseball/rankings/',
+      '/games': '/college-baseball/games/',
+      '/compare': '/college-baseball/compare/',
+      '/conferences': '/college-baseball/conferences/',
+      '/park-factors': '/college-baseball/savant/park-factors/',
+      '/glossary': '/college-baseball/savant/glossary/',
+      '/visuals': '/college-baseball/savant/visuals/',
+      '/bubble': '/college-baseball/savant/',
+      '/radar-lab': '/college-baseball/savant/',
+      '/nil-explorer': '/nil-valuation/',
+      '/athletic-analysis': '/college-baseball/savant/',
+    };
+    const path = url.pathname.replace(/\/$/, '') || '/';
+    // Player detail: /players/:id → /college-baseball/savant/player/:id/
+    const playerMatch = path.match(/^\/players\/(\d+)/);
+    if (playerMatch) {
+      return new Response(null, { status: 301, headers: { Location: `https://blazesportsintel.com/college-baseball/savant/player/${playerMatch[1]}/` } });
+    }
+    // Team detail: /teams/:id → /college-baseball/teams/:id/
+    const teamMatch = path.match(/^\/teams\/(.+)/);
+    if (teamMatch) {
+      return new Response(null, { status: 301, headers: { Location: `https://blazesportsintel.com/college-baseball/teams/${teamMatch[1]}/` } });
+    }
+    const target = labsRouteMap[path] || '/college-baseball/savant/';
+    return new Response(null, { status: 301, headers: { Location: `https://blazesportsintel.com${target}` } });
+  }
   await next();
 });
 
