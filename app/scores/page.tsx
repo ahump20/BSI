@@ -789,8 +789,7 @@ function ScoresHubContent() {
         <nav
           className="sticky top-0 z-20"
           style={{
-            background: 'color-mix(in srgb, var(--surface-press-box) 96%, transparent)',
-            backdropFilter: 'blur(12px)',
+            background: 'var(--surface-press-box)',
             borderTop: '1px solid var(--border-vintage)',
             borderBottom: '1px solid var(--border-vintage)',
           }}

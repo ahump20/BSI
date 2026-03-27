@@ -324,18 +324,16 @@ textarea:focus-visible,
     background-color: var(--hover-bg) !important;
   }
 
-  /* Chart panel — glass card with left accent (from Labs) */
+  /* Chart panel — Heritage card with left accent */
   .chart-panel {
-    background: var(--glass-default-bg);
-    border: 1px solid var(--glass-default-border);
+    background: var(--surface-dugout);
+    border: 1px solid var(--border-vintage);
     border-left: 2px solid var(--bsi-primary);
     border-radius: 2px;
-    backdrop-filter: blur(var(--glass-default-blur));
-    -webkit-backdrop-filter: blur(var(--glass-default-blur));
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
   .chart-panel:hover {
-    border-color: rgba(255, 255, 255, 0.10);
+    border-color: rgba(140, 98, 57, 0.5);
     border-left-color: var(--bsi-primary);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   }
@@ -440,16 +438,15 @@ textarea:focus-visible,
   }
 
   .btn-ghost:hover {
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(140, 98, 57, 0.1);
     color: var(--color-text-primary);
   }
 
   /* ---- Stat components ---- */
   .stat-card {
-    background: var(--glass-default-bg);
-    backdrop-filter: blur(var(--glass-default-blur));
+    background: var(--surface-dugout);
     border-radius: 2px;
-    border: 1px solid var(--glass-default-border);
+    border: 1px solid var(--border-vintage);
     padding: 1rem;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
@@ -504,9 +501,7 @@ textarea:focus-visible,
     position: sticky;
     top: 0;
     z-index: 10;
-    background: var(--glass-elevated-bg);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    background: var(--surface-press-box);
   }
 
   .sticky-header thead tr {
@@ -687,15 +682,9 @@ textarea:focus-visible,
     z-index: 1030;
   }
 
-  /* ---- Backdrop blur ---- */
-  .backdrop-blur-glass {
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-  }
-
   /* ---- Background utilities ---- */
   .bg-midnight {
-    background-color: #0d0d0d;
+    background-color: var(--surface-scoreboard);
   }
 
   .bg-background-primary {

@@ -25,8 +25,8 @@ export default function SabermetricsPlaygroundPage() {
       {/* Nav */}
       <nav style={{
         position: 'sticky', top: 0, zIndex: 100,
-        background: 'rgba(13,13,13,0.96)', backdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(191,87,0,0.15)',
+        background: 'var(--surface-press-box)',
+        borderBottom: '1px solid var(--border-vintage)',
       }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0.875rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
