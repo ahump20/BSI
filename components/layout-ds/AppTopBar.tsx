@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 /* ========================================================================== */
 
 const ROUTE_TITLES: Record<string, string> = {
-  '/': 'Dashboard',
+  '/': 'Home',
   '/scores': 'Live Scores',
   '/college-baseball': 'College Baseball',
   '/college-baseball/editorial': 'Editorial',
