@@ -1,0 +1,34 @@
+{
+  "$schema": "https://code.claude.com/schemas/marketplace.json",
+  "name": "bsi-openai-curated",
+  "owner": {
+    "name": "Austin Humphrey",
+    "email": "Austin@BlazeSportsIntel.com"
+  },
+  "metadata": {
+    "description": "Repo-local Claude Code marketplace that ports selected OpenAI-curated bundles for web apps, iOS apps, and browser games."
+  },
+  "plugins": [
+    {
+      "name": "build-web-apps",
+      "description": "Claude-native port of the OpenAI-curated build-web-apps bundle for frontend delivery, Vercel deployment, Stripe guidance, Supabase/Postgres practices, and web UI review.",
+      "source": "./plugins/build-web-apps",
+      "category": "development",
+      "homepage": "https://github.com/ahump20/BSI/tree/main/plugins/build-web-apps"
+    },
+    {
+      "name": "build-ios-apps",
+      "description": "Claude-native port of the OpenAI-curated build-ios-apps bundle for SwiftUI architecture, refactors, performance audits, and simulator-led debugging.",
+      "source": "./plugins/build-ios-apps",
+      "category": "development",
+      "homepage": "https://github.com/ahump20/BSI/tree/main/plugins/build-ios-apps"
+    },
+    {
+      "name": "game-studio",
+      "description": "Claude-native port of the OpenAI-curated game-studio bundle for browser-game planning, 2D and 3D implementation, asset pipelines, and playtesting.",
+      "source": "./plugins/game-studio",
+      "category": "development",
+      "homepage": "https://github.com/ahump20/BSI/tree/main/plugins/game-studio"
+    }
+  ]
+}

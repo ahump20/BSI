@@ -141,6 +141,7 @@ export async function handleSavantBattingLeaderboard(url: URL, env: Env, headers
   const metric = url.searchParams.get('metric') || 'woba';
   const conference = url.searchParams.get('conference') || '';
   const position = url.searchParams.get('position') || '';
+  const team = url.searchParams.get('team') || '';
   const limit = Math.min(parseInt(url.searchParams.get('limit') || '25', 10) || 25, 100);
   const sortDir = url.searchParams.get('sort') === 'asc' ? 'ASC' : 'DESC';
   const minPA = Math.max(0, parseInt(url.searchParams.get('min_pa') || '25', 10) || 25);
@@ -153,7 +154,7 @@ export async function handleSavantBattingLeaderboard(url: URL, env: Env, headers
   ];
   const safeMetric = allowedMetrics.includes(metric) ? metric : 'woba';
 
-  const cacheKey = `savant:bat:lb:${safeMetric}:${conference || 'all'}:${position || 'all'}:${limit}:${sortDir}:${minPA}:${tier}`;
+  const cacheKey = `savant:bat:lb:${safeMetric}:${conference || 'all'}:${team || 'all'}:${position || 'all'}:${limit}:${sortDir}:${minPA}:${tier}`;
   const cached = await kvGet<{ data: unknown; total: number }>(env.KV, cacheKey);
   if (cached) {
     return cachedJson(
@@ -178,6 +179,10 @@ export async function handleSavantBattingLeaderboard(url: URL, env: Env, headers
     if (conference) {
       query += ' AND conference = ?';
       binds.push(conference);
+    }
+    if (team) {
+      query += ' AND team = ?';
+      binds.push(team);
     }
     if (position) {
       query += ' AND position = ?';
@@ -228,6 +233,7 @@ export async function handleSavantPitchingLeaderboard(url: URL, env: Env, header
   const metric = url.searchParams.get('metric') || 'fip';
   const conference = url.searchParams.get('conference') || '';
   const position = url.searchParams.get('position') || '';
+  const team = url.searchParams.get('team') || '';
   const limit = Math.min(parseInt(url.searchParams.get('limit') || '25', 10) || 25, 100);
   const sortDir = url.searchParams.get('sort') === 'desc' ? 'DESC' : 'ASC';
   const minIP = Math.max(0, parseFloat(url.searchParams.get('min_ip') || '10') || 10);
@@ -239,7 +245,7 @@ export async function handleSavantPitchingLeaderboard(url: URL, env: Env, header
   ];
   const safeMetric = allowedMetrics.includes(metric) ? metric : 'fip';
 
-  const cacheKey = `savant:pitch:lb:${safeMetric}:${conference || 'all'}:${position || 'all'}:${limit}:${sortDir}:${minIP}:${tier}`;
+  const cacheKey = `savant:pitch:lb:${safeMetric}:${conference || 'all'}:${team || 'all'}:${position || 'all'}:${limit}:${sortDir}:${minIP}:${tier}`;
   const cached = await kvGet<{ data: unknown; total: number }>(env.KV, cacheKey);
   if (cached) {
     return cachedJson(
@@ -263,6 +269,10 @@ export async function handleSavantPitchingLeaderboard(url: URL, env: Env, header
     if (conference) {
       query += ' AND conference = ?';
       binds.push(conference);
+    }
+    if (team) {
+      query += ' AND team = ?';
+      binds.push(team);
     }
     if (position) {
       query += ' AND position = ?';

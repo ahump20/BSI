@@ -1,0 +1,9 @@
+{
+  "name": "build-web-apps",
+  "description": "Claude-native port of the OpenAI-curated build-web-apps bundle for frontend execution, Vercel deployment, Stripe integrations, Supabase/Postgres guidance, and UI review.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Austin Humphrey",
+    "email": "Austin@BlazeSportsIntel.com"
+  }
+}

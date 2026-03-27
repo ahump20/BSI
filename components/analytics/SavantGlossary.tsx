@@ -1,7 +1,25 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { METRIC_DEFINITIONS } from '@/lib/data/metric-definitions';
+
+const LEADERBOARD_LINKS: Record<string, string> = {
+  'AVG': '/college-baseball/savant',
+  'OBP': '/college-baseball/savant',
+  'SLG': '/college-baseball/savant',
+  'OPS': '/college-baseball/savant',
+  'wOBA': '/college-baseball/savant',
+  'wRC+': '/college-baseball/savant',
+  'OPS+': '/college-baseball/savant',
+  'ISO': '/college-baseball/savant',
+  'ERA': '/college-baseball/savant',
+  'FIP': '/college-baseball/savant',
+  'xFIP': '/college-baseball/savant',
+  'ERA-': '/college-baseball/savant',
+  'CSI': '/college-baseball/savant/conference-index',
+  'PF': '/college-baseball/savant/park-factors',
+};
 
 // ---------------------------------------------------------------------------
 // Glossary categories
@@ -142,6 +160,14 @@ export function SavantGlossary({ className = '' }: { className?: string }) {
                         <p className="mt-2 text-[11px] font-mono text-[var(--svt-text-dim,_#737373)]">
                           {entry.context}
                         </p>
+                      )}
+                      {LEADERBOARD_LINKS[entry.key] && (
+                        <Link
+                          href={LEADERBOARD_LINKS[entry.key]}
+                          className="inline-block mt-2 text-[11px] text-[var(--svt-accent,_#BF5700)] hover:underline"
+                        >
+                          View on leaderboard &rarr;
+                        </Link>
                       )}
                     </div>
                   )}

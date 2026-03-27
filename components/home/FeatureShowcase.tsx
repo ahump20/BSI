@@ -6,19 +6,19 @@ import { AskBSI } from './AskBSI';
 
 const SUPPORT_RAIL = [
   {
-    label: 'Transfer Portal',
-    href: '/college-baseball/transfer-portal',
-    description: 'Track movement, fit, and roster pressure as players change the league.',
+    label: 'Glossary',
+    href: '/college-baseball/savant/glossary',
+    description: 'Every metric defined in plain English — what it measures, why it matters, and where to find it.',
   },
   {
-    label: 'NIL Valuation',
-    href: '/nil-valuation',
-    description: 'See where market leverage, performance, and visibility meet in one board.',
+    label: 'Methodology',
+    href: '/college-baseball/savant/methodology',
+    description: 'How BSI computes park factors, conference strength, and run-value metrics.',
   },
   {
-    label: 'Models',
-    href: '/models',
-    description: 'Move from static numbers to scenario thinking before the game starts.',
+    label: 'Editorial',
+    href: '/college-baseball/editorial',
+    description: 'Series recaps, scouting reads, and matchup framing tied to the numbers.',
   },
 ];
 
@@ -32,10 +32,10 @@ export function FeatureShowcase() {
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(191,87,0,0.18)] to-transparent" />
       <div className="max-w-6xl mx-auto relative z-10">
         <ScrollReveal direction="up">
-          <span className="heritage-stamp mb-2">Platform</span>
-          <div className="flex items-center gap-3 mt-2 mb-8">
+          <span className="heritage-stamp mb-4">Platform</span>
+          <div className="flex items-center gap-3 mt-4 mb-8">
             <div className="section-rule-thick" />
-            <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide" style={{ color: 'var(--bsi-bone)' }}>
+            <h2 className="font-display text-3xl sm:text-4xl font-bold uppercase tracking-[0.05em]" style={{ color: 'var(--bsi-bone)' }}>
               One Platform, Four Ways In
             </h2>
           </div>

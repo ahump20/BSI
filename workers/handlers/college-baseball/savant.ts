@@ -226,14 +226,22 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
     // Resolve slug to ESPN numeric team_id if non-numeric
     let resolvedId = teamId;
     if (!/^\d+$/.test(teamId)) {
-      // Convert slug to search term: "texas-am" → "%texas%a%m%"
-      const searchTerm = `%${teamId.replace(/-/g, '%')}%`;
-      const lookup = await env.DB.prepare(`
-        SELECT team_id FROM player_season_stats
-        WHERE sport = 'college-baseball' AND season = ? AND LOWER(team) LIKE LOWER(?)
-        LIMIT 1
-      `).bind(SEASON, searchTerm).first<{ team_id: string }>();
-      if (lookup?.team_id) resolvedId = lookup.team_id;
+      // Primary: exact slug match via teamMetadata (e.g. "texas" → "126")
+      const meta = teamMetadata[teamId];
+      if (meta?.espnId) {
+        resolvedId = meta.espnId;
+      } else {
+        // Fallback: fuzzy D1 lookup for teams not in metadata
+        // Note: "texas-am" → "%texas%a%m%" — LIKE without ORDER BY is
+        // nondeterministic and can return the wrong team for ambiguous slugs
+        const searchTerm = `%${teamId.replace(/-/g, '%')}%`;
+        const lookup = await env.DB.prepare(`
+          SELECT team_id FROM player_season_stats
+          WHERE sport = 'college-baseball' AND season = ? AND LOWER(team) LIKE LOWER(?)
+          LIMIT 1
+        `).bind(SEASON, searchTerm).first<{ team_id: string }>();
+        if (lookup?.team_id) resolvedId = lookup.team_id;
+      }
     }
 
     // Get league baseline from KV (computed by league handler or ingest cron)
@@ -500,13 +508,18 @@ export async function handleCBBTeamSOS(teamId: string, env: Env): Promise<Respon
     // Resolve slug to ESPN numeric team_id if non-numeric
     let resolvedId = teamId;
     if (!/^\d+$/.test(teamId)) {
-      const searchTerm = `%${teamId.replace(/-/g, '%')}%`;
-      const lookup = await env.DB.prepare(`
-        SELECT team_id FROM player_season_stats
-        WHERE sport = 'college-baseball' AND season = ? AND LOWER(team) LIKE LOWER(?)
-        LIMIT 1
-      `).bind(SEASON, searchTerm).first<{ team_id: string }>();
-      if (lookup?.team_id) resolvedId = lookup.team_id;
+      const meta = teamMetadata[teamId];
+      if (meta?.espnId) {
+        resolvedId = meta.espnId;
+      } else {
+        const searchTerm = `%${teamId.replace(/-/g, '%')}%`;
+        const lookup = await env.DB.prepare(`
+          SELECT team_id FROM player_season_stats
+          WHERE sport = 'college-baseball' AND season = ? AND LOWER(team) LIKE LOWER(?)
+          LIMIT 1
+        `).bind(SEASON, searchTerm).first<{ team_id: string }>();
+        if (lookup?.team_id) resolvedId = lookup.team_id;
+      }
     }
 
     // Get all processed games for the season

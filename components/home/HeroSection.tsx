@@ -104,7 +104,7 @@ export function HeroSection() {
                   <span style={{ color: 'rgba(245, 240, 235, 0.36)' }}>&#9670;</span>
                   <span style={{ color: 'rgba(245, 240, 235, 0.72)' }}>Park-Adjusted Sabermetrics</span>
                   <span style={{ color: 'rgba(245, 240, 235, 0.36)' }}>&#9670;</span>
-                  <span style={{ color: 'rgba(245, 240, 235, 0.72)' }}>Five Sports, One Standard</span>
+                  <span style={{ color: 'rgba(245, 240, 235, 0.72)' }}>330 D1 Programs Tracked</span>
                 </div>
               </div>
 

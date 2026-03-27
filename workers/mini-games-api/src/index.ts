@@ -57,7 +57,12 @@ export default {
     const gameMatch = path.match(/^\/api\/mini-games\/leaderboard\/([a-z0-9-]+)$/);
     if (gameMatch && request.method === 'GET') {
       const limit = parseInt(url.searchParams.get('limit') || '20', 10);
-      return await getGameLeaderboard(gameMatch[1], limit, env);
+      const mode = url.searchParams.get('mode');
+      const difficulty = url.searchParams.get('difficulty');
+      return await getGameLeaderboard(gameMatch[1], limit, env, {
+        mode,
+        difficulty,
+      });
     }
 
     return json({ error: 'Not found' }, 404);
