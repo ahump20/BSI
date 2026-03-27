@@ -50,10 +50,13 @@ async function resolveTier(url: URL, headers: Headers, env: Env): Promise<string
   }
 }
 
-/** Strip pro-only fields for free tier. */
+/** Strip pro-only fields for free tier.
+ *  Free gets: index_score, performance_score, estimated range, tier.
+ *  Pro adds: exposure_score, market_score, social_followers, market_size.
+ */
 function stripNILProFields(row: Record<string, unknown>): Record<string, unknown> {
   const proKeys = [
-    'performance_score', 'exposure_score', 'market_score',
+    'exposure_score', 'market_score',
     'social_followers', 'market_size',
   ];
   const filtered = { ...row };
@@ -111,7 +114,7 @@ export async function handleNILLeaderboard(url: URL, env: Env, headers?: Headers
 
     let output = results as Record<string, unknown>[];
     if (tier !== 'pro') {
-      output = output.slice(0, 10).map(stripNILProFields);
+      output = output.map(stripNILProFields);
     }
 
     await kvPut(env.KV, cacheKey, { data: output, total: results.length }, 21600); // 6h
