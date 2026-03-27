@@ -239,9 +239,9 @@ export function HomePageClient() {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            {battingMeta && (
+            {battingMeta?.lastUpdated && (
               <span className="text-[9px] font-mono" style={{ color: 'var(--bsi-dust)' }}>
-                Updated {new Date(battingMeta.fetchedAt).toLocaleTimeString('en-US', {
+                Updated {new Date(battingMeta.lastUpdated).toLocaleTimeString('en-US', {
                   hour: 'numeric',
                   minute: '2-digit',
                   timeZone: 'America/Chicago',
