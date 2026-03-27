@@ -106,7 +106,7 @@ export function SavantGlossary({ className = '' }: { className?: string }) {
             <h2 className="font-savant-display text-sm uppercase tracking-widest text-[var(--svt-accent,_#BF5700)] font-bold">
               {category.label}
             </h2>
-            <div className="flex-1 h-px bg-[var(--svt-border,_rgba(255,255,255,0.06))]" />
+            <div className="flex-1 h-px bg-[var(--svt-border,_rgba(140,98,57,0.15))]" />
           </div>
 
           {/* Entries */}
@@ -124,8 +124,8 @@ export function SavantGlossary({ className = '' }: { className?: string }) {
                     onClick={() => setOpenKey(isOpen ? null : entry.key)}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-sm transition-all ${
                       isOpen
-                        ? 'bg-[var(--svt-surface,_rgba(255,255,255,0.04))] border border-[var(--svt-accent,_#BF5700)]/20'
-                        : 'bg-[var(--svt-card,_rgba(26,26,26,0.6))] border border-[var(--svt-border,_rgba(255,255,255,0.04))] hover:border-[var(--svt-accent,_#BF5700)]/30'
+                        ? 'bg-[var(--svt-surface,_rgba(140,98,57,0.12))] border border-[var(--svt-accent,_#BF5700)]/20'
+                        : 'bg-[var(--svt-card,_var(--surface-dugout))] border border-[var(--svt-border,_rgba(140,98,57,0.12))] hover:border-[var(--svt-accent,_#BF5700)]/30'
                     }`}
                   >
                     {/* Abbreviation badge */}

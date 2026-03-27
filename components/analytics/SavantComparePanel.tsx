@@ -187,7 +187,7 @@ export function SavantComparePanel({
 
               {isGated ? (
                 <div className="h-8 rounded-sm flex items-center justify-center"
-                  style={{ background: 'rgba(255,255,255,0.02)' }}>
+                  style={{ background: 'rgba(140,98,57,0.06)' }}>
                   <span className="text-[10px] font-mono" style={{ color: 'var(--bsi-dust)' }}>
                     Upgrade to compare
                   </span>
@@ -214,7 +214,7 @@ export function SavantComparePanel({
                         <span className="text-[10px] font-mono w-20 truncate shrink-0" style={{ color }}>
                           {player.player_name.split(' ').pop()}
                         </span>
-                        <div className="flex-1 h-[8px] rounded-full overflow-hidden relative" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                        <div className="flex-1 h-[8px] rounded-full overflow-hidden relative" style={{ background: 'rgba(140,98,57,0.12)' }}>
                           <div
                             className="h-full rounded-full transition-all duration-500"
                             style={{ width: `${barWidth}%`, backgroundColor: color, opacity: 0.8 }}

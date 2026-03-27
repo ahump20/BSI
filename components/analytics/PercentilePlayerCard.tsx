@@ -67,14 +67,14 @@ export function PercentilePlayerCard({
               {playerName}
             </h3>
             <div className="flex items-center gap-2 mt-0.5">
-              <span className="text-xs text-[var(--svt-text-muted,_#A89F95)]">{team}</span>
+              <span className="text-xs text-[var(--svt-text-muted,_#C4B8A5)]">{team}</span>
               {conference && (
                 <span className="text-[10px] font-mono text-[var(--svt-text-dim,_#737373)]">
                   {conference}
                 </span>
               )}
               {position && (
-                <span className="text-[10px] font-mono text-[var(--svt-text-muted,_#A89F95)] uppercase px-1.5 py-0.5 rounded-sm bg-[var(--svt-surface,_rgba(255,255,255,0.04))]">
+                <span className="text-[10px] font-mono text-[var(--svt-text-muted,_#C4B8A5)] uppercase px-1.5 py-0.5 rounded-sm bg-[var(--svt-surface,_rgba(140,98,57,0.12))]">
                   {position}
                 </span>
               )}
@@ -102,7 +102,7 @@ export function PercentilePlayerCard({
               <span className="text-[10px] font-savant-display uppercase tracking-[0.1em] text-[var(--svt-text-dim,_#737373)]">
                 {group.label}
               </span>
-              <div className="flex-1 h-px bg-[var(--svt-border,_rgba(255,255,255,0.06))]" />
+              <div className="flex-1 h-px bg-[var(--svt-border,_rgba(140,98,57,0.15))]" />
             </div>
 
             {/* Stats */}
@@ -115,12 +115,12 @@ export function PercentilePlayerCard({
                 return (
                   <div key={stat.key} className="flex items-center gap-3">
                     {/* Label */}
-                    <span className="text-[10px] font-mono text-[var(--svt-text-muted,_#A89F95)] w-12 text-right shrink-0 uppercase">
+                    <span className="text-[10px] font-mono text-[var(--svt-text-muted,_#C4B8A5)] w-12 text-right shrink-0 uppercase">
                       {stat.label}
                     </span>
 
                     {/* Bar track */}
-                    <div className="flex-1 h-[10px] rounded-full bg-[var(--svt-border,_rgba(255,255,255,0.03))] overflow-hidden relative">
+                    <div className="flex-1 h-[10px] rounded-full bg-[var(--svt-border,_rgba(140,98,57,0.08))] overflow-hidden relative">
                       <div
                         className="h-full rounded-full transition-all duration-700 ease-out"
                         style={{
@@ -156,12 +156,12 @@ export function PercentilePlayerCard({
 
       {/* Expected vs Actual section */}
       {expectedVsActual && expectedVsActual.length > 0 && (
-        <div className="px-5 py-4 border-t border-[var(--svt-border,_rgba(255,255,255,0.06))]">
+        <div className="px-5 py-4 border-t border-[var(--svt-border,_rgba(140,98,57,0.15))]">
           <div className="flex items-center gap-3 mb-3">
             <span className="text-[10px] font-savant-display uppercase tracking-[0.1em] text-[var(--svt-text-dim,_#737373)]">
               Expected vs Actual
             </span>
-            <div className="flex-1 h-px bg-[var(--svt-border,_rgba(255,255,255,0.06))]" />
+            <div className="flex-1 h-px bg-[var(--svt-border,_rgba(140,98,57,0.15))]" />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -175,7 +175,7 @@ export function PercentilePlayerCard({
               return (
                 <div
                   key={item.label}
-                  className="flex flex-col gap-1 p-3 rounded-sm bg-[var(--svt-surface,_rgba(255,255,255,0.02))]"
+                  className="flex flex-col gap-1 p-3 rounded-sm bg-[var(--svt-surface,_rgba(140,98,57,0.06))]"
                 >
                   <span className="text-[9px] font-mono uppercase tracking-wider text-[var(--svt-text-dim,_#737373)]">
                     {item.label}
@@ -184,7 +184,7 @@ export function PercentilePlayerCard({
                     <span className="text-sm font-mono font-bold tabular-nums text-[var(--svt-text,_#F5F0EB)]">
                       {fmt(item.actual)}
                     </span>
-                    <span className="text-[10px] font-mono text-[var(--svt-text-muted,_#A89F95)]">
+                    <span className="text-[10px] font-mono text-[var(--svt-text-muted,_#C4B8A5)]">
                       vs {fmt(item.expected)}
                     </span>
                   </div>
@@ -202,7 +202,7 @@ export function PercentilePlayerCard({
       )}
 
       {/* Legend */}
-      <div className="px-5 py-3 border-t border-[var(--svt-border,_rgba(255,255,255,0.06))] flex items-center justify-center gap-4">
+      <div className="px-5 py-3 border-t border-[var(--svt-border,_rgba(140,98,57,0.15))] flex items-center justify-center gap-4">
         {[
           { label: 'Elite', color: '#ef4444' },
           { label: 'Great', color: '#f97316' },
