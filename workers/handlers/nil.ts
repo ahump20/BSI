@@ -20,6 +20,8 @@ import { json, cachedJson, kvGet, kvPut } from '../shared/helpers';
 import { HTTP_CACHE } from '../shared/constants';
 
 const SEASON = 2026;
+/** Bump to bust KV cache after schema changes. */
+const CACHE_VERSION = 2;
 
 function nilMeta(source: string, cacheHit: boolean) {
   return {
@@ -83,7 +85,7 @@ export async function handleNILLeaderboard(url: URL, env: Env, headers?: Headers
   const sortDir = url.searchParams.get('sort') === 'asc' ? 'ASC' : 'DESC';
   const tier = await resolveTier(url, headers ?? new Headers(), env);
 
-  const cacheKey = `nil:leaderboard:${conference || 'all'}:${position || 'all'}:${tierFilter || 'all'}:${limit}:${sortDir}:${tier}`;
+  const cacheKey = `nil:v${CACHE_VERSION}:leaderboard:${conference || 'all'}:${position || 'all'}:${tierFilter || 'all'}:${limit}:${sortDir}:${tier}`;
   const cached = await kvGet<{ data: unknown; total: number }>(env.KV, cacheKey);
   if (cached) {
     return cachedJson(
@@ -138,7 +140,7 @@ export async function handleNILLeaderboard(url: URL, env: Env, headers?: Headers
 export async function handleNILPlayer(playerId: string, url: URL, env: Env, headers?: Headers): Promise<Response> {
   const tier = await resolveTier(url, headers ?? new Headers(), env);
 
-  const cacheKey = `nil:player:${playerId}:${tier}`;
+  const cacheKey = `nil:v${CACHE_VERSION}:player:${playerId}:${tier}`;
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
     return cachedJson(
@@ -192,7 +194,7 @@ export async function handleNILComparables(playerId: string, url: URL, env: Env,
     return json({ error: 'Comparables require Pro tier', upgrade_url: '/pricing' }, 403);
   }
 
-  const cacheKey = `nil:comparables:${playerId}`;
+  const cacheKey = `nil:v${CACHE_VERSION}:comparables:${playerId}`;
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
     return cachedJson(
@@ -246,7 +248,7 @@ export async function handleNILUndervalued(url: URL, env: Env, headers?: Headers
     return json({ error: 'Undervalued discovery requires Pro tier', upgrade_url: '/pricing' }, 403);
   }
 
-  const cacheKey = 'nil:undervalued';
+  const cacheKey = `nil:v${CACHE_VERSION}:undervalued`;
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
     return cachedJson(
@@ -296,7 +298,7 @@ export async function handleNILTrends(url: URL, env: Env, headers?: Headers): Pr
 
   const groupBy = url.searchParams.get('group_by') || 'conference';
 
-  const cacheKey = `nil:trends:${groupBy}`;
+  const cacheKey = `nil:v${CACHE_VERSION}:trends:${groupBy}`;
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
     return cachedJson(
@@ -389,7 +391,7 @@ export async function handleNILCollectiveROI(url: URL, env: Env, headers?: Heade
     return json({ error: 'Collective ROI requires Pro tier', upgrade_url: '/pricing' }, 403);
   }
 
-  const cacheKey = 'nil:collective-roi';
+  const cacheKey = `nil:v${CACHE_VERSION}:collective-roi`;
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
     return cachedJson(
@@ -440,7 +442,7 @@ export async function handleNILDraftLeverage(url: URL, env: Env, headers?: Heade
     return json({ error: 'Draft leverage requires Pro tier', upgrade_url: '/pricing' }, 403);
   }
 
-  const cacheKey = 'nil:draft-leverage';
+  const cacheKey = `nil:v${CACHE_VERSION}:draft-leverage`;
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
     return cachedJson(
