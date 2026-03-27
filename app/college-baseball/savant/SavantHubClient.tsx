@@ -219,109 +219,62 @@ export default function SavantHubPage() {
     return source.filter(row => compareIds.has(row.player_id as string));
   }, [compareIds, activeTab, battingRes, pitchingRes]);
 
+  const batterCount = filteredBatting.length || (battingRes?.data?.length ?? 0);
+  const pitcherCount = filteredPitching.length || (pitchingRes?.data?.length ?? 0);
+  const confCount = confRes?.total ?? confRes?.data?.length ?? 0;
+
   return (
     <>
       <div>
-        <section
-          className="relative overflow-hidden savant-ambient"
-          style={{
-            padding: 'clamp(2rem, 4vw, 3rem) 0',
-          }}
-        >
-          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[rgba(191,87,0,0.15)] to-transparent" />
+        <section className="relative overflow-hidden pt-6 pb-4">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            {/* Breadcrumb */}
-            <nav className="flex items-center gap-2 text-xs mb-6" style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--bsi-dust)' }}>
-              <Link href="/" className="transition-colors hover:text-[var(--bsi-bone)]">Home</Link>
-              <span>/</span>
-              <Link href="/college-baseball" className="transition-colors hover:text-[var(--bsi-bone)]">College Baseball</Link>
-              <span>/</span>
-              <span style={{ color: 'var(--bsi-primary)' }}>Savant</span>
-            </nav>
 
-            {/* Hero */}
-            <ScrollReveal direction="up" delay={50}>
-              <div className="mb-10">
-                <span className="heritage-stamp mb-3">Advanced Analytics</span>
+            {/* Compact title + trust strip */}
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-3">
+                <span className="heritage-stamp">Savant</span>
                 <h1
-                  className="mt-3 font-bold uppercase tracking-tight leading-none mb-4 font-savant-display"
-                  style={{
-                    fontFamily: 'var(--font-syne, var(--bsi-font-display-hero))',
-                    fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-                    color: 'var(--bsi-bone)',
-                    textShadow: '1px 1px 0px rgba(0,0,0,0.5)',
-                  }}
+                  className="text-lg font-bold uppercase tracking-wide"
+                  style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
                 >
-                  College Baseball <span style={{ color: 'var(--bsi-primary)' }}>Savant</span>
+                  D1 Sabermetrics
                 </h1>
-                <p className="mt-3 max-w-2xl text-base leading-relaxed font-serif italic" style={{ color: 'var(--bsi-dust)' }}>
-                  The metrics MLB Savant tracks — wOBA, FIP, wRC+, park factors, conference
-                  strength indices — applied to every D1 program. No other public platform
-                  does this for the college game.
-                </p>
-                <div className="mt-5 flex items-center gap-6 flex-wrap">
-                  <Link
-                    href="/college-baseball/savant/visuals"
-                    className="inline-flex items-center gap-2 text-sm transition-colors group"
-                    style={{ color: 'var(--bsi-primary)' }}
-                  >
-                    <span className="uppercase tracking-wider" style={{ fontFamily: 'var(--bsi-font-display)' }}>Interactive Visuals</span>
-                    <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                  <Link
-                    href="/college-baseball/savant/glossary"
-                    className="inline-flex items-center gap-2 text-sm transition-colors group"
-                    style={{ color: 'var(--svt-text-muted, var(--bsi-dust))' }}
-                  >
-                    <span className="uppercase tracking-wider" style={{ fontFamily: 'var(--bsi-font-display)' }}>Glossary</span>
-                    <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                  <Link
-                    href="/college-baseball/savant/methodology"
-                    className="inline-flex items-center gap-2 text-sm transition-colors group"
-                    style={{ color: 'var(--svt-text-muted, var(--bsi-dust))' }}
-                  >
-                    <span className="uppercase tracking-wider" style={{ fontFamily: 'var(--bsi-font-display)' }}>Methodology</span>
-                    <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                  <Link
-                    href="/college-baseball/savant/team-compare"
-                    className="inline-flex items-center gap-2 text-sm transition-colors group"
-                    style={{ color: 'var(--svt-text-muted, var(--bsi-dust))' }}
-                  >
-                    <span className="uppercase tracking-wider" style={{ fontFamily: 'var(--bsi-font-display)' }}>Compare Teams</span>
-                    <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                  <Link
-                    href="/college-baseball/savant/conference-comparison"
-                    className="inline-flex items-center gap-2 text-sm transition-colors group"
-                    style={{ color: 'var(--svt-text-muted, var(--bsi-dust))' }}
-                  >
-                    <span className="uppercase tracking-wider" style={{ fontFamily: 'var(--bsi-font-display)' }}>Compare Conferences</span>
-                    <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                </div>
               </div>
-            </ScrollReveal>
-
-            {/* Data Coverage — inline note, not boxed */}
-            <div className="mb-8 flex items-start gap-3 pl-4" style={{ borderLeft: '2px solid rgba(191, 87, 0, 0.2)' }}>
-              <p className="text-[11px] leading-relaxed" style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--bsi-dust)' }}>
-                {confLoading ? '...' : `${confRes?.total ?? confRes?.data?.length ?? 22} conferences tracked`} · ESPN box scores + Highlightly Pro · Recomputed every 6 hours
+              <p className="text-[10px] font-mono" style={{ color: 'var(--bsi-dust)' }}>
+                {confLoading ? '...' : `${confCount} conferences`} · Updated every 6h
                 {battingRes?.meta?.fetched_at && (
-                  <> · Last computed: {new Date(battingRes.meta.fetched_at).toLocaleString('en-US', { timeZone: 'America/Chicago', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })} CT</>
+                  <> · {new Date(battingRes.meta.fetched_at).toLocaleString('en-US', { timeZone: 'America/Chicago', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })} CT</>
                 )}
               </p>
+            </div>
+
+            {/* Hero stat pills — animated counters showing data scope */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+              {[
+                { label: 'Batters', value: batterCount, color: 'var(--bsi-primary)' },
+                { label: 'Pitchers', value: pitcherCount, color: 'var(--heritage-columbia-blue)' },
+                { label: 'Conferences', value: confCount, color: 'var(--bsi-dust)' },
+                { label: 'Parks', value: parkRes?.data?.length ?? 0, color: 'var(--bsi-success)' },
+              ].map((stat) => (
+                <div
+                  key={stat.label}
+                  className="heritage-card p-3 flex flex-col items-center text-center"
+                  style={{ borderTop: `2px solid ${stat.color}` }}
+                >
+                  <span
+                    className="text-2xl font-bold tabular-nums"
+                    style={{ fontFamily: 'var(--font-mono)', color: stat.color }}
+                  >
+                    {stat.value.toLocaleString()}
+                  </span>
+                  <span
+                    className="text-[9px] uppercase tracking-[0.15em] mt-1"
+                    style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-dust)' }}
+                  >
+                    {stat.label}
+                  </span>
+                </div>
+              ))}
             </div>
 
             <DataErrorBoundary name="Savant Analytics">
