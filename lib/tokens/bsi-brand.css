@@ -269,32 +269,23 @@
    ========================================================================== */
 
 .savant-theme {
-  --svt-bg: #0a0c10;
-  --svt-surface: #12151c;
-  --svt-card: #181c26;
-  --svt-border: #242a38;
-  --svt-accent: #e85d26;
+  /* Heritage-aligned warm surfaces (matches Labs) */
+  --svt-bg: var(--surface-scoreboard);
+  --svt-surface: var(--surface-press-box);
+  --svt-card: var(--surface-dugout);
+  --svt-border: var(--border-vintage);
+  --svt-accent: var(--bsi-primary);
   --svt-accent-hot: #ff7a3d;
   --svt-accent-ember: #ff4500;
-  --svt-text: #e8eaf0;
-  --svt-text-muted: #8890a4;
-  --svt-text-dim: #555d73;
+  --svt-text: var(--bsi-bone);
+  --svt-text-muted: var(--bsi-dust);
+  --svt-text-dim: rgba(196, 184, 165, 0.5);
   --svt-blue: #3b82f6;
   --svt-cyan: #22d3ee;
   --svt-green: #22c55e;
   --svt-yellow: #eab308;
   --svt-red: #ef4444;
   --svt-purple: #a855f7;
-}
-
-/* Savant percentile scale (updated 6-tier) */
-.savant-theme {
-  --savant-elite: #ef4444;
-  --savant-great: #f97316;
-  --savant-above: #eab308;
-  --savant-avg: #8890a4;
-  --savant-below: #3b82f6;
-  --savant-poor: #6366f1;
 }
 
 /* Savant card surface */
