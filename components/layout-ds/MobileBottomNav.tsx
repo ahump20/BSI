@@ -82,7 +82,7 @@ export function MobileBottomNav({ onMorePress }: { onMorePress?: () => void }) {
   return (
     <nav
       aria-label="Mobile navigation"
-      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0D0D0D] border-t border-white/[0.06] shadow-[0_-4px_24px_rgba(0,0,0,0.4)]"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--surface-scoreboard)] border-t border-[var(--border-vintage)] shadow-[0_-4px_24px_rgba(0,0,0,0.4)]"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
       <div className="flex items-stretch">

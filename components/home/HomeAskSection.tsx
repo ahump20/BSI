@@ -78,7 +78,7 @@ export function HomeAskSection(): React.JSX.Element {
                 borderRadius: '2px',
                 border: '1px solid var(--border-vintage)',
                 borderBottom: '2px solid var(--bsi-primary)',
-                background: 'rgba(255,255,255,0.03)',
+                background: 'rgba(140,98,57,0.06)',
                 color: 'var(--bsi-bone)',
                 fontFamily: 'var(--bsi-font-body)',
               }}

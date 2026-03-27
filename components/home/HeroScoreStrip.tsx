@@ -33,7 +33,7 @@ function GameLine({ game, label, accent }: { game: HeroGame; label: string; acce
   return (
     <Link
       href="/scores"
-      className="group min-w-0 rounded-sm border border-transparent px-4 py-3 transition-all duration-300 hover:border-[rgba(191,87,0,0.25)] hover:bg-[rgba(255,255,255,0.02)]"
+      className="group min-w-0 rounded-sm border border-transparent px-4 py-3 transition-all duration-300 hover:border-[rgba(191,87,0,0.25)] hover:bg-[rgba(140,98,57,0.06)]"
     >
       <div className="mb-2 flex items-center gap-2">
         <span
@@ -139,10 +139,10 @@ export function HeroScoreStrip() {
         <div className="grid gap-y-3 divide-y divide-[rgba(245,242,235,0.08)] px-2 py-2 md:grid-cols-3 md:divide-x md:divide-y-0">
           {Array.from({ length: 3 }).map((_, index) => (
             <div key={index} className="px-4 py-3">
-              <div className="mb-2 h-3 w-16 rounded-sm bg-[rgba(255,255,255,0.06)]" />
+              <div className="mb-2 h-3 w-16 rounded-sm bg-[rgba(140,98,57,0.12)]" />
               <div className="space-y-2">
-                <div className="h-5 w-full rounded-sm bg-[rgba(255,255,255,0.08)]" />
-                <div className="h-5 w-5/6 rounded-sm bg-[rgba(255,255,255,0.06)]" />
+                <div className="h-5 w-full rounded-sm bg-[rgba(140,98,57,0.15)]" />
+                <div className="h-5 w-5/6 rounded-sm bg-[rgba(140,98,57,0.12)]" />
               </div>
             </div>
           ))}

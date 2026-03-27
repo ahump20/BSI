@@ -295,7 +295,7 @@ export function AppSidebar() {
     <>
       {/* ── Desktop sidebar ── */}
       <aside
-        className={`hidden md:flex flex-col border-r border-white/[0.05] transition-all duration-300 relative shrink-0 bg-midnight shadow-[inset_-1px_0_0_rgba(255,255,255,0.03)] ${
+        className={`hidden md:flex flex-col border-r border-[var(--border-vintage)] transition-all duration-300 relative shrink-0 bg-[var(--surface-scoreboard)] shadow-[inset_-1px_0_0_rgba(140,98,57,0.08)] ${
           collapsed ? 'w-16' : 'w-56'
         }`}
       >
