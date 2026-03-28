@@ -157,7 +157,7 @@ function FreshnessIndicator({ timestamp }: { timestamp?: string }) {
   const color = ageMin < 5 ? 'var(--bsi-success)' : ageMin < 30 ? 'var(--bsi-warning)' : 'var(--bsi-error)';
   const label = ageMin < 1 ? 'Just now' : ageMin < 60 ? `${Math.round(ageMin)}m ago` : `${Math.round(ageMin / 60)}h ago`;
   return (
-    <div className="flex items-center gap-1.5 text-[10px] text-text-muted" suppressHydrationWarning>
+    <div className="flex items-center gap-1.5 text-[10px] text-[rgba(196,184,165,0.35)]" suppressHydrationWarning>
       <span className="relative flex h-2 w-2">
         <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: color }} />
         <span className="relative inline-flex rounded-full h-2 w-2" style={{ backgroundColor: color }} />
@@ -363,15 +363,15 @@ export default function TexasIntelHubClient() {
         <Section padding="sm" className="border-b border-border">
           <Container>
             <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 College Baseball
               </Link>
-              <span className="text-text-muted">/</span>
-              <Link href="/college-baseball/teams/texas" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <Link href="/college-baseball/teams/texas" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 Texas
               </Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-primary">Intelligence Hub</span>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[var(--bsi-bone)]">Intelligence Hub</span>
             </nav>
           </Container>
         </Section>
@@ -392,7 +392,7 @@ export default function TexasIntelHubClient() {
             <div className="corner-marks">
               <ScrollReveal direction="up">
                 <div className="flex flex-col md:flex-row items-start gap-6">
-                  <div className="w-20 h-20 flex-shrink-0 rounded-sm bg-surface-light/50 flex items-center justify-center overflow-hidden">
+                  <div className="w-20 h-20 flex-shrink-0 rounded-sm bg-[var(--surface-press-box)]/50 flex items-center justify-center overflow-hidden">
                     <img src={logoUrl} alt="Texas Longhorns" className="w-14 h-14 object-contain" loading="eager" />
                   </div>
                   <div>
@@ -408,15 +408,15 @@ export default function TexasIntelHubClient() {
                         </Badge>
                       )}
                     </div>
-                    <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-wide text-text-primary" style={{ fontFamily: "'Bebas Neue', var(--font-display)" }}>
+                    <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-wide text-[var(--bsi-bone)]" style={{ fontFamily: "'Bebas Neue', var(--font-display)" }}>
                       Texas Longhorns Baseball
                     </h1>
-                    <p className="text-text-secondary text-lg mt-3 max-w-2xl leading-relaxed">
+                    <p className="text-[var(--bsi-dust)] text-lg mt-3 max-w-2xl leading-relaxed">
                       6 CWS titles. 38 CWS appearances. The winningest program in college baseball history.
                     </p>
                     {/* Item 1: Pulsing horizontal rule */}
-                    <hr className="w-16 border-t-2 border-burnt-orange mt-6 transition-all duration-300 hover:w-24" />
-                    <div className="flex flex-wrap items-center gap-4 mt-4 text-sm text-text-muted">
+                    <hr className="w-16 border-t-2 border-[var(--bsi-primary)] mt-6 transition-all duration-300 hover:w-24" />
+                    <div className="flex flex-wrap items-center gap-4 mt-4 text-sm text-[rgba(196,184,165,0.35)]">
                       <span>UFCU Disch-Falk Field</span>
                       <span className="text-border-subtle">|</span>
                       <span>Austin, TX</span>
@@ -466,60 +466,60 @@ export default function TexasIntelHubClient() {
                       <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--bsi-danger)]">Live</span>
                     </span>
                     <div className="flex items-center gap-2 font-mono text-sm font-bold">
-                      <span className="text-text-primary truncate max-w-[60px]">{liveGame.awayTeam.shortName}</span>
-                      <span className="text-text-primary">{liveGame.awayTeam.score}</span>
-                      <span className="text-text-muted text-xs">-</span>
-                      <span className="text-text-primary">{liveGame.homeTeam.score}</span>
-                      <span className="text-text-primary truncate max-w-[60px]">{liveGame.homeTeam.shortName}</span>
+                      <span className="text-[var(--bsi-bone)] truncate max-w-[60px]">{liveGame.awayTeam.shortName}</span>
+                      <span className="text-[var(--bsi-bone)]">{liveGame.awayTeam.score}</span>
+                      <span className="text-[rgba(196,184,165,0.35)] text-xs">-</span>
+                      <span className="text-[var(--bsi-bone)]">{liveGame.homeTeam.score}</span>
+                      <span className="text-[var(--bsi-bone)] truncate max-w-[60px]">{liveGame.homeTeam.shortName}</span>
                     </div>
                     {liveGame.inning != null && (
-                      <span className="text-text-muted text-[10px] font-mono">
+                      <span className="text-[rgba(196,184,165,0.35)] text-[10px] font-mono">
                         {liveGame.inningHalf === 'top' ? 'Top' : 'Bot'} {liveGame.inning}
                       </span>
                     )}
                   </div>
                 ) : teamLoading ? (
-                  <div className="h-8 w-16 mx-auto bg-surface-light rounded-sm animate-pulse" />
+                  <div className="h-8 w-16 mx-auto bg-[var(--surface-press-box)] rounded-sm animate-pulse" />
                 ) : nextGame?.opponent ? (
                   <div className="flex flex-col items-center gap-1">
                     <div className="flex items-center gap-2">
                       {opponentLogo && (
                         <img src={opponentLogo} alt="" className="w-5 h-5 object-contain" loading="lazy" />
                       )}
-                      <span className="font-mono text-lg font-bold text-text-primary truncate max-w-[120px]">
+                      <span className="font-mono text-lg font-bold text-[var(--bsi-bone)] truncate max-w-[120px]">
                         {nextGame.opponent}
                       </span>
                     </div>
                     {countdown && (
-                      <span className="text-burnt-orange text-xs font-mono font-semibold" suppressHydrationWarning>
+                      <span className="text-[var(--bsi-primary)] text-xs font-mono font-semibold" suppressHydrationWarning>
                         {countdown}
                       </span>
                     )}
                   </div>
                 ) : (
-                  <div className="font-mono text-2xl font-bold text-text-primary">&mdash;</div>
+                  <div className="font-mono text-2xl font-bold text-[var(--bsi-bone)]">&mdash;</div>
                 )}
-                <div className="text-text-muted text-xs mt-1 uppercase tracking-wider">
+                <div className="text-[rgba(196,184,165,0.35)] text-xs mt-1 uppercase tracking-wider">
                   {liveGame ? 'Live Game' : 'Next Game'}
                 </div>
                 {!liveGame && nextGame?.date && !teamLoading && (
-                  <div className="text-text-muted text-[10px] mt-0.5">{nextGame.date}</div>
+                  <div className="text-[rgba(196,184,165,0.35)] text-[10px] mt-0.5">{nextGame.date}</div>
                 )}
               </div>
               {/* Item 3: Season pulse mini-chart */}
               <div className="text-center py-2">
                 {recentResults.length > 0 ? (
                   <>
-                    <div className="font-mono text-2xl font-bold text-text-primary">
+                    <div className="font-mono text-2xl font-bold text-[var(--bsi-bone)]">
                       {recentResults.slice(-10).filter((r) => r.result === 'W').length}-
                       {recentResults.slice(-10).filter((r) => r.result === 'L').length}
                     </div>
                     <SeasonPulse results={recentResults} />
                   </>
                 ) : (
-                  <div className="h-8 w-16 mx-auto bg-surface-light rounded-sm animate-pulse" />
+                  <div className="h-8 w-16 mx-auto bg-[var(--surface-press-box)] rounded-sm animate-pulse" />
                 )}
-                <div className="text-text-muted text-xs mt-1 uppercase tracking-wider">Last 10</div>
+                <div className="text-[rgba(196,184,165,0.35)] text-xs mt-1 uppercase tracking-wider">Last 10</div>
               </div>
             </div>
           </Container>
@@ -530,7 +530,7 @@ export default function TexasIntelHubClient() {
           <Container>
             <nav className="flex items-center gap-1 overflow-x-auto py-2 scrollbar-hide" aria-label="Intelligence sections">
               {INTEL_NAV.map((item) => (
-                <Link key={item.href} href={item.href} className="whitespace-nowrap px-3 py-1.5 text-xs font-mono uppercase tracking-wider text-text-muted hover:text-burnt-orange transition-colors">
+                <Link key={item.href} href={item.href} className="whitespace-nowrap px-3 py-1.5 text-xs font-mono uppercase tracking-wider text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                   {item.label}
                 </Link>
               ))}
@@ -542,7 +542,7 @@ export default function TexasIntelHubClient() {
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-6 text-text-primary">
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-6 text-[var(--bsi-bone)]">
                 Intelligence Sections
               </h2>
             </ScrollReveal>
@@ -551,12 +551,12 @@ export default function TexasIntelHubClient() {
                 <ScrollReveal key={item.href} direction="up">
                   {/* Item 10: Mobile touch targets — min-h-[44px] + p-4 */}
                   <Link href={item.href} className="block min-h-[44px]">
-                    <Card variant="default" padding="md" className="h-full p-4 hover:border-burnt-orange/30 transition-colors cursor-pointer group">
+                    <Card variant="default" padding="md" className="h-full p-4 hover:border-[var(--bsi-primary)]/30 transition-colors cursor-pointer group">
                       <CardContent>
-                        <h3 className="font-display font-bold text-sm uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors">
+                        <h3 className="font-display font-bold text-sm uppercase tracking-wide text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors">
                           {item.label}
                         </h3>
-                        <p className="text-text-muted text-xs mt-1">{item.desc}</p>
+                        <p className="text-[rgba(196,184,165,0.35)] text-xs mt-1">{item.desc}</p>
                       </CardContent>
                     </Card>
                   </Link>
@@ -570,7 +570,7 @@ export default function TexasIntelHubClient() {
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-6 text-text-primary">
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-6 text-[var(--bsi-bone)]">
                 Roster Advanced Metrics
               </h2>
             </ScrollReveal>
@@ -600,7 +600,7 @@ export default function TexasIntelHubClient() {
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-6 text-text-primary">
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-6 text-[var(--bsi-bone)]">
                 Film Room
               </h2>
             </ScrollReveal>
@@ -612,7 +612,7 @@ export default function TexasIntelHubClient() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-6 text-text-primary">
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-6 text-[var(--bsi-bone)]">
                 Social Intelligence
               </h2>
             </ScrollReveal>
@@ -626,14 +626,14 @@ export default function TexasIntelHubClient() {
             <Container>
               <ScrollReveal direction="up">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary">
+                  <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-[var(--bsi-bone)]">
                     Post-Game Intel
                   </h2>
                   <div className="flex gap-2">
                     <button
                       onClick={() => setAnalysisIdx((i) => Math.max(0, i - 1))}
                       disabled={analysisIdx === 0}
-                      className="w-8 h-8 rounded-sm border border-border flex items-center justify-center text-text-muted hover:text-text-primary disabled:opacity-30 transition-colors"
+                      className="w-8 h-8 rounded-sm border border-border flex items-center justify-center text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] disabled:opacity-30 transition-colors"
                       aria-label="Previous game"
                     >
                       &larr;
@@ -641,7 +641,7 @@ export default function TexasIntelHubClient() {
                     <button
                       onClick={() => setAnalysisIdx((i) => Math.min(recentAnalyses.length - 1, i + 1))}
                       disabled={analysisIdx >= recentAnalyses.length - 1}
-                      className="w-8 h-8 rounded-sm border border-border flex items-center justify-center text-text-muted hover:text-text-primary disabled:opacity-30 transition-colors"
+                      className="w-8 h-8 rounded-sm border border-border flex items-center justify-center text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] disabled:opacity-30 transition-colors"
                       aria-label="Next game"
                     >
                       &rarr;
@@ -679,13 +679,13 @@ export default function TexasIntelHubClient() {
                               ? `${game.homeScore}-${game.awayScore}`
                               : `${game.awayScore}-${game.homeScore}`}
                           </Badge>
-                          <span className="text-text-muted text-xs">{game.date}</span>
+                          <span className="text-[rgba(196,184,165,0.35)] text-xs">{game.date}</span>
                         </div>
                       </div>
                     </CardHeader>
                     <CardContent>
                       {game.analysis.paragraphs.map((p, i) => (
-                        <p key={i} className="text-text-secondary text-sm leading-relaxed mb-3 last:mb-0">
+                        <p key={i} className="text-[var(--bsi-dust)] text-sm leading-relaxed mb-3 last:mb-0">
                           {p}
                         </p>
                       ))}
@@ -699,7 +699,7 @@ export default function TexasIntelHubClient() {
                     key={i}
                     onClick={() => setAnalysisIdx(i)}
                     className={`w-2 h-2 rounded-full transition-colors ${
-                      i === analysisIdx ? 'bg-burnt-orange' : 'bg-surface-light'
+                      i === analysisIdx ? 'bg-[var(--bsi-primary)]' : 'bg-[var(--surface-press-box)]'
                     }`}
                     aria-label={`Game ${i + 1}`}
                   />
@@ -714,7 +714,7 @@ export default function TexasIntelHubClient() {
           <Container>
             <ScrollReveal direction="up">
               <Card variant="default" padding="lg" className="relative overflow-hidden">
-                <div className="absolute top-0 left-0 right-0 h-0.5 bg-burnt-orange" />
+                <div className="absolute top-0 left-0 right-0 h-0.5 bg-[var(--bsi-primary)]" />
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3">
                     <span>Program History</span>
@@ -722,7 +722,7 @@ export default function TexasIntelHubClient() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-text-secondary text-sm leading-relaxed mb-4">
+                  <p className="text-[var(--bsi-dust)] text-sm leading-relaxed mb-4">
                     The Texas Longhorns baseball program is the winningest in NCAA history.
                     Six national championships, 38 College World Series appearances, and a
                     pipeline that has produced over 100 MLB draft picks. From Augie Garrido&apos;s
@@ -737,7 +737,7 @@ export default function TexasIntelHubClient() {
                   </div>
                   <Link
                     href="/college-baseball/texas-history"
-                    className="inline-flex items-center gap-2 text-sm text-burnt-orange hover:text-ember transition-colors font-medium"
+                    className="inline-flex items-center gap-2 text-sm text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors font-medium"
                   >
                     Explore Full History &rarr;
                   </Link>
@@ -752,7 +752,7 @@ export default function TexasIntelHubClient() {
           <Section padding="lg" background="charcoal" borderTop>
             <Container>
               <ScrollReveal direction="up">
-                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-6 text-text-primary">
+                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-6 text-[var(--bsi-bone)]">
                   Recent Coverage
                 </h2>
               </ScrollReveal>
@@ -760,16 +760,16 @@ export default function TexasIntelHubClient() {
                 {texasArticles.map((article) => (
                   <ScrollReveal key={article.slug} direction="up">
                     <Link href={`/college-baseball/editorial/${article.slug}`}>
-                      <Card variant="default" padding="md" className="h-full hover:border-burnt-orange/30 transition-colors cursor-pointer">
+                      <Card variant="default" padding="md" className="h-full hover:border-[var(--bsi-primary)]/30 transition-colors cursor-pointer">
                         <CardContent>
                           <div className="flex items-center gap-2 mb-2">
                             <Badge variant="secondary" size="sm">{article.badge}</Badge>
-                            <span className="text-text-muted text-xs">{article.date}</span>
+                            <span className="text-[rgba(196,184,165,0.35)] text-xs">{article.date}</span>
                           </div>
-                          <h3 className="font-display font-bold text-sm uppercase tracking-wide text-text-primary mb-2 line-clamp-2">
+                          <h3 className="font-display font-bold text-sm uppercase tracking-wide text-[var(--bsi-bone)] mb-2 line-clamp-2">
                             {article.title}
                           </h3>
-                          <p className="text-text-muted text-xs leading-relaxed line-clamp-2">
+                          <p className="text-[rgba(196,184,165,0.35)] text-xs leading-relaxed line-clamp-2">
                             {article.description}
                           </p>
                         </CardContent>
@@ -800,43 +800,43 @@ export default function TexasIntelHubClient() {
               <div className="flex flex-wrap gap-4">
                 <Link
                   href="/college-baseball/texas-intelligence/pitching"
-                  className="text-sm text-burnt-orange hover:text-ember transition-colors"
+                  className="text-sm text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
                 >
                   Pitching Staff &rarr;
                 </Link>
                 <Link
                   href="/college-baseball/texas-intelligence/schedule"
-                  className="text-sm text-burnt-orange hover:text-ember transition-colors"
+                  className="text-sm text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
                 >
                   Schedule Heat Map &rarr;
                 </Link>
                 <Link
                   href="/college-baseball/texas-intelligence/roster"
-                  className="text-sm text-text-muted hover:text-text-primary transition-colors"
+                  className="text-sm text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] transition-colors"
                 >
                   Full Roster &rarr;
                 </Link>
                 <Link
                   href="/college-baseball/texas-intelligence/nil"
-                  className="text-sm text-text-muted hover:text-text-primary transition-colors"
+                  className="text-sm text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] transition-colors"
                 >
                   NIL Intelligence &rarr;
                 </Link>
                 <Link
                   href="/college-baseball/teams/texas"
-                  className="text-sm text-text-muted hover:text-text-primary transition-colors"
+                  className="text-sm text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] transition-colors"
                 >
                   Team Detail &rarr;
                 </Link>
                 <Link
                   href="/college-baseball/texas-history"
-                  className="text-sm text-text-muted hover:text-text-primary transition-colors"
+                  className="text-sm text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] transition-colors"
                 >
                   Program History &rarr;
                 </Link>
                 <Link
                   href="/college-baseball/savant"
-                  className="text-sm text-text-muted hover:text-text-primary transition-colors"
+                  className="text-sm text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] transition-colors"
                 >
                   BSI Savant &rarr;
                 </Link>
@@ -863,7 +863,7 @@ export default function TexasIntelHubClient() {
               <span className="heritage-stamp text-[10px]">Keyboard Shortcuts</span>
               <button
                 onClick={() => setShowShortcuts(false)}
-                className="text-text-muted hover:text-text-primary text-lg leading-none transition-colors"
+                className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] text-lg leading-none transition-colors"
                 aria-label="Close shortcuts"
               >
                 &times;
@@ -871,16 +871,16 @@ export default function TexasIntelHubClient() {
             </div>
             <div className="space-y-2">
               {Object.entries(SHORTCUT_MAP).map(([key, { label }]) => (
-                <div key={key} className="flex items-center justify-between py-1.5 border-b border-border-subtle last:border-0">
-                  <span className="text-text-secondary text-sm">{label}</span>
-                  <kbd className="font-mono text-xs bg-[var(--surface-press-box)] border border-border-subtle rounded-sm px-2 py-0.5 text-text-primary">
+                <div key={key} className="flex items-center justify-between py-1.5 border-b border-[var(--border-vintage)] last:border-0">
+                  <span className="text-[var(--bsi-dust)] text-sm">{label}</span>
+                  <kbd className="font-mono text-xs bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm px-2 py-0.5 text-[var(--bsi-bone)]">
                     {key.toUpperCase()}
                   </kbd>
                 </div>
               ))}
               <div className="flex items-center justify-between py-1.5">
-                <span className="text-text-secondary text-sm">Toggle this panel</span>
-                <kbd className="font-mono text-xs bg-[var(--surface-press-box)] border border-border-subtle rounded-sm px-2 py-0.5 text-text-primary">
+                <span className="text-[var(--bsi-dust)] text-sm">Toggle this panel</span>
+                <kbd className="font-mono text-xs bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm px-2 py-0.5 text-[var(--bsi-bone)]">
                   ?
                 </kbd>
               </div>
@@ -912,14 +912,14 @@ function DashboardStat({
   return (
     <div className="text-center py-2">
       {loading ? (
-        <div className="h-8 w-16 mx-auto bg-surface-light rounded-sm animate-pulse" />
+        <div className="h-8 w-16 mx-auto bg-[var(--surface-press-box)] rounded-sm animate-pulse" />
       ) : value ? (
         <AnimatedStatValue value={value} accent={accent} />
       ) : (
         <span className="font-mono text-2xl font-bold">&mdash;</span>
       )}
-      <div className="text-text-muted text-xs mt-1 uppercase tracking-wider">{label}</div>
-      {sub && <div className="text-text-muted text-[10px] mt-0.5">{sub}</div>}
+      <div className="text-[rgba(196,184,165,0.35)] text-xs mt-1 uppercase tracking-wider">{label}</div>
+      {sub && <div className="text-[rgba(196,184,165,0.35)] text-[10px] mt-0.5">{sub}</div>}
     </div>
   );
 }
@@ -927,8 +927,8 @@ function DashboardStat({
 function HistoryStat({ label, value }: { label: string; value: string }) {
   return (
     <div className="text-center">
-      <div className="font-mono text-xl font-bold text-burnt-orange">{value}</div>
-      <div className="text-text-muted text-xs mt-1">{label}</div>
+      <div className="font-mono text-xl font-bold text-[var(--bsi-primary)]">{value}</div>
+      <div className="text-[rgba(196,184,165,0.35)] text-xs mt-1">{label}</div>
     </div>
   );
 }

@@ -63,11 +63,11 @@ export default function TexasDigestClient() {
         <Section padding="sm" className="border-b border-border">
           <Container>
             <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">College Baseball</Link>
-              <span className="text-text-muted">/</span>
-              <Link href="/college-baseball/texas-intelligence" className="text-text-muted hover:text-burnt-orange transition-colors">Texas Intel</Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-primary">Weekly Digest</span>
+              <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">College Baseball</Link>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <Link href="/college-baseball/texas-intelligence" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">Texas Intel</Link>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[var(--bsi-bone)]">Weekly Digest</span>
             </nav>
           </Container>
         </Section>
@@ -81,10 +81,10 @@ export default function TexasDigestClient() {
                 <img src={logoUrl} alt="Texas" className="w-12 h-12 object-contain" loading="eager" />
                 <div>
                   <span className="heritage-stamp text-[10px]">Weekly Digest</span>
-                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-text-primary mt-1">
+                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-[var(--bsi-bone)] mt-1">
                     {data?.weekLabel ?? 'Intel Digest'}
                   </h1>
-                  <p className="text-text-secondary text-sm mt-2 max-w-xl">
+                  <p className="text-[var(--bsi-dust)] text-sm mt-2 max-w-xl">
                     This week in Texas Longhorns baseball — record, standout performers, and the series ahead.
                   </p>
                 </div>
@@ -99,7 +99,7 @@ export default function TexasDigestClient() {
             <Container>
               <div className="space-y-4">
                 {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="h-24 bg-surface-light rounded-sm animate-pulse" />
+                  <div key={i} className="h-24 bg-[var(--surface-press-box)] rounded-sm animate-pulse" />
                 ))}
               </div>
             </Container>
@@ -111,7 +111,7 @@ export default function TexasDigestClient() {
           <Section padding="lg">
             <Container>
               <Card padding="lg" className="text-center">
-                <p className="text-text-muted text-sm">Weekly digest data is not available right now. Check back soon.</p>
+                <p className="text-[rgba(196,184,165,0.35)] text-sm">Weekly digest data is not available right now. Check back soon.</p>
               </Card>
             </Container>
           </Section>
@@ -125,22 +125,22 @@ export default function TexasDigestClient() {
               <Container>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="text-center py-2">
-                    <div className="font-mono text-2xl font-bold text-text-primary">
+                    <div className="font-mono text-2xl font-bold text-[var(--bsi-bone)]">
                       {record ? `${record.wins}-${record.losses}` : '—'}
                     </div>
-                    <div className="text-text-muted text-xs mt-1 uppercase tracking-wider">Overall</div>
+                    <div className="text-[rgba(196,184,165,0.35)] text-xs mt-1 uppercase tracking-wider">Overall</div>
                   </div>
                   <div className="text-center py-2">
                     <div className="font-mono text-2xl font-bold" style={{ color: ACCENT }}>
                       {record ? `${record.weekWins}-${record.weekLosses}` : '—'}
                     </div>
-                    <div className="text-text-muted text-xs mt-1 uppercase tracking-wider">This Week</div>
+                    <div className="text-[rgba(196,184,165,0.35)] text-xs mt-1 uppercase tracking-wider">This Week</div>
                   </div>
                   <div className="text-center py-2">
-                    <div className="font-mono text-2xl font-bold text-text-primary">
+                    <div className="font-mono text-2xl font-bold text-[var(--bsi-bone)]">
                       {ranking?.current ? `#${ranking.current}` : '—'}
                     </div>
-                    <div className="text-text-muted text-xs mt-1 uppercase tracking-wider">National Rank</div>
+                    <div className="text-[rgba(196,184,165,0.35)] text-xs mt-1 uppercase tracking-wider">National Rank</div>
                   </div>
                   <div className="text-center py-2">
                     <div className="font-mono text-2xl font-bold" style={{
@@ -150,7 +150,7 @@ export default function TexasDigestClient() {
                     }}>
                       {ranking?.movement ? (ranking.movement > 0 ? `+${ranking.movement}` : String(ranking.movement)) : '—'}
                     </div>
-                    <div className="text-text-muted text-xs mt-1 uppercase tracking-wider">Movement</div>
+                    <div className="text-[rgba(196,184,165,0.35)] text-xs mt-1 uppercase tracking-wider">Movement</div>
                   </div>
                 </div>
               </Container>
@@ -161,12 +161,12 @@ export default function TexasDigestClient() {
               <Section padding="lg" borderTop>
                 <Container>
                   <ScrollReveal direction="up">
-                    <Card variant="default" padding="lg" className="border-t-2 border-burnt-orange">
+                    <Card variant="default" padding="lg" className="border-t-2 border-[var(--bsi-primary)]">
                       <CardHeader>
                         <CardTitle>Week in Review</CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-text-secondary text-sm leading-relaxed" style={{ fontFamily: 'var(--font-body, "Cormorant Garamond", serif)' }}>
+                        <p className="text-[var(--bsi-dust)] text-sm leading-relaxed" style={{ fontFamily: 'var(--font-body, "Cormorant Garamond", serif)' }}>
                           {data.weekSummary}
                         </p>
                       </CardContent>
@@ -181,7 +181,7 @@ export default function TexasDigestClient() {
               <Section padding="lg" background="charcoal" borderTop>
                 <Container>
                   <ScrollReveal direction="up">
-                    <h2 className="font-display text-2xl font-bold uppercase tracking-wide mb-4 text-text-primary">
+                    <h2 className="font-display text-2xl font-bold uppercase tracking-wide mb-4 text-[var(--bsi-bone)]">
                       Standout Performers
                     </h2>
                   </ScrollReveal>
@@ -192,12 +192,12 @@ export default function TexasDigestClient() {
                           <CardContent>
                             <div className="flex items-start justify-between mb-2">
                               <div>
-                                <div className="text-text-primary font-medium text-sm">{perf.name}</div>
-                                <div className="text-text-muted text-xs">{perf.position}</div>
+                                <div className="text-[var(--bsi-bone)] font-medium text-sm">{perf.name}</div>
+                                <div className="text-[rgba(196,184,165,0.35)] text-xs">{perf.position}</div>
                               </div>
                               <Badge variant="accent" size="sm">{perf.stat}</Badge>
                             </div>
-                            <p className="text-text-secondary text-xs leading-relaxed">{perf.highlight}</p>
+                            <p className="text-[var(--bsi-dust)] text-xs leading-relaxed">{perf.highlight}</p>
                           </CardContent>
                         </Card>
                       </ScrollReveal>
@@ -212,7 +212,7 @@ export default function TexasDigestClient() {
               <Section padding="lg" borderTop>
                 <Container>
                   <ScrollReveal direction="up">
-                    <h2 className="font-display text-2xl font-bold uppercase tracking-wide mb-4 text-text-primary">
+                    <h2 className="font-display text-2xl font-bold uppercase tracking-wide mb-4 text-[var(--bsi-bone)]">
                       Series Ahead
                     </h2>
                   </ScrollReveal>
@@ -222,13 +222,13 @@ export default function TexasDigestClient() {
                         <Card variant="default" padding="md">
                           <CardContent>
                             <div className="flex items-center justify-between mb-2">
-                              <h3 className="font-display font-bold text-sm uppercase tracking-wide text-text-primary">
+                              <h3 className="font-display font-bold text-sm uppercase tracking-wide text-[var(--bsi-bone)]">
                                 vs {series.opponent}
                               </h3>
-                              <span className="text-text-muted text-xs font-mono">{series.dates}</span>
+                              <span className="text-[rgba(196,184,165,0.35)] text-xs font-mono">{series.dates}</span>
                             </div>
-                            <div className="text-text-muted text-xs mb-2">{series.location}</div>
-                            <p className="text-text-secondary text-xs leading-relaxed">{series.preview}</p>
+                            <div className="text-[rgba(196,184,165,0.35)] text-xs mb-2">{series.location}</div>
+                            <p className="text-[var(--bsi-dust)] text-xs leading-relaxed">{series.preview}</p>
                           </CardContent>
                         </Card>
                       </ScrollReveal>
@@ -257,7 +257,7 @@ export default function TexasDigestClient() {
               />
               <Link
                 href="/college-baseball/texas-intelligence"
-                className="text-sm text-burnt-orange hover:text-ember transition-colors"
+                className="text-sm text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 &larr; Back to Hub
               </Link>

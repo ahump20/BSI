@@ -120,29 +120,29 @@ export function EdgeBotPanel() {
   return (
     <div>
       <div className="mb-6">
-        <h2 className="font-display text-2xl font-bold uppercase tracking-wide text-text-primary">
+        <h2 className="font-display text-2xl font-bold uppercase tracking-wide text-[var(--bsi-bone)]">
           EdgeBot v3 Intelligence
         </h2>
-        <p className="text-text-muted text-sm mt-1">
+        <p className="text-[rgba(196,184,165,0.35)] text-sm mt-1">
           BSI probability model · EdgeBot v3 · Single-game analysis
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Input form */}
-        <div className="bg-surface-light/10 border border-border-subtle rounded-sm p-5">
-          <h3 className="text-sm font-semibold text-text-secondary mb-4 uppercase tracking-wide">
+        <div className="bg-[var(--surface-press-box)]/10 border border-[var(--border-vintage)] rounded-sm p-5">
+          <h3 className="text-sm font-semibold text-[var(--bsi-dust)] mb-4 uppercase tracking-wide">
             PRE Mode — Game Setup
           </h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs text-text-muted mb-1" htmlFor="teamA">Team A</label>
+                <label className="block text-xs text-[rgba(196,184,165,0.35)] mb-1" htmlFor="teamA">Team A</label>
                 <select
                   id="teamA"
                   value={input.teamA}
                   onChange={update('teamA')}
-                  className="w-full bg-midnight border border-border-subtle rounded-sm px-3 py-2 text-text-primary text-sm focus:border-burnt-orange focus:outline-none"
+                  className="w-full bg-[var(--surface-scoreboard)] border border-[var(--border-vintage)] rounded-sm px-3 py-2 text-[var(--bsi-bone)] text-sm focus:border-[var(--bsi-primary)] focus:outline-none"
                 >
                   <option value="">Select team</option>
                   {TEAMS.map((t) => (
@@ -151,12 +151,12 @@ export function EdgeBotPanel() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-text-muted mb-1" htmlFor="teamB">Team B</label>
+                <label className="block text-xs text-[rgba(196,184,165,0.35)] mb-1" htmlFor="teamB">Team B</label>
                 <select
                   id="teamB"
                   value={input.teamB}
                   onChange={update('teamB')}
-                  className="w-full bg-midnight border border-border-subtle rounded-sm px-3 py-2 text-text-primary text-sm focus:border-burnt-orange focus:outline-none"
+                  className="w-full bg-[var(--surface-scoreboard)] border border-[var(--border-vintage)] rounded-sm px-3 py-2 text-[var(--bsi-bone)] text-sm focus:border-[var(--bsi-primary)] focus:outline-none"
                 >
                   <option value="">Select team</option>
                   {TEAMS.map((t) => (
@@ -168,12 +168,12 @@ export function EdgeBotPanel() {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs text-text-muted mb-1" htmlFor="pool">Round</label>
+                <label className="block text-xs text-[rgba(196,184,165,0.35)] mb-1" htmlFor="pool">Round</label>
                 <select
                   id="pool"
                   value={input.pool}
                   onChange={update('pool')}
-                  className="w-full bg-midnight border border-border-subtle rounded-sm px-3 py-2 text-text-primary text-sm focus:border-burnt-orange focus:outline-none"
+                  className="w-full bg-[var(--surface-scoreboard)] border border-[var(--border-vintage)] rounded-sm px-3 py-2 text-[var(--bsi-bone)] text-sm focus:border-[var(--bsi-primary)] focus:outline-none"
                 >
                   {POOLS.map((p) => (
                     <option key={p} value={p}>{p === 'A' || p === 'B' || p === 'C' || p === 'D' ? `Pool ${p}` : p}</option>
@@ -181,7 +181,7 @@ export function EdgeBotPanel() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-text-muted mb-1" htmlFor="date">Date</label>
+                <label className="block text-xs text-[rgba(196,184,165,0.35)] mb-1" htmlFor="date">Date</label>
                 <input
                   id="date"
                   type="date"
@@ -189,26 +189,26 @@ export function EdgeBotPanel() {
                   onChange={update('date')}
                   min="2026-03-05"
                   max="2026-03-17"
-                  className="w-full bg-midnight border border-border-subtle rounded-sm px-3 py-2 text-text-primary text-sm focus:border-burnt-orange focus:outline-none"
+                  className="w-full bg-[var(--surface-scoreboard)] border border-[var(--border-vintage)] rounded-sm px-3 py-2 text-[var(--bsi-bone)] text-sm focus:border-[var(--bsi-primary)] focus:outline-none"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs text-text-muted mb-1" htmlFor="venue">Venue (optional)</label>
+              <label className="block text-xs text-[rgba(196,184,165,0.35)] mb-1" htmlFor="venue">Venue (optional)</label>
               <input
                 id="venue"
                 type="text"
                 placeholder="e.g. Tokyo Dome"
                 value={input.venue}
                 onChange={update('venue')}
-                className="w-full bg-midnight border border-border-subtle rounded-sm px-3 py-2 text-text-primary text-sm focus:border-burnt-orange focus:outline-none"
+                className="w-full bg-[var(--surface-scoreboard)] border border-[var(--border-vintage)] rounded-sm px-3 py-2 text-[var(--bsi-bone)] text-sm focus:border-[var(--bsi-primary)] focus:outline-none"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs text-text-muted mb-1" htmlFor="teamAStarter">
+                <label className="block text-xs text-[rgba(196,184,165,0.35)] mb-1" htmlFor="teamAStarter">
                   {input.teamA || 'Team A'} starter
                 </label>
                 <input
@@ -217,11 +217,11 @@ export function EdgeBotPanel() {
                   placeholder="Optional"
                   value={input.teamAStarter}
                   onChange={update('teamAStarter')}
-                  className="w-full bg-midnight border border-border-subtle rounded-sm px-3 py-2 text-text-primary text-sm focus:border-burnt-orange focus:outline-none"
+                  className="w-full bg-[var(--surface-scoreboard)] border border-[var(--border-vintage)] rounded-sm px-3 py-2 text-[var(--bsi-bone)] text-sm focus:border-[var(--bsi-primary)] focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-xs text-text-muted mb-1" htmlFor="teamBStarter">
+                <label className="block text-xs text-[rgba(196,184,165,0.35)] mb-1" htmlFor="teamBStarter">
                   {input.teamB || 'Team B'} starter
                 </label>
                 <input
@@ -230,27 +230,27 @@ export function EdgeBotPanel() {
                   placeholder="Optional"
                   value={input.teamBStarter}
                   onChange={update('teamBStarter')}
-                  className="w-full bg-midnight border border-border-subtle rounded-sm px-3 py-2 text-text-primary text-sm focus:border-burnt-orange focus:outline-none"
+                  className="w-full bg-[var(--surface-scoreboard)] border border-[var(--border-vintage)] rounded-sm px-3 py-2 text-[var(--bsi-bone)] text-sm focus:border-[var(--bsi-primary)] focus:outline-none"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs text-text-muted mb-1" htmlFor="notes">Additional context</label>
+              <label className="block text-xs text-[rgba(196,184,165,0.35)] mb-1" htmlFor="notes">Additional context</label>
               <textarea
                 id="notes"
                 placeholder="e.g. Must-win game, bullpen depletion notes, market odds..."
                 value={input.notes}
                 onChange={update('notes')}
                 rows={2}
-                className="w-full bg-midnight border border-border-subtle rounded-sm px-3 py-2 text-text-primary text-sm focus:border-burnt-orange focus:outline-none resize-none"
+                className="w-full bg-[var(--surface-scoreboard)] border border-[var(--border-vintage)] rounded-sm px-3 py-2 text-[var(--bsi-bone)] text-sm focus:border-[var(--bsi-primary)] focus:outline-none resize-none"
               />
             </div>
 
             <button
               type="submit"
               disabled={!canSubmit || state === 'loading'}
-              className="w-full py-2.5 bg-burnt-orange text-white font-semibold rounded-sm text-sm hover:bg-ember transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-2.5 bg-[var(--bsi-primary)] text-white font-semibold rounded-sm text-sm hover:bg-ember transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {state === 'loading' ? 'Analyzing...' : 'Run EdgeBot v3 →'}
             </button>
@@ -258,22 +258,22 @@ export function EdgeBotPanel() {
         </div>
 
         {/* Output panel */}
-        <div className="bg-midnight border border-border-subtle rounded-sm p-5 flex flex-col min-h-[300px]">
-          <h3 className="text-sm font-semibold text-text-secondary mb-4 uppercase tracking-wide">
+        <div className="bg-[var(--surface-scoreboard)] border border-[var(--border-vintage)] rounded-sm p-5 flex flex-col min-h-[300px]">
+          <h3 className="text-sm font-semibold text-[var(--bsi-dust)] mb-4 uppercase tracking-wide">
             BSI Analytical Readout
           </h3>
 
           {state === 'idle' && (
             <div className="flex-1 flex items-center justify-center text-center">
               <div>
-                <div className="w-12 h-12 bg-surface-light rounded-full flex items-center justify-center mx-auto mb-3">
-                  <svg viewBox="0 0 24 24" className="w-6 h-6 text-text-muted" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <div className="w-12 h-12 bg-[var(--surface-press-box)] rounded-full flex items-center justify-center mx-auto mb-3">
+                  <svg viewBox="0 0 24 24" className="w-6 h-6 text-[rgba(196,184,165,0.35)]" fill="none" stroke="currentColor" strokeWidth="1.5">
                     <circle cx="12" cy="12" r="10" />
                     <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
                     <line x1="12" y1="17" x2="12.01" y2="17" />
                   </svg>
                 </div>
-                <p className="text-text-muted text-sm">Select teams and game details to run analysis</p>
+                <p className="text-[rgba(196,184,165,0.35)] text-sm">Select teams and game details to run analysis</p>
               </div>
             </div>
           )}
@@ -281,21 +281,21 @@ export function EdgeBotPanel() {
           {state === 'loading' && (
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
-                <div className="w-8 h-8 border-2 border-burnt-orange border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-                <p className="text-text-muted text-sm">EdgeBot v3 analyzing...</p>
+                <div className="w-8 h-8 border-2 border-[var(--bsi-primary)] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+                <p className="text-[rgba(196,184,165,0.35)] text-sm">EdgeBot v3 analyzing...</p>
               </div>
             </div>
           )}
 
           {(state === 'complete' || state === 'error' || output) && (
             <div className="flex-1 overflow-auto">
-              <pre className="text-text-secondary text-xs sm:text-sm font-mono whitespace-pre-wrap leading-relaxed">
+              <pre className="text-[var(--bsi-dust)] text-xs sm:text-sm font-mono whitespace-pre-wrap leading-relaxed">
                 {output}
               </pre>
             </div>
           )}
 
-          <p className="text-text-muted text-[10px] mt-4 pt-3 border-t border-border-subtle">
+          <p className="text-[rgba(196,184,165,0.35)] text-[10px] mt-4 pt-3 border-t border-[var(--border-vintage)]">
             Informational analysis only. Not financial advice. EdgeBot v3 · BSI probability model.
           </p>
         </div>

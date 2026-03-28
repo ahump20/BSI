@@ -378,28 +378,28 @@ export default function NBAPage() {
                           <div className="overflow-x-auto">
                             <table className="w-full">
                               <thead>
-                                <tr className="border-b-2 border-burnt-orange">
+                                <tr className="border-b-2 border-[var(--bsi-primary)]">
                                   {['#', 'Team', 'W', 'L', 'PCT', 'GB', 'STRK'].map((h) => (
-                                    <th key={h} className="text-left p-3 text-text-tertiary font-semibold text-xs">{h}</th>
+                                    <th key={h} className="text-left p-3 text-[rgba(196,184,165,0.5)] font-semibold text-xs">{h}</th>
                                   ))}
                                 </tr>
                               </thead>
                               <tbody>
                                 {conf.teams.sort((a, b) => b.wins - a.wins).map((team, idx) => (
-                                  <tr key={team.teamName} className="border-b border-border-subtle hover:bg-[var(--surface-dugout)] transition-colors">
-                                    <td className="p-3 text-burnt-orange font-bold">{idx + 1}</td>
-                                    <td className="p-3 font-semibold text-text-primary">{team.teamName}</td>
-                                    <td className="p-3 text-text-secondary">{team.wins}</td>
-                                    <td className="p-3 text-text-secondary">{team.losses}</td>
-                                    <td className="p-3 text-text-secondary">{team.winPercentage.toFixed(3).replace('0.', '.')}</td>
-                                    <td className="p-3 text-text-secondary">{team.gamesBack != null ? (team.gamesBack === 0 ? '-' : team.gamesBack.toFixed(1)) : '-'}</td>
-                                    <td className="p-3 text-text-secondary">{team.streak || '-'}</td>
+                                  <tr key={team.teamName} className="border-b border-[var(--border-vintage)] hover:bg-[var(--surface-dugout)] transition-colors">
+                                    <td className="p-3 text-[var(--bsi-primary)] font-bold">{idx + 1}</td>
+                                    <td className="p-3 font-semibold text-[var(--bsi-bone)]">{team.teamName}</td>
+                                    <td className="p-3 text-[var(--bsi-dust)]">{team.wins}</td>
+                                    <td className="p-3 text-[var(--bsi-dust)]">{team.losses}</td>
+                                    <td className="p-3 text-[var(--bsi-dust)]">{team.winPercentage.toFixed(3).replace('0.', '.')}</td>
+                                    <td className="p-3 text-[var(--bsi-dust)]">{team.gamesBack != null ? (team.gamesBack === 0 ? '-' : team.gamesBack.toFixed(1)) : '-'}</td>
+                                    <td className="p-3 text-[var(--bsi-dust)]">{team.streak || '-'}</td>
                                   </tr>
                                 ))}
                               </tbody>
                             </table>
                           </div>
-                          <div className="mt-4 pt-4 border-t border-border-subtle">
+                          <div className="mt-4 pt-4 border-t border-[var(--border-vintage)]">
                             <DataSourceBadge source="SportsDataIO" timestamp={formatTimestamp(lastUpdated)} />
                           </div>
                         </CardContent>
@@ -441,9 +441,9 @@ export default function NBAPage() {
                           />
                         ))}
                       </div>
-                      <div className="mt-4 pt-4 border-t border-border-subtle">
+                      <div className="mt-4 pt-4 border-t border-[var(--border-vintage)]">
                         <DataSourceBadge source="SportsDataIO" timestamp={formatTimestamp(lastUpdated)} />
-                        {hasLiveGames && <span className="text-xs text-text-tertiary ml-4">Auto-refreshing every 30 seconds</span>}
+                        {hasLiveGames && <span className="text-xs text-[rgba(196,184,165,0.5)] ml-4">Auto-refreshing every 30 seconds</span>}
                       </div>
                     </CardContent>
                   </Card>
@@ -463,10 +463,10 @@ export default function NBAPage() {
                           <Image src="/icons/basketball.svg" alt="" width={20} height={20} className="opacity-60" aria-hidden="true" />
                           {conf.label}
                         </CardTitle>
-                        <p className="text-xs text-text-tertiary mt-1">{conf.teams.length} teams</p>
+                        <p className="text-xs text-[rgba(196,184,165,0.5)] mt-1">{conf.teams.length} teams</p>
                       </CardHeader>
                       <CardContent>
-                        <div className="divide-y divide-border-subtle">
+                        <div className="divide-y divide-[var(--border-vintage)]">
                           {conf.teams.sort((a, b) => b.wins - a.wins).map((team, idx) => {
                             const isPlayoffSeed = idx < 6;
                             const isPlayIn = idx >= 6 && idx < 10;
@@ -474,16 +474,16 @@ export default function NBAPage() {
                               <Link key={team.teamName} href={`/nba/teams/${team.teamName.toLowerCase().replace(/\s+/g, '-')}`}>
                                 <div className="flex items-center justify-between py-3 px-2 hover:bg-[var(--surface-dugout)] rounded-sm transition-colors group">
                                   <div className="flex items-center gap-3">
-                                    <span className={`text-sm font-bold w-6 text-center ${isPlayoffSeed ? 'text-burnt-orange' : isPlayIn ? 'text-text-secondary' : 'text-text-tertiary'}`}>
+                                    <span className={`text-sm font-bold w-6 text-center ${isPlayoffSeed ? 'text-[var(--bsi-primary)]' : isPlayIn ? 'text-[var(--bsi-dust)]' : 'text-[rgba(196,184,165,0.5)]'}`}>
                                       {idx + 1}
                                     </span>
-                                    <span className="font-medium text-text-primary group-hover:text-burnt-orange transition-colors">
+                                    <span className="font-medium text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors">
                                       {team.teamName}
                                     </span>
                                   </div>
                                   <div className="flex items-center gap-3">
-                                    <span className="font-mono text-sm text-text-secondary">{team.wins}-{team.losses}</span>
-                                    <span className="font-mono text-xs text-text-tertiary w-12 text-right">
+                                    <span className="font-mono text-sm text-[var(--bsi-dust)]">{team.wins}-{team.losses}</span>
+                                    <span className="font-mono text-xs text-[rgba(196,184,165,0.5)] w-12 text-right">
                                       {team.winPercentage.toFixed(3).replace('0.', '.')}
                                     </span>
                                     {isPlayoffSeed && (
@@ -532,28 +532,28 @@ export default function NBAPage() {
                           <Card variant="default" padding="lg">
                             <CardHeader>
                               <CardTitle className="flex items-center gap-3">
-                                <span className="inline-flex items-center justify-center w-10 h-10 rounded-sm bg-burnt-orange/15 text-burnt-orange font-mono font-bold text-sm">
+                                <span className="inline-flex items-center justify-center w-10 h-10 rounded-sm bg-[var(--bsi-primary)]/15 text-[var(--bsi-primary)] font-mono font-bold text-sm">
                                   {cat.abbreviation}
                                 </span>
                                 {cat.label}
                               </CardTitle>
                             </CardHeader>
                             <CardContent>
-                              <div className="divide-y divide-border-subtle">
+                              <div className="divide-y divide-[var(--border-vintage)]">
                                 {cat.players.map((player, idx) => (
                                   <div key={player.name} className="flex items-center justify-between py-3">
                                     <div className="flex items-center gap-3">
-                                      <span className={`text-sm font-bold w-6 text-center ${idx === 0 ? 'text-burnt-orange' : 'text-text-tertiary'}`}>
+                                      <span className={`text-sm font-bold w-6 text-center ${idx === 0 ? 'text-[var(--bsi-primary)]' : 'text-[rgba(196,184,165,0.5)]'}`}>
                                         {idx + 1}
                                       </span>
                                       <div>
-                                        <p className={`font-semibold text-sm ${idx === 0 ? 'text-text-primary' : 'text-text-secondary'}`}>
+                                        <p className={`font-semibold text-sm ${idx === 0 ? 'text-[var(--bsi-bone)]' : 'text-[var(--bsi-dust)]'}`}>
                                           {player.name}
                                         </p>
-                                        <p className="text-xs text-text-tertiary">{player.team}</p>
+                                        <p className="text-xs text-[rgba(196,184,165,0.5)]">{player.team}</p>
                                       </div>
                                     </div>
-                                    <span className={`font-mono font-bold text-sm ${idx === 0 ? 'text-burnt-orange' : 'text-text-primary'}`}>
+                                    <span className={`font-mono font-bold text-sm ${idx === 0 ? 'text-[var(--bsi-primary)]' : 'text-[var(--bsi-bone)]'}`}>
                                       {player.value.toFixed(1)}
                                     </span>
                                   </div>
@@ -573,7 +573,7 @@ export default function NBAPage() {
                   <Card variant="default" padding="lg">
                     <CardHeader><CardTitle>Player Statistics</CardTitle></CardHeader>
                     <CardContent>
-                      <p className="text-text-secondary mb-4">Search NBA players for detailed stats and profiles.</p>
+                      <p className="text-[var(--bsi-dust)] mb-4">Search NBA players for detailed stats and profiles.</p>
                       <div className="flex flex-wrap gap-3">
                         <Link href="/nba/players"><Button variant="primary">Browse All Players</Button></Link>
                         <Link href="/nba/standings"><Button variant="secondary">View Standings</Button></Link>
@@ -592,10 +592,10 @@ export default function NBAPage() {
             <Container>
               <ScrollReveal>
                 <div className="mb-8">
-                  <h2 className="font-display text-2xl md:text-3xl font-bold text-text-primary uppercase tracking-wide">
+                  <h2 className="font-display text-2xl md:text-3xl font-bold text-[var(--bsi-bone)] uppercase tracking-wide">
                     League Leaders
                   </h2>
-                  <p className="text-text-tertiary text-sm mt-2">Top performers across the NBA this season</p>
+                  <p className="text-[rgba(196,184,165,0.5)] text-sm mt-2">Top performers across the NBA this season</p>
                 </div>
               </ScrollReveal>
               <div className="grid gap-6 md:grid-cols-3">
@@ -604,28 +604,28 @@ export default function NBAPage() {
                     <Card variant="default" padding="lg" className="h-full">
                       <CardHeader>
                         <CardTitle className="flex items-center gap-3 text-lg">
-                          <span className="inline-flex items-center justify-center w-10 h-10 rounded-sm bg-burnt-orange/15 text-burnt-orange font-mono font-bold text-sm">
+                          <span className="inline-flex items-center justify-center w-10 h-10 rounded-sm bg-[var(--bsi-primary)]/15 text-[var(--bsi-primary)] font-mono font-bold text-sm">
                             {cat.abbreviation}
                           </span>
                           {cat.label}
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <div className="divide-y divide-border-subtle">
+                        <div className="divide-y divide-[var(--border-vintage)]">
                           {cat.players.map((player, idx) => (
                             <div key={player.name} className="flex items-center justify-between py-3">
                               <div className="flex items-center gap-3">
-                                <span className={`text-sm font-bold w-6 text-center ${idx === 0 ? 'text-burnt-orange' : 'text-text-tertiary'}`}>
+                                <span className={`text-sm font-bold w-6 text-center ${idx === 0 ? 'text-[var(--bsi-primary)]' : 'text-[rgba(196,184,165,0.5)]'}`}>
                                   {idx + 1}
                                 </span>
                                 <div>
-                                  <p className={`font-semibold text-sm ${idx === 0 ? 'text-text-primary' : 'text-text-secondary'}`}>
+                                  <p className={`font-semibold text-sm ${idx === 0 ? 'text-[var(--bsi-bone)]' : 'text-[var(--bsi-dust)]'}`}>
                                     {player.name}
                                   </p>
-                                  <p className="text-xs text-text-tertiary">{player.team}</p>
+                                  <p className="text-xs text-[rgba(196,184,165,0.5)]">{player.team}</p>
                                 </div>
                               </div>
-                              <span className={`font-mono font-bold text-sm ${idx === 0 ? 'text-burnt-orange' : 'text-text-primary'}`}>
+                              <span className={`font-mono font-bold text-sm ${idx === 0 ? 'text-[var(--bsi-primary)]' : 'text-[var(--bsi-bone)]'}`}>
                                 {player.value.toFixed(1)}
                               </span>
                             </div>
@@ -645,10 +645,10 @@ export default function NBAPage() {
           <Container>
             <ScrollReveal>
               <div className="mb-8">
-                <h2 className="font-display text-2xl md:text-3xl font-bold text-text-primary uppercase tracking-wide">
+                <h2 className="font-display text-2xl md:text-3xl font-bold text-[var(--bsi-bone)] uppercase tracking-wide">
                   Around the League
                 </h2>
-                <p className="text-text-tertiary text-sm mt-2">Live storylines from the standings and news wire</p>
+                <p className="text-[rgba(196,184,165,0.5)] text-sm mt-2">Live storylines from the standings and news wire</p>
               </div>
             </ScrollReveal>
             {aroundTheLeagueLoading ? (
@@ -672,7 +672,7 @@ export default function NBAPage() {
             ) : aroundTheLeague.length === 0 ? (
               <Card variant="default" padding="lg">
                 <CardContent>
-                  <p className="text-text-secondary text-center py-4">
+                  <p className="text-[var(--bsi-dust)] text-center py-4">
                     League insights will appear here once standings data is available.
                   </p>
                   <div className="flex justify-center">
@@ -691,12 +691,12 @@ export default function NBAPage() {
                         <CardContent>
                           <div className="flex items-center gap-3 mb-3">
                             <Badge variant={item.badgeVariant} size="sm">{item.badge}</Badge>
-                            <span className="text-xs text-text-tertiary uppercase tracking-wider font-semibold">{item.category}</span>
+                            <span className="text-xs text-[rgba(196,184,165,0.5)] uppercase tracking-wider font-semibold">{item.category}</span>
                           </div>
-                          <h3 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide mb-2">
+                          <h3 className="font-display text-lg font-bold text-[var(--bsi-bone)] uppercase tracking-wide mb-2">
                             {item.headline}
                           </h3>
-                          <p className="text-sm text-text-secondary leading-relaxed">
+                          <p className="text-sm text-[var(--bsi-dust)] leading-relaxed">
                             {item.description}
                           </p>
                         </CardContent>
@@ -707,7 +707,7 @@ export default function NBAPage() {
               </div>
             )}
             {!aroundTheLeagueLoading && aroundTheLeague.length > 0 && (
-              <div className="mt-4 pt-4 border-t border-border-subtle">
+              <div className="mt-4 pt-4 border-t border-[var(--border-vintage)]">
                 <DataSourceBadge source="SportsDataIO + ESPN" timestamp={formatTimestamp(lastUpdated)} />
               </div>
             )}
@@ -720,7 +720,7 @@ export default function NBAPage() {
             <div className="grid gap-8 lg:grid-cols-2">
               <SportInfoCard
                 icon={
-                  <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
+                  <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-[var(--bsi-primary)] fill-none stroke-[1.5]">
                     <rect x="2" y="3" width="20" height="14" rx="2" />
                     <line x1="8" y1="21" x2="16" y2="21" />
                     <line x1="12" y1="17" x2="12" y2="21" />
@@ -736,8 +736,8 @@ export default function NBAPage() {
               <ScrollReveal>
                 <Card variant="default" padding="lg" className="h-full">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-sm bg-burnt-orange/15 flex items-center justify-center">
-                      <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
+                    <div className="w-10 h-10 rounded-sm bg-[var(--bsi-primary)]/15 flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-[var(--bsi-primary)] fill-none stroke-[1.5]">
                         <line x1="18" y1="20" x2="18" y2="10" />
                         <line x1="12" y1="20" x2="12" y2="4" />
                         <line x1="6" y1="20" x2="6" y2="14" />
@@ -745,17 +745,17 @@ export default function NBAPage() {
                     </div>
                     <div>
                       <CardTitle size="md">Stat Glossary</CardTitle>
-                      <p className="text-text-tertiary text-xs mt-0.5">Advanced metrics decoded</p>
+                      <p className="text-[rgba(196,184,165,0.5)] text-xs mt-0.5">Advanced metrics decoded</p>
                     </div>
                   </div>
                   <div className="space-y-4">
                     {STAT_EXPLAINERS.map((item) => (
-                      <div key={item.stat} className="border-l-2 border-burnt-orange/40 pl-4">
+                      <div key={item.stat} className="border-l-2 border-[var(--bsi-primary)]/40 pl-4">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="font-mono font-bold text-burnt-orange text-sm">{item.stat}</span>
-                          <span className="text-xs text-text-tertiary">— {item.name}</span>
+                          <span className="font-mono font-bold text-[var(--bsi-primary)] text-sm">{item.stat}</span>
+                          <span className="text-xs text-[rgba(196,184,165,0.5)]">— {item.name}</span>
                         </div>
-                        <p className="text-sm text-text-secondary leading-relaxed">
+                        <p className="text-sm text-[var(--bsi-dust)] leading-relaxed">
                           {item.description}
                         </p>
                       </div>

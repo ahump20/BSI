@@ -123,10 +123,10 @@ function StatBar({
 
   return (
     <div className={`flex items-center gap-2 ${align === 'right' ? 'flex-row-reverse' : ''}`}>
-      <span className={`text-[10px] font-mono text-text-muted w-8 ${align === 'right' ? 'text-left' : 'text-right'}`}>
+      <span className={`text-[10px] font-mono text-[rgba(196,184,165,0.35)] w-8 ${align === 'right' ? 'text-left' : 'text-right'}`}>
         {def.label}
       </span>
-      <div className="flex-1 h-[10px] rounded-full bg-surface-light relative overflow-hidden">
+      <div className="flex-1 h-[10px] rounded-full bg-[var(--surface-press-box)] relative overflow-hidden">
         <motion.div
           className={`absolute top-0 bottom-0 rounded-full ${align === 'right' ? 'right-0' : 'left-0'}`}
           style={{
@@ -171,20 +171,20 @@ function PlayerSelector({
 }) {
   return (
     <div className={`${align === 'right' ? 'text-right' : 'text-left'}`}>
-      <span className="text-[9px] font-display uppercase tracking-widest text-text-muted block mb-1">
+      <span className="text-[9px] font-display uppercase tracking-widest text-[rgba(196,184,165,0.35)] block mb-1">
         {label}
       </span>
       <select
         aria-label={`Select ${label.toLowerCase()}`}
         value={selected}
         onChange={(e) => onSelect(e.target.value)}
-        className={`w-full bg-surface-light border border-border rounded-sm px-3 py-2 text-sm text-text-tertiary font-mono appearance-none cursor-pointer hover:border-border-strong transition-colors focus:outline-none focus:border-burnt-orange/40 ${align === 'right' ? 'text-right' : ''}`}
+        className={`w-full bg-[var(--surface-press-box)] border border-border rounded-sm px-3 py-2 text-sm text-[rgba(196,184,165,0.5)] font-mono appearance-none cursor-pointer hover:border-[rgba(140,98,57,0.5)] transition-colors focus:outline-none focus:border-[var(--bsi-primary)]/40 ${align === 'right' ? 'text-right' : ''}`}
       >
-        <option value="" className="bg-background-secondary text-text-primary">
+        <option value="" className="bg-[var(--surface-dugout)] text-[var(--bsi-bone)]">
           Select {label.toLowerCase()}...
         </option>
         {players.map(p => (
-          <option key={p.id} value={p.id} className="bg-background-secondary text-text-primary">
+          <option key={p.id} value={p.id} className="bg-[var(--surface-dugout)] text-[var(--bsi-bone)]">
             {p.name} — {p.team}
           </option>
         ))}
@@ -221,9 +221,9 @@ function IdentityPlate({
         {name}
       </h3>
       <div className="flex items-center gap-2 mt-0.5" style={{ justifyContent: align === 'right' ? 'flex-end' : 'flex-start' }}>
-        <span className="text-xs text-text-secondary">{team}</span>
+        <span className="text-xs text-[var(--bsi-dust)]">{team}</span>
         {conference && (
-          <span className="text-[10px] text-text-muted">({conference})</span>
+          <span className="text-[10px] text-[rgba(196,184,165,0.35)]">({conference})</span>
         )}
         {position && position !== 'UN' && (
           <span
@@ -244,14 +244,14 @@ function IdentityPlate({
 
 function EmptyHalf({ label, align }: { label: string; align: 'left' | 'right' }) {
   return (
-    <div className={`flex-1 flex flex-col items-center justify-center py-12 ${align === 'right' ? 'md:border-l md:border-border-subtle' : ''}`}>
-      <div className="w-16 h-16 rounded-full bg-surface-light flex items-center justify-center mb-3">
-        <svg viewBox="0 0 24 24" className="w-8 h-8 text-text-muted">
+    <div className={`flex-1 flex flex-col items-center justify-center py-12 ${align === 'right' ? 'md:border-l md:border-[var(--border-vintage)]' : ''}`}>
+      <div className="w-16 h-16 rounded-full bg-[var(--surface-press-box)] flex items-center justify-center mb-3">
+        <svg viewBox="0 0 24 24" className="w-8 h-8 text-[rgba(196,184,165,0.35)]">
           <circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" strokeWidth="1.5" />
           <path d="M4 20c0-4 3.58-7 8-7s8 3 8 7" fill="none" stroke="currentColor" strokeWidth="1.5" />
         </svg>
       </div>
-      <span className="text-[11px] text-text-muted font-mono">Select a {label}</span>
+      <span className="text-[11px] text-[rgba(196,184,165,0.35)] font-mono">Select a {label}</span>
     </div>
   );
 }
@@ -272,14 +272,14 @@ export function MatchupTheater({
   const [focusSide, setFocusSide] = useState<'batter' | 'pitcher' | null>(null);
 
   return (
-    <div className={`bg-background-primary border border-border-subtle rounded-sm overflow-hidden ${className}`}>
+    <div className={`bg-[var(--surface-scoreboard)] border border-[var(--border-vintage)] rounded-sm overflow-hidden ${className}`}>
       {/* Header bar */}
-      <div className="px-5 pt-5 pb-3 border-b border-border-subtle">
+      <div className="px-5 pt-5 pb-3 border-b border-[var(--border-vintage)]">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-display text-sm uppercase tracking-widest text-text-secondary">
+          <h3 className="font-display text-sm uppercase tracking-widest text-[var(--bsi-dust)]">
             Matchup Theater
           </h3>
-          <span className="text-[9px] font-mono text-text-muted uppercase tracking-wider">
+          <span className="text-[9px] font-mono text-[rgba(196,184,165,0.35)] uppercase tracking-wider">
             Batter vs Pitcher
           </span>
         </div>
@@ -325,12 +325,12 @@ export function MatchupTheater({
               {/* Summary stat chips */}
               <div className="flex flex-wrap gap-2 mb-4">
                 {batter.stats.pa != null && (
-                  <span className="text-[10px] font-mono text-text-muted bg-surface-light px-2 py-0.5 rounded-sm">
+                  <span className="text-[10px] font-mono text-[rgba(196,184,165,0.35)] bg-[var(--surface-press-box)] px-2 py-0.5 rounded-sm">
                     {batter.stats.pa} PA
                   </span>
                 )}
                 {batter.stats.hr != null && (
-                  <span className="text-[10px] font-mono text-text-muted bg-surface-light px-2 py-0.5 rounded-sm">
+                  <span className="text-[10px] font-mono text-[rgba(196,184,165,0.35)] bg-[var(--surface-press-box)] px-2 py-0.5 rounded-sm">
                     {batter.stats.hr} HR
                   </span>
                 )}
@@ -367,7 +367,7 @@ export function MatchupTheater({
 
         {/* Pitcher side — mirrored layout */}
         <div
-          className={`p-5 border-t md:border-t-0 md:border-l border-border-subtle transition-opacity duration-300 ${focusSide === 'batter' ? 'opacity-40' : ''}`}
+          className={`p-5 border-t md:border-t-0 md:border-l border-[var(--border-vintage)] transition-opacity duration-300 ${focusSide === 'batter' ? 'opacity-40' : ''}`}
           onMouseEnter={() => setFocusSide('pitcher')}
           onMouseLeave={() => setFocusSide(null)}
         >
@@ -385,7 +385,7 @@ export function MatchupTheater({
               {/* Summary stat chips */}
               <div className="flex flex-wrap gap-2 mb-4 justify-end">
                 {pitcher.stats.ip != null && (
-                  <span className="text-[10px] font-mono text-text-muted bg-surface-light px-2 py-0.5 rounded-sm">
+                  <span className="text-[10px] font-mono text-[rgba(196,184,165,0.35)] bg-[var(--surface-press-box)] px-2 py-0.5 rounded-sm">
                     {pitcher.stats.ip.toFixed(1)} IP
                   </span>
                 )}
@@ -416,8 +416,8 @@ export function MatchupTheater({
       </div>
 
       {/* Footer */}
-      <div className="px-5 py-3 border-t border-border-subtle text-center">
-        <span className="text-[9px] font-mono text-text-muted uppercase tracking-wider">
+      <div className="px-5 py-3 border-t border-[var(--border-vintage)] text-center">
+        <span className="text-[9px] font-mono text-[rgba(196,184,165,0.35)] uppercase tracking-wider">
           {batter && pitcher ? (
             `${batter.player_name} vs ${pitcher.player_name}`
           ) : (

@@ -31,11 +31,11 @@ export function DrillCard({ drill, index }: DrillCardProps) {
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
-      className="rounded-sm bg-surface-dugout border border-border-subtle p-4 hover:border-burnt-orange/20 transition-colors"
+      className="rounded-sm bg-surface-dugout border border-[var(--border-vintage)] p-4 hover:border-[var(--bsi-primary)]/20 transition-colors"
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2">
-          <span className="w-6 h-6 rounded-sm bg-burnt-orange/15 flex items-center justify-center text-xs font-bold text-burnt-orange font-mono">
+          <span className="w-6 h-6 rounded-sm bg-[var(--bsi-primary)]/15 flex items-center justify-center text-xs font-bold text-[var(--bsi-primary)] font-mono">
             {index + 1}
           </span>
           <h4 className="text-sm font-semibold text-bsi-bone">{drill.name}</h4>
@@ -47,7 +47,7 @@ export function DrillCard({ drill, index }: DrillCardProps) {
 
       <p className="text-xs text-bsi-dust leading-relaxed mb-3">{drill.description}</p>
 
-      <div className="flex items-center gap-4 text-[10px] text-text-muted">
+      <div className="flex items-center gap-4 text-[10px] text-[rgba(196,184,165,0.35)]">
         <span className="flex items-center gap-1">
           <svg viewBox="0 0 16 16" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="1.5">
             <circle cx="8" cy="8" r="6" />
@@ -57,7 +57,7 @@ export function DrillCard({ drill, index }: DrillCardProps) {
         </span>
         <span className="heritage-stamp text-[9px]">{drill.target}</span>
         {drill.equipment && (
-          <span className="text-text-muted">{drill.equipment}</span>
+          <span className="text-[rgba(196,184,165,0.35)]">{drill.equipment}</span>
         )}
       </div>
     </motion.div>
@@ -247,7 +247,7 @@ Only output the JSON array, nothing else.`,
         <span className="heritage-stamp text-[10px]">AI-Personalized</span>
         {loading && (
           <motion.div
-            className="w-3 h-3 border border-burnt-orange border-t-transparent rounded-full"
+            className="w-3 h-3 border border-[var(--bsi-primary)] border-t-transparent rounded-full"
             animate={{ rotate: 360 }}
             transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
           />
@@ -256,7 +256,7 @@ Only output the JSON array, nothing else.`,
       {loading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="rounded-sm bg-surface-dugout border border-border-subtle p-4 animate-pulse">
+            <div key={i} className="rounded-sm bg-surface-dugout border border-[var(--border-vintage)] p-4 animate-pulse">
               <div className="h-4 bg-white/[0.06] rounded-sm w-40 mb-3" />
               <div className="h-3 bg-white/[0.04] rounded-sm w-full mb-2" />
               <div className="h-3 bg-white/[0.04] rounded-sm w-3/4" />

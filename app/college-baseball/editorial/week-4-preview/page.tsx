@@ -62,15 +62,15 @@ export default function Week4PreviewPage() {
         <Section padding="sm" className="border-b border-border">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 College Baseball
               </Link>
-              <span className="text-text-muted">/</span>
-              <Link href="/college-baseball/editorial" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <Link href="/college-baseball/editorial" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 Editorial
               </Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-primary">Week 4 Preview</span>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[var(--bsi-bone)]">Week 4 Preview</span>
             </nav>
           </Container>
         </Section>
@@ -83,9 +83,9 @@ export default function Week4PreviewPage() {
               <div className="max-w-3xl">
                 <div className="flex items-center gap-3 mb-6">
                   <Badge variant="primary">Week 4 Preview</Badge>
-                  <span className="text-text-muted text-sm">March 3, 2026</span>
-                  <span className="text-text-muted">|</span>
-                  <span className="text-text-muted text-sm">~10 min read</span>
+                  <span className="text-[rgba(196,184,165,0.35)] text-sm">March 3, 2026</span>
+                  <span className="text-[rgba(196,184,165,0.35)]">|</span>
+                  <span className="text-[rgba(196,184,165,0.35)] text-sm">~10 min read</span>
                 </div>
                 <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold uppercase tracking-tight leading-[0.95] mb-4">
                   The Last{' '}
@@ -93,7 +93,7 @@ export default function Week4PreviewPage() {
                     Tune-Up.
                   </span>
                 </h1>
-                <p className="font-serif text-xl md:text-2xl italic text-text-tertiary leading-relaxed max-w-2xl">
+                <p className="font-serif text-xl md:text-2xl italic text-[rgba(196,184,165,0.5)] leading-relaxed max-w-2xl">
                   Conference play starts March 13. This weekend is the final window to fix what
                   three weeks exposed &mdash; or bank one more quality win before the real
                   schedule arrives.
@@ -119,9 +119,9 @@ export default function Week4PreviewPage() {
           <Container>
             <ScrollReveal>
               <div className="max-w-3xl mx-auto">
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
-                    <strong className="text-text-primary font-semibold">[Updated March 10]</strong>{' '}
+                    <strong className="text-[var(--bsi-bone)] font-semibold">[Updated March 10]</strong>{' '}
                     Four weeks of non-conference play are done. Texas swept USC Upstate 14&ndash;2,
                     11&ndash;9, 13&ndash;3 at Disch-Falk, climbed to No. 2 nationally, and beat
                     Texas State 15&ndash;4 on the road Tuesday night to improve to 16&ndash;0.
@@ -148,11 +148,11 @@ export default function Week4PreviewPage() {
           <Container>
             <ScrollReveal>
               <div className="max-w-3xl mx-auto">
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-8">
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-8">
                   Texas: Swept USC Upstate, Road Win at Texas State
                 </h2>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
-                  <p className="text-sm font-mono text-text-muted">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
+                  <p className="text-sm font-mono text-[rgba(196,184,165,0.35)]">
                     Weekend: Texas 14&ndash;2, 11&ndash;9, 13&ndash;3 vs USC Upstate (Disch-Falk)<br />
                     Tuesday: Texas 15, Texas State 4 (at Bobcat Ballpark, San Marcos)
                   </p>
@@ -171,7 +171,7 @@ export default function Week4PreviewPage() {
                     Six run-rule wins. Zero road losses, though Tuesday was the first time they
                     played one. The foundation is as solid as a non-conference body of work can be.
                   </p>
-                  <p className="text-text-tertiary">
+                  <p className="text-[rgba(196,184,165,0.5)]">
                     Ole Miss arrives at Disch-Falk in three days. The Rebels have been inconsistent
                     all month. Texas has not been. That contrast is the story entering the weekend.
                   </p>
@@ -186,11 +186,11 @@ export default function Week4PreviewPage() {
           <Container>
             <ScrollReveal>
               <div className="max-w-3xl mx-auto">
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-8">
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-8">
                   The Matchup That Matters: Virginia at North Carolina
                 </h2>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
-                  <p className="text-sm font-mono text-text-muted">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
+                  <p className="text-sm font-mono text-[rgba(196,184,165,0.35)]">
                     Friday&ndash;Sunday, March 6&ndash;8 at Boshamer Stadium, Chapel Hill
                   </p>
                   <p>
@@ -222,19 +222,19 @@ export default function Week4PreviewPage() {
           <Container>
             <ScrollReveal>
               <div className="max-w-3xl mx-auto">
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-8">
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-8">
                   Around the Country
                 </h2>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
-                    <strong className="text-text-primary font-semibold">No. 5 Georgia Tech (11&ndash;1)</strong>{' '}
+                    <strong className="text-[var(--bsi-bone)] font-semibold">No. 5 Georgia Tech (11&ndash;1)</strong>{' '}
                     continues at home with the most explosive lineup in the ACC. Ryan
                     Zuckerman&rsquo;s 3-HR day against Northwestern was not an outlier &mdash;
                     it was the peak of a team that has hit double-digit runs in seven of its
                     first twelve games.
                   </p>
                   <p>
-                    <strong className="text-text-primary font-semibold">No. 14 Clemson (10&ndash;1)</strong>{' '}
+                    <strong className="text-[var(--bsi-bone)] font-semibold">No. 14 Clemson (10&ndash;1)</strong>{' '}
                     carries momentum from the Palmetto Series win. Sharman&rsquo;s complete game
                     was the weekend&rsquo;s best pitching performance outside of Dygert&rsquo;s
                     gem at Arkansas &mdash; the kind of start that tells a coaching staff the
@@ -242,21 +242,21 @@ export default function Week4PreviewPage() {
                     staff ERA under 2.50 across that stretch.
                   </p>
                   <p>
-                    <strong className="text-text-primary font-semibold">No. 25 USC (9&ndash;0+)</strong>{' '}
+                    <strong className="text-[var(--bsi-bone)] font-semibold">No. 25 USC (9&ndash;0+)</strong>{' '}
                     looks to extend its unbeaten start after entering the Top 25 this week.
                     Mason Edwards has not allowed a hit in 18 consecutive innings, and the
                     1.45 team ERA behind him is not a one-man artifact. Another clean weekend
                     and USC climbs into territory that demands national attention.
                   </p>
                   <p>
-                    <strong className="text-text-primary font-semibold">No. 9 Florida (11&ndash;1)</strong>{' '}
+                    <strong className="text-[var(--bsi-bone)] font-semibold">No. 9 Florida (11&ndash;1)</strong>{' '}
                     owns the longest active winning streak in the SEC at 11 games. The
                     Gators&rsquo; schedule gets real fast once conference play begins, and the
                     last three weeks have been about building bullpen depth rather than riding
                     two starters. That depth gets its first true exam in 10 days.
                   </p>
                   <p>
-                    <strong className="text-text-primary font-semibold">No. 2 LSU (11&ndash;1)</strong>{' '}
+                    <strong className="text-[var(--bsi-bone)] font-semibold">No. 2 LSU (11&ndash;1)</strong>{' '}
                     reloads after a dominant early stretch. The Tigers&rsquo; one loss came
                     against McNeese on a Tuesday night where they used 10 pitchers and walked
                     their way into a five-run deficit &mdash; a process failure, not a talent
@@ -273,8 +273,8 @@ export default function Week4PreviewPage() {
           <Container>
             <ScrollReveal>
               <div className="max-w-3xl mx-auto">
-                <blockquote className="border-l-[3px] border-burnt-orange pl-6 py-4">
-                  <p className="font-serif text-2xl italic text-text-secondary leading-relaxed">
+                <blockquote className="border-l-[3px] border-[var(--bsi-primary)] pl-6 py-4">
+                  <p className="font-serif text-2xl italic text-[var(--bsi-dust)] leading-relaxed">
                     The last non-conference weekend is the final exam before the real semester
                     begins. The teams that use it to prepare &mdash; not just to win &mdash; are
                     the ones still playing in June.
@@ -290,12 +290,12 @@ export default function Week4PreviewPage() {
           <Container>
             <ScrollReveal>
               <div className="max-w-3xl mx-auto">
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-8">
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-8">
                   Tuesday Night Across the SEC
                 </h2>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
-                    <strong className="text-text-primary font-semibold">[March 10 results]</strong>{' '}
+                    <strong className="text-[var(--bsi-bone)] font-semibold">[March 10 results]</strong>{' '}
                     Nine SEC programs lost on Tuesday night. The carnage reshapes the context for
                     every opening-weekend series.
                   </p>
@@ -308,7 +308,7 @@ export default function Week4PreviewPage() {
                     Ball State 3&ndash;10. Missouri lost to Southern Indiana 6&ndash;14. Florida lost
                     to Florida State 3&ndash;6 in the only result that carries real rivalry weight.
                   </p>
-                  <p className="text-text-tertiary">
+                  <p className="text-[rgba(196,184,165,0.5)]">
                     The one SEC team that won Tuesday? Texas, 15&ndash;4 on the road. The gap
                     between the Longhorns and the rest of the conference &mdash; at least on this
                     particular night &mdash; was not subtle.
@@ -324,43 +324,43 @@ export default function Week4PreviewPage() {
           <Container>
             <ScrollReveal>
               <div className="max-w-3xl mx-auto">
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-8">
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-8">
                   SEC Openers Look-Ahead: March 13&ndash;15
                 </h2>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
                     Conference play arrives in three days. Tuesday night added fresh data to every
                     matchup &mdash; and most of it raised more questions than it answered.
                   </p>
                   <p>
-                    <strong className="text-text-primary font-semibold">Ole Miss at Texas.</strong>{' '}
+                    <strong className="text-[var(--bsi-bone)] font-semibold">Ole Miss at Texas.</strong>{' '}
                     The Rebels have been in and out of the Top 25 all month. Texas is 16&ndash;0
                     with a +133 run differential. Disch-Falk under the lights on Thursday. This is
                     the series that tells us whether the Longhorns&rsquo; perfect record is real or
                     February-inflated &mdash; and whether Ole Miss has an identity to bring to Austin.
                   </p>
                   <p>
-                    <strong className="text-text-primary font-semibold">LSU at Vanderbilt.</strong>{' '}
+                    <strong className="text-[var(--bsi-bone)] font-semibold">LSU at Vanderbilt.</strong>{' '}
                     LSU lost to Creighton 4&ndash;8 on Tuesday. Vanderbilt gave up 14 runs to Indiana
                     State. Neither pitching staff showed up for the dress rehearsal. If the arms that
                     took the mound Tuesday night are the ones that show up Friday, this series could
                     be an offensive fireworks show for all the wrong reasons.
                   </p>
                   <p>
-                    <strong className="text-text-primary font-semibold">Mississippi State at Arkansas.</strong>{' '}
+                    <strong className="text-[var(--bsi-bone)] font-semibold">Mississippi State at Arkansas.</strong>{' '}
                     Mississippi State lost to Tulane 7&ndash;11 on Tuesday. Arkansas has been
                     inconsistent since the UT Arlington upset. Baum-Walker in March is a different
                     animal, but both teams enter the weekend having lost their last midweek game.
                   </p>
                   <p>
-                    <strong className="text-text-primary font-semibold">Tennessee at Georgia.</strong>{' '}
+                    <strong className="text-[var(--bsi-bone)] font-semibold">Tennessee at Georgia.</strong>{' '}
                     Tennessee 2, Tennessee Tech 20. That line will hang over the Volunteers all
                     weekend. Georgia has been quietly steady at 10&ndash;1, but Vitello&rsquo;s team
                     needs to prove that Tuesday was an aberration, not a preview of what SEC
                     lineups will do to this pitching staff.
                   </p>
                   <p>
-                    <strong className="text-text-primary font-semibold">South Carolina at Florida.</strong>{' '}
+                    <strong className="text-[var(--bsi-bone)] font-semibold">South Carolina at Florida.</strong>{' '}
                     Florida lost to Florida State 3&ndash;6 &mdash; at least that loss carries weight.
                     South Carolina needs to prove the Palmetto loss was a blip. Both teams enter
                     conference play with something to prove, which makes this the most volatile
@@ -408,13 +408,13 @@ export default function Week4PreviewPage() {
               <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
                 <Link
                   href="/college-baseball/editorial"
-                  className="text-text-muted hover:text-burnt-orange transition-colors text-sm"
+                  className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors text-sm"
                 >
                   &larr; All Editorial
                 </Link>
                 <Link
                   href="/college-baseball/editorial/weekend-3-recap"
-                  className="text-text-muted hover:text-burnt-orange transition-colors text-sm"
+                  className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors text-sm"
                 >
                   Weekend 3 Recap &rarr;
                 </Link>

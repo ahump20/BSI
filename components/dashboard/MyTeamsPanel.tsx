@@ -78,7 +78,7 @@ export function MyTeamsPanel({ teamSlugs }: MyTeamsPanelProps) {
         <Link
           key={team.slug}
           href={`/college-baseball/teams/${team.slug}`}
-          className="flex-shrink-0 flex items-center gap-3 px-4 py-3 bg-surface-light border border-border rounded-sm hover:border-burnt-orange/40 transition-all group min-w-[160px]"
+          className="flex-shrink-0 flex items-center gap-3 px-4 py-3 bg-[var(--surface-press-box)] border border-border rounded-sm hover:border-[var(--bsi-primary)]/40 transition-all group min-w-[160px]"
         >
           <Image
             src={team.logo}
@@ -89,10 +89,10 @@ export function MyTeamsPanel({ teamSlugs }: MyTeamsPanelProps) {
             unoptimized
           />
           <div>
-            <p className="text-sm font-semibold text-text-primary group-hover:text-burnt-orange transition-colors">
+            <p className="text-sm font-semibold text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors">
               {team.abbreviation}
             </p>
-            <p className="text-xs text-text-muted">
+            <p className="text-xs text-[rgba(196,184,165,0.35)]">
               {team.record.wins}-{team.record.losses}
             </p>
           </div>

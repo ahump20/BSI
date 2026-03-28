@@ -103,14 +103,14 @@ export default function CollegeBaseballNewsPage() {
   return (
     <>
       <div>
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-text-tertiary hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors">
                 College Baseball
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">News</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">News</span>
             </nav>
           </Container>
         </Section>
@@ -119,15 +119,15 @@ export default function CollegeBaseballNewsPage() {
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
           <Container>
             <ScrollReveal>
-              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-gradient-blaze mb-2">
+              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-[var(--bsi-primary)] mb-2">
                 College Baseball News
               </h1>
-              <p className="text-text-secondary max-w-2xl">
+              <p className="text-[var(--bsi-dust)] max-w-2xl">
                 The transfer portal moves, recruiting wins, and game coverage ESPN won&apos;t give you.
                 Every D1 program, actually covered.
               </p>
               {data?.sources && (
-                <p className="text-text-tertiary text-xs mt-2">
+                <p className="text-[rgba(196,184,165,0.5)] text-xs mt-2">
                   {data.sources.total} articles from {data.sources.espn} ESPN + {data.sources.highlightly} Highlightly sources
                 </p>
               )}
@@ -144,8 +144,8 @@ export default function CollegeBaseballNewsPage() {
                   onClick={() => setCategoryFilter(cat.id)}
                   className={`px-4 py-2 rounded-sm text-sm font-medium whitespace-nowrap transition-colors ${
                     categoryFilter === cat.id
-                      ? 'bg-burnt-orange text-white'
-                      : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
+                      ? 'bg-[var(--bsi-primary)] text-white'
+                      : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:bg-[var(--surface-press-box)]'
                   }`}
                 >
                   {cat.label}
@@ -159,8 +159,8 @@ export default function CollegeBaseballNewsPage() {
                   onClick={() => setSourceFilter(src.id)}
                   className={`px-3 py-1.5 rounded-sm text-xs font-medium whitespace-nowrap transition-colors ${
                     sourceFilter === src.id
-                      ? 'bg-surface-medium text-text-primary border border-border-strong'
-                      : 'bg-surface-light text-text-muted hover:bg-surface-medium hover:text-text-tertiary'
+                      ? 'bg-surface-medium text-[var(--bsi-bone)] border border-[rgba(140,98,57,0.5)]'
+                      : 'bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.35)] hover:bg-[var(--surface-press-box)] hover:text-[rgba(196,184,165,0.5)]'
                   }`}
                 >
                   {src.label}
@@ -186,16 +186,16 @@ export default function CollegeBaseballNewsPage() {
             ) : error ? (
               <Card variant="default" padding="lg" className="bg-error/10 border-error/30">
                 <p className="text-error font-semibold">Unable to Load News</p>
-                <p className="text-text-secondary text-sm mt-1">{error}</p>
+                <p className="text-[var(--bsi-dust)] text-sm mt-1">{error}</p>
               </Card>
             ) : filtered.length === 0 ? (
               <Card variant="default" padding="lg">
                 <div className="text-center py-8">
-                  <svg viewBox="0 0 24 24" className="w-16 h-16 text-text-tertiary mx-auto mb-4" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <svg viewBox="0 0 24 24" className="w-16 h-16 text-[rgba(196,184,165,0.5)] mx-auto mb-4" fill="none" stroke="currentColor" strokeWidth="1.5">
                     <path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2m-4-3H9M7 16h6M7 12h10" />
                   </svg>
-                  <p className="text-text-secondary">No news in this category right now.</p>
-                  <p className="text-text-tertiary text-sm mt-2">
+                  <p className="text-[var(--bsi-dust)]">No news in this category right now.</p>
+                  <p className="text-[rgba(196,184,165,0.5)] text-sm mt-2">
                     The transfer portal can be quiet between waves. Fall ball wraps, portal opens,
                     then it&apos;s chaos. Stay tuned.
                   </p>
@@ -206,7 +206,7 @@ export default function CollegeBaseballNewsPage() {
                 <div className="space-y-8">
                   {grouped.map((group) => (
                     <div key={group.label}>
-                      <h2 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-4">
+                      <h2 className="text-sm font-semibold text-[rgba(196,184,165,0.35)] uppercase tracking-wider mb-4">
                         {group.label}
                       </h2>
                       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -229,7 +229,7 @@ export default function CollegeBaseballNewsPage() {
               </ScrollReveal>
             )}
 
-            <div className="mt-8 pt-4 border-t border-border-subtle">
+            <div className="mt-8 pt-4 border-t border-[var(--border-vintage)]">
               <DataSourceBadge source={sourceLabel} timestamp={formatTimestamp(lastUpdated)} />
             </div>
           </Container>

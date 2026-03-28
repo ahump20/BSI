@@ -57,17 +57,17 @@ export default function NFLStandingsPage() {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/nfl"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 NFL
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">Standings</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">Standings</span>
             </nav>
           </Container>
         </Section>
@@ -84,13 +84,13 @@ export default function NFLStandingsPage() {
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-gradient-blaze">
+              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-[var(--bsi-primary)]">
                 NFL Standings
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="text-text-secondary mt-2">
+              <p className="text-[var(--bsi-dust)] mt-2">
                 Complete AFC and NFC standings with playoff positioning
               </p>
             </ScrollReveal>
@@ -107,8 +107,8 @@ export default function NFLStandingsPage() {
                   onClick={() => setSelectedConference(conf)}
                   className={`px-6 py-3 min-h-[44px] rounded-sm font-semibold transition-all ${
                     selectedConference === conf
-                      ? 'bg-burnt-orange text-white'
-                      : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
+                      ? 'bg-[var(--bsi-primary)] text-white'
+                      : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:bg-[var(--surface-press-box)]'
                   }`}
                 >
                   {conf}
@@ -125,9 +125,9 @@ export default function NFLStandingsPage() {
 
             <DataErrorBoundary name="NFL Standings">
             {isOffSeason && (
-              <Card variant="default" padding="md" className="mb-6 bg-surface-light border-border-subtle">
-                <p className="text-text-primary font-semibold">Off-Season</p>
-                <p className="text-text-secondary text-sm mt-1">
+              <Card variant="default" padding="md" className="mb-6 bg-[var(--surface-press-box)] border-[var(--border-vintage)]">
+                <p className="text-[var(--bsi-bone)] font-semibold">Off-Season</p>
+                <p className="text-[var(--bsi-dust)] text-sm mt-1">
                   The 2025-26 NFL season has concluded. Final standings will display when live data is available from our API. The 2026 season kicks off in September.
                 </p>
               </Card>
@@ -138,10 +138,10 @@ export default function NFLStandingsPage() {
                 {[1, 2, 3, 4].map((i) => (
                   <Card key={i} variant="default" padding="lg">
                     <div className="animate-pulse">
-                      <div className="h-6 bg-background-tertiary rounded-sm w-32 mb-4"></div>
+                      <div className="h-6 bg-[var(--surface-dugout)] rounded-sm w-32 mb-4"></div>
                       <div className="space-y-2">
                         {[1, 2, 3, 4].map((j) => (
-                          <div key={j} className="h-10 bg-background-tertiary rounded-sm"></div>
+                          <div key={j} className="h-10 bg-[var(--surface-dugout)] rounded-sm"></div>
                         ))}
                       </div>
                     </div>
@@ -151,7 +151,7 @@ export default function NFLStandingsPage() {
             ) : error ? (
               <Card variant="default" padding="lg">
                 <div className="text-center py-12">
-                  <p className="text-text-secondary mb-4">Standings could not be loaded right now.</p>
+                  <p className="text-[var(--bsi-dust)] mb-4">Standings could not be loaded right now.</p>
                   <button onClick={retry} className="btn-heritage text-sm">Try Again</button>
                 </div>
               </Card>
@@ -169,39 +169,39 @@ export default function NFLStandingsPage() {
                 {currentConference?.divisions.map((division, index) => (
                   <ScrollReveal key={division.name} direction="up" delay={index * 100}>
                     <Card variant="default" padding="lg">
-                      <h3 className="text-lg font-display font-bold text-burnt-orange mb-4">
+                      <h3 className="text-lg font-display font-bold text-[var(--bsi-primary)] mb-4">
                         {division.name}
                       </h3>
 
                       <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                           <thead>
-                            <tr className="border-b border-border-subtle">
-                              <th className="text-left py-2 px-2 text-text-tertiary font-semibold">
+                            <tr className="border-b border-[var(--border-vintage)]">
+                              <th className="text-left py-2 px-2 text-[rgba(196,184,165,0.5)] font-semibold">
                                 Team
                               </th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                              <th className="text-center py-2 px-2 text-[rgba(196,184,165,0.5)] font-semibold">
                                 W
                               </th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                              <th className="text-center py-2 px-2 text-[rgba(196,184,165,0.5)] font-semibold">
                                 L
                               </th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                              <th className="text-center py-2 px-2 text-[rgba(196,184,165,0.5)] font-semibold">
                                 T
                               </th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                              <th className="text-center py-2 px-2 text-[rgba(196,184,165,0.5)] font-semibold">
                                 PCT
                               </th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">
+                              <th className="text-center py-2 px-2 text-[rgba(196,184,165,0.5)] font-semibold hidden md:table-cell">
                                 PF
                               </th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">
+                              <th className="text-center py-2 px-2 text-[rgba(196,184,165,0.5)] font-semibold hidden md:table-cell">
                                 PA
                               </th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">
+                              <th className="text-center py-2 px-2 text-[rgba(196,184,165,0.5)] font-semibold hidden md:table-cell">
                                 DIFF
                               </th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden lg:table-cell">
+                              <th className="text-center py-2 px-2 text-[rgba(196,184,165,0.5)] font-semibold hidden lg:table-cell">
                                 STRK
                               </th>
                             </tr>
@@ -210,43 +210,43 @@ export default function NFLStandingsPage() {
                             {division.teams.map((team, teamIndex) => (
                               <tr
                                 key={team.abbreviation}
-                                className={`border-b border-border-subtle last:border-0 ${
+                                className={`border-b border-[var(--border-vintage)] last:border-0 ${
                                   teamIndex === 0 ? 'bg-success/5' : ''
                                 }`}
                               >
                                 <td className="py-3 px-2">
                                   <div className="flex items-center gap-2">
-                                    <span className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
+                                    <span className="w-8 h-8 bg-[var(--surface-dugout)] rounded-full flex items-center justify-center text-xs font-bold text-[var(--bsi-primary)]">
                                       {team.abbreviation}
                                     </span>
-                                    <span className="font-semibold text-text-primary">{team.name}</span>
+                                    <span className="font-semibold text-[var(--bsi-bone)]">{team.name}</span>
                                   </div>
                                 </td>
-                                <td className="text-center py-3 px-2 text-text-primary font-mono">
+                                <td className="text-center py-3 px-2 text-[var(--bsi-bone)] font-mono">
                                   {team.wins}
                                 </td>
-                                <td className="text-center py-3 px-2 text-text-primary font-mono">
+                                <td className="text-center py-3 px-2 text-[var(--bsi-bone)] font-mono">
                                   {team.losses}
                                 </td>
-                                <td className="text-center py-3 px-2 text-text-primary font-mono">
+                                <td className="text-center py-3 px-2 text-[var(--bsi-bone)] font-mono">
                                   {team.ties}
                                 </td>
-                                <td className="text-center py-3 px-2 text-text-primary font-mono">
+                                <td className="text-center py-3 px-2 text-[var(--bsi-bone)] font-mono">
                                   {team.pct.toFixed(3)}
                                 </td>
-                                <td className="text-center py-3 px-2 text-text-secondary font-mono hidden md:table-cell">
+                                <td className="text-center py-3 px-2 text-[var(--bsi-dust)] font-mono hidden md:table-cell">
                                   {team.pf}
                                 </td>
-                                <td className="text-center py-3 px-2 text-text-secondary font-mono hidden md:table-cell">
+                                <td className="text-center py-3 px-2 text-[var(--bsi-dust)] font-mono hidden md:table-cell">
                                   {team.pa}
                                 </td>
                                 <td
-                                  className={`text-center py-3 px-2 font-mono hidden md:table-cell ${team.diff > 0 ? 'text-success' : team.diff < 0 ? 'text-error' : 'text-text-secondary'}`}
+                                  className={`text-center py-3 px-2 font-mono hidden md:table-cell ${team.diff > 0 ? 'text-success' : team.diff < 0 ? 'text-error' : 'text-[var(--bsi-dust)]'}`}
                                 >
                                   {team.diff > 0 ? '+' : ''}
                                   {team.diff}
                                 </td>
-                                <td className="text-center py-3 px-2 text-text-secondary hidden lg:table-cell">
+                                <td className="text-center py-3 px-2 text-[var(--bsi-dust)] hidden lg:table-cell">
                                   {team.streak}
                                 </td>
                               </tr>
@@ -261,7 +261,7 @@ export default function NFLStandingsPage() {
             )}
 
             {/* Data Source Footer */}
-            <div className="mt-8 pt-4 border-t border-border-subtle">
+            <div className="mt-8 pt-4 border-t border-[var(--border-vintage)]">
               <DataSourceBadge source="ESPN NFL API" timestamp={formatTimestamp()} />
             </div>
             </DataErrorBoundary>

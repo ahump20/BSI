@@ -14,7 +14,6 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
-import { HeroGlow } from '@/components/ui/HeroGlow';
 import { toDataMeta } from '@/lib/utils/data-meta';
 import { formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
 import type { DataMeta } from '@/lib/types/data-meta';
@@ -66,7 +65,7 @@ function GameIntelTrigger({ game }: { game: Game }) {
     <div className="mt-1">
       <button
         onClick={() => setOpen((p) => !p)}
-        className="w-full flex items-center justify-center gap-1.5 py-2 text-xs font-display uppercase tracking-widest text-text-tertiary hover:text-burnt-orange transition-colors"
+        className="w-full flex items-center justify-center gap-1.5 py-2 text-xs font-display uppercase tracking-widest text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
       >
         <span className="w-1 h-1 rounded-full bg-current" style={{ opacity: open ? 1 : 0.5 }} />
         {open ? 'Hide Intel' : 'Pregame Intel'}
@@ -105,7 +104,7 @@ function TeamRow({
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <span
-            className={`truncate font-semibold ${won ? 'text-text-primary' : 'text-text-secondary'}`}
+            className={`truncate font-semibold ${won ? 'text-[var(--bsi-bone)]' : 'text-[var(--bsi-dust)]'}`}
           >
             {displayName}
           </span>
@@ -120,10 +119,10 @@ function TeamRow({
             </svg>
           )}
         </div>
-        <p className="text-xs text-text-tertiary">{record}</p>
+        <p className="text-xs text-[rgba(196,184,165,0.5)]">{record}</p>
       </div>
       <span
-        className={`font-display text-2xl ${won ? 'text-burnt-orange' : 'text-text-primary'}`}
+        className={`font-display text-2xl ${won ? 'text-[var(--bsi-primary)]' : 'text-[var(--bsi-bone)]'}`}
         {...(!isScheduled ? { 'aria-live': 'polite' as const } : {})}
       >
         {team.score ?? (isScheduled ? '-' : 0)}
@@ -148,19 +147,19 @@ function GameCard({ game }: { game: Game }) {
   return (
     <Link href={gameHref} className="block">
       <div
-        className={`bg-background-tertiary rounded-sm border transition-all hover:border-burnt-orange hover:bg-surface-light ${
-          isLive ? 'border-success' : 'border-border-subtle'
+        className={`bg-[var(--surface-dugout)] rounded-sm border transition-all hover:border-[var(--bsi-primary)] hover:bg-[var(--surface-press-box)] ${
+          isLive ? 'border-success' : 'border-[var(--border-vintage)]'
         }`}
       >
         {/* Game Status Bar */}
         <div
           className={`px-4 py-2 rounded-t-sm flex items-center justify-between ${
-            isLive ? 'bg-success/20' : isFinal ? 'bg-background-secondary' : 'bg-burnt-orange/20'
+            isLive ? 'bg-success/20' : isFinal ? 'bg-[var(--surface-dugout)]' : 'bg-[var(--bsi-primary)]/20'
           }`}
         >
           <span
             className={`text-xs font-semibold uppercase ${
-              isLive ? 'text-success' : isFinal ? 'text-text-tertiary' : 'text-burnt-orange'
+              isLive ? 'text-success' : isFinal ? 'text-[rgba(196,184,165,0.5)]' : 'text-[var(--bsi-primary)]'
             }`}
           >
             {isLive ? (
@@ -199,9 +198,9 @@ function GameCard({ game }: { game: Game }) {
 
         {/* Venue Footer */}
         {game.venue && game.venue !== 'TBD' && (
-          <div className="px-4 pb-3 text-xs text-text-tertiary border-t border-border-subtle pt-3">
+          <div className="px-4 pb-3 text-xs text-[rgba(196,184,165,0.5)] border-t border-[var(--border-vintage)] pt-3">
             {game.venue}
-            {game.tv && <span className="ml-2 text-burnt-orange">• {game.tv}</span>}
+            {game.tv && <span className="ml-2 text-[var(--bsi-primary)]">• {game.tv}</span>}
           </div>
         )}
       </div>
@@ -223,7 +222,7 @@ function GameSection({ games, status, label, showPulse, className }: GameSection
 
   return (
     <div className={className}>
-      <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+      <h2 className="text-lg font-semibold text-[var(--bsi-bone)] mb-4 flex items-center gap-2">
         {showPulse && <span className="w-2 h-2 bg-success rounded-full animate-pulse" />}
         {label}
       </h2>
@@ -357,43 +356,42 @@ export default function CollegeBaseballScoresPage() {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/college-baseball"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 College Baseball
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">Scores</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">Scores</span>
             </nav>
           </Container>
         </Section>
 
         {/* Header */}
         <Section padding="md" className="relative overflow-hidden">
-          <HeroGlow shape="80% 50%" intensity={0.07} />
 
           <Container>
             <div className="flex items-center justify-between flex-wrap gap-4">
               <div>
                 <ScrollReveal direction="up">
                   <div className="flex items-center gap-3 mb-4">
-                    <span className="section-label">Live Scores</span>
+                    <span className="heritage-stamp">Live Scores</span>
                     {hasLiveGames && <FreshnessBadge isLive fetchedAt={meta?.fetched_at} />}
                   </div>
                 </ScrollReveal>
 
                 <ScrollReveal direction="up" delay={100}>
-                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-gradient-blaze">
+                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-[var(--bsi-primary)]">
                     College Baseball Scores
                   </h1>
                 </ScrollReveal>
 
                 <ScrollReveal direction="up" delay={150}>
-                  <p className="text-burnt-orange font-serif italic text-lg mt-2">
+                  <p className="text-[var(--bsi-primary)] font-serif italic text-lg mt-2">
                     Every D1 program. Updated every 30 seconds during live games.
                   </p>
                 </ScrollReveal>
@@ -410,7 +408,7 @@ export default function CollegeBaseballScoresPage() {
               <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
                 <button
                   onClick={() => handleDateSelect(getDateOffset(-3))}
-                  className="p-2 text-text-tertiary hover:text-text-primary transition-colors"
+                  className="p-2 text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-bone)] transition-colors"
                   aria-label="Previous days"
                 >
                   <svg
@@ -442,7 +440,7 @@ export default function CollegeBaseballScoresPage() {
 
                 <button
                   onClick={() => handleDateSelect(getDateOffset(3))}
-                  className="p-2 text-text-tertiary hover:text-text-primary transition-colors"
+                  className="p-2 text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-bone)] transition-colors"
                   aria-label="Next days"
                 >
                   <svg
@@ -477,11 +475,11 @@ export default function CollegeBaseballScoresPage() {
 
               {/* Game Status Header */}
               {!loading && !error && games.length > 0 && (
-                <div className="mb-6 flex items-center gap-2 text-sm text-text-secondary">
+                <div className="mb-6 flex items-center gap-2 text-sm text-[var(--bsi-dust)]">
                   {isYesterdayFallback ? (
                     <span className="flex items-center gap-2">
-                      <span className="text-text-tertiary">Yesterday&apos;s Results</span>
-                      <span className="text-burnt-orange font-semibold">
+                      <span className="text-[rgba(196,184,165,0.5)]">Yesterday&apos;s Results</span>
+                      <span className="text-[var(--bsi-primary)] font-semibold">
                         {games.length} {games.length === 1 ? 'game' : 'games'}
                       </span>
                     </span>
@@ -489,7 +487,7 @@ export default function CollegeBaseballScoresPage() {
                     <span className="flex items-center gap-2">
                       <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
                       <span className="text-success font-semibold">{liveCount} live</span>
-                      <span className="text-text-tertiary">
+                      <span className="text-[rgba(196,184,165,0.5)]">
                         &middot; {games.length} total {games.length === 1 ? 'game' : 'games'} today
                       </span>
                     </span>
@@ -511,13 +509,13 @@ export default function CollegeBaseballScoresPage() {
               ) : error ? (
                 <Card variant="default" padding="lg" className="bg-warning/10 border-warning/30">
                   <p className="text-warning font-semibold">Unable to Load Scores</p>
-                  <p className="text-text-secondary text-sm mt-1">
+                  <p className="text-[var(--bsi-dust)] text-sm mt-1">
                     The scores API returned an error. This is usually temporary — try again in a
                     moment.
                   </p>
                   <button
                     onClick={() => retry()}
-                    className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange/80 transition-colors"
+                    className="mt-4 px-4 py-2 bg-[var(--bsi-primary)] text-white rounded-sm hover:bg-[var(--bsi-primary)]/80 transition-colors"
                   >
                     Retry
                   </button>
@@ -533,7 +531,7 @@ export default function CollegeBaseballScoresPage() {
                   {/* Live Games Section */}
                   {games.some((g) => g.status === 'live') && (
                     <div className="mb-8">
-                      <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+                      <h2 className="text-lg font-semibold text-[var(--bsi-bone)] mb-4 flex items-center gap-2">
                         <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
                         Live Games
                       </h2>
@@ -552,7 +550,7 @@ export default function CollegeBaseballScoresPage() {
                   {/* Final Games */}
                   {games.some((g) => g.status === 'final') && (
                     <div className="mb-8">
-                      <h2 className="text-lg font-semibold text-text-primary mb-4">Final</h2>
+                      <h2 className="text-lg font-semibold text-[var(--bsi-bone)] mb-4">Final</h2>
                       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                         {games
                           .filter((g) => g.status === 'final')
@@ -568,7 +566,7 @@ export default function CollegeBaseballScoresPage() {
                   {/* Scheduled Games */}
                   {games.some((g) => g.status === 'scheduled') && (
                     <div>
-                      <h2 className="text-lg font-semibold text-text-primary mb-4">Upcoming</h2>
+                      <h2 className="text-lg font-semibold text-[var(--bsi-bone)] mb-4">Upcoming</h2>
                       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                         {games
                           .filter((g) => g.status === 'scheduled')
@@ -585,7 +583,7 @@ export default function CollegeBaseballScoresPage() {
                   )}
 
                   {/* Data Freshness Footer */}
-                  <div className="mt-8 pt-4 border-t border-border-subtle space-y-2">
+                  <div className="mt-8 pt-4 border-t border-[var(--border-vintage)] space-y-2">
                     <DataFreshnessIndicator
                       lastUpdated={meta?.fetched_at ? new Date(meta.fetched_at) : undefined}
                       source={meta?.source || 'ESPN'}

@@ -42,10 +42,10 @@ export default function GameSummaryClient() {
           <Card variant="default" padding="md">
             <div className="flex items-center gap-3 mb-2">
               <Badge variant="success">W</Badge>
-              <span className="text-text-tertiary text-sm">Winning Pitcher</span>
+              <span className="text-[rgba(196,184,165,0.5)] text-sm">Winning Pitcher</span>
             </div>
-            <p className="text-text-primary font-semibold text-lg">{winningPitcher.player.name}</p>
-            <p className="text-text-secondary text-sm mt-1">
+            <p className="text-[var(--bsi-bone)] font-semibold text-lg">{winningPitcher.player.name}</p>
+            <p className="text-[var(--bsi-dust)] text-sm mt-1">
               {winningPitcher.ip} IP, {winningPitcher.h} H, {winningPitcher.er} ER,{' '}
               {winningPitcher.so} K
             </p>
@@ -57,10 +57,10 @@ export default function GameSummaryClient() {
           <Card variant="default" padding="md">
             <div className="flex items-center gap-3 mb-2">
               <Badge variant="error">L</Badge>
-              <span className="text-text-tertiary text-sm">Losing Pitcher</span>
+              <span className="text-[rgba(196,184,165,0.5)] text-sm">Losing Pitcher</span>
             </div>
-            <p className="text-text-primary font-semibold text-lg">{losingPitcher.player.name}</p>
-            <p className="text-text-secondary text-sm mt-1">
+            <p className="text-[var(--bsi-bone)] font-semibold text-lg">{losingPitcher.player.name}</p>
+            <p className="text-[var(--bsi-dust)] text-sm mt-1">
               {losingPitcher.ip} IP, {losingPitcher.h} H, {losingPitcher.er} ER, {losingPitcher.so}{' '}
               K
             </p>
@@ -72,10 +72,10 @@ export default function GameSummaryClient() {
           <Card variant="default" padding="md">
             <div className="flex items-center gap-3 mb-2">
               <Badge variant="primary">S</Badge>
-              <span className="text-text-tertiary text-sm">Save</span>
+              <span className="text-[rgba(196,184,165,0.5)] text-sm">Save</span>
             </div>
-            <p className="text-text-primary font-semibold text-lg">{savePitcher.player.name}</p>
-            <p className="text-text-secondary text-sm mt-1">
+            <p className="text-[var(--bsi-bone)] font-semibold text-lg">{savePitcher.player.name}</p>
+            <p className="text-[var(--bsi-dust)] text-sm mt-1">
               {savePitcher.ip} IP, {savePitcher.h} H, {savePitcher.er} ER, {savePitcher.so} K
             </p>
           </Card>
@@ -85,16 +85,16 @@ export default function GameSummaryClient() {
       {/* Batting Leaders */}
       {(topAwayHitter || topHomeHitter) && (
         <Card variant="default" padding="md">
-          <h3 className="text-lg font-semibold text-text-primary mb-4">Batting Leaders</h3>
+          <h3 className="text-lg font-semibold text-[var(--bsi-bone)] mb-4">Batting Leaders</h3>
           <div className="grid gap-4 md:grid-cols-2">
             {topAwayHitter && (
-              <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-sm">
-                <div className="w-12 h-12 bg-background-secondary rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange">
+              <div className="flex items-center gap-4 p-3 bg-[var(--surface-dugout)] rounded-sm">
+                <div className="w-12 h-12 bg-[var(--surface-dugout)] rounded-full flex items-center justify-center text-sm font-bold text-[var(--bsi-primary)]">
                   {game.teams.away.abbreviation}
                 </div>
                 <div>
-                  <p className="font-semibold text-text-primary">{topAwayHitter.player.name}</p>
-                  <p className="text-text-secondary text-sm">
+                  <p className="font-semibold text-[var(--bsi-bone)]">{topAwayHitter.player.name}</p>
+                  <p className="text-[var(--bsi-dust)] text-sm">
                     {topAwayHitter.h}-{topAwayHitter.ab}, {topAwayHitter.rbi} RBI, {topAwayHitter.r}{' '}
                     R
                   </p>
@@ -102,13 +102,13 @@ export default function GameSummaryClient() {
               </div>
             )}
             {topHomeHitter && (
-              <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-sm">
-                <div className="w-12 h-12 bg-background-secondary rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange">
+              <div className="flex items-center gap-4 p-3 bg-[var(--surface-dugout)] rounded-sm">
+                <div className="w-12 h-12 bg-[var(--surface-dugout)] rounded-full flex items-center justify-center text-sm font-bold text-[var(--bsi-primary)]">
                   {game.teams.home.abbreviation}
                 </div>
                 <div>
-                  <p className="font-semibold text-text-primary">{topHomeHitter.player.name}</p>
-                  <p className="text-text-secondary text-sm">
+                  <p className="font-semibold text-[var(--bsi-bone)]">{topHomeHitter.player.name}</p>
+                  <p className="text-[var(--bsi-dust)] text-sm">
                     {topHomeHitter.h}-{topHomeHitter.ab}, {topHomeHitter.rbi} RBI, {topHomeHitter.r}{' '}
                     R
                   </p>
@@ -208,7 +208,7 @@ export default function GameSummaryClient() {
           <div className="text-center py-8">
             <svg
               viewBox="0 0 24 24"
-              className="w-16 h-16 text-text-tertiary mx-auto mb-4"
+              className="w-16 h-16 text-[rgba(196,184,165,0.5)] mx-auto mb-4"
               fill="none"
               stroke="currentColor"
               strokeWidth="1.5"
@@ -216,8 +216,8 @@ export default function GameSummaryClient() {
               <circle cx="12" cy="12" r="10" />
               <path d="M12 8v4l3 3" />
             </svg>
-            <p className="text-text-secondary">Game hasn't started yet</p>
-            <p className="text-text-tertiary text-sm mt-2">
+            <p className="text-[var(--bsi-dust)]">Game hasn't started yet</p>
+            <p className="text-[rgba(196,184,165,0.5)] text-sm mt-2">
               Box score and play-by-play will appear once the first pitch is thrown
             </p>
           </div>

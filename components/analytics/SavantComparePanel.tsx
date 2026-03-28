@@ -145,7 +145,7 @@ export function SavantComparePanel({
             </span>
             <button
               onClick={() => onRemove(player.player_id)}
-              className="text-text-muted hover:text-text-primary transition-colors ml-1 cursor-pointer"
+              className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] transition-colors ml-1 cursor-pointer"
               aria-label={`Remove ${player.player_name}`}
             >
               <svg viewBox="0 0 16 16" className="w-3 h-3" fill="currentColor">

@@ -58,7 +58,7 @@ export function MetricExplainer({
     >
       {children}
       <svg
-        className="w-3 h-3 text-text-muted opacity-40 hover:opacity-70 transition-opacity shrink-0"
+        className="w-3 h-3 text-[rgba(196,184,165,0.35)] opacity-40 hover:opacity-70 transition-opacity shrink-0"
         viewBox="0 0 16 16"
         fill="currentColor"
         aria-hidden="true"
@@ -69,15 +69,15 @@ export function MetricExplainer({
       </svg>
 
       {open && (
-        <span className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 sm:w-64 p-3 rounded-sm bg-background-secondary border border-border shadow-xl pointer-events-auto">
-          <span className="block text-xs font-mono text-burnt-orange font-bold mb-1">
+        <span className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 sm:w-64 p-3 rounded-sm bg-[var(--surface-dugout)] border border-border shadow-xl pointer-events-auto">
+          <span className="block text-xs font-mono text-[var(--bsi-primary)] font-bold mb-1">
             {def.abbr}
           </span>
-          <span className="block text-[11px] text-text-secondary leading-relaxed">
+          <span className="block text-[11px] text-[var(--bsi-dust)] leading-relaxed">
             {def.description}
           </span>
           {def.context && (
-            <span className="block text-[10px] text-text-muted mt-1.5 font-mono">
+            <span className="block text-[10px] text-[rgba(196,184,165,0.35)] mt-1.5 font-mono">
               {def.context}
             </span>
           )}

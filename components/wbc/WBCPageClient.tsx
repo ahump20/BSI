@@ -18,7 +18,7 @@ const wbcFeatures = [
   {
     id: 'rankings' as WBCTab,
     icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
+      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-[var(--bsi-primary)] fill-none stroke-[1.5]">
         <line x1="18" y1="20" x2="18" y2="10" />
         <line x1="12" y1="20" x2="12" y2="4" />
         <line x1="6" y1="20" x2="6" y2="14" />
@@ -31,7 +31,7 @@ const wbcFeatures = [
   {
     id: 'pools' as WBCTab,
     icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
+      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-[var(--bsi-primary)] fill-none stroke-[1.5]">
         <rect x="3" y="3" width="18" height="18" rx="2" />
         <line x1="12" y1="3" x2="12" y2="21" />
         <line x1="3" y1="12" x2="21" y2="12" />
@@ -44,7 +44,7 @@ const wbcFeatures = [
   {
     id: 'bracket' as WBCTab,
     icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
+      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-[var(--bsi-primary)] fill-none stroke-[1.5]">
         <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
       </svg>
     ),
@@ -55,7 +55,7 @@ const wbcFeatures = [
   {
     id: 'intelligence' as WBCTab,
     icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
+      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-[var(--bsi-primary)] fill-none stroke-[1.5]">
         <circle cx="12" cy="12" r="3" />
         <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
       </svg>
@@ -82,15 +82,15 @@ export function WBCPageClient() {
       <WBCHero />
 
       {/* Feature Cards */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-charcoal border-t border-border-subtle">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-[var(--surface-dugout)] border-t border-[var(--border-vintage)]">
         <div className="max-w-7xl mx-auto">
           <ScrollReveal>
             <div className="text-center mb-10">
               <span className="kicker">2026 World Baseball Classic</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display mt-2">
-                Full Tournament <span className="text-gradient-blaze">Coverage</span>
+                Full Tournament <span className="text-[var(--bsi-primary)]">Coverage</span>
               </h2>
-              <p className="text-text-secondary mt-4 max-w-xl mx-auto">
+              <p className="text-[var(--bsi-dust)] mt-4 max-w-xl mx-auto">
                 Power rankings, pool breakdowns, bracket math, and betting intelligence — one place.
               </p>
             </div>
@@ -109,17 +109,17 @@ export function WBCPageClient() {
                   <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
                     <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
 
-                    <div className="w-12 h-12 mb-4 bg-burnt-orange/15 rounded-sm flex items-center justify-center">
+                    <div className="w-12 h-12 mb-4 bg-[var(--bsi-primary)]/15 rounded-sm flex items-center justify-center">
                       {feature.icon}
                     </div>
-                    <h3 className="text-base font-semibold text-text-primary mb-2">{feature.title}</h3>
-                    <p className="text-text-tertiary text-sm leading-relaxed mb-4">{feature.description}</p>
+                    <h3 className="text-base font-semibold text-[var(--bsi-bone)] mb-2">{feature.title}</h3>
+                    <p className="text-[rgba(196,184,165,0.5)] text-sm leading-relaxed mb-4">{feature.description}</p>
 
-                    <div className="flex items-center justify-between pt-3 border-t border-border-subtle">
-                      <span className="text-xs font-semibold text-text-muted bg-surface-light px-2 py-0.5 rounded-sm">
+                    <div className="flex items-center justify-between pt-3 border-t border-[var(--border-vintage)]">
+                      <span className="text-xs font-semibold text-[rgba(196,184,165,0.35)] bg-[var(--surface-press-box)] px-2 py-0.5 rounded-sm">
                         {feature.badge}
                       </span>
-                      <span className="text-burnt-orange text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+                      <span className="text-[var(--bsi-primary)] text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
                         View
                         <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
                           <path d="M5 12h14M12 5l7 7-7 7" />
@@ -137,7 +137,7 @@ export function WBCPageClient() {
       {/* Tabs */}
       <section
         id="wbc-tabs"
-        className="py-12 px-4 sm:px-6 lg:px-8 bg-charcoal border-t border-border-subtle"
+        className="py-12 px-4 sm:px-6 lg:px-8 bg-[var(--surface-dugout)] border-t border-[var(--border-vintage)]"
       >
         <div className="max-w-7xl mx-auto">
           <TabBar
@@ -182,24 +182,24 @@ export function WBCPageClient() {
       </section>
 
       {/* Tournament context */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-midnight border-t border-border-subtle">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-[var(--surface-scoreboard)] border-t border-[var(--border-vintage)]">
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="p-5 rounded-sm border border-border-subtle bg-surface-light/5">
-              <div className="text-burnt-orange font-semibold text-sm mb-2">Pool of Death</div>
-              <p className="text-text-secondary text-sm leading-relaxed">
+            <div className="p-5 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)]/5">
+              <div className="text-[var(--bsi-primary)] font-semibold text-sm mb-2">Pool of Death</div>
+              <p className="text-[var(--bsi-dust)] text-sm leading-relaxed">
                 Dominican Republic, Venezuela, and Puerto Rico combine for 37% of championship probability in the BSI model. All three play Pool D Miami. One doesn&apos;t make the quarterfinals.
               </p>
             </div>
-            <div className="p-5 rounded-sm border border-border-subtle bg-surface-light/5">
-              <div className="text-burnt-orange font-semibold text-sm mb-2">Japan&apos;s Edge</div>
-              <p className="text-text-secondary text-sm leading-relaxed">
+            <div className="p-5 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)]/5">
+              <div className="text-[var(--bsi-primary)] font-semibold text-sm mb-2">Japan&apos;s Edge</div>
+              <p className="text-[var(--bsi-dust)] text-sm leading-relaxed">
                 Defending champions, deepest pitching staff, Ohtani available. Japan reaches the final in 55% of BSI simulations. The question is whether they spend ace arms in Tokyo or save them for Miami.
               </p>
             </div>
-            <div className="p-5 rounded-sm border border-border-subtle bg-surface-light/5">
-              <div className="text-burnt-orange font-semibold text-sm mb-2">USA&apos;s Ceiling</div>
-              <p className="text-text-secondary text-sm leading-relaxed">
+            <div className="p-5 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)]/5">
+              <div className="text-[var(--bsi-primary)] font-semibold text-sm mb-2">USA&apos;s Ceiling</div>
+              <p className="text-[var(--bsi-dust)] text-sm leading-relaxed">
                 USA gets Pool B Houston — easiest draw of any Tier 1 team. Their 40% Final% vs 15% Championship% reveals the pattern: they reach the final, they don&apos;t finish it. Bullpen management is the recurring problem.
               </p>
             </div>
@@ -208,7 +208,7 @@ export function WBCPageClient() {
           <div className="text-center">
             <Link
               href="/college-baseball"
-              className="inline-flex items-center gap-2 text-burnt-orange font-semibold hover:text-ember transition-colors"
+              className="inline-flex items-center gap-2 text-[var(--bsi-primary)] font-semibold hover:text-[var(--bsi-primary)] transition-colors"
             >
               Also covering: D1 College Baseball — Savant metrics, live scores, 330 programs
               <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">

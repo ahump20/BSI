@@ -144,16 +144,16 @@ function PlayerSearchInput({
   if (selected) {
     return (
       <div className="relative">
-        <label className="block text-xs font-semibold text-text-muted uppercase tracking-wider mb-2">{label}</label>
-        <div className={`flex items-center justify-between p-3 rounded-sm border bg-surface-light`} style={{ borderColor: accentColor + '40' }}>
+        <label className="block text-xs font-semibold text-bsi-dust/50 uppercase tracking-wider mb-2">{label}</label>
+        <div className={`flex items-center justify-between p-3 rounded-sm border bg-[#111111]`} style={{ borderColor: accentColor + '40' }}>
           <div>
-            <span className="text-text-primary font-medium">{selected.name}</span>
-            <span className="text-text-muted text-sm ml-2">{selected.team}</span>
-            {selected.position && <span className="text-text-muted text-xs ml-2">{selected.position}</span>}
+            <span className="text-bsi-bone font-medium">{selected.name}</span>
+            <span className="text-bsi-dust/50 text-sm ml-2">{selected.team}</span>
+            {selected.position && <span className="text-bsi-dust/50 text-xs ml-2">{selected.position}</span>}
           </div>
           <button
             onClick={onClear}
-            className="text-text-muted hover:text-text-primary transition-colors text-sm px-2"
+            className="text-bsi-dust/50 hover:text-bsi-bone transition-colors text-sm px-2"
             aria-label={`Clear ${label}`}
           >
             Clear
@@ -165,7 +165,7 @@ function PlayerSearchInput({
 
   return (
     <div className="relative" ref={wrapperRef}>
-      <label className="block text-xs font-semibold text-text-muted uppercase tracking-wider mb-2">{label}</label>
+      <label className="block text-xs font-semibold text-bsi-dust/50 uppercase tracking-wider mb-2">{label}</label>
       <input
         type="text"
         value={query}
@@ -175,21 +175,21 @@ function PlayerSearchInput({
         }}
         onFocus={() => { if (results.length > 0) setOpen(true); }}
         placeholder="Search by name..."
-        className="w-full p-3 rounded-sm border border-border-strong bg-surface-light text-text-primary placeholder-text-muted focus:outline-none focus:border-burnt-orange transition-colors"
+        className="w-full p-3 rounded-sm border border-[rgba(140,98,57,0.5)] bg-[#111111] text-bsi-bone placeholder-bsi-dust/50 focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
       />
       {searching && (
         <div className="absolute right-3 top-[38px] mt-0.5">
-          <div className="w-4 h-4 border-2 border-border border-t-text-tertiary rounded-full animate-spin" />
+          <div className="w-4 h-4 border-2 border-[rgba(140,98,57,0.3)] border-t-bsi-dust rounded-full animate-spin" />
         </div>
       )}
 
       {/* Dropdown */}
       {open && results.length > 0 && (
-        <ul className="absolute z-50 mt-1 w-full bg-background-secondary border border-border-strong rounded-sm shadow-xl max-h-64 overflow-y-auto">
+        <ul className="absolute z-50 mt-1 w-full bg-[#161616] border border-[rgba(140,98,57,0.5)] rounded-sm shadow-xl max-h-64 overflow-y-auto">
           {results.map((p) => (
             <li key={p.id}>
               <button
-                className="w-full text-left px-4 py-3 hover:bg-surface-medium transition-colors flex items-center justify-between"
+                className="w-full text-left px-4 py-3 hover:bg-[#161616] transition-colors flex items-center justify-between"
                 onClick={() => {
                   onSelect(p);
                   setQuery('');
@@ -197,12 +197,12 @@ function PlayerSearchInput({
                 }}
               >
                 <div>
-                  <span className="text-text-primary text-sm font-medium">{p.name}</span>
-                  {p.team && <span className="text-text-muted text-xs ml-2">{p.team}</span>}
+                  <span className="text-bsi-bone text-sm font-medium">{p.name}</span>
+                  {p.team && <span className="text-bsi-dust/50 text-xs ml-2">{p.team}</span>}
                 </div>
                 <div className="flex items-center gap-2">
-                  {p.position && <span className="text-text-muted text-xs">{p.position}</span>}
-                  {p.classYear && <span className="text-text-muted text-xs">{p.classYear}</span>}
+                  {p.position && <span className="text-bsi-dust/50 text-xs">{p.position}</span>}
+                  {p.classYear && <span className="text-bsi-dust/50 text-xs">{p.classYear}</span>}
                 </div>
               </button>
             </li>
@@ -211,8 +211,8 @@ function PlayerSearchInput({
       )}
 
       {open && query.length >= 2 && !searching && results.length === 0 && (
-        <div className="absolute z-50 mt-1 w-full bg-background-secondary border border-border-strong rounded-sm shadow-xl px-4 py-3">
-          <span className="text-text-muted text-sm">No players found</span>
+        <div className="absolute z-50 mt-1 w-full bg-[#161616] border border-[rgba(140,98,57,0.5)] rounded-sm shadow-xl px-4 py-3">
+          <span className="text-bsi-dust/50 text-sm">No players found</span>
         </div>
       )}
     </div>
@@ -240,27 +240,27 @@ export default function PlayerComparePage() {
 
   return (
     <>
-      <div className="pt-6">
+      <div className="min-h-screen pt-6 bg-[#0A0A0A] text-bsi-bone">
         <Section padding="lg">
           <Container>
             {/* Breadcrumb */}
             <div className="flex items-center gap-3 mb-2">
-              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-bsi-dust/50 hover:text-[var(--bsi-primary)] transition-colors">
                 College Baseball
               </Link>
-              <span className="text-text-muted">/</span>
-              <Link href="/college-baseball/players" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <span className="text-bsi-dust/50">/</span>
+              <Link href="/college-baseball/players" className="text-bsi-dust/50 hover:text-[var(--bsi-primary)] transition-colors">
                 Players
               </Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-primary">Compare</span>
+              <span className="text-bsi-dust/50">/</span>
+              <span className="text-bsi-bone">Compare</span>
             </div>
 
             {/* Title */}
-            <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-[0.04em] text-text-primary mb-2">
+            <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-[0.04em] text-bsi-bone mb-2">
               Player Comparison
             </h1>
-            <p className="text-text-tertiary text-sm mb-8">
+            <p className="text-bsi-dust text-sm mb-8">
               Select two players to compare their statistics side by side.
             </p>
 
@@ -285,7 +285,7 @@ export default function PlayerComparePage() {
             {/* Loading */}
             {loading && (
               <div className="flex items-center justify-center py-20">
-                <div className="w-10 h-10 border-4 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
+                <div className="w-10 h-10 border-4 border-[var(--bsi-primary)]/30 border-t-[var(--bsi-primary)] rounded-full animate-spin" />
               </div>
             )}
 
@@ -295,7 +295,7 @@ export default function PlayerComparePage() {
                 <p className="text-error mb-3">{error}</p>
                 <button
                   onClick={retry}
-                  className="px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange/80 transition-colors text-sm"
+                  className="px-4 py-2 bg-[var(--bsi-primary)] text-white rounded-sm hover:bg-[var(--bsi-primary)]/80 transition-colors text-sm"
                 >
                   Retry
                 </button>
@@ -321,8 +321,8 @@ export default function PlayerComparePage() {
             {/* API error (e.g. player not found) */}
             {data?.error && !loading && (
               <Card padding="lg" className="text-center">
-                <p className="text-text-tertiary mb-2">{data.error}</p>
-                <p className="text-text-muted text-sm">Try selecting different players.</p>
+                <p className="text-bsi-dust mb-2">{data.error}</p>
+                <p className="text-bsi-dust/50 text-sm">Try selecting different players.</p>
               </Card>
             )}
 
@@ -330,8 +330,8 @@ export default function PlayerComparePage() {
             {!player1 && !player2 && !loading && (
               <Card padding="lg" className="text-center mt-4">
                 <div className="py-8">
-                  <p className="text-text-muted text-lg mb-2">Search for two players to get started</p>
-                  <p className="text-text-muted text-sm">Compare batting averages, home runs, ERA, and more.</p>
+                  <p className="text-bsi-dust/50 text-lg mb-2">Search for two players to get started</p>
+                  <p className="text-bsi-dust/50 text-sm">Compare batting averages, home runs, ERA, and more.</p>
                 </div>
               </Card>
             )}

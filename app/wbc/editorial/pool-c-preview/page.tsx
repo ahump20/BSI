@@ -50,15 +50,15 @@ export default function PoolCPreviewPage() {
         <Section padding="sm" className="border-b border-border">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/wbc" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <Link href="/wbc" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 WBC 2026
               </Link>
-              <span className="text-text-muted">/</span>
-              <Link href="/wbc/pool/c" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <Link href="/wbc/pool/c" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 Pool C
               </Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-primary">Preview</span>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[var(--bsi-bone)]">Preview</span>
             </nav>
           </Container>
         </Section>
@@ -71,9 +71,9 @@ export default function PoolCPreviewPage() {
               <div className="max-w-3xl">
                 <div className="flex items-center gap-3 mb-6">
                   <Badge variant="primary">Pool C Preview</Badge>
-                  <span className="text-text-muted text-sm">March 4, 2026</span>
-                  <span className="text-text-muted">|</span>
-                  <span className="text-text-muted text-sm">~10 min read</span>
+                  <span className="text-[rgba(196,184,165,0.35)] text-sm">March 4, 2026</span>
+                  <span className="text-[rgba(196,184,165,0.35)]">|</span>
+                  <span className="text-[rgba(196,184,165,0.35)] text-sm">~10 min read</span>
                 </div>
                 <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold uppercase tracking-tight leading-[0.95] mb-4">
                   Tokyo Starts{' '}
@@ -81,7 +81,7 @@ export default function PoolCPreviewPage() {
                     Tomorrow.
                   </span>
                 </h1>
-                <p className="font-serif text-xl md:text-2xl italic text-text-tertiary leading-relaxed max-w-2xl">
+                <p className="font-serif text-xl md:text-2xl italic text-[rgba(196,184,165,0.5)] leading-relaxed max-w-2xl">
                   Japan and South Korea share Pool C at Tokyo Dome. Together, they account for 30% of every
                   simulated championship in the BSI model. Only two teams advance.
                   The bracket is not confused about what that means.
@@ -107,7 +107,7 @@ export default function PoolCPreviewPage() {
           <Container>
             <ScrollReveal>
               <div className="max-w-3xl mx-auto">
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
                     Pool C is the tournament's opening statement, and the statement is not gentle.
                     While Houston waits until Saturday and Miami fans set their alarms for pool play
@@ -142,10 +142,10 @@ export default function PoolCPreviewPage() {
           <Container>
             <ScrollReveal>
               <div className="max-w-3xl mx-auto">
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-8">
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-8">
                   Japan: The Defending Standard
                 </h2>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
                     Japan&rsquo;s 2023 title run was a case study in roster management. Hideki Kuriyama
                     used Shohei Ohtani in exactly the right moments &mdash; deep into pool play to build
@@ -183,10 +183,10 @@ export default function PoolCPreviewPage() {
           <Container>
             <ScrollReveal>
               <div className="max-w-3xl mx-auto">
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-8">
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-8">
                   South Korea: Championship Ceiling, KBO Floor
                 </h2>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
                     South Korea&rsquo;s two WBC final appearances &mdash; 2006 and 2009 &mdash; came from
                     rosters that were flush with MLB-caliber talent: Chan Ho Park, Shin-Soo Choo,
@@ -223,10 +223,10 @@ export default function PoolCPreviewPage() {
           <Container>
             <ScrollReveal>
               <div className="max-w-3xl mx-auto">
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-8">
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-8">
                   Australia, Czech Republic, China: Who Gets the Bracket Gift
                 </h2>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
                     Australia enters at 1.5% title probability, which the BSI model describes as
                     &ldquo;upset capable&rdquo; in a single game context. Baseball Australia has genuinely
@@ -259,10 +259,10 @@ export default function PoolCPreviewPage() {
           <Container>
             <ScrollReveal>
               <div className="max-w-3xl mx-auto">
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-8">
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-8">
                   The Ohtani Question Is Always a Coaching Question
                 </h2>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
                     Ohtani is available for up to three starts &mdash; pool play opener, a potential
                     quarterfinal, and the Final &mdash; if Japan advances straight through without burning
@@ -294,10 +294,10 @@ export default function PoolCPreviewPage() {
           <Container>
             <ScrollReveal>
               <div className="max-w-3xl mx-auto">
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-8">
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-8">
                   Pool C Verdict
                 </h2>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
                     Japan comes out as Pool C winner. That sentence is boring in a way that
                     understates the difficulty &mdash; in 6% of simulations, they don&rsquo;t.
@@ -324,7 +324,7 @@ export default function PoolCPreviewPage() {
                 </div>
 
                 {/* Data attribution */}
-                <p className="text-text-muted text-xs pt-8 border-t border-border-subtle">
+                <p className="text-[rgba(196,184,165,0.35)] text-xs pt-8 border-t border-[var(--border-vintage)]">
                   Title probabilities: BSI probability model (200,000 Monte Carlo simulations) &middot;
                   Pre-tournament baseline &middot; March 4, 2026
                 </p>
@@ -333,13 +333,13 @@ export default function PoolCPreviewPage() {
                 <div className="mt-8 flex flex-wrap gap-4 items-center">
                   <Link
                     href="/wbc/pool/c"
-                    className="inline-flex items-center gap-2 text-burnt-orange font-semibold hover:text-ember transition-colors"
+                    className="inline-flex items-center gap-2 text-[var(--bsi-primary)] font-semibold hover:text-[var(--bsi-primary)] transition-colors"
                   >
                     ← Pool C Details
                   </Link>
                   <Link
                     href="/wbc"
-                    className="inline-flex items-center gap-2 text-text-muted hover:text-text-primary transition-colors text-sm"
+                    className="inline-flex items-center gap-2 text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] transition-colors text-sm"
                   >
                     WBC Hub →
                   </Link>

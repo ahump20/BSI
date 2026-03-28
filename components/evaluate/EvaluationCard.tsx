@@ -45,7 +45,7 @@ function TierBadge({ tier, percentile }: { tier: string; percentile: number }) {
         >
           {tier}
         </p>
-        <p className="text-[11px] text-text-muted">Overall Percentile</p>
+        <p className="text-[11px] text-[rgba(196,184,165,0.35)]">Overall Percentile</p>
       </div>
     </div>
   );
@@ -78,7 +78,7 @@ export function EvaluationCard({ profile, compact = false, className = '' }: Eva
   return (
     <Card padding="none" className={`overflow-hidden ${className}`}>
       {/* Header */}
-      <div className="px-5 py-4 border-b border-border-subtle">
+      <div className="px-5 py-4 border-b border-[var(--border-vintage)]">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-4">
             {/* Headshot */}
@@ -94,18 +94,18 @@ export function EvaluationCard({ profile, compact = false, className = '' }: Eva
             )}
 
             <div>
-              <h3 className="font-display text-xl md:text-2xl font-bold uppercase tracking-wider text-text-primary">
+              <h3 className="font-display text-xl md:text-2xl font-bold uppercase tracking-wider text-[var(--bsi-bone)]">
                 {player.name}
               </h3>
               <div className="flex items-center gap-2 mt-1 flex-wrap">
                 <Badge variant="primary" size="sm">{player.position}</Badge>
                 <Badge variant="secondary" size="sm">{player.team}</Badge>
-                <span className="text-[10px] font-mono text-text-muted uppercase">
+                <span className="text-[10px] font-mono text-[rgba(196,184,165,0.35)] uppercase">
                   {SPORT_LABELS[player.sport]}
                 </span>
               </div>
               {!compact && player.bio && (
-                <div className="flex items-center gap-3 mt-1.5 text-[11px] text-text-muted">
+                <div className="flex items-center gap-3 mt-1.5 text-[11px] text-[rgba(196,184,165,0.35)]">
                   {player.bio.height && <span>{player.bio.height}</span>}
                   {player.bio.weight && <span>{player.bio.weight} lbs</span>}
                   {player.bio.age && <span>Age {player.bio.age}</span>}
@@ -126,7 +126,7 @@ export function EvaluationCard({ profile, compact = false, className = '' }: Eva
           if (!catMetrics || catMetrics.length === 0) return null;
           return (
             <div key={cat}>
-              <h4 className="text-[10px] font-mono uppercase tracking-widest text-text-muted mb-2.5">
+              <h4 className="text-[10px] font-mono uppercase tracking-widest text-[rgba(196,184,165,0.35)] mb-2.5">
                 {categoryLabel(cat)}
               </h4>
               <div className="space-y-2">
@@ -145,7 +145,7 @@ export function EvaluationCard({ profile, compact = false, className = '' }: Eva
         })}
 
         {evaluation.metrics.length === 0 && (
-          <p className="text-text-muted text-sm text-center py-4">
+          <p className="text-[rgba(196,184,165,0.35)] text-sm text-center py-4">
             No evaluation data available for this player.
           </p>
         )}

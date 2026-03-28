@@ -139,10 +139,10 @@ describe('Vision AI Hub Page', () => {
 
     // Click "Scouting" (index 7) — should activate
     fireEvent.click(navButtons[7]);
-    expect(navButtons[7].className).toContain('border-burnt-orange');
+    expect(navButtons[7].className).toContain('border-[var(--bsi-primary)]');
 
     // "Overview" (index 0) should no longer be active
-    expect(navButtons[0].className).not.toContain('border-burnt-orange');
+    expect(navButtons[0].className).not.toContain('border-[var(--bsi-primary)]');
   });
 
   it('renders BSI Take editorial callouts in detailed sections', () => {

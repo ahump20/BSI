@@ -301,12 +301,12 @@ export default function CompareHubPage() {
 
   return (
     <>
-      <div>
+      <div className="min-h-screen bg-[#0A0A0A] text-bsi-bone">
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-vintage/30">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-bsi-dust hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-bsi-dust hover:text-[var(--bsi-primary)] transition-colors">
                 College Baseball
               </Link>
               <span className="text-bsi-dust">/</span>
@@ -322,7 +322,7 @@ export default function CompareHubPage() {
             <ScrollReveal direction="up">
               <Badge variant="primary" className="mb-4">Head-to-Head</Badge>
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-center uppercase tracking-wide mb-4 text-bsi-bone">
-                Compare <span className="text-burnt-orange">Teams</span>
+                Compare <span className="text-[var(--bsi-primary)]">Teams</span>
               </h1>
               <p className="text-bsi-dust text-center max-w-xl mx-auto">
                 Select two teams to compare records, batting, pitching, advanced metrics, and NIL totals side by side.
@@ -345,7 +345,7 @@ export default function CompareHubPage() {
                       setTeamA('');
                       setTeamB('');
                     }}
-                    className="appearance-none bg-surface-dugout border border-border-vintage/40 rounded-sm px-4 py-2 pr-10 text-bsi-bone text-sm focus:border-burnt-orange focus:outline-none cursor-pointer"
+                    className="appearance-none bg-surface-dugout border border-border-vintage/40 rounded-sm px-4 py-2 pr-10 text-bsi-bone text-sm focus:border-[var(--bsi-primary)] focus:outline-none cursor-pointer"
                   >
                     {conferences.map((c) => (
                       <option key={c} value={c}>{c === 'All' ? 'All Conferences' : c}</option>
@@ -363,7 +363,7 @@ export default function CompareHubPage() {
                   <select
                     value={teamA}
                     onChange={(e) => setTeamA(e.target.value)}
-                    className="w-full appearance-none bg-surface-dugout border border-border-vintage/40 rounded-sm px-4 py-3 text-bsi-bone text-sm focus:border-burnt-orange focus:outline-none cursor-pointer"
+                    className="w-full appearance-none bg-surface-dugout border border-border-vintage/40 rounded-sm px-4 py-3 text-bsi-bone text-sm focus:border-[var(--bsi-primary)] focus:outline-none cursor-pointer"
                   >
                     <option value="">Select a team...</option>
                     {teamNames.filter((n) => n !== teamB).map((name) => (
@@ -375,8 +375,8 @@ export default function CompareHubPage() {
 
                 {/* VS Icon */}
                 <div className="flex justify-center">
-                  <div className="w-12 h-12 rounded-full bg-burnt-orange/20 border border-burnt-orange/40 flex items-center justify-center">
-                    <ArrowLeftRight className="w-5 h-5 text-burnt-orange" />
+                  <div className="w-12 h-12 rounded-full bg-[var(--bsi-primary)]/20 border border-[var(--bsi-primary)]/40 flex items-center justify-center">
+                    <ArrowLeftRight className="w-5 h-5 text-[var(--bsi-primary)]" />
                   </div>
                 </div>
 
@@ -386,7 +386,7 @@ export default function CompareHubPage() {
                   <select
                     value={teamB}
                     onChange={(e) => setTeamB(e.target.value)}
-                    className="w-full appearance-none bg-surface-dugout border border-border-vintage/40 rounded-sm px-4 py-3 text-bsi-bone text-sm focus:border-burnt-orange focus:outline-none cursor-pointer"
+                    className="w-full appearance-none bg-surface-dugout border border-border-vintage/40 rounded-sm px-4 py-3 text-bsi-bone text-sm focus:border-[var(--bsi-primary)] focus:outline-none cursor-pointer"
                   >
                     <option value="">Select a team...</option>
                     {teamNames.filter((n) => n !== teamA).map((name) => (
@@ -401,7 +401,7 @@ export default function CompareHubPage() {
             {/* Loading State */}
             {loading && (
               <div className="text-center py-12">
-                <div className="w-8 h-8 border-2 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin mx-auto mb-3" />
+                <div className="w-8 h-8 border-2 border-[var(--bsi-primary)]/30 border-t-[var(--bsi-primary)] rounded-full animate-spin mx-auto mb-3" />
                 <p className="text-bsi-dust text-sm">Loading team data...</p>
               </div>
             )}
@@ -418,13 +418,13 @@ export default function CompareHubPage() {
               <ScrollReveal direction="up" delay={100}>
                 <Card padding="lg" className="mt-8">
                   {/* Header */}
-                  <div className="grid grid-cols-3 items-center mb-6 pb-4 border-b-2 border-burnt-orange/30">
+                  <div className="grid grid-cols-3 items-center mb-6 pb-4 border-b-2 border-[var(--bsi-primary)]/30">
                     <div className="text-right pr-4">
                       <h3 className="font-display text-xl font-bold text-bsi-bone uppercase">{teamA}</h3>
                       <p className="text-bsi-dust text-xs">{dataA?.conference || ''}</p>
                     </div>
                     <div className="text-center">
-                      <span className="text-burnt-orange font-display text-lg font-bold">VS</span>
+                      <span className="text-[var(--bsi-primary)] font-display text-lg font-bold">VS</span>
                     </div>
                     <div className="text-left pl-4">
                       <h3 className="font-display text-xl font-bold text-bsi-bone uppercase">{teamB}</h3>
@@ -443,7 +443,7 @@ export default function CompareHubPage() {
                   {(savantA || savantB) && (
                     <>
                       <div className="mt-4 mb-2">
-                        <span className="text-burnt-orange text-xs uppercase tracking-wider font-display">Advanced Metrics</span>
+                        <span className="text-[var(--bsi-primary)] text-xs uppercase tracking-wider font-display">Advanced Metrics</span>
                       </div>
                       <CompareRow label="wOBA" valueA={savantA?.woba} valueB={savantB?.woba} format={(v) => fmt3(v as number)} />
                       <CompareRow label="wRC+" valueA={savantA?.wrc_plus} valueB={savantB?.wrc_plus} format={(v) => fmt1(v as number)} />
@@ -458,7 +458,7 @@ export default function CompareHubPage() {
                   {(nilA || nilB) && (
                     <>
                       <div className="mt-4 mb-2">
-                        <span className="text-burnt-orange text-xs uppercase tracking-wider font-display">NIL Valuation</span>
+                        <span className="text-[var(--bsi-primary)] text-xs uppercase tracking-wider font-display">NIL Valuation</span>
                       </div>
                       <CompareRow
                         label="NIL Total"

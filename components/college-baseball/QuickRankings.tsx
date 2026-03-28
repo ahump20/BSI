@@ -24,13 +24,13 @@ export function QuickRankings({ rankings, loading }: QuickRankingsProps) {
       <Section padding="sm" className="py-4">
         <Container>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide">
+            <h2 className="font-display text-lg font-bold text-[var(--bsi-bone)] uppercase tracking-wide">
               Top 10
             </h2>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
             {Array.from({ length: 10 }, (_, i) => (
-              <div key={i} className="h-12 bg-surface-light border border-border rounded-sm animate-pulse" />
+              <div key={i} className="h-12 bg-[var(--surface-press-box)] border border-border rounded-sm animate-pulse" />
             ))}
           </div>
         </Container>
@@ -45,12 +45,12 @@ export function QuickRankings({ rankings, loading }: QuickRankingsProps) {
       <Container>
         <ScrollReveal>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide">
+            <h2 className="font-display text-lg font-bold text-[var(--bsi-bone)] uppercase tracking-wide">
               Top 10
             </h2>
             <Link
               href="/college-baseball?tab=rankings"
-              className="text-sm text-burnt-orange hover:text-ember transition-colors"
+              className="text-sm text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
             >
               Full Rankings →
             </Link>
@@ -60,8 +60,8 @@ export function QuickRankings({ rankings, loading }: QuickRankingsProps) {
             {top10.map((entry) => {
               const meta = entry.slug ? teamMetadata[entry.slug] : null;
               const inner = (
-                <div className="flex items-center gap-2.5 bg-surface-light border border-border rounded-sm px-3 py-2.5 hover:border-burnt-orange/30 transition-all group">
-                  <span className="text-burnt-orange font-mono text-xs font-bold w-5 text-right shrink-0">
+                <div className="flex items-center gap-2.5 bg-[var(--surface-press-box)] border border-border rounded-sm px-3 py-2.5 hover:border-[var(--bsi-primary)]/30 transition-all group">
+                  <span className="text-[var(--bsi-primary)] font-mono text-xs font-bold w-5 text-right shrink-0">
                     {entry.rank}
                   </span>
                   {meta ? (
@@ -73,14 +73,14 @@ export function QuickRankings({ rankings, loading }: QuickRankingsProps) {
                       decoding="async"
                     />
                   ) : (
-                    <div className="w-5 h-5 bg-burnt-orange/15 rounded-full shrink-0" />
+                    <div className="w-5 h-5 bg-[var(--bsi-primary)]/15 rounded-full shrink-0" />
                   )}
                   <div className="min-w-0 flex-1">
-                    <div className="text-xs font-semibold text-text-primary truncate group-hover:text-burnt-orange transition-colors">
+                    <div className="text-xs font-semibold text-[var(--bsi-bone)] truncate group-hover:text-[var(--bsi-primary)] transition-colors">
                       {meta?.shortName || entry.team}
                     </div>
                     {entry.record && (
-                      <div className="text-[10px] text-text-muted">{entry.record}</div>
+                      <div className="text-[10px] text-[rgba(196,184,165,0.35)]">{entry.record}</div>
                     )}
                   </div>
                 </div>

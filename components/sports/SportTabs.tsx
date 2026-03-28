@@ -30,7 +30,7 @@ export function SportTabs({ defaultSport = 'mlb', onSportChange }: SportTabsProp
   };
 
   return (
-    <div className="flex gap-2 p-1 bg-surface-light rounded-[2px]">
+    <div className="flex gap-2 p-1 bg-[var(--surface-press-box)] rounded-[2px]">
       {sports.map((sport) => (
         <button
           key={sport.id}
@@ -38,8 +38,8 @@ export function SportTabs({ defaultSport = 'mlb', onSportChange }: SportTabsProp
           onClick={() => handleChange(sport.id)}
           className={`flex items-center gap-2 px-5 py-2.5 min-h-[44px] rounded-[2px] text-sm font-semibold transition-all ${
             active === sport.id
-              ? 'bg-burnt-orange text-white shadow-lg'
-              : 'text-text-muted hover:text-text-primary hover:bg-surface-light'
+              ? 'bg-[var(--bsi-primary)] text-white shadow-lg'
+              : 'text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)]'
           }`}
         >
           <Image src={sport.icon} alt="" width={18} height={18} className="opacity-80" />
@@ -71,8 +71,8 @@ export function SportTabsCompact({ defaultSport = 'mlb', onSportChange }: SportT
           onClick={() => handleChange(sport.id)}
           className={`px-4 py-2 min-h-[44px] rounded-[2px] text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all ${
             active === sport.id
-              ? 'bg-burnt-orange text-white'
-              : 'bg-surface-light text-text-muted hover:text-text-secondary'
+              ? 'bg-[var(--bsi-primary)] text-white'
+              : 'bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-dust)]'
           }`}
         >
           {sport.label}

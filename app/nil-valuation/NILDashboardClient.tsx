@@ -50,12 +50,12 @@ function HeadlineStat({
     <div className="text-center">
       <div
         className={`text-xl md:text-2xl font-mono font-bold ${
-          accent ? 'text-burnt-orange' : 'text-text-primary'
+          accent ? 'text-[var(--bsi-primary)]' : 'text-[var(--bsi-bone)]'
         }`}
       >
         {value}
       </div>
-      <div className="text-[10px] font-mono uppercase tracking-wider text-text-muted mt-0.5">
+      <div className="text-[10px] font-mono uppercase tracking-wider text-[rgba(196,184,165,0.35)] mt-0.5">
         {label}
       </div>
     </div>
@@ -71,15 +71,15 @@ export function NILDashboardClient() {
     <Section className="py-16">
       <Container>
         <div className="text-center mb-10">
-          <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display text-text-primary mb-4">
+          <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display text-[var(--bsi-bone)] mb-4">
             Market Data
           </h2>
-          <p className="text-text-tertiary max-w-2xl mx-auto mb-8">
+          <p className="text-[rgba(196,184,165,0.5)] max-w-2xl mx-auto mb-8">
             Four years of verified NIL market data. Every chart sourced from the research paper.
           </p>
 
           {/* At-a-glance headline stats */}
-          <div className="flex flex-wrap justify-center gap-8 md:gap-12 py-4 px-6 rounded-sm bg-surface-light border border-border max-w-2xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-8 md:gap-12 py-4 px-6 rounded-sm bg-[var(--surface-press-box)] border border-border max-w-2xl mx-auto">
             <HeadlineStat label="Year 4 Market" value="$2.26B" accent />
             <div className="w-px bg-border hidden md:block" />
             <HeadlineStat label="Active Collectives" value="200+" />

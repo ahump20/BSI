@@ -51,7 +51,7 @@ function RankChange({ current, previous }: { current: number; previous: number |
   }
   const diff = previous - current;
   if (diff === 0) {
-    return <span className="text-text-muted text-xs">—</span>;
+    return <span className="text-[rgba(196,184,165,0.35)] text-xs">—</span>;
   }
   if (diff > 0) {
     return (
@@ -118,8 +118,8 @@ export function EnrichedRankingsTable({
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-sm bg-burnt-orange/15 flex items-center justify-center">
-                <svg viewBox="0 0 24 24" className="w-4 h-4 stroke-burnt-orange fill-none stroke-[2]">
+              <div className="w-8 h-8 rounded-sm bg-[var(--bsi-primary)]/15 flex items-center justify-center">
+                <svg viewBox="0 0 24 24" className="w-4 h-4 stroke-[var(--bsi-primary)] fill-none stroke-[2]">
                   <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.77 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z" />
                 </svg>
               </div>
@@ -144,38 +144,38 @@ export function EnrichedRankingsTable({
           ) : error ? (
             <div className="bg-[var(--bsi-danger)]/10 border border-[var(--bsi-danger)]/30 rounded-sm p-6">
               <p className="text-[var(--bsi-danger)] font-semibold">Rankings Unavailable</p>
-              <p className="text-text-secondary text-sm mt-1">{error}</p>
+              <p className="text-[var(--bsi-dust)] text-sm mt-1">{error}</p>
               <button
                 onClick={onRetry}
-                className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-sm text-sm font-medium hover:bg-ember transition-colors"
+                className="mt-4 px-4 py-2 bg-[var(--bsi-primary)] text-white rounded-sm text-sm font-medium hover:bg-ember transition-colors"
               >
                 Retry
               </button>
               {preseasonFallback.length > 0 && (
-                <p className="text-text-muted text-xs mt-3">Showing preseason rankings as fallback below.</p>
+                <p className="text-[rgba(196,184,165,0.35)] text-xs mt-3">Showing preseason rankings as fallback below.</p>
               )}
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b-2 border-burnt-orange">
-                    <th className="text-left p-3 text-text-muted font-semibold text-xs w-12">Rank</th>
+                  <tr className="border-b-2 border-[var(--bsi-primary)]">
+                    <th className="text-left p-3 text-[rgba(196,184,165,0.35)] font-semibold text-xs w-12">Rank</th>
                     {prevMap && (
-                      <th className="text-center p-3 text-text-muted font-semibold text-xs w-10">+/-</th>
+                      <th className="text-center p-3 text-[rgba(196,184,165,0.35)] font-semibold text-xs w-10">+/-</th>
                     )}
-                    <th className="text-left p-3 text-text-muted font-semibold text-xs">Team</th>
-                    <th className="text-left p-3 text-text-muted font-semibold text-xs hidden sm:table-cell">Conference</th>
-                    <th className="text-left p-3 text-text-muted font-semibold text-xs">Record</th>
+                    <th className="text-left p-3 text-[rgba(196,184,165,0.35)] font-semibold text-xs">Team</th>
+                    <th className="text-left p-3 text-[rgba(196,184,165,0.35)] font-semibold text-xs hidden sm:table-cell">Conference</th>
+                    <th className="text-left p-3 text-[rgba(196,184,165,0.35)] font-semibold text-xs">Record</th>
                   </tr>
                 </thead>
                 <tbody>
                   {enriched.map((team) => (
                     <tr
                       key={team.rank}
-                      className="border-b border-border-subtle hover:bg-surface-light transition-colors"
+                      className="border-b border-[var(--border-vintage)] hover:bg-[var(--surface-press-box)] transition-colors"
                     >
-                      <td className="p-3 text-burnt-orange font-bold text-lg tabular-nums">
+                      <td className="p-3 text-[var(--bsi-primary)] font-bold text-lg tabular-nums">
                         {team.rank}
                       </td>
                       {prevMap && (
@@ -198,19 +198,19 @@ export function EnrichedRankingsTable({
                           {team.slug ? (
                             <Link
                               href={`/college-baseball/teams/${team.slug}`}
-                              className="font-semibold text-text-primary hover:text-burnt-orange transition-colors"
+                              className="font-semibold text-[var(--bsi-bone)] hover:text-[var(--bsi-primary)] transition-colors"
                             >
                               {team.team}
                             </Link>
                           ) : (
-                            <span className="font-semibold text-text-primary">{team.team}</span>
+                            <span className="font-semibold text-[var(--bsi-bone)]">{team.team}</span>
                           )}
                         </div>
                       </td>
-                      <td className="p-3 text-text-secondary hidden sm:table-cell">
+                      <td className="p-3 text-[var(--bsi-dust)] hidden sm:table-cell">
                         {team.conference || '—'}
                       </td>
-                      <td className="p-3 text-text-secondary tabular-nums">
+                      <td className="p-3 text-[var(--bsi-dust)] tabular-nums">
                         {team.record || '—'}
                       </td>
                     </tr>
@@ -230,7 +230,7 @@ export function EnrichedRankingsTable({
             </div>
             <Link
               href="/college-baseball/rankings"
-              className="text-sm text-burnt-orange hover:text-ember transition-colors"
+              className="text-sm text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
             >
               Full Rankings →
             </Link>

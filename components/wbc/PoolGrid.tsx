@@ -98,14 +98,14 @@ const DANGER_STYLES = {
     accent: 'bg-[var(--bsi-warning)]/5',
   },
   'medium-high': {
-    border: 'border-burnt-orange/25',
-    badge: 'text-burnt-orange bg-burnt-orange/10 border-burnt-orange/20',
-    accent: 'bg-burnt-orange/5',
+    border: 'border-[var(--bsi-primary)]/25',
+    badge: 'text-[var(--bsi-primary)] bg-[var(--bsi-primary)]/10 border-[var(--bsi-primary)]/20',
+    accent: 'bg-[var(--bsi-primary)]/5',
   },
   medium: {
-    border: 'border-border-subtle',
-    badge: 'text-text-muted bg-surface-light border-border-subtle',
-    accent: 'bg-surface-light/30',
+    border: 'border-[var(--border-vintage)]',
+    badge: 'text-[rgba(196,184,165,0.35)] bg-[var(--surface-press-box)] border-[var(--border-vintage)]',
+    accent: 'bg-[var(--surface-press-box)]/30',
   },
 };
 
@@ -113,10 +113,10 @@ export function PoolGrid() {
   return (
     <div>
       <div className="mb-6">
-        <h2 className="font-display text-2xl font-bold uppercase tracking-wide text-text-primary">
+        <h2 className="font-display text-2xl font-bold uppercase tracking-wide text-[var(--bsi-bone)]">
           Pool Breakdown
         </h2>
-        <p className="text-text-muted text-sm mt-1">Double-elimination pool play · Top 2 from each pool advance to Miami</p>
+        <p className="text-[rgba(196,184,165,0.35)] text-sm mt-1">Double-elimination pool play · Top 2 from each pool advance to Miami</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -135,17 +135,17 @@ export function PoolGrid() {
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-display text-3xl font-bold text-burnt-orange">
+                      <span className="font-display text-3xl font-bold text-[var(--bsi-primary)]">
                         Pool {pool.id}
                       </span>
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-sm border ${danger.badge}`}>
                         {pool.dangerLabel}
                       </span>
                     </div>
-                    <div className="text-text-tertiary text-sm">{pool.venue}</div>
-                    <div className="text-text-muted text-xs">{pool.city} · {pool.dates}</div>
+                    <div className="text-[rgba(196,184,165,0.5)] text-sm">{pool.venue}</div>
+                    <div className="text-[rgba(196,184,165,0.35)] text-xs">{pool.city} · {pool.dates}</div>
                   </div>
-                  <span className="text-burnt-orange opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span className="text-[var(--bsi-primary)] opacity-0 group-hover:opacity-100 transition-opacity">
                     <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M5 12h14M12 5l7 7-7 7" />
                     </svg>
@@ -157,21 +157,21 @@ export function PoolGrid() {
                   {pool.teams.map((team, i) => (
                     <div key={team.name} className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="text-text-muted text-xs w-4 tabular-nums">{i + 1}</span>
-                        <span className="text-text-secondary text-sm font-medium">
+                        <span className="text-[rgba(196,184,165,0.35)] text-xs w-4 tabular-nums">{i + 1}</span>
+                        <span className="text-[var(--bsi-dust)] text-sm font-medium">
                           {team.name}
                         </span>
-                        <span className="text-text-muted text-xs">#{team.rank}</span>
+                        <span className="text-[rgba(196,184,165,0.35)] text-xs">#{team.rank}</span>
                       </div>
-                      <span className="text-text-muted text-xs tabular-nums">{team.titlePct}% title</span>
+                      <span className="text-[rgba(196,184,165,0.35)] text-xs tabular-nums">{team.titlePct}% title</span>
                     </div>
                   ))}
                 </div>
 
                 {/* Key race */}
-                <div className="pt-3 border-t border-border-subtle/50">
-                  <span className="text-text-muted text-xs">
-                    <span className="text-burnt-orange font-semibold">Key race: </span>
+                <div className="pt-3 border-t border-[var(--border-vintage)]/50">
+                  <span className="text-[rgba(196,184,165,0.35)] text-xs">
+                    <span className="text-[var(--bsi-primary)] font-semibold">Key race: </span>
                     {pool.keyRace}
                   </span>
                 </div>

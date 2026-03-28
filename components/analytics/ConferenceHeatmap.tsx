@@ -191,13 +191,13 @@ export function ConferenceHeatmap({
   const totalHeight = 40 + sorted.length * 32 + 12;
 
   return (
-    <div className={`bg-background-primary border border-border-subtle rounded-sm overflow-hidden ${className}`}>
+    <div className={`bg-[var(--surface-scoreboard)] border border-[var(--border-vintage)] rounded-sm overflow-hidden ${className}`}>
       {/* Header */}
-      <div className="px-5 py-4 border-b border-border-subtle">
-        <h3 className="font-display text-base uppercase tracking-wider text-text-primary">
+      <div className="px-5 py-4 border-b border-[var(--border-vintage)]">
+        <h3 className="font-display text-base uppercase tracking-wider text-[var(--bsi-bone)]">
           Conference Strength Heatmap
         </h3>
-        <p className="text-[10px] font-mono text-text-muted mt-0.5">
+        <p className="text-[10px] font-mono text-[rgba(196,184,165,0.35)] mt-0.5">
           Ranked by composite strength index · Cell color = percentile among all conferences
         </p>
       </div>
@@ -215,22 +215,22 @@ export function ConferenceHeatmap({
         {/* Tooltip */}
         {tooltip && (
           <div
-            className="absolute z-50 pointer-events-none bg-background-secondary border border-border shadow-xl rounded-sm px-3 py-2"
+            className="absolute z-50 pointer-events-none bg-[var(--surface-dugout)] border border-border shadow-xl rounded-sm px-3 py-2"
             style={{
               left: tooltip.x + 12,
               top: tooltip.y - 10,
             }}
           >
-            <div className="text-sm text-text-primary font-medium">{tooltip.conf}</div>
+            <div className="text-sm text-[var(--bsi-bone)] font-medium">{tooltip.conf}</div>
             <div className="flex gap-3 mt-1">
               <div>
-                <span className="text-[9px] text-text-muted font-mono">{tooltip.metric}</span>
-                <span className="block text-xs font-mono font-bold text-text-primary">
+                <span className="text-[9px] text-[rgba(196,184,165,0.35)] font-mono">{tooltip.metric}</span>
+                <span className="block text-xs font-mono font-bold text-[var(--bsi-bone)]">
                   {tooltip.value.toFixed(tooltip.metric === 'STR' ? 0 : tooltip.metric === 'ERA' ? 2 : 3)}
                 </span>
               </div>
               <div>
-                <span className="text-[9px] text-text-muted font-mono">Percentile</span>
+                <span className="text-[9px] text-[rgba(196,184,165,0.35)] font-mono">Percentile</span>
                 <span
                   className="block text-xs font-mono font-bold"
                   style={{ color: getPercentileColor(tooltip.percentile, true) }}
@@ -244,7 +244,7 @@ export function ConferenceHeatmap({
       </div>
 
       {/* Legend */}
-      <div className="px-5 py-3 border-t border-border-subtle flex items-center justify-center gap-4">
+      <div className="px-5 py-3 border-t border-[var(--border-vintage)] flex items-center justify-center gap-4">
         {[
           { label: 'Elite', color: '#c0392b' },
           { label: 'Above Avg', color: '#d4775c' },
@@ -254,7 +254,7 @@ export function ConferenceHeatmap({
         ].map(item => (
           <div key={item.label} className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: item.color }} />
-            <span className="text-[9px] font-mono text-text-muted">{item.label}</span>
+            <span className="text-[9px] font-mono text-[rgba(196,184,165,0.35)]">{item.label}</span>
           </div>
         ))}
       </div>

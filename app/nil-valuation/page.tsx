@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { HeroGlow } from '@/components/ui/HeroGlow';
 import { Footer } from '@/components/layout-ds/Footer';
 import { ScrollReveal } from '@/components/cinematic';
 import { useSportData } from '@/lib/hooks/useSportData';
@@ -36,11 +35,11 @@ function formatValue(value: number): string {
 
 function tierBadge(tier: string): { text: string; color: string } {
   switch (tier) {
-    case 'elite': return { text: 'Elite', color: 'text-burnt-orange' };
+    case 'elite': return { text: 'Elite', color: 'text-[var(--bsi-primary)]' };
     case 'high': return { text: 'High', color: 'text-[var(--bsi-success)]' };
     case 'mid': return { text: 'Mid', color: 'text-[var(--heritage-columbia-blue)]' };
     case 'emerging': return { text: 'Emerging', color: 'text-[var(--bsi-warning)]' };
-    default: return { text: 'Dev', color: 'text-text-muted' };
+    default: return { text: 'Dev', color: 'text-[rgba(196,184,165,0.35)]' };
   }
 }
 
@@ -110,22 +109,21 @@ export default function NILValuationPage() {
 
   return (
     <>
-      <div className="min-h-screen bg-background-primary text-text-primary">
+      <div className="min-h-screen bg-[var(--surface-scoreboard)] text-[var(--bsi-bone)]">
         {/* Hero */}
         <Section className="pt-6 pb-12 relative overflow-hidden">
-          <HeroGlow />
           <Container>
             <div className="max-w-4xl mx-auto text-center">
               <Badge variant="primary" className="mb-4">NIL Intelligence</Badge>
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-wide mb-6">
-                <span className="text-burnt-orange">NIL Valuation</span> Engine
+                <span className="text-[var(--bsi-primary)]">NIL Valuation</span> Engine
               </h1>
-              <p className="text-xl text-text-secondary mb-8 max-w-2xl mx-auto">
+              <p className="text-xl text-[var(--bsi-dust)] mb-8 max-w-2xl mx-auto">
                 Fair Market Value calculations, transfer portal intelligence, and roster optimization tools. Know what athletes are worth before you make offers.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/nil-valuation/tools">
-                  <Button size="lg" className="bg-burnt-orange">Explore Tools</Button>
+                  <Button size="lg" className="bg-[var(--bsi-primary)]">Explore Tools</Button>
                 </Link>
                 <Link href="/nil-valuation/methodology">
                   <Button variant="outline" size="lg">View Methodology</Button>
@@ -136,29 +134,29 @@ export default function NILValuationPage() {
         </Section>
 
       {/* Live Stats Bar */}
-      <div className="bg-background-secondary border-y border-border py-8">
+      <div className="bg-[var(--surface-dugout)] border-y border-border py-8">
         <Container>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <ScrollReveal>
               <div>
-                <div className="text-3xl md:text-4xl font-bold text-burnt-orange">
+                <div className="text-3xl md:text-4xl font-bold text-[var(--bsi-primary)]">
                   {totalScored > 0 ? totalScored : '500+'}
                 </div>
-                <p className="text-text-tertiary mt-1">Players Scored</p>
+                <p className="text-[rgba(196,184,165,0.5)] mt-1">Players Scored</p>
               </div>
               <div>
-                <div className="text-3xl md:text-4xl font-bold text-burnt-orange">
+                <div className="text-3xl md:text-4xl font-bold text-[var(--bsi-primary)]">
                   {conferences > 0 ? conferences : '20+'}
                 </div>
-                <p className="text-text-tertiary mt-1">Conferences</p>
+                <p className="text-[rgba(196,184,165,0.5)] mt-1">Conferences</p>
               </div>
               <div>
-                <div className="text-3xl md:text-4xl font-bold text-burnt-orange">9</div>
-                <p className="text-text-tertiary mt-1">Analysis Tools</p>
+                <div className="text-3xl md:text-4xl font-bold text-[var(--bsi-primary)]">9</div>
+                <p className="text-[rgba(196,184,165,0.5)] mt-1">Analysis Tools</p>
               </div>
               <div>
-                <div className="text-3xl md:text-4xl font-bold text-burnt-orange">Every 6h</div>
-                <p className="text-text-tertiary mt-1">Score Updates</p>
+                <div className="text-3xl md:text-4xl font-bold text-[var(--bsi-primary)]">Every 6h</div>
+                <p className="text-[rgba(196,184,165,0.5)] mt-1">Score Updates</p>
               </div>
             </ScrollReveal>
           </div>
@@ -175,8 +173,8 @@ export default function NILValuationPage() {
                 <ScrollReveal>
                   <div className="flex items-center justify-between mb-6">
                     <div>
-                      <h2 className="text-2xl font-bold text-text-primary">Top NIL Valuations</h2>
-                      <p className="text-sm text-text-muted mt-1">Live from BSI Savant compute</p>
+                      <h2 className="text-2xl font-bold text-[var(--bsi-bone)]">Top NIL Valuations</h2>
+                      <p className="text-sm text-[rgba(196,184,165,0.35)] mt-1">Live from BSI Savant compute</p>
                     </div>
                     <Link href="/nil-valuation/tools">
                       <Button variant="outline" size="sm">All Tools →</Button>
@@ -189,7 +187,7 @@ export default function NILValuationPage() {
                       <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                           <thead>
-                            <tr className="border-b border-border text-text-muted">
+                            <tr className="border-b border-border text-[rgba(196,184,165,0.35)]">
                               <th className="text-left p-4 font-medium w-8">#</th>
                               <th className="text-left p-4 font-medium">Player</th>
                               <th className="text-left p-4 font-medium">Team</th>
@@ -202,12 +200,12 @@ export default function NILValuationPage() {
                             {topTen.map((p, i) => {
                               const tb = tierBadge(p.nil_tier);
                               return (
-                                <tr key={p.player_id} className="border-b border-border/50 hover:bg-background-secondary transition-colors">
-                                  <td className="p-4 text-text-muted font-mono">{i + 1}</td>
-                                  <td className="p-4 font-semibold text-text-primary">{p.player_name}</td>
-                                  <td className="p-4 text-text-secondary">{p.team}</td>
-                                  <td className="p-4 text-right font-bold text-text-primary">{p.index_score}</td>
-                                  <td className="p-4 text-right font-bold text-burnt-orange">{formatValue(p.estimated_mid)}</td>
+                                <tr key={p.player_id} className="border-b border-border/50 hover:bg-[var(--surface-dugout)] transition-colors">
+                                  <td className="p-4 text-[rgba(196,184,165,0.35)] font-mono">{i + 1}</td>
+                                  <td className="p-4 font-semibold text-[var(--bsi-bone)]">{p.player_name}</td>
+                                  <td className="p-4 text-[var(--bsi-dust)]">{p.team}</td>
+                                  <td className="p-4 text-right font-bold text-[var(--bsi-bone)]">{p.index_score}</td>
+                                  <td className="p-4 text-right font-bold text-[var(--bsi-primary)]">{formatValue(p.estimated_mid)}</td>
                                   <td className="p-4 text-right">
                                     <span className={`text-xs font-semibold ${tb.color}`}>{tb.text}</span>
                                   </td>
@@ -226,8 +224,8 @@ export default function NILValuationPage() {
               <div>
                 <ScrollReveal delay={200}>
                   <div className="mb-6">
-                    <h2 className="text-2xl font-bold text-text-primary">Undervalued</h2>
-                    <p className="text-sm text-text-muted mt-1">Performance outpacing market value</p>
+                    <h2 className="text-2xl font-bold text-[var(--bsi-bone)]">Undervalued</h2>
+                    <p className="text-sm text-[rgba(196,184,165,0.35)] mt-1">Performance outpacing market value</p>
                   </div>
                 </ScrollReveal>
                 <div className="space-y-4">
@@ -238,14 +236,14 @@ export default function NILValuationPage() {
                           <div className="flex items-start justify-between mb-2">
                             <div>
                               <span className="text-xs font-bold text-[var(--bsi-success)]">#{i + 1} Value Gap</span>
-                              <h3 className="font-semibold text-text-primary">{p.player_name}</h3>
-                              <p className="text-xs text-text-muted">{p.team} · {p.conference}</p>
+                              <h3 className="font-semibold text-[var(--bsi-bone)]">{p.player_name}</h3>
+                              <p className="text-xs text-[rgba(196,184,165,0.35)]">{p.team} · {p.conference}</p>
                             </div>
                             <span className="text-lg font-bold text-[var(--bsi-success)]">+{p.gap.toFixed(1)}</span>
                           </div>
                           <div className="flex justify-between text-xs mt-3 pt-2 border-t border-border/50">
-                            <span className="text-text-muted">Est. Value</span>
-                            <span className="font-bold text-burnt-orange">{formatValue(p.estimated_mid)}</span>
+                            <span className="text-[rgba(196,184,165,0.35)]">Est. Value</span>
+                            <span className="font-bold text-[var(--bsi-primary)]">{formatValue(p.estimated_mid)}</span>
                           </div>
                         </CardContent>
                       </Card>
@@ -254,7 +252,7 @@ export default function NILValuationPage() {
                     <ScrollReveal delay={250}>
                       <Card className="border-l-4 border-l-[var(--bsi-success)]">
                         <CardContent className="p-6 text-center">
-                          <p className="text-sm text-text-muted">Undervalued spotlight appears with Pro access.</p>
+                          <p className="text-sm text-[rgba(196,184,165,0.35)]">Undervalued spotlight appears with Pro access.</p>
                           <Link href="/pricing" className="block mt-3">
                             <Button variant="outline" size="sm">Upgrade</Button>
                           </Link>
@@ -279,8 +277,8 @@ export default function NILValuationPage() {
         <Container>
           <ScrollReveal>
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-text-primary mb-4">NIL Intelligence Tools</h2>
-              <p className="text-text-tertiary max-w-2xl mx-auto">
+              <h2 className="text-3xl font-bold text-[var(--bsi-bone)] mb-4">NIL Intelligence Tools</h2>
+              <p className="text-[rgba(196,184,165,0.5)] max-w-2xl mx-auto">
                 Everything programs and agents need to navigate the NIL landscape with confidence.
               </p>
             </div>
@@ -294,10 +292,10 @@ export default function NILValuationPage() {
                   <Card className="h-full">
                     <CardContent className="p-6">
                       <div className="flex items-center gap-3 mb-4">
-                        {Icon && <div className="text-burnt-orange"><Icon /></div>}
-                        <h3 className="text-lg font-semibold text-text-primary">{feature.title}</h3>
+                        {Icon && <div className="text-[var(--bsi-primary)]"><Icon /></div>}
+                        <h3 className="text-lg font-semibold text-[var(--bsi-bone)]">{feature.title}</h3>
                       </div>
-                      <p className="text-text-tertiary text-sm">{feature.description}</p>
+                      <p className="text-[rgba(196,184,165,0.5)] text-sm">{feature.description}</p>
                     </CardContent>
                   </Card>
                 </ScrollReveal>
@@ -311,12 +309,12 @@ export default function NILValuationPage() {
         <NILDashboardClient />
 
       {/* Sport Breakdown */}
-      <Section className="py-20 bg-background-secondary">
+      <Section className="py-20 bg-[var(--surface-dugout)]">
         <Container>
           <ScrollReveal>
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-text-primary mb-4">NIL by Sport</h2>
-              <p className="text-text-tertiary max-w-2xl mx-auto">
+              <h2 className="text-3xl font-bold text-[var(--bsi-bone)] mb-4">NIL by Sport</h2>
+              <p className="text-[rgba(196,184,165,0.5)] max-w-2xl mx-auto">
                 How NIL values vary across different sports. Football dominates, but every sport has its market.
               </p>
             </div>
@@ -327,18 +325,18 @@ export default function NILValuationPage() {
               <ScrollReveal key={sport.sport} delay={index * 100}>
                 <Card className="text-center">
                   <CardContent className="p-6">
-                    <h3 className="text-lg font-semibold text-text-primary mb-4">{sport.sport}</h3>
+                    <h3 className="text-lg font-semibold text-[var(--bsi-bone)] mb-4">{sport.sport}</h3>
                     <div className="space-y-3">
                       <div>
-                        <div className="text-2xl font-bold text-burnt-orange">{sport.avgValue}</div>
-                        <div className="text-xs text-text-muted">Average Value</div>
+                        <div className="text-2xl font-bold text-[var(--bsi-primary)]">{sport.avgValue}</div>
+                        <div className="text-xs text-[rgba(196,184,165,0.35)]">Average Value</div>
                       </div>
                       <div className="border-t border-border pt-3">
-                        <div className="text-lg font-semibold text-text-primary">{sport.topValue}</div>
-                        <div className="text-xs text-text-muted">Top Player</div>
+                        <div className="text-lg font-semibold text-[var(--bsi-bone)]">{sport.topValue}</div>
+                        <div className="text-xs text-[rgba(196,184,165,0.35)]">Top Player</div>
                       </div>
                       <div className="border-t border-border pt-3">
-                        <div className="text-sm text-text-tertiary">{sport.players} tracked</div>
+                        <div className="text-sm text-[rgba(196,184,165,0.5)]">{sport.players} tracked</div>
                       </div>
                     </div>
                   </CardContent>
@@ -347,7 +345,7 @@ export default function NILValuationPage() {
             ))}
           </div>
 
-          <p className="text-center text-xs text-text-muted mt-8">
+          <p className="text-center text-xs text-[rgba(196,184,165,0.35)] mt-8">
             Market overview based on public reporting. College baseball NIL scores powered by BSI Savant.
           </p>
         </Container>
@@ -361,27 +359,27 @@ export default function NILValuationPage() {
               <Card className="border-l-4 border-l-burnt-orange">
                 <CardContent className="p-8">
                   <Badge variant="secondary" className="mb-4">Transparency</Badge>
-                  <h2 className="text-2xl font-bold text-text-primary mb-4">Our Methodology</h2>
-                  <p className="text-text-tertiary mb-6">
+                  <h2 className="text-2xl font-bold text-[var(--bsi-bone)] mb-4">Our Methodology</h2>
+                  <p className="text-[rgba(196,184,165,0.5)] mb-6">
                     BSI&apos;s FMNV model combines on-field performance data from our Savant compute
                     pipeline with exposure and market factors to estimate what an athlete&apos;s NIL
                     is worth. Every input is sourced from live data — no fabricated metrics.
                   </p>
                   <div className="grid grid-cols-3 gap-4 mb-6">
-                    <div className="text-center p-4 bg-background-secondary rounded-sm">
-                      <div className="text-xl font-bold text-text-primary">40%</div>
-                      <div className="text-xs text-text-muted">Performance</div>
-                      <div className="text-[10px] text-text-muted/50 mt-1">wOBA, wRC+, FIP</div>
+                    <div className="text-center p-4 bg-[var(--surface-dugout)] rounded-sm">
+                      <div className="text-xl font-bold text-[var(--bsi-bone)]">40%</div>
+                      <div className="text-xs text-[rgba(196,184,165,0.35)]">Performance</div>
+                      <div className="text-[10px] text-[rgba(196,184,165,0.35)]/50 mt-1">wOBA, wRC+, FIP</div>
                     </div>
-                    <div className="text-center p-4 bg-background-secondary rounded-sm">
-                      <div className="text-xl font-bold text-text-primary">30%</div>
-                      <div className="text-xs text-text-muted">Exposure</div>
-                      <div className="text-[10px] text-text-muted/50 mt-1">Conference, Social</div>
+                    <div className="text-center p-4 bg-[var(--surface-dugout)] rounded-sm">
+                      <div className="text-xl font-bold text-[var(--bsi-bone)]">30%</div>
+                      <div className="text-xs text-[rgba(196,184,165,0.35)]">Exposure</div>
+                      <div className="text-[10px] text-[rgba(196,184,165,0.35)]/50 mt-1">Conference, Social</div>
                     </div>
-                    <div className="text-center p-4 bg-background-secondary rounded-sm">
-                      <div className="text-xl font-bold text-text-primary">30%</div>
-                      <div className="text-xs text-text-muted">Market</div>
-                      <div className="text-[10px] text-text-muted/50 mt-1">Metro, Program</div>
+                    <div className="text-center p-4 bg-[var(--surface-dugout)] rounded-sm">
+                      <div className="text-xl font-bold text-[var(--bsi-bone)]">30%</div>
+                      <div className="text-xs text-[rgba(196,184,165,0.35)]">Market</div>
+                      <div className="text-[10px] text-[rgba(196,184,165,0.35)]/50 mt-1">Metro, Program</div>
                     </div>
                   </div>
                   <div className="flex flex-col sm:flex-row gap-3">
@@ -391,7 +389,7 @@ export default function NILValuationPage() {
                       </Button>
                     </Link>
                     <Link href="/nil-valuation/performance-index" className="flex-1">
-                      <Button className="w-full bg-burnt-orange">
+                      <Button className="w-full bg-[var(--bsi-primary)]">
                         Try the Calculator
                       </Button>
                     </Link>
@@ -404,19 +402,19 @@ export default function NILValuationPage() {
       </Section>
 
       {/* CTA Section */}
-      <Section className="py-20 bg-gradient-to-b from-background-secondary to-background-primary">
+      <Section className="py-20 bg-gradient-to-b from-background-secondary to-[var(--surface-scoreboard)]">
         <Container>
           <ScrollReveal>
             <div className="max-w-2xl mx-auto text-center">
               <h2 className="text-3xl md:text-4xl font-bold mb-6 font-display uppercase tracking-wide">
-                Ready to Navigate <span className="text-burnt-orange">NIL</span> with Data?
+                Ready to Navigate <span className="text-[var(--bsi-primary)]">NIL</span> with Data?
               </h2>
-              <p className="text-xl text-text-tertiary mb-8">
+              <p className="text-xl text-[rgba(196,184,165,0.5)] mb-8">
                 Pro access includes full NIL Valuation tools, transfer portal alerts, and the interactive NIL Explorer on BSI Labs.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/pricing">
-                  <Button size="lg" className="bg-burnt-orange">Get Pro Access</Button>
+                  <Button size="lg" className="bg-[var(--bsi-primary)]">Get Pro Access</Button>
                 </Link>
                 <Link href="/nil-valuation/tools">
                   <Button variant="outline" size="lg">Browse Tools →</Button>

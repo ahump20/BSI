@@ -80,19 +80,19 @@ export default function Big12EditorialPage() {
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/college-baseball"
-                className="text-text-muted hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 College Baseball
               </Link>
-              <span className="text-text-muted">/</span>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
               <Link
                 href="/college-baseball/editorial"
-                className="text-text-muted hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 Editorial
               </Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-primary">Big 12</span>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[var(--bsi-bone)]">Big 12</span>
             </nav>
           </Container>
         </Section>
@@ -108,9 +108,9 @@ export default function Big12EditorialPage() {
                 </Badge>
                 <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-wide mb-3">
                   Big 12 Baseball:{' '}
-                  <span className="text-burnt-orange">New Blood</span>
+                  <span className="text-[var(--bsi-primary)]">New Blood</span>
                 </h1>
-                <p className="text-text-tertiary text-lg leading-relaxed">
+                <p className="text-[rgba(196,184,165,0.5)] text-lg leading-relaxed">
                   The conference has been reshaped by expansion. Arizona, Arizona State, BYU,
                   Cincinnati, Colorado, Houston, UCF, and Utah arrived — bringing new recruiting
                   pipelines, regional baseball cultures, and a depth the Big 12 has never had.
@@ -122,28 +122,28 @@ export default function Big12EditorialPage() {
 
             {/* Stats Band */}
             <ScrollReveal direction="up" delay={100}>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center bg-surface-light border border-border-subtle rounded-sm p-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-6">
                 <div>
-                  <div className="font-display text-3xl font-bold text-burnt-orange">14</div>
-                  <div className="text-text-muted text-xs uppercase tracking-wider mt-1">
+                  <div className="font-display text-3xl font-bold text-[var(--bsi-primary)]">14</div>
+                  <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider mt-1">
                     Programs
                   </div>
                 </div>
                 <div>
-                  <div className="font-display text-3xl font-bold text-burnt-orange">5</div>
-                  <div className="text-text-muted text-xs uppercase tracking-wider mt-1">
+                  <div className="font-display text-3xl font-bold text-[var(--bsi-primary)]">5</div>
+                  <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider mt-1">
                     Dark Horse+
                   </div>
                 </div>
                 <div>
                   <div className="font-display text-3xl font-bold text-ember">TCU</div>
-                  <div className="text-text-muted text-xs uppercase tracking-wider mt-1">
+                  <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider mt-1">
                     Conference Headliner
                   </div>
                 </div>
                 <div>
-                  <div className="font-display text-3xl font-bold text-burnt-orange">8</div>
-                  <div className="text-text-muted text-xs uppercase tracking-wider mt-1">
+                  <div className="font-display text-3xl font-bold text-[var(--bsi-primary)]">8</div>
+                  <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider mt-1">
                     Expansion Additions
                   </div>
                 </div>
@@ -158,12 +158,12 @@ export default function Big12EditorialPage() {
             <ScrollReveal direction="up">
               <div className="max-w-3xl mx-auto">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-1 h-8 rounded-full bg-burnt-orange" />
-                  <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary">
+                  <div className="w-1 h-8 rounded-full bg-[var(--bsi-primary)]" />
+                  <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-[var(--bsi-bone)]">
                     The Conference, Transformed
                   </h2>
                 </div>
-                <div className="space-y-5 text-text-tertiary leading-relaxed">
+                <div className="space-y-5 text-[rgba(196,184,165,0.5)] leading-relaxed">
                   <p>
                     Two years ago, the Big 12 was a six-team baseball conference trying to
                     justify its Power Five status on the diamond. Texas and Oklahoma had left.
@@ -202,12 +202,12 @@ export default function Big12EditorialPage() {
               <div className="flex items-end justify-between mb-8">
                 <div>
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-1 h-8 rounded-full bg-burnt-orange" />
-                    <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary">
+                    <div className="w-1 h-8 rounded-full bg-[var(--bsi-primary)]" />
+                    <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-[var(--bsi-bone)]">
                       All 14 Team Previews
                     </h2>
                   </div>
-                  <p className="text-text-muted text-sm ml-4 pl-3">
+                  <p className="text-[rgba(196,184,165,0.35)] text-sm ml-4 pl-3">
                     Sorted by projection tier — full scouting breakdowns for every program
                   </p>
                 </div>
@@ -227,7 +227,7 @@ export default function Big12EditorialPage() {
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-1 h-8 rounded-full bg-ember" />
-                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary">
+                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-[var(--bsi-bone)]">
                   Key Storylines
                 </h2>
               </div>
@@ -236,10 +236,10 @@ export default function Big12EditorialPage() {
               {STORYLINES.map((story, i) => (
                 <ScrollReveal key={story.title} direction="up" delay={i * 80}>
                   <Card variant="default" padding="lg" className="h-full">
-                    <h3 className="font-display text-sm font-bold text-burnt-orange uppercase tracking-wide mb-3">
+                    <h3 className="font-display text-sm font-bold text-[var(--bsi-primary)] uppercase tracking-wide mb-3">
                       {story.title}
                     </h3>
-                    <p className="text-text-tertiary text-sm leading-relaxed">{story.body}</p>
+                    <p className="text-[rgba(196,184,165,0.5)] text-sm leading-relaxed">{story.body}</p>
                   </Card>
                 </ScrollReveal>
               ))}
@@ -251,7 +251,7 @@ export default function Big12EditorialPage() {
         <Section padding="md" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-xl font-bold uppercase tracking-wide text-text-tertiary mb-6">
+              <h2 className="font-display text-xl font-bold uppercase tracking-wide text-[rgba(196,184,165,0.5)] mb-6">
                 More Conference Previews
               </h2>
             </ScrollReveal>
@@ -268,8 +268,8 @@ export default function Big12EditorialPage() {
                       <h3 className="font-display text-xl font-bold uppercase tracking-wide text-[#C9A227] group-hover:brightness-125 transition-all">
                         SEC
                       </h3>
-                      <p className="text-text-muted text-sm mt-1 italic">The Standard</p>
-                      <div className="flex items-center gap-4 mt-3 text-xs text-text-muted">
+                      <p className="text-[rgba(196,184,165,0.35)] text-sm mt-1 italic">The Standard</p>
+                      <div className="flex items-center gap-4 mt-3 text-xs text-[rgba(196,184,165,0.35)]">
                         <span>16 teams</span>
                         <span>13 ranked</span>
                       </div>
@@ -301,8 +301,8 @@ export default function Big12EditorialPage() {
                       <h3 className="font-display text-xl font-bold uppercase tracking-wide text-[#6B8CAE] group-hover:brightness-125 transition-all">
                         Big Ten
                       </h3>
-                      <p className="text-text-muted text-sm mt-1 italic">Northern Rising</p>
-                      <div className="flex items-center gap-4 mt-3 text-xs text-text-muted">
+                      <p className="text-[rgba(196,184,165,0.35)] text-sm mt-1 italic">Northern Rising</p>
+                      <div className="flex items-center gap-4 mt-3 text-xs text-[rgba(196,184,165,0.35)]">
                         <span>17 teams</span>
                         <span>3 ranked</span>
                       </div>
@@ -330,19 +330,19 @@ export default function Big12EditorialPage() {
         <Section padding="sm" borderTop>
           <Container>
             <div className="flex flex-wrap items-center justify-between gap-4">
-              <p className="text-text-muted text-xs">
+              <p className="text-[rgba(196,184,165,0.35)] text-xs">
                 Data: ESPN / SportsDataIO / D1Baseball — February 2026
               </p>
               <div className="flex items-center gap-4">
                 <Link
                   href="/college-baseball/editorial"
-                  className="text-sm text-burnt-orange hover:text-ember transition-colors"
+                  className="text-sm text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
                 >
                   ← Editorial Hub
                 </Link>
                 <Link
                   href="/college-baseball"
-                  className="text-sm text-text-muted hover:text-text-secondary transition-colors"
+                  className="text-sm text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-dust)] transition-colors"
                 >
                   College Baseball
                 </Link>

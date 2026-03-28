@@ -58,7 +58,7 @@ export function GameDetailSheet({ game, open, onClose }: GameDetailSheetProps) {
           </div>
           <button
             onClick={onClose}
-            className="rounded-sm p-1.5 text-text-muted hover:text-text-primary hover:bg-surface transition-colors"
+            className="rounded-sm p-1.5 text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] hover:bg-surface transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
@@ -68,11 +68,11 @@ export function GameDetailSheet({ game, open, onClose }: GameDetailSheetProps) {
       <SheetBody>
         {/* Scoreboard */}
         <div className="text-center mb-6">
-          <div className="font-display text-sm uppercase tracking-wide text-text-muted mb-2">
+          <div className="font-display text-sm uppercase tracking-wide text-[rgba(196,184,165,0.35)] mb-2">
             {game.venue}
           </div>
           {game.headline && (
-            <div className="mb-2 font-mono text-[11px] italic text-text-muted">{game.headline}</div>
+            <div className="mb-2 font-mono text-[11px] italic text-[rgba(196,184,165,0.35)]">{game.headline}</div>
           )}
           <div className="flex items-center justify-center gap-6">
             <div className="flex items-center gap-2 text-right">
@@ -80,10 +80,10 @@ export function GameDetailSheet({ game, open, onClose }: GameDetailSheetProps) {
                 <img src={game.away.logo} alt={`${game.away.name} logo`} className="h-9 w-9 shrink-0 object-contain" loading="lazy" decoding="async" />
               )}
               <div>
-                <div className="font-display text-base font-semibold uppercase text-text-primary">
+                <div className="font-display text-base font-semibold uppercase text-[var(--bsi-bone)]">
                   {rankPrefix(game.away.rank)}{game.away.name}
                 </div>
-                <div className="font-mono text-[11px] text-text-muted">{game.away.record}</div>
+                <div className="font-mono text-[11px] text-[rgba(196,184,165,0.35)]">{game.away.record}</div>
               </div>
             </div>
             {showPregameGauge ? (
@@ -93,7 +93,7 @@ export function GameDetailSheet({ game, open, onClose }: GameDetailSheetProps) {
                 <span className="font-mono text-3xl font-bold tabular-nums" style={{ color: awayScoreColor }}>
                   {game.away.score}
                 </span>
-                <span className="text-text-muted">—</span>
+                <span className="text-[rgba(196,184,165,0.35)]">—</span>
                 <span className="font-mono text-3xl font-bold tabular-nums" style={{ color: homeScoreColor }}>
                   {game.home.score}
                 </span>
@@ -101,10 +101,10 @@ export function GameDetailSheet({ game, open, onClose }: GameDetailSheetProps) {
             )}
             <div className="flex items-center gap-2 text-left">
               <div>
-                <div className="font-display text-base font-semibold uppercase text-text-primary">
+                <div className="font-display text-base font-semibold uppercase text-[var(--bsi-bone)]">
                   {rankPrefix(game.home.rank)}{game.home.name}
                 </div>
-                <div className="font-mono text-[11px] text-text-muted">{game.home.record}</div>
+                <div className="font-mono text-[11px] text-[rgba(196,184,165,0.35)]">{game.home.record}</div>
               </div>
               {game.home.logo && (
                 <img src={game.home.logo} alt={`${game.home.name} logo`} className="h-9 w-9 shrink-0 object-contain" loading="lazy" decoding="async" />
@@ -112,7 +112,7 @@ export function GameDetailSheet({ game, open, onClose }: GameDetailSheetProps) {
             </div>
           </div>
           {game.statusDetail && (
-            <div className="font-mono text-[11px] text-text-muted mt-1">{game.statusDetail}</div>
+            <div className="font-mono text-[11px] text-[rgba(196,184,165,0.35)] mt-1">{game.statusDetail}</div>
           )}
         </div>
 
@@ -122,15 +122,15 @@ export function GameDetailSheet({ game, open, onClose }: GameDetailSheetProps) {
         {game.keyStats && game.keyStats.length > 0 && (
           <div className="my-4">
             <div className="flex items-center gap-2 mb-3">
-              <BarChart3 className="h-4 w-4 text-text-muted" />
-              <span className="font-mono text-[11px] text-text-muted uppercase tracking-wider">Key Stats</span>
+              <BarChart3 className="h-4 w-4 text-[rgba(196,184,165,0.35)]" />
+              <span className="font-mono text-[11px] text-[rgba(196,184,165,0.35)] uppercase tracking-wider">Key Stats</span>
             </div>
             <div className="space-y-2">
               {game.keyStats.map((stat) => (
                 <div key={stat.label} className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-                  <span className="text-right font-mono text-[12px] text-text-secondary tabular-nums">{stat.away}</span>
-                  <span className="font-mono text-[10px] text-text-muted text-center min-w-[80px]">{stat.label}</span>
-                  <span className="text-left font-mono text-[12px] text-text-secondary tabular-nums">{stat.home}</span>
+                  <span className="text-right font-mono text-[12px] text-[var(--bsi-dust)] tabular-nums">{stat.away}</span>
+                  <span className="font-mono text-[10px] text-[rgba(196,184,165,0.35)] text-center min-w-[80px]">{stat.label}</span>
+                  <span className="text-left font-mono text-[12px] text-[var(--bsi-dust)] tabular-nums">{stat.home}</span>
                 </div>
               ))}
             </div>
@@ -149,8 +149,8 @@ export function GameDetailSheet({ game, open, onClose }: GameDetailSheetProps) {
         {/* Model Explainability (SHAP-like) */}
         <div className="my-4">
           <div className="flex items-center gap-2 mb-3">
-            <TrendingUp className="h-4 w-4 text-text-muted" />
-            <span className="font-mono text-[11px] text-text-muted uppercase tracking-wider">What Drives This Outcome</span>
+            <TrendingUp className="h-4 w-4 text-[rgba(196,184,165,0.35)]" />
+            <span className="font-mono text-[11px] text-[rgba(196,184,165,0.35)] uppercase tracking-wider">What Drives This Outcome</span>
           </div>
           <div className="h-[180px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -185,11 +185,11 @@ export function GameDetailSheet({ game, open, onClose }: GameDetailSheetProps) {
           <div className="flex items-center justify-center gap-4 mt-2 font-mono text-[10px]">
             <span className="flex items-center gap-1">
               <span className="h-2 w-2 rounded-sm bg-[var(--bsi-primary)]/80" />
-              <span className="text-text-muted">Favors outcome</span>
+              <span className="text-[rgba(196,184,165,0.35)]">Favors outcome</span>
             </span>
             <span className="flex items-center gap-1">
               <span className="h-2 w-2 rounded-sm bg-[var(--bsi-danger)]/80" />
-              <span className="text-text-muted">Works against</span>
+              <span className="text-[rgba(196,184,165,0.35)]">Works against</span>
             </span>
           </div>
         </div>

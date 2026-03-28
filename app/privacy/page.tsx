@@ -18,17 +18,17 @@ export default function PrivacyPage() {
           <Container>
             <ScrollReveal direction="up">
               <h1 className="font-display text-4xl font-bold uppercase tracking-display mb-8">
-                Privacy <span className="text-gradient-blaze">Policy</span>
+                Privacy <span className="text-[var(--bsi-primary)]">Policy</span>
               </h1>
-              <p className="text-text-tertiary text-sm mb-8">Last updated: January 31, 2026</p>
+              <p className="text-[rgba(196,184,165,0.5)] text-sm mb-8">Last updated: January 31, 2026</p>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
               <div className="prose prose-invert max-w-none space-y-8">
 
                 <section>
-                  <h2 className="text-xl font-semibold text-text-primary mb-4">1. Who We Are</h2>
-                  <p className="text-text-secondary leading-relaxed">
+                  <h2 className="text-xl font-semibold text-[var(--bsi-bone)] mb-4">1. Who We Are</h2>
+                  <p className="text-[var(--bsi-dust)] leading-relaxed">
                     Blaze Sports Intel (&ldquo;BSI,&rdquo; &ldquo;we,&rdquo; &ldquo;us&rdquo;) is a product of
                     Blaze Intelligence LLC, a Texas limited liability company. We provide sports analytics,
                     live scores, and data intelligence tools for college and professional sports.
@@ -36,29 +36,29 @@ export default function PrivacyPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-text-primary mb-4">2. Information We Collect</h2>
-                  <p className="text-text-secondary leading-relaxed font-medium mb-3">Information you provide directly:</p>
-                  <ul className="list-disc pl-5 space-y-1 text-text-secondary">
+                  <h2 className="text-xl font-semibold text-[var(--bsi-bone)] mb-4">2. Information We Collect</h2>
+                  <p className="text-[var(--bsi-dust)] leading-relaxed font-medium mb-3">Information you provide directly:</p>
+                  <ul className="list-disc pl-5 space-y-1 text-[var(--bsi-dust)]">
                     <li>Account information: name, email address</li>
                     <li>Contact form submissions: name, email, organization, sport, message</li>
                     <li>Newsletter subscriptions: email address</li>
                     <li>Payment information: processed by Stripe &mdash; we never receive or store your card number, expiration date, or CVC</li>
                   </ul>
-                  <p className="text-text-secondary leading-relaxed font-medium mt-4 mb-3">Information collected automatically:</p>
-                  <ul className="list-disc pl-5 space-y-1 text-text-secondary">
+                  <p className="text-[var(--bsi-dust)] leading-relaxed font-medium mt-4 mb-3">Information collected automatically:</p>
+                  <ul className="list-disc pl-5 space-y-1 text-[var(--bsi-dust)]">
                     <li>Usage data: pages viewed, features used, timestamps</li>
                     <li>Device information: browser type, operating system, screen resolution</li>
                     <li>Network information: IP address, approximate geographic location</li>
                     <li>Performance data: page load times, error reports (via Cloudflare analytics)</li>
                   </ul>
-                  <p className="text-text-secondary leading-relaxed mt-4">
+                  <p className="text-[var(--bsi-dust)] leading-relaxed mt-4">
                     We do not use session replay tools, keystroke logging, or behavioral recording software.
                   </p>
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-text-primary mb-4">3. How We Use Your Information</h2>
-                  <ul className="list-disc pl-5 space-y-1 text-text-secondary">
+                  <h2 className="text-xl font-semibold text-[var(--bsi-bone)] mb-4">3. How We Use Your Information</h2>
+                  <ul className="list-disc pl-5 space-y-1 text-[var(--bsi-dust)]">
                     <li>Provide and operate the BSI platform and services</li>
                     <li>Process payments and manage subscriptions</li>
                     <li>Send transactional communications (account confirmations, payment receipts)</li>
@@ -70,33 +70,33 @@ export default function PrivacyPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-text-primary mb-4">4. Third-Party Service Providers</h2>
-                  <p className="text-text-secondary leading-relaxed mb-3">
+                  <h2 className="text-xl font-semibold text-[var(--bsi-bone)] mb-4">4. Third-Party Service Providers</h2>
+                  <p className="text-[var(--bsi-dust)] leading-relaxed mb-3">
                     We share data only with service providers necessary to operate BSI:
                   </p>
                   <div className="overflow-x-auto">
-                    <table className="w-full text-sm text-text-secondary">
+                    <table className="w-full text-sm text-[var(--bsi-dust)]">
                       <thead>
-                        <tr className="text-left border-b border-border-subtle">
-                          <th className="pb-2 pr-4 text-text-tertiary">Provider</th>
-                          <th className="pb-2 pr-4 text-text-tertiary">Purpose</th>
-                          <th className="pb-2 text-text-tertiary">Data Shared</th>
+                        <tr className="text-left border-b border-[var(--border-vintage)]">
+                          <th className="pb-2 pr-4 text-[rgba(196,184,165,0.5)]">Provider</th>
+                          <th className="pb-2 pr-4 text-[rgba(196,184,165,0.5)]">Purpose</th>
+                          <th className="pb-2 text-[rgba(196,184,165,0.5)]">Data Shared</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-border-subtle/50">
+                      <tbody className="divide-y divide-[var(--border-vintage)]/50">
                         <tr><td className="py-2 pr-4">Cloudflare</td><td className="py-2 pr-4">Hosting, CDN, edge compute</td><td className="py-2">IP address, request data</td></tr>
                         <tr><td className="py-2 pr-4">Stripe</td><td className="py-2 pr-4">Payment processing</td><td className="py-2">Name, email, payment method (handled by Stripe directly)</td></tr>
                       </tbody>
                     </table>
                   </div>
-                  <p className="text-text-secondary leading-relaxed mt-3">
+                  <p className="text-[var(--bsi-dust)] leading-relaxed mt-3">
                     We do not sell, rent, or share your personal information with data brokers, advertisers, or any other third parties.
                   </p>
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-text-primary mb-4">5. Data Retention</h2>
-                  <ul className="list-disc pl-5 space-y-1 text-text-secondary">
+                  <h2 className="text-xl font-semibold text-[var(--bsi-bone)] mb-4">5. Data Retention</h2>
+                  <ul className="list-disc pl-5 space-y-1 text-[var(--bsi-dust)]">
                     <li>Contact form submissions: retained for 90 days, then automatically deleted</li>
                     <li>Newsletter subscriptions: retained until you unsubscribe</li>
                     <li>Account data: retained for the duration of your account, plus 30 days after deletion</li>
@@ -106,29 +106,29 @@ export default function PrivacyPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-text-primary mb-4">6. Your Rights</h2>
-                  <p className="text-text-secondary leading-relaxed mb-3">
+                  <h2 className="text-xl font-semibold text-[var(--bsi-bone)] mb-4">6. Your Rights</h2>
+                  <p className="text-[var(--bsi-dust)] leading-relaxed mb-3">
                     Depending on your location, you may have the following rights regarding your personal data:
                   </p>
-                  <ul className="list-disc pl-5 space-y-1 text-text-secondary">
-                    <li><strong className="text-text-primary">Access:</strong> Request a copy of the personal data we hold about you</li>
-                    <li><strong className="text-text-primary">Correction:</strong> Request correction of inaccurate data</li>
-                    <li><strong className="text-text-primary">Deletion:</strong> Request deletion of your personal data</li>
-                    <li><strong className="text-text-primary">Portability:</strong> Request your data in a portable format</li>
-                    <li><strong className="text-text-primary">Opt-out:</strong> Opt out of marketing communications at any time</li>
-                    <li><strong className="text-text-primary">Non-discrimination:</strong> We will not discriminate against you for exercising your privacy rights</li>
+                  <ul className="list-disc pl-5 space-y-1 text-[var(--bsi-dust)]">
+                    <li><strong className="text-[var(--bsi-bone)]">Access:</strong> Request a copy of the personal data we hold about you</li>
+                    <li><strong className="text-[var(--bsi-bone)]">Correction:</strong> Request correction of inaccurate data</li>
+                    <li><strong className="text-[var(--bsi-bone)]">Deletion:</strong> Request deletion of your personal data</li>
+                    <li><strong className="text-[var(--bsi-bone)]">Portability:</strong> Request your data in a portable format</li>
+                    <li><strong className="text-[var(--bsi-bone)]">Opt-out:</strong> Opt out of marketing communications at any time</li>
+                    <li><strong className="text-[var(--bsi-bone)]">Non-discrimination:</strong> We will not discriminate against you for exercising your privacy rights</li>
                   </ul>
-                  <p className="text-text-secondary leading-relaxed mt-3">
+                  <p className="text-[var(--bsi-dust)] leading-relaxed mt-3">
                     To exercise any of these rights, email{' '}
-                    <a href="mailto:Austin@blazesportsintel.com" className="text-burnt-orange hover:text-ember">
+                    <a href="mailto:Austin@blazesportsintel.com" className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)]">
                       Austin@blazesportsintel.com
                     </a>. We will respond within 45 days as required by applicable law.
                   </p>
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-text-primary mb-4">7. Texas Data Privacy and Security Act (TDPSA)</h2>
-                  <p className="text-text-secondary leading-relaxed">
+                  <h2 className="text-xl font-semibold text-[var(--bsi-bone)] mb-4">7. Texas Data Privacy and Security Act (TDPSA)</h2>
+                  <p className="text-[var(--bsi-dust)] leading-relaxed">
                     As a Texas-based company, we comply with the Texas Data Privacy and Security Act.
                     Texas residents have the right to access, correct, delete, and obtain a copy of their
                     personal data, and to opt out of the processing of personal data for targeted advertising,
@@ -139,8 +139,8 @@ export default function PrivacyPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-text-primary mb-4">8. California Consumer Privacy Act (CCPA)</h2>
-                  <p className="text-text-secondary leading-relaxed">
+                  <h2 className="text-xl font-semibold text-[var(--bsi-bone)] mb-4">8. California Consumer Privacy Act (CCPA)</h2>
+                  <p className="text-[var(--bsi-dust)] leading-relaxed">
                     If you are a California resident, you have additional rights under the CCPA including
                     the right to know what personal information we collect, the right to delete, and the
                     right to opt out of the sale of personal information. We do not sell personal information.
@@ -149,8 +149,8 @@ export default function PrivacyPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-text-primary mb-4">9. Cookies</h2>
-                  <p className="text-text-secondary leading-relaxed">
+                  <h2 className="text-xl font-semibold text-[var(--bsi-bone)] mb-4">9. Cookies</h2>
+                  <p className="text-[var(--bsi-dust)] leading-relaxed">
                     BSI uses only essential cookies required for the platform to function (session management,
                     security). We do not use advertising cookies, tracking cookies, or third-party analytics
                     cookies.
@@ -158,8 +158,8 @@ export default function PrivacyPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-text-primary mb-4">10. Data Security</h2>
-                  <p className="text-text-secondary leading-relaxed">
+                  <h2 className="text-xl font-semibold text-[var(--bsi-bone)] mb-4">10. Data Security</h2>
+                  <p className="text-[var(--bsi-dust)] leading-relaxed">
                     We implement industry-standard security measures including encryption in transit (TLS),
                     encryption at rest, access controls, and regular security reviews. Our infrastructure
                     is hosted on Cloudflare&apos;s global network with built-in DDoS protection.
@@ -168,8 +168,8 @@ export default function PrivacyPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-text-primary mb-4">11. Data Breach Notification</h2>
-                  <p className="text-text-secondary leading-relaxed">
+                  <h2 className="text-xl font-semibold text-[var(--bsi-bone)] mb-4">11. Data Breach Notification</h2>
+                  <p className="text-[var(--bsi-dust)] leading-relaxed">
                     In the event of a data breach affecting your personal information, we will notify
                     affected individuals and the Texas Attorney General within 60 days as required by
                     Texas law, and California residents as required by the CCPA.
@@ -179,8 +179,8 @@ export default function PrivacyPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-text-primary mb-4">12. Children&apos;s Privacy</h2>
-                  <p className="text-text-secondary leading-relaxed">
+                  <h2 className="text-xl font-semibold text-[var(--bsi-bone)] mb-4">12. Children&apos;s Privacy</h2>
+                  <p className="text-[var(--bsi-dust)] leading-relaxed">
                     BSI is not directed at individuals under the age of 16. We do not knowingly collect
                     personal information from children. If we learn we have collected data from a child
                     under 16, we will delete it promptly.
@@ -188,18 +188,18 @@ export default function PrivacyPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-text-primary mb-4">13. Changes to This Policy</h2>
-                  <p className="text-text-secondary leading-relaxed">
+                  <h2 className="text-xl font-semibold text-[var(--bsi-bone)] mb-4">13. Changes to This Policy</h2>
+                  <p className="text-[var(--bsi-dust)] leading-relaxed">
                     We may update this policy from time to time. Material changes will be communicated
                     via email to registered users and posted on this page with an updated date. Continued
                     use of BSI after changes constitutes acceptance of the updated policy.
                   </p>
                 </section>
 
-                <section className="pt-8 border-t border-border-subtle">
-                  <p className="text-text-tertiary text-sm">
+                <section className="pt-8 border-t border-[var(--border-vintage)]">
+                  <p className="text-[rgba(196,184,165,0.5)] text-sm">
                     Blaze Intelligence LLC &middot; Boerne, Texas &middot;{' '}
-                    <a href="mailto:Austin@blazesportsintel.com" className="text-burnt-orange hover:text-ember">
+                    <a href="mailto:Austin@blazesportsintel.com" className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)]">
                       Austin@blazesportsintel.com
                     </a>
                   </p>

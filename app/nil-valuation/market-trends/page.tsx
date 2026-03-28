@@ -52,28 +52,28 @@ export default function MarketTrendsPage() {
   const trends = useMemo(() => trendsData?.data || [], [trendsData]);
 
   return (
-    <div className="min-h-screen bg-background-primary text-text-primary">
+    <div className="min-h-screen bg-[var(--surface-scoreboard)] text-[var(--bsi-bone)]">
       {/* Breadcrumb */}
       <Section className="pt-4 pb-0">
         <Container>
-          <nav className="flex items-center gap-2 text-sm text-text-muted">
-            <Link href="/nil-valuation" className="hover:text-burnt-orange transition-colors">NIL Valuation</Link>
+          <nav className="flex items-center gap-2 text-sm text-[rgba(196,184,165,0.35)]">
+            <Link href="/nil-valuation" className="hover:text-[var(--bsi-primary)] transition-colors">NIL Valuation</Link>
             <span>/</span>
-            <span className="text-text-secondary">Market Trends</span>
+            <span className="text-[var(--bsi-dust)]">Market Trends</span>
           </nav>
         </Container>
       </Section>
 
       {/* Hero */}
-      <Section className="pt-6 pb-12 bg-gradient-to-b from-background-secondary to-background-primary">
+      <Section className="pt-6 pb-12 bg-gradient-to-b from-background-secondary to-[var(--surface-scoreboard)]">
         <Container>
           <ScrollReveal>
             <div className="max-w-3xl mx-auto text-center">
               <Badge variant="primary" className="mb-4">Free / Pro</Badge>
               <h1 className="text-4xl md:text-5xl font-bold mb-4 font-display uppercase tracking-wide">
-                <span className="text-burnt-orange">Market</span> Trends
+                <span className="text-[var(--bsi-primary)]">Market</span> Trends
               </h1>
-              <p className="text-lg text-text-secondary max-w-2xl mx-auto">
+              <p className="text-lg text-[var(--bsi-dust)] max-w-2xl mx-auto">
                 Track how the NIL market is moving — by sport, conference, and over time.
               </p>
             </div>
@@ -85,15 +85,15 @@ export default function MarketTrendsPage() {
       <Section className="py-12">
         <Container>
           <ScrollReveal>
-            <h2 className="text-2xl font-bold text-text-primary mb-6">Market Overview</h2>
+            <h2 className="text-2xl font-bold text-[var(--bsi-bone)] mb-6">Market Overview</h2>
           </ScrollReveal>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {MARKET_OVERVIEW.map((item, i) => (
               <ScrollReveal key={item.label} delay={i * 80}>
                 <Card className="text-center">
                   <CardContent className="p-5">
-                    <div className="text-2xl md:text-3xl font-bold text-burnt-orange">{item.value}</div>
-                    <div className="text-sm text-text-secondary mt-1">{item.label}</div>
+                    <div className="text-2xl md:text-3xl font-bold text-[var(--bsi-primary)]">{item.value}</div>
+                    <div className="text-sm text-[var(--bsi-dust)] mt-1">{item.label}</div>
                     <div className="text-xs text-[var(--bsi-success)] mt-2">{item.change}</div>
                   </CardContent>
                 </Card>
@@ -111,7 +111,7 @@ export default function MarketTrendsPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-border text-text-muted">
+                      <tr className="border-b border-border text-[rgba(196,184,165,0.35)]">
                         <th className="text-left p-4 font-medium">Sport</th>
                         <th className="text-right p-4 font-medium">Market Share</th>
                         <th className="text-right p-4 font-medium">Avg Deal</th>
@@ -120,10 +120,10 @@ export default function MarketTrendsPage() {
                     </thead>
                     <tbody>
                       {SPORT_BREAKDOWN.map(row => (
-                        <tr key={row.sport} className="border-b border-border/50 hover:bg-background-secondary transition-colors">
-                          <td className="p-4 font-semibold text-text-primary">{row.sport}</td>
-                          <td className="p-4 text-right text-text-secondary">{row.share}</td>
-                          <td className="p-4 text-right text-text-secondary">{row.avg}</td>
+                        <tr key={row.sport} className="border-b border-border/50 hover:bg-[var(--surface-dugout)] transition-colors">
+                          <td className="p-4 font-semibold text-[var(--bsi-bone)]">{row.sport}</td>
+                          <td className="p-4 text-right text-[var(--bsi-dust)]">{row.share}</td>
+                          <td className="p-4 text-right text-[var(--bsi-dust)]">{row.avg}</td>
                           <td className="p-4 text-right text-[var(--bsi-success)]">{row.growth}</td>
                         </tr>
                       ))}
@@ -134,41 +134,41 @@ export default function MarketTrendsPage() {
             </Card>
           </ScrollReveal>
 
-          <p className="text-center text-xs text-text-muted mt-4">
+          <p className="text-center text-xs text-[rgba(196,184,165,0.35)] mt-4">
             Market overview based on public reporting and industry estimates. Updated quarterly.
           </p>
         </Container>
       </Section>
 
       {/* Live Conference Trends — Pro only */}
-      <Section className="py-12 bg-background-secondary">
+      <Section className="py-12 bg-[var(--surface-dugout)]">
         <Container>
           <ScrollReveal>
-            <h2 className="text-2xl font-bold text-text-primary mb-2">Conference NIL Trends</h2>
-            <p className="text-text-muted mb-6">Live data from BSI Savant compute. Updated every 6 hours.</p>
+            <h2 className="text-2xl font-bold text-[var(--bsi-bone)] mb-2">Conference NIL Trends</h2>
+            <p className="text-[rgba(196,184,165,0.35)] mb-6">Live data from BSI Savant compute. Updated every 6 hours.</p>
           </ScrollReveal>
 
           {!hasAccess ? (
             <ScrollReveal>
               <Card className="max-w-lg mx-auto text-center border-l-4 border-l-burnt-orange">
                 <CardContent className="p-8">
-                  <h3 className="text-xl font-bold text-text-primary mb-3">Pro Access Required</h3>
-                  <p className="text-text-tertiary mb-6">
+                  <h3 className="text-xl font-bold text-[var(--bsi-bone)] mb-3">Pro Access Required</h3>
+                  <p className="text-[rgba(196,184,165,0.5)] mb-6">
                     Live conference-level NIL trend data is available on the Pro tier.
                   </p>
                   <Link href="/pricing">
-                    <Button size="lg" className="bg-burnt-orange">Upgrade to Pro</Button>
+                    <Button size="lg" className="bg-[var(--bsi-primary)]">Upgrade to Pro</Button>
                   </Link>
                 </CardContent>
               </Card>
             </ScrollReveal>
           ) : loading ? (
             <div className="text-center py-16">
-              <div className="animate-spin w-8 h-8 border-2 border-burnt-orange border-t-transparent rounded-full mx-auto mb-4" />
-              <p className="text-text-muted">Loading conference trends...</p>
+              <div className="animate-spin w-8 h-8 border-2 border-[var(--bsi-primary)] border-t-transparent rounded-full mx-auto mb-4" />
+              <p className="text-[rgba(196,184,165,0.35)]">Loading conference trends...</p>
             </div>
           ) : trends.length === 0 ? (
-            <p className="text-center text-text-muted py-12">No trend data available yet. Trends appear after the first NIL compute cycle.</p>
+            <p className="text-center text-[rgba(196,184,165,0.35)] py-12">No trend data available yet. Trends appear after the first NIL compute cycle.</p>
           ) : (
             <ScrollReveal>
               <Card>
@@ -176,7 +176,7 @@ export default function MarketTrendsPage() {
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="border-b border-border text-text-muted">
+                        <tr className="border-b border-border text-[rgba(196,184,165,0.35)]">
                           <th className="text-left p-4 font-medium">Conference</th>
                           <th className="text-right p-4 font-medium">Players</th>
                           <th className="text-right p-4 font-medium">Avg Index</th>
@@ -187,15 +187,15 @@ export default function MarketTrendsPage() {
                       </thead>
                       <tbody>
                         {trends.map(row => (
-                          <tr key={row.conference} className="border-b border-border/50 hover:bg-background-primary transition-colors">
-                            <td className="p-4 font-semibold text-text-primary">{row.conference}</td>
-                            <td className="p-4 text-right text-text-secondary">{row.player_count}</td>
-                            <td className="p-4 text-right text-text-secondary">{row.avg_index}</td>
-                            <td className="p-4 text-right text-burnt-orange font-semibold">{formatValue(row.avg_value)}</td>
-                            <td className="p-4 text-right text-text-secondary">{formatValue(row.top_value)}</td>
+                          <tr key={row.conference} className="border-b border-border/50 hover:bg-[var(--surface-scoreboard)] transition-colors">
+                            <td className="p-4 font-semibold text-[var(--bsi-bone)]">{row.conference}</td>
+                            <td className="p-4 text-right text-[var(--bsi-dust)]">{row.player_count}</td>
+                            <td className="p-4 text-right text-[var(--bsi-dust)]">{row.avg_index}</td>
+                            <td className="p-4 text-right text-[var(--bsi-primary)] font-semibold">{formatValue(row.avg_value)}</td>
+                            <td className="p-4 text-right text-[var(--bsi-dust)]">{formatValue(row.top_value)}</td>
                             <td className="p-4 text-right">
                               <span className="text-[var(--bsi-success)] font-semibold">{row.elite_count}</span>
-                              <span className="text-text-muted"> / {row.high_count}</span>
+                              <span className="text-[rgba(196,184,165,0.35)]"> / {row.high_count}</span>
                             </td>
                           </tr>
                         ))}

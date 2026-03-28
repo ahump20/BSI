@@ -59,7 +59,7 @@ const TOOLTIP_STYLE = {
 
 function ChartSource({ source }: { source: string }) {
   return (
-    <p className="text-[10px] font-mono text-text-muted/40 mt-3 text-right">
+    <p className="text-[10px] font-mono text-[rgba(196,184,165,0.35)]/40 mt-3 text-right">
       Source: {source}
     </p>
   );
@@ -124,10 +124,10 @@ export function MarketGrowthChart() {
 
   return (
     <div>
-      <h3 className="font-display text-sm uppercase tracking-wider text-text-secondary mb-1">
+      <h3 className="font-display text-sm uppercase tracking-wider text-[var(--bsi-dust)] mb-1">
         NIL Market Size
       </h3>
-      <p className="text-xs text-text-muted mb-3">
+      <p className="text-xs text-[rgba(196,184,165,0.35)] mb-3">
         Total market value, Year 1 through Year 5 (projected)
       </p>
 
@@ -138,7 +138,7 @@ export function MarketGrowthChart() {
           prefix="$"
           suffix="B"
           decimals={2}
-          className="text-2xl font-mono font-bold text-burnt-orange"
+          className="text-2xl font-mono font-bold text-[var(--bsi-primary)]"
         />
         <span className="text-xs font-mono text-[var(--bsi-success)]">
           +{yoyGrowth.toFixed(0)}% YoY
@@ -167,12 +167,12 @@ export function MarketGrowthChart() {
               const d = payload[0].payload;
               return (
                 <div style={TOOLTIP_STYLE} className="px-3 py-2">
-                  <div className="text-xs text-text-muted mb-1">{d.label}</div>
-                  <div className="text-sm font-mono font-bold text-text-primary">
+                  <div className="text-xs text-[rgba(196,184,165,0.35)] mb-1">{d.label}</div>
+                  <div className="text-sm font-mono font-bold text-[var(--bsi-bone)]">
                     ${d.value.toFixed(2)}B
                   </div>
                   {d.projected && (
-                    <div className="text-[10px] text-burnt-orange mt-1 font-mono">
+                    <div className="text-[10px] text-[var(--bsi-primary)] mt-1 font-mono">
                       Projected ({d.low && d.high ? `$${d.low}B - $${d.high}B range` : ''})
                     </div>
                   )}
@@ -217,12 +217,12 @@ export function MarketGrowthChart() {
       </ResponsiveContainer>
       <div className="flex items-center gap-4 mt-2">
         <div className="flex items-center gap-1.5">
-          <div className="w-2.5 h-2.5 rounded-full bg-burnt-orange" />
-          <span className="text-[10px] text-text-muted font-mono">Actual</span>
+          <div className="w-2.5 h-2.5 rounded-full bg-[var(--bsi-primary)]" />
+          <span className="text-[10px] text-[rgba(196,184,165,0.35)] font-mono">Actual</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-2.5 h-2.5 rounded-full border border-burnt-orange/60 border-dashed" />
-          <span className="text-[10px] text-text-muted font-mono">Projected</span>
+          <div className="w-2.5 h-2.5 rounded-full border border-[var(--bsi-primary)]/60 border-dashed" />
+          <span className="text-[10px] text-[rgba(196,184,165,0.35)] font-mono">Projected</span>
         </div>
       </div>
       <ChartSource source={NIL_MARKET_GROWTH_SOURCE} />
@@ -245,10 +245,10 @@ export function SportDistributionChart() {
 
   return (
     <div>
-      <h3 className="font-display text-sm uppercase tracking-wider text-text-secondary mb-1">
+      <h3 className="font-display text-sm uppercase tracking-wider text-[var(--bsi-dust)] mb-1">
         NIL Distribution by Sport
       </h3>
-      <p className="text-xs text-text-muted mb-3">
+      <p className="text-xs text-[rgba(196,184,165,0.35)] mb-3">
         Share of total NIL activity by sport
       </p>
 
@@ -258,9 +258,9 @@ export function SportDistributionChart() {
           value={data[0]?.share ?? 0}
           suffix="%"
           decimals={1}
-          className="text-2xl font-mono font-bold text-burnt-orange"
+          className="text-2xl font-mono font-bold text-[var(--bsi-primary)]"
         />
-        <span className="text-xs font-mono text-text-muted">
+        <span className="text-xs font-mono text-[rgba(196,184,165,0.35)]">
           Football alone
         </span>
       </div>
@@ -321,10 +321,10 @@ export function GenderEquityChart() {
 
   return (
     <div>
-      <h3 className="font-display text-sm uppercase tracking-wider text-text-secondary mb-1">
+      <h3 className="font-display text-sm uppercase tracking-wider text-[var(--bsi-dust)] mb-1">
         Gender Equity in NIL
       </h3>
-      <p className="text-xs text-text-muted mb-3">
+      <p className="text-xs text-[rgba(196,184,165,0.35)] mb-3">
         Deal share by gender — count vs. top-100 representation
       </p>
 
@@ -332,11 +332,11 @@ export function GenderEquityChart() {
       <div className="flex gap-6 mb-4">
         <div>
           <div className="text-lg font-mono font-bold text-[var(--heritage-columbia-blue)]">52%</div>
-          <div className="text-[10px] font-mono text-text-muted">Women in Top-100</div>
+          <div className="text-[10px] font-mono text-[rgba(196,184,165,0.35)]">Women in Top-100</div>
         </div>
         <div>
-          <div className="text-lg font-mono font-bold text-burnt-orange">57%</div>
-          <div className="text-[10px] font-mono text-text-muted">Men deal count</div>
+          <div className="text-lg font-mono font-bold text-[var(--bsi-primary)]">57%</div>
+          <div className="text-[10px] font-mono text-[rgba(196,184,165,0.35)]">Men deal count</div>
         </div>
       </div>
 
@@ -356,7 +356,7 @@ export function GenderEquityChart() {
               const d = payload[0].payload;
               return (
                 <div style={TOOLTIP_STYLE} className="px-3 py-2">
-                  <div className="text-xs text-text-muted mb-1.5">{d.metric}</div>
+                  <div className="text-xs text-[rgba(196,184,165,0.35)] mb-1.5">{d.metric}</div>
                   <div className="flex gap-4">
                     <div>
                       <span className="inline-block w-2 h-2 rounded-sm mr-1.5" style={{ background: CHART_COLORS.men }} />
@@ -409,14 +409,14 @@ export function GenderEquityChart() {
       <div className="flex items-center gap-4 mt-2">
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-3 rounded-sm" style={{ background: CHART_COLORS.men }} />
-          <span className="text-[10px] text-text-muted font-mono">Men</span>
+          <span className="text-[10px] text-[rgba(196,184,165,0.35)] font-mono">Men</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-3 rounded-sm" style={{ background: CHART_COLORS.women }} />
-          <span className="text-[10px] text-text-muted font-mono">Women</span>
+          <span className="text-[10px] text-[rgba(196,184,165,0.35)] font-mono">Women</span>
         </div>
       </div>
-      <p className="text-[10px] text-text-muted/60 mt-2 italic">
+      <p className="text-[10px] text-[rgba(196,184,165,0.35)]/60 mt-2 italic">
         Note: Dollar-share data lacks independent audit. Count-based metrics are more reliable.
       </p>
       <ChartSource source={NIL_GENDER_SOURCE} />
@@ -439,10 +439,10 @@ export function CollectiveGrowthChart() {
 
   return (
     <div>
-      <h3 className="font-display text-sm uppercase tracking-wider text-text-secondary mb-1">
+      <h3 className="font-display text-sm uppercase tracking-wider text-[var(--bsi-dust)] mb-1">
         Collective Ecosystem
       </h3>
-      <p className="text-xs text-text-muted mb-3">
+      <p className="text-xs text-[rgba(196,184,165,0.35)] mb-3">
         Number of active NIL collectives
       </p>
 
@@ -452,7 +452,7 @@ export function CollectiveGrowthChart() {
           value={data.at(-2)?.count ?? 0}
           suffix="+"
           decimals={0}
-          className="text-2xl font-mono font-bold text-burnt-orange"
+          className="text-2xl font-mono font-bold text-[var(--bsi-primary)]"
         />
         <span className="text-xs font-mono text-[var(--bsi-success)]">
           +{growth}% since {data[0]?.year}
@@ -477,12 +477,12 @@ export function CollectiveGrowthChart() {
               const d = payload[0].payload;
               return (
                 <div style={TOOLTIP_STYLE} className="px-3 py-2">
-                  <div className="text-xs text-text-muted mb-1">{d.year}</div>
-                  <div className="text-sm font-mono font-bold text-text-primary">
+                  <div className="text-xs text-[rgba(196,184,165,0.35)] mb-1">{d.year}</div>
+                  <div className="text-sm font-mono font-bold text-[var(--bsi-bone)]">
                     {d.count} collectives
                   </div>
                   {d.projected && (
-                    <div className="text-[10px] text-burnt-orange mt-1 font-mono">
+                    <div className="text-[10px] text-[var(--bsi-primary)] mt-1 font-mono">
                       Projected
                     </div>
                   )}
@@ -526,7 +526,7 @@ export function CollectiveGrowthChart() {
           />
         </LineChart>
       </ResponsiveContainer>
-      <p className="text-[10px] text-text-muted/60 mt-2">
+      <p className="text-[10px] text-[rgba(196,184,165,0.35)]/60 mt-2">
         {NIL_COLLECTIVE_CONCENTRATION}
       </p>
       <ChartSource source={NIL_COLLECTIVE_SOURCE} />

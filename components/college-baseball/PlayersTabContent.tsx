@@ -53,13 +53,13 @@ export function PlayersTabContent() {
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name (min 2 chars)..."
             aria-label="Search players by name"
-            className="flex-1 px-4 py-2.5 bg-surface-light border border-border rounded-sm text-text-primary placeholder-text-muted text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
+            className="flex-1 px-4 py-2.5 bg-[var(--surface-press-box)] border border-border rounded-sm text-[var(--bsi-bone)] placeholder-text-muted text-sm focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-all"
           />
           <select
             aria-label="Filter by position"
             value={posFilter}
             onChange={(e) => setPosFilter(e.target.value)}
-            className="px-3 py-2.5 bg-surface-light border border-border rounded-sm text-text-primary text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
+            className="px-3 py-2.5 bg-[var(--surface-press-box)] border border-border rounded-sm text-[var(--bsi-bone)] text-sm focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-all"
           >
             <option value="All">All Positions</option>
             {['P', 'C', '1B', '2B', '3B', 'SS', 'OF', 'DH', 'UTL'].map(p => (
@@ -70,7 +70,7 @@ export function PlayersTabContent() {
             aria-label="Filter by class year"
             value={classFilter}
             onChange={(e) => setClassFilter(e.target.value)}
-            className="px-3 py-2.5 bg-surface-light border border-border rounded-sm text-text-primary text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
+            className="px-3 py-2.5 bg-[var(--surface-press-box)] border border-border rounded-sm text-[var(--bsi-bone)] text-sm focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-all"
           >
             <option value="All">All Classes</option>
             {['Fr', 'So', 'Jr', 'Sr', 'Gr'].map(c => (
@@ -81,7 +81,7 @@ export function PlayersTabContent() {
 
         {!searchParam && (
           <div className="text-center py-8">
-            <p className="text-text-secondary mb-4">Enter at least 2 characters to search D1 baseball players.</p>
+            <p className="text-[var(--bsi-dust)] mb-4">Enter at least 2 characters to search D1 baseball players.</p>
             <div className="flex flex-wrap gap-3 justify-center">
               <Link href="/college-baseball/players"><Button variant="primary">Browse Players</Button></Link>
               <Link href="/college-baseball/transfer-portal"><Button variant="secondary">Transfer Portal</Button></Link>
@@ -95,7 +95,7 @@ export function PlayersTabContent() {
 
         {searchParam && !loading && filtered.length === 0 && (
           <div className="text-center py-8">
-            <p className="text-text-muted">No players found for &quot;{debouncedSearch}&quot;</p>
+            <p className="text-[rgba(196,184,165,0.35)]">No players found for &quot;{debouncedSearch}&quot;</p>
           </div>
         )}
 
@@ -103,21 +103,21 @@ export function PlayersTabContent() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b-2 border-burnt-orange">
+                <tr className="border-b-2 border-[var(--bsi-primary)]">
                   {['Name', 'Team', 'Pos', 'Class', ''].map((h) => (
-                    <th key={h} className="text-left p-3 text-text-muted font-semibold text-xs">{h}</th>
+                    <th key={h} className="text-left p-3 text-[rgba(196,184,165,0.35)] font-semibold text-xs">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {filtered.slice(0, 25).map((player) => (
-                  <tr key={player.id} className="border-b border-border-subtle hover:bg-surface-light transition-colors">
-                    <td className="p-3 font-semibold text-text-primary">{player.name}</td>
-                    <td className="p-3 text-text-secondary">{player.team}</td>
-                    <td className="p-3 text-text-secondary">{player.position}</td>
-                    <td className="p-3 text-text-secondary">{player.classYear || '-'}</td>
+                  <tr key={player.id} className="border-b border-[var(--border-vintage)] hover:bg-[var(--surface-press-box)] transition-colors">
+                    <td className="p-3 font-semibold text-[var(--bsi-bone)]">{player.name}</td>
+                    <td className="p-3 text-[var(--bsi-dust)]">{player.team}</td>
+                    <td className="p-3 text-[var(--bsi-dust)]">{player.position}</td>
+                    <td className="p-3 text-[var(--bsi-dust)]">{player.classYear || '-'}</td>
                     <td className="p-3">
-                      <Link href={`/college-baseball/players/${player.id}`} className="text-burnt-orange text-xs hover:text-ember transition-colors">
+                      <Link href={`/college-baseball/players/${player.id}`} className="text-[var(--bsi-primary)] text-xs hover:text-[var(--bsi-primary)] transition-colors">
                         Profile →
                       </Link>
                     </td>

@@ -37,26 +37,26 @@ function CollapsibleBoxScore({
     <Card variant="default" padding="none" className="overflow-hidden">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full px-4 py-3 flex items-center justify-between bg-background-secondary hover:bg-surface-light transition-colors"
+        className="w-full px-4 py-3 flex items-center justify-between bg-[var(--surface-dugout)] hover:bg-[var(--surface-press-box)] transition-colors"
       >
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-background-primary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange relative">
+          <div className="w-8 h-8 bg-[var(--surface-scoreboard)] rounded-full flex items-center justify-center text-xs font-bold text-[var(--bsi-primary)] relative">
             {team.abbreviation}
             {team.ranking && (
-              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-burnt-orange text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[var(--bsi-primary)] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
                 {team.ranking}
               </span>
             )}
           </div>
           <div className="text-left">
-            <p className="text-text-primary font-semibold text-sm">{team.name}</p>
-            {team.record && <p className="text-text-tertiary text-xs">{team.record}</p>}
+            <p className="text-[var(--bsi-bone)] font-semibold text-sm">{team.name}</p>
+            {team.record && <p className="text-[rgba(196,184,165,0.5)] text-xs">{team.record}</p>}
           </div>
-          <span className="text-text-tertiary text-xs ml-2">{label}</span>
+          <span className="text-[rgba(196,184,165,0.5)] text-xs ml-2">{label}</span>
         </div>
         <svg
           viewBox="0 0 24 24"
-          className={`w-5 h-5 text-text-tertiary transition-transform ${expanded ? 'rotate-180' : ''}`}
+          className={`w-5 h-5 text-[rgba(196,184,165,0.5)] transition-transform ${expanded ? 'rotate-180' : ''}`}
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -66,18 +66,18 @@ function CollapsibleBoxScore({
       </button>
 
       {expanded && (
-        <div className="border-t border-border-subtle">
+        <div className="border-t border-[var(--border-vintage)]">
           {/* Batting */}
           <div>
-            <div className="px-4 py-2 bg-background-tertiary border-b border-border-subtle">
-              <span className="text-xs font-semibold text-text-tertiary uppercase tracking-wide">
+            <div className="px-4 py-2 bg-[var(--surface-dugout)] border-b border-[var(--border-vintage)]">
+              <span className="text-xs font-semibold text-[rgba(196,184,165,0.5)] uppercase tracking-wide">
                 Batting
               </span>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm min-w-[480px]">
                 <thead>
-                  <tr className="border-b border-border-subtle text-text-tertiary text-xs">
+                  <tr className="border-b border-[var(--border-vintage)] text-[rgba(196,184,165,0.5)] text-xs">
                     <th className="text-left p-2.5 font-medium">Player</th>
                     <th className="text-center p-2.5 font-medium w-10">AB</th>
                     <th className="text-center p-2.5 font-medium w-10">R</th>
@@ -90,20 +90,20 @@ function CollapsibleBoxScore({
                 </thead>
                 <tbody>
                   {batting.map((b, i) => (
-                    <tr key={i} className="border-b border-border-subtle hover:bg-surface-light transition-colors">
+                    <tr key={i} className="border-b border-[var(--border-vintage)] hover:bg-[var(--surface-press-box)] transition-colors">
                       <td className="p-2.5">
                         <div className="flex items-center gap-1.5">
-                          <span className="text-text-tertiary text-xs w-5">{b.player.position}</span>
-                          <span className="text-text-primary font-medium text-sm">{b.player.name}</span>
+                          <span className="text-[rgba(196,184,165,0.5)] text-xs w-5">{b.player.position}</span>
+                          <span className="text-[var(--bsi-bone)] font-medium text-sm">{b.player.name}</span>
                         </div>
                       </td>
-                      <td className="text-center p-2.5 font-mono text-text-secondary text-sm">{b.ab}</td>
-                      <td className="text-center p-2.5 font-mono text-text-secondary text-sm">{b.r}</td>
-                      <td className="text-center p-2.5 font-mono text-text-primary font-semibold text-sm">{b.h}</td>
-                      <td className="text-center p-2.5 font-mono text-text-secondary text-sm">{b.rbi}</td>
-                      <td className="text-center p-2.5 font-mono text-text-secondary text-sm">{b.bb}</td>
-                      <td className="text-center p-2.5 font-mono text-text-secondary text-sm">{b.so}</td>
-                      <td className="text-center p-2.5 font-mono text-text-tertiary text-sm">{b.avg}</td>
+                      <td className="text-center p-2.5 font-mono text-[var(--bsi-dust)] text-sm">{b.ab}</td>
+                      <td className="text-center p-2.5 font-mono text-[var(--bsi-dust)] text-sm">{b.r}</td>
+                      <td className="text-center p-2.5 font-mono text-[var(--bsi-bone)] font-semibold text-sm">{b.h}</td>
+                      <td className="text-center p-2.5 font-mono text-[var(--bsi-dust)] text-sm">{b.rbi}</td>
+                      <td className="text-center p-2.5 font-mono text-[var(--bsi-dust)] text-sm">{b.bb}</td>
+                      <td className="text-center p-2.5 font-mono text-[var(--bsi-dust)] text-sm">{b.so}</td>
+                      <td className="text-center p-2.5 font-mono text-[rgba(196,184,165,0.5)] text-sm">{b.avg}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -113,15 +113,15 @@ function CollapsibleBoxScore({
 
           {/* Pitching */}
           <div>
-            <div className="px-4 py-2 bg-background-tertiary border-b border-border-subtle">
-              <span className="text-xs font-semibold text-text-tertiary uppercase tracking-wide">
+            <div className="px-4 py-2 bg-[var(--surface-dugout)] border-b border-[var(--border-vintage)]">
+              <span className="text-xs font-semibold text-[rgba(196,184,165,0.5)] uppercase tracking-wide">
                 Pitching
               </span>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm min-w-[480px]">
                 <thead>
-                  <tr className="border-b border-border-subtle text-text-tertiary text-xs">
+                  <tr className="border-b border-[var(--border-vintage)] text-[rgba(196,184,165,0.5)] text-xs">
                     <th className="text-left p-2.5 font-medium">Pitcher</th>
                     <th className="text-center p-2.5 font-medium w-12">IP</th>
                     <th className="text-center p-2.5 font-medium w-10">H</th>
@@ -134,10 +134,10 @@ function CollapsibleBoxScore({
                 </thead>
                 <tbody>
                   {pitching.map((p, i) => (
-                    <tr key={i} className="border-b border-border-subtle hover:bg-surface-light transition-colors">
+                    <tr key={i} className="border-b border-[var(--border-vintage)] hover:bg-[var(--surface-press-box)] transition-colors">
                       <td className="p-2.5">
                         <div className="flex items-center gap-2">
-                          <span className="text-text-primary font-medium text-sm">{p.player.name}</span>
+                          <span className="text-[var(--bsi-bone)] font-medium text-sm">{p.player.name}</span>
                           {p.decision && (
                             <Badge
                               variant={p.decision === 'W' ? 'success' : p.decision === 'L' ? 'error' : 'secondary'}
@@ -148,13 +148,13 @@ function CollapsibleBoxScore({
                           )}
                         </div>
                       </td>
-                      <td className="text-center p-2.5 font-mono text-text-primary font-semibold text-sm">{p.ip}</td>
-                      <td className="text-center p-2.5 font-mono text-text-secondary text-sm">{p.h}</td>
-                      <td className="text-center p-2.5 font-mono text-text-secondary text-sm">{p.r}</td>
-                      <td className="text-center p-2.5 font-mono text-text-secondary text-sm">{p.er}</td>
-                      <td className="text-center p-2.5 font-mono text-text-secondary text-sm">{p.bb}</td>
-                      <td className="text-center p-2.5 font-mono text-text-secondary text-sm">{p.so}</td>
-                      <td className="text-center p-2.5 font-mono text-text-tertiary text-sm">{p.era}</td>
+                      <td className="text-center p-2.5 font-mono text-[var(--bsi-bone)] font-semibold text-sm">{p.ip}</td>
+                      <td className="text-center p-2.5 font-mono text-[var(--bsi-dust)] text-sm">{p.h}</td>
+                      <td className="text-center p-2.5 font-mono text-[var(--bsi-dust)] text-sm">{p.r}</td>
+                      <td className="text-center p-2.5 font-mono text-[var(--bsi-dust)] text-sm">{p.er}</td>
+                      <td className="text-center p-2.5 font-mono text-[var(--bsi-dust)] text-sm">{p.bb}</td>
+                      <td className="text-center p-2.5 font-mono text-[var(--bsi-dust)] text-sm">{p.so}</td>
+                      <td className="text-center p-2.5 font-mono text-[rgba(196,184,165,0.5)] text-sm">{p.era}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -288,7 +288,7 @@ export default function LiveGameClient() {
           <div className="text-center py-8">
             <svg
               viewBox="0 0 24 24"
-              className="w-16 h-16 text-text-tertiary mx-auto mb-4"
+              className="w-16 h-16 text-[rgba(196,184,165,0.5)] mx-auto mb-4"
               fill="none"
               stroke="currentColor"
               strokeWidth="1.5"
@@ -296,11 +296,11 @@ export default function LiveGameClient() {
               <circle cx="12" cy="12" r="10" />
               <polyline points="12,6 12,12 16,14" />
             </svg>
-            <p className="text-text-secondary">Game day experience activates when first pitch hits.</p>
-            <p className="text-text-tertiary text-sm mt-2">
+            <p className="text-[var(--bsi-dust)]">Game day experience activates when first pitch hits.</p>
+            <p className="text-[rgba(196,184,165,0.5)] text-sm mt-2">
               Linescore, play-by-play, box score, and live matchup data will load automatically.
             </p>
-            <p className="text-burnt-orange text-sm mt-4 font-semibold">
+            <p className="text-[var(--bsi-primary)] text-sm mt-4 font-semibold">
               {game.status.detailedState}
             </p>
           </div>

@@ -34,15 +34,15 @@ interface PlayerRow {
 /* -- Tier visual system -------------------------------------------------- */
 
 const TIER_COLORS: Record<string, string> = {
-  Elite: 'text-burnt-orange',
+  Elite: 'text-[var(--bsi-primary)]',
   High: 'text-[var(--bsi-warning)]',
   'Above Average': 'text-[var(--bsi-success)]',
-  Average: 'text-text-secondary',
-  Developing: 'text-text-muted',
+  Average: 'text-[var(--bsi-dust)]',
+  Developing: 'text-[rgba(196,184,165,0.35)]',
 };
 
 const TIER_BG: Record<string, string> = {
-  Elite: 'bg-burnt-orange/20 border-burnt-orange/40',
+  Elite: 'bg-[var(--bsi-primary)]/20 border-[var(--bsi-primary)]/40',
   High: 'bg-[var(--bsi-warning)]/10 border-[var(--bsi-warning)]/30',
   'Above Average': 'bg-[var(--bsi-success)]/10 border-[var(--bsi-success)]/30',
   Average: 'bg-white/5 border-white/10',
@@ -129,13 +129,13 @@ export function PerformanceIndexClient() {
   }, [battingRes, pitchingRes]);
 
   return (
-    <Section padding="lg" className="bg-background-secondary border-t border-border">
+    <Section padding="lg" className="bg-[var(--surface-dugout)] border-t border-border">
       <Container>
         <div className="max-w-3xl mx-auto">
           {/* Search */}
           <Card className="mb-8">
             <CardContent className="p-6">
-              <label className="block text-xs font-mono uppercase tracking-wider text-text-muted mb-2">
+              <label className="block text-xs font-mono uppercase tracking-wider text-[rgba(196,184,165,0.35)] mb-2">
                 Search Player
               </label>
               <div className="relative">
@@ -149,32 +149,32 @@ export function PerformanceIndexClient() {
                       : 'Type a player name or team...'
                   }
                   disabled={loading}
-                  className="w-full bg-background-primary border border-border rounded-sm px-4 py-3 text-text-primary placeholder:text-text-muted/40 focus:outline-none focus:border-burnt-orange/50 transition-colors font-serif"
+                  className="w-full bg-[var(--surface-scoreboard)] border border-border rounded-sm px-4 py-3 text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)]/40 focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-colors font-serif"
                 />
                 {loading && (
                   <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                    <div className="w-4 h-4 border-2 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
+                    <div className="w-4 h-4 border-2 border-[var(--bsi-primary)]/30 border-t-[var(--bsi-primary)] rounded-full animate-spin" />
                   </div>
                 )}
               </div>
 
               {/* Search Results Dropdown */}
               {filtered.length > 0 && (
-                <div className="mt-2 border border-border rounded-sm overflow-hidden bg-background-primary">
+                <div className="mt-2 border border-border rounded-sm overflow-hidden bg-[var(--surface-scoreboard)]">
                   {filtered.map((player, i) => (
                     <button
                       key={`${player.player_name}-${player.team}-${i}`}
                       onClick={() => selectPlayer(player)}
-                      className="w-full text-left px-4 py-3 hover:bg-burnt-orange/10 transition-colors border-b border-border last:border-b-0 cursor-pointer"
+                      className="w-full text-left px-4 py-3 hover:bg-[var(--bsi-primary)]/10 transition-colors border-b border-border last:border-b-0 cursor-pointer"
                     >
-                      <span className="font-semibold text-text-primary">
+                      <span className="font-semibold text-[var(--bsi-bone)]">
                         {player.player_name}
                       </span>
-                      <span className="text-text-muted text-sm ml-2">
+                      <span className="text-[rgba(196,184,165,0.35)] text-sm ml-2">
                         {player.team}
                       </span>
                       {player.conference && (
-                        <span className="text-text-muted/50 text-xs ml-2">
+                        <span className="text-[rgba(196,184,165,0.35)]/50 text-xs ml-2">
                           ({player.conference})
                         </span>
                       )}
@@ -184,7 +184,7 @@ export function PerformanceIndexClient() {
               )}
 
               {search.trim() && filtered.length === 0 && !loading && (
-                <p className="mt-2 text-sm text-text-muted">
+                <p className="mt-2 text-sm text-[rgba(196,184,165,0.35)]">
                   No players found. Try a different name or team.
                 </p>
               )}
@@ -199,15 +199,15 @@ export function PerformanceIndexClient() {
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
-                      <h2 className="font-display text-2xl font-bold uppercase text-text-primary">
+                      <h2 className="font-display text-2xl font-bold uppercase text-[var(--bsi-bone)]">
                         {selectedPlayer.player_name}
                       </h2>
-                      <p className="text-text-muted text-sm">
+                      <p className="text-[rgba(196,184,165,0.35)] text-sm">
                         {selectedPlayer.team}
                         {selectedPlayer.conference &&
                           ` · ${selectedPlayer.conference}`}
                       </p>
-                      <p className="text-xs text-text-muted/60 font-mono mt-1">
+                      <p className="text-xs text-[rgba(196,184,165,0.35)]/60 font-mono mt-1">
                         {'BSI Estimate · '}
                         {result.isPitcher ? 'Pitcher' : 'Position Player'} Profile
                       </p>
@@ -228,7 +228,7 @@ export function PerformanceIndexClient() {
               <MetricGate isPro={isPro} metricName="NIL breakdown details">
                 <Card>
                   <CardContent className="p-6">
-                    <h3 className="font-display text-sm uppercase tracking-wider text-text-secondary mb-4">
+                    <h3 className="font-display text-sm uppercase tracking-wider text-[var(--bsi-dust)] mb-4">
                       FMNV Breakdown
                     </h3>
                     <div className="space-y-4 mb-6">
@@ -257,7 +257,7 @@ export function PerformanceIndexClient() {
 
                     {/* Dollar Range Bar */}
                     <div className="border-t border-border pt-4">
-                      <h4 className="text-xs font-mono uppercase tracking-wider text-text-muted mb-3">
+                      <h4 className="text-xs font-mono uppercase tracking-wider text-[rgba(196,184,165,0.35)] mb-3">
                         Estimated NIL Range
                       </h4>
                       <DollarRangeBar
@@ -265,7 +265,7 @@ export function PerformanceIndexClient() {
                         high={result.estimatedRange[1]}
                         index={result.index}
                       />
-                      <p className="text-[10px] text-text-muted/50 mt-3">
+                      <p className="text-[10px] text-[rgba(196,184,165,0.35)]/50 mt-3">
                         Based on Brook (2025) WAR-to-NIL baseline ($7.5M/WAR) adjusted for
                         college baseball market. This is a model estimate, not a market quote.
                       </p>
@@ -288,10 +288,10 @@ export function PerformanceIndexClient() {
           {/* Empty State */}
           {!selectedPlayer && !loading && (
             <div className="text-center py-12">
-              <p className="text-text-muted text-sm">
+              <p className="text-[rgba(196,184,165,0.35)] text-sm">
                 Search for a player above to calculate their NIL Performance Index.
               </p>
-              <p className="text-text-muted/50 text-xs mt-2">
+              <p className="text-[rgba(196,184,165,0.35)]/50 text-xs mt-2">
                 {allPlayers.length > 0
                   ? `${allPlayers.length} players available from BSI Savant`
                   : 'Loading player data from BSI Savant...'}
@@ -353,7 +353,7 @@ function ScoreGauge({ score, tier }: { score: number; tier: string }) {
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-2xl font-mono font-bold text-text-primary leading-none">
+        <span className="text-2xl font-mono font-bold text-[var(--bsi-bone)] leading-none">
           {score}
         </span>
         <span
@@ -384,13 +384,13 @@ function TierScale({ activeTier }: { activeTier: string }) {
           <div
             className={`h-1.5 rounded-full mb-1 transition-all duration-500 ${
               t.name === activeTier
-                ? 'bg-burnt-orange shadow-[0_0_8px_rgba(191,87,0,0.4)]'
+                ? 'bg-[var(--bsi-primary)] shadow-[0_0_8px_rgba(191,87,0,0.4)]'
                 : 'bg-white/8'
             }`}
           />
           <span
             className={`text-[8px] font-mono uppercase tracking-wider ${
-              t.name === activeTier ? 'text-burnt-orange' : 'text-text-muted/40'
+              t.name === activeTier ? 'text-[var(--bsi-primary)]' : 'text-[rgba(196,184,165,0.35)]/40'
             }`}
           >
             {t.name === 'Above Average' ? 'Above' : t.name}
@@ -439,13 +439,13 @@ function BreakdownBar({
             className="w-2 h-2 rounded-full inline-block"
             style={{ background: color }}
           />
-          <span className="text-xs text-text-secondary">{label}</span>
+          <span className="text-xs text-[var(--bsi-dust)]">{label}</span>
         </div>
         <div className="flex items-baseline gap-2">
-          <span className="text-lg font-mono font-bold text-text-primary">
+          <span className="text-lg font-mono font-bold text-[var(--bsi-bone)]">
             {value}
           </span>
-          <span className="text-[10px] font-mono text-text-muted">{weight}</span>
+          <span className="text-[10px] font-mono text-[rgba(196,184,165,0.35)]">{weight}</span>
         </div>
       </div>
       <div className="w-full h-2.5 bg-white/5 rounded-full overflow-hidden">
@@ -480,7 +480,7 @@ function DollarRangeBar({
       <div className="relative h-8 bg-white/5 rounded-sm overflow-hidden">
         {/* Range band */}
         <div
-          className="absolute top-1 bottom-1 rounded-sm bg-burnt-orange/20 border border-burnt-orange/30"
+          className="absolute top-1 bottom-1 rounded-sm bg-[var(--bsi-primary)]/20 border border-[var(--bsi-primary)]/30"
           style={{
             left: `${lowPct}%`,
             width: `${highPct - lowPct}%`,
@@ -488,18 +488,18 @@ function DollarRangeBar({
         />
         {/* Midpoint marker */}
         <div
-          className="absolute top-0 bottom-0 w-0.5 bg-burnt-orange"
+          className="absolute top-0 bottom-0 w-0.5 bg-[var(--bsi-primary)]"
           style={{ left: `${midPct}%` }}
         />
       </div>
       <div className="flex justify-between mt-1.5">
-        <span className="text-sm font-mono font-bold text-burnt-orange">
+        <span className="text-sm font-mono font-bold text-[var(--bsi-primary)]">
           {formatNILDollar(low)}
         </span>
-        <span className="text-[10px] font-mono text-text-muted self-center">
+        <span className="text-[10px] font-mono text-[rgba(196,184,165,0.35)] self-center">
           estimated range
         </span>
-        <span className="text-sm font-mono font-bold text-burnt-orange">
+        <span className="text-sm font-mono font-bold text-[var(--bsi-primary)]">
           {formatNILDollar(high)}
         </span>
       </div>

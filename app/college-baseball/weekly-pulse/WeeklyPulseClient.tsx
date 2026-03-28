@@ -98,7 +98,7 @@ export default function WeeklyPulseClient() {
             {/* Header */}
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-2">
-                <Link href="/college-baseball" className="text-bsi-dust hover:text-burnt-orange transition-colors">
+                <Link href="/college-baseball" className="text-bsi-dust hover:text-[var(--bsi-primary)] transition-colors">
                   College Baseball
                 </Link>
                 <span className="text-bsi-dust">/</span>
@@ -107,7 +107,7 @@ export default function WeeklyPulseClient() {
 
               <div className="mb-8">
                 <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-bsi-bone">
-                  Weekly <span className="text-burnt-orange">Pulse</span>
+                  Weekly <span className="text-[var(--bsi-primary)]">Pulse</span>
                 </h1>
                 <p className="text-bsi-dust mt-2 max-w-2xl">
                   {pulse ? weekLabel(pulse.week) : 'This week'} in college baseball — top performers, biggest movers, and conference trends.
@@ -119,7 +119,7 @@ export default function WeeklyPulseClient() {
             {/* Loading */}
             {loading && (
               <div className="text-center py-12">
-                <div className="w-8 h-8 border-2 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin mx-auto mb-3" />
+                <div className="w-8 h-8 border-2 border-[var(--bsi-primary)]/30 border-t-[var(--bsi-primary)] rounded-full animate-spin mx-auto mb-3" />
                 <p className="text-bsi-dust text-sm">Computing this week&rsquo;s pulse...</p>
               </div>
             )}
@@ -137,7 +137,7 @@ export default function WeeklyPulseClient() {
                 {/* Top Hitters */}
                 <ScrollReveal direction="up" delay={100}>
                   <div className="flex items-center gap-2 mb-4">
-                    <Zap className="w-5 h-5 text-burnt-orange" />
+                    <Zap className="w-5 h-5 text-[var(--bsi-primary)]" />
                     <h2 className="font-display text-xl font-bold text-bsi-bone uppercase tracking-wide">
                       Top Hitters by wRC+
                     </h2>
@@ -146,9 +146,9 @@ export default function WeeklyPulseClient() {
                     {pulse.top_hitters.map((h, idx) => (
                       <div
                         key={h.player_id}
-                        className="flex items-center gap-3 px-4 py-3 bg-surface-dugout rounded border border-border-vintage/20 hover:border-burnt-orange/30 transition-colors"
+                        className="flex items-center gap-3 px-4 py-3 bg-surface-dugout rounded border border-border-vintage/20 hover:border-[var(--bsi-primary)]/30 transition-colors"
                       >
-                        <span className="text-burnt-orange font-mono font-bold text-sm w-6 text-right">
+                        <span className="text-[var(--bsi-primary)] font-mono font-bold text-sm w-6 text-right">
                           {idx + 1}
                         </span>
                         <div className="flex-1 min-w-0">
@@ -170,7 +170,7 @@ export default function WeeklyPulseClient() {
                 {/* Top Pitchers */}
                 <ScrollReveal direction="up" delay={150}>
                   <div className="flex items-center gap-2 mb-4">
-                    <BarChart3 className="w-5 h-5 text-burnt-orange" />
+                    <BarChart3 className="w-5 h-5 text-[var(--bsi-primary)]" />
                     <h2 className="font-display text-xl font-bold text-bsi-bone uppercase tracking-wide">
                       Top Pitchers by FIP
                     </h2>
@@ -179,9 +179,9 @@ export default function WeeklyPulseClient() {
                     {pulse.top_pitchers.map((p, idx) => (
                       <div
                         key={p.player_id}
-                        className="flex items-center gap-3 px-4 py-3 bg-surface-dugout rounded border border-border-vintage/20 hover:border-burnt-orange/30 transition-colors"
+                        className="flex items-center gap-3 px-4 py-3 bg-surface-dugout rounded border border-border-vintage/20 hover:border-[var(--bsi-primary)]/30 transition-colors"
                       >
-                        <span className="text-burnt-orange font-mono font-bold text-sm w-6 text-right">
+                        <span className="text-[var(--bsi-primary)] font-mono font-bold text-sm w-6 text-right">
                           {idx + 1}
                         </span>
                         <div className="flex-1 min-w-0">
@@ -349,12 +349,12 @@ export default function WeeklyPulseClient() {
                               <td className="px-3 py-2">
                                 <span className="text-bsi-bone font-display font-bold text-sm">{c.conference}</span>
                                 {c.is_power === 1 && (
-                                  <span className="text-[10px] uppercase tracking-wider text-burnt-orange border border-burnt-orange/40 px-1 py-0.5 rounded font-bold ml-2">
+                                  <span className="text-[10px] uppercase tracking-wider text-[var(--bsi-primary)] border border-[var(--bsi-primary)]/40 px-1 py-0.5 rounded font-bold ml-2">
                                     P5
                                   </span>
                                 )}
                               </td>
-                              <td className="text-center px-3 py-2 text-burnt-orange font-mono font-bold">{c.strength_index.toFixed(1)}</td>
+                              <td className="text-center px-3 py-2 text-[var(--bsi-primary)] font-mono font-bold">{c.strength_index.toFixed(1)}</td>
                               <td className="text-center px-3 py-2 text-bsi-bone font-mono">{c.avg_woba.toFixed(3)}</td>
                               <td className="text-center px-3 py-2 text-bsi-bone font-mono">{c.avg_era.toFixed(2)}</td>
                             </tr>

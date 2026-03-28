@@ -107,7 +107,7 @@ export default function Weekend6RecapPage() {
                 </div>
                 <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-wide mb-4">
                   The Weekend That Broke Programs.{' '}
-                  <span className="text-gradient-blaze">And Made One Pitcher Immortal.</span>
+                  <span className="text-[var(--bsi-primary)]">And Made One Pitcher Immortal.</span>
                 </h1>
                 <p className="text-white/70 text-lg leading-relaxed">
                   Tyler Fay threw Alabama&apos;s first solo no-hitter in 84 years and swept No. 18 Florida out of the rankings entirely.

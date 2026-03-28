@@ -37,16 +37,16 @@ export function DataAttribution({
 
   if (!isValidDate) {
     return effectiveSource ? (
-      <div className={`flex items-center gap-2 text-xs text-text-muted ${className}`}>
+      <div className={`flex items-center gap-2 text-xs text-[rgba(196,184,165,0.35)] ${className}`}>
         <span>Powered by {effectiveSource}</span>
       </div>
     ) : null;
   }
 
   return (
-    <div className={`flex items-center gap-2 text-xs text-text-muted ${className}`}>
+    <div className={`flex items-center gap-2 text-xs text-[rgba(196,184,165,0.35)] ${className}`}>
       <span>{relative}</span>
-      <span className="text-text-muted">·</span>
+      <span className="text-[rgba(196,184,165,0.35)]">·</span>
       <span>Powered by {effectiveSource}</span>
     </div>
   );

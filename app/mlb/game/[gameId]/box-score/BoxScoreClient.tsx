@@ -28,15 +28,15 @@ export default function BoxScoreClient() {
         <div className="text-center py-8">
           <svg
             viewBox="0 0 24 24"
-            className="w-16 h-16 text-text-tertiary mx-auto mb-4"
+            className="w-16 h-16 text-[rgba(196,184,165,0.5)] mx-auto mb-4"
             fill="none"
             stroke="currentColor"
             strokeWidth="1.5"
           >
             <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
           </svg>
-          <p className="text-text-secondary">Box score data not available yet</p>
-          <p className="text-text-tertiary text-sm mt-2">
+          <p className="text-[var(--bsi-dust)]">Box score data not available yet</p>
+          <p className="text-[rgba(196,184,165,0.5)] text-sm mt-2">
             The full box score will appear once the game gets underway. Grab some peanuts and
             Cracker Jacks while you wait.
           </p>

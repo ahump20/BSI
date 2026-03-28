@@ -54,10 +54,10 @@ export default function Linescore({
     isLive && currentInning != null && inningIndex + 1 === currentInning;
 
   return (
-    <div className="bg-midnight rounded-sm border border-border-subtle overflow-hidden">
+    <div className="bg-[var(--surface-scoreboard)] rounded-sm border border-[var(--border-vintage)] overflow-hidden">
       {/* Live indicator */}
       {isLive && (
-        <div className="flex items-center gap-2 px-4 py-2 bg-success/10 border-b border-border-subtle">
+        <div className="flex items-center gap-2 px-4 py-2 bg-success/10 border-b border-[var(--border-vintage)]">
           <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
           <span className="text-success text-xs font-semibold uppercase tracking-wide">
             Live{currentInning != null && ` - ${isTopInning ? 'Top' : 'Bot'} ${currentInning}`}
@@ -69,9 +69,9 @@ export default function Linescore({
       <div className="overflow-x-auto">
         <table className="w-full text-sm min-w-[500px]">
           <thead>
-            <tr className="border-b border-border-subtle">
+            <tr className="border-b border-[var(--border-vintage)]">
               {/* Team name column */}
-              <th className="text-left px-3 py-2.5 text-text-tertiary font-medium w-20 sticky left-0 bg-midnight z-10">
+              <th className="text-left px-3 py-2.5 text-[rgba(196,184,165,0.5)] font-medium w-20 sticky left-0 bg-[var(--surface-scoreboard)] z-10">
                 Team
               </th>
 
@@ -81,8 +81,8 @@ export default function Linescore({
                   key={i}
                   className={`text-center px-1.5 py-2.5 w-8 font-mono text-xs font-medium transition-colors ${
                     isCurrentInning(i)
-                      ? 'text-burnt-orange bg-burnt-orange/10'
-                      : 'text-text-tertiary'
+                      ? 'text-[var(--bsi-primary)] bg-[var(--bsi-primary)]/10'
+                      : 'text-[rgba(196,184,165,0.5)]'
                   }`}
                 >
                   {i + 1}
@@ -90,21 +90,21 @@ export default function Linescore({
               ))}
 
               {/* R H E totals */}
-              <th className="text-center px-2 py-2.5 w-10 border-l border-border-subtle text-burnt-orange font-bold">
+              <th className="text-center px-2 py-2.5 w-10 border-l border-[var(--border-vintage)] text-[var(--bsi-primary)] font-bold">
                 R
               </th>
-              <th className="text-center px-2 py-2.5 w-10 text-text-tertiary font-medium">
+              <th className="text-center px-2 py-2.5 w-10 text-[rgba(196,184,165,0.5)] font-medium">
                 H
               </th>
-              <th className="text-center px-2 py-2.5 w-10 text-text-tertiary font-medium">
+              <th className="text-center px-2 py-2.5 w-10 text-[rgba(196,184,165,0.5)] font-medium">
                 E
               </th>
             </tr>
           </thead>
           <tbody>
             {/* Away team row */}
-            <tr className="border-b border-border-subtle">
-              <td className="px-3 py-2.5 sticky left-0 bg-midnight z-10">
+            <tr className="border-b border-[var(--border-vintage)]">
+              <td className="px-3 py-2.5 sticky left-0 bg-[var(--surface-scoreboard)] z-10">
                 <div className="flex items-center gap-2">
                   {awayTeam.logo && (
                     <img
@@ -130,10 +130,10 @@ export default function Linescore({
                     key={i}
                     className={`text-center px-1.5 py-2.5 font-mono text-sm transition-colors ${
                       isActive
-                        ? 'text-burnt-orange font-bold bg-burnt-orange/10'
+                        ? 'text-[var(--bsi-primary)] font-bold bg-[var(--bsi-primary)]/10'
                         : value != null
                           ? 'text-bone'
-                          : 'text-text-tertiary'
+                          : 'text-[rgba(196,184,165,0.5)]'
                     }`}
                   >
                     {value != null ? value : i < innings.length ? 0 : '-'}
@@ -142,7 +142,7 @@ export default function Linescore({
               })}
 
               {/* Totals */}
-              <td className="text-center px-2 py-2.5 font-mono font-bold text-text-primary border-l border-border-subtle">
+              <td className="text-center px-2 py-2.5 font-mono font-bold text-[var(--bsi-bone)] border-l border-[var(--border-vintage)]">
                 {totals.away.runs}
               </td>
               <td className="text-center px-2 py-2.5 font-mono text-bone">
@@ -155,7 +155,7 @@ export default function Linescore({
 
             {/* Home team row */}
             <tr>
-              <td className="px-3 py-2.5 sticky left-0 bg-midnight z-10">
+              <td className="px-3 py-2.5 sticky left-0 bg-[var(--surface-scoreboard)] z-10">
                 <div className="flex items-center gap-2">
                   {homeTeam.logo && (
                     <img
@@ -181,10 +181,10 @@ export default function Linescore({
                     key={i}
                     className={`text-center px-1.5 py-2.5 font-mono text-sm transition-colors ${
                       isActive
-                        ? 'text-burnt-orange font-bold bg-burnt-orange/10'
+                        ? 'text-[var(--bsi-primary)] font-bold bg-[var(--bsi-primary)]/10'
                         : value != null
                           ? 'text-bone'
-                          : 'text-text-tertiary'
+                          : 'text-[rgba(196,184,165,0.5)]'
                     }`}
                   >
                     {value != null ? value : i < innings.length ? 0 : '-'}
@@ -193,7 +193,7 @@ export default function Linescore({
               })}
 
               {/* Totals */}
-              <td className="text-center px-2 py-2.5 font-mono font-bold text-text-primary border-l border-border-subtle">
+              <td className="text-center px-2 py-2.5 font-mono font-bold text-[var(--bsi-bone)] border-l border-[var(--border-vintage)]">
                 {totals.home.runs}
               </td>
               <td className="text-center px-2 py-2.5 font-mono text-bone">

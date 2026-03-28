@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function DiamondDynastyCardPage() {
   return (
-    <Suspense fallback={<div className="min-h-[40vh] bg-midnight" />}>
+    <Suspense fallback={<div className="min-h-[40vh] bg-[var(--surface-scoreboard)]" />}>
       <DiamondDynastyCardClient />
     </Suspense>
   );

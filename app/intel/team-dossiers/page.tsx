@@ -17,8 +17,8 @@ type Tier = 'Omaha Favorite' | 'Contender' | 'Dark Horse';
 
 const tierStyles: Record<Tier, string> = {
   'Omaha Favorite': 'bg-[#C9A227]/20 text-[#C9A227] border-[#C9A227]/30',
-  Contender: 'bg-burnt-orange/20 text-ember border-burnt-orange/30',
-  'Dark Horse': 'bg-surface-medium text-text-secondary border-border-strong',
+  Contender: 'bg-[var(--bsi-primary)]/20 text-ember border-[var(--bsi-primary)]/30',
+  'Dark Horse': 'bg-surface-medium text-[var(--bsi-dust)] border-[rgba(140,98,57,0.5)]',
 };
 
 interface DossierSummary {
@@ -114,10 +114,10 @@ export default function TeamDossiersIndexPage() {
           <Container>
             <div className="max-w-3xl mb-8">
               <Badge variant="primary" className="mb-4">Scouting</Badge>
-              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-text-primary mb-3">
+              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-[var(--bsi-bone)] mb-3">
                 Team Dossiers
               </h1>
-              <p className="text-text-tertiary text-lg leading-relaxed">
+              <p className="text-[rgba(196,184,165,0.5)] text-lg leading-relaxed">
                 Structured scouting reports — identity, game plan, key players, schedule difficulty,
                 and BSI projection tier. One per team, updated as the season unfolds.
               </p>
@@ -126,21 +126,21 @@ export default function TeamDossiersIndexPage() {
             {loading && liveDossiers.length === 0 && (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="bg-surface-light border border-border-subtle rounded-sm p-4 animate-pulse">
+                  <div key={i} className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4 animate-pulse">
                     <div className="flex justify-between mb-2">
                       <div className="h-4 bg-border-subtle rounded-sm w-1/3" />
-                      <div className="h-4 bg-surface-light rounded-sm w-1/4" />
+                      <div className="h-4 bg-[var(--surface-press-box)] rounded-sm w-1/4" />
                     </div>
-                    <div className="h-3 bg-surface-light rounded-sm w-1/2 mt-3" />
+                    <div className="h-3 bg-[var(--surface-press-box)] rounded-sm w-1/2 mt-3" />
                   </div>
                 ))}
               </div>
             )}
 
             {error && liveDossiers.length === 0 && (
-              <div className="mb-4 text-xs text-text-muted flex items-center gap-3">
+              <div className="mb-4 text-xs text-[rgba(196,184,165,0.35)] flex items-center gap-3">
                 <span>Could not load live rankings</span>
-                <button onClick={retry} className="text-burnt-orange hover:text-ember transition-colors">
+                <button onClick={retry} className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors">
                   Retry
                 </button>
               </div>
@@ -151,19 +151,19 @@ export default function TeamDossiersIndexPage() {
                 const style = tierStyles[dossier.tier] || tierStyles['Dark Horse'];
                 return (
                   <Link key={dossier.slug} href={`/intel/team-dossiers/${dossier.slug}`} className="block group">
-                    <Card variant="default" padding="md" className="h-full hover:border-burnt-orange/30 transition-all">
+                    <Card variant="default" padding="md" className="h-full hover:border-[var(--bsi-primary)]/30 transition-all">
                       <div className="flex items-start justify-between mb-2">
                         <div>
-                          <h2 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide group-hover:text-burnt-orange transition-colors">
+                          <h2 className="font-display text-sm font-bold text-[var(--bsi-bone)] uppercase tracking-wide group-hover:text-[var(--bsi-primary)] transition-colors">
                             {dossier.name}
                           </h2>
-                          {dossier.mascot && <p className="text-text-muted text-xs">{dossier.mascot}</p>}
+                          {dossier.mascot && <p className="text-[rgba(196,184,165,0.35)] text-xs">{dossier.mascot}</p>}
                         </div>
                         <span className={`inline-block px-2 py-0.5 rounded-sm text-[10px] font-semibold uppercase tracking-wider border ${style}`}>
                           {dossier.tier}
                         </span>
                       </div>
-                      <div className="flex items-center gap-3 mt-3 text-xs text-text-muted">
+                      <div className="flex items-center gap-3 mt-3 text-xs text-[rgba(196,184,165,0.35)]">
                         {dossier.conference && <span>{dossier.conference}</span>}
                         {dossier.record && <span className="font-mono">{dossier.record}</span>}
                       </div>
@@ -173,13 +173,13 @@ export default function TeamDossiersIndexPage() {
               })}
             </div>
 
-            <div className="mt-8 bg-surface-light border border-dashed border-border rounded-sm p-6 text-center">
-              <p className="text-sm text-text-muted">
+            <div className="mt-8 bg-[var(--surface-press-box)] border border-dashed border-border rounded-sm p-6 text-center">
+              <p className="text-sm text-[rgba(196,184,165,0.35)]">
                 {liveDossiers.length > 0
                   ? `Showing top 25 from live rankings. Full dossier set building through the 2026 season.`
                   : 'Full 47-team dossier set building through the 2026 season.'}{' '}
                 See{' '}
-                <Link href="/college-baseball/editorial" className="text-burnt-orange hover:text-ember transition-colors">
+                <Link href="/college-baseball/editorial" className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors">
                   editorial previews
                 </Link>{' '}
                 for all team coverage.
@@ -187,7 +187,7 @@ export default function TeamDossiersIndexPage() {
             </div>
 
             {lastUpdated && (
-              <p className="mt-4 text-[10px] text-text-muted">
+              <p className="mt-4 text-[10px] text-[rgba(196,184,165,0.35)]">
                 Rankings updated {lastUpdated.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
               </p>
             )}

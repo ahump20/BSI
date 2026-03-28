@@ -100,7 +100,7 @@ export function GameCardHero({ game, onClick }: GameCardHeroProps) {
                 >
                   {game.away.score}
                 </span>
-                <span className="text-text-muted text-sm">—</span>
+                <span className="text-[rgba(196,184,165,0.35)] text-sm">—</span>
                 <span
                   className="intel-score intel-score-lg"
                   style={{ color: homeScoreColor }}
@@ -134,7 +134,7 @@ export function GameCardHero({ game, onClick }: GameCardHeroProps) {
       {winProbData.length > 0 && (
         <div className="intel-panel-elevated p-2">
           <div className="flex items-center gap-1 mb-1">
-            <TrendingUp className="h-3 w-3 text-text-muted" />
+            <TrendingUp className="h-3 w-3 text-[rgba(196,184,165,0.35)]" />
             <span className="intel-caption uppercase tracking-wider">Win Probability</span>
           </div>
           <div className="h-[60px]">

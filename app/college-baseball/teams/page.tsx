@@ -142,7 +142,7 @@ function TeamCard({ team }: { team: TeamEntry }) {
       <Card
         padding="md"
         variant="hover"
-        className="text-center transition-all hover:border-burnt-orange"
+        className="text-center transition-all hover:border-[var(--bsi-primary)]"
       >
         <div className="flex flex-col items-center gap-2">
           {logoUrl && (
@@ -155,7 +155,7 @@ function TeamCard({ team }: { team: TeamEntry }) {
               unoptimized
             />
           )}
-          <span className="text-text-primary font-medium text-sm">{team.name}</span>
+          <span className="text-[var(--bsi-bone)] font-medium text-sm">{team.name}</span>
           {preseason && (
             <Badge variant="primary" size="sm">#{preseason.rank}</Badge>
           )}
@@ -185,9 +185,9 @@ export default function TeamsPage() {
                   2026 Preseason
                 </Badge>
                 <h1 className="font-display text-4xl md:text-5xl font-bold uppercase tracking-display mb-4">
-                  College Baseball <span className="text-gradient-blaze">Teams</span>
+                  College Baseball <span className="text-[var(--bsi-primary)]">Teams</span>
                 </h1>
-                <p className="text-text-secondary max-w-2xl mx-auto">
+                <p className="text-[var(--bsi-dust)] max-w-2xl mx-auto">
                   Browse teams by conference. Ranked teams include preseason scouting intel,
                   key players, and editorial previews.
                 </p>
@@ -202,10 +202,10 @@ export default function TeamsPage() {
                 <ScrollReveal key={conference.name} direction="up" delay={confIndex * 50}>
                   <div>
                     <div className="flex items-center gap-4 mb-6">
-                      <h2 className="font-display text-2xl font-bold text-burnt-orange">
+                      <h2 className="font-display text-2xl font-bold text-[var(--bsi-primary)]">
                         {conference.name}
                       </h2>
-                      <span className="text-text-tertiary text-sm">{conference.fullName}</span>
+                      <span className="text-[rgba(196,184,165,0.5)] text-sm">{conference.fullName}</span>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                       {conference.teams.map((team) => (
@@ -219,7 +219,7 @@ export default function TeamsPage() {
 
             <ScrollReveal direction="up" delay={300}>
               <div className="mt-16 text-center">
-                <p className="text-text-tertiary text-sm">
+                <p className="text-[rgba(196,184,165,0.5)] text-sm">
                   All Power 4, Pac-12, and featured mid-major team profiles are live. Coverage expanding through the 2026 season.
                 </p>
               </div>

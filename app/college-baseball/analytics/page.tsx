@@ -68,7 +68,7 @@ export default function CollegeBaseballAnalyticsPage() {
 
   return (
     <>
-      <div>
+      <div className="min-h-screen bg-[#0A0A0A] text-bsi-bone">
         <Section padding="lg" className="pt-6">
           <Container size="wide">
             {/* Breadcrumb */}
@@ -76,19 +76,19 @@ export default function CollegeBaseballAnalyticsPage() {
               <nav className="flex items-center gap-2 text-sm mb-6">
                 <Link
                   href="/"
-                  className="text-text-muted hover:text-burnt-orange transition-colors"
+                  className="text-bsi-dust/50 hover:text-[var(--bsi-primary)] transition-colors"
                 >
                   Home
                 </Link>
-                <span className="text-text-muted">/</span>
+                <span className="text-bsi-dust/50">/</span>
                 <Link
                   href="/college-baseball"
-                  className="text-text-muted hover:text-burnt-orange transition-colors"
+                  className="text-bsi-dust/50 hover:text-[var(--bsi-primary)] transition-colors"
                 >
                   College Baseball
                 </Link>
-                <span className="text-text-muted">/</span>
-                <span className="text-text-secondary">Analytics</span>
+                <span className="text-bsi-dust/50">/</span>
+                <span className="text-bsi-dust">Analytics</span>
               </nav>
             </ScrollReveal>
 
@@ -98,20 +98,20 @@ export default function CollegeBaseballAnalyticsPage() {
                 <div className="flex items-center gap-3 mb-3">
                   <Badge variant="accent" size="sm">BSI PROPRIETARY</Badge>
                 </div>
-                <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-wider text-text-primary">
-                  HAV-F <span className="text-burnt-orange">Analytics</span>
+                <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-wider text-bsi-bone">
+                  HAV-F <span className="text-[var(--bsi-primary)]">Analytics</span>
                 </h1>
-                <p className="text-text-tertiary mt-3 max-w-2xl text-base leading-relaxed">
+                <p className="text-bsi-dust mt-3 max-w-2xl text-base leading-relaxed">
                   BSI&apos;s proprietary player evaluation metric. Four measurable dimensions
                   compressed into a single composite score that tells you what batting
                   average and ERA alone never will.{' '}
-                  <Link href="/models/havf" className="text-burnt-orange hover:text-ember transition-colors">
+                  <Link href="/models/havf" className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors">
                     Read the full methodology &rarr;
                   </Link>
                 </p>
-                <p className="text-text-muted mt-2 text-sm">
+                <p className="text-bsi-dust/50 mt-2 text-sm">
                   Looking for wOBA, FIP, wRC+, park factors?{' '}
-                  <Link href="/college-baseball/savant" className="text-burnt-orange hover:text-ember transition-colors">
+                  <Link href="/college-baseball/savant" className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors">
                     College Baseball Savant &rarr;
                   </Link>
                 </p>
@@ -124,17 +124,17 @@ export default function CollegeBaseballAnalyticsPage() {
                 {METHODOLOGY.map((m) => (
                   <Card key={m.key} padding="md" className="group">
                     <div className="flex items-baseline gap-2 mb-1.5">
-                      <span className="font-display text-2xl font-bold text-burnt-orange">
+                      <span className="font-display text-2xl font-bold text-[var(--bsi-primary)]">
                         {m.key}
                       </span>
-                      <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider">
+                      <span className="text-[10px] font-mono text-bsi-dust/50 uppercase tracking-wider">
                         {m.weight}
                       </span>
                     </div>
-                    <p className="font-display text-xs uppercase tracking-widest text-text-secondary mb-1">
+                    <p className="font-display text-xs uppercase tracking-widest text-bsi-dust mb-1">
                       {m.label}
                     </p>
-                    <p className="text-[11px] text-text-muted leading-relaxed">
+                    <p className="text-[11px] text-bsi-dust/50 leading-relaxed">
                       {m.description}
                     </p>
                   </Card>
@@ -147,22 +147,22 @@ export default function CollegeBaseballAnalyticsPage() {
               <ScrollReveal direction="up" delay={150}>
                 <Card padding="none" className="overflow-hidden">
                   {/* Skeleton header */}
-                  <div className="px-5 py-4 border-b border-border-subtle flex items-center justify-between">
-                    <div className="h-4 w-40 bg-surface-light rounded-sm animate-pulse" />
-                    <div className="h-3 w-20 bg-surface-light rounded-sm animate-pulse" />
+                  <div className="px-5 py-4 border-b border-[rgba(140,98,57,0.3)] flex items-center justify-between">
+                    <div className="h-4 w-40 bg-[#111111] rounded-sm animate-pulse" />
+                    <div className="h-3 w-20 bg-[#111111] rounded-sm animate-pulse" />
                   </div>
                   {/* Skeleton rows */}
-                  <div className="divide-y divide-border-subtle">
+                  <div className="divide-y divide-[rgba(140,98,57,0.3)]">
                     {Array.from({ length: 10 }).map((_, i) => (
                       <div key={i} className="px-5 py-3 flex items-center gap-4">
-                        <div className="h-4 w-6 bg-surface-light rounded-sm animate-pulse" />
-                        <div className="h-4 flex-1 max-w-[200px] bg-surface-light rounded-sm animate-pulse" />
-                        <div className="h-4 w-16 bg-surface-light rounded-sm animate-pulse hidden sm:block" />
-                        <div className="h-6 w-12 bg-surface-light rounded-sm animate-pulse ml-auto" />
-                        <div className="h-[6px] w-16 bg-surface-light rounded-sm animate-pulse hidden md:block" />
-                        <div className="h-[6px] w-16 bg-surface-light rounded-sm animate-pulse hidden md:block" />
-                        <div className="h-[6px] w-16 bg-surface-light rounded-sm animate-pulse hidden md:block" />
-                        <div className="h-[6px] w-16 bg-surface-light rounded-sm animate-pulse hidden md:block" />
+                        <div className="h-4 w-6 bg-[#111111] rounded-sm animate-pulse" />
+                        <div className="h-4 flex-1 max-w-[200px] bg-[#111111] rounded-sm animate-pulse" />
+                        <div className="h-4 w-16 bg-[#111111] rounded-sm animate-pulse hidden sm:block" />
+                        <div className="h-6 w-12 bg-[#111111] rounded-sm animate-pulse ml-auto" />
+                        <div className="h-[6px] w-16 bg-[#111111] rounded-sm animate-pulse hidden md:block" />
+                        <div className="h-[6px] w-16 bg-[#111111] rounded-sm animate-pulse hidden md:block" />
+                        <div className="h-[6px] w-16 bg-[#111111] rounded-sm animate-pulse hidden md:block" />
+                        <div className="h-[6px] w-16 bg-[#111111] rounded-sm animate-pulse hidden md:block" />
                       </div>
                     ))}
                   </div>
@@ -171,30 +171,30 @@ export default function CollegeBaseballAnalyticsPage() {
             ) : error ? (
               <Card padding="lg" className="text-center">
                 <div className="text-error text-4xl mb-4 font-display">!</div>
-                <h3 className="text-xl font-display font-semibold text-text-primary mb-2 uppercase tracking-wide">
+                <h3 className="text-xl font-display font-semibold text-bsi-bone mb-2 uppercase tracking-wide">
                   Error Loading Leaderboard
                 </h3>
-                <p className="text-text-muted mb-6 text-sm">{error}</p>
+                <p className="text-bsi-dust/50 mb-6 text-sm">{error}</p>
                 <button
                   onClick={retry}
-                  className="px-5 py-2 bg-burnt-orange/20 text-burnt-orange rounded-sm text-sm font-medium hover:bg-burnt-orange/30 transition-colors"
+                  className="px-5 py-2 bg-[var(--bsi-primary)]/20 text-[var(--bsi-primary)] rounded-sm text-sm font-medium hover:bg-[var(--bsi-primary)]/30 transition-colors"
                 >
                   Try again
                 </button>
               </Card>
             ) : players.length === 0 ? (
               <Card padding="lg" className="text-center">
-                <div className="text-text-muted text-4xl mb-4 font-display">--</div>
-                <h3 className="text-xl font-display font-semibold text-text-primary mb-2 uppercase tracking-wide">
+                <div className="text-bsi-dust/50 text-4xl mb-4 font-display">--</div>
+                <h3 className="text-xl font-display font-semibold text-bsi-bone mb-2 uppercase tracking-wide">
                   No Player Data Available
                 </h3>
-                <p className="text-text-muted mb-6 text-sm">
+                <p className="text-bsi-dust/50 mb-6 text-sm">
                   HAV-F leaderboards populate once the season begins and game data flows through
                   the pipeline.
                 </p>
                 <button
                   onClick={retry}
-                  className="px-5 py-2 bg-surface-light text-text-tertiary rounded-sm text-sm font-medium hover:bg-surface-medium transition-colors"
+                  className="px-5 py-2 bg-[#111111] text-bsi-dust rounded-sm text-sm font-medium hover:bg-[#161616] transition-colors"
                 >
                   Refresh
                 </button>
@@ -233,7 +233,7 @@ export default function CollegeBaseballAnalyticsPage() {
 
                 {/* Data attribution */}
                 {response?.meta && (
-                  <div className="mt-8 text-center text-xs text-text-muted">
+                  <div className="mt-8 text-center text-xs text-bsi-dust/50">
                     <p>
                       Source: {response.meta.source} | Last updated: {response.meta.fetched_at} | {response.meta.timezone}
                     </p>

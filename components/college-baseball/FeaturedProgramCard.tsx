@@ -45,7 +45,7 @@ export function FeaturedProgramCard() {
       <CardContent>
         <div className="flex items-start gap-4">
           {/* Logo */}
-          <div className="w-14 h-14 flex-shrink-0 rounded-sm bg-surface-light flex items-center justify-center overflow-hidden">
+          <div className="w-14 h-14 flex-shrink-0 rounded-sm bg-[var(--surface-press-box)] flex items-center justify-center overflow-hidden">
             <img
               src={logoUrl}
               alt="Texas Longhorns"
@@ -60,7 +60,7 @@ export function FeaturedProgramCard() {
               <span className="heritage-stamp text-[10px]">Program Intelligence</span>
             </div>
             <div className="flex items-center gap-2 mb-3">
-              <h3 className="font-display text-lg font-bold uppercase tracking-wide text-text-primary">
+              <h3 className="font-display text-lg font-bold uppercase tracking-wide text-[var(--bsi-bone)]">
                 Texas Longhorns
               </h3>
               {streak && streak.length >= 2 && (
@@ -79,42 +79,42 @@ export function FeaturedProgramCard() {
             {loading ? (
               <div className="flex gap-4">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-10 w-16 bg-surface-light rounded-sm animate-pulse" />
+                  <div key={i} className="h-10 w-16 bg-[var(--surface-press-box)] rounded-sm animate-pulse" />
                 ))}
               </div>
             ) : data ? (
               <div className="flex gap-6 mb-4">
                 <div>
-                  <div className="font-mono text-xl font-bold text-burnt-orange">
+                  <div className="font-mono text-xl font-bold text-[var(--bsi-primary)]">
                     {Math.round(data.batting.wrc_plus)}
                   </div>
-                  <div className="text-text-muted text-[10px]">wRC+</div>
+                  <div className="text-[rgba(196,184,165,0.35)] text-[10px]">wRC+</div>
                 </div>
                 {data.pitching.fip > 0 && (
                 <div>
-                  <div className="font-mono text-xl font-bold text-text-primary">
+                  <div className="font-mono text-xl font-bold text-[var(--bsi-bone)]">
                     {data.pitching.fip.toFixed(2)}
                   </div>
-                  <div className="text-text-muted text-[10px]">Team FIP</div>
+                  <div className="text-[rgba(196,184,165,0.35)] text-[10px]">Team FIP</div>
                 </div>
                 )}
                 <div>
-                  <div className="font-mono text-xl font-bold text-text-primary">
+                  <div className="font-mono text-xl font-bold text-[var(--bsi-bone)]">
                     {data.batting.woba.toFixed(3)}
                   </div>
-                  <div className="text-text-muted text-[10px]">wOBA</div>
+                  <div className="text-[rgba(196,184,165,0.35)] text-[10px]">wOBA</div>
                 </div>
               </div>
             ) : (
               <div className="mb-4">
-                <p className="text-text-muted text-xs">6 CWS titles · 38 CWS appearances · UFCU Disch-Falk Field</p>
+                <p className="text-[rgba(196,184,165,0.35)] text-xs">6 CWS titles · 38 CWS appearances · UFCU Disch-Falk Field</p>
               </div>
             )}
 
             {/* CTA */}
             <Link
               href="/college-baseball/texas-intelligence"
-              className="inline-flex items-center gap-1 text-sm text-burnt-orange hover:text-ember transition-colors font-semibold"
+              className="inline-flex items-center gap-1 text-sm text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors font-semibold"
             >
               View Full Intel
               <span aria-hidden="true">&rarr;</span>

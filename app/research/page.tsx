@@ -42,12 +42,12 @@ export default function ResearchIndexPage() {
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/"
-                className="text-text-muted hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 Home
               </Link>
-              <span className="text-text-muted/40">/</span>
-              <span className="text-text-primary">Research</span>
+              <span className="text-[rgba(196,184,165,0.35)]/40">/</span>
+              <span className="text-[var(--bsi-bone)]">Research</span>
             </nav>
           </Container>
         </Section>
@@ -58,15 +58,15 @@ export default function ResearchIndexPage() {
           <Container>
             <div className="max-w-3xl">
               <div className="flex items-center gap-3 mb-8">
-                <div className="h-px w-8 bg-burnt-orange/60" />
-                <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-burnt-orange/70">
+                <div className="h-px w-8 bg-[var(--bsi-primary)]/60" />
+                <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-[var(--bsi-primary)]/70">
                   BSI Research Division
                 </span>
               </div>
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-wide mb-6">
                 Research
               </h1>
-              <p className="font-serif text-xl md:text-2xl text-text-tertiary leading-relaxed max-w-2xl">
+              <p className="font-serif text-xl md:text-2xl text-[rgba(196,184,165,0.5)] leading-relaxed max-w-2xl">
                 Long-form scholarly analysis of the structural forces reshaping college athletics.
                 Evidence-based. Peer-review sourced. No takes without receipts.
               </p>
@@ -77,7 +77,7 @@ export default function ResearchIndexPage() {
         {/* Published Analyses */}
         <Section padding="lg" background="charcoal">
           <Container size="lg">
-            <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-text-muted mb-8">
+            <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-[rgba(196,184,165,0.35)] mb-8">
               Published Analyses
             </p>
             <div className="space-y-8">
@@ -87,38 +87,38 @@ export default function ResearchIndexPage() {
                   href={`/research/${analysis.slug}`}
                   className="block group"
                 >
-                  <article className="relative bg-background-primary/40 border border-border/60 rounded-sm overflow-hidden hover:border-burnt-orange/25 transition-all duration-500">
+                  <article className="relative bg-[var(--surface-scoreboard)]/40 border border-border/60 rounded-sm overflow-hidden hover:border-[var(--bsi-primary)]/25 transition-all duration-500">
                     {/* Left accent bar */}
-                    <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-burnt-orange/20 group-hover:bg-burnt-orange/60 transition-colors duration-500" />
+                    <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-[var(--bsi-primary)]/20 group-hover:bg-[var(--bsi-primary)]/60 transition-colors duration-500" />
 
                     <div className="p-8 md:p-10 pl-8 md:pl-12">
                       {/* Meta line */}
                       <div className="flex items-center gap-4 mb-5">
-                        <span className="font-mono text-xs text-text-muted tracking-wide">
+                        <span className="font-mono text-xs text-[rgba(196,184,165,0.35)] tracking-wide">
                           {analysis.date}
                         </span>
-                        <span className="text-text-muted/30">&middot;</span>
-                        <span className="font-mono text-xs text-text-muted tracking-wide">
+                        <span className="text-[rgba(196,184,165,0.35)]/30">&middot;</span>
+                        <span className="font-mono text-xs text-[rgba(196,184,165,0.35)] tracking-wide">
                           {analysis.wordCount} words
                         </span>
-                        <span className="text-text-muted/30">&middot;</span>
-                        <span className="font-mono text-xs text-text-muted tracking-wide">
+                        <span className="text-[rgba(196,184,165,0.35)]/30">&middot;</span>
+                        <span className="font-mono text-xs text-[rgba(196,184,165,0.35)] tracking-wide">
                           {analysis.readTime} read
                         </span>
                       </div>
 
                       {/* Title */}
-                      <h2 className="font-display text-2xl md:text-3xl lg:text-4xl font-bold uppercase tracking-wide mb-3 group-hover:text-burnt-orange transition-colors duration-300">
+                      <h2 className="font-display text-2xl md:text-3xl lg:text-4xl font-bold uppercase tracking-wide mb-3 group-hover:text-[var(--bsi-primary)] transition-colors duration-300">
                         {analysis.title}
                       </h2>
 
                       {/* Subtitle */}
-                      <p className="font-serif text-lg md:text-xl text-burnt-orange/70 italic mb-5">
+                      <p className="font-serif text-lg md:text-xl text-[var(--bsi-primary)]/70 italic mb-5">
                         {analysis.subtitle}
                       </p>
 
                       {/* Description */}
-                      <p className="font-serif text-text-secondary leading-relaxed mb-8 max-w-3xl">
+                      <p className="font-serif text-[var(--bsi-dust)] leading-relaxed mb-8 max-w-3xl">
                         {analysis.description}
                       </p>
 
@@ -128,13 +128,13 @@ export default function ResearchIndexPage() {
                           {analysis.tags.map((tag) => (
                             <span
                               key={tag}
-                              className="text-[10px] font-mono uppercase tracking-wider px-2.5 py-1 rounded-sm bg-burnt-orange/8 text-burnt-orange/60 border border-burnt-orange/10"
+                              className="text-[10px] font-mono uppercase tracking-wider px-2.5 py-1 rounded-sm bg-[var(--bsi-primary)]/8 text-[var(--bsi-primary)]/60 border border-[var(--bsi-primary)]/10"
                             >
                               {tag}
                             </span>
                           ))}
                         </div>
-                        <span className="font-mono text-xs text-burnt-orange/60 group-hover:text-burnt-orange transition-colors uppercase tracking-wider">
+                        <span className="font-mono text-xs text-[var(--bsi-primary)]/60 group-hover:text-[var(--bsi-primary)] transition-colors uppercase tracking-wider">
                           Read Analysis &rarr;
                         </span>
                       </div>

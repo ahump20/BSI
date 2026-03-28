@@ -44,11 +44,11 @@ export default function TexasNILClient() {
         <Section padding="sm" className="border-b border-border">
           <Container>
             <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">College Baseball</Link>
-              <span className="text-text-muted">/</span>
-              <Link href="/college-baseball/texas-intelligence" className="text-text-muted hover:text-burnt-orange transition-colors">Texas Intel</Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-primary">NIL Intelligence</span>
+              <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">College Baseball</Link>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <Link href="/college-baseball/texas-intelligence" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">Texas Intel</Link>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[var(--bsi-bone)]">NIL Intelligence</span>
             </nav>
           </Container>
         </Section>
@@ -62,10 +62,10 @@ export default function TexasNILClient() {
                 <img src={logoUrl} alt="Texas" className="w-12 h-12 object-contain" loading="eager" />
                 <div>
                   <span className="heritage-stamp text-[10px]">NIL Intelligence</span>
-                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-text-primary mt-1">
+                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-[var(--bsi-bone)] mt-1">
                     Texas NIL Valuations
                   </h1>
-                  <p className="text-text-secondary text-sm mt-2 max-w-xl">
+                  <p className="text-[var(--bsi-dust)] text-sm mt-2 max-w-xl">
                     Player NIL indices, WAR-to-dollar efficiency, and draft leverage analysis.
                   </p>
                 </div>
@@ -99,19 +99,19 @@ export default function TexasNILClient() {
                     <div className="grid grid-cols-2 gap-px bg-border-subtle rounded-sm overflow-hidden">
                       {[
                         { label: 'Elite + Paid', desc: 'High performance, high NIL', bg: 'bg-[var(--bsi-success)]/5', check: (p: DraftLeveragePlayer) => p.nil_index >= 60 && p.draft_round_projection <= 5 },
-                        { label: 'Undervalued', desc: 'High performance, low NIL', bg: 'bg-burnt-orange/5', check: (p: DraftLeveragePlayer) => p.nil_index >= 60 && p.draft_round_projection > 5 },
+                        { label: 'Undervalued', desc: 'High performance, low NIL', bg: 'bg-[var(--bsi-primary)]/5', check: (p: DraftLeveragePlayer) => p.nil_index >= 60 && p.draft_round_projection > 5 },
                         { label: 'Overvalued', desc: 'Low performance, high NIL', bg: 'bg-[var(--bsi-danger)]/5', check: (p: DraftLeveragePlayer) => p.nil_index < 60 && p.draft_round_projection <= 5 },
                         { label: 'Development', desc: 'Building both', bg: 'bg-[var(--surface-dugout)]', check: (p: DraftLeveragePlayer) => p.nil_index < 60 && p.draft_round_projection > 5 },
                       ].map((q) => (
                         <div key={q.label} className={`${q.bg} p-4`}>
-                          <div className="text-text-primary text-sm font-medium">{q.label}</div>
-                          <div className="text-text-muted text-xs mt-1">{q.desc}</div>
+                          <div className="text-[var(--bsi-bone)] text-sm font-medium">{q.label}</div>
+                          <div className="text-[rgba(196,184,165,0.35)] text-xs mt-1">{q.desc}</div>
                           <div className="mt-2 space-y-1">
                             {draftData.players
                               .filter(q.check)
                               .slice(0, 3)
                               .map((p) => (
-                                <div key={p.player_id} className="text-xs text-text-secondary font-mono">{p.name}</div>
+                                <div key={p.player_id} className="text-xs text-[var(--bsi-dust)] font-mono">{p.name}</div>
                               ))}
                           </div>
                         </div>
@@ -128,7 +128,7 @@ export default function TexasNILClient() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <Card variant="default" padding="lg" className="border-t-2 border-burnt-orange">
+              <Card variant="default" padding="lg" className="border-t-2 border-[var(--bsi-primary)]">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3">
                     <span>Draft Leverage</span>
@@ -136,7 +136,7 @@ export default function TexasNILClient() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-text-secondary text-sm mb-4">
+                  <p className="text-[var(--bsi-dust)] text-sm mb-4">
                     How draft position affects NIL strategy — players projected in early rounds
                     have signing bonus leverage that makes NIL less critical, while later-round
                     projections increase NIL importance for retention.
@@ -144,14 +144,14 @@ export default function TexasNILClient() {
                   {draftLoading ? (
                     <div className="space-y-3">
                       {[1, 2, 3].map((i) => (
-                        <div key={i} className="h-10 bg-surface-light rounded-sm animate-pulse" />
+                        <div key={i} className="h-10 bg-[var(--surface-press-box)] rounded-sm animate-pulse" />
                       ))}
                     </div>
                   ) : draftData?.players && draftData.players.length > 0 ? (
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                          <tr className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
                             <th className="text-left py-2 px-2">Player</th>
                             <th className="text-right py-2 px-2">NIL Index</th>
                             <th className="text-right py-2 px-2">Draft Proj.</th>
@@ -160,22 +160,22 @@ export default function TexasNILClient() {
                         </thead>
                         <tbody>
                           {draftData.players.map((p) => (
-                            <tr key={p.player_id} className="border-t border-border-subtle">
-                              <td className="py-2 px-2 text-text-primary font-medium">{p.name}</td>
+                            <tr key={p.player_id} className="border-t border-[var(--border-vintage)]">
+                              <td className="py-2 px-2 text-[var(--bsi-bone)] font-medium">{p.name}</td>
                               <td className="py-2 px-2 text-right font-mono" style={{ color: p.nil_index >= 70 ? ACCENT : undefined }}>
                                 {p.nil_index.toFixed(1)}
                               </td>
-                              <td className="py-2 px-2 text-right font-mono text-text-secondary">
+                              <td className="py-2 px-2 text-right font-mono text-[var(--bsi-dust)]">
                                 Rd {p.draft_round_projection}
                               </td>
-                              <td className="py-2 px-2 text-text-muted text-xs">{p.leverage_quadrant}</td>
+                              <td className="py-2 px-2 text-[rgba(196,184,165,0.35)] text-xs">{p.leverage_quadrant}</td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
                     </div>
                   ) : (
-                    <p className="text-text-muted text-sm text-center py-6">
+                    <p className="text-[rgba(196,184,165,0.35)] text-sm text-center py-6">
                       {draftError ? 'Unable to load draft leverage data. Try refreshing.' : 'Draft leverage data not yet available for this season.'}
                     </p>
                   )}
@@ -201,10 +201,10 @@ export default function TexasNILClient() {
                 }
               />
               <div className="flex flex-wrap gap-4">
-                <Link href="/college-baseball/texas-intelligence" className="text-sm text-burnt-orange hover:text-ember transition-colors">
+                <Link href="/college-baseball/texas-intelligence" className="text-sm text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors">
                   &larr; Back to Hub
                 </Link>
-                <Link href="/nil-valuation" className="text-sm text-text-muted hover:text-text-primary transition-colors">
+                <Link href="/nil-valuation" className="text-sm text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] transition-colors">
                   Full NIL Valuation Tool &rarr;
                 </Link>
               </div>

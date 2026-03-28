@@ -86,12 +86,12 @@ export function ParkFactorTable({ data, isPro = false, className = '' }: ParkFac
   }
 
   return (
-    <div className={`bg-background-primary border border-border-subtle rounded-sm overflow-hidden ${className}`}>
-      <div className="px-5 py-4 border-b border-border-subtle flex items-center justify-between">
-        <h3 className="font-display text-base uppercase tracking-wider text-text-primary">Park Factors</h3>
+    <div className={`bg-[var(--surface-scoreboard)] border border-[var(--border-vintage)] rounded-sm overflow-hidden ${className}`}>
+      <div className="px-5 py-4 border-b border-[var(--border-vintage)] flex items-center justify-between">
+        <h3 className="font-display text-base uppercase tracking-wider text-[var(--bsi-bone)]">Park Factors</h3>
         <button
           onClick={() => setGroupByConf(!groupByConf)}
-          className="text-[10px] font-mono text-text-muted hover:text-text-muted transition-colors"
+          className="text-[10px] font-mono text-[rgba(196,184,165,0.35)] hover:text-[rgba(196,184,165,0.35)] transition-colors"
         >
           {groupByConf ? 'Sort by factor' : 'Group by conference'}
         </button>
@@ -100,7 +100,7 @@ export function ParkFactorTable({ data, isPro = false, className = '' }: ParkFac
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-border-subtle">
+            <tr className="border-b border-[var(--border-vintage)]">
               <th
                 className="pl-5 pr-2 py-3 text-left cursor-pointer"
                 onClick={() => handleSort('team')}
@@ -109,12 +109,12 @@ export function ParkFactorTable({ data, isPro = false, className = '' }: ParkFac
                 role="columnheader"
                 aria-sort={sortKey === 'team' ? (sortDir === 'asc' ? 'ascending' : 'descending') : undefined}
               >
-                <span className={`text-[10px] font-display uppercase tracking-widest ${sortKey === 'team' ? 'text-burnt-orange' : 'text-text-muted'}`}>
+                <span className={`text-[10px] font-display uppercase tracking-widest ${sortKey === 'team' ? 'text-[var(--bsi-primary)]' : 'text-[rgba(196,184,165,0.35)]'}`}>
                   Team {sortKey === 'team' && (sortDir === 'asc' ? '▲' : '▼')}
                 </span>
               </th>
               <th className="px-2 py-3 text-left hidden sm:table-cell">
-                <span className="text-[10px] font-display uppercase tracking-widest text-text-muted">Venue</span>
+                <span className="text-[10px] font-display uppercase tracking-widest text-[rgba(196,184,165,0.35)]">Venue</span>
               </th>
               <th
                 className="px-2 py-3 text-center cursor-pointer"
@@ -124,12 +124,12 @@ export function ParkFactorTable({ data, isPro = false, className = '' }: ParkFac
                 role="columnheader"
                 aria-sort={sortKey === 'runs_factor' ? (sortDir === 'asc' ? 'ascending' : 'descending') : undefined}
               >
-                <span className={`text-[10px] font-display uppercase tracking-widest ${sortKey === 'runs_factor' ? 'text-burnt-orange' : 'text-text-muted'}`}>
+                <span className={`text-[10px] font-display uppercase tracking-widest ${sortKey === 'runs_factor' ? 'text-[var(--bsi-primary)]' : 'text-[rgba(196,184,165,0.35)]'}`}>
                   Runs {sortKey === 'runs_factor' && (sortDir === 'asc' ? '▲' : '▼')}
                 </span>
               </th>
               <th className="px-2 py-3 hidden md:table-cell">
-                <span className="text-[10px] font-display uppercase tracking-widest text-text-muted">Factor</span>
+                <span className="text-[10px] font-display uppercase tracking-widest text-[rgba(196,184,165,0.35)]">Factor</span>
               </th>
               <th
                 className="px-2 py-3 text-center hidden md:table-cell cursor-pointer"
@@ -139,7 +139,7 @@ export function ParkFactorTable({ data, isPro = false, className = '' }: ParkFac
                 role="columnheader"
                 aria-sort={sortKey === 'sample_games' ? (sortDir === 'asc' ? 'ascending' : 'descending') : undefined}
               >
-                <span className={`text-[10px] font-display uppercase tracking-widest ${sortKey === 'sample_games' ? 'text-burnt-orange' : 'text-text-muted'}`}>
+                <span className={`text-[10px] font-display uppercase tracking-widest ${sortKey === 'sample_games' ? 'text-[var(--bsi-primary)]' : 'text-[rgba(196,184,165,0.35)]'}`}>
                   Games {sortKey === 'sample_games' && (sortDir === 'asc' ? '▲' : '▼')}
                 </span>
               </th>
@@ -152,9 +152,9 @@ export function ParkFactorTable({ data, isPro = false, className = '' }: ParkFac
               if (groupByConf && row.conference && row.conference !== lastConf) {
                 lastConf = row.conference;
                 confHeader = (
-                  <tr key={`conf-${row.conference}`} className="bg-surface-light">
+                  <tr key={`conf-${row.conference}`} className="bg-[var(--surface-press-box)]">
                     <td colSpan={5} className="pl-5 py-2">
-                      <span className="text-[10px] font-display uppercase tracking-widest text-burnt-orange">
+                      <span className="text-[10px] font-display uppercase tracking-widest text-[var(--bsi-primary)]">
                         {row.conference}
                       </span>
                     </td>
@@ -167,15 +167,15 @@ export function ParkFactorTable({ data, isPro = false, className = '' }: ParkFac
 
               return (
                 <React.Fragment key={`${row.team}-${i}`}>{confHeader}
-                <tr className="border-b border-border-subtle">
+                <tr className="border-b border-[var(--border-vintage)]">
                   <td className="pl-5 pr-2 py-3">
-                    <span className="text-text-primary text-sm font-medium">{row.team}</span>
+                    <span className="text-[var(--bsi-bone)] text-sm font-medium">{row.team}</span>
                     {row.conference && !groupByConf && (
-                      <span className="ml-1.5 text-[10px] text-text-muted">{row.conference}</span>
+                      <span className="ml-1.5 text-[10px] text-[rgba(196,184,165,0.35)]">{row.conference}</span>
                     )}
                   </td>
                   <td className="px-2 py-3 hidden sm:table-cell">
-                    <span className="text-text-muted text-xs">{row.venue_name || '—'}</span>
+                    <span className="text-[rgba(196,184,165,0.35)] text-xs">{row.venue_name || '—'}</span>
                   </td>
                   <td className="px-2 py-3 text-center">
                     <span
@@ -187,7 +187,7 @@ export function ParkFactorTable({ data, isPro = false, className = '' }: ParkFac
                   </td>
                   {/* Thermometer bar */}
                   <td className="px-2 py-3 hidden md:table-cell">
-                    <div className="w-full h-[6px] rounded-full bg-surface-light overflow-hidden">
+                    <div className="w-full h-[6px] rounded-full bg-[var(--surface-press-box)] overflow-hidden">
                       <div
                         className="h-full rounded-full transition-all duration-500"
                         style={{ width: `${width}%`, backgroundColor: color }}
@@ -195,7 +195,7 @@ export function ParkFactorTable({ data, isPro = false, className = '' }: ParkFac
                     </div>
                   </td>
                   <td className="px-2 py-3 text-center hidden md:table-cell">
-                    <span className="text-text-muted text-xs font-mono">{row.sample_games}</span>
+                    <span className="text-[rgba(196,184,165,0.35)] text-xs font-mono">{row.sample_games}</span>
                   </td>
                 </tr></React.Fragment>
               );
@@ -205,10 +205,10 @@ export function ParkFactorTable({ data, isPro = false, className = '' }: ParkFac
       </div>
 
       {!isPro && data.length > 5 && (
-        <div className="px-5 py-3 border-t border-border-subtle text-center">
+        <div className="px-5 py-3 border-t border-[var(--border-vintage)] text-center">
           <a
             href="/pricing"
-            className="text-xs text-burnt-orange hover:text-ember font-medium transition-colors"
+            className="text-xs text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] font-medium transition-colors"
           >
             Upgrade to Pro for all {data.length} venues
           </a>

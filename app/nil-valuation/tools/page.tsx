@@ -105,17 +105,17 @@ export default function NILToolsPage() {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/nil-valuation"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 NIL Valuation
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">Tools</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">Tools</span>
             </nav>
           </Container>
         </Section>
@@ -131,13 +131,13 @@ export default function NILToolsPage() {
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-gradient-blaze mb-4">
+              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-[var(--bsi-primary)] mb-4">
                 NIL Valuation Tools
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="text-text-secondary max-w-2xl">
+              <p className="text-[var(--bsi-dust)] max-w-2xl">
                 Calculators, analyzers, and market intelligence tools to help athletes, agents, and
                 programs make informed NIL decisions.
               </p>
@@ -166,7 +166,7 @@ export default function NILToolsPage() {
                       </div>
                     </CardHeader>
                     <CardContent className="flex-1 flex flex-col">
-                      <p className="text-text-secondary text-sm mb-6 flex-1">{tool.description}</p>
+                      <p className="text-[var(--bsi-dust)] text-sm mb-6 flex-1">{tool.description}</p>
                       <Link href={tool.href}>
                         <Button variant="primary" size="sm" className="w-full">
                           Launch Tool
@@ -181,10 +181,10 @@ export default function NILToolsPage() {
             {/* CTA */}
             <ScrollReveal delay={400}>
               <Card variant="default" padding="lg" className="mt-12 text-center">
-                <h3 className="font-display text-xl font-bold text-text-primary mb-4">
+                <h3 className="font-display text-xl font-bold text-[var(--bsi-bone)] mb-4">
                   Need a Custom Analysis?
                 </h3>
-                <p className="text-text-secondary mb-6 max-w-xl mx-auto">
+                <p className="text-[var(--bsi-dust)] mb-6 max-w-xl mx-auto">
                   Our Pro tier includes valuation reports, market analysis, and advanced NIL tools.
                 </p>
                 <Link href="/pricing">

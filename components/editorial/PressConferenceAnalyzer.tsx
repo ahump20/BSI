@@ -99,10 +99,10 @@ export default function PressConferenceAnalyzer() {
     <div className="min-h-screen bg-surface-scoreboard">
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-1.5 text-xs text-text-muted mb-6 font-mono">
-          <a href="/college-baseball" className="hover:text-burnt-orange transition-colors">College Baseball</a>
+        <nav className="flex items-center gap-1.5 text-xs text-[rgba(196,184,165,0.35)] mb-6 font-mono">
+          <a href="/college-baseball" className="hover:text-[var(--bsi-primary)] transition-colors">College Baseball</a>
           <span>/</span>
-          <a href="/college-baseball/texas-intelligence" className="hover:text-burnt-orange transition-colors">Texas Intel</a>
+          <a href="/college-baseball/texas-intelligence" className="hover:text-[var(--bsi-primary)] transition-colors">Texas Intel</a>
           <span>/</span>
           <span className="text-bsi-dust">Press Conference</span>
         </nav>
@@ -127,21 +127,21 @@ export default function PressConferenceAnalyzer() {
               value={coach}
               onChange={(e) => setCoach(e.target.value)}
               placeholder="Coach name (optional)"
-              className="px-4 py-2.5 bg-surface-dugout border border-border-vintage rounded-sm text-bsi-bone placeholder-text-muted text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
+              className="px-4 py-2.5 bg-surface-dugout border border-border-vintage rounded-sm text-bsi-bone placeholder-text-muted text-sm focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-all"
             />
             <input
               type="text"
               value={team}
               onChange={(e) => setTeam(e.target.value)}
               placeholder="Team (optional)"
-              className="px-4 py-2.5 bg-surface-dugout border border-border-vintage rounded-sm text-bsi-bone placeholder-text-muted text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
+              className="px-4 py-2.5 bg-surface-dugout border border-border-vintage rounded-sm text-bsi-bone placeholder-text-muted text-sm focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-all"
             />
             <input
               type="text"
               value={context}
               onChange={(e) => setContext(e.target.value)}
               placeholder="Context, e.g. 'post-game Friday'"
-              className="px-4 py-2.5 bg-surface-dugout border border-border-vintage rounded-sm text-bsi-bone placeholder-text-muted text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
+              className="px-4 py-2.5 bg-surface-dugout border border-border-vintage rounded-sm text-bsi-bone placeholder-text-muted text-sm focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-all"
             />
           </div>
 
@@ -149,11 +149,11 @@ export default function PressConferenceAnalyzer() {
             value={transcript}
             onChange={(e) => setTranscript(e.target.value)}
             placeholder="Paste the press conference transcript here..."
-            className="w-full h-48 px-4 py-3 bg-surface-dugout border border-border-vintage rounded-sm text-bsi-bone placeholder-text-muted text-sm focus:outline-none focus:border-burnt-orange/50 transition-all resize-y font-mono leading-relaxed"
+            className="w-full h-48 px-4 py-3 bg-surface-dugout border border-border-vintage rounded-sm text-bsi-bone placeholder-text-muted text-sm focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-all resize-y font-mono leading-relaxed"
           />
 
           <div className="flex items-center justify-between">
-            <span className="text-xs text-text-muted font-mono">
+            <span className="text-xs text-[rgba(196,184,165,0.35)] font-mono">
               {transcript.length.toLocaleString()} / 15,000 characters
             </span>
             <button
@@ -188,7 +188,7 @@ export default function PressConferenceAnalyzer() {
             {/* Confidence badge */}
             {analysis.confidenceLevel && (
               <div className="flex items-center gap-2">
-                <span className="text-xs text-text-muted font-mono uppercase tracking-wider">Analysis Confidence:</span>
+                <span className="text-xs text-[rgba(196,184,165,0.35)] font-mono uppercase tracking-wider">Analysis Confidence:</span>
                 <span className={`text-xs font-bold uppercase ${CONFIDENCE_COLORS[analysis.confidenceLevel] || 'text-bsi-dust'}`}>
                   {analysis.confidenceLevel}
                 </span>
@@ -202,7 +202,7 @@ export default function PressConferenceAnalyzer() {
                 <ul className="space-y-2">
                   {analysis.keyTakeaways.map((t, i) => (
                     <li key={i} className="flex gap-2 text-sm text-bsi-bone">
-                      <span className="text-burnt-orange mt-0.5 shrink-0">&#9670;</span>
+                      <span className="text-[var(--bsi-primary)] mt-0.5 shrink-0">&#9670;</span>
                       <span>{t}</span>
                     </li>
                   ))}
@@ -216,7 +216,7 @@ export default function PressConferenceAnalyzer() {
                 <h2 className="heritage-stamp text-xs mb-4">Lineup Signals</h2>
                 <div className="space-y-3">
                   {analysis.lineupSignals.map((s, i) => (
-                    <div key={i} className="border-l-2 border-burnt-orange/40 pl-4">
+                    <div key={i} className="border-l-2 border-[var(--bsi-primary)]/40 pl-4">
                       <p className="text-sm text-bsi-bone">{s.signal}</p>
                       <p className="text-xs text-bsi-dust mt-1">{s.implication}</p>
                     </div>
@@ -234,7 +234,7 @@ export default function PressConferenceAnalyzer() {
                     <div key={i} className="border-l-2 border-[var(--bsi-warning)]/40 pl-4">
                       <p className="text-sm font-semibold text-bsi-bone">{h.player}</p>
                       <p className="text-xs text-bsi-dust">{h.status}</p>
-                      <p className="text-xs text-burnt-orange/80 italic mt-1">{h.readBetweenLines}</p>
+                      <p className="text-xs text-[var(--bsi-primary)]/80 italic mt-1">{h.readBetweenLines}</p>
                     </div>
                   ))}
                 </div>
@@ -262,7 +262,7 @@ export default function PressConferenceAnalyzer() {
                 <h2 className="heritage-stamp text-xs mb-4">Midweek Rotation Signals</h2>
                 <div className="space-y-3">
                   {analysis.midweekRotationSignals.map((s, i) => (
-                    <div key={i} className="border-l-2 border-burnt-orange/40 pl-4">
+                    <div key={i} className="border-l-2 border-[var(--bsi-primary)]/40 pl-4">
                       <p className="text-sm text-bsi-bone">{s.signal}</p>
                       <p className="text-xs text-bsi-dust mt-1">{s.implication}</p>
                     </div>
@@ -292,7 +292,7 @@ export default function PressConferenceAnalyzer() {
                 <h2 className="heritage-stamp text-xs mb-4">DH &amp; Platoon Signals</h2>
                 <div className="space-y-3">
                   {analysis.dhPlatoonSignals.map((s, i) => (
-                    <div key={i} className="border-l-2 border-burnt-orange/40 pl-4">
+                    <div key={i} className="border-l-2 border-[var(--bsi-primary)]/40 pl-4">
                       <p className="text-sm text-bsi-bone">{s.signal}</p>
                       <p className="text-xs text-bsi-dust mt-1">{s.implication}</p>
                     </div>
@@ -339,11 +339,11 @@ export default function PressConferenceAnalyzer() {
                   {analysis.saidVsImplied.map((s, i) => (
                     <div key={i} className="bg-surface-scoreboard/50 rounded-sm p-4">
                       <div className="flex items-start gap-2 mb-2">
-                        <span className="text-xs text-text-muted font-mono uppercase shrink-0 mt-0.5">Said:</span>
+                        <span className="text-xs text-[rgba(196,184,165,0.35)] font-mono uppercase shrink-0 mt-0.5">Said:</span>
                         <p className="text-sm text-bsi-bone italic">&ldquo;{s.quote}&rdquo;</p>
                       </div>
                       <div className="flex items-start gap-2">
-                        <span className="text-xs text-burnt-orange font-mono uppercase shrink-0 mt-0.5">Implied:</span>
+                        <span className="text-xs text-[var(--bsi-primary)] font-mono uppercase shrink-0 mt-0.5">Implied:</span>
                         <p className="text-sm text-bsi-dust">{s.subtext}</p>
                       </div>
                       <span className={`text-[10px] font-mono uppercase mt-2 inline-block ${CONFIDENCE_COLORS[s.confidence] || ''}`}>

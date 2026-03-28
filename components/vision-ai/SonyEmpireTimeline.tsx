@@ -67,8 +67,8 @@ export function SonyEmpireTimeline({ className = '' }: { className?: string }) {
     <div className={className}>
       {/* Timeline header */}
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-2 h-2 rounded-full bg-burnt-orange animate-pulse" />
-        <span className="text-xs uppercase tracking-wider text-text-tertiary font-semibold">
+        <div className="w-2 h-2 rounded-full bg-[var(--bsi-primary)] animate-pulse" />
+        <span className="text-xs uppercase tracking-wider text-[rgba(196,184,165,0.5)] font-semibold">
           2011 &mdash; Present
         </span>
         <div className="flex-1 h-px bg-gradient-to-r from-burnt-orange/30 to-transparent" />
@@ -92,10 +92,10 @@ export function SonyEmpireTimeline({ className = '' }: { className?: string }) {
                     onClick={() => setExpanded(isExpanded ? null : i)}
                     className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center font-mono text-xs font-bold transition-all border ${
                       isLast
-                        ? 'bg-burnt-orange text-white border-burnt-orange shadow-[0_0_20px_rgba(191,87,0,0.4)]'
+                        ? 'bg-[var(--bsi-primary)] text-white border-[var(--bsi-primary)] shadow-[0_0_20px_rgba(191,87,0,0.4)]'
                         : isExpanded
-                          ? 'bg-burnt-orange/20 text-burnt-orange border-burnt-orange/40'
-                          : 'bg-graphite text-text-secondary border-border hover:border-burnt-orange/30 hover:text-burnt-orange'
+                          ? 'bg-[var(--bsi-primary)]/20 text-[var(--bsi-primary)] border-[var(--bsi-primary)]/40'
+                          : 'bg-graphite text-[var(--bsi-dust)] border-border hover:border-[var(--bsi-primary)]/30 hover:text-[var(--bsi-primary)]'
                     }`}
                     aria-expanded={isExpanded}
                     aria-label={`${acq.year}: ${acq.company}`}
@@ -108,8 +108,8 @@ export function SonyEmpireTimeline({ className = '' }: { className?: string }) {
                 <div
                   className={`rounded-sm border transition-all cursor-pointer ${
                     isExpanded
-                      ? 'bg-surface-light border-burnt-orange/20'
-                      : 'bg-transparent border-transparent hover:bg-surface-light'
+                      ? 'bg-[var(--surface-press-box)] border-[var(--bsi-primary)]/20'
+                      : 'bg-transparent border-transparent hover:bg-[var(--surface-press-box)]'
                   }`}
                   onClick={() => setExpanded(isExpanded ? null : i)}
                   role="button"
@@ -123,28 +123,28 @@ export function SonyEmpireTimeline({ className = '' }: { className?: string }) {
                 >
                   <div className="px-4 py-3">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-burnt-orange font-mono text-sm font-bold">{acq.year}</span>
-                      <span className="text-text-primary font-semibold text-sm">{acq.company}</span>
+                      <span className="text-[var(--bsi-primary)] font-mono text-sm font-bold">{acq.year}</span>
+                      <span className="text-[var(--bsi-bone)] font-semibold text-sm">{acq.company}</span>
                       <Badge variant="primary" size="sm">{acq.focus}</Badge>
                     </div>
 
                     {isExpanded && (
                       <div className="mt-3 space-y-3 animate-in fade-in duration-200">
-                        <p className="text-text-secondary text-sm leading-relaxed">{acq.detail}</p>
+                        <p className="text-[var(--bsi-dust)] text-sm leading-relaxed">{acq.detail}</p>
 
                         <div className="flex items-center gap-2 flex-wrap">
                           {acq.sports.map((sport) => (
                             <span
                               key={sport}
-                              className="text-[10px] px-2 py-0.5 rounded-full bg-surface-light text-text-muted border border-border-subtle font-mono"
+                              className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.35)] border border-[var(--border-vintage)] font-mono"
                             >
                               {sport}
                             </span>
                           ))}
                         </div>
 
-                        <div className="bg-burnt-orange/5 border border-burnt-orange/10 rounded-sm px-3 py-2">
-                          <p className="text-burnt-orange/80 text-xs font-semibold">
+                        <div className="bg-[var(--bsi-primary)]/5 border border-[var(--bsi-primary)]/10 rounded-sm px-3 py-2">
+                          <p className="text-[var(--bsi-primary)]/80 text-xs font-semibold">
                             {acq.significance}
                           </p>
                         </div>
@@ -159,20 +159,20 @@ export function SonyEmpireTimeline({ className = '' }: { className?: string }) {
       </div>
 
       {/* Summary insight */}
-      <div className="mt-4 bg-graphite rounded-sm p-4 border border-border-subtle">
+      <div className="mt-4 bg-graphite rounded-sm p-4 border border-[var(--border-vintage)]">
         <div className="flex justify-between text-sm mb-2">
-          <span className="text-text-tertiary">Total acquisitions</span>
-          <span className="text-text-primary font-mono">{ACQUISITIONS.length}</span>
+          <span className="text-[rgba(196,184,165,0.5)]">Total acquisitions</span>
+          <span className="text-[var(--bsi-bone)] font-mono">{ACQUISITIONS.length}</span>
         </div>
         <div className="flex justify-between text-sm mb-2">
-          <span className="text-text-tertiary">Span</span>
-          <span className="text-text-primary font-mono">{ACQUISITIONS[ACQUISITIONS.length - 1].year - ACQUISITIONS[0].year} years</span>
+          <span className="text-[rgba(196,184,165,0.5)]">Span</span>
+          <span className="text-[var(--bsi-bone)] font-mono">{ACQUISITIONS[ACQUISITIONS.length - 1].year - ACQUISITIONS[0].year} years</span>
         </div>
         <div className="flex justify-between text-sm">
-          <span className="text-text-tertiary">Sports covered</span>
-          <span className="text-text-primary font-mono">7+</span>
+          <span className="text-[rgba(196,184,165,0.5)]">Sports covered</span>
+          <span className="text-[var(--bsi-bone)] font-mono">7+</span>
         </div>
-        <p className="text-text-muted text-xs mt-3 pt-3 border-t border-border-subtle">
+        <p className="text-[rgba(196,184,165,0.35)] text-xs mt-3 pt-3 border-t border-[var(--border-vintage)]">
           Sony now owns the full stack: data capture (Hawk-Eye), biomechanics (KinaTrax),
           wearable fusion (STATSports), visualization (Beyond Sports), and distribution (Pulselive).
         </p>

@@ -312,8 +312,8 @@ export default function CFBPage() {
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 {hasLiveGames && <span className="w-2 h-2 bg-success rounded-full animate-pulse" />}
-                <h2 className="font-display text-xl md:text-2xl font-bold uppercase tracking-wide text-text-primary">
-                  {hasLiveGames ? 'Live' : 'Recent'} <span className="text-burnt-orange">Scores</span>
+                <h2 className="font-display text-xl md:text-2xl font-bold uppercase tracking-wide text-[var(--bsi-bone)]">
+                  {hasLiveGames ? 'Live' : 'Recent'} <span className="text-[var(--bsi-primary)]">Scores</span>
                 </h2>
               </div>
               <Link href="/cfb/scores">
@@ -345,12 +345,12 @@ export default function CFBPage() {
             ) : (
               <Card variant="default" padding="lg">
                 <div className="text-center py-6">
-                  <p className="text-text-tertiary">No recent games available. Check back during the season for live scores and results.</p>
+                  <p className="text-[rgba(196,184,165,0.5)]">No recent games available. Check back during the season for live scores and results.</p>
                 </div>
               </Card>
             )}
             {scoresRaw?.meta && (
-              <div className="mt-4 pt-3 border-t border-border-subtle">
+              <div className="mt-4 pt-3 border-t border-[var(--border-vintage)]">
                 <DataSourceBadge source={scoresRaw.meta.dataSource || 'SportsDataIO'} timestamp={formatTimestamp(scoresRaw.meta.lastUpdated)} />
               </div>
             )}
@@ -361,8 +361,8 @@ export default function CFBPage() {
         <Section padding="md" background="midnight" borderTop>
           <Container>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="font-display text-xl md:text-2xl font-bold uppercase tracking-wide text-text-primary">
-                Conference <span className="text-burnt-orange">Standings</span>
+              <h2 className="font-display text-xl md:text-2xl font-bold uppercase tracking-wide text-[var(--bsi-bone)]">
+                Conference <span className="text-[var(--bsi-primary)]">Standings</span>
               </h2>
               <Link href="/cfb/standings">
                 <Button variant="ghost" size="sm">Full Standings &rarr;</Button>
@@ -383,33 +383,33 @@ export default function CFBPage() {
                   <ScrollReveal key={conf}>
                     <Card variant="default" padding="md">
                       <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-display text-sm font-bold uppercase tracking-wider text-burnt-orange">{conf}</h3>
-                        <Link href={`/cfb/standings?conference=${conf.toLowerCase().replace(/\s+/g, '-')}`} className="text-xs text-text-muted hover:text-burnt-orange transition-colors">
+                        <h3 className="font-display text-sm font-bold uppercase tracking-wider text-[var(--bsi-primary)]">{conf}</h3>
+                        <Link href={`/cfb/standings?conference=${conf.toLowerCase().replace(/\s+/g, '-')}`} className="text-xs text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                           Full &rarr;
                         </Link>
                       </div>
                       <table className="w-full">
                         <thead>
-                          <tr className="border-b border-border-subtle">
-                            <th className="text-left pb-2 text-text-muted font-semibold text-[11px] uppercase tracking-wider">Team</th>
-                            <th className="text-center pb-2 text-text-muted font-semibold text-[11px] uppercase tracking-wider w-12">W</th>
-                            <th className="text-center pb-2 text-text-muted font-semibold text-[11px] uppercase tracking-wider w-12">L</th>
+                          <tr className="border-b border-[var(--border-vintage)]">
+                            <th className="text-left pb-2 text-[rgba(196,184,165,0.35)] font-semibold text-[11px] uppercase tracking-wider">Team</th>
+                            <th className="text-center pb-2 text-[rgba(196,184,165,0.35)] font-semibold text-[11px] uppercase tracking-wider w-12">W</th>
+                            <th className="text-center pb-2 text-[rgba(196,184,165,0.35)] font-semibold text-[11px] uppercase tracking-wider w-12">L</th>
                             {teams[0]?.conferenceWins != null && (
-                              <th className="text-center pb-2 text-text-muted font-semibold text-[11px] uppercase tracking-wider w-16">Conf</th>
+                              <th className="text-center pb-2 text-[rgba(196,184,165,0.35)] font-semibold text-[11px] uppercase tracking-wider w-16">Conf</th>
                             )}
                           </tr>
                         </thead>
                         <tbody>
                           {teams.map((team, idx) => (
-                            <tr key={team.teamName || team.name} className="border-b border-border-subtle/50 last:border-0">
+                            <tr key={team.teamName || team.name} className="border-b border-[var(--border-vintage)]/50 last:border-0">
                               <td className="py-2 text-sm">
-                                <span className="text-burnt-orange font-bold mr-2 text-xs">{idx + 1}</span>
-                                <span className="font-semibold text-text-primary">{team.teamName || team.name}</span>
+                                <span className="text-[var(--bsi-primary)] font-bold mr-2 text-xs">{idx + 1}</span>
+                                <span className="font-semibold text-[var(--bsi-bone)]">{team.teamName || team.name}</span>
                               </td>
-                              <td className="py-2 text-center text-sm text-text-secondary">{team.wins}</td>
-                              <td className="py-2 text-center text-sm text-text-secondary">{team.losses}</td>
+                              <td className="py-2 text-center text-sm text-[var(--bsi-dust)]">{team.wins}</td>
+                              <td className="py-2 text-center text-sm text-[var(--bsi-dust)]">{team.losses}</td>
                               {team.conferenceWins != null && (
-                                <td className="py-2 text-center text-sm text-text-tertiary">{team.conferenceWins}-{team.conferenceLosses}</td>
+                                <td className="py-2 text-center text-sm text-[rgba(196,184,165,0.5)]">{team.conferenceWins}-{team.conferenceLosses}</td>
                               )}
                             </tr>
                           ))}
@@ -422,12 +422,12 @@ export default function CFBPage() {
             ) : (
               <Card variant="default" padding="lg">
                 <div className="text-center py-6">
-                  <p className="text-text-tertiary">Conference standings will populate once the season begins. Browse conferences below for team rosters and schedules.</p>
+                  <p className="text-[rgba(196,184,165,0.5)]">Conference standings will populate once the season begins. Browse conferences below for team rosters and schedules.</p>
                 </div>
               </Card>
             )}
             {standingsRaw?.meta && (
-              <div className="mt-4 pt-3 border-t border-border-subtle">
+              <div className="mt-4 pt-3 border-t border-[var(--border-vintage)]">
                 <DataSourceBadge source={standingsRaw.meta.dataSource || 'SportsDataIO'} timestamp={formatTimestamp(standingsRaw.meta.lastUpdated)} />
               </div>
             )}
@@ -439,11 +439,11 @@ export default function CFBPage() {
           <Container>
             <ScrollReveal>
               <div className="text-center mb-8">
-                <span className="text-[11px] font-mono uppercase tracking-widest text-burnt-orange">The Pulse</span>
-                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mt-2 text-text-primary">
-                  This Week in <span className="text-gradient-blaze">CFB</span>
+                <span className="text-[11px] font-mono uppercase tracking-widest text-[var(--bsi-primary)]">The Pulse</span>
+                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mt-2 text-[var(--bsi-bone)]">
+                  This Week in <span className="text-[var(--bsi-primary)]">CFB</span>
                 </h2>
-                <p className="text-text-secondary mt-3 max-w-xl mx-auto text-sm">
+                <p className="text-[var(--bsi-dust)] mt-3 max-w-xl mx-auto text-sm">
                   The storylines shaping the season — portal movement, rivalry matchups, and the 12-team playoff picture.
                 </p>
               </div>
@@ -453,13 +453,13 @@ export default function CFBPage() {
                 <Link href="/cfb/transfer-portal" className="block group">
                   <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
                     <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="w-10 h-10 mb-4 bg-burnt-orange/15 rounded-sm flex items-center justify-center">
-                      <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
+                    <div className="w-10 h-10 mb-4 bg-[var(--bsi-primary)]/15 rounded-sm flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-[var(--bsi-primary)] fill-none stroke-[1.5]">
                         <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5" />
                       </svg>
                     </div>
-                    <h3 className="text-base font-semibold text-text-primary mb-2 group-hover:text-burnt-orange transition-colors">Transfer Portal</h3>
-                    <p className="text-text-tertiary text-sm leading-relaxed">
+                    <h3 className="text-base font-semibold text-[var(--bsi-bone)] mb-2 group-hover:text-[var(--bsi-primary)] transition-colors">Transfer Portal</h3>
+                    <p className="text-[rgba(196,184,165,0.5)] text-sm leading-relaxed">
                       The portal never stops. Track who entered, who committed, and which programs are winning the offseason arms race.
                     </p>
                     <Badge variant="success" className="mt-3">Live Tracking</Badge>
@@ -470,13 +470,13 @@ export default function CFBPage() {
                 <Link href="/cfb/scores" className="block group">
                   <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
                     <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="w-10 h-10 mb-4 bg-burnt-orange/15 rounded-sm flex items-center justify-center">
-                      <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
+                    <div className="w-10 h-10 mb-4 bg-[var(--bsi-primary)]/15 rounded-sm flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-[var(--bsi-primary)] fill-none stroke-[1.5]">
                         <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
                       </svg>
                     </div>
-                    <h3 className="text-base font-semibold text-text-primary mb-2 group-hover:text-burnt-orange transition-colors">Rivalry Watch</h3>
-                    <p className="text-text-tertiary text-sm leading-relaxed">
+                    <h3 className="text-base font-semibold text-[var(--bsi-bone)] mb-2 group-hover:text-[var(--bsi-primary)] transition-colors">Rivalry Watch</h3>
+                    <p className="text-[rgba(196,184,165,0.5)] text-sm leading-relaxed">
                       The matchups that define the sport. Iron Bowl, Red River, The Game — every rivalry result and storyline.
                     </p>
                     <Badge variant="primary" className="mt-3">In-Season</Badge>
@@ -487,15 +487,15 @@ export default function CFBPage() {
                 <Link href="/cfb/standings" className="block group">
                   <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
                     <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="w-10 h-10 mb-4 bg-burnt-orange/15 rounded-sm flex items-center justify-center">
-                      <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
+                    <div className="w-10 h-10 mb-4 bg-[var(--bsi-primary)]/15 rounded-sm flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-[var(--bsi-primary)] fill-none stroke-[1.5]">
                         <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
                         <line x1="3" y1="9" x2="21" y2="9" />
                         <line x1="9" y1="21" x2="9" y2="9" />
                       </svg>
                     </div>
-                    <h3 className="text-base font-semibold text-text-primary mb-2 group-hover:text-burnt-orange transition-colors">Playoff Picture</h3>
-                    <p className="text-text-tertiary text-sm leading-relaxed">
+                    <h3 className="text-base font-semibold text-[var(--bsi-bone)] mb-2 group-hover:text-[var(--bsi-primary)] transition-colors">Playoff Picture</h3>
+                    <p className="text-[rgba(196,184,165,0.5)] text-sm leading-relaxed">
                       12 teams, 4 byes, 2 new conferences in the mix. Who is in, who is on the bubble, and who controls their destiny.
                     </p>
                     <Badge variant="warning" className="mt-3">12-Team Playoff</Badge>
@@ -506,15 +506,15 @@ export default function CFBPage() {
                 <Link href="/cfb/teams" className="block group">
                   <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
                     <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="w-10 h-10 mb-4 bg-burnt-orange/15 rounded-sm flex items-center justify-center">
-                      <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
+                    <div className="w-10 h-10 mb-4 bg-[var(--bsi-primary)]/15 rounded-sm flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-[var(--bsi-primary)] fill-none stroke-[1.5]">
                         <line x1="18" y1="20" x2="18" y2="10" />
                         <line x1="12" y1="20" x2="12" y2="4" />
                         <line x1="6" y1="20" x2="6" y2="14" />
                       </svg>
                     </div>
-                    <h3 className="text-base font-semibold text-text-primary mb-2 group-hover:text-burnt-orange transition-colors">Conference Power</h3>
-                    <p className="text-text-tertiary text-sm leading-relaxed">
+                    <h3 className="text-base font-semibold text-[var(--bsi-bone)] mb-2 group-hover:text-[var(--bsi-primary)] transition-colors">Conference Power</h3>
+                    <p className="text-[rgba(196,184,165,0.5)] text-sm leading-relaxed">
                       SEC vs. Big Ten is the headliner, but the Big 12 and ACC are deeper than the narratives suggest. Data tells the story.
                     </p>
                     <Badge variant="primary" className="mt-3">All 10 Conferences</Badge>
@@ -540,8 +540,8 @@ export default function CFBPage() {
                 { label: 'Schedule', href: '/cfb/schedule' },
               ].map((link, i) => (
                 <Link key={link.href} href={link.href}
-                  className={`px-3 py-1.5 text-[11px] font-mono uppercase tracking-wider text-text-muted hover:text-burnt-orange transition-colors whitespace-nowrap ${
-                    i === 0 ? 'border-l-2 border-burnt-orange/40 pl-3' : ''
+                  className={`px-3 py-1.5 text-[11px] font-mono uppercase tracking-wider text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors whitespace-nowrap ${
+                    i === 0 ? 'border-l-2 border-[var(--bsi-primary)]/40 pl-3' : ''
                   }`}>
                   {link.label}
                 </Link>
@@ -575,19 +575,19 @@ export default function CFBPage() {
                         <div className="overflow-x-auto">
                           <table className="w-full">
                             <thead>
-                              <tr className="border-b-2 border-burnt-orange">
+                              <tr className="border-b-2 border-[var(--bsi-primary)]">
                                 {['Rank', 'Team', 'Conference', 'Record'].map((h) => (
-                                  <th key={h} className="text-left p-3 text-text-muted font-semibold text-xs">{h}</th>
+                                  <th key={h} className="text-left p-3 text-[rgba(196,184,165,0.35)] font-semibold text-xs">{h}</th>
                                 ))}
                               </tr>
                             </thead>
                             <tbody>
                               {rankings.map((team) => (
-                                <tr key={team.rank} className="border-b border-border-subtle hover:bg-[var(--surface-dugout)] transition-colors">
-                                  <td className="p-3 text-burnt-orange font-bold text-lg">{team.rank}</td>
-                                  <td className="p-3 font-semibold text-text-primary">{team.team}</td>
-                                  <td className="p-3 text-text-secondary">{team.conference}</td>
-                                  <td className="p-3 text-text-secondary">{team.record || '-'}</td>
+                                <tr key={team.rank} className="border-b border-[var(--border-vintage)] hover:bg-[var(--surface-dugout)] transition-colors">
+                                  <td className="p-3 text-[var(--bsi-primary)] font-bold text-lg">{team.rank}</td>
+                                  <td className="p-3 font-semibold text-[var(--bsi-bone)]">{team.team}</td>
+                                  <td className="p-3 text-[var(--bsi-dust)]">{team.conference}</td>
+                                  <td className="p-3 text-[var(--bsi-dust)]">{team.record || '-'}</td>
                                 </tr>
                               ))}
                             </tbody>
@@ -595,7 +595,7 @@ export default function CFBPage() {
                         </div>
                         {rankings.length === 0 && error && (
                           <div className="text-center py-8">
-                            <p className="text-text-secondary mb-4">{error}</p>
+                            <p className="text-[var(--bsi-dust)] mb-4">{error}</p>
                             <Button variant="primary" size="sm" onClick={retryRankings}>Retry</Button>
                           </div>
                         )}
@@ -612,16 +612,16 @@ export default function CFBPage() {
             {/* Conferences Tab */}
             {activeTab === 'conferences' && (
               <ScrollReveal>
-                <p className="text-text-secondary text-sm mb-6 max-w-2xl">
+                <p className="text-[var(--bsi-dust)] text-sm mb-6 max-w-2xl">
                   The 2025-26 FBS landscape: four Power conferences, the rebuilt Pac-12, and five Group of 5 leagues. 134 programs, 10 conferences, all tracked.
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                   {conferences.map((conf) => (
                     <Link key={conf.name} href={`/cfb/standings?conference=${conf.name.toLowerCase().replace(/\s+/g, '-')}`}>
                       <Card variant="hover" padding="lg" className="text-center h-full group">
-                        <div className="font-display text-lg font-bold uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors">{conf.name}</div>
-                        <div className="text-sm text-text-muted mt-1">{conf.description}</div>
-                        <div className="text-xs text-burnt-orange mt-3 font-semibold">{conf.teams} Teams</div>
+                        <div className="font-display text-lg font-bold uppercase tracking-wide text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors">{conf.name}</div>
+                        <div className="text-sm text-[rgba(196,184,165,0.35)] mt-1">{conf.description}</div>
+                        <div className="text-xs text-[var(--bsi-primary)] mt-3 font-semibold">{conf.teams} Teams</div>
                       </Card>
                     </Link>
                   ))}
@@ -649,14 +649,14 @@ export default function CFBPage() {
                     </div>
                   ) : portalError ? (
                     <div className="text-center py-8">
-                      <p className="text-text-secondary mb-4">Unable to load transfer portal data.</p>
+                      <p className="text-[var(--bsi-dust)] mb-4">Unable to load transfer portal data.</p>
                       <Link href="/cfb/transfer-portal">
                         <Button variant="primary">View Transfer Portal Page</Button>
                       </Link>
                     </div>
                   ) : portalEntries.length === 0 ? (
                     <div className="text-center py-8">
-                      <p className="text-text-secondary mb-4">No transfer portal entries available yet.</p>
+                      <p className="text-[var(--bsi-dust)] mb-4">No transfer portal entries available yet.</p>
                       <Link href="/cfb/transfer-portal">
                         <Button variant="primary">View Transfer Portal</Button>
                       </Link>
@@ -665,19 +665,19 @@ export default function CFBPage() {
                     <div className="overflow-x-auto">
                       <table className="w-full">
                         <thead>
-                          <tr className="border-b-2 border-burnt-orange">
+                          <tr className="border-b-2 border-[var(--bsi-primary)]">
                             {['Player', 'Pos', 'From', 'To', 'Status'].map((h) => (
-                              <th key={h} className="text-left p-3 text-text-muted font-semibold text-xs">{h}</th>
+                              <th key={h} className="text-left p-3 text-[rgba(196,184,165,0.35)] font-semibold text-xs">{h}</th>
                             ))}
                           </tr>
                         </thead>
                         <tbody>
                           {portalEntries.slice(0, 25).map((entry, i) => (
-                            <tr key={`${entry.name}-${i}`} className="border-b border-border-subtle hover:bg-[var(--surface-dugout)] transition-colors">
-                              <td className="p-3 font-semibold text-text-primary">{entry.name}</td>
-                              <td className="p-3 text-text-secondary">{entry.position}</td>
-                              <td className="p-3 text-text-secondary">{entry.fromSchool}</td>
-                              <td className="p-3 text-text-secondary">{entry.toSchool || 'Undecided'}</td>
+                            <tr key={`${entry.name}-${i}`} className="border-b border-[var(--border-vintage)] hover:bg-[var(--surface-dugout)] transition-colors">
+                              <td className="p-3 font-semibold text-[var(--bsi-bone)]">{entry.name}</td>
+                              <td className="p-3 text-[var(--bsi-dust)]">{entry.position}</td>
+                              <td className="p-3 text-[var(--bsi-dust)]">{entry.fromSchool}</td>
+                              <td className="p-3 text-[var(--bsi-dust)]">{entry.toSchool || 'Undecided'}</td>
                               <td className="p-3">
                                 <Badge variant={entry.toSchool ? 'success' : 'warning'}>
                                   {entry.status || (entry.toSchool ? 'Committed' : 'In Portal')}
@@ -703,9 +703,9 @@ export default function CFBPage() {
               <div className="text-center mb-12">
                 <span className="kicker">All 134 FBS Programs</span>
                 <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display mt-2">
-                  The Data You <span className="text-gradient-blaze">Actually Need</span>
+                  The Data You <span className="text-[var(--bsi-primary)]">Actually Need</span>
                 </h2>
-                <p className="text-text-secondary mt-4 max-w-2xl mx-auto">
+                <p className="text-[var(--bsi-dust)] mt-4 max-w-2xl mx-auto">
                   Scores, standings, portal intel, and team profiles — straight from the source, no middleman.
                 </p>
               </div>
@@ -717,13 +717,13 @@ export default function CFBPage() {
                   <Link href={feature.href} className="block group">
                     <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
                       <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
-                      <h3 className="text-lg font-semibold text-text-primary mb-3">{feature.title}</h3>
-                      <p className="text-text-tertiary text-sm leading-relaxed mb-4">
+                      <h3 className="text-lg font-semibold text-[var(--bsi-bone)] mb-3">{feature.title}</h3>
+                      <p className="text-[rgba(196,184,165,0.5)] text-sm leading-relaxed mb-4">
                         {feature.description}
                       </p>
-                      <div className="flex items-center justify-between pt-4 border-t border-border-subtle">
+                      <div className="flex items-center justify-between pt-4 border-t border-[var(--border-vintage)]">
                         <Badge variant={feature.badgeVariant}>{feature.badge}</Badge>
-                        <span className="text-burnt-orange text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
+                        <span className="text-[var(--bsi-primary)] text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
                           View
                           <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
                             <path d="M5 12h14M12 5l7 7-7 7" />
@@ -743,7 +743,7 @@ export default function CFBPage() {
           <Container>
             <SportInfoCard
               icon={
-                <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
+                <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-[var(--bsi-primary)] fill-none stroke-[1.5]">
                   <polygon points="23 7 16 12 23 17 23 7" />
                   <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
                 </svg>

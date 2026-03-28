@@ -41,13 +41,13 @@ export function AdvancedStatsCard({
   const proStats = stats.filter(s => s.pro);
 
   return (
-    <div className={`bg-background-primary border border-border-subtle rounded-sm overflow-hidden ${className}`}>
-      <div className="px-5 py-3 border-b border-border-subtle flex items-center justify-between">
-        <h4 className="font-display text-sm uppercase tracking-wider text-text-primary">{title}</h4>
+    <div className={`bg-[var(--surface-scoreboard)] border border-[var(--border-vintage)] rounded-sm overflow-hidden ${className}`}>
+      <div className="px-5 py-3 border-b border-[var(--border-vintage)] flex items-center justify-between">
+        <h4 className="font-display text-sm uppercase tracking-wider text-[var(--bsi-bone)]">{title}</h4>
         {profileUrl && (
           <a
             href={profileUrl}
-            className="text-[10px] font-mono text-burnt-orange hover:text-ember transition-colors"
+            className="text-[10px] font-mono text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
           >
             Full Profile →
           </a>
@@ -58,7 +58,7 @@ export function AdvancedStatsCard({
       <div className="px-5 py-3 space-y-2">
         {freeStats.map(stat => (
           <div key={stat.label} className="flex items-center justify-between">
-            <MetricExplainer metric={stat.label} className="text-[11px] text-text-muted font-mono uppercase tracking-wide">
+            <MetricExplainer metric={stat.label} className="text-[11px] text-[rgba(196,184,165,0.35)] font-mono uppercase tracking-wide">
               {stat.label}
             </MetricExplainer>
             <div className="flex items-center gap-3">
@@ -72,7 +72,7 @@ export function AdvancedStatsCard({
                   />
                 </div>
               )}
-              <span className="text-sm text-text-primary font-mono tabular-nums">
+              <span className="text-sm text-[var(--bsi-bone)] font-mono tabular-nums">
                 {(stat.format || defaultFormat)(stat.value)}
               </span>
             </div>
@@ -82,11 +82,11 @@ export function AdvancedStatsCard({
 
       {/* Pro stats */}
       {proStats.length > 0 && (
-        <MetricGate isPro={isPro} metricName="wRC+, FIP, eBA" className="border-t border-border-subtle">
+        <MetricGate isPro={isPro} metricName="wRC+, FIP, eBA" className="border-t border-[var(--border-vintage)]">
           <div className="px-5 py-3 space-y-2">
             {proStats.map(stat => (
               <div key={stat.label} className="flex items-center justify-between">
-                <MetricExplainer metric={stat.label} className="text-[11px] text-text-muted font-mono uppercase tracking-wide">
+                <MetricExplainer metric={stat.label} className="text-[11px] text-[rgba(196,184,165,0.35)] font-mono uppercase tracking-wide">
                   {stat.label}
                 </MetricExplainer>
                 <div className="flex items-center gap-3">
@@ -100,7 +100,7 @@ export function AdvancedStatsCard({
                       />
                     </div>
                   )}
-                  <span className="text-sm text-text-primary font-mono tabular-nums">
+                  <span className="text-sm text-[var(--bsi-bone)] font-mono tabular-nums">
                     {(stat.format || defaultFormat)(stat.value)}
                   </span>
                 </div>

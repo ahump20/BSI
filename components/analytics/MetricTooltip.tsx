@@ -37,15 +37,15 @@ export function MetricTooltip({
     >
       {children}
       {open && (
-        <span className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 rounded-sm bg-background-secondary border border-border shadow-xl">
-          <span className="block text-xs font-mono text-burnt-orange font-bold mb-1">
+        <span className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 rounded-sm bg-[var(--surface-dugout)] border border-border shadow-xl">
+          <span className="block text-xs font-mono text-[var(--bsi-primary)] font-bold mb-1">
             {metric}
           </span>
-          <span className="block text-[11px] text-text-secondary leading-relaxed">
+          <span className="block text-[11px] text-[var(--bsi-dust)] leading-relaxed">
             {description}
           </span>
           {context && (
-            <span className="block text-[10px] text-text-muted mt-1.5 font-mono">
+            <span className="block text-[10px] text-[rgba(196,184,165,0.35)] mt-1.5 font-mono">
               {context}
             </span>
           )}

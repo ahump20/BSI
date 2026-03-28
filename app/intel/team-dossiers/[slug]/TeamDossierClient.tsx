@@ -188,10 +188,10 @@ export function TeamDossierClient({ slug }: { slug: string }) {
                 <div className="h-10 bg-border-subtle rounded-sm w-1/2" />
                 <div className="grid grid-cols-3 gap-3">
                   {[1, 2, 3].map((i) => (
-                    <div key={i} className="h-24 bg-surface-light rounded-sm" />
+                    <div key={i} className="h-24 bg-[var(--surface-press-box)] rounded-sm" />
                   ))}
                 </div>
-                <div className="h-40 bg-surface-light rounded-sm" />
+                <div className="h-40 bg-[var(--surface-press-box)] rounded-sm" />
               </div>
             </Container>
           </Section>
@@ -207,10 +207,10 @@ export function TeamDossierClient({ slug }: { slug: string }) {
         <div>
           <Section padding="lg">
             <Container>
-              <h1 className="font-display text-2xl font-bold text-text-primary uppercase">Dossier Not Found</h1>
-              <p className="text-text-muted mt-2">
+              <h1 className="font-display text-2xl font-bold text-[var(--bsi-bone)] uppercase">Dossier Not Found</h1>
+              <p className="text-[rgba(196,184,165,0.35)] mt-2">
                 This team dossier doesn&#39;t exist yet.{' '}
-                <Link href="/intel/team-dossiers" className="text-burnt-orange hover:text-ember transition-colors">
+                <Link href="/intel/team-dossiers" className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors">
                   Browse all dossiers &#8594;
                 </Link>
               </p>
@@ -260,11 +260,11 @@ export function TeamDossierClient({ slug }: { slug: string }) {
               />
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-4 text-sm text-text-muted">
-              <Link href="/intel/team-dossiers" className="hover:text-text-secondary transition-colors">
+            <div className="mt-8 flex flex-wrap gap-4 text-sm text-[rgba(196,184,165,0.35)]">
+              <Link href="/intel/team-dossiers" className="hover:text-[var(--bsi-dust)] transition-colors">
                 &#8592; All Dossiers
               </Link>
-              <Link href={`/college-baseball/editorial/${dossier.slug.replace('-2026', '')}-2026`} className="hover:text-text-secondary transition-colors">
+              <Link href={`/college-baseball/editorial/${dossier.slug.replace('-2026', '')}-2026`} className="hover:text-[var(--bsi-dust)] transition-colors">
                 Full {dossier.name} Preview &#8594;
               </Link>
             </div>

@@ -107,13 +107,13 @@ export default function TournamentHubPage() {
               <Badge variant="warning" className="mb-4">
                 2026 Season Framework
               </Badge>
-              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-wide text-text-primary mb-4">
+              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-wide text-[var(--bsi-bone)] mb-4">
                 Tournament{' '}
                 <span className="bg-gradient-to-r from-[#C9A227] to-burnt-orange bg-clip-text text-transparent">
                   HQ
                 </span>
               </h1>
-              <p className="text-text-tertiary text-lg leading-relaxed">
+              <p className="text-[rgba(196,184,165,0.5)] text-lg leading-relaxed">
                 The road to Omaha starts with 64 teams and ends with one. Bracket projections, bubble
                 tracking, and everything between Selection Monday and the final out at Charles Schwab Field.
               </p>
@@ -125,11 +125,11 @@ export default function TournamentHubPage() {
         <Section padding="lg" borderTop id="bracket">
           <Container size="wide">
             <div className="mb-8">
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary mb-2">
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-[var(--bsi-bone)] mb-2">
                 Bracket{' '}
                 <span className="text-[#C9A227]">Projection</span>
               </h2>
-              <p className="text-sm text-text-muted max-w-2xl">
+              <p className="text-sm text-[rgba(196,184,165,0.35)] max-w-2xl">
                 Based on BSI preseason power rankings. Top 16 teams project as regional hosts.
                 The NCAA tournament is a 64-team, double-elimination gauntlet — 16 regionals feed
                 into 8 super regionals, and those 8 winners converge on Omaha.
@@ -143,7 +143,7 @@ export default function TournamentHubPage() {
               <div>
                 <div className="flex items-center gap-2 mb-4">
                   <div className="w-1 h-6 bg-[#C9A227] rounded-full" />
-                  <h3 className="font-display text-sm font-bold uppercase tracking-wider text-text-secondary">
+                  <h3 className="font-display text-sm font-bold uppercase tracking-wider text-[var(--bsi-dust)]">
                     16 Regionals
                   </h3>
                 </div>
@@ -152,7 +152,7 @@ export default function TournamentHubPage() {
                     <Link
                       key={slug}
                       href={`/college-baseball/teams/${slug}`}
-                      className="group flex items-center gap-2.5 bg-surface-light border border-border-subtle rounded-sm p-2.5 hover:border-[#C9A227]/40 transition-all"
+                      className="group flex items-center gap-2.5 bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-2.5 hover:border-[#C9A227]/40 transition-all"
                     >
                       <span className="text-[11px] font-mono text-[#C9A227] w-5 shrink-0 text-right">
                         {i + 1}
@@ -166,10 +166,10 @@ export default function TournamentHubPage() {
                         unoptimized
                       />
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm text-text-secondary font-medium truncate group-hover:text-[#C9A227] transition-colors">
+                        <p className="text-sm text-[var(--bsi-dust)] font-medium truncate group-hover:text-[#C9A227] transition-colors">
                           {displayName(slug)}
                         </p>
-                        <p className="text-[10px] text-text-muted truncate">
+                        <p className="text-[10px] text-[rgba(196,184,165,0.35)] truncate">
                           {team.conference} &middot; {team.record2025.split('(')[0].trim()}
                         </p>
                       </div>
@@ -181,8 +181,8 @@ export default function TournamentHubPage() {
               {/* Column 2: 8 Super Regionals */}
               <div>
                 <div className="flex items-center gap-2 mb-4">
-                  <div className="w-1 h-6 bg-burnt-orange rounded-full" />
-                  <h3 className="font-display text-sm font-bold uppercase tracking-wider text-text-secondary">
+                  <div className="w-1 h-6 bg-[var(--bsi-primary)] rounded-full" />
+                  <h3 className="font-display text-sm font-bold uppercase tracking-wider text-[var(--bsi-dust)]">
                     8 Super Regionals
                   </h3>
                 </div>
@@ -193,18 +193,18 @@ export default function TournamentHubPage() {
                     return (
                       <div
                         key={i}
-                        className="bg-surface-light border border-border-subtle rounded-sm overflow-hidden"
+                        className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm overflow-hidden"
                       >
-                        <div className="px-3 py-1.5 bg-gradient-to-r from-[#C9A227]/8 to-transparent border-b border-border-subtle">
-                          <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted">
+                        <div className="px-3 py-1.5 bg-gradient-to-r from-[#C9A227]/8 to-transparent border-b border-[var(--border-vintage)]">
+                          <span className="text-[10px] font-mono uppercase tracking-wider text-[rgba(196,184,165,0.35)]">
                             Super Regional {i + 1}
                           </span>
                         </div>
-                        <div className="divide-y divide-border-subtle">
+                        <div className="divide-y divide-[var(--border-vintage)]">
                           {/* High seed */}
                           <Link
                             href={`/college-baseball/teams/${highSlug}`}
-                            className="flex items-center gap-2.5 px-3 py-2 hover:bg-surface-medium/50 transition-colors"
+                            className="flex items-center gap-2.5 px-3 py-2 hover:bg-[var(--surface-press-box)]/50 transition-colors"
                           >
                             <span className="text-[10px] font-mono text-[#C9A227] w-4 text-right">
                               {highTeam.rank}
@@ -217,7 +217,7 @@ export default function TournamentHubPage() {
                               className="shrink-0"
                               unoptimized
                             />
-                            <span className="text-sm text-text-secondary font-medium truncate flex-1">
+                            <span className="text-sm text-[var(--bsi-dust)] font-medium truncate flex-1">
                               {displayName(highSlug)}
                             </span>
                             <Badge
@@ -231,9 +231,9 @@ export default function TournamentHubPage() {
                           {/* Low seed */}
                           <Link
                             href={`/college-baseball/teams/${lowSlug}`}
-                            className="flex items-center gap-2.5 px-3 py-2 hover:bg-surface-medium/50 transition-colors"
+                            className="flex items-center gap-2.5 px-3 py-2 hover:bg-[var(--surface-press-box)]/50 transition-colors"
                           >
-                            <span className="text-[10px] font-mono text-text-muted w-4 text-right">
+                            <span className="text-[10px] font-mono text-[rgba(196,184,165,0.35)] w-4 text-right">
                               {lowTeam.rank}
                             </span>
                             <Image
@@ -244,7 +244,7 @@ export default function TournamentHubPage() {
                               className="shrink-0"
                               unoptimized
                             />
-                            <span className="text-sm text-text-muted font-medium truncate flex-1">
+                            <span className="text-sm text-[rgba(196,184,165,0.35)] font-medium truncate flex-1">
                               {displayName(lowSlug)}
                             </span>
                             <Badge
@@ -266,32 +266,32 @@ export default function TournamentHubPage() {
               <div>
                 <div className="flex items-center gap-2 mb-4">
                   <div className="w-1 h-6 bg-gradient-to-b from-[#C9A227] to-burnt-orange rounded-full" />
-                  <h3 className="font-display text-sm font-bold uppercase tracking-wider text-text-secondary">
+                  <h3 className="font-display text-sm font-bold uppercase tracking-wider text-[var(--bsi-dust)]">
                     College World Series
                   </h3>
                 </div>
-                <div className="bg-surface-light border border-[#C9A227]/20 rounded-sm overflow-hidden">
+                <div className="bg-[var(--surface-press-box)] border border-[#C9A227]/20 rounded-sm overflow-hidden">
                   <div className="bg-gradient-to-r from-[#C9A227]/10 via-[#C9A227]/5 to-transparent px-4 py-3 border-b border-[#C9A227]/10">
                     <p className="font-display text-xs font-bold uppercase tracking-wider text-[#C9A227]">
                       Charles Schwab Field &middot; Omaha, NE
                     </p>
-                    <p className="text-[10px] text-text-muted mt-0.5">June 14-23, 2026</p>
+                    <p className="text-[10px] text-[rgba(196,184,165,0.35)] mt-0.5">June 14-23, 2026</p>
                   </div>
                   <div className="p-4 space-y-3">
-                    <p className="text-xs text-text-muted leading-relaxed">
+                    <p className="text-xs text-[rgba(196,184,165,0.35)] leading-relaxed">
                       Eight super regional winners converge on Omaha for a double-elimination bracket,
                       culminating in a best-of-three championship series.
                     </p>
                     {/* Projected CWS Field — top 8 seeds */}
                     <div className="space-y-1.5">
-                      <p className="text-[10px] font-mono uppercase tracking-wider text-text-muted mb-2">
+                      <p className="text-[10px] font-mono uppercase tracking-wider text-[rgba(196,184,165,0.35)] mb-2">
                         Projected Field
                       </p>
                       {top16.slice(0, 8).map(([slug, team]) => (
                         <Link
                           key={slug}
                           href={`/college-baseball/teams/${slug}`}
-                          className="flex items-center gap-2 px-2 py-1.5 rounded-sm hover:bg-surface-medium/50 transition-colors group"
+                          className="flex items-center gap-2 px-2 py-1.5 rounded-sm hover:bg-[var(--surface-press-box)]/50 transition-colors group"
                         >
                           <Image
                             src={logoUrl(slug)}
@@ -301,10 +301,10 @@ export default function TournamentHubPage() {
                             className="shrink-0"
                             unoptimized
                           />
-                          <span className="text-sm text-text-secondary group-hover:text-[#C9A227] transition-colors truncate flex-1">
+                          <span className="text-sm text-[var(--bsi-dust)] group-hover:text-[#C9A227] transition-colors truncate flex-1">
                             {displayName(slug)}
                           </span>
-                          <span className="text-[10px] text-text-muted">
+                          <span className="text-[10px] text-[rgba(196,184,165,0.35)]">
                             {team.record2025.split('(')[0].trim()}
                           </span>
                         </Link>
@@ -314,11 +314,11 @@ export default function TournamentHubPage() {
                 </div>
 
                 {/* CWS Format Explainer */}
-                <div className="mt-4 bg-surface-light border border-border-subtle rounded-sm p-4">
-                  <h4 className="font-display text-xs font-bold uppercase tracking-wider text-text-secondary mb-2">
+                <div className="mt-4 bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4">
+                  <h4 className="font-display text-xs font-bold uppercase tracking-wider text-[var(--bsi-dust)] mb-2">
                     How It Works
                   </h4>
-                  <div className="space-y-2 text-xs text-text-muted leading-relaxed">
+                  <div className="space-y-2 text-xs text-[rgba(196,184,165,0.35)] leading-relaxed">
                     <div className="flex gap-2">
                       <span className="text-[#C9A227] font-mono shrink-0">01</span>
                       <span>Eight teams split into two four-team, double-elimination brackets.</span>
@@ -338,7 +338,7 @@ export default function TournamentHubPage() {
 
             {/* Flow arrows (desktop only) */}
             <div className="hidden lg:flex items-center justify-center gap-4 mt-6">
-              <div className="flex items-center gap-2 text-[10px] text-text-muted uppercase tracking-wider">
+              <div className="flex items-center gap-2 text-[10px] text-[rgba(196,184,165,0.35)] uppercase tracking-wider">
                 <span>64 Teams</span>
                 <span className="text-[#C9A227]">&rarr;</span>
                 <span>16 Regionals</span>
@@ -357,11 +357,11 @@ export default function TournamentHubPage() {
         <Section padding="lg" borderTop id="bubble">
           <Container>
             <div className="mb-8">
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary mb-2">
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-[var(--bsi-bone)] mb-2">
                 Bubble{' '}
                 <span className="text-[#C9A227]">Watch</span>
               </h2>
-              <p className="text-sm text-text-muted max-w-2xl">
+              <p className="text-sm text-[rgba(196,184,165,0.35)] max-w-2xl">
                 The NCAA tournament takes 64 teams. Thirty-one get auto-bids through conference
                 tournaments. The remaining 33 at-large bids come down to resume, strength of schedule,
                 and late-season momentum. These teams are on the edge.
@@ -390,7 +390,7 @@ export default function TournamentHubPage() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-xs font-mono text-[#C9A227]">#{team.rank}</span>
-                            <h3 className="font-display text-base font-bold uppercase tracking-wide text-text-primary group-hover:text-[#C9A227] transition-colors truncate">
+                            <h3 className="font-display text-base font-bold uppercase tracking-wide text-[var(--bsi-bone)] group-hover:text-[#C9A227] transition-colors truncate">
                               {displayName(slug)}
                             </h3>
                           </div>
@@ -402,7 +402,7 @@ export default function TournamentHubPage() {
                             >
                               {team.conference}
                             </Badge>
-                            <span className="text-xs text-text-muted">
+                            <span className="text-xs text-[rgba(196,184,165,0.35)]">
                               {team.record2025.split('(')[0].trim()}
                             </span>
                           </div>
@@ -413,11 +413,11 @@ export default function TournamentHubPage() {
                             >
                               {status.label}
                             </span>
-                            <span className="text-[10px] text-text-muted">
+                            <span className="text-[10px] text-[rgba(196,184,165,0.35)]">
                               {getTierLabel(team.tier)}
                             </span>
                           </div>
-                          <p className="text-xs text-text-muted leading-relaxed line-clamp-2">
+                          <p className="text-xs text-[rgba(196,184,165,0.35)] leading-relaxed line-clamp-2">
                             {team.outlook.split('.').slice(0, 2).join('.') + '.'}
                           </p>
                         </div>
@@ -436,11 +436,11 @@ export default function TournamentHubPage() {
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
               {/* Main content */}
               <div className="lg:col-span-3">
-                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary mb-2">
+                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-[var(--bsi-bone)] mb-2">
                   The Road to{' '}
                   <span className="text-[#C9A227]">Omaha</span>
                 </h2>
-                <div className="space-y-4 text-text-tertiary leading-relaxed">
+                <div className="space-y-4 text-[rgba(196,184,165,0.5)] leading-relaxed">
                   <p>
                     The College World Series has been played in Omaha, Nebraska since 1950 &mdash;
                     making it the longest-running city-sport relationship in NCAA history. Charles
@@ -473,12 +473,12 @@ export default function TournamentHubPage() {
               {/* Sidebar: CWS Quick Facts */}
               <div className="lg:col-span-2">
                 <Card variant="default" className="overflow-hidden">
-                  <div className="bg-gradient-to-r from-[#C9A227]/10 via-transparent to-burnt-orange/5 px-5 py-4 border-b border-border-subtle">
+                  <div className="bg-gradient-to-r from-[#C9A227]/10 via-transparent to-burnt-orange/5 px-5 py-4 border-b border-[var(--border-vintage)]">
                     <h3 className="font-display text-sm font-bold uppercase tracking-wider text-[#C9A227]">
                       CWS Quick Facts
                     </h3>
                   </div>
-                  <div className="divide-y divide-border-subtle">
+                  <div className="divide-y divide-[var(--border-vintage)]">
                     {[
                       { label: 'Location', value: 'Omaha, Nebraska' },
                       { label: 'Venue', value: 'Charles Schwab Field' },
@@ -491,8 +491,8 @@ export default function TournamentHubPage() {
                       { label: 'Format', value: 'Double-elimination + best-of-3 final' },
                     ].map((fact) => (
                       <div key={fact.label} className="flex items-center justify-between px-5 py-3">
-                        <span className="text-xs text-text-muted uppercase tracking-wider">{fact.label}</span>
-                        <span className="text-sm text-text-secondary font-medium text-right">{fact.value}</span>
+                        <span className="text-xs text-[rgba(196,184,165,0.35)] uppercase tracking-wider">{fact.label}</span>
+                        <span className="text-sm text-[var(--bsi-dust)] font-medium text-right">{fact.value}</span>
                       </div>
                     ))}
                   </div>
@@ -500,7 +500,7 @@ export default function TournamentHubPage() {
 
                 {/* What It Takes */}
                 <Card variant="default" padding="lg" className="mt-4">
-                  <h3 className="font-display text-sm font-bold uppercase tracking-wider text-text-secondary mb-3">
+                  <h3 className="font-display text-sm font-bold uppercase tracking-wider text-[var(--bsi-dust)] mb-3">
                     What It Takes to Get There
                   </h3>
                   <div className="space-y-3">
@@ -512,7 +512,7 @@ export default function TournamentHubPage() {
                     ].map((item) => (
                       <div key={item.stat} className="flex gap-3">
                         <span className="text-sm font-mono text-[#C9A227] shrink-0 w-20">{item.stat}</span>
-                        <span className="text-xs text-text-muted leading-relaxed">{item.desc}</span>
+                        <span className="text-xs text-[rgba(196,184,165,0.35)] leading-relaxed">{item.desc}</span>
                       </div>
                     ))}
                   </div>
@@ -526,11 +526,11 @@ export default function TournamentHubPage() {
         <Section padding="lg" borderTop id="hosts">
           <Container>
             <div className="mb-6">
-              <h2 className="font-display text-xl md:text-2xl font-bold uppercase tracking-wide text-text-primary mb-2">
+              <h2 className="font-display text-xl md:text-2xl font-bold uppercase tracking-wide text-[var(--bsi-bone)] mb-2">
                 Projected Regional{' '}
                 <span className="text-[#C9A227]">Hosts</span>
               </h2>
-              <p className="text-sm text-text-muted max-w-2xl">
+              <p className="text-sm text-[rgba(196,184,165,0.35)] max-w-2xl">
                 The NCAA selects 16 national seeds as regional hosts based on overall record, RPI,
                 strength of schedule, and results against ranked opponents. These projections are
                 based on BSI preseason power rankings.
@@ -545,7 +545,7 @@ export default function TournamentHubPage() {
                     href={`/college-baseball/teams/${slug}`}
                     className="group block"
                   >
-                    <div className="bg-surface-light border border-border-subtle rounded-sm p-4 hover:border-[#C9A227]/30 transition-all h-full">
+                    <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4 hover:border-[#C9A227]/30 transition-all h-full">
                       <div className="flex items-center gap-3 mb-3">
                         <span className="flex items-center justify-center w-7 h-7 rounded-full bg-[#C9A227]/10 text-[#C9A227] text-xs font-mono font-bold">
                           {i + 1}
@@ -559,7 +559,7 @@ export default function TournamentHubPage() {
                           unoptimized
                         />
                         <div className="min-w-0 flex-1">
-                          <p className="text-sm text-text-secondary font-bold truncate group-hover:text-[#C9A227] transition-colors">
+                          <p className="text-sm text-[var(--bsi-dust)] font-bold truncate group-hover:text-[#C9A227] transition-colors">
                             {meta?.name ?? displayName(slug)}
                           </p>
                         </div>
@@ -572,15 +572,15 @@ export default function TournamentHubPage() {
                         >
                           {team.conference}
                         </Badge>
-                        <span className="text-xs text-text-muted">
+                        <span className="text-xs text-[rgba(196,184,165,0.35)]">
                           {team.record2025}
                         </span>
                       </div>
-                      <p className="text-[10px] text-text-muted uppercase tracking-wider">
+                      <p className="text-[10px] text-[rgba(196,184,165,0.35)] uppercase tracking-wider">
                         {team.postseason2025}
                       </p>
                       {meta?.location && (
-                        <p className="text-[10px] text-text-muted mt-1">
+                        <p className="text-[10px] text-[rgba(196,184,165,0.35)] mt-1">
                           {meta.location.stadium} &middot; {meta.location.city}, {meta.location.state}
                         </p>
                       )}
@@ -596,11 +596,11 @@ export default function TournamentHubPage() {
         <Section padding="lg" borderTop id="timeline">
           <Container size="md">
             <div className="mb-8 text-center">
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary mb-2">
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-[var(--bsi-bone)] mb-2">
                 Tournament{' '}
                 <span className="text-[#C9A227]">Timeline</span>
               </h2>
-              <p className="text-sm text-text-muted">
+              <p className="text-sm text-[rgba(196,184,165,0.35)]">
                 Key dates on the path from conference tournaments to Omaha.
               </p>
             </div>
@@ -624,12 +624,12 @@ export default function TournamentHubPage() {
 
                       {/* Content */}
                       <div className={`ml-10 md:ml-0 md:w-1/2 ${isLeft ? 'md:pr-10 md:text-right' : 'md:pl-10'}`}>
-                        <div className="bg-surface-light border border-border-subtle rounded-sm p-4 hover:border-[#C9A227]/20 transition-colors">
+                        <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4 hover:border-[#C9A227]/20 transition-colors">
                           <p className="text-xs font-mono text-[#C9A227] mb-1">{item.date}</p>
-                          <h3 className="font-display text-sm font-bold uppercase tracking-wide text-text-primary mb-1">
+                          <h3 className="font-display text-sm font-bold uppercase tracking-wide text-[var(--bsi-bone)] mb-1">
                             {item.event}
                           </h3>
-                          <p className="text-xs text-text-muted leading-relaxed">{item.desc}</p>
+                          <p className="text-xs text-[rgba(196,184,165,0.35)] leading-relaxed">{item.desc}</p>
                         </div>
                       </div>
                     </div>
@@ -643,17 +643,17 @@ export default function TournamentHubPage() {
         {/* ── NAV FOOTER ─────────────────────────────────────────────────────── */}
         <Section padding="md" borderTop>
           <Container>
-            <div className="flex flex-wrap gap-4 text-sm text-text-muted">
-              <Link href="/college-baseball" className="hover:text-text-secondary transition-colors">
+            <div className="flex flex-wrap gap-4 text-sm text-[rgba(196,184,165,0.35)]">
+              <Link href="/college-baseball" className="hover:text-[var(--bsi-dust)] transition-colors">
                 &#8592; College Baseball
               </Link>
-              <Link href="/college-baseball/rankings" className="hover:text-text-secondary transition-colors">
+              <Link href="/college-baseball/rankings" className="hover:text-[var(--bsi-dust)] transition-colors">
                 Rankings
               </Link>
-              <Link href="/college-baseball/standings" className="hover:text-text-secondary transition-colors">
+              <Link href="/college-baseball/standings" className="hover:text-[var(--bsi-dust)] transition-colors">
                 Standings
               </Link>
-              <Link href="/college-baseball/editorial" className="hover:text-text-secondary transition-colors">
+              <Link href="/college-baseball/editorial" className="hover:text-[var(--bsi-dust)] transition-colors">
                 Editorial Hub
               </Link>
             </div>

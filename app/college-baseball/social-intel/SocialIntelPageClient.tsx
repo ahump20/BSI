@@ -115,10 +115,10 @@ function DistributionBar({ signals }: { signals: SocialSignal[] }) {
         {segments.map(({ type, cfg, count, pct }) => (
           <div key={type} className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: cfg.color }} />
-            <span className="font-mono text-[10px] uppercase tracking-wider text-text-muted">
+            <span className="font-mono text-[10px] uppercase tracking-wider text-[rgba(196,184,165,0.35)]">
               {cfg.short}
             </span>
-            <span className="font-mono text-[10px] text-text-muted opacity-60">
+            <span className="font-mono text-[10px] text-[rgba(196,184,165,0.35)] opacity-60">
               {count} · {pct.toFixed(0)}%
             </span>
           </div>
@@ -142,7 +142,7 @@ function SignalRow({ signal, index }: { signal: SocialSignal; index: number }) {
       {/* Left accent + index */}
       <div className="flex flex-col items-center gap-1.5 flex-shrink-0 pt-0.5">
         <div className="w-px flex-1 min-h-[2rem]" style={{ backgroundColor: `${cfg.color}40` }} />
-        <span className="font-mono text-[9px] text-text-muted opacity-40 tabular-nums">
+        <span className="font-mono text-[9px] text-[rgba(196,184,165,0.35)] opacity-40 tabular-nums">
           {String(index + 1).padStart(2, '0')}
         </span>
       </div>
@@ -150,7 +150,7 @@ function SignalRow({ signal, index }: { signal: SocialSignal; index: number }) {
       {/* Content */}
       <div className="min-w-0 flex-1 pb-0.5">
         {/* Signal text */}
-        <p className="text-sm text-text-secondary leading-snug group-hover:text-text-primary transition-colors line-clamp-2 mb-2">
+        <p className="text-sm text-[var(--bsi-dust)] leading-snug group-hover:text-[var(--bsi-bone)] transition-colors line-clamp-2 mb-2">
           {signal.summary ?? signal.post_text.slice(0, 140)}
         </p>
 
@@ -178,7 +178,7 @@ function SignalRow({ signal, index }: { signal: SocialSignal; index: number }) {
 
           {/* Player */}
           {signal.player_mentioned && (
-            <span className="text-[11px] text-text-muted opacity-70 truncate max-w-[14ch]">
+            <span className="text-[11px] text-[rgba(196,184,165,0.35)] opacity-70 truncate max-w-[14ch]">
               {signal.player_mentioned}
             </span>
           )}
@@ -191,7 +191,7 @@ function SignalRow({ signal, index }: { signal: SocialSignal; index: number }) {
           )}
 
           {/* Time — show relative age so visitors see staleness */}
-          <span className="ml-auto font-mono text-[10px] text-text-muted opacity-40 tabular-nums" title={`${formatTimestamp(signal.posted_at)} CT`}>
+          <span className="ml-auto font-mono text-[10px] text-[rgba(196,184,165,0.35)] opacity-40 tabular-nums" title={`${formatTimestamp(signal.posted_at)} CT`}>
             {relativeTime(signal.posted_at)}
           </span>
         </div>
@@ -276,19 +276,19 @@ export function SocialIntelPageClient() {
   const lastUpdated = data?.meta?.fetched_at ? relativeTime(data.meta.fetched_at) : null;
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] text-text-primary">
+    <div className="min-h-screen bg-[#0D0D0D] text-[var(--bsi-bone)]">
       {/* Back nav */}
       <div className="border-b border-border/50 bg-[#111111]">
         <Container>
           <div className="flex items-center gap-3 py-3">
             <Link
               href="/college-baseball"
-              className="font-mono text-[11px] uppercase tracking-wider text-text-muted hover:text-burnt-orange transition-colors"
+              className="font-mono text-[11px] uppercase tracking-wider text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors"
             >
               ← College Baseball
             </Link>
             <span className="text-border-strong">·</span>
-            <span className="font-mono text-[11px] uppercase tracking-wider text-text-muted opacity-50">
+            <span className="font-mono text-[11px] uppercase tracking-wider text-[rgba(196,184,165,0.35)] opacity-50">
               Social Intelligence
             </span>
           </div>
@@ -311,10 +311,10 @@ export function SocialIntelPageClient() {
                     Live · Updated every 30 min
                   </span>
                 </div>
-                <h1 className="font-['Oswald'] text-3xl md:text-4xl uppercase tracking-wide text-text-primary leading-none">
+                <h1 className="font-['Oswald'] text-3xl md:text-4xl uppercase tracking-wide text-[var(--bsi-bone)] leading-none">
                   Social Intelligence
                 </h1>
-                <p className="mt-2 text-sm text-text-muted max-w-xl leading-relaxed">
+                <p className="mt-2 text-sm text-[rgba(196,184,165,0.35)] max-w-xl leading-relaxed">
                   Real-time signals from Reddit and Twitter — injuries, transfers, recruiting, and sentiment across D1 college baseball. Classified by AI, updated continuously.
                 </p>
               </div>
@@ -322,14 +322,14 @@ export function SocialIntelPageClient() {
               {/* Signal count */}
               {!loading && allSignals.length > 0 && (
                 <div className="hidden md:flex flex-col items-end gap-1 flex-shrink-0">
-                  <span className="font-mono text-3xl tabular-nums text-text-primary">
+                  <span className="font-mono text-3xl tabular-nums text-[var(--bsi-bone)]">
                     {allSignals.length}
                   </span>
-                  <span className="font-mono text-[10px] uppercase tracking-wider text-text-muted">
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-[rgba(196,184,165,0.35)]">
                     signals
                   </span>
                   {lastUpdated && (
-                    <span className="font-mono text-[10px] text-text-muted opacity-50">
+                    <span className="font-mono text-[10px] text-[rgba(196,184,165,0.35)] opacity-50">
                       {lastUpdated}
                     </span>
                   )}
@@ -344,11 +344,11 @@ export function SocialIntelPageClient() {
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-orange-400 flex-shrink-0" />
-                <span className="font-mono text-[10px] uppercase tracking-wider text-text-muted">Reddit</span>
+                <span className="font-mono text-[10px] uppercase tracking-wider text-[rgba(196,184,165,0.35)]">Reddit</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-[var(--heritage-columbia-blue)] flex-shrink-0" />
-                <span className="font-mono text-[10px] uppercase tracking-wider text-text-muted">X / Twitter</span>
+                <span className="font-mono text-[10px] uppercase tracking-wider text-[rgba(196,184,165,0.35)]">X / Twitter</span>
               </div>
             </div>
           </div>
@@ -371,14 +371,14 @@ export function SocialIntelPageClient() {
                     border-b-2 transition-colors duration-150
                     ${isActive
                       ? 'border-[#BF5700] text-[#BF5700]'
-                      : 'border-transparent text-text-muted hover:text-text-secondary'}
+                      : 'border-transparent text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-dust)]'}
                   `}
                 >
                   {tab.label}
                   {count > 0 && (
                     <span className={`
                       px-1.5 py-0.5 rounded-sm text-[9px] tabular-nums font-mono
-                      ${isActive ? 'bg-[#BF5700]/15 text-[#BF5700]' : 'bg-surface text-text-muted'}
+                      ${isActive ? 'bg-[#BF5700]/15 text-[#BF5700]' : 'bg-surface text-[rgba(196,184,165,0.35)]'}
                     `}>
                       {count}
                     </span>
@@ -399,10 +399,10 @@ export function SocialIntelPageClient() {
             </div>
           ) : filtered.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 text-center">
-              <span className="font-mono text-[11px] uppercase tracking-wider text-text-muted mb-2">
+              <span className="font-mono text-[11px] uppercase tracking-wider text-[rgba(196,184,165,0.35)] mb-2">
                 No signals
               </span>
-              <p className="text-sm text-text-muted opacity-60 max-w-xs">
+              <p className="text-sm text-[rgba(196,184,165,0.35)] opacity-60 max-w-xs">
                 {allSignals.length === 0
                   ? 'The pipeline is warming up. Signals populate every 30 minutes.'
                   : 'No signals match this filter.'}
@@ -412,12 +412,12 @@ export function SocialIntelPageClient() {
             <div className="rounded-sm border border-border overflow-hidden bg-[#111111]">
               {/* Feed header */}
               <div className="flex items-center justify-between px-5 py-3 border-b border-border bg-[#0D0D0D]/60">
-                <span className="font-mono text-[10px] uppercase tracking-wider text-text-muted">
+                <span className="font-mono text-[10px] uppercase tracking-wider text-[rgba(196,184,165,0.35)]">
                   {filtered.length} signal{filtered.length !== 1 ? 's' : ''}
                   {activeFilter !== 'all' && ` · ${SIGNAL_CONFIG[activeFilter as keyof typeof SIGNAL_CONFIG]?.label ?? activeFilter}`}
                 </span>
                 {data?.meta?.source && (
-                  <span className="font-mono text-[10px] text-text-muted opacity-40">
+                  <span className="font-mono text-[10px] text-[rgba(196,184,165,0.35)] opacity-40">
                     {data.meta.source}
                   </span>
                 )}

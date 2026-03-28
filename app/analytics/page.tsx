@@ -21,7 +21,6 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { FilterPill } from '@/components/ui/FilterPill';
-import { HeroGlow } from '@/components/ui/HeroGlow';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 
@@ -206,39 +205,38 @@ export default function AnalyticsPage() {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 Home
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">Analytics</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">Analytics</span>
             </nav>
           </Container>
         </Section>
 
         {/* Hero */}
         <Section padding="lg" className="pt-6 relative overflow-hidden">
-          <HeroGlow />
 
           <Container>
             <div className="relative">
             <ScrollReveal direction="up">
-              <span className="section-label block mb-4">Analytics Hub</span>
+              <span className="heritage-stamp block mb-4">Analytics Hub</span>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-text-primary mb-3">
+              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-[var(--bsi-bone)] mb-3">
                 Data-Driven Intelligence
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="text-burnt-orange font-serif italic text-lg leading-relaxed mb-10 max-w-2xl">
+              <p className="text-[var(--bsi-primary)] font-serif italic text-lg leading-relaxed mb-10 max-w-2xl">
                 Professional-grade analytics tools for fans who want more than just scores. Win
                 probability, projections, historical analysis, and predictive models.
               </p>
@@ -248,10 +246,10 @@ export default function AnalyticsPage() {
             <ScrollReveal direction="up" delay={200}>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {quickStats.map((stat) => (
-                  <div key={stat.label} className="bg-surface-light border border-border-subtle rounded-sm p-5 text-center">
-                    <p className="text-2xl md:text-3xl font-mono font-bold text-burnt-orange">{stat.value}</p>
-                    <p className="text-sm text-text-primary font-medium mt-1">{stat.label}</p>
-                    <p className="text-xs text-text-muted mt-0.5">{stat.sublabel}</p>
+                  <div key={stat.label} className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-5 text-center">
+                    <p className="text-2xl md:text-3xl font-mono font-bold text-[var(--bsi-primary)]">{stat.value}</p>
+                    <p className="text-sm text-[var(--bsi-bone)] font-medium mt-1">{stat.label}</p>
+                    <p className="text-xs text-[rgba(196,184,165,0.35)] mt-0.5">{stat.sublabel}</p>
                   </div>
                 ))}
               </div>
@@ -288,17 +286,17 @@ export default function AnalyticsPage() {
                     <Card
                       variant="default"
                       padding="lg"
-                      className={`h-full transition-all hover:border-burnt-orange ${
+                      className={`h-full transition-all hover:border-[var(--bsi-primary)] ${
                         tool.status === 'coming-soon' ? 'opacity-60' : ''
                       }`}
                     >
                       <div className="flex items-start gap-4">
-                        <span className="text-text-secondary">
+                        <span className="text-[var(--bsi-dust)]">
                           {(() => { const Icon = TOOL_ICONS[tool.id]; return Icon ? <Icon /> : null; })()}
                         </span>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <h3 className="font-semibold text-text-primary">{tool.name}</h3>
+                            <h3 className="font-semibold text-[var(--bsi-bone)]">{tool.name}</h3>
                             {tool.status === 'coming-soon' && (
                               <Badge variant="secondary" size="sm">
                                 Coming Soon
@@ -310,7 +308,7 @@ export default function AnalyticsPage() {
                               </Badge>
                             )}
                           </div>
-                          <p className="text-sm text-text-secondary mb-3">{tool.description}</p>
+                          <p className="text-sm text-[var(--bsi-dust)] mb-3">{tool.description}</p>
                           <Badge variant="secondary" size="sm">
                             {tool.sport}
                           </Badge>
@@ -328,11 +326,11 @@ export default function AnalyticsPage() {
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal>
-              <Card variant="hover" padding="lg" className="text-center border-burnt-orange/30">
-                <h2 className="font-display text-2xl md:text-3xl font-bold text-text-primary mb-4">
+              <Card variant="hover" padding="lg" className="text-center border-[var(--bsi-primary)]/30">
+                <h2 className="font-display text-2xl md:text-3xl font-bold text-[var(--bsi-bone)] mb-4">
                   Unlock Full Analytics Access
                 </h2>
-                <p className="text-text-secondary max-w-xl mx-auto mb-6">
+                <p className="text-[var(--bsi-dust)] max-w-xl mx-auto mb-6">
                   Pro subscribers get access to all analytics tools, including historical
                   data and advanced exports.
                 </p>

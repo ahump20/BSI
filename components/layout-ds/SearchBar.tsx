@@ -59,20 +59,20 @@ export function SearchBar({ variant = 'default', placeholder = 'Search teams, pl
 
   return (
     <div ref={ref} className="relative">
-      <input type="search" value={query} onChange={(e) => { setQuery(e.target.value); setOpen(true); }} onFocus={() => setOpen(true)} autoFocus={autoFocus} placeholder={placeholder} aria-label="Search teams and players" className={`${variant === 'page' ? 'w-full px-4 py-3 text-base' : 'w-48 lg:w-64 px-3 py-1.5 text-sm'} rounded-sm bg-charcoal border border-border-subtle text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors`} />
+      <input type="search" value={query} onChange={(e) => { setQuery(e.target.value); setOpen(true); }} onFocus={() => setOpen(true)} autoFocus={autoFocus} placeholder={placeholder} aria-label="Search teams and players" className={`${variant === 'page' ? 'w-full px-4 py-3 text-base' : 'w-48 lg:w-64 px-3 py-1.5 text-sm'} rounded-sm bg-[var(--surface-dugout)] border border-[var(--border-vintage)] text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.5)] focus:outline-none focus:border-[var(--bsi-primary)] transition-colors`} />
       {open && query.length >= 2 && (
-        <div className="absolute top-full mt-1 left-0 right-0 bg-background-secondary border border-border-subtle rounded-sm shadow-xl z-50 max-h-64 overflow-y-auto">
+        <div className="absolute top-full mt-1 left-0 right-0 bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm shadow-xl z-50 max-h-64 overflow-y-auto">
           {loading ? (
-            <div className="px-3 py-4 text-text-tertiary text-sm text-center">Searching...</div>
+            <div className="px-3 py-4 text-[rgba(196,184,165,0.5)] text-sm text-center">Searching...</div>
           ) : results.length === 0 ? (
-            <div className="px-3 py-4 text-text-tertiary text-sm text-center">No results</div>
+            <div className="px-3 py-4 text-[rgba(196,184,165,0.5)] text-sm text-center">No results</div>
           ) : (
             results.map((r) => (
-              <Link key={`${r.type}-${r.id}`} href={r.url || `/${r.type}s/${r.id}`} onClick={() => { setOpen(false); setQuery(''); }} className="flex items-center gap-3 px-3 py-2.5 hover:bg-charcoal transition-colors border-b border-border-subtle last:border-0">
-                <span className="text-[10px] uppercase tracking-wider text-text-tertiary w-12">{r.sport || r.type}</span>
+              <Link key={`${r.type}-${r.id}`} href={r.url || `/${r.type}s/${r.id}`} onClick={() => { setOpen(false); setQuery(''); }} className="flex items-center gap-3 px-3 py-2.5 hover:bg-[var(--surface-dugout)] transition-colors border-b border-[var(--border-vintage)] last:border-0">
+                <span className="text-[10px] uppercase tracking-wider text-[rgba(196,184,165,0.5)] w-12">{r.sport || r.type}</span>
                 <div>
-                  <div className="text-text-primary text-sm font-medium">{r.name}</div>
-                  {r.subtitle && <div className="text-text-tertiary text-xs">{r.subtitle}</div>}
+                  <div className="text-[var(--bsi-bone)] text-sm font-medium">{r.name}</div>
+                  {r.subtitle && <div className="text-[rgba(196,184,165,0.5)] text-xs">{r.subtitle}</div>}
                 </div>
               </Link>
             ))

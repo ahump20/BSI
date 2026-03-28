@@ -241,12 +241,12 @@ export default function ConferencesHubPage() {
 
   return (
     <>
-      <div>
+      <div className="min-h-screen bg-[#0A0A0A] text-bsi-bone">
         <Section padding="lg" className="pt-6">
           <Container>
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-2">
-                <Link href="/college-baseball" className="text-bsi-dust hover:text-burnt-orange transition-colors">
+                <Link href="/college-baseball" className="text-bsi-dust hover:text-[var(--bsi-primary)] transition-colors">
                   College Baseball
                 </Link>
                 <span className="text-bsi-dust">/</span>
@@ -255,7 +255,7 @@ export default function ConferencesHubPage() {
 
               <div className="mb-8">
                 <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-bsi-bone">
-                  Conference <span className="text-burnt-orange">Hub</span>
+                  Conference <span className="text-[var(--bsi-primary)]">Hub</span>
                 </h1>
                 <p className="text-bsi-dust mt-2 max-w-2xl">
                   Live conference breakdowns with records, advanced metrics, and NIL spend across the reshuffled D1 landscape.
@@ -267,22 +267,22 @@ export default function ConferencesHubPage() {
             <ScrollReveal direction="up" delay={100}>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
                 <Card padding="md" className="text-center">
-                  <Trophy className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
+                  <Trophy className="w-6 h-6 text-[var(--bsi-primary)] mx-auto mb-2" />
                   <div className="font-display text-2xl font-bold text-bsi-bone">4</div>
                   <div className="text-bsi-dust text-sm">Power Conferences</div>
                 </Card>
                 <Card padding="md" className="text-center">
-                  <Users className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
+                  <Users className="w-6 h-6 text-[var(--bsi-primary)] mx-auto mb-2" />
                   <div className="font-display text-2xl font-bold text-bsi-bone">{totalTeams || '300+'}</div>
                   <div className="text-bsi-dust text-sm">D1 Teams</div>
                 </Card>
                 <Card padding="md" className="text-center">
-                  <TrendingUp className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
+                  <TrendingUp className="w-6 h-6 text-[var(--bsi-primary)] mx-auto mb-2" />
                   <div className="font-display text-2xl font-bold text-bsi-bone">{midMajorConfs.length + 4}</div>
                   <div className="text-bsi-dust text-sm">Conferences</div>
                 </Card>
                 <Card padding="md" className="text-center">
-                  <MapPin className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
+                  <MapPin className="w-6 h-6 text-[var(--bsi-primary)] mx-auto mb-2" />
                   <div className="font-display text-2xl font-bold text-bsi-bone">Live</div>
                   <div className="text-bsi-dust text-sm">Data Feed</div>
                 </Card>
@@ -292,7 +292,7 @@ export default function ConferencesHubPage() {
             {/* Loading */}
             {loading && (
               <div className="text-center py-8">
-                <div className="w-8 h-8 border-2 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin mx-auto mb-3" />
+                <div className="w-8 h-8 border-2 border-[var(--bsi-primary)]/30 border-t-[var(--bsi-primary)] rounded-full animate-spin mx-auto mb-3" />
                 <p className="text-bsi-dust text-sm">Loading conference data...</p>
               </div>
             )}
@@ -326,11 +326,11 @@ export default function ConferencesHubPage() {
                         return (
                           <tr key={conf.id} className="border-b border-border-vintage/20 hover:bg-surface-dugout/50 transition-colors">
                             <td className="px-4 py-3">
-                              <Link href={`/college-baseball/conferences/${conf.id}`} className="text-bsi-bone hover:text-burnt-orange transition-colors font-display font-bold">
+                              <Link href={`/college-baseball/conferences/${conf.id}`} className="text-bsi-bone hover:text-[var(--bsi-primary)] transition-colors font-display font-bold">
                                 {conf.name}
                               </Link>
                             </td>
-                            <td className="text-center px-3 py-3 text-burnt-orange font-mono font-bold">
+                            <td className="text-center px-3 py-3 text-[var(--bsi-primary)] font-mono font-bold">
                               {confStrength.find(cs => cs.conference === conf.name)?.strength_index.toFixed(1) || '—'}
                             </td>
                             <td className="text-center px-3 py-3 text-bsi-bone font-mono">{a?.teamCount || '—'}</td>
@@ -339,7 +339,7 @@ export default function ConferencesHubPage() {
                             <td className="text-center px-3 py-3 text-bsi-bone font-mono">{a?.avgWoba ? a.avgWoba.toFixed(3) : '—'}</td>
                             <td className="text-center px-3 py-3 text-bsi-bone font-mono">{a?.avgWrcPlus ? a.avgWrcPlus.toFixed(1) : '—'}</td>
                             <td className="text-center px-3 py-3 text-bsi-bone font-mono">{a?.nilCount ? fmtDollars(a.totalNil) : '—'}</td>
-                            <td className="text-center px-3 py-3 text-burnt-orange text-xs">{a?.topTeam || '—'}</td>
+                            <td className="text-center px-3 py-3 text-[var(--bsi-primary)] text-xs">{a?.topTeam || '—'}</td>
                           </tr>
                         );
                       })}
@@ -354,7 +354,7 @@ export default function ConferencesHubPage() {
               <ScrollReveal direction="up" delay={200}>
                 <div className="mb-10">
                   <h2 className="font-display text-xl font-bold text-bsi-bone mb-2 uppercase tracking-wide">
-                    BSI Conference <span className="text-burnt-orange">Strength Index</span>
+                    BSI Conference <span className="text-[var(--bsi-primary)]">Strength Index</span>
                   </h2>
                   <p className="text-bsi-dust text-sm mb-4">
                     Every D1 conference ranked by BSI&rsquo;s composite strength index — batting, pitching, and inter-conference performance. Recomputed daily.
@@ -375,7 +375,7 @@ export default function ConferencesHubPage() {
                                   {slug ? (
                                     <Link
                                       href={`/college-baseball/conferences/${slug}`}
-                                      className="text-bsi-bone hover:text-burnt-orange transition-colors font-display font-bold text-sm truncate"
+                                      className="text-bsi-bone hover:text-[var(--bsi-primary)] transition-colors font-display font-bold text-sm truncate"
                                     >
                                       {cs.conference}
                                     </Link>
@@ -383,7 +383,7 @@ export default function ConferencesHubPage() {
                                     <span className="text-bsi-bone font-display font-bold text-sm truncate">{cs.conference}</span>
                                   )}
                                   {cs.is_power === 1 && (
-                                    <span className="text-[10px] uppercase tracking-wider text-burnt-orange border border-burnt-orange/40 px-1.5 py-0.5 rounded font-bold">
+                                    <span className="text-[10px] uppercase tracking-wider text-[var(--bsi-primary)] border border-[var(--bsi-primary)]/40 px-1.5 py-0.5 rounded font-bold">
                                       P5
                                     </span>
                                   )}
@@ -422,11 +422,11 @@ export default function ConferencesHubPage() {
                 return (
                   <ScrollReveal key={conf.id} direction="up" delay={150 + index * 50}>
                     <Link href={`/college-baseball/conferences/${conf.id}`}>
-                      <Card padding="lg" className="hover:border-burnt-orange/50 transition-all cursor-pointer group">
+                      <Card padding="lg" className="hover:border-[var(--bsi-primary)]/50 transition-all cursor-pointer group">
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                           <div className="flex-1">
                             <div className="flex items-center gap-3 mb-2">
-                              <h2 className="font-display text-2xl font-bold text-bsi-bone group-hover:text-burnt-orange transition-colors">
+                              <h2 className="font-display text-2xl font-bold text-bsi-bone group-hover:text-[var(--bsi-primary)] transition-colors">
                                 {conf.fullName}
                               </h2>
                               {a && a.teamCount > 0 && (
@@ -436,7 +436,7 @@ export default function ConferencesHubPage() {
                             <p className="text-bsi-dust mb-3">{conf.description}</p>
                             <div className="flex flex-wrap gap-3 text-sm">
                               {a?.topTeam && (
-                                <span className="text-burnt-orange">Leader: {a.topTeam}</span>
+                                <span className="text-[var(--bsi-primary)]">Leader: {a.topTeam}</span>
                               )}
                               {winPct !== undefined && (
                                 <span className="text-bsi-dust">Win%: {fmtPct(winPct)}</span>
@@ -448,7 +448,7 @@ export default function ConferencesHubPage() {
                             {(() => {
                               const cs = confStrength.find(c => c.conference === conf.name);
                               return cs ? (
-                                <div className="text-burnt-orange font-mono text-lg font-bold">{cs.strength_index.toFixed(1)}</div>
+                                <div className="text-[var(--bsi-primary)] font-mono text-lg font-bold">{cs.strength_index.toFixed(1)}</div>
                               ) : null;
                             })()}
                             {a?.totalWins !== undefined && (
@@ -481,9 +481,9 @@ export default function ConferencesHubPage() {
                     const winPct = totalGames > 0 ? (conf.agg?.totalWins || 0) / totalGames : undefined;
                     return (
                       <Link key={conf.id} href={`/college-baseball/conferences/${conf.id}`}>
-                        <Card padding="md" className="hover:border-burnt-orange/50 transition-all cursor-pointer group h-full">
+                        <Card padding="md" className="hover:border-[var(--bsi-primary)]/50 transition-all cursor-pointer group h-full">
                           <div className="flex items-center justify-between mb-1">
-                            <h3 className="font-display text-lg font-bold text-bsi-bone group-hover:text-burnt-orange transition-colors">
+                            <h3 className="font-display text-lg font-bold text-bsi-bone group-hover:text-[var(--bsi-primary)] transition-colors">
                               {conf.name}
                             </h3>
                           </div>

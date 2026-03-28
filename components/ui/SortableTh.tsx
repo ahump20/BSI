@@ -16,7 +16,7 @@ export function SortableTh({ label, sortKey, indicator, onSort, className = '' }
   return (
     <th
       scope="col"
-      className={`text-left p-3 text-text-tertiary font-semibold text-xs cursor-pointer select-none hover:text-burnt-orange transition-colors ${className}`}
+      className={`text-left p-3 text-[rgba(196,184,165,0.5)] font-semibold text-xs cursor-pointer select-none hover:text-[var(--bsi-primary)] transition-colors ${className}`}
       onClick={() => onSort(sortKey)}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSort(sortKey); } }}
       tabIndex={0}
@@ -26,7 +26,7 @@ export function SortableTh({ label, sortKey, indicator, onSort, className = '' }
       <span className="inline-flex items-center gap-1">
         {label}
         {indicator && (
-          <span className="text-burnt-orange text-[10px]">{indicator}</span>
+          <span className="text-[var(--bsi-primary)] text-[10px]">{indicator}</span>
         )}
       </span>
     </th>

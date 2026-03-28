@@ -59,15 +59,15 @@ export default function CollegeRecapClient() {
         <div className="text-center py-8">
           <svg
             viewBox="0 0 24 24"
-            className="w-16 h-16 text-text-tertiary mx-auto mb-4"
+            className="w-16 h-16 text-[rgba(196,184,165,0.5)] mx-auto mb-4"
             fill="none"
             stroke="currentColor"
             strokeWidth="1.5"
           >
             <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <p className="text-text-secondary">Game recap drops after the final out.</p>
-          <p className="text-text-tertiary text-sm mt-2">
+          <p className="text-[var(--bsi-dust)]">Game recap drops after the final out.</p>
+          <p className="text-[rgba(196,184,165,0.5)] text-sm mt-2">
             Not some AI-generated summary—actual game context, key moments, and the stuff ESPN won't
             tell you.
           </p>
@@ -85,9 +85,9 @@ export default function CollegeRecapClient() {
             <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
             <span className="text-success font-semibold">Game In Progress</span>
           </div>
-          <p className="text-text-secondary">
+          <p className="text-[var(--bsi-dust)]">
             Live updates as the game unfolds. Currently in the{' '}
-            <span className="text-text-primary font-semibold">
+            <span className="text-[var(--bsi-bone)] font-semibold">
               {game.status.inningState} of the {game.status.inning}
               {game.status.inning === 1
                 ? 'st'
@@ -112,7 +112,7 @@ export default function CollegeRecapClient() {
                 {scoringPlays.map((play) => (
                   <div
                     key={play.id}
-                    className="p-3 bg-background-tertiary rounded-sm border-l-4 border-burnt-orange"
+                    className="p-3 bg-[var(--surface-dugout)] rounded-sm border-l-4 border-[var(--bsi-primary)]"
                   >
                     <div className="flex items-center gap-2 mb-1">
                       <Badge variant="primary" size="sm">
@@ -122,8 +122,8 @@ export default function CollegeRecapClient() {
                         +{play.runsScored}
                       </Badge>
                     </div>
-                    <p className="text-text-secondary text-sm">{play.description}</p>
-                    <p className="text-text-tertiary text-xs mt-1">
+                    <p className="text-[var(--bsi-dust)] text-sm">{play.description}</p>
+                    <p className="text-[rgba(196,184,165,0.5)] text-xs mt-1">
                       Score: {game.teams.away.abbreviation} {play.scoreAfter.away} -{' '}
                       {game.teams.home.abbreviation} {play.scoreAfter.home}
                     </p>
@@ -145,12 +145,12 @@ export default function CollegeRecapClient() {
     <div className="space-y-6">
       {/* Headline */}
       <Card variant="default" padding="lg">
-        <h2 className="text-2xl font-display font-bold text-text-primary mb-4">
+        <h2 className="text-2xl font-display font-bold text-[var(--bsi-bone)] mb-4">
           {winner.ranking && `#${winner.ranking} `}
           {winner.name} defeat {loser.ranking && `#${loser.ranking} `}
           {loser.name}, {winner.score}-{loser.score}
         </h2>
-        <p className="text-text-secondary leading-relaxed">
+        <p className="text-[var(--bsi-dust)] leading-relaxed">
           The {winner.name} came away with the victory over the {loser.name} at {game.venue?.name}.
           {winningPitcher && (
             <>
@@ -162,7 +162,7 @@ export default function CollegeRecapClient() {
           {losingPitcher && <> {losingPitcher.player.name} took the loss.</>}
         </p>
         {(winner.conference || loser.conference) && (
-          <p className="text-text-tertiary text-sm mt-3">
+          <p className="text-[rgba(196,184,165,0.5)] text-sm mt-3">
             {winner.conference === loser.conference
               ? `${winner.conference} conference game`
               : 'Non-conference matchup'}
@@ -179,20 +179,20 @@ export default function CollegeRecapClient() {
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2">
               {battingStars.slice(0, 4).map((player, idx) => (
-                <div key={idx} className="flex items-center gap-4 p-3 bg-background-tertiary rounded-sm">
-                  <div className="w-12 h-12 bg-background-secondary rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange">
+                <div key={idx} className="flex items-center gap-4 p-3 bg-[var(--surface-dugout)] rounded-sm">
+                  <div className="w-12 h-12 bg-[var(--surface-dugout)] rounded-full flex items-center justify-center text-sm font-bold text-[var(--bsi-primary)]">
                     {player.team}
                   </div>
                   <div>
-                    <p className="font-semibold text-text-primary">
+                    <p className="font-semibold text-[var(--bsi-bone)]">
                       {player.player.name}
                       {player.player.year && (
-                        <span className="text-text-tertiary text-xs ml-2">
+                        <span className="text-[rgba(196,184,165,0.5)] text-xs ml-2">
                           ({player.player.year})
                         </span>
                       )}
                     </p>
-                    <p className="text-text-secondary text-sm">
+                    <p className="text-[var(--bsi-dust)] text-sm">
                       {player.h}-{player.ab}
                       {player.rbi > 0 && `, ${player.rbi} RBI`}
                       {player.r > 0 && `, ${player.r} R`}
@@ -216,7 +216,7 @@ export default function CollegeRecapClient() {
               {scoringPlays.map((play) => (
                 <div
                   key={play.id}
-                  className="p-3 bg-background-tertiary rounded-sm border-l-4 border-burnt-orange"
+                  className="p-3 bg-[var(--surface-dugout)] rounded-sm border-l-4 border-[var(--bsi-primary)]"
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <Badge variant="primary" size="sm">
@@ -226,7 +226,7 @@ export default function CollegeRecapClient() {
                       +{play.runsScored}
                     </Badge>
                   </div>
-                  <p className="text-text-secondary text-sm">{play.description}</p>
+                  <p className="text-[var(--bsi-dust)] text-sm">{play.description}</p>
                 </div>
               ))}
             </div>
@@ -243,18 +243,18 @@ export default function CollegeRecapClient() {
           <CardContent>
             <div className="space-y-3">
               {qualityStarts.map((pitcher, idx) => (
-                <div key={idx} className="flex items-center gap-4 p-3 bg-background-tertiary rounded-sm">
+                <div key={idx} className="flex items-center gap-4 p-3 bg-[var(--surface-dugout)] rounded-sm">
                   <Badge variant="success">QS</Badge>
                   <div>
-                    <p className="font-semibold text-text-primary">
+                    <p className="font-semibold text-[var(--bsi-bone)]">
                       {pitcher.player.name}
                       {pitcher.player.year && (
-                        <span className="text-text-tertiary text-xs ml-2">
+                        <span className="text-[rgba(196,184,165,0.5)] text-xs ml-2">
                           ({pitcher.player.year})
                         </span>
                       )}
                     </p>
-                    <p className="text-text-secondary text-sm">
+                    <p className="text-[var(--bsi-dust)] text-sm">
                       {pitcher.ip} IP, {pitcher.h} H, {pitcher.er} ER, {pitcher.so} K
                     </p>
                   </div>
@@ -269,7 +269,7 @@ export default function CollegeRecapClient() {
       {scoringPlays.length === 0 && (
         <Card variant="default" padding="lg">
           <div className="text-center py-4">
-            <p className="text-text-secondary">
+            <p className="text-[var(--bsi-dust)]">
               No runs crossed the plate—or the scoring data's still loading.
             </p>
           </div>

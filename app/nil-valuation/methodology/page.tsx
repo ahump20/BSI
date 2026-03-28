@@ -13,17 +13,17 @@ export default function NILMethodologyPage() {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/nil-valuation"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 NIL Valuation
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">Methodology</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">Methodology</span>
             </nav>
           </Container>
         </Section>
@@ -39,13 +39,13 @@ export default function NILMethodologyPage() {
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-gradient-blaze mb-4">
+              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-[var(--bsi-primary)] mb-4">
                 Our Methodology
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="text-text-secondary max-w-2xl">
+              <p className="text-[var(--bsi-dust)] max-w-2xl">
                 How we calculate Fair Market NIL Value (FMNV) and convert performance metrics to
                 dollar values.
               </p>
@@ -64,7 +64,7 @@ export default function NILMethodologyPage() {
                     <CardTitle className="flex items-center gap-3">
                       <svg
                         viewBox="0 0 24 24"
-                        className="w-6 h-6 text-burnt-orange"
+                        className="w-6 h-6 text-[var(--bsi-primary)]"
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="1.5"
@@ -75,43 +75,43 @@ export default function NILMethodologyPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <p className="text-text-secondary">
+                    <p className="text-[var(--bsi-dust)]">
                       FMNV represents the estimated market value of an athlete's NIL rights based on
                       multiple factors. Our model considers:
                     </p>
-                    <ul className="space-y-3 text-text-secondary">
+                    <ul className="space-y-3 text-[var(--bsi-dust)]">
                       <li className="flex items-start gap-3">
-                        <span className="text-burnt-orange font-bold">1.</span>
+                        <span className="text-[var(--bsi-primary)] font-bold">1.</span>
                         <div>
-                          <strong className="text-text-primary">On-Field Performance</strong> — Statistical
+                          <strong className="text-[var(--bsi-bone)]">On-Field Performance</strong> — Statistical
                           production, awards, and projected draft position contribute to base value.
                         </div>
                       </li>
                       <li className="flex items-start gap-3">
-                        <span className="text-burnt-orange font-bold">2.</span>
+                        <span className="text-[var(--bsi-primary)] font-bold">2.</span>
                         <div>
-                          <strong className="text-text-primary">Social Following</strong> — Combined reach
+                          <strong className="text-[var(--bsi-bone)]">Social Following</strong> — Combined reach
                           across platforms with engagement rate adjustments.
                         </div>
                       </li>
                       <li className="flex items-start gap-3">
-                        <span className="text-burnt-orange font-bold">3.</span>
+                        <span className="text-[var(--bsi-primary)] font-bold">3.</span>
                         <div>
-                          <strong className="text-text-primary">Market Size</strong> — School market,
+                          <strong className="text-[var(--bsi-bone)]">Market Size</strong> — School market,
                           conference visibility, and regional brand affinity.
                         </div>
                       </li>
                       <li className="flex items-start gap-3">
-                        <span className="text-burnt-orange font-bold">4.</span>
+                        <span className="text-[var(--bsi-primary)] font-bold">4.</span>
                         <div>
-                          <strong className="text-text-primary">Sport Premium</strong> — Football and
+                          <strong className="text-[var(--bsi-bone)]">Sport Premium</strong> — Football and
                           basketball command higher valuations due to media exposure.
                         </div>
                       </li>
                       <li className="flex items-start gap-3">
-                        <span className="text-burnt-orange font-bold">5.</span>
+                        <span className="text-[var(--bsi-primary)] font-bold">5.</span>
                         <div>
-                          <strong className="text-text-primary">Comparable Deals</strong> — Actual NIL
+                          <strong className="text-[var(--bsi-bone)]">Comparable Deals</strong> — Actual NIL
                           deals for similar athletes inform market pricing.
                         </div>
                       </li>
@@ -127,7 +127,7 @@ export default function NILMethodologyPage() {
                     <CardTitle className="flex items-center gap-3">
                       <svg
                         viewBox="0 0 24 24"
-                        className="w-6 h-6 text-burnt-orange"
+                        className="w-6 h-6 text-[var(--bsi-primary)]"
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="1.5"
@@ -138,23 +138,23 @@ export default function NILMethodologyPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <p className="text-text-secondary">
+                    <p className="text-[var(--bsi-dust)]">
                       For baseball athletes, we convert Wins Above Replacement (WAR) to NIL value
                       using MLB market rates as a benchmark:
                     </p>
-                    <div className="bg-background-tertiary rounded-sm p-4 font-mono text-sm">
-                      <p className="text-burnt-orange mb-2">{'// Base calculation'}</p>
-                      <p className="text-text-primary">
+                    <div className="bg-[var(--surface-dugout)] rounded-sm p-4 font-mono text-sm">
+                      <p className="text-[var(--bsi-primary)] mb-2">{'// Base calculation'}</p>
+                      <p className="text-[var(--bsi-bone)]">
                         NIL Value = WAR × $/WAR × College Discount Factor
                       </p>
-                      <p className="text-text-tertiary mt-4">
+                      <p className="text-[rgba(196,184,165,0.5)] mt-4">
                         {'// 2025 MLB market: ~$8M per WAR'}
                       </p>
-                      <p className="text-text-tertiary">
+                      <p className="text-[rgba(196,184,165,0.5)]">
                         {'// College discount: 0.5-2% of MLB value'}
                       </p>
                     </div>
-                    <p className="text-text-secondary">
+                    <p className="text-[var(--bsi-dust)]">
                       This gives a performance-based floor that we then adjust using the social and
                       market factors from FMNV.
                     </p>
@@ -169,7 +169,7 @@ export default function NILMethodologyPage() {
                     <CardTitle className="flex items-center gap-3">
                       <svg
                         viewBox="0 0 24 24"
-                        className="w-6 h-6 text-burnt-orange"
+                        className="w-6 h-6 text-[var(--bsi-primary)]"
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="1.5"
@@ -180,10 +180,10 @@ export default function NILMethodologyPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-text-secondary mb-4">
+                    <p className="text-[var(--bsi-dust)] mb-4">
                       Our valuations rely on publicly available data from trusted sources:
                     </p>
-                    <ul className="grid gap-3 md:grid-cols-2 text-text-secondary">
+                    <ul className="grid gap-3 md:grid-cols-2 text-[var(--bsi-dust)]">
                       <li className="flex items-center gap-2">
                         <svg
                           viewBox="0 0 24 24"
@@ -267,9 +267,9 @@ export default function NILMethodologyPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-text-secondary">
+                    <p className="text-[var(--bsi-dust)]">
                       Our valuations are{' '}
-                      <strong className="text-text-primary">
+                      <strong className="text-[var(--bsi-bone)]">
                         estimates for informational purposes only
                       </strong>
                       . Actual NIL values depend on negotiation, specific deal terms, and market

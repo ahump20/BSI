@@ -120,7 +120,7 @@ export function IntelHeader({
         />
 
         <Tooltip content={MODE_DESCRIPTIONS[mode]} side="bottom">
-          <span className="inline-flex items-center gap-1 text-text-muted">
+          <span className="inline-flex items-center gap-1 text-[rgba(196,184,165,0.35)]">
             <Info className="h-3.5 w-3.5" />
             <span className="intel-caption">{MODE_LABELS[mode]}</span>
           </span>
@@ -130,7 +130,7 @@ export function IntelHeader({
         {teamLens ? (
           <button
             onClick={() => onTeamLensChange(null)}
-            className="inline-flex items-center gap-1 px-2 py-1 text-[11px] transition-colors hover:border-border-strong"
+            className="inline-flex items-center gap-1 px-2 py-1 text-[11px] transition-colors hover:border-[rgba(140,98,57,0.5)]"
             style={{
               fontFamily: 'var(--intel-mono)',
               borderRadius: '2px',
@@ -146,7 +146,7 @@ export function IntelHeader({
             aria-label="Select team lens"
             value=""
             onChange={(e) => e.target.value && onTeamLensChange(e.target.value)}
-            className="h-8 border border-border bg-surface-light px-2 text-[11px] text-text-secondary outline-none focus:border-border-strong"
+            className="h-8 border border-border bg-[var(--surface-press-box)] px-2 text-[11px] text-[var(--bsi-dust)] outline-none focus:border-[rgba(140,98,57,0.5)]"
             style={{ fontFamily: 'var(--intel-mono)', borderRadius: '2px' }}
           >
             <option value="">Team lens...</option>

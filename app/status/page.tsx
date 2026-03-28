@@ -101,12 +101,12 @@ export default function StatusPage() {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/" className="text-text-tertiary hover:text-burnt-orange transition-colors">Home</Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">System Status</span>
+              <Link href="/" className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors">Home</Link>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">System Status</span>
             </nav>
           </Container>
         </Section>
@@ -115,10 +115,10 @@ export default function StatusPage() {
         <Section padding="md" className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
           <Container>
-            <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-gradient-blaze">
+            <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-[var(--bsi-primary)]">
               System Status
             </h1>
-            <p className="text-text-secondary mt-2">
+            <p className="text-[var(--bsi-dust)] mt-2">
               Real-time health of BSI data pipelines and endpoints
             </p>
           </Container>
@@ -128,13 +128,13 @@ export default function StatusPage() {
           <Container>
             {loading ? (
               <div className="flex flex-col items-center justify-center py-16">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-burnt-orange mb-4" />
-                <p className="text-text-secondary">Checking systems...</p>
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--bsi-primary)] mb-4" />
+                <p className="text-[var(--bsi-dust)]">Checking systems...</p>
               </div>
             ) : error ? (
               <Card padding="lg" className="text-center">
                 <p className="text-error mb-2">Unable to load system status</p>
-                <p className="text-text-tertiary text-sm">{error}</p>
+                <p className="text-[rgba(196,184,165,0.5)] text-sm">{error}</p>
               </Card>
             ) : data ? (
               <>
@@ -149,7 +149,7 @@ export default function StatusPage() {
                       {overall?.label}
                     </span>
                   </div>
-                  <p className="text-text-tertiary text-xs mt-2">
+                  <p className="text-[rgba(196,184,165,0.5)] text-xs mt-2">
                     Last checked: {new Date(data.timestamp).toLocaleString('en-US', {
                       timeZone: 'America/Chicago',
                       month: 'short',
@@ -168,7 +168,7 @@ export default function StatusPage() {
                     return (
                     <Card key={endpoint.name} padding="md">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-semibold text-text-primary truncate">
+                        <span className="text-sm font-semibold text-[var(--bsi-bone)] truncate">
                           {endpoint.name}
                         </span>
                         <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${
@@ -176,7 +176,7 @@ export default function StatusPage() {
                           slow ? 'bg-[var(--bsi-warning)]' : 'bg-[var(--bsi-danger)]'
                         }`} />
                       </div>
-                      <div className="flex items-center justify-between text-xs text-text-tertiary">
+                      <div className="flex items-center justify-between text-xs text-[rgba(196,184,165,0.5)]">
                         <Badge
                           variant={healthy ? 'success' : slow ? 'warning' : 'error'}
                           size="sm"
@@ -193,7 +193,7 @@ export default function StatusPage() {
                 </div>
 
                 {/* Refresh Note */}
-                <p className="text-center text-xs text-text-tertiary mt-8">
+                <p className="text-center text-xs text-[rgba(196,184,165,0.5)] mt-8">
                   Auto-refreshes every 60 seconds. Checks run every 5 minutes via synthetic monitor.
                 </p>
               </>

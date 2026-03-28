@@ -42,7 +42,7 @@ export function HAVFLiveLeaderboard() {
     return (
       <div className="space-y-2">
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="h-14 bg-surface-light rounded-sm animate-pulse" />
+          <div key={i} className="h-14 bg-[var(--surface-press-box)] rounded-sm animate-pulse" />
         ))}
       </div>
     );
@@ -50,7 +50,7 @@ export function HAVFLiveLeaderboard() {
 
   if (players.length === 0) {
     return (
-      <div className="text-center py-8 text-text-muted text-sm">
+      <div className="text-center py-8 text-[rgba(196,184,165,0.35)] text-sm">
         HAV-F scores recompute daily. Data will appear after the next compute cycle.
       </div>
     );

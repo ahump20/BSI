@@ -118,8 +118,8 @@ function RollingAreaChart({
 }) {
   if (data.length < 2) {
     return (
-      <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
-        <p className="text-text-muted text-xs">{label} data will appear as the season progresses.</p>
+      <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] p-4 text-center">
+        <p className="text-[rgba(196,184,165,0.35)] text-xs">{label} data will appear as the season progresses.</p>
       </div>
     );
   }
@@ -150,9 +150,9 @@ function RollingAreaChart({
   const lastVal = values[values.length - 1];
 
   return (
-    <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4">
+    <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] p-4">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-[10px] uppercase tracking-wider text-text-muted">{label}</span>
+        <span className="text-[10px] uppercase tracking-wider text-[rgba(196,184,165,0.35)]">{label}</span>
         <span className="font-mono text-sm font-bold" style={{ color }}>{format(lastVal)}</span>
       </div>
       <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto" aria-hidden="true">
@@ -181,8 +181,8 @@ function RollingAreaChart({
 function RunDiffBarChart({ data }: { data: TeamRollingPoint[] }) {
   if (data.length < 2) {
     return (
-      <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
-        <p className="text-text-muted text-xs">Run differential data will appear as the season progresses.</p>
+      <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] p-4 text-center">
+        <p className="text-[rgba(196,184,165,0.35)] text-xs">Run differential data will appear as the season progresses.</p>
       </div>
     );
   }
@@ -199,9 +199,9 @@ function RunDiffBarChart({ data }: { data: TeamRollingPoint[] }) {
   const lastVal = values[values.length - 1];
 
   return (
-    <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4">
+    <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] p-4">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-[10px] uppercase tracking-wider text-text-muted">Run Differential</span>
+        <span className="text-[10px] uppercase tracking-wider text-[rgba(196,184,165,0.35)]">Run Differential</span>
         <span
           className="font-mono text-sm font-bold"
           style={{ color: lastVal > 0 ? 'var(--bsi-success)' : lastVal < 0 ? 'var(--bsi-error)' : undefined }}
@@ -254,11 +254,11 @@ export default function TexasTrendsClient() {
         <Section padding="sm" className="border-b border-border">
           <Container>
             <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">College Baseball</Link>
-              <span className="text-text-muted">/</span>
-              <Link href="/college-baseball/texas-intelligence" className="text-text-muted hover:text-burnt-orange transition-colors">Texas Intel</Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-primary">Trends</span>
+              <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">College Baseball</Link>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <Link href="/college-baseball/texas-intelligence" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">Texas Intel</Link>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[var(--bsi-bone)]">Trends</span>
             </nav>
           </Container>
         </Section>
@@ -272,12 +272,12 @@ export default function TexasTrendsClient() {
                 <img src={logoUrl} alt="Texas" className="w-12 h-12 object-contain" loading="eager" />
                 <div>
                   <span className="heritage-stamp text-[10px]">Performance Trends</span>
-                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-text-primary mt-1">
+                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-[var(--bsi-bone)] mt-1">
                     Hot & Cold Tracker
                   </h1>
                 </div>
               </div>
-              <p className="text-text-secondary text-sm mt-4 max-w-2xl">
+              <p className="text-[var(--bsi-dust)] text-sm mt-4 max-w-2xl">
                 Rolling averages and momentum metrics — who is carrying the team right now and who is pressing.
               </p>
             </ScrollReveal>
@@ -291,7 +291,7 @@ export default function TexasTrendsClient() {
             <Container>
               <ScrollReveal direction="up">
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
+                  <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] p-4 text-center">
                     <div
                       className="font-mono text-2xl font-bold"
                       style={{
@@ -302,15 +302,15 @@ export default function TexasTrendsClient() {
                     >
                       {momentum.last5RunDifferential > 0 ? '+' : ''}{momentum.last5RunDifferential}
                     </div>
-                    <div className="text-[10px] uppercase tracking-wider text-text-muted mt-1">Run Diff (L5)</div>
+                    <div className="text-[10px] uppercase tracking-wider text-[rgba(196,184,165,0.35)] mt-1">Run Diff (L5)</div>
                   </div>
-                  <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
+                  <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] p-4 text-center">
                     <div className="font-mono text-2xl font-bold text-orange-400">{momentum.hotPlayers}</div>
-                    <div className="text-[10px] uppercase tracking-wider text-text-muted mt-1">Hot Bats</div>
+                    <div className="text-[10px] uppercase tracking-wider text-[rgba(196,184,165,0.35)] mt-1">Hot Bats</div>
                   </div>
-                  <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
+                  <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] p-4 text-center">
                     <div className="font-mono text-2xl font-bold text-[var(--heritage-columbia-blue)]">{momentum.coldPlayers}</div>
-                    <div className="text-[10px] uppercase tracking-wider text-text-muted mt-1">Cold Bats</div>
+                    <div className="text-[10px] uppercase tracking-wider text-[rgba(196,184,165,0.35)] mt-1">Cold Bats</div>
                   </div>
                 </div>
               </ScrollReveal>
@@ -351,7 +351,7 @@ export default function TexasTrendsClient() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <Card variant="default" padding="lg" className="border-t-2 border-burnt-orange">
+              <Card variant="default" padding="lg" className="border-t-2 border-[var(--bsi-primary)]">
                 <CardHeader>
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <CardTitle className="flex items-center gap-3">
@@ -369,8 +369,8 @@ export default function TexasTrendsClient() {
                             statusFilter === f
                               ? f === 'hot' ? 'bg-orange-500 text-white'
                                 : f === 'cold' ? 'bg-[var(--heritage-columbia-blue)] text-white'
-                                : 'bg-burnt-orange text-white'
-                              : 'bg-surface-light text-text-muted hover:text-text-primary'
+                                : 'bg-[var(--bsi-primary)] text-white'
+                              : 'bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)]'
                           }`}
                         >
                           {f === 'all' ? 'All' : f}
@@ -383,18 +383,18 @@ export default function TexasTrendsClient() {
                   {loading ? (
                     <div className="space-y-3">
                       {[1, 2, 3, 4, 5, 6].map((i) => (
-                        <div key={i} className="h-12 bg-surface-light rounded-sm animate-pulse" />
+                        <div key={i} className="h-12 bg-[var(--surface-press-box)] rounded-sm animate-pulse" />
                       ))}
                     </div>
                   ) : error || !data?.players ? (
-                    <p className="text-text-muted text-sm text-center py-8">Trend data is not available right now.</p>
+                    <p className="text-[rgba(196,184,165,0.35)] text-sm text-center py-8">Trend data is not available right now.</p>
                   ) : filtered.length === 0 ? (
-                    <p className="text-text-muted text-sm text-center py-8">No players match this filter.</p>
+                    <p className="text-[rgba(196,184,165,0.35)] text-sm text-center py-8">No players match this filter.</p>
                   ) : (
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                          <tr className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
                             <th className="text-left py-2 px-2">Player</th>
                             <th className="text-left py-2 px-2">Pos</th>
                             <th className="text-center py-2 px-2">Status</th>
@@ -411,22 +411,22 @@ export default function TexasTrendsClient() {
                             const s = STATUS_STYLES[p.status];
                             const avgDelta = p.rolling.avg5 - p.seasonStats.avg;
                             return (
-                              <tr key={p.playerId || p.name} className="border-t border-border-subtle hover:bg-surface-light/30 transition-colors">
-                                <td className="py-2.5 px-2 text-text-primary font-medium">{p.name}</td>
-                                <td className="py-2.5 px-2 text-text-muted text-xs">{p.position}</td>
+                              <tr key={p.playerId || p.name} className="border-t border-[var(--border-vintage)] hover:bg-[var(--surface-press-box)]/30 transition-colors">
+                                <td className="py-2.5 px-2 text-[var(--bsi-bone)] font-medium">{p.name}</td>
+                                <td className="py-2.5 px-2 text-[rgba(196,184,165,0.35)] text-xs">{p.position}</td>
                                 <td className="py-2.5 px-2 text-center">
                                   <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm ${s.bg}`}>
                                     <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
                                     <span className={`text-[10px] font-semibold uppercase tracking-wider ${s.text}`}>{s.label}</span>
                                   </span>
                                 </td>
-                                <td className="py-2.5 px-2 text-right font-mono text-text-secondary">
+                                <td className="py-2.5 px-2 text-right font-mono text-[var(--bsi-dust)]">
                                   {fmt3(p.seasonStats.avg)}
                                 </td>
                                 <td className="py-2.5 px-2 text-right font-mono font-semibold" style={{ color: avgDelta > 0.03 ? '#f97316' : avgDelta < -0.03 ? '#3b82f6' : undefined }}>
                                   {fmt3(p.rolling.avg5)}
                                 </td>
-                                <td className="py-2.5 px-2 text-right font-mono text-text-secondary">
+                                <td className="py-2.5 px-2 text-right font-mono text-[var(--bsi-dust)]">
                                   {fmt3(p.rolling.avg10)}
                                 </td>
                                 <td className="py-2.5 px-2 text-right font-mono" style={{ color: p.seasonStats.woba > 0.340 ? ACCENT : undefined }}>
@@ -455,27 +455,27 @@ export default function TexasTrendsClient() {
         <Section padding="md" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <div className="rounded-sm bg-[var(--surface-dugout)] border border-border-subtle p-4">
+              <div className="rounded-sm bg-[var(--surface-dugout)] border border-[var(--border-vintage)] p-4">
                 <span className="heritage-stamp text-[10px] block mb-2">How This Works</span>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-text-secondary">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-[var(--bsi-dust)]">
                   <div>
                     <span className="inline-flex items-center gap-1.5 mb-1">
                       <span className="w-2 h-2 rounded-full bg-orange-500" />
-                      <span className="text-text-primary font-semibold">Hot</span>
+                      <span className="text-[var(--bsi-bone)] font-semibold">Hot</span>
                     </span>
                     <p>Last-5-game average is 50+ points above season average. The bat is alive.</p>
                   </div>
                   <div>
                     <span className="inline-flex items-center gap-1.5 mb-1">
                       <span className="w-2 h-2 rounded-full bg-[var(--heritage-columbia-blue)]" />
-                      <span className="text-text-primary font-semibold">Cold</span>
+                      <span className="text-[var(--bsi-bone)] font-semibold">Cold</span>
                     </span>
                     <p>Last-5-game average is 50+ points below season average. Pressing or fatigued.</p>
                   </div>
                   <div>
                     <span className="inline-flex items-center gap-1.5 mb-1">
                       <span className="w-2 h-2 rounded-full bg-[var(--bsi-dust)]" />
-                      <span className="text-text-primary font-semibold">Neutral</span>
+                      <span className="text-[var(--bsi-bone)] font-semibold">Neutral</span>
                     </span>
                     <p>Performing within normal range of season averages. Steady contributor.</p>
                   </div>
@@ -504,7 +504,7 @@ export default function TexasTrendsClient() {
               />
               <Link
                 href="/college-baseball/texas-intelligence"
-                className="text-sm text-burnt-orange hover:text-ember transition-colors"
+                className="text-sm text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 &larr; Back to Hub
               </Link>

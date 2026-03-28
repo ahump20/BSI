@@ -28,9 +28,9 @@ function StrikeZone({
   size?: string;
 }) {
   return (
-    <div className="relative w-48 h-60 bg-charcoal rounded-sm border border-border">
+    <div className="relative w-48 h-60 bg-[var(--surface-dugout)] rounded-sm border border-border">
       {/* Zone outline */}
-      <div className="absolute inset-6 border border-border-strong rounded-sm" />
+      <div className="absolute inset-6 border border-[rgba(140,98,57,0.5)] rounded-sm" />
       {/* Pitch dots */}
       {pitches.map((p) => {
         const x = p.coordinates ? (p.coordinates.x / 250) * 100 : 50;
@@ -42,13 +42,13 @@ function StrikeZone({
             onClick={() => onPitchClick(p.id === selectedPitchId ? null : p.id)}
             className={`absolute w-3 h-3 rounded-full -translate-x-1/2 -translate-y-1/2 transition-all ${
               p.isSelected ? 'ring-2 ring-white scale-150' : ''
-            } ${isStrike ? 'bg-burnt-orange' : 'bg-text-muted'}`}
+            } ${isStrike ? 'bg-[var(--bsi-primary)]' : 'bg-text-muted'}`}
             style={{ left: `${x}%`, top: `${y}%` }}
             title={`${p.type} — ${p.speed} mph — ${p.result}`}
           />
         );
       })}
-      <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[10px] text-text-muted">
+      <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[10px] text-[rgba(196,184,165,0.35)]">
         Strike Zone
       </span>
     </div>
@@ -84,13 +84,13 @@ function PitchList({
           key={p.id}
           onClick={() => onPitchSelect(p.id === selectedPitchId ? null : p.id)}
           className={`w-full flex items-center gap-3 px-3 py-2 rounded-sm text-left transition-colors ${
-            p.id === selectedPitchId ? 'bg-burnt-orange/20 text-white' : 'hover:bg-surface-light text-text-secondary'
+            p.id === selectedPitchId ? 'bg-[var(--bsi-primary)]/20 text-white' : 'hover:bg-[var(--surface-press-box)] text-[var(--bsi-dust)]'
           }`}
         >
-          <span className="text-xs text-text-muted w-4 font-mono">{p.pitchNumber}</span>
+          <span className="text-xs text-[rgba(196,184,165,0.35)] w-4 font-mono">{p.pitchNumber}</span>
           <span className="flex-1 text-sm">{p.type}</span>
-          <span className="text-xs font-mono text-burnt-orange">{p.speed} mph</span>
-          <span className="text-xs text-text-muted w-16 text-right truncate">{p.result}</span>
+          <span className="text-xs font-mono text-[var(--bsi-primary)]">{p.speed} mph</span>
+          <span className="text-xs text-[rgba(196,184,165,0.35)] w-16 text-right truncate">{p.result}</span>
         </button>
       ))}
     </div>
@@ -194,9 +194,9 @@ export function PitchTracker({
   if (atBats.length === 0) {
     return (
       <div className="p-4">
-        <div className="text-center py-12 bg-charcoal rounded-sm">
+        <div className="text-center py-12 bg-[var(--surface-dugout)] rounded-sm">
           <svg
-            className="w-12 h-12 mx-auto text-text-muted mb-3"
+            className="w-12 h-12 mx-auto text-[rgba(196,184,165,0.35)] mb-3"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -204,8 +204,8 @@ export function PitchTracker({
             <circle cx="12" cy="12" r="10" strokeWidth="1.5" />
             <path strokeLinecap="round" strokeWidth="1.5" d="M12 6v6l4 2" />
           </svg>
-          <p className="text-text-muted">Waiting for pitch data</p>
-          <p className="text-text-muted text-sm mt-1">
+          <p className="text-[rgba(196,184,165,0.35)]">Waiting for pitch data</p>
+          <p className="text-[rgba(196,184,165,0.35)] text-sm mt-1">
             Pitch tracking data will appear here during live games
           </p>
         </div>
@@ -228,8 +228,8 @@ export function PitchTracker({
               onClick={() => setSelectedAtBat(index)}
               className={`flex-shrink-0 px-3 py-2 rounded-sm text-sm transition-all ${
                 isSelected
-                  ? 'bg-burnt-orange text-white'
-                  : 'bg-charcoal text-text-secondary hover:bg-charcoal/80'
+                  ? 'bg-[var(--bsi-primary)] text-white'
+                  : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:bg-[var(--surface-dugout)]/80'
               } ${isLive ? 'ring-2 ring-green-500' : ''}`}
             >
               <div className="font-medium truncate max-w-24">{ab.batter.name.split(' ').pop()}</div>
@@ -260,11 +260,11 @@ export function PitchTracker({
               className={`mt-3 px-4 py-2 rounded-sm text-center ${
                 currentAtBat.isScoring
                   ? 'bg-[var(--bsi-success)]/20 text-[var(--bsi-success)]'
-                  : 'bg-charcoal text-text-secondary'
+                  : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)]'
               }`}
             >
               <div className="text-sm font-medium">{currentAtBat.result || 'In Progress'}</div>
-              <div className="text-xs text-text-muted mt-0.5 max-w-64 truncate">
+              <div className="text-xs text-[rgba(196,184,165,0.35)] mt-0.5 max-w-64 truncate">
                 {currentAtBat.description}
               </div>
             </div>
@@ -273,8 +273,8 @@ export function PitchTracker({
           {/* Pitch list */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-semibold text-text-primary">{currentAtBat.batter.name}</h3>
-              <span className="text-xs text-text-muted">vs {currentAtBat.pitcher.name}</span>
+              <h3 className="text-sm font-semibold text-[var(--bsi-bone)]">{currentAtBat.batter.name}</h3>
+              <span className="text-xs text-[rgba(196,184,165,0.35)]">vs {currentAtBat.pitcher.name}</span>
             </div>
             <PitchList
               pitches={currentAtBat.pitches.map((p, i) => ({
@@ -329,8 +329,8 @@ function PitchTypeSummary({ atBats }: { atBats: AtBat[] }) {
   if (summary.length === 0) return null;
 
   return (
-    <div className="bg-charcoal rounded-sm p-4">
-      <h3 className="text-sm font-semibold text-text-primary mb-3">Pitch Arsenal</h3>
+    <div className="bg-[var(--surface-dugout)] rounded-sm p-4">
+      <h3 className="text-sm font-semibold text-[var(--bsi-bone)] mb-3">Pitch Arsenal</h3>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         {summary.map(([type, data]) => {
           const percentage = ((data.count / totalPitches) * 100).toFixed(0);
@@ -339,18 +339,18 @@ function PitchTypeSummary({ atBats }: { atBats: AtBat[] }) {
             <div key={type} className="flex items-center gap-3">
               <div className="flex-1">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-text-secondary">{type}</span>
-                  <span className="text-xs text-text-muted">{percentage}%</span>
+                  <span className="text-xs text-[var(--bsi-dust)]">{type}</span>
+                  <span className="text-xs text-[rgba(196,184,165,0.35)]">{percentage}%</span>
                 </div>
                 <div className="mt-1 h-1.5 bg-surface rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-burnt-orange rounded-full transition-all"
+                    className="h-full bg-[var(--bsi-primary)] rounded-full transition-all"
                     style={{ width: `${percentage}%` }}
                   />
                 </div>
                 <div className="flex items-center justify-between mt-1">
-                  <span className="text-[10px] text-text-muted">{data.count} pitches</span>
-                  <span className="text-[10px] text-burnt-orange">
+                  <span className="text-[10px] text-[rgba(196,184,165,0.35)]">{data.count} pitches</span>
+                  <span className="text-[10px] text-[var(--bsi-primary)]">
                     {data.avgSpeed.toFixed(1)} mph
                   </span>
                 </div>

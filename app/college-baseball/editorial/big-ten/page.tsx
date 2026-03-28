@@ -83,19 +83,19 @@ export default function BigTenEditorialPage() {
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/college-baseball"
-                className="text-text-muted hover:text-[#6B8CAE] transition-colors"
+                className="text-[rgba(196,184,165,0.35)] hover:text-[#6B8CAE] transition-colors"
               >
                 College Baseball
               </Link>
-              <span className="text-text-muted">/</span>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
               <Link
                 href="/college-baseball/editorial"
-                className="text-text-muted hover:text-[#6B8CAE] transition-colors"
+                className="text-[rgba(196,184,165,0.35)] hover:text-[#6B8CAE] transition-colors"
               >
                 Editorial
               </Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-primary">Big Ten</span>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[var(--bsi-bone)]">Big Ten</span>
             </nav>
           </Container>
         </Section>
@@ -116,7 +116,7 @@ export default function BigTenEditorialPage() {
                   Northern{' '}
                   <span className="text-[#6B8CAE]">Rising</span>
                 </h1>
-                <p className="text-text-tertiary text-lg leading-relaxed">
+                <p className="text-[rgba(196,184,165,0.5)] text-lg leading-relaxed">
                   The Big Ten added UCLA, USC, Oregon, and Washington — and overnight became
                   a real baseball conference. Seventeen programs. One Omaha favorite. Two
                   contenders. And a Midwest middle class investing at levels the old conference
@@ -129,27 +129,27 @@ export default function BigTenEditorialPage() {
             {/* Stats Band */}
             <ScrollReveal direction="up" delay={100}>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-surface-light border border-border-subtle rounded-sm p-4 text-center">
+                <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4 text-center">
                   <div className="font-display text-3xl font-bold text-[#6B8CAE]">17</div>
-                  <div className="text-text-muted text-xs uppercase tracking-wider mt-1">
+                  <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider mt-1">
                     Programs
                   </div>
                 </div>
-                <div className="bg-surface-light border border-border-subtle rounded-sm p-4 text-center">
+                <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4 text-center">
                   <div className="font-display text-3xl font-bold text-[#C9A227]">1</div>
-                  <div className="text-text-muted text-xs uppercase tracking-wider mt-1">
+                  <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider mt-1">
                     Omaha Favorite
                   </div>
                 </div>
-                <div className="bg-surface-light border border-border-subtle rounded-sm p-4 text-center">
+                <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4 text-center">
                   <div className="font-display text-3xl font-bold text-[#6B8CAE]">2</div>
-                  <div className="text-text-muted text-xs uppercase tracking-wider mt-1">
+                  <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider mt-1">
                     Contenders
                   </div>
                 </div>
-                <div className="bg-surface-light border border-border-subtle rounded-sm p-4 text-center">
-                  <div className="font-display text-3xl font-bold text-text-muted">8</div>
-                  <div className="text-text-muted text-xs uppercase tracking-wider mt-1">
+                <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4 text-center">
+                  <div className="font-display text-3xl font-bold text-[rgba(196,184,165,0.35)]">8</div>
+                  <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider mt-1">
                     Bubble Teams
                   </div>
                 </div>
@@ -164,13 +164,13 @@ export default function BigTenEditorialPage() {
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-1 h-8 rounded-full bg-[#6B8CAE]" />
-                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary">
+                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-[var(--bsi-bone)]">
                   The Conference
                 </h2>
               </div>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={60}>
-              <div className="space-y-5 text-text-tertiary leading-relaxed">
+              <div className="space-y-5 text-[rgba(196,184,165,0.5)] leading-relaxed">
                 <p>
                   The Big Ten added UCLA, USC, Oregon, and Washington — and overnight became
                   a legitimate baseball conference. For decades, the Big Ten was a Midwest
@@ -213,11 +213,11 @@ export default function BigTenEditorialPage() {
                 <div>
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-1 h-8 rounded-full bg-[#6B8CAE]" />
-                    <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary">
+                    <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-[var(--bsi-bone)]">
                       All 17 Programs
                     </h2>
                   </div>
-                  <p className="text-text-muted text-sm ml-4 pl-3">
+                  <p className="text-[rgba(196,184,165,0.35)] text-sm ml-4 pl-3">
                     Sorted by projection tier -- tap any team for full scouting breakdown
                   </p>
                 </div>
@@ -237,7 +237,7 @@ export default function BigTenEditorialPage() {
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-1 h-8 rounded-full bg-[#6B8CAE]" />
-                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary">
+                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-[var(--bsi-bone)]">
                   Key Storylines
                 </h2>
               </div>
@@ -252,7 +252,7 @@ export default function BigTenEditorialPage() {
                         {story.title}
                       </h3>
                     </div>
-                    <p className="text-text-tertiary text-sm leading-relaxed">{story.body}</p>
+                    <p className="text-[rgba(196,184,165,0.5)] text-sm leading-relaxed">{story.body}</p>
                   </Card>
                 </ScrollReveal>
               ))}
@@ -264,7 +264,7 @@ export default function BigTenEditorialPage() {
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-xl font-bold uppercase tracking-wide text-text-tertiary mb-6">
+              <h2 className="font-display text-xl font-bold uppercase tracking-wide text-[rgba(196,184,165,0.5)] mb-6">
                 More Conference Previews
               </h2>
             </ScrollReveal>
@@ -281,8 +281,8 @@ export default function BigTenEditorialPage() {
                       <h3 className="font-display text-xl font-bold uppercase tracking-wide text-[#C9A227] group-hover:text-[#C9A227]/80 transition-colors">
                         SEC
                       </h3>
-                      <p className="text-text-muted text-sm mt-1 italic">The Standard</p>
-                      <div className="flex items-center gap-4 mt-3 text-xs text-text-muted">
+                      <p className="text-[rgba(196,184,165,0.35)] text-sm mt-1 italic">The Standard</p>
+                      <div className="flex items-center gap-4 mt-3 text-xs text-[rgba(196,184,165,0.35)]">
                         <span>16 teams</span>
                         <span>4 Omaha Favorites</span>
                       </div>
@@ -307,19 +307,19 @@ export default function BigTenEditorialPage() {
                   <Card
                     variant="default"
                     padding="lg"
-                    className="h-full hover:border-burnt-orange/30 transition-all relative overflow-hidden"
+                    className="h-full hover:border-[var(--bsi-primary)]/30 transition-all relative overflow-hidden"
                   >
-                    <div className="absolute top-0 left-0 w-full h-1 rounded-t-sm bg-burnt-orange" />
+                    <div className="absolute top-0 left-0 w-full h-1 rounded-t-sm bg-[var(--bsi-primary)]" />
                     <div className="mt-2">
-                      <h3 className="font-display text-xl font-bold uppercase tracking-wide text-burnt-orange group-hover:text-ember transition-colors">
+                      <h3 className="font-display text-xl font-bold uppercase tracking-wide text-[var(--bsi-primary)] group-hover:text-[var(--bsi-primary)] transition-colors">
                         Big 12
                       </h3>
-                      <p className="text-text-muted text-sm mt-1 italic">New Blood</p>
-                      <div className="flex items-center gap-4 mt-3 text-xs text-text-muted">
+                      <p className="text-[rgba(196,184,165,0.35)] text-sm mt-1 italic">New Blood</p>
+                      <div className="flex items-center gap-4 mt-3 text-xs text-[rgba(196,184,165,0.35)]">
                         <span>14 teams</span>
                         <span>5 ranked</span>
                       </div>
-                      <div className="mt-4 flex items-center gap-1.5 text-sm font-semibold text-burnt-orange group-hover:translate-x-1 transition-transform">
+                      <div className="mt-4 flex items-center gap-1.5 text-sm font-semibold text-[var(--bsi-primary)] group-hover:translate-x-1 transition-transform">
                         Explore
                         <svg
                           viewBox="0 0 24 24"
@@ -343,7 +343,7 @@ export default function BigTenEditorialPage() {
         <Section padding="sm" borderTop>
           <Container>
             <div className="flex flex-wrap items-center justify-between gap-4">
-              <p className="text-text-muted text-xs">
+              <p className="text-[rgba(196,184,165,0.35)] text-xs">
                 Data: ESPN / SportsDataIO / D1Baseball -- February 2026
               </p>
               <Link

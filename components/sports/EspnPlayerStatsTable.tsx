@@ -21,17 +21,17 @@ interface EspnPlayerStatsTableProps {
 
 function PlayerRow({ player }: { player: BoxscorePlayerAthlete }) {
   return (
-    <tr className="border-b border-border-subtle last:border-0 hover:bg-surface-light">
-      <td className="p-2 text-text-primary font-medium whitespace-nowrap sticky left-0 bg-inherit">
+    <tr className="border-b border-[var(--border-vintage)] last:border-0 hover:bg-[var(--surface-press-box)]">
+      <td className="p-2 text-[var(--bsi-bone)] font-medium whitespace-nowrap sticky left-0 bg-inherit">
         <span>{player.athlete?.shortName || player.athlete?.displayName || '-'}</span>
         {player.athlete?.position?.abbreviation && (
-          <span className="text-text-tertiary text-xs ml-1.5">
+          <span className="text-[rgba(196,184,165,0.5)] text-xs ml-1.5">
             {player.athlete.position.abbreviation}
           </span>
         )}
       </td>
       {(player.stats || []).map((val, sIdx) => (
-        <td key={sIdx} className="p-2 text-center font-mono text-text-secondary text-xs">
+        <td key={sIdx} className="p-2 text-center font-mono text-[var(--bsi-dust)] text-xs">
           {val}
         </td>
       ))}
@@ -44,8 +44,8 @@ function SectionHeader({ label, colSpan, muted }: { label: string; colSpan: numb
     <tr>
       <td
         colSpan={colSpan}
-        className={`px-2 py-1 text-xs font-semibold uppercase tracking-wide bg-background-tertiary ${
-          muted ? 'text-text-tertiary' : 'text-burnt-orange'
+        className={`px-2 py-1 text-xs font-semibold uppercase tracking-wide bg-[var(--surface-dugout)] ${
+          muted ? 'text-[rgba(196,184,165,0.5)]' : 'text-[var(--bsi-primary)]'
         }`}
       >
         {label}
@@ -71,7 +71,7 @@ export function EspnPlayerStatsTable({
             <Card key={tIdx} variant="default" padding="md">
               <CardHeader><CardTitle>{teamName}</CardTitle></CardHeader>
               <CardContent>
-                <p className="text-text-tertiary text-sm py-4">No player statistics available</p>
+                <p className="text-[rgba(196,184,165,0.5)] text-sm py-4">No player statistics available</p>
               </CardContent>
             </Card>
           );
@@ -96,17 +96,17 @@ export function EspnPlayerStatsTable({
                     return (
                       <div key={gIdx}>
                         {groupName && (
-                          <div className="px-2 py-1.5 mb-2 text-xs text-burnt-orange font-semibold uppercase tracking-wide bg-background-tertiary rounded-sm">
+                          <div className="px-2 py-1.5 mb-2 text-xs text-[var(--bsi-primary)] font-semibold uppercase tracking-wide bg-[var(--surface-dugout)] rounded-sm">
                             {groupName}
                           </div>
                         )}
                         <div className="overflow-x-auto">
                           <table className="w-full text-sm">
                             <thead>
-                              <tr className="border-b border-border-subtle">
-                                <th className="text-left p-2 text-text-tertiary sticky left-0 bg-inherit">Player</th>
+                              <tr className="border-b border-[var(--border-vintage)]">
+                                <th className="text-left p-2 text-[rgba(196,184,165,0.5)] sticky left-0 bg-inherit">Player</th>
                                 {headers.map((h, hIdx) => (
-                                  <th key={hIdx} className="text-center p-2 text-text-tertiary text-xs uppercase">{h}</th>
+                                  <th key={hIdx} className="text-center p-2 text-[rgba(196,184,165,0.5)] text-xs uppercase">{h}</th>
                                 ))}
                               </tr>
                             </thead>
@@ -132,17 +132,17 @@ export function EspnPlayerStatsTable({
                   return (
                     <div key={gIdx}>
                       {groupName && (
-                        <div className="px-2 py-1.5 mb-2 text-xs text-burnt-orange font-semibold uppercase tracking-wide bg-background-tertiary rounded-sm">
+                        <div className="px-2 py-1.5 mb-2 text-xs text-[var(--bsi-primary)] font-semibold uppercase tracking-wide bg-[var(--surface-dugout)] rounded-sm">
                           {groupName}
                         </div>
                       )}
                       <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                           <thead>
-                            <tr className="border-b border-border-subtle">
-                              <th className="text-left p-2 text-text-tertiary sticky left-0 bg-inherit">Player</th>
+                            <tr className="border-b border-[var(--border-vintage)]">
+                              <th className="text-left p-2 text-[rgba(196,184,165,0.5)] sticky left-0 bg-inherit">Player</th>
                               {headers.map((h, hIdx) => (
-                                <th key={hIdx} className="text-center p-2 text-text-tertiary text-xs uppercase">{h}</th>
+                                <th key={hIdx} className="text-center p-2 text-[rgba(196,184,165,0.5)] text-xs uppercase">{h}</th>
                               ))}
                             </tr>
                           </thead>
@@ -163,11 +163,11 @@ export function EspnPlayerStatsTable({
                               <>
                                 <SectionHeader label="Did Not Play" colSpan={colSpan} muted />
                                 {dnp.map((player, dIdx) => (
-                                  <tr key={dIdx} className="border-b border-border-subtle last:border-0">
-                                    <td className="p-2 text-text-tertiary whitespace-nowrap">
+                                  <tr key={dIdx} className="border-b border-[var(--border-vintage)] last:border-0">
+                                    <td className="p-2 text-[rgba(196,184,165,0.5)] whitespace-nowrap">
                                       {player.athlete?.shortName || player.athlete?.displayName || '-'}
                                     </td>
-                                    <td colSpan={headers.length} className="p-2 text-text-tertiary text-xs italic">
+                                    <td colSpan={headers.length} className="p-2 text-[rgba(196,184,165,0.5)] text-xs italic">
                                       {player.reason || 'DNP'}
                                     </td>
                                   </tr>

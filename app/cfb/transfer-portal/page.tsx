@@ -139,7 +139,7 @@ function StatCard({
   isLive?: boolean;
 }) {
   return (
-    <div className="relative p-4 md:p-6 rounded-sm bg-gradient-to-br from-charcoal-800/80 to-charcoal-900/80 border border-border-subtle">
+    <div className="relative p-4 md:p-6 rounded-sm bg-gradient-to-br from-[#1A1A1A]-800/80 to-charcoal-900/80 border border-[var(--border-vintage)]">
       {isLive && (
         <div className="absolute top-3 right-3">
           <span className="flex h-2 w-2">
@@ -148,13 +148,13 @@ function StatCard({
           </span>
         </div>
       )}
-      <p className="text-xs md:text-sm font-medium text-text-tertiary uppercase tracking-wide mb-1">
+      <p className="text-xs md:text-sm font-medium text-[rgba(196,184,165,0.5)] uppercase tracking-wide mb-1">
         {label}
       </p>
-      <p className="text-2xl md:text-3xl font-display font-bold text-text-primary">{value}</p>
+      <p className="text-2xl md:text-3xl font-display font-bold text-[var(--bsi-bone)]">{value}</p>
       {change && (
         <p
-          className={`text-xs mt-1 ${change.startsWith('+') ? 'text-success-light' : 'text-text-muted'}`}
+          className={`text-xs mt-1 ${change.startsWith('+') ? 'text-success-light' : 'text-[rgba(196,184,165,0.35)]'}`}
         >
           {change} today
         </p>
@@ -201,7 +201,7 @@ export default function CFBTransferPortalPage() {
 
   return (
     <>
-      <div className="min-h-screen bg-midnight">
+      <div className="min-h-screen bg-[var(--surface-scoreboard)]">
         {/* Hero section */}
         <Section className="relative pt-6 pb-16 overflow-hidden">
           {/* Background gradient - football brown tones */}
@@ -213,11 +213,11 @@ export default function CFBTransferPortalPage() {
                 <Badge variant="primary" className="mb-6">
                   2025 Transfer Portal
                 </Badge>
-                <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-text-primary mb-4">
+                <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--bsi-bone)] mb-4">
                   College Football
-                  <span className="block text-burnt-orange">Transfer Portal Tracker</span>
+                  <span className="block text-[var(--bsi-primary)]">Transfer Portal Tracker</span>
                 </h1>
-                <p className="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto">
+                <p className="text-lg md:text-xl text-[var(--bsi-dust)] max-w-2xl mx-auto">
                   Real-time tracking of every FBS player entering, committing, or withdrawing from
                   the transfer portal. Includes recruiting star ratings and commitment intel.
                 </p>
@@ -269,7 +269,7 @@ export default function CFBTransferPortalPage() {
             {filteredEntries.length === 0 && (
               <div className="text-center py-16">
                 <svg
-                  className="w-16 h-16 mx-auto mb-4 text-text-muted"
+                  className="w-16 h-16 mx-auto mb-4 text-[rgba(196,184,165,0.35)]"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -278,8 +278,8 @@ export default function CFBTransferPortalPage() {
                   <circle cx="11" cy="11" r="8" />
                   <path d="M21 21L16.65 16.65" />
                 </svg>
-                <h3 className="text-lg font-medium text-text-secondary mb-2">No entries found</h3>
-                <p className="text-text-tertiary">Try adjusting your filters or search term</p>
+                <h3 className="text-lg font-medium text-[var(--bsi-dust)] mb-2">No entries found</h3>
+                <p className="text-[rgba(196,184,165,0.5)]">Try adjusting your filters or search term</p>
               </div>
             )}
 
@@ -289,7 +289,7 @@ export default function CFBTransferPortalPage() {
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0 w-12 h-12 rounded-full bg-football/20 flex items-center justify-center">
                     <svg
-                      className="w-6 h-6 text-burnt-orange"
+                      className="w-6 h-6 text-[var(--bsi-primary)]"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -300,23 +300,23 @@ export default function CFBTransferPortalPage() {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-text-primary mb-1">
+                    <h3 className="text-lg font-semibold text-[var(--bsi-bone)] mb-1">
                       2025 Portal Windows
                     </h3>
-                    <p className="text-text-secondary mb-3">
+                    <p className="text-[var(--bsi-dust)] mb-3">
                       The winter transfer window opens{' '}
-                      <strong className="text-burnt-orange">December 9, 2025</strong> for 30 days.
+                      <strong className="text-[var(--bsi-primary)]">December 9, 2025</strong> for 30 days.
                       Players must declare within 7 days of entering and have 30 days to find a new
                       school.
                     </p>
                     <div className="flex flex-wrap gap-4 text-sm">
                       <div>
-                        <span className="text-text-muted">Winter Window:</span>
-                        <span className="ml-2 text-text-primary">Dec 9 - Jan 8, 2026</span>
+                        <span className="text-[rgba(196,184,165,0.35)]">Winter Window:</span>
+                        <span className="ml-2 text-[var(--bsi-bone)]">Dec 9 - Jan 8, 2026</span>
                       </div>
                       <div>
-                        <span className="text-text-muted">Spring Window:</span>
-                        <span className="ml-2 text-text-primary">Apr 15 - Apr 30, 2026</span>
+                        <span className="text-[rgba(196,184,165,0.35)]">Spring Window:</span>
+                        <span className="ml-2 text-[var(--bsi-bone)]">Apr 15 - Apr 30, 2026</span>
                       </div>
                     </div>
                   </div>
@@ -331,10 +331,10 @@ export default function CFBTransferPortalPage() {
           <Container>
             <ScrollReveal>
               <div className="text-center max-w-2xl mx-auto">
-                <h2 className="font-display text-3xl md:text-4xl font-bold text-text-primary mb-4">
+                <h2 className="font-display text-3xl md:text-4xl font-bold text-[var(--bsi-bone)] mb-4">
                   Never Miss a Transfer
                 </h2>
-                <p className="text-text-secondary mb-8">
+                <p className="text-[var(--bsi-dust)] mb-8">
                   Get instant alerts when players from your favorite schools or conferences enter
                   the portal. Pro subscribers get star ratings, NIL valuations, and exclusive
                   commitment intel.

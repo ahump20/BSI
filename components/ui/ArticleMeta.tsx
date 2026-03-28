@@ -62,7 +62,7 @@ export function ArticleMeta({ readingTime, shareTitle, shareUrl }: ArticleMetaPr
       </span>
       <button
         onClick={handleShare}
-        className="flex items-center gap-1.5 hover:text-burnt-orange transition-colors"
+        className="flex items-center gap-1.5 hover:text-[var(--bsi-primary)] transition-colors"
         aria-label="Share this article"
       >
         <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="1.5">

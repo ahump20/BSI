@@ -150,20 +150,20 @@ export default function SabermetricsPage() {
 
   return (
     <>
-      <div>
+      <div className="min-h-screen bg-[#0A0A0A] text-bsi-bone">
         <Section padding="lg" className="pt-6">
           <Container size="wide">
 
             {/* Breadcrumb */}
             <ScrollReveal direction="up">
               <nav className="flex items-center gap-2 text-sm mb-6">
-                <Link href="/" className="text-text-muted hover:text-burnt-orange transition-colors">Home</Link>
-                <span className="text-text-muted">/</span>
-                <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
+                <Link href="/" className="text-bsi-dust/50 hover:text-[var(--bsi-primary)] transition-colors">Home</Link>
+                <span className="text-bsi-dust/50">/</span>
+                <Link href="/college-baseball" className="text-bsi-dust/50 hover:text-[var(--bsi-primary)] transition-colors">
                   College Baseball
                 </Link>
-                <span className="text-text-muted">/</span>
-                <span className="text-text-secondary">Sabermetrics</span>
+                <span className="text-bsi-dust/50">/</span>
+                <span className="text-bsi-dust">Sabermetrics</span>
               </nav>
             </ScrollReveal>
 
@@ -178,10 +178,10 @@ export default function SabermetricsPage() {
                     </Badge>
                   )}
                 </div>
-                <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-wider text-text-primary">
-                  College Baseball <span className="text-burnt-orange">Sabermetrics</span>
+                <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-wider text-bsi-bone">
+                  College Baseball <span className="text-[var(--bsi-primary)]">Sabermetrics</span>
                 </h1>
-                <p className="text-text-tertiary mt-3 max-w-2xl text-base leading-relaxed">
+                <p className="text-bsi-dust mt-3 max-w-2xl text-base leading-relaxed">
                   Live scores, advanced metrics, and an AI-native API — wOBA, FIP, wRC+,
                   and conference power indices for D1 baseball, accessible directly from Claude.
                 </p>
@@ -190,13 +190,13 @@ export default function SabermetricsPage() {
 
             {/* MCP callout */}
             <ScrollReveal direction="up" delay={75}>
-              <Card padding="sm" className="mb-8 border-burnt-orange/20 bg-burnt-orange/5">
+              <Card padding="sm" className="mb-8 border-[var(--bsi-primary)]/20 bg-[var(--bsi-primary)]/5">
                 <div className="flex items-start gap-3">
-                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-burnt-orange mt-0.5 flex-shrink-0"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-[var(--bsi-primary)] mt-0.5 flex-shrink-0"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                   <div>
-                    <p className="text-xs font-mono text-text-secondary">
+                    <p className="text-xs font-mono text-bsi-dust">
                       MCP endpoint active at{' '}
-                      <span className="text-burnt-orange">sabermetrics.blazesportsintel.com/mcp</span>
+                      <span className="text-[var(--bsi-primary)]">sabermetrics.blazesportsintel.com/mcp</span>
                       {' '}— Claude can query live scores, standings, and advanced stats directly.
                     </p>
                   </div>
@@ -206,15 +206,15 @@ export default function SabermetricsPage() {
 
             {/* Tab nav */}
             <ScrollReveal direction="up" delay={100}>
-              <div className="flex items-center gap-1 border-b border-border mb-6 overflow-x-auto">
+              <div className="flex items-center gap-1 border-b border-[rgba(140,98,57,0.3)] mb-6 overflow-x-auto">
                 {PAGE_TABS.map((tab) => (
                   <button
                     key={tab.key}
                     onClick={() => setActiveTab(tab.key)}
                     className={`px-4 py-3 text-sm font-display uppercase tracking-wider whitespace-nowrap transition-colors border-b-2 ${
                       activeTab === tab.key
-                        ? 'text-burnt-orange border-burnt-orange'
-                        : 'text-text-muted border-transparent hover:text-text-tertiary'
+                        ? 'text-[var(--bsi-primary)] border-[var(--bsi-primary)]'
+                        : 'text-bsi-dust/50 border-transparent hover:text-bsi-dust'
                     }`}
                   >
                     {tab.label}
@@ -277,7 +277,7 @@ function ScoreboardTab({
   if (games.length === 0) {
     return (
       <Card padding="lg" className="text-center">
-        <p className="text-text-muted text-sm">Games and sabermetric breakdowns appear here during the season</p>
+        <p className="text-bsi-dust/50 text-sm">Games and sabermetric breakdowns appear here during the season</p>
       </Card>
     );
   }
@@ -300,7 +300,7 @@ function ScoreboardTab({
         )}
         {final.length > 0 && (
           <div>
-            <p className="text-[10px] font-display uppercase tracking-widest text-text-muted mb-2">Final</p>
+            <p className="text-[10px] font-display uppercase tracking-widest text-bsi-dust/50 mb-2">Final</p>
             <div className="space-y-1">
               {final.map(g => <GameCard key={g.id} game={g} selected={selectedId === g.id} onClick={() => setSelectedId(g.id)} />)}
             </div>
@@ -308,14 +308,14 @@ function ScoreboardTab({
         )}
         {upcoming.length > 0 && (
           <div>
-            <p className="text-[10px] font-display uppercase tracking-widest text-text-muted mb-2">Upcoming</p>
+            <p className="text-[10px] font-display uppercase tracking-widest text-bsi-dust/50 mb-2">Upcoming</p>
             <div className="space-y-1">
               {upcoming.map(g => <GameCard key={g.id} game={g} selected={selectedId === g.id} onClick={() => setSelectedId(g.id)} />)}
             </div>
           </div>
         )}
         {meta && (
-          <p className="text-[10px] font-mono text-text-muted mt-3">
+          <p className="text-[10px] font-mono text-bsi-dust/50 mt-3">
             Source: {meta.source} · {new Date(meta.fetched_at).toLocaleTimeString('en-US', { timeZone: meta.timezone, hour: 'numeric', minute: '2-digit' })} CT
           </p>
         )}
@@ -327,7 +327,7 @@ function ScoreboardTab({
           <GameDetail game={selectedGame} />
         ) : (
           <Card padding="lg" className="flex items-center justify-center min-h-[200px]">
-            <p className="text-text-muted text-sm">Select a game</p>
+            <p className="text-bsi-dust/50 text-sm">Select a game</p>
           </Card>
         )}
       </div>
@@ -346,11 +346,11 @@ function GameCard({ game, selected, onClick }: { game: ESPNGame; selected: boole
     <button
       onClick={onClick}
       className={`w-full text-left p-3 rounded-sm border transition-colors ${
-        selected ? 'border-burnt-orange bg-burnt-orange/5' : 'border-border-subtle hover:border-border-strong'
+        selected ? 'border-[var(--bsi-primary)] bg-[var(--bsi-primary)]/5' : 'border-[rgba(140,98,57,0.3)] hover:border-[rgba(140,98,57,0.5)]'
       }`}
     >
       <div className="flex items-center justify-between mb-1.5">
-        <span className="text-[10px] font-mono text-text-muted">
+        <span className="text-[10px] font-mono text-bsi-dust/50">
           {isLive ? (
             <span className="text-[var(--bsi-danger)] font-semibold">● {game.status.type.shortDetail}</span>
           ) : isFinal ? (
@@ -363,10 +363,10 @@ function GameCard({ game, selected, onClick }: { game: ESPNGame; selected: boole
       <div className="space-y-1">
         {[away, home].map((team, i) => team && (
           <div key={i} className="flex items-center justify-between">
-            <span className={`text-xs ${team.winner ? 'text-text-primary font-semibold' : 'text-text-secondary'}`}>
+            <span className={`text-xs ${team.winner ? 'text-bsi-bone font-semibold' : 'text-bsi-dust'}`}>
               {team.team.abbreviation}
             </span>
-            <span className={`text-xs font-mono tabular-nums ${team.winner ? 'font-bold text-text-primary' : 'text-text-secondary'}`}>
+            <span className={`text-xs font-mono tabular-nums ${team.winner ? 'font-bold text-bsi-bone' : 'text-bsi-dust'}`}>
               {team.score || '—'}
             </span>
           </div>
@@ -397,42 +397,42 @@ function GameDetail({ game }: { game: ESPNGame }) {
         ) : game.status?.type?.completed ? (
           <Badge variant="default" size="sm">Final</Badge>
         ) : (
-          <Badge variant="default" size="sm" className="text-text-muted border-border">
+          <Badge variant="default" size="sm" className="text-bsi-dust/50 border-[rgba(140,98,57,0.3)]">
             {game.status?.type?.shortDetail}
           </Badge>
         )}
-        {note && <span className="text-xs text-text-muted">{note}</span>}
+        {note && <span className="text-xs text-bsi-dust/50">{note}</span>}
       </div>
 
       {/* Score */}
       <div className="grid grid-cols-3 gap-4 items-center">
         <div className="text-center">
-          <p className="font-display text-sm uppercase tracking-widest text-text-muted mb-1">
+          <p className="font-display text-sm uppercase tracking-widest text-bsi-dust/50 mb-1">
             {away?.team.abbreviation}
           </p>
-          <p className="font-display text-base text-text-tertiary">{away?.team.shortDisplayName}</p>
-          {awayRecord && <p className="text-[10px] font-mono text-text-muted mt-1">{awayRecord}</p>}
-          <p className={`font-display text-5xl font-bold mt-3 tabular-nums ${away?.winner ? 'text-text-primary' : 'text-text-tertiary'}`}>
+          <p className="font-display text-base text-bsi-dust">{away?.team.shortDisplayName}</p>
+          {awayRecord && <p className="text-[10px] font-mono text-bsi-dust/50 mt-1">{awayRecord}</p>}
+          <p className={`font-display text-5xl font-bold mt-3 tabular-nums ${away?.winner ? 'text-bsi-bone' : 'text-bsi-dust'}`}>
             {away?.score || '0'}
           </p>
         </div>
 
         <div className="text-center">
-          <p className="text-text-muted text-sm font-display uppercase tracking-widest">vs</p>
+          <p className="text-bsi-dust/50 text-sm font-display uppercase tracking-widest">vs</p>
           {game.status?.type?.detail && (
-            <p className="text-[10px] font-mono text-text-muted mt-1 leading-relaxed">
+            <p className="text-[10px] font-mono text-bsi-dust/50 mt-1 leading-relaxed">
               {game.status.type.detail}
             </p>
           )}
         </div>
 
         <div className="text-center">
-          <p className="font-display text-sm uppercase tracking-widest text-text-muted mb-1">
+          <p className="font-display text-sm uppercase tracking-widest text-bsi-dust/50 mb-1">
             {home?.team.abbreviation}
           </p>
-          <p className="font-display text-base text-text-tertiary">{home?.team.shortDisplayName}</p>
-          {homeRecord && <p className="text-[10px] font-mono text-text-muted mt-1">{homeRecord}</p>}
-          <p className={`font-display text-5xl font-bold mt-3 tabular-nums ${home?.winner ? 'text-text-primary' : 'text-text-tertiary'}`}>
+          <p className="font-display text-base text-bsi-dust">{home?.team.shortDisplayName}</p>
+          {homeRecord && <p className="text-[10px] font-mono text-bsi-dust/50 mt-1">{homeRecord}</p>}
+          <p className={`font-display text-5xl font-bold mt-3 tabular-nums ${home?.winner ? 'text-bsi-bone' : 'text-bsi-dust'}`}>
             {home?.score || '0'}
           </p>
         </div>
@@ -440,17 +440,17 @@ function GameDetail({ game }: { game: ESPNGame }) {
 
       {/* Venue */}
       {comp?.venue?.fullName && (
-        <p className="text-[10px] font-mono text-text-muted">
+        <p className="text-[10px] font-mono text-bsi-dust/50">
           {comp.venue.fullName}
           {comp.venue.address ? ` · ${comp.venue.address.city}, ${comp.venue.address.state}` : ''}
           {comp.attendance ? ` · Att: ${comp.attendance.toLocaleString()}` : ''}
         </p>
       )}
 
-      <div className="pt-2 border-t border-border-subtle">
+      <div className="pt-2 border-t border-[rgba(140,98,57,0.3)]">
         <Link
           href={`/college-baseball/games/${game.id}`}
-          className="text-xs text-burnt-orange hover:text-ember transition-colors font-mono"
+          className="text-xs text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors font-mono"
         >
           Box score →
         </Link>
@@ -464,10 +464,10 @@ function ScoreboardSkeleton() {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
       <div className="space-y-2">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="h-16 rounded-sm bg-surface-light animate-pulse" />
+          <div key={i} className="h-16 rounded-sm bg-[#111111] animate-pulse" />
         ))}
       </div>
-      <div className="lg:col-span-2 h-64 rounded-sm bg-surface-light animate-pulse" />
+      <div className="lg:col-span-2 h-64 rounded-sm bg-[#111111] animate-pulse" />
     </div>
   );
 }
@@ -498,16 +498,16 @@ function LeaderboardsTab({
             onClick={() => setSub(s)}
             className={`px-4 py-2 rounded-sm text-xs font-display uppercase tracking-wider transition-colors border ${
               sub === s
-                ? 'border-burnt-orange text-burnt-orange bg-burnt-orange/5'
-                : 'border-border text-text-muted hover:border-border-strong'
+                ? 'border-[var(--bsi-primary)] text-[var(--bsi-primary)] bg-[var(--bsi-primary)]/5'
+                : 'border-[rgba(140,98,57,0.3)] text-bsi-dust/50 hover:border-[rgba(140,98,57,0.5)]'
             }`}
           >
             {s}
           </button>
         ))}
-        <span className="ml-auto text-[10px] font-mono text-text-muted">
+        <span className="ml-auto text-[10px] font-mono text-bsi-dust/50">
           Top 25 · Full view at{' '}
-          <Link href="/college-baseball/savant" className="text-burnt-orange hover:text-ember transition-colors">
+          <Link href="/college-baseball/savant" className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors">
             Savant →
           </Link>
         </span>
@@ -565,7 +565,7 @@ function DataTable({
   if (rows.length === 0) {
     return (
       <Card padding="lg" className="text-center">
-        <p className="text-text-muted text-sm">Leaderboard data populates as games are played</p>
+        <p className="text-bsi-dust/50 text-sm">Leaderboard data populates as games are played</p>
       </Card>
     );
   }
@@ -575,12 +575,12 @@ function DataTable({
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
           <thead>
-            <tr className="border-b border-border-subtle">
-              <th className="px-3 py-2.5 text-left text-[10px] font-display uppercase tracking-widest text-text-muted w-6">#</th>
+            <tr className="border-b border-[rgba(140,98,57,0.3)]">
+              <th className="px-3 py-2.5 text-left text-[10px] font-display uppercase tracking-widest text-bsi-dust/50 w-6">#</th>
               {cols.map(c => (
                 <th
                   key={c.key}
-                  className={`px-3 py-2.5 text-[10px] font-display uppercase tracking-widest text-text-muted ${
+                  className={`px-3 py-2.5 text-[10px] font-display uppercase tracking-widest text-bsi-dust/50 ${
                     c.key === 'player_name' ? 'text-left' : 'text-right'
                   }`}
                 >
@@ -589,10 +589,10 @@ function DataTable({
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-border-subtle">
+          <tbody className="divide-y divide-[rgba(140,98,57,0.3)]">
             {rows.map((row, i) => (
-              <tr key={i} className="hover:bg-surface-light/50 transition-colors">
-                <td className="px-3 py-2.5 text-text-muted font-mono tabular-nums">{i + 1}</td>
+              <tr key={i} className="hover:bg-[#111111]/50 transition-colors">
+                <td className="px-3 py-2.5 text-bsi-dust/50 font-mono tabular-nums">{i + 1}</td>
                 {cols.map(c => {
                   const val = row[c.key as keyof LeaderRow];
                   const isName = c.key === 'player_name' || c.key === 'team';
@@ -602,7 +602,7 @@ function DataTable({
                   return (
                     <td
                       key={c.key}
-                      className={`px-3 py-2.5 ${isName ? 'text-left text-text-secondary' : 'text-right font-mono tabular-nums text-text-primary'}`}
+                      className={`px-3 py-2.5 ${isName ? 'text-left text-bsi-dust' : 'text-right font-mono tabular-nums text-bsi-bone'}`}
                     >
                       {String(display)}
                     </td>
@@ -620,14 +620,14 @@ function DataTable({
 function LeaderboardSkeleton() {
   return (
     <Card padding="none" className="overflow-hidden">
-      <div className="divide-y divide-border-subtle">
+      <div className="divide-y divide-[rgba(140,98,57,0.3)]">
         {Array.from({ length: 10 }).map((_, i) => (
           <div key={i} className="px-4 py-3 flex items-center gap-4">
-            <div className="h-3 w-5 bg-surface-light rounded-sm animate-pulse" />
-            <div className="h-3 flex-1 max-w-[180px] bg-surface-medium rounded-sm animate-pulse" />
-            <div className="h-3 w-12 bg-surface-light rounded-sm animate-pulse" />
-            <div className="h-3 w-10 bg-surface-light rounded-sm animate-pulse hidden sm:block" />
-            <div className="h-3 w-10 bg-surface-light rounded-sm animate-pulse hidden md:block" />
+            <div className="h-3 w-5 bg-[#111111] rounded-sm animate-pulse" />
+            <div className="h-3 flex-1 max-w-[180px] bg-[#161616] rounded-sm animate-pulse" />
+            <div className="h-3 w-12 bg-[#111111] rounded-sm animate-pulse" />
+            <div className="h-3 w-10 bg-[#111111] rounded-sm animate-pulse hidden sm:block" />
+            <div className="h-3 w-10 bg-[#111111] rounded-sm animate-pulse hidden md:block" />
           </div>
         ))}
       </div>
@@ -762,8 +762,8 @@ function CalculatorTab() {
 
   return (
     <div className="space-y-6">
-      <Card padding="md" className="border-border-subtle">
-        <p className="text-[10px] font-mono text-text-muted">
+      <Card padding="md" className="border-[rgba(140,98,57,0.3)]">
+        <p className="text-[10px] font-mono text-bsi-dust/50">
           Weights: wBB=0.69 · wHBP=0.72 · w1B=0.89 · w2B=1.27 · w3B=1.62 · wHR=2.10 · FIP constant=3.80
           (college-derived via BSI Savant Compute).
         </p>
@@ -776,8 +776,8 @@ function CalculatorTab() {
             onClick={() => setMode(m)}
             className={`px-4 py-2 rounded-sm text-xs font-display uppercase tracking-wider transition-colors border ${
               mode === m
-                ? 'border-burnt-orange text-burnt-orange bg-burnt-orange/5'
-                : 'border-border text-text-muted hover:border-border-strong'
+                ? 'border-[var(--bsi-primary)] text-[var(--bsi-primary)] bg-[var(--bsi-primary)]/5'
+                : 'border-[rgba(140,98,57,0.3)] text-bsi-dust/50 hover:border-[rgba(140,98,57,0.5)]'
             }`}
           >
             {m}
@@ -788,11 +788,11 @@ function CalculatorTab() {
       {mode === 'batting' && (
         <div className="space-y-5">
           <Card padding="md">
-            <p className="text-xs font-display uppercase tracking-widest text-text-muted mb-4">Inputs</p>
+            <p className="text-xs font-display uppercase tracking-widest text-bsi-dust/50 mb-4">Inputs</p>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
               {battingFields.map(f => (
                 <div key={f.key}>
-                  <label className="text-[10px] font-mono text-text-muted block mb-1">
+                  <label className="text-[10px] font-mono text-bsi-dust/50 block mb-1">
                     {f.label}{f.hint ? ` (${f.hint})` : ''}
                   </label>
                   <input
@@ -801,7 +801,7 @@ function CalculatorTab() {
                     step="any"
                     value={battingInputs[f.key]}
                     onChange={e => setBattingInputs(prev => ({ ...prev, [f.key]: e.target.value }))}
-                    className="w-full bg-surface-light border border-border rounded-sm px-2.5 py-1.5 text-sm font-mono text-text-primary focus:outline-none focus:border-burnt-orange/50 transition-colors"
+                    className="w-full bg-[#111111] border border-[rgba(140,98,57,0.3)] rounded-sm px-2.5 py-1.5 text-sm font-mono text-bsi-bone focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-colors"
                   />
                 </div>
               ))}
@@ -809,13 +809,13 @@ function CalculatorTab() {
             <div className="flex gap-3 mt-4">
               <button
                 onClick={calculateBatting}
-                className="px-4 py-2 bg-burnt-orange hover:bg-ember text-white text-xs font-display uppercase tracking-wider rounded-sm transition-colors"
+                className="px-4 py-2 bg-[var(--bsi-primary)] hover:bg-ember text-white text-xs font-display uppercase tracking-wider rounded-sm transition-colors"
               >
                 Calculate
               </button>
               <button
                 onClick={() => { setBattingInputs({ pa: '', ab: '', h: '', singles: '', doubles: '', triples: '', hr: '', bb: '', hbp: '', sf: '', k: '' }); setBattingResult(null); }}
-                className="px-4 py-2 border border-border text-text-muted text-xs font-display uppercase tracking-wider rounded-sm hover:border-border-strong transition-colors"
+                className="px-4 py-2 border border-[rgba(140,98,57,0.3)] text-bsi-dust/50 text-xs font-display uppercase tracking-wider rounded-sm hover:border-[rgba(140,98,57,0.5)] transition-colors"
               >
                 Clear
               </button>
@@ -823,13 +823,13 @@ function CalculatorTab() {
           </Card>
 
           {battingResult && (
-            <Card padding="md" className="border-burnt-orange/20 bg-burnt-orange/5">
-              <p className="text-xs font-display uppercase tracking-widest text-burnt-orange mb-3">Results</p>
+            <Card padding="md" className="border-[var(--bsi-primary)]/20 bg-[var(--bsi-primary)]/5">
+              <p className="text-xs font-display uppercase tracking-widest text-[var(--bsi-primary)] mb-3">Results</p>
               <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
                 {Object.entries(battingResult).map(([k, v]) => (
                   <div key={k}>
-                    <p className="text-[10px] font-mono text-text-muted mb-0.5">{k}</p>
-                    <p className="text-lg font-mono font-bold tabular-nums text-text-primary">{v}</p>
+                    <p className="text-[10px] font-mono text-bsi-dust/50 mb-0.5">{k}</p>
+                    <p className="text-lg font-mono font-bold tabular-nums text-bsi-bone">{v}</p>
                   </div>
                 ))}
               </div>
@@ -841,11 +841,11 @@ function CalculatorTab() {
       {mode === 'pitching' && (
         <div className="space-y-5">
           <Card padding="md">
-            <p className="text-xs font-display uppercase tracking-widest text-text-muted mb-4">Inputs</p>
+            <p className="text-xs font-display uppercase tracking-widest text-bsi-dust/50 mb-4">Inputs</p>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
               {pitchingFields.map(f => (
                 <div key={f.key}>
-                  <label className="text-[10px] font-mono text-text-muted block mb-1">
+                  <label className="text-[10px] font-mono text-bsi-dust/50 block mb-1">
                     {f.label}{f.hint ? ` (${f.hint})` : ''}
                   </label>
                   <input
@@ -854,7 +854,7 @@ function CalculatorTab() {
                     step="any"
                     value={pitchingInputs[f.key]}
                     onChange={e => setPitchingInputs(prev => ({ ...prev, [f.key]: e.target.value }))}
-                    className="w-full bg-surface-light border border-border rounded-sm px-2.5 py-1.5 text-sm font-mono text-text-primary focus:outline-none focus:border-burnt-orange/50 transition-colors"
+                    className="w-full bg-[#111111] border border-[rgba(140,98,57,0.3)] rounded-sm px-2.5 py-1.5 text-sm font-mono text-bsi-bone focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-colors"
                   />
                 </div>
               ))}
@@ -862,13 +862,13 @@ function CalculatorTab() {
             <div className="flex gap-3 mt-4">
               <button
                 onClick={calculatePitching}
-                className="px-4 py-2 bg-burnt-orange hover:bg-ember text-white text-xs font-display uppercase tracking-wider rounded-sm transition-colors"
+                className="px-4 py-2 bg-[var(--bsi-primary)] hover:bg-ember text-white text-xs font-display uppercase tracking-wider rounded-sm transition-colors"
               >
                 Calculate
               </button>
               <button
                 onClick={() => { setPitchingInputs({ ip: '', h: '', er: '', hr: '', bb: '', hbp: '', k: '', ibb: '' }); setPitchingResult(null); }}
-                className="px-4 py-2 border border-border text-text-muted text-xs font-display uppercase tracking-wider rounded-sm hover:border-border-strong transition-colors"
+                className="px-4 py-2 border border-[rgba(140,98,57,0.3)] text-bsi-dust/50 text-xs font-display uppercase tracking-wider rounded-sm hover:border-[rgba(140,98,57,0.5)] transition-colors"
               >
                 Clear
               </button>
@@ -876,13 +876,13 @@ function CalculatorTab() {
           </Card>
 
           {pitchingResult && (
-            <Card padding="md" className="border-burnt-orange/20 bg-burnt-orange/5">
-              <p className="text-xs font-display uppercase tracking-widest text-burnt-orange mb-3">Results</p>
+            <Card padding="md" className="border-[var(--bsi-primary)]/20 bg-[var(--bsi-primary)]/5">
+              <p className="text-xs font-display uppercase tracking-widest text-[var(--bsi-primary)] mb-3">Results</p>
               <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
                 {Object.entries(pitchingResult).map(([k, v]) => (
                   <div key={k}>
-                    <p className="text-[10px] font-mono text-text-muted mb-0.5">{k}</p>
-                    <p className="text-lg font-mono font-bold tabular-nums text-text-primary">{v}</p>
+                    <p className="text-[10px] font-mono text-bsi-dust/50 mb-0.5">{k}</p>
+                    <p className="text-lg font-mono font-bold tabular-nums text-bsi-bone">{v}</p>
                   </div>
                 ))}
               </div>
@@ -922,39 +922,39 @@ function ApiExplorerTab() {
     <div className="space-y-6">
       {/* Endpoint info */}
       <Card padding="md">
-        <p className="text-xs font-display uppercase tracking-widest text-text-muted mb-4">Endpoint</p>
+        <p className="text-xs font-display uppercase tracking-widest text-bsi-dust/50 mb-4">Endpoint</p>
         <div className="space-y-2 text-xs font-mono">
           <div className="flex items-center gap-3">
-            <span className="text-text-muted w-12 shrink-0">GET</span>
-            <span className="text-text-primary">sabermetrics.blazesportsintel.com/health</span>
+            <span className="text-bsi-dust/50 w-12 shrink-0">GET</span>
+            <span className="text-bsi-bone">sabermetrics.blazesportsintel.com/health</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-text-muted w-12 shrink-0">POST</span>
-            <span className="text-text-primary">sabermetrics.blazesportsintel.com/mcp</span>
-            <span className="text-text-muted">JSON-RPC 2.0 · Bearer auth</span>
+            <span className="text-bsi-dust/50 w-12 shrink-0">POST</span>
+            <span className="text-bsi-bone">sabermetrics.blazesportsintel.com/mcp</span>
+            <span className="text-bsi-dust/50">JSON-RPC 2.0 · Bearer auth</span>
           </div>
         </div>
       </Card>
 
       {/* Quick commands */}
       <div className="space-y-3">
-        <p className="text-xs font-display uppercase tracking-widest text-text-muted">Quick Commands</p>
+        <p className="text-xs font-display uppercase tracking-widest text-bsi-dust/50">Quick Commands</p>
         {[
           { label: 'Health check', curl: healthCurl, key: 'health' },
           { label: 'Initialize', curl: initCurl, key: 'init' },
           { label: 'Get scoreboard', curl: scoreboardCurl, key: 'scores' },
         ].map(({ label, curl, key }) => (
           <Card key={key} padding="none" className="overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-2 border-b border-border-subtle">
-              <span className="text-[10px] font-mono text-text-muted">{label}</span>
+            <div className="flex items-center justify-between px-4 py-2 border-b border-[rgba(140,98,57,0.3)]">
+              <span className="text-[10px] font-mono text-bsi-dust/50">{label}</span>
               <button
                 onClick={() => copy(curl, key)}
-                className="text-[10px] font-mono text-burnt-orange hover:text-ember transition-colors"
+                className="text-[10px] font-mono text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 {copied === key ? 'Copied!' : 'Copy'}
               </button>
             </div>
-            <pre className="px-4 py-3 text-[10px] font-mono text-text-tertiary overflow-x-auto leading-relaxed">
+            <pre className="px-4 py-3 text-[10px] font-mono text-bsi-dust overflow-x-auto leading-relaxed">
               {curl}
             </pre>
           </Card>
@@ -963,20 +963,20 @@ function ApiExplorerTab() {
 
       {/* Tool list */}
       <div className="space-y-3">
-        <p className="text-xs font-display uppercase tracking-widest text-text-muted">
+        <p className="text-xs font-display uppercase tracking-widest text-bsi-dust/50">
           Available Tools ({MCP_TOOLS.length})
         </p>
         <div className="space-y-2">
           {MCP_TOOLS.map(tool => (
-            <Card key={tool.name} padding="md" className="border-border-subtle">
+            <Card key={tool.name} padding="md" className="border-[rgba(140,98,57,0.3)]">
               <div className="flex items-start gap-3">
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-mono text-burnt-orange mb-1">{tool.name}</p>
-                  <p className="text-xs text-text-secondary leading-relaxed">{tool.description}</p>
+                  <p className="text-xs font-mono text-[var(--bsi-primary)] mb-1">{tool.name}</p>
+                  <p className="text-xs text-bsi-dust leading-relaxed">{tool.description}</p>
                   {tool.params.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mt-2">
                       {tool.params.map(p => (
-                        <span key={p} className="text-[10px] font-mono text-text-muted bg-surface-light px-2 py-0.5 rounded-sm">
+                        <span key={p} className="text-[10px] font-mono text-bsi-dust/50 bg-[#111111] px-2 py-0.5 rounded-sm">
                           {p}
                         </span>
                       ))}
@@ -990,12 +990,12 @@ function ApiExplorerTab() {
       </div>
 
       {/* Claude.ai connector note */}
-      <Card padding="md" className="border-border-subtle">
-        <p className="text-xs font-display uppercase tracking-widest text-text-muted mb-3">Claude.ai Connector</p>
-        <div className="space-y-1.5 text-xs font-mono text-text-secondary">
+      <Card padding="md" className="border-[rgba(140,98,57,0.3)]">
+        <p className="text-xs font-display uppercase tracking-widest text-bsi-dust/50 mb-3">Claude.ai Connector</p>
+        <div className="space-y-1.5 text-xs font-mono text-bsi-dust">
           <p>Settings → Connectors → Add custom connector</p>
-          <p>Server URL: <span className="text-burnt-orange">https://sabermetrics.blazesportsintel.com/mcp</span></p>
-          <p>Header: <span className="text-text-primary">Authorization: Bearer &lt;BSI_API_KEY&gt;</span></p>
+          <p>Server URL: <span className="text-[var(--bsi-primary)]">https://sabermetrics.blazesportsintel.com/mcp</span></p>
+          <p>Header: <span className="text-bsi-bone">Authorization: Bearer &lt;BSI_API_KEY&gt;</span></p>
         </div>
       </Card>
     </div>

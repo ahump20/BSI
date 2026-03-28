@@ -27,7 +27,7 @@ export function DashboardWidget({
       layout
       layoutId={layoutId}
       className={`
-        border border-border/50 bg-surface-light/30 backdrop-blur-sm rounded-sm
+        border border-border/50 bg-[var(--surface-press-box)]/30 backdrop-blur-sm rounded-sm
         ${fullWidth ? '' : ''}
         ${className}
       `.trim()}
@@ -37,12 +37,12 @@ export function DashboardWidget({
     >
       {title && (
         <div className="flex items-center justify-between px-5 pt-4 pb-2">
-          <h3 className="text-sm font-display uppercase tracking-wider text-text-primary flex items-center gap-2">
-            <span className="w-1 h-4 bg-burnt-orange rounded-full" />
+          <h3 className="text-sm font-display uppercase tracking-wider text-[var(--bsi-bone)] flex items-center gap-2">
+            <span className="w-1 h-4 bg-[var(--bsi-primary)] rounded-full" />
             {title}
           </h3>
           {subtitle && (
-            <span className="text-xs text-text-muted uppercase tracking-wider">{subtitle}</span>
+            <span className="text-xs text-[rgba(196,184,165,0.35)] uppercase tracking-wider">{subtitle}</span>
           )}
         </div>
       )}

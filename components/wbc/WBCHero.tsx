@@ -27,11 +27,11 @@ const PHASE_LABELS: Record<Phase, string> = {
 };
 
 const PHASE_COLORS: Record<Phase, string> = {
-  pre: 'text-text-tertiary',
+  pre: 'text-[rgba(196,184,165,0.5)]',
   pool: 'text-[var(--bsi-primary)]',
   knockout: 'text-ember',
-  final: 'text-burnt-orange',
-  complete: 'text-text-secondary',
+  final: 'text-[var(--bsi-primary)]',
+  complete: 'text-[var(--bsi-dust)]',
 };
 
 interface Countdown {
@@ -76,10 +76,10 @@ export function WBCHero() {
   const isLive = phase === 'pool' || phase === 'knockout' || phase === 'final';
 
   return (
-    <section className="relative overflow-hidden bg-midnight pt-16 pb-12 px-4 sm:px-6 lg:px-8">
+    <section className="relative overflow-hidden bg-[var(--surface-scoreboard)] pt-16 pb-12 px-4 sm:px-6 lg:px-8">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-burnt-orange/8 via-transparent to-ember/4 pointer-events-none" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-burnt-orange/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[var(--bsi-primary)]/5 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center">
@@ -97,14 +97,14 @@ export function WBCHero() {
           </div>
 
           {/* Title */}
-          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold uppercase tracking-display text-text-primary mb-4">
+          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold uppercase tracking-display text-[var(--bsi-bone)] mb-4">
             World Baseball
             <br />
-            <span className="text-gradient-blaze">Classic 2026</span>
+            <span className="text-[var(--bsi-primary)]">Classic 2026</span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-text-secondary text-lg sm:text-xl max-w-2xl mx-auto mb-8">
+          <p className="text-[var(--bsi-dust)] text-lg sm:text-xl max-w-2xl mx-auto mb-8">
             March 5–17 &middot; 20 Nations &middot; Four Pools &middot; One Title
           </p>
 
@@ -113,10 +113,10 @@ export function WBCHero() {
             <div className="flex justify-center gap-4 sm:gap-8 mb-10">
               {(['days', 'hours', 'minutes', 'seconds'] as const).map((unit) => (
                 <div key={unit} className="text-center">
-                  <div className="text-3xl sm:text-4xl font-bold text-text-primary font-mono tabular-nums">
+                  <div className="text-3xl sm:text-4xl font-bold text-[var(--bsi-bone)] font-mono tabular-nums">
                     {String(countdown[unit]).padStart(2, '0')}
                   </div>
-                  <div className="text-xs text-text-muted uppercase tracking-wider mt-1">
+                  <div className="text-xs text-[rgba(196,184,165,0.35)] uppercase tracking-wider mt-1">
                     {unit}
                   </div>
                 </div>
@@ -133,8 +133,8 @@ export function WBCHero() {
               { value: 'Miami', label: 'Final Venue' },
             ].map((stat) => (
               <div key={stat.label} className="flex flex-col items-center">
-                <span className="text-2xl font-bold text-burnt-orange">{stat.value}</span>
-                <span className="text-xs text-text-muted uppercase tracking-wider">{stat.label}</span>
+                <span className="text-2xl font-bold text-[var(--bsi-primary)]">{stat.value}</span>
+                <span className="text-xs text-[rgba(196,184,165,0.35)] uppercase tracking-wider">{stat.label}</span>
               </div>
             ))}
           </div>

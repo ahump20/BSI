@@ -88,10 +88,10 @@ function formatGameDate(dateString: string): string {
 
 function StatCard({ label, value, subValue }: { label: string; value: string | number; subValue?: string }) {
   return (
-    <div className="text-center p-4 bg-background-tertiary rounded-sm">
-      <p className="text-2xl md:text-3xl font-bold text-text-primary">{value}</p>
-      <p className="text-xs text-text-tertiary uppercase tracking-wider mt-1">{label}</p>
-      {subValue && <p className="text-xs text-text-secondary mt-1">{subValue}</p>}
+    <div className="text-center p-4 bg-[var(--surface-dugout)] rounded-sm">
+      <p className="text-2xl md:text-3xl font-bold text-[var(--bsi-bone)]">{value}</p>
+      <p className="text-xs text-[rgba(196,184,165,0.5)] uppercase tracking-wider mt-1">{label}</p>
+      {subValue && <p className="text-xs text-[var(--bsi-dust)] mt-1">{subValue}</p>}
     </div>
   );
 }
@@ -100,13 +100,13 @@ function SkeletonTeamProfile() {
   return (
     <div className="animate-pulse">
       <div className="flex flex-col md:flex-row gap-8 items-center">
-        <div className="w-32 h-32 bg-background-tertiary rounded-sm flex-shrink-0" />
+        <div className="w-32 h-32 bg-[var(--surface-dugout)] rounded-sm flex-shrink-0" />
         <div className="flex-1 space-y-4 text-center md:text-left">
-          <div className="h-10 bg-background-tertiary rounded-sm w-2/3 mx-auto md:mx-0" />
-          <div className="h-6 bg-background-tertiary/50 rounded-sm w-1/3 mx-auto md:mx-0" />
+          <div className="h-10 bg-[var(--surface-dugout)] rounded-sm w-2/3 mx-auto md:mx-0" />
+          <div className="h-6 bg-[var(--surface-dugout)]/50 rounded-sm w-1/3 mx-auto md:mx-0" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-20 bg-background-tertiary rounded-sm" />
+              <div key={i} className="h-20 bg-[var(--surface-dugout)] rounded-sm" />
             ))}
           </div>
         </div>
@@ -132,14 +132,14 @@ function RosterCard({ player, teamColor }: { player: RosterPlayer; teamColor: st
             #{player.jersey || '?'}
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="font-display font-bold text-text-primary truncate group-hover:text-burnt-orange transition-colors">
+            <h4 className="font-display font-bold text-[var(--bsi-bone)] truncate group-hover:text-[var(--bsi-primary)] transition-colors">
               {player.name}
             </h4>
-            <p className="text-text-secondary text-sm">{player.position}</p>
+            <p className="text-[var(--bsi-dust)] text-sm">{player.position}</p>
           </div>
           <div className="text-right hidden sm:block">
-            <p className="text-text-secondary text-sm">{player.height}</p>
-            <p className="text-text-tertiary text-xs">{player.weight} lbs</p>
+            <p className="text-[var(--bsi-dust)] text-sm">{player.height}</p>
+            <p className="text-[rgba(196,184,165,0.5)] text-xs">{player.weight} lbs</p>
           </div>
         </div>
       </Card>
@@ -163,13 +163,13 @@ function ScheduleCard({ game, teamId }: { game: ScheduleGame; teamId: string }) 
     <Card variant="default" padding="md" className="h-full">
       <div className="flex items-center justify-between gap-4">
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 text-sm text-text-tertiary mb-1">
+          <div className="flex items-center gap-2 text-sm text-[rgba(196,184,165,0.5)] mb-1">
             <span>{formatGameDate(game.date)}</span>
             <Badge variant={isHome ? 'primary' : 'secondary'} className="text-xs">
               {isHome ? 'HOME' : 'AWAY'}
             </Badge>
           </div>
-          <p className="text-text-primary font-semibold truncate">
+          <p className="text-[var(--bsi-bone)] font-semibold truncate">
             {isHome ? 'vs' : '@'} {opponent.team.displayName}
           </p>
         </div>
@@ -181,7 +181,7 @@ function ScheduleCard({ game, teamId }: { game: ScheduleGame; teamId: string }) 
             >
               {teamWon ? 'W' : 'L'}
             </p>
-            <p className="text-text-secondary text-sm">
+            <p className="text-[var(--bsi-dust)] text-sm">
               {team.score}-{opponent.score}
             </p>
           </div>
@@ -261,24 +261,24 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/nba"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 NBA
               </Link>
-              <span className="text-text-tertiary">/</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
               <Link
                 href="/nba/teams"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 Teams
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">
                 {loading ? 'Loading...' : team?.name || 'Team'}
               </span>
             </nav>
@@ -298,10 +298,10 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             {error && (
               <Card variant="default" padding="lg" className="mb-6 bg-error/10 border-error/30">
                 <p className="text-error font-semibold">Error loading team</p>
-                <p className="text-text-secondary text-sm mt-1">{error}</p>
+                <p className="text-[var(--bsi-dust)] text-sm mt-1">{error}</p>
                 <button
                   onClick={fetchTeam}
-                  className="mt-3 px-4 py-2 bg-burnt-orange text-white rounded-sm text-sm hover:bg-burnt-orange/80 transition-colors"
+                  className="mt-3 px-4 py-2 bg-[var(--bsi-primary)] text-white rounded-sm text-sm hover:bg-[var(--bsi-primary)]/80 transition-colors"
                 >
                   Try Again
                 </button>
@@ -337,7 +337,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
 
                   {/* Team Info */}
                   <div className="flex-1 text-center md:text-left">
-                    <h1 className="font-display text-3xl md:text-4xl font-bold text-text-primary">
+                    <h1 className="font-display text-3xl md:text-4xl font-bold text-[var(--bsi-bone)]">
                       {team.name}
                     </h1>
 
@@ -348,7 +348,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                       >
                         {team.abbreviation}
                       </Badge>
-                      <span className="text-text-secondary">2025-26 Season</span>
+                      <span className="text-[var(--bsi-dust)]">2025-26 Season</span>
                     </div>
 
                     {/* Record Stats */}
@@ -379,8 +379,8 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   onClick={() => setActiveTab('roster')}
                   className={`px-6 py-2 rounded-sm font-semibold transition-all ${
                     activeTab === 'roster'
-                      ? 'bg-burnt-orange text-white'
-                      : 'bg-background-tertiary text-text-secondary hover:bg-surface-light'
+                      ? 'bg-[var(--bsi-primary)] text-white'
+                      : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:bg-[var(--surface-press-box)]'
                   }`}
                 >
                   Roster ({roster.length})
@@ -389,8 +389,8 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   onClick={() => setActiveTab('schedule')}
                   className={`px-6 py-2 rounded-sm font-semibold transition-all ${
                     activeTab === 'schedule'
-                      ? 'bg-burnt-orange text-white'
-                      : 'bg-background-tertiary text-text-secondary hover:bg-surface-light'
+                      ? 'bg-[var(--bsi-primary)] text-white'
+                      : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:bg-[var(--surface-press-box)]'
                   }`}
                 >
                   Schedule
@@ -405,14 +405,14 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
           <Section padding="lg" background="charcoal">
             <Container>
               <ScrollReveal direction="up">
-                <h2 className="font-display text-2xl font-bold text-text-primary mb-6">
+                <h2 className="font-display text-2xl font-bold text-[var(--bsi-bone)] mb-6">
                   Team Roster
                 </h2>
               </ScrollReveal>
 
               {sortedRoster.length === 0 ? (
                 <Card variant="default" padding="lg" className="text-center">
-                  <p className="text-text-secondary">Roster updates once the season roster is finalized</p>
+                  <p className="text-[var(--bsi-dust)]">Roster updates once the season roster is finalized</p>
                 </Card>
               ) : (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -435,12 +435,12 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                 {/* Recent Games */}
                 <ScrollReveal direction="up">
                   <div>
-                    <h2 className="font-display text-xl font-bold text-text-primary mb-4">
+                    <h2 className="font-display text-xl font-bold text-[var(--bsi-bone)] mb-4">
                       Recent Games
                     </h2>
                     {recentGames.length === 0 ? (
                       <Card variant="default" padding="lg" className="text-center">
-                        <p className="text-text-secondary">No recent games</p>
+                        <p className="text-[var(--bsi-dust)]">No recent games</p>
                       </Card>
                     ) : (
                       <div className="space-y-3">
@@ -455,12 +455,12 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                 {/* Upcoming Games */}
                 <ScrollReveal direction="up" delay={100}>
                   <div>
-                    <h2 className="font-display text-xl font-bold text-text-primary mb-4">
+                    <h2 className="font-display text-xl font-bold text-[var(--bsi-bone)] mb-4">
                       Upcoming Games
                     </h2>
                     {upcomingGames.length === 0 ? (
                       <Card variant="default" padding="lg" className="text-center">
-                        <p className="text-text-secondary">No upcoming games scheduled</p>
+                        <p className="text-[var(--bsi-dust)]">No upcoming games scheduled</p>
                       </Card>
                     ) : (
                       <div className="space-y-3">
@@ -489,25 +489,25 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/nba/teams"
-                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
+                className="px-6 py-3 bg-[var(--surface-dugout)] rounded-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-all"
               >
                 ← All Teams
               </Link>
               <Link
                 href="/nba/standings"
-                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
+                className="px-6 py-3 bg-[var(--surface-dugout)] rounded-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-all"
               >
                 Standings →
               </Link>
               <Link
                 href="/nba/games"
-                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
+                className="px-6 py-3 bg-[var(--surface-dugout)] rounded-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-all"
               >
                 Live Scores →
               </Link>
               <Link
                 href="/nba/players"
-                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
+                className="px-6 py-3 bg-[var(--surface-dugout)] rounded-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-all"
               >
                 All Players →
               </Link>

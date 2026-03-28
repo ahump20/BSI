@@ -124,19 +124,19 @@ export default function NBAGamesPage() {
     return (
       <Link href={`/nba/game/${game.id}`} className="block">
         <div
-          className={`bg-background-tertiary rounded-sm border transition-all hover:border-burnt-orange hover:bg-surface-light ${
-            isLive ? 'border-success' : 'border-border-subtle'
+          className={`bg-[var(--surface-dugout)] rounded-sm border transition-all hover:border-[var(--bsi-primary)] hover:bg-[var(--surface-press-box)] ${
+            isLive ? 'border-success' : 'border-[var(--border-vintage)]'
           }`}
         >
           {/* Game Status Bar */}
           <div
             className={`px-4 py-2 rounded-t-sm flex items-center justify-between ${
-              isLive ? 'bg-success/20' : isFinal ? 'bg-background-secondary' : 'bg-burnt-orange/20'
+              isLive ? 'bg-success/20' : isFinal ? 'bg-[var(--surface-dugout)]' : 'bg-[var(--bsi-primary)]/20'
             }`}
           >
             <span
               className={`text-xs font-semibold uppercase ${
-                isLive ? 'text-success' : isFinal ? 'text-text-tertiary' : 'text-burnt-orange'
+                isLive ? 'text-success' : isFinal ? 'text-[rgba(196,184,165,0.5)]' : 'text-[var(--bsi-primary)]'
               }`}
             >
               {isLive ? (
@@ -160,7 +160,7 @@ export default function NBAGamesPage() {
             {/* Away Team */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center overflow-hidden">
+                <div className="w-8 h-8 bg-[var(--surface-dugout)] rounded-full flex items-center justify-center overflow-hidden">
                   {getTeamLogo(awayTeam) ? (
                     <img
                       src={getTeamLogo(awayTeam)!}
@@ -168,17 +168,17 @@ export default function NBAGamesPage() {
                       className="w-6 h-6 object-contain"
                     />
                   ) : (
-                    <span className="text-xs font-bold text-burnt-orange">
+                    <span className="text-xs font-bold text-[var(--bsi-primary)]">
                       {awayTeam.team.abbreviation}
                     </span>
                   )}
                 </div>
                 <div>
-                  <p className={`font-semibold ${awayWon ? 'text-text-primary' : 'text-text-secondary'}`}>
+                  <p className={`font-semibold ${awayWon ? 'text-[var(--bsi-bone)]' : 'text-[var(--bsi-dust)]'}`}>
                     {awayTeam.team.shortDisplayName || awayTeam.team.displayName}
                   </p>
                   {awayTeam.records?.[0] && (
-                    <p className="text-xs text-text-tertiary">{awayTeam.records[0].summary}</p>
+                    <p className="text-xs text-[rgba(196,184,165,0.5)]">{awayTeam.records[0].summary}</p>
                   )}
                 </div>
               </div>
@@ -191,10 +191,10 @@ export default function NBAGamesPage() {
                 <span
                   className={`text-2xl font-bold font-mono ${
                     isScheduled
-                      ? 'text-text-tertiary'
+                      ? 'text-[rgba(196,184,165,0.5)]'
                       : awayWon
-                        ? 'text-text-primary'
-                        : 'text-text-secondary'
+                        ? 'text-[var(--bsi-bone)]'
+                        : 'text-[var(--bsi-dust)]'
                   }`}
                 >
                   {awayTeam.score || '-'}
@@ -205,7 +205,7 @@ export default function NBAGamesPage() {
             {/* Home Team */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center overflow-hidden">
+                <div className="w-8 h-8 bg-[var(--surface-dugout)] rounded-full flex items-center justify-center overflow-hidden">
                   {getTeamLogo(homeTeam) ? (
                     <img
                       src={getTeamLogo(homeTeam)!}
@@ -213,17 +213,17 @@ export default function NBAGamesPage() {
                       className="w-6 h-6 object-contain"
                     />
                   ) : (
-                    <span className="text-xs font-bold text-burnt-orange">
+                    <span className="text-xs font-bold text-[var(--bsi-primary)]">
                       {homeTeam.team.abbreviation}
                     </span>
                   )}
                 </div>
                 <div>
-                  <p className={`font-semibold ${homeWon ? 'text-text-primary' : 'text-text-secondary'}`}>
+                  <p className={`font-semibold ${homeWon ? 'text-[var(--bsi-bone)]' : 'text-[var(--bsi-dust)]'}`}>
                     {homeTeam.team.shortDisplayName || homeTeam.team.displayName}
                   </p>
                   {homeTeam.records?.[0] && (
-                    <p className="text-xs text-text-tertiary">{homeTeam.records[0].summary}</p>
+                    <p className="text-xs text-[rgba(196,184,165,0.5)]">{homeTeam.records[0].summary}</p>
                   )}
                 </div>
               </div>
@@ -236,10 +236,10 @@ export default function NBAGamesPage() {
                 <span
                   className={`text-2xl font-bold font-mono ${
                     isScheduled
-                      ? 'text-text-tertiary'
+                      ? 'text-[rgba(196,184,165,0.5)]'
                       : homeWon
-                        ? 'text-text-primary'
-                        : 'text-text-secondary'
+                        ? 'text-[var(--bsi-bone)]'
+                        : 'text-[var(--bsi-dust)]'
                   }`}
                 >
                   {homeTeam.score || '-'}
@@ -250,7 +250,7 @@ export default function NBAGamesPage() {
 
           {/* Venue Footer */}
           {game.venue && (
-            <div className="px-4 pb-3 text-xs text-text-tertiary border-t border-border-subtle pt-3">
+            <div className="px-4 pb-3 text-xs text-[rgba(196,184,165,0.5)] border-t border-[var(--border-vintage)] pt-3">
               {game.venue.fullName}
               {game.venue.city && `, ${game.venue.city}`}
             </div>
@@ -266,17 +266,17 @@ export default function NBAGamesPage() {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/nba"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 NBA
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">Games</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">Games</span>
             </nav>
           </Container>
         </Section>
@@ -296,13 +296,13 @@ export default function NBAGamesPage() {
                 </ScrollReveal>
 
                 <ScrollReveal direction="up" delay={100}>
-                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-gradient-blaze">
+                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-[var(--bsi-primary)]">
                     NBA Scores
                   </h1>
                 </ScrollReveal>
 
                 <ScrollReveal direction="up" delay={150}>
-                  <p className="text-text-secondary mt-2">
+                  <p className="text-[var(--bsi-dust)] mt-2">
                     Live scores and results from around the league
                   </p>
                 </ScrollReveal>
@@ -319,7 +319,7 @@ export default function NBAGamesPage() {
             <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
               <button
                 onClick={() => setSelectedDate(getDateOffset(-3))}
-                className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-text-tertiary hover:text-text-primary transition-colors"
+                className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-bone)] transition-colors"
                 aria-label="Previous days"
               >
                 <svg
@@ -343,8 +343,8 @@ export default function NBAGamesPage() {
                     onClick={() => setSelectedDate(dateValue)}
                     className={`px-4 py-2 min-h-[44px] rounded-sm font-semibold text-sm whitespace-nowrap transition-all ${
                       isSelected
-                        ? 'bg-burnt-orange text-white'
-                        : 'bg-background-tertiary text-text-secondary hover:bg-surface-light hover:text-text-primary'
+                        ? 'bg-[var(--bsi-primary)] text-white'
+                        : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:bg-[var(--surface-press-box)] hover:text-[var(--bsi-bone)]'
                     }`}
                   >
                     {option.label}
@@ -354,7 +354,7 @@ export default function NBAGamesPage() {
 
               <button
                 onClick={() => setSelectedDate(getDateOffset(3))}
-                className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-text-tertiary hover:text-text-primary transition-colors"
+                className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-bone)] transition-colors"
                 aria-label="Next days"
               >
                 <svg
@@ -377,8 +377,8 @@ export default function NBAGamesPage() {
                   onClick={() => setSelectedConference(conf)}
                   className={`px-4 py-2 min-h-[44px] rounded-sm text-sm font-medium transition-all ${
                     selectedConference === conf
-                      ? 'bg-burnt-orange text-white'
-                      : 'bg-background-tertiary text-text-secondary hover:text-text-primary hover:bg-slate'
+                      ? 'bg-[var(--bsi-primary)] text-white'
+                      : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-slate'
                   }`}
                 >
                   {conf === 'All' ? 'All Teams' : `${conf} Conference`}
@@ -396,10 +396,10 @@ export default function NBAGamesPage() {
             ) : error ? (
               <Card variant="default" padding="lg" className="bg-warning/10 border-warning/30">
                 <p className="text-warning font-semibold">Error Loading Games</p>
-                <p className="text-text-secondary text-sm mt-1">{error}</p>
+                <p className="text-[var(--bsi-dust)] text-sm mt-1">{error}</p>
                 <button
                   onClick={retry}
-                  className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange/80 transition-colors"
+                  className="mt-4 px-4 py-2 bg-[var(--bsi-primary)] text-white rounded-sm hover:bg-[var(--bsi-primary)]/80 transition-colors"
                 >
                   Retry
                 </button>
@@ -416,7 +416,7 @@ export default function NBAGamesPage() {
                 {/* Live Games Section */}
                 {live.length > 0 && (
                   <div className="mb-8">
-                    <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+                    <h2 className="text-lg font-semibold text-[var(--bsi-bone)] mb-4 flex items-center gap-2">
                       <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
                       Live Games
                     </h2>
@@ -433,7 +433,7 @@ export default function NBAGamesPage() {
                 {/* Final Games */}
                 {final.length > 0 && (
                   <div className="mb-8">
-                    <h2 className="text-lg font-semibold text-text-primary mb-4">Final</h2>
+                    <h2 className="text-lg font-semibold text-[var(--bsi-bone)] mb-4">Final</h2>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                       {final.map((game) => (
                         <ScrollReveal key={game.id}>
@@ -447,7 +447,7 @@ export default function NBAGamesPage() {
                 {/* Scheduled Games */}
                 {scheduled.length > 0 && (
                   <div>
-                    <h2 className="text-lg font-semibold text-text-primary mb-4">Upcoming</h2>
+                    <h2 className="text-lg font-semibold text-[var(--bsi-bone)] mb-4">Upcoming</h2>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                       {scheduled.map((game) => (
                         <ScrollReveal key={game.id}>
@@ -459,13 +459,13 @@ export default function NBAGamesPage() {
                 )}
 
                 {/* Data Source Footer */}
-                <div className="mt-8 pt-4 border-t border-border-subtle flex items-center justify-between flex-wrap gap-4">
+                <div className="mt-8 pt-4 border-t border-[var(--border-vintage)] flex items-center justify-between flex-wrap gap-4">
                   <DataSourceBadge
                     source={meta?.dataSource || 'ESPN NBA API'}
                     timestamp={formatTimestamp(meta?.lastUpdated)}
                   />
                   {hasLiveGames && (
-                    <span className="text-xs text-text-tertiary">
+                    <span className="text-xs text-[rgba(196,184,165,0.5)]">
                       Auto-refreshing every 30 seconds
                     </span>
                   )}

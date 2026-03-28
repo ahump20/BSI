@@ -58,8 +58,8 @@ export function MMIGauge({
   if (compact) {
     return (
       <div className={`flex items-center gap-2 ${className}`}>
-        <span className="text-[10px] text-text-muted w-8 text-right truncate">{awayTeam}</span>
-        <div className="flex-1 h-[6px] rounded-full bg-surface-light relative overflow-hidden min-w-[80px]">
+        <span className="text-[10px] text-[rgba(196,184,165,0.35)] w-8 text-right truncate">{awayTeam}</span>
+        <div className="flex-1 h-[6px] rounded-full bg-[var(--surface-press-box)] relative overflow-hidden min-w-[80px]">
           {/* Away fill */}
           <motion.div
             className="absolute inset-y-0 left-0 rounded-l-full"
@@ -85,16 +85,16 @@ export function MMIGauge({
             transition={{ type: 'spring', stiffness: 100, damping: 15 }}
           />
         </div>
-        <span className="text-[10px] text-text-muted w-8 truncate">{homeTeam}</span>
+        <span className="text-[10px] text-[rgba(196,184,165,0.35)] w-8 truncate">{homeTeam}</span>
       </div>
     );
   }
 
   return (
-    <div className={`bg-background-primary border border-border-subtle rounded-sm p-5 ${className}`}>
+    <div className={`bg-[var(--surface-scoreboard)] border border-[var(--border-vintage)] rounded-sm p-5 ${className}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h4 className="font-display text-sm uppercase tracking-widest text-text-secondary">
+        <h4 className="font-display text-sm uppercase tracking-widest text-[var(--bsi-dust)]">
           Momentum
         </h4>
         <div className="flex items-center gap-2">
@@ -117,17 +117,17 @@ export function MMIGauge({
 
       {/* Team labels */}
       <div className="flex justify-between mb-2">
-        <span className={`text-xs font-medium transition-colors ${isAway ? 'text-[#6B8DB2]' : 'text-text-muted'}`}>
+        <span className={`text-xs font-medium transition-colors ${isAway ? 'text-[#6B8DB2]' : 'text-[rgba(196,184,165,0.35)]'}`}>
           {awayTeam}
         </span>
-        <span className="text-[10px] text-text-muted uppercase tracking-wider">Neutral</span>
-        <span className={`text-xs font-medium transition-colors ${isHome ? 'text-burnt-orange' : 'text-text-muted'}`}>
+        <span className="text-[10px] text-[rgba(196,184,165,0.35)] uppercase tracking-wider">Neutral</span>
+        <span className={`text-xs font-medium transition-colors ${isHome ? 'text-[var(--bsi-primary)]' : 'text-[rgba(196,184,165,0.35)]'}`}>
           {homeTeam}
         </span>
       </div>
 
       {/* Gauge track */}
-      <div className="relative h-3 rounded-full bg-surface-light overflow-hidden">
+      <div className="relative h-3 rounded-full bg-[var(--surface-press-box)] overflow-hidden">
         {/* Away half gradient */}
         <div
           className="absolute inset-y-0 left-0 w-1/2 rounded-l-full"
@@ -163,9 +163,9 @@ export function MMIGauge({
 
       {/* Scale markers */}
       <div className="flex justify-between mt-1">
-        <span className="text-[9px] font-mono text-text-muted tabular-nums">-100</span>
-        <span className="text-[9px] font-mono text-text-muted tabular-nums">0</span>
-        <span className="text-[9px] font-mono text-text-muted tabular-nums">+100</span>
+        <span className="text-[9px] font-mono text-[rgba(196,184,165,0.35)] tabular-nums">-100</span>
+        <span className="text-[9px] font-mono text-[rgba(196,184,165,0.35)] tabular-nums">0</span>
+        <span className="text-[9px] font-mono text-[rgba(196,184,165,0.35)] tabular-nums">+100</span>
       </div>
     </div>
   );

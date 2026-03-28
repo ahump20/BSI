@@ -110,26 +110,26 @@ export default function TrendsPage() {
 
   return (
     <>
-      <div>
+      <div className="min-h-screen bg-[#0A0A0A] text-bsi-bone">
         {/* Header */}
-        <Section padding="lg" className="pt-6 bg-gradient-to-b from-charcoal to-background-primary">
+        <Section padding="lg" className="pt-6 bg-gradient-to-b from-[#1A1A1A] to-[#0A0A0A]">
           <Container>
             <ScrollReveal direction="up">
               <nav className="flex items-center gap-3 mb-6 text-sm">
                 <Link
                   href="/college-baseball"
-                  className="text-text-muted hover:text-burnt-orange transition-colors"
+                  className="text-bsi-dust/50 hover:text-[var(--bsi-primary)] transition-colors"
                 >
                   College Baseball
                 </Link>
-                <span className="text-text-muted">/</span>
-                <span className="text-text-tertiary">Trends</span>
+                <span className="text-bsi-dust/50">/</span>
+                <span className="text-bsi-dust">Trends</span>
               </nav>
 
-              <h1 className="font-display text-3xl md:text-4xl font-bold text-text-primary uppercase tracking-wide mb-2">
+              <h1 className="font-display text-3xl md:text-4xl font-bold text-bsi-bone uppercase tracking-wide mb-2">
                 Season Trends
               </h1>
-              <p className="text-text-muted max-w-xl">
+              <p className="text-bsi-dust/50 max-w-xl">
                 Historical win percentage, ranking movement, and run differential tracked across
                 the season. Select a team to view their trajectory.
               </p>
@@ -138,7 +138,7 @@ export default function TrendsPage() {
         </Section>
 
         {/* Filters */}
-        <Section padding="sm" className="bg-charcoal border-b border-border sticky top-16 z-30">
+        <Section padding="sm" className="bg-[#161616] border-b border-[rgba(140,98,57,0.3)] sticky top-16 z-30">
           <Container>
             <div className="flex flex-col sm:flex-row gap-3">
               <select
@@ -147,10 +147,10 @@ export default function TrendsPage() {
                   setSelectedConference(e.target.value);
                   setSelectedTeamSlug(null);
                 }}
-                className="bg-surface-light border border-border rounded-sm px-4 py-2 text-text-primary text-sm focus:outline-none focus:border-burnt-orange"
+                className="bg-[#111111] border border-[rgba(140,98,57,0.3)] rounded-sm px-4 py-2 text-bsi-bone text-sm focus:outline-none focus:border-[var(--bsi-primary)]"
               >
                 {conferences.map((c) => (
-                  <option key={c.id} value={c.id} className="bg-charcoal">
+                  <option key={c.id} value={c.id} className="bg-[#161616]">
                     {c.name}
                   </option>
                 ))}
@@ -161,34 +161,34 @@ export default function TrendsPage() {
                 placeholder="Search teams..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-surface-light border border-border rounded-sm px-4 py-2 text-text-primary text-sm placeholder:text-text-muted focus:outline-none focus:border-burnt-orange flex-1"
+                className="bg-[#111111] border border-[rgba(140,98,57,0.3)] rounded-sm px-4 py-2 text-bsi-bone text-sm placeholder:text-bsi-dust/50 focus:outline-none focus:border-[var(--bsi-primary)] flex-1"
               />
             </div>
           </Container>
         </Section>
 
         {/* Content */}
-        <Section padding="lg" className="bg-background-primary">
+        <Section padding="lg" className="bg-[#0A0A0A]">
           <Container>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Team Selector */}
               <div className="lg:col-span-1">
                 <ScrollReveal direction="up">
                   <Card padding="none" className="max-h-[600px] overflow-y-auto">
-                    <div className="px-4 py-3 border-b border-border sticky top-0 bg-surface-light">
-                      <h3 className="text-xs uppercase tracking-wider text-text-muted font-semibold">
+                    <div className="px-4 py-3 border-b border-[rgba(140,98,57,0.3)] sticky top-0 bg-[#111111]">
+                      <h3 className="text-xs uppercase tracking-wider text-bsi-dust/50 font-semibold">
                         Select Team ({filteredTeams.length})
                       </h3>
                     </div>
-                    <div className="divide-y divide-border-subtle">
+                    <div className="divide-y divide-[rgba(140,98,57,0.3)]">
                       {filteredTeams.map((team) => (
                         <button
                           key={team.slug}
                           onClick={() => setSelectedTeamSlug(team.slug)}
                           className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${
                             selectedTeamSlug === team.slug
-                              ? 'bg-burnt-orange/10 text-burnt-orange'
-                              : 'text-text-tertiary hover:text-text-primary hover:bg-surface-light'
+                              ? 'bg-[var(--bsi-primary)]/10 text-[var(--bsi-primary)]'
+                              : 'text-bsi-dust hover:text-bsi-bone hover:bg-[#111111]'
                           }`}
                         >
                           <img
@@ -202,7 +202,7 @@ export default function TrendsPage() {
                           />
                           <div className="min-w-0 flex-1">
                             <div className="text-sm font-semibold truncate">{team.shortName}</div>
-                            <div className="text-xs text-text-muted">{team.conference}</div>
+                            <div className="text-xs text-bsi-dust/50">{team.conference}</div>
                           </div>
                           {selectedTeamSlug === team.slug && (
                             <Badge variant="primary" size="sm">Active</Badge>
@@ -220,11 +220,11 @@ export default function TrendsPage() {
                   <ScrollReveal direction="up">
                     <Card padding="lg" className="text-center">
                       <div className="py-12">
-                        <div className="text-burnt-orange text-4xl mb-4 font-display">--</div>
-                        <h3 className="text-xl font-display font-bold text-text-primary uppercase tracking-wide mb-3">
+                        <div className="text-[var(--bsi-primary)] text-4xl mb-4 font-display">--</div>
+                        <h3 className="text-xl font-display font-bold text-bsi-bone uppercase tracking-wide mb-3">
                           Select a Team
                         </h3>
-                        <p className="text-text-muted max-w-md mx-auto">
+                        <p className="text-bsi-dust/50 max-w-md mx-auto">
                           Choose a team from the list to view their season trends,
                           ranking trajectory, and run differential.
                         </p>
@@ -236,8 +236,8 @@ export default function TrendsPage() {
                 {selectedTeamSlug && loading && (
                   <Card padding="lg" className="text-center">
                     <div className="py-12">
-                      <div className="w-8 h-8 border-2 border-burnt-orange border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                      <p className="text-text-muted text-sm">Loading trend data...</p>
+                      <div className="w-8 h-8 border-2 border-[var(--bsi-primary)] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                      <p className="text-bsi-dust/50 text-sm">Loading trend data...</p>
                     </div>
                   </Card>
                 )}
@@ -246,7 +246,7 @@ export default function TrendsPage() {
                   <Card padding="lg" className="text-center">
                     <div className="py-8">
                       <div className="text-error text-sm mb-2">Failed to load trends</div>
-                      <p className="text-text-muted text-xs">{error}</p>
+                      <p className="text-bsi-dust/50 text-xs">{error}</p>
                     </div>
                   </Card>
                 )}
@@ -258,7 +258,7 @@ export default function TrendsPage() {
                       <Card padding="lg">
                         <div className="flex items-center justify-between mb-4">
                           <div>
-                            <h2 className="font-display text-xl font-bold text-text-primary uppercase tracking-wide">
+                            <h2 className="font-display text-xl font-bold text-bsi-bone uppercase tracking-wide">
                               {trendData.team.name || selectedMeta?.name || selectedTeamSlug}
                             </h2>
                             {trendData.team.conference && (
@@ -269,16 +269,16 @@ export default function TrendsPage() {
                           </div>
                           <div className="flex gap-4 text-center">
                             <div>
-                              <div className="font-mono text-lg font-bold text-burnt-orange">
+                              <div className="font-mono text-lg font-bold text-[var(--bsi-primary)]">
                                 {trendData.summary.currentStreak}
                               </div>
-                              <div className="text-text-muted text-xs uppercase">Streak</div>
+                              <div className="text-bsi-dust/50 text-xs uppercase">Streak</div>
                             </div>
                             <div>
-                              <div className="font-mono text-lg font-bold text-text-primary">
+                              <div className="font-mono text-lg font-bold text-bsi-bone">
                                 {trendData.summary.last10}
                               </div>
-                              <div className="text-text-muted text-xs uppercase">Recent</div>
+                              <div className="text-bsi-dust/50 text-xs uppercase">Recent</div>
                             </div>
                             {trendData.summary.rankingChange !== null && (
                               <div>
@@ -288,21 +288,21 @@ export default function TrendsPage() {
                                       ? 'text-success'
                                       : trendData.summary.rankingChange < 0
                                         ? 'text-error'
-                                        : 'text-text-muted'
+                                        : 'text-bsi-dust/50'
                                   }`}
                                 >
                                   {trendData.summary.rankingChange > 0
                                     ? `+${trendData.summary.rankingChange}`
                                     : trendData.summary.rankingChange}
                                 </div>
-                                <div className="text-text-muted text-xs uppercase">Rank Chg</div>
+                                <div className="text-bsi-dust/50 text-xs uppercase">Rank Chg</div>
                               </div>
                             )}
                           </div>
                         </div>
 
                         {trendData.snapshots.length === 0 && (
-                          <p className="text-text-muted text-sm">
+                          <p className="text-bsi-dust/50 text-sm">
                             {trendData.message ||
                               'No snapshot data available yet. Trend data populates once the ingest pipeline runs.'}
                           </p>
@@ -360,8 +360,8 @@ export default function TrendsPage() {
             </div>
 
             {/* Attribution */}
-            <div className="mt-12 pt-6 border-t border-border-subtle text-center">
-              <div className="flex items-center justify-center gap-2 text-xs text-text-muted">
+            <div className="mt-12 pt-6 border-t border-[rgba(140,98,57,0.3)] text-center">
+              <div className="flex items-center justify-center gap-2 text-xs text-bsi-dust/50">
                 <span>BSI D1 Historical Database</span>
                 <span>|</span>
                 <span>Updated daily</span>

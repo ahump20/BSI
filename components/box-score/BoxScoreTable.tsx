@@ -84,8 +84,8 @@ export function BoxScoreTableSkeleton() {
   return (
     <div className="animate-pulse space-y-4 p-4">
       <div className="h-6 bg-surface rounded-sm w-1/3" />
-      <div className="h-32 bg-surface-light rounded-sm" />
-      <div className="h-48 bg-surface-light rounded-sm" />
+      <div className="h-32 bg-[var(--surface-press-box)] rounded-sm" />
+      <div className="h-48 bg-[var(--surface-press-box)] rounded-sm" />
     </div>
   );
 }
@@ -116,8 +116,8 @@ export function BoxScoreTable({
 
   if (!boxscore) {
     return (
-      <div className="bg-background-primary rounded-sm overflow-hidden border border-border-subtle">
-        <div className="px-4 py-8 text-center text-text-muted text-sm">
+      <div className="bg-[var(--surface-scoreboard)] rounded-sm overflow-hidden border border-[var(--border-vintage)]">
+        <div className="px-4 py-8 text-center text-[rgba(196,184,165,0.35)] text-sm">
           Box score data not available yet
         </div>
       </div>
@@ -125,13 +125,13 @@ export function BoxScoreTable({
   }
 
   return (
-    <div className="bg-background-primary rounded-sm overflow-hidden border border-border-subtle">
+    <div className="bg-[var(--surface-scoreboard)] rounded-sm overflow-hidden border border-[var(--border-vintage)]">
       {/* Linescore */}
       {showLinescore && linescore && (
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-text-primary" aria-label="Linescore">
+          <table className="w-full text-sm text-[var(--bsi-bone)]" aria-label="Linescore">
             <thead>
-              <tr className="border-b border-border text-xs text-text-muted uppercase">
+              <tr className="border-b border-border text-xs text-[rgba(196,184,165,0.35)] uppercase">
                 <th scope="col" className="text-left px-4 py-2 w-32">Team</th>
                 {linescore.innings.map((_, i) => (
                   <th scope="col" key={i} className="px-2 py-2 text-center w-8">
@@ -144,7 +144,7 @@ export function BoxScoreTable({
               </tr>
             </thead>
             <tbody>
-              <tr className="border-b border-border-subtle">
+              <tr className="border-b border-[var(--border-vintage)]">
                 <td className="px-4 py-2 font-medium">{awayTeam.abbreviation}</td>
                 {linescore.innings.map((inn, i) => (
                   <td key={i} className="px-2 py-2 text-center tabular-nums">{inn.away ?? '-'}</td>
@@ -174,7 +174,7 @@ export function BoxScoreTable({
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`flex-1 py-2 text-xs font-display uppercase tracking-wider transition-colors ${
-              activeTab === tab ? 'text-burnt-orange border-b-2 border-burnt-orange' : 'text-text-muted hover:text-text-secondary'
+              activeTab === tab ? 'text-[var(--bsi-primary)] border-b-2 border-[var(--bsi-primary)]' : 'text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-dust)]'
             }`}
           >
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -184,20 +184,20 @@ export function BoxScoreTable({
 
       {/* Batting tables */}
       {activeTab === 'batting' && (
-        <div className="divide-y divide-border-subtle">
+        <div className="divide-y divide-[var(--border-vintage)]">
           {[
             { label: awayTeam.name, abbr: awayTeam.abbreviation, batting: boxscore.away.batting },
             { label: homeTeam.name, abbr: homeTeam.abbreviation, batting: boxscore.home.batting },
           ].map((side) => (
             side.batting.length > 0 && (
               <div key={side.abbr} className="p-4">
-                <h4 className="text-sm font-display text-text-secondary uppercase tracking-wider mb-3">
+                <h4 className="text-sm font-display text-[var(--bsi-dust)] uppercase tracking-wider mb-3">
                   {side.abbr}
                 </h4>
                 <div className="overflow-x-auto">
-                <table className="w-full text-xs text-text-secondary" aria-label={`${side.abbr} batting statistics`}>
+                <table className="w-full text-xs text-[var(--bsi-dust)]" aria-label={`${side.abbr} batting statistics`}>
                   <thead>
-                    <tr className="text-text-muted uppercase">
+                    <tr className="text-[rgba(196,184,165,0.35)] uppercase">
                       <th scope="col" className="text-left py-1">Batter</th>
                       <th scope="col" className="text-center py-1">AB</th>
                       <th scope="col" className="text-center py-1">R</th>
@@ -213,7 +213,7 @@ export function BoxScoreTable({
                   </thead>
                   <tbody>
                     {side.batting.map((b, i) => (
-                      <tr key={i} className="border-t border-border-subtle">
+                      <tr key={i} className="border-t border-[var(--border-vintage)]">
                         <td className="py-1">{b.player.name}</td>
                         <td className="text-center tabular-nums">{b.ab}</td>
                         <td className="text-center tabular-nums">{b.r}</td>
@@ -251,20 +251,20 @@ export function BoxScoreTable({
 
       {/* Pitching tables */}
       {activeTab === 'pitching' && (
-        <div className="divide-y divide-border-subtle">
+        <div className="divide-y divide-[var(--border-vintage)]">
           {[
             { label: awayTeam.name, abbr: awayTeam.abbreviation, pitching: boxscore.away.pitching },
             { label: homeTeam.name, abbr: homeTeam.abbreviation, pitching: boxscore.home.pitching },
           ].map((side) => (
             side.pitching.length > 0 && (
               <div key={side.abbr} className="p-4">
-                <h4 className="text-sm font-display text-text-secondary uppercase tracking-wider mb-3">
+                <h4 className="text-sm font-display text-[var(--bsi-dust)] uppercase tracking-wider mb-3">
                   {side.abbr}
                 </h4>
                 <div className="overflow-x-auto">
-                <table className="w-full text-xs text-text-secondary" aria-label={`${side.abbr} pitching statistics`}>
+                <table className="w-full text-xs text-[var(--bsi-dust)]" aria-label={`${side.abbr} pitching statistics`}>
                   <thead>
-                    <tr className="text-text-muted uppercase">
+                    <tr className="text-[rgba(196,184,165,0.35)] uppercase">
                       <th scope="col" className="text-left py-1">Pitcher</th>
                       <th scope="col" className="text-center py-1">IP</th>
                       <th scope="col" className="text-center py-1">H</th>
@@ -277,10 +277,10 @@ export function BoxScoreTable({
                   </thead>
                   <tbody>
                     {side.pitching.map((p, i) => (
-                      <tr key={i} className="border-t border-border-subtle">
+                      <tr key={i} className="border-t border-[var(--border-vintage)]">
                         <td className="py-1">
                           {p.player.name}
-                          {p.decision && <span className="text-text-muted ml-1">({p.decision})</span>}
+                          {p.decision && <span className="text-[rgba(196,184,165,0.35)] ml-1">({p.decision})</span>}
                         </td>
                         <td className="text-center tabular-nums">{p.ip}</td>
                         <td className="text-center tabular-nums">{p.h}</td>

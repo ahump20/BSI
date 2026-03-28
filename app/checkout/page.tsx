@@ -34,8 +34,8 @@ function LoadingState() {
       <div>
         <Section padding="lg" className="pt-6 min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-burnt-orange mx-auto mb-4" />
-            <p className="text-text-secondary">Loading checkout...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--bsi-primary)] mx-auto mb-4" />
+            <p className="text-[var(--bsi-dust)]">Loading checkout...</p>
           </div>
         </Section>
       </div>
@@ -72,7 +72,7 @@ function ErrorState({ message }: { message: string }) {
                 <h1 className="font-display text-2xl font-bold uppercase tracking-display mb-4">
                   Checkout Error
                 </h1>
-                <p className="text-text-secondary mb-8">{message}</p>
+                <p className="text-[var(--bsi-dust)] mb-8">{message}</p>
                 <div className="space-y-4">
                   <Link href="/pricing">
                     <Button variant="primary" size="lg" className="w-full">
@@ -160,9 +160,9 @@ function CheckoutContent() {
                 {/* Header */}
                 <div className="text-center mb-8">
                   <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display mb-2">
-                    Complete Your <span className="text-gradient-blaze">Subscription</span>
+                    Complete Your <span className="text-[var(--bsi-primary)]">Subscription</span>
                   </h1>
-                  <p className="text-text-secondary">Secure checkout powered by Stripe</p>
+                  <p className="text-[var(--bsi-dust)]">Secure checkout powered by Stripe</p>
                 </div>
 
                 {/* Stripe Embedded Checkout */}
@@ -178,7 +178,7 @@ function CheckoutContent() {
                 </Card>
 
                 {/* Security Note */}
-                <p className="text-text-tertiary text-xs text-center mt-6">
+                <p className="text-[rgba(196,184,165,0.5)] text-xs text-center mt-6">
                   Your payment information is encrypted and secure. We never store your card
                   details.
                 </p>
@@ -187,7 +187,7 @@ function CheckoutContent() {
                 <div className="text-center mt-4">
                   <Link
                     href="/pricing"
-                    className="text-burnt-orange hover:text-ember transition-colors text-sm"
+                    className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors text-sm"
                   >
                     ← Back to pricing
                   </Link>

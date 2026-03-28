@@ -123,17 +123,17 @@ export default function MLBTeamsPage() {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/mlb"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 MLB
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">Teams</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">Teams</span>
             </nav>
           </Container>
         </Section>
@@ -150,13 +150,13 @@ export default function MLBTeamsPage() {
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-gradient-blaze mb-4">
+              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-[var(--bsi-primary)] mb-4">
                 MLB Teams
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="text-text-secondary max-w-2xl">
+              <p className="text-[var(--bsi-dust)] max-w-2xl">
                 Browse all 30 Major League Baseball teams. View rosters, schedules, statistics, and
                 depth charts.
               </p>
@@ -173,7 +173,7 @@ export default function MLBTeamsPage() {
               <div className="relative flex-1 max-w-md">
                 <svg
                   viewBox="0 0 24 24"
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[rgba(196,184,165,0.5)]"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
@@ -186,7 +186,7 @@ export default function MLBTeamsPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search teams, cities, venues..."
-                  className="w-full pl-10 pr-4 py-2.5 rounded-sm bg-background-tertiary border border-border-subtle text-text-primary text-sm placeholder:text-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-sm bg-[var(--surface-dugout)] border border-[var(--border-vintage)] text-[var(--bsi-bone)] text-sm placeholder:text-[rgba(196,184,165,0.5)] focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
                 />
               </div>
 
@@ -198,8 +198,8 @@ export default function MLBTeamsPage() {
                     onClick={() => setSelectedLeague(league)}
                     className={`px-6 py-2.5 rounded-sm font-semibold text-sm transition-all ${
                       selectedLeague === league
-                        ? 'bg-burnt-orange text-white'
-                        : 'bg-background-tertiary text-text-secondary hover:bg-surface-light hover:text-text-primary'
+                        ? 'bg-[var(--bsi-primary)] text-white'
+                        : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:bg-[var(--surface-press-box)] hover:text-[var(--bsi-bone)]'
                     }`}
                   >
                     {league === 'all'
@@ -220,10 +220,10 @@ export default function MLBTeamsPage() {
 
                 return (
                   <div key={division} className="mb-8">
-                    <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+                    <h2 className="text-lg font-semibold text-[var(--bsi-bone)] mb-4 flex items-center gap-2">
                       <svg
                         viewBox="0 0 24 24"
-                        className="w-5 h-5 text-burnt-orange"
+                        className="w-5 h-5 text-[var(--bsi-primary)]"
                         fill="currentColor"
                       >
                         <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
@@ -244,7 +244,7 @@ export default function MLBTeamsPage() {
               <div className="py-16 text-center">
                 <svg
                   viewBox="0 0 24 24"
-                  className="w-12 h-12 mx-auto text-text-tertiary mb-4"
+                  className="w-12 h-12 mx-auto text-[rgba(196,184,165,0.5)] mb-4"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="1.5"
@@ -252,8 +252,8 @@ export default function MLBTeamsPage() {
                   <circle cx="11" cy="11" r="8" />
                   <path d="M21 21l-4.35-4.35" />
                 </svg>
-                <p className="text-text-secondary text-lg mb-2">No teams found</p>
-                <p className="text-text-tertiary text-sm">
+                <p className="text-[var(--bsi-dust)] text-lg mb-2">No teams found</p>
+                <p className="text-[rgba(196,184,165,0.5)] text-sm">
                   Try a different search term or clear your filters.
                 </p>
                 <button
@@ -261,7 +261,7 @@ export default function MLBTeamsPage() {
                     setSearchQuery('');
                     setSelectedLeague('all');
                   }}
-                  className="mt-4 px-4 py-2 text-sm text-burnt-orange hover:text-text-primary transition-colors"
+                  className="mt-4 px-4 py-2 text-sm text-[var(--bsi-primary)] hover:text-[var(--bsi-bone)] transition-colors"
                 >
                   Clear filters
                 </button>
@@ -269,7 +269,7 @@ export default function MLBTeamsPage() {
             )}
 
             {/* Data Source Footer */}
-            <div className="mt-8 pt-4 border-t border-border-subtle">
+            <div className="mt-8 pt-4 border-t border-[var(--border-vintage)]">
               <DataSourceBadge
                 source={meta?.dataSource || 'MLB Stats API'}
                 timestamp={displayTimestamp(meta?.lastUpdated)}
@@ -294,7 +294,7 @@ function TeamCard({ team }: { team: TeamWithRecord }) {
       <Card
         variant="default"
         padding="md"
-        className="h-full transition-all group-hover:border-burnt-orange"
+        className="h-full transition-all group-hover:border-[var(--bsi-primary)]"
       >
         <div className="flex items-center gap-4">
           {/* Team Logo */}
@@ -318,15 +318,15 @@ function TeamCard({ team }: { team: TeamWithRecord }) {
           </div>
 
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-text-primary group-hover:text-burnt-orange transition-colors truncate">
+            <p className="font-semibold text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors truncate">
               {team.city} {team.name}
             </p>
-            <p className="text-xs text-text-tertiary">
+            <p className="text-xs text-[rgba(196,184,165,0.5)]">
               {team.league} {team.division}
-              {team.venue && <span className="ml-1 text-text-tertiary/60">&middot; {team.venue}</span>}
+              {team.venue && <span className="ml-1 text-[rgba(196,184,165,0.5)]/60">&middot; {team.venue}</span>}
             </p>
             {team.wins !== undefined && (
-              <p className="text-sm text-text-secondary mt-1 font-mono">
+              <p className="text-sm text-[var(--bsi-dust)] mt-1 font-mono">
                 {team.wins}-{team.losses}
               </p>
             )}
@@ -334,7 +334,7 @@ function TeamCard({ team }: { team: TeamWithRecord }) {
 
           <svg
             viewBox="0 0 24 24"
-            className="w-5 h-5 text-text-tertiary group-hover:text-burnt-orange transition-colors flex-shrink-0"
+            className="w-5 h-5 text-[rgba(196,184,165,0.5)] group-hover:text-[var(--bsi-primary)] transition-colors flex-shrink-0"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"

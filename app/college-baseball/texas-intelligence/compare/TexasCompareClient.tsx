@@ -126,11 +126,11 @@ function RadarChart({
       <div className="flex items-center gap-6 mt-2 text-xs">
         <div className="flex items-center gap-1.5">
           <span className="w-3 h-0.5 rounded-full" style={{ backgroundColor: ACCENT }} />
-          <span className="text-text-muted">{nameA}</span>
+          <span className="text-[rgba(196,184,165,0.35)]">{nameA}</span>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="w-3 h-0.5 rounded-full" style={{ backgroundColor: COMPARE_COLOR }} />
-          <span className="text-text-muted">{nameB}</span>
+          <span className="text-[rgba(196,184,165,0.35)]">{nameB}</span>
         </div>
       </div>
     </div>
@@ -200,11 +200,11 @@ export default function TexasCompareClient() {
         <Section padding="sm" className="border-b border-border">
           <Container>
             <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">College Baseball</Link>
-              <span className="text-text-muted">/</span>
-              <Link href="/college-baseball/texas-intelligence" className="text-text-muted hover:text-burnt-orange transition-colors">Texas Intel</Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-primary">Compare</span>
+              <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">College Baseball</Link>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <Link href="/college-baseball/texas-intelligence" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">Texas Intel</Link>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[var(--bsi-bone)]">Compare</span>
             </nav>
           </Container>
         </Section>
@@ -218,10 +218,10 @@ export default function TexasCompareClient() {
                 <img src={logoUrl} alt="Texas" className="w-12 h-12 object-contain" loading="eager" />
                 <div>
                   <span className="heritage-stamp text-[10px]">Player Comparison</span>
-                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-text-primary mt-1">
+                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-[var(--bsi-bone)] mt-1">
                     Compare Players
                   </h1>
-                  <p className="text-text-secondary text-sm mt-2 max-w-xl">
+                  <p className="text-[var(--bsi-dust)] text-sm mt-2 max-w-xl">
                     Side-by-side comparison of any two Texas Longhorns. Select players to see sabermetric overlays.
                   </p>
                 </div>
@@ -236,11 +236,11 @@ export default function TexasCompareClient() {
             <ScrollReveal direction="up">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-text-muted text-xs uppercase tracking-wider mb-2">Player A</label>
+                  <label className="block text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider mb-2">Player A</label>
                   <select
                     value={playerA}
                     onChange={(e) => setPlayerA(e.target.value)}
-                    className="w-full bg-[var(--surface-dugout)] border border-border rounded-sm px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
+                    className="w-full bg-[var(--surface-dugout)] border border-border rounded-sm px-3 py-2.5 text-sm text-[var(--bsi-bone)] focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
                     aria-label="Select first player"
                   >
                     <option value="">Select a player...</option>
@@ -252,11 +252,11 @@ export default function TexasCompareClient() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-text-muted text-xs uppercase tracking-wider mb-2">Player B</label>
+                  <label className="block text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider mb-2">Player B</label>
                   <select
                     value={playerB}
                     onChange={(e) => setPlayerB(e.target.value)}
-                    className="w-full bg-[var(--surface-dugout)] border border-border rounded-sm px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
+                    className="w-full bg-[var(--surface-dugout)] border border-border rounded-sm px-3 py-2.5 text-sm text-[var(--bsi-bone)] focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
                     aria-label="Select second player"
                   >
                     <option value="">Select a player...</option>
@@ -278,7 +278,7 @@ export default function TexasCompareClient() {
             <Container>
               <div className="space-y-4">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-16 bg-surface-light rounded-sm animate-pulse" />
+                  <div key={i} className="h-16 bg-[var(--surface-press-box)] rounded-sm animate-pulse" />
                 ))}
               </div>
             </Container>
@@ -293,7 +293,7 @@ export default function TexasCompareClient() {
               <Section padding="lg" borderTop>
                 <Container>
                   <ScrollReveal direction="up">
-                    <Card variant="default" padding="lg" className="border-t-2 border-burnt-orange">
+                    <Card variant="default" padding="lg" className="border-t-2 border-[var(--bsi-primary)]">
                       <CardHeader>
                         <CardTitle className="flex items-center gap-3">
                           <span>Profile Overlay</span>
@@ -329,22 +329,22 @@ export default function TexasCompareClient() {
                       <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                           <thead>
-                            <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                            <tr className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
                               <th className="text-right py-2 px-2" style={{ color: ACCENT }}>{selectedA.name}</th>
                               <th className="text-center py-2 px-2 w-20">Stat</th>
                               <th className="text-left py-2 px-2" style={{ color: COMPARE_COLOR }}>{selectedB.name}</th>
                             </tr>
                           </thead>
                           <tbody>
-                            <tr className="border-t border-border-subtle">
-                              <td className="py-2 px-2 text-right font-mono text-text-secondary">{selectedA.position}</td>
-                              <td className="py-2 px-2 text-center text-text-muted text-xs uppercase">Position</td>
-                              <td className="py-2 px-2 font-mono text-text-secondary">{selectedB.position}</td>
+                            <tr className="border-t border-[var(--border-vintage)]">
+                              <td className="py-2 px-2 text-right font-mono text-[var(--bsi-dust)]">{selectedA.position}</td>
+                              <td className="py-2 px-2 text-center text-[rgba(196,184,165,0.35)] text-xs uppercase">Position</td>
+                              <td className="py-2 px-2 font-mono text-[var(--bsi-dust)]">{selectedB.position}</td>
                             </tr>
-                            <tr className="border-t border-border-subtle">
-                              <td className="py-2 px-2 text-right font-mono text-text-secondary">{selectedA.games}</td>
-                              <td className="py-2 px-2 text-center text-text-muted text-xs uppercase">Games</td>
-                              <td className="py-2 px-2 font-mono text-text-secondary">{selectedB.games}</td>
+                            <tr className="border-t border-[var(--border-vintage)]">
+                              <td className="py-2 px-2 text-right font-mono text-[var(--bsi-dust)]">{selectedA.games}</td>
+                              <td className="py-2 px-2 text-center text-[rgba(196,184,165,0.35)] text-xs uppercase">Games</td>
+                              <td className="py-2 px-2 font-mono text-[var(--bsi-dust)]">{selectedB.games}</td>
                             </tr>
                             {selectedA.type === 'hitter' && selectedB.type === 'hitter' && (
                               <>
@@ -380,7 +380,7 @@ export default function TexasCompareClient() {
           <Section padding="lg" borderTop>
             <Container>
               <Card padding="lg" className="text-center">
-                <p className="text-text-muted text-sm">
+                <p className="text-[rgba(196,184,165,0.35)] text-sm">
                   {!playerA && !playerB
                     ? 'Select two players above to compare their sabermetric profiles.'
                     : 'Select a different player for the second slot to begin comparison.'}
@@ -407,7 +407,7 @@ export default function TexasCompareClient() {
               />
               <Link
                 href="/college-baseball/texas-intelligence"
-                className="text-sm text-burnt-orange hover:text-ember transition-colors"
+                className="text-sm text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 &larr; Back to Hub
               </Link>
@@ -440,11 +440,11 @@ function CompRow({
   const aWins = higher ? aVal > bVal : aVal < bVal;
   const bWins = higher ? bVal > aVal : bVal < aVal;
   return (
-    <tr className="border-t border-border-subtle">
+    <tr className="border-t border-[var(--border-vintage)]">
       <td className="py-2 px-2 text-right font-mono font-semibold" style={{ color: aWins ? ACCENT : undefined }}>
         {a}
       </td>
-      <td className="py-2 px-2 text-center text-text-muted text-xs uppercase tracking-wider">{stat}</td>
+      <td className="py-2 px-2 text-center text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider">{stat}</td>
       <td className="py-2 px-2 font-mono font-semibold" style={{ color: bWins ? COMPARE_COLOR : undefined }}>
         {b}
       </td>

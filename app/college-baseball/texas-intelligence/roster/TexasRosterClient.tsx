@@ -116,11 +116,11 @@ export default function TexasRosterClient() {
         <Section padding="sm" className="border-b border-border">
           <Container>
             <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">College Baseball</Link>
-              <span className="text-text-muted">/</span>
-              <Link href="/college-baseball/texas-intelligence" className="text-text-muted hover:text-burnt-orange transition-colors">Texas Intel</Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-primary">Roster</span>
+              <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">College Baseball</Link>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <Link href="/college-baseball/texas-intelligence" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">Texas Intel</Link>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[var(--bsi-bone)]">Roster</span>
             </nav>
           </Container>
         </Section>
@@ -134,7 +134,7 @@ export default function TexasRosterClient() {
                 <img src={logoUrl} alt="Texas" className="w-12 h-12 object-contain" loading="eager" />
                 <div>
                   <span className="heritage-stamp text-[10px]">Roster Intelligence</span>
-                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-text-primary mt-1">
+                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-[var(--bsi-bone)] mt-1">
                     Texas Longhorns Roster
                   </h1>
                 </div>
@@ -153,8 +153,8 @@ export default function TexasRosterClient() {
                   onClick={() => setActiveTab(tab)}
                   className={`px-4 py-2 rounded-sm text-xs font-mono uppercase tracking-wider transition-colors ${
                     activeTab === tab
-                      ? 'bg-burnt-orange text-white'
-                      : 'text-text-muted hover:text-text-primary'
+                      ? 'bg-[var(--bsi-primary)] text-white'
+                      : 'text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)]'
                   }`}
                 >
                   {tab === 'all' ? 'All' : tab === 'position' ? 'Position Players' : 'Pitchers'}
@@ -170,7 +170,7 @@ export default function TexasRosterClient() {
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <Card variant="default" padding="lg" className="border-t-2 border-burnt-orange">
+              <Card variant="default" padding="lg" className="border-t-2 border-[var(--bsi-primary)]">
                 <CardHeader>
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <CardTitle className="flex items-center gap-3">
@@ -186,8 +186,8 @@ export default function TexasRosterClient() {
                           onClick={() => setPosFilter(f)}
                           className={`px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-sm transition-colors ${
                             posFilter === f
-                              ? 'bg-burnt-orange text-white'
-                              : 'bg-surface-light text-text-muted hover:text-text-primary'
+                              ? 'bg-[var(--bsi-primary)] text-white'
+                              : 'bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)]'
                           }`}
                         >
                           {f === 'all' ? 'All' : f}
@@ -200,16 +200,16 @@ export default function TexasRosterClient() {
                   {loading ? (
                     <div className="space-y-3">
                       {[1, 2, 3, 4, 5].map((i) => (
-                        <div key={i} className="h-10 bg-surface-light rounded-sm animate-pulse" />
+                        <div key={i} className="h-10 bg-[var(--surface-press-box)] rounded-sm animate-pulse" />
                       ))}
                     </div>
                   ) : sortedHitters.length === 0 ? (
-                    <p className="text-text-muted text-sm text-center py-8">No hitter data available for this filter.</p>
+                    <p className="text-[rgba(196,184,165,0.35)] text-sm text-center py-8">No hitter data available for this filter.</p>
                   ) : (
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                          <tr className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
                             <th className="text-left py-2 px-2">Name</th>
                             <th className="text-left py-2 px-2">Pos</th>
                             <SortTh label="PA" field="pa" current={hitterSort} onSort={setHitterSort} />
@@ -222,15 +222,15 @@ export default function TexasRosterClient() {
                         </thead>
                         <tbody>
                           {sortedHitters.map((h) => (
-                            <tr key={h.espn_id || h.name} className="border-t border-border-subtle">
-                              <td className="py-2 px-2 text-text-primary font-medium">{h.name}</td>
-                              <td className="py-2 px-2 text-text-muted text-xs">{h.position}</td>
-                              <td className="py-2 px-2 text-right font-mono text-text-muted">{h.pa}</td>
+                            <tr key={h.espn_id || h.name} className="border-t border-[var(--border-vintage)]">
+                              <td className="py-2 px-2 text-[var(--bsi-bone)] font-medium">{h.name}</td>
+                              <td className="py-2 px-2 text-[rgba(196,184,165,0.35)] text-xs">{h.position}</td>
+                              <td className="py-2 px-2 text-right font-mono text-[rgba(196,184,165,0.35)]">{h.pa}</td>
                               <td className="py-2 px-2 text-right font-mono" style={{ color: h.woba > lgWoba ? ACCENT : undefined }}>{fmt3(h.woba)}</td>
                               <td className="py-2 px-2 text-right font-mono font-semibold" style={{ color: h.wrc_plus >= 100 ? ACCENT : undefined }}>{Math.round(h.wrc_plus)}</td>
-                              <td className="py-2 px-2 text-right font-mono text-text-secondary">{fmt3(h.iso)}</td>
-                              <td className="py-2 px-2 text-right font-mono text-text-secondary">{fmtPct(h.kpct)}</td>
-                              <td className="py-2 px-2 text-right font-mono text-text-secondary">{fmtPct(h.bbpct)}</td>
+                              <td className="py-2 px-2 text-right font-mono text-[var(--bsi-dust)]">{fmt3(h.iso)}</td>
+                              <td className="py-2 px-2 text-right font-mono text-[var(--bsi-dust)]">{fmtPct(h.kpct)}</td>
+                              <td className="py-2 px-2 text-right font-mono text-[var(--bsi-dust)]">{fmtPct(h.bbpct)}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -262,16 +262,16 @@ export default function TexasRosterClient() {
                   {loading ? (
                     <div className="space-y-3">
                       {[1, 2, 3, 4].map((i) => (
-                        <div key={i} className="h-10 bg-surface-light rounded-sm animate-pulse" />
+                        <div key={i} className="h-10 bg-[var(--surface-press-box)] rounded-sm animate-pulse" />
                       ))}
                     </div>
                   ) : sortedPitchers.length === 0 ? (
-                    <p className="text-text-muted text-sm text-center py-8">No pitcher data available.</p>
+                    <p className="text-[rgba(196,184,165,0.35)] text-sm text-center py-8">No pitcher data available.</p>
                   ) : (
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                          <tr className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
                             <th className="text-left py-2 px-2">Name</th>
                             <th className="text-left py-2 px-2">Pos</th>
                             <PitcherSortTh label="IP" field="ip" current={pitcherSort} onSort={setPitcherSort} />
@@ -282,13 +282,13 @@ export default function TexasRosterClient() {
                         </thead>
                         <tbody>
                           {sortedPitchers.map((p) => (
-                            <tr key={p.espn_id || p.name} className="border-t border-border-subtle">
-                              <td className="py-2 px-2 text-text-primary font-medium">{p.name}</td>
-                              <td className="py-2 px-2 text-text-muted text-xs">{p.position}</td>
-                              <td className="py-2 px-2 text-right font-mono text-text-muted">{fmt1(p.ip)}</td>
+                            <tr key={p.espn_id || p.name} className="border-t border-[var(--border-vintage)]">
+                              <td className="py-2 px-2 text-[var(--bsi-bone)] font-medium">{p.name}</td>
+                              <td className="py-2 px-2 text-[rgba(196,184,165,0.35)] text-xs">{p.position}</td>
+                              <td className="py-2 px-2 text-right font-mono text-[rgba(196,184,165,0.35)]">{fmt1(p.ip)}</td>
                               <td className="py-2 px-2 text-right font-mono font-semibold" style={{ color: p.fip <= lgFip ? ACCENT : undefined }}>{fmt2(p.fip)}</td>
-                              <td className="py-2 px-2 text-right font-mono text-text-secondary">{fmt1(p.k9)}</td>
-                              <td className="py-2 px-2 text-right font-mono text-text-secondary">{fmt1(p.bb9)}</td>
+                              <td className="py-2 px-2 text-right font-mono text-[var(--bsi-dust)]">{fmt1(p.k9)}</td>
+                              <td className="py-2 px-2 text-right font-mono text-[var(--bsi-dust)]">{fmt1(p.bb9)}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -320,7 +320,7 @@ export default function TexasRosterClient() {
               />
               <Link
                 href="/college-baseball/texas-intelligence"
-                className="text-sm text-burnt-orange hover:text-ember transition-colors"
+                className="text-sm text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 &larr; Back to Hub
               </Link>
@@ -339,7 +339,7 @@ function SortTh({ label, field, current, onSort }: { label: string; field: SortF
   const active = current === field;
   return (
     <th
-      className={`text-right py-2 px-2 cursor-pointer hover:text-text-primary transition-colors ${active ? 'text-burnt-orange' : ''}`}
+      className={`text-right py-2 px-2 cursor-pointer hover:text-[var(--bsi-bone)] transition-colors ${active ? 'text-[var(--bsi-primary)]' : ''}`}
       onClick={() => onSort(field)}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSort(field); } }}
       tabIndex={0}
@@ -357,7 +357,7 @@ function PitcherSortTh({ label, field, current, onSort }: { label: string; field
   const ascending = field === 'fip' || field === 'bb9';
   return (
     <th
-      className={`text-right py-2 px-2 cursor-pointer hover:text-text-primary transition-colors ${active ? 'text-burnt-orange' : ''}`}
+      className={`text-right py-2 px-2 cursor-pointer hover:text-[var(--bsi-bone)] transition-colors ${active ? 'text-[var(--bsi-primary)]' : ''}`}
       onClick={() => onSort(field)}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSort(field); } }}
       tabIndex={0}

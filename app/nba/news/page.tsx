@@ -42,14 +42,14 @@ function SkeletonNewsCard() {
   return (
     <Card variant="default" padding="md" className="animate-pulse">
       <div className="flex gap-4">
-        <div className="w-24 h-24 bg-background-tertiary rounded-sm flex-shrink-0 hidden sm:block" />
+        <div className="w-24 h-24 bg-[var(--surface-dugout)] rounded-sm flex-shrink-0 hidden sm:block" />
         <div className="flex-1 space-y-3">
-          <div className="h-5 bg-background-tertiary rounded-sm w-3/4" />
-          <div className="h-4 bg-background-tertiary/50 rounded-sm w-full" />
-          <div className="h-4 bg-background-tertiary/50 rounded-sm w-2/3" />
+          <div className="h-5 bg-[var(--surface-dugout)] rounded-sm w-3/4" />
+          <div className="h-4 bg-[var(--surface-dugout)]/50 rounded-sm w-full" />
+          <div className="h-4 bg-[var(--surface-dugout)]/50 rounded-sm w-2/3" />
           <div className="flex gap-2">
-            <div className="h-5 w-16 bg-background-tertiary rounded-sm" />
-            <div className="h-5 w-12 bg-background-tertiary/50 rounded-sm" />
+            <div className="h-5 w-16 bg-[var(--surface-dugout)] rounded-sm" />
+            <div className="h-5 w-12 bg-[var(--surface-dugout)]/50 rounded-sm" />
           </div>
         </div>
       </div>
@@ -63,7 +63,7 @@ function NewsCard({ item }: { item: NewsItem }) {
       <Card
         variant="hover"
         padding="md"
-        className="h-full transition-all duration-300 hover:border-burnt-orange group"
+        className="h-full transition-all duration-300 hover:border-[var(--bsi-primary)] group"
       >
         <div className="flex gap-4">
           {item.image && (
@@ -80,20 +80,20 @@ function NewsCard({ item }: { item: NewsItem }) {
           )}
 
           <div className="flex-1 min-w-0">
-            <h3 className="font-display font-bold text-text-primary text-lg leading-tight group-hover:text-burnt-orange transition-colors line-clamp-2">
+            <h3 className="font-display font-bold text-[var(--bsi-bone)] text-lg leading-tight group-hover:text-[var(--bsi-primary)] transition-colors line-clamp-2">
               {item.title}
             </h3>
 
             {item.description && (
-              <p className="text-text-secondary text-sm mt-2 line-clamp-2">{item.description}</p>
+              <p className="text-[var(--bsi-dust)] text-sm mt-2 line-clamp-2">{item.description}</p>
             )}
 
             <div className="flex items-center gap-3 mt-3 flex-wrap">
               <Badge variant="primary" className="text-xs">
                 NBA
               </Badge>
-              <span className="text-text-tertiary text-xs">{getRelativeTime(item.published)}</span>
-              <span className="text-text-tertiary text-xs">via {item.source}</span>
+              <span className="text-[rgba(196,184,165,0.5)] text-xs">{getRelativeTime(item.published)}</span>
+              <span className="text-[rgba(196,184,165,0.5)] text-xs">via {item.source}</span>
             </div>
           </div>
         </div>
@@ -129,17 +129,17 @@ export default function NBANewsPage() {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/nba"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 NBA
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">News</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">News</span>
             </nav>
           </Container>
         </Section>
@@ -156,13 +156,13 @@ export default function NBANewsPage() {
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-gradient-blaze">
+              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-[var(--bsi-primary)]">
                 NBA News
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="text-text-secondary mt-2 max-w-2xl">
+              <p className="text-[var(--bsi-dust)] mt-2 max-w-2xl">
                 Breaking news, trade rumors, injury updates, and game recaps from around the league.
                 Auto-refreshes every 5 minutes.
               </p>
@@ -176,10 +176,10 @@ export default function NBANewsPage() {
             {error && (
               <Card variant="default" padding="lg" className="mb-6 bg-error/10 border-error/30">
                 <p className="text-error font-semibold">Error loading news</p>
-                <p className="text-text-secondary text-sm mt-1">{error}</p>
+                <p className="text-[var(--bsi-dust)] text-sm mt-1">{error}</p>
                 <button
                   onClick={fetchNews}
-                  className="mt-3 px-4 py-2 bg-burnt-orange text-white rounded-sm text-sm hover:bg-burnt-orange/80 transition-colors"
+                  className="mt-3 px-4 py-2 bg-[var(--bsi-primary)] text-white rounded-sm text-sm hover:bg-[var(--bsi-primary)]/80 transition-colors"
                 >
                   Try Again
                 </button>
@@ -195,12 +195,12 @@ export default function NBANewsPage() {
             ) : news.length === 0 ? (
               <Card variant="default" padding="lg" className="text-center">
                 <div className="py-8">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-16 h-16 mx-auto mb-4 text-text-tertiary">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-16 h-16 mx-auto mb-4 text-[rgba(196,184,165,0.5)]">
                     <path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z" />
                     <path d="M7 7h4v4H7zM13 7h4M13 11h4M7 15h10" />
                   </svg>
-                  <p className="text-text-secondary text-lg">NBA news feed is quiet right now</p>
-                  <p className="text-text-tertiary text-sm mt-2">
+                  <p className="text-[var(--bsi-dust)] text-lg">NBA news feed is quiet right now</p>
+                  <p className="text-[rgba(196,184,165,0.5)] text-sm mt-2">
                     Stories appear here as they break across the league.
                   </p>
                 </div>
@@ -219,7 +219,7 @@ export default function NBANewsPage() {
                       <Card
                         variant="hover"
                         padding="lg"
-                        className="relative overflow-hidden group border-burnt-orange/30"
+                        className="relative overflow-hidden group border-[var(--bsi-primary)]/30"
                       >
                         <div className="flex flex-col md:flex-row gap-6">
                           {news[0].image && (
@@ -239,22 +239,22 @@ export default function NBANewsPage() {
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-3">
                               <Badge variant="primary">Featured</Badge>
-                              <span className="text-text-tertiary text-sm">
+                              <span className="text-[rgba(196,184,165,0.5)] text-sm">
                                 {getRelativeTime(news[0].published)}
                               </span>
                             </div>
 
-                            <h2 className="font-display font-bold text-text-primary text-xl md:text-2xl leading-tight group-hover:text-burnt-orange transition-colors">
+                            <h2 className="font-display font-bold text-[var(--bsi-bone)] text-xl md:text-2xl leading-tight group-hover:text-[var(--bsi-primary)] transition-colors">
                               {news[0].title}
                             </h2>
 
                             {news[0].description && (
-                              <p className="text-text-secondary mt-3 line-clamp-3">
+                              <p className="text-[var(--bsi-dust)] mt-3 line-clamp-3">
                                 {news[0].description}
                               </p>
                             )}
 
-                            <p className="text-text-tertiary text-sm mt-4">via {news[0].source}</p>
+                            <p className="text-[rgba(196,184,165,0.5)] text-sm mt-4">via {news[0].source}</p>
                           </div>
                         </div>
                       </Card>
@@ -274,7 +274,7 @@ export default function NBANewsPage() {
             )}
 
             {/* Data Source Footer */}
-            <div className="mt-8 pt-4 border-t border-border-subtle">
+            <div className="mt-8 pt-4 border-t border-[var(--border-vintage)]">
               <DataSourceBadge source="ESPN NBA News API" timestamp={lastUpdated} />
             </div>
           </Container>
@@ -286,19 +286,19 @@ export default function NBANewsPage() {
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/nba/games"
-                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
+                className="px-6 py-3 bg-[var(--surface-dugout)] rounded-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-all"
               >
                 Live Scores →
               </Link>
               <Link
                 href="/nba/standings"
-                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
+                className="px-6 py-3 bg-[var(--surface-dugout)] rounded-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-all"
               >
                 Standings →
               </Link>
               <Link
                 href="/nba/teams"
-                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
+                className="px-6 py-3 bg-[var(--surface-dugout)] rounded-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-all"
               >
                 All Teams →
               </Link>

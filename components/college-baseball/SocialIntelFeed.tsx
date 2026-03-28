@@ -77,7 +77,7 @@ const SIGNAL_CONFIG: Record<string, {
   },
   general: {
     label: 'General',
-    color: 'text-text-muted',
+    color: 'text-[rgba(196,184,165,0.35)]',
     bg: 'bg-surface',
     border: 'border-border',
     dot: 'bg-[var(--bsi-dust)]',
@@ -194,25 +194,25 @@ function SignalCard({ signal }: { signal: SocialSignal }) {
           </div>
 
           {/* Timestamp */}
-          <span className="text-[10px] text-text-muted flex-shrink-0 mt-0.5">
+          <span className="text-[10px] text-[rgba(196,184,165,0.35)] flex-shrink-0 mt-0.5">
             {relativeTime(signal.posted_at)}
           </span>
         </div>
 
         {/* Summary — primary display text */}
         {signal.summary ? (
-          <p className="text-sm text-text-primary leading-snug font-medium mb-1.5 group-hover:text-[#BF5700] transition-colors">
+          <p className="text-sm text-[var(--bsi-bone)] leading-snug font-medium mb-1.5 group-hover:text-[#BF5700] transition-colors">
             {signal.summary}
           </p>
         ) : (
-          <p className="text-sm text-text-secondary leading-snug mb-1.5 line-clamp-2">
+          <p className="text-sm text-[var(--bsi-dust)] leading-snug mb-1.5 line-clamp-2">
             {signal.post_text.slice(0, 140)}
           </p>
         )}
 
         {/* Footer row: author + player + confidence */}
         <div className="flex items-center justify-between gap-2 mt-2">
-          <div className="flex items-center gap-2 text-[11px] text-text-muted min-w-0">
+          <div className="flex items-center gap-2 text-[11px] text-[rgba(196,184,165,0.35)] min-w-0">
             {signal.author && (
               <span className="truncate">
                 @{signal.author}
@@ -257,11 +257,11 @@ function EmptyTab({ label }: { label: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
       <div className="w-10 h-10 rounded-full bg-surface flex items-center justify-center mb-3">
-        <svg className="w-5 h-5 text-text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+        <svg className="w-5 h-5 text-[rgba(196,184,165,0.35)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
         </svg>
       </div>
-      <p className="text-sm text-text-muted">No {label.toLowerCase()} signals in the last 30 minutes</p>
+      <p className="text-sm text-[rgba(196,184,165,0.35)]">No {label.toLowerCase()} signals in the last 30 minutes</p>
     </div>
   );
 }
@@ -293,8 +293,8 @@ function TabButton({
         border-b-2 transition-all duration-150
         focus:outline-none focus-visible:ring-2 focus-visible:ring-[#BF5700]
         ${isActive
-          ? 'border-[#BF5700] text-text-primary font-semibold'
-          : 'border-transparent text-text-muted hover:text-text-secondary hover:border-border font-medium'
+          ? 'border-[#BF5700] text-[var(--bsi-bone)] font-semibold'
+          : 'border-transparent text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-dust)] hover:border-border font-medium'
         }
       `}
     >
@@ -309,7 +309,7 @@ function TabButton({
             inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-semibold
             ${isActive
               ? 'bg-[#BF5700] text-white'
-              : 'bg-surface-light text-text-muted'
+              : 'bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.35)]'
             }
           `}
         >
@@ -363,21 +363,21 @@ export function SocialIntelFeed() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#BF5700] opacity-60" />
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#BF5700]" />
           </span>
-          <h2 className="font-['Oswald'] text-base uppercase tracking-wider text-text-primary">
+          <h2 className="font-['Oswald'] text-base uppercase tracking-wider text-[var(--bsi-bone)]">
             Social Intelligence
           </h2>
         </div>
 
         <div className="flex items-center gap-2">
           {data && (
-            <span className="text-[10px] text-text-muted">
+            <span className="text-[10px] text-[rgba(196,184,165,0.35)]">
               {data.signals.length} signals{data.signals.length > 0
                 ? ` · latest ${relativeTime(data.signals[0].posted_at)}`
                 : ''}
             </span>
           )}
           {/* Platform legend */}
-          <div className="hidden sm:flex items-center gap-2 text-[10px] text-text-muted">
+          <div className="hidden sm:flex items-center gap-2 text-[10px] text-[rgba(196,184,165,0.35)]">
             <span className="flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-orange-400" />
               Reddit
@@ -425,7 +425,7 @@ export function SocialIntelFeed() {
 
         {error && !loading && (
           <div className="flex flex-col items-center justify-center py-10 text-center">
-            <p className="text-sm text-text-muted mb-4">Social signals are refreshing. Check back during game days for live intel.</p>
+            <p className="text-sm text-[rgba(196,184,165,0.35)] mb-4">Social signals are refreshing. Check back during game days for live intel.</p>
             <div className="flex flex-wrap justify-center gap-2">
               {[
                 { label: 'Latest Articles', href: '/college-baseball/editorial' },
@@ -435,7 +435,7 @@ export function SocialIntelFeed() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="px-3 py-1.5 text-xs font-medium bg-surface border border-border rounded-sm text-text-secondary hover:text-[#BF5700] hover:border-[#BF5700]/30 transition-all"
+                  className="px-3 py-1.5 text-xs font-medium bg-surface border border-border rounded-sm text-[var(--bsi-dust)] hover:text-[#BF5700] hover:border-[#BF5700]/30 transition-all"
                 >
                   {link.label}
                 </Link>
@@ -447,14 +447,14 @@ export function SocialIntelFeed() {
         {!loading && !error && visibleSignals.length === 0 && (
           <div className="flex flex-col items-center justify-center py-10 text-center">
             <div className="w-10 h-10 rounded-full bg-surface flex items-center justify-center mb-3">
-              <svg className="w-5 h-5 text-text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+              <svg className="w-5 h-5 text-[rgba(196,184,165,0.35)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
               </svg>
             </div>
-            <p className="text-sm text-text-muted mb-1">
+            <p className="text-sm text-[rgba(196,184,165,0.35)] mb-1">
               No {(TABS.find(t => t.id === activeTab)?.label ?? 'signal').toLowerCase()} signals right now
             </p>
-            <p className="text-xs text-text-muted opacity-60">Signals update throughout game days with injury reports, portal news, and recruiting intel</p>
+            <p className="text-xs text-[rgba(196,184,165,0.35)] opacity-60">Signals update throughout game days with injury reports, portal news, and recruiting intel</p>
           </div>
         )}
 

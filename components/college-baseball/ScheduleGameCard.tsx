@@ -39,14 +39,14 @@ export function ScheduleGameCard({ game }: { game: ScheduleGame }) {
 
   return (
     <Link href={`/college-baseball/game/${game.id}`} className="block">
-      <div className={`bg-surface-light rounded-sm border transition-all hover:border-burnt-orange hover:bg-surface ${
+      <div className={`bg-[var(--surface-press-box)] rounded-sm border transition-all hover:border-[var(--bsi-primary)] hover:bg-surface ${
         isLive ? 'border-[var(--bsi-primary)]/30' : 'border-border'
       }`}>
         <div className={`px-3 py-1.5 rounded-t-sm flex items-center justify-between ${
-          isLive ? 'bg-[var(--bsi-primary)]/10' : isFinal ? 'bg-surface-light' : 'bg-burnt-orange/10'
+          isLive ? 'bg-[var(--bsi-primary)]/10' : isFinal ? 'bg-[var(--surface-press-box)]' : 'bg-[var(--bsi-primary)]/10'
         }`}>
           <span className={`text-xs font-semibold uppercase ${
-            isLive ? 'text-[var(--bsi-primary)]' : isFinal ? 'text-text-muted' : 'text-burnt-orange'
+            isLive ? 'text-[var(--bsi-primary)]' : isFinal ? 'text-[rgba(196,184,165,0.35)]' : 'text-[var(--bsi-primary)]'
           }`}>
             {isLive ? (
               <span className="flex items-center gap-1.5">
@@ -55,44 +55,44 @@ export function ScheduleGameCard({ game }: { game: ScheduleGame }) {
               </span>
             ) : isFinal ? 'Final' : game.time}
           </span>
-          <span className="text-[10px] text-text-muted font-medium">
+          <span className="text-[10px] text-[rgba(196,184,165,0.35)] font-medium">
             {game.homeTeam.conference || game.awayTeam.conference || 'NCAA'}
           </span>
         </div>
         <div className="p-3 space-y-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-6 h-6 bg-surface-light rounded-full flex items-center justify-center text-[10px] font-bold text-burnt-orange flex-shrink-0">
+              <div className="w-6 h-6 bg-[var(--surface-press-box)] rounded-full flex items-center justify-center text-[10px] font-bold text-[var(--bsi-primary)] flex-shrink-0">
                 {game.awayTeam.shortName?.slice(0, 3).toUpperCase() || 'AWY'}
               </div>
-              <span className={`font-semibold text-sm truncate ${awayWon ? 'text-text-primary' : 'text-text-secondary'}`}>
+              <span className={`font-semibold text-sm truncate ${awayWon ? 'text-[var(--bsi-bone)]' : 'text-[var(--bsi-dust)]'}`}>
                 {game.awayTeam.name}
               </span>
             </div>
             <span className={`text-lg font-bold font-mono ml-2 ${
-              isScheduled ? 'text-text-muted' : awayWon ? 'text-text-primary' : 'text-text-muted'
+              isScheduled ? 'text-[rgba(196,184,165,0.35)]' : awayWon ? 'text-[var(--bsi-bone)]' : 'text-[rgba(196,184,165,0.35)]'
             }`}>
               {game.awayTeam.score !== null ? game.awayTeam.score : '-'}
             </span>
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-6 h-6 bg-surface-light rounded-full flex items-center justify-center text-[10px] font-bold text-burnt-orange flex-shrink-0">
+              <div className="w-6 h-6 bg-[var(--surface-press-box)] rounded-full flex items-center justify-center text-[10px] font-bold text-[var(--bsi-primary)] flex-shrink-0">
                 {game.homeTeam.shortName?.slice(0, 3).toUpperCase() || 'HME'}
               </div>
-              <span className={`font-semibold text-sm truncate ${homeWon ? 'text-text-primary' : 'text-text-secondary'}`}>
+              <span className={`font-semibold text-sm truncate ${homeWon ? 'text-[var(--bsi-bone)]' : 'text-[var(--bsi-dust)]'}`}>
                 {game.homeTeam.name}
               </span>
             </div>
             <span className={`text-lg font-bold font-mono ml-2 ${
-              isScheduled ? 'text-text-muted' : homeWon ? 'text-text-primary' : 'text-text-muted'
+              isScheduled ? 'text-[rgba(196,184,165,0.35)]' : homeWon ? 'text-[var(--bsi-bone)]' : 'text-[rgba(196,184,165,0.35)]'
             }`}>
               {game.homeTeam.score !== null ? game.homeTeam.score : '-'}
             </span>
           </div>
         </div>
         {game.venue && game.venue !== 'TBD' && (
-          <div className="px-3 pb-2 text-[10px] text-text-muted truncate">
+          <div className="px-3 pb-2 text-[10px] text-[rgba(196,184,165,0.35)] truncate">
             {game.venue}
           </div>
         )}

@@ -228,7 +228,7 @@ function PlayerAvatar({ name, headshot, size = 40 }: { name: string; headshot?: 
       <img
         src={headshot}
         alt={name}
-        className="rounded-full object-cover bg-surface-light shrink-0"
+        className="rounded-full object-cover bg-[var(--surface-press-box)] shrink-0"
         style={{ width: px, height: px }}
         loading="lazy"
       />
@@ -236,7 +236,7 @@ function PlayerAvatar({ name, headshot, size = 40 }: { name: string; headshot?: 
   }
   return (
     <div
-      className="rounded-full bg-surface-light flex items-center justify-center text-xs font-bold text-text-muted shrink-0"
+      className="rounded-full bg-[var(--surface-press-box)] flex items-center justify-center text-xs font-bold text-[rgba(196,184,165,0.35)] shrink-0"
       style={{ width: px, height: px }}
     >
       {initials}
@@ -380,13 +380,13 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
   if (!meta) {
     return (
       <>
-        <div className="min-h-screen pt-6 bg-gradient-to-b from-charcoal to-background-primary">
+        <div className="min-h-screen pt-6 bg-gradient-to-b from-[#1A1A1A] to-[var(--surface-scoreboard)]">
           <Container>
             <Card padding="lg" className="text-center mt-12">
-              <div className="text-burnt-orange text-4xl mb-4 font-display">?</div>
-              <h3 className="text-xl font-semibold text-text-primary mb-2">Team Not Found</h3>
-              <p className="text-text-muted mb-6">No data available for &ldquo;{teamId}&rdquo;.</p>
-              <Link href="/college-baseball/teams" className="inline-block px-6 py-2 bg-burnt-orange text-white font-semibold rounded-sm hover:bg-burnt-orange/90 transition-colors">
+              <div className="text-[var(--bsi-primary)] text-4xl mb-4 font-display">?</div>
+              <h3 className="text-xl font-semibold text-[var(--bsi-bone)] mb-2">Team Not Found</h3>
+              <p className="text-[rgba(196,184,165,0.35)] mb-6">No data available for &ldquo;{teamId}&rdquo;.</p>
+              <Link href="/college-baseball/teams" className="inline-block px-6 py-2 bg-[var(--bsi-primary)] text-white font-semibold rounded-sm hover:bg-[var(--bsi-primary)]/90 transition-colors">
                 Back to Teams
               </Link>
             </Card>
@@ -419,16 +419,16 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             <Container>
               <ScrollReveal direction="up">
                 <nav className="flex items-center gap-3 mb-8 text-sm">
-                  <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">College Baseball</Link>
-                  <span className="text-text-muted">/</span>
-                  <Link href="/college-baseball/teams" className="text-text-muted hover:text-burnt-orange transition-colors">Teams</Link>
-                  <span className="text-text-muted">/</span>
-                  <span className="text-text-tertiary">{meta.shortName}</span>
+                  <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">College Baseball</Link>
+                  <span className="text-[rgba(196,184,165,0.35)]">/</span>
+                  <Link href="/college-baseball/teams" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">Teams</Link>
+                  <span className="text-[rgba(196,184,165,0.35)]">/</span>
+                  <span className="text-[rgba(196,184,165,0.5)]">{meta.shortName}</span>
                 </nav>
 
                 <div className="flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-8">
                   {/* Logo */}
-                  <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-surface-light flex items-center justify-center overflow-hidden shrink-0" style={{ borderWidth: '4px', borderStyle: 'solid', borderColor: withAlpha(accent, 0.25) }}>
+                  <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-[var(--surface-press-box)] flex items-center justify-center overflow-hidden shrink-0" style={{ borderWidth: '4px', borderStyle: 'solid', borderColor: withAlpha(accent, 0.25) }}>
                     {!logoError ? (
                       <img src={logoUrl} alt={`${meta.name} logo`} className="w-20 h-20 md:w-24 md:h-24 object-contain" loading="eager" onError={() => setLogoError(true)} />
                     ) : (
@@ -439,7 +439,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   {/* Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-3 mb-2">
-                      <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-text-primary uppercase tracking-wide">{meta.name}</h1>
+                      <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--bsi-bone)] uppercase tracking-wide">{meta.name}</h1>
                     </div>
                     <div className="flex flex-wrap items-center gap-2 mb-3">
                       <Badge variant="secondary">{meta.conference}</Badge>
@@ -450,7 +450,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                         </>
                       )}
                     </div>
-                    <div className="flex flex-wrap gap-4 text-sm text-text-muted">
+                    <div className="flex flex-wrap gap-4 text-sm text-[rgba(196,184,165,0.35)]">
                       <span className="flex items-center gap-1.5">
                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" /></svg>
                         {meta.location.city}, {meta.location.state}
@@ -461,7 +461,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                       </span>
                       <Link
                         href={`/college-baseball/teams/${teamId}/readout`}
-                        className="flex items-center gap-1.5 text-burnt-orange hover:text-ember transition-colors font-semibold"
+                        className="flex items-center gap-1.5 text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors font-semibold"
                       >
                         <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                           <rect x="2" y="2" width="12" height="12" rx="2" />
@@ -477,7 +477,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                     {hasLiveRecord && (
                       <div className="text-center">
                         <div className="font-mono text-2xl md:text-3xl font-bold" style={{ color: accent }}>{liveStats.wins}-{liveStats.losses}</div>
-                        <div className="text-text-muted text-xs uppercase tracking-wider mt-1">2026 Record</div>
+                        <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider mt-1">2026 Record</div>
                       </div>
                     )}
                     {hasPreseason && (
@@ -485,18 +485,18 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                         {!hasLiveRecord && overallRecord && (
                           <div className="text-center">
                             <div className="font-mono text-2xl md:text-3xl font-bold" style={{ color: accent }}>{overallRecord}</div>
-                            <div className="text-text-muted text-xs uppercase tracking-wider mt-1">2025 Record</div>
+                            <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider mt-1">2025 Record</div>
                           </div>
                         )}
                         {confRecord && (
                           <div className="text-center">
-                            <div className="font-mono text-2xl md:text-3xl font-bold text-text-primary">{confRecord}</div>
-                            <div className="text-text-muted text-xs uppercase tracking-wider mt-1">Conference</div>
+                            <div className="font-mono text-2xl md:text-3xl font-bold text-[var(--bsi-bone)]">{confRecord}</div>
+                            <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider mt-1">Conference</div>
                           </div>
                         )}
                         <div className="text-center">
                           <div className="font-mono text-2xl md:text-3xl font-bold text-success">#{preseason.rank}</div>
-                          <div className="text-text-muted text-xs uppercase tracking-wider mt-1">BSI Rank</div>
+                          <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider mt-1">BSI Rank</div>
                         </div>
                       </>
                     )}
@@ -508,14 +508,14 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
         </div>
 
         {/* Tabs */}
-        <Section padding="none" className="bg-charcoal border-b border-border sticky top-16 z-30">
+        <Section padding="none" className="bg-[var(--surface-dugout)] border-b border-border sticky top-16 z-30">
           <Container>
             <div className="flex gap-1">
               {(['overview', 'roster', 'schedule', 'advanced'] as const).map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-6 py-4 font-display font-semibold text-sm uppercase tracking-wider transition-all duration-200 ${activeTab === tab ? 'border-b-2' : 'text-text-muted hover:text-text-secondary'}`}
+                  className={`px-6 py-4 font-display font-semibold text-sm uppercase tracking-wider transition-all duration-200 ${activeTab === tab ? 'border-b-2' : 'text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-dust)]'}`}
                   style={activeTab === tab ? { color: accent, borderColor: accent } : undefined}
                 >
                   {tab === 'advanced' ? 'Advanced Stats' : tab}
@@ -526,7 +526,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
         </Section>
 
         {/* Tab Content */}
-        <Section padding="lg" className="bg-background-primary">
+        <Section padding="lg" className="bg-[var(--surface-scoreboard)]">
           <Container>
             {/* ── Overview ──────────────────────────────────────────────────── */}
             {activeTab === 'overview' && (
@@ -535,20 +535,20 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   <ScrollReveal direction="up" className="mb-8">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       <Card padding="md">
-                        <div className="text-xs uppercase tracking-wide text-text-muted">2025 Record</div>
-                        <div className="mt-1 text-xl font-mono text-text-primary">{preseason.record2025}</div>
+                        <div className="text-xs uppercase tracking-wide text-[rgba(196,184,165,0.35)]">2025 Record</div>
+                        <div className="mt-1 text-xl font-mono text-[var(--bsi-bone)]">{preseason.record2025}</div>
                       </Card>
                       <Card padding="md">
-                        <div className="text-xs uppercase tracking-wide text-text-muted">Postseason</div>
+                        <div className="text-xs uppercase tracking-wide text-[rgba(196,184,165,0.35)]">Postseason</div>
                         <div className="mt-1 text-xl font-mono" style={{ color: accent }}>{preseason.postseason2025}</div>
                       </Card>
                       <Card padding="md">
-                        <div className="text-xs uppercase tracking-wide text-text-muted">BSI Tier</div>
-                        <div className="mt-1 text-xl font-display uppercase tracking-wide text-text-primary">{getTierLabel(preseason.tier)}</div>
+                        <div className="text-xs uppercase tracking-wide text-[rgba(196,184,165,0.35)]">BSI Tier</div>
+                        <div className="mt-1 text-xl font-display uppercase tracking-wide text-[var(--bsi-bone)]">{getTierLabel(preseason.tier)}</div>
                       </Card>
                       <Card padding="md">
-                        <div className="text-xs uppercase tracking-wide text-text-muted">Conference</div>
-                        <div className="mt-1 text-xl font-display uppercase tracking-wide text-text-primary">{preseason.conference}</div>
+                        <div className="text-xs uppercase tracking-wide text-[rgba(196,184,165,0.35)]">Conference</div>
+                        <div className="mt-1 text-xl font-display uppercase tracking-wide text-[var(--bsi-bone)]">{preseason.conference}</div>
                       </Card>
                     </div>
                   </ScrollReveal>
@@ -559,29 +559,29 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       {hasLiveRecord && (
                         <Card padding="md">
-                          <div className="text-xs uppercase tracking-wide text-text-muted">2026 Record</div>
+                          <div className="text-xs uppercase tracking-wide text-[rgba(196,184,165,0.35)]">2026 Record</div>
                           <div className="mt-1 text-xl font-mono" style={{ color: accent }}>
                             {liveStats.wins}-{liveStats.losses}
                           </div>
                         </Card>
                       )}
                       <Card padding="md">
-                        <div className="text-xs uppercase tracking-wide text-text-muted">Conference</div>
-                        <div className="mt-1 text-xl font-display uppercase tracking-wide text-text-primary">
+                        <div className="text-xs uppercase tracking-wide text-[rgba(196,184,165,0.35)]">Conference</div>
+                        <div className="mt-1 text-xl font-display uppercase tracking-wide text-[var(--bsi-bone)]">
                           {meta.conference}
                         </div>
                       </Card>
                       {rosterPlayers.length > 0 && (
                         <Card padding="md">
-                          <div className="text-xs uppercase tracking-wide text-text-muted">Roster</div>
-                          <div className="mt-1 text-xl font-mono text-text-primary">
+                          <div className="text-xs uppercase tracking-wide text-[rgba(196,184,165,0.35)]">Roster</div>
+                          <div className="mt-1 text-xl font-mono text-[var(--bsi-bone)]">
                             {rosterPlayers.length} players
                           </div>
                         </Card>
                       )}
                       <Card padding="md">
-                        <div className="text-xs uppercase tracking-wide text-text-muted">Division</div>
-                        <div className="mt-1 text-xl font-display uppercase tracking-wide text-text-primary">
+                        <div className="text-xs uppercase tracking-wide text-[rgba(196,184,165,0.35)]">Division</div>
+                        <div className="mt-1 text-xl font-display uppercase tracking-wide text-[var(--bsi-bone)]">
                           D1
                         </div>
                       </Card>
@@ -595,8 +595,8 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                       <Card variant="hover" padding="lg" className="group flex items-center justify-between">
                         <div>
                           <div className="text-xs uppercase tracking-wide font-semibold mb-1" style={{ color: accent }}>Full Preview Available</div>
-                          <div className="text-text-primary font-display text-lg uppercase tracking-wide">{meta.shortName} 2026 Season Preview</div>
-                          <div className="text-text-muted text-sm mt-1">Deep-dive scouting report, roster breakdown, schedule analysis, and projection</div>
+                          <div className="text-[var(--bsi-bone)] font-display text-lg uppercase tracking-wide">{meta.shortName} 2026 Season Preview</div>
+                          <div className="text-[rgba(196,184,165,0.35)] text-sm mt-1">Deep-dive scouting report, roster breakdown, schedule analysis, and projection</div>
                         </div>
                         <svg className="w-6 h-6 group-hover:translate-x-1 transition-transform shrink-0 ml-4" style={{ color: accent }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -611,9 +611,9 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   <ScrollReveal direction="up" className="mb-8">
                     <Card padding="lg">
                       <div className="flex items-center justify-between mb-6">
-                        <h2 className="font-display text-xl font-bold text-text-primary uppercase tracking-wide">BSI Scouting Report</h2>
+                        <h2 className="font-display text-xl font-bold text-[var(--bsi-bone)] uppercase tracking-wide">BSI Scouting Report</h2>
                         <div className="text-right">
-                          <span className="text-text-muted text-xs">Updated {new Date(featuredInsight.lastUpdated).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                          <span className="text-[rgba(196,184,165,0.35)] text-xs">Updated {new Date(featuredInsight.lastUpdated).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                           {hasLiveRecord && (() => {
                             const daysSinceUpdate = Math.floor((Date.now() - new Date(featuredInsight.lastUpdated).getTime()) / 86400000);
                             return daysSinceUpdate > 5 ? (
@@ -625,16 +625,16 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                         </div>
                       </div>
 
-                      <p className="text-text-tertiary leading-relaxed mb-6">{featuredInsight.snapshot}</p>
+                      <p className="text-[rgba(196,184,165,0.5)] leading-relaxed mb-6">{featuredInsight.snapshot}</p>
 
                       {/* What to Watch */}
                       <div className="mb-6">
-                        <h3 className="text-xs uppercase tracking-wider text-text-muted font-semibold mb-3">What to Watch</h3>
+                        <h3 className="text-xs uppercase tracking-wider text-[rgba(196,184,165,0.35)] font-semibold mb-3">What to Watch</h3>
                         <div className="space-y-2">
                           {featuredInsight.whatToWatch.map((item, i) => (
                             <div key={i} className="flex gap-2 text-sm">
                               <span className="shrink-0 mt-0.5" style={{ color: accent }}>&bull;</span>
-                              <span className="text-text-tertiary">{item}</span>
+                              <span className="text-[rgba(196,184,165,0.5)]">{item}</span>
                             </div>
                           ))}
                         </div>
@@ -642,48 +642,48 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
 
                       {/* Offense + Pitching Analysis */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                        <div className="rounded-sm bg-surface-light border border-border-subtle p-4">
+                        <div className="rounded-sm bg-[var(--surface-press-box)] border border-[var(--border-vintage)] p-4">
                           <h3 className="text-xs uppercase tracking-wider font-semibold mb-3" style={{ color: accent }}>Offense</h3>
-                          <div className="text-sm font-semibold text-text-primary mb-2">{featuredInsight.offenseAnalysis.headline}</div>
+                          <div className="text-sm font-semibold text-[var(--bsi-bone)] mb-2">{featuredInsight.offenseAnalysis.headline}</div>
                           <div className="flex flex-wrap gap-2 mb-3">
                             {featuredInsight.offenseAnalysis.indicators.slice(0, 4).map((ind) => (
-                              <div key={ind.label} className="bg-charcoal rounded-sm px-2 py-1">
+                              <div key={ind.label} className="bg-[var(--surface-dugout)] rounded-sm px-2 py-1">
                                 <span className="font-mono text-sm font-bold" style={{ color: accent }}>{ind.value}</span>
-                                <span className="text-text-muted text-xs ml-1">{ind.label}</span>
+                                <span className="text-[rgba(196,184,165,0.35)] text-xs ml-1">{ind.label}</span>
                               </div>
                             ))}
                           </div>
-                          <p className="text-text-muted text-xs leading-relaxed">{featuredInsight.offenseAnalysis.narrative}</p>
+                          <p className="text-[rgba(196,184,165,0.35)] text-xs leading-relaxed">{featuredInsight.offenseAnalysis.narrative}</p>
                         </div>
-                        <div className="rounded-sm bg-surface-light border border-border-subtle p-4">
+                        <div className="rounded-sm bg-[var(--surface-press-box)] border border-[var(--border-vintage)] p-4">
                           <h3 className="text-xs uppercase tracking-wider font-semibold mb-3" style={{ color: accent }}>Pitching</h3>
-                          <div className="text-sm font-semibold text-text-primary mb-2">{featuredInsight.pitchingAnalysis.headline}</div>
+                          <div className="text-sm font-semibold text-[var(--bsi-bone)] mb-2">{featuredInsight.pitchingAnalysis.headline}</div>
                           <div className="flex flex-wrap gap-2 mb-3">
                             {featuredInsight.pitchingAnalysis.indicators.slice(0, 4).map((ind) => (
-                              <div key={ind.label} className="bg-charcoal rounded-sm px-2 py-1">
+                              <div key={ind.label} className="bg-[var(--surface-dugout)] rounded-sm px-2 py-1">
                                 <span className="font-mono text-sm font-bold" style={{ color: accent }}>{ind.value}</span>
-                                <span className="text-text-muted text-xs ml-1">{ind.label}</span>
+                                <span className="text-[rgba(196,184,165,0.35)] text-xs ml-1">{ind.label}</span>
                               </div>
                             ))}
                           </div>
-                          <p className="text-text-muted text-xs leading-relaxed">{featuredInsight.pitchingAnalysis.narrative}</p>
+                          <p className="text-[rgba(196,184,165,0.35)] text-xs leading-relaxed">{featuredInsight.pitchingAnalysis.narrative}</p>
                         </div>
                       </div>
 
                       {/* Key Contributors */}
                       <div className="mb-6">
-                        <h3 className="text-xs uppercase tracking-wider text-text-muted font-semibold mb-3">Key Contributors</h3>
+                        <h3 className="text-xs uppercase tracking-wider text-[rgba(196,184,165,0.35)] font-semibold mb-3">Key Contributors</h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           {featuredInsight.keyContributors.slice(0, 6).map((c) => {
                             const rosterMatch = rosterPlayers.find(p => p.name.toLowerCase().includes(c.name.split(' ').pop()?.toLowerCase() ?? ''));
                             return (
-                              <div key={c.name} className="flex gap-3 p-3 rounded-sm bg-surface-light border border-border-subtle">
+                              <div key={c.name} className="flex gap-3 p-3 rounded-sm bg-[var(--surface-press-box)] border border-[var(--border-vintage)]">
                                 <PlayerAvatar name={c.name} headshot={rosterMatch?.headshot} size={48} />
                                 <div className="min-w-0">
-                                  <div className="text-text-primary font-semibold text-sm">{c.name}</div>
-                                  <div className="text-text-muted text-xs">{c.role}</div>
+                                  <div className="text-[var(--bsi-bone)] font-semibold text-sm">{c.name}</div>
+                                  <div className="text-[rgba(196,184,165,0.35)] text-xs">{c.role}</div>
                                   <div className="font-mono text-xs mt-1" style={{ color: accent }}>{c.statLine.split(',').slice(0, 3).join(',')}</div>
-                                  <p className="text-text-muted text-xs mt-1 line-clamp-2">{c.scoutingSentence}</p>
+                                  <p className="text-[rgba(196,184,165,0.35)] text-xs mt-1 line-clamp-2">{c.scoutingSentence}</p>
                                 </div>
                               </div>
                             );
@@ -697,7 +697,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                           <h3 className="text-xs uppercase tracking-wider font-semibold mb-2 text-success">Strengths</h3>
                           <div className="space-y-1">
                             {featuredInsight.strengths.map((s, i) => (
-                              <div key={i} className="text-text-tertiary text-sm flex gap-2">
+                              <div key={i} className="text-[rgba(196,184,165,0.5)] text-sm flex gap-2">
                                 <span className="text-success shrink-0">&bull;</span>{s}
                               </div>
                             ))}
@@ -707,7 +707,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                           <h3 className="text-xs uppercase tracking-wider font-semibold mb-2 text-[var(--bsi-warning)]">Pressure Points</h3>
                           <div className="space-y-1">
                             {featuredInsight.pressurePoints.map((p, i) => (
-                              <div key={i} className="text-text-tertiary text-sm flex gap-2">
+                              <div key={i} className="text-[rgba(196,184,165,0.5)] text-sm flex gap-2">
                                 <span className="text-[var(--bsi-warning)] shrink-0">&bull;</span>{p}
                               </div>
                             ))}
@@ -716,20 +716,20 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                       </div>
 
                       {/* Coaching + Program Context */}
-                      <div className="border-t border-border-subtle pt-4">
+                      <div className="border-t border-[var(--border-vintage)] pt-4">
                         <details className="group">
-                          <summary className="text-xs uppercase tracking-wider text-text-muted font-semibold cursor-pointer hover:text-text-tertiary transition-colors">
+                          <summary className="text-xs uppercase tracking-wider text-[rgba(196,184,165,0.35)] font-semibold cursor-pointer hover:text-[rgba(196,184,165,0.5)] transition-colors">
                             Coaching &amp; Program Context
                           </summary>
                           <div className="mt-3 space-y-3">
-                            <p className="text-text-muted text-xs leading-relaxed">{featuredInsight.coachingContext}</p>
-                            <p className="text-text-muted text-xs leading-relaxed">{featuredInsight.programContext}</p>
+                            <p className="text-[rgba(196,184,165,0.35)] text-xs leading-relaxed">{featuredInsight.coachingContext}</p>
+                            <p className="text-[rgba(196,184,165,0.35)] text-xs leading-relaxed">{featuredInsight.programContext}</p>
                           </div>
                         </details>
                       </div>
 
                       {/* Data Provenance */}
-                      <div className="mt-4 pt-3 border-t border-border-subtle flex flex-wrap gap-4 text-xs text-text-muted">
+                      <div className="mt-4 pt-3 border-t border-[var(--border-vintage)] flex flex-wrap gap-4 text-xs text-[rgba(196,184,165,0.35)]">
                         <div>
                           <span className="font-semibold">Sources:</span>{' '}
                           {featuredInsight.dataProvenance.sources.map(s => `${s.name} (${s.date})`).join(' · ')}
@@ -743,15 +743,15 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   {hasPreseason && preseason.keyPlayers.length > 0 && (
                     <ScrollReveal direction="up">
                       <Card padding="lg">
-                        <h2 className="font-display text-xl font-bold text-text-primary uppercase tracking-wide mb-6">Key Players</h2>
+                        <h2 className="font-display text-xl font-bold text-[var(--bsi-bone)] uppercase tracking-wide mb-6">Key Players</h2>
                         <div className="space-y-4">
                           {preseason.keyPlayers.map((player) => {
                             const match = player.match(/^(.+?)\s*\((.+)\)$/);
                             const name = match ? match[1] : player;
                             const stat = match ? match[2] : null;
                             return (
-                              <div key={player} className="flex items-center justify-between py-2 border-b border-border-subtle last:border-0">
-                                <span className="text-text-primary font-semibold">{name}</span>
+                              <div key={player} className="flex items-center justify-between py-2 border-b border-[var(--border-vintage)] last:border-0">
+                                <span className="text-[var(--bsi-bone)] font-semibold">{name}</span>
                                 {stat && <span className="font-mono text-sm" style={{ color: accent }}>{stat}</span>}
                               </div>
                             );
@@ -764,9 +764,9 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   {hasPreseason && (
                     <ScrollReveal direction="up" delay={100}>
                       <Card padding="lg">
-                        <h2 className="font-display text-xl font-bold text-text-primary uppercase tracking-wide mb-4">BSI Outlook</h2>
+                        <h2 className="font-display text-xl font-bold text-[var(--bsi-bone)] uppercase tracking-wide mb-4">BSI Outlook</h2>
                         <Badge variant="accent" className="mb-4">{getTierLabel(preseason.tier)}</Badge>
-                        <p className="text-text-tertiary leading-relaxed">{preseason.outlook}</p>
+                        <p className="text-[rgba(196,184,165,0.5)] leading-relaxed">{preseason.outlook}</p>
                       </Card>
                     </ScrollReveal>
                   )}
@@ -774,26 +774,26 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   {!hasPreseason && (
                     <ScrollReveal direction="up">
                       <Card padding="lg">
-                        <h2 className="font-display text-xl font-bold text-text-primary uppercase tracking-wide mb-6">
+                        <h2 className="font-display text-xl font-bold text-[var(--bsi-bone)] uppercase tracking-wide mb-6">
                           Team Profile
                         </h2>
                         <div className="space-y-4">
-                          <div className="flex justify-between py-2 border-b border-border-subtle">
-                            <span className="text-text-muted">Conference</span>
-                            <span className="text-text-primary font-semibold">{meta.conference}</span>
+                          <div className="flex justify-between py-2 border-b border-[var(--border-vintage)]">
+                            <span className="text-[rgba(196,184,165,0.35)]">Conference</span>
+                            <span className="text-[var(--bsi-bone)] font-semibold">{meta.conference}</span>
                           </div>
-                          <div className="flex justify-between py-2 border-b border-border-subtle">
-                            <span className="text-text-muted">Stadium</span>
-                            <span className="text-text-primary font-semibold">{meta.location.stadium}</span>
+                          <div className="flex justify-between py-2 border-b border-[var(--border-vintage)]">
+                            <span className="text-[rgba(196,184,165,0.35)]">Stadium</span>
+                            <span className="text-[var(--bsi-bone)] font-semibold">{meta.location.stadium}</span>
                           </div>
-                          <div className="flex justify-between py-2 border-b border-border-subtle">
-                            <span className="text-text-muted">Location</span>
-                            <span className="text-text-primary font-semibold">{meta.location.city}, {meta.location.state}</span>
+                          <div className="flex justify-between py-2 border-b border-[var(--border-vintage)]">
+                            <span className="text-[rgba(196,184,165,0.35)]">Location</span>
+                            <span className="text-[var(--bsi-bone)] font-semibold">{meta.location.city}, {meta.location.state}</span>
                           </div>
                           {rosterPlayers.length > 0 && (
-                            <div className="flex justify-between py-2 border-b border-border-subtle">
-                              <span className="text-text-muted">Active Roster</span>
-                              <span className="text-text-primary font-semibold">{rosterPlayers.length} players</span>
+                            <div className="flex justify-between py-2 border-b border-[var(--border-vintage)]">
+                              <span className="text-[rgba(196,184,165,0.35)]">Active Roster</span>
+                              <span className="text-[var(--bsi-bone)] font-semibold">{rosterPlayers.length} players</span>
                             </div>
                           )}
                         </div>
@@ -808,22 +808,22 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {rosterPlayers.length > 0 && (
                         <button onClick={() => setActiveTab('roster')} className="text-left">
-                          <Card padding="md" className="hover:border-burnt-orange/50 transition-all">
+                          <Card padding="md" className="hover:border-[var(--bsi-primary)]/50 transition-all">
                             <div className="text-xs uppercase tracking-wide mb-1" style={{ color: accent }}>
                               Full Roster
                             </div>
-                            <div className="text-text-primary font-semibold">
+                            <div className="text-[var(--bsi-bone)] font-semibold">
                               {rosterPlayers.length} players &mdash; view roster breakdown
                             </div>
                           </Card>
                         </button>
                       )}
                       <button onClick={() => setActiveTab('schedule')} className="text-left">
-                        <Card padding="md" className="hover:border-burnt-orange/50 transition-all">
+                        <Card padding="md" className="hover:border-[var(--bsi-primary)]/50 transition-all">
                           <div className="text-xs uppercase tracking-wide mb-1" style={{ color: accent }}>
                             Season Schedule
                           </div>
-                          <div className="text-text-primary font-semibold">
+                          <div className="text-[var(--bsi-bone)] font-semibold">
                             View full 2026 schedule &amp; results
                           </div>
                         </Card>
@@ -836,81 +836,81 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                 {teamStats && (
                   <ScrollReveal direction="up" className="mt-8">
                     <Card padding="lg">
-                      <h2 className="font-display text-xl font-bold text-text-primary uppercase tracking-wide mb-6">2026 Season Stats</h2>
+                      <h2 className="font-display text-xl font-bold text-[var(--bsi-bone)] uppercase tracking-wide mb-6">2026 Season Stats</h2>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {/* Batting */}
                         <div>
-                          <div className="text-xs uppercase tracking-wider text-text-muted mb-4 font-semibold">Batting</div>
+                          <div className="text-xs uppercase tracking-wider text-[rgba(196,184,165,0.35)] mb-4 font-semibold">Batting</div>
                           <div className="grid grid-cols-4 gap-3">
                             <div>
                               <div className="font-mono text-2xl font-bold" style={{ color: accent }}>{fmt3(teamStats.batting.battingAverage)}</div>
-                              <div className="text-text-muted text-xs uppercase mt-1">AVG</div>
+                              <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase mt-1">AVG</div>
                             </div>
                             <div>
                               <div className="font-mono text-2xl font-bold" style={{ color: accent }}>{teamStats.batting.ops != null ? fmt3(teamStats.batting.ops) : '\u2014'}</div>
-                              <div className="text-text-muted text-xs uppercase mt-1">OPS</div>
+                              <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase mt-1">OPS</div>
                             </div>
                             <div>
-                              <div className="font-mono text-2xl font-bold text-text-primary">{teamStats.batting.homeRuns}</div>
-                              <div className="text-text-muted text-xs uppercase mt-1">HR</div>
+                              <div className="font-mono text-2xl font-bold text-[var(--bsi-bone)]">{teamStats.batting.homeRuns}</div>
+                              <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase mt-1">HR</div>
                             </div>
                             <div>
-                              <div className="font-mono text-2xl font-bold text-text-primary">{teamStats.batting.rbi}</div>
-                              <div className="text-text-muted text-xs uppercase mt-1">RBI</div>
+                              <div className="font-mono text-2xl font-bold text-[var(--bsi-bone)]">{teamStats.batting.rbi}</div>
+                              <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase mt-1">RBI</div>
                             </div>
                             <div>
-                              <div className="font-mono text-lg text-text-tertiary">{teamStats.batting.runs}</div>
-                              <div className="text-text-muted text-xs uppercase mt-1">Runs</div>
+                              <div className="font-mono text-lg text-[rgba(196,184,165,0.5)]">{teamStats.batting.runs}</div>
+                              <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase mt-1">Runs</div>
                             </div>
                             <div>
-                              <div className="font-mono text-lg text-text-tertiary">{teamStats.batting.stolenBases ?? 0}</div>
-                              <div className="text-text-muted text-xs uppercase mt-1">SB</div>
+                              <div className="font-mono text-lg text-[rgba(196,184,165,0.5)]">{teamStats.batting.stolenBases ?? 0}</div>
+                              <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase mt-1">SB</div>
                             </div>
                             <div>
-                              <div className="font-mono text-lg text-text-tertiary">{teamStats.batting.walks ?? 0}</div>
-                              <div className="text-text-muted text-xs uppercase mt-1">BB</div>
+                              <div className="font-mono text-lg text-[rgba(196,184,165,0.5)]">{teamStats.batting.walks ?? 0}</div>
+                              <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase mt-1">BB</div>
                             </div>
                             <div>
-                              <div className="font-mono text-lg text-text-tertiary">{teamStats.batting.players}</div>
-                              <div className="text-text-muted text-xs uppercase mt-1">Batters</div>
+                              <div className="font-mono text-lg text-[rgba(196,184,165,0.5)]">{teamStats.batting.players}</div>
+                              <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase mt-1">Batters</div>
                             </div>
                           </div>
                         </div>
                         {/* Pitching */}
                         <div>
-                          <div className="text-xs uppercase tracking-wider text-text-muted mb-4 font-semibold">Pitching</div>
+                          <div className="text-xs uppercase tracking-wider text-[rgba(196,184,165,0.35)] mb-4 font-semibold">Pitching</div>
                           <div className="grid grid-cols-4 gap-3">
                             <div>
                               <div className="font-mono text-2xl font-bold" style={{ color: accent }}>{teamStats.pitching.era.toFixed(2)}</div>
-                              <div className="text-text-muted text-xs uppercase mt-1">ERA</div>
+                              <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase mt-1">ERA</div>
                             </div>
                             <div>
                               <div className="font-mono text-2xl font-bold" style={{ color: accent }}>{teamStats.pitching.whip.toFixed(2)}</div>
-                              <div className="text-text-muted text-xs uppercase mt-1">WHIP</div>
+                              <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase mt-1">WHIP</div>
                             </div>
                             <div>
-                              <div className="font-mono text-2xl font-bold text-text-primary">{teamStats.pitching.strikeouts}</div>
-                              <div className="text-text-muted text-xs uppercase mt-1">K</div>
+                              <div className="font-mono text-2xl font-bold text-[var(--bsi-bone)]">{teamStats.pitching.strikeouts}</div>
+                              <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase mt-1">K</div>
                             </div>
                             <div>
-                              <div className="font-mono text-2xl font-bold text-text-primary">{teamStats.pitching.saves ?? 0}</div>
-                              <div className="text-text-muted text-xs uppercase mt-1">SV</div>
+                              <div className="font-mono text-2xl font-bold text-[var(--bsi-bone)]">{teamStats.pitching.saves ?? 0}</div>
+                              <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase mt-1">SV</div>
                             </div>
                             <div>
-                              <div className="font-mono text-lg text-text-tertiary">{teamStats.pitching.inningsPitched}</div>
-                              <div className="text-text-muted text-xs uppercase mt-1">IP</div>
+                              <div className="font-mono text-lg text-[rgba(196,184,165,0.5)]">{teamStats.pitching.inningsPitched}</div>
+                              <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase mt-1">IP</div>
                             </div>
                             <div>
-                              <div className="font-mono text-lg text-text-tertiary">{teamStats.pitching.walks}</div>
-                              <div className="text-text-muted text-xs uppercase mt-1">BB</div>
+                              <div className="font-mono text-lg text-[rgba(196,184,165,0.5)]">{teamStats.pitching.walks}</div>
+                              <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase mt-1">BB</div>
                             </div>
                             <div>
-                              <div className="font-mono text-lg text-text-tertiary">{(teamStats.pitching.wins ?? 0)}-{(teamStats.pitching.losses ?? 0)}</div>
-                              <div className="text-text-muted text-xs uppercase mt-1">W-L</div>
+                              <div className="font-mono text-lg text-[rgba(196,184,165,0.5)]">{(teamStats.pitching.wins ?? 0)}-{(teamStats.pitching.losses ?? 0)}</div>
+                              <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase mt-1">W-L</div>
                             </div>
                             <div>
-                              <div className="font-mono text-lg text-text-tertiary">{teamStats.pitching.pitchers}</div>
-                              <div className="text-text-muted text-xs uppercase mt-1">Pitchers</div>
+                              <div className="font-mono text-lg text-[rgba(196,184,165,0.5)]">{teamStats.pitching.pitchers}</div>
+                              <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase mt-1">Pitchers</div>
                             </div>
                           </div>
                         </div>
@@ -923,33 +923,33 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                 {teamLeaders && (
                   <ScrollReveal direction="up" className="mt-8">
                     <Card padding="lg">
-                      <h2 className="font-display text-xl font-bold text-text-primary uppercase tracking-wide mb-6">Team Leaders</h2>
+                      <h2 className="font-display text-xl font-bold text-[var(--bsi-bone)] uppercase tracking-wide mb-6">Team Leaders</h2>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                         {teamLeaders.battingAvg && (
                           <div className="flex flex-col items-center text-center">
-                            <div className="text-text-muted text-xs uppercase tracking-wider mb-2">Batting Avg</div>
+                            <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider mb-2">Batting Avg</div>
                             <PlayerAvatar name={teamLeaders.battingAvg.name} headshot={teamLeaders.battingAvg.headshot} size={48} />
                             <div className="font-mono text-2xl font-bold mt-2" style={{ color: accent }}>{teamLeaders.battingAvg.stats?.avg?.toFixed(3)}</div>
-                            <div className="text-text-primary font-semibold mt-1">{teamLeaders.battingAvg.name}</div>
-                            <div className="text-text-muted text-xs">{teamLeaders.battingAvg.position}</div>
+                            <div className="text-[var(--bsi-bone)] font-semibold mt-1">{teamLeaders.battingAvg.name}</div>
+                            <div className="text-[rgba(196,184,165,0.35)] text-xs">{teamLeaders.battingAvg.position}</div>
                           </div>
                         )}
                         {teamLeaders.homeRuns && (
                           <div className="flex flex-col items-center text-center">
-                            <div className="text-text-muted text-xs uppercase tracking-wider mb-2">Home Runs</div>
+                            <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider mb-2">Home Runs</div>
                             <PlayerAvatar name={teamLeaders.homeRuns.name} headshot={teamLeaders.homeRuns.headshot} size={48} />
                             <div className="font-mono text-2xl font-bold mt-2" style={{ color: accent }}>{teamLeaders.homeRuns.stats?.hr}</div>
-                            <div className="text-text-primary font-semibold mt-1">{teamLeaders.homeRuns.name}</div>
-                            <div className="text-text-muted text-xs">{teamLeaders.homeRuns.position}</div>
+                            <div className="text-[var(--bsi-bone)] font-semibold mt-1">{teamLeaders.homeRuns.name}</div>
+                            <div className="text-[rgba(196,184,165,0.35)] text-xs">{teamLeaders.homeRuns.position}</div>
                           </div>
                         )}
                         {teamLeaders.era && (
                           <div className="flex flex-col items-center text-center">
-                            <div className="text-text-muted text-xs uppercase tracking-wider mb-2">ERA</div>
+                            <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider mb-2">ERA</div>
                             <PlayerAvatar name={teamLeaders.era.name} headshot={teamLeaders.era.headshot} size={48} />
                             <div className="font-mono text-2xl font-bold mt-2" style={{ color: accent }}>{teamLeaders.era.stats?.era?.toFixed(2)}</div>
-                            <div className="text-text-primary font-semibold mt-1">{teamLeaders.era.name}</div>
-                            <div className="text-text-muted text-xs">{teamLeaders.era.position}</div>
+                            <div className="text-[var(--bsi-bone)] font-semibold mt-1">{teamLeaders.era.name}</div>
+                            <div className="text-[rgba(196,184,165,0.35)] text-xs">{teamLeaders.era.position}</div>
                           </div>
                         )}
                       </div>
@@ -962,8 +962,8 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   <ScrollReveal direction="up" className="mt-8">
                     <Card padding="lg">
                       <div className="flex items-center justify-between mb-6">
-                        <h2 className="font-display text-xl font-bold text-text-primary uppercase tracking-wide">Game Momentum</h2>
-                        <span className="text-[10px] text-text-muted uppercase tracking-widest font-display">Recent</span>
+                        <h2 className="font-display text-xl font-bold text-[var(--bsi-bone)] uppercase tracking-wide">Game Momentum</h2>
+                        <span className="text-[10px] text-[rgba(196,184,165,0.35)] uppercase tracking-widest font-display">Recent</span>
                       </div>
                       <div className="space-y-6">
                         {mmiTeamGames.map((game) => {
@@ -982,19 +982,19 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                               />
                               <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3">
                                 <div className="text-center">
-                                  <div className="text-xs text-text-muted uppercase tracking-wider">Volatility</div>
-                                  <div className="font-mono text-lg font-bold text-text-primary mt-0.5">{game.mmi_volatility.toFixed(1)}</div>
+                                  <div className="text-xs text-[rgba(196,184,165,0.35)] uppercase tracking-wider">Volatility</div>
+                                  <div className="font-mono text-lg font-bold text-[var(--bsi-bone)] mt-0.5">{game.mmi_volatility.toFixed(1)}</div>
                                 </div>
                                 <div className="text-center">
-                                  <div className="text-xs text-text-muted uppercase tracking-wider">Lead Changes</div>
-                                  <div className="font-mono text-lg font-bold text-text-primary mt-0.5">{game.lead_changes}</div>
+                                  <div className="text-xs text-[rgba(196,184,165,0.35)] uppercase tracking-wider">Lead Changes</div>
+                                  <div className="font-mono text-lg font-bold text-[var(--bsi-bone)] mt-0.5">{game.lead_changes}</div>
                                 </div>
                                 <div className="text-center">
-                                  <div className="text-xs text-text-muted uppercase tracking-wider">Max Swing</div>
-                                  <div className="font-mono text-lg font-bold text-text-primary mt-0.5">{game.max_swing.toFixed(1)}</div>
+                                  <div className="text-xs text-[rgba(196,184,165,0.35)] uppercase tracking-wider">Max Swing</div>
+                                  <div className="font-mono text-lg font-bold text-[var(--bsi-bone)] mt-0.5">{game.max_swing.toFixed(1)}</div>
                                 </div>
                                 <div className="text-center">
-                                  <div className="text-xs text-text-muted uppercase tracking-wider">Rating</div>
+                                  <div className="text-xs text-[rgba(196,184,165,0.35)] uppercase tracking-wider">Rating</div>
                                   <div className="font-mono text-lg font-bold mt-0.5" style={{
                                     color: game.excitement_rating === 'instant-classic' || game.excitement_rating === 'extreme'
                                       ? 'var(--bsi-primary)'
@@ -1007,7 +1007,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                                 </div>
                               </div>
                               {game.final_home_score != null && game.final_away_score != null && (
-                                <div className="mt-2 text-center text-xs text-text-muted">
+                                <div className="mt-2 text-center text-xs text-[rgba(196,184,165,0.35)]">
                                   Final: {game.away_team} {game.final_away_score}, {game.home_team} {game.final_home_score}
                                 </div>
                               )}
@@ -1015,7 +1015,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                           );
                         })}
                       </div>
-                      <div className="mt-4 pt-3 border-t border-border-subtle text-xs text-text-muted">
+                      <div className="mt-4 pt-3 border-t border-[var(--border-vintage)] text-xs text-[rgba(196,184,165,0.35)]">
                         Source: BSI Momentum Engine
                       </div>
                     </Card>
@@ -1027,31 +1027,31 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   <ScrollReveal direction="up" className="mt-8">
                     <Card padding="lg">
                       <div className="flex items-center justify-between mb-6">
-                        <h2 className="font-display text-xl font-bold text-text-primary uppercase tracking-wide">NIL Spending Power</h2>
+                        <h2 className="font-display text-xl font-bold text-[var(--bsi-bone)] uppercase tracking-wide">NIL Spending Power</h2>
                         <span className="text-xs px-2 py-1 rounded-sm font-semibold" style={{ backgroundColor: 'rgba(191,87,0,0.15)', color: '#BF5700' }}>
                           {nilTeamData.conference} — {nilTeamData.marketTier}
                         </span>
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
                         <div>
-                          <div className="text-xs uppercase tracking-wide text-text-muted">Scored Players</div>
-                          <div className="mt-1 font-mono text-2xl font-bold text-text-primary">{nilTeamData.playerCount}</div>
+                          <div className="text-xs uppercase tracking-wide text-[rgba(196,184,165,0.35)]">Scored Players</div>
+                          <div className="mt-1 font-mono text-2xl font-bold text-[var(--bsi-bone)]">{nilTeamData.playerCount}</div>
                         </div>
                         <div>
-                          <div className="text-xs uppercase tracking-wide text-text-muted">Avg NIL Index</div>
+                          <div className="text-xs uppercase tracking-wide text-[rgba(196,184,165,0.35)]">Avg NIL Index</div>
                           <div className="mt-1 font-mono text-2xl font-bold" style={{ color: '#BF5700' }}>{nilTeamData.avgIndex}</div>
                         </div>
                         <div className="col-span-2">
-                          <div className="text-xs uppercase tracking-wide text-text-muted">Top Valued Player</div>
+                          <div className="text-xs uppercase tracking-wide text-[rgba(196,184,165,0.35)]">Top Valued Player</div>
                           <div className="mt-1 flex items-baseline gap-2">
-                            <span className="text-text-primary font-semibold">{nilTeamData.topPlayer}</span>
+                            <span className="text-[var(--bsi-bone)] font-semibold">{nilTeamData.topPlayer}</span>
                             <span className="font-mono text-lg font-bold" style={{ color: '#BF5700' }}>
                               ${nilTeamData.topValue >= 1000 ? `${(nilTeamData.topValue / 1000).toFixed(0)}K` : nilTeamData.topValue.toLocaleString()}
                             </span>
                           </div>
                         </div>
                       </div>
-                      <div className="pt-3 border-t border-border-subtle text-xs text-text-muted">
+                      <div className="pt-3 border-t border-[var(--border-vintage)] text-xs text-[rgba(196,184,165,0.35)]">
                         Source: BSI NIL Intelligence Platform
                       </div>
                     </Card>
@@ -1062,25 +1062,25 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                 {teamArticles.length > 0 && (
                   <ScrollReveal direction="up" className="mt-8">
                     <Card padding="lg">
-                      <h2 className="font-display text-xl font-bold text-text-primary uppercase tracking-wide mb-6">Related Articles</h2>
+                      <h2 className="font-display text-xl font-bold text-[var(--bsi-bone)] uppercase tracking-wide mb-6">Related Articles</h2>
                       <div className="space-y-3">
                         {teamArticles.slice(0, 5).map((article) => (
                           <Link
                             key={article.slug}
                             href={`/college-baseball/editorial/${article.slug}`}
-                            className="flex items-center justify-between py-3 border-b border-border-subtle last:border-0 group"
+                            className="flex items-center justify-between py-3 border-b border-[var(--border-vintage)] last:border-0 group"
                           >
                             <div className="min-w-0">
                               <div className="flex items-center gap-2 mb-1">
                                 <Badge variant="secondary">{article.badge}</Badge>
-                                <span className="text-text-muted text-xs">{article.readTime}</span>
+                                <span className="text-[rgba(196,184,165,0.35)] text-xs">{article.readTime}</span>
                               </div>
-                              <div className="text-text-primary font-semibold text-sm group-hover:text-burnt-orange transition-colors truncate">
+                              <div className="text-[var(--bsi-bone)] font-semibold text-sm group-hover:text-[var(--bsi-primary)] transition-colors truncate">
                                 {article.title}
                               </div>
-                              <div className="text-text-muted text-xs mt-0.5">{article.date}</div>
+                              <div className="text-[rgba(196,184,165,0.35)] text-xs mt-0.5">{article.date}</div>
                             </div>
-                            <svg className="w-4 h-4 text-text-muted group-hover:text-burnt-orange group-hover:translate-x-0.5 transition-all shrink-0 ml-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className="w-4 h-4 text-[rgba(196,184,165,0.35)] group-hover:text-[var(--bsi-primary)] group-hover:translate-x-0.5 transition-all shrink-0 ml-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                             </svg>
                           </Link>
@@ -1095,48 +1095,48 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   const teamPlayers = nilLeaderboardData.data.filter(p => p.team === meta?.name);
                   const totalValue = teamPlayers.reduce((sum, p) => sum + p.estimated_mid, 0);
                   const formatNIL = (v: number) => v >= 1_000_000 ? `$${(v / 1_000_000).toFixed(1)}M` : v >= 1_000 ? `$${Math.round(v / 1_000)}K` : `$${v}`;
-                  const tierColors: Record<string, string> = { elite: 'text-burnt-orange', high: 'text-[var(--bsi-success)]', mid: 'text-[var(--heritage-columbia-blue)]', emerging: 'text-[var(--bsi-warning)]' };
+                  const tierColors: Record<string, string> = { elite: 'text-[var(--bsi-primary)]', high: 'text-[var(--bsi-success)]', mid: 'text-[var(--heritage-columbia-blue)]', emerging: 'text-[var(--bsi-warning)]' };
                   return (
                     <ScrollReveal direction="up" className="mt-6">
                       <Card padding="none" className="overflow-hidden">
                         <div className="px-4 py-3 border-b border-border flex items-center justify-between" style={{ backgroundColor: withAlpha(accent, 0.08) }}>
-                          <h3 className="font-display text-base font-bold uppercase tracking-wide text-text-primary">
+                          <h3 className="font-display text-base font-bold uppercase tracking-wide text-[var(--bsi-bone)]">
                             NIL Valuation — Roster
                           </h3>
-                          <Link href="/nil-valuation" className="text-[10px] text-text-muted hover:text-burnt-orange transition-colors uppercase tracking-widest">
+                          <Link href="/nil-valuation" className="text-[10px] text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors uppercase tracking-widest">
                             Full NIL Hub &rarr;
                           </Link>
                         </div>
                         <div className="p-4">
                           <div className="grid grid-cols-3 gap-4 mb-4">
                             <div className="text-center">
-                              <span className="text-xs text-text-muted block">Scored Players</span>
+                              <span className="text-xs text-[rgba(196,184,165,0.35)] block">Scored Players</span>
                               <span className="font-display text-2xl font-bold" style={{ color: accent }}>{teamPlayers.length}</span>
                             </div>
                             <div className="text-center">
-                              <span className="text-xs text-text-muted block">Total Roster Value</span>
-                              <span className="font-display text-2xl font-bold text-burnt-orange">{formatNIL(totalValue)}</span>
+                              <span className="text-xs text-[rgba(196,184,165,0.35)] block">Total Roster Value</span>
+                              <span className="font-display text-2xl font-bold text-[var(--bsi-primary)]">{formatNIL(totalValue)}</span>
                             </div>
                             <div className="text-center">
-                              <span className="text-xs text-text-muted block">Avg Per Player</span>
-                              <span className="font-display text-2xl font-bold text-text-primary">{formatNIL(Math.round(totalValue / teamPlayers.length))}</span>
+                              <span className="text-xs text-[rgba(196,184,165,0.35)] block">Avg Per Player</span>
+                              <span className="font-display text-2xl font-bold text-[var(--bsi-bone)]">{formatNIL(Math.round(totalValue / teamPlayers.length))}</span>
                             </div>
                           </div>
                           <div className="space-y-1">
                             {teamPlayers.slice(0, 5).map((p, i) => (
-                              <div key={p.player_name} className="flex items-center justify-between py-1.5 px-2 rounded-sm hover:bg-surface-light transition-colors">
+                              <div key={p.player_name} className="flex items-center justify-between py-1.5 px-2 rounded-sm hover:bg-[var(--surface-press-box)] transition-colors">
                                 <div className="flex items-center gap-2">
-                                  <span className="text-xs text-text-muted font-mono w-4">{i + 1}</span>
-                                  <span className="text-sm text-text-primary">{p.player_name}</span>
-                                  <span className={`text-[10px] font-semibold uppercase ${tierColors[p.nil_tier] || 'text-text-muted'}`}>{p.nil_tier}</span>
+                                  <span className="text-xs text-[rgba(196,184,165,0.35)] font-mono w-4">{i + 1}</span>
+                                  <span className="text-sm text-[var(--bsi-bone)]">{p.player_name}</span>
+                                  <span className={`text-[10px] font-semibold uppercase ${tierColors[p.nil_tier] || 'text-[rgba(196,184,165,0.35)]'}`}>{p.nil_tier}</span>
                                 </div>
-                                <span className="text-sm font-bold text-burnt-orange font-mono">{formatNIL(p.estimated_mid)}</span>
+                                <span className="text-sm font-bold text-[var(--bsi-primary)] font-mono">{formatNIL(p.estimated_mid)}</span>
                               </div>
                             ))}
                           </div>
                           {teamPlayers.length > 5 && (
                             <div className="text-center mt-3">
-                              <Link href="/nil-valuation" className="text-xs text-text-muted hover:text-burnt-orange transition-colors">
+                              <Link href="/nil-valuation" className="text-xs text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                                 {teamPlayers.length - 5} more players scored &rarr;
                               </Link>
                             </div>
@@ -1169,7 +1169,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="border-b border-border text-text-muted text-xs uppercase tracking-wider">
+                          <tr className="border-b border-border text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider">
                             <th className="text-left px-4 py-3">Date</th>
                             <th className="text-left px-4 py-3">Opponent</th>
                             <th className="text-center px-4 py-3">Result</th>
@@ -1178,16 +1178,16 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                         </thead>
                         <tbody>
                           {scheduleGames.map((g) => (
-                            <tr key={g.id} className="border-b border-border-subtle hover:bg-surface-light transition-colors">
-                              <td className="px-4 py-3 text-text-tertiary whitespace-nowrap">{formatDate(g.date)}</td>
-                              <td className="px-4 py-3 text-text-primary font-semibold">{g.isHome ? 'vs' : '@'} {g.opponent.name}</td>
+                            <tr key={g.id} className="border-b border-[var(--border-vintage)] hover:bg-[var(--surface-press-box)] transition-colors">
+                              <td className="px-4 py-3 text-[rgba(196,184,165,0.5)] whitespace-nowrap">{formatDate(g.date)}</td>
+                              <td className="px-4 py-3 text-[var(--bsi-bone)] font-semibold">{g.isHome ? 'vs' : '@'} {g.opponent.name}</td>
                               <td className="px-4 py-3 text-center">
                                 {g.result === 'W' && <span className="text-success font-bold">W</span>}
                                 {g.result === 'L' && <span className="text-error font-bold">L</span>}
                                 {!g.result && g.status === 'in' && <span style={{ color: accent }} className="font-bold">LIVE</span>}
-                                {!g.result && g.status === 'pre' && <span className="text-text-muted">{g.detail || '\u2014'}</span>}
+                                {!g.result && g.status === 'pre' && <span className="text-[rgba(196,184,165,0.35)]">{g.detail || '\u2014'}</span>}
                               </td>
-                              <td className="px-4 py-3 text-center font-mono text-text-secondary">
+                              <td className="px-4 py-3 text-center font-mono text-[var(--bsi-dust)]">
                                 {g.score ? `${g.score.team}-${g.score.opponent}` : '\u2014'}
                               </td>
                             </tr>
@@ -1195,13 +1195,13 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                         </tbody>
                       </table>
                     </div>
-                    <div className="px-4 py-3 border-t border-border-subtle text-xs text-text-muted">
+                    <div className="px-4 py-3 border-t border-[var(--border-vintage)] text-xs text-[rgba(196,184,165,0.35)]">
                       {scheduleGames.length} games &mdash; Source: ESPN
                     </div>
                   </Card>
                 ) : (
                   <Card padding="lg" className="text-center">
-                    <p className="text-text-tertiary">Loading schedule...</p>
+                    <p className="text-[rgba(196,184,165,0.5)]">Loading schedule...</p>
                   </Card>
                 )}
               </ScrollReveal>
@@ -1214,44 +1214,44 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                 {positionGroups.some(g => g.group === 'Rotation') && (
                   <ScrollReveal direction="up">
                     <Card padding="lg">
-                      <h2 className="font-display text-xl font-bold text-text-primary uppercase tracking-wide mb-6">Pitching Depth Chart</h2>
+                      <h2 className="font-display text-xl font-bold text-[var(--bsi-bone)] uppercase tracking-wide mb-6">Pitching Depth Chart</h2>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Rotation */}
                         <div>
-                          <div className="text-xs uppercase tracking-wider text-text-muted mb-3 font-semibold">Weekend Rotation</div>
+                          <div className="text-xs uppercase tracking-wider text-[rgba(196,184,165,0.35)] mb-3 font-semibold">Weekend Rotation</div>
                           <div className="space-y-2">
                             {positionGroups.find(g => g.group === 'Rotation')?.players.slice(0, 4).map((p, i) => (
-                              <div key={p.id || p.name} className="flex items-center justify-between p-3 rounded-sm bg-surface-light border border-border-subtle">
+                              <div key={p.id || p.name} className="flex items-center justify-between p-3 rounded-sm bg-[var(--surface-press-box)] border border-[var(--border-vintage)]">
                                 <div className="flex items-center gap-3 min-w-0">
-                                  <span className="font-mono text-xs text-text-muted w-5">{['FRI', 'SAT', 'SUN', 'MID'][i]}</span>
+                                  <span className="font-mono text-xs text-[rgba(196,184,165,0.35)] w-5">{['FRI', 'SAT', 'SUN', 'MID'][i]}</span>
                                   <PlayerAvatar name={p.name} headshot={p.headshot} size={36} />
                                   <div className="min-w-0">
-                                    <div className="text-text-primary font-semibold text-sm truncate">
+                                    <div className="text-[var(--bsi-bone)] font-semibold text-sm truncate">
                                       {p.id ? <Link href={`/college-baseball/players/${p.id}`} className="hover:underline">{p.name}</Link> : p.name}
                                     </div>
-                                    <div className="text-text-muted text-xs">{p.position}</div>
+                                    <div className="text-[rgba(196,184,165,0.35)] text-xs">{p.position}</div>
                                   </div>
                                 </div>
                                 <div className="flex gap-3 sm:gap-4 text-xs font-mono shrink-0">
                                   <div className="text-center">
                                     <div style={{ color: accent }} className="font-bold">{p.stats?.era?.toFixed(2) ?? '\u2014'}</div>
-                                    <div className="text-text-muted">ERA</div>
+                                    <div className="text-[rgba(196,184,165,0.35)]">ERA</div>
                                   </div>
                                   <div className="text-center hidden sm:block">
-                                    <div className="text-text-secondary">{p.stats?.whip?.toFixed(2) ?? '\u2014'}</div>
-                                    <div className="text-text-muted">WHIP</div>
+                                    <div className="text-[var(--bsi-dust)]">{p.stats?.whip?.toFixed(2) ?? '\u2014'}</div>
+                                    <div className="text-[rgba(196,184,165,0.35)]">WHIP</div>
                                   </div>
                                   <div className="text-center">
-                                    <div className="text-text-secondary">{p.stats?.w ?? 0}-{p.stats?.l ?? 0}</div>
-                                    <div className="text-text-muted">W-L</div>
+                                    <div className="text-[var(--bsi-dust)]">{p.stats?.w ?? 0}-{p.stats?.l ?? 0}</div>
+                                    <div className="text-[rgba(196,184,165,0.35)]">W-L</div>
                                   </div>
                                   <div className="text-center">
-                                    <div className="text-text-secondary">{p.stats?.ip ?? 0}</div>
-                                    <div className="text-text-muted">IP</div>
+                                    <div className="text-[var(--bsi-dust)]">{p.stats?.ip ?? 0}</div>
+                                    <div className="text-[rgba(196,184,165,0.35)]">IP</div>
                                   </div>
                                   <div className="text-center hidden sm:block">
-                                    <div className="text-text-secondary">{p.stats?.so ?? 0}</div>
-                                    <div className="text-text-muted">K</div>
+                                    <div className="text-[var(--bsi-dust)]">{p.stats?.so ?? 0}</div>
+                                    <div className="text-[rgba(196,184,165,0.35)]">K</div>
                                   </div>
                                 </div>
                               </div>
@@ -1261,31 +1261,31 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                         {/* Bullpen */}
                         {positionGroups.some(g => g.group === 'Bullpen') && (
                           <div>
-                            <div className="text-xs uppercase tracking-wider text-text-muted mb-3 font-semibold">Bullpen</div>
+                            <div className="text-xs uppercase tracking-wider text-[rgba(196,184,165,0.35)] mb-3 font-semibold">Bullpen</div>
                             <div className="space-y-2">
                               {positionGroups.find(g => g.group === 'Bullpen')?.players.map((p) => (
-                                <div key={p.id || p.name} className="flex items-center justify-between p-3 rounded-sm bg-surface-light border border-border-subtle">
+                                <div key={p.id || p.name} className="flex items-center justify-between p-3 rounded-sm bg-[var(--surface-press-box)] border border-[var(--border-vintage)]">
                                   <div className="flex items-center gap-3 min-w-0">
                                     <PlayerAvatar name={p.name} headshot={p.headshot} size={36} />
                                     <div className="min-w-0">
-                                      <div className="text-text-primary font-semibold text-sm truncate">
+                                      <div className="text-[var(--bsi-bone)] font-semibold text-sm truncate">
                                         {p.id ? <Link href={`/college-baseball/players/${p.id}`} className="hover:underline">{p.name}</Link> : p.name}
                                       </div>
-                                      <div className="text-text-muted text-xs">{p.position}{(p.stats?.sv ?? 0) > 0 ? ' \u00b7 Closer' : ''}</div>
+                                      <div className="text-[rgba(196,184,165,0.35)] text-xs">{p.position}{(p.stats?.sv ?? 0) > 0 ? ' \u00b7 Closer' : ''}</div>
                                     </div>
                                   </div>
                                   <div className="flex gap-4 text-xs font-mono shrink-0">
                                     <div className="text-center">
                                       <div style={{ color: accent }} className="font-bold">{p.stats?.era?.toFixed(2) ?? '\u2014'}</div>
-                                      <div className="text-text-muted">ERA</div>
+                                      <div className="text-[rgba(196,184,165,0.35)]">ERA</div>
                                     </div>
                                     <div className="text-center">
-                                      <div className="text-text-secondary">{p.stats?.ip ?? 0}</div>
-                                      <div className="text-text-muted">IP</div>
+                                      <div className="text-[var(--bsi-dust)]">{p.stats?.ip ?? 0}</div>
+                                      <div className="text-[rgba(196,184,165,0.35)]">IP</div>
                                     </div>
                                     <div className="text-center">
-                                      <div className="text-text-secondary">{p.stats?.sv ?? 0}</div>
-                                      <div className="text-text-muted">SV</div>
+                                      <div className="text-[var(--bsi-dust)]">{p.stats?.sv ?? 0}</div>
+                                      <div className="text-[rgba(196,184,165,0.35)]">SV</div>
                                     </div>
                                   </div>
                                 </div>
@@ -1307,13 +1307,13 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                         <Card padding="none" className="overflow-hidden">
                           <div className="px-4 py-3 border-b border-border" style={{ backgroundColor: withAlpha(accent, 0.05) }}>
                             <h3 className="font-display text-sm font-bold uppercase tracking-wider" style={{ color: accent }}>{group}</h3>
-                            <span className="text-text-muted text-xs">{groupPlayers.length} player{groupPlayers.length !== 1 ? 's' : ''}</span>
+                            <span className="text-[rgba(196,184,165,0.35)] text-xs">{groupPlayers.length} player{groupPlayers.length !== 1 ? 's' : ''}</span>
                           </div>
                           <div className="overflow-x-auto">
                             <table className="w-full text-sm">
                               <thead>
-                                <tr className="border-b border-border text-text-muted text-xs uppercase tracking-wider">
-                                  <th className="text-left px-4 py-2 sticky left-0 bg-charcoal">Player</th>
+                                <tr className="border-b border-border text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider">
+                                  <th className="text-left px-4 py-2 sticky left-0 bg-[var(--surface-dugout)]">Player</th>
                                   <th className="text-left px-3 py-2">Pos</th>
                                   {isPitcherGroup ? (
                                     <>
@@ -1346,39 +1346,39 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                               </thead>
                               <tbody>
                                 {groupPlayers.map((p) => (
-                                  <tr key={p.id || p.name} className="border-b border-border-subtle hover:bg-surface-light transition-colors">
-                                    <td className="px-4 py-2.5 text-text-primary font-semibold sticky left-0 bg-charcoal whitespace-nowrap">
+                                  <tr key={p.id || p.name} className="border-b border-[var(--border-vintage)] hover:bg-[var(--surface-press-box)] transition-colors">
+                                    <td className="px-4 py-2.5 text-[var(--bsi-bone)] font-semibold sticky left-0 bg-[var(--surface-dugout)] whitespace-nowrap">
                                       <div className="flex items-center gap-2">
                                         <PlayerAvatar name={p.name} headshot={p.headshot} size={32} />
                                         {p.id ? <Link href={`/college-baseball/players/${p.id}`} className="hover:underline">{p.name}</Link> : p.name}
                                       </div>
                                     </td>
-                                    <td className="px-3 py-2.5 text-text-tertiary text-xs">{p.position}</td>
+                                    <td className="px-3 py-2.5 text-[rgba(196,184,165,0.5)] text-xs">{p.position}</td>
                                     {isPitcherGroup ? (
                                       <>
                                         <td className="px-3 py-2.5 text-right font-mono tabular-nums" style={{ color: accent }}>{p.stats?.era?.toFixed(2) ?? '\u2014'}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-secondary">{p.stats?.whip?.toFixed(2) ?? '\u2014'}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-secondary">{p.stats?.w ?? 0}-{p.stats?.l ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-secondary">{p.stats?.sv ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-secondary">{p.stats?.ip ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-secondary">{p.stats?.so ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-tertiary">{p.stats?.pitchBB ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-tertiary hidden md:table-cell">{p.stats?.ha ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-tertiary hidden md:table-cell">{p.stats?.er ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-tertiary hidden lg:table-cell">{p.stats?.hra ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-[var(--bsi-dust)]">{p.stats?.whip?.toFixed(2) ?? '\u2014'}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-[var(--bsi-dust)]">{p.stats?.w ?? 0}-{p.stats?.l ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-[var(--bsi-dust)]">{p.stats?.sv ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-[var(--bsi-dust)]">{p.stats?.ip ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-[var(--bsi-dust)]">{p.stats?.so ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-[rgba(196,184,165,0.5)]">{p.stats?.pitchBB ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-[rgba(196,184,165,0.5)] hidden md:table-cell">{p.stats?.ha ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-[rgba(196,184,165,0.5)] hidden md:table-cell">{p.stats?.er ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-[rgba(196,184,165,0.5)] hidden lg:table-cell">{p.stats?.hra ?? 0}</td>
                                       </>
                                     ) : (
                                       <>
                                         <td className="px-3 py-2.5 text-right font-mono tabular-nums" style={{ color: accent }}>{p.stats?.avg != null ? fmt3(p.stats.avg) : '\u2014'}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-secondary">{p.stats?.ops != null ? fmt3(p.stats.ops) : '\u2014'}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-secondary">{p.stats?.hr ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-secondary">{p.stats?.rbi ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-secondary">{p.stats?.r ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-tertiary hidden md:table-cell">{p.stats?.h ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-tertiary hidden md:table-cell">{p.stats?.doubles ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-tertiary hidden md:table-cell">{p.stats?.bb ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-tertiary hidden lg:table-cell">{p.stats?.sb ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-tertiary hidden lg:table-cell">{p.stats?.k ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-[var(--bsi-dust)]">{p.stats?.ops != null ? fmt3(p.stats.ops) : '\u2014'}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-[var(--bsi-dust)]">{p.stats?.hr ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-[var(--bsi-dust)]">{p.stats?.rbi ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-[var(--bsi-dust)]">{p.stats?.r ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-[rgba(196,184,165,0.5)] hidden md:table-cell">{p.stats?.h ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-[rgba(196,184,165,0.5)] hidden md:table-cell">{p.stats?.doubles ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-[rgba(196,184,165,0.5)] hidden md:table-cell">{p.stats?.bb ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-[rgba(196,184,165,0.5)] hidden lg:table-cell">{p.stats?.sb ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-[rgba(196,184,165,0.5)] hidden lg:table-cell">{p.stats?.k ?? 0}</td>
                                       </>
                                     )}
                                   </tr>
@@ -1392,11 +1392,11 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   })
                 ) : (
                   <Card padding="lg" className="text-center">
-                    <p className="text-text-tertiary">Loading roster...</p>
+                    <p className="text-[rgba(196,184,165,0.5)]">Loading roster...</p>
                   </Card>
                 )}
 
-                <div className="text-xs text-text-muted text-center mt-4">
+                <div className="text-xs text-[rgba(196,184,165,0.35)] text-center mt-4">
                   {rosterPlayers.length} players &middot; Stats from D1 box scores &mdash; Source: ESPN / Highlightly
                 </div>
               </div>
@@ -1424,8 +1424,8 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             )}
 
             {/* Attribution */}
-            <div className="mt-12 pt-6 border-t border-border-subtle text-center">
-              <div className="flex items-center justify-center gap-2 text-xs text-text-muted">
+            <div className="mt-12 pt-6 border-t border-[var(--border-vintage)] text-center">
+              <div className="flex items-center justify-center gap-2 text-xs text-[rgba(196,184,165,0.35)]">
                 <span>BSI Preseason Intelligence</span>
                 <span>|</span>
                 <span>NCAA / D1Baseball</span>

@@ -145,7 +145,7 @@ function OptionGrid<T extends string>({
 }) {
   return (
     <div>
-      <label className="block text-sm font-semibold text-text-secondary mb-2">{label}</label>
+      <label className="block text-sm font-semibold text-[var(--bsi-dust)] mb-2">{label}</label>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {options.map((opt) => (
           <button
@@ -154,8 +154,8 @@ function OptionGrid<T extends string>({
             onClick={() => onChange(opt.value)}
             className={`p-2.5 rounded-sm border text-sm font-medium transition-all ${
               value === opt.value
-                ? 'border-burnt-orange bg-burnt-orange/10 text-burnt-orange'
-                : 'border-border text-text-tertiary hover:border-text-muted'
+                ? 'border-[var(--bsi-primary)] bg-[var(--bsi-primary)]/10 text-[var(--bsi-primary)]'
+                : 'border-border text-[rgba(196,184,165,0.5)] hover:border-text-muted'
             }`}
           >
             {opt.label}
@@ -184,8 +184,8 @@ export default function BrandMatchPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background-primary text-text-primary">
-      <Section className="pt-6 pb-16 bg-gradient-to-b from-background-secondary to-background-primary">
+    <div className="min-h-screen bg-[var(--surface-scoreboard)] text-[var(--bsi-bone)]">
+      <Section className="pt-6 pb-16 bg-gradient-to-b from-background-secondary to-[var(--surface-scoreboard)]">
         <Container>
           <Breadcrumb
             items={[
@@ -198,9 +198,9 @@ export default function BrandMatchPage() {
             <div className="max-w-3xl mx-auto text-center">
               <Badge variant="primary" className="mb-4">Free Tool</Badge>
               <h1 className="text-4xl md:text-5xl font-display uppercase tracking-wide font-bold mb-4">
-                <span className="text-burnt-orange">Brand Match</span> Finder
+                <span className="text-[var(--bsi-primary)]">Brand Match</span> Finder
               </h1>
-              <p className="text-lg text-text-secondary max-w-2xl mx-auto">
+              <p className="text-lg text-[var(--bsi-dust)] max-w-2xl mx-auto">
                 Answer five questions about your athlete profile and discover which brand categories
                 are the strongest fit for NIL partnerships.
               </p>
@@ -271,7 +271,7 @@ export default function BrandMatchPage() {
 
                   <Button
                     size="lg"
-                    className={`w-full mt-4 ${isComplete ? 'bg-burnt-orange' : 'opacity-50 cursor-not-allowed'}`}
+                    className={`w-full mt-4 ${isComplete ? 'bg-[var(--bsi-primary)]' : 'opacity-50 cursor-not-allowed'}`}
                     onClick={handleSubmit}
                     disabled={!isComplete}
                   >
@@ -297,17 +297,17 @@ export default function BrandMatchPage() {
                     <Card>
                       <CardContent className="p-4 flex items-center gap-4">
                         <div className="flex-shrink-0 w-14 text-center">
-                          <div className={`text-xl font-bold ${r.match >= 80 ? 'text-burnt-orange' : 'text-text-secondary'}`}>
+                          <div className={`text-xl font-bold ${r.match >= 80 ? 'text-[var(--bsi-primary)]' : 'text-[var(--bsi-dust)]'}`}>
                             {r.match}%
                           </div>
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="font-semibold text-text-primary">{r.category}</div>
-                          <div className="text-sm text-text-tertiary">{r.reason}</div>
+                          <div className="font-semibold text-[var(--bsi-bone)]">{r.category}</div>
+                          <div className="text-sm text-[rgba(196,184,165,0.5)]">{r.reason}</div>
                         </div>
                         <div className="flex-shrink-0 w-24 h-2 rounded-full bg-border overflow-hidden">
                           <div
-                            className="h-full rounded-full bg-burnt-orange transition-all duration-500"
+                            className="h-full rounded-full bg-[var(--bsi-primary)] transition-all duration-500"
                             style={{ width: `${r.match}%` }}
                           />
                         </div>

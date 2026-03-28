@@ -78,8 +78,8 @@ export function VideoUploader({ onVideoReady, isProcessing }: VideoUploaderProps
             onClick={() => inputRef.current?.click()}
             className={`relative rounded-sm border-2 border-dashed p-12 text-center cursor-pointer transition-all duration-300 ${
               dragActive
-                ? 'border-burnt-orange bg-burnt-orange/5 shadow-[0_0_30px_rgba(191,87,0,0.1)]'
-                : 'border-border-subtle bg-surface-dugout hover:border-burnt-orange/30 hover:bg-surface-dugout/80'
+                ? 'border-[var(--bsi-primary)] bg-[var(--bsi-primary)]/5 shadow-[0_0_30px_rgba(191,87,0,0.1)]'
+                : 'border-[var(--border-vintage)] bg-surface-dugout hover:border-[var(--bsi-primary)]/30 hover:bg-surface-dugout/80'
             }`}
           >
             <input
@@ -91,8 +91,8 @@ export function VideoUploader({ onVideoReady, isProcessing }: VideoUploaderProps
             />
 
             <div className="flex flex-col items-center gap-4">
-              <div className="w-16 h-16 rounded-sm bg-burnt-orange/10 flex items-center justify-center">
-                <svg viewBox="0 0 24 24" className="w-8 h-8 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <div className="w-16 h-16 rounded-sm bg-[var(--bsi-primary)]/10 flex items-center justify-center">
+                <svg viewBox="0 0 24 24" className="w-8 h-8 text-[var(--bsi-primary)]" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
                   <circle cx="12" cy="13" r="4" />
                 </svg>
@@ -102,7 +102,7 @@ export function VideoUploader({ onVideoReady, isProcessing }: VideoUploaderProps
                 <p className="text-bsi-bone font-semibold mb-1">
                   {dragActive ? 'Drop your swing video' : 'Upload your swing video'}
                 </p>
-                <p className="text-xs text-text-muted">
+                <p className="text-xs text-[rgba(196,184,165,0.35)]">
                   MP4, MOV, or WebM up to 100MB. Side angle recommended.
                 </p>
               </div>
@@ -117,13 +117,13 @@ export function VideoUploader({ onVideoReady, isProcessing }: VideoUploaderProps
             </div>
 
             {/* Camera guide hint */}
-            <div className="mt-6 pt-4 border-t border-border-subtle">
+            <div className="mt-6 pt-4 border-t border-[var(--border-vintage)]">
               <div className="flex items-start gap-3 text-left max-w-sm mx-auto">
-                <svg viewBox="0 0 24 24" className="w-5 h-5 text-burnt-orange shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <svg viewBox="0 0 24 24" className="w-5 h-5 text-[var(--bsi-primary)] shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <circle cx="12" cy="12" r="10" />
                   <path d="M12 8v4M12 16h.01" />
                 </svg>
-                <p className="text-[11px] text-text-muted leading-relaxed">
+                <p className="text-[11px] text-[rgba(196,184,165,0.35)] leading-relaxed">
                   Best results: Record from the <strong className="text-bsi-dust">side angle</strong> (3rd base or 1st base side),
                   phone held vertically, full body in frame from stance through follow-through.
                 </p>
@@ -135,7 +135,7 @@ export function VideoUploader({ onVideoReady, isProcessing }: VideoUploaderProps
             key="preview"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="rounded-sm overflow-hidden border border-border-subtle bg-surface-dugout"
+            className="rounded-sm overflow-hidden border border-[var(--border-vintage)] bg-surface-dugout"
           >
             <video
               src={preview}
@@ -145,7 +145,7 @@ export function VideoUploader({ onVideoReady, isProcessing }: VideoUploaderProps
             <div className="p-4 flex items-center justify-between">
               <div className="text-sm">
                 <p className="text-bsi-bone font-medium">{selectedFile?.name}</p>
-                <p className="text-xs text-text-muted mt-0.5">
+                <p className="text-xs text-[rgba(196,184,165,0.35)] mt-0.5">
                   {selectedFile ? `${(selectedFile.size / (1024 * 1024)).toFixed(1)} MB` : ''}
                 </p>
               </div>
@@ -156,7 +156,7 @@ export function VideoUploader({ onVideoReady, isProcessing }: VideoUploaderProps
                     setSelectedFile(null);
                     setError(null);
                   }}
-                  className="text-xs text-text-muted hover:text-burnt-orange transition-colors"
+                  className="text-xs text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors"
                 >
                   Change video
                 </button>

@@ -60,9 +60,9 @@ interface PlayerResponse {
 
 function StatCard({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="text-center p-4 bg-background-secondary rounded-sm">
-      <p className="text-2xl md:text-3xl font-bold text-text-primary">{value}</p>
-      <p className="text-xs text-text-tertiary uppercase tracking-wider mt-1">{label}</p>
+    <div className="text-center p-4 bg-[var(--surface-dugout)] rounded-sm">
+      <p className="text-2xl md:text-3xl font-bold text-[var(--bsi-bone)]">{value}</p>
+      <p className="text-xs text-[rgba(196,184,165,0.5)] uppercase tracking-wider mt-1">{label}</p>
     </div>
   );
 }
@@ -71,13 +71,13 @@ function SkeletonProfile() {
   return (
     <div className="animate-pulse">
       <div className="flex flex-col md:flex-row gap-8 items-start">
-        <div className="w-48 h-48 bg-background-tertiary rounded-full flex-shrink-0" />
+        <div className="w-48 h-48 bg-[var(--surface-dugout)] rounded-full flex-shrink-0" />
         <div className="flex-1 space-y-4">
-          <div className="h-8 bg-background-tertiary rounded-sm w-2/3" />
-          <div className="h-6 bg-background-tertiary/50 rounded-sm w-1/3" />
+          <div className="h-8 bg-[var(--surface-dugout)] rounded-sm w-2/3" />
+          <div className="h-6 bg-[var(--surface-dugout)]/50 rounded-sm w-1/3" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-20 bg-background-tertiary rounded-sm" />
+              <div key={i} className="h-20 bg-[var(--surface-dugout)] rounded-sm" />
             ))}
           </div>
         </div>
@@ -105,19 +105,19 @@ export default function CFBPlayerDetailClient({ playerId }: CFBPlayerDetailClien
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/cfb"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 CFB
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-tertiary">Players</span>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[rgba(196,184,165,0.5)]">Players</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">
                 {loading ? 'Loading...' : player?.name || 'Player'}
               </span>
             </nav>
@@ -137,10 +137,10 @@ export default function CFBPlayerDetailClient({ playerId }: CFBPlayerDetailClien
             {error && (
               <Card variant="default" padding="lg" className="mb-6 bg-error/10 border-error/30">
                 <p className="text-error font-semibold">Error loading player</p>
-                <p className="text-text-secondary text-sm mt-1">{error}</p>
+                <p className="text-[var(--bsi-dust)] text-sm mt-1">{error}</p>
                 <button
                   onClick={fetchPlayer}
-                  className="mt-3 px-4 py-2 bg-burnt-orange text-white rounded-sm text-sm hover:bg-burnt-orange/80 transition-colors"
+                  className="mt-3 px-4 py-2 bg-[var(--bsi-primary)] text-white rounded-sm text-sm hover:bg-[var(--bsi-primary)]/80 transition-colors"
                 >
                   Try Again
                 </button>
@@ -159,7 +159,7 @@ export default function CFBPlayerDetailClient({ playerId }: CFBPlayerDetailClien
                         src={player.headshot}
                         alt={player.name}
                         fill
-                        className="object-cover rounded-full border-4 border-burnt-orange"
+                        className="object-cover rounded-full border-4 border-[var(--bsi-primary)]"
                         sizes="192px"
                         unoptimized
                         priority
@@ -190,26 +190,26 @@ export default function CFBPlayerDetailClient({ playerId }: CFBPlayerDetailClien
                       {player.team?.id ? (
                         <Link
                           href={`/cfb/teams/${player.team.id}`}
-                          className="text-text-secondary hover:text-burnt-orange transition-colors"
+                          className="text-[var(--bsi-dust)] hover:text-[var(--bsi-primary)] transition-colors"
                         >
                           {player.team?.name}
                         </Link>
                       ) : (
-                        <span className="text-text-secondary">{player.team?.name || 'Unknown Team'}</span>
+                        <span className="text-[var(--bsi-dust)]">{player.team?.name || 'Unknown Team'}</span>
                       )}
                     </div>
 
-                    <h1 className="font-display text-3xl md:text-4xl font-bold text-text-primary">
+                    <h1 className="font-display text-3xl md:text-4xl font-bold text-[var(--bsi-bone)]">
                       {player.name}
                     </h1>
 
                     <div className="flex items-center gap-4 justify-center md:justify-start mt-2">
                       {player.jersey && <Badge variant="primary">#{player.jersey}</Badge>}
-                      <span className="text-text-secondary">
+                      <span className="text-[var(--bsi-dust)]">
                         {player.positionFull || player.position}
                       </span>
                       {player.year && (
-                        <span className="text-text-tertiary">{player.year}</span>
+                        <span className="text-[rgba(196,184,165,0.5)]">{player.year}</span>
                       )}
                     </div>
 
@@ -239,38 +239,38 @@ export default function CFBPlayerDetailClient({ playerId }: CFBPlayerDetailClien
                 {/* Personal Info */}
                 <ScrollReveal direction="up">
                   <Card variant="default" padding="lg">
-                    <h2 className="font-display text-xl font-bold text-text-primary mb-4">
+                    <h2 className="font-display text-xl font-bold text-[var(--bsi-bone)] mb-4">
                       Player Information
                     </h2>
                     <dl className="space-y-3">
                       {player.position && (
                         <div className="flex justify-between">
-                          <dt className="text-text-tertiary">Position</dt>
-                          <dd className="text-text-primary">{player.positionFull || player.position}</dd>
+                          <dt className="text-[rgba(196,184,165,0.5)]">Position</dt>
+                          <dd className="text-[var(--bsi-bone)]">{player.positionFull || player.position}</dd>
                         </div>
                       )}
                       {player.height && (
                         <div className="flex justify-between">
-                          <dt className="text-text-tertiary">Height</dt>
-                          <dd className="text-text-primary">{player.height}</dd>
+                          <dt className="text-[rgba(196,184,165,0.5)]">Height</dt>
+                          <dd className="text-[var(--bsi-bone)]">{player.height}</dd>
                         </div>
                       )}
                       {player.weight && (
                         <div className="flex justify-between">
-                          <dt className="text-text-tertiary">Weight</dt>
-                          <dd className="text-text-primary">{player.weight} lbs</dd>
+                          <dt className="text-[rgba(196,184,165,0.5)]">Weight</dt>
+                          <dd className="text-[var(--bsi-bone)]">{player.weight} lbs</dd>
                         </div>
                       )}
                       {player.year && (
                         <div className="flex justify-between">
-                          <dt className="text-text-tertiary">Class</dt>
-                          <dd className="text-text-primary">{player.year}</dd>
+                          <dt className="text-[rgba(196,184,165,0.5)]">Class</dt>
+                          <dd className="text-[var(--bsi-bone)]">{player.year}</dd>
                         </div>
                       )}
                       {player.birthDate && (
                         <div className="flex justify-between">
-                          <dt className="text-text-tertiary">Born</dt>
-                          <dd className="text-text-primary">
+                          <dt className="text-[rgba(196,184,165,0.5)]">Born</dt>
+                          <dd className="text-[var(--bsi-bone)]">
                             {new Date(player.birthDate).toLocaleDateString('en-US', {
                               month: 'long',
                               day: 'numeric',
@@ -281,14 +281,14 @@ export default function CFBPlayerDetailClient({ playerId }: CFBPlayerDetailClien
                       )}
                       {player.birthPlace && (
                         <div className="flex justify-between">
-                          <dt className="text-text-tertiary">Hometown</dt>
-                          <dd className="text-text-primary">{player.birthPlace}</dd>
+                          <dt className="text-[rgba(196,184,165,0.5)]">Hometown</dt>
+                          <dd className="text-[var(--bsi-bone)]">{player.birthPlace}</dd>
                         </div>
                       )}
                       {player.hometown && !player.birthPlace && (
                         <div className="flex justify-between">
-                          <dt className="text-text-tertiary">Hometown</dt>
-                          <dd className="text-text-primary">{player.hometown}</dd>
+                          <dt className="text-[rgba(196,184,165,0.5)]">Hometown</dt>
+                          <dd className="text-[var(--bsi-bone)]">{player.hometown}</dd>
                         </div>
                       )}
                     </dl>
@@ -298,7 +298,7 @@ export default function CFBPlayerDetailClient({ playerId }: CFBPlayerDetailClien
                 {/* Team Info */}
                 <ScrollReveal direction="up" delay={100}>
                   <Card variant="default" padding="lg">
-                    <h2 className="font-display text-xl font-bold text-text-primary mb-4">
+                    <h2 className="font-display text-xl font-bold text-[var(--bsi-bone)] mb-4">
                       Team
                     </h2>
                     {player.team ? (
@@ -314,17 +314,17 @@ export default function CFBPlayerDetailClient({ playerId }: CFBPlayerDetailClien
                           />
                         )}
                         <div>
-                          <p className="text-text-primary font-semibold text-lg">{player.team.name}</p>
-                          <p className="text-text-tertiary">{player.team.abbreviation}</p>
+                          <p className="text-[var(--bsi-bone)] font-semibold text-lg">{player.team.name}</p>
+                          <p className="text-[rgba(196,184,165,0.5)]">{player.team.abbreviation}</p>
                         </div>
                       </div>
                     ) : (
-                      <p className="text-text-secondary">Team information unavailable</p>
+                      <p className="text-[var(--bsi-dust)]">Team information unavailable</p>
                     )}
                     {player.team?.id && (
                       <Link
                         href={`/cfb/teams/${player.team.id}`}
-                        className="inline-block px-4 py-2 bg-burnt-orange/20 text-burnt-orange rounded-sm hover:bg-burnt-orange/30 transition-colors mt-2"
+                        className="inline-block px-4 py-2 bg-[var(--bsi-primary)]/20 text-[var(--bsi-primary)] rounded-sm hover:bg-[var(--bsi-primary)]/30 transition-colors mt-2"
                       >
                         View Full Roster
                       </Link>
@@ -341,7 +341,7 @@ export default function CFBPlayerDetailClient({ playerId }: CFBPlayerDetailClien
           <Section padding="lg" background="midnight">
             <Container>
               <ScrollReveal direction="up">
-                <h2 className="font-display text-2xl font-bold text-text-primary mb-6">
+                <h2 className="font-display text-2xl font-bold text-[var(--bsi-bone)] mb-6">
                   {stats.season || 'Season'} Stats
                 </h2>
               </ScrollReveal>
@@ -350,8 +350,8 @@ export default function CFBPlayerDetailClient({ playerId }: CFBPlayerDetailClien
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
                   {stats.stats.map((stat) => (
                     <Card key={stat.name} variant="default" padding="md" className="text-center">
-                      <p className="text-2xl font-bold text-burnt-orange">{stat.displayValue}</p>
-                      <p className="text-xs text-text-tertiary uppercase tracking-wider mt-1">
+                      <p className="text-2xl font-bold text-[var(--bsi-primary)]">{stat.displayValue}</p>
+                      <p className="text-xs text-[rgba(196,184,165,0.5)] uppercase tracking-wider mt-1">
                         {stat.displayName}
                       </p>
                     </Card>
@@ -376,20 +376,20 @@ export default function CFBPlayerDetailClient({ playerId }: CFBPlayerDetailClien
               {player?.team?.id && (
                 <Link
                   href={`/cfb/teams/${player.team.id}`}
-                  className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
+                  className="px-6 py-3 bg-[var(--surface-dugout)] rounded-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-all"
                 >
                   {player.team.name} Roster
                 </Link>
               )}
               <Link
                 href="/cfb/teams"
-                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
+                className="px-6 py-3 bg-[var(--surface-dugout)] rounded-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-all"
               >
                 All Teams
               </Link>
               <Link
                 href="/cfb/scores"
-                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
+                className="px-6 py-3 bg-[var(--surface-dugout)] rounded-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-all"
               >
                 Live Scores
               </Link>

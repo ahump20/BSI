@@ -113,9 +113,9 @@ export default function PlayByPlay({
 
   if (plays.length === 0) {
     return (
-      <div className="bg-graphite rounded-sm border border-border-subtle p-8 text-center">
-        <p className="text-text-secondary">No play-by-play data available yet.</p>
-        <p className="text-text-tertiary text-sm mt-2">
+      <div className="bg-graphite rounded-sm border border-[var(--border-vintage)] p-8 text-center">
+        <p className="text-[var(--bsi-dust)]">No play-by-play data available yet.</p>
+        <p className="text-[rgba(196,184,165,0.5)] text-sm mt-2">
           When the game gets going, every at-bat shows up here.
         </p>
       </div>
@@ -125,9 +125,9 @@ export default function PlayByPlay({
   const scoringCount = plays.filter((p) => p.isScoring).length;
 
   return (
-    <div className="bg-midnight rounded-sm border border-border-subtle overflow-hidden">
+    <div className="bg-[var(--surface-scoreboard)] rounded-sm border border-[var(--border-vintage)] overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border-subtle bg-charcoal">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-vintage)] bg-[var(--surface-dugout)]">
         <div className="flex items-center gap-3">
           <h3 className="font-display text-sm font-semibold uppercase tracking-wide text-bone">
             Play-by-Play
@@ -146,8 +146,8 @@ export default function PlayByPlay({
             onClick={() => setFilter('all')}
             className={`px-3 py-1 rounded-sm text-xs font-medium transition-colors ${
               filter === 'all'
-                ? 'bg-burnt-orange text-white'
-                : 'bg-graphite text-text-secondary hover:bg-surface'
+                ? 'bg-[var(--bsi-primary)] text-white'
+                : 'bg-graphite text-[var(--bsi-dust)] hover:bg-surface'
             }`}
           >
             All ({plays.length})
@@ -156,8 +156,8 @@ export default function PlayByPlay({
             onClick={() => setFilter('scoring')}
             className={`px-3 py-1 rounded-sm text-xs font-medium transition-colors ${
               filter === 'scoring'
-                ? 'bg-burnt-orange text-white'
-                : 'bg-graphite text-text-secondary hover:bg-surface'
+                ? 'bg-[var(--bsi-primary)] text-white'
+                : 'bg-graphite text-[var(--bsi-dust)] hover:bg-surface'
             }`}
           >
             Scoring ({scoringCount})
@@ -181,11 +181,11 @@ export default function PlayByPlay({
             <div key={group.key}>
               {/* Inning header */}
               <div
-                className={`sticky top-0 z-10 px-4 py-2 border-b border-border-subtle ${
-                  isCurrent ? 'bg-burnt-orange/20' : 'bg-charcoal/80 backdrop-blur-sm'
+                className={`sticky top-0 z-10 px-4 py-2 border-b border-[var(--border-vintage)] ${
+                  isCurrent ? 'bg-[var(--bsi-primary)]/20' : 'bg-[var(--surface-dugout)]/80 backdrop-blur-sm'
                 }`}
               >
-                <span className="font-display text-xs font-semibold uppercase tracking-wide text-burnt-orange">
+                <span className="font-display text-xs font-semibold uppercase tracking-wide text-[var(--bsi-primary)]">
                   {inningLabel(group.inning, group.half)}
                 </span>
               </div>
@@ -194,10 +194,10 @@ export default function PlayByPlay({
               {group.plays.map((play) => (
                 <div
                   key={play.id}
-                  className={`px-4 py-3 border-b border-border-subtle transition-colors ${
+                  className={`px-4 py-3 border-b border-[var(--border-vintage)] transition-colors ${
                     play.isScoring
-                      ? 'bg-burnt-orange/5 border-l-4 border-l-burnt-orange'
-                      : 'hover:bg-surface-light'
+                      ? 'bg-[var(--bsi-primary)]/5 border-l-4 border-l-burnt-orange'
+                      : 'hover:bg-[var(--surface-press-box)]'
                   }`}
                 >
                   <div className="flex items-start gap-3">
@@ -208,7 +208,7 @@ export default function PlayByPlay({
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
-                      <p className={`text-sm leading-relaxed ${play.isScoring ? 'text-text-primary font-medium' : 'text-text-secondary'}`}>
+                      <p className={`text-sm leading-relaxed ${play.isScoring ? 'text-[var(--bsi-bone)] font-medium' : 'text-[var(--bsi-dust)]'}`}>
                         {play.description}
                       </p>
 
@@ -217,7 +217,7 @@ export default function PlayByPlay({
                           <Badge variant="primary" size="sm">
                             +{play.runsScored} Run{play.runsScored > 1 ? 's' : ''}
                           </Badge>
-                          <span className="text-xs text-text-tertiary font-mono">
+                          <span className="text-xs text-[rgba(196,184,165,0.5)] font-mono">
                             {awayAbbr ?? 'AWY'} {play.scoreAfter.away} - {homeAbbr ?? 'HME'} {play.scoreAfter.home}
                           </span>
                         </div>
@@ -239,7 +239,7 @@ export default function PlayByPlay({
         <div className="sticky bottom-0 px-4 py-2 bg-gradient-to-t from-midnight to-transparent">
           <button
             onClick={scrollToBottom}
-            className="w-full py-2 bg-burnt-orange/90 hover:bg-burnt-orange text-white text-xs font-semibold rounded-sm transition-colors flex items-center justify-center gap-1.5"
+            className="w-full py-2 bg-[var(--bsi-primary)]/90 hover:bg-[var(--bsi-primary)] text-white text-xs font-semibold rounded-sm transition-colors flex items-center justify-center gap-1.5"
           >
             <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M12 5v14M5 12l7 7 7-7" />

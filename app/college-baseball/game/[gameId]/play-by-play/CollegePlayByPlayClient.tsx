@@ -58,7 +58,7 @@ export default function CollegePlayByPlayClient() {
         <div className="text-center py-8">
           <svg
             viewBox="0 0 24 24"
-            className="w-16 h-16 text-text-tertiary mx-auto mb-4"
+            className="w-16 h-16 text-[rgba(196,184,165,0.5)] mx-auto mb-4"
             fill="none"
             stroke="currentColor"
             strokeWidth="1.5"
@@ -69,8 +69,8 @@ export default function CollegePlayByPlayClient() {
             <line x1="16" y1="17" x2="8" y2="17" />
             <polyline points="10,9 9,9 8,9" />
           </svg>
-          <p className="text-text-secondary">Play-by-play data not available yet.</p>
-          <p className="text-text-tertiary text-sm mt-2">
+          <p className="text-[var(--bsi-dust)]">Play-by-play data not available yet.</p>
+          <p className="text-[rgba(196,184,165,0.5)] text-sm mt-2">
             When the game starts, every pitch, every swing, every play shows up here—the kind of
             detail ESPN can't be bothered to track for college baseball.
           </p>
@@ -83,14 +83,14 @@ export default function CollegePlayByPlayClient() {
     <div className="space-y-4">
       {/* Filters */}
       <div className="flex items-center gap-4 mb-6">
-        <span className="text-text-tertiary text-sm">Filter:</span>
+        <span className="text-[rgba(196,184,165,0.5)] text-sm">Filter:</span>
         <div className="flex gap-2">
           <button
             onClick={() => setFilter('all')}
             className={`px-4 py-2 rounded-sm text-sm font-medium transition-colors ${
               filter === 'all'
-                ? 'bg-burnt-orange text-white'
-                : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
+                ? 'bg-[var(--bsi-primary)] text-white'
+                : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:bg-[var(--surface-press-box)]'
             }`}
           >
             All Plays ({plays.length})
@@ -99,8 +99,8 @@ export default function CollegePlayByPlayClient() {
             onClick={() => setFilter('scoring')}
             className={`px-4 py-2 rounded-sm text-sm font-medium transition-colors ${
               filter === 'scoring'
-                ? 'bg-burnt-orange text-white'
-                : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
+                ? 'bg-[var(--bsi-primary)] text-white'
+                : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:bg-[var(--surface-press-box)]'
             }`}
           >
             Scoring ({plays.filter((p) => p.isScoring).length})
@@ -119,10 +119,10 @@ export default function CollegePlayByPlayClient() {
               {/* Inning Header */}
               <button
                 onClick={() => toggleInning(inning)}
-                className="w-full px-4 py-3 flex items-center justify-between hover:bg-surface-light transition-colors"
+                className="w-full px-4 py-3 flex items-center justify-between hover:bg-[var(--surface-press-box)] transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-burnt-orange font-semibold uppercase text-sm tracking-wide">
+                  <span className="text-[var(--bsi-primary)] font-semibold uppercase text-sm tracking-wide">
                     {inning}
                   </span>
                   {scoringCount > 0 && (
@@ -132,10 +132,10 @@ export default function CollegePlayByPlayClient() {
                   )}
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-text-tertiary text-sm">{inningPlays.length} plays</span>
+                  <span className="text-[rgba(196,184,165,0.5)] text-sm">{inningPlays.length} plays</span>
                   <svg
                     viewBox="0 0 24 24"
-                    className={`w-5 h-5 text-text-tertiary transition-transform ${
+                    className={`w-5 h-5 text-[rgba(196,184,165,0.5)] transition-transform ${
                       isExpanded ? 'rotate-180' : ''
                     }`}
                     fill="none"
@@ -149,21 +149,21 @@ export default function CollegePlayByPlayClient() {
 
               {/* Plays List */}
               {isExpanded && (
-                <div className="border-t border-border-subtle">
+                <div className="border-t border-[var(--border-vintage)]">
                   {inningPlays.map((play) => (
                     <div
                       key={play.id}
-                      className={`px-4 py-3 border-b border-border-subtle last:border-0 ${
-                        play.isScoring ? 'bg-burnt-orange/10 border-l-4 border-l-burnt-orange' : ''
+                      className={`px-4 py-3 border-b border-[var(--border-vintage)] last:border-0 ${
+                        play.isScoring ? 'bg-[var(--bsi-primary)]/10 border-l-4 border-l-burnt-orange' : ''
                       }`}
                     >
-                      <p className="text-text-secondary text-sm">{play.description}</p>
+                      <p className="text-[var(--bsi-dust)] text-sm">{play.description}</p>
                       {play.isScoring && (
                         <div className="mt-2 flex items-center gap-3">
                           <Badge variant="primary" size="sm">
                             +{play.runsScored} Run{play.runsScored > 1 ? 's' : ''}
                           </Badge>
-                          <span className="text-xs text-text-tertiary">
+                          <span className="text-xs text-[rgba(196,184,165,0.5)]">
                             Score: {game?.teams.away.abbreviation} {play.scoreAfter.away} -{' '}
                             {game?.teams.home.abbreviation} {play.scoreAfter.home}
                           </span>
@@ -182,8 +182,8 @@ export default function CollegePlayByPlayClient() {
       {filteredPlays.length === 0 && filter === 'scoring' && (
         <Card variant="default" padding="lg">
           <div className="text-center py-6">
-            <p className="text-text-secondary">No scoring plays yet.</p>
-            <p className="text-text-tertiary text-sm mt-1">
+            <p className="text-[var(--bsi-dust)]">No scoring plays yet.</p>
+            <p className="text-[rgba(196,184,165,0.5)] text-sm mt-1">
               Some of the best college games are pitcher's duels. Patience.
             </p>
           </div>

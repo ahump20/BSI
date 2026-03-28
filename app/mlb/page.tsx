@@ -28,7 +28,7 @@ const mlbFeatures = [
   {
     href: '/mlb/scores',
     icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
+      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-[var(--bsi-primary)] fill-none stroke-[1.5]">
         <circle cx="12" cy="12" r="10" />
         <polyline points="12 6 12 12 16 14" />
       </svg>
@@ -43,7 +43,7 @@ const mlbFeatures = [
   {
     href: '/mlb/standings',
     icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
+      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-[var(--bsi-primary)] fill-none stroke-[1.5]">
         <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
         <line x1="3" y1="9" x2="21" y2="9" />
         <line x1="9" y1="21" x2="9" y2="9" />
@@ -58,7 +58,7 @@ const mlbFeatures = [
   {
     href: '/mlb/teams',
     icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
+      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-[var(--bsi-primary)] fill-none stroke-[1.5]">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
         <circle cx="9" cy="7" r="4" />
         <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
@@ -73,7 +73,7 @@ const mlbFeatures = [
   {
     href: '/mlb/stats',
     icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
+      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-[var(--bsi-primary)] fill-none stroke-[1.5]">
         <line x1="18" y1="20" x2="18" y2="10" />
         <line x1="12" y1="20" x2="12" y2="4" />
         <line x1="6" y1="20" x2="6" y2="14" />
@@ -88,7 +88,7 @@ const mlbFeatures = [
   {
     href: '/mlb/editorial',
     icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
+      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-[var(--bsi-primary)] fill-none stroke-[1.5]">
         <path d="M12 20h9" />
         <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
       </svg>
@@ -327,11 +327,11 @@ export default function MLBPage() {
           <Section padding="md" background="charcoal" borderTop>
             <Container>
               <Link href="/mlb/spring-training" className="group block">
-                <div className="bg-gradient-to-r from-burnt-orange/15 via-ember/10 to-transparent rounded-sm p-6 border border-burnt-orange/30 hover:border-burnt-orange transition-colors">
+                <div className="bg-gradient-to-r from-burnt-orange/15 via-ember/10 to-transparent rounded-sm p-6 border border-[var(--bsi-primary)]/30 hover:border-[var(--bsi-primary)] transition-colors">
                   <div className="flex items-center justify-between flex-wrap gap-4">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-burnt-orange/20 rounded-sm flex items-center justify-center">
-                        <svg viewBox="0 0 24 24" className="w-6 h-6 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <div className="w-12 h-12 bg-[var(--bsi-primary)]/20 rounded-sm flex items-center justify-center">
+                        <svg viewBox="0 0 24 24" className="w-6 h-6 text-[var(--bsi-primary)]" fill="none" stroke="currentColor" strokeWidth="1.5">
                           <circle cx="12" cy="12" r="10" />
                           <path d="M12 2c-2 4-2 8 0 12s2 8 0 12" />
                           <path d="M2 12c4-2 8-2 12 0s8 2 12 0" />
@@ -342,11 +342,11 @@ export default function MLBPage() {
                           <Badge variant="warning">Spring Training</Badge>
                           <FreshnessBadge isLive fetchedAt={meta?.lastUpdated} />
                         </div>
-                        <h3 className="text-text-primary font-semibold">Cactus & Grapefruit League</h3>
-                        <p className="text-text-tertiary text-sm mt-1">Live scores, standings, rosters, and schedules across both spring leagues.</p>
+                        <h3 className="text-[var(--bsi-bone)] font-semibold">Cactus & Grapefruit League</h3>
+                        <p className="text-[rgba(196,184,165,0.5)] text-sm mt-1">Live scores, standings, rosters, and schedules across both spring leagues.</p>
                       </div>
                     </div>
-                    <span className="text-burnt-orange font-semibold text-sm flex items-center gap-2 group-hover:gap-3 transition-all">
+                    <span className="text-[var(--bsi-primary)] font-semibold text-sm flex items-center gap-2 group-hover:gap-3 transition-all">
                       View Spring Training
                       <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M5 12h14M12 5l7 7-7 7" />
@@ -366,9 +366,9 @@ export default function MLBPage() {
               <div className="text-center mb-12">
                 <span className="kicker">All 30 Teams</span>
                 <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display mt-2">
-                  The Data You <span className="text-gradient-blaze">Actually Need</span>
+                  The Data You <span className="text-[var(--bsi-primary)]">Actually Need</span>
                 </h2>
-                <p className="text-text-secondary mt-4 max-w-2xl mx-auto">
+                <p className="text-[var(--bsi-dust)] mt-4 max-w-2xl mx-auto">
                   Scores, standings, Statcast. Straight from MLB—no middleman.
                 </p>
               </div>
@@ -381,22 +381,22 @@ export default function MLBPage() {
                     <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
                       <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
 
-                      <div className="w-12 h-12 mb-5 bg-burnt-orange/15 rounded-sm flex items-center justify-center">
+                      <div className="w-12 h-12 mb-5 bg-[var(--bsi-primary)]/15 rounded-sm flex items-center justify-center">
                         {feature.icon}
                       </div>
 
-                      <h3 className="text-lg font-semibold text-text-primary mb-3">{feature.title}</h3>
-                      <p className="text-text-tertiary text-sm leading-relaxed mb-4">
+                      <h3 className="text-lg font-semibold text-[var(--bsi-bone)] mb-3">{feature.title}</h3>
+                      <p className="text-[rgba(196,184,165,0.5)] text-sm leading-relaxed mb-4">
                         {feature.description}
                       </p>
 
-                      <div className="flex items-center justify-between pt-4 border-t border-border-subtle">
+                      <div className="flex items-center justify-between pt-4 border-t border-[var(--border-vintage)]">
                         {feature.isLive ? (
                           <FreshnessBadge isLive fetchedAt={meta?.lastUpdated} />
                         ) : (
                           <Badge variant={feature.badgeVariant}>{feature.badge}</Badge>
                         )}
-                        <span className="text-burnt-orange text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
+                        <span className="text-[var(--bsi-primary)] text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
                           View
                           <svg
                             viewBox="0 0 24 24"
@@ -438,12 +438,12 @@ export default function MLBPage() {
                         <div className="overflow-x-auto">
                           <table className="w-full" aria-label="MLB standings">
                             <thead>
-                              <tr className="border-b-2 border-burnt-orange">
+                              <tr className="border-b-2 border-[var(--bsi-primary)]">
                                 {['Rank', 'Team', 'W', 'L', 'PCT', 'GB', 'RS', 'RA', 'STRK'].map(
                                   (h) => (
                                     <th scope="col"
                                       key={h}
-                                      className="text-left p-3 text-text-tertiary font-semibold"
+                                      className="text-left p-3 text-[rgba(196,184,165,0.5)] font-semibold"
                                     >
                                       {h}
                                     </th>
@@ -480,7 +480,7 @@ export default function MLBPage() {
                           <CardTitle className="flex items-center gap-3">
                             <svg
                               viewBox="0 0 24 24"
-                              className="w-6 h-6 text-burnt-orange"
+                              className="w-6 h-6 text-[var(--bsi-primary)]"
                               fill="currentColor"
                             >
                               <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
@@ -492,20 +492,20 @@ export default function MLBPage() {
                           <div className="overflow-x-auto">
                             <table className="w-full" aria-label="MLB division standings">
                               <thead>
-                                <tr className="border-b-2 border-burnt-orange">
-                                  <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">
+                                <tr className="border-b-2 border-[var(--bsi-primary)]">
+                                  <th scope="col" className="text-left p-3 text-[rgba(196,184,165,0.5)] font-semibold">
                                     Rank
                                   </th>
-                                  <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">
+                                  <th scope="col" className="text-left p-3 text-[rgba(196,184,165,0.5)] font-semibold">
                                     Team
                                   </th>
-                                  <th className="text-left p-3 text-text-tertiary font-semibold">W</th>
-                                  <th className="text-left p-3 text-text-tertiary font-semibold">L</th>
-                                  <th className="text-left p-3 text-text-tertiary font-semibold">PCT</th>
-                                  <th className="text-left p-3 text-text-tertiary font-semibold">GB</th>
-                                  <th className="text-left p-3 text-text-tertiary font-semibold">RS</th>
-                                  <th className="text-left p-3 text-text-tertiary font-semibold">RA</th>
-                                  <th className="text-left p-3 text-text-tertiary font-semibold">
+                                  <th className="text-left p-3 text-[rgba(196,184,165,0.5)] font-semibold">W</th>
+                                  <th className="text-left p-3 text-[rgba(196,184,165,0.5)] font-semibold">L</th>
+                                  <th className="text-left p-3 text-[rgba(196,184,165,0.5)] font-semibold">PCT</th>
+                                  <th className="text-left p-3 text-[rgba(196,184,165,0.5)] font-semibold">GB</th>
+                                  <th className="text-left p-3 text-[rgba(196,184,165,0.5)] font-semibold">RS</th>
+                                  <th className="text-left p-3 text-[rgba(196,184,165,0.5)] font-semibold">RA</th>
+                                  <th className="text-left p-3 text-[rgba(196,184,165,0.5)] font-semibold">
                                     STRK
                                   </th>
                                 </tr>
@@ -514,31 +514,31 @@ export default function MLBPage() {
                                 {standingsByDivision[division].map((team, idx) => (
                                   <tr
                                     key={team.teamName}
-                                    className="border-b border-border-subtle hover:bg-[var(--surface-dugout)] transition-colors"
+                                    className="border-b border-[var(--border-vintage)] hover:bg-[var(--surface-dugout)] transition-colors"
                                   >
-                                    <td className="p-3 text-burnt-orange font-bold">{idx + 1}</td>
-                                    <td className="p-3 font-semibold text-text-primary">
+                                    <td className="p-3 text-[var(--bsi-primary)] font-bold">{idx + 1}</td>
+                                    <td className="p-3 font-semibold text-[var(--bsi-bone)]">
                                       {team.teamName}
                                     </td>
-                                    <td className="p-3 text-text-secondary">{team.wins}</td>
-                                    <td className="p-3 text-text-secondary">{team.losses}</td>
-                                    <td className="p-3 text-text-secondary">
+                                    <td className="p-3 text-[var(--bsi-dust)]">{team.wins}</td>
+                                    <td className="p-3 text-[var(--bsi-dust)]">{team.losses}</td>
+                                    <td className="p-3 text-[var(--bsi-dust)]">
                                       {team.winPercentage.toFixed(3).replace('0.', '.')}
                                     </td>
-                                    <td className="p-3 text-text-secondary">
+                                    <td className="p-3 text-[var(--bsi-dust)]">
                                       {team.gamesBack === 0 ? '-' : team.gamesBack.toFixed(1)}
                                     </td>
-                                    <td className="p-3 text-text-secondary">{team.runsScored}</td>
-                                    <td className="p-3 text-text-secondary">
+                                    <td className="p-3 text-[var(--bsi-dust)]">{team.runsScored}</td>
+                                    <td className="p-3 text-[var(--bsi-dust)]">
                                       {team.runsAllowed}
                                     </td>
-                                    <td className="p-3 text-text-secondary">{team.streakCode}</td>
+                                    <td className="p-3 text-[var(--bsi-dust)]">{team.streakCode}</td>
                                   </tr>
                                 ))}
                               </tbody>
                             </table>
                           </div>
-                          <div className="mt-4 pt-4 border-t border-border-subtle">
+                          <div className="mt-4 pt-4 border-t border-[var(--border-vintage)]">
                             <DataSourceBadge
                               source={meta?.dataSource || 'MLB Stats API'}
                               timestamp={formatTimestamp(meta?.lastUpdated)}
@@ -557,32 +557,32 @@ export default function MLBPage() {
               <Card variant="default" padding="lg">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3">
-                    <svg viewBox="0 0 24 24" className="w-6 h-6 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg viewBox="0 0 24 24" className="w-6 h-6 text-[var(--bsi-primary)]" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
                     </svg>
                     MLB Teams
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-text-secondary mb-6">
+                  <p className="text-[var(--bsi-dust)] mb-6">
                     Browse all 30 MLB teams — rosters, schedules, and statistics across the American and National Leagues.
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <Link href="/mlb/teams" className="group block">
-                      <div className="bg-[var(--surface-dugout)] rounded-sm p-6 border border-[var(--border-vintage)] hover:border-burnt-orange transition-colors">
-                        <h3 className="text-text-primary font-semibold mb-2 group-hover:text-burnt-orange transition-colors">All 30 Teams</h3>
-                        <p className="text-text-tertiary text-sm">Full team directory with profiles, rosters, and season stats.</p>
-                        <span className="text-burnt-orange text-sm font-semibold mt-3 inline-flex items-center gap-1">
+                      <div className="bg-[var(--surface-dugout)] rounded-sm p-6 border border-[var(--border-vintage)] hover:border-[var(--bsi-primary)] transition-colors">
+                        <h3 className="text-[var(--bsi-bone)] font-semibold mb-2 group-hover:text-[var(--bsi-primary)] transition-colors">All 30 Teams</h3>
+                        <p className="text-[rgba(196,184,165,0.5)] text-sm">Full team directory with profiles, rosters, and season stats.</p>
+                        <span className="text-[var(--bsi-primary)] text-sm font-semibold mt-3 inline-flex items-center gap-1">
                           Browse Teams
                           <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                         </span>
                       </div>
                     </Link>
                     <Link href="/mlb/standings" className="group block">
-                      <div className="bg-[var(--surface-dugout)] rounded-sm p-6 border border-[var(--border-vintage)] hover:border-burnt-orange transition-colors">
-                        <h3 className="text-text-primary font-semibold mb-2 group-hover:text-burnt-orange transition-colors">Division Standings</h3>
-                        <p className="text-text-tertiary text-sm">AL &amp; NL standings with win percentage, games back, and streaks.</p>
-                        <span className="text-burnt-orange text-sm font-semibold mt-3 inline-flex items-center gap-1">
+                      <div className="bg-[var(--surface-dugout)] rounded-sm p-6 border border-[var(--border-vintage)] hover:border-[var(--bsi-primary)] transition-colors">
+                        <h3 className="text-[var(--bsi-bone)] font-semibold mb-2 group-hover:text-[var(--bsi-primary)] transition-colors">Division Standings</h3>
+                        <p className="text-[rgba(196,184,165,0.5)] text-sm">AL &amp; NL standings with win percentage, games back, and streaks.</p>
+                        <span className="text-[var(--bsi-primary)] text-sm font-semibold mt-3 inline-flex items-center gap-1">
                           View Standings
                           <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                         </span>
@@ -598,32 +598,32 @@ export default function MLBPage() {
               <Card variant="default" padding="lg">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3">
-                    <svg viewBox="0 0 24 24" className="w-6 h-6 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg viewBox="0 0 24 24" className="w-6 h-6 text-[var(--bsi-primary)]" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
                     </svg>
                     Player Statistics
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-text-secondary mb-6">
+                  <p className="text-[var(--bsi-dust)] mb-6">
                     Player profiles, advanced Statcast metrics, and performance data across the league.
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <Link href="/mlb/players" className="group block">
-                      <div className="bg-[var(--surface-dugout)] rounded-sm p-6 border border-[var(--border-vintage)] hover:border-burnt-orange transition-colors">
-                        <h3 className="text-text-primary font-semibold mb-2 group-hover:text-burnt-orange transition-colors">Browse Players</h3>
-                        <p className="text-text-tertiary text-sm">Search and explore player profiles with batting, pitching, and fielding stats.</p>
-                        <span className="text-burnt-orange text-sm font-semibold mt-3 inline-flex items-center gap-1">
+                      <div className="bg-[var(--surface-dugout)] rounded-sm p-6 border border-[var(--border-vintage)] hover:border-[var(--bsi-primary)] transition-colors">
+                        <h3 className="text-[var(--bsi-bone)] font-semibold mb-2 group-hover:text-[var(--bsi-primary)] transition-colors">Browse Players</h3>
+                        <p className="text-[rgba(196,184,165,0.5)] text-sm">Search and explore player profiles with batting, pitching, and fielding stats.</p>
+                        <span className="text-[var(--bsi-primary)] text-sm font-semibold mt-3 inline-flex items-center gap-1">
                           View Players
                           <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                         </span>
                       </div>
                     </Link>
                     <Link href="/mlb/stats" className="group block">
-                      <div className="bg-[var(--surface-dugout)] rounded-sm p-6 border border-[var(--border-vintage)] hover:border-burnt-orange transition-colors">
-                        <h3 className="text-text-primary font-semibold mb-2 group-hover:text-burnt-orange transition-colors">Statcast Analytics</h3>
-                        <p className="text-text-tertiary text-sm">Exit velocity, launch angle, sprint speed, and pitch movement data.</p>
-                        <span className="text-burnt-orange text-sm font-semibold mt-3 inline-flex items-center gap-1">
+                      <div className="bg-[var(--surface-dugout)] rounded-sm p-6 border border-[var(--border-vintage)] hover:border-[var(--bsi-primary)] transition-colors">
+                        <h3 className="text-[var(--bsi-bone)] font-semibold mb-2 group-hover:text-[var(--bsi-primary)] transition-colors">Statcast Analytics</h3>
+                        <p className="text-[rgba(196,184,165,0.5)] text-sm">Exit velocity, launch angle, sprint speed, and pitch movement data.</p>
+                        <span className="text-[var(--bsi-primary)] text-sm font-semibold mt-3 inline-flex items-center gap-1">
                           View Analytics
                           <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                         </span>
@@ -659,7 +659,7 @@ export default function MLBPage() {
                         <div className="flex items-center gap-3">
                           <svg
                             viewBox="0 0 24 24"
-                            className="w-6 h-6 text-burnt-orange"
+                            className="w-6 h-6 text-[var(--bsi-primary)]"
                             fill="none"
                             stroke="currentColor"
                             strokeWidth="2"
@@ -710,13 +710,13 @@ export default function MLBPage() {
                           />
                         ))}
                       </div>
-                      <div className="mt-4 pt-4 border-t border-border-subtle">
+                      <div className="mt-4 pt-4 border-t border-[var(--border-vintage)]">
                         <DataSourceBadge
                           source={meta?.dataSource || 'MLB Stats API'}
                           timestamp={formatTimestamp(meta?.lastUpdated)}
                         />
                         {hasLiveGames && (
-                          <span className="text-xs text-text-tertiary ml-4">
+                          <span className="text-xs text-[rgba(196,184,165,0.5)] ml-4">
                             Auto-refreshing every 30 seconds
                           </span>
                         )}
@@ -735,7 +735,7 @@ export default function MLBPage() {
           <Container>
             <SportInfoCard
               icon={
-                <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
+                <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-[var(--bsi-primary)] fill-none stroke-[1.5]">
                   <circle cx="12" cy="12" r="3" />
                   <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
                 </svg>

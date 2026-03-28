@@ -50,14 +50,14 @@ export default function SpringTrainingScoresPage() {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/mlb" className="text-text-tertiary hover:text-burnt-orange transition-colors">MLB</Link>
-              <span className="text-text-tertiary">/</span>
-              <Link href="/mlb/spring-training" className="text-text-tertiary hover:text-burnt-orange transition-colors">Spring Training</Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">Scores</span>
+              <Link href="/mlb" className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors">MLB</Link>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <Link href="/mlb/spring-training" className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors">Spring Training</Link>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">Scores</span>
             </nav>
           </Container>
         </Section>
@@ -66,10 +66,10 @@ export default function SpringTrainingScoresPage() {
           <Container>
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
               <div>
-                <h1 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display text-gradient-blaze">
+                <h1 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display text-[var(--bsi-primary)]">
                   Spring Training Scores
                 </h1>
-                <p className="text-text-secondary mt-2">
+                <p className="text-[var(--bsi-dust)] mt-2">
                   {targetDate.toLocaleDateString('en-US', {
                     weekday: 'long',
                     month: 'long',
@@ -89,7 +89,7 @@ export default function SpringTrainingScoresPage() {
             <div className="flex items-center gap-2 mb-6">
               <button
                 onClick={() => setDateOffset((d) => d - 1)}
-                className="px-3 py-1.5 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary text-sm transition-colors"
+                className="px-3 py-1.5 bg-[var(--surface-dugout)] rounded-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] text-sm transition-colors"
               >
                 &larr; Previous
               </button>
@@ -97,15 +97,15 @@ export default function SpringTrainingScoresPage() {
                 onClick={() => setDateOffset(0)}
                 className={`px-3 py-1.5 rounded-sm text-sm transition-colors ${
                   dateOffset === 0
-                    ? 'bg-burnt-orange text-white'
-                    : 'bg-background-tertiary text-text-secondary hover:text-text-primary'
+                    ? 'bg-[var(--bsi-primary)] text-white'
+                    : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)]'
                 }`}
               >
                 Today
               </button>
               <button
                 onClick={() => setDateOffset((d) => d + 1)}
-                className="px-3 py-1.5 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary text-sm transition-colors"
+                className="px-3 py-1.5 bg-[var(--surface-dugout)] rounded-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] text-sm transition-colors"
               >
                 Next &rarr;
               </button>
@@ -157,7 +157,7 @@ export default function SpringTrainingScoresPage() {
                         </div>
                       ))}
                     </div>
-                    <div className="mt-4 pt-4 border-t border-border-subtle">
+                    <div className="mt-4 pt-4 border-t border-[var(--border-vintage)]">
                       <DataSourceBadge
                         source={data?.meta?.dataSource ?? 'ESPN'}
                         timestamp={formatTimestamp(data?.meta?.lastUpdated)}

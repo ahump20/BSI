@@ -155,7 +155,7 @@ function VelocitySparkline({ data }: { data: PitcherBiomechanics[] }) {
 
   if (chartData.length < 2) {
     return (
-      <div className="h-[60px] flex items-center justify-center text-text-muted font-mono text-[10px]">
+      <div className="h-[60px] flex items-center justify-center text-[rgba(196,184,165,0.35)] font-mono text-[10px]">
         Insufficient history
       </div>
     );
@@ -223,8 +223,8 @@ function ReleaseDriftVisual({ driftInches }: { driftInches: number }) {
         />
       </svg>
       <div>
-        <span className="font-mono text-[12px] text-text-secondary">{driftInches.toFixed(1)}&quot;</span>
-        <span className="font-mono text-[10px] text-text-muted ml-1">drift</span>
+        <span className="font-mono text-[12px] text-[var(--bsi-dust)]">{driftInches.toFixed(1)}&quot;</span>
+        <span className="font-mono text-[10px] text-[rgba(196,184,165,0.35)] ml-1">drift</span>
       </div>
     </div>
   );
@@ -241,11 +241,11 @@ function PitcherRow({ pitcher }: { pitcher: PitcherBiomechanics }) {
   })();
 
   return (
-    <div className="border-b border-border-subtle last:border-0 py-3 px-1">
+    <div className="border-b border-[var(--border-vintage)] last:border-0 py-3 px-1">
       <div className="flex items-center justify-between mb-2">
         <div>
-          <span className="text-sm font-semibold text-text-primary">{pitcher.player_name}</span>
-          <span className="ml-2 text-[10px] font-mono text-text-muted">
+          <span className="text-sm font-semibold text-[var(--bsi-bone)]">{pitcher.player_name}</span>
+          <span className="ml-2 text-[10px] font-mono text-[rgba(196,184,165,0.35)]">
             {pitcher.team} / {pitcher.league.toUpperCase()}
           </span>
         </div>
@@ -260,12 +260,12 @@ function PitcherRow({ pitcher }: { pitcher: PitcherBiomechanics }) {
 
       <div className="grid grid-cols-3 gap-3 text-[11px] font-mono">
         <div>
-          <span className="text-text-muted">Pitch Ct</span>
-          <p className="text-text-primary">{pitcher.pitch_count}</p>
+          <span className="text-[rgba(196,184,165,0.35)]">Pitch Ct</span>
+          <p className="text-[var(--bsi-bone)]">{pitcher.pitch_count}</p>
         </div>
         <div>
-          <span className="text-text-muted">Velo Drop</span>
-          <p className="text-text-primary">
+          <span className="text-[rgba(196,184,165,0.35)]">Velo Drop</span>
+          <p className="text-[var(--bsi-bone)]">
             {pitcher.velocity_delta != null ? `${pitcher.velocity_delta > 0 ? '+' : ''}${pitcher.velocity_delta.toFixed(1)} mph` : '--'}
           </p>
         </div>
@@ -275,7 +275,7 @@ function PitcherRow({ pitcher }: { pitcher: PitcherBiomechanics }) {
       {riskFactors.length > 0 && (
         <ul className="mt-2 space-y-0.5">
           {riskFactors.map((f, i) => (
-            <li key={i} className="text-[10px] text-text-muted flex items-start gap-1">
+            <li key={i} className="text-[10px] text-[rgba(196,184,165,0.35)] flex items-start gap-1">
               <span className="text-[var(--bsi-warning)]/60 mt-0.5">*</span>
               {f}
             </li>
@@ -307,13 +307,13 @@ export function PitcherFatigue({ sport }: PitcherFatigueProps) {
       <Card variant="default" padding="none">
         <CardHeader>
           <CardTitle size="sm" className="flex items-center gap-2">
-            <Activity className="h-4 w-4 text-burnt-orange" />
+            <Activity className="h-4 w-4 text-[var(--bsi-primary)]" />
             Pitcher Fatigue
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="h-[120px] flex items-center justify-center">
-            <div className="w-6 h-6 border-2 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
+            <div className="w-6 h-6 border-2 border-[var(--bsi-primary)]/30 border-t-[var(--bsi-primary)] rounded-full animate-spin" />
           </div>
         </CardContent>
       </Card>
@@ -325,7 +325,7 @@ export function PitcherFatigue({ sport }: PitcherFatigueProps) {
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle size="sm" className="flex items-center gap-2">
-            <Activity className="h-4 w-4 text-burnt-orange" />
+            <Activity className="h-4 w-4 text-[var(--bsi-primary)]" />
             Pitcher Fatigue
           </CardTitle>
           <div className="flex items-center gap-2">
@@ -350,14 +350,14 @@ export function PitcherFatigue({ sport }: PitcherFatigueProps) {
         {topPitcher ? (
           <div className="mb-4">
             <FatigueGauge score={topPitcher.fatigue_score} />
-            <p className="text-center text-[11px] font-mono text-text-muted mt-1">
+            <p className="text-center text-[11px] font-mono text-[rgba(196,184,165,0.35)] mt-1">
               {topPitcher.player_name} — highest active fatigue
             </p>
           </div>
         ) : (
           <div className="mb-4 text-center">
             <FatigueGauge score={0} />
-            <p className="text-[11px] font-mono text-text-muted mt-1">
+            <p className="text-[11px] font-mono text-[rgba(196,184,165,0.35)] mt-1">
               No active fatigue alerts
             </p>
           </div>
@@ -366,7 +366,7 @@ export function PitcherFatigue({ sport }: PitcherFatigueProps) {
         {/* Velocity Trend (uses history data if available) */}
         {pitchers.length > 1 && (
           <div className="mb-4">
-            <p className="text-[10px] font-mono text-text-muted mb-1 uppercase tracking-wider">
+            <p className="text-[10px] font-mono text-[rgba(196,184,165,0.35)] mb-1 uppercase tracking-wider">
               Velocity Trend
             </p>
             <VelocitySparkline data={pitchers} />
@@ -382,21 +382,21 @@ export function PitcherFatigue({ sport }: PitcherFatigueProps) {
           </div>
         ) : (
           <div className="py-6 text-center">
-            <p className="text-[11px] font-mono text-text-muted">
+            <p className="text-[11px] font-mono text-[rgba(196,184,165,0.35)]">
               No pitchers above fatigue threshold
             </p>
-            <p className="text-[10px] font-mono text-text-muted mt-1">
+            <p className="text-[10px] font-mono text-[rgba(196,184,165,0.35)] mt-1">
               Data populates during live games
             </p>
           </div>
         )}
 
         {/* Footer */}
-        <div className="flex items-center justify-between mt-3 pt-3 border-t border-border-subtle">
-          <span className="font-mono text-[10px] text-text-muted">
+        <div className="flex items-center justify-between mt-3 pt-3 border-t border-[var(--border-vintage)]">
+          <span className="font-mono text-[10px] text-[rgba(196,184,165,0.35)]">
             Threshold: {threshold}+
           </span>
-          <span className="font-mono text-[10px] text-text-muted">
+          <span className="font-mono text-[10px] text-[rgba(196,184,165,0.35)]">
             CV Intelligence
           </span>
         </div>

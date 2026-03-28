@@ -24,7 +24,7 @@ interface StatRadarChartProps {
 export function StatRadarChart({ player1Name, player2Name, data }: StatRadarChartProps) {
   if (data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64 text-text-muted text-sm">
+      <div className="flex items-center justify-center h-64 text-[rgba(196,184,165,0.35)] text-sm">
         No comparable statistics available
       </div>
     );

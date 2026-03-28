@@ -75,7 +75,7 @@ export function DiamondDynastyCollectionDetailClient() {
           <Card padding="lg">
             <CardContent className="space-y-3 px-0 pb-0 pt-0">
               <p className="text-sm text-[var(--bsi-dust)]">
-                Start from the <Link href="/mlb/the-show-26/diamond-dynasty/collections" className="text-burnt-orange">collections board</Link>.
+                Start from the <Link href="/mlb/the-show-26/diamond-dynasty/collections" className="text-[var(--bsi-primary)]">collections board</Link>.
               </p>
             </CardContent>
           </Card>
@@ -133,7 +133,7 @@ export function DiamondDynastyCollectionDetailClient() {
                     <div className="overflow-x-auto">
                       <table className="w-full min-w-[920px]">
                         <thead>
-                          <tr className="border-b border-burnt-orange/35 text-left text-xs uppercase tracking-[0.18em] text-[var(--bsi-dust)]">
+                          <tr className="border-b border-[var(--bsi-primary)]/35 text-left text-xs uppercase tracking-[0.18em] text-[var(--bsi-dust)]">
                             <th className="px-3 py-3">Card</th>
                             <th className="px-3 py-3">Team</th>
                             <th className="px-3 py-3">Series</th>
@@ -150,7 +150,7 @@ export function DiamondDynastyCollectionDetailClient() {
                             return (
                               <tr key={card.id} className="border-b border-[var(--border-vintage)] text-sm text-[var(--bsi-bone)]">
                                 <td className="px-3 py-3">
-                                  <Link href={buildCardHref(card.id)} className="block transition-colors hover:text-burnt-orange">
+                                  <Link href={buildCardHref(card.id)} className="block transition-colors hover:text-[var(--bsi-primary)]">
                                     <div className="font-semibold">{card.name}</div>
                                     <div className="text-xs uppercase tracking-[0.18em] text-[var(--bsi-dust)]">
                                       {card.rarity} • {card.setName ?? 'No set label'}
@@ -160,7 +160,7 @@ export function DiamondDynastyCollectionDetailClient() {
                                 <td className="px-3 py-3">{card.team}</td>
                                 <td className="px-3 py-3">{card.series}</td>
                                 <td className="px-3 py-3">{card.primaryPosition}</td>
-                                <td className="px-3 py-3 font-mono text-burnt-orange">{card.overall}</td>
+                                <td className="px-3 py-3 font-mono text-[var(--bsi-primary)]">{card.overall}</td>
                                 <td className="px-3 py-3 font-mono">{formatCompactStub(card.market?.bestSellNow)}</td>
                                 <td className="px-3 py-3">{card.isCaptain ? 'Yes' : 'No'}</td>
                                 <td className="px-3 py-3">
@@ -188,7 +188,7 @@ function InfoChip({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-4">
       <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)]">{label}</div>
-      <div className="mt-2 font-mono text-2xl text-burnt-orange">{value.toLocaleString()}</div>
+      <div className="mt-2 font-mono text-2xl text-[var(--bsi-primary)]">{value.toLocaleString()}</div>
     </div>
   );
 }

@@ -102,13 +102,13 @@ export default async function PoolPage({ params }: { params: Promise<{ pool: str
   const isDeath = data.id === 'D';
 
   return (
-    <div className="min-h-screen bg-midnight">
+    <div className="min-h-screen bg-[var(--surface-scoreboard)]">
       {/* Header */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 border-b border-border-subtle">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 border-b border-[var(--border-vintage)]">
         <div className="max-w-4xl mx-auto">
           <Link
             href="/wbc"
-            className="inline-flex items-center gap-2 text-text-muted hover:text-burnt-orange transition-colors text-sm mb-6"
+            className="inline-flex items-center gap-2 text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors text-sm mb-6"
           >
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M19 12H5M12 5l-7 7 7 7" />
@@ -117,49 +117,49 @@ export default async function PoolPage({ params }: { params: Promise<{ pool: str
           </Link>
 
           <div className="flex items-start gap-4 mb-4">
-            <span className="font-display text-6xl font-bold text-burnt-orange">
+            <span className="font-display text-6xl font-bold text-[var(--bsi-primary)]">
               Pool {data.id}
             </span>
             <span
               className={`mt-2 text-xs font-bold px-2 py-1 rounded-sm border ${
                 isDeath
                   ? 'text-ember bg-ember/10 border-ember/30'
-                  : 'text-text-muted bg-surface-light border-border-subtle'
+                  : 'text-[rgba(196,184,165,0.35)] bg-[var(--surface-press-box)] border-[var(--border-vintage)]'
               }`}
             >
               {data.danger}
             </span>
           </div>
 
-          <div className="text-text-secondary mb-2">{data.venue}</div>
-          <div className="text-text-muted text-sm">{data.city} · {data.dates}</div>
+          <div className="text-[var(--bsi-dust)] mb-2">{data.venue}</div>
+          <div className="text-[rgba(196,184,165,0.35)] text-sm">{data.city} · {data.dates}</div>
         </div>
       </section>
 
       {/* Content */}
       <section className="py-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <p className="text-text-secondary text-lg leading-relaxed mb-8">{data.description}</p>
+          <p className="text-[var(--bsi-dust)] text-lg leading-relaxed mb-8">{data.description}</p>
 
           {/* Teams table */}
           <div className="mb-8">
-            <h2 className="font-display text-xl font-bold uppercase tracking-wide text-text-primary mb-4">
+            <h2 className="font-display text-xl font-bold uppercase tracking-wide text-[var(--bsi-bone)] mb-4">
               Teams
             </h2>
             <div className="space-y-3">
               {data.teams.map((team, i) => (
                 <div
                   key={team.name}
-                  className="flex items-center justify-between p-4 rounded-sm border border-border-subtle bg-surface-light/10"
+                  className="flex items-center justify-between p-4 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)]/10"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-text-muted text-sm w-4 tabular-nums">{i + 1}</span>
-                    <span className="font-semibold text-text-primary">{team.name}</span>
-                    <span className="text-text-muted text-xs">#{team.rank} global</span>
+                    <span className="text-[rgba(196,184,165,0.35)] text-sm w-4 tabular-nums">{i + 1}</span>
+                    <span className="font-semibold text-[var(--bsi-bone)]">{team.name}</span>
+                    <span className="text-[rgba(196,184,165,0.35)] text-xs">#{team.rank} global</span>
                   </div>
                   <div className="text-right">
-                    <div className="text-burnt-orange font-bold tabular-nums">{team.titlePct}%</div>
-                    <div className="text-text-muted text-xs">title probability</div>
+                    <div className="text-[var(--bsi-primary)] font-bold tabular-nums">{team.titlePct}%</div>
+                    <div className="text-[rgba(196,184,165,0.35)] text-xs">title probability</div>
                   </div>
                 </div>
               ))}
@@ -168,30 +168,30 @@ export default async function PoolPage({ params }: { params: Promise<{ pool: str
 
           {/* Key race and routing */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
-            <div className="p-5 rounded-sm border border-border-subtle bg-surface-light/5">
-              <div className="text-burnt-orange font-semibold text-sm mb-2">Key Race</div>
-              <p className="text-text-secondary text-sm">{data.keyRace}</p>
+            <div className="p-5 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)]/5">
+              <div className="text-[var(--bsi-primary)] font-semibold text-sm mb-2">Key Race</div>
+              <p className="text-[var(--bsi-dust)] text-sm">{data.keyRace}</p>
             </div>
-            <div className="p-5 rounded-sm border border-border-subtle bg-surface-light/5">
-              <div className="text-burnt-orange font-semibold text-sm mb-2">Quarterfinal Routing</div>
-              <p className="text-text-secondary text-sm">{data.qfRoute}</p>
+            <div className="p-5 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)]/5">
+              <div className="text-[var(--bsi-primary)] font-semibold text-sm mb-2">Quarterfinal Routing</div>
+              <p className="text-[var(--bsi-dust)] text-sm">{data.qfRoute}</p>
             </div>
           </div>
 
-          <p className="text-text-muted text-xs pt-4 border-t border-border-subtle">
+          <p className="text-[rgba(196,184,165,0.35)] text-xs pt-4 border-t border-[var(--border-vintage)]">
             Title probabilities: BSI probability model (200K Monte Carlo simulations) · Pre-tournament baseline · March 4, 2026
           </p>
 
           <div className="mt-8 flex gap-4">
             <Link
               href="/wbc"
-              className="inline-flex items-center gap-2 text-burnt-orange font-semibold hover:text-ember transition-colors"
+              className="inline-flex items-center gap-2 text-[var(--bsi-primary)] font-semibold hover:text-[var(--bsi-primary)] transition-colors"
             >
               ← Back to WBC Hub
             </Link>
             <Link
               href="/wbc#wbc-tabs"
-              className="inline-flex items-center gap-2 text-text-muted hover:text-text-primary transition-colors text-sm"
+              className="inline-flex items-center gap-2 text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] transition-colors text-sm"
             >
               View all pools →
             </Link>

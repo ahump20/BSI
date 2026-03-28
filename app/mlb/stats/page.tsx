@@ -82,22 +82,22 @@ export default function MLBStatsPage() {
     <div
       className={`flex items-center gap-4 p-4 rounded-sm ${
         rank === 1
-          ? 'bg-burnt-orange/10 border border-burnt-orange'
+          ? 'bg-[var(--bsi-primary)]/10 border border-[var(--bsi-primary)]'
           : rank <= 3
-            ? 'bg-background-tertiary'
-            : 'bg-background-secondary'
+            ? 'bg-[var(--surface-dugout)]'
+            : 'bg-[var(--surface-dugout)]'
       }`}
     >
       {/* Rank */}
       <div
         className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
           rank === 1
-            ? 'bg-burnt-orange text-white'
+            ? 'bg-[var(--bsi-primary)] text-white'
             : rank === 2
               ? 'bg-gold/20 text-gold'
               : rank === 3
                 ? 'bg-texas-soil/20 text-texas-soil'
-                : 'bg-background-tertiary text-text-tertiary'
+                : 'bg-[var(--surface-dugout)] text-[rgba(196,184,165,0.5)]'
         }`}
       >
         {rank}
@@ -105,21 +105,21 @@ export default function MLBStatsPage() {
 
       {/* Player Info */}
       <div className="flex-1 min-w-0">
-        <p className="font-semibold text-text-primary truncate">{leader.player.name}</p>
-        <p className="text-xs text-text-tertiary">{leader.player.team}</p>
+        <p className="font-semibold text-[var(--bsi-bone)] truncate">{leader.player.name}</p>
+        <p className="text-xs text-[rgba(196,184,165,0.5)]">{leader.player.team}</p>
       </div>
 
       {/* Stat Value */}
       <div className="text-right">
         <p
           className={`text-2xl font-bold font-mono ${
-            rank === 1 ? 'text-burnt-orange' : 'text-text-primary'
+            rank === 1 ? 'text-[var(--bsi-primary)]' : 'text-[var(--bsi-bone)]'
           }`}
         >
           {currentStatConfig?.format(leader.value as number) || leader.value}
         </p>
         {leader.supportingStats && (
-          <p className="text-xs text-text-tertiary">
+          <p className="text-xs text-[rgba(196,184,165,0.5)]">
             {Object.entries(leader.supportingStats)
               .map(([k, v]) => `${k}: ${v}`)
               .join(' | ')}
@@ -133,17 +133,17 @@ export default function MLBStatsPage() {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/mlb"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 MLB
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">Stats Leaders</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">Stats Leaders</span>
             </nav>
           </Container>
         </Section>
@@ -160,13 +160,13 @@ export default function MLBStatsPage() {
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-gradient-blaze mb-4">
+              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-[var(--bsi-primary)] mb-4">
                 MLB Stat Leaders
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="text-text-secondary max-w-2xl">
+              <p className="text-[var(--bsi-dust)] max-w-2xl">
                 League leaders in batting, pitching, and fielding statistics. Updated daily
                 throughout the season.
               </p>
@@ -183,8 +183,8 @@ export default function MLBStatsPage() {
                 onClick={() => setCategory('batting')}
                 className={`px-6 py-2.5 rounded-sm font-semibold text-sm transition-all ${
                   category === 'batting'
-                    ? 'bg-burnt-orange text-white'
-                    : 'bg-background-tertiary text-text-secondary hover:bg-surface-light hover:text-text-primary'
+                    ? 'bg-[var(--bsi-primary)] text-white'
+                    : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:bg-[var(--surface-press-box)] hover:text-[var(--bsi-bone)]'
                 }`}
               >
                 Batting
@@ -193,8 +193,8 @@ export default function MLBStatsPage() {
                 onClick={() => setCategory('pitching')}
                 className={`px-6 py-2.5 rounded-sm font-semibold text-sm transition-all ${
                   category === 'pitching'
-                    ? 'bg-burnt-orange text-white'
-                    : 'bg-background-tertiary text-text-secondary hover:bg-surface-light hover:text-text-primary'
+                    ? 'bg-[var(--bsi-primary)] text-white'
+                    : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:bg-[var(--surface-press-box)] hover:text-[var(--bsi-bone)]'
                 }`}
               >
                 Pitching
@@ -202,15 +202,15 @@ export default function MLBStatsPage() {
             </div>
 
             {/* Stat Selector */}
-            <div className="flex flex-wrap gap-2 mb-8 pb-4 border-b border-border-subtle">
+            <div className="flex flex-wrap gap-2 mb-8 pb-4 border-b border-[var(--border-vintage)]">
               {currentStats.map((stat) => (
                 <button
                   key={stat.id}
                   onClick={() => setSelectedStat(stat.id)}
                   className={`px-4 py-2 rounded-sm text-sm transition-all ${
                     selectedStat === stat.id
-                      ? 'bg-surface-light text-text-primary font-semibold border border-burnt-orange'
-                      : 'text-text-tertiary hover:text-text-primary hover:bg-surface-light'
+                      ? 'bg-[var(--surface-press-box)] text-[var(--bsi-bone)] font-semibold border border-[var(--bsi-primary)]'
+                      : 'text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)]'
                   }`}
                 >
                   {stat.label}
@@ -227,7 +227,7 @@ export default function MLBStatsPage() {
                 <CardContent>
                   <div className="space-y-4">
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
-                      <div key={i} className="flex items-center gap-4 p-4 bg-background-tertiary rounded-sm">
+                      <div key={i} className="flex items-center gap-4 p-4 bg-[var(--surface-dugout)] rounded-sm">
                         <Skeleton variant="rectangular" width={40} height={40} className="rounded-full" />
                         <div className="flex-1">
                           <Skeleton variant="text" width={150} height={18} />
@@ -242,10 +242,10 @@ export default function MLBStatsPage() {
             ) : error ? (
               <Card variant="default" padding="lg" className="bg-error/10 border-error/30">
                 <p className="text-error font-semibold">Data Unavailable</p>
-                <p className="text-text-secondary text-sm mt-1">{error}</p>
+                <p className="text-[var(--bsi-dust)] text-sm mt-1">{error}</p>
                 <button
                   onClick={fetchLeaders}
-                  className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange/80 transition-colors"
+                  className="mt-4 px-4 py-2 bg-[var(--bsi-primary)] text-white rounded-sm hover:bg-[var(--bsi-primary)]/80 transition-colors"
                 >
                   Retry
                 </button>
@@ -255,15 +255,15 @@ export default function MLBStatsPage() {
                 <div className="text-center py-8">
                   <svg
                     viewBox="0 0 24 24"
-                    className="w-16 h-16 text-text-tertiary mx-auto mb-4"
+                    className="w-16 h-16 text-[rgba(196,184,165,0.5)] mx-auto mb-4"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="1.5"
                   >
                     <path d="M3 3v18h18M8 17V9m4 8V5m4 12v-6" />
                   </svg>
-                  <p className="text-text-secondary">Stat leaders populate once the season starts</p>
-                  <p className="text-text-tertiary text-sm mt-2">
+                  <p className="text-[var(--bsi-dust)]">Stat leaders populate once the season starts</p>
+                  <p className="text-[rgba(196,184,165,0.5)] text-sm mt-2">
                     Check back for batting, pitching, and fielding leaders
                   </p>
                 </div>
@@ -275,7 +275,7 @@ export default function MLBStatsPage() {
                     <CardTitle className="flex items-center gap-3">
                       <svg
                         viewBox="0 0 24 24"
-                        className="w-6 h-6 text-burnt-orange"
+                        className="w-6 h-6 text-[var(--bsi-primary)]"
                         fill="currentColor"
                       >
                         <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
@@ -291,7 +291,7 @@ export default function MLBStatsPage() {
                     </div>
 
                     {currentLeaders.length >= 10 && (
-                      <button type="button" className="w-full mt-6 py-3 text-burnt-orange hover:text-ember font-semibold text-sm transition-colors">
+                      <button type="button" className="w-full mt-6 py-3 text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] font-semibold text-sm transition-colors">
                         View Full Leaderboard →
                       </button>
                     )}
@@ -312,24 +312,24 @@ export default function MLBStatsPage() {
                       <Card
                         variant="default"
                         padding="md"
-                        className={`cursor-pointer transition-all hover:border-burnt-orange ${
-                          selectedStat === stat.id ? 'border-burnt-orange' : ''
+                        className={`cursor-pointer transition-all hover:border-[var(--bsi-primary)] ${
+                          selectedStat === stat.id ? 'border-[var(--bsi-primary)]' : ''
                         }`}
                         onClick={() => setSelectedStat(stat.id)}
                       >
-                        <p className="text-text-tertiary text-xs uppercase tracking-wide mb-2">
+                        <p className="text-[rgba(196,184,165,0.5)] text-xs uppercase tracking-wide mb-2">
                           {stat.label}
                         </p>
                         {topLeader ? (
                           <>
-                            <p className="text-2xl font-bold text-burnt-orange font-mono">
+                            <p className="text-2xl font-bold text-[var(--bsi-primary)] font-mono">
                               {stat.format(topLeader.value as number)}
                             </p>
-                            <p className="text-sm text-text-primary mt-1">{topLeader.player.name}</p>
-                            <p className="text-xs text-text-tertiary">{topLeader.player.team}</p>
+                            <p className="text-sm text-[var(--bsi-bone)] mt-1">{topLeader.player.name}</p>
+                            <p className="text-xs text-[rgba(196,184,165,0.5)]">{topLeader.player.team}</p>
                           </>
                         ) : (
-                          <p className="text-text-tertiary text-sm">Click to load</p>
+                          <p className="text-[rgba(196,184,165,0.5)] text-sm">Click to load</p>
                         )}
                       </Card>
                     </ScrollReveal>
@@ -339,7 +339,7 @@ export default function MLBStatsPage() {
             )}
 
             {/* Data Source Footer */}
-            <div className="mt-8 pt-4 border-t border-border-subtle">
+            <div className="mt-8 pt-4 border-t border-[var(--border-vintage)]">
               <DataSourceBadge
                 source={meta?.dataSource || 'MLB Stats API'}
                 timestamp={formatTimestamp(meta?.lastUpdated)}

@@ -238,12 +238,12 @@ function HavfBar({ label, description, value }: { label: string; description: st
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between text-xs">
-        <span className="font-semibold text-text-primary uppercase tracking-wider" style={{ fontFamily: 'Oswald, sans-serif' }}>
-          {label} <span className="text-text-muted font-normal normal-case" style={{ fontFamily: 'Cormorant Garamond, serif' }}>{description}</span>
+        <span className="font-semibold text-[var(--bsi-bone)] uppercase tracking-wider" style={{ fontFamily: 'Oswald, sans-serif' }}>
+          {label} <span className="text-[rgba(196,184,165,0.35)] font-normal normal-case" style={{ fontFamily: 'Cormorant Garamond, serif' }}>{description}</span>
         </span>
-        <span className="font-mono text-text-secondary">{value}</span>
+        <span className="font-mono text-[var(--bsi-dust)]">{value}</span>
       </div>
-      <div className="h-2 rounded-full bg-surface-light overflow-hidden">
+      <div className="h-2 rounded-full bg-[var(--surface-press-box)] overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-700"
           style={{ width: `${pct}%`, backgroundColor: ACCENT }}
@@ -281,11 +281,11 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
           <Section padding="lg" className="bg-[var(--surface-scoreboard)]">
             <Container>
               <div className="space-y-6 animate-pulse">
-                <div className="h-8 w-48 bg-surface-light rounded-sm" />
-                <div className="h-12 w-72 bg-surface-light rounded-sm" />
+                <div className="h-8 w-48 bg-[var(--surface-press-box)] rounded-sm" />
+                <div className="h-12 w-72 bg-[var(--surface-press-box)] rounded-sm" />
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
                   {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className="h-24 bg-surface-light rounded-sm" />
+                    <div key={i} className="h-24 bg-[var(--surface-press-box)] rounded-sm" />
                   ))}
                 </div>
               </div>
@@ -305,8 +305,8 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
           <Section padding="lg" className="bg-[var(--surface-scoreboard)]">
             <Container>
               <div className="text-center py-16">
-                <h1 className="font-display text-2xl text-text-primary mb-4">Player Not Found</h1>
-                <p className="text-text-muted mb-6">{error ?? 'Unable to load player profile.'}</p>
+                <h1 className="font-display text-2xl text-[var(--bsi-bone)] mb-4">Player Not Found</h1>
+                <p className="text-[rgba(196,184,165,0.35)] mb-6">{error ?? 'Unable to load player profile.'}</p>
                 <button onClick={retry} className="btn-heritage-fill">
                   Try Again
                 </button>
@@ -328,13 +328,13 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
         <Section padding="sm" className="border-b border-border">
           <Container>
             <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm flex-wrap">
-              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">College Baseball</Link>
-              <span className="text-text-muted">/</span>
-              <Link href="/college-baseball/texas-intelligence" className="text-text-muted hover:text-burnt-orange transition-colors">Texas Intel</Link>
-              <span className="text-text-muted">/</span>
-              <Link href="/college-baseball/texas-intelligence/roster" className="text-text-muted hover:text-burnt-orange transition-colors">Players</Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-primary">{player.name}</span>
+              <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">College Baseball</Link>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <Link href="/college-baseball/texas-intelligence" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">Texas Intel</Link>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <Link href="/college-baseball/texas-intelligence/roster" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">Players</Link>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[var(--bsi-bone)]">{player.name}</span>
             </nav>
           </Container>
         </Section>
@@ -358,12 +358,12 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
                 )}
                 <div>
                   <span className="heritage-stamp text-[10px]">Player Intelligence</span>
-                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-text-primary mt-1">
+                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-[var(--bsi-bone)] mt-1">
                     {player.name}
                   </h1>
                   <div className="flex items-center gap-3 mt-1">
                     <Badge variant="accent" size="sm">{player.position}</Badge>
-                    <span className="text-text-muted text-sm">{player.team}</span>
+                    <span className="text-[rgba(196,184,165,0.35)] text-sm">{player.team}</span>
                   </div>
                 </div>
               </div>
@@ -416,8 +416,8 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
                   <div className="grid grid-cols-5 gap-2 mt-4 text-center">
                     {RADAR_KEYS.map((key, i) => (
                       <div key={key}>
-                        <div className="font-mono text-sm text-text-primary">{radar[key]}</div>
-                        <div className="text-[10px] text-text-muted uppercase tracking-wider" style={{ fontFamily: 'Oswald, sans-serif' }}>{RADAR_LABELS[i]}</div>
+                        <div className="font-mono text-sm text-[var(--bsi-bone)]">{radar[key]}</div>
+                        <div className="text-[10px] text-[rgba(196,184,165,0.35)] uppercase tracking-wider" style={{ fontFamily: 'Oswald, sans-serif' }}>{RADAR_LABELS[i]}</div>
                       </div>
                     ))}
                   </div>
@@ -440,7 +440,7 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                          <tr className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
                             <th className="text-left py-2 px-2">W</th>
                             <th className="text-left py-2 px-2">L</th>
                             <th className="text-left py-2 px-2">SV</th>
@@ -455,7 +455,7 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
                           </tr>
                         </thead>
                         <tbody>
-                          <tr className="border-t border-border-subtle">
+                          <tr className="border-t border-[var(--border-vintage)]">
                             <td className="py-2 px-2 font-mono">{pitching.w}</td>
                             <td className="py-2 px-2 font-mono">{pitching.l}</td>
                             <td className="py-2 px-2 font-mono">{pitching.sv}</td>
@@ -475,7 +475,7 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                          <tr className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
                             <th className="text-right py-2 px-2">PA</th>
                             <th className="text-right py-2 px-2">AVG</th>
                             <th className="text-right py-2 px-2">OBP</th>
@@ -492,8 +492,8 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
                           </tr>
                         </thead>
                         <tbody>
-                          <tr className="border-t border-border-subtle">
-                            <td className="py-2 px-2 text-right font-mono text-text-muted">{batting.pa}</td>
+                          <tr className="border-t border-[var(--border-vintage)]">
+                            <td className="py-2 px-2 text-right font-mono text-[rgba(196,184,165,0.35)]">{batting.pa}</td>
                             <td className="py-2 px-2 text-right font-mono font-semibold">{fmt3(batting.avg)}</td>
                             <td className="py-2 px-2 text-right font-mono">{fmt3(batting.obp)}</td>
                             <td className="py-2 px-2 text-right font-mono">{fmt3(batting.slg)}</td>
@@ -511,7 +511,7 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
                       </table>
                     </div>
                   ) : (
-                    <p className="text-text-muted text-sm text-center py-8">No advanced stats available for this player.</p>
+                    <p className="text-[rgba(196,184,165,0.35)] text-sm text-center py-8">No advanced stats available for this player.</p>
                   )}
                 </CardContent>
               </Card>
@@ -535,7 +535,7 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                          <tr className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
                             <th className="text-left py-2 px-2">Date</th>
                             <th className="text-left py-2 px-2">Opp</th>
                             <th className="text-left py-2 px-2">Result</th>
@@ -564,12 +564,12 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
                         </thead>
                         <tbody>
                           {gameLog.map((g, idx) => (
-                            <tr key={`${g.date}-${idx}`} className="border-t border-border-subtle">
-                              <td className="py-2 px-2 text-text-muted text-xs whitespace-nowrap">{g.date}</td>
-                              <td className="py-2 px-2 text-text-primary font-medium whitespace-nowrap">
+                            <tr key={`${g.date}-${idx}`} className="border-t border-[var(--border-vintage)]">
+                              <td className="py-2 px-2 text-[rgba(196,184,165,0.35)] text-xs whitespace-nowrap">{g.date}</td>
+                              <td className="py-2 px-2 text-[var(--bsi-bone)] font-medium whitespace-nowrap">
                                 {g.isHome ? 'vs ' : '@ '}{g.opponent ?? 'TBD'}
                               </td>
-                              <td className="py-2 px-2 text-text-secondary text-xs">{g.result ?? '--'}</td>
+                              <td className="py-2 px-2 text-[var(--bsi-dust)] text-xs">{g.result ?? '--'}</td>
                               {isPitcher && g.pitching ? (
                                 <>
                                   <td className="py-2 px-2 text-right font-mono">{g.pitching.ip.toFixed(1)}</td>
@@ -591,7 +591,7 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
                                   <td className="py-2 px-2 text-right font-mono font-semibold">{fmt3(g.batting.avg)}</td>
                                 </>
                               ) : (
-                                <td colSpan={isPitcher ? 6 : 8} className="py-2 px-2 text-text-muted text-center">--</td>
+                                <td colSpan={isPitcher ? 6 : 8} className="py-2 px-2 text-[rgba(196,184,165,0.35)] text-center">--</td>
                               )}
                             </tr>
                           ))}
@@ -650,7 +650,7 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
               />
               <Link
                 href="/college-baseball/texas-intelligence"
-                className="text-sm text-burnt-orange hover:text-ember transition-colors"
+                className="text-sm text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 &larr; Back to Hub
               </Link>
@@ -668,10 +668,10 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
 function QuickStat({ label, value }: { label: string; value: string }) {
   return (
     <div className="heritage-card p-4 text-center">
-      <div className="text-[10px] text-text-muted uppercase tracking-wider mb-1" style={{ fontFamily: 'Oswald, sans-serif' }}>
+      <div className="text-[10px] text-[rgba(196,184,165,0.35)] uppercase tracking-wider mb-1" style={{ fontFamily: 'Oswald, sans-serif' }}>
         {label}
       </div>
-      <div className="text-2xl font-bold font-mono text-text-primary">{value}</div>
+      <div className="text-2xl font-bold font-mono text-[var(--bsi-bone)]">{value}</div>
     </div>
   );
 }

@@ -127,20 +127,20 @@ function LineScoreTable({ scores, label }: { scores: InningScore[]; label: strin
   const inningCount = scores[0].innings.length;
   return (
     <Card variant="default" padding="none">
-      <div className="bg-burnt-orange/5 text-center py-2">
-        <span className="font-display text-[10px] uppercase tracking-[3px] text-burnt-orange">
+      <div className="bg-[var(--bsi-primary)]/5 text-center py-2">
+        <span className="font-display text-[10px] uppercase tracking-[3px] text-[var(--bsi-primary)]">
           {label}
         </span>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full min-w-[540px]">
           <thead>
-            <tr className="font-display text-[11px] uppercase tracking-widest text-text-muted bg-black/30">
+            <tr className="font-display text-[11px] uppercase tracking-widest text-[rgba(196,184,165,0.35)] bg-black/30">
               <th className="text-left py-2.5 px-4 w-36" />
               {Array.from({ length: inningCount }, (_, i) => (
                 <th key={i} className="text-center py-2.5 w-10">{i + 1}</th>
               ))}
-              <th className="text-center py-2.5 w-12 border-l border-border-subtle">R</th>
+              <th className="text-center py-2.5 w-12 border-l border-[var(--border-vintage)]">R</th>
               <th className="text-center py-2.5 w-12">H</th>
               <th className="text-center py-2.5 w-12">E</th>
             </tr>
@@ -149,20 +149,20 @@ function LineScoreTable({ scores, label }: { scores: InningScore[]; label: strin
             {scores.map((row) => {
               const isTexas = row.team === 'Texas';
               return (
-                <tr key={row.team} className="border-t border-border-subtle">
-                  <td className={`py-3 px-4 font-display text-sm font-semibold uppercase tracking-wide ${isTexas ? 'text-burnt-orange' : 'text-text-tertiary'}`}>
+                <tr key={row.team} className="border-t border-[var(--border-vintage)]">
+                  <td className={`py-3 px-4 font-display text-sm font-semibold uppercase tracking-wide ${isTexas ? 'text-[var(--bsi-primary)]' : 'text-[rgba(196,184,165,0.5)]'}`}>
                     {row.team}
                   </td>
                   {row.innings.map((val, i) => (
-                    <td key={i} className={`text-center py-3 ${typeof val === 'string' ? 'text-text-muted' : Number(val) > 0 ? (isTexas ? 'text-text-primary font-semibold' : 'text-text-secondary font-medium') : 'text-text-muted'}`}>
+                    <td key={i} className={`text-center py-3 ${typeof val === 'string' ? 'text-[rgba(196,184,165,0.35)]' : Number(val) > 0 ? (isTexas ? 'text-[var(--bsi-bone)] font-semibold' : 'text-[var(--bsi-dust)] font-medium') : 'text-[rgba(196,184,165,0.35)]'}`}>
                       {val}
                     </td>
                   ))}
-                  <td className={`text-center py-3 border-l border-border-subtle font-bold text-lg ${isTexas ? 'text-burnt-orange' : 'text-text-tertiary'}`}>
+                  <td className={`text-center py-3 border-l border-[var(--border-vintage)] font-bold text-lg ${isTexas ? 'text-[var(--bsi-primary)]' : 'text-[rgba(196,184,165,0.5)]'}`}>
                     {row.r}
                   </td>
-                  <td className="text-center py-3 text-text-muted">{row.h}</td>
-                  <td className="text-center py-3 text-text-muted">{row.e}</td>
+                  <td className="text-center py-3 text-[rgba(196,184,165,0.35)]">{row.h}</td>
+                  <td className="text-center py-3 text-[rgba(196,184,165,0.35)]">{row.e}</td>
                 </tr>
               );
             })}
@@ -176,12 +176,12 @@ function LineScoreTable({ scores, label }: { scores: InningScore[]; label: strin
 function PitchingTable({ pitchers, teamLabel }: { pitchers: PitchingLine[]; teamLabel: string }) {
   return (
     <div>
-      <h3 className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-3">{teamLabel} Pitching</h3>
+      <h3 className="font-display text-sm uppercase tracking-wider text-[var(--bsi-primary)] mb-3">{teamLabel} Pitching</h3>
       <Card variant="default" padding="none">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[400px] font-mono text-sm">
             <thead>
-              <tr className="text-[10px] uppercase tracking-wider text-text-muted bg-black/20">
+              <tr className="text-[10px] uppercase tracking-wider text-[rgba(196,184,165,0.35)] bg-black/20">
                 <th className="text-left py-2 px-3">Pitcher</th>
                 <th className="text-center py-2 w-10">IP</th>
                 <th className="text-center py-2 w-8">H</th>
@@ -193,17 +193,17 @@ function PitchingTable({ pitchers, teamLabel }: { pitchers: PitchingLine[]; team
             </thead>
             <tbody>
               {pitchers.map((p) => (
-                <tr key={p.name} className="border-t border-border-subtle">
-                  <td className="py-2 px-3 text-text-secondary">
+                <tr key={p.name} className="border-t border-[var(--border-vintage)]">
+                  <td className="py-2 px-3 text-[var(--bsi-dust)]">
                     {p.name}
-                    {p.decision && <span className="text-burnt-orange ml-1 text-xs">({p.decision})</span>}
+                    {p.decision && <span className="text-[var(--bsi-primary)] ml-1 text-xs">({p.decision})</span>}
                   </td>
-                  <td className="text-center text-text-tertiary">{p.ip}</td>
-                  <td className="text-center text-text-muted">{p.h}</td>
-                  <td className="text-center text-text-muted">{p.r}</td>
-                  <td className="text-center text-text-muted">{p.er}</td>
-                  <td className="text-center text-text-muted">{p.bb}</td>
-                  <td className="text-center text-text-primary font-medium">{p.so}</td>
+                  <td className="text-center text-[rgba(196,184,165,0.5)]">{p.ip}</td>
+                  <td className="text-center text-[rgba(196,184,165,0.35)]">{p.h}</td>
+                  <td className="text-center text-[rgba(196,184,165,0.35)]">{p.r}</td>
+                  <td className="text-center text-[rgba(196,184,165,0.35)]">{p.er}</td>
+                  <td className="text-center text-[rgba(196,184,165,0.35)]">{p.bb}</td>
+                  <td className="text-center text-[var(--bsi-bone)] font-medium">{p.so}</td>
                 </tr>
               ))}
             </tbody>
@@ -242,15 +242,15 @@ export default function TexasWeek6RecapPage() {
         <Section padding="sm" className="border-b border-border">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 College Baseball
               </Link>
-              <span className="text-text-muted">/</span>
-              <Link href="/college-baseball/editorial" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <Link href="/college-baseball/editorial" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 Editorial
               </Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-secondary">Texas Week 6</span>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[var(--bsi-dust)]">Texas Week 6</span>
             </nav>
           </Container>
         </Section>
@@ -266,23 +266,23 @@ export default function TexasWeek6RecapPage() {
                   <Badge variant="primary">Texas Weekly</Badge>
                   <Badge variant="accent">No. 2 Texas</Badge>
                   <Badge variant="outline">20-3</Badge>
-                  <span className="font-mono text-xs text-text-muted">SEC: 4-2 &middot; RPI No. 1</span>
+                  <span className="font-mono text-xs text-[rgba(196,184,165,0.35)]">SEC: 4-2 &middot; RPI No. 1</span>
                 </div>
 
                 <h1 className="font-display font-bold uppercase tracking-wide leading-none mb-4">
-                  <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-text-primary mb-1">
+                  <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-[var(--bsi-bone)] mb-1">
                     Punched,
                   </span>
-                  <span className="block text-gradient-blaze text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
+                  <span className="block text-[var(--bsi-primary)] text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
                     Then Answered.
                   </span>
                 </h1>
 
-                <p className="font-serif text-lg sm:text-xl text-text-tertiary italic leading-relaxed mb-6">
+                <p className="font-serif text-lg sm:text-xl text-[rgba(196,184,165,0.5)] italic leading-relaxed mb-6">
                   A midweek stumble at Disch-Falk. A walk-off gut punch on Friday night. Then two wins at the fifth-ranked team in America &mdash; the last one a shutout that hadn&rsquo;t been done in SEC play in program history. Texas turned a turbulent week into a r&eacute;sum&eacute;-building one.
                 </p>
 
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] text-text-muted tracking-wide">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] text-[rgba(196,184,165,0.35)] tracking-wide">
                   <span>March 17 &ndash; 22, 2026</span>
                   <span className="hidden sm:inline">&middot;</span>
                   <span>Plainsman Park, Auburn AL</span>
@@ -290,7 +290,7 @@ export default function TexasWeek6RecapPage() {
                   <span>Week 6 &middot; 4 Games</span>
                 </div>
 
-                <div className="flex items-center gap-4 text-sm text-text-muted mt-4">
+                <div className="flex items-center gap-4 text-sm text-[rgba(196,184,165,0.35)] mt-4">
                   <span>By Blaze Sports Intel</span>
                   <span>|</span>
                   <span>March 24, 2026</span>
@@ -330,10 +330,10 @@ export default function TexasWeek6RecapPage() {
               <p className="font-serif text-xl sm:text-[23px] font-medium leading-relaxed text-[#FAF7F2] mb-6">
                 The Auburn series tested the exact stress points Texas had shown in conference play: late-inning execution, role clarity at the back of the bullpen, and the ability to respond after getting punched. Friday answered with a walk-off that turned on a defensive miscue. Saturday answered with power, chaos, and a closer who survived his own wildness. Sunday answered with five arms and zero runs &mdash; the first time Texas had done that in SEC history.
               </p>
-              <p className="font-serif text-lg leading-relaxed text-text-secondary mb-6">
-                Before Auburn, there was Tarleton State. That loss sits in the record and in the conversation. A WAC program walked into Disch-Falk and held the No. 2 team in America to two hits. It happened. <strong className="text-text-primary">What happened next is the story.</strong>
+              <p className="font-serif text-lg leading-relaxed text-[var(--bsi-dust)] mb-6">
+                Before Auburn, there was Tarleton State. That loss sits in the record and in the conversation. A WAC program walked into Disch-Falk and held the No. 2 team in America to two hits. It happened. <strong className="text-[var(--bsi-bone)]">What happened next is the story.</strong>
               </p>
-              <p className="font-serif text-lg leading-relaxed text-text-tertiary">
+              <p className="font-serif text-lg leading-relaxed text-[rgba(196,184,165,0.5)]">
                 Twenty wins and three losses. Two SEC series won. The No. 1 RPI. And a pattern that keeps repeating: lose the Friday opener, then take the series anyway. Whether that pattern is a vulnerability or a feature depends on what Oklahoma does this weekend.
               </p>
             </ScrollReveal>
@@ -350,16 +350,16 @@ export default function TexasWeek6RecapPage() {
                     Midweek &middot; March 17
                   </div>
                 </div>
-                <div className="font-display text-lg font-semibold text-text-primary uppercase tracking-wide mb-1">
+                <div className="font-display text-lg font-semibold text-[var(--bsi-bone)] uppercase tracking-wide mb-1">
                   Tarleton State 6, No. 2 Texas 1
                 </div>
                 <div className="font-mono text-sm text-[#C44536] mb-4">
                   UFCU Disch-Falk Field &middot; 2 hits &middot; 12 strikeouts &middot; 34 consecutive outs after the 1st inning
                 </div>
-                <p className="font-serif text-sm text-text-tertiary leading-relaxed mb-3">
+                <p className="font-serif text-sm text-[rgba(196,184,165,0.5)] leading-relaxed mb-3">
                   Carson Tinney homered in the first inning. Then nothing. Thirty-four consecutive Texas batters failed to reach base. Five Tarleton pitchers &mdash; a WAC program at 13-7 &mdash; combined for 12 strikeouts against the second-ranked team in America. Ethan Jaques earned the win with three hitless relief innings. It was the highest-ranked victory in Tarleton State&rsquo;s program history.
                 </p>
-                <p className="font-serif text-sm text-text-muted leading-relaxed">
+                <p className="font-serif text-sm text-[rgba(196,184,165,0.35)] leading-relaxed">
                   The loss doesn&rsquo;t define the week. But hiding it would be dishonest. Texas went 2-2, not 2-1. The Auburn story only means what it means because Tarleton happened first.
                 </p>
               </div>
@@ -373,10 +373,10 @@ export default function TexasWeek6RecapPage() {
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-1 h-8 rounded-full bg-[#C44536]" />
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange">
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)]">
                   Game 1: Auburn 4, Texas 3
                 </h2>
-                <span className="font-mono text-xs text-text-muted">Friday &middot; Mar 20 &middot; Walk-off</span>
+                <span className="font-mono text-xs text-[rgba(196,184,165,0.35)]">Friday &middot; Mar 20 &middot; Walk-off</span>
               </div>
 
               <div className="mb-6">
@@ -386,7 +386,7 @@ export default function TexasWeek6RecapPage() {
 
             <Container size="narrow">
               <ScrollReveal direction="up" delay={100}>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
                     This was an ace duel that deserved a better ending. Riojas delivered 6.1 innings of one-run ball on 99 pitches, striking out six and walking one. Auburn&rsquo;s Jake Marciano was better &mdash; 7.0 innings, nine strikeouts, one earned run, holding Texas to two hits through eight innings. The game belonged to the pitchers until it didn&rsquo;t.
                   </p>
@@ -396,10 +396,10 @@ export default function TexasWeek6RecapPage() {
                   </p>
 
                   <p>
-                    Then Bristol Carter roped a two-run single to center. The ball scooted past Robbins in center field for an error that allowed the winning run to score. <strong className="text-text-primary">Auburn 4, Texas 3. Walk-off. The Tigers&rsquo; 12-game streak survived on one swing and one miscue.</strong>
+                    Then Bristol Carter roped a two-run single to center. The ball scooted past Robbins in center field for an error that allowed the winning run to score. <strong className="text-[var(--bsi-bone)]">Auburn 4, Texas 3. Walk-off. The Tigers&rsquo; 12-game streak survived on one swing and one miscue.</strong>
                   </p>
 
-                  <p className="text-text-tertiary">
+                  <p className="text-[rgba(196,184,165,0.5)]">
                     The tactical takeaway isn&rsquo;t &ldquo;Texas can&rsquo;t hit&rdquo; &mdash; three hits in an ace duel happens. It&rsquo;s that in a low-hit game you must be airtight on the last three outs. Texas had the pitching to win. The margin collapsed on one defensive execution and one high-leverage baserunner sequence.
                   </p>
                 </div>
@@ -419,11 +419,11 @@ export default function TexasWeek6RecapPage() {
           <Container>
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-1 h-8 rounded-full bg-burnt-orange" />
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange">
+                <div className="w-1 h-8 rounded-full bg-[var(--bsi-primary)]" />
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)]">
                   Game 2: Texas 7, Auburn 6
                 </h2>
-                <span className="font-mono text-xs text-text-muted">Saturday &middot; Mar 21 &middot; Record Crowd</span>
+                <span className="font-mono text-xs text-[rgba(196,184,165,0.35)]">Saturday &middot; Mar 21 &middot; Record Crowd</span>
               </div>
 
               <div className="mb-6">
@@ -433,7 +433,7 @@ export default function TexasWeek6RecapPage() {
 
             <Container size="narrow">
               <ScrollReveal direction="up" delay={100}>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
                     Texas attacked early and used Auburn&rsquo;s defensive mistakes as fuel. Maddox Monsour &mdash; making his first SEC start at DH &mdash; ripped a two-out, two-run single in the second inning that drove in two unearned runs off Auburn errors. Then the third inning happened: Robbins launched a 417-foot, 109-mph missile off the batter&rsquo;s eye, and freshman Jayden Duplantier uncorked his first career home run &mdash; a three-run blast over the 37-foot left-field wall on a full-count breaking ball. Six runs through three innings. Message sent.
                   </p>
@@ -443,10 +443,10 @@ export default function TexasWeek6RecapPage() {
                   </p>
 
                   <p>
-                    <strong className="text-text-primary">Then Burns induced a ground ball to third baseman Temo Becerra. Series even.</strong>
+                    <strong className="text-[var(--bsi-bone)]">Then Burns induced a ground ball to third baseman Temo Becerra. Series even.</strong>
                   </p>
 
-                  <p className="text-text-tertiary">
+                  <p className="text-[rgba(196,184,165,0.5)]">
                     This is the kind of SEC win that builds belief because it isn&rsquo;t sterile. Texas proved it could flip immediately after a walk-off loss and still win when the bullpen doesn&rsquo;t give you a clean final nine outs. The Burns ninth is a concern. The fact that it ended with a ground ball rather than a run is the distinction between a resilient team and a collapsing one.
                   </p>
                 </div>
@@ -467,10 +467,10 @@ export default function TexasWeek6RecapPage() {
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-1 h-8 rounded-full bg-[#C9A227]" />
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange">
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)]">
                   Game 3: Texas 5, Auburn 0
                 </h2>
-                <span className="font-mono text-xs text-text-muted">Sunday &middot; Mar 22 &middot; First-ever SEC Shutout</span>
+                <span className="font-mono text-xs text-[rgba(196,184,165,0.35)]">Sunday &middot; Mar 22 &middot; First-ever SEC Shutout</span>
               </div>
 
               <div className="mb-6">
@@ -480,16 +480,16 @@ export default function TexasWeek6RecapPage() {
 
             <Container size="narrow">
               <ScrollReveal direction="up" delay={100}>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
-                    The Sunday blueprint worked. Dylan Volantis opened with four scoreless innings on 94 pitches &mdash; command was inconsistent (four walks), but he kept Auburn off the board. Then Sam Cozart entered and threw 2.2 hitless innings with three strikeouts, earning the win. Crossland handled the bridge. Leffew recorded an out. Grubbs closed. Five arms, zero runs, four hits allowed. <strong className="text-text-primary">The program&rsquo;s first-ever shutout in SEC play.</strong>
+                    The Sunday blueprint worked. Dylan Volantis opened with four scoreless innings on 94 pitches &mdash; command was inconsistent (four walks), but he kept Auburn off the board. Then Sam Cozart entered and threw 2.2 hitless innings with three strikeouts, earning the win. Crossland handled the bridge. Leffew recorded an out. Grubbs closed. Five arms, zero runs, four hits allowed. <strong className="text-[var(--bsi-bone)]">The program&rsquo;s first-ever shutout in SEC play.</strong>
                   </p>
 
                   <p>
                     Casey Borba supplied the early separation &mdash; a 103-mph, two-run home run over the left-field monster in the second inning, the kind of opposite-field authority that forces a staff to pitch around the middle of the order. Carson Tinney added a clutch two-out, two-RBI single in the fourth. The approach was deliberate: take the run, don&rsquo;t chase perfection, and let the pitching bury them.
                   </p>
 
-                  <p className="text-text-tertiary">
+                  <p className="text-[rgba(196,184,165,0.5)]">
                     Auburn went 0-for-9 with runners in scoring position and stranded twelve. They put traffic on early &mdash; Volantis threw 77 pitches by the third inning, and Auburn loaded the bases twice. But the Texas bullpen&rsquo;s sequencing held through the final eight outs. The series win snapped Auburn&rsquo;s 12-game winning streak, handed them their first SEC loss, and marked Texas&rsquo;s first road series win over a top-5 team since defeating No. 3 TCU on May 9, 2021.
                   </p>
                 </div>
@@ -515,7 +515,7 @@ export default function TexasWeek6RecapPage() {
                   <p>
                     The bullpen hierarchy is clearer after Auburn. Cozart is the highest-trust multi-inning bridge &mdash; he earned the win Sunday and handled leverage Saturday. Crossland is a strikeout-capable matchup option. Burns remains the closer by title, but his SEC-only numbers (5.87 ERA, 4 BB in 2.0 IP) explain why Texas avoided using him Sunday entirely. The ninth inning is this team&rsquo;s thinnest margin.
                   </p>
-                  <p className="text-text-secondary">
+                  <p className="text-[var(--bsi-dust)]">
                     But the r&eacute;sum&eacute; keeps stacking. 20-3. No. 1 RPI. SOS No. 5. A 7-2 Quadrant 1 record. Series wins at Ole Miss and at No. 5 Auburn. If Texas keeps winning two of three in league play, the national-seed conversation isn&rsquo;t aspirational &mdash; it&rsquo;s already mathematical. The Auburn series didn&rsquo;t just save the week from the Tarleton embarrassment. It may have been the strongest road weekend any team has had this season.
                   </p>
         </BSIVerdict>
@@ -524,14 +524,14 @@ export default function TexasWeek6RecapPage() {
         <Section padding="lg">
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-5 pb-2 border-b border-burnt-orange/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-5 pb-2 border-b border-[var(--bsi-primary)]/15">
                 No. 1 Check: UCLA
               </h2>
             </ScrollReveal>
 
             <Container size="narrow">
               <ScrollReveal direction="up" delay={100}>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
                     UCLA sits atop every major poll at 21-2 overall, 9-0 in the Big Ten &mdash; the best conference-opening stretch in program history &mdash; riding a 15-game winning streak, the longest active streak in Division I. They are 6-0 against ranked opponents, including a three-game sweep of No. 7 TCU (outscoring them 30-8). The rotation is anchored by Logan Reddemann (6-0), the lineup features consensus projected No. 1 overall pick Roch Cholowsky, and Will Gasparino (a Texas transfer) led the nation in home runs early at 10.
                   </p>
@@ -539,7 +539,7 @@ export default function TexasWeek6RecapPage() {
                     The ranking is defensible on poll logic. UCLA&rsquo;s margin of dominance is extreme: +130 run differential (212-82), a .302/.433/.520 team slash line, and 3.33 ERA. They are crushing opponents while maintaining a top-tier win rate. ELO models grade them as the No. 1 team in the country right now, and poll voters reward the &ldquo;best team right now&rdquo; thesis.
                   </p>
                   <p>
-                    <strong className="text-text-primary">But it&rsquo;s also fragile in the selection-math sense.</strong> Texas has the higher RPI (No. 1 vs. UCLA&rsquo;s No. 6), the much stronger strength of schedule (No. 5 vs. No. 43), and more Quadrant 1 volume (7-2 vs. 3-0). The NCAA&rsquo;s pre-championship manual explicitly values RPI, quadrant records, SOS, and road results &mdash; the exact categories where Texas leads. If Texas keeps winning series in the SEC, the combination of schedule weight and Q1 accumulation gives them a compelling argument for No. 1 even if UCLA&rsquo;s run differential remains gaudier.
+                    <strong className="text-[var(--bsi-bone)]">But it&rsquo;s also fragile in the selection-math sense.</strong> Texas has the higher RPI (No. 1 vs. UCLA&rsquo;s No. 6), the much stronger strength of schedule (No. 5 vs. No. 43), and more Quadrant 1 volume (7-2 vs. 3-0). The NCAA&rsquo;s pre-championship manual explicitly values RPI, quadrant records, SOS, and road results &mdash; the exact categories where Texas leads. If Texas keeps winning series in the SEC, the combination of schedule weight and Q1 accumulation gives them a compelling argument for No. 1 even if UCLA&rsquo;s run differential remains gaudier.
                   </p>
                 </div>
               </ScrollReveal>
@@ -548,15 +548,15 @@ export default function TexasWeek6RecapPage() {
               <ScrollReveal direction="up" delay={150}>
                 <div className="my-8">
                   <Card variant="default" padding="none">
-                    <div className="bg-burnt-orange/5 text-center py-2">
-                      <span className="font-display text-[10px] uppercase tracking-[3px] text-burnt-orange">
+                    <div className="bg-[var(--bsi-primary)]/5 text-center py-2">
+                      <span className="font-display text-[10px] uppercase tracking-[3px] text-[var(--bsi-primary)]">
                         UCLA vs. Texas &mdash; By the Numbers
                       </span>
                     </div>
                     <div className="overflow-x-auto">
                       <table className="w-full font-mono text-sm">
                         <thead>
-                          <tr className="text-[10px] uppercase tracking-wider text-text-muted bg-black/20">
+                          <tr className="text-[10px] uppercase tracking-wider text-[rgba(196,184,165,0.35)] bg-black/20">
                             <th className="text-left py-2.5 px-4">Metric</th>
                             <th className="text-center py-2.5 w-32">UCLA</th>
                             <th className="text-center py-2.5 w-32">Texas</th>
@@ -574,10 +574,10 @@ export default function TexasWeek6RecapPage() {
                             ['K/BB Ratio', '2.80', '3.26'],
                             ['Run Differential', '+130 (212-82)', '+63 (205-142)'],
                           ].map(([metric, ucla, texas]) => (
-                            <tr key={metric} className="border-t border-border-subtle">
-                              <td className="py-2.5 px-4 text-text-secondary text-xs">{metric}</td>
-                              <td className="text-center py-2.5 text-text-tertiary">{ucla}</td>
-                              <td className="text-center py-2.5 text-burnt-orange font-medium">{texas}</td>
+                            <tr key={metric} className="border-t border-[var(--border-vintage)]">
+                              <td className="py-2.5 px-4 text-[var(--bsi-dust)] text-xs">{metric}</td>
+                              <td className="text-center py-2.5 text-[rgba(196,184,165,0.5)]">{ucla}</td>
+                              <td className="text-center py-2.5 text-[var(--bsi-primary)] font-medium">{texas}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -588,8 +588,8 @@ export default function TexasWeek6RecapPage() {
               </ScrollReveal>
 
               <ScrollReveal direction="up" delay={200}>
-                <p className="font-serif text-lg leading-[1.78] text-text-tertiary">
-                  The clean conclusion: <strong className="text-text-secondary">UCLA&rsquo;s No. 1 ranking is defensible as a quality-and-dominance statement. Texas&rsquo;s profile is stronger as a schedule-and-selection statement.</strong> Both can be true simultaneously. The distinction only collapses if both teams reach the selection committee table in June &mdash; and by then, the SEC gauntlet will have provided its own answer.
+                <p className="font-serif text-lg leading-[1.78] text-[rgba(196,184,165,0.5)]">
+                  The clean conclusion: <strong className="text-[var(--bsi-dust)]">UCLA&rsquo;s No. 1 ranking is defensible as a quality-and-dominance statement. Texas&rsquo;s profile is stronger as a schedule-and-selection statement.</strong> Both can be true simultaneously. The distinction only collapses if both teams reach the selection committee table in June &mdash; and by then, the SEC gauntlet will have provided its own answer.
                 </p>
               </ScrollReveal>
             </Container>
@@ -600,31 +600,31 @@ export default function TexasWeek6RecapPage() {
         <Section padding="lg" background="charcoal">
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-5 pb-2 border-b border-burnt-orange/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-5 pb-2 border-b border-[var(--bsi-primary)]/15">
                 SEC Landscape: Week 6
               </h2>
             </ScrollReveal>
 
             <Container size="narrow">
               <ScrollReveal direction="up" delay={100}>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
                     Seven teams share first place in the SEC at 4-2: Texas, Mississippi State, Auburn, Kentucky, Georgia, Oklahoma, and Arkansas. Four more sit at 3-3 (Ole Miss, Florida, Alabama, Tennessee). The conference&rsquo;s combined non-conference record of 236-56 (.808) underscores why every SEC series win carries outsized r&eacute;sum&eacute; weight. Ten to eleven SEC teams appear across the three major polls.
                   </p>
 
                   <p>
-                    <strong className="text-text-primary">Alabama swept No. 18 Florida 3-0</strong>, headlined by Tyler Fay&rsquo;s no-hitter on Friday &mdash; 13 strikeouts, 2 walks, the first solo no-no in Alabama baseball in 84 years. Brady Neal drove in 11 runs across the series. Alabama entered the Top 25; Florida plummeted 11 spots in the coaches poll and fell out of Baseball America&rsquo;s rankings entirely. A program-altering weekend for the Crimson Tide.
+                    <strong className="text-[var(--bsi-bone)]">Alabama swept No. 18 Florida 3-0</strong>, headlined by Tyler Fay&rsquo;s no-hitter on Friday &mdash; 13 strikeouts, 2 walks, the first solo no-no in Alabama baseball in 84 years. Brady Neal drove in 11 runs across the series. Alabama entered the Top 25; Florida plummeted 11 spots in the coaches poll and fell out of Baseball America&rsquo;s rankings entirely. A program-altering weekend for the Crimson Tide.
                   </p>
 
                   <p>
-                    <strong className="text-text-primary">Oklahoma won 2-of-3 at LSU</strong>, clinching the rubber game 4-3 on an eighth-inning rally aided by two LSU errors. The defending national champions dropped to 16-9 (2-4 SEC) with a cratered RPI of 109 &mdash; completely unranked for the first time since 2019. Oklahoma, picked to finish in the bottom half of the SEC, is now No. 8 in the country.
+                    <strong className="text-[var(--bsi-bone)]">Oklahoma won 2-of-3 at LSU</strong>, clinching the rubber game 4-3 on an eighth-inning rally aided by two LSU errors. The defending national champions dropped to 16-9 (2-4 SEC) with a cratered RPI of 109 &mdash; completely unranked for the first time since 2019. Oklahoma, picked to finish in the bottom half of the SEC, is now No. 8 in the country.
                   </p>
 
                   <p>
                     Mississippi State swept Vanderbilt for the first time since March 2000. Tomas Valincius struck out 14 on Saturday. Vanderbilt, preseason No. 23, sits at 13-12 with a five-game losing streak and an RPI of 178. The Brian O&rsquo;Connor rebuild at Mississippi State is ahead of schedule.
                   </p>
 
-                  <p className="text-text-tertiary">
+                  <p className="text-[rgba(196,184,165,0.5)]">
                     And then there&rsquo;s South Carolina. Paul Mainieri was fired on March 21 after a 22-6 blowout loss to Arkansas &mdash; his sixth consecutive defeat. Mainieri went 40-40 overall and 6-28 in SEC play during his tenure. Interim coach Monte Lee (former Clemson HC) has taken over, with Coastal Carolina&rsquo;s Kevin Schnall reportedly the primary target. The coaching change mid-season is a structural marker: SEC programs don&rsquo;t wait.
                   </p>
                 </div>
@@ -637,14 +637,14 @@ export default function TexasWeek6RecapPage() {
         <Section padding="lg">
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-5 pb-2 border-b border-burnt-orange/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-5 pb-2 border-b border-[var(--bsi-primary)]/15">
                 Week 7 Preview: Oklahoma
               </h2>
             </ScrollReveal>
 
             <Container size="narrow">
               <ScrollReveal direction="up" delay={100}>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
                     Texas hosts Houston on Tuesday at Schroeder Park (6:30 PM CT, ESPN+), then welcomes No. 8 Oklahoma to Disch-Falk for a Thursday-through-Saturday SEC series &mdash; all three games on SEC Network linear television. ESPN has designated it the Series of the Week.
                   </p>
@@ -658,7 +658,7 @@ export default function TexasWeek6RecapPage() {
                     <div className="overflow-x-auto">
                       <table className="w-full font-mono text-sm">
                         <thead>
-                          <tr className="text-[10px] uppercase tracking-wider text-text-muted bg-black/20">
+                          <tr className="text-[10px] uppercase tracking-wider text-[rgba(196,184,165,0.35)] bg-black/20">
                             <th className="text-left py-2.5 px-4">Game</th>
                             <th className="text-left py-2.5">Date</th>
                             <th className="text-center py-2.5 w-24">Time (CT)</th>
@@ -671,11 +671,11 @@ export default function TexasWeek6RecapPage() {
                             ['Game 2', 'Fri, Mar 27', '7:00 PM', 'SEC Network'],
                             ['Game 3', 'Sat, Mar 28', '4:00 PM', 'SEC Network'],
                           ].map(([game, date, time, tv]) => (
-                            <tr key={game} className="border-t border-border-subtle">
-                              <td className="py-2.5 px-4 text-burnt-orange font-medium">{game}</td>
-                              <td className="py-2.5 text-text-secondary">{date}</td>
-                              <td className="text-center py-2.5 text-text-tertiary">{time}</td>
-                              <td className="text-center py-2.5 text-text-muted">{tv}</td>
+                            <tr key={game} className="border-t border-[var(--border-vintage)]">
+                              <td className="py-2.5 px-4 text-[var(--bsi-primary)] font-medium">{game}</td>
+                              <td className="py-2.5 text-[var(--bsi-dust)]">{date}</td>
+                              <td className="text-center py-2.5 text-[rgba(196,184,165,0.5)]">{time}</td>
+                              <td className="text-center py-2.5 text-[rgba(196,184,165,0.35)]">{tv}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -686,7 +686,7 @@ export default function TexasWeek6RecapPage() {
               </ScrollReveal>
 
               <ScrollReveal direction="up" delay={150}>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
                     The projected rotation follows Texas&rsquo;s established order on normal rest from the Auburn series: Riojas (Thursday), Harrison (Friday), Volantis as opener/bulk Saturday with Cozart positioned as the primary bridge.
                   </p>
@@ -699,7 +699,7 @@ export default function TexasWeek6RecapPage() {
                     Several storylines converge. Both teams enter at 4-2 in SEC play, part of the seven-way tie for first. This marks the first time both programs have been ranked in the top 10 heading into a baseball matchup since 2009. Texas carries the Friday-night pattern &mdash; 0-2 in SEC openers, 4-0 in Games 2 and 3. Whether Schlossnagle&rsquo;s club can break the Game 1 curse, and whether the ninth-inning questions around Burns can be resolved, will define the narrative.
                   </p>
 
-                  <p className="text-text-tertiary">
+                  <p className="text-[rgba(196,184,165,0.5)]">
                     Against Oklahoma&rsquo;s running game (70-for-76), the first-order tactical key is controlling the bases without giving away fastballs. That means varying holds, using slide steps selectively, and calling pitches that create catcher throw opportunities. If Texas just ignores it, they&rsquo;re playing into Oklahoma&rsquo;s preferred chaos.
                   </p>
                 </div>
@@ -713,10 +713,10 @@ export default function TexasWeek6RecapPage() {
           <Container size="narrow">
             <ScrollReveal direction="up">
               <div className="text-center py-4">
-                <blockquote className="font-serif text-2xl sm:text-3xl italic text-text-primary leading-snug mb-4">
+                <blockquote className="font-serif text-2xl sm:text-3xl italic text-[var(--bsi-bone)] leading-snug mb-4">
                   &ldquo;Five arms, zero runs, four hits. The shutout that hadn&rsquo;t been done in SEC play in program history &mdash; and it came on the road at the fifth-ranked team in America.&rdquo;
                 </blockquote>
-                <div className="font-mono text-xs text-burnt-orange tracking-wider uppercase">
+                <div className="font-mono text-xs text-[var(--bsi-primary)] tracking-wider uppercase">
                   On Sunday&rsquo;s Texas 5, Auburn 0
                 </div>
               </div>
@@ -728,14 +728,14 @@ export default function TexasWeek6RecapPage() {
         <Section padding="lg">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-5 pb-2 border-b border-burnt-orange/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-5 pb-2 border-b border-[var(--bsi-primary)]/15">
                 Looking Ahead
               </h2>
-              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-4">
+              <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-4">
                 <p>
                   Week 7 is about protecting the gains from Week 6. Don&rsquo;t give back midweek sloppiness at Houston. Win the first two innings &mdash; mentally and on the scoreboard &mdash; against an Oklahoma team that&rsquo;s built to pressure you. Break the Friday-night pattern. The series is at Disch-Falk, which means Texas controls the environment for the first time in an SEC weekend.
                 </p>
-                <p className="text-text-tertiary">
+                <p className="text-[rgba(196,184,165,0.5)]">
                   A series win over Oklahoma would give Texas three consecutive SEC series wins (Ole Miss, Auburn, Oklahoma) and functionally separate them from the seven-team pack at the top of the standings. A series loss would drop them into the middle of it. The margin is that narrow. The opportunity is that real.
                 </p>
               </div>
@@ -748,25 +748,25 @@ export default function TexasWeek6RecapPage() {
           <Container>
             <ScrollReveal direction="up">
               <div className="text-center mb-8">
-                <span className="font-mono text-[10px] uppercase tracking-[3px] text-burnt-orange">Powered by AI</span>
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-text-primary mt-2">
+                <span className="font-mono text-[10px] uppercase tracking-[3px] text-[var(--bsi-primary)]">Powered by AI</span>
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mt-2">
                   Go Deeper
                 </h2>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
                 <button
                   onClick={() => openAI('claude')}
-                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded-sm transition-colors text-left"
+                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-[var(--bsi-primary)]/10 hover:border-[var(--bsi-primary)]/30 rounded-sm transition-colors text-left"
                 >
-                  <div className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-1">Claude Analysis</div>
-                  <div className="text-text-muted text-xs">Anthropic-powered series breakdown</div>
+                  <div className="font-display text-sm uppercase tracking-wider text-[var(--bsi-primary)] mb-1">Claude Analysis</div>
+                  <div className="text-[rgba(196,184,165,0.35)] text-xs">Anthropic-powered series breakdown</div>
                 </button>
                 <button
                   onClick={() => openAI('gemini')}
-                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded-sm transition-colors text-left"
+                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-[var(--bsi-primary)]/10 hover:border-[var(--bsi-primary)]/30 rounded-sm transition-colors text-left"
                 >
-                  <div className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-1">Gemini Analysis</div>
-                  <div className="text-text-muted text-xs">Google-powered scouting insights</div>
+                  <div className="font-display text-sm uppercase tracking-wider text-[var(--bsi-primary)] mb-1">Gemini Analysis</div>
+                  <div className="text-[rgba(196,184,165,0.35)] text-xs">Google-powered scouting insights</div>
                 </button>
               </div>
             </ScrollReveal>
@@ -778,11 +778,11 @@ export default function TexasWeek6RecapPage() {
           <Container size="narrow">
             <ScrollReveal direction="up">
               <div className="text-center">
-                <span className="font-mono text-[10px] uppercase tracking-[3px] text-text-muted block mb-2">NotebookLM Integration</span>
-                <h3 className="font-display text-lg uppercase tracking-wider text-text-primary mb-4">
+                <span className="font-mono text-[10px] uppercase tracking-[3px] text-[rgba(196,184,165,0.35)] block mb-2">NotebookLM Integration</span>
+                <h3 className="font-display text-lg uppercase tracking-wider text-[var(--bsi-bone)] mb-4">
                   Turn This Recap Into a Podcast
                 </h3>
-                <p className="text-text-muted text-sm mb-6 max-w-md mx-auto">
+                <p className="text-[rgba(196,184,165,0.35)] text-sm mb-6 max-w-md mx-auto">
                   One click copies the full recap to your clipboard and opens Google NotebookLM. Paste it in and generate an audio overview.
                 </p>
                 <NotebookLMExport articleText={ARTICLE_TEXT} />
@@ -792,7 +792,7 @@ export default function TexasWeek6RecapPage() {
         </Section>
 
         {/* ── Source Attribution ── */}
-        <Section padding="md" className="border-t border-burnt-orange/10">
+        <Section padding="md" className="border-t border-[var(--bsi-primary)]/10">
           <Container size="narrow">
             <div className="space-y-4">
               <div className="flex flex-wrap gap-3">
@@ -802,14 +802,14 @@ export default function TexasWeek6RecapPage() {
                 <DataSourceBadge source="d1baseball.com" timestamp="March 23, 2026 CT" />
                 <DataSourceBadge source="ESPN" timestamp="March 23, 2026 CT" />
               </div>
-              <div className="font-mono text-[11px] text-text-muted leading-relaxed">
+              <div className="font-mono text-[11px] text-[rgba(196,184,165,0.35)] leading-relaxed">
                 Box scores sourced from Texas Longhorns official stats (games #17839, #17840, #17841) and Auburn Tigers recaps. Inning-by-inning line scores reconstructed from official game summaries and verified R/H/E totals. SEC standings via Warren Nolan. Rankings from D1Baseball, Baseball America, and USA Today Coaches Poll (March 23). Player season stats from Texas official cumulative statistics (March 22).
               </div>
               <div className="flex flex-wrap gap-6 pt-2">
-                <Link href="/college-baseball/editorial/weekend-5-recap" className="font-display text-[13px] uppercase tracking-widest text-burnt-orange hover:opacity-70 transition-opacity">
+                <Link href="/college-baseball/editorial/weekend-5-recap" className="font-display text-[13px] uppercase tracking-widest text-[var(--bsi-primary)] hover:opacity-70 transition-opacity">
                   &larr; Weekend 5 Recap
                 </Link>
-                <Link href="/college-baseball/editorial/texas-week-3-recap" className="font-display text-[13px] uppercase tracking-widest text-burnt-orange hover:opacity-70 transition-opacity">
+                <Link href="/college-baseball/editorial/texas-week-3-recap" className="font-display text-[13px] uppercase tracking-widest text-[var(--bsi-primary)] hover:opacity-70 transition-opacity">
                   Texas Week 3 Recap &rarr;
                 </Link>
               </div>

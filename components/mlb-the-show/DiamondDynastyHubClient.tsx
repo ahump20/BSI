@@ -138,7 +138,7 @@ export function DiamondDynastyHubClient() {
                       <Link
                         key={card.id}
                         href={buildCardHref(card.id)}
-                        className="flex items-center justify-between rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3 transition-colors hover:border-burnt-orange/35"
+                        className="flex items-center justify-between rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3 transition-colors hover:border-[var(--bsi-primary)]/35"
                       >
                         <div>
                           <div className="text-sm font-semibold text-[var(--bsi-bone)]">{card.name}</div>
@@ -147,7 +147,7 @@ export function DiamondDynastyHubClient() {
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="font-mono text-lg text-burnt-orange">{formatCompactStub(card.market?.bestSellNow)}</div>
+                          <div className="font-mono text-lg text-[var(--bsi-primary)]">{formatCompactStub(card.market?.bestSellNow)}</div>
                           <div className="text-xs text-[var(--bsi-dust)]">{card.market?.spread !== null ? `Spread ${card.market?.spread?.toLocaleString()}` : 'Spread N/A'}</div>
                         </div>
                       </Link>
@@ -170,7 +170,7 @@ export function DiamondDynastyHubClient() {
                               {captain.team} • {captain.position}
                             </div>
                           </div>
-                          <div className="font-mono text-lg text-burnt-orange">{captain.overall}</div>
+                          <div className="font-mono text-lg text-[var(--bsi-primary)]">{captain.overall}</div>
                         </div>
                         <p className="mt-2 text-sm text-[var(--bsi-dust)]">{captain.abilityDescription}</p>
                       </div>
@@ -187,7 +187,7 @@ export function DiamondDynastyHubClient() {
                       <Link
                         key={collection.id}
                         href={buildCollectionHref(collection.id)}
-                        className="flex items-center justify-between rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3 transition-colors hover:border-burnt-orange/35"
+                        className="flex items-center justify-between rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3 transition-colors hover:border-[var(--bsi-primary)]/35"
                       >
                         <div>
                           <div className="text-sm font-semibold text-[var(--bsi-bone)]">{collection.name}</div>
@@ -214,12 +214,12 @@ export function DiamondDynastyHubClient() {
                         <Link
                           key={event.eventId}
                           href={buildCardHref(event.cardId)}
-                          className="block rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3 transition-colors hover:border-burnt-orange/35"
+                          className="block rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3 transition-colors hover:border-[var(--bsi-primary)]/35"
                         >
                           <div className="flex items-center justify-between gap-4">
                             <div>
                               <div className="text-sm font-semibold text-[var(--bsi-bone)]">{event.cardName}</div>
-                              <div className="text-xs uppercase tracking-[0.18em] text-burnt-orange">{event.eventLabel}</div>
+                              <div className="text-xs uppercase tracking-[0.18em] text-[var(--bsi-primary)]">{event.eventLabel}</div>
                             </div>
                             <div className="text-right text-xs text-[var(--bsi-dust)]">
                               <div>{event.deltaValue !== null ? `${event.deltaValue > 0 ? '+' : ''}${event.deltaValue.toLocaleString()} stubs` : 'N/A'}</div>
@@ -241,7 +241,7 @@ export function DiamondDynastyHubClient() {
                       <Link
                         key={feature.href}
                         href={feature.href}
-                        className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-4 transition-colors hover:border-burnt-orange/35"
+                        className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-4 transition-colors hover:border-[var(--bsi-primary)]/35"
                       >
                         <div className="text-sm font-semibold text-[var(--bsi-bone)]">{feature.title}</div>
                         <p className="mt-2 text-sm leading-relaxed text-[var(--bsi-dust)]">{feature.description}</p>

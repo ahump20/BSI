@@ -53,7 +53,7 @@ function applyInline(text: string): React.ReactNode[] {
   return parts.map((part, i) => {
     if (part.startsWith('**') && part.endsWith('**')) {
       return (
-        <strong key={i} className="text-text-primary font-semibold">
+        <strong key={i} className="text-[var(--bsi-bone)] font-semibold">
           {part.slice(2, -2)}
         </strong>
       );
@@ -160,7 +160,7 @@ function MarkdownRenderer({ content }: { content: string }) {
             return (
               <h2
                 key={idx}
-                className="font-display text-2xl md:text-3xl font-bold text-text-primary uppercase tracking-display mt-10 mb-4 first:mt-0"
+                className="font-display text-2xl md:text-3xl font-bold text-[var(--bsi-bone)] uppercase tracking-display mt-10 mb-4 first:mt-0"
               >
                 {node.text}
               </h2>
@@ -170,7 +170,7 @@ function MarkdownRenderer({ content }: { content: string }) {
             return (
               <h3
                 key={idx}
-                className="font-display text-lg font-bold text-text-primary uppercase tracking-wide mt-7 mb-3"
+                className="font-display text-lg font-bold text-[var(--bsi-bone)] uppercase tracking-wide mt-7 mb-3"
               >
                 {node.text}
               </h3>
@@ -180,20 +180,20 @@ function MarkdownRenderer({ content }: { content: string }) {
             return (
               <hr
                 key={idx}
-                className="my-8 border-t border-border-subtle"
+                className="my-8 border-t border-[var(--border-vintage)]"
               />
             );
 
           case 'table':
             return (
-              <div key={idx} className="overflow-x-auto my-6 rounded-sm border border-border-subtle">
+              <div key={idx} className="overflow-x-auto my-6 rounded-sm border border-[var(--border-vintage)]">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-border-subtle bg-surface-light">
+                    <tr className="border-b border-[var(--border-vintage)] bg-[var(--surface-press-box)]">
                       {node.headers.map((h, hi) => (
                         <th
                           key={hi}
-                          className="px-4 py-2.5 text-left text-text-tertiary font-medium font-display uppercase tracking-wide text-xs whitespace-nowrap"
+                          className="px-4 py-2.5 text-left text-[rgba(196,184,165,0.5)] font-medium font-display uppercase tracking-wide text-xs whitespace-nowrap"
                         >
                           {h}
                         </th>
@@ -204,12 +204,12 @@ function MarkdownRenderer({ content }: { content: string }) {
                     {node.rows.map((row, ri) => (
                       <tr
                         key={ri}
-                        className="border-t border-border-subtle hover:bg-surface-light/50 transition-colors"
+                        className="border-t border-[var(--border-vintage)] hover:bg-[var(--surface-press-box)]/50 transition-colors"
                       >
                         {row.map((cell, ci) => (
                           <td
                             key={ci}
-                            className="px-4 py-2.5 text-text-secondary"
+                            className="px-4 py-2.5 text-[var(--bsi-dust)]"
                           >
                             {applyInline(cell)}
                           </td>
@@ -225,8 +225,8 @@ function MarkdownRenderer({ content }: { content: string }) {
             return (
               <ul key={idx} className="my-3 space-y-1.5 pl-1">
                 {node.items.map((item, ii) => (
-                  <li key={ii} className="flex items-start gap-2 text-text-secondary leading-relaxed">
-                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-burnt-orange flex-shrink-0" />
+                  <li key={ii} className="flex items-start gap-2 text-[var(--bsi-dust)] leading-relaxed">
+                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[var(--bsi-primary)] flex-shrink-0" />
                     <span>{applyInline(item)}</span>
                   </li>
                 ))}
@@ -237,8 +237,8 @@ function MarkdownRenderer({ content }: { content: string }) {
             return (
               <ol key={idx} className="my-3 space-y-1.5 pl-1">
                 {node.items.map((item, ii) => (
-                  <li key={ii} className="flex items-start gap-3 text-text-secondary leading-relaxed">
-                    <span className="mt-0.5 font-display text-burnt-orange font-bold text-sm flex-shrink-0 w-5 text-right">
+                  <li key={ii} className="flex items-start gap-3 text-[var(--bsi-dust)] leading-relaxed">
+                    <span className="mt-0.5 font-display text-[var(--bsi-primary)] font-bold text-sm flex-shrink-0 w-5 text-right">
                       {ii + 1})
                     </span>
                     <span>{applyInline(item)}</span>
@@ -252,7 +252,7 @@ function MarkdownRenderer({ content }: { content: string }) {
 
           case 'p':
             return (
-              <p key={idx} className="text-text-secondary leading-relaxed">
+              <p key={idx} className="text-[var(--bsi-dust)] leading-relaxed">
                 {applyInline(node.text)}
               </p>
             );
@@ -321,11 +321,11 @@ export function BlogPostClient() {
 
   return (
     <>
-      <div className="min-h-screen bg-background-primary">
+      <div className="min-h-screen bg-[var(--surface-scoreboard)]">
         {/* Hero */}
         <Section
           padding="lg"
-          className="bg-gradient-to-b from-background-secondary to-background-primary relative overflow-hidden"
+          className="bg-gradient-to-b from-background-secondary to-[var(--surface-scoreboard)] relative overflow-hidden"
         >
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/5 via-transparent to-transparent pointer-events-none" />
 
@@ -333,9 +333,9 @@ export function BlogPostClient() {
             <div className="max-w-3xl mx-auto">
               {/* Breadcrumb */}
               <nav className="mb-8">
-                <ol className="flex items-center gap-2 text-sm text-text-tertiary">
+                <ol className="flex items-center gap-2 text-sm text-[rgba(196,184,165,0.5)]">
                   <li>
-                    <Link href="/" className="hover:text-burnt-orange transition-colors">
+                    <Link href="/" className="hover:text-[var(--bsi-primary)] transition-colors">
                       BSI
                     </Link>
                   </li>
@@ -343,13 +343,13 @@ export function BlogPostClient() {
                   <li>
                     <Link
                       href="/blog-post-feed"
-                      className="hover:text-burnt-orange transition-colors"
+                      className="hover:text-[var(--bsi-primary)] transition-colors"
                     >
                       Editorial
                     </Link>
                   </li>
                   <li>/</li>
-                  <li className="text-text-secondary truncate max-w-48">Article</li>
+                  <li className="text-[var(--bsi-dust)] truncate max-w-48">Article</li>
                 </ol>
               </nav>
 
@@ -362,8 +362,8 @@ export function BlogPostClient() {
                 </div>
               ) : error ? (
                 <Card variant="default" padding="lg" className="text-center">
-                  <h1 className="text-2xl font-semibold text-text-primary mb-4">{error}</h1>
-                  <p className="text-text-tertiary mb-6">
+                  <h1 className="text-2xl font-semibold text-[var(--bsi-bone)] mb-4">{error}</h1>
+                  <p className="text-[rgba(196,184,165,0.5)] mb-6">
                     This article doesn&apos;t exist or hasn&apos;t been published yet.
                   </p>
                   <Link href="/blog-post-feed">
@@ -386,19 +386,19 @@ export function BlogPostClient() {
                   </div>
 
                   {/* Title */}
-                  <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-text-primary mb-4 leading-tight">
+                  <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-[var(--bsi-bone)] mb-4 leading-tight">
                     {post.title}
                   </h1>
 
                   {post.subtitle && (
-                    <p className="text-xl text-text-secondary leading-relaxed mb-5">
+                    <p className="text-xl text-[var(--bsi-dust)] leading-relaxed mb-5">
                       {post.subtitle}
                     </p>
                   )}
 
                   {/* Byline */}
-                  <div className="flex flex-wrap items-center gap-3 text-sm text-text-tertiary border-t border-border-subtle pt-5">
-                    <span className="font-medium text-text-secondary">{post.author}</span>
+                  <div className="flex flex-wrap items-center gap-3 text-sm text-[rgba(196,184,165,0.5)] border-t border-[var(--border-vintage)] pt-5">
+                    <span className="font-medium text-[var(--bsi-dust)]">{post.author}</span>
                     <span>·</span>
                     <span>{formatDate(post.published_at)}</span>
                     <span>·</span>
@@ -426,22 +426,22 @@ export function BlogPostClient() {
                     {content ? (
                       <MarkdownRenderer content={content} />
                     ) : (
-                      <p className="text-text-tertiary italic">
+                      <p className="text-[rgba(196,184,165,0.5)] italic">
                         This article is being prepared. Check back shortly.
                       </p>
                     )}
                   </article>
 
                   {/* Footer */}
-                  <div className="mt-10 pt-6 border-t border-border-subtle">
+                  <div className="mt-10 pt-6 border-t border-[var(--border-vintage)]">
                     <div className="flex flex-wrap items-center justify-between gap-4">
-                      <div className="text-xs text-text-tertiary">
+                      <div className="text-xs text-[rgba(196,184,165,0.5)]">
                         <span>Blaze Sports Intel · {formatDate(post.published_at)}</span>
                         {post.source_context && (
                           <span className="ml-2 opacity-60">· {post.source_context}</span>
                         )}
                       </div>
-                      <span className="text-xs text-text-tertiary">
+                      <span className="text-xs text-[rgba(196,184,165,0.5)]">
                         blazesportsintel.com
                       </span>
                     </div>

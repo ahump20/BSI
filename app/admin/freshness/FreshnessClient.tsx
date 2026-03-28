@@ -407,7 +407,7 @@ export default function FreshnessClient() {
 
             {loading && !report && !needsAuth && (
               <div className="heritage-card p-8 text-center">
-                <div className="w-6 h-6 mx-auto border-2 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
+                <div className="w-6 h-6 mx-auto border-2 border-[var(--bsi-primary)]/30 border-t-[var(--bsi-primary)] rounded-full animate-spin" />
                 <p className="mt-3 text-sm" style={{ color: 'var(--bsi-dust)' }}>
                   Checking all data sources\u2026
                 </p>

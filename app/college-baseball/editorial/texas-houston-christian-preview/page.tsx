@@ -57,11 +57,11 @@ export default function TexasHoustonChristianPreviewPage() {
         <Section padding="sm" className="border-b border-border">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">College Baseball</Link>
-              <span className="text-text-muted">/</span>
-              <Link href="/college-baseball/editorial" className="text-text-muted hover:text-burnt-orange transition-colors">Editorial</Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-primary">Texas vs. Houston Christian Preview</span>
+              <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">College Baseball</Link>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <Link href="/college-baseball/editorial" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">Editorial</Link>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[var(--bsi-bone)]">Texas vs. Houston Christian Preview</span>
             </nav>
           </Container>
         </Section>
@@ -74,15 +74,15 @@ export default function TexasHoustonChristianPreviewPage() {
               <div className="max-w-3xl">
                 <div className="flex items-center gap-3 mb-6">
                   <Badge variant="primary">Game Preview</Badge>
-                  <span className="text-text-muted text-sm">March 3, 2026</span>
-                  <span className="text-text-muted">|</span>
-                  <span className="text-text-muted text-sm">~6 min read</span>
+                  <span className="text-[rgba(196,184,165,0.35)] text-sm">March 3, 2026</span>
+                  <span className="text-[rgba(196,184,165,0.35)]">|</span>
+                  <span className="text-[rgba(196,184,165,0.35)] text-sm">~6 min read</span>
                 </div>
                 <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold uppercase tracking-tight leading-[0.95] mb-4">
                   The Midweek Before{' '}
                   <span className="bg-gradient-to-r from-burnt-orange to-ember bg-clip-text text-transparent">the Storm.</span>
                 </h1>
-                <p className="font-serif text-xl md:text-2xl italic text-text-tertiary leading-relaxed max-w-2xl">
+                <p className="font-serif text-xl md:text-2xl italic text-[rgba(196,184,165,0.5)] leading-relaxed max-w-2xl">
                   Texas hosts Houston Christian on Tuesday night. The final tune-up before the last
                   non-conference weekend &mdash; and then SEC play arrives.
                 </p>
@@ -107,7 +107,7 @@ export default function TexasHoustonChristianPreviewPage() {
           <Container>
             <ScrollReveal>
               <div className="max-w-3xl mx-auto">
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
                     This is a mismatch on paper. No. 3 Texas is 11&ndash;0. Houston Christian is a Southland
                     Conference program that Texas leads 10&ndash;0 all-time. The Longhorns just swept the
@@ -131,14 +131,14 @@ export default function TexasHoustonChristianPreviewPage() {
           <Container>
             <ScrollReveal>
               <div className="max-w-3xl mx-auto">
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-8">The Matchup</h2>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-8">The Matchup</h2>
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <div className="bg-surface-elevated/50 border border-border rounded-sm p-6 mb-6">
-                    <p className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary">
+                    <p className="font-display text-lg font-semibold uppercase tracking-wide text-[var(--bsi-bone)]">
                       No. 3 Texas vs. Houston Christian
                     </p>
-                    <p className="text-sm text-text-muted mt-1">Tuesday, March 4 &mdash; 6:30 PM CT &mdash; UFCU Disch-Falk Field, Austin</p>
-                    <p className="text-sm text-text-muted">SEC Network+</p>
+                    <p className="text-sm text-[rgba(196,184,165,0.35)] mt-1">Tuesday, March 4 &mdash; 6:30 PM CT &mdash; UFCU Disch-Falk Field, Austin</p>
+                    <p className="text-sm text-[rgba(196,184,165,0.35)]">SEC Network+</p>
                   </div>
                   <p>
                     Sam Cozart (2&ndash;0, 1.13 ERA) gets the start for Texas. The right-hander has been one of
@@ -164,8 +164,8 @@ export default function TexasHoustonChristianPreviewPage() {
           <Container>
             <ScrollReveal>
               <div className="max-w-3xl mx-auto">
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-8">The Huskies Are Not Just Showing Up</h2>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-8">The Huskies Are Not Just Showing Up</h2>
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
                     Houston Christian is the defending Southland Conference champion and has won six of its last
                     seven games, including a walk-off comeback against Incarnate Word where the Huskies trailed
@@ -190,8 +190,8 @@ export default function TexasHoustonChristianPreviewPage() {
           <Container>
             <ScrollReveal>
               <div className="max-w-3xl mx-auto">
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-8">What This Game Means for Texas</h2>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-8">What This Game Means for Texas</h2>
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
                     The math is simple: if Texas wins, it goes to 12&ndash;0 heading into the USC Upstate series.
                     Then the final non-conference weekend. Then Ole Miss visits Disch-Falk on March 13 to open SEC
@@ -215,8 +215,8 @@ export default function TexasHoustonChristianPreviewPage() {
           <Container>
             <ScrollReveal>
               <div className="max-w-3xl mx-auto">
-                <blockquote className="border-l-[3px] border-burnt-orange pl-6 py-4">
-                  <p className="font-serif text-2xl italic text-text-secondary leading-relaxed">
+                <blockquote className="border-l-[3px] border-[var(--bsi-primary)] pl-6 py-4">
+                  <p className="font-serif text-2xl italic text-[var(--bsi-dust)] leading-relaxed">
                     The score on Tuesday night does not matter. What the fourth and fifth arms in
                     the bullpen look like throwing it &mdash; that matters in March.
                   </p>
@@ -250,10 +250,10 @@ export default function TexasHoustonChristianPreviewPage() {
             <div className="max-w-3xl mx-auto">
               <DataSourceBadge source="texaslonghorns.com / hcuhuskies.com / D1Baseball" timestamp="March 3, 2026 — 2:00 PM CT" />
               <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
-                <Link href="/college-baseball/editorial" className="text-text-muted hover:text-burnt-orange transition-colors text-sm">
+                <Link href="/college-baseball/editorial" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors text-sm">
                   &larr; All Editorial
                 </Link>
-                <Link href="/college-baseball/editorial/texas-week-3-recap" className="text-text-muted hover:text-burnt-orange transition-colors text-sm">
+                <Link href="/college-baseball/editorial/texas-week-3-recap" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors text-sm">
                   Texas Week 3 Recap &rarr;
                 </Link>
               </div>

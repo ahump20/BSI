@@ -46,8 +46,8 @@ function LoadingState() {
       <div>
         <Section padding="lg" className="pt-6 min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-burnt-orange mx-auto mb-4" />
-            <p className="text-text-secondary">Confirming your subscription...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--bsi-primary)] mx-auto mb-4" />
+            <p className="text-[var(--bsi-dust)]">Confirming your subscription...</p>
           </div>
         </Section>
       </div>
@@ -141,20 +141,20 @@ function CheckoutReturnContent() {
                       </svg>
                     </div>
                     <h1 className="font-display text-3xl font-bold uppercase tracking-display mb-4">
-                      Welcome to <span className="text-gradient-blaze">BSI</span>
+                      Welcome to <span className="text-[var(--bsi-primary)]">BSI</span>
                     </h1>
-                    <p className="text-text-secondary mb-2">
+                    <p className="text-[var(--bsi-dust)] mb-2">
                       Your {tier === 'enterprise' ? 'Enterprise' : 'Pro'} subscription is now
                       active.
                     </p>
                     {customerEmail && (
-                      <p className="text-text-tertiary text-sm mb-4">
+                      <p className="text-[rgba(196,184,165,0.5)] text-sm mb-4">
                         Your API key has been sent to {customerEmail}. Use it to access your dashboard.
                       </p>
                     )}
                     {tier === 'pro' && trialEnd && (
-                      <div className="bg-burnt-orange/10 border border-burnt-orange/30 rounded-sm p-4 mb-6">
-                        <p className="text-burnt-orange text-sm">
+                      <div className="bg-[var(--bsi-primary)]/10 border border-[var(--bsi-primary)]/30 rounded-sm p-4 mb-6">
+                        <p className="text-[var(--bsi-primary)] text-sm">
                           Your 14-day free trial has started. You won&apos;t be charged until{' '}
                           {new Date(trialEnd * 1000).toLocaleDateString('en-US', {
                             month: 'long',
@@ -165,8 +165,8 @@ function CheckoutReturnContent() {
                         </p>
                       </div>
                     )}
-                    <div className="bg-background-secondary/50 border border-border rounded-sm p-4 mb-8">
-                      <p className="text-text-secondary text-sm">
+                    <div className="bg-[var(--surface-dugout)]/50 border border-border rounded-sm p-4 mb-8">
+                      <p className="text-[var(--bsi-dust)] text-sm">
                         Check your inbox for an email from BSI with your API key.
                         Enter it on the login page to access your dashboard.
                       </p>
@@ -202,9 +202,9 @@ function CheckoutReturnContent() {
                       </svg>
                     </div>
                     <h1 className="font-display text-3xl font-bold uppercase tracking-display mb-4">
-                      Checkout <span className="text-text-tertiary">Cancelled</span>
+                      Checkout <span className="text-[rgba(196,184,165,0.5)]">Cancelled</span>
                     </h1>
-                    <p className="text-text-secondary mb-8">
+                    <p className="text-[var(--bsi-dust)] mb-8">
                       No worries—your checkout was cancelled and you were not charged.
                     </p>
                     <div className="space-y-4">
@@ -240,14 +240,14 @@ function CheckoutReturnContent() {
                     <h1 className="font-display text-3xl font-bold uppercase tracking-display mb-4">
                       Something <span className="text-error">Went Wrong</span>
                     </h1>
-                    <p className="text-text-secondary mb-4">
+                    <p className="text-[var(--bsi-dust)] mb-4">
                       {errorMessage || "We couldn't verify your subscription."}
                     </p>
-                    <p className="text-text-tertiary text-sm mb-8">
+                    <p className="text-[rgba(196,184,165,0.5)] text-sm mb-8">
                       If you were charged, please contact{' '}
                       <a
                         href="mailto:Austin@blazesportsintel.com"
-                        className="text-burnt-orange hover:text-ember"
+                        className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)]"
                       >
                         Austin@blazesportsintel.com
                       </a>

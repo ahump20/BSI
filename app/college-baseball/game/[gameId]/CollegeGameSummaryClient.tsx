@@ -99,12 +99,12 @@ function SeriesStrip({ games, currentGameId }: { games: SeriesGame[]; currentGam
   if (games.length <= 1) return null;
 
   return (
-    <Card variant="default" padding="md" className="border-burnt-orange/20">
+    <Card variant="default" padding="md" className="border-[var(--bsi-primary)]/20">
       <div className="flex items-center gap-2 mb-3">
-        <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-burnt-orange">
+        <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-[var(--bsi-primary)]">
           Weekend Series
         </span>
-        <span className="text-xs text-text-tertiary">
+        <span className="text-xs text-[rgba(196,184,165,0.5)]">
           {games.length}-Game Series
         </span>
       </div>
@@ -117,21 +117,21 @@ function SeriesStrip({ games, currentGameId }: { games: SeriesGame[]; currentGam
               key={g.id}
               className={`flex-shrink-0 px-3 py-2 rounded-sm text-sm ${
                 isCurrent
-                  ? 'bg-burnt-orange/15 border border-burnt-orange/30'
-                  : 'bg-background-tertiary'
+                  ? 'bg-[var(--bsi-primary)]/15 border border-[var(--bsi-primary)]/30'
+                  : 'bg-[var(--surface-dugout)]'
               }`}
             >
-              <div className="text-[10px] text-text-tertiary mb-1">
+              <div className="text-[10px] text-[rgba(196,184,165,0.5)] mb-1">
                 Game {i + 1}
               </div>
               {isFinal ? (
-                <div className="font-mono text-text-primary">
+                <div className="font-mono text-[var(--bsi-bone)]">
                   {g.awayScore} - {g.homeScore}
                 </div>
               ) : g.status === 'live' ? (
                 <div className="text-success text-xs font-semibold">Live</div>
               ) : (
-                <div className="text-text-tertiary text-xs">Scheduled</div>
+                <div className="text-[rgba(196,184,165,0.5)] text-xs">Scheduled</div>
               )}
             </div>
           );
@@ -279,7 +279,7 @@ export default function CollegeGameSummaryClient() {
           <div className="text-center py-8">
             <svg
               viewBox="0 0 24 24"
-              className="w-16 h-16 text-text-tertiary mx-auto mb-4"
+              className="w-16 h-16 text-[rgba(196,184,165,0.5)] mx-auto mb-4"
               fill="none"
               stroke="currentColor"
               strokeWidth="1.5"
@@ -287,11 +287,11 @@ export default function CollegeGameSummaryClient() {
               <circle cx="12" cy="12" r="10" />
               <polyline points="12,6 12,12 16,14" />
             </svg>
-            <p className="text-text-secondary">First pitch hasn't happened yet.</p>
-            <p className="text-text-tertiary text-sm mt-2">
+            <p className="text-[var(--bsi-dust)]">First pitch hasn't happened yet.</p>
+            <p className="text-[rgba(196,184,165,0.5)] text-sm mt-2">
               Come back when the game gets going. This is what ESPN ignores—but we'll have every stat.
             </p>
-            <p className="text-burnt-orange text-sm mt-4 font-semibold">
+            <p className="text-[var(--bsi-primary)] text-sm mt-4 font-semibold">
               {game.status.detailedState}
             </p>
           </div>
@@ -316,7 +316,7 @@ export default function CollegeGameSummaryClient() {
           <div className="flex items-center gap-3">
             <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
             <span className="text-success font-semibold">Game In Progress</span>
-            <span className="text-text-secondary text-sm">
+            <span className="text-[var(--bsi-dust)] text-sm">
               — {game.status.inningState} of the {game.status.inning}
               {game.status.inning === 1
                 ? 'st'
@@ -366,20 +366,20 @@ export default function CollegeGameSummaryClient() {
               <div className="space-y-4">
                 {/* Top Hitters */}
                 {topHitters.map((hitter, idx) => (
-                  <div key={idx} className="flex items-center gap-4 p-3 bg-background-tertiary rounded-sm">
-                    <div className="w-10 h-10 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
+                  <div key={idx} className="flex items-center gap-4 p-3 bg-[var(--surface-dugout)] rounded-sm">
+                    <div className="w-10 h-10 bg-[var(--surface-dugout)] rounded-full flex items-center justify-center text-xs font-bold text-[var(--bsi-primary)]">
                       {hitter.player.position}
                     </div>
                     <div className="flex-1">
-                      <p className="font-semibold text-text-primary">
+                      <p className="font-semibold text-[var(--bsi-bone)]">
                         {hitter.player.name}
                         {hitter.player.year && (
-                          <span className="text-text-tertiary text-xs ml-2">
+                          <span className="text-[rgba(196,184,165,0.5)] text-xs ml-2">
                             ({hitter.player.year})
                           </span>
                         )}
                       </p>
-                      <p className="text-text-secondary text-sm">
+                      <p className="text-[var(--bsi-dust)] text-sm">
                         {hitter.h}-{hitter.ab}
                         {hitter.rbi > 0 && `, ${hitter.rbi} RBI`}
                         {hitter.r > 0 && `, ${hitter.r} R`}
@@ -390,33 +390,33 @@ export default function CollegeGameSummaryClient() {
 
                 {/* Pitching Decisions */}
                 {winningPitcher && (
-                  <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-sm">
+                  <div className="flex items-center gap-4 p-3 bg-[var(--surface-dugout)] rounded-sm">
                     <Badge variant="success">W</Badge>
                     <div>
-                      <p className="font-semibold text-text-primary">{winningPitcher.player.name}</p>
-                      <p className="text-text-secondary text-sm">
+                      <p className="font-semibold text-[var(--bsi-bone)]">{winningPitcher.player.name}</p>
+                      <p className="text-[var(--bsi-dust)] text-sm">
                         {winningPitcher.ip} IP, {winningPitcher.so} K, {winningPitcher.er} ER
                       </p>
                     </div>
                   </div>
                 )}
                 {losingPitcher && (
-                  <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-sm">
+                  <div className="flex items-center gap-4 p-3 bg-[var(--surface-dugout)] rounded-sm">
                     <Badge variant="error">L</Badge>
                     <div>
-                      <p className="font-semibold text-text-primary">{losingPitcher.player.name}</p>
-                      <p className="text-text-secondary text-sm">
+                      <p className="font-semibold text-[var(--bsi-bone)]">{losingPitcher.player.name}</p>
+                      <p className="text-[var(--bsi-dust)] text-sm">
                         {losingPitcher.ip} IP, {losingPitcher.so} K, {losingPitcher.er} ER
                       </p>
                     </div>
                   </div>
                 )}
                 {savePitcher && (
-                  <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-sm">
+                  <div className="flex items-center gap-4 p-3 bg-[var(--surface-dugout)] rounded-sm">
                     <Badge variant="secondary">SV</Badge>
                     <div>
-                      <p className="font-semibold text-text-primary">{savePitcher.player.name}</p>
-                      <p className="text-text-secondary text-sm">
+                      <p className="font-semibold text-[var(--bsi-bone)]">{savePitcher.player.name}</p>
+                      <p className="text-[var(--bsi-dust)] text-sm">
                         {savePitcher.ip} IP, {savePitcher.so} K
                       </p>
                     </div>
@@ -424,7 +424,7 @@ export default function CollegeGameSummaryClient() {
                 )}
               </div>
             ) : (
-              <p className="text-text-tertiary text-sm py-4 text-center">
+              <p className="text-[rgba(196,184,165,0.5)] text-sm py-4 text-center">
                 Performance data shows up as the game progresses.
               </p>
             )}
@@ -442,7 +442,7 @@ export default function CollegeGameSummaryClient() {
                 {scoringPlays.map((play) => (
                   <div
                     key={play.id}
-                    className="p-3 bg-background-tertiary rounded-sm border-l-4 border-burnt-orange"
+                    className="p-3 bg-[var(--surface-dugout)] rounded-sm border-l-4 border-[var(--bsi-primary)]"
                   >
                     <div className="flex items-center gap-2 mb-1">
                       <Badge variant="primary" size="sm">
@@ -452,12 +452,12 @@ export default function CollegeGameSummaryClient() {
                         +{play.runsScored}
                       </Badge>
                     </div>
-                    <p className="text-text-secondary text-sm">{play.description}</p>
+                    <p className="text-[var(--bsi-dust)] text-sm">{play.description}</p>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-text-tertiary text-sm py-4 text-center">
+              <p className="text-[rgba(196,184,165,0.5)] text-sm py-4 text-center">
                 No runs across yet. College baseball's best pitching duels happen when you least
                 expect them.
               </p>
@@ -474,27 +474,27 @@ export default function CollegeGameSummaryClient() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="text-center p-4 bg-background-tertiary rounded-sm">
-                <p className="text-text-tertiary text-sm mb-1">Total Runs</p>
-                <p className="text-2xl font-bold text-text-primary font-mono">
+              <div className="text-center p-4 bg-[var(--surface-dugout)] rounded-sm">
+                <p className="text-[rgba(196,184,165,0.5)] text-sm mb-1">Total Runs</p>
+                <p className="text-2xl font-bold text-[var(--bsi-bone)] font-mono">
                   {game.linescore.totals.away.runs + game.linescore.totals.home.runs}
                 </p>
               </div>
-              <div className="text-center p-4 bg-background-tertiary rounded-sm">
-                <p className="text-text-tertiary text-sm mb-1">Total Hits</p>
-                <p className="text-2xl font-bold text-text-primary font-mono">
+              <div className="text-center p-4 bg-[var(--surface-dugout)] rounded-sm">
+                <p className="text-[rgba(196,184,165,0.5)] text-sm mb-1">Total Hits</p>
+                <p className="text-2xl font-bold text-[var(--bsi-bone)] font-mono">
                   {game.linescore.totals.away.hits + game.linescore.totals.home.hits}
                 </p>
               </div>
-              <div className="text-center p-4 bg-background-tertiary rounded-sm">
-                <p className="text-text-tertiary text-sm mb-1">Errors</p>
-                <p className="text-2xl font-bold text-text-primary font-mono">
+              <div className="text-center p-4 bg-[var(--surface-dugout)] rounded-sm">
+                <p className="text-[rgba(196,184,165,0.5)] text-sm mb-1">Errors</p>
+                <p className="text-2xl font-bold text-[var(--bsi-bone)] font-mono">
                   {game.linescore.totals.away.errors + game.linescore.totals.home.errors}
                 </p>
               </div>
-              <div className="text-center p-4 bg-background-tertiary rounded-sm">
-                <p className="text-text-tertiary text-sm mb-1">Innings</p>
-                <p className="text-2xl font-bold text-text-primary font-mono">
+              <div className="text-center p-4 bg-[var(--surface-dugout)] rounded-sm">
+                <p className="text-[rgba(196,184,165,0.5)] text-sm mb-1">Innings</p>
+                <p className="text-2xl font-bold text-[var(--bsi-bone)] font-mono">
                   {game.linescore.innings.length}
                 </p>
               </div>
@@ -506,12 +506,12 @@ export default function CollegeGameSummaryClient() {
       {/* Venue Info */}
       <Card variant="default" padding="sm">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-text-tertiary">
+          <span className="text-[rgba(196,184,165,0.5)]">
             {game.venue?.name}
             {game.venue?.city && game.venue?.state && ` — ${game.venue.city}, ${game.venue.state}`}
           </span>
           {(game.teams.away.conference || game.teams.home.conference) && (
-            <span className="text-text-tertiary">
+            <span className="text-[rgba(196,184,165,0.5)]">
               {game.teams.away.conference === game.teams.home.conference
                 ? `${game.teams.away.conference} Conference Game`
                 : 'Non-Conference'}

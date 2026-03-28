@@ -34,14 +34,14 @@ function ChartLoadingPlaceholder() {
     return (
       <div className="h-64 flex items-center justify-center">
         <div className="text-center">
-          <svg viewBox="0 0 24 24" className="w-10 h-10 mx-auto text-text-muted mb-3" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <svg viewBox="0 0 24 24" className="w-10 h-10 mx-auto text-[rgba(196,184,165,0.35)] mb-3" fill="none" stroke="currentColor" strokeWidth="1.5">
             <circle cx="12" cy="12" r="10" />
             <path d="M12 6v6l4 2" />
           </svg>
-          <p className="text-text-tertiary text-sm">No chart data available</p>
+          <p className="text-[rgba(196,184,165,0.5)] text-sm">No chart data available</p>
           <button
             onClick={() => window.location.reload()}
-            className="mt-2 text-xs text-burnt-orange hover:text-burnt-orange/80 underline transition-colors"
+            className="mt-2 text-xs text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)]/80 underline transition-colors"
           >
             Reload page
           </button>
@@ -53,8 +53,8 @@ function ChartLoadingPlaceholder() {
   return (
     <div className="h-64 flex items-center justify-center">
       <div className="flex flex-col items-center gap-2">
-        <div className="w-8 h-8 border-2 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
-        <span className="text-xs text-text-tertiary">Loading chart...</span>
+        <div className="w-8 h-8 border-2 border-[var(--bsi-primary)]/30 border-t-[var(--bsi-primary)] rounded-full animate-spin" />
+        <span className="text-xs text-[rgba(196,184,165,0.5)]">Loading chart...</span>
       </div>
     </div>
   );
@@ -179,7 +179,7 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen pt-6 flex items-center justify-center bg-[var(--surface-scoreboard)]">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin mx-auto mb-4" />
+          <div className="w-8 h-8 border-2 border-[var(--bsi-primary)]/30 border-t-[var(--bsi-primary)] rounded-full animate-spin mx-auto mb-4" />
           <p className="text-bsi-dust text-sm">Verifying access...</p>
         </div>
       </div>
@@ -418,14 +418,14 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
                 {hasBilling && (
                   <button
                     onClick={handleManageSubscription}
-                    className="px-3 py-1.5 text-xs text-burnt-orange hover:text-ember border border-burnt-orange/30 hover:border-burnt-orange/50 rounded-sm transition-colors"
+                    className="px-3 py-1.5 text-xs text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] border border-[var(--bsi-primary)]/30 hover:border-[var(--bsi-primary)]/50 rounded-sm transition-colors"
                   >
                     Manage Subscription
                   </button>
                 )}
                 <button
                   onClick={handleSignOut}
-                  className="px-3 py-1.5 text-xs text-text-muted hover:text-text-secondary border border-border hover:border-border-subtle rounded-sm transition-colors"
+                  className="px-3 py-1.5 text-xs text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-dust)] border border-border hover:border-[var(--border-vintage)] rounded-sm transition-colors"
                 >
                   Sign Out
                 </button>
@@ -566,11 +566,11 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
                       {fetchError || (!isLoading && standingsChartData.length === 0) ? (
                         <div className="h-64 flex items-center justify-center">
                           <div className="text-center">
-                            <svg viewBox="0 0 24 24" className="w-10 h-10 mx-auto text-text-muted mb-3" fill="none" stroke="currentColor" strokeWidth="1.5">
+                            <svg viewBox="0 0 24 24" className="w-10 h-10 mx-auto text-[rgba(196,184,165,0.35)] mb-3" fill="none" stroke="currentColor" strokeWidth="1.5">
                               <rect x="3" y="3" width="18" height="18" rx="2" />
                               <path d="M3 9h18M9 21V9" />
                             </svg>
-                            <p className="text-text-tertiary text-sm">
+                            <p className="text-[rgba(196,184,165,0.5)] text-sm">
                               {fetchError ? 'Standings data unavailable' : `No standings data for ${activeSport.toUpperCase()}`}
                             </p>
                           </div>
@@ -586,12 +586,12 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
                       ) : (
                         <div className="h-64 flex items-center justify-center">
                           <div className="text-center">
-                            <svg viewBox="0 0 24 24" className="w-10 h-10 mx-auto text-text-muted mb-3" fill="none" stroke="currentColor" strokeWidth="1.5">
+                            <svg viewBox="0 0 24 24" className="w-10 h-10 mx-auto text-[rgba(196,184,165,0.35)] mb-3" fill="none" stroke="currentColor" strokeWidth="1.5">
                               <circle cx="12" cy="12" r="10" />
                               <path d="M12 6v6l4 2" />
                             </svg>
-                            <p className="text-text-tertiary text-sm">Coverage data unavailable</p>
-                            <p className="text-text-tertiary/60 text-xs mt-1">Live scores integration pending</p>
+                            <p className="text-[rgba(196,184,165,0.5)] text-sm">Coverage data unavailable</p>
+                            <p className="text-[rgba(196,184,165,0.5)]/60 text-xs mt-1">Live scores integration pending</p>
                           </div>
                         </div>
                       )}
@@ -626,7 +626,7 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
                   <div className="mt-4 text-center">
                     <Link
                       href="/data-sources"
-                      className="text-xs text-text-muted hover:text-text-tertiary transition-colors underline underline-offset-2"
+                      className="text-xs text-[rgba(196,184,165,0.35)] hover:text-[rgba(196,184,165,0.5)] transition-colors underline underline-offset-2"
                     >
                       View all data sources and refresh cadences →
                     </Link>
@@ -699,7 +699,7 @@ function ProviderHealthPanel({ health }: { health: HealthData | null }) {
   return (
     <DashboardWidget title="Data Pipeline" className="mb-6">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-[10px] text-text-muted">
+        <span className="text-[10px] text-[rgba(196,184,165,0.35)]">
           Checked {new Date(health.checkedAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })}
         </span>
       </div>
@@ -709,7 +709,7 @@ function ProviderHealthPanel({ health }: { health: HealthData | null }) {
           return (
             <div key={key} className="flex items-center gap-2">
               <span className={`w-2 h-2 rounded-full ${colors.dot}`} />
-              <span className="text-sm text-text-secondary">{SPORT_DISPLAY[key] || key}</span>
+              <span className="text-sm text-[var(--bsi-dust)]">{SPORT_DISPLAY[key] || key}</span>
               <span className={`text-[10px] ${colors.text}`}>{provider.status}</span>
             </div>
           );
@@ -777,7 +777,7 @@ function QuickLinkCard({ href, icon, title, subtitle }: QuickLinkCardProps) {
       className="block p-4 heritage-card hover:border-[var(--border-active)] transition-all group"
     >
       <Image src={icon} alt="" width={28} height={28} className="mb-2 opacity-60 group-hover:opacity-100 transition-opacity" />
-      <p className="font-semibold text-bsi-bone group-hover:text-burnt-orange transition-colors text-sm">
+      <p className="font-semibold text-bsi-bone group-hover:text-[var(--bsi-primary)] transition-colors text-sm">
         {title}
       </p>
       <p className="text-xs text-bsi-dust">{subtitle}</p>
@@ -796,7 +796,7 @@ function ArcadeQuickLinkCard() {
         <circle cx="9" cy="12" r="2" />
         <path d="M15 10v4M13 12h4" />
       </svg>
-      <p className="font-semibold text-bsi-bone group-hover:text-burnt-orange transition-colors text-sm">
+      <p className="font-semibold text-bsi-bone group-hover:text-[var(--bsi-primary)] transition-colors text-sm">
         Arcade
       </p>
       <p className="text-xs text-bsi-dust">Mini-games</p>

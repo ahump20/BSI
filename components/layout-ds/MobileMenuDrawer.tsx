@@ -138,12 +138,12 @@ export function MobileMenuDrawer({
           aria-current={active ? 'page' : undefined}
           className={`block w-full px-4 py-3 rounded-sm transition-all min-h-12 flex items-center relative ${
             active
-              ? 'text-burnt-orange font-semibold bg-surface'
-              : 'text-text-secondary hover:text-text-primary hover:bg-surface-light'
+              ? 'text-[var(--bsi-primary)] font-semibold bg-surface'
+              : 'text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)]'
           }`}
         >
           {active && (
-            <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-burnt-orange rounded-r" />
+            <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[var(--bsi-primary)] rounded-r" />
           )}
           <span className={active ? 'pl-2' : ''}>{item.label}</span>
         </Link>
@@ -161,7 +161,7 @@ export function MobileMenuDrawer({
       <motion.div key={item.href} variants={linkItem}>
         <div className="relative">
           {active && (
-            <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-burnt-orange rounded-r z-10" />
+            <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[var(--bsi-primary)] rounded-r z-10" />
           )}
           <div className="flex items-center">
             <Link
@@ -170,14 +170,14 @@ export function MobileMenuDrawer({
               aria-current={active ? 'page' : undefined}
               className={`flex-1 flex items-center justify-between px-4 py-3 rounded-l-sm transition-all min-h-12 ${
                 active
-                  ? 'text-burnt-orange font-semibold bg-surface'
-                  : 'text-text-secondary hover:text-text-primary hover:bg-surface-light'
+                  ? 'text-[var(--bsi-primary)] font-semibold bg-surface'
+                  : 'text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)]'
               }`}
             >
               <span className={active ? 'pl-2' : ''}>{item.label}</span>
               <span className="flex items-center gap-2">
                 {item.phaseLabel && (
-                  <span className="text-[10px] text-text-muted">{item.phaseLabel}</span>
+                  <span className="text-[10px] text-[rgba(196,184,165,0.35)]">{item.phaseLabel}</span>
                 )}
                 {isLive && (
                   <span className="relative flex h-2.5 w-2.5">
@@ -191,13 +191,13 @@ export function MobileMenuDrawer({
               <button
                 onClick={() => setExpandedLeague(isExpanded ? null : item.href)}
                 className={`px-3 py-3 rounded-r-sm transition-colors min-h-12 ${
-                  active ? 'bg-surface' : 'hover:bg-surface-light'
+                  active ? 'bg-surface' : 'hover:bg-[var(--surface-press-box)]'
                 }`}
                 aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${item.label} links`}
                 aria-expanded={isExpanded}
               >
                 <ChevronDown
-                  className={`w-4 h-4 text-text-muted transition-transform duration-200 ${
+                  className={`w-4 h-4 text-[rgba(196,184,165,0.35)] transition-transform duration-200 ${
                     isExpanded ? 'rotate-180' : ''
                   }`}
                 />
@@ -227,8 +227,8 @@ export function MobileMenuDrawer({
                       onClick={onClose}
                       className={`block px-3 py-2 rounded-sm text-sm transition-colors ${
                         subActive
-                          ? 'text-burnt-orange font-medium'
-                          : 'text-text-muted hover:text-text-secondary'
+                          ? 'text-[var(--bsi-primary)] font-medium'
+                          : 'text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-dust)]'
                       }`}
                     >
                       {sub.label}
@@ -244,7 +244,7 @@ export function MobileMenuDrawer({
   };
 
   const renderSectionHeader = (label: string) => (
-    <span className="text-[10px] uppercase tracking-widest text-text-muted font-medium px-4 flex items-center gap-2">
+    <span className="text-[10px] uppercase tracking-widest text-[rgba(196,184,165,0.35)] font-medium px-4 flex items-center gap-2">
       {label}
       <span className="h-px flex-1 bg-border-subtle" />
     </span>
@@ -271,7 +271,7 @@ export function MobileMenuDrawer({
             role="dialog"
             aria-modal="true"
             aria-label="Navigation menu"
-            className="fixed top-0 right-0 bottom-0 z-50 w-[85vw] max-w-sm bg-midnight/95 backdrop-blur-xl border-l border-border overflow-y-auto"
+            className="fixed top-0 right-0 bottom-0 z-50 w-[85vw] max-w-sm bg-[var(--surface-scoreboard)]/95 backdrop-blur-xl border-l border-border overflow-y-auto"
             style={{
               paddingBottom: 'env(safe-area-inset-bottom, 0px)',
               x: dragX,
@@ -285,8 +285,8 @@ export function MobileMenuDrawer({
             onPanEnd={handlePanEnd}
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-border-subtle">
-              <span className="text-xs uppercase tracking-widest text-text-muted font-medium">
+            <div className="flex items-center justify-between p-4 border-b border-[var(--border-vintage)]">
+              <span className="text-xs uppercase tracking-widest text-[rgba(196,184,165,0.35)] font-medium">
                 Menu
               </span>
               <button
@@ -295,7 +295,7 @@ export function MobileMenuDrawer({
                 className="p-2 hover:bg-surface rounded-sm transition-colors"
                 aria-label="Close menu"
               >
-                <X className="w-5 h-5 text-text-primary" />
+                <X className="w-5 h-5 text-[var(--bsi-bone)]" />
               </button>
             </div>
 
@@ -312,7 +312,7 @@ export function MobileMenuDrawer({
             {/* Sports */}
             {leagues.length > 0 && (
               <>
-                <div className="mx-4 my-2 border-t border-border-subtle" />
+                <div className="mx-4 my-2 border-t border-[var(--border-vintage)]" />
                 <div className="px-4 pb-1">
                   {renderSectionHeader('Sports')}
                 </div>
@@ -330,7 +330,7 @@ export function MobileMenuDrawer({
             {/* Analytics & Tools */}
             {analytics.length > 0 && (
               <>
-                <div className="mx-4 my-2 border-t border-border-subtle" />
+                <div className="mx-4 my-2 border-t border-[var(--border-vintage)]" />
                 <div className="px-4 pb-1">
                   {renderSectionHeader('Analytics & Tools')}
                 </div>
@@ -348,7 +348,7 @@ export function MobileMenuDrawer({
             {/* More */}
             {secondary.length > 0 && (
               <>
-                <div className="mx-4 my-2 border-t border-border-subtle" />
+                <div className="mx-4 my-2 border-t border-[var(--border-vintage)]" />
                 <div className="px-4 pb-1">
                   {renderSectionHeader('More')}
                 </div>

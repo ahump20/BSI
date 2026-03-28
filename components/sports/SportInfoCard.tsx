@@ -19,26 +19,26 @@ export function SportInfoCard({ icon, title, subtitle, bullets, actions }: Sport
     <ScrollReveal>
       <Card variant="default" padding="lg">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-sm bg-burnt-orange/15 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-sm bg-[var(--bsi-primary)]/15 flex items-center justify-center">
             {icon}
           </div>
           <div>
             <CardTitle size="md">{title}</CardTitle>
-            <p className="text-text-tertiary text-xs mt-0.5">{subtitle}</p>
+            <p className="text-[rgba(196,184,165,0.5)] text-xs mt-0.5">{subtitle}</p>
           </div>
         </div>
-        <ul className="space-y-3 text-sm text-text-secondary">
+        <ul className="space-y-3 text-sm text-[var(--bsi-dust)]">
           {bullets.map((bullet) => (
             <li key={bullet.bold} className="flex gap-2">
-              <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
+              <span className="text-[var(--bsi-primary)] mt-1 shrink-0">&bull;</span>
               <span>
-                <strong className="text-text-primary">{bullet.bold}</strong> {bullet.text}
+                <strong className="text-[var(--bsi-bone)]">{bullet.bold}</strong> {bullet.text}
               </span>
             </li>
           ))}
         </ul>
         {actions && actions.length > 0 && (
-          <div className="flex flex-wrap gap-3 mt-5 pt-4 border-t border-border-subtle">
+          <div className="flex flex-wrap gap-3 mt-5 pt-4 border-t border-[var(--border-vintage)]">
             {actions.map((action) => (
               <Link key={action.href} href={action.href}>
                 <Button variant={action.variant || 'ghost'} size="sm">

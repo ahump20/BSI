@@ -45,15 +45,15 @@ export default function RecapClient() {
         <div className="text-center py-8">
           <svg
             viewBox="0 0 24 24"
-            className="w-16 h-16 text-text-tertiary mx-auto mb-4"
+            className="w-16 h-16 text-[rgba(196,184,165,0.5)] mx-auto mb-4"
             fill="none"
             stroke="currentColor"
             strokeWidth="1.5"
           >
             <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <p className="text-text-secondary">Game recap will be available after the final buzzer</p>
-          <p className="text-text-tertiary text-sm mt-2">
+          <p className="text-[var(--bsi-dust)]">Game recap will be available after the final buzzer</p>
+          <p className="text-[rgba(196,184,165,0.5)] text-sm mt-2">
             Check back once the game is complete for a full summary
           </p>
         </div>
@@ -70,9 +70,9 @@ export default function RecapClient() {
             <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
             <span className="text-success font-semibold">Game In Progress</span>
           </div>
-          <p className="text-text-secondary">
+          <p className="text-[var(--bsi-dust)]">
             Live recap updates as the game unfolds. Currently in{' '}
-            <span className="text-text-primary font-semibold">
+            <span className="text-[var(--bsi-bone)] font-semibold">
               Q{game.status?.period || '?'} {game.status?.displayClock || ''}
             </span>
             .
@@ -90,7 +90,7 @@ export default function RecapClient() {
                 {scoringPlays.slice(-10).map((play, idx) => (
                   <div
                     key={play.id || idx}
-                    className="p-3 bg-background-tertiary rounded-sm border-l-4 border-burnt-orange"
+                    className="p-3 bg-[var(--surface-dugout)] rounded-sm border-l-4 border-[var(--bsi-primary)]"
                   >
                     <div className="flex items-center gap-2 mb-1">
                       <Badge variant="primary" size="sm">
@@ -102,15 +102,15 @@ export default function RecapClient() {
                         </Badge>
                       )}
                       {play.clock?.displayValue && (
-                        <span className="text-text-tertiary text-xs font-mono">
+                        <span className="text-[rgba(196,184,165,0.5)] text-xs font-mono">
                           {play.clock.displayValue}
                         </span>
                       )}
                     </div>
-                    <p className="text-text-secondary text-sm">
+                    <p className="text-[var(--bsi-dust)] text-sm">
                       {play.text || play.shortText || 'Scoring play'}
                     </p>
-                    <p className="text-text-tertiary text-xs mt-1">
+                    <p className="text-[rgba(196,184,165,0.5)] text-xs mt-1">
                       Score: {awayTeam?.team?.abbreviation} {play.awayScore} -{' '}
                       {homeTeam?.team?.abbreviation} {play.homeScore}
                     </p>
@@ -136,11 +136,11 @@ export default function RecapClient() {
     <div className="space-y-6">
       {/* Headline */}
       <Card variant="default" padding="lg">
-        <h2 className="text-2xl font-display font-bold text-text-primary mb-4">
+        <h2 className="text-2xl font-display font-bold text-[var(--bsi-bone)] mb-4">
           {winner?.team?.displayName || 'Winner'} defeat{' '}
           {loser?.team?.displayName || 'Loser'}, {winnerScore}-{loserScore}
         </h2>
-        <p className="text-text-secondary leading-relaxed">
+        <p className="text-[var(--bsi-dust)] leading-relaxed">
           The {winner?.team?.displayName || 'winners'} came away with the victory over the{' '}
           {loser?.team?.displayName || 'opponents'}.
           {pointsLeader && (
@@ -169,35 +169,35 @@ export default function RecapClient() {
           <CardContent>
             <div className="grid gap-4 md:grid-cols-3">
               {pointsLeader && (
-                <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-sm">
+                <div className="flex items-center gap-4 p-3 bg-[var(--surface-dugout)] rounded-sm">
                   <Badge variant="primary">PTS</Badge>
                   <div>
-                    <p className="font-semibold text-text-primary">
+                    <p className="font-semibold text-[var(--bsi-bone)]">
                       {pointsLeader.athlete?.displayName}
                     </p>
-                    <p className="text-text-secondary text-sm">{pointsLeader.displayValue}</p>
+                    <p className="text-[var(--bsi-dust)] text-sm">{pointsLeader.displayValue}</p>
                   </div>
                 </div>
               )}
               {reboundsLeader && (
-                <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-sm">
+                <div className="flex items-center gap-4 p-3 bg-[var(--surface-dugout)] rounded-sm">
                   <Badge variant="success">REB</Badge>
                   <div>
-                    <p className="font-semibold text-text-primary">
+                    <p className="font-semibold text-[var(--bsi-bone)]">
                       {reboundsLeader.athlete?.displayName}
                     </p>
-                    <p className="text-text-secondary text-sm">{reboundsLeader.displayValue}</p>
+                    <p className="text-[var(--bsi-dust)] text-sm">{reboundsLeader.displayValue}</p>
                   </div>
                 </div>
               )}
               {assistsLeader && (
-                <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-sm">
+                <div className="flex items-center gap-4 p-3 bg-[var(--surface-dugout)] rounded-sm">
                   <Badge variant="secondary">AST</Badge>
                   <div>
-                    <p className="font-semibold text-text-primary">
+                    <p className="font-semibold text-[var(--bsi-bone)]">
                       {assistsLeader.athlete?.displayName}
                     </p>
-                    <p className="text-text-secondary text-sm">{assistsLeader.displayValue}</p>
+                    <p className="text-[var(--bsi-dust)] text-sm">{assistsLeader.displayValue}</p>
                   </div>
                 </div>
               )}
@@ -220,7 +220,7 @@ export default function RecapClient() {
                 .map((play, idx) => (
                   <div
                     key={play.id || idx}
-                    className="p-3 bg-background-tertiary rounded-sm border-l-4 border-burnt-orange"
+                    className="p-3 bg-[var(--surface-dugout)] rounded-sm border-l-4 border-[var(--bsi-primary)]"
                   >
                     <div className="flex items-center gap-2 mb-1">
                       <Badge variant="primary" size="sm">
@@ -232,7 +232,7 @@ export default function RecapClient() {
                         </Badge>
                       )}
                     </div>
-                    <p className="text-text-secondary text-sm">
+                    <p className="text-[var(--bsi-dust)] text-sm">
                       {play.text || play.shortText || 'Scoring play'}
                     </p>
                   </div>
@@ -251,33 +251,33 @@ export default function RecapClient() {
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2">
               {/* Away */}
-              <div className="p-4 bg-background-tertiary rounded-sm">
-                <p className="text-text-primary font-semibold mb-3">
+              <div className="p-4 bg-[var(--surface-dugout)] rounded-sm">
+                <p className="text-[var(--bsi-bone)] font-semibold mb-3">
                   {awayTeam?.team?.displayName || 'Away'}
                 </p>
                 <div className="flex gap-3">
                   {awayTeam?.linescores?.map((ls, i) => (
                     <div key={i} className="text-center">
-                      <span className="text-text-tertiary text-xs block mb-1">
+                      <span className="text-[rgba(196,184,165,0.5)] text-xs block mb-1">
                         {getPeriodShortLabel(i + 1)}
                       </span>
-                      <span className="text-text-primary font-mono font-bold">{ls.value ?? '-'}</span>
+                      <span className="text-[var(--bsi-bone)] font-mono font-bold">{ls.value ?? '-'}</span>
                     </div>
                   ))}
                 </div>
               </div>
               {/* Home */}
-              <div className="p-4 bg-background-tertiary rounded-sm">
-                <p className="text-text-primary font-semibold mb-3">
+              <div className="p-4 bg-[var(--surface-dugout)] rounded-sm">
+                <p className="text-[var(--bsi-bone)] font-semibold mb-3">
                   {homeTeam?.team?.displayName || 'Home'}
                 </p>
                 <div className="flex gap-3">
                   {homeTeam?.linescores?.map((ls, i) => (
                     <div key={i} className="text-center">
-                      <span className="text-text-tertiary text-xs block mb-1">
+                      <span className="text-[rgba(196,184,165,0.5)] text-xs block mb-1">
                         {getPeriodShortLabel(i + 1)}
                       </span>
-                      <span className="text-text-primary font-mono font-bold">{ls.value ?? '-'}</span>
+                      <span className="text-[var(--bsi-bone)] font-mono font-bold">{ls.value ?? '-'}</span>
                     </div>
                   ))}
                 </div>
@@ -291,7 +291,7 @@ export default function RecapClient() {
       {scoringPlays.length === 0 && (
         <Card variant="default" padding="lg">
           <div className="text-center py-4">
-            <p className="text-text-secondary">
+            <p className="text-[var(--bsi-dust)]">
               Scoring play data not available for this game
             </p>
           </div>

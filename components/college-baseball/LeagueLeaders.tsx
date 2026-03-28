@@ -106,14 +106,14 @@ export function LeagueLeaders() {
       <Container>
         <ScrollReveal>
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-sm bg-burnt-orange/15 flex items-center justify-center">
-              <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
+            <div className="w-10 h-10 rounded-sm bg-[var(--bsi-primary)]/15 flex items-center justify-center">
+              <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-[var(--bsi-primary)] fill-none stroke-[1.5]">
                 <path d="M18 20V10M12 20V4M6 20V14" />
               </svg>
             </div>
             <div>
-              <h2 className="font-display text-xl font-bold text-text-primary uppercase tracking-wide">League Leaders</h2>
-              <p className="text-text-muted text-xs mt-0.5">Top performers across D1 baseball</p>
+              <h2 className="font-display text-xl font-bold text-[var(--bsi-bone)] uppercase tracking-wide">League Leaders</h2>
+              <p className="text-[rgba(196,184,165,0.35)] text-xs mt-0.5">Top performers across D1 baseball</p>
             </div>
           </div>
         </ScrollReveal>
@@ -136,10 +136,10 @@ export function LeagueLeaders() {
             ].map((stat) => (
               <Card key={stat.label} variant="default" padding="md">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-burnt-orange font-semibold text-sm">{stat.cat}</span>
+                  <span className="text-[var(--bsi-primary)] font-semibold text-sm">{stat.cat}</span>
                   <Badge variant="secondary">{stat.label}</Badge>
                 </div>
-                <p className="text-text-muted text-xs">Stats available once season games are final.</p>
+                <p className="text-[rgba(196,184,165,0.35)] text-xs">Stats available once season games are final.</p>
               </Card>
             ))}
           </div>
@@ -149,7 +149,7 @@ export function LeagueLeaders() {
               <ScrollReveal key={cat.abbreviation || cat.name}>
                 <Card variant="default" padding="md" className="h-full">
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-burnt-orange font-semibold text-sm">{cat.name}</span>
+                    <span className="text-[var(--bsi-primary)] font-semibold text-sm">{cat.name}</span>
                     <Badge variant="secondary">{getStatLabel(cat)}</Badge>
                   </div>
                   <div className="space-y-2">
@@ -160,21 +160,21 @@ export function LeagueLeaders() {
                       >
                         <div className="flex items-center gap-2.5 min-w-0">
                           <span className={`text-xs font-bold tabular-nums w-4 text-right ${
-                            idx === 0 ? 'text-burnt-orange' : 'text-text-muted'
+                            idx === 0 ? 'text-[var(--bsi-primary)]' : 'text-[rgba(196,184,165,0.35)]'
                           }`}>
                             {idx + 1}
                           </span>
                           <div className="min-w-0">
-                            <span className="text-sm text-text-primary font-medium truncate block">
+                            <span className="text-sm text-[var(--bsi-bone)] font-medium truncate block">
                               {leader.name}
                             </span>
-                            <span className="text-[10px] text-text-muted uppercase tracking-wider">
+                            <span className="text-[10px] text-[rgba(196,184,165,0.35)] uppercase tracking-wider">
                               {leader.team}
                             </span>
                           </div>
                         </div>
                         <span className={`text-sm font-mono font-bold tabular-nums ml-2 ${
-                          idx === 0 ? 'text-burnt-orange' : 'text-text-secondary'
+                          idx === 0 ? 'text-[var(--bsi-primary)]' : 'text-[var(--bsi-dust)]'
                         }`}>
                           {leader.value}
                         </span>

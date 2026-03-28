@@ -45,7 +45,7 @@ interface TabListProps {
 
 export function TabList({ children, className }: TabListProps) {
   return (
-    <div role="tablist" className={clsx('flex gap-1 rounded-sm p-1 bg-surface-light border border-border', className)}>
+    <div role="tablist" className={clsx('flex gap-1 rounded-sm p-1 bg-[var(--surface-press-box)] border border-border', className)}>
       {children}
     </div>
   );
@@ -71,8 +71,8 @@ export function Tab({ value, children, className }: TabProps) {
       className={clsx(
         'px-3 py-1.5 min-h-[44px] rounded-sm text-xs font-mono uppercase tracking-[0.15em] transition-all',
         isActive
-          ? 'bg-burnt-orange/15 text-burnt-orange border border-burnt-orange/30'
-          : 'text-text-muted hover:text-text-secondary border border-transparent',
+          ? 'bg-[var(--bsi-primary)]/15 text-[var(--bsi-primary)] border border-[var(--bsi-primary)]/30'
+          : 'text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-dust)] border border-transparent',
         className,
       )}
     >

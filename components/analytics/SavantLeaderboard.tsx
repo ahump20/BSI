@@ -188,11 +188,11 @@ export function SavantLeaderboard({
   }
 
   return (
-    <div className={`bg-background-primary border border-border-subtle rounded-sm overflow-hidden ${className}`}>
+    <div className={`bg-[var(--surface-scoreboard)] border border-[var(--border-vintage)] rounded-sm overflow-hidden ${className}`}>
       {/* Header */}
-      <div className="px-5 py-4 border-b border-border-subtle flex items-center justify-between">
-        <h3 className="font-display text-base uppercase tracking-wider text-text-primary">{title}</h3>
-        <span className="text-[10px] font-mono text-text-muted tabular-nums">
+      <div className="px-5 py-4 border-b border-[var(--border-vintage)] flex items-center justify-between">
+        <h3 className="font-display text-base uppercase tracking-wider text-[var(--bsi-bone)]">{title}</h3>
+        <span className="text-[10px] font-mono text-[rgba(196,184,165,0.35)] tabular-nums">
           {data.length} player{data.length !== 1 ? 's' : ''}
         </span>
       </div>
@@ -201,24 +201,24 @@ export function SavantLeaderboard({
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-border-subtle" style={{ borderTop: '2px solid var(--svt-accent, #BF5700)' }}>
+            <tr className="border-b border-[var(--border-vintage)]" style={{ borderTop: '2px solid var(--svt-accent, #BF5700)' }}>
               {onCompareToggle && (
                 <th className="pl-3 pr-0 py-3 w-8">
-                  <span className="text-[10px] font-display uppercase tracking-widest text-text-muted" title="Compare players">
-                    <svg viewBox="0 0 16 16" className="w-3.5 h-3.5 text-text-muted" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <span className="text-[10px] font-display uppercase tracking-widest text-[rgba(196,184,165,0.35)]" title="Compare players">
+                    <svg viewBox="0 0 16 16" className="w-3.5 h-3.5 text-[rgba(196,184,165,0.35)]" fill="none" stroke="currentColor" strokeWidth="1.5">
                       <path d="M4 8h8M8 4v8" />
                     </svg>
                   </span>
                 </th>
               )}
               <th className="pl-5 pr-2 py-3 text-left">
-                <span className="text-[10px] font-display uppercase tracking-widest text-text-muted">#</span>
+                <span className="text-[10px] font-display uppercase tracking-widest text-[rgba(196,184,165,0.35)]">#</span>
               </th>
               <th className="px-2 py-3 text-left">
-                <span className="text-[10px] font-display uppercase tracking-widest text-text-muted">Player</span>
+                <span className="text-[10px] font-display uppercase tracking-widest text-[rgba(196,184,165,0.35)]">Player</span>
               </th>
               <th className="px-2 py-3 text-left hidden sm:table-cell">
-                <span className="text-[10px] font-display uppercase tracking-widest text-text-muted">Team</span>
+                <span className="text-[10px] font-display uppercase tracking-widest text-[rgba(196,184,165,0.35)]">Team</span>
               </th>
               {columns.map(col => (
                 <th
@@ -228,7 +228,7 @@ export function SavantLeaderboard({
                   <button
                     onClick={() => handleSort(col.key)}
                     className={`flex items-center gap-1 text-[10px] font-display uppercase tracking-widest transition-colors mx-auto cursor-pointer ${
-                      sortKey === col.key ? 'text-burnt-orange' : 'text-text-muted hover:text-text-secondary'
+                      sortKey === col.key ? 'text-[var(--bsi-primary)]' : 'text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-dust)]'
                     }`}
                   >
                     {col.metricKey && METRIC_DEFS[col.metricKey] ? (
@@ -243,7 +243,7 @@ export function SavantLeaderboard({
                       col.label
                     )}
                     {col.pro && !isPro && (
-                      <span className="text-[7px] text-burnt-orange ml-0.5">PRO</span>
+                      <span className="text-[7px] text-[var(--bsi-primary)] ml-0.5">PRO</span>
                     )}
                     {sortKey === col.key && (
                       <span className="text-[8px]">{sortDir === 'desc' ? '\u25BC' : '\u25B2'}</span>
@@ -263,7 +263,7 @@ export function SavantLeaderboard({
                 <tr
                   key={playerId || i}
                   onClick={() => playerId && onPlayerClick?.(playerId)}
-                  className={`border-b border-border-subtle transition-colors hover:bg-surface-light/50 ${i % 2 === 1 ? 'bg-[rgba(255,255,255,0.01)]' : ''} ${
+                  className={`border-b border-[var(--border-vintage)] transition-colors hover:bg-[var(--surface-press-box)]/50 ${i % 2 === 1 ? 'bg-[rgba(255,255,255,0.01)]' : ''} ${
                     onPlayerClick ? 'cursor-pointer' : ''
                   } ${isCompareSelected ? '!bg-[rgba(191,87,0,0.06)]' : ''}`}
                 >
@@ -279,10 +279,10 @@ export function SavantLeaderboard({
                         disabled={!isCompareSelected && !canAddMore}
                         className={`w-4 h-4 rounded-sm border transition-colors flex items-center justify-center cursor-pointer ${
                           isCompareSelected
-                            ? 'bg-burnt-orange border-burnt-orange'
+                            ? 'bg-[var(--bsi-primary)] border-[var(--bsi-primary)]'
                             : canAddMore
-                              ? 'border-border-subtle hover:border-burnt-orange/50'
-                              : 'border-border-subtle opacity-30 cursor-not-allowed'
+                              ? 'border-[var(--border-vintage)] hover:border-[var(--bsi-primary)]/50'
+                              : 'border-[var(--border-vintage)] opacity-30 cursor-not-allowed'
                         }`}
                         aria-label={isCompareSelected ? `Remove ${row.player_name} from comparison` : `Add ${row.player_name} to comparison`}
                       >
@@ -296,7 +296,7 @@ export function SavantLeaderboard({
                   )}
                   <td className="pl-5 pr-2 py-2.5">
                     <span className={`text-xs font-mono tabular-nums ${
-                      rank <= 3 ? 'text-burnt-orange font-bold' : 'text-text-muted'
+                      rank <= 3 ? 'text-[var(--bsi-primary)] font-bold' : 'text-[rgba(196,184,165,0.35)]'
                     }`}>
                       {rank}
                     </span>
@@ -306,25 +306,25 @@ export function SavantLeaderboard({
                       {playerId ? (
                         <Link
                           href={`/college-baseball/savant/player/${playerId}`}
-                          className="text-text-primary font-medium text-sm hover:text-burnt-orange transition-colors"
+                          className="text-[var(--bsi-bone)] font-medium text-sm hover:text-[var(--bsi-primary)] transition-colors"
                           onClick={(e) => e.stopPropagation()}
                         >
                           {row.player_name as string}
                         </Link>
                       ) : (
-                        <span className="text-text-primary font-medium text-sm">
+                        <span className="text-[var(--bsi-bone)] font-medium text-sm">
                           {row.player_name as string}
                         </span>
                       )}
                       {row.position && (row.position as string) !== 'UN' && (
-                        <span className="ml-1.5 text-[10px] text-text-muted uppercase">
+                        <span className="ml-1.5 text-[10px] text-[rgba(196,184,165,0.35)] uppercase">
                           {row.position as string}
                         </span>
                       )}
                     </div>
                   </td>
                   <td className="px-2 py-2.5 hidden sm:table-cell">
-                    <span className="text-text-muted text-xs">{row.team as string}</span>
+                    <span className="text-[rgba(196,184,165,0.35)] text-xs">{row.team as string}</span>
                   </td>
                   {columns.map(col => {
                     const val = row[col.key];
@@ -355,17 +355,17 @@ export function SavantLeaderboard({
                       >
                         {isGated ? (
                           <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-sm">
-                            <span className="font-mono tabular-nums text-xs text-text-muted/30 blur-[3px] select-none" aria-hidden="true">
+                            <span className="font-mono tabular-nums text-xs text-[rgba(196,184,165,0.35)]/30 blur-[3px] select-none" aria-hidden="true">
                               {col.format ? col.format(col.key === 'wrc_plus' || col.key === 'ops_plus' || col.key === 'era_minus' ? 105 : col.key === 'fip' || col.key === 'era' ? 3.85 : col.key === 'k_bb' ? 2.80 : col.key === 'lob_pct' ? 0.72 : 0.320) : '0.0'}
                             </span>
-                            <svg className="w-2.5 h-2.5 text-burnt-orange/60" viewBox="0 0 16 16" fill="currentColor">
+                            <svg className="w-2.5 h-2.5 text-[var(--bsi-primary)]/60" viewBox="0 0 16 16" fill="currentColor">
                               <path d="M8 1a4 4 0 0 0-4 4v2H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1h-1V5a4 4 0 0 0-4-4zm2 6H6V5a2 2 0 1 1 4 0v2z"/>
                             </svg>
                           </span>
                         ) : (
                           <span
                             className={`inline-block px-1.5 py-0.5 rounded-sm font-mono tabular-nums text-xs ${
-                              showHeatmap ? 'text-white font-medium' : col.key === 'fip' ? 'text-[var(--svt-accent,_#BF5700)] font-bold' : 'text-text-secondary'
+                              showHeatmap ? 'text-white font-medium' : col.key === 'fip' ? 'text-[var(--svt-accent,_#BF5700)] font-bold' : 'text-[var(--bsi-dust)]'
                             }`}
                             style={showHeatmap ? {
                               backgroundColor: withAlpha(bgColor, 0.13),
@@ -397,16 +397,16 @@ export function SavantLeaderboard({
                     <div className="absolute inset-0 bg-gradient-to-r from-burnt-orange/5 via-burnt-orange/10 to-burnt-orange/5" />
                     <div className="relative flex items-center justify-between px-5 py-3">
                       <div className="flex items-center gap-3">
-                        <span className="text-[10px] font-display uppercase tracking-widest text-burnt-orange font-bold">
+                        <span className="text-[10px] font-display uppercase tracking-widest text-[var(--bsi-primary)] font-bold">
                           PRO
                         </span>
-                        <span className="text-xs text-text-muted">
+                        <span className="text-xs text-[rgba(196,184,165,0.35)]">
                           {data.length - 10} more players with wOBA, wRC+, FIP, ERA-
                         </span>
                       </div>
                       <a
                         href="/pricing"
-                        className="text-[11px] font-mono text-burnt-orange hover:text-ember transition-colors uppercase tracking-wider font-medium"
+                        className="text-[11px] font-mono text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors uppercase tracking-wider font-medium"
                       >
                         Unlock Full Leaderboard
                       </a>
@@ -421,10 +421,10 @@ export function SavantLeaderboard({
 
       {/* Footer — show all button */}
       {!showAll && data.length > effectiveRows && (
-        <div className="px-5 py-4 border-t border-border-subtle">
+        <div className="px-5 py-4 border-t border-[var(--border-vintage)]">
           <button
             onClick={() => setShowAll(true)}
-            className="w-full text-center text-xs text-burnt-orange hover:text-ember font-medium transition-colors"
+            className="w-full text-center text-xs text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] font-medium transition-colors"
           >
             Show all {data.length} players
           </button>

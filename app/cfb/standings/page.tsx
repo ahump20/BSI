@@ -104,12 +104,12 @@ export default function CFBStandingsPage() {
   return (
     <>
       <div>
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/cfb" className="text-text-tertiary hover:text-burnt-orange transition-colors">CFB</Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">Standings</span>
+              <Link href="/cfb" className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors">CFB</Link>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">Standings</span>
             </nav>
           </Container>
         </Section>
@@ -119,15 +119,15 @@ export default function CFBStandingsPage() {
           <Container>
             <ScrollReveal direction="up">
               <Badge variant="primary" className="mb-4">Conference Standings</Badge>
-              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-gradient-blaze">
+              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-[var(--bsi-primary)]">
                 CFB Standings
               </h1>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={100}>
-              <p className="text-text-secondary mt-2">
+              <p className="text-[var(--bsi-dust)] mt-2">
                 Complete FBS conference standings with conference and overall records
                 {totalTeams > 0 && (
-                  <span className="text-text-tertiary ml-2">
+                  <span className="text-[rgba(196,184,165,0.5)] ml-2">
                     — {conferences.length} conferences, {totalTeams} teams
                   </span>
                 )}
@@ -146,8 +146,8 @@ export default function CFBStandingsPage() {
                   onClick={() => setSelectedConference('all')}
                   className={`px-4 py-2 rounded-sm text-sm font-semibold whitespace-nowrap transition-all ${
                     selectedConference === 'all'
-                      ? 'bg-burnt-orange text-white'
-                      : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
+                      ? 'bg-[var(--bsi-primary)] text-white'
+                      : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:bg-[var(--surface-press-box)]'
                   }`}
                 >
                   All
@@ -161,8 +161,8 @@ export default function CFBStandingsPage() {
                       onClick={() => setSelectedConference(conf.name)}
                       className={`px-4 py-2 rounded-sm text-sm font-semibold whitespace-nowrap transition-all ${
                         selectedConference === conf.name
-                          ? 'bg-burnt-orange text-white'
-                          : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
+                          ? 'bg-[var(--bsi-primary)] text-white'
+                          : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:bg-[var(--surface-press-box)]'
                       }`}
                     >
                       {pc}
@@ -174,7 +174,7 @@ export default function CFBStandingsPage() {
                   <select
                     value={selectedConference}
                     onChange={(e) => setSelectedConference(e.target.value)}
-                    className="px-3 py-2 rounded-sm text-sm font-semibold bg-background-tertiary text-text-secondary border-none cursor-pointer"
+                    className="px-3 py-2 rounded-sm text-sm font-semibold bg-[var(--surface-dugout)] text-[var(--bsi-dust)] border-none cursor-pointer"
                   >
                     <option value="all">More Conferences</option>
                     {otherConferences.map(c => (
@@ -191,7 +191,7 @@ export default function CFBStandingsPage() {
                   placeholder="Search teams..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-3 py-2 rounded-sm text-sm bg-background-tertiary text-text-primary placeholder:text-text-tertiary border border-border-subtle focus:border-burnt-orange focus:outline-none transition-colors"
+                  className="w-full px-3 py-2 rounded-sm text-sm bg-[var(--surface-dugout)] text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.5)] border border-[var(--border-vintage)] focus:border-[var(--bsi-primary)] focus:outline-none transition-colors"
                 />
               </div>
             </div>
@@ -206,10 +206,10 @@ export default function CFBStandingsPage() {
                   {Array.from({ length: 4 }).map((_, i) => (
                     <Card key={i} variant="default" padding="lg">
                       <div className="animate-pulse">
-                        <div className="h-6 bg-background-tertiary rounded-sm w-40 mb-4" />
+                        <div className="h-6 bg-[var(--surface-dugout)] rounded-sm w-40 mb-4" />
                         <div className="space-y-2">
                           {Array.from({ length: 4 }).map((_, j) => (
-                            <div key={j} className="h-10 bg-background-tertiary rounded-sm" />
+                            <div key={j} className="h-10 bg-[var(--surface-dugout)] rounded-sm" />
                           ))}
                         </div>
                       </div>
@@ -219,22 +219,22 @@ export default function CFBStandingsPage() {
               ) : error ? (
                 <Card padding="lg" className="bg-error/10 border-error/30">
                   <p className="text-error font-semibold">Data Unavailable</p>
-                  <p className="text-text-secondary text-sm mt-1">{error}</p>
+                  <p className="text-[var(--bsi-dust)] text-sm mt-1">{error}</p>
                 </Card>
               ) : conferences.length === 0 ? (
                 <Card padding="lg" className="text-center">
-                  <SportIcon sport="cfb" className="w-16 h-16 mx-auto mb-4 text-text-tertiary" />
-                  <p className="text-text-secondary text-lg">Standings not available</p>
-                  <p className="text-text-tertiary text-sm mt-2">
+                  <SportIcon sport="cfb" className="w-16 h-16 mx-auto mb-4 text-[rgba(196,184,165,0.5)]" />
+                  <p className="text-[var(--bsi-dust)] text-lg">Standings not available</p>
+                  <p className="text-[rgba(196,184,165,0.5)] text-sm mt-2">
                     Standings are updated during the college football season (August - January)
                   </p>
                 </Card>
               ) : filteredConferences.length === 0 ? (
                 <Card padding="lg" className="text-center">
-                  <p className="text-text-secondary">No teams match your search</p>
+                  <p className="text-[var(--bsi-dust)]">No teams match your search</p>
                   <button
                     onClick={() => { setSearchQuery(''); setSelectedConference('all'); }}
-                    className="text-burnt-orange text-sm mt-2 hover:text-ember transition-colors"
+                    className="text-[var(--bsi-primary)] text-sm mt-2 hover:text-[var(--bsi-primary)] transition-colors"
                   >
                     Clear filters
                   </button>
@@ -244,14 +244,14 @@ export default function CFBStandingsPage() {
                   {filteredConferences.map((conf, ci) => (
                     <ScrollReveal key={conf.name} delay={ci * 50}>
                       <Card variant="default" padding="none" className="overflow-hidden">
-                        <div className="bg-burnt-orange/20 px-4 py-3 border-b border-border-subtle flex items-center justify-between">
-                          <h2 className="font-display text-lg font-bold text-text-primary">{conf.name}</h2>
-                          <span className="text-text-tertiary text-xs">{conf.teams.length} teams</span>
+                        <div className="bg-[var(--bsi-primary)]/20 px-4 py-3 border-b border-[var(--border-vintage)] flex items-center justify-between">
+                          <h2 className="font-display text-lg font-bold text-[var(--bsi-bone)]">{conf.name}</h2>
+                          <span className="text-[rgba(196,184,165,0.5)] text-xs">{conf.teams.length} teams</span>
                         </div>
                         <div className="overflow-x-auto">
                           <table className="w-full text-left">
                             <thead>
-                              <tr className="border-b border-border-subtle text-text-tertiary text-xs uppercase tracking-wider">
+                              <tr className="border-b border-[var(--border-vintage)] text-[rgba(196,184,165,0.5)] text-xs uppercase tracking-wider">
                                 <th className="py-2 px-4 w-8 text-center">#</th>
                                 <th className="py-2 px-4">Team</th>
                                 <th className="py-2 px-4 text-center">CONF</th>
@@ -264,15 +264,15 @@ export default function CFBStandingsPage() {
                                 <th className="py-2 px-4 text-center hidden lg:table-cell">STRK</th>
                               </tr>
                             </thead>
-                            <tbody className="divide-y divide-border-subtle">
+                            <tbody className="divide-y divide-[var(--border-vintage)]">
                               {conf.teams.map((team, ti) => (
                                 <tr
                                   key={team.abbreviation + ti}
-                                  className={`hover:bg-surface-light transition-colors ${
+                                  className={`hover:bg-[var(--surface-press-box)] transition-colors ${
                                     ti === 0 ? 'bg-success/5' : ''
                                   }`}
                                 >
-                                  <td className="py-2.5 px-4 text-center text-text-tertiary text-xs font-mono">
+                                  <td className="py-2.5 px-4 text-center text-[rgba(196,184,165,0.5)] text-xs font-mono">
                                     {ti + 1}
                                   </td>
                                   <td className="py-2.5 px-4">
@@ -280,36 +280,36 @@ export default function CFBStandingsPage() {
                                       {team.logo ? (
                                         <img src={team.logo} alt={`${team.name || team.abbreviation} logo`} className="w-6 h-6 object-contain" loading="lazy" decoding="async" />
                                       ) : (
-                                        <div className="w-6 h-6 bg-background-secondary rounded-full flex items-center justify-center text-[10px] font-bold text-burnt-orange">
+                                        <div className="w-6 h-6 bg-[var(--surface-dugout)] rounded-full flex items-center justify-center text-[10px] font-bold text-[var(--bsi-primary)]">
                                           {team.abbreviation}
                                         </div>
                                       )}
                                       {team.id ? (
                                         <Link
                                           href={`/cfb/teams/${team.id}`}
-                                          className="text-text-primary font-medium text-sm hover:text-burnt-orange transition-colors"
+                                          className="text-[var(--bsi-bone)] font-medium text-sm hover:text-[var(--bsi-primary)] transition-colors"
                                         >
                                           {team.name}
                                         </Link>
                                       ) : (
-                                        <span className="text-text-primary font-medium text-sm">{team.name}</span>
+                                        <span className="text-[var(--bsi-bone)] font-medium text-sm">{team.name}</span>
                                       )}
                                     </div>
                                   </td>
-                                  <td className="py-2.5 px-4 text-center text-text-secondary font-mono text-xs">
+                                  <td className="py-2.5 px-4 text-center text-[var(--bsi-dust)] font-mono text-xs">
                                     {team.confRecord || '-'}
                                   </td>
-                                  <td className="py-2.5 px-4 text-center text-text-primary font-mono text-sm">{team.wins}</td>
-                                  <td className="py-2.5 px-4 text-center text-text-secondary font-mono text-sm">{team.losses}</td>
-                                  <td className="py-2.5 px-4 text-center text-burnt-orange font-mono text-sm font-semibold">
+                                  <td className="py-2.5 px-4 text-center text-[var(--bsi-bone)] font-mono text-sm">{team.wins}</td>
+                                  <td className="py-2.5 px-4 text-center text-[var(--bsi-dust)] font-mono text-sm">{team.losses}</td>
+                                  <td className="py-2.5 px-4 text-center text-[var(--bsi-primary)] font-mono text-sm font-semibold">
                                     {team.pct.toFixed(3)}
                                   </td>
-                                  <td className="py-2.5 px-4 text-center text-text-secondary font-mono text-sm hidden md:table-cell">{team.pf}</td>
-                                  <td className="py-2.5 px-4 text-center text-text-secondary font-mono text-sm hidden md:table-cell">{team.pa}</td>
-                                  <td className={`py-2.5 px-4 text-center font-mono text-sm hidden sm:table-cell ${team.diff > 0 ? 'text-success' : team.diff < 0 ? 'text-error' : 'text-text-secondary'}`}>
+                                  <td className="py-2.5 px-4 text-center text-[var(--bsi-dust)] font-mono text-sm hidden md:table-cell">{team.pf}</td>
+                                  <td className="py-2.5 px-4 text-center text-[var(--bsi-dust)] font-mono text-sm hidden md:table-cell">{team.pa}</td>
+                                  <td className={`py-2.5 px-4 text-center font-mono text-sm hidden sm:table-cell ${team.diff > 0 ? 'text-success' : team.diff < 0 ? 'text-error' : 'text-[var(--bsi-dust)]'}`}>
                                     {team.diff > 0 ? '+' : ''}{team.diff}
                                   </td>
-                                  <td className="py-2.5 px-4 text-center text-text-tertiary text-sm hidden lg:table-cell">{team.streak}</td>
+                                  <td className="py-2.5 px-4 text-center text-[rgba(196,184,165,0.5)] text-sm hidden lg:table-cell">{team.streak}</td>
                                 </tr>
                               ))}
                             </tbody>
@@ -321,7 +321,7 @@ export default function CFBStandingsPage() {
                 </div>
               )}
 
-              <div className="mt-8 pt-4 border-t border-border-subtle">
+              <div className="mt-8 pt-4 border-t border-[var(--border-vintage)]">
                 <DataSourceBadge source="ESPN CFB" timestamp={lastUpdated} />
               </div>
             </DataErrorBoundary>

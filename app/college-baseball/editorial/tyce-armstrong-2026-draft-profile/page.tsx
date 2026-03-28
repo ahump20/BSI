@@ -115,9 +115,9 @@ const SCOUTING_GRADES: ScoutingGrade[] = [
 
 function gradeColor(grade: number): string {
   if (grade >= 70) return 'text-[#C9A227]';
-  if (grade >= 60) return 'text-burnt-orange';
-  if (grade >= 55) return 'text-text-secondary';
-  return 'text-text-tertiary';
+  if (grade >= 60) return 'text-[var(--bsi-primary)]';
+  if (grade >= 55) return 'text-[var(--bsi-dust)]';
+  return 'text-[rgba(196,184,165,0.5)]';
 }
 
 // ── Page ─────────────────────────────────────────────────────────────
@@ -132,21 +132,21 @@ export default function ArmstrongDraftProfilePage() {
         url="/college-baseball/editorial/tyce-armstrong-2026-draft-profile"
         sport="College Baseball"
       />
-      <div className="pt-6 bg-midnight">
+      <div className="pt-6 bg-[var(--surface-scoreboard)]">
         {/* ── Hero ── */}
         <Section padding="lg">
           <Container size="narrow">
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-4 text-sm">
-                <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
+                <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                   College Baseball
                 </Link>
-                <span className="text-text-muted">/</span>
-                <Link href="/college-baseball/editorial" className="text-text-muted hover:text-burnt-orange transition-colors">
+                <span className="text-[rgba(196,184,165,0.35)]">/</span>
+                <Link href="/college-baseball/editorial" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                   Editorial
                 </Link>
-                <span className="text-text-muted">/</span>
-                <span className="text-text-tertiary">Draft Profile</span>
+                <span className="text-[rgba(196,184,165,0.35)]">/</span>
+                <span className="text-[rgba(196,184,165,0.5)]">Draft Profile</span>
               </div>
 
               <div className="flex flex-wrap items-center gap-3 mb-4">
@@ -155,11 +155,11 @@ export default function ArmstrongDraftProfilePage() {
                 <DataSourceBadge source="BSI Analytics" />
               </div>
 
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display text-text-primary leading-[0.95] mb-4">
+              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display text-[var(--bsi-bone)] leading-[0.95] mb-4">
                 Tyce Armstrong
               </h1>
 
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-text-tertiary mb-6">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-[rgba(196,184,165,0.5)] mb-6">
                 <span>1B &middot; Baylor Bears</span>
                 <span className="hidden sm:inline">&middot;</span>
                 <span>3 Grand Slams in One Game</span>
@@ -167,7 +167,7 @@ export default function ArmstrongDraftProfilePage() {
                 <span>February 25, 2026</span>
               </div>
 
-              <p className="font-serif text-xl md:text-2xl leading-relaxed text-text-secondary">
+              <p className="font-serif text-xl md:text-2xl leading-relaxed text-[var(--bsi-dust)]">
                 Twelve RBI in a single game. Three grand slams in three different innings. The second player in fifty years of NCAA Division I baseball to do it. One Friday night in Waco turned Tyce Armstrong from a Baylor first baseman into a national conversation &mdash; and a draft board question that scouts are still trying to answer.
               </p>
             </ScrollReveal>
@@ -189,10 +189,10 @@ export default function ArmstrongDraftProfilePage() {
         <Section padding="lg">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-6 pb-2 border-b border-[var(--bsi-primary)]/15">
                 What Happened on Opening Friday
               </h2>
-              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                 <p>
                   Baylor&rsquo;s lineup drew 8 walks and absorbed 5 hit-by-pitches against New Mexico State on February 14. That&rsquo;s 13 free baserunners. Four times, those free baserunners loaded the bases. Three of those four times, Tyce Armstrong cleared them.
                 </p>
@@ -211,42 +211,42 @@ export default function ArmstrongDraftProfilePage() {
         <Section padding="lg" background="charcoal">
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-text-primary mb-6 pb-2 border-b border-border">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mb-6 pb-2 border-b border-border">
                 Opening Weekend vs New Mexico State &mdash; Game Log
               </h2>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-border-strong">
+                    <tr className="border-b border-[rgba(140,98,57,0.5)]">
                       {['Game', 'Result', 'AB', 'H', 'HR', 'RBI', 'BB', 'SO', 'Note'].map((h) => (
-                        <th key={h} className="py-3 px-3 text-xs font-semibold text-text-muted uppercase text-left">{h}</th>
+                        <th key={h} className="py-3 px-3 text-xs font-semibold text-[rgba(196,184,165,0.35)] uppercase text-left">{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {OPENING_WEEKEND.map((g) => (
                       <tr key={g.game} className="border-b border-border">
-                        <td className="py-3 px-3 text-text-primary text-sm font-medium">{g.game}</td>
+                        <td className="py-3 px-3 text-[var(--bsi-bone)] text-sm font-medium">{g.game}</td>
                         <td className="py-3 px-3 text-success text-sm font-semibold">{g.result}</td>
-                        <td className="py-3 px-3 text-text-primary text-sm text-center">{g.ab}</td>
-                        <td className="py-3 px-3 text-text-primary text-sm text-center">{g.h}</td>
-                        <td className="py-3 px-3 text-burnt-orange font-bold text-sm text-center">{g.hr}</td>
-                        <td className="py-3 px-3 text-text-primary text-sm text-center">{g.rbi}</td>
-                        <td className="py-3 px-3 text-text-primary text-sm text-center">{g.bb}</td>
-                        <td className="py-3 px-3 text-text-primary text-sm text-center">{g.so}</td>
-                        <td className="py-3 px-3 text-text-tertiary text-sm">{g.note}</td>
+                        <td className="py-3 px-3 text-[var(--bsi-bone)] text-sm text-center">{g.ab}</td>
+                        <td className="py-3 px-3 text-[var(--bsi-bone)] text-sm text-center">{g.h}</td>
+                        <td className="py-3 px-3 text-[var(--bsi-primary)] font-bold text-sm text-center">{g.hr}</td>
+                        <td className="py-3 px-3 text-[var(--bsi-bone)] text-sm text-center">{g.rbi}</td>
+                        <td className="py-3 px-3 text-[var(--bsi-bone)] text-sm text-center">{g.bb}</td>
+                        <td className="py-3 px-3 text-[var(--bsi-bone)] text-sm text-center">{g.so}</td>
+                        <td className="py-3 px-3 text-[rgba(196,184,165,0.5)] text-sm">{g.note}</td>
                       </tr>
                     ))}
                     {/* Weekend totals */}
-                    <tr className="border-t-2 border-burnt-orange/30 bg-surface-light">
-                      <td className="py-3 px-3 text-text-primary text-sm font-bold" colSpan={2}>Weekend Total</td>
-                      <td className="py-3 px-3 text-text-primary text-sm text-center font-bold">12</td>
-                      <td className="py-3 px-3 text-text-primary text-sm text-center font-bold">3</td>
-                      <td className="py-3 px-3 text-burnt-orange font-bold text-sm text-center">3</td>
-                      <td className="py-3 px-3 text-text-primary text-sm text-center font-bold">14</td>
-                      <td className="py-3 px-3 text-text-primary text-sm text-center font-bold">1</td>
-                      <td className="py-3 px-3 text-text-primary text-sm text-center font-bold">1</td>
-                      <td className="py-3 px-3 text-text-tertiary text-sm italic">ESPN Player of the Week</td>
+                    <tr className="border-t-2 border-[var(--bsi-primary)]/30 bg-[var(--surface-press-box)]">
+                      <td className="py-3 px-3 text-[var(--bsi-bone)] text-sm font-bold" colSpan={2}>Weekend Total</td>
+                      <td className="py-3 px-3 text-[var(--bsi-bone)] text-sm text-center font-bold">12</td>
+                      <td className="py-3 px-3 text-[var(--bsi-bone)] text-sm text-center font-bold">3</td>
+                      <td className="py-3 px-3 text-[var(--bsi-primary)] font-bold text-sm text-center">3</td>
+                      <td className="py-3 px-3 text-[var(--bsi-bone)] text-sm text-center font-bold">14</td>
+                      <td className="py-3 px-3 text-[var(--bsi-bone)] text-sm text-center font-bold">1</td>
+                      <td className="py-3 px-3 text-[var(--bsi-bone)] text-sm text-center font-bold">1</td>
+                      <td className="py-3 px-3 text-[rgba(196,184,165,0.5)] text-sm italic">ESPN Player of the Week</td>
                     </tr>
                   </tbody>
                 </table>
@@ -259,10 +259,10 @@ export default function ArmstrongDraftProfilePage() {
         <Section padding="lg">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-6 pb-2 border-b border-[var(--bsi-primary)]/15">
                 The Silence After the Explosion
               </h2>
-              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                 <p>
                   Armstrong was held hitless in Games 2 and 3. Twelve RBI on Friday, two RBI on sac flies and groundouts over the weekend&rsquo;s final two games. That&rsquo;s the data point scouts will weigh most carefully. A historic Friday followed by two quiet days against the same pitching staff tells you the power is real but the approach is still developing.
                 </p>
@@ -281,28 +281,28 @@ export default function ArmstrongDraftProfilePage() {
         <Section padding="lg" background="charcoal">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-text-primary mb-6 pb-2 border-b border-border">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mb-6 pb-2 border-b border-border">
                 BSI Scouting Grades (20&ndash;80 Scale)
               </h2>
-              <p className="text-xs text-text-muted mb-4 uppercase tracking-widest">
+              <p className="text-xs text-[rgba(196,184,165,0.35)] mb-4 uppercase tracking-widest">
                 Based on early-season performance + pre-draft projections. Not a final evaluation.
               </p>
               <div className="space-y-4">
                 {SCOUTING_GRADES.map((g) => (
-                  <div key={g.tool} className="flex items-start gap-4 py-3 border-b border-border-subtle">
-                    <span className="font-display text-sm font-bold uppercase tracking-wider text-text-tertiary w-16 shrink-0 pt-0.5">{g.tool}</span>
+                  <div key={g.tool} className="flex items-start gap-4 py-3 border-b border-[var(--border-vintage)]">
+                    <span className="font-display text-sm font-bold uppercase tracking-wider text-[rgba(196,184,165,0.5)] w-16 shrink-0 pt-0.5">{g.tool}</span>
                     <div className="flex items-center gap-3 shrink-0">
                       <div className="text-center">
-                        <span className="text-[10px] text-text-muted block uppercase tracking-widest">Now</span>
+                        <span className="text-[10px] text-[rgba(196,184,165,0.35)] block uppercase tracking-widest">Now</span>
                         <span className={`font-mono text-lg font-bold ${gradeColor(g.current)}`}>{g.current}</span>
                       </div>
-                      <span className="text-text-muted">&rarr;</span>
+                      <span className="text-[rgba(196,184,165,0.35)]">&rarr;</span>
                       <div className="text-center">
-                        <span className="text-[10px] text-text-muted block uppercase tracking-widest">Proj</span>
+                        <span className="text-[10px] text-[rgba(196,184,165,0.35)] block uppercase tracking-widest">Proj</span>
                         <span className={`font-mono text-lg font-bold ${gradeColor(g.future)}`}>{g.future}</span>
                       </div>
                     </div>
-                    <span className="text-sm text-text-tertiary leading-snug">{g.note}</span>
+                    <span className="text-sm text-[rgba(196,184,165,0.5)] leading-snug">{g.note}</span>
                   </div>
                 ))}
               </div>
@@ -314,10 +314,10 @@ export default function ArmstrongDraftProfilePage() {
         <Section padding="lg">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-6 pb-2 border-b border-[var(--bsi-primary)]/15">
                 The Baylor Context
               </h2>
-              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                 <p>
                   Armstrong wasn&rsquo;t in the preseason conversation for Baylor&rsquo;s key players. The Bears&rsquo; offseason headliners were Blake Wright (Mississippi State transfer, .293/.381/.512, 14 HR) and Will Dion (Duke transfer, 3.78 ERA, 71 K). Armstrong was the lineup piece nobody was talking about nationally &mdash; a physical first baseman with raw power who hadn&rsquo;t translated that power into sustained production.
                 </p>
@@ -346,49 +346,49 @@ export default function ArmstrongDraftProfilePage() {
         <Section padding="lg">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h3 className="font-display text-sm font-semibold uppercase tracking-widest text-text-muted mb-4">More 2026 Draft Profiles</h3>
+              <h3 className="font-display text-sm font-semibold uppercase tracking-widest text-[rgba(196,184,165,0.35)] mb-4">More 2026 Draft Profiles</h3>
               <div className="grid md:grid-cols-2 gap-4 mb-6">
-                <Link href="/college-baseball/editorial/roch-cholowsky-2026-draft-profile" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
-                  <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
-                  <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
+                <Link href="/college-baseball/editorial/roch-cholowsky-2026-draft-profile" className="group block p-4 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)] hover:border-[var(--bsi-primary)]/30 transition-colors">
+                  <span className="text-[10px] text-[rgba(196,184,165,0.35)] uppercase tracking-widest">Draft Profile</span>
+                  <p className="text-sm font-display uppercase tracking-wide text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors mt-1">
                     Roch Cholowsky &mdash; No. 1 Overall Pick
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/dylan-volantis-2026-draft-profile" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
-                  <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
-                  <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
+                <Link href="/college-baseball/editorial/dylan-volantis-2026-draft-profile" className="group block p-4 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)] hover:border-[var(--bsi-primary)]/30 transition-colors">
+                  <span className="text-[10px] text-[rgba(196,184,165,0.35)] uppercase tracking-widest">Draft Profile</span>
+                  <p className="text-sm font-display uppercase tracking-wide text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors mt-1">
                     Dylan Volantis &mdash; 14 IP, 0 ER, The Conversion
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/jackson-flora-2026-draft-profile" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
-                  <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
-                  <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
+                <Link href="/college-baseball/editorial/jackson-flora-2026-draft-profile" className="group block p-4 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)] hover:border-[var(--bsi-primary)]/30 transition-colors">
+                  <span className="text-[10px] text-[rgba(196,184,165,0.35)] uppercase tracking-widest">Draft Profile</span>
+                  <p className="text-sm font-display uppercase tracking-wide text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors mt-1">
                     Jackson Flora &mdash; 100 MPH, New Arsenal
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/liam-peterson-2026-draft-profile" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
-                  <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
-                  <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
+                <Link href="/college-baseball/editorial/liam-peterson-2026-draft-profile" className="group block p-4 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)] hover:border-[var(--bsi-primary)]/30 transition-colors">
+                  <span className="text-[10px] text-[rgba(196,184,165,0.35)] uppercase tracking-widest">Draft Profile</span>
+                  <p className="text-sm font-display uppercase tracking-wide text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors mt-1">
                     Liam Peterson &mdash; The Walk Problem
                   </p>
                 </Link>
               </div>
               <div className="grid md:grid-cols-2 gap-4 mb-8">
-                <Link href="/college-baseball/editorial/week-1-recap" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
-                  <span className="text-[10px] text-text-muted uppercase tracking-widest">Related</span>
-                  <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
+                <Link href="/college-baseball/editorial/week-1-recap" className="group block p-4 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)] hover:border-[var(--bsi-primary)]/30 transition-colors">
+                  <span className="text-[10px] text-[rgba(196,184,165,0.35)] uppercase tracking-widest">Related</span>
+                  <p className="text-sm font-display uppercase tracking-wide text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors mt-1">
                     Week 1 Recap: Armstrong&rsquo;s Record-Tying Game
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/baylor-2026" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
-                  <span className="text-[10px] text-text-muted uppercase tracking-widest">Team Preview</span>
-                  <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
+                <Link href="/college-baseball/editorial/baylor-2026" className="group block p-4 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)] hover:border-[var(--bsi-primary)]/30 transition-colors">
+                  <span className="text-[10px] text-[rgba(196,184,165,0.35)] uppercase tracking-widest">Team Preview</span>
+                  <p className="text-sm font-display uppercase tracking-wide text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors mt-1">
                     Baylor 2026 Season Preview
                   </p>
                 </Link>
               </div>
 
-              <Link href="/college-baseball/players" className="text-xs text-text-muted hover:text-burnt-orange transition-colors uppercase tracking-widest">
+              <Link href="/college-baseball/players" className="text-xs text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors uppercase tracking-widest">
                 Full Player Database &rarr;
               </Link>
             </ScrollReveal>

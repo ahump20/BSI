@@ -39,35 +39,35 @@ function GameCardList({ games }: { games: GameScore[] }) {
           key={game.id}
           role="group"
           aria-label={`${game.away.name} at ${game.home.name}`}
-          className={`bg-surface-light rounded-sm p-4 border transition-colors ${
+          className={`bg-[var(--surface-press-box)] rounded-sm p-4 border transition-colors ${
             game.isLive
               ? 'border-[var(--bsi-primary)]/30'
               : game.isPostponed
-                ? 'border-border-subtle opacity-50'
+                ? 'border-[var(--border-vintage)] opacity-50'
                 : 'border-transparent'
           }`}
         >
           <div className="flex justify-between items-center mb-1.5">
-            <span className="font-semibold text-text-primary text-sm flex items-center gap-1.5">
+            <span className="font-semibold text-[var(--bsi-bone)] text-sm flex items-center gap-1.5">
               {game.away.rank && (
-                <span className="text-[10px] font-bold text-burnt-orange bg-burnt-orange/10 px-1.5 py-0.5 rounded-sm leading-none">
+                <span className="text-[10px] font-bold text-[var(--bsi-primary)] bg-[var(--bsi-primary)]/10 px-1.5 py-0.5 rounded-sm leading-none">
                   #{game.away.rank}
                 </span>
               )}
               {game.away.name}
             </span>
-            <span className="font-bold text-burnt-orange text-lg tabular-nums" aria-label={`${game.away.name} score`} {...(game.isLive ? { 'aria-live': 'polite' as const } : {})}>{game.away.score}</span>
+            <span className="font-bold text-[var(--bsi-primary)] text-lg tabular-nums" aria-label={`${game.away.name} score`} {...(game.isLive ? { 'aria-live': 'polite' as const } : {})}>{game.away.score}</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="font-semibold text-text-primary text-sm flex items-center gap-1.5">
+            <span className="font-semibold text-[var(--bsi-bone)] text-sm flex items-center gap-1.5">
               {game.home.rank && (
-                <span className="text-[10px] font-bold text-burnt-orange bg-burnt-orange/10 px-1.5 py-0.5 rounded-sm leading-none">
+                <span className="text-[10px] font-bold text-[var(--bsi-primary)] bg-[var(--bsi-primary)]/10 px-1.5 py-0.5 rounded-sm leading-none">
                   #{game.home.rank}
                 </span>
               )}
               {game.home.name}
             </span>
-            <span className="font-bold text-burnt-orange text-lg tabular-nums" aria-label={`${game.home.name} score`} {...(game.isLive ? { 'aria-live': 'polite' as const } : {})}>{game.home.score}</span>
+            <span className="font-bold text-[var(--bsi-primary)] text-lg tabular-nums" aria-label={`${game.home.name} score`} {...(game.isLive ? { 'aria-live': 'polite' as const } : {})}>{game.home.score}</span>
           </div>
           <div className="mt-2 flex items-center gap-2">
             {game.isLive && (
@@ -76,8 +76,8 @@ function GameCardList({ games }: { games: GameScore[] }) {
             <span className={`text-xs ${
               game.isLive ? 'text-[var(--bsi-primary)]'
                 : game.isPostponed ? 'text-[var(--bsi-warning)]/60'
-                : game.isFinal ? 'text-text-muted'
-                : 'text-burnt-orange'
+                : game.isFinal ? 'text-[rgba(196,184,165,0.35)]'
+                : 'text-[var(--bsi-primary)]'
             }`}>
               {game.detail || game.status}
             </span>
@@ -92,7 +92,7 @@ function LoadingSkeleton() {
   return (
     <>
       {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="bg-surface-light rounded-sm p-4 animate-pulse">
+        <div key={i} className="bg-[var(--surface-press-box)] rounded-sm p-4 animate-pulse">
           <div className="h-4 bg-surface rounded-sm w-2/3 mb-2" />
           <div className="h-4 bg-surface rounded-sm w-2/3" />
         </div>
@@ -116,13 +116,13 @@ function LiveScoresPanelWS({ className = '' }: { className?: string }) {
   const loading = connectionStatus === 'connecting' && games.length === 0;
 
   return (
-    <div className={`bg-surface-light border border-border-subtle rounded-sm ${className}`}>
-      <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between">
+    <div className={`bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm ${className}`}>
+      <div className="px-6 py-4 border-b border-[var(--border-vintage)] flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h3 className="text-lg font-semibold text-text-primary">Live Scores</h3>
+          <h3 className="text-lg font-semibold text-[var(--bsi-bone)]">Live Scores</h3>
           <ConnectionIndicator status={connectionStatus} />
         </div>
-        <span className="text-xs text-text-muted uppercase tracking-wider">NCAA</span>
+        <span className="text-xs text-[rgba(196,184,165,0.35)] uppercase tracking-wider">NCAA</span>
       </div>
       {isPreseason && preseasonLabel && (
         <div className="mx-4 mt-3 px-3 py-2 bg-[var(--bsi-warning)]/10 border border-[var(--bsi-warning)]/20 rounded-sm">
@@ -139,14 +139,14 @@ function LiveScoresPanelWS({ className = '' }: { className?: string }) {
             <p className="text-[var(--bsi-danger)] text-sm mb-2">{error}</p>
             <button
               onClick={retry}
-              className="text-xs text-burnt-orange hover:text-ember transition-colors"
+              className="text-xs text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
             >
               Retry connection
             </button>
           </div>
         ) : games.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-text-muted text-sm">No games scheduled</p>
+            <p className="text-[rgba(196,184,165,0.35)] text-sm">No games scheduled</p>
           </div>
         ) : (
           <GameCardList games={games} />
@@ -266,12 +266,12 @@ function LiveScoresPanelREST({ sport, className = '' }: { sport: Sport; classNam
   }, [sport, buildEndpoint, buildCachedEndpoint]);
 
   return (
-    <div className={`bg-surface-light border border-border-subtle rounded-sm ${className}`}>
-      <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-text-primary">
+    <div className={`bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm ${className}`}>
+      <div className="px-6 py-4 border-b border-[var(--border-vintage)] flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-[var(--bsi-bone)]">
           {isYesterday ? "Yesterday's Results" : 'Live Scores'}
         </h3>
-        <span className="text-xs text-text-muted uppercase tracking-wider">{sport.toUpperCase()}</span>
+        <span className="text-xs text-[rgba(196,184,165,0.35)] uppercase tracking-wider">{sport.toUpperCase()}</span>
       </div>
       {isPreseason && preseasonLabel && (
         <div className="mx-4 mt-3 px-3 py-2 bg-[var(--bsi-warning)]/10 border border-[var(--bsi-warning)]/20 rounded-sm">
@@ -289,7 +289,7 @@ function LiveScoresPanelREST({ sport, className = '' }: { sport: Sport; classNam
           </div>
         ) : games.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-text-muted text-sm">No games scheduled</p>
+            <p className="text-[rgba(196,184,165,0.35)] text-sm">No games scheduled</p>
           </div>
         ) : (
           <GameCardList games={games} />

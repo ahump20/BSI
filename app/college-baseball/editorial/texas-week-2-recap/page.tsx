@@ -165,20 +165,20 @@ function LineScoreTable({ scores, label }: { scores: InningScore[]; label: strin
   const inningCount = scores[0].innings.length;
   return (
     <Card variant="default" padding="none">
-      <div className="bg-burnt-orange/5 text-center py-2">
-        <span className="font-display text-[10px] uppercase tracking-[3px] text-burnt-orange">
+      <div className="bg-[var(--bsi-primary)]/5 text-center py-2">
+        <span className="font-display text-[10px] uppercase tracking-[3px] text-[var(--bsi-primary)]">
           {label}
         </span>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full min-w-[540px]">
           <thead>
-            <tr className="font-display text-[11px] uppercase tracking-widest text-text-muted bg-black/30">
+            <tr className="font-display text-[11px] uppercase tracking-widest text-[rgba(196,184,165,0.35)] bg-black/30">
               <th className="text-left py-2.5 px-4 w-36" />
               {Array.from({ length: inningCount }, (_, i) => (
                 <th key={i} className="text-center py-2.5 w-10">{i + 1}</th>
               ))}
-              <th className="text-center py-2.5 w-12 border-l border-border-subtle">R</th>
+              <th className="text-center py-2.5 w-12 border-l border-[var(--border-vintage)]">R</th>
               <th className="text-center py-2.5 w-12">H</th>
               <th className="text-center py-2.5 w-12">E</th>
             </tr>
@@ -187,20 +187,20 @@ function LineScoreTable({ scores, label }: { scores: InningScore[]; label: strin
             {scores.map((row) => {
               const isTexas = row.team === 'Texas';
               return (
-                <tr key={row.team} className="border-t border-border-subtle">
-                  <td className={`py-3 px-4 font-display text-sm font-semibold uppercase tracking-wide ${isTexas ? 'text-burnt-orange' : 'text-text-tertiary'}`}>
+                <tr key={row.team} className="border-t border-[var(--border-vintage)]">
+                  <td className={`py-3 px-4 font-display text-sm font-semibold uppercase tracking-wide ${isTexas ? 'text-[var(--bsi-primary)]' : 'text-[rgba(196,184,165,0.5)]'}`}>
                     {row.team}
                   </td>
                   {row.innings.map((val, i) => (
-                    <td key={i} className={`text-center py-3 ${typeof val === 'string' ? 'text-text-muted' : Number(val) > 0 ? (isTexas ? 'text-text-primary font-semibold' : 'text-text-secondary font-medium') : 'text-text-muted'}`}>
+                    <td key={i} className={`text-center py-3 ${typeof val === 'string' ? 'text-[rgba(196,184,165,0.35)]' : Number(val) > 0 ? (isTexas ? 'text-[var(--bsi-bone)] font-semibold' : 'text-[var(--bsi-dust)] font-medium') : 'text-[rgba(196,184,165,0.35)]'}`}>
                       {val}
                     </td>
                   ))}
-                  <td className={`text-center py-3 border-l border-border-subtle font-bold text-lg ${isTexas ? 'text-burnt-orange' : 'text-text-tertiary'}`}>
+                  <td className={`text-center py-3 border-l border-[var(--border-vintage)] font-bold text-lg ${isTexas ? 'text-[var(--bsi-primary)]' : 'text-[rgba(196,184,165,0.5)]'}`}>
                     {row.r}
                   </td>
-                  <td className="text-center py-3 text-text-muted">{row.h}</td>
-                  <td className="text-center py-3 text-text-muted">{row.e}</td>
+                  <td className="text-center py-3 text-[rgba(196,184,165,0.35)]">{row.h}</td>
+                  <td className="text-center py-3 text-[rgba(196,184,165,0.35)]">{row.e}</td>
                 </tr>
               );
             })}
@@ -214,12 +214,12 @@ function LineScoreTable({ scores, label }: { scores: InningScore[]; label: strin
 function PitchingTable({ pitchers, teamLabel }: { pitchers: PitchingLine[]; teamLabel: string }) {
   return (
     <div>
-      <h3 className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-3">{teamLabel} Pitching</h3>
+      <h3 className="font-display text-sm uppercase tracking-wider text-[var(--bsi-primary)] mb-3">{teamLabel} Pitching</h3>
       <Card variant="default" padding="none">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[400px] font-mono text-sm">
             <thead>
-              <tr className="text-[10px] uppercase tracking-wider text-text-muted bg-black/20">
+              <tr className="text-[10px] uppercase tracking-wider text-[rgba(196,184,165,0.35)] bg-black/20">
                 <th className="text-left py-2 px-3">Pitcher</th>
                 <th className="text-center py-2 w-10">IP</th>
                 <th className="text-center py-2 w-8">H</th>
@@ -232,18 +232,18 @@ function PitchingTable({ pitchers, teamLabel }: { pitchers: PitchingLine[]; team
             </thead>
             <tbody>
               {pitchers.map((p) => (
-                <tr key={p.name} className="border-t border-border-subtle">
-                  <td className="py-2 px-3 text-text-secondary">
+                <tr key={p.name} className="border-t border-[var(--border-vintage)]">
+                  <td className="py-2 px-3 text-[var(--bsi-dust)]">
                     {p.name}
-                    {p.decision && <span className="text-burnt-orange ml-1 text-xs">({p.decision})</span>}
+                    {p.decision && <span className="text-[var(--bsi-primary)] ml-1 text-xs">({p.decision})</span>}
                   </td>
-                  <td className="text-center text-text-tertiary">{p.ip}</td>
-                  <td className="text-center text-text-muted">{p.h}</td>
-                  <td className="text-center text-text-muted">{p.r}</td>
-                  <td className="text-center text-text-muted">{p.er}</td>
-                  <td className="text-center text-text-muted">{p.bb}</td>
-                  <td className="text-center text-text-primary font-medium">{p.so}</td>
-                  <td className="text-center text-text-muted">{p.pitches ?? '\u2014'}</td>
+                  <td className="text-center text-[rgba(196,184,165,0.5)]">{p.ip}</td>
+                  <td className="text-center text-[rgba(196,184,165,0.35)]">{p.h}</td>
+                  <td className="text-center text-[rgba(196,184,165,0.35)]">{p.r}</td>
+                  <td className="text-center text-[rgba(196,184,165,0.35)]">{p.er}</td>
+                  <td className="text-center text-[rgba(196,184,165,0.35)]">{p.bb}</td>
+                  <td className="text-center text-[var(--bsi-bone)] font-medium">{p.so}</td>
+                  <td className="text-center text-[rgba(196,184,165,0.35)]">{p.pitches ?? '\u2014'}</td>
                 </tr>
               ))}
             </tbody>
@@ -282,15 +282,15 @@ export default function TexasWeek2RecapPage() {
         <Section padding="sm" className="border-b border-border">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 College Baseball
               </Link>
-              <span className="text-text-muted">/</span>
-              <Link href="/college-baseball/editorial" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <Link href="/college-baseball/editorial" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 Editorial
               </Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-secondary">Texas Week 2</span>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[var(--bsi-dust)]">Texas Week 2</span>
             </nav>
           </Container>
         </Section>
@@ -306,20 +306,20 @@ export default function TexasWeek2RecapPage() {
                   <Badge variant="primary">Week 2 Recap</Badge>
                   <Badge variant="accent">No. 3 Texas</Badge>
                   <Badge variant="outline">7-0</Badge>
-                  <span className="font-mono text-xs text-text-muted">Sweep</span>
+                  <span className="font-mono text-xs text-[rgba(196,184,165,0.35)]">Sweep</span>
                 </div>
 
                 <h1 className="font-display font-bold uppercase tracking-wide leading-none mb-4">
-                  <span className="block text-gradient-blaze text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-1">
+                  <span className="block text-[var(--bsi-primary)] text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-1">
                     The Cycle, The Shutout, The Statement.
                   </span>
                 </h1>
 
-                <p className="font-serif text-lg sm:text-xl text-text-tertiary italic leading-relaxed mb-6">
+                <p className="font-serif text-lg sm:text-xl text-[rgba(196,184,165,0.5)] italic leading-relaxed mb-6">
                   Texas swept Michigan State 15-2 behind Robbins&rsquo; cycle &mdash; the first by a Longhorn in eleven years &mdash; a Volantis shutout with a career-high 9 K, and a pitching staff that allowed two total runs in three games. The Spartans came in with a Louisville series win on their resume. It didn&rsquo;t matter. Now comes Coastal Carolina and the first off-site test of the season.
                 </p>
 
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] text-text-muted tracking-wide">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] text-[rgba(196,184,165,0.35)] tracking-wide">
                   <span>February 20&ndash;22, 2026</span>
                   <span className="hidden sm:inline">&middot;</span>
                   <span>UFCU Disch-Falk Field</span>
@@ -329,7 +329,7 @@ export default function TexasWeek2RecapPage() {
                   <span>Austin, TX</span>
                 </div>
 
-                <div className="flex items-center gap-4 text-sm text-text-muted mt-4">
+                <div className="flex items-center gap-4 text-sm text-[rgba(196,184,165,0.35)] mt-4">
                   <span>By Blaze Sports Intel</span>
                   <span>|</span>
                   <span>~18 min read</span>
@@ -367,10 +367,10 @@ export default function TexasWeek2RecapPage() {
               <p className="font-serif text-xl sm:text-[23px] font-medium leading-relaxed text-[#FAF7F2] mb-6">
                 Michigan State walked into Disch-Falk with a Louisville series win on their resume &mdash; the first Spartan series victory in Louisville since 1993. They left with two total runs across three games. The pitching staff struck out 32 batters in 27 innings. The offense manufactured 15 runs without needing a single crooked-number inning. This was a team that controlled every phase of every game.
               </p>
-              <p className="font-serif text-lg leading-relaxed text-text-secondary mb-6">
-                The headline moment was Robbins&rsquo; cycle on Saturday &mdash; the first by a Longhorn since CJ Hinojosa against Kansas State on April 18, 2015. But the structural takeaway lives in the pitching: <strong className="text-text-primary">1.53 staff ERA, 0.86 WHIP, and a rotation that has thrown 14 straight scoreless innings on Sundays</strong> through Dylan Volantis.
+              <p className="font-serif text-lg leading-relaxed text-[var(--bsi-dust)] mb-6">
+                The headline moment was Robbins&rsquo; cycle on Saturday &mdash; the first by a Longhorn since CJ Hinojosa against Kansas State on April 18, 2015. But the structural takeaway lives in the pitching: <strong className="text-[var(--bsi-bone)]">1.53 staff ERA, 0.86 WHIP, and a rotation that has thrown 14 straight scoreless innings on Sundays</strong> through Dylan Volantis.
               </p>
-              <p className="font-serif text-lg leading-relaxed text-text-tertiary">
+              <p className="font-serif text-lg leading-relaxed text-[rgba(196,184,165,0.5)]">
                 Two weekends down, two sweeps banked, and the identity keeps sharpening. The question is no longer whether this team is good. It&rsquo;s whether the schedule will reveal the ceiling.
               </p>
             </ScrollReveal>
@@ -382,11 +382,11 @@ export default function TexasWeek2RecapPage() {
           <Container>
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-1 h-8 rounded-full bg-burnt-orange" />
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange">
+                <div className="w-1 h-8 rounded-full bg-[var(--bsi-primary)]" />
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)]">
                   Game 1: Texas 8, Michigan State 1
                 </h2>
-                <span className="font-mono text-xs text-text-muted">Friday &middot; Feb 20</span>
+                <span className="font-mono text-xs text-[rgba(196,184,165,0.35)]">Friday &middot; Feb 20</span>
               </div>
 
               <div className="mb-6">
@@ -396,7 +396,7 @@ export default function TexasWeek2RecapPage() {
 
             <Container size="narrow">
               <ScrollReveal direction="up" delay={100}>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
                     Riojas set the tone in the first inning and never let it drift. Ten strikeouts in six innings of work, with the command to match the stuff. Michigan State managed three hits and one earned run, and even that felt like a concession rather than a crack. The line read like an ace&rsquo;s calling card: 6.0 IP, 3 H, 1 ER, 10 K.
                   </p>
@@ -405,7 +405,7 @@ export default function TexasWeek2RecapPage() {
                     Mendoza drove the offense. Three-for-four with two extra-base hits, two RBI, and his third home run in five games to open the season. That&rsquo;s not a hot streak. That&rsquo;s a hitter operating at a different level than his opponent &mdash; a .462 average through the first week and a half with power to all fields. Texas scored in four of the first six innings, turning a 2-0 lead into an 8-1 rout. Borba&rsquo;s two-run shot in the fifth and Pack Jr.&rsquo;s solo blast in the sixth capped the damage.
                   </p>
 
-                  <p className="text-text-tertiary">
+                  <p className="text-[rgba(196,184,165,0.5)]">
                     Winter, Crossland, and Walls combined for three scoreless innings of relief, striking out four. The pen hasn&rsquo;t allowed a run in this series &mdash; 9.2 IP, 0 ER from the bullpen across all three games.
                   </p>
                 </div>
@@ -426,10 +426,10 @@ export default function TexasWeek2RecapPage() {
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-1 h-8 rounded-full bg-[#C9A227]" />
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange">
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)]">
                   Game 2: Texas 3, Michigan State 1
                 </h2>
-                <span className="font-mono text-xs text-text-muted">Saturday &middot; Feb 21</span>
+                <span className="font-mono text-xs text-[rgba(196,184,165,0.35)]">Saturday &middot; Feb 21</span>
               </div>
 
               <div className="mb-6">
@@ -439,7 +439,7 @@ export default function TexasWeek2RecapPage() {
 
             <Container size="narrow">
               <ScrollReveal direction="up" delay={100}>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
                     This was the pitching duel. Harrison battled through 4.1 innings &mdash; four hits, one unearned run &mdash; before handing the ball to a bullpen that slammed the door. Michigan State got their run in the third on a sequence that required an error to score; Harrison&rsquo;s line read 0 ER despite allowing the traffic. Schlossnagle pulled him before the fifth was over, Leffew bridged the gap, and the decision paid off immediately.
                   </p>
@@ -458,23 +458,23 @@ export default function TexasWeek2RecapPage() {
                       Hit for the Cycle
                     </div>
                   </div>
-                  <div className="font-display text-lg font-semibold text-text-primary uppercase tracking-wide mb-1">
+                  <div className="font-display text-lg font-semibold text-[var(--bsi-bone)] uppercase tracking-wide mb-1">
                     Aiden Robbins
                   </div>
                   <div className="font-mono text-sm text-[#C9A227] mb-4">
                     4-for-4 &middot; 1B (1st) &middot; 3B (3rd) &middot; 2B (6th) &middot; HR (8th)
                   </div>
-                  <p className="font-serif text-sm text-text-tertiary leading-relaxed mb-3">
+                  <p className="font-serif text-sm text-[rgba(196,184,165,0.5)] leading-relaxed mb-3">
                     Single up the middle in the first that drove in the game&rsquo;s first Texas run. Triple down the right-field line in the third. Double to left center in the sixth. Then the solo home run in the eighth to complete it &mdash; a no-doubt pull shot down the right-field line. Two RBI on the day, both on swings that mattered.
                   </p>
-                  <p className="font-serif text-sm text-text-muted leading-relaxed">
+                  <p className="font-serif text-sm text-[rgba(196,184,165,0.35)] leading-relaxed">
                     The last Longhorn to hit for the cycle was CJ Hinojosa against Kansas State on April 18, 2015 &mdash; eleven years ago. Robbins, the Notre Dame transfer, needed five games to announce himself with the 450-foot HR in Week 1. He needed seven to write himself into the program&rsquo;s record book.
                   </p>
                 </div>
               </ScrollReveal>
 
               <ScrollReveal direction="up" delay={200}>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-4">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-4">
                   <p>
                     Grubbs came in and threw three scoreless innings to earn the win &mdash; Harrison didn&rsquo;t qualify at 4.1 IP, but the bullpen made it irrelevant. Grubbs didn&rsquo;t allow a hit and struck out two. Burns closed with a scoreless ninth, striking out three, to collect the save. The bullpen chain has been airtight through two weekends &mdash; hand the middle innings to Grubbs, hand the ninth to Burns, game over.
                   </p>
@@ -495,11 +495,11 @@ export default function TexasWeek2RecapPage() {
           <Container>
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-1 h-8 rounded-full bg-burnt-orange" />
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange">
+                <div className="w-1 h-8 rounded-full bg-[var(--bsi-primary)]" />
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)]">
                   Game 3: Texas 4, Michigan State 0
                 </h2>
-                <span className="font-mono text-xs text-text-muted">Sunday &middot; Feb 22</span>
+                <span className="font-mono text-xs text-[rgba(196,184,165,0.35)]">Sunday &middot; Feb 22</span>
               </div>
 
               <div className="mb-6">
@@ -509,16 +509,16 @@ export default function TexasWeek2RecapPage() {
 
             <Container size="narrow">
               <ScrollReveal direction="up" delay={100}>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
-                    Volantis threw the first complete-team shutout of the season. Seven innings, five hits, zero earned runs, nine strikeouts &mdash; a new career high, surpassing the eight he put up in the UC Davis Sunday start a week earlier. Michigan State put runners on more than they did against Riojas or the pen, but Volantis stranded all of them. Through two weekends as a starter: <strong className="text-text-primary">14 innings pitched, 0 earned runs, 17 strikeouts, 2 walks.</strong> The former closer who saved 12 games with a 1.94 ERA as a freshman is pitching like a front-of-the-rotation arm in his second career start.
+                    Volantis threw the first complete-team shutout of the season. Seven innings, five hits, zero earned runs, nine strikeouts &mdash; a new career high, surpassing the eight he put up in the UC Davis Sunday start a week earlier. Michigan State put runners on more than they did against Riojas or the pen, but Volantis stranded all of them. Through two weekends as a starter: <strong className="text-[var(--bsi-bone)]">14 innings pitched, 0 earned runs, 17 strikeouts, 2 walks.</strong> The former closer who saved 12 games with a 1.94 ERA as a freshman is pitching like a front-of-the-rotation arm in his second career start.
                   </p>
 
                   <p>
                     Texas scored two in the first and never looked back. Williams drove in the game&rsquo;s first run in the bottom of the first, and the lead grew to 4-0 by the fourth. The offense didn&rsquo;t need to be explosive. Volantis only needed four runs because he wasn&rsquo;t giving any back.
                   </p>
 
-                  <p className="text-text-tertiary">
+                  <p className="text-[rgba(196,184,165,0.5)]">
                     Crossland threw a clean eighth, then Burns struck out two in a scoreless ninth. The Sunday pitching formula &mdash; Volantis into the pen &mdash; hasn&rsquo;t allowed an earned run through two weekends.
                   </p>
                 </div>
@@ -537,16 +537,16 @@ export default function TexasWeek2RecapPage() {
         <Section padding="lg" background="charcoal">
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-6 pb-2 border-b border-[var(--bsi-primary)]/15">
                 Week 2 Performers
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {performers.map((p) => (
                   <div
                     key={p.name}
-                    className="relative bg-gradient-to-br from-[#2A2A2A]/90 to-charcoal/95 border border-burnt-orange/10 hover:border-burnt-orange/25 rounded-sm p-5 pl-7 overflow-hidden transition-colors"
+                    className="relative bg-gradient-to-br from-[#2A2A2A]/90 to-charcoal/95 border border-[var(--bsi-primary)]/10 hover:border-[var(--bsi-primary)]/25 rounded-sm p-5 pl-7 overflow-hidden transition-colors"
                   >
-                    <div className="absolute top-0 left-0 w-[3px] h-full bg-burnt-orange" />
+                    <div className="absolute top-0 left-0 w-[3px] h-full bg-[var(--bsi-primary)]" />
                     <div className="flex items-center justify-between mb-0.5">
                       <div className="font-display text-base font-semibold uppercase tracking-wide text-[#FAF7F2]">
                         {p.name}
@@ -555,10 +555,10 @@ export default function TexasWeek2RecapPage() {
                         {p.label}
                       </span>
                     </div>
-                    <div className="font-mono text-[10px] uppercase tracking-wider text-burnt-orange mb-2">
+                    <div className="font-mono text-[10px] uppercase tracking-wider text-[var(--bsi-primary)] mb-2">
                       {p.pos}
                     </div>
-                    <div className="font-mono text-[13px] text-text-muted leading-relaxed">
+                    <div className="font-mono text-[13px] text-[rgba(196,184,165,0.35)] leading-relaxed">
                       <span className="text-ember font-medium">{p.line}</span>
                       <br />
                       {p.context}
@@ -574,59 +574,59 @@ export default function TexasWeek2RecapPage() {
         <Section padding="lg">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-5 pb-2 border-b border-burnt-orange/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-5 pb-2 border-b border-[var(--bsi-primary)]/15">
                 Season Stats &mdash; 7-0
               </h2>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
-                <div className="bg-surface-light border border-border-subtle rounded-sm p-4 text-center">
-                  <div className="font-display text-[10px] uppercase tracking-[3px] text-text-muted mb-1">Team BA</div>
-                  <div className="font-display text-2xl font-bold text-burnt-orange">.321</div>
+                <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4 text-center">
+                  <div className="font-display text-[10px] uppercase tracking-[3px] text-[rgba(196,184,165,0.35)] mb-1">Team BA</div>
+                  <div className="font-display text-2xl font-bold text-[var(--bsi-primary)]">.321</div>
                 </div>
-                <div className="bg-surface-light border border-border-subtle rounded-sm p-4 text-center">
-                  <div className="font-display text-[10px] uppercase tracking-[3px] text-text-muted mb-1">Team OPS</div>
-                  <div className="font-display text-2xl font-bold text-burnt-orange">.986</div>
+                <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4 text-center">
+                  <div className="font-display text-[10px] uppercase tracking-[3px] text-[rgba(196,184,165,0.35)] mb-1">Team OPS</div>
+                  <div className="font-display text-2xl font-bold text-[var(--bsi-primary)]">.986</div>
                 </div>
-                <div className="bg-surface-light border border-border-subtle rounded-sm p-4 text-center">
-                  <div className="font-display text-[10px] uppercase tracking-[3px] text-text-muted mb-1">Staff ERA</div>
-                  <div className="font-display text-2xl font-bold text-burnt-orange">1.53</div>
+                <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4 text-center">
+                  <div className="font-display text-[10px] uppercase tracking-[3px] text-[rgba(196,184,165,0.35)] mb-1">Staff ERA</div>
+                  <div className="font-display text-2xl font-bold text-[var(--bsi-primary)]">1.53</div>
                 </div>
-                <div className="bg-surface-light border border-border-subtle rounded-sm p-4 text-center">
-                  <div className="font-display text-[10px] uppercase tracking-[3px] text-text-muted mb-1">WHIP</div>
-                  <div className="font-display text-2xl font-bold text-burnt-orange">0.86</div>
+                <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4 text-center">
+                  <div className="font-display text-[10px] uppercase tracking-[3px] text-[rgba(196,184,165,0.35)] mb-1">WHIP</div>
+                  <div className="font-display text-2xl font-bold text-[var(--bsi-primary)]">0.86</div>
                 </div>
               </div>
 
-              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                 <p>
-                  Through seven games, the run differential is <strong className="text-text-primary">56-13 (+43)</strong>. Texas has outscored opponents by more than four runs per game on average, and the pitching staff hasn&rsquo;t allowed more than four runs in any single contest.
+                  Through seven games, the run differential is <strong className="text-[var(--bsi-bone)]">56-13 (+43)</strong>. Texas has outscored opponents by more than four runs per game on average, and the pitching staff hasn&rsquo;t allowed more than four runs in any single contest.
                 </p>
 
                 <div className="space-y-4">
-                  <h3 className="font-display text-sm uppercase tracking-wider text-text-tertiary mb-3">Individual Leaders</h3>
+                  <h3 className="font-display text-sm uppercase tracking-wider text-[rgba(196,184,165,0.5)] mb-3">Individual Leaders</h3>
 
-                  <div className="bg-surface-light border border-border-subtle rounded-sm p-4">
-                    <div className="font-display text-sm font-semibold uppercase tracking-wide text-text-primary mb-1">Ethan Mendoza</div>
-                    <div className="font-mono text-xs text-burnt-orange mb-1">.462 AVG &middot; 12 H &middot; 3 HR &middot; 9 RBI &middot; 1.375 OPS</div>
-                    <div className="font-mono text-[11px] text-text-muted">Best bat in the lineup through two weekends. Hitting for average and power with no platoon weakness.</div>
+                  <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4">
+                    <div className="font-display text-sm font-semibold uppercase tracking-wide text-[var(--bsi-bone)] mb-1">Ethan Mendoza</div>
+                    <div className="font-mono text-xs text-[var(--bsi-primary)] mb-1">.462 AVG &middot; 12 H &middot; 3 HR &middot; 9 RBI &middot; 1.375 OPS</div>
+                    <div className="font-mono text-[11px] text-[rgba(196,184,165,0.35)]">Best bat in the lineup through two weekends. Hitting for average and power with no platoon weakness.</div>
                   </div>
 
-                  <div className="bg-surface-light border border-border-subtle rounded-sm p-4">
-                    <div className="font-display text-sm font-semibold uppercase tracking-wide text-text-primary mb-1">Carson Tinney</div>
-                    <div className="font-mono text-xs text-burnt-orange mb-1">.316/.567/.684 &middot; 11 BB (T-6th nationally)</div>
-                    <div className="font-mono text-[11px] text-text-muted">Sees more pitches than anyone in the order. Eleven walks in seven games &mdash; the kind of on-base presence that lengthens every inning.</div>
+                  <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4">
+                    <div className="font-display text-sm font-semibold uppercase tracking-wide text-[var(--bsi-bone)] mb-1">Carson Tinney</div>
+                    <div className="font-mono text-xs text-[var(--bsi-primary)] mb-1">.316/.567/.684 &middot; 11 BB (T-6th nationally)</div>
+                    <div className="font-mono text-[11px] text-[rgba(196,184,165,0.35)]">Sees more pitches than anyone in the order. Eleven walks in seven games &mdash; the kind of on-base presence that lengthens every inning.</div>
                   </div>
 
-                  <div className="bg-surface-light border border-border-subtle rounded-sm p-4">
-                    <div className="font-display text-sm font-semibold uppercase tracking-wide text-text-primary mb-1">Ruger Riojas</div>
-                    <div className="font-mono text-xs text-burnt-orange mb-1">11 IP &middot; 2 ER &middot; 19 K &middot; 1.64 ERA (10 K vs MSU)</div>
-                    <div className="font-mono text-[11px] text-text-muted">Posted a 5.61 ERA in 2025. Through two Friday starts: 19 strikeouts in 11 innings &mdash; 9 K in the opener, 10 K against Michigan State. The leap is real.</div>
+                  <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4">
+                    <div className="font-display text-sm font-semibold uppercase tracking-wide text-[var(--bsi-bone)] mb-1">Ruger Riojas</div>
+                    <div className="font-mono text-xs text-[var(--bsi-primary)] mb-1">11 IP &middot; 2 ER &middot; 19 K &middot; 1.64 ERA (10 K vs MSU)</div>
+                    <div className="font-mono text-[11px] text-[rgba(196,184,165,0.35)]">Posted a 5.61 ERA in 2025. Through two Friday starts: 19 strikeouts in 11 innings &mdash; 9 K in the opener, 10 K against Michigan State. The leap is real.</div>
                   </div>
 
-                  <div className="bg-surface-light border border-border-subtle rounded-sm p-4">
-                    <div className="font-display text-sm font-semibold uppercase tracking-wide text-text-primary mb-1">Dylan Volantis</div>
-                    <div className="font-mono text-xs text-burnt-orange mb-1">14 IP &middot; 0 ER &middot; 17 K &middot; 2 BB &middot; 0.00 ERA</div>
-                    <div className="font-mono text-[11px] text-text-muted">Converted from closer (12 SV, 1.94 ERA as freshman) to Sunday starter. Two starts, zero earned runs. Career-high K totals both weekends.</div>
+                  <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4">
+                    <div className="font-display text-sm font-semibold uppercase tracking-wide text-[var(--bsi-bone)] mb-1">Dylan Volantis</div>
+                    <div className="font-mono text-xs text-[var(--bsi-primary)] mb-1">14 IP &middot; 0 ER &middot; 17 K &middot; 2 BB &middot; 0.00 ERA</div>
+                    <div className="font-mono text-[11px] text-[rgba(196,184,165,0.35)]">Converted from closer (12 SV, 1.94 ERA as freshman) to Sunday starter. Two starts, zero earned runs. Career-high K totals both weekends.</div>
                   </div>
                 </div>
               </div>
@@ -645,7 +645,7 @@ export default function TexasWeek2RecapPage() {
                   <p>
                     The lineup doesn&rsquo;t have a hole. Mendoza is hitting .462 with 3 HR. Tinney is tied for sixth nationally in walks. Robbins just hit for the cycle. The offense doesn&rsquo;t need to be explosive because the pitching doesn&rsquo;t force it to be.
                   </p>
-                  <p className="text-text-secondary">
+                  <p className="text-[var(--bsi-dust)]">
                     But the schedule is about to start asking real questions. Two weekends of home games against overmatched opponents is a foundation, not a verdict. Friday night at Daikin Park &mdash; No. 11 Coastal Carolina, Preseason National Player of the Year Cameron Flukey, a 2025 national runner-up program &mdash; is the first pitch that will tell Texas something about itself.
                   </p>
         </BSIVerdict>
@@ -655,44 +655,44 @@ export default function TexasWeek2RecapPage() {
           <Container>
             <ScrollReveal direction="up">
               <div className="text-center mb-6">
-                <span className="font-mono text-[10px] uppercase tracking-[3px] text-burnt-orange">Tuesday Preview</span>
+                <span className="font-mono text-[10px] uppercase tracking-[3px] text-[var(--bsi-primary)]">Tuesday Preview</span>
               </div>
 
               <div className="max-w-2xl mx-auto">
                 <Card variant="default" padding="lg">
                   <div className="text-center space-y-3 mb-6">
-                    <h3 className="font-display text-xl uppercase tracking-wider text-text-primary">
+                    <h3 className="font-display text-xl uppercase tracking-wider text-[var(--bsi-bone)]">
                       UTRGV at No. 3 Texas
                     </h3>
-                    <div className="font-mono text-sm text-burnt-orange">
+                    <div className="font-mono text-sm text-[var(--bsi-primary)]">
                       Tuesday, February 25 &middot; UFCU Disch-Falk Field
                     </div>
-                    <div className="font-mono text-xs text-text-muted">
+                    <div className="font-mono text-xs text-[rgba(196,184,165,0.35)]">
                       Austin, TX
                     </div>
                   </div>
 
-                  <div className="border-t border-border-subtle pt-5">
-                    <h4 className="font-display text-sm uppercase tracking-wider text-text-tertiary mb-3">
+                  <div className="border-t border-[var(--border-vintage)] pt-5">
+                    <h4 className="font-display text-sm uppercase tracking-wider text-[rgba(196,184,165,0.5)] mb-3">
                       What UTRGV Is Bringing to Austin
                     </h4>
-                    <div className="font-serif text-base text-text-secondary leading-relaxed space-y-3">
+                    <div className="font-serif text-base text-[var(--bsi-dust)] leading-relaxed space-y-3">
                       <p>
                         UTRGV is 3-4, and the record undersells the fight. They beat Kansas in their season opener &mdash; 7-4 in front of a sellout 5,862 &mdash; then went to Houston and took two of three from the Cougars. That included an 8-run rally in Game 2 and a 6-run ninth-inning comeback in Game 3 to steal the series. This is a team that can score in bunches when they get hot, and they&rsquo;ve already proven they won&rsquo;t fold on the road against Power 4 opponents.
                       </p>
-                      <p className="text-text-tertiary">
+                      <p className="text-[rgba(196,184,165,0.5)]">
                         The flipside: they lost to Texas Tech 21-12, which means they can bleed runs too. Thomas Williams is the key bat. Cienfuegos is the arm to watch. Texas should control this game, but UTRGV has earned the right not to be dismissed.
                       </p>
                     </div>
 
-                    <div className="bg-surface-light border border-border-subtle rounded-sm p-4 mt-5">
-                      <h4 className="font-display text-[11px] uppercase tracking-[3px] text-burnt-orange mb-3">
+                    <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4 mt-5">
+                      <h4 className="font-display text-[11px] uppercase tracking-[3px] text-[var(--bsi-primary)] mb-3">
                         Keys for Texas
                       </h4>
-                      <div className="font-serif text-sm text-text-tertiary leading-relaxed space-y-2">
-                        <p><strong className="text-text-secondary">Midweek pitching depth.</strong> Use the Tuesday game to get reps for arms outside the weekend rotation. The Bruce Bolt Classic is four days away &mdash; manage the workload.</p>
-                        <p><strong className="text-text-secondary">Don&rsquo;t let them get comfortable.</strong> UTRGV&rsquo;s Houston series showed they can rally late. Score early, play clean, close the door before momentum shifts.</p>
-                        <p><strong className="text-text-secondary">Stay sharp defensively.</strong> The lineup will hit. The question is whether the defense stays clean in a game where the concentration can slip.</p>
+                      <div className="font-serif text-sm text-[rgba(196,184,165,0.5)] leading-relaxed space-y-2">
+                        <p><strong className="text-[var(--bsi-dust)]">Midweek pitching depth.</strong> Use the Tuesday game to get reps for arms outside the weekend rotation. The Bruce Bolt Classic is four days away &mdash; manage the workload.</p>
+                        <p><strong className="text-[var(--bsi-dust)]">Don&rsquo;t let them get comfortable.</strong> UTRGV&rsquo;s Houston series showed they can rally late. Score early, play clean, close the door before momentum shifts.</p>
+                        <p><strong className="text-[var(--bsi-dust)]">Stay sharp defensively.</strong> The lineup will hit. The question is whether the defense stays clean in a game where the concentration can slip.</p>
                       </div>
                     </div>
                   </div>
@@ -711,13 +711,13 @@ export default function TexasWeek2RecapPage() {
               </div>
 
               <div className="max-w-3xl mx-auto">
-                <h3 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wider text-text-primary text-center mb-2">
+                <h3 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wider text-[var(--bsi-bone)] text-center mb-2">
                   Bruce Bolt College Classic
                 </h3>
-                <div className="text-center font-mono text-sm text-burnt-orange mb-2">
+                <div className="text-center font-mono text-sm text-[var(--bsi-primary)] mb-2">
                   February 27 &ndash; March 1 &middot; Daikin Park, Houston
                 </div>
-                <div className="text-center font-mono text-xs text-text-muted mb-8">
+                <div className="text-center font-mono text-xs text-[rgba(196,184,165,0.35)] mb-8">
                   Space City Home Network + free stream on Astros.com
                 </div>
 
@@ -730,22 +730,22 @@ export default function TexasWeek2RecapPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
                     <div className="bg-[#C9A227]/5 border border-[#C9A227]/15 rounded-sm p-4">
                       <div className="font-display text-[10px] uppercase tracking-[3px] text-[#C9A227] mb-1">Friday 7:05 PM</div>
-                      <div className="font-display text-lg font-bold text-text-primary">vs No. 11 Coastal Carolina</div>
+                      <div className="font-display text-lg font-bold text-[var(--bsi-bone)]">vs No. 11 Coastal Carolina</div>
                       <div className="font-mono text-[11px] text-[#C9A227]/70 mt-1">
                         Flukey &middot; Preseason NPOY &middot; 2025 National Runner-Up (56-14)
                       </div>
                     </div>
-                    <div className="bg-surface-light border border-border-subtle rounded-sm p-4">
-                      <div className="font-display text-[10px] uppercase tracking-[3px] text-text-muted mb-1">Saturday 7:05 PM</div>
-                      <div className="font-display text-lg font-bold text-text-primary">vs Baylor</div>
-                      <div className="font-mono text-[11px] text-text-muted mt-1">
+                    <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4">
+                      <div className="font-display text-[10px] uppercase tracking-[3px] text-[rgba(196,184,165,0.35)] mb-1">Saturday 7:05 PM</div>
+                      <div className="font-display text-lg font-bold text-[var(--bsi-bone)]">vs Baylor</div>
+                      <div className="font-mono text-[11px] text-[rgba(196,184,165,0.35)] mt-1">
                         In-state rivalry &middot; Big 12
                       </div>
                     </div>
-                    <div className="bg-surface-light border border-border-subtle rounded-sm p-4">
-                      <div className="font-display text-[10px] uppercase tracking-[3px] text-text-muted mb-1">Sunday 2:05 PM</div>
-                      <div className="font-display text-lg font-bold text-text-primary">vs Ohio State</div>
-                      <div className="font-mono text-[11px] text-text-muted mt-1">
+                    <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4">
+                      <div className="font-display text-[10px] uppercase tracking-[3px] text-[rgba(196,184,165,0.35)] mb-1">Sunday 2:05 PM</div>
+                      <div className="font-display text-lg font-bold text-[var(--bsi-bone)]">vs Ohio State</div>
+                      <div className="font-mono text-[11px] text-[rgba(196,184,165,0.35)] mt-1">
                         Big Ten
                       </div>
                     </div>
@@ -754,10 +754,10 @@ export default function TexasWeek2RecapPage() {
 
                 {/* Matchup analysis */}
                 <div className="mb-8">
-                  <h4 className="font-display text-sm uppercase tracking-wider text-text-tertiary mb-4 pb-2 border-b border-border">
+                  <h4 className="font-display text-sm uppercase tracking-wider text-[rgba(196,184,165,0.5)] mb-4 pb-2 border-b border-border">
                     Matchup Analysis
                   </h4>
-                  <div className="font-serif text-base text-text-secondary leading-relaxed space-y-6">
+                  <div className="font-serif text-base text-[var(--bsi-dust)] leading-relaxed space-y-6">
                     <div>
                       <h5 className="font-display text-sm font-semibold uppercase tracking-wide text-[#C9A227] mb-2">
                         Friday: No. 11 Coastal Carolina &mdash; The Measuring Stick
@@ -768,7 +768,7 @@ export default function TexasWeek2RecapPage() {
                     </div>
 
                     <div>
-                      <h5 className="font-display text-sm font-semibold uppercase tracking-wide text-text-primary mb-2">
+                      <h5 className="font-display text-sm font-semibold uppercase tracking-wide text-[var(--bsi-bone)] mb-2">
                         Saturday: Baylor &mdash; The Rivalry Factor
                       </h5>
                       <p>
@@ -777,10 +777,10 @@ export default function TexasWeek2RecapPage() {
                     </div>
 
                     <div>
-                      <h5 className="font-display text-sm font-semibold uppercase tracking-wide text-text-primary mb-2">
+                      <h5 className="font-display text-sm font-semibold uppercase tracking-wide text-[var(--bsi-bone)] mb-2">
                         Sunday: Ohio State &mdash; Most Manageable
                       </h5>
-                      <p className="text-text-tertiary">
+                      <p className="text-[rgba(196,184,165,0.5)]">
                         Ohio State rounds out the weekend. Of the three opponents, this should be the most straightforward matchup for Volantis and the Sunday pitching formula. But &ldquo;should be&rdquo; is a dangerous phrase three games into a neutral-site tournament &mdash; fatigue, travel, and the unfamiliar ballpark all apply. Treat it like a close game until it isn&rsquo;t one.
                       </p>
                     </div>
@@ -789,32 +789,32 @@ export default function TexasWeek2RecapPage() {
 
                 {/* Other teams in the field */}
                 <div className="mb-8">
-                  <h4 className="font-display text-sm uppercase tracking-wider text-text-tertiary mb-4 pb-2 border-b border-border">
+                  <h4 className="font-display text-sm uppercase tracking-wider text-[rgba(196,184,165,0.5)] mb-4 pb-2 border-b border-border">
                     Also in the Field
                   </h4>
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-surface-light border border-border-subtle rounded-sm p-4">
-                      <div className="font-display text-sm font-semibold uppercase tracking-wide text-text-primary">Ole Miss</div>
+                    <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4">
+                      <div className="font-display text-sm font-semibold uppercase tracking-wide text-[var(--bsi-bone)]">Ole Miss</div>
                       <div className="font-mono text-[11px] text-[#C9A227] mt-1">8-0 &middot; No. 1 RPI</div>
-                      <div className="font-mono text-[10px] text-text-muted mt-1">Texas won&rsquo;t play them this weekend, but they&rsquo;re the best team in the building.</div>
+                      <div className="font-mono text-[10px] text-[rgba(196,184,165,0.35)] mt-1">Texas won&rsquo;t play them this weekend, but they&rsquo;re the best team in the building.</div>
                     </div>
-                    <div className="bg-surface-light border border-border-subtle rounded-sm p-4">
-                      <div className="font-display text-sm font-semibold uppercase tracking-wide text-text-primary">UTSA</div>
-                      <div className="font-mono text-[11px] text-text-muted mt-1">2025 AAC Champions</div>
-                      <div className="font-mono text-[10px] text-text-muted mt-1">Won their conference last season. Capable program in a loaded field.</div>
+                    <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4">
+                      <div className="font-display text-sm font-semibold uppercase tracking-wide text-[var(--bsi-bone)]">UTSA</div>
+                      <div className="font-mono text-[11px] text-[rgba(196,184,165,0.35)] mt-1">2025 AAC Champions</div>
+                      <div className="font-mono text-[10px] text-[rgba(196,184,165,0.35)] mt-1">Won their conference last season. Capable program in a loaded field.</div>
                     </div>
                   </div>
                 </div>
 
                 {/* Series keys */}
-                <div className="bg-surface-light border border-border-subtle rounded-sm p-5">
-                  <h4 className="font-display text-[11px] uppercase tracking-[3px] text-burnt-orange mb-4">
+                <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-5">
+                  <h4 className="font-display text-[11px] uppercase tracking-[3px] text-[var(--bsi-primary)] mb-4">
                     What to Watch For
                   </h4>
-                  <div className="font-serif text-sm text-text-tertiary leading-relaxed space-y-3">
-                    <p><strong className="text-text-secondary">Friday night is the real test.</strong> Coastal Carolina with Flukey on the mound is the first opponent that can match Texas pitch-for-pitch. How Riojas handles a lineup that went to the CWS finals last year defines the weekend.</p>
-                    <p><strong className="text-text-secondary">First road-adjacent games of the season.</strong> Two weekends at Disch-Falk built the foundation. Daikin Park in Houston is neutral ground. The crowd advantage disappears. The identity has to travel.</p>
-                    <p><strong className="text-text-secondary">Workload management.</strong> Three games in three days at a neutral site with a Tuesday game beforehand. Bullpen depth matters more this weekend than any point so far. Burns, Grubbs, Crossland, and Winter all need to be available and sharp across three nights.</p>
+                  <div className="font-serif text-sm text-[rgba(196,184,165,0.5)] leading-relaxed space-y-3">
+                    <p><strong className="text-[var(--bsi-dust)]">Friday night is the real test.</strong> Coastal Carolina with Flukey on the mound is the first opponent that can match Texas pitch-for-pitch. How Riojas handles a lineup that went to the CWS finals last year defines the weekend.</p>
+                    <p><strong className="text-[var(--bsi-dust)]">First road-adjacent games of the season.</strong> Two weekends at Disch-Falk built the foundation. Daikin Park in Houston is neutral ground. The crowd advantage disappears. The identity has to travel.</p>
+                    <p><strong className="text-[var(--bsi-dust)]">Workload management.</strong> Three games in three days at a neutral site with a Tuesday game beforehand. Bullpen depth matters more this weekend than any point so far. Burns, Grubbs, Crossland, and Winter all need to be available and sharp across three nights.</p>
                   </div>
                 </div>
               </div>
@@ -827,25 +827,25 @@ export default function TexasWeek2RecapPage() {
           <Container>
             <ScrollReveal direction="up">
               <div className="text-center mb-8">
-                <span className="font-mono text-[10px] uppercase tracking-[3px] text-burnt-orange">Powered by AI</span>
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-text-primary mt-2">
+                <span className="font-mono text-[10px] uppercase tracking-[3px] text-[var(--bsi-primary)]">Powered by AI</span>
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mt-2">
                   Go Deeper
                 </h2>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
                 <button
                   onClick={() => openAI('claude')}
-                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded-sm transition-colors text-left"
+                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-[var(--bsi-primary)]/10 hover:border-[var(--bsi-primary)]/30 rounded-sm transition-colors text-left"
                 >
-                  <div className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-1">Claude Analysis</div>
-                  <div className="text-text-muted text-xs">Anthropic-powered series breakdown</div>
+                  <div className="font-display text-sm uppercase tracking-wider text-[var(--bsi-primary)] mb-1">Claude Analysis</div>
+                  <div className="text-[rgba(196,184,165,0.35)] text-xs">Anthropic-powered series breakdown</div>
                 </button>
                 <button
                   onClick={() => openAI('gemini')}
-                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded-sm transition-colors text-left"
+                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-[var(--bsi-primary)]/10 hover:border-[var(--bsi-primary)]/30 rounded-sm transition-colors text-left"
                 >
-                  <div className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-1">Gemini Analysis</div>
-                  <div className="text-text-muted text-xs">Google-powered scouting insights</div>
+                  <div className="font-display text-sm uppercase tracking-wider text-[var(--bsi-primary)] mb-1">Gemini Analysis</div>
+                  <div className="text-[rgba(196,184,165,0.35)] text-xs">Google-powered scouting insights</div>
                 </button>
               </div>
             </ScrollReveal>
@@ -857,11 +857,11 @@ export default function TexasWeek2RecapPage() {
           <Container size="narrow">
             <ScrollReveal direction="up">
               <div className="text-center">
-                <span className="font-mono text-[10px] uppercase tracking-[3px] text-text-muted block mb-2">NotebookLM Integration</span>
-                <h3 className="font-display text-lg uppercase tracking-wider text-text-primary mb-4">
+                <span className="font-mono text-[10px] uppercase tracking-[3px] text-[rgba(196,184,165,0.35)] block mb-2">NotebookLM Integration</span>
+                <h3 className="font-display text-lg uppercase tracking-wider text-[var(--bsi-bone)] mb-4">
                   Turn This Recap Into a Podcast
                 </h3>
-                <p className="text-text-muted text-sm mb-6 max-w-md mx-auto">
+                <p className="text-[rgba(196,184,165,0.35)] text-sm mb-6 max-w-md mx-auto">
                   One click copies the full recap to your clipboard and opens Google NotebookLM. Paste it in and generate an audio overview.
                 </p>
                 <NotebookLMExport articleText={ARTICLE_TEXT} />
@@ -871,7 +871,7 @@ export default function TexasWeek2RecapPage() {
         </Section>
 
         {/* ── Source Attribution ── */}
-        <Section padding="md" className="border-t border-burnt-orange/10">
+        <Section padding="md" className="border-t border-[var(--bsi-primary)]/10">
           <Container size="narrow">
             <div className="space-y-4">
               <div className="flex flex-wrap gap-3">
@@ -881,17 +881,17 @@ export default function TexasWeek2RecapPage() {
                 <DataSourceBadge source="mlb.com/astros" timestamp="February 24, 2026 CT" />
                 <DataSourceBadge source="d1baseball.com" timestamp="February 24, 2026 CT" />
               </div>
-              <div className="font-mono text-[11px] text-text-muted leading-relaxed">
+              <div className="font-mono text-[11px] text-[rgba(196,184,165,0.35)] leading-relaxed">
                 Box scores sourced from Texas Longhorns and Michigan State official stats. UTRGV and Bruce Bolt Classic data from official athletic sites and D1Baseball.
               </div>
               <div className="flex flex-wrap gap-6 pt-2">
-                <Link href="/college-baseball/editorial" className="font-display text-[13px] uppercase tracking-widest text-burnt-orange hover:opacity-70 transition-opacity">
+                <Link href="/college-baseball/editorial" className="font-display text-[13px] uppercase tracking-widest text-[var(--bsi-primary)] hover:opacity-70 transition-opacity">
                   More Editorial &rarr;
                 </Link>
-                <Link href="/college-baseball/editorial/texas-week-1-recap" className="font-display text-[13px] uppercase tracking-widest text-burnt-orange hover:opacity-70 transition-opacity">
+                <Link href="/college-baseball/editorial/texas-week-1-recap" className="font-display text-[13px] uppercase tracking-widest text-[var(--bsi-primary)] hover:opacity-70 transition-opacity">
                   Week 1 Recap &rarr;
                 </Link>
-                <Link href="/college-baseball/editorial/texas-2026" className="font-display text-[13px] uppercase tracking-widest text-burnt-orange hover:opacity-70 transition-opacity">
+                <Link href="/college-baseball/editorial/texas-2026" className="font-display text-[13px] uppercase tracking-widest text-[var(--bsi-primary)] hover:opacity-70 transition-opacity">
                   2026 Season Preview &rarr;
                 </Link>
               </div>

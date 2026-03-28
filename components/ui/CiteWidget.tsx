@@ -63,9 +63,9 @@ export function CiteWidget({ title, path, date = '2026-02-17', author = 'Austin 
   }
 
   return (
-    <div className="bg-surface-light border border-border-subtle rounded-sm p-4 sm:p-5">
+    <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4 sm:p-5">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-xs font-semibold uppercase tracking-wider text-text-muted">Cite this page</span>
+        <span className="text-xs font-semibold uppercase tracking-wider text-[rgba(196,184,165,0.35)]">Cite this page</span>
         <div className="flex gap-1">
           {(['apa', 'bibtex'] as const).map((f) => (
             <button
@@ -74,8 +74,8 @@ export function CiteWidget({ title, path, date = '2026-02-17', author = 'Austin 
               aria-pressed={format === f}
               className={`px-2.5 py-1 rounded-sm text-[10px] font-semibold uppercase tracking-wider border transition-all ${
                 format === f
-                  ? 'bg-burnt-orange/20 text-burnt-orange border-burnt-orange/30'
-                  : 'bg-surface-light text-text-muted border-border hover:text-text-secondary'
+                  ? 'bg-[var(--bsi-primary)]/20 text-[var(--bsi-primary)] border-[var(--bsi-primary)]/30'
+                  : 'bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.35)] border-border hover:text-[var(--bsi-dust)]'
               }`}
             >
               {f === 'apa' ? 'APA' : 'BibTeX'}
@@ -83,12 +83,12 @@ export function CiteWidget({ title, path, date = '2026-02-17', author = 'Austin 
           ))}
         </div>
       </div>
-      <pre data-cite-text className="text-xs text-text-muted bg-surface-light rounded-sm p-3 overflow-x-auto whitespace-pre-wrap font-mono leading-relaxed">
+      <pre data-cite-text className="text-xs text-[rgba(196,184,165,0.35)] bg-[var(--surface-press-box)] rounded-sm p-3 overflow-x-auto whitespace-pre-wrap font-mono leading-relaxed">
         {text}
       </pre>
       <button
         onClick={handleCopy}
-        className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-semibold bg-surface-light border border-border text-text-muted hover:text-text-secondary hover:border-border-strong transition-all"
+        className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-semibold bg-[var(--surface-press-box)] border border-border text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-dust)] hover:border-[rgba(140,98,57,0.5)] transition-all"
       >
         {copied ? (
           <>

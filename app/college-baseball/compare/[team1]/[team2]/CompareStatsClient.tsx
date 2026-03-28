@@ -75,15 +75,15 @@ function StatRow({ label, valueA, valueB, higher, inverse, description }: StatRo
   const actualHigher = higher || (numA === numB ? 'tie' : inverse ? (numA < numB ? 'a' : 'b') : (numA > numB ? 'a' : 'b'));
 
   return (
-    <div className="flex items-center justify-between py-3 border-b border-border-subtle last:border-0">
-      <div className={`text-right w-20 font-mono text-sm ${actualHigher === 'a' ? 'text-success font-bold' : 'text-text-secondary'}`}>
+    <div className="flex items-center justify-between py-3 border-b border-[var(--border-vintage)] last:border-0">
+      <div className={`text-right w-20 font-mono text-sm ${actualHigher === 'a' ? 'text-success font-bold' : 'text-[var(--bsi-dust)]'}`}>
         {valueA || '-'}
       </div>
       <div className="flex-1 text-center px-2">
-        <span className="text-xs text-text-tertiary uppercase tracking-wide">{label}</span>
-        {description && <p className="text-[10px] text-text-tertiary mt-0.5">{description}</p>}
+        <span className="text-xs text-[rgba(196,184,165,0.5)] uppercase tracking-wide">{label}</span>
+        {description && <p className="text-[10px] text-[rgba(196,184,165,0.5)] mt-0.5">{description}</p>}
       </div>
-      <div className={`text-left w-20 font-mono text-sm ${actualHigher === 'b' ? 'text-success font-bold' : 'text-text-secondary'}`}>
+      <div className={`text-left w-20 font-mono text-sm ${actualHigher === 'b' ? 'text-success font-bold' : 'text-[var(--bsi-dust)]'}`}>
         {valueB || '-'}
       </div>
     </div>
@@ -126,11 +126,11 @@ export default function CompareStatsClient({ team1Slug, team2Slug, team1Name, te
     return (
       <Card variant="default" padding="lg" className="mt-8">
         <div className="animate-pulse space-y-4">
-          <div className="h-6 bg-background-tertiary rounded-sm w-48 mx-auto" />
-          <div className="h-4 bg-background-tertiary rounded-sm w-32 mx-auto" />
+          <div className="h-6 bg-[var(--surface-dugout)] rounded-sm w-48 mx-auto" />
+          <div className="h-4 bg-[var(--surface-dugout)] rounded-sm w-32 mx-auto" />
           <div className="space-y-2">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="h-10 bg-background-tertiary rounded-sm" />
+              <div key={i} className="h-10 bg-[var(--surface-dugout)] rounded-sm" />
             ))}
           </div>
         </div>
@@ -142,7 +142,7 @@ export default function CompareStatsClient({ team1Slug, team2Slug, team1Name, te
     return (
       <Card variant="default" padding="lg" className="mt-8 text-center">
         <Badge variant="secondary" className="mb-3">BSI Savant</Badge>
-        <p className="text-text-secondary text-sm">
+        <p className="text-[var(--bsi-dust)] text-sm">
           Advanced analytics aren't available for these teams yet.
           Check back as the season progresses.
         </p>
@@ -154,19 +154,19 @@ export default function CompareStatsClient({ team1Slug, team2Slug, team1Name, te
     <div className="mt-8 space-y-6">
       <div className="text-center mb-4">
         <Badge variant="primary" className="mb-2">Live Analytics</Badge>
-        <h2 className="font-display text-xl font-bold uppercase tracking-wide text-text-primary">
+        <h2 className="font-display text-xl font-bold uppercase tracking-wide text-[var(--bsi-bone)]">
           BSI Savant Comparison
         </h2>
-        <p className="text-text-tertiary text-sm mt-1">
+        <p className="text-[rgba(196,184,165,0.5)] text-sm mt-1">
           Advanced sabermetrics computed from 2026 season data
         </p>
       </div>
 
       {/* Team headers */}
       <div className="flex items-center justify-between px-4">
-        <span className="font-display font-bold text-burnt-orange uppercase text-sm">{team1Name}</span>
-        <span className="text-text-tertiary text-xs">vs</span>
-        <span className="font-display font-bold text-burnt-orange uppercase text-sm">{team2Name}</span>
+        <span className="font-display font-bold text-[var(--bsi-primary)] uppercase text-sm">{team1Name}</span>
+        <span className="text-[rgba(196,184,165,0.5)] text-xs">vs</span>
+        <span className="font-display font-bold text-[var(--bsi-primary)] uppercase text-sm">{team2Name}</span>
       </div>
 
       {/* Batting Comparison */}
@@ -174,7 +174,7 @@ export default function CompareStatsClient({ team1Slug, team2Slug, team1Name, te
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             Batting
-            <span className="text-text-tertiary text-xs font-normal">
+            <span className="text-[rgba(196,184,165,0.5)] text-xs font-normal">
               ({stats1?.batting.count || 0} vs {stats2?.batting.count || 0} qualifiers)
             </span>
           </CardTitle>
@@ -218,7 +218,7 @@ export default function CompareStatsClient({ team1Slug, team2Slug, team1Name, te
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             Pitching
-            <span className="text-text-tertiary text-xs font-normal">
+            <span className="text-[rgba(196,184,165,0.5)] text-xs font-normal">
               ({stats1?.pitching.count || 0} vs {stats2?.pitching.count || 0} qualifiers)
             </span>
           </CardTitle>

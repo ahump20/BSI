@@ -35,10 +35,10 @@ function AnimatedScore({
     <motion.span
       className={`text-2xl font-bold font-mono ${
         isScheduled
-          ? 'text-text-tertiary'
+          ? 'text-[rgba(196,184,165,0.5)]'
           : isWinner
-            ? 'text-text-primary'
-            : 'text-text-secondary'
+            ? 'text-[var(--bsi-bone)]'
+            : 'text-[var(--bsi-dust)]'
       }`}
       animate={flash ? { scale: [1, 1.3, 1], color: ['', 'var(--bsi-accent)', ''] } : {}}
       transition={{ duration: 0.6, ease: 'easeOut' }}
@@ -121,8 +121,8 @@ export function LiveScoreCard({ game, animate = true, lastMessageAt }: LiveScore
     <Wrapper {...(wrapperProps as Record<string, unknown>)}>
       <Link href={`/college-baseball/game/${game.id}`} className="block">
         <div
-          className={`bg-graphite rounded-sm border transition-all hover:border-burnt-orange hover:bg-surface-light ${
-            isLive ? 'border-success' : 'border-border-subtle'
+          className={`bg-graphite rounded-sm border transition-all hover:border-[var(--bsi-primary)] hover:bg-[var(--surface-press-box)] ${
+            isLive ? 'border-success' : 'border-[var(--border-vintage)]'
           }`}
         >
           {/* Status Bar */}
@@ -131,8 +131,8 @@ export function LiveScoreCard({ game, animate = true, lastMessageAt }: LiveScore
               isLive
                 ? 'bg-success/20'
                 : isFinal
-                  ? 'bg-charcoal'
-                  : 'bg-burnt-orange/20'
+                  ? 'bg-[var(--surface-dugout)]'
+                  : 'bg-[var(--bsi-primary)]/20'
             }`}
           >
             <span
@@ -140,8 +140,8 @@ export function LiveScoreCard({ game, animate = true, lastMessageAt }: LiveScore
                 isLive
                   ? 'text-success'
                   : isFinal
-                    ? 'text-text-tertiary'
-                    : 'text-burnt-orange'
+                    ? 'text-[rgba(196,184,165,0.5)]'
+                    : 'text-[var(--bsi-primary)]'
               }`}
             >
               {isLive ? (
@@ -178,7 +178,7 @@ export function LiveScoreCard({ game, animate = true, lastMessageAt }: LiveScore
               )}
             </AnimatePresence>
 
-            <span className="text-xs text-text-tertiary bg-charcoal/60 px-2 py-0.5 rounded-sm">
+            <span className="text-xs text-[rgba(196,184,165,0.5)] bg-[var(--surface-dugout)]/60 px-2 py-0.5 rounded-sm">
               {game.homeTeam.conference || game.awayTeam.conference || 'NCAA'}
             </span>
           </div>
@@ -188,24 +188,24 @@ export function LiveScoreCard({ game, animate = true, lastMessageAt }: LiveScore
             {/* Away Team */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-charcoal rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
+                <div className="w-8 h-8 bg-[var(--surface-dugout)] rounded-full flex items-center justify-center text-xs font-bold text-[var(--bsi-primary)]">
                   {game.awayTeam.shortName?.slice(0, 3).toUpperCase() || 'AWY'}
                 </div>
                 <div>
                   <p
                     className={`font-semibold ${
-                      awayWon ? 'text-text-primary' : 'text-text-secondary'
+                      awayWon ? 'text-[var(--bsi-bone)]' : 'text-[var(--bsi-dust)]'
                     }`}
                   >
                     {game.awayTeam.ranking && (
-                      <span className="text-burnt-orange text-xs mr-1">
+                      <span className="text-[var(--bsi-primary)] text-xs mr-1">
                         #{game.awayTeam.ranking}
                       </span>
                     )}
                     {game.awayTeam.name}
                   </p>
                   {game.awayTeam.record && (
-                    <p className="text-xs text-text-tertiary">{game.awayTeam.record}</p>
+                    <p className="text-xs text-[rgba(196,184,165,0.5)]">{game.awayTeam.record}</p>
                   )}
                 </div>
               </div>
@@ -226,24 +226,24 @@ export function LiveScoreCard({ game, animate = true, lastMessageAt }: LiveScore
             {/* Home Team */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-charcoal rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
+                <div className="w-8 h-8 bg-[var(--surface-dugout)] rounded-full flex items-center justify-center text-xs font-bold text-[var(--bsi-primary)]">
                   {game.homeTeam.shortName?.slice(0, 3).toUpperCase() || 'HME'}
                 </div>
                 <div>
                   <p
                     className={`font-semibold ${
-                      homeWon ? 'text-text-primary' : 'text-text-secondary'
+                      homeWon ? 'text-[var(--bsi-bone)]' : 'text-[var(--bsi-dust)]'
                     }`}
                   >
                     {game.homeTeam.ranking && (
-                      <span className="text-burnt-orange text-xs mr-1">
+                      <span className="text-[var(--bsi-primary)] text-xs mr-1">
                         #{game.homeTeam.ranking}
                       </span>
                     )}
                     {game.homeTeam.name}
                   </p>
                   {game.homeTeam.record && (
-                    <p className="text-xs text-text-tertiary">{game.homeTeam.record}</p>
+                    <p className="text-xs text-[rgba(196,184,165,0.5)]">{game.homeTeam.record}</p>
                   )}
                 </div>
               </div>
@@ -264,7 +264,7 @@ export function LiveScoreCard({ game, animate = true, lastMessageAt }: LiveScore
 
           {/* Venue Footer */}
           {game.venue && game.venue !== 'TBD' && (
-            <div className="px-4 pb-3 text-xs text-text-tertiary border-t border-border-subtle pt-3">
+            <div className="px-4 pb-3 text-xs text-[rgba(196,184,165,0.5)] border-t border-[var(--border-vintage)] pt-3">
               {game.venue}
             </div>
           )}

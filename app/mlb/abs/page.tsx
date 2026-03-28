@@ -106,12 +106,12 @@ export default function ABSTrackerPage() {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/mlb" className="text-text-tertiary hover:text-burnt-orange transition-colors">MLB</Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">ABS Challenge Tracker</span>
+              <Link href="/mlb" className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors">MLB</Link>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">ABS Challenge Tracker</span>
             </nav>
           </Container>
         </Section>
@@ -128,18 +128,18 @@ export default function ABSTrackerPage() {
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-gradient-blaze mb-4">
+              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-[var(--bsi-primary)] mb-4">
                 Robot Umpire Tracker
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="text-text-secondary max-w-2xl mb-2">
+              <p className="text-[var(--bsi-dust)] max-w-2xl mb-2">
                 MLB's Automated Ball-Strike System uses Hawk-Eye pose-tracking cameras to generate
                 batter-specific strike zones and adjudicate challenges in ~17 seconds. Each team
                 gets 2 challenges per game.
               </p>
-              <p className="text-text-tertiary text-sm max-w-2xl">
+              <p className="text-[rgba(196,184,165,0.5)] text-sm max-w-2xl">
                 Powered by Sony Hawk-Eye (12 cameras per ballpark) and T-Mobile 5G private network.
               </p>
             </ScrollReveal>
@@ -155,8 +155,8 @@ export default function ABSTrackerPage() {
                   { label: 'Avg Time', value: `${totals.avgTime}s` },
                 ].map((kpi) => (
                   <Card key={kpi.label} variant="default" padding="md" className="text-center">
-                    <p className="text-2xl md:text-3xl font-bold font-mono text-burnt-orange">{kpi.value}</p>
-                    <p className="text-xs text-text-tertiary uppercase tracking-wider mt-1">{kpi.label}</p>
+                    <p className="text-2xl md:text-3xl font-bold font-mono text-[var(--bsi-primary)]">{kpi.value}</p>
+                    <p className="text-xs text-[rgba(196,184,165,0.5)] uppercase tracking-wider mt-1">{kpi.label}</p>
                   </Card>
                 ))}
               </div>
@@ -165,7 +165,7 @@ export default function ABSTrackerPage() {
         </Section>
 
         {/* View Tabs */}
-        <Section padding="none" className="bg-charcoal border-b border-border-subtle sticky top-16 z-30">
+        <Section padding="none" className="bg-[var(--surface-dugout)] border-b border-[var(--border-vintage)] sticky top-16 z-30">
           <Container>
             <div className="flex gap-1 overflow-x-auto">
               {([
@@ -179,8 +179,8 @@ export default function ABSTrackerPage() {
                   onClick={() => setView(tab.id)}
                   className={`px-6 py-4 font-semibold text-sm uppercase tracking-wider transition-colors whitespace-nowrap ${
                     view === tab.id
-                      ? 'text-burnt-orange border-b-2 border-burnt-orange'
-                      : 'text-text-tertiary hover:text-text-primary'
+                      ? 'text-[var(--bsi-primary)] border-b-2 border-[var(--bsi-primary)]'
+                      : 'text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-bone)]'
                   }`}
                 >
                   {tab.label}
@@ -204,28 +204,28 @@ export default function ABSTrackerPage() {
                     <div className="overflow-x-auto">
                       <table className="w-full">
                         <thead>
-                          <tr className="bg-background-tertiary border-b border-border-subtle">
-                            <th className="text-left py-3 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">Date</th>
-                            <th className="text-left py-3 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">Matchup</th>
-                            <th className="text-center py-3 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">Challenges</th>
-                            <th className="text-center py-3 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">Overturned</th>
-                            <th className="text-center py-3 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">Success %</th>
-                            <th className="text-center py-3 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">Avg Time</th>
+                          <tr className="bg-[var(--surface-dugout)] border-b border-[var(--border-vintage)]">
+                            <th className="text-left py-3 px-4 text-xs font-semibold text-[rgba(196,184,165,0.5)] uppercase tracking-wider">Date</th>
+                            <th className="text-left py-3 px-4 text-xs font-semibold text-[rgba(196,184,165,0.5)] uppercase tracking-wider">Matchup</th>
+                            <th className="text-center py-3 px-4 text-xs font-semibold text-[rgba(196,184,165,0.5)] uppercase tracking-wider">Challenges</th>
+                            <th className="text-center py-3 px-4 text-xs font-semibold text-[rgba(196,184,165,0.5)] uppercase tracking-wider">Overturned</th>
+                            <th className="text-center py-3 px-4 text-xs font-semibold text-[rgba(196,184,165,0.5)] uppercase tracking-wider">Success %</th>
+                            <th className="text-center py-3 px-4 text-xs font-semibold text-[rgba(196,184,165,0.5)] uppercase tracking-wider">Avg Time</th>
                           </tr>
                         </thead>
                         <tbody>
                           {RECENT_GAMES.map((game) => (
-                            <tr key={game.gameId} className="border-b border-border-subtle hover:bg-background-secondary/50 transition-colors">
-                              <td className="py-3 px-4 text-text-secondary text-sm">{game.date}</td>
-                              <td className="py-3 px-4 text-text-primary font-semibold text-sm">{game.away} @ {game.home}</td>
-                              <td className="py-3 px-4 text-center font-mono text-text-primary">{game.totalChallenges}</td>
-                              <td className="py-3 px-4 text-center font-mono text-burnt-orange">{game.overturned}</td>
-                              <td className="py-3 px-4 text-center font-mono text-text-primary">
+                            <tr key={game.gameId} className="border-b border-[var(--border-vintage)] hover:bg-[var(--surface-dugout)]/50 transition-colors">
+                              <td className="py-3 px-4 text-[var(--bsi-dust)] text-sm">{game.date}</td>
+                              <td className="py-3 px-4 text-[var(--bsi-bone)] font-semibold text-sm">{game.away} @ {game.home}</td>
+                              <td className="py-3 px-4 text-center font-mono text-[var(--bsi-bone)]">{game.totalChallenges}</td>
+                              <td className="py-3 px-4 text-center font-mono text-[var(--bsi-primary)]">{game.overturned}</td>
+                              <td className="py-3 px-4 text-center font-mono text-[var(--bsi-bone)]">
                                 {game.totalChallenges > 0
                                   ? `${((game.overturned / game.totalChallenges) * 100).toFixed(0)}%`
                                   : '-'}
                               </td>
-                              <td className="py-3 px-4 text-center font-mono text-text-secondary">{game.avgChallengeTime}s</td>
+                              <td className="py-3 px-4 text-center font-mono text-[var(--bsi-dust)]">{game.avgChallengeTime}s</td>
                             </tr>
                           ))}
                         </tbody>
@@ -242,44 +242,44 @@ export default function ABSTrackerPage() {
                   <div className="grid md:grid-cols-2 gap-6 mt-2">
                     <div className="space-y-4">
                       <div className="flex gap-3">
-                        <div className="w-8 h-8 rounded-full bg-burnt-orange/20 flex items-center justify-center text-burnt-orange font-bold text-sm shrink-0">1</div>
+                        <div className="w-8 h-8 rounded-full bg-[var(--bsi-primary)]/20 flex items-center justify-center text-[var(--bsi-primary)] font-bold text-sm shrink-0">1</div>
                         <div>
-                          <p className="text-text-primary font-semibold text-sm">Human umpire makes the initial call</p>
-                          <p className="text-text-tertiary text-xs">Every pitch is still called by a human umpire behind the plate.</p>
+                          <p className="text-[var(--bsi-bone)] font-semibold text-sm">Human umpire makes the initial call</p>
+                          <p className="text-[rgba(196,184,165,0.5)] text-xs">Every pitch is still called by a human umpire behind the plate.</p>
                         </div>
                       </div>
                       <div className="flex gap-3">
-                        <div className="w-8 h-8 rounded-full bg-burnt-orange/20 flex items-center justify-center text-burnt-orange font-bold text-sm shrink-0">2</div>
+                        <div className="w-8 h-8 rounded-full bg-[var(--bsi-primary)]/20 flex items-center justify-center text-[var(--bsi-primary)] font-bold text-sm shrink-0">2</div>
                         <div>
-                          <p className="text-text-primary font-semibold text-sm">Team may challenge the call</p>
-                          <p className="text-text-tertiary text-xs">Each team gets 2 challenges per game. Catchers, hitters, or pitchers can request.</p>
+                          <p className="text-[var(--bsi-bone)] font-semibold text-sm">Team may challenge the call</p>
+                          <p className="text-[rgba(196,184,165,0.5)] text-xs">Each team gets 2 challenges per game. Catchers, hitters, or pitchers can request.</p>
                         </div>
                       </div>
                       <div className="flex gap-3">
-                        <div className="w-8 h-8 rounded-full bg-burnt-orange/20 flex items-center justify-center text-burnt-orange font-bold text-sm shrink-0">3</div>
+                        <div className="w-8 h-8 rounded-full bg-[var(--bsi-primary)]/20 flex items-center justify-center text-[var(--bsi-primary)] font-bold text-sm shrink-0">3</div>
                         <div>
-                          <p className="text-text-primary font-semibold text-sm">Hawk-Eye determines the true zone</p>
-                          <p className="text-text-tertiary text-xs">12 cameras track ball trajectory and batter-specific strike zone via skeletal pose estimation.</p>
+                          <p className="text-[var(--bsi-bone)] font-semibold text-sm">Hawk-Eye determines the true zone</p>
+                          <p className="text-[rgba(196,184,165,0.5)] text-xs">12 cameras track ball trajectory and batter-specific strike zone via skeletal pose estimation.</p>
                         </div>
                       </div>
                       <div className="flex gap-3">
-                        <div className="w-8 h-8 rounded-full bg-burnt-orange/20 flex items-center justify-center text-burnt-orange font-bold text-sm shrink-0">4</div>
+                        <div className="w-8 h-8 rounded-full bg-[var(--bsi-primary)]/20 flex items-center justify-center text-[var(--bsi-primary)] font-bold text-sm shrink-0">4</div>
                         <div>
-                          <p className="text-text-primary font-semibold text-sm">Call confirmed or overturned (~17 sec)</p>
-                          <p className="text-text-tertiary text-xs">Result transmitted via T-Mobile 5G private network to the ballpark display.</p>
+                          <p className="text-[var(--bsi-bone)] font-semibold text-sm">Call confirmed or overturned (~17 sec)</p>
+                          <p className="text-[rgba(196,184,165,0.5)] text-xs">Result transmitted via T-Mobile 5G private network to the ballpark display.</p>
                         </div>
                       </div>
                     </div>
-                    <div className="bg-background-tertiary rounded-sm p-6">
-                      <h4 className="text-text-primary font-semibold text-sm mb-4">Key Facts</h4>
+                    <div className="bg-[var(--surface-dugout)] rounded-sm p-6">
+                      <h4 className="text-[var(--bsi-bone)] font-semibold text-sm mb-4">Key Facts</h4>
                       <div className="space-y-3 text-sm">
-                        <div className="flex justify-between"><span className="text-text-tertiary">Cameras per park</span><span className="text-text-primary font-mono">12</span></div>
-                        <div className="flex justify-between"><span className="text-text-tertiary">Position accuracy</span><span className="text-text-primary font-mono">&plusmn;0.1 in</span></div>
-                        <div className="flex justify-between"><span className="text-text-tertiary">Challenges per team</span><span className="text-text-primary font-mono">2 / game</span></div>
-                        <div className="flex justify-between"><span className="text-text-tertiary">Avg review time</span><span className="text-text-primary font-mono">~17 sec</span></div>
-                        <div className="flex justify-between"><span className="text-text-tertiary">Network</span><span className="text-text-primary font-mono">T-Mobile 5G</span></div>
-                        <div className="flex justify-between"><span className="text-text-tertiary">Skeletal keypoints</span><span className="text-text-primary font-mono">18 per batter</span></div>
-                        <div className="flex justify-between"><span className="text-text-tertiary">Approved</span><span className="text-text-primary font-mono">Sept 2025</span></div>
+                        <div className="flex justify-between"><span className="text-[rgba(196,184,165,0.5)]">Cameras per park</span><span className="text-[var(--bsi-bone)] font-mono">12</span></div>
+                        <div className="flex justify-between"><span className="text-[rgba(196,184,165,0.5)]">Position accuracy</span><span className="text-[var(--bsi-bone)] font-mono">&plusmn;0.1 in</span></div>
+                        <div className="flex justify-between"><span className="text-[rgba(196,184,165,0.5)]">Challenges per team</span><span className="text-[var(--bsi-bone)] font-mono">2 / game</span></div>
+                        <div className="flex justify-between"><span className="text-[rgba(196,184,165,0.5)]">Avg review time</span><span className="text-[var(--bsi-bone)] font-mono">~17 sec</span></div>
+                        <div className="flex justify-between"><span className="text-[rgba(196,184,165,0.5)]">Network</span><span className="text-[var(--bsi-bone)] font-mono">T-Mobile 5G</span></div>
+                        <div className="flex justify-between"><span className="text-[rgba(196,184,165,0.5)]">Skeletal keypoints</span><span className="text-[var(--bsi-bone)] font-mono">18 per batter</span></div>
+                        <div className="flex justify-between"><span className="text-[rgba(196,184,165,0.5)]">Approved</span><span className="text-[var(--bsi-bone)] font-mono">Sept 2025</span></div>
                       </div>
                     </div>
                   </div>
@@ -299,27 +299,27 @@ export default function ABSTrackerPage() {
                         </Badge>
                       </div>
                       <div className="text-center">
-                        <p className="font-display text-5xl font-bold text-burnt-orange">{role.successRate}%</p>
-                        <p className="text-text-tertiary text-xs uppercase tracking-wider mt-2">Success Rate</p>
+                        <p className="font-display text-5xl font-bold text-[var(--bsi-primary)]">{role.successRate}%</p>
+                        <p className="text-[rgba(196,184,165,0.5)] text-xs uppercase tracking-wider mt-2">Success Rate</p>
                       </div>
                       <div className="mt-6 space-y-3">
                         <div className="flex justify-between text-sm">
-                          <span className="text-text-tertiary">Total Challenges</span>
-                          <span className="text-text-primary font-mono">{role.challenges.toLocaleString()}</span>
+                          <span className="text-[rgba(196,184,165,0.5)]">Total Challenges</span>
+                          <span className="text-[var(--bsi-bone)] font-mono">{role.challenges.toLocaleString()}</span>
                         </div>
                         <div className="flex justify-between text-sm">
-                          <span className="text-text-tertiary">Overturned</span>
-                          <span className="text-burnt-orange font-mono">{role.overturned.toLocaleString()}</span>
+                          <span className="text-[rgba(196,184,165,0.5)]">Overturned</span>
+                          <span className="text-[var(--bsi-primary)] font-mono">{role.overturned.toLocaleString()}</span>
                         </div>
                         <div className="flex justify-between text-sm">
-                          <span className="text-text-tertiary">Upheld</span>
-                          <span className="text-text-secondary font-mono">{(role.challenges - role.overturned).toLocaleString()}</span>
+                          <span className="text-[rgba(196,184,165,0.5)]">Upheld</span>
+                          <span className="text-[var(--bsi-dust)] font-mono">{(role.challenges - role.overturned).toLocaleString()}</span>
                         </div>
                       </div>
                       {/* Visual bar */}
-                      <div className="mt-4 h-2 bg-background-tertiary rounded-full overflow-hidden">
+                      <div className="mt-4 h-2 bg-[var(--surface-dugout)] rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-burnt-orange rounded-full transition-all"
+                          className="h-full bg-[var(--bsi-primary)] rounded-full transition-all"
                           style={{ width: `${role.successRate}%` }}
                         />
                       </div>
@@ -331,9 +331,9 @@ export default function ABSTrackerPage() {
                   <CardHeader className="px-0 pt-0">
                     <CardTitle>Spring Training 2025 Benchmarks</CardTitle>
                   </CardHeader>
-                  <p className="text-text-secondary text-sm mt-2">
-                    During 2025 spring training testing, <strong className="text-text-primary">52.2% of all challenges were successful</strong> with
-                    an average of <strong className="text-text-primary">4.1 challenges per game</strong>. Catchers led at 56%, followed by
+                  <p className="text-[var(--bsi-dust)] text-sm mt-2">
+                    During 2025 spring training testing, <strong className="text-[var(--bsi-bone)]">52.2% of all challenges were successful</strong> with
+                    an average of <strong className="text-[var(--bsi-bone)]">4.1 challenges per game</strong>. Catchers led at 56%, followed by
                     hitters at 50% and pitchers at 41%. These early-season 2026 numbers show catchers
                     maintaining their edge — they see the zone from behind the plate and have the
                     best instinct for when a call is wrong.
@@ -353,20 +353,20 @@ export default function ABSTrackerPage() {
                     {UMPIRE_ACCURACY.map((entry) => (
                       <div key={entry.label}>
                         <div className="flex justify-between items-baseline mb-2">
-                          <span className="text-text-primary font-semibold text-sm">{entry.label}</span>
-                          <span className="text-burnt-orange font-mono text-lg font-bold">{entry.accuracy}%</span>
+                          <span className="text-[var(--bsi-bone)] font-semibold text-sm">{entry.label}</span>
+                          <span className="text-[var(--bsi-primary)] font-mono text-lg font-bold">{entry.accuracy}%</span>
                         </div>
-                        <div className="h-3 bg-background-tertiary rounded-full overflow-hidden">
+                        <div className="h-3 bg-[var(--surface-dugout)] rounded-full overflow-hidden">
                           <div
                             className={`h-full rounded-full transition-all ${
-                              entry.accuracy > 99 ? 'bg-success' : entry.accuracy > 96 ? 'bg-burnt-orange' : 'bg-warning'
+                              entry.accuracy > 99 ? 'bg-success' : entry.accuracy > 96 ? 'bg-[var(--bsi-primary)]' : 'bg-warning'
                             }`}
                             style={{ width: `${entry.accuracy}%` }}
                           />
                         </div>
                         <div className="flex justify-between mt-1">
-                          <span className="text-text-tertiary text-xs">{entry.source}</span>
-                          <span className="text-text-tertiary text-xs">{entry.totalCalls.toLocaleString()} calls/season est.</span>
+                          <span className="text-[rgba(196,184,165,0.5)] text-xs">{entry.source}</span>
+                          <span className="text-[rgba(196,184,165,0.5)] text-xs">{entry.totalCalls.toLocaleString()} calls/season est.</span>
                         </div>
                       </div>
                     ))}
@@ -375,8 +375,8 @@ export default function ABSTrackerPage() {
 
                 <div className="grid md:grid-cols-2 gap-6 mt-8">
                   <Card variant="default" padding="lg">
-                    <h3 className="text-text-primary font-semibold mb-3">What ABS Means for Pitchers</h3>
-                    <p className="text-text-secondary text-sm">
+                    <h3 className="text-[var(--bsi-bone)] font-semibold mb-3">What ABS Means for Pitchers</h3>
+                    <p className="text-[var(--bsi-dust)] text-sm">
                       Pitchers who paint corners will see more called strikes. The ABS zone is
                       geometrically precise — no human inconsistency on borderline pitches. Pitchers
                       with high called-strike rates above expected should benefit most; those who rely
@@ -384,8 +384,8 @@ export default function ABSTrackerPage() {
                     </p>
                   </Card>
                   <Card variant="default" padding="lg">
-                    <h3 className="text-text-primary font-semibold mb-3">What ABS Means for Hitters</h3>
-                    <p className="text-text-secondary text-sm">
+                    <h3 className="text-[var(--bsi-bone)] font-semibold mb-3">What ABS Means for Hitters</h3>
+                    <p className="text-[var(--bsi-dust)] text-sm">
                       Hitters get a consistent, personalized zone based on their stance — measured by
                       Hawk-Eye skeletal tracking at 18 keypoints. No more umpire-specific tendencies
                       to memorize. Walk rates may shift as borderline calls become deterministic
@@ -409,8 +409,8 @@ export default function ABSTrackerPage() {
                         <div className="flex flex-col items-center">
                           <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${
                             i === ABS_TIMELINE.length - 1
-                              ? 'bg-burnt-orange text-white'
-                              : 'bg-background-tertiary text-text-secondary'
+                              ? 'bg-[var(--bsi-primary)] text-white'
+                              : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)]'
                           }`}>
                             {entry.year.slice(2)}
                           </div>
@@ -419,8 +419,8 @@ export default function ABSTrackerPage() {
                           )}
                         </div>
                         <div className="pb-8">
-                          <p className="text-burnt-orange font-semibold text-sm">{entry.year}</p>
-                          <p className="text-text-secondary text-sm">{entry.event}</p>
+                          <p className="text-[var(--bsi-primary)] font-semibold text-sm">{entry.year}</p>
+                          <p className="text-[var(--bsi-dust)] text-sm">{entry.event}</p>
                         </div>
                       </div>
                     ))}
@@ -430,7 +430,7 @@ export default function ABSTrackerPage() {
             )}
 
             {/* Data Source */}
-            <div className="mt-8 pt-4 border-t border-border-subtle">
+            <div className="mt-8 pt-4 border-t border-[var(--border-vintage)]">
               <DataSourceBadge
                 source="MLB / Hawk-Eye / UmpScorecards"
                 timestamp=""
@@ -447,7 +447,7 @@ export default function ABSTrackerPage() {
                 <CardHeader className="px-0 pt-0">
                   <CardTitle>ABS Strike Zone Model</CardTitle>
                 </CardHeader>
-                <p className="text-text-secondary text-sm mb-6">
+                <p className="text-[var(--bsi-dust)] text-sm mb-6">
                   Hawk-Eye tracks 18 skeletal keypoints on each batter to generate a personalized strike zone.
                   The zone top is defined as the midpoint between the shoulders and belt; the zone bottom
                   is the hollow of the knee. Width is the fixed 17-inch rulebook plate.
@@ -470,10 +470,10 @@ export default function ABSTrackerPage() {
                   <Badge variant="accent">Vision AI</Badge>
                   <Badge variant="secondary">Intelligence Report</Badge>
                 </div>
-                <h3 className="font-display text-xl font-bold uppercase tracking-display text-text-primary mb-2">
+                <h3 className="font-display text-xl font-bold uppercase tracking-display text-[var(--bsi-bone)] mb-2">
                   Deeper: Vision AI in Sports
                 </h3>
-                <p className="text-text-secondary text-sm mb-4 max-w-2xl">
+                <p className="text-[var(--bsi-dust)] text-sm mb-4 max-w-2xl">
                   ABS is one piece of a much larger picture. Computer vision is reshaping every sport —
                   from biomechanical injury prediction to automated scouting at scale. BSI&apos;s Vision AI
                   Intelligence Hub covers the full landscape: 8 application areas, 40+ companies,

@@ -408,11 +408,11 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
           <Section padding="lg" background="charcoal">
             <Container>
               <Card variant="default" padding="lg" className="text-center">
-                <h1 className="text-2xl font-bold text-text-primary mb-4">Team Not Found</h1>
-                <p className="text-text-secondary mb-6">
+                <h1 className="text-2xl font-bold text-[var(--bsi-bone)] mb-4">Team Not Found</h1>
+                <p className="text-[var(--bsi-dust)] mb-6">
                   The team you're looking for doesn't exist.
                 </p>
-                <Link href="/nfl/teams" className="text-burnt-orange hover:underline">
+                <Link href="/nfl/teams" className="text-[var(--bsi-primary)] hover:underline">
                   ← Back to All Teams
                 </Link>
               </Card>
@@ -442,24 +442,24 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/nfl"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 NFL
               </Link>
-              <span className="text-text-tertiary">/</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
               <Link
                 href="/nfl/teams"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 Teams
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">{fullName}</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">{fullName}</span>
             </nav>
           </Container>
         </Section>
@@ -485,12 +485,12 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
             <ScrollReveal direction="up" delay={100}>
               <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display mb-4">
                 <span style={{ color: team.primaryColor }}>{team.city}</span>{' '}
-                <span className="text-text-primary">{team.name}</span>
+                <span className="text-[var(--bsi-bone)]">{team.name}</span>
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="text-text-secondary">
+              <p className="text-[var(--bsi-dust)]">
                 {(() => { const now = new Date(); const y = now.getFullYear(); return now.getMonth() < 2 ? y - 1 : y; })()} Season · {team.conference} {team.division}
               </p>
             </ScrollReveal>
@@ -508,7 +508,7 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
                     <CardTitle className="flex items-center gap-3">
                       <svg
                         viewBox="0 0 24 24"
-                        className="w-6 h-6 text-burnt-orange"
+                        className="w-6 h-6 text-[var(--bsi-primary)]"
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="1.5"
@@ -523,11 +523,11 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
                       <Skeleton variant="text" width="100%" height={60} />
                     ) : stats ? (
                       <div className="text-center">
-                        <div className="text-4xl font-bold text-text-primary mb-2">
+                        <div className="text-4xl font-bold text-[var(--bsi-bone)] mb-2">
                           {stats.wins}-{stats.losses}
                           {stats.ties > 0 ? `-${stats.ties}` : ''}
                         </div>
-                        <div className="text-text-secondary">
+                        <div className="text-[var(--bsi-dust)]">
                           Win Pct:{' '}
                           {(stats.wins / (stats.wins + stats.losses + stats.ties) || 0)
                             .toFixed(3)
@@ -535,7 +535,7 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
                         </div>
                       </div>
                     ) : (
-                      <div className="text-center text-text-secondary">Season data unavailable</div>
+                      <div className="text-center text-[var(--bsi-dust)]">Season data unavailable</div>
                     )}
                   </CardContent>
                 </Card>
@@ -548,7 +548,7 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
                     <CardTitle className="flex items-center gap-3">
                       <svg
                         viewBox="0 0 24 24"
-                        className="w-6 h-6 text-burnt-orange"
+                        className="w-6 h-6 text-[var(--bsi-primary)]"
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="1.5"
@@ -566,23 +566,23 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
                       <div className="grid grid-cols-3 gap-4 text-center">
                         <div>
                           <div className="text-2xl font-bold text-success">{stats.pointsFor}</div>
-                          <div className="text-text-tertiary text-sm">PF</div>
+                          <div className="text-[rgba(196,184,165,0.5)] text-sm">PF</div>
                         </div>
                         <div>
                           <div className="text-2xl font-bold text-error">{stats.pointsAgainst}</div>
-                          <div className="text-text-tertiary text-sm">PA</div>
+                          <div className="text-[rgba(196,184,165,0.5)] text-sm">PA</div>
                         </div>
                         <div>
                           <div
-                            className={`text-2xl font-bold ${stats.pointsFor - stats.pointsAgainst > 0 ? 'text-success' : stats.pointsFor - stats.pointsAgainst < 0 ? 'text-error' : 'text-text-secondary'}`}
+                            className={`text-2xl font-bold ${stats.pointsFor - stats.pointsAgainst > 0 ? 'text-success' : stats.pointsFor - stats.pointsAgainst < 0 ? 'text-error' : 'text-[var(--bsi-dust)]'}`}
                           >
                             {diffDisplay}
                           </div>
-                          <div className="text-text-tertiary text-sm">DIFF</div>
+                          <div className="text-[rgba(196,184,165,0.5)] text-sm">DIFF</div>
                         </div>
                       </div>
                     ) : (
-                      <div className="text-center text-text-secondary">Points data unavailable</div>
+                      <div className="text-center text-[var(--bsi-dust)]">Points data unavailable</div>
                     )}
                   </CardContent>
                 </Card>
@@ -595,7 +595,7 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
                     <CardTitle className="flex items-center gap-3">
                       <svg
                         viewBox="0 0 24 24"
-                        className="w-6 h-6 text-burnt-orange"
+                        className="w-6 h-6 text-[var(--bsi-primary)]"
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="1.5"
@@ -611,11 +611,11 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
                     ) : stats ? (
                       <div className="text-center">
                         <div
-                          className={`text-4xl font-bold ${stats.streak > 0 ? 'text-success' : stats.streak < 0 ? 'text-error' : 'text-text-secondary'}`}
+                          className={`text-4xl font-bold ${stats.streak > 0 ? 'text-success' : stats.streak < 0 ? 'text-error' : 'text-[var(--bsi-dust)]'}`}
                         >
                           {streakDisplay}
                         </div>
-                        <div className="text-text-secondary mt-2">
+                        <div className="text-[var(--bsi-dust)] mt-2">
                           {stats.streak > 0
                             ? 'Winning Streak'
                             : stats.streak < 0
@@ -624,7 +624,7 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
                         </div>
                       </div>
                     ) : (
-                      <div className="text-center text-text-secondary">Streak data unavailable</div>
+                      <div className="text-center text-[var(--bsi-dust)]">Streak data unavailable</div>
                     )}
                   </CardContent>
                 </Card>
@@ -641,19 +641,19 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
                   <div className="flex flex-wrap gap-4">
                     <Link
                       href="/nfl"
-                      className="px-4 py-2 bg-burnt-orange/20 text-burnt-orange rounded-sm hover:bg-burnt-orange/30 transition-colors"
+                      className="px-4 py-2 bg-[var(--bsi-primary)]/20 text-[var(--bsi-primary)] rounded-sm hover:bg-[var(--bsi-primary)]/30 transition-colors"
                     >
                       Live Scores
                     </Link>
                     <Link
                       href="/nfl"
-                      className="px-4 py-2 bg-burnt-orange/20 text-burnt-orange rounded-sm hover:bg-burnt-orange/30 transition-colors"
+                      className="px-4 py-2 bg-[var(--bsi-primary)]/20 text-[var(--bsi-primary)] rounded-sm hover:bg-[var(--bsi-primary)]/30 transition-colors"
                     >
                       Full Standings
                     </Link>
                     <Link
                       href="/nfl/teams"
-                      className="px-4 py-2 bg-burnt-orange/20 text-burnt-orange rounded-sm hover:bg-burnt-orange/30 transition-colors"
+                      className="px-4 py-2 bg-[var(--bsi-primary)]/20 text-[var(--bsi-primary)] rounded-sm hover:bg-[var(--bsi-primary)]/30 transition-colors"
                     >
                       All Teams
                     </Link>

@@ -53,7 +53,7 @@ const SIGNAL_BADGE: Record<string, { label: string; color: string; bg: string; b
   transfer_portal:{ label: 'Portal',   color: 'text-[var(--bsi-warning)]',  bg: 'bg-[var(--bsi-warning)]/10',  border: 'border-[var(--bsi-warning)]/25' },
   recruiting:     { label: 'Recruit',  color: 'text-[var(--heritage-columbia-blue)]', bg: 'bg-[var(--heritage-columbia-blue)]/10', border: 'border-[var(--heritage-columbia-blue)]/25' },
   sentiment:      { label: 'Sentiment',color: 'text-[var(--bsi-success)]',bg: 'bg-[var(--bsi-success)]/10',border: 'border-[var(--bsi-success)]/25' },
-  general:        { label: 'General',  color: 'text-text-muted', bg: 'bg-surface',       border: 'border-border' },
+  general:        { label: 'General',  color: 'text-[rgba(196,184,165,0.35)]', bg: 'bg-surface',       border: 'border-border' },
 };
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -72,7 +72,7 @@ function SentimentGauge({ score }: { score: number | null }) {
   if (score === null) {
     return (
       <div className="flex items-center gap-1.5">
-        <span className="text-xs text-text-muted">—</span>
+        <span className="text-xs text-[rgba(196,184,165,0.35)]">—</span>
       </div>
     );
   }
@@ -89,12 +89,12 @@ function SentimentGauge({ score }: { score: number | null }) {
     : 'bg-[var(--bsi-dust)]';
 
   const label = isPositive ? 'Positive' : isNegative ? 'Negative' : 'Neutral';
-  const textColor = isPositive ? 'text-[var(--bsi-success)]' : isNegative ? 'text-[var(--bsi-danger)]' : 'text-text-muted';
+  const textColor = isPositive ? 'text-[var(--bsi-success)]' : isNegative ? 'text-[var(--bsi-danger)]' : 'text-[rgba(196,184,165,0.35)]';
 
   return (
     <div className="flex items-center gap-2" title={`Sentiment score: ${score.toFixed(2)}`}>
       {/* Track */}
-      <div className="relative h-1.5 w-16 bg-surface-light rounded-full overflow-hidden">
+      <div className="relative h-1.5 w-16 bg-[var(--surface-press-box)] rounded-full overflow-hidden">
         {/* Fill — from center */}
         <div
           className={`absolute top-0 h-full ${barColor} rounded-full transition-all duration-700`}
@@ -131,16 +131,16 @@ function SummaryRow({ summary }: { summary: TeamSummary }) {
             key={label}
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-sm ${count > 0 ? activeBg : 'bg-surface'}`}
           >
-            <span className={`text-sm font-semibold tabular-nums ${count > 0 ? color : 'text-text-muted'}`}>
+            <span className={`text-sm font-semibold tabular-nums ${count > 0 ? color : 'text-[rgba(196,184,165,0.35)]'}`}>
               {count}
             </span>
-            <span className="text-[11px] text-text-muted">{label}</span>
+            <span className="text-[11px] text-[rgba(196,184,165,0.35)]">{label}</span>
           </div>
         ))}
       </div>
 
       <div className="flex items-center gap-2">
-        <span className="text-[11px] text-text-muted">Buzz</span>
+        <span className="text-[11px] text-[rgba(196,184,165,0.35)]">Buzz</span>
         <SentimentGauge score={summary.sentiment_score} />
       </div>
     </div>
@@ -166,7 +166,7 @@ function SignalRow({ signal }: { signal: SocialSignal }) {
 
       <div className="min-w-0 flex-1">
         {/* Signal text */}
-        <p className="text-sm text-text-secondary leading-snug group-hover:text-text-primary transition-colors line-clamp-2">
+        <p className="text-sm text-[var(--bsi-dust)] leading-snug group-hover:text-[var(--bsi-bone)] transition-colors line-clamp-2">
           {signal.summary ?? signal.post_text.slice(0, 120)}
         </p>
 
@@ -186,10 +186,10 @@ function SignalRow({ signal }: { signal: SocialSignal }) {
           )}
 
           {signal.author && (
-            <span className="text-[11px] text-text-muted opacity-60">@{signal.author}</span>
+            <span className="text-[11px] text-[rgba(196,184,165,0.35)] opacity-60">@{signal.author}</span>
           )}
 
-          <span className="text-[11px] text-text-muted opacity-50 ml-auto">
+          <span className="text-[11px] text-[rgba(196,184,165,0.35)] opacity-50 ml-auto">
             {relativeTime(signal.posted_at)} ago
           </span>
         </div>
@@ -249,12 +249,12 @@ export function SocialIntelTeamPanel({ teamId }: SocialIntelTeamPanelProps) {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#BF5700] opacity-50" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-[#BF5700]" />
           </span>
-          <span className="font-['Oswald'] text-sm uppercase tracking-wider text-text-primary">
+          <span className="font-['Oswald'] text-sm uppercase tracking-wider text-[var(--bsi-bone)]">
             Social Signals
           </span>
         </div>
         {data && (
-          <span className="text-[10px] text-text-muted">
+          <span className="text-[10px] text-[rgba(196,184,165,0.35)]">
             {data.signals.length} signal{data.signals.length !== 1 ? 's' : ''} · {data.meta.fetched_at ? relativeTime(data.meta.fetched_at) + ' ago' : 'recent'}
           </span>
         )}

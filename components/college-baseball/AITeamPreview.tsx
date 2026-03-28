@@ -56,7 +56,7 @@ function toGrade(percentile: number): number {
 function gradeColor(grade: number): string {
   if (grade >= 70) return 'text-[var(--bsi-success)]';
   if (grade >= 60) return 'text-[var(--heritage-columbia-blue)]';
-  if (grade >= 50) return 'text-text-primary';
+  if (grade >= 50) return 'text-[var(--bsi-bone)]';
   if (grade >= 40) return 'text-[var(--bsi-warning)]';
   return 'text-[var(--bsi-danger)]';
 }
@@ -224,12 +224,12 @@ export function AITeamPreview({ teamId: _teamId, teamName, stats, conference: _c
   // No stats available — show minimal placeholder
   if (!stats || !analysis) {
     return (
-      <div className="bg-charcoal/50 border border-border-subtle rounded-sm p-4 mt-4">
+      <div className="bg-[var(--surface-dugout)]/50 border border-[var(--border-vintage)] rounded-sm p-4 mt-4">
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-burnt-orange text-xs font-semibold uppercase tracking-wider">Scouting Intel</span>
+          <span className="text-[var(--bsi-primary)] text-xs font-semibold uppercase tracking-wider">Scouting Intel</span>
           <Badge variant="secondary" size="sm">Pre-Season</Badge>
         </div>
-        <p className="text-text-secondary text-sm">
+        <p className="text-[var(--bsi-dust)] text-sm">
           Scouting intelligence for {teamName} activates once season stats are available.
           Grades, Pythagorean projections, and narrative analysis generate automatically
           from game data.
@@ -241,14 +241,14 @@ export function AITeamPreview({ teamId: _teamId, teamName, stats, conference: _c
   const games = stats.wins + stats.losses;
 
   return (
-    <div className="bg-charcoal/50 border border-border-subtle rounded-sm p-5">
+    <div className="bg-[var(--surface-dugout)]/50 border border-[var(--border-vintage)] rounded-sm p-5">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <span className="text-burnt-orange text-xs font-semibold uppercase tracking-wider">Scouting Intel</span>
+          <span className="text-[var(--bsi-primary)] text-xs font-semibold uppercase tracking-wider">Scouting Intel</span>
           <Badge variant="primary" size="sm">Live</Badge>
         </div>
-        <span className="text-text-tertiary text-xs">{games}G sample</span>
+        <span className="text-[rgba(196,184,165,0.5)] text-xs">{games}G sample</span>
       </div>
 
       {/* Scouting Grades */}
@@ -258,8 +258,8 @@ export function AITeamPreview({ teamId: _teamId, teamName, stats, conference: _c
             <div className={`font-display text-2xl font-bold ${gradeColor(g.grade)}`}>
               {g.grade}
             </div>
-            <div className="text-text-tertiary text-[10px] uppercase tracking-wider mt-0.5">{g.label}</div>
-            <div className="text-text-tertiary text-[10px] mt-0.5">{gradeLabel(g.grade)}</div>
+            <div className="text-[rgba(196,184,165,0.5)] text-[10px] uppercase tracking-wider mt-0.5">{g.label}</div>
+            <div className="text-[rgba(196,184,165,0.5)] text-[10px] mt-0.5">{gradeLabel(g.grade)}</div>
           </div>
         ))}
       </div>
@@ -267,21 +267,21 @@ export function AITeamPreview({ teamId: _teamId, teamName, stats, conference: _c
       {/* Pythagorean Bar */}
       <div className="bg-graphite rounded-sm p-3 mb-4">
         <div className="flex justify-between items-baseline mb-1.5">
-          <span className="text-text-tertiary text-xs">Actual Win%</span>
-          <span className="text-text-primary font-mono text-sm font-bold">{(analysis.winPct * 100).toFixed(1)}%</span>
+          <span className="text-[rgba(196,184,165,0.5)] text-xs">Actual Win%</span>
+          <span className="text-[var(--bsi-bone)] font-mono text-sm font-bold">{(analysis.winPct * 100).toFixed(1)}%</span>
         </div>
-        <div className="h-2 bg-charcoal rounded-full overflow-hidden mb-2">
-          <div className="h-full bg-burnt-orange rounded-full" style={{ width: `${analysis.winPct * 100}%` }} />
+        <div className="h-2 bg-[var(--surface-dugout)] rounded-full overflow-hidden mb-2">
+          <div className="h-full bg-[var(--bsi-primary)] rounded-full" style={{ width: `${analysis.winPct * 100}%` }} />
         </div>
         <div className="flex justify-between items-baseline mb-1.5">
-          <span className="text-text-tertiary text-xs">Pythagorean Expected</span>
-          <span className="text-text-secondary font-mono text-sm">{(analysis.pythWinPct * 100).toFixed(1)}%</span>
+          <span className="text-[rgba(196,184,165,0.5)] text-xs">Pythagorean Expected</span>
+          <span className="text-[var(--bsi-dust)] font-mono text-sm">{(analysis.pythWinPct * 100).toFixed(1)}%</span>
         </div>
-        <div className="h-2 bg-charcoal rounded-full overflow-hidden">
+        <div className="h-2 bg-[var(--surface-dugout)] rounded-full overflow-hidden">
           <div className="h-full bg-text-muted rounded-full" style={{ width: `${analysis.pythWinPct * 100}%` }} />
         </div>
         {Math.abs(analysis.luck) > 0.02 && (
-          <p className="text-text-tertiary text-xs mt-2">
+          <p className="text-[rgba(196,184,165,0.5)] text-xs mt-2">
             {analysis.luck > 0 ? 'Over' : 'Under'}performing by {Math.abs(Math.round(analysis.luck * games))} wins relative to run differential.
           </p>
         )}
@@ -291,20 +291,20 @@ export function AITeamPreview({ teamId: _teamId, teamName, stats, conference: _c
       <div className="space-y-2">
         {analysis.bullets.map((bullet, i) => (
           <div key={i} className="flex gap-2">
-            <span className="text-burnt-orange mt-1 shrink-0">
+            <span className="text-[var(--bsi-primary)] mt-1 shrink-0">
               <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
               </svg>
             </span>
-            <p className="text-text-secondary text-sm leading-relaxed">{bullet}</p>
+            <p className="text-[var(--bsi-dust)] text-sm leading-relaxed">{bullet}</p>
           </div>
         ))}
       </div>
 
       {/* Data Attribution */}
-      <div className="mt-4 pt-3 border-t border-border-subtle flex items-center justify-between">
-        <span className="text-text-tertiary text-[10px]">Grades: 20-80 scouting scale | Pyth exp: 1.83</span>
-        <span className="text-text-tertiary text-[10px]">NCAA / Highlightly</span>
+      <div className="mt-4 pt-3 border-t border-[var(--border-vintage)] flex items-center justify-between">
+        <span className="text-[rgba(196,184,165,0.5)] text-[10px]">Grades: 20-80 scouting scale | Pyth exp: 1.83</span>
+        <span className="text-[rgba(196,184,165,0.5)] text-[10px]">NCAA / Highlightly</span>
       </div>
     </div>
   );

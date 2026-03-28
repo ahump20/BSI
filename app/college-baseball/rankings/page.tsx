@@ -11,7 +11,6 @@ import { FilterPill } from '@/components/ui/FilterPill';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
-import { HeroGlow } from '@/components/ui/HeroGlow';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { teamMetadata } from '@/lib/data/team-metadata';
 import { DataAttribution } from '@/components/ui/DataAttribution';
@@ -162,17 +161,16 @@ export default function CollegeBaseballRankingsPage() {
   };
 
   const getStreakClass = (streak?: string) => {
-    if (!streak) return 'text-text-tertiary';
+    if (!streak) return 'text-[rgba(196,184,165,0.5)]';
     if (streak.startsWith('W')) return 'text-success';
     if (streak.startsWith('L')) return 'text-error';
-    return 'text-text-tertiary';
+    return 'text-[rgba(196,184,165,0.5)]';
   };
 
   return (
     <>
       <div>
         <Section padding="lg" className="pt-6 relative overflow-hidden">
-          <HeroGlow position="50% 15%" spread="65%" />
           <Container>
             {/* Breadcrumb & Header */}
             <ScrollReveal direction="up">
@@ -186,11 +184,11 @@ export default function CollegeBaseballRankingsPage() {
               />
 
               <div className="mb-8">
-                <span className="section-label block mb-3">NCAA Division I Baseball</span>
+                <span className="heritage-stamp block mb-3">NCAA Division I Baseball</span>
                 <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display">
-                  Top 25 <span className="text-gradient-blaze">Rankings</span>
+                  Top 25 <span className="text-[var(--bsi-primary)]">Rankings</span>
                 </h1>
-                <p className="text-burnt-orange font-serif italic text-lg mt-2 max-w-2xl">
+                <p className="text-[var(--bsi-primary)] font-serif italic text-lg mt-2 max-w-2xl">
                   D1Baseball, USA Today Coaches Poll, Perfect Game, and NCAA RPI — all in one place.
                 </p>
               </div>
@@ -216,11 +214,11 @@ export default function CollegeBaseballRankingsPage() {
               <Card padding="lg" className="mb-6">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div>
-                    <h2 className="font-display text-2xl font-bold text-text-primary">
+                    <h2 className="font-display text-2xl font-bold text-[var(--bsi-bone)]">
                       {pollOptions.find((p) => p.value === selectedPoll)?.label}
                     </h2>
                     {rankings && (
-                      <p className="text-text-tertiary text-sm mt-1">
+                      <p className="text-[rgba(196,184,165,0.5)] text-sm mt-1">
                         Last updated: {formatTimestamp(rankings.lastUpdated)}
                       </p>
                     )}
@@ -236,32 +234,32 @@ export default function CollegeBaseballRankingsPage() {
             <DataErrorBoundary name="Rankings">
             {loading ? (
               <div className="text-center py-16">
-                <div className="inline-block w-10 h-10 border-4 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin mb-4" />
-                <p className="text-text-secondary">Loading rankings...</p>
-                <p className="text-text-tertiary text-xs mt-2">This usually takes a few seconds</p>
+                <div className="inline-block w-10 h-10 border-4 border-[var(--bsi-primary)]/30 border-t-[var(--bsi-primary)] rounded-full animate-spin mb-4" />
+                <p className="text-[var(--bsi-dust)]">Loading rankings...</p>
+                <p className="text-[rgba(196,184,165,0.5)] text-xs mt-2">This usually takes a few seconds</p>
               </div>
             ) : error ? (
               <Card padding="lg" className="text-center">
                 <div className="text-error text-4xl mb-4">!</div>
-                <h3 className="text-xl font-semibold text-text-primary mb-2">Error Loading Rankings</h3>
-                <p className="text-text-secondary mb-4">{error}</p>
+                <h3 className="text-xl font-semibold text-[var(--bsi-bone)] mb-2">Error Loading Rankings</h3>
+                <p className="text-[var(--bsi-dust)] mb-4">{error}</p>
                 <button
                   onClick={retry}
-                  className="px-4 py-2 bg-burnt-orange/20 text-burnt-orange rounded-sm text-sm font-medium hover:bg-burnt-orange/30 transition-colors"
+                  className="px-4 py-2 bg-[var(--bsi-primary)]/20 text-[var(--bsi-primary)] rounded-sm text-sm font-medium hover:bg-[var(--bsi-primary)]/30 transition-colors"
                 >
                   Try again
                 </button>
               </Card>
             ) : !rankings || rankings.teams.length === 0 ? (
               <Card padding="lg" className="text-center">
-                <div className="text-text-tertiary text-4xl mb-4">?</div>
-                <h3 className="text-xl font-semibold text-text-primary mb-2">No Rankings Available</h3>
-                <p className="text-text-secondary mb-4">
+                <div className="text-[rgba(196,184,165,0.5)] text-4xl mb-4">?</div>
+                <h3 className="text-xl font-semibold text-[var(--bsi-bone)] mb-2">No Rankings Available</h3>
+                <p className="text-[var(--bsi-dust)] mb-4">
                   Rankings for this poll are not currently available. Try another source.
                 </p>
                 <button
                   onClick={retry}
-                  className="px-4 py-2 bg-surface-light text-text-secondary rounded-sm text-sm font-medium hover:bg-surface-medium transition-colors"
+                  className="px-4 py-2 bg-[var(--surface-press-box)] text-[var(--bsi-dust)] rounded-sm text-sm font-medium hover:bg-[var(--surface-press-box)] transition-colors"
                 >
                   Refresh
                 </button>
@@ -318,14 +316,14 @@ export default function CollegeBaseballRankingsPage() {
                           return (
                             <tr
                               key={`${team.team}-${team.rank}`}
-                              className={`border-b border-border-subtle hover:bg-background-secondary/50 transition-colors ${
-                                isTopTen ? 'bg-burnt-orange/5' : ''
+                              className={`border-b border-[var(--border-vintage)] hover:bg-[var(--surface-dugout)]/50 transition-colors ${
+                                isTopTen ? 'bg-[var(--bsi-primary)]/5' : ''
                               }`}
                             >
                               <td className="py-4 px-4">
                                 <span
                                   className={`font-display text-lg font-bold ${
-                                    isTopTen ? 'text-burnt-orange' : 'text-text-primary'
+                                    isTopTen ? 'text-[var(--bsi-primary)]' : 'text-[var(--bsi-bone)]'
                                   }`}
                                 >
                                   {team.rank}
@@ -334,30 +332,30 @@ export default function CollegeBaseballRankingsPage() {
                               <td className="py-4 px-4">
                                 <Link
                                   href={`/college-baseball/teams/${teamSlug(team.team)}`}
-                                  className="font-semibold text-text-primary hover:text-burnt-orange transition-colors"
+                                  className="font-semibold text-[var(--bsi-bone)] hover:text-[var(--bsi-primary)] transition-colors"
                                 >
                                   {team.team}
                                 </Link>
                               </td>
-                              <td className="py-4 px-4 text-text-secondary hidden md:table-cell">
+                              <td className="py-4 px-4 text-[var(--bsi-dust)] hidden md:table-cell">
                                 {team.conference}
                               </td>
                               <td className="py-4 px-4 text-center">
-                                <span className="text-text-primary font-mono">{team.record}</span>
+                                <span className="text-[var(--bsi-bone)] font-mono">{team.record}</span>
                               </td>
                               {selectedPoll === 'rpi' && (
                                 <>
-                                  <td className="py-4 px-4 text-center text-text-secondary font-mono hidden lg:table-cell">
+                                  <td className="py-4 px-4 text-center text-[var(--bsi-dust)] font-mono hidden lg:table-cell">
                                     {team.sos ?? '-'}
                                   </td>
                                 </>
                               )}
                               {(selectedPoll === 'd1baseball' || selectedPoll === 'coaches') && (
                                 <>
-                                  <td className="py-4 px-4 text-center text-text-secondary font-mono hidden lg:table-cell">
+                                  <td className="py-4 px-4 text-center text-[var(--bsi-dust)] font-mono hidden lg:table-cell">
                                     {team.points ?? '-'}
                                   </td>
-                                  <td className="py-4 px-4 text-center text-text-secondary hidden lg:table-cell">
+                                  <td className="py-4 px-4 text-center text-[var(--bsi-dust)] hidden lg:table-cell">
                                     {team.firstPlace ? `(${team.firstPlace})` : '-'}
                                   </td>
                                 </>
@@ -406,7 +404,7 @@ export default function CollegeBaseballRankingsPage() {
                                     NEW
                                   </Badge>
                                 ) : (
-                                  <span className="text-text-tertiary">-</span>
+                                  <span className="text-[rgba(196,184,165,0.5)]">-</span>
                                 )}
                               </td>
                             </tr>
@@ -420,7 +418,7 @@ export default function CollegeBaseballRankingsPage() {
                   <div className="px-4 py-3 bg-[var(--surface-press-box)] border-t border-[var(--border-vintage)]">
                     <div className="flex flex-wrap items-center gap-4 text-xs text-[var(--bsi-dust)]">
                       <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-burnt-orange/20 rounded-sm" />
+                        <div className="w-3 h-3 bg-[var(--bsi-primary)]/20 rounded-sm" />
                         <span>Top 10 Teams</span>
                       </div>
                       <div className="flex items-center gap-2">
@@ -451,7 +449,7 @@ export default function CollegeBaseballRankingsPage() {
                   <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
                     {alsoReceiving.length > 0 && (
                       <Card padding="md">
-                        <h3 className="font-display text-lg font-bold text-text-primary mb-4">
+                        <h3 className="font-display text-lg font-bold text-[var(--bsi-bone)] mb-4">
                           Also Receiving Votes
                         </h3>
                         <div className="space-y-2">
@@ -459,11 +457,11 @@ export default function CollegeBaseballRankingsPage() {
                             <div key={t.team} className="flex items-center justify-between text-sm">
                               <Link
                                 href={`/college-baseball/teams/${teamSlug(t.team)}`}
-                                className="text-text-primary hover:text-burnt-orange transition-colors font-medium"
+                                className="text-[var(--bsi-bone)] hover:text-[var(--bsi-primary)] transition-colors font-medium"
                               >
                                 {t.team}
                               </Link>
-                              <span className="text-text-secondary font-mono text-xs">
+                              <span className="text-[var(--bsi-dust)] font-mono text-xs">
                                 {t.points} pts
                               </span>
                             </div>
@@ -473,7 +471,7 @@ export default function CollegeBaseballRankingsPage() {
                     )}
                     {droppedOut.length > 0 && (
                       <Card padding="md">
-                        <h3 className="font-display text-lg font-bold text-text-primary mb-4">
+                        <h3 className="font-display text-lg font-bold text-[var(--bsi-bone)] mb-4">
                           Dropped Out
                         </h3>
                         <div className="space-y-2">
@@ -481,7 +479,7 @@ export default function CollegeBaseballRankingsPage() {
                             <div key={t.team} className="flex items-center justify-between text-sm">
                               <Link
                                 href={`/college-baseball/teams/${teamSlug(t.team)}`}
-                                className="text-text-primary hover:text-burnt-orange transition-colors font-medium"
+                                className="text-[var(--bsi-bone)] hover:text-[var(--bsi-primary)] transition-colors font-medium"
                               >
                                 {t.team}
                               </Link>

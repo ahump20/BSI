@@ -326,17 +326,17 @@ export default function VisionAIPage() {
             <ScrollReveal direction="up" delay={80}>
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display mb-4">
                 How Computer Vision is{' '}
-                <span className="text-gradient-blaze">Reshaping Sports</span>
+                <span className="text-[var(--bsi-primary)]">Reshaping Sports</span>
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={120}>
-              <p className="text-text-secondary max-w-3xl text-lg mb-2">
+              <p className="text-[var(--bsi-dust)] max-w-3xl text-lg mb-2">
                 From 12-camera Hawk-Eye arrays tracking 225+ metrics per pitch to open-source
                 pose estimation anyone can run on a laptop — the technology landscape that
                 powers modern sports analytics.
               </p>
-              <p className="text-text-tertiary max-w-2xl">
+              <p className="text-[rgba(196,184,165,0.5)] max-w-2xl">
                 BSI covers what the major platforms won&apos;t: how this technology actually works,
                 who builds it, what it costs, and where the gaps are — especially in college sports.
               </p>
@@ -352,8 +352,8 @@ export default function VisionAIPage() {
                   { label: 'Concussion Reduction', value: '17%' },
                 ].map((kpi) => (
                   <Card key={kpi.label} variant="default" padding="md" className="text-center backdrop-blur-sm">
-                    <p className="text-2xl md:text-3xl font-bold font-mono text-burnt-orange">{kpi.value}</p>
-                    <p className="text-[10px] text-text-tertiary uppercase tracking-wider mt-1">{kpi.label}</p>
+                    <p className="text-2xl md:text-3xl font-bold font-mono text-[var(--bsi-primary)]">{kpi.value}</p>
+                    <p className="text-[10px] text-[rgba(196,184,165,0.5)] uppercase tracking-wider mt-1">{kpi.label}</p>
                   </Card>
                 ))}
               </div>
@@ -362,7 +362,7 @@ export default function VisionAIPage() {
         </Section>
 
         {/* ── Section Navigation ───────────────────────────────── */}
-        <Section padding="none" className="bg-background-secondary border-y border-border-subtle sticky top-16 z-30">
+        <Section padding="none" className="bg-[var(--surface-dugout)] border-y border-[var(--border-vintage)] sticky top-16 z-30">
           <Container size="wide">
             <div className="flex gap-1 overflow-x-auto scrollbar-hide py-1">
               {NAV_SECTIONS.map((section) => (
@@ -371,8 +371,8 @@ export default function VisionAIPage() {
                   onClick={() => scrollToSection(section.id)}
                   className={`px-4 py-3 font-semibold text-xs uppercase tracking-wider transition-colors whitespace-nowrap ${
                     activeSection === section.id
-                      ? 'text-burnt-orange border-b-2 border-burnt-orange'
-                      : 'text-text-tertiary hover:text-text-primary'
+                      ? 'text-[var(--bsi-primary)] border-b-2 border-[var(--bsi-primary)]'
+                      : 'text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-bone)]'
                   }`}
                 >
                   <span className="hidden md:inline">{section.label}</span>
@@ -388,11 +388,11 @@ export default function VisionAIPage() {
           <Container>
             <ScrollReveal>
               <div className="mb-8">
-                <span className="text-burnt-orange text-xs font-semibold uppercase tracking-wider">Application Areas</span>
-                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display mt-2 text-text-primary">
+                <span className="text-[var(--bsi-primary)] text-xs font-semibold uppercase tracking-wider">Application Areas</span>
+                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display mt-2 text-[var(--bsi-bone)]">
                   Eight Ways CV is Changing the Game
                 </h2>
-                <p className="text-text-secondary mt-2 max-w-2xl">
+                <p className="text-[var(--bsi-dust)] mt-2 max-w-2xl">
                   Click any card to jump to its detailed section below.
                 </p>
               </div>
@@ -409,23 +409,23 @@ export default function VisionAIPage() {
                   >
                     <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
                     <div className="flex items-center gap-2 mb-3">
-                      <span className="w-6 h-6 rounded-full bg-burnt-orange/15 flex items-center justify-center text-burnt-orange text-xs font-bold">
+                      <span className="w-6 h-6 rounded-full bg-[var(--bsi-primary)]/15 flex items-center justify-center text-[var(--bsi-primary)] text-xs font-bold">
                         {i + 1}
                       </span>
                       <Badge variant="secondary" size="sm">
                         {area.companies.filter((c) => c.maturity === 'Production').length > 0 ? 'Active' : 'Emerging'}
                       </Badge>
                     </div>
-                    <h3 className="text-text-primary font-semibold text-sm mb-1">{area.title}</h3>
-                    <p className="text-text-tertiary text-xs leading-relaxed">{area.tagline}</p>
+                    <h3 className="text-[var(--bsi-bone)] font-semibold text-sm mb-1">{area.title}</h3>
+                    <p className="text-[rgba(196,184,165,0.5)] text-xs leading-relaxed">{area.tagline}</p>
                     <div className="flex gap-1 mt-3 flex-wrap">
                       {area.sports.slice(0, 3).map((sport) => (
-                        <span key={sport} className="text-[9px] px-1.5 py-0.5 rounded-sm bg-surface-light text-text-muted font-mono">
+                        <span key={sport} className="text-[9px] px-1.5 py-0.5 rounded-sm bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.35)] font-mono">
                           {sport}
                         </span>
                       ))}
                       {area.sports.length > 3 && (
-                        <span className="text-[9px] px-1.5 py-0.5 rounded-sm bg-surface-light text-text-muted font-mono">
+                        <span className="text-[9px] px-1.5 py-0.5 rounded-sm bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.35)] font-mono">
                           +{area.sports.length - 3}
                         </span>
                       )}
@@ -449,17 +449,17 @@ export default function VisionAIPage() {
             <Container>
               <ScrollReveal>
                 <div className="flex items-center gap-3 mb-2">
-                  <span className="w-8 h-8 rounded-full bg-burnt-orange/15 flex items-center justify-center text-burnt-orange text-sm font-bold">
+                  <span className="w-8 h-8 rounded-full bg-[var(--bsi-primary)]/15 flex items-center justify-center text-[var(--bsi-primary)] text-sm font-bold">
                     {i + 1}
                   </span>
-                  <span className="text-burnt-orange text-xs font-semibold uppercase tracking-wider">
+                  <span className="text-[var(--bsi-primary)] text-xs font-semibold uppercase tracking-wider">
                     Application Area {i + 1} of {APP_AREAS.length}
                   </span>
                 </div>
-                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display text-text-primary mb-1">
+                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display text-[var(--bsi-bone)] mb-1">
                   {area.title}
                 </h2>
-                <p className="text-text-secondary italic mb-6">{area.tagline}</p>
+                <p className="text-[var(--bsi-dust)] italic mb-6">{area.tagline}</p>
               </ScrollReveal>
 
               <div className="grid lg:grid-cols-3 gap-6">
@@ -467,21 +467,21 @@ export default function VisionAIPage() {
                 <div className="lg:col-span-2 space-y-6">
                   <ScrollReveal delay={100}>
                     <Card variant="default" padding="lg">
-                      <p className="text-text-secondary leading-relaxed">{area.description}</p>
+                      <p className="text-[var(--bsi-dust)] leading-relaxed">{area.description}</p>
                     </Card>
                   </ScrollReveal>
 
                   {/* Companies */}
                   <ScrollReveal delay={150}>
                     <Card variant="default" padding="lg">
-                      <h3 className="text-text-primary font-semibold text-sm mb-4 flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-burnt-orange" />
+                      <h3 className="text-[var(--bsi-bone)] font-semibold text-sm mb-4 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--bsi-primary)]" />
                         Key Companies
                       </h3>
                       <div className="space-y-2">
                         {area.companies.map((company) => (
-                          <div key={company.name} className="flex items-center justify-between py-2 border-b border-border-subtle last:border-0">
-                            <span className="text-text-primary text-sm">{company.name}</span>
+                          <div key={company.name} className="flex items-center justify-between py-2 border-b border-[var(--border-vintage)] last:border-0">
+                            <span className="text-[var(--bsi-bone)] text-sm">{company.name}</span>
                             <Badge
                               variant={company.maturity === 'Production' ? 'success' : company.maturity === 'Growth' ? 'warning' : 'secondary'}
                               size="sm"
@@ -496,11 +496,11 @@ export default function VisionAIPage() {
 
                   {/* BSI Take */}
                   <ScrollReveal delay={200}>
-                    <div className="bg-burnt-orange/5 border-l-2 border-burnt-orange rounded-r-sm p-5">
+                    <div className="bg-[var(--bsi-primary)]/5 border-l-2 border-[var(--bsi-primary)] rounded-r-sm p-5">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-burnt-orange text-xs font-semibold uppercase tracking-wider">BSI Take</span>
+                        <span className="text-[var(--bsi-primary)] text-xs font-semibold uppercase tracking-wider">BSI Take</span>
                       </div>
-                      <p className="text-text-secondary text-sm leading-relaxed">{area.bsiTake}</p>
+                      <p className="text-[var(--bsi-dust)] text-sm leading-relaxed">{area.bsiTake}</p>
                     </div>
                   </ScrollReveal>
 
@@ -508,10 +508,10 @@ export default function VisionAIPage() {
                   {area.id === 'officiating' && (
                     <ScrollReveal delay={250}>
                       <Card variant="default" padding="lg">
-                        <h3 className="text-text-primary font-semibold text-sm mb-4">ABS Strike Zone Model</h3>
+                        <h3 className="text-[var(--bsi-bone)] font-semibold text-sm mb-4">ABS Strike Zone Model</h3>
                         <StrikeZoneModel compact />
-                        <div className="mt-4 pt-3 border-t border-border-subtle">
-                          <Link href="/mlb/abs" className="text-burnt-orange text-sm font-semibold hover:underline">
+                        <div className="mt-4 pt-3 border-t border-[var(--border-vintage)]">
+                          <Link href="/mlb/abs" className="text-[var(--bsi-primary)] text-sm font-semibold hover:underline">
                             Full ABS Challenge Tracker &rarr;
                           </Link>
                         </div>
@@ -524,14 +524,14 @@ export default function VisionAIPage() {
                 <div className="space-y-4">
                   <ScrollReveal delay={120}>
                     <Card variant="default" padding="none" className="overflow-hidden">
-                      <div className="bg-background-tertiary px-4 py-3 border-b border-border-subtle">
-                        <h4 className="text-xs uppercase tracking-wider text-text-tertiary font-semibold">Key Numbers</h4>
+                      <div className="bg-[var(--surface-dugout)] px-4 py-3 border-b border-[var(--border-vintage)]">
+                        <h4 className="text-xs uppercase tracking-wider text-[rgba(196,184,165,0.5)] font-semibold">Key Numbers</h4>
                       </div>
                       <div className="p-4 space-y-4">
                         {area.stats.map((stat) => (
                           <div key={stat.label} className="flex justify-between items-baseline">
-                            <span className="text-text-tertiary text-xs">{stat.label}</span>
-                            <span className="text-text-primary font-mono text-sm font-bold">{stat.value}</span>
+                            <span className="text-[rgba(196,184,165,0.5)] text-xs">{stat.label}</span>
+                            <span className="text-[var(--bsi-bone)] font-mono text-sm font-bold">{stat.value}</span>
                           </div>
                         ))}
                       </div>
@@ -540,8 +540,8 @@ export default function VisionAIPage() {
 
                   <ScrollReveal delay={160}>
                     <Card variant="default" padding="none" className="overflow-hidden">
-                      <div className="bg-background-tertiary px-4 py-3 border-b border-border-subtle">
-                        <h4 className="text-xs uppercase tracking-wider text-text-tertiary font-semibold">BSI Sports</h4>
+                      <div className="bg-[var(--surface-dugout)] px-4 py-3 border-b border-[var(--border-vintage)]">
+                        <h4 className="text-xs uppercase tracking-wider text-[rgba(196,184,165,0.5)] font-semibold">BSI Sports</h4>
                       </div>
                       <div className="p-4 flex gap-2 flex-wrap">
                         {area.sports.map((sport) => (
@@ -560,11 +560,11 @@ export default function VisionAIPage() {
         <Section id="sony" padding="lg" background="midnight" borderTop>
           <Container>
             <ScrollReveal>
-              <span className="text-burnt-orange text-xs font-semibold uppercase tracking-wider">Industry Analysis</span>
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display mt-2 text-text-primary mb-2">
+              <span className="text-[var(--bsi-primary)] text-xs font-semibold uppercase tracking-wider">Industry Analysis</span>
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display mt-2 text-[var(--bsi-bone)] mb-2">
                 The Sony CV Empire
               </h2>
-              <p className="text-text-secondary max-w-2xl mb-8">
+              <p className="text-[var(--bsi-dust)] max-w-2xl mb-8">
                 Sony has quietly assembled the most comprehensive computer vision stack in sports
                 through five strategic acquisitions spanning 14 years. They now own every layer:
                 data capture, biomechanics, wearables, visualization, and distribution.
@@ -583,11 +583,11 @@ export default function VisionAIPage() {
         <Section id="college-gap" padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal>
-              <span className="text-burnt-orange text-xs font-semibold uppercase tracking-wider">Strategic Section</span>
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display mt-2 text-text-primary mb-2">
+              <span className="text-[var(--bsi-primary)] text-xs font-semibold uppercase tracking-wider">Strategic Section</span>
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display mt-2 text-[var(--bsi-bone)] mb-2">
                 The College Sports Gap
               </h2>
-              <p className="text-text-secondary max-w-2xl mb-8">
+              <p className="text-[var(--bsi-dust)] max-w-2xl mb-8">
                 Pro leagues have near-complete tracking infrastructure. College sports — where BSI
                 focuses — have massive gaps. This comparison shows exactly where the coverage drops off.
               </p>
@@ -605,11 +605,11 @@ export default function VisionAIPage() {
         <Section padding="lg" background="midnight" borderTop>
           <Container>
             <ScrollReveal>
-              <span className="text-burnt-orange text-xs font-semibold uppercase tracking-wider">Interactive Map</span>
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display mt-2 text-text-primary mb-2">
+              <span className="text-[var(--bsi-primary)] text-xs font-semibold uppercase tracking-wider">Interactive Map</span>
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display mt-2 text-[var(--bsi-bone)] mb-2">
                 Technology Maturity Map
               </h2>
-              <p className="text-text-secondary max-w-2xl mb-8">
+              <p className="text-[var(--bsi-dust)] max-w-2xl mb-8">
                 Filter by sport and maturity level to see who&apos;s building what — and how far along they are.
               </p>
             </ScrollReveal>
@@ -626,11 +626,11 @@ export default function VisionAIPage() {
         <Section id="open-source" padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal>
-              <span className="text-burnt-orange text-xs font-semibold uppercase tracking-wider">Technical Reference</span>
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display mt-2 text-text-primary mb-2">
+              <span className="text-[var(--bsi-primary)] text-xs font-semibold uppercase tracking-wider">Technical Reference</span>
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display mt-2 text-[var(--bsi-bone)] mb-2">
                 Open Source Toolbox
               </h2>
-              <p className="text-text-secondary max-w-2xl mb-8">
+              <p className="text-[var(--bsi-dust)] max-w-2xl mb-8">
                 Production-grade open-source tools for sports computer vision. License matters —
                 AGPL means you can&apos;t use it commercially without releasing your own code.
               </p>
@@ -641,19 +641,19 @@ export default function VisionAIPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="bg-background-tertiary border-b border-border-subtle">
-                        <th className="text-left py-3 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">Tool</th>
-                        <th className="text-left py-3 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">Role</th>
-                        <th className="text-left py-3 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">License</th>
-                        <th className="text-left py-3 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">Org</th>
-                        <th className="text-left py-3 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden md:table-cell">Note</th>
+                      <tr className="bg-[var(--surface-dugout)] border-b border-[var(--border-vintage)]">
+                        <th className="text-left py-3 px-4 text-xs font-semibold text-[rgba(196,184,165,0.5)] uppercase tracking-wider">Tool</th>
+                        <th className="text-left py-3 px-4 text-xs font-semibold text-[rgba(196,184,165,0.5)] uppercase tracking-wider">Role</th>
+                        <th className="text-left py-3 px-4 text-xs font-semibold text-[rgba(196,184,165,0.5)] uppercase tracking-wider">License</th>
+                        <th className="text-left py-3 px-4 text-xs font-semibold text-[rgba(196,184,165,0.5)] uppercase tracking-wider">Org</th>
+                        <th className="text-left py-3 px-4 text-xs font-semibold text-[rgba(196,184,165,0.5)] uppercase tracking-wider hidden md:table-cell">Note</th>
                       </tr>
                     </thead>
                     <tbody>
                       {OPEN_SOURCE_TOOLS.map((tool) => (
-                        <tr key={tool.name} className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
-                          <td className="py-3 px-4 text-text-primary font-semibold text-sm font-mono">{tool.name}</td>
-                          <td className="py-3 px-4 text-text-secondary text-sm">{tool.role}</td>
+                        <tr key={tool.name} className="border-b border-[var(--border-vintage)] hover:bg-white/[0.02] transition-colors">
+                          <td className="py-3 px-4 text-[var(--bsi-bone)] font-semibold text-sm font-mono">{tool.name}</td>
+                          <td className="py-3 px-4 text-[var(--bsi-dust)] text-sm">{tool.role}</td>
                           <td className="py-3 px-4">
                             <Badge
                               variant={tool.license.includes('AGPL') ? 'warning' : 'success'}
@@ -662,8 +662,8 @@ export default function VisionAIPage() {
                               {tool.license}
                             </Badge>
                           </td>
-                          <td className="py-3 px-4 text-text-tertiary text-sm">{tool.org}</td>
-                          <td className="py-3 px-4 text-text-tertiary text-xs hidden md:table-cell">{tool.note}</td>
+                          <td className="py-3 px-4 text-[rgba(196,184,165,0.5)] text-sm">{tool.org}</td>
+                          <td className="py-3 px-4 text-[rgba(196,184,165,0.5)] text-xs hidden md:table-cell">{tool.note}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -678,7 +678,7 @@ export default function VisionAIPage() {
                   <span className="w-1 h-4 bg-[var(--bsi-warning)] rounded-full" />
                   <span className="text-[var(--bsi-warning)] text-xs font-semibold uppercase tracking-wider">Legal Note</span>
                 </div>
-                <p className="text-text-secondary text-sm leading-relaxed">
+                <p className="text-[var(--bsi-dust)] text-sm leading-relaxed">
                   Processing broadcast video without league authorization likely violates copyright and
                   broadcast agreements, regardless of what the model license allows. Open-source tools
                   are technically capable, but the legal right to process the video is a separate question.
@@ -693,8 +693,8 @@ export default function VisionAIPage() {
         <Section id="tools" padding="lg" background="midnight" borderTop>
           <Container>
             <ScrollReveal>
-              <span className="text-burnt-orange text-xs font-semibold uppercase tracking-wider">Explore More</span>
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display mt-2 text-text-primary mb-8">
+              <span className="text-[var(--bsi-primary)] text-xs font-semibold uppercase tracking-wider">Explore More</span>
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display mt-2 text-[var(--bsi-bone)] mb-8">
                 Go Deeper
               </h2>
             </ScrollReveal>
@@ -705,12 +705,12 @@ export default function VisionAIPage() {
                   <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
                     <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
                     <Badge variant="success" size="sm" className="mb-3">Live Tracker</Badge>
-                    <h3 className="text-text-primary font-semibold mb-2">ABS Robot Umpire Tracker</h3>
-                    <p className="text-text-tertiary text-sm mb-4">
+                    <h3 className="text-[var(--bsi-bone)] font-semibold mb-2">ABS Robot Umpire Tracker</h3>
+                    <p className="text-[rgba(196,184,165,0.5)] text-sm mb-4">
                       Challenge rates, success by role, umpire accuracy comparisons — the most tracked
                       CV deployment in baseball.
                     </p>
-                    <span className="text-burnt-orange text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
+                    <span className="text-[var(--bsi-primary)] text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
                       View Tracker
                       <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M5 12h14M12 5l7 7-7 7" />
@@ -725,12 +725,12 @@ export default function VisionAIPage() {
                   <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
                     <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
                     <Badge variant="primary" size="sm" className="mb-3">BSI Flagship</Badge>
-                    <h3 className="text-text-primary font-semibold mb-2">College Baseball Hub</h3>
-                    <p className="text-text-tertiary text-sm mb-4">
+                    <h3 className="text-[var(--bsi-bone)] font-semibold mb-2">College Baseball Hub</h3>
+                    <p className="text-[rgba(196,184,165,0.5)] text-sm mb-4">
                       Where the technology gap is most visible — and where BSI covers what the major
                       platforms skip.
                     </p>
-                    <span className="text-burnt-orange text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
+                    <span className="text-[var(--bsi-primary)] text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
                       Explore
                       <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M5 12h14M12 5l7 7-7 7" />
@@ -742,8 +742,8 @@ export default function VisionAIPage() {
             </div>
 
             {/* Attribution */}
-            <div className="mt-12 pt-6 border-t border-border-subtle text-center">
-              <p className="text-text-muted text-xs">
+            <div className="mt-12 pt-6 border-t border-[var(--border-vintage)] text-center">
+              <p className="text-[rgba(196,184,165,0.35)] text-xs">
                 Research compiled by Blaze Sports Intel. Data from public sources, league announcements,
                 and company documentation. Last updated February 2026.
               </p>

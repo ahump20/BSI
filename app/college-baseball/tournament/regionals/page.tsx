@@ -47,10 +47,10 @@ export default function RegionalsPage() {
               <Badge variant="warning" className="mb-4">
                 {isPostseason ? 'Selection Pending' : 'Projections — Coming May 2026'}
               </Badge>
-              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-text-primary mb-4">
+              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-[var(--bsi-bone)] mb-4">
                 Regional Brackets
               </h1>
-              <p className="text-text-tertiary text-lg leading-relaxed">
+              <p className="text-[rgba(196,184,165,0.5)] text-lg leading-relaxed">
                 16 regionals, 4 teams each. Bracket projections start mid-season and lock on
                 Selection Monday. Each regional gets a matchup breakdown and host analysis.
               </p>
@@ -59,10 +59,10 @@ export default function RegionalsPage() {
             {/* Projected 16 National Seeds */}
             {(hasData || loading) && (
               <section className="mb-12">
-                <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-text-primary mb-4">
+                <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-[var(--bsi-bone)] mb-4">
                   Projected Regional Hosts
                 </h2>
-                <p className="text-sm text-text-muted mb-6">
+                <p className="text-sm text-[rgba(196,184,165,0.35)] mb-6">
                   The NCAA selects 16 national seeds to host regionals. Based on current rankings —
                   these shift weekly as the season unfolds.
                 </p>
@@ -70,7 +70,7 @@ export default function RegionalsPage() {
                 {loading && !hasData ? (
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {Array.from({ length: 16 }).map((_, i) => (
-                      <div key={i} className="h-16 bg-surface-light rounded-sm animate-pulse" />
+                      <div key={i} className="h-16 bg-[var(--surface-press-box)] rounded-sm animate-pulse" />
                     ))}
                   </div>
                 ) : (
@@ -78,19 +78,19 @@ export default function RegionalsPage() {
                     {projectedHosts.map((team, i) => (
                       <div
                         key={team.name || i}
-                        className="bg-surface-light border border-border-subtle rounded-sm p-4 flex items-start gap-3"
+                        className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4 flex items-start gap-3"
                       >
                         <span className="text-lg font-display font-bold text-[#C9A227] w-8 shrink-0">
                           #{team.rank || i + 1}
                         </span>
                         <div className="min-w-0">
-                          <p className="text-sm text-text-primary font-medium truncate">
+                          <p className="text-sm text-[var(--bsi-bone)] font-medium truncate">
                             {team.name || team.team}
                           </p>
-                          <p className="text-[10px] text-text-muted">
+                          <p className="text-[10px] text-[rgba(196,184,165,0.35)]">
                             {team.conference}{team.record ? ` · ${team.record}` : ''}
                           </p>
-                          <p className="text-[10px] text-text-muted mt-1">
+                          <p className="text-[10px] text-[rgba(196,184,165,0.35)] mt-1">
                             Regional {i + 1} Host
                           </p>
                         </div>
@@ -100,7 +100,7 @@ export default function RegionalsPage() {
                 )}
 
                 {lastUpdated && (
-                  <p className="mt-4 text-[10px] text-text-muted">
+                  <p className="mt-4 text-[10px] text-[rgba(196,184,165,0.35)]">
                     Rankings updated {lastUpdated.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
                   </p>
                 )}
@@ -109,10 +109,10 @@ export default function RegionalsPage() {
 
             {/* How It Works */}
             <section className="mb-12">
-              <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
+              <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-[var(--bsi-bone)] mb-4">
                 How Regionals Work
               </h2>
-              <div className="bg-surface-light border border-border-subtle rounded-sm p-5 space-y-3">
+              <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-5 space-y-3">
                 {[
                   { label: 'Selection Monday', detail: 'The NCAA announces the 64-team field, 16 national seeds, and regional bracket assignments in late May.' },
                   { label: 'Format', detail: 'Each regional is double-elimination with 4 teams. Win three games to advance to super regionals.' },
@@ -123,28 +123,28 @@ export default function RegionalsPage() {
                     <span className="text-[10px] font-bold uppercase tracking-wider text-[#C9A227] mt-0.5 shrink-0 w-32">
                       {item.label}
                     </span>
-                    <p className="text-sm text-text-tertiary leading-relaxed">{item.detail}</p>
+                    <p className="text-sm text-[rgba(196,184,165,0.5)] leading-relaxed">{item.detail}</p>
                   </div>
                 ))}
               </div>
             </section>
 
             {/* Empty state for bracket data */}
-            <div className="bg-surface-light border border-dashed border-border rounded-sm p-8 text-center mb-8">
-              <p className="text-sm text-text-muted mb-2">
+            <div className="bg-[var(--surface-press-box)] border border-dashed border-border rounded-sm p-8 text-center mb-8">
+              <p className="text-sm text-[rgba(196,184,165,0.35)] mb-2">
                 Bracket data populates on Selection Monday (late May / early June).
               </p>
-              <p className="text-xs text-text-muted">
+              <p className="text-xs text-[rgba(196,184,165,0.35)]">
                 Once brackets are announced, this page will show full bracket views, matchup previews,
                 and results tracking for all 16 regionals.
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-4 text-sm text-text-muted">
-              <Link href="/college-baseball/tournament" className="hover:text-text-secondary transition-colors">
+            <div className="flex flex-wrap gap-4 text-sm text-[rgba(196,184,165,0.35)]">
+              <Link href="/college-baseball/tournament" className="hover:text-[var(--bsi-dust)] transition-colors">
                 &#8592; Tournament HQ
               </Link>
-              <Link href="/college-baseball/tournament/cws" className="hover:text-text-secondary transition-colors">
+              <Link href="/college-baseball/tournament/cws" className="hover:text-[var(--bsi-dust)] transition-colors">
                 College World Series &#8594;
               </Link>
             </div>

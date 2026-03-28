@@ -65,7 +65,7 @@ export default function PlayByPlayClient() {
         <div className="text-center py-8">
           <svg
             viewBox="0 0 24 24"
-            className="w-16 h-16 text-text-tertiary mx-auto mb-4"
+            className="w-16 h-16 text-[rgba(196,184,165,0.5)] mx-auto mb-4"
             fill="none"
             stroke="currentColor"
             strokeWidth="1.5"
@@ -76,8 +76,8 @@ export default function PlayByPlayClient() {
             <line x1="16" y1="17" x2="8" y2="17" />
             <polyline points="10,9 9,9 8,9" />
           </svg>
-          <p className="text-text-secondary">Play-by-play data not available yet</p>
-          <p className="text-text-tertiary text-sm mt-2">
+          <p className="text-[var(--bsi-dust)]">Play-by-play data not available yet</p>
+          <p className="text-[rgba(196,184,165,0.5)] text-sm mt-2">
             Live play updates will appear here once the game begins
           </p>
         </div>
@@ -89,14 +89,14 @@ export default function PlayByPlayClient() {
     <div className="space-y-4">
       {/* Filters */}
       <div className="flex items-center gap-4 mb-6">
-        <span className="text-text-tertiary text-sm">Filter:</span>
+        <span className="text-[rgba(196,184,165,0.5)] text-sm">Filter:</span>
         <div className="flex gap-2">
           <button
             onClick={() => setFilter('all')}
             className={`px-4 py-2 rounded-sm text-sm font-medium transition-colors ${
               filter === 'all'
-                ? 'bg-burnt-orange text-white'
-                : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
+                ? 'bg-[var(--bsi-primary)] text-white'
+                : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:bg-[var(--surface-press-box)]'
             }`}
           >
             All Plays ({plays.length})
@@ -105,8 +105,8 @@ export default function PlayByPlayClient() {
             onClick={() => setFilter('scoring')}
             className={`px-4 py-2 rounded-sm text-sm font-medium transition-colors ${
               filter === 'scoring'
-                ? 'bg-burnt-orange text-white'
-                : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
+                ? 'bg-[var(--bsi-primary)] text-white'
+                : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:bg-[var(--surface-press-box)]'
             }`}
           >
             Scoring ({scoringCount})
@@ -128,10 +128,10 @@ export default function PlayByPlayClient() {
                 {/* Quarter Header */}
                 <button
                   onClick={() => toggleQuarter(q)}
-                  className="w-full px-4 py-3 flex items-center justify-between hover:bg-surface-light transition-colors"
+                  className="w-full px-4 py-3 flex items-center justify-between hover:bg-[var(--surface-press-box)] transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-burnt-orange font-semibold uppercase text-sm tracking-wide">
+                    <span className="text-[var(--bsi-primary)] font-semibold uppercase text-sm tracking-wide">
                       {getQuarterLabel(q)}
                     </span>
                     {qScoringCount > 0 && (
@@ -141,10 +141,10 @@ export default function PlayByPlayClient() {
                     )}
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-text-tertiary text-sm">{quarterPlays.length} plays</span>
+                    <span className="text-[rgba(196,184,165,0.5)] text-sm">{quarterPlays.length} plays</span>
                     <svg
                       viewBox="0 0 24 24"
-                      className={`w-5 h-5 text-text-tertiary transition-transform ${
+                      className={`w-5 h-5 text-[rgba(196,184,165,0.5)] transition-transform ${
                         isExpanded ? 'rotate-180' : ''
                       }`}
                       fill="none"
@@ -158,13 +158,13 @@ export default function PlayByPlayClient() {
 
                 {/* Plays List */}
                 {isExpanded && (
-                  <div className="border-t border-border-subtle">
+                  <div className="border-t border-[var(--border-vintage)]">
                     {quarterPlays.map((play, idx) => (
                       <div
                         key={play.id || idx}
-                        className={`px-4 py-3 border-b border-border-subtle last:border-0 ${
+                        className={`px-4 py-3 border-b border-[var(--border-vintage)] last:border-0 ${
                           play.scoringPlay
-                            ? 'bg-burnt-orange/10 border-l-4 border-l-burnt-orange'
+                            ? 'bg-[var(--bsi-primary)]/10 border-l-4 border-l-burnt-orange'
                             : ''
                         }`}
                       >
@@ -172,7 +172,7 @@ export default function PlayByPlayClient() {
                           <div className="flex-1">
                             {/* Down and distance context */}
                             {play.start?.down && (
-                              <p className="text-xs text-text-tertiary mb-1">
+                              <p className="text-xs text-[rgba(196,184,165,0.5)] mb-1">
                                 {play.start.down}
                                 {play.start.down === 1
                                   ? 'st'
@@ -187,7 +187,7 @@ export default function PlayByPlayClient() {
                                   : ''}
                               </p>
                             )}
-                            <p className="text-text-secondary text-sm">
+                            <p className="text-[var(--bsi-dust)] text-sm">
                               {play.text || play.shortText || 'Play'}
                             </p>
                             {play.scoringPlay && (
@@ -197,7 +197,7 @@ export default function PlayByPlayClient() {
                                     +{play.scoreValue} pt{play.scoreValue > 1 ? 's' : ''}
                                   </Badge>
                                 )}
-                                <span className="text-xs text-text-tertiary">
+                                <span className="text-xs text-[rgba(196,184,165,0.5)]">
                                   Score: {awayTeam?.team?.abbreviation} {play.awayScore} -{' '}
                                   {homeTeam?.team?.abbreviation} {play.homeScore}
                                 </span>
@@ -206,7 +206,7 @@ export default function PlayByPlayClient() {
                           </div>
                           <div className="flex flex-col items-end gap-1">
                             {play.clock?.displayValue && (
-                              <span className="text-xs text-text-tertiary font-mono whitespace-nowrap">
+                              <span className="text-xs text-[rgba(196,184,165,0.5)] font-mono whitespace-nowrap">
                                 {play.clock.displayValue}
                               </span>
                             )}
@@ -235,8 +235,8 @@ export default function PlayByPlayClient() {
       {filteredPlays.length === 0 && filter === 'scoring' && (
         <Card variant="default" padding="lg">
           <div className="text-center py-6">
-            <p className="text-text-secondary">No scoring plays yet</p>
-            <p className="text-text-tertiary text-sm mt-1">
+            <p className="text-[var(--bsi-dust)]">No scoring plays yet</p>
+            <p className="text-[rgba(196,184,165,0.5)] text-sm mt-1">
               Defense is winning this one so far
             </p>
           </div>

@@ -13,8 +13,8 @@ const sizeClasses: Record<string, string> = {
   md: 'px-4 py-2 text-sm min-h-[44px]',
 };
 
-const ACTIVE = 'bg-burnt-orange/15 text-burnt-orange border-burnt-orange/30';
-const INACTIVE = 'bg-transparent text-text-muted border-white/[0.06] hover:text-text-primary hover:border-white/10';
+const ACTIVE = 'bg-[var(--bsi-primary)]/15 text-[var(--bsi-primary)] border-[var(--bsi-primary)]/30';
+const INACTIVE = 'bg-transparent text-[rgba(196,184,165,0.35)] border-white/[0.06] hover:text-[var(--bsi-bone)] hover:border-white/10';
 
 export function FilterPill({
   active,

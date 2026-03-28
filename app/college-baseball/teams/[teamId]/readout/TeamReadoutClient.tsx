@@ -75,8 +75,8 @@ function formatDate(iso: string): string {
 function StatCell({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
     <div className="heritage-card px-4 py-3 text-center">
-      <div className="text-[10px] font-display uppercase tracking-[0.2em] text-text-muted mb-1">{label}</div>
-      <div className={`font-mono text-xl md:text-2xl font-bold tabular-nums ${accent ? 'text-burnt-orange' : 'text-text-primary'}`}>
+      <div className="text-[10px] font-display uppercase tracking-[0.2em] text-[rgba(196,184,165,0.35)] mb-1">{label}</div>
+      <div className={`font-mono text-xl md:text-2xl font-bold tabular-nums ${accent ? 'text-[var(--bsi-primary)]' : 'text-[var(--bsi-bone)]'}`}>
         {value}
       </div>
     </div>
@@ -95,7 +95,7 @@ function Panel({ title, accentHeader, children }: { title: string; accentHeader?
             : 'var(--surface-press-box)',
         }}
       >
-        <h2 className="text-xs font-display uppercase tracking-[0.2em] text-text-muted">{title}</h2>
+        <h2 className="text-xs font-display uppercase tracking-[0.2em] text-[rgba(196,184,165,0.35)]">{title}</h2>
       </div>
       {children}
     </div>
@@ -193,30 +193,30 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background-primary flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
+      <div className="min-h-screen bg-[var(--surface-scoreboard)] flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-[var(--bsi-primary)]/30 border-t-[var(--bsi-primary)] rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
     <>
-      <div className="min-h-screen bg-background-primary text-text-primary">
+      <div className="min-h-screen bg-[var(--surface-scoreboard)] text-[var(--bsi-bone)]">
         {/* ═══ Dossier Header ═══ */}
         <Section className="pt-6 pb-8 relative overflow-hidden grain-overlay">
           <div className="absolute inset-0 bg-gradient-to-b from-burnt-orange/6 via-transparent to-transparent pointer-events-none" />
           <Container>
             {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-xs font-display uppercase tracking-wider mb-6">
-              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 College Baseball
               </Link>
-              <span className="text-text-muted">/</span>
-              <Link href={`/college-baseball/teams/${teamId}`} className="text-text-muted hover:text-burnt-orange transition-colors">
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <Link href={`/college-baseball/teams/${teamId}`} className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 {teamName}
               </Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-tertiary">Readout</span>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[rgba(196,184,165,0.5)]">Readout</span>
             </nav>
 
             {/* Team Identity */}
@@ -229,15 +229,15 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
               <div className="min-w-0">
                 <span className="heritage-stamp mb-2 inline-block text-[9px]">Executive Readout</span>
                 <h1
-                  className="font-display font-bold uppercase tracking-display text-text-primary"
+                  className="font-display font-bold uppercase tracking-display text-[var(--bsi-bone)]"
                   style={{ fontSize: 'clamp(1.75rem, 4vw, 3rem)', lineHeight: 1.1 }}
                 >
                   {teamName}
                 </h1>
                 <div className="flex items-center gap-3 mt-1.5">
-                  <span className="text-sm text-text-muted">{conference}</span>
+                  <span className="text-sm text-[rgba(196,184,165,0.35)]">{conference}</span>
                   {winPct && (
-                    <span className="text-xs font-mono text-text-muted">
+                    <span className="text-xs font-mono text-[rgba(196,184,165,0.35)]">
                       {winPct}% W
                     </span>
                   )}
@@ -254,7 +254,7 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
                 <StatCell label="Team ERA" value={stats.era.toFixed(2)} />
                 {stats.streak && (
                   <div className="heritage-card px-4 py-3 text-center">
-                    <div className="text-[10px] font-display uppercase tracking-[0.2em] text-text-muted mb-1">Streak</div>
+                    <div className="text-[10px] font-display uppercase tracking-[0.2em] text-[rgba(196,184,165,0.35)] mb-1">Streak</div>
                     <div className={`font-mono text-xl md:text-2xl font-bold ${stats.streak.startsWith('W') ? 'text-[var(--bsi-success)]' : 'text-[var(--bsi-danger)]'}`}>
                       {stats.streak}
                     </div>
@@ -266,18 +266,18 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
             {teamId === 'texas' && (
               <div className="mt-4">
                 <Link href="/college-baseball/texas-intelligence">
-                  <div className="heritage-card px-5 py-4 border-t-2 border-burnt-orange hover:border-burnt-orange/80 transition-colors cursor-pointer group">
+                  <div className="heritage-card px-5 py-4 border-t-2 border-[var(--bsi-primary)] hover:border-[var(--bsi-primary)]/80 transition-colors cursor-pointer group">
                     <div className="flex items-center justify-between">
                       <div>
                         <span className="heritage-stamp text-[9px] block mb-1">Dedicated Hub</span>
-                        <span className="font-display font-bold text-sm uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors">
+                        <span className="font-display font-bold text-sm uppercase tracking-wide text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors">
                           Texas Intelligence Hub
                         </span>
-                        <p className="text-text-muted text-xs mt-1">
+                        <p className="text-[rgba(196,184,165,0.35)] text-xs mt-1">
                           Full sabermetrics, scouting, draft board, press conference analysis, and program history
                         </p>
                       </div>
-                      <span className="text-burnt-orange text-lg" aria-hidden="true">&rarr;</span>
+                      <span className="text-[var(--bsi-primary)] text-lg" aria-hidden="true">&rarr;</span>
                     </div>
                   </div>
                 </Link>
@@ -300,7 +300,7 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
                         {teamStats.batting && (
                           <div>
                             <div className="section-rule-thick mb-3" />
-                            <span className="text-[10px] font-display uppercase tracking-[0.25em] text-burnt-orange block mb-3">
+                            <span className="text-[10px] font-display uppercase tracking-[0.25em] text-[var(--bsi-primary)] block mb-3">
                               Batting
                             </span>
                             <div className="space-y-2.5">
@@ -311,8 +311,8 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
                                 ['Runs', String(teamStats.batting.runs)],
                               ] as const).map(([label, val]) => (
                                 <div key={label} className="flex justify-between items-baseline text-sm">
-                                  <span className="text-text-muted">{label}</span>
-                                  <span className="text-text-primary font-mono tabular-nums">{val}</span>
+                                  <span className="text-[rgba(196,184,165,0.35)]">{label}</span>
+                                  <span className="text-[var(--bsi-bone)] font-mono tabular-nums">{val}</span>
                                 </div>
                               ))}
                             </div>
@@ -321,7 +321,7 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
                         {teamStats.pitching && (
                           <div>
                             <div className="section-rule-thick mb-3" />
-                            <span className="text-[10px] font-display uppercase tracking-[0.25em] text-burnt-orange block mb-3">
+                            <span className="text-[10px] font-display uppercase tracking-[0.25em] text-[var(--bsi-primary)] block mb-3">
                               Pitching
                             </span>
                             <div className="space-y-2.5">
@@ -331,8 +331,8 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
                                 ['SO', String(teamStats.pitching.strikeouts)],
                               ] as const).map(([label, val]) => (
                                 <div key={label} className="flex justify-between items-baseline text-sm">
-                                  <span className="text-text-muted">{label}</span>
-                                  <span className="text-text-primary font-mono tabular-nums">{val}</span>
+                                  <span className="text-[rgba(196,184,165,0.35)]">{label}</span>
+                                  <span className="text-[var(--bsi-bone)] font-mono tabular-nums">{val}</span>
                                 </div>
                               ))}
                             </div>
@@ -359,17 +359,17 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
                             >
                               {g.result}
                             </span>
-                            <span className="text-sm text-text-primary">
+                            <span className="text-sm text-[var(--bsi-bone)]">
                               {g.isHome ? 'vs' : '@'} {g.opponent.name}
                             </span>
                           </div>
                           <div className="flex items-center gap-3">
                             {g.score && (
-                              <span className="text-sm font-mono tabular-nums text-text-secondary">
+                              <span className="text-sm font-mono tabular-nums text-[var(--bsi-dust)]">
                                 {g.score.team}&ndash;{g.score.opponent}
                               </span>
                             )}
-                            <span className="text-xs text-text-muted font-mono">{formatDate(g.date)}</span>
+                            <span className="text-xs text-[rgba(196,184,165,0.35)] font-mono">{formatDate(g.date)}</span>
                           </div>
                         </div>
                       ))}
@@ -383,10 +383,10 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
                     <div className="divide-y divide-border-vintage/40">
                       {upcoming.map(g => (
                         <div key={g.id} className="flex items-center justify-between px-4 py-2.5">
-                          <span className="text-sm text-text-primary">
+                          <span className="text-sm text-[var(--bsi-bone)]">
                             {g.isHome ? 'vs' : '@'} {g.opponent.name}
                           </span>
-                          <span className="text-xs text-text-muted font-mono">{formatDate(g.date)}</span>
+                          <span className="text-xs text-[rgba(196,184,165,0.35)] font-mono">{formatDate(g.date)}</span>
                         </div>
                       ))}
                     </div>
@@ -402,16 +402,16 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
                     {teamNIL.length > 0 ? (
                       <>
                         <div className="text-center mb-4 corner-marks py-4">
-                          <div className="text-[10px] font-display uppercase tracking-[0.25em] text-text-muted">
+                          <div className="text-[10px] font-display uppercase tracking-[0.25em] text-[rgba(196,184,165,0.35)]">
                             Total Roster Value
                           </div>
                           <div
-                            className="font-display font-bold text-burnt-orange mt-1"
+                            className="font-display font-bold text-[var(--bsi-primary)] mt-1"
                             style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)' }}
                           >
                             {formatNIL(nilTotal)}
                           </div>
-                          <div className="text-[10px] text-text-muted mt-1 font-mono">
+                          <div className="text-[10px] text-[rgba(196,184,165,0.35)] mt-1 font-mono">
                             {teamNIL.length} players scored
                           </div>
                         </div>
@@ -421,11 +421,11 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
                         <div className="space-y-0">
                           {teamNIL.slice(0, 5).map((p, i) => (
                             <div key={p.player_name} className="flex items-center justify-between py-1.5 text-sm">
-                              <span className="text-text-primary truncate">
-                                <span className="text-text-muted font-mono text-xs mr-1.5">{i + 1}</span>
+                              <span className="text-[var(--bsi-bone)] truncate">
+                                <span className="text-[rgba(196,184,165,0.35)] font-mono text-xs mr-1.5">{i + 1}</span>
                                 {p.player_name}
                               </span>
-                              <span className="text-burnt-orange font-mono font-bold shrink-0 ml-2 tabular-nums">
+                              <span className="text-[var(--bsi-primary)] font-mono font-bold shrink-0 ml-2 tabular-nums">
                                 {formatNIL(p.estimated_mid)}
                               </span>
                             </div>
@@ -433,13 +433,13 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
                         </div>
                         <Link
                           href="/nil-valuation"
-                          className="block text-center mt-3 text-xs font-display uppercase tracking-wider text-text-muted hover:text-burnt-orange transition-colors"
+                          className="block text-center mt-3 text-xs font-display uppercase tracking-wider text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors"
                         >
                           Full NIL Analysis &rarr;
                         </Link>
                       </>
                     ) : (
-                      <p className="text-sm text-text-muted text-center py-4">
+                      <p className="text-sm text-[rgba(196,184,165,0.35)] text-center py-4">
                         No NIL data available
                       </p>
                     )}
@@ -452,8 +452,8 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
                     {roster.length > 0 ? (
                       <>
                         <div className="text-center mb-3">
-                          <div className="font-display text-2xl font-bold text-text-primary">{roster.length}</div>
-                          <div className="text-[10px] font-display uppercase tracking-[0.2em] text-text-muted">
+                          <div className="font-display text-2xl font-bold text-[var(--bsi-bone)]">{roster.length}</div>
+                          <div className="text-[10px] font-display uppercase tracking-[0.2em] text-[rgba(196,184,165,0.35)]">
                             Active Players
                           </div>
                         </div>
@@ -472,8 +472,8 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
                                 ['Outfielders', outfielders.length],
                               ] as const).map(([label, count]) => (
                                 <div key={label} className="flex justify-between items-baseline">
-                                  <span className="text-text-muted">{label}</span>
-                                  <span className="text-text-primary font-mono tabular-nums">{count}</span>
+                                  <span className="text-[rgba(196,184,165,0.35)]">{label}</span>
+                                  <span className="text-[var(--bsi-bone)] font-mono tabular-nums">{count}</span>
                                 </div>
                               ))}
                             </div>
@@ -481,7 +481,7 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
                         })()}
                       </>
                     ) : (
-                      <p className="text-sm text-text-muted text-center py-4">
+                      <p className="text-sm text-[rgba(196,184,165,0.35)] text-center py-4">
                         No roster data available
                       </p>
                     )}
@@ -500,7 +500,7 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
                       <Link
                         key={href}
                         href={href}
-                        className="block text-xs font-display uppercase tracking-wider text-text-muted hover:text-burnt-orange transition-colors"
+                        className="block text-xs font-display uppercase tracking-wider text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors"
                       >
                         {label}
                       </Link>

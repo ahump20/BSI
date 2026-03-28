@@ -74,7 +74,7 @@ export function DiamondDynastyCollectionsClient() {
                 <Card key={collection.id} padding="lg" className="h-full">
                   <CardContent className="space-y-4 px-0 pb-0 pt-0">
                     <div>
-                      <div className="text-xs font-semibold uppercase tracking-[0.18em] text-burnt-orange">{collection.type}</div>
+                      <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-primary)]">{collection.type}</div>
                       <h2 className="mt-2 font-display text-2xl uppercase tracking-display text-[var(--bsi-bone)]">{collection.name}</h2>
                     </div>
                     <div className="grid gap-3 md:grid-cols-2">
@@ -86,7 +86,7 @@ export function DiamondDynastyCollectionsClient() {
                     </p>
                     <Link
                       href={buildCollectionHref(collection.id)}
-                      className="inline-flex rounded-sm border border-[var(--border-vintage)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] transition-colors hover:border-burnt-orange/40 hover:text-burnt-orange"
+                      className="inline-flex rounded-sm border border-[var(--border-vintage)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] transition-colors hover:border-[var(--bsi-primary)]/40 hover:text-[var(--bsi-primary)]"
                     >
                       Open collection
                     </Link>

@@ -61,8 +61,8 @@ function SportPills({
           onClick={() => onChange(opt.value)}
           className={`px-3 py-1 text-xs font-mono uppercase tracking-wide rounded-sm border transition-colors ${
             selected === opt.value
-              ? 'bg-burnt-orange/20 text-burnt-orange border-burnt-orange/30'
-              : 'bg-transparent text-text-muted border-border-subtle hover:text-text-secondary hover:border-border-strong'
+              ? 'bg-[var(--bsi-primary)]/20 text-[var(--bsi-primary)] border-[var(--bsi-primary)]/30'
+              : 'bg-transparent text-[rgba(196,184,165,0.35)] border-[var(--border-vintage)] hover:text-[var(--bsi-dust)] hover:border-[rgba(140,98,57,0.5)]'
           }`}
         >
           {opt.label}
@@ -180,21 +180,21 @@ export function PlayerSearch({
           onFocus={() => results.length > 0 && setShowDropdown(true)}
           placeholder={placeholder}
           autoFocus={autoFocus}
-          className="w-full px-4 py-3 bg-surface-dugout border border-border-subtle rounded-sm text-text-primary placeholder-text-muted text-sm font-body focus:outline-none focus:border-burnt-orange/50 transition-colors"
+          className="w-full px-4 py-3 bg-surface-dugout border border-[var(--border-vintage)] rounded-sm text-[var(--bsi-bone)] placeholder-text-muted text-sm font-body focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-colors"
         />
         {searching && (
           <div className="absolute right-3 top-1/2 -translate-y-1/2">
-            <div className="w-4 h-4 border-2 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
+            <div className="w-4 h-4 border-2 border-[var(--bsi-primary)]/30 border-t-[var(--bsi-primary)] rounded-full animate-spin" />
           </div>
         )}
 
         {/* Results dropdown */}
         {showDropdown && results.length > 0 && (
-          <div className="absolute top-full left-0 right-0 mt-1 bg-surface-dugout border border-border-subtle rounded-sm shadow-lg z-50 max-h-80 overflow-y-auto">
+          <div className="absolute top-full left-0 right-0 mt-1 bg-surface-dugout border border-[var(--border-vintage)] rounded-sm shadow-lg z-50 max-h-80 overflow-y-auto">
             {results.map((r) => {
               const content = (
-                <div className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-surface-press-box transition-colors cursor-pointer border-b border-border-subtle last:border-b-0">
-                  <p className="text-sm font-semibold text-text-primary">{r.name}</p>
+                <div className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-surface-press-box transition-colors cursor-pointer border-b border-[var(--border-vintage)] last:border-b-0">
+                  <p className="text-sm font-semibold text-[var(--bsi-bone)]">{r.name}</p>
                   <Badge variant={sportBadgeVariant(r.sport)} size="sm">
                     {r.sportLabel}
                   </Badge>
@@ -220,8 +220,8 @@ export function PlayerSearch({
 
         {/* No results */}
         {showDropdown && query.length >= 2 && results.length === 0 && !searching && (
-          <div className="absolute top-full left-0 right-0 mt-1 bg-surface-dugout border border-border-subtle rounded-sm shadow-lg z-50">
-            <p className="px-4 py-3 text-sm text-text-muted text-center">
+          <div className="absolute top-full left-0 right-0 mt-1 bg-surface-dugout border border-[var(--border-vintage)] rounded-sm shadow-lg z-50">
+            <p className="px-4 py-3 text-sm text-[rgba(196,184,165,0.35)] text-center">
               No players found for &ldquo;{query}&rdquo;
             </p>
           </div>

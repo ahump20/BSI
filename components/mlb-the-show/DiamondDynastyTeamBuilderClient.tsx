@@ -217,7 +217,7 @@ export function DiamondDynastyTeamBuilderClient() {
                         type="button"
                         onClick={handleSaveBuild}
                         disabled={saving || selections.length === 0}
-                        className="rounded-sm border border-burnt-orange bg-burnt-orange/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-burnt-orange disabled:opacity-50"
+                        className="rounded-sm border border-[var(--bsi-primary)] bg-[var(--bsi-primary)]/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-primary)] disabled:opacity-50"
                       >
                         {saving ? 'Saving…' : 'Save public build'}
                       </button>
@@ -225,9 +225,9 @@ export function DiamondDynastyTeamBuilderClient() {
                   </div>
 
                   {savedBuild ? (
-                    <div className="rounded-sm border border-burnt-orange/35 bg-burnt-orange/10 px-4 py-4 text-sm text-[var(--bsi-bone)]">
+                    <div className="rounded-sm border border-[var(--bsi-primary)]/35 bg-[var(--bsi-primary)]/10 px-4 py-4 text-sm text-[var(--bsi-bone)]">
                       Build saved. Open the share view at{' '}
-                      <Link className="text-burnt-orange" href={buildShareHref(savedBuild.build.buildId)}>
+                      <Link className="text-[var(--bsi-primary)]" href={buildShareHref(savedBuild.build.buildId)}>
                         {buildShareHref(savedBuild.build.buildId)}
                       </Link>
                     </div>
@@ -248,7 +248,7 @@ export function DiamondDynastyTeamBuilderClient() {
                                 onClick={() => setActiveSlot(slot.key)}
                                 className={`rounded-sm border px-4 py-4 text-left transition-colors ${
                                   active
-                                    ? 'border-burnt-orange bg-burnt-orange/10'
+                                    ? 'border-[var(--bsi-primary)] bg-[var(--bsi-primary)]/10'
                                     : 'border-[var(--border-vintage)] bg-[var(--surface-dugout)]'
                                 }`}
                               >
@@ -259,7 +259,7 @@ export function DiamondDynastyTeamBuilderClient() {
                                       {selection ? selection.displayName : 'Open slot'}
                                     </div>
                                   </div>
-                                  <div className="font-mono text-lg text-burnt-orange">{selection?.overall ?? '--'}</div>
+                                  <div className="font-mono text-lg text-[var(--bsi-primary)]">{selection?.overall ?? '--'}</div>
                                 </div>
                                 {selection ? (
                                   <div className="mt-3 grid gap-3 md:grid-cols-2">
@@ -386,20 +386,20 @@ export function DiamondDynastyTeamBuilderClient() {
                                 </div>
                               </div>
                               <div className="text-right">
-                                <div className="font-mono text-lg text-burnt-orange">{card.overall}</div>
+                                <div className="font-mono text-lg text-[var(--bsi-primary)]">{card.overall}</div>
                                 <div className="text-xs text-[var(--bsi-dust)]">{formatCompactStub(card.market?.bestSellNow)}</div>
                               </div>
                             </div>
                             <div className="mt-3 flex items-center justify-between text-xs text-[var(--bsi-dust)]">
                               <span>Assign to {reference.slots.find((slot) => slot.key === activeSlot)?.label ?? activeSlot}</span>
-                              <Link href={buildCardHref(card.id)} className="text-burnt-orange">
+                              <Link href={buildCardHref(card.id)} className="text-[var(--bsi-primary)]">
                                 Detail
                               </Link>
                             </div>
                             <button
                               type="button"
                               onClick={() => assignCard(activeSlot, card, card.market)}
-                              className="mt-3 rounded-sm border border-burnt-orange bg-burnt-orange/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-burnt-orange"
+                              className="mt-3 rounded-sm border border-[var(--bsi-primary)] bg-[var(--bsi-primary)]/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-primary)]"
                             >
                               Assign card
                             </button>

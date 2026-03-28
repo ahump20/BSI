@@ -566,7 +566,7 @@ export default function SavantVisualsPage() {
 
   return (
     <>
-      <div>
+      <div className="min-h-screen bg-[#0A0A0A] text-bsi-bone">
         <Section padding="lg" className="pt-6">
           <Container size="wide">
             {/* Breadcrumb */}
@@ -611,7 +611,7 @@ export default function SavantVisualsPage() {
             {Array.from(toolsByCategory.entries()).map(([category, tools]) => (
               <ScrollReveal key={category} direction="up" delay={100}>
                 <div className="mb-10">
-                  <h2 className="font-display text-sm uppercase tracking-widest text-text-muted mb-4">
+                  <h2 className="font-display text-sm uppercase tracking-widest text-bsi-dust/50 mb-4">
                     {CATEGORY_LABELS[category] ?? category}
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -627,16 +627,16 @@ export default function SavantVisualsPage() {
                           padding="md"
                           className={`h-full transition-all duration-300 ${
                             activeViz === tool.id
-                              ? 'border-burnt-orange/40 shadow-[0_0_20px_rgba(191,87,0,0.1)]'
+                              ? 'border-[var(--bsi-primary)]/40 shadow-[0_0_20px_rgba(191,87,0,0.1)]'
                               : 'hover:border-[var(--svt-accent)]/30'
                           }`}
                         >
                           {/* Thumbnail placeholder */}
                           <div className={`h-24 rounded-sm mb-3 flex items-center justify-center ${
-                            tool.available ? 'bg-gradient-to-br from-surface-light to-surface-medium' : 'bg-surface-light'
+                            tool.available ? 'bg-gradient-to-br from-surface-light to-surface-medium' : 'bg-[#111111]'
                           }`}>
                             {tool.available ? (
-                              <svg viewBox="0 0 48 48" className="w-10 h-10 text-burnt-orange/40">
+                              <svg viewBox="0 0 48 48" className="w-10 h-10 text-[var(--bsi-primary)]/40">
                                 <rect x="4" y="4" width="40" height="40" rx="4" fill="none" stroke="currentColor" strokeWidth="1.5" />
                                 <circle cx="16" cy="28" r="4" fill="currentColor" opacity="0.5" />
                                 <circle cx="28" cy="18" r="3" fill="currentColor" opacity="0.3" />
@@ -644,25 +644,25 @@ export default function SavantVisualsPage() {
                                 <line x1="8" y1="40" x2="40" y2="12" stroke="currentColor" strokeWidth="1" opacity="0.2" />
                               </svg>
                             ) : (
-                              <span className="text-[10px] font-display uppercase tracking-widest text-text-muted">Coming Soon</span>
+                              <span className="text-[10px] font-display uppercase tracking-widest text-bsi-dust/50">Coming Soon</span>
                             )}
                           </div>
 
-                          <h3 className="font-display text-sm uppercase tracking-wider text-text-primary mb-1">
+                          <h3 className="font-display text-sm uppercase tracking-wider text-bsi-bone mb-1">
                             {tool.title}
                           </h3>
-                          <p className="text-[11px] text-text-muted leading-relaxed">
+                          <p className="text-[11px] text-bsi-dust/50 leading-relaxed">
                             {tool.description}
                           </p>
 
                           {tool.available && (
                             <div className="mt-3 flex items-center gap-1.5">
                               <span className="w-1.5 h-1.5 rounded-full bg-[var(--bsi-primary)]" />
-                              <span className="text-[9px] font-mono text-text-muted uppercase tracking-wider">
+                              <span className="text-[9px] font-mono text-bsi-dust/50 uppercase tracking-wider">
                                 {activeViz === tool.id ? 'Active' : 'Click to explore'}
                               </span>
                               {tool.proRequired && (
-                                <span className="text-[7px] font-mono text-burnt-orange ml-1 uppercase">Pro</span>
+                                <span className="text-[7px] font-mono text-[var(--bsi-primary)] ml-1 uppercase">Pro</span>
                               )}
                             </div>
                           )}
@@ -682,7 +682,7 @@ export default function SavantVisualsPage() {
                   {activeViz === 'plate-discipline' && (
                     battingLoading ? (
                       <Card padding="lg" className="text-center">
-                        <span className="text-xs text-text-muted font-mono">Loading scatter data...</span>
+                        <span className="text-xs text-bsi-dust/50 font-mono">Loading scatter data...</span>
                       </Card>
                     ) : (
                       <PlateDisciplineScatter data={scatterData} />
@@ -693,7 +693,7 @@ export default function SavantVisualsPage() {
                   {activeViz === 'power-contact' && (
                     battingLoading ? (
                       <Card padding="lg" className="text-center">
-                        <span className="text-xs text-text-muted font-mono">Loading scatter data...</span>
+                        <span className="text-xs text-bsi-dust/50 font-mono">Loading scatter data...</span>
                       </Card>
                     ) : (
                       <PowerVsContact data={powerContactData} />
@@ -704,7 +704,7 @@ export default function SavantVisualsPage() {
                   {activeViz === 'conference-heatmap' && (
                     confLoading ? (
                       <Card padding="lg" className="text-center">
-                        <span className="text-xs text-text-muted font-mono">Loading conference data...</span>
+                        <span className="text-xs text-bsi-dust/50 font-mono">Loading conference data...</span>
                       </Card>
                     ) : (
                       <ConferenceHeatmap data={confRes?.data ?? []} />
@@ -715,14 +715,14 @@ export default function SavantVisualsPage() {
                   {activeViz === 'era-fip-gap' && (
                     pitchingLoading ? (
                       <Card padding="lg" className="text-center">
-                        <span className="text-xs text-text-muted font-mono">Loading pitching data...</span>
+                        <span className="text-xs text-bsi-dust/50 font-mono">Loading pitching data...</span>
                       </Card>
                     ) : eraFipData.length === 0 ? (
                       <Card padding="lg" className="text-center">
                         <div className="py-6">
-                          <span className="text-sm text-text-muted">
+                          <span className="text-sm text-bsi-dust/50">
                             FIP data requires Pro tier.{' '}
-                            <Link href="/pricing" className="text-burnt-orange hover:text-ember transition-colors">
+                            <Link href="/pricing" className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors">
                               Upgrade to unlock
                             </Link>
                           </span>
@@ -737,14 +737,14 @@ export default function SavantVisualsPage() {
                   {activeViz === 'batted-ball' && (
                     battingLoading ? (
                       <Card padding="lg" className="text-center">
-                        <span className="text-xs text-text-muted font-mono">Loading batted ball data...</span>
+                        <span className="text-xs text-bsi-dust/50 font-mono">Loading batted ball data...</span>
                       </Card>
                     ) : battedBallData.length === 0 ? (
                       <Card padding="lg" className="text-center">
                         <div className="py-6">
-                          <span className="text-sm text-text-muted">
+                          <span className="text-sm text-bsi-dust/50">
                             wOBA data requires Pro tier.{' '}
-                            <Link href="/pricing" className="text-burnt-orange hover:text-ember transition-colors">
+                            <Link href="/pricing" className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors">
                               Upgrade to unlock
                             </Link>
                           </span>
@@ -759,14 +759,14 @@ export default function SavantVisualsPage() {
                   {activeViz === 'pitching-command' && (
                     pitchingLoading ? (
                       <Card padding="lg" className="text-center">
-                        <span className="text-xs text-text-muted font-mono">Loading pitching data...</span>
+                        <span className="text-xs text-bsi-dust/50 font-mono">Loading pitching data...</span>
                       </Card>
                     ) : pitchingCommandData.length === 0 ? (
                       <Card padding="lg" className="text-center">
                         <div className="py-6">
-                          <span className="text-sm text-text-muted">
+                          <span className="text-sm text-bsi-dust/50">
                             K/9 data requires Pro tier.{' '}
-                            <Link href="/pricing" className="text-burnt-orange hover:text-ember transition-colors">
+                            <Link href="/pricing" className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors">
                               Upgrade to unlock
                             </Link>
                           </span>
@@ -781,7 +781,7 @@ export default function SavantVisualsPage() {
                   {activeViz === 'percentile-card' && (
                     battingLoading ? (
                       <Card padding="lg" className="text-center">
-                        <span className="text-xs text-text-muted font-mono">Loading player data...</span>
+                        <span className="text-xs text-bsi-dust/50 font-mono">Loading player data...</span>
                       </Card>
                     ) : (
                       <div className="max-w-lg mx-auto">
@@ -791,13 +791,13 @@ export default function SavantVisualsPage() {
                             <select
                               value={selectedPlayerId}
                               onChange={(e) => setSelectedPlayerId(e.target.value)}
-                              className="w-full bg-surface-light border border-border rounded-sm px-3 py-2 text-sm text-text-tertiary font-mono appearance-none cursor-pointer hover:border-border-strong transition-colors focus:outline-none focus:border-burnt-orange/40"
+                              className="w-full bg-[#111111] border border-[rgba(140,98,57,0.3)] rounded-sm px-3 py-2 text-sm text-bsi-dust font-mono appearance-none cursor-pointer hover:border-[rgba(140,98,57,0.5)] transition-colors focus:outline-none focus:border-[var(--bsi-primary)]/40"
                             >
-                              <option value="" className="bg-background-secondary text-text-primary">
+                              <option value="" className="bg-[#161616] text-bsi-bone">
                                 Top player (auto)
                               </option>
                               {playerOptions.map(p => (
-                                <option key={p.id} value={p.id} className="bg-background-secondary text-text-primary">
+                                <option key={p.id} value={p.id} className="bg-[#161616] text-bsi-bone">
                                   {p.name} — {p.team}
                                 </option>
                               ))}
@@ -814,7 +814,7 @@ export default function SavantVisualsPage() {
                           />
                         ) : (
                           <Card padding="lg" className="text-center">
-                            <span className="text-xs text-text-muted font-mono">No player data available</span>
+                            <span className="text-xs text-bsi-dust/50 font-mono">No player data available</span>
                           </Card>
                         )}
                       </div>
@@ -842,7 +842,7 @@ export default function SavantVisualsPage() {
                     return (
                       <div>
                         <div className="mb-3">
-                          <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider">
+                          <span className="text-[10px] font-mono text-bsi-dust/50 uppercase tracking-wider">
                             {hasRealData
                               ? `${topGame.away_team} @ ${topGame.home_team} — ${topGame.excitement_rating?.replace('-', ' ')}`
                               : 'Demo: Sample 9-inning game with walk-off finish'}
@@ -860,7 +860,7 @@ export default function SavantVisualsPage() {
                               : 'instant-classic'
                           }
                         />
-                        <p className="text-[11px] text-text-muted mt-3 leading-relaxed max-w-xl">
+                        <p className="text-[11px] text-bsi-dust/50 mt-3 leading-relaxed max-w-xl">
                           {hasRealData
                             ? 'Showing the most volatile game from today. Each scoring event is a node on the river — hover to see what happened.'
                             : 'During live games, momentum data populates automatically from the MMI engine. Each scoring event becomes a node on the river — hover to see what happened.'}
@@ -873,7 +873,7 @@ export default function SavantVisualsPage() {
                   {activeViz === 'matchup-theater' && (
                     (battingLoading || pitchingLoading) ? (
                       <Card padding="lg" className="text-center">
-                        <span className="text-xs text-text-muted font-mono">Loading player data...</span>
+                        <span className="text-xs text-bsi-dust/50 font-mono">Loading player data...</span>
                       </Card>
                     ) : (
                       <MatchupTheater
@@ -890,7 +890,7 @@ export default function SavantVisualsPage() {
                   {activeViz === 'scouting-radar' && (
                     battingLoading ? (
                       <Card padding="lg" className="text-center">
-                        <span className="text-xs text-text-muted font-mono">Loading batting data...</span>
+                        <span className="text-xs text-bsi-dust/50 font-mono">Loading batting data...</span>
                       </Card>
                     ) : (
                       <ScoutingRadar
@@ -903,7 +903,7 @@ export default function SavantVisualsPage() {
                   {activeViz === 'similarity-map' && (
                     battingLoading ? (
                       <Card padding="lg" className="text-center">
-                        <span className="text-xs text-text-muted font-mono">Loading batting data...</span>
+                        <span className="text-xs text-bsi-dust/50 font-mono">Loading batting data...</span>
                       </Card>
                     ) : (
                       <SimilarityMap
@@ -917,7 +917,7 @@ export default function SavantVisualsPage() {
                   {activeViz === 'stat-distribution' && (
                     battingLoading ? (
                       <Card padding="lg" className="text-center">
-                        <span className="text-xs text-text-muted font-mono">Loading batting data...</span>
+                        <span className="text-xs text-bsi-dust/50 font-mono">Loading batting data...</span>
                       </Card>
                     ) : (
                       <StatDistribution
@@ -929,7 +929,7 @@ export default function SavantVisualsPage() {
                   {activeViz === 'team-percentile' && (
                     battingLoading ? (
                       <Card padding="lg" className="text-center">
-                        <span className="text-xs text-text-muted font-mono">Loading batting data...</span>
+                        <span className="text-xs text-bsi-dust/50 font-mono">Loading batting data...</span>
                       </Card>
                     ) : (
                       <TeamPercentileCard
@@ -941,7 +941,7 @@ export default function SavantVisualsPage() {
                   {activeViz === 'compare-scatter' && (
                     battingLoading ? (
                       <Card padding="lg" className="text-center">
-                        <span className="text-xs text-text-muted font-mono">Loading batting data...</span>
+                        <span className="text-xs text-bsi-dust/50 font-mono">Loading batting data...</span>
                       </Card>
                     ) : (() => {
                       const teams = [...new Set(enrichedBatters.map(b => b.team))].slice(0, 2);
@@ -960,12 +960,12 @@ export default function SavantVisualsPage() {
             )}
 
             {/* Attribution */}
-            <div className="mt-8 text-center text-xs text-text-muted">
+            <div className="mt-8 text-center text-xs text-bsi-dust/50">
               <p>
                 Data: BSI College Baseball Savant ·{' '}
                 <Link
                   href="/college-baseball/savant"
-                  className="text-burnt-orange hover:text-ember transition-colors"
+                  className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
                 >
                   Back to Leaderboards
                 </Link>

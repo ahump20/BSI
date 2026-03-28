@@ -81,15 +81,15 @@ export default function GameSummaryClient() {
               <Card key={statKey} variant="default" padding="md">
                 <div className="flex items-center gap-3 mb-2">
                   <Badge variant={variant}>{label}</Badge>
-                  <span className="text-text-tertiary text-sm">Leader</span>
+                  <span className="text-[rgba(196,184,165,0.5)] text-sm">Leader</span>
                 </div>
-                <p className="text-text-primary font-semibold text-lg">
+                <p className="text-[var(--bsi-bone)] font-semibold text-lg">
                   {topPerformer.athlete?.displayName || 'Unknown'}
                 </p>
-                <p className="text-text-secondary text-sm mt-1">
+                <p className="text-[var(--bsi-dust)] text-sm mt-1">
                   {topPerformer.displayValue || ''}
                   {topPerformer.athlete?.position?.abbreviation && (
-                    <span className="text-text-tertiary ml-2">
+                    <span className="text-[rgba(196,184,165,0.5)] ml-2">
                       ({topPerformer.athlete.position.abbreviation})
                     </span>
                   )}
@@ -103,7 +103,7 @@ export default function GameSummaryClient() {
       {/* Key Stat Comparison */}
       {hasStats && (
         <Card variant="default" padding="md">
-          <h3 className="text-lg font-semibold text-text-primary mb-4">Key Stats</h3>
+          <h3 className="text-lg font-semibold text-[var(--bsi-bone)] mb-4">Key Stats</h3>
           <div className="space-y-4">
             {comparisonStats.map((item) => {
               const awayVal = getStatValue(awayTeam, item.stat);
@@ -128,26 +128,26 @@ export default function GameSummaryClient() {
                   <div className="flex items-center justify-between mb-1">
                     <span
                       className={`text-sm font-mono ${
-                        !tied && awayBetter ? 'text-success font-bold' : 'text-text-secondary'
+                        !tied && awayBetter ? 'text-success font-bold' : 'text-[var(--bsi-dust)]'
                       }`}
                     >
                       {awayVal || '-'}
                     </span>
-                    <span className="text-xs text-text-tertiary uppercase tracking-wide">
+                    <span className="text-xs text-[rgba(196,184,165,0.5)] uppercase tracking-wide">
                       {item.label}
                     </span>
                     <span
                       className={`text-sm font-mono ${
-                        !tied && !awayBetter ? 'text-success font-bold' : 'text-text-secondary'
+                        !tied && !awayBetter ? 'text-success font-bold' : 'text-[var(--bsi-dust)]'
                       }`}
                     >
                       {homeVal || '-'}
                     </span>
                   </div>
-                  <div className="flex h-2 rounded-full overflow-hidden bg-background-tertiary">
+                  <div className="flex h-2 rounded-full overflow-hidden bg-[var(--surface-dugout)]">
                     <div
                       className={`transition-all ${
-                        !tied && awayBetter ? 'bg-success' : 'bg-burnt-orange/50'
+                        !tied && awayBetter ? 'bg-success' : 'bg-[var(--bsi-primary)]/50'
                       }`}
                       style={{
                         width: `${awayNum + homeNum > 0 ? (awayNum / (awayNum + homeNum)) * 100 : 50}%`,
@@ -155,7 +155,7 @@ export default function GameSummaryClient() {
                     />
                     <div
                       className={`transition-all ${
-                        !tied && !awayBetter ? 'bg-success' : 'bg-burnt-orange/50'
+                        !tied && !awayBetter ? 'bg-success' : 'bg-[var(--bsi-primary)]/50'
                       }`}
                       style={{
                         width: `${awayNum + homeNum > 0 ? (homeNum / (awayNum + homeNum)) * 100 : 50}%`,
@@ -175,7 +175,7 @@ export default function GameSummaryClient() {
           <div className="text-center py-8">
             <svg
               viewBox="0 0 24 24"
-              className="w-16 h-16 text-text-tertiary mx-auto mb-4"
+              className="w-16 h-16 text-[rgba(196,184,165,0.5)] mx-auto mb-4"
               fill="none"
               stroke="currentColor"
               strokeWidth="1.5"
@@ -183,8 +183,8 @@ export default function GameSummaryClient() {
               <circle cx="12" cy="12" r="10" />
               <path d="M12 8v4l3 3" />
             </svg>
-            <p className="text-text-secondary">Game hasn't started yet</p>
-            <p className="text-text-tertiary text-sm mt-2">
+            <p className="text-[var(--bsi-dust)]">Game hasn't started yet</p>
+            <p className="text-[rgba(196,184,165,0.5)] text-sm mt-2">
               Leaders, stats, and box score will appear once kickoff happens
             </p>
           </div>

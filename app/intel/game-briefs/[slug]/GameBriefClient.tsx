@@ -133,9 +133,9 @@ export function GameBriefClient({ slug }: { slug: string }) {
               <div className="max-w-3xl animate-pulse space-y-4">
                 <div className="h-6 bg-border-subtle rounded-sm w-1/4" />
                 <div className="h-10 bg-border-subtle rounded-sm w-3/4" />
-                <div className="h-40 bg-surface-light rounded-sm" />
-                <div className="h-4 bg-surface-light rounded-sm w-full" />
-                <div className="h-4 bg-surface-light rounded-sm w-5/6" />
+                <div className="h-40 bg-[var(--surface-press-box)] rounded-sm" />
+                <div className="h-4 bg-[var(--surface-press-box)] rounded-sm w-full" />
+                <div className="h-4 bg-[var(--surface-press-box)] rounded-sm w-5/6" />
               </div>
             </Container>
           </Section>
@@ -151,10 +151,10 @@ export function GameBriefClient({ slug }: { slug: string }) {
         <div>
           <Section padding="lg">
             <Container>
-              <h1 className="font-display text-2xl font-bold text-text-primary uppercase">Brief Not Found</h1>
-              <p className="text-text-muted mt-2">
+              <h1 className="font-display text-2xl font-bold text-[var(--bsi-bone)] uppercase">Brief Not Found</h1>
+              <p className="text-[rgba(196,184,165,0.35)] mt-2">
                 This game brief doesn&#39;t exist yet.{' '}
-                <Link href="/intel/game-briefs" className="text-burnt-orange hover:text-ember transition-colors">
+                <Link href="/intel/game-briefs" className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors">
                   Browse all briefs &#8594;
                 </Link>
               </p>
@@ -209,11 +209,11 @@ export function GameBriefClient({ slug }: { slug: string }) {
               />
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-4 text-sm text-text-muted">
-              <Link href="/intel/game-briefs" className="hover:text-text-secondary transition-colors">
+            <div className="mt-8 flex flex-wrap gap-4 text-sm text-[rgba(196,184,165,0.35)]">
+              <Link href="/intel/game-briefs" className="hover:text-[var(--bsi-dust)] transition-colors">
                 &#8592; All Game Briefs
               </Link>
-              <Link href="/intel" className="hover:text-text-secondary transition-colors">
+              <Link href="/intel" className="hover:text-[var(--bsi-dust)] transition-colors">
                 Intel Dashboard
               </Link>
             </div>

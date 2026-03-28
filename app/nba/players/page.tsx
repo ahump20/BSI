@@ -65,11 +65,11 @@ function SkeletonPlayerCard() {
   return (
     <Card variant="default" padding="md" className="animate-pulse">
       <div className="flex items-center gap-4">
-        <div className="w-16 h-16 bg-background-tertiary rounded-full" />
+        <div className="w-16 h-16 bg-[var(--surface-dugout)] rounded-full" />
         <div className="flex-1 space-y-2">
-          <div className="h-5 bg-background-tertiary rounded-sm w-3/4" />
-          <div className="h-4 bg-background-tertiary/50 rounded-sm w-1/2" />
-          <div className="h-3 bg-background-tertiary/30 rounded-sm w-1/3" />
+          <div className="h-5 bg-[var(--surface-dugout)] rounded-sm w-3/4" />
+          <div className="h-4 bg-[var(--surface-dugout)]/50 rounded-sm w-1/2" />
+          <div className="h-3 bg-[var(--surface-dugout)]/30 rounded-sm w-1/3" />
         </div>
       </div>
     </Card>
@@ -109,10 +109,10 @@ function PlayerCard({ player }: { player: Player }) {
           </div>
 
           <div className="flex-1 min-w-0">
-            <h3 className="font-display font-bold text-text-primary text-lg truncate group-hover:text-burnt-orange transition-colors">
+            <h3 className="font-display font-bold text-[var(--bsi-bone)] text-lg truncate group-hover:text-[var(--bsi-primary)] transition-colors">
               {player.name}
             </h3>
-            <div className="flex items-center gap-2 text-sm text-text-secondary">
+            <div className="flex items-center gap-2 text-sm text-[var(--bsi-dust)]">
               <span>#{player.jersey}</span>
               <span>•</span>
               <span>{player.position}</span>
@@ -128,13 +128,13 @@ function PlayerCard({ player }: { player: Player }) {
                   unoptimized
                 />
               )}
-              <span className="text-xs text-text-tertiary">{player.teamName}</span>
+              <span className="text-xs text-[rgba(196,184,165,0.5)]">{player.teamName}</span>
             </div>
           </div>
 
           <div className="text-right hidden sm:block">
-            <p className="text-text-secondary text-sm">{player.height}</p>
-            <p className="text-text-tertiary text-xs">{player.weight} lbs</p>
+            <p className="text-[var(--bsi-dust)] text-sm">{player.height}</p>
+            <p className="text-[rgba(196,184,165,0.5)] text-xs">{player.weight} lbs</p>
           </div>
         </div>
       </Card>
@@ -233,17 +233,17 @@ export default function NBAPlayersPage() {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/nba"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 NBA
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">Players</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">Players</span>
             </nav>
           </Container>
         </Section>
@@ -260,13 +260,13 @@ export default function NBAPlayersPage() {
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-gradient-blaze">
+              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-[var(--bsi-primary)]">
                 NBA Players
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="text-text-secondary mt-2">
+              <p className="text-[var(--bsi-dust)] mt-2">
                 Browse and search all NBA players • Click any player for full profile
               </p>
             </ScrollReveal>
@@ -284,12 +284,12 @@ export default function NBAPlayersPage() {
                   placeholder="Search players or teams..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-4 py-2 bg-background-tertiary border border-border-subtle rounded-sm text-text-primary placeholder-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors"
+                  className="w-full px-4 py-2 bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm text-[var(--bsi-bone)] placeholder-[rgba(196,184,165,0.5)] focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
                 />
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-primary"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-bone)]"
                   >
                     ✕
                   </button>
@@ -305,8 +305,8 @@ export default function NBAPlayersPage() {
                       onClick={() => setSelectedPosition(pos)}
                       className={`px-3 py-1.5 rounded-sm font-medium transition-all text-sm ${
                         selectedPosition === pos
-                          ? 'bg-burnt-orange text-white'
-                          : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
+                          ? 'bg-[var(--bsi-primary)] text-white'
+                          : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:bg-[var(--surface-press-box)]'
                       }`}
                     >
                       {pos}
@@ -318,7 +318,7 @@ export default function NBAPlayersPage() {
                 <select
                   value={selectedTeam}
                   onChange={(e) => setSelectedTeam(e.target.value)}
-                  className="px-4 py-2 bg-background-tertiary border border-border-subtle rounded-sm text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
+                  className="px-4 py-2 bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm text-[var(--bsi-bone)] focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
                 >
                   <option value="All">All Teams</option>
                   {teams
@@ -340,10 +340,10 @@ export default function NBAPlayersPage() {
             {error && (
               <Card variant="default" padding="lg" className="mb-6 bg-error/10 border-error/30">
                 <p className="text-error font-semibold">Error loading players</p>
-                <p className="text-text-secondary text-sm mt-1">{error}</p>
+                <p className="text-[var(--bsi-dust)] text-sm mt-1">{error}</p>
                 <button
                   onClick={teamsError ? retryTeams : () => fetchRosters(teams)}
-                  className="mt-3 px-4 py-2 bg-burnt-orange text-white rounded-sm text-sm hover:bg-burnt-orange/80 transition-colors"
+                  className="mt-3 px-4 py-2 bg-[var(--bsi-primary)] text-white rounded-sm text-sm hover:bg-[var(--bsi-primary)]/80 transition-colors"
                 >
                   Try Again
                 </button>
@@ -352,7 +352,7 @@ export default function NBAPlayersPage() {
 
             {/* Results count */}
             {!loading && !error && (
-              <p className="text-text-tertiary text-sm mb-4">
+              <p className="text-[rgba(196,184,165,0.5)] text-sm mb-4">
                 {filteredPlayers.length} player{filteredPlayers.length !== 1 ? 's' : ''} found
               </p>
             )}
@@ -366,13 +366,13 @@ export default function NBAPlayersPage() {
             ) : filteredPlayers.length === 0 ? (
               <Card variant="default" padding="lg" className="text-center">
                 <div className="py-8">
-                  <SportIcon sport="nba" className="w-16 h-16 mx-auto mb-4 text-text-tertiary" />
-                  <p className="text-text-secondary text-lg">
+                  <SportIcon sport="nba" className="w-16 h-16 mx-auto mb-4 text-[rgba(196,184,165,0.5)]" />
+                  <p className="text-[var(--bsi-dust)] text-lg">
                     {searchQuery || selectedPosition !== 'All' || selectedTeam !== 'All'
                       ? 'No players match your filters'
                       : 'No players found'}
                   </p>
-                  <p className="text-text-tertiary text-sm mt-2">
+                  <p className="text-[rgba(196,184,165,0.5)] text-sm mt-2">
                     Try adjusting your search or filters
                   </p>
                 </div>
@@ -388,7 +388,7 @@ export default function NBAPlayersPage() {
             )}
 
             {/* Data Source Footer */}
-            <div className="mt-8 pt-4 border-t border-border-subtle">
+            <div className="mt-8 pt-4 border-t border-[var(--border-vintage)]">
               <DataSourceBadge source="ESPN NBA API" timestamp={lastUpdated} />
             </div>
           </Container>
@@ -400,19 +400,19 @@ export default function NBAPlayersPage() {
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/nba/games"
-                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
+                className="px-6 py-3 bg-[var(--surface-dugout)] rounded-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-all"
               >
                 Live Scores →
               </Link>
               <Link
                 href="/nba/standings"
-                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
+                className="px-6 py-3 bg-[var(--surface-dugout)] rounded-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-all"
               >
                 Standings →
               </Link>
               <Link
                 href="/nba/teams"
-                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
+                className="px-6 py-3 bg-[var(--surface-dugout)] rounded-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-all"
               >
                 All Teams →
               </Link>

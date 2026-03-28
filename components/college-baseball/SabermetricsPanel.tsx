@@ -99,12 +99,12 @@ function StatBar({ label, value, leagueAvg, format, higher }: {
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between text-sm">
-        <span className="text-text-secondary">{label}</span>
-        <span className={`font-mono font-semibold ${aboveAvg ? 'text-[var(--bsi-success)]' : 'text-text-primary'}`}>
+        <span className="text-[var(--bsi-dust)]">{label}</span>
+        <span className={`font-mono font-semibold ${aboveAvg ? 'text-[var(--bsi-success)]' : 'text-[var(--bsi-bone)]'}`}>
           {format(value)}
         </span>
       </div>
-      <div className="relative h-2 bg-surface-light rounded-full overflow-hidden">
+      <div className="relative h-2 bg-[var(--surface-press-box)] rounded-full overflow-hidden">
         <div
           className="absolute inset-y-0 left-0 rounded-full transition-all"
           style={{ width: `${pct}%`, backgroundColor: aboveAvg ? 'var(--bsi-primary)' : 'var(--bsi-dust, #C4B8A5)' }}
@@ -115,7 +115,7 @@ function StatBar({ label, value, leagueAvg, format, higher }: {
           title={`League avg: ${format(leagueAvg)}`}
         />
       </div>
-      <div className="text-[10px] text-text-muted">
+      <div className="text-[10px] text-[rgba(196,184,165,0.35)]">
         League avg: {format(leagueAvg)}
       </div>
     </div>
@@ -145,7 +145,7 @@ export function SabermetricsPanel({ teamId, espnId, accent = 'var(--bsi-primary)
     return (
       <div className="space-y-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-24 bg-surface-light rounded-sm animate-pulse" />
+          <div key={i} className="h-24 bg-[var(--surface-press-box)] rounded-sm animate-pulse" />
         ))}
       </div>
     );
@@ -154,7 +154,7 @@ export function SabermetricsPanel({ teamId, espnId, accent = 'var(--bsi-primary)
   if (error || !data) {
     return (
       <Card padding="lg" className="text-center">
-        <p className="text-text-muted">Advanced stats unavailable — data requires minimum plate appearances and innings pitched.</p>
+        <p className="text-[rgba(196,184,165,0.35)]">Advanced stats unavailable — data requires minimum plate appearances and innings pitched.</p>
       </Card>
     );
   }
@@ -193,15 +193,15 @@ export function SabermetricsPanel({ teamId, espnId, accent = 'var(--bsi-primary)
 
             {/* Hitters Table — top 5 or full roster */}
             {displayHitters.length > 0 && (
-              <div className="mt-6 pt-4 border-t border-border-subtle">
+              <div className="mt-6 pt-4 border-t border-[var(--border-vintage)]">
                 <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-xs uppercase tracking-wider text-text-muted">
+                  <h4 className="text-xs uppercase tracking-wider text-[rgba(196,184,165,0.35)]">
                     {showAllHitters ? 'Full Roster' : 'Top Hitters'} by wRC+
                   </h4>
                   {sortedHitters.length > 5 && (
                     <button
                       onClick={() => setShowAllHitters(!showAllHitters)}
-                      className="text-xs text-burnt-orange hover:text-ember transition-colors"
+                      className="text-xs text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
                     >
                       {showAllHitters ? `Show top 5` : `Show all ${sortedHitters.length} players`}
                     </button>
@@ -210,7 +210,7 @@ export function SabermetricsPanel({ teamId, espnId, accent = 'var(--bsi-primary)
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="text-text-muted text-xs uppercase tracking-wider">
+                      <tr className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider">
                         <th className="text-left py-2">Player</th>
                         {showAllHitters && <th className="text-left py-2">Pos</th>}
                         <th className="text-right py-2">wRC+</th>
@@ -233,28 +233,28 @@ export function SabermetricsPanel({ teamId, espnId, accent = 'var(--bsi-primary)
                         const pa = hitter.pa;
 
                         return (
-                          <tr key={name} className="border-t border-border-subtle">
-                            <td className="py-2 text-text-primary font-medium">{name}</td>
+                          <tr key={name} className="border-t border-[var(--border-vintage)]">
+                            <td className="py-2 text-[var(--bsi-bone)] font-medium">{name}</td>
                             {showAllHitters && (
-                              <td className="py-2 text-text-muted text-xs">{hitter.position || '—'}</td>
+                              <td className="py-2 text-[rgba(196,184,165,0.35)] text-xs">{hitter.position || '—'}</td>
                             )}
                             <td className="py-2 text-right font-mono" style={{ color: wrcPlus >= 100 ? accent : undefined }}>
                               {Math.round(wrcPlus)}
                             </td>
-                            <td className="py-2 text-right font-mono text-text-secondary">{fmt3(woba)}</td>
-                            <td className="py-2 text-right font-mono text-text-secondary">{fmt3(babip)}</td>
-                            <td className="py-2 text-right font-mono text-text-secondary">{fmt3(iso)}</td>
+                            <td className="py-2 text-right font-mono text-[var(--bsi-dust)]">{fmt3(woba)}</td>
+                            <td className="py-2 text-right font-mono text-[var(--bsi-dust)]">{fmt3(babip)}</td>
+                            <td className="py-2 text-right font-mono text-[var(--bsi-dust)]">{fmt3(iso)}</td>
                             {showAllHitters && (
-                              <td className="py-2 text-right font-mono text-text-secondary">
+                              <td className="py-2 text-right font-mono text-[var(--bsi-dust)]">
                                 {hitter.kpct !== undefined ? fmtPct(hitter.kpct) : '—'}
                               </td>
                             )}
                             {showAllHitters && (
-                              <td className="py-2 text-right font-mono text-text-secondary">
+                              <td className="py-2 text-right font-mono text-[var(--bsi-dust)]">
                                 {hitter.bbpct !== undefined ? fmtPct(hitter.bbpct) : '—'}
                               </td>
                             )}
-                            <td className="py-2 text-right font-mono text-text-muted">{pa}</td>
+                            <td className="py-2 text-right font-mono text-[rgba(196,184,165,0.35)]">{pa}</td>
                           </tr>
                         );
                       })}
@@ -283,15 +283,15 @@ export function SabermetricsPanel({ teamId, espnId, accent = 'var(--bsi-primary)
 
             {/* Pitchers Table — top 5 or full roster */}
             {displayPitchers.length > 0 && (
-              <div className="mt-6 pt-4 border-t border-border-subtle">
+              <div className="mt-6 pt-4 border-t border-[var(--border-vintage)]">
                 <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-xs uppercase tracking-wider text-text-muted">
+                  <h4 className="text-xs uppercase tracking-wider text-[rgba(196,184,165,0.35)]">
                     {showAllPitchers ? 'Full Staff' : 'Top Pitchers'} by FIP
                   </h4>
                   {sortedPitchers.length > 5 && (
                     <button
                       onClick={() => setShowAllPitchers(!showAllPitchers)}
-                      className="text-xs text-burnt-orange hover:text-ember transition-colors"
+                      className="text-xs text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
                     >
                       {showAllPitchers ? `Show top 5` : `Show all ${sortedPitchers.length} pitchers`}
                     </button>
@@ -300,7 +300,7 @@ export function SabermetricsPanel({ teamId, espnId, accent = 'var(--bsi-primary)
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="text-text-muted text-xs uppercase tracking-wider">
+                      <tr className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider">
                         <th className="text-left py-2">Player</th>
                         {showAllPitchers && <th className="text-left py-2">Pos</th>}
                         <th className="text-right py-2">FIP</th>
@@ -319,17 +319,17 @@ export function SabermetricsPanel({ teamId, espnId, accent = 'var(--bsi-primary)
                         const ip = pitcher.ip;
 
                         return (
-                          <tr key={name} className="border-t border-border-subtle">
-                            <td className="py-2 text-text-primary font-medium">{name}</td>
+                          <tr key={name} className="border-t border-[var(--border-vintage)]">
+                            <td className="py-2 text-[var(--bsi-bone)] font-medium">{name}</td>
                             {showAllPitchers && (
-                              <td className="py-2 text-text-muted text-xs">{pitcher.position || '—'}</td>
+                              <td className="py-2 text-[rgba(196,184,165,0.35)] text-xs">{pitcher.position || '—'}</td>
                             )}
                             <td className="py-2 text-right font-mono" style={{ color: fip <= data.league.fip ? accent : undefined }}>
                               {fmt2(fip)}
                             </td>
-                            <td className="py-2 text-right font-mono text-text-secondary">{fmt1(k9)}</td>
-                            <td className="py-2 text-right font-mono text-text-secondary">{fmt1(bb9)}</td>
-                            <td className="py-2 text-right font-mono text-text-muted">{fmt1(ip)}</td>
+                            <td className="py-2 text-right font-mono text-[var(--bsi-dust)]">{fmt1(k9)}</td>
+                            <td className="py-2 text-right font-mono text-[var(--bsi-dust)]">{fmt1(bb9)}</td>
+                            <td className="py-2 text-right font-mono text-[rgba(196,184,165,0.35)]">{fmt1(ip)}</td>
                           </tr>
                         );
                       })}
@@ -343,9 +343,9 @@ export function SabermetricsPanel({ teamId, espnId, accent = 'var(--bsi-primary)
 
         {/* Data Source Attribution */}
         <div className="flex flex-col items-center gap-2">
-          <div className="text-xs text-text-muted text-center">
+          <div className="text-xs text-[rgba(196,184,165,0.35)] text-center">
             BSI Sabermetrics — computed from D1 box scores · Min. 20 PA / 15 IP ·{' '}
-            <a href="/college-baseball/savant/methodology" className="text-burnt-orange hover:underline">
+            <a href="/college-baseball/savant/methodology" className="text-[var(--bsi-primary)] hover:underline">
               Methodology
             </a>
           </div>

@@ -143,8 +143,8 @@ export default function IntelDashboard() {
       <DataErrorBoundary name="Intel Dashboard">
         <div className="flex min-h-[60vh] items-center justify-center">
           <div className="text-center">
-            <p className="font-display text-lg text-text-secondary">Unable to load intel data</p>
-            <p className="mt-1 font-mono text-[12px] text-text-muted">
+            <p className="font-display text-lg text-[var(--bsi-dust)]">Unable to load intel data</p>
+            <p className="mt-1 font-mono text-[12px] text-[rgba(196,184,165,0.35)]">
               Check network connection or try refreshing
             </p>
           </div>

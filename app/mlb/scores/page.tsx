@@ -157,19 +157,19 @@ function GameCard({ game }: { game: Game }) {
   return (
     <Link href={`/mlb/game/${gameId}`} className="block">
       <div
-        className={`bg-background-tertiary rounded-sm border transition-all hover:border-burnt-orange hover:bg-surface-light ${
-          isLive ? 'border-success' : 'border-border-subtle'
+        className={`bg-[var(--surface-dugout)] rounded-sm border transition-all hover:border-[var(--bsi-primary)] hover:bg-[var(--surface-press-box)] ${
+          isLive ? 'border-success' : 'border-[var(--border-vintage)]'
         }`}
       >
         {/* Game Status Bar */}
         <div
           className={`px-4 py-2 rounded-t-sm flex items-center justify-between ${
-            isLive ? 'bg-success/20' : isFinal ? 'bg-background-secondary' : 'bg-burnt-orange/20'
+            isLive ? 'bg-success/20' : isFinal ? 'bg-[var(--surface-dugout)]' : 'bg-[var(--bsi-primary)]/20'
           }`}
         >
           <span
             className={`text-xs font-semibold uppercase ${
-              isLive ? 'text-success' : isFinal ? 'text-text-tertiary' : 'text-burnt-orange'
+              isLive ? 'text-success' : isFinal ? 'text-[rgba(196,184,165,0.5)]' : 'text-[var(--bsi-primary)]'
             }`}
           >
             {isLive ? (
@@ -182,7 +182,7 @@ function GameCard({ game }: { game: Game }) {
             )}
           </span>
           {game.venue?.name && (
-            <span className="text-xs text-text-tertiary">{game.venue.name}</span>
+            <span className="text-xs text-[rgba(196,184,165,0.5)]">{game.venue.name}</span>
           )}
         </div>
 
@@ -191,17 +191,17 @@ function GameCard({ game }: { game: Game }) {
           {/* Away Team */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
+              <div className="w-8 h-8 bg-[var(--surface-dugout)] rounded-full flex items-center justify-center text-xs font-bold text-[var(--bsi-primary)]">
                 {away?.abbreviation || '—'}
               </div>
               <div>
                 <p
-                  className={`font-semibold ${isFinal && away?.isWinner ? 'text-text-primary' : 'text-text-secondary'}`}
+                  className={`font-semibold ${isFinal && away?.isWinner ? 'text-[var(--bsi-bone)]' : 'text-[var(--bsi-dust)]'}`}
                 >
                   {away?.name || 'Unknown'}
                 </p>
                 {away?.record && (
-                  <p className="text-xs text-text-tertiary">{away.record}</p>
+                  <p className="text-xs text-[rgba(196,184,165,0.5)]">{away.record}</p>
                 )}
               </div>
             </div>
@@ -214,10 +214,10 @@ function GameCard({ game }: { game: Game }) {
               <span
                 className={`text-2xl font-bold font-mono ${
                   isScheduled
-                    ? 'text-text-tertiary'
+                    ? 'text-[rgba(196,184,165,0.5)]'
                     : isFinal && away?.isWinner
-                      ? 'text-text-primary'
-                      : 'text-text-secondary'
+                      ? 'text-[var(--bsi-bone)]'
+                      : 'text-[var(--bsi-dust)]'
                 }`}
               >
                 {isScheduled ? '-' : away?.score ?? '-'}
@@ -228,17 +228,17 @@ function GameCard({ game }: { game: Game }) {
           {/* Home Team */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
+              <div className="w-8 h-8 bg-[var(--surface-dugout)] rounded-full flex items-center justify-center text-xs font-bold text-[var(--bsi-primary)]">
                 {home?.abbreviation || '—'}
               </div>
               <div>
                 <p
-                  className={`font-semibold ${isFinal && home?.isWinner ? 'text-text-primary' : 'text-text-secondary'}`}
+                  className={`font-semibold ${isFinal && home?.isWinner ? 'text-[var(--bsi-bone)]' : 'text-[var(--bsi-dust)]'}`}
                 >
                   {home?.name || 'Unknown'}
                 </p>
                 {home?.record && (
-                  <p className="text-xs text-text-tertiary">{home.record}</p>
+                  <p className="text-xs text-[rgba(196,184,165,0.5)]">{home.record}</p>
                 )}
               </div>
             </div>
@@ -251,10 +251,10 @@ function GameCard({ game }: { game: Game }) {
               <span
                 className={`text-2xl font-bold font-mono ${
                   isScheduled
-                    ? 'text-text-tertiary'
+                    ? 'text-[rgba(196,184,165,0.5)]'
                     : isFinal && home?.isWinner
-                      ? 'text-text-primary'
-                      : 'text-text-secondary'
+                      ? 'text-[var(--bsi-bone)]'
+                      : 'text-[var(--bsi-dust)]'
                 }`}
               >
                 {isScheduled ? '-' : home?.score ?? '-'}
@@ -265,20 +265,20 @@ function GameCard({ game }: { game: Game }) {
 
         {/* Game Details Footer */}
         {(isFinal || isLive) && (
-          <div className="px-4 pb-3 flex items-center justify-between text-xs text-text-tertiary border-t border-border-subtle pt-3">
+          <div className="px-4 pb-3 flex items-center justify-between text-xs text-[rgba(196,184,165,0.5)] border-t border-[var(--border-vintage)] pt-3">
             <span>
               H: {away?.hits ?? 0}-{home?.hits ?? 0}
             </span>
             <span>
               E: {away?.errors ?? 0}-{home?.errors ?? 0}
             </span>
-            <span className="text-burnt-orange hover:text-ember">Box Score →</span>
+            <span className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)]">Box Score →</span>
           </div>
         )}
 
         {/* Probable Pitchers for Scheduled Games */}
         {isScheduled && game.probablePitchers && (
-          <div className="px-4 pb-3 text-xs text-text-tertiary border-t border-border-subtle pt-3">
+          <div className="px-4 pb-3 text-xs text-[rgba(196,184,165,0.5)] border-t border-[var(--border-vintage)] pt-3">
             <div className="flex justify-between">
               <span>{game.probablePitchers.away?.name || 'Not Announced'}</span>
               <span>vs</span>
@@ -320,17 +320,17 @@ export default function MLBScoresPage() {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/mlb"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 MLB
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">Scores</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">Scores</span>
             </nav>
           </Container>
         </Section>
@@ -350,7 +350,7 @@ export default function MLBScoresPage() {
                 </ScrollReveal>
 
                 <ScrollReveal direction="up" delay={100}>
-                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-gradient-blaze">
+                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-[var(--bsi-primary)]">
                     MLB Scores
                   </h1>
                 </ScrollReveal>
@@ -366,7 +366,7 @@ export default function MLBScoresPage() {
             <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
               <button
                 onClick={() => setSelectedDate(getDateOffset(-3))}
-                className="p-2 text-text-tertiary hover:text-text-primary transition-colors"
+                className="p-2 text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-bone)] transition-colors"
                 aria-label="Previous days"
               >
                 <svg
@@ -390,8 +390,8 @@ export default function MLBScoresPage() {
                     onClick={() => setSelectedDate(dateValue)}
                     className={`px-4 py-2 rounded-sm font-semibold text-sm whitespace-nowrap transition-all ${
                       isSelected
-                        ? 'bg-burnt-orange text-white'
-                        : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium hover:text-text-primary'
+                        ? 'bg-[var(--bsi-primary)] text-white'
+                        : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:bg-[var(--surface-press-box)] hover:text-[var(--bsi-bone)]'
                     }`}
                   >
                     {option.label}
@@ -401,7 +401,7 @@ export default function MLBScoresPage() {
 
               <button
                 onClick={() => setSelectedDate(getDateOffset(3))}
-                className="p-2 text-text-tertiary hover:text-text-primary transition-colors"
+                className="p-2 text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-bone)] transition-colors"
                 aria-label="Next days"
               >
                 <svg
@@ -427,10 +427,10 @@ export default function MLBScoresPage() {
             ) : error ? (
               <Card variant="default" padding="lg" className="bg-error/10 border-error/30">
                 <p className="text-error font-semibold">Data Unavailable</p>
-                <p className="text-text-secondary text-sm mt-1">{error}</p>
+                <p className="text-[var(--bsi-dust)] text-sm mt-1">{error}</p>
                 <button
                   onClick={() => retry()}
-                  className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange/80 transition-colors"
+                  className="mt-4 px-4 py-2 bg-[var(--bsi-primary)] text-white rounded-sm hover:bg-[var(--bsi-primary)]/80 transition-colors"
                 >
                   Retry
                 </button>
@@ -445,7 +445,7 @@ export default function MLBScoresPage() {
                 {/* Live Games Section */}
                 {games.some((g) => g.status.isLive) && (
                   <div className="mb-8">
-                    <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+                    <h2 className="text-lg font-semibold text-[var(--bsi-bone)] mb-4 flex items-center gap-2">
                       <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
                       Live Games
                     </h2>
@@ -464,7 +464,7 @@ export default function MLBScoresPage() {
                 {/* Final Games */}
                 {games.some((g) => g.status.isFinal) && (
                   <div className="mb-8">
-                    <h2 className="text-lg font-semibold text-text-primary mb-4">Final</h2>
+                    <h2 className="text-lg font-semibold text-[var(--bsi-bone)] mb-4">Final</h2>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                       {games
                         .filter((g) => g.status.isFinal)
@@ -480,7 +480,7 @@ export default function MLBScoresPage() {
                 {/* Scheduled Games */}
                 {games.some((g) => !g.status.isLive && !g.status.isFinal) && (
                   <div>
-                    <h2 className="text-lg font-semibold text-text-primary mb-4">Upcoming</h2>
+                    <h2 className="text-lg font-semibold text-[var(--bsi-bone)] mb-4">Upcoming</h2>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                       {games
                         .filter((g) => !g.status.isLive && !g.status.isFinal)
@@ -494,13 +494,13 @@ export default function MLBScoresPage() {
                 )}
 
                 {/* Data Source Footer */}
-                <div className="mt-8 pt-4 border-t border-border-subtle flex items-center justify-between flex-wrap gap-4">
+                <div className="mt-8 pt-4 border-t border-[var(--border-vintage)] flex items-center justify-between flex-wrap gap-4">
                   <DataSourceBadge
                     source={meta?.dataSource || 'MLB Stats API'}
                     timestamp={formatTimestamp(meta?.lastUpdated)}
                   />
                   {hasLiveGames && (
-                    <span className="text-xs text-text-tertiary">
+                    <span className="text-xs text-[rgba(196,184,165,0.5)]">
                       Auto-refreshing every 30 seconds
                     </span>
                   )}

@@ -106,7 +106,7 @@ export default function TeamStatsClient() {
         <div className="text-center py-8">
           <svg
             viewBox="0 0 24 24"
-            className="w-16 h-16 text-text-tertiary mx-auto mb-4"
+            className="w-16 h-16 text-[rgba(196,184,165,0.5)] mx-auto mb-4"
             fill="none"
             stroke="currentColor"
             strokeWidth="1.5"
@@ -115,8 +115,8 @@ export default function TeamStatsClient() {
             <line x1="12" y1="20" x2="12" y2="4" />
             <line x1="6" y1="20" x2="6" y2="14" />
           </svg>
-          <p className="text-text-secondary">Game hasn't started yet.</p>
-          <p className="text-text-tertiary text-sm mt-2">
+          <p className="text-[var(--bsi-dust)]">Game hasn't started yet.</p>
+          <p className="text-[rgba(196,184,165,0.5)] text-sm mt-2">
             Head-to-head team stats show up once first pitch flies. Who's got the edge? You'll know
             soon.
           </p>
@@ -136,22 +136,22 @@ export default function TeamStatsClient() {
           {/* Team Headers */}
           <div className="flex items-center justify-between mb-6 px-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-background-secondary rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange">
+              <div className="w-12 h-12 bg-[var(--surface-dugout)] rounded-full flex items-center justify-center text-sm font-bold text-[var(--bsi-primary)]">
                 {game.teams.away.abbreviation}
               </div>
               <div>
-                <p className="font-semibold text-text-primary">{game.teams.away.name}</p>
-                <p className="text-text-tertiary text-sm">{game.teams.away.record}</p>
+                <p className="font-semibold text-[var(--bsi-bone)]">{game.teams.away.name}</p>
+                <p className="text-[rgba(196,184,165,0.5)] text-sm">{game.teams.away.record}</p>
               </div>
             </div>
-            <span className="text-text-tertiary text-sm font-semibold">VS</span>
+            <span className="text-[rgba(196,184,165,0.5)] text-sm font-semibold">VS</span>
             <div className="flex items-center gap-3 flex-row-reverse">
-              <div className="w-12 h-12 bg-background-secondary rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange">
+              <div className="w-12 h-12 bg-[var(--surface-dugout)] rounded-full flex items-center justify-center text-sm font-bold text-[var(--bsi-primary)]">
                 {game.teams.home.abbreviation}
               </div>
               <div className="text-right">
-                <p className="font-semibold text-text-primary">{game.teams.home.name}</p>
-                <p className="text-text-tertiary text-sm">{game.teams.home.record}</p>
+                <p className="font-semibold text-[var(--bsi-bone)]">{game.teams.home.name}</p>
+                <p className="text-[rgba(196,184,165,0.5)] text-sm">{game.teams.home.record}</p>
               </div>
             </div>
           </div>
@@ -173,26 +173,26 @@ export default function TeamStatsClient() {
                 <div key={stat.label} className="px-4">
                   <div className="flex items-center justify-between mb-1">
                     <span
-                      className={`text-sm font-mono ${awayWins && awayVal !== homeVal ? 'text-success font-bold' : 'text-text-secondary'}`}
+                      className={`text-sm font-mono ${awayWins && awayVal !== homeVal ? 'text-success font-bold' : 'text-[var(--bsi-dust)]'}`}
                     >
                       {stat.away}
                     </span>
-                    <span className="text-xs text-text-tertiary uppercase tracking-wide">
+                    <span className="text-xs text-[rgba(196,184,165,0.5)] uppercase tracking-wide">
                       {stat.label}
                     </span>
                     <span
-                      className={`text-sm font-mono ${!awayWins && awayVal !== homeVal ? 'text-success font-bold' : 'text-text-secondary'}`}
+                      className={`text-sm font-mono ${!awayWins && awayVal !== homeVal ? 'text-success font-bold' : 'text-[var(--bsi-dust)]'}`}
                     >
                       {stat.home}
                     </span>
                   </div>
-                  <div className="flex h-2 rounded-full overflow-hidden bg-background-tertiary">
+                  <div className="flex h-2 rounded-full overflow-hidden bg-[var(--surface-dugout)]">
                     <div
-                      className={`transition-all ${awayWins && awayVal !== homeVal ? 'bg-success' : 'bg-burnt-orange/50'}`}
+                      className={`transition-all ${awayWins && awayVal !== homeVal ? 'bg-success' : 'bg-[var(--bsi-primary)]/50'}`}
                       style={{ width: `${awayPct}%` }}
                     />
                     <div
-                      className={`transition-all ${!awayWins && awayVal !== homeVal ? 'bg-success' : 'bg-burnt-orange/50'}`}
+                      className={`transition-all ${!awayWins && awayVal !== homeVal ? 'bg-success' : 'bg-[var(--bsi-primary)]/50'}`}
                       style={{ width: `${homePct}%` }}
                     />
                   </div>
@@ -212,22 +212,22 @@ export default function TeamStatsClient() {
           <div className="space-y-4">
             {/* LOB */}
             {game.linescore && (
-              <div className="p-4 bg-background-tertiary rounded-sm">
-                <p className="text-text-tertiary text-sm mb-1">Left on Base</p>
+              <div className="p-4 bg-[var(--surface-dugout)] rounded-sm">
+                <p className="text-[rgba(196,184,165,0.5)] text-sm mb-1">Left on Base</p>
                 <div className="flex items-center justify-between">
                   <div className="text-center">
-                    <span className="text-text-tertiary text-xs">
+                    <span className="text-[rgba(196,184,165,0.5)] text-xs">
                       {game.teams.away.abbreviation}
                     </span>
-                    <p className="text-text-primary font-bold text-lg">
+                    <p className="text-[var(--bsi-bone)] font-bold text-lg">
                       {awayBattingTotals.h + awayBattingTotals.bb - awayBattingTotals.r}
                     </p>
                   </div>
                   <div className="text-center">
-                    <span className="text-text-tertiary text-xs">
+                    <span className="text-[rgba(196,184,165,0.5)] text-xs">
                       {game.teams.home.abbreviation}
                     </span>
-                    <p className="text-text-primary font-bold text-lg">
+                    <p className="text-[var(--bsi-bone)] font-bold text-lg">
                       {homeBattingTotals.h + homeBattingTotals.bb - homeBattingTotals.r}
                     </p>
                   </div>
@@ -237,22 +237,22 @@ export default function TeamStatsClient() {
 
             {/* Efficiency */}
             <div className="grid gap-4 md:grid-cols-2">
-              <div className="p-4 bg-background-tertiary rounded-sm">
-                <p className="text-text-tertiary text-sm mb-2">Hits with RISP</p>
-                <p className="text-text-secondary text-xs">
+              <div className="p-4 bg-[var(--surface-dugout)] rounded-sm">
+                <p className="text-[rgba(196,184,165,0.5)] text-sm mb-2">Hits with RISP</p>
+                <p className="text-[var(--bsi-dust)] text-xs">
                   Situational hitting data appears during live games
                 </p>
               </div>
-              <div className="p-4 bg-background-tertiary rounded-sm">
-                <p className="text-text-tertiary text-sm mb-2">Two-Out RBI</p>
-                <p className="text-text-secondary text-xs">
+              <div className="p-4 bg-[var(--surface-dugout)] rounded-sm">
+                <p className="text-[rgba(196,184,165,0.5)] text-sm mb-2">Two-Out RBI</p>
+                <p className="text-[var(--bsi-dust)] text-xs">
                   Clutch hitting metrics tracked during the game
                 </p>
               </div>
             </div>
 
             {/* Note */}
-            <p className="text-text-tertiary text-xs text-center pt-4 border-t border-border-subtle">
+            <p className="text-[rgba(196,184,165,0.5)] text-xs text-center pt-4 border-t border-[var(--border-vintage)]">
               Advanced metrics like exit velocity and launch angle require Statcast data integration
             </p>
           </div>

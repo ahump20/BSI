@@ -69,11 +69,11 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
         <Section padding="sm" className="border-b border-border">
           <Container>
             <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm flex-wrap">
-              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">College Baseball</Link>
-              <span className="text-text-muted">/</span>
-              <Link href="/college-baseball/texas-intelligence" className="text-text-muted hover:text-burnt-orange transition-colors">Texas Intel</Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-primary">vs {oppName}</span>
+              <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">College Baseball</Link>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <Link href="/college-baseball/texas-intelligence" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">Texas Intel</Link>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[var(--bsi-bone)]">vs {oppName}</span>
             </nav>
           </Container>
         </Section>
@@ -87,19 +87,19 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
               <div className="flex items-center justify-center gap-6 sm:gap-10">
                 <div className="text-center">
                   <img src={texasLogo} alt="Texas" className="w-16 h-16 sm:w-20 sm:h-20 object-contain mx-auto" loading="eager" />
-                  <div className="font-display text-lg sm:text-xl font-bold uppercase tracking-wide text-text-primary mt-2">Texas</div>
+                  <div className="font-display text-lg sm:text-xl font-bold uppercase tracking-wide text-[var(--bsi-bone)] mt-2">Texas</div>
                 </div>
                 <div className="text-center">
-                  <div className="font-display text-3xl sm:text-4xl font-bold text-text-muted">VS</div>
+                  <div className="font-display text-3xl sm:text-4xl font-bold text-[rgba(196,184,165,0.35)]">VS</div>
                   {h2h && (
-                    <div className="font-mono text-xs text-text-muted mt-1">
+                    <div className="font-mono text-xs text-[rgba(196,184,165,0.35)] mt-1">
                       H2H: {h2h.texasWins}–{h2h.opponentWins}
                     </div>
                   )}
                 </div>
                 <div className="text-center">
                   <img src={oppLogo} alt={oppName} className="w-16 h-16 sm:w-20 sm:h-20 object-contain mx-auto" loading="eager" />
-                  <div className="font-display text-lg sm:text-xl font-bold uppercase tracking-wide text-text-primary mt-2">{oppName}</div>
+                  <div className="font-display text-lg sm:text-xl font-bold uppercase tracking-wide text-[var(--bsi-bone)] mt-2">{oppName}</div>
                 </div>
               </div>
             </ScrollReveal>
@@ -111,7 +111,7 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
             <Container>
               <div className="space-y-4">
                 {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="h-24 bg-surface-light rounded-sm animate-pulse" />
+                  <div key={i} className="h-24 bg-[var(--surface-press-box)] rounded-sm animate-pulse" />
                 ))}
               </div>
             </Container>
@@ -120,7 +120,7 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
           <Section padding="lg" borderTop>
             <Container>
               <Card padding="lg" className="text-center">
-                <p className="text-text-muted text-sm">Matchup data is not available for this opponent right now.</p>
+                <p className="text-[rgba(196,184,165,0.35)] text-sm">Matchup data is not available for this opponent right now.</p>
               </Card>
             </Container>
           </Section>
@@ -139,7 +139,7 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
                         <div className="overflow-x-auto">
                           <table className="w-full text-sm">
                             <thead>
-                              <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                              <tr className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
                                 <th className="text-right py-2 px-2" style={{ color: ACCENT }}>Texas</th>
                                 <th className="text-center py-2 px-2 w-20">Stat</th>
                                 <th className="text-left py-2 px-2">{oppName.split(' ').pop()}</th>
@@ -175,7 +175,7 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
                         <div className="overflow-x-auto">
                           <table className="w-full text-sm">
                             <thead>
-                              <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                              <tr className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
                                 <th className="text-right py-2 px-2" style={{ color: ACCENT }}>Texas</th>
                                 <th className="text-center py-2 px-2 w-20">Stat</th>
                                 <th className="text-left py-2 px-2">{oppName.split(' ').pop()}</th>
@@ -210,25 +210,25 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-text-muted text-xs mb-4">
+                        <p className="text-[rgba(196,184,165,0.35)] text-xs mb-4">
                           Projected advantage based on pitcher FIP and hitter wRC+. Green favors Texas pitching; red favors opponent bats.
                         </p>
                         <div className="overflow-x-auto">
                           <table className="text-xs">
                             <thead>
                               <tr>
-                                <th className="py-2 px-2 text-left text-text-muted uppercase tracking-wider bg-[var(--surface-press-box)] min-w-[100px]">
+                                <th className="py-2 px-2 text-left text-[rgba(196,184,165,0.35)] uppercase tracking-wider bg-[var(--surface-press-box)] min-w-[100px]">
                                   Pitcher
                                 </th>
                                 {opp.topHitters.map((h, hi) => (
                                   <th
                                     key={`${h.player_name}-${hi}`}
-                                    className="py-2 px-2 text-center text-text-muted uppercase tracking-wider bg-[var(--surface-press-box)] min-w-[80px]"
+                                    className="py-2 px-2 text-center text-[rgba(196,184,165,0.35)] uppercase tracking-wider bg-[var(--surface-press-box)] min-w-[80px]"
                                   >
                                     <div className="truncate max-w-[80px]" title={h.player_name}>
                                       {h.player_name.split(' ').pop()}
                                     </div>
-                                    <div className="text-[9px] font-normal normal-case tracking-normal text-text-muted">
+                                    <div className="text-[9px] font-normal normal-case tracking-normal text-[rgba(196,184,165,0.35)]">
                                       {Math.round(h.wrc_plus)} wRC+
                                     </div>
                                   </th>
@@ -237,10 +237,10 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
                             </thead>
                             <tbody>
                               {texas.topPitchers.map((p, pi) => (
-                                <tr key={`${p.player_name}-${pi}`} className="border-t border-border-subtle">
-                                  <td className="py-2 px-2 text-text-primary font-medium whitespace-nowrap">
+                                <tr key={`${p.player_name}-${pi}`} className="border-t border-[var(--border-vintage)]">
+                                  <td className="py-2 px-2 text-[var(--bsi-bone)] font-medium whitespace-nowrap">
                                     <div>{p.player_name}</div>
-                                    <div className="text-[9px] text-text-muted font-normal">
+                                    <div className="text-[9px] text-[rgba(196,184,165,0.35)] font-normal">
                                       {p.fip.toFixed(2)} FIP
                                     </div>
                                   </td>
@@ -256,11 +256,11 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
                                     const cellBg =
                                       advantage === 'texas' ? 'bg-[var(--bsi-success)]/15'
                                       : advantage === 'opponent' ? 'bg-[var(--bsi-danger)]/15'
-                                      : 'bg-surface-light/20';
+                                      : 'bg-[var(--surface-press-box)]/20';
                                     const cellBorder =
                                       advantage === 'texas' ? 'border-[var(--bsi-success)]/30'
                                       : advantage === 'opponent' ? 'border-[var(--bsi-danger)]/30'
-                                      : 'border-border-subtle';
+                                      : 'border-[var(--border-vintage)]';
                                     return (
                                       <td
                                         key={`${p.player_name}-${hi}`}
@@ -269,7 +269,7 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
                                         <span className={`text-[10px] font-semibold uppercase ${
                                           advantage === 'texas' ? 'text-[var(--bsi-success)]'
                                           : advantage === 'opponent' ? 'text-[var(--bsi-danger)]'
-                                          : 'text-text-muted'
+                                          : 'text-[rgba(196,184,165,0.35)]'
                                         }`}>
                                           {advantage === 'texas' ? 'TX' : advantage === 'opponent' ? 'OPP' : '—'}
                                         </span>
@@ -281,7 +281,7 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
                             </tbody>
                           </table>
                         </div>
-                        <div className="flex items-center gap-4 mt-4 text-[10px] text-text-muted">
+                        <div className="flex items-center gap-4 mt-4 text-[10px] text-[rgba(196,184,165,0.35)]">
                           <span className="flex items-center gap-1.5">
                             <span className="w-3 h-3 rounded-sm bg-[var(--bsi-success)]/15 border border-[var(--bsi-success)]/30" />
                             Texas advantage
@@ -291,7 +291,7 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
                             Opponent advantage
                           </span>
                           <span className="flex items-center gap-1.5">
-                            <span className="w-3 h-3 rounded-sm bg-surface-light/20 border border-border-subtle" />
+                            <span className="w-3 h-3 rounded-sm bg-[var(--surface-press-box)]/20 border border-[var(--border-vintage)]" />
                             Neutral
                           </span>
                         </div>
@@ -319,13 +319,13 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
                         <CardContent>
                           <div className="space-y-2">
                             {texas.topHitters.map((h, i) => (
-                              <div key={`${h.player_name}-${i}`} className="flex items-center justify-between py-1.5 border-b border-border-subtle last:border-0">
+                              <div key={`${h.player_name}-${i}`} className="flex items-center justify-between py-1.5 border-b border-[var(--border-vintage)] last:border-0">
                                 <div>
-                                  <span className="text-text-primary text-sm font-medium">{h.player_name}</span>
-                                  <span className="text-text-muted text-xs ml-2">{h.position}</span>
+                                  <span className="text-[var(--bsi-bone)] text-sm font-medium">{h.player_name}</span>
+                                  <span className="text-[rgba(196,184,165,0.35)] text-xs ml-2">{h.position}</span>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                  <span className="font-mono text-xs text-text-secondary">{fmt3(h.woba)} wOBA</span>
+                                  <span className="font-mono text-xs text-[var(--bsi-dust)]">{fmt3(h.woba)} wOBA</span>
                                   <span className="font-mono text-sm font-bold" style={{ color: h.wrc_plus >= 100 ? ACCENT : undefined }}>
                                     {Math.round(h.wrc_plus)}
                                   </span>
@@ -349,13 +349,13 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
                         <CardContent>
                           <div className="space-y-2">
                             {opp.topHitters.map((h, i) => (
-                              <div key={`${h.player_name}-${i}`} className="flex items-center justify-between py-1.5 border-b border-border-subtle last:border-0">
+                              <div key={`${h.player_name}-${i}`} className="flex items-center justify-between py-1.5 border-b border-[var(--border-vintage)] last:border-0">
                                 <div>
-                                  <span className="text-text-primary text-sm font-medium">{h.player_name}</span>
-                                  <span className="text-text-muted text-xs ml-2">{h.position}</span>
+                                  <span className="text-[var(--bsi-bone)] text-sm font-medium">{h.player_name}</span>
+                                  <span className="text-[rgba(196,184,165,0.35)] text-xs ml-2">{h.position}</span>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                  <span className="font-mono text-xs text-text-secondary">{fmt3(h.woba)} wOBA</span>
+                                  <span className="font-mono text-xs text-[var(--bsi-dust)]">{fmt3(h.woba)} wOBA</span>
                                   <span className="font-mono text-sm font-bold" style={{ color: h.wrc_plus >= 100 ? ACCENT : undefined }}>
                                     {Math.round(h.wrc_plus)}
                                   </span>
@@ -391,13 +391,13 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
                             const texasWon = texasScore > oppScore;
                             return (
                               <div key={`${g.date}-${i}`} className="flex items-center justify-between rounded-sm bg-[var(--surface-press-box)] p-3">
-                                <div className="text-text-muted text-xs">{g.date}</div>
+                                <div className="text-[rgba(196,184,165,0.35)] text-xs">{g.date}</div>
                                 <div className="flex items-center gap-3">
-                                  <span className={`font-mono text-sm font-bold ${texasWon ? 'text-text-primary' : 'text-text-muted'}`}>
+                                  <span className={`font-mono text-sm font-bold ${texasWon ? 'text-[var(--bsi-bone)]' : 'text-[rgba(196,184,165,0.35)]'}`}>
                                     TX {texasScore}
                                   </span>
-                                  <span className="text-text-muted text-xs">–</span>
-                                  <span className={`font-mono text-sm font-bold ${!texasWon ? 'text-text-primary' : 'text-text-muted'}`}>
+                                  <span className="text-[rgba(196,184,165,0.35)] text-xs">–</span>
+                                  <span className={`font-mono text-sm font-bold ${!texasWon ? 'text-[var(--bsi-bone)]' : 'text-[rgba(196,184,165,0.35)]'}`}>
                                     {oppScore} {oppName.split(' ').pop()}
                                   </span>
                                   <span className={`text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded-sm ${
@@ -436,7 +436,7 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
               />
               <Link
                 href="/college-baseball/texas-intelligence"
-                className="text-sm text-burnt-orange hover:text-ember transition-colors"
+                className="text-sm text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 &larr; Back to Hub
               </Link>
@@ -457,11 +457,11 @@ function CompareRow({ stat, texas, opp, texasVal, oppVal, higher }: {
   const texasWins = higher ? texasVal > oppVal : texasVal < oppVal;
   const oppWins = higher ? oppVal > texasVal : oppVal < texasVal;
   return (
-    <tr className="border-t border-border-subtle">
+    <tr className="border-t border-[var(--border-vintage)]">
       <td className="py-2.5 px-2 text-right font-mono font-semibold" style={{ color: texasWins ? ACCENT : undefined }}>
         {texas}
       </td>
-      <td className="py-2.5 px-2 text-center text-text-muted text-xs uppercase tracking-wider">{stat}</td>
+      <td className="py-2.5 px-2 text-center text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider">{stat}</td>
       <td className="py-2.5 px-2 text-left font-mono font-semibold" style={{ color: oppWins ? '#4B9CD3' : undefined }}>
         {opp}
       </td>

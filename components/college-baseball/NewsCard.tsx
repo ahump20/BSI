@@ -15,7 +15,7 @@ interface NewsCardProps {
 const SOURCE_STYLES: Record<string, { bg: string; text: string; label: string }> = {
   espn: { bg: 'bg-[rgba(75,156,211,0.2)] border-[rgba(75,156,211,0.4)]', text: 'text-[var(--heritage-columbia-blue)]', label: 'ESPN' },
   highlightly: { bg: 'bg-[var(--bsi-success)]/20 border-[var(--bsi-success)]/40', text: 'text-[var(--bsi-success)]', label: 'Highlightly' },
-  bsi: { bg: 'bg-burnt-orange/20 border-burnt-orange/40', text: 'text-burnt-orange', label: 'BSI' },
+  bsi: { bg: 'bg-[var(--bsi-primary)]/20 border-[var(--bsi-primary)]/40', text: 'text-[var(--bsi-primary)]', label: 'BSI' },
 };
 
 const CATEGORY_STYLES: Record<string, string> = {
@@ -25,7 +25,7 @@ const CATEGORY_STYLES: Record<string, string> = {
   editorial: 'bg-[var(--heritage-columbia-blue)]/15 text-[var(--heritage-columbia-blue)] border-[var(--heritage-columbia-blue)]/30',
   analysis: 'bg-[var(--heritage-columbia-blue)]/15 text-[var(--heritage-columbia-blue)] border-[var(--heritage-columbia-blue)]/30',
   rankings: 'bg-orange-500/15 text-orange-400 border-orange-500/30',
-  general: 'bg-surface text-text-muted border-border-strong',
+  general: 'bg-surface text-[rgba(196,184,165,0.35)] border-[rgba(140,98,57,0.5)]',
 };
 
 export function NewsCard({
@@ -48,10 +48,10 @@ export function NewsCard({
       rel={url.startsWith('/') ? undefined : 'noopener noreferrer'}
       className="block group"
     >
-      <div className="bg-background-secondary border border-border rounded-[2px] overflow-hidden hover:border-burnt-orange/40 hover:-translate-y-0.5 transition-all duration-200">
+      <div className="bg-[var(--surface-dugout)] border border-border rounded-[2px] overflow-hidden hover:border-[var(--bsi-primary)]/40 hover:-translate-y-0.5 transition-all duration-200">
         {/* Image header (optional) */}
         {imageUrl && (
-          <div className="relative h-40 overflow-hidden bg-surface-light">
+          <div className="relative h-40 overflow-hidden bg-[var(--surface-press-box)]">
             <img
               src={imageUrl}
               alt=""
@@ -80,20 +80,20 @@ export function NewsCard({
 
             {/* Timestamp */}
             {relativeTime && (
-              <span className="text-[10px] text-text-muted ml-auto flex-shrink-0">
+              <span className="text-[10px] text-[rgba(196,184,165,0.35)] ml-auto flex-shrink-0">
                 {relativeTime}
               </span>
             )}
           </div>
 
           {/* Title */}
-          <h3 className="font-semibold text-text-primary text-sm leading-snug group-hover:text-burnt-orange transition-colors line-clamp-2">
+          <h3 className="font-semibold text-[var(--bsi-bone)] text-sm leading-snug group-hover:text-[var(--bsi-primary)] transition-colors line-clamp-2">
             {title}
           </h3>
 
           {/* Description — truncated to 2 lines */}
           {description && (
-            <p className="text-text-muted text-xs leading-relaxed mt-2 line-clamp-2">
+            <p className="text-[rgba(196,184,165,0.35)] text-xs leading-relaxed mt-2 line-clamp-2">
               {description}
             </p>
           )}

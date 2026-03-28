@@ -152,8 +152,8 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
       return (
         <Card variant="default" padding="lg">
           <div className="text-center py-8">
-            <p className="text-text-secondary">Roster data loading or not yet available.</p>
-            <p className="text-text-tertiary text-sm mt-2">
+            <p className="text-[var(--bsi-dust)]">Roster data loading or not yet available.</p>
+            <p className="text-[rgba(196,184,165,0.5)] text-sm mt-2">
               The 40-man roster will populate once spring training rosters are finalized. Check back
               when the boys report to camp.
             </p>
@@ -173,8 +173,8 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
               onClick={() => setPositionFilter(group.id)}
               className={`px-4 py-2 rounded-sm text-sm transition-all ${
                 positionFilter === group.id
-                  ? 'bg-burnt-orange text-white font-semibold'
-                  : 'bg-background-tertiary text-text-secondary hover:bg-surface-light hover:text-text-primary'
+                  ? 'bg-[var(--bsi-primary)] text-white font-semibold'
+                  : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:bg-[var(--surface-press-box)] hover:text-[var(--bsi-bone)]'
               }`}
             >
               {group.label}
@@ -188,7 +188,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
               key={player.id}
               variant="default"
               padding="md"
-              className="hover:border-burnt-orange transition-all"
+              className="hover:border-[var(--bsi-primary)] transition-all"
             >
               <div className="flex items-start gap-4">
                 <div
@@ -198,16 +198,16 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   {player.primaryNumber || '-'}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-text-primary truncate">{player.fullName}</p>
+                  <p className="font-semibold text-[var(--bsi-bone)] truncate">{player.fullName}</p>
                   <div className="flex items-center gap-2 mt-1">
                     <Badge variant="secondary" className="text-xs">
                       {player.primaryPosition.abbreviation}
                     </Badge>
-                    <span className="text-xs text-text-tertiary">
+                    <span className="text-xs text-[rgba(196,184,165,0.5)]">
                       {player.batSide.code}/{player.pitchHand?.code || '-'}
                     </span>
                   </div>
-                  <p className="text-xs text-text-tertiary mt-1">
+                  <p className="text-xs text-[rgba(196,184,165,0.5)] mt-1">
                     {player.height} | {player.weight} lbs | Age {player.currentAge}
                   </p>
                 </div>
@@ -245,7 +245,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             <CardTitle className="flex items-center gap-2">
               <svg
                 viewBox="0 0 24 24"
-                className="w-5 h-5 text-burnt-orange"
+                className="w-5 h-5 text-[var(--bsi-primary)]"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
@@ -263,8 +263,8 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   (p) => p.primaryPosition.abbreviation === pos.position
                 );
                 return (
-                  <div key={pos.position} className="bg-background-tertiary rounded-sm p-4">
-                    <p className="text-xs text-text-tertiary uppercase tracking-wide mb-2">
+                  <div key={pos.position} className="bg-[var(--surface-dugout)] rounded-sm p-4">
+                    <p className="text-xs text-[rgba(196,184,165,0.5)] uppercase tracking-wide mb-2">
                       {pos.label}
                     </p>
                     {players.length > 0 ? (
@@ -272,9 +272,9 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                         {players.slice(0, 2).map((player, idx) => (
                           <div
                             key={player.id}
-                            className={`flex items-center gap-2 ${idx === 0 ? 'text-text-primary' : 'text-text-secondary'}`}
+                            className={`flex items-center gap-2 ${idx === 0 ? 'text-[var(--bsi-bone)]' : 'text-[var(--bsi-dust)]'}`}
                           >
-                            <span className="text-xs text-burnt-orange font-mono w-6">
+                            <span className="text-xs text-[var(--bsi-primary)] font-mono w-6">
                               {player.primaryNumber}
                             </span>
                             <span className="text-sm truncate">{player.fullName}</span>
@@ -282,7 +282,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-text-tertiary text-sm">-</p>
+                      <p className="text-[rgba(196,184,165,0.5)] text-sm">-</p>
                     )}
                   </div>
                 );
@@ -296,7 +296,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             <CardTitle className="flex items-center gap-2">
               <svg
                 viewBox="0 0 24 24"
-                className="w-5 h-5 text-burnt-orange"
+                className="w-5 h-5 text-[var(--bsi-primary)]"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
@@ -319,7 +319,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                 );
                 return (
                   <div key={role.role}>
-                    <p className="text-sm font-semibold text-text-primary mb-3">{role.label}</p>
+                    <p className="text-sm font-semibold text-[var(--bsi-bone)] mb-3">{role.label}</p>
                     {pitchers.length > 0 ? (
                       <div className="space-y-2">
                         {pitchers
@@ -327,13 +327,13 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                           .map((player) => (
                             <div
                               key={player.id}
-                              className="flex items-center justify-between bg-background-tertiary rounded-sm px-3 py-2"
+                              className="flex items-center justify-between bg-[var(--surface-dugout)] rounded-sm px-3 py-2"
                             >
                               <div className="flex items-center gap-2">
-                                <span className="text-xs text-burnt-orange font-mono w-6">
+                                <span className="text-xs text-[var(--bsi-primary)] font-mono w-6">
                                   {player.primaryNumber}
                                 </span>
-                                <span className="text-sm text-text-secondary">
+                                <span className="text-sm text-[var(--bsi-dust)]">
                                   {player.fullName}
                                 </span>
                               </div>
@@ -341,7 +341,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                           ))}
                       </div>
                     ) : (
-                      <p className="text-text-tertiary text-sm">-</p>
+                      <p className="text-[rgba(196,184,165,0.5)] text-sm">-</p>
                     )}
                   </div>
                 );
@@ -358,7 +358,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
       <div className="text-center py-8">
         <svg
           viewBox="0 0 24 24"
-          className="w-16 h-16 text-text-tertiary mx-auto mb-4"
+          className="w-16 h-16 text-[rgba(196,184,165,0.5)] mx-auto mb-4"
           fill="none"
           stroke="currentColor"
           strokeWidth="1.5"
@@ -368,14 +368,14 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
           <line x1="8" y1="2" x2="8" y2="6" />
           <line x1="3" y1="10" x2="21" y2="10" />
         </svg>
-        <p className="text-text-secondary">Schedule drops when Opening Day gets closer.</p>
-        <p className="text-text-tertiary text-sm mt-2 mb-4">
+        <p className="text-[var(--bsi-dust)]">Schedule drops when Opening Day gets closer.</p>
+        <p className="text-[rgba(196,184,165,0.5)] text-sm mt-2 mb-4">
           MLB releases the full slate in late January. We&apos;ll have it the minute it&apos;s
           official.
         </p>
         <Link
           href="/mlb/scores"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange/80 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--bsi-primary)] text-white rounded-sm hover:bg-[var(--bsi-primary)]/80 transition-colors"
         >
           View Today&apos;s Games
           <svg
@@ -399,7 +399,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
           <CardTitle>Team Batting</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8 text-text-tertiary">
+          <div className="text-center py-8 text-[rgba(196,184,165,0.5)]">
             Team batting stats populate once the season starts. No spring training fluff—only
             regular season numbers.
           </div>
@@ -410,7 +410,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
           <CardTitle>Team Pitching</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8 text-text-tertiary">
+          <div className="text-center py-8 text-[rgba(196,184,165,0.5)]">
             Rotation and bullpen stats show up when games count. Check back after Opening Day.
           </div>
         </CardContent>
@@ -427,24 +427,24 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
   return (
     <>
       <div>
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/mlb"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 MLB
               </Link>
-              <span className="text-text-tertiary">/</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
               <Link
                 href="/mlb/teams"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 Teams
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">{displayName}</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">{displayName}</span>
             </nav>
           </Container>
         </Section>
@@ -464,26 +464,26 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   <Badge variant="secondary" className="mb-2">
                     {displayLeague} {displayDivision}
                   </Badge>
-                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-gradient-blaze">
+                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-[var(--bsi-primary)]">
                     {displayName}
                   </h1>
                   {quickStats?.record && (
                     <div className="flex items-center gap-4 mt-2">
-                      <p className="text-text-secondary text-lg font-mono">{quickStats.record}</p>
+                      <p className="text-[var(--bsi-dust)] text-lg font-mono">{quickStats.record}</p>
                       {quickStats.streak && (
                         <Badge variant={quickStats.streak.startsWith('W') ? 'success' : 'error'}>
                           {quickStats.streak}
                         </Badge>
                       )}
                       {quickStats.divisionRank && (
-                        <span className="text-sm text-text-tertiary">
+                        <span className="text-sm text-[rgba(196,184,165,0.5)]">
                           {quickStats.divisionRank} in {displayDivision}
                         </span>
                       )}
                     </div>
                   )}
                   {teamInfo?.venue && (
-                    <p className="text-text-tertiary text-sm mt-1">{teamInfo.venue}</p>
+                    <p className="text-[rgba(196,184,165,0.5)] text-sm mt-1">{teamInfo.venue}</p>
                   )}
                 </div>
               </div>
@@ -493,12 +493,12 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
 
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
-            <div className="flex gap-2 mb-8 border-b border-border-subtle overflow-x-auto pb-px">
+            <div className="flex gap-2 mb-8 border-b border-[var(--border-vintage)] overflow-x-auto pb-px">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`px-6 py-3 text-sm font-semibold whitespace-nowrap transition-colors border-b-2 -mb-px ${activeTab === tab.id ? 'text-burnt-orange border-burnt-orange' : 'text-text-tertiary border-transparent hover:text-text-primary'}`}
+                  className={`px-6 py-3 text-sm font-semibold whitespace-nowrap transition-colors border-b-2 -mb-px ${activeTab === tab.id ? 'text-[var(--bsi-primary)] border-[var(--bsi-primary)]' : 'text-[rgba(196,184,165,0.5)] border-transparent hover:text-[var(--bsi-bone)]'}`}
                 >
                   {tab.label}
                 </button>
@@ -509,7 +509,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
               <Card variant="default" padding="lg">
                 <div className="space-y-4">
                   {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="flex items-center gap-4 p-4 bg-background-tertiary rounded-sm">
+                    <div key={i} className="flex items-center gap-4 p-4 bg-[var(--surface-dugout)] rounded-sm">
                       <Skeleton variant="rectangular" width={56} height={56} className="rounded-sm" />
                       <div className="flex-1">
                         <Skeleton variant="text" width={150} height={18} />
@@ -522,10 +522,10 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             ) : error ? (
               <Card variant="default" padding="lg" className="bg-error/10 border-error/30">
                 <p className="text-error font-semibold">Unable to Load Team Data</p>
-                <p className="text-text-secondary text-sm mt-1">{error}</p>
+                <p className="text-[var(--bsi-dust)] text-sm mt-1">{error}</p>
                 <button
                   onClick={fetchTeam}
-                  className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange/80 transition-colors"
+                  className="mt-4 px-4 py-2 bg-[var(--bsi-primary)] text-white rounded-sm hover:bg-[var(--bsi-primary)]/80 transition-colors"
                 >
                   Retry
                 </button>
@@ -539,7 +539,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
               </ScrollReveal>
             )}
 
-            <div className="mt-8 pt-4 border-t border-border-subtle">
+            <div className="mt-8 pt-4 border-t border-[var(--border-vintage)]">
               <DataSourceBadge
                 source={meta?.dataSource || 'MLB Stats API'}
                 timestamp={displayTimestamp(meta?.lastUpdated)}

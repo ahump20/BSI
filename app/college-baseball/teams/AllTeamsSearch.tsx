@@ -10,10 +10,10 @@ import { ScrollReveal } from '@/components/cinematic';
 export function AllTeamsSearch() {
   return (
     <ScrollReveal direction="up" delay={100}>
-      <div className="mb-12 p-6 bg-surface-light/30 border border-border/50 rounded-sm backdrop-blur-sm">
+      <div className="mb-12 p-6 bg-[var(--surface-press-box)]/30 border border-border/50 rounded-sm backdrop-blur-sm">
         <div className="flex items-center gap-2 mb-4">
-          <span className="w-1 h-4 bg-burnt-orange rounded-full" />
-          <h2 className="text-sm font-display uppercase tracking-wider text-text-primary">
+          <span className="w-1 h-4 bg-[var(--bsi-primary)] rounded-full" />
+          <h2 className="text-sm font-display uppercase tracking-wider text-[var(--bsi-bone)]">
             Search All Teams
           </h2>
         </div>

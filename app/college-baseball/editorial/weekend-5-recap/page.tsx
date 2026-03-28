@@ -107,7 +107,7 @@ export default function Weekend5RecapPage() {
                 </div>
                 <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-wide mb-4">
                   Conference Play Exposes Everyone.{' '}
-                  <span className="text-gradient-blaze">Now We Know.</span>
+                  <span className="text-[var(--bsi-primary)]">Now We Know.</span>
                 </h1>
                 <p className="text-white/70 text-lg leading-relaxed">
                   The SEC opened its doors and immediately rearranged the national picture. Texas lost for the first time in 17 games.

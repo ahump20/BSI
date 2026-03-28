@@ -240,10 +240,10 @@ export function StrikeZoneModel({ className = '', compact = false }: StrikeZoneM
 
       {/* Caption */}
       <div className="mt-3 text-center">
-        <p className="text-text-tertiary text-xs">
+        <p className="text-[rgba(196,184,165,0.5)] text-xs">
           18 skeletal keypoints tracked at 30fps per batter
         </p>
-        <p className="text-text-muted text-[10px] mt-1">
+        <p className="text-[rgba(196,184,165,0.35)] text-[10px] mt-1">
           Zone top = midpoint of shoulders &amp; belt | Zone bottom = hollow of knee
         </p>
       </div>

@@ -32,11 +32,11 @@ interface StandingsResponse {
 
 const tierStyles: Record<Tier, string> = {
   'Omaha Favorite': 'bg-[#C9A227]/20 text-[#C9A227] border-[#C9A227]/30',
-  Contender: 'bg-burnt-orange/20 text-ember border-burnt-orange/30',
-  'Dark Horse': 'bg-surface-medium text-text-secondary border-border-strong',
-  Bubble: 'bg-surface-light text-text-muted border-border',
-  Sleeper: 'bg-surface-light text-text-muted border-border',
-  Rebuilding: 'bg-surface-light text-text-muted border-border-subtle',
+  Contender: 'bg-[var(--bsi-primary)]/20 text-ember border-[var(--bsi-primary)]/30',
+  'Dark Horse': 'bg-surface-medium text-[var(--bsi-dust)] border-[rgba(140,98,57,0.5)]',
+  Bubble: 'bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.35)] border-border',
+  Sleeper: 'bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.35)] border-border',
+  Rebuilding: 'bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.35)] border-[var(--border-vintage)]',
 };
 
 function TierBadge({ tier }: { tier: Tier }) {
@@ -70,24 +70,24 @@ function TeamPreviewCard({
   return (
     <Link href={`/college-baseball/editorial/${team.slug}-2026`} className="block group">
       <div
-        className="bg-surface-light border border-border-subtle rounded-sm p-4 hover:bg-surface-medium transition-all h-full"
+        className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4 hover:bg-[var(--surface-press-box)] transition-all h-full"
         onMouseEnter={(e) => { e.currentTarget.style.borderColor = hoverColor; }}
         onMouseLeave={(e) => { e.currentTarget.style.borderColor = ''; }}
       >
         <div className="flex items-start justify-between mb-2">
           <div className="min-w-0">
-            <h4 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide transition-colors truncate">
+            <h4 className="font-display text-sm font-bold text-[var(--bsi-bone)] uppercase tracking-wide transition-colors truncate">
               {team.name}
             </h4>
-            <p className="text-text-muted text-xs">{team.mascot}</p>
+            <p className="text-[rgba(196,184,165,0.35)] text-xs">{team.mascot}</p>
           </div>
           <TierBadge tier={team.tier} />
         </div>
         <div className="flex items-center justify-between mt-3">
-          <span className="text-text-muted text-xs font-mono">{record}</span>
+          <span className="text-[rgba(196,184,165,0.35)] text-xs font-mono">{record}</span>
           <svg
             viewBox="0 0 24 24"
-            className="w-3.5 h-3.5 text-text-muted transition-colors"
+            className="w-3.5 h-3.5 text-[rgba(196,184,165,0.35)] transition-colors"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"

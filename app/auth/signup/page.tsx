@@ -18,12 +18,12 @@ export default function SignupPage() {
               <div className="max-w-md mx-auto">
                 <div className="text-center mb-8">
                   <h1 className="font-display text-3xl font-bold uppercase tracking-display mb-2">
-                    Create Your <span className="text-gradient-blaze">Account</span>
+                    Create Your <span className="text-[var(--bsi-primary)]">Account</span>
                   </h1>
                 </div>
 
                 <Card padding="lg" className="text-center">
-                  <p className="text-text-secondary mb-6">
+                  <p className="text-[var(--bsi-dust)] mb-6">
                     To get started, choose a plan. Your account is created automatically when you
                     subscribe, and your API key is emailed to you.
                   </p>
@@ -37,11 +37,11 @@ export default function SignupPage() {
                   </div>
 
                   <div className="mt-6">
-                    <p className="text-text-tertiary text-sm">
+                    <p className="text-[rgba(196,184,165,0.5)] text-sm">
                       Already have a key?{' '}
                       <Link
                         href="/auth/login"
-                        className="text-burnt-orange hover:text-ember transition-colors"
+                        className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
                       >
                         Sign in
                       </Link>

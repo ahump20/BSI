@@ -43,13 +43,13 @@ export default function CWSPage() {
           <Container>
             <div className="max-w-3xl mb-8">
               <Badge variant="warning" className="mb-4">Coming June 2026</Badge>
-              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-wide text-text-primary mb-4">
+              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-wide text-[var(--bsi-bone)] mb-4">
                 College World{' '}
                 <span className="bg-gradient-to-r from-[#C9A227] to-burnt-orange bg-clip-text text-transparent">
                   Series
                 </span>
               </h1>
-              <p className="text-text-tertiary text-lg leading-relaxed">
+              <p className="text-[rgba(196,184,165,0.5)] text-lg leading-relaxed">
                 The road to Omaha. Super regional matchups, CWS bracket, game briefs, and
                 championship series coverage. Eight teams. Double elimination. One champion.
               </p>
@@ -58,10 +58,10 @@ export default function CWSPage() {
             {/* Projected Top 8 National Seeds */}
             {(hasData || loading) && (
               <section className="mb-12">
-                <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-text-primary mb-4">
+                <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-[var(--bsi-bone)] mb-4">
                   Projected Top 8 Seeds
                 </h2>
-                <p className="text-sm text-text-muted mb-6">
+                <p className="text-sm text-[rgba(196,184,165,0.35)] mb-6">
                   The top 8 national seeds host super regionals and have the clearest path to Omaha.
                   Based on current rankings.
                 </p>
@@ -69,7 +69,7 @@ export default function CWSPage() {
                 {loading && !hasData ? (
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {Array.from({ length: 8 }).map((_, i) => (
-                      <div key={i} className="h-20 bg-surface-light rounded-sm animate-pulse" />
+                      <div key={i} className="h-20 bg-[var(--surface-press-box)] rounded-sm animate-pulse" />
                     ))}
                   </div>
                 ) : (
@@ -77,15 +77,15 @@ export default function CWSPage() {
                     {projectedSeeds.map((team, i) => (
                       <div
                         key={team.name || i}
-                        className="bg-surface-light border border-[#C9A227]/20 rounded-sm p-4 text-center"
+                        className="bg-[var(--surface-press-box)] border border-[#C9A227]/20 rounded-sm p-4 text-center"
                       >
                         <span className="text-2xl font-display font-bold text-[#C9A227] block mb-1">
                           #{team.rank || i + 1}
                         </span>
-                        <p className="text-sm text-text-primary font-medium truncate">
+                        <p className="text-sm text-[var(--bsi-bone)] font-medium truncate">
                           {team.name || team.team}
                         </p>
-                        <p className="text-[10px] text-text-muted mt-1">
+                        <p className="text-[10px] text-[rgba(196,184,165,0.35)] mt-1">
                           {team.conference}{team.record ? ` · ${team.record}` : ''}
                         </p>
                       </div>
@@ -94,7 +94,7 @@ export default function CWSPage() {
                 )}
 
                 {lastUpdated && (
-                  <p className="mt-4 text-[10px] text-text-muted">
+                  <p className="mt-4 text-[10px] text-[rgba(196,184,165,0.35)]">
                     Rankings updated {lastUpdated.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
                   </p>
                 )}
@@ -103,10 +103,10 @@ export default function CWSPage() {
 
             {/* CWS Format */}
             <section className="mb-12">
-              <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
+              <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-[var(--bsi-bone)] mb-4">
                 How the CWS Works
               </h2>
-              <div className="bg-surface-light border border-border-subtle rounded-sm p-5 space-y-3">
+              <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-5 space-y-3">
                 {[
                   { label: 'Super Regionals', detail: '8 best-of-three series. Win your super regional to earn one of 8 CWS berths.' },
                   { label: 'CWS Bracket', detail: '8 teams in Omaha, split into two 4-team double-elimination brackets. Winners of each bracket meet in the Finals.' },
@@ -117,31 +117,31 @@ export default function CWSPage() {
                     <span className="text-[10px] font-bold uppercase tracking-wider text-[#C9A227] mt-0.5 shrink-0 w-32">
                       {item.label}
                     </span>
-                    <p className="text-sm text-text-tertiary leading-relaxed">{item.detail}</p>
+                    <p className="text-sm text-[rgba(196,184,165,0.5)] leading-relaxed">{item.detail}</p>
                   </div>
                 ))}
               </div>
             </section>
 
             {/* CWS data placeholder */}
-            <div className="bg-surface-light border border-dashed border-border rounded-sm p-8 text-center mb-8">
-              <p className="text-sm text-text-muted mb-2">
+            <div className="bg-[var(--surface-press-box)] border border-dashed border-border rounded-sm p-8 text-center mb-8">
+              <p className="text-sm text-[rgba(196,184,165,0.35)] mb-2">
                 CWS bracket and game data populates when super regionals are set (mid-June).
               </p>
-              <p className="text-xs text-text-muted">
+              <p className="text-xs text-[rgba(196,184,165,0.35)]">
                 Live game briefs, bracket tracking, and championship series coverage
                 will publish in real time once the CWS begins.
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-4 text-sm text-text-muted">
-              <Link href="/college-baseball/tournament" className="hover:text-text-secondary transition-colors">
+            <div className="flex flex-wrap gap-4 text-sm text-[rgba(196,184,165,0.35)]">
+              <Link href="/college-baseball/tournament" className="hover:text-[var(--bsi-dust)] transition-colors">
                 &#8592; Tournament HQ
               </Link>
-              <Link href="/college-baseball/tournament/bubble" className="hover:text-text-secondary transition-colors">
+              <Link href="/college-baseball/tournament/bubble" className="hover:text-[var(--bsi-dust)] transition-colors">
                 Bubble Watch
               </Link>
-              <Link href="/college-baseball/tournament/regionals" className="hover:text-text-secondary transition-colors">
+              <Link href="/college-baseball/tournament/regionals" className="hover:text-[var(--bsi-dust)] transition-colors">
                 Regionals
               </Link>
             </div>

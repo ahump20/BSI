@@ -22,7 +22,6 @@ import { ConferenceStrengthChart } from '@/components/analytics/ConferenceStreng
 import { getPercentileColor } from '@/components/analytics/PercentileBar';
 import { SavantComparePanel } from '@/components/analytics/SavantComparePanel';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
-import { HeroGlow } from '@/components/ui/HeroGlow';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -295,7 +294,7 @@ export default function SavantHubPage() {
                     >
                       <div className="flex items-baseline justify-between mb-2">
                         <span className="font-mono text-xs font-bold tracking-wide" style={{ color }}>{spot.abbr}</span>
-                        <span className="text-[9px] font-mono text-text-muted uppercase">{spot.tab}</span>
+                        <span className="text-[9px] font-mono text-[rgba(196,184,165,0.35)] uppercase">{spot.tab}</span>
                       </div>
                       {leader ? (
                         <div className="mb-2.5">
@@ -303,16 +302,16 @@ export default function SavantHubPage() {
                             {spot.format(leader.value)}
                           </span>
                           <div className="mt-1.5">
-                            <span className="text-xs text-text-primary font-medium">{leader.name}</span>
-                            <span className="ml-1.5 text-[10px] text-text-muted">{leader.team}</span>
+                            <span className="text-xs text-[var(--bsi-bone)] font-medium">{leader.name}</span>
+                            <span className="ml-1.5 text-[10px] text-[rgba(196,184,165,0.35)]">{leader.team}</span>
                           </div>
                         </div>
                       ) : (
                         <div className="mb-2.5 h-14 flex items-center">
-                          <div className="h-6 w-16 bg-surface-light rounded-sm animate-pulse" />
+                          <div className="h-6 w-16 bg-[var(--surface-press-box)] rounded-sm animate-pulse" />
                         </div>
                       )}
-                      <p className="text-[10px] text-text-muted/70 leading-relaxed">
+                      <p className="text-[10px] text-[rgba(196,184,165,0.35)]/70 leading-relaxed">
                         {spot.description}
                       </p>
                     </div>
@@ -327,7 +326,7 @@ export default function SavantHubPage() {
                 <div className="mb-6 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] p-4">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="heritage-stamp text-[9px]">2026 D1 Run Environment</span>
-                    <span className="text-[9px] text-text-muted font-mono">
+                    <span className="text-[9px] text-[rgba(196,184,165,0.35)] font-mono">
                       {leagueCtxRes.context.sample_batting.toLocaleString()} batters · {leagueCtxRes.context.sample_pitching.toLocaleString()} pitchers
                     </span>
                   </div>
@@ -342,11 +341,11 @@ export default function SavantHubPage() {
                     ].map((stat) => (
                       <div key={stat.label}>
                         <div className="font-mono text-sm font-bold" style={{ color: 'var(--bsi-bone)' }}>{stat.value}</div>
-                        <div className="text-[9px] text-text-muted/60 uppercase tracking-wider">{stat.label}</div>
+                        <div className="text-[9px] text-[rgba(196,184,165,0.35)]/60 uppercase tracking-wider">{stat.label}</div>
                       </div>
                     ))}
                   </div>
-                  <p className="text-[9px] text-text-muted/40 mt-3 leading-relaxed">
+                  <p className="text-[9px] text-[rgba(196,184,165,0.35)]/40 mt-3 leading-relaxed">
                     Every metric on this page is normalized against these baselines. A 100 wRC+ means exactly league average for the {leagueCtxRes.context.season} D1 season. Weights derived from actual D1 data, not MLB defaults.
                   </p>
                 </div>
@@ -361,8 +360,8 @@ export default function SavantHubPage() {
                   onClick={() => { setActiveTab(tab.key); setPositionFilter(''); setCompareIds(new Set()); }}
                   className={`px-4 py-3 text-sm font-display uppercase tracking-wider whitespace-nowrap transition-colors border-b-2 ${
                     activeTab === tab.key
-                      ? 'text-burnt-orange border-burnt-orange bg-burnt-orange/[0.04]'
-                      : 'text-text-muted border-transparent hover:text-text-tertiary hover:bg-[rgba(140,98,57,0.06)]'
+                      ? 'text-[var(--bsi-primary)] border-[var(--bsi-primary)] bg-[var(--bsi-primary)]/[0.04]'
+                      : 'text-[rgba(196,184,165,0.35)] border-transparent hover:text-[rgba(196,184,165,0.5)] hover:bg-[rgba(140,98,57,0.06)]'
                   }`}
                 >
                   {tab.label}
@@ -418,7 +417,7 @@ export default function SavantHubPage() {
                       value={playerSearch}
                       onChange={(e) => setPlayerSearch(e.target.value)}
                       placeholder="Search player or team..."
-                      className="px-3 py-1.5 text-xs font-mono w-48 sm:w-56 outline-none placeholder:text-text-muted"
+                      className="px-3 py-1.5 text-xs font-mono w-48 sm:w-56 outline-none placeholder:text-[rgba(196,184,165,0.35)]"
                       style={{
                         background: 'var(--surface-press-box, #111)',
                         color: 'var(--bsi-bone, #F5F2EB)',
@@ -456,7 +455,7 @@ export default function SavantHubPage() {
                   {(conferenceFilter || positionFilter || playerSearch || minPA !== 25) && (
                     <button
                       onClick={() => { setConferenceFilter(''); setPositionFilter(''); setPlayerSearch(''); setMinPA(25); }}
-                      className="text-[10px] font-mono text-burnt-orange hover:text-ember transition-colors"
+                      className="text-[10px] font-mono text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
                     >
                       Clear filters
                     </button>
@@ -566,27 +565,27 @@ export default function SavantHubPage() {
             {battingRes && (
               <div className="mt-10 pt-6 border-t border-[var(--border-vintage)]">
                 <div className="flex items-center justify-center gap-4 flex-wrap">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-muted/50">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-[rgba(196,184,165,0.35)]/50">
                     Source: BSI Savant
                   </span>
-                  <span className="text-text-muted/20">&middot;</span>
+                  <span className="text-[rgba(196,184,165,0.35)]/20">&middot;</span>
                   <Link
                     href="/college-baseball/savant/park-factors"
-                    className="font-mono text-[10px] uppercase tracking-[0.12em] text-burnt-orange/50 hover:text-burnt-orange transition-colors"
+                    className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--bsi-primary)]/50 hover:text-[var(--bsi-primary)] transition-colors"
                   >
                     Park Factor Methodology
                   </Link>
-                  <span className="text-text-muted/20">&middot;</span>
+                  <span className="text-[rgba(196,184,165,0.35)]/20">&middot;</span>
                   <Link
                     href="/college-baseball/savant/conference-index"
-                    className="font-mono text-[10px] uppercase tracking-[0.12em] text-burnt-orange/50 hover:text-burnt-orange transition-colors"
+                    className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--bsi-primary)]/50 hover:text-[var(--bsi-primary)] transition-colors"
                   >
                     Conference Strength Index
                   </Link>
-                  <span className="text-text-muted/20">&middot;</span>
+                  <span className="text-[rgba(196,184,165,0.35)]/20">&middot;</span>
                   <Link
                     href="/college-baseball/savant/glossary"
-                    className="font-mono text-[10px] uppercase tracking-[0.12em] text-burnt-orange/50 hover:text-burnt-orange transition-colors"
+                    className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--bsi-primary)]/50 hover:text-[var(--bsi-primary)] transition-colors"
                   >
                     Metric Glossary
                   </Link>
@@ -622,15 +621,15 @@ function FilterSelect({
 }) {
   return (
     <div className="flex items-center gap-1.5">
-      <span className="text-[10px] font-display uppercase tracking-widest text-text-muted">{label}</span>
+      <span className="text-[10px] font-display uppercase tracking-widest text-[rgba(196,184,165,0.35)]">{label}</span>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
         aria-label={`Filter by ${label.toLowerCase()}`}
-        className="bg-surface-light border border-border rounded-sm px-2.5 py-1.5 text-xs text-text-tertiary font-mono appearance-none cursor-pointer hover:border-border-strong transition-colors focus:outline-none focus:border-burnt-orange/40 focus:ring-1 focus:ring-burnt-orange/30"
+        className="bg-[var(--surface-press-box)] border border-border rounded-sm px-2.5 py-1.5 text-xs text-[rgba(196,184,165,0.5)] font-mono appearance-none cursor-pointer hover:border-[rgba(140,98,57,0.5)] transition-colors focus:outline-none focus:border-[var(--bsi-primary)]/40 focus:ring-1 focus:ring-[var(--bsi-primary)]/30"
       >
         {options.map(opt => (
-          <option key={opt} value={opt} className="bg-background-secondary text-text-primary">
+          <option key={opt} value={opt} className="bg-[var(--surface-dugout)] text-[var(--bsi-bone)]">
             {opt || allLabel}
           </option>
         ))}
@@ -694,18 +693,18 @@ function computeQuickPercentile(
 function LeaderboardSkeleton() {
   return (
     <Card padding="none" className="overflow-hidden">
-      <div className="px-5 py-4 border-b border-border-subtle flex items-center justify-between">
+      <div className="px-5 py-4 border-b border-[var(--border-vintage)] flex items-center justify-between">
         <div className="h-4 w-48 bg-surface-medium rounded-sm animate-pulse" />
-        <div className="h-3 w-20 bg-surface-light rounded-sm animate-pulse" />
+        <div className="h-3 w-20 bg-[var(--surface-press-box)] rounded-sm animate-pulse" />
       </div>
-      <div className="divide-y divide-border-subtle">
+      <div className="divide-y divide-[var(--border-vintage)]">
         {Array.from({ length: 10 }).map((_, i) => (
           <div key={i} className="px-5 py-3 flex items-center gap-4">
-            <div className="h-4 w-6 bg-surface-light rounded-sm animate-pulse" />
+            <div className="h-4 w-6 bg-[var(--surface-press-box)] rounded-sm animate-pulse" />
             <div className="h-4 flex-1 max-w-[200px] bg-surface-medium rounded-sm animate-pulse" />
-            <div className="h-4 w-16 bg-surface-light rounded-sm animate-pulse hidden sm:block" />
-            <div className="h-4 w-12 bg-surface-light rounded-sm animate-pulse" />
-            <div className="h-4 w-12 bg-surface-light rounded-sm animate-pulse hidden md:block" />
+            <div className="h-4 w-16 bg-[var(--surface-press-box)] rounded-sm animate-pulse hidden sm:block" />
+            <div className="h-4 w-12 bg-[var(--surface-press-box)] rounded-sm animate-pulse" />
+            <div className="h-4 w-12 bg-[var(--surface-press-box)] rounded-sm animate-pulse hidden md:block" />
           </div>
         ))}
       </div>

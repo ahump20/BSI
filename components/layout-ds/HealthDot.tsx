@@ -81,7 +81,7 @@ export function HealthDot() {
   return (
     <Link
       href="/status"
-      className="inline-flex items-center gap-1.5 text-text-muted hover:text-text-secondary transition-colors"
+      className="inline-flex items-center gap-1.5 text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-dust)] transition-colors"
       title={labels[health]}
     >
       <span className={`w-2 h-2 rounded-full ${dotColors[health]}`} />

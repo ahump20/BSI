@@ -34,14 +34,14 @@ export function DataSourcePanel({ sources, lastUpdated, meta, refreshInterval, c
   const effectiveTimezone = normalized?.timezone ?? 'America/Chicago';
 
   return (
-    <div className={`bg-surface-light border border-border rounded-sm p-4 ${className}`}>
+    <div className={`bg-[var(--surface-press-box)] border border-border rounded-sm p-4 ${className}`}>
       <div className="flex items-center gap-2 mb-3">
-        <svg viewBox="0 0 24 24" className="w-4 h-4 text-text-muted" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg viewBox="0 0 24 24" className="w-4 h-4 text-[rgba(196,184,165,0.35)]" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
         </svg>
-        <span className="text-xs text-text-muted font-semibold uppercase tracking-wider">Data Sources</span>
+        <span className="text-xs text-[rgba(196,184,165,0.35)] font-semibold uppercase tracking-wider">Data Sources</span>
         {refreshInterval && (
-          <span className="ml-auto text-xs text-text-muted">Refreshing every {refreshInterval}s</span>
+          <span className="ml-auto text-xs text-[rgba(196,184,165,0.35)]">Refreshing every {refreshInterval}s</span>
         )}
       </div>
       <div className="flex flex-wrap gap-3">
@@ -51,14 +51,14 @@ export function DataSourcePanel({ sources, lastUpdated, meta, refreshInterval, c
             href={source.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs text-burnt-orange hover:text-ember transition-colors"
+            className="text-xs text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
           >
             {source.name}
           </a>
         ))}
       </div>
       {effectiveLastUpdated && (
-        <p className="text-xs text-text-muted mt-2">
+        <p className="text-xs text-[rgba(196,184,165,0.35)] mt-2">
           Last updated: {new Date(effectiveLastUpdated).toLocaleString('en-US', { timeZone: effectiveTimezone })} CT
         </p>
       )}
@@ -84,7 +84,7 @@ export function BottomNav({ items, className = '' }: { items: BottomNavItem[]; c
 
   return (
     <nav
-      className={`fixed bottom-0 left-0 right-0 z-40 bg-midnight/95 backdrop-blur-md border-t border-border ${className}`}
+      className={`fixed bottom-0 left-0 right-0 z-40 bg-[var(--surface-scoreboard)]/95 backdrop-blur-md border-t border-border ${className}`}
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       role="navigation"
       aria-label="Bottom navigation"
@@ -101,7 +101,7 @@ export function BottomNav({ items, className = '' }: { items: BottomNavItem[]; c
                 key={item.label}
                 onClick={item.onPress}
                 className={`flex flex-col items-center justify-center gap-0.5 min-w-[48px] min-h-[48px] transition-colors ${
-                  active ? 'text-burnt-orange' : 'text-text-muted'
+                  active ? 'text-[var(--bsi-primary)]' : 'text-[rgba(196,184,165,0.35)]'
                 }`}
               >
                 {Icon && <Icon className="w-5 h-5" />}
@@ -115,12 +115,12 @@ export function BottomNav({ items, className = '' }: { items: BottomNavItem[]; c
               key={item.href}
               href={item.href}
               className={`relative flex flex-col items-center justify-center gap-0.5 min-w-[48px] min-h-[48px] transition-colors ${
-                active ? 'text-burnt-orange' : 'text-text-muted active:text-text-primary'
+                active ? 'text-[var(--bsi-primary)]' : 'text-[rgba(196,184,165,0.35)] active:text-[var(--bsi-bone)]'
               }`}
               aria-current={active ? 'page' : undefined}
             >
               {active && (
-                <span className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-[2px] rounded-full bg-burnt-orange" aria-hidden="true" />
+                <span className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-[2px] rounded-full bg-[var(--bsi-primary)]" aria-hidden="true" />
               )}
               {Icon && <Icon className="w-5 h-5" />}
               <span className="text-[10px] font-medium leading-tight">{item.label}</span>
@@ -147,21 +147,21 @@ export function CitationFooter({ sources, source, fetchedAt, meta, additionalSou
   if (resolvedSources.length === 0) return null;
   return (
     <footer className={`border-t border-border pt-4 mt-8 ${className}`}>
-      <p className="text-xs text-text-muted mb-2">Sources</p>
+      <p className="text-xs text-[rgba(196,184,165,0.35)] mb-2">Sources</p>
       <div className="flex flex-wrap gap-2">
         {resolvedSources.map((s) => (
           s.url ? (
-            <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" className="text-xs text-burnt-orange hover:text-ember transition-colors">{s.name}</a>
+            <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" className="text-xs text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors">{s.name}</a>
           ) : (
-            <span key={s.name} className="text-xs text-text-muted">{s.name}</span>
+            <span key={s.name} className="text-xs text-[rgba(196,184,165,0.35)]">{s.name}</span>
           )
         ))}
         {additionalSources?.map((s) => (
-          <span key={s} className="text-xs text-text-muted">{s}</span>
+          <span key={s} className="text-xs text-[rgba(196,184,165,0.35)]">{s}</span>
         ))}
       </div>
       {showFreshness && (normalized?.lastUpdated ?? fetchedAt) && (
-        <p className="text-[10px] text-text-muted mt-1">Last updated: {normalized?.lastUpdated ?? fetchedAt}</p>
+        <p className="text-[10px] text-[rgba(196,184,165,0.35)] mt-1">Last updated: {normalized?.lastUpdated ?? fetchedAt}</p>
       )}
     </footer>
   );
@@ -169,7 +169,7 @@ export function CitationFooter({ sources, source, fetchedAt, meta, additionalSou
 
 export function DataDisclaimer({ className = '' }: { className?: string }) {
   return (
-    <p className={`text-[10px] text-text-muted ${className}`}>
+    <p className={`text-[10px] text-[rgba(196,184,165,0.35)] ${className}`}>
       Data is provided for informational purposes only. Stats may be delayed or incomplete.
     </p>
   );

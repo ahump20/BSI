@@ -1715,7 +1715,7 @@ const conferenceData: Record<
 
 function RankChange({ current, previous }: { current: number | null; previous: number | null }) {
   if (!current) return null;
-  if (!previous) return <span className="text-text-tertiary text-sm">NEW</span>;
+  if (!previous) return <span className="text-[rgba(196,184,165,0.5)] text-sm">NEW</span>;
 
   const change = previous - current;
   if (change > 0) {
@@ -1733,7 +1733,7 @@ function RankChange({ current, previous }: { current: number | null; previous: n
       </span>
     );
   }
-  return <Minus className="w-4 h-4 text-text-tertiary" />;
+  return <Minus className="w-4 h-4 text-[rgba(196,184,165,0.5)]" />;
 }
 
 // ─── Auto-generated conference data from teamMetadata ──────────────────────────
@@ -1867,15 +1867,15 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
             <Section padding="lg" className="pt-6">
               <Container>
                 <div className="text-center py-20">
-                  <h1 className="font-display text-3xl font-bold text-text-primary mb-4">
+                  <h1 className="font-display text-3xl font-bold text-[var(--bsi-bone)] mb-4">
                     Conference Not Found
                   </h1>
-                  <p className="text-text-secondary mb-6">
+                  <p className="text-[var(--bsi-dust)] mb-6">
                     The conference you&apos;re looking for doesn&apos;t exist.
                   </p>
                   <Link
                     href="/college-baseball/conferences"
-                    className="text-burnt-orange hover:underline"
+                    className="text-[var(--bsi-primary)] hover:underline"
                   >
                     ← Back to Conferences
                   </Link>
@@ -1897,20 +1897,20 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
               <ScrollReveal direction="up">
                 <Link
                   href="/college-baseball/conferences"
-                  className="inline-flex items-center gap-2 text-text-tertiary hover:text-burnt-orange transition-colors mb-6"
+                  className="inline-flex items-center gap-2 text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors mb-6"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   All Conferences
                 </Link>
 
                 <div className="mb-8">
-                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-text-primary">
+                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-[var(--bsi-bone)]">
                     {auto.fullName}
                   </h1>
-                  <p className="text-text-secondary mt-2 max-w-3xl">
+                  <p className="text-[var(--bsi-dust)] mt-2 max-w-3xl">
                     {auto.description}
                   </p>
-                  <p className="text-text-tertiary mt-2 text-sm">
+                  <p className="text-[rgba(196,184,165,0.5)] mt-2 text-sm">
                     {auto.teams.length} {auto.teams.length === 1 ? 'team' : 'teams'} &middot; {auto.region}
                   </p>
                 </div>
@@ -1920,23 +1920,23 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
               <ScrollReveal direction="up" delay={100}>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10">
                   <Card padding="md" className="text-center">
-                    <Users className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                    <div className="font-display text-2xl font-bold text-text-primary">
+                    <Users className="w-6 h-6 text-[var(--bsi-primary)] mx-auto mb-2" />
+                    <div className="font-display text-2xl font-bold text-[var(--bsi-bone)]">
                       {auto.teams.length}
                     </div>
-                    <div className="text-text-tertiary text-sm">{auto.teams.length === 1 ? 'Team' : 'Teams'}</div>
+                    <div className="text-[rgba(196,184,165,0.5)] text-sm">{auto.teams.length === 1 ? 'Team' : 'Teams'}</div>
                   </Card>
                   <Card padding="md" className="text-center">
-                    <MapPin className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                    <div className="font-display text-2xl font-bold text-text-primary">
+                    <MapPin className="w-6 h-6 text-[var(--bsi-primary)] mx-auto mb-2" />
+                    <div className="font-display text-2xl font-bold text-[var(--bsi-bone)]">
                       {auto.region}
                     </div>
-                    <div className="text-text-tertiary text-sm">Region</div>
+                    <div className="text-[rgba(196,184,165,0.5)] text-sm">Region</div>
                   </Card>
                   <Card padding="md" className="text-center col-span-2 md:col-span-1">
-                    <Trophy className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                    <div className="font-display text-2xl font-bold text-text-primary">D1</div>
-                    <div className="text-text-tertiary text-sm">Division</div>
+                    <Trophy className="w-6 h-6 text-[var(--bsi-primary)] mx-auto mb-2" />
+                    <div className="font-display text-2xl font-bold text-[var(--bsi-bone)]">D1</div>
+                    <div className="text-[rgba(196,184,165,0.5)] text-sm">Division</div>
                   </Card>
                 </div>
               </ScrollReveal>
@@ -1952,7 +1952,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
 
               {/* Team Grid */}
               <ScrollReveal direction="up" delay={300}>
-                <h2 className="font-display text-xl font-bold text-text-primary mb-4">
+                <h2 className="font-display text-xl font-bold text-[var(--bsi-bone)] mb-4">
                   Conference Teams
                 </h2>
                 <div className="grid md:grid-cols-2 gap-4">
@@ -1963,7 +1963,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                       <Link key={team.slug} href={`/college-baseball/teams/${team.slug}`}>
                         <Card
                           padding="md"
-                          className="hover:border-burnt-orange/50 transition-all group"
+                          className="hover:border-[var(--bsi-primary)]/50 transition-all group"
                           style={{ borderLeftWidth: '3px', borderLeftColor: withAlpha(team.colors.primary, 0.38) }}
                         >
                           <div className="flex items-center gap-4">
@@ -1980,22 +1980,22 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                             </div>
                             <div className="min-w-0 flex-1">
                               <div className="flex items-center gap-2">
-                                <h3 className="font-display text-lg font-bold text-text-primary group-hover:text-burnt-orange transition-colors truncate">
+                                <h3 className="font-display text-lg font-bold text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors truncate">
                                   {team.fullName}
                                 </h3>
                                 {rank && (
-                                  <span className="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-semibold text-white bg-burnt-orange shrink-0">
+                                  <span className="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-semibold text-white bg-[var(--bsi-primary)] shrink-0">
                                     #{rank}
                                   </span>
                                 )}
                               </div>
-                              <div className="flex items-center gap-2 text-sm text-text-tertiary">
+                              <div className="flex items-center gap-2 text-sm text-[rgba(196,184,165,0.5)]">
                                 <MapPin className="w-3 h-3 shrink-0" />
                                 <span className="truncate">
                                   {team.city}, {team.state}
                                 </span>
                               </div>
-                              <p className="text-xs text-text-tertiary mt-0.5">{team.stadium}</p>
+                              <p className="text-xs text-[rgba(196,184,165,0.5)] mt-0.5">{team.stadium}</p>
                             </div>
                           </div>
                         </Card>
@@ -2006,7 +2006,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
               </ScrollReveal>
 
               {/* Attribution */}
-              <div className="mt-10 text-center text-xs text-text-tertiary">
+              <div className="mt-10 text-center text-xs text-[rgba(196,184,165,0.5)]">
                 <p>Team data sourced from ESPN.</p>
                 <p className="mt-1" suppressHydrationWarning>
                   Last updated:{' '}
@@ -2033,7 +2033,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
             <ScrollReveal direction="up">
               <Link
                 href="/college-baseball/conferences"
-                className="inline-flex items-center gap-2 text-text-tertiary hover:text-burnt-orange transition-colors mb-6"
+                className="inline-flex items-center gap-2 text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors mb-6"
               >
                 <ArrowLeft className="w-4 h-4" />
                 All Conferences
@@ -2041,12 +2041,12 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
 
               <div className="mb-8">
                 <div className="flex items-center gap-3 mb-2">
-                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-text-primary">
+                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-[var(--bsi-bone)]">
                     {conference.fullName}
                   </h1>
                   <Badge variant="primary">{rankedTeams.length} Ranked</Badge>
                 </div>
-                <p className="text-text-secondary max-w-3xl">{conference.description}</p>
+                <p className="text-[var(--bsi-dust)] max-w-3xl">{conference.description}</p>
               </div>
             </ScrollReveal>
 
@@ -2054,34 +2054,34 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
             <ScrollReveal direction="up" delay={100}>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
                 <Card padding="md" className="text-center">
-                  <Trophy className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                  <div className="font-display text-2xl font-bold text-text-primary">
+                  <Trophy className="w-6 h-6 text-[var(--bsi-primary)] mx-auto mb-2" />
+                  <div className="font-display text-2xl font-bold text-[var(--bsi-bone)]">
                     {rankedTeams.length}
                   </div>
-                  <div className="text-text-tertiary text-sm">Ranked Teams</div>
+                  <div className="text-[rgba(196,184,165,0.5)] text-sm">Ranked Teams</div>
                 </Card>
                 <Card padding="md" className="text-center">
-                  <Users className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                  <div className="font-display text-2xl font-bold text-text-primary">
+                  <Users className="w-6 h-6 text-[var(--bsi-primary)] mx-auto mb-2" />
+                  <div className="font-display text-2xl font-bold text-[var(--bsi-bone)]">
                     {conference.teams.length}
                   </div>
-                  <div className="text-text-tertiary text-sm">Total Teams</div>
+                  <div className="text-[rgba(196,184,165,0.5)] text-sm">Total Teams</div>
                 </Card>
                 <Card padding="md" className="text-center">
-                  <TrendingUp className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                  <div className="font-display text-2xl font-bold text-text-primary">
+                  <TrendingUp className="w-6 h-6 text-[var(--bsi-primary)] mx-auto mb-2" />
+                  <div className="font-display text-2xl font-bold text-[var(--bsi-bone)]">
                     {rankedTeams[0]?.name || '—'}
                   </div>
-                  <div className="text-text-tertiary text-sm">
+                  <div className="text-[rgba(196,184,165,0.5)] text-sm">
                     Top Team {rankedTeams[0]?.rank ? `(#${rankedTeams[0].rank})` : ''}
                   </div>
                 </Card>
                 <Card padding="md" className="text-center">
-                  <MapPin className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                  <div className="font-display text-2xl font-bold text-text-primary">
+                  <MapPin className="w-6 h-6 text-[var(--bsi-primary)] mx-auto mb-2" />
+                  <div className="font-display text-2xl font-bold text-[var(--bsi-bone)]">
                     {conference.region}
                   </div>
-                  <div className="text-text-tertiary text-sm">Region</div>
+                  <div className="text-[rgba(196,184,165,0.5)] text-sm">Region</div>
                 </Card>
               </div>
             </ScrollReveal>
@@ -2093,7 +2093,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
               <ScrollReveal direction="up" delay={130}>
                 <Card padding="lg" className="mb-8">
                   <div className="flex items-center gap-2 mb-4">
-                    <BarChart3 className="w-5 h-5 text-burnt-orange" />
+                    <BarChart3 className="w-5 h-5 text-[var(--bsi-primary)]" />
                     <h2 className="font-display text-xl font-bold text-bsi-bone">Power Rankings</h2>
                   </div>
                   <div className="space-y-2">
@@ -2103,7 +2103,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                       return (
                         <div key={team.team_name} className="flex items-center justify-between py-2 border-b border-border-vintage/20 last:border-0">
                           <div className="flex items-center gap-3">
-                            <span className="text-burnt-orange font-display font-bold text-sm w-6 text-right">{idx + 1}</span>
+                            <span className="text-[var(--bsi-primary)] font-display font-bold text-sm w-6 text-right">{idx + 1}</span>
                             <span className="text-bsi-bone font-medium">{team.team_name}</span>
                           </div>
                           <div className="flex items-center gap-4 text-sm">
@@ -2124,7 +2124,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
               <ScrollReveal direction="up" delay={140}>
                 <Card padding="lg" className="mb-8">
                   <div className="flex items-center gap-2 mb-4">
-                    <Star className="w-5 h-5 text-burnt-orange" />
+                    <Star className="w-5 h-5 text-[var(--bsi-primary)]" />
                     <h2 className="font-display text-xl font-bold text-bsi-bone">Top Performers</h2>
                   </div>
                   <div className="space-y-3">
@@ -2164,7 +2164,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
               <ScrollReveal direction="up" delay={145}>
                 <Card padding="lg" className="mb-8">
                   <div className="flex items-center gap-2 mb-4">
-                    <ArrowRightLeft className="w-5 h-5 text-burnt-orange" />
+                    <ArrowRightLeft className="w-5 h-5 text-[var(--bsi-primary)]" />
                     <h2 className="font-display text-xl font-bold text-bsi-bone">Portal Activity</h2>
                     <Badge variant="primary">{portalEntries.length}</Badge>
                   </div>
@@ -2181,7 +2181,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                       </div>
                     ))}
                     {portalEntries.length > 8 && (
-                      <Link href="/college-baseball/transfer-portal" className="text-burnt-orange text-xs hover:underline">
+                      <Link href="/college-baseball/transfer-portal" className="text-[var(--bsi-primary)] text-xs hover:underline">
                         View all {portalEntries.length} portal entries →
                       </Link>
                     )}
@@ -2195,16 +2195,16 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
             {/* Preseason Storylines */}
             <ScrollReveal direction="up" delay={150}>
               <Card padding="lg" className="mb-10">
-                <h2 className="font-display text-xl font-bold text-text-primary mb-4">
+                <h2 className="font-display text-xl font-bold text-[var(--bsi-bone)] mb-4">
                   2026 Preseason Storylines
                 </h2>
                 <ul className="space-y-3">
                   {conference.storylines.map((storyline, index) => (
                     <li key={index} className="flex gap-3">
-                      <span className="text-burnt-orange font-bold shrink-0">
+                      <span className="text-[var(--bsi-primary)] font-bold shrink-0">
                         {String(index + 1).padStart(2, '0')}
                       </span>
-                      <span className="text-text-secondary">{storyline}</span>
+                      <span className="text-[var(--bsi-dust)]">{storyline}</span>
                     </li>
                   ))}
                 </ul>
@@ -2214,7 +2214,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
             {/* Ranked Teams */}
             {rankedTeams.length > 0 && (
               <ScrollReveal direction="up" delay={200}>
-                <h2 className="font-display text-xl font-bold text-text-primary mb-4">
+                <h2 className="font-display text-xl font-bold text-[var(--bsi-bone)] mb-4">
                   Ranked Teams ({rankedTeams.length})
                 </h2>
                 <div className="grid gap-4 mb-10">
@@ -2228,38 +2228,38 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                         <Card
                           key={team.name}
                           padding="md"
-                          className={`transition-all ${team.slug ? 'hover:border-burnt-orange/50' : ''}`}
+                          className={`transition-all ${team.slug ? 'hover:border-[var(--bsi-primary)]/50' : ''}`}
                         >
                           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                             <div className="flex items-center gap-4">
-                              <div className="w-12 h-12 rounded-sm bg-burnt-orange/20 flex items-center justify-center overflow-hidden">
+                              <div className="w-12 h-12 rounded-sm bg-[var(--bsi-primary)]/20 flex items-center justify-center overflow-hidden">
                                 {logoUrl ? (
                                   <img src={logoUrl} alt="" className="w-9 h-9 object-contain" loading="lazy" decoding="async" />
                                 ) : (
-                                  <span className="font-display text-xl font-bold text-burnt-orange">
+                                  <span className="font-display text-xl font-bold text-[var(--bsi-primary)]">
                                     #{team.rank}
                                   </span>
                                 )}
                               </div>
                               <div>
                                 <div className="flex items-center gap-2">
-                                  <h3 className="font-display text-lg font-bold text-text-primary">
+                                  <h3 className="font-display text-lg font-bold text-[var(--bsi-bone)]">
                                     {team.name} {team.mascot}
                                   </h3>
                                   {logoUrl && (
-                                    <span className="font-display text-sm font-bold text-burnt-orange">
+                                    <span className="font-display text-sm font-bold text-[var(--bsi-primary)]">
                                       #{team.rank}
                                     </span>
                                   )}
                                   <RankChange current={team.rank} previous={team.previousRank} />
                                 </div>
                                 {team.keyPlayer && (
-                                  <p className="text-burnt-orange text-sm">{team.keyPlayer}</p>
+                                  <p className="text-[var(--bsi-primary)] text-sm">{team.keyPlayer}</p>
                                 )}
                               </div>
                             </div>
                             {team.previewNote && (
-                              <p className="text-text-secondary text-sm md:text-right md:max-w-md">
+                              <p className="text-[var(--bsi-dust)] text-sm md:text-right md:max-w-md">
                                 {team.previewNote}
                               </p>
                             )}
@@ -2283,7 +2283,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
             {/* Other Teams */}
             {unrankedTeams.length > 0 && (
               <ScrollReveal direction="up" delay={250}>
-                <h2 className="font-display text-xl font-bold text-text-primary mb-4">
+                <h2 className="font-display text-xl font-bold text-[var(--bsi-bone)] mb-4">
                   Other Conference Teams ({unrankedTeams.length})
                 </h2>
                 <div className="grid md:grid-cols-2 gap-4">
@@ -2295,18 +2295,18 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                       <Card
                         key={team.name}
                         padding="md"
-                        className={team.slug ? 'hover:border-burnt-orange/50 transition-all' : ''}
+                        className={team.slug ? 'hover:border-[var(--bsi-primary)]/50 transition-all' : ''}
                       >
                         <div className="flex items-center gap-3">
                           {logoUrl && (
                             <img src={logoUrl} alt="" className="w-8 h-8 object-contain shrink-0" loading="lazy" decoding="async" />
                           )}
                           <div>
-                            <h3 className="font-display text-lg font-bold text-text-primary">
+                            <h3 className="font-display text-lg font-bold text-[var(--bsi-bone)]">
                               {team.name} {team.mascot}
                             </h3>
                             {team.previewNote && (
-                              <p className="text-text-secondary text-sm mt-1">{team.previewNote}</p>
+                              <p className="text-[var(--bsi-dust)] text-sm mt-1">{team.previewNote}</p>
                             )}
                           </div>
                         </div>

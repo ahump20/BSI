@@ -89,24 +89,24 @@ export default function MMITrendingPage() {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 Home
               </Link>
-              <span className="text-text-tertiary">/</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
               <Link
                 href="/analytics"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 Analytics
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">Momentum Index</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">Momentum Index</span>
             </nav>
           </Container>
         </Section>
@@ -123,13 +123,13 @@ export default function MMITrendingPage() {
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display text-gradient-blaze mb-4">
+              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display text-[var(--bsi-primary)] mb-4">
                 Momentum Index (MMI)
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="text-text-secondary text-lg max-w-2xl mb-8">
+              <p className="text-[var(--bsi-dust)] text-lg max-w-2xl mb-8">
                 Track in-game momentum shifts across college baseball. BSI&apos;s proprietary
                 index measures scoring pressure, game phase, and base situations to quantify
                 which team has the edge.
@@ -143,13 +143,13 @@ export default function MMITrendingPage() {
           <Container>
             <ScrollReveal>
               <Card variant="default" padding="lg">
-                <h2 className="font-display text-xl uppercase tracking-wide font-semibold text-text-primary mb-4">
+                <h2 className="font-display text-xl uppercase tracking-wide font-semibold text-[var(--bsi-bone)] mb-4">
                   How It Works
                 </h2>
-                <p className="text-text-secondary text-sm mb-6 max-w-3xl">
+                <p className="text-[var(--bsi-dust)] text-sm mb-6 max-w-3xl">
                   The Momentum Magnitude Index combines four weighted signals into a single
                   value on a scale from <span className="font-mono text-[var(--heritage-columbia-blue)]">-100</span> (full
-                  away momentum) to <span className="font-mono text-burnt-orange">+100</span> (full
+                  away momentum) to <span className="font-mono text-[var(--bsi-primary)]">+100</span> (full
                   home momentum). Zero is neutral.
                 </p>
 
@@ -157,18 +157,18 @@ export default function MMITrendingPage() {
                   {methodologyWeights.map((w) => (
                     <div
                       key={w.abbr}
-                      className="bg-surface-light border border-border rounded-sm p-4"
+                      className="bg-[var(--surface-press-box)] border border-border rounded-sm p-4"
                     >
                       <div className="flex items-baseline gap-2 mb-1">
-                        <span className="font-mono text-burnt-orange font-bold text-lg">
+                        <span className="font-mono text-[var(--bsi-primary)] font-bold text-lg">
                           {w.weight}
                         </span>
-                        <span className="font-display text-xs uppercase tracking-wider text-text-muted">
+                        <span className="font-display text-xs uppercase tracking-wider text-[rgba(196,184,165,0.35)]">
                           {w.abbr}
                         </span>
                       </div>
-                      <p className="text-sm font-medium text-text-primary mb-1">{w.name}</p>
-                      <p className="text-xs text-text-tertiary">{w.description}</p>
+                      <p className="text-sm font-medium text-[var(--bsi-bone)] mb-1">{w.name}</p>
+                      <p className="text-xs text-[rgba(196,184,165,0.5)]">{w.description}</p>
                     </div>
                   ))}
                 </div>
@@ -183,15 +183,15 @@ export default function MMITrendingPage() {
             <ScrollReveal direction="up">
               <div className="flex items-center justify-between mb-8">
                 <div>
-                  <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display text-text-primary">
+                  <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display text-[var(--bsi-bone)]">
                     Trending Games
                   </h2>
-                  <p className="text-text-tertiary text-sm mt-1">
+                  <p className="text-[rgba(196,184,165,0.5)] text-sm mt-1">
                     Today&apos;s most dramatic momentum shifts, sorted by volatility.
                   </p>
                 </div>
                 {data?.meta && (
-                  <div className="hidden md:flex items-center gap-2 text-xs text-text-muted">
+                  <div className="hidden md:flex items-center gap-2 text-xs text-[rgba(196,184,165,0.35)]">
                     <span className="font-medium">{data.meta.source}</span>
                     <span>|</span>
                     <span>{data.meta.fetched_at}</span>
@@ -207,11 +207,11 @@ export default function MMITrendingPage() {
                   <Card key={i} variant="default" padding="lg">
                     <div className="animate-pulse space-y-4">
                       <div className="h-5 bg-surface-medium rounded-sm w-2/3" />
-                      <div className="h-14 bg-surface-light rounded-sm" />
+                      <div className="h-14 bg-[var(--surface-press-box)] rounded-sm" />
                       <div className="flex gap-4">
-                        <div className="h-4 bg-surface-light rounded-sm w-24" />
-                        <div className="h-4 bg-surface-light rounded-sm w-28" />
-                        <div className="h-4 bg-surface-light rounded-sm w-20" />
+                        <div className="h-4 bg-[var(--surface-press-box)] rounded-sm w-24" />
+                        <div className="h-4 bg-[var(--surface-press-box)] rounded-sm w-28" />
+                        <div className="h-4 bg-[var(--surface-press-box)] rounded-sm w-20" />
                       </div>
                     </div>
                   </Card>
@@ -225,7 +225,7 @@ export default function MMITrendingPage() {
                 <p className="text-error mb-4">{error}</p>
                 <button
                   onClick={retry}
-                  className="px-6 py-2.5 rounded-sm font-semibold text-sm bg-burnt-orange text-white hover:bg-burnt-orange/80 transition-colors"
+                  className="px-6 py-2.5 rounded-sm font-semibold text-sm bg-[var(--bsi-primary)] text-white hover:bg-[var(--bsi-primary)]/80 transition-colors"
                 >
                   Retry
                 </button>
@@ -235,10 +235,10 @@ export default function MMITrendingPage() {
             {/* Empty State */}
             {!loading && !error && sortedGames.length === 0 && (
               <Card variant="default" padding="lg" className="text-center">
-                <p className="text-text-tertiary text-lg mb-2">
+                <p className="text-[rgba(196,184,165,0.5)] text-lg mb-2">
                   Momentum metrics activate on game days
                 </p>
-                <p className="text-text-tertiary text-sm">
+                <p className="text-[rgba(196,184,165,0.5)] text-sm">
                   Live momentum data appears here during active games.
                 </p>
               </Card>
@@ -260,7 +260,7 @@ export default function MMITrendingPage() {
                       >
                         {/* Game Header */}
                         <div className="flex items-center justify-between mb-4">
-                          <h3 className="font-semibold text-text-primary">
+                          <h3 className="font-semibold text-[var(--bsi-bone)]">
                             {game.away_team} at {game.home_team}
                           </h3>
                           <Badge variant={excitement.variant} size="sm">
@@ -280,14 +280,14 @@ export default function MMITrendingPage() {
                         {/* Stats Row */}
                         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
                           <div className="flex items-center gap-1.5">
-                            <span className="text-text-tertiary">Lead Changes:</span>
-                            <span className="font-mono font-bold text-text-primary tabular-nums">
+                            <span className="text-[rgba(196,184,165,0.5)]">Lead Changes:</span>
+                            <span className="font-mono font-bold text-[var(--bsi-bone)] tabular-nums">
                               {game.lead_changes}
                             </span>
                           </div>
                           <div className="flex items-center gap-1.5">
-                            <span className="text-text-tertiary">Max Swing:</span>
-                            <span className="font-mono font-bold text-burnt-orange tabular-nums">
+                            <span className="text-[rgba(196,184,165,0.5)]">Max Swing:</span>
+                            <span className="font-mono font-bold text-[var(--bsi-primary)] tabular-nums">
                               {game.max_swing.toFixed(1)}
                             </span>
                           </div>

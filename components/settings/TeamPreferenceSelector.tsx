@@ -49,12 +49,12 @@ interface TeamPreferenceSelectorProps {
 export function TeamPreferenceSelector({ selected = [], onChange: _onChange }: TeamPreferenceSelectorProps) {
   return (
     <div>
-      <label className="block text-sm font-medium text-text-secondary mb-2">Favorite Teams</label>
+      <label className="block text-sm font-medium text-[var(--bsi-dust)] mb-2">Favorite Teams</label>
       <div className="flex flex-wrap gap-2">
         {selected.map((team) => (
           <Badge key={team} variant="primary">{team}</Badge>
         ))}
-        {selected.length === 0 && <p className="text-text-tertiary text-sm">No favorite teams selected yet.</p>}
+        {selected.length === 0 && <p className="text-[rgba(196,184,165,0.5)] text-sm">No favorite teams selected yet.</p>}
       </div>
     </div>
   );
@@ -67,7 +67,7 @@ export function FavoriteTeamsBadge({ teams }: { teams: string[] }) {
       {teams.slice(0, 3).map((t) => (
         <Badge key={t} variant="secondary" size="sm">{t}</Badge>
       ))}
-      {teams.length > 3 && <span className="text-text-tertiary text-xs">+{teams.length - 3}</span>}
+      {teams.length > 3 && <span className="text-[rgba(196,184,165,0.5)] text-xs">+{teams.length - 3}</span>}
     </div>
   );
 }

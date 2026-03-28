@@ -72,7 +72,7 @@ const FALLBACK_ARTICLES: Editorial[] = [
 
 function SkeletonFeatured() {
   return (
-    <div className="bg-surface-light border border-border rounded-[2px] p-5 md:p-7 animate-pulse">
+    <div className="bg-[var(--surface-press-box)] border border-border rounded-[2px] p-5 md:p-7 animate-pulse">
       <div className="h-4 w-24 bg-surface rounded-sm mb-3" />
       <div className="h-6 w-3/4 bg-surface rounded-sm mb-2" />
       <div className="h-4 w-full bg-surface rounded-sm mb-1" />
@@ -83,7 +83,7 @@ function SkeletonFeatured() {
 
 function SkeletonSecondary() {
   return (
-    <div className="bg-surface-light border border-border rounded-[2px] p-4 animate-pulse h-full">
+    <div className="bg-[var(--surface-press-box)] border border-border rounded-[2px] p-4 animate-pulse h-full">
       <div className="h-3 w-16 bg-surface rounded-sm mb-3" />
       <div className="h-5 w-5/6 bg-surface rounded-sm mb-2" />
       <div className="h-3 w-full bg-surface rounded-sm" />
@@ -116,12 +116,12 @@ export function EditorialFeed() {
       <Section padding="sm" className="py-4">
         <Container>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide">
+            <h2 className="font-display text-lg font-bold text-[var(--bsi-bone)] uppercase tracking-wide">
               Latest Analysis
             </h2>
             <Link
               href="/college-baseball/editorial"
-              className="text-sm text-burnt-orange hover:text-ember transition-colors"
+              className="text-sm text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
             >
               All Articles →
             </Link>
@@ -152,7 +152,7 @@ export function EditorialFeed() {
           {/* Section header */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <h2 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide">
+              <h2 className="font-display text-lg font-bold text-[var(--bsi-bone)] uppercase tracking-wide">
                 Latest Analysis
               </h2>
               {articles && !error && (
@@ -163,7 +163,7 @@ export function EditorialFeed() {
             </div>
             <Link
               href="/college-baseball/editorial"
-              className="text-sm text-burnt-orange hover:text-ember transition-colors"
+              className="text-sm text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
             >
               All Articles →
             </Link>
@@ -172,7 +172,7 @@ export function EditorialFeed() {
           {/* Featured article */}
           <Link href={getEditorialHref(featured)}>
             <div
-              className="border border-burnt-orange/30 rounded-[2px] p-4 md:p-6 hover:border-burnt-orange/60 transition-all group cursor-pointer mb-3"
+              className="border border-[var(--bsi-primary)]/30 rounded-[2px] p-4 md:p-6 hover:border-[var(--bsi-primary)]/60 transition-all group cursor-pointer mb-3"
               style={{ background: 'linear-gradient(to right, rgba(var(--bsi-primary-rgb), 0.2), rgba(140, 98, 57, 0.15))' }}
             >
               <div className="flex items-center justify-between">
@@ -181,25 +181,25 @@ export function EditorialFeed() {
                     {featured.teams.length > 0 && (
                       <Badge variant="primary">{featured.teams[0]}</Badge>
                     )}
-                    <span className="text-text-muted text-[10px] uppercase tracking-wider">
+                    <span className="text-[rgba(196,184,165,0.35)] text-[10px] uppercase tracking-wider">
                       {formatDate(featured.date)}
                     </span>
                     {featured.wordCount > 0 && (
-                      <span className="text-text-muted text-[10px]">
+                      <span className="text-[rgba(196,184,165,0.35)] text-[10px]">
                         · {readTime(featured.wordCount)}
                       </span>
                     )}
                   </div>
-                  <h3 className="font-display text-lg md:text-xl font-bold text-text-primary uppercase tracking-wide group-hover:text-burnt-orange transition-colors">
+                  <h3 className="font-display text-lg md:text-xl font-bold text-[var(--bsi-bone)] uppercase tracking-wide group-hover:text-[var(--bsi-primary)] transition-colors">
                     {featured.title}
                   </h3>
                   {featured.preview && (
-                    <p className="text-text-muted text-sm mt-1 line-clamp-2">
+                    <p className="text-[rgba(196,184,165,0.35)] text-sm mt-1 line-clamp-2">
                       {featured.preview}
                     </p>
                   )}
                 </div>
-                <svg viewBox="0 0 24 24" className="w-6 h-6 text-burnt-orange flex-shrink-0 ml-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg viewBox="0 0 24 24" className="w-6 h-6 text-[var(--bsi-primary)] flex-shrink-0 ml-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M9 18l6-6-6-6" />
                 </svg>
               </div>
@@ -211,29 +211,29 @@ export function EditorialFeed() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {secondary.map((article) => (
                 <Link key={article.id} href={getEditorialHref(article)}>
-                  <div className="bg-surface-light border border-border rounded-[2px] p-3 md:p-4 hover:border-burnt-orange/40 transition-all group cursor-pointer h-full">
+                  <div className="bg-[var(--surface-press-box)] border border-border rounded-[2px] p-3 md:p-4 hover:border-[var(--bsi-primary)]/40 transition-all group cursor-pointer h-full">
                     <div className="flex items-center justify-between">
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           {article.teams.length > 0 && (
-                            <span className="text-burnt-orange/70 text-[10px] font-semibold uppercase tracking-wider">
+                            <span className="text-[var(--bsi-primary)]/70 text-[10px] font-semibold uppercase tracking-wider">
                               {article.teams[0]}
                             </span>
                           )}
-                          <span className="text-text-muted text-[10px]">
+                          <span className="text-[rgba(196,184,165,0.35)] text-[10px]">
                             {formatDate(article.date)}
                           </span>
                         </div>
-                        <h4 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide group-hover:text-burnt-orange transition-colors">
+                        <h4 className="font-display text-sm font-bold text-[var(--bsi-bone)] uppercase tracking-wide group-hover:text-[var(--bsi-primary)] transition-colors">
                           {article.title}
                         </h4>
                         {article.preview && (
-                          <p className="text-text-muted text-xs mt-0.5 line-clamp-2">
+                          <p className="text-[rgba(196,184,165,0.35)] text-xs mt-0.5 line-clamp-2">
                             {article.preview}
                           </p>
                         )}
                       </div>
-                      <svg viewBox="0 0 24 24" className="w-4 h-4 text-text-muted flex-shrink-0 ml-3" fill="none" stroke="currentColor" strokeWidth="2">
+                      <svg viewBox="0 0 24 24" className="w-4 h-4 text-[rgba(196,184,165,0.35)] flex-shrink-0 ml-3" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M9 18l6-6-6-6" />
                       </svg>
                     </div>

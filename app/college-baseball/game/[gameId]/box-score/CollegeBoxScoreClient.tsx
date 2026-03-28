@@ -25,7 +25,7 @@ export default function CollegeBoxScoreClient() {
         <div className="text-center py-8">
           <svg
             viewBox="0 0 24 24"
-            className="w-16 h-16 text-text-tertiary mx-auto mb-4"
+            className="w-16 h-16 text-[rgba(196,184,165,0.5)] mx-auto mb-4"
             fill="none"
             stroke="currentColor"
             strokeWidth="1.5"
@@ -34,8 +34,8 @@ export default function CollegeBoxScoreClient() {
             <line x1="3" y1="9" x2="21" y2="9" />
             <line x1="9" y1="21" x2="9" y2="9" />
           </svg>
-          <p className="text-text-secondary">Box score not available yet.</p>
-          <p className="text-text-tertiary text-sm mt-2">
+          <p className="text-[var(--bsi-dust)]">Box score not available yet.</p>
+          <p className="text-[rgba(196,184,165,0.5)] text-sm mt-2">
             Once the first pitch flies, every at-bat and every pitch gets tracked here. The full
             picture, no ESPN filter.
           </p>
@@ -49,29 +49,29 @@ export default function CollegeBoxScoreClient() {
       {/* Away Team */}
       <div>
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 bg-background-secondary rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange relative">
+          <div className="w-10 h-10 bg-[var(--surface-dugout)] rounded-full flex items-center justify-center text-sm font-bold text-[var(--bsi-primary)] relative">
             {game.teams.away.abbreviation}
             {game.teams.away.ranking && (
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-burnt-orange text-white text-xs font-bold rounded-full flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 w-5 h-5 bg-[var(--bsi-primary)] text-white text-xs font-bold rounded-full flex items-center justify-center">
                 {game.teams.away.ranking}
               </span>
             )}
           </div>
           <div>
-            <h3 className="font-semibold text-text-primary">{game.teams.away.name}</h3>
-            <p className="text-text-tertiary text-sm">{game.teams.away.record}</p>
+            <h3 className="font-semibold text-[var(--bsi-bone)]">{game.teams.away.name}</h3>
+            <p className="text-[rgba(196,184,165,0.5)] text-sm">{game.teams.away.record}</p>
           </div>
         </div>
 
         {/* Away Batting */}
         <Card variant="default" padding="none" className="mb-4 overflow-hidden">
-          <CardHeader className="bg-background-tertiary">
+          <CardHeader className="bg-[var(--surface-dugout)]">
             <CardTitle size="sm">Batting</CardTitle>
           </CardHeader>
           <div className="overflow-x-auto">
             <table className="w-full text-sm" aria-label={`${game.teams.away.abbreviation || 'Away'} batting statistics`}>
               <thead>
-                <tr className="border-b border-border-subtle bg-background-secondary text-text-tertiary">
+                <tr className="border-b border-[var(--border-vintage)] bg-[var(--surface-dugout)] text-[rgba(196,184,165,0.5)]">
                   <th scope="col" className="text-left p-3 font-medium">Player</th>
                   <th scope="col" className="text-center p-3 font-medium w-12">AB</th>
                   <th scope="col" className="text-center p-3 font-medium w-12">R</th>
@@ -86,28 +86,28 @@ export default function CollegeBoxScoreClient() {
                 {boxscore.away.batting.map((batter, idx) => (
                   <tr
                     key={idx}
-                    className="border-b border-border-subtle hover:bg-surface-light transition-colors"
+                    className="border-b border-[var(--border-vintage)] hover:bg-[var(--surface-press-box)] transition-colors"
                   >
                     <td className="p-3">
                       <div className="flex items-center gap-2">
-                        <span className="text-text-tertiary text-xs w-6">
+                        <span className="text-[rgba(196,184,165,0.5)] text-xs w-6">
                           {batter.player.position}
                         </span>
-                        <span className="text-text-primary font-medium">{batter.player.name}</span>
+                        <span className="text-[var(--bsi-bone)] font-medium">{batter.player.name}</span>
                         {batter.player.year && (
-                          <span className="text-text-tertiary text-xs">({batter.player.year})</span>
+                          <span className="text-[rgba(196,184,165,0.5)] text-xs">({batter.player.year})</span>
                         )}
                       </div>
                     </td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{batter.ab}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{batter.r}</td>
-                    <td className="text-center p-3 font-mono text-text-primary font-semibold">
+                    <td className="text-center p-3 font-mono text-[var(--bsi-dust)]">{batter.ab}</td>
+                    <td className="text-center p-3 font-mono text-[var(--bsi-dust)]">{batter.r}</td>
+                    <td className="text-center p-3 font-mono text-[var(--bsi-bone)] font-semibold">
                       {batter.h}
                     </td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{batter.rbi}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{batter.bb}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{batter.so}</td>
-                    <td className="text-center p-3 font-mono text-text-tertiary">{batter.avg}</td>
+                    <td className="text-center p-3 font-mono text-[var(--bsi-dust)]">{batter.rbi}</td>
+                    <td className="text-center p-3 font-mono text-[var(--bsi-dust)]">{batter.bb}</td>
+                    <td className="text-center p-3 font-mono text-[var(--bsi-dust)]">{batter.so}</td>
+                    <td className="text-center p-3 font-mono text-[rgba(196,184,165,0.5)]">{batter.avg}</td>
                   </tr>
                 ))}
               </tbody>
@@ -117,13 +117,13 @@ export default function CollegeBoxScoreClient() {
 
         {/* Away Pitching */}
         <Card variant="default" padding="none" className="overflow-hidden">
-          <CardHeader className="bg-background-tertiary">
+          <CardHeader className="bg-[var(--surface-dugout)]">
             <CardTitle size="sm">Pitching</CardTitle>
           </CardHeader>
           <div className="overflow-x-auto">
             <table className="w-full text-sm" aria-label={`${game.teams.away.abbreviation || 'Away'} pitching statistics`}>
               <thead>
-                <tr className="border-b border-border-subtle bg-background-secondary text-text-tertiary">
+                <tr className="border-b border-[var(--border-vintage)] bg-[var(--surface-dugout)] text-[rgba(196,184,165,0.5)]">
                   <th scope="col" className="text-left p-3 font-medium">Pitcher</th>
                   <th scope="col" className="text-center p-3 font-medium w-14">IP</th>
                   <th scope="col" className="text-center p-3 font-medium w-12">H</th>
@@ -138,13 +138,13 @@ export default function CollegeBoxScoreClient() {
                 {boxscore.away.pitching.map((pitcher, idx) => (
                   <tr
                     key={idx}
-                    className="border-b border-border-subtle hover:bg-surface-light transition-colors"
+                    className="border-b border-[var(--border-vintage)] hover:bg-[var(--surface-press-box)] transition-colors"
                   >
                     <td className="p-3">
                       <div className="flex items-center gap-2">
-                        <span className="text-text-primary font-medium">{pitcher.player.name}</span>
+                        <span className="text-[var(--bsi-bone)] font-medium">{pitcher.player.name}</span>
                         {pitcher.player.year && (
-                          <span className="text-text-tertiary text-xs">
+                          <span className="text-[rgba(196,184,165,0.5)] text-xs">
                             ({pitcher.player.year})
                           </span>
                         )}
@@ -164,15 +164,15 @@ export default function CollegeBoxScoreClient() {
                         )}
                       </div>
                     </td>
-                    <td className="text-center p-3 font-mono text-text-primary font-semibold">
+                    <td className="text-center p-3 font-mono text-[var(--bsi-bone)] font-semibold">
                       {pitcher.ip}
                     </td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{pitcher.h}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{pitcher.r}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{pitcher.er}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{pitcher.bb}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{pitcher.so}</td>
-                    <td className="text-center p-3 font-mono text-text-tertiary">{pitcher.era}</td>
+                    <td className="text-center p-3 font-mono text-[var(--bsi-dust)]">{pitcher.h}</td>
+                    <td className="text-center p-3 font-mono text-[var(--bsi-dust)]">{pitcher.r}</td>
+                    <td className="text-center p-3 font-mono text-[var(--bsi-dust)]">{pitcher.er}</td>
+                    <td className="text-center p-3 font-mono text-[var(--bsi-dust)]">{pitcher.bb}</td>
+                    <td className="text-center p-3 font-mono text-[var(--bsi-dust)]">{pitcher.so}</td>
+                    <td className="text-center p-3 font-mono text-[rgba(196,184,165,0.5)]">{pitcher.era}</td>
                   </tr>
                 ))}
               </tbody>
@@ -184,29 +184,29 @@ export default function CollegeBoxScoreClient() {
       {/* Home Team */}
       <div>
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 bg-background-secondary rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange relative">
+          <div className="w-10 h-10 bg-[var(--surface-dugout)] rounded-full flex items-center justify-center text-sm font-bold text-[var(--bsi-primary)] relative">
             {game.teams.home.abbreviation}
             {game.teams.home.ranking && (
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-burnt-orange text-white text-xs font-bold rounded-full flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 w-5 h-5 bg-[var(--bsi-primary)] text-white text-xs font-bold rounded-full flex items-center justify-center">
                 {game.teams.home.ranking}
               </span>
             )}
           </div>
           <div>
-            <h3 className="font-semibold text-text-primary">{game.teams.home.name}</h3>
-            <p className="text-text-tertiary text-sm">{game.teams.home.record}</p>
+            <h3 className="font-semibold text-[var(--bsi-bone)]">{game.teams.home.name}</h3>
+            <p className="text-[rgba(196,184,165,0.5)] text-sm">{game.teams.home.record}</p>
           </div>
         </div>
 
         {/* Home Batting */}
         <Card variant="default" padding="none" className="mb-4 overflow-hidden">
-          <CardHeader className="bg-background-tertiary">
+          <CardHeader className="bg-[var(--surface-dugout)]">
             <CardTitle size="sm">Batting</CardTitle>
           </CardHeader>
           <div className="overflow-x-auto">
             <table className="w-full text-sm" aria-label={`${game.teams.home.abbreviation || 'Home'} batting statistics`}>
               <thead>
-                <tr className="border-b border-border-subtle bg-background-secondary text-text-tertiary">
+                <tr className="border-b border-[var(--border-vintage)] bg-[var(--surface-dugout)] text-[rgba(196,184,165,0.5)]">
                   <th scope="col" className="text-left p-3 font-medium">Player</th>
                   <th scope="col" className="text-center p-3 font-medium w-12">AB</th>
                   <th scope="col" className="text-center p-3 font-medium w-12">R</th>
@@ -221,28 +221,28 @@ export default function CollegeBoxScoreClient() {
                 {boxscore.home.batting.map((batter, idx) => (
                   <tr
                     key={idx}
-                    className="border-b border-border-subtle hover:bg-surface-light transition-colors"
+                    className="border-b border-[var(--border-vintage)] hover:bg-[var(--surface-press-box)] transition-colors"
                   >
                     <td className="p-3">
                       <div className="flex items-center gap-2">
-                        <span className="text-text-tertiary text-xs w-6">
+                        <span className="text-[rgba(196,184,165,0.5)] text-xs w-6">
                           {batter.player.position}
                         </span>
-                        <span className="text-text-primary font-medium">{batter.player.name}</span>
+                        <span className="text-[var(--bsi-bone)] font-medium">{batter.player.name}</span>
                         {batter.player.year && (
-                          <span className="text-text-tertiary text-xs">({batter.player.year})</span>
+                          <span className="text-[rgba(196,184,165,0.5)] text-xs">({batter.player.year})</span>
                         )}
                       </div>
                     </td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{batter.ab}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{batter.r}</td>
-                    <td className="text-center p-3 font-mono text-text-primary font-semibold">
+                    <td className="text-center p-3 font-mono text-[var(--bsi-dust)]">{batter.ab}</td>
+                    <td className="text-center p-3 font-mono text-[var(--bsi-dust)]">{batter.r}</td>
+                    <td className="text-center p-3 font-mono text-[var(--bsi-bone)] font-semibold">
                       {batter.h}
                     </td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{batter.rbi}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{batter.bb}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{batter.so}</td>
-                    <td className="text-center p-3 font-mono text-text-tertiary">{batter.avg}</td>
+                    <td className="text-center p-3 font-mono text-[var(--bsi-dust)]">{batter.rbi}</td>
+                    <td className="text-center p-3 font-mono text-[var(--bsi-dust)]">{batter.bb}</td>
+                    <td className="text-center p-3 font-mono text-[var(--bsi-dust)]">{batter.so}</td>
+                    <td className="text-center p-3 font-mono text-[rgba(196,184,165,0.5)]">{batter.avg}</td>
                   </tr>
                 ))}
               </tbody>
@@ -252,13 +252,13 @@ export default function CollegeBoxScoreClient() {
 
         {/* Home Pitching */}
         <Card variant="default" padding="none" className="overflow-hidden">
-          <CardHeader className="bg-background-tertiary">
+          <CardHeader className="bg-[var(--surface-dugout)]">
             <CardTitle size="sm">Pitching</CardTitle>
           </CardHeader>
           <div className="overflow-x-auto">
             <table className="w-full text-sm" aria-label={`${game.teams.home.abbreviation || 'Home'} pitching statistics`}>
               <thead>
-                <tr className="border-b border-border-subtle bg-background-secondary text-text-tertiary">
+                <tr className="border-b border-[var(--border-vintage)] bg-[var(--surface-dugout)] text-[rgba(196,184,165,0.5)]">
                   <th scope="col" className="text-left p-3 font-medium">Pitcher</th>
                   <th scope="col" className="text-center p-3 font-medium w-14">IP</th>
                   <th scope="col" className="text-center p-3 font-medium w-12">H</th>
@@ -273,13 +273,13 @@ export default function CollegeBoxScoreClient() {
                 {boxscore.home.pitching.map((pitcher, idx) => (
                   <tr
                     key={idx}
-                    className="border-b border-border-subtle hover:bg-surface-light transition-colors"
+                    className="border-b border-[var(--border-vintage)] hover:bg-[var(--surface-press-box)] transition-colors"
                   >
                     <td className="p-3">
                       <div className="flex items-center gap-2">
-                        <span className="text-text-primary font-medium">{pitcher.player.name}</span>
+                        <span className="text-[var(--bsi-bone)] font-medium">{pitcher.player.name}</span>
                         {pitcher.player.year && (
-                          <span className="text-text-tertiary text-xs">
+                          <span className="text-[rgba(196,184,165,0.5)] text-xs">
                             ({pitcher.player.year})
                           </span>
                         )}
@@ -299,15 +299,15 @@ export default function CollegeBoxScoreClient() {
                         )}
                       </div>
                     </td>
-                    <td className="text-center p-3 font-mono text-text-primary font-semibold">
+                    <td className="text-center p-3 font-mono text-[var(--bsi-bone)] font-semibold">
                       {pitcher.ip}
                     </td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{pitcher.h}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{pitcher.r}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{pitcher.er}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{pitcher.bb}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{pitcher.so}</td>
-                    <td className="text-center p-3 font-mono text-text-tertiary">{pitcher.era}</td>
+                    <td className="text-center p-3 font-mono text-[var(--bsi-dust)]">{pitcher.h}</td>
+                    <td className="text-center p-3 font-mono text-[var(--bsi-dust)]">{pitcher.r}</td>
+                    <td className="text-center p-3 font-mono text-[var(--bsi-dust)]">{pitcher.er}</td>
+                    <td className="text-center p-3 font-mono text-[var(--bsi-dust)]">{pitcher.bb}</td>
+                    <td className="text-center p-3 font-mono text-[var(--bsi-dust)]">{pitcher.so}</td>
+                    <td className="text-center p-3 font-mono text-[rgba(196,184,165,0.5)]">{pitcher.era}</td>
                   </tr>
                 ))}
               </tbody>

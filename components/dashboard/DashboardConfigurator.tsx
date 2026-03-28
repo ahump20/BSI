@@ -122,15 +122,15 @@ export function DashboardConfigurator({ prefs, onChange, onClose }: DashboardCon
   return (
     <Card padding="lg" className="max-w-lg mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="font-display text-xl font-bold text-text-primary">CUSTOMIZE DASHBOARD</h2>
-        <button onClick={onClose} className="text-text-tertiary hover:text-white transition-colors p-1" aria-label="Close">
+        <h2 className="font-display text-xl font-bold text-[var(--bsi-bone)]">CUSTOMIZE DASHBOARD</h2>
+        <button onClick={onClose} className="text-[rgba(196,184,165,0.5)] hover:text-white transition-colors p-1" aria-label="Close">
           <X className="w-5 h-5" />
         </button>
       </div>
 
       {/* Favorite Sports */}
       <div className="mb-6">
-        <h3 className="text-sm font-semibold text-text-secondary mb-3 uppercase tracking-wider">
+        <h3 className="text-sm font-semibold text-[var(--bsi-dust)] mb-3 uppercase tracking-wider">
           Favorite Sports
         </h3>
         <div className="flex flex-wrap gap-2">
@@ -140,8 +140,8 @@ export function DashboardConfigurator({ prefs, onChange, onClose }: DashboardCon
               onClick={() => toggleSport(sport)}
               className={`px-3 py-1.5 rounded-sm text-sm font-medium transition-all ${
                 local.favoriteSports.includes(sport)
-                  ? 'bg-burnt-orange text-white'
-                  : 'bg-charcoal text-text-secondary hover:text-white'
+                  ? 'bg-[var(--bsi-primary)] text-white'
+                  : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:text-white'
               }`}
             >
               {sport}
@@ -152,7 +152,7 @@ export function DashboardConfigurator({ prefs, onChange, onClose }: DashboardCon
 
       {/* Favorite Teams */}
       <div className="mb-6">
-        <h3 className="text-sm font-semibold text-text-secondary mb-3 uppercase tracking-wider">
+        <h3 className="text-sm font-semibold text-[var(--bsi-dust)] mb-3 uppercase tracking-wider">
           Favorite Teams
         </h3>
 
@@ -162,7 +162,7 @@ export function DashboardConfigurator({ prefs, onChange, onClose }: DashboardCon
             {favoriteTeamObjects.map((team) => (
               <div
                 key={team.slug}
-                className="flex items-center gap-2 px-3 py-1.5 bg-burnt-orange/15 text-burnt-orange rounded-sm text-sm"
+                className="flex items-center gap-2 px-3 py-1.5 bg-[var(--bsi-primary)]/15 text-[var(--bsi-primary)] rounded-sm text-sm"
               >
                 <Image
                   src={team.logo}
@@ -202,18 +202,18 @@ export function DashboardConfigurator({ prefs, onChange, onClose }: DashboardCon
             }}
             placeholder="Search teams to add..."
             aria-label="Search teams to add to dashboard"
-            className="w-full px-3 py-2 bg-charcoal border border-border rounded-sm text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-burnt-orange/50 transition-colors"
+            className="w-full px-3 py-2 bg-[var(--surface-dugout)] border border-border rounded-sm text-sm text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)] focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-colors"
           />
 
           {/* Dropdown */}
           {showDropdown && filteredTeams.length > 0 && (
-            <div className="absolute z-20 top-full left-0 right-0 mt-1 bg-midnight border border-border rounded-sm overflow-hidden shadow-lg max-h-48 overflow-y-auto">
+            <div className="absolute z-20 top-full left-0 right-0 mt-1 bg-[var(--surface-scoreboard)] border border-border rounded-sm overflow-hidden shadow-lg max-h-48 overflow-y-auto">
               {filteredTeams.map((team) => (
                 <button
                   key={team.slug}
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => addTeam(team.slug)}
-                  className="w-full flex items-center gap-3 px-3 py-2 hover:bg-surface-light transition-colors text-left"
+                  className="w-full flex items-center gap-3 px-3 py-2 hover:bg-[var(--surface-press-box)] transition-colors text-left"
                 >
                   <Image
                     src={team.logo}
@@ -224,8 +224,8 @@ export function DashboardConfigurator({ prefs, onChange, onClose }: DashboardCon
                     unoptimized
                   />
                   <div className="min-w-0">
-                    <p className="text-sm text-text-primary truncate">{team.name}</p>
-                    <p className="text-[10px] text-text-muted">{team.conference}</p>
+                    <p className="text-sm text-[var(--bsi-bone)] truncate">{team.name}</p>
+                    <p className="text-[10px] text-[rgba(196,184,165,0.35)]">{team.conference}</p>
                   </div>
                 </button>
               ))}
@@ -234,7 +234,7 @@ export function DashboardConfigurator({ prefs, onChange, onClose }: DashboardCon
         </div>
 
         {teamOptions.length === 0 && (
-          <p className="text-[11px] text-text-muted mt-2">
+          <p className="text-[11px] text-[rgba(196,184,165,0.35)] mt-2">
             Team search available when NCAA Baseball is selected
           </p>
         )}
@@ -244,13 +244,13 @@ export function DashboardConfigurator({ prefs, onChange, onClose }: DashboardCon
       <div className="flex gap-3">
         <button
           onClick={() => { onChange(local); onClose(); }}
-          className="px-6 py-2 bg-burnt-orange hover:bg-burnt-orange/80 text-white rounded-sm font-medium transition-colors"
+          className="px-6 py-2 bg-[var(--bsi-primary)] hover:bg-[var(--bsi-primary)]/80 text-white rounded-sm font-medium transition-colors"
         >
           Save
         </button>
         <button
           onClick={onClose}
-          className="px-6 py-2 bg-charcoal text-text-secondary hover:text-white rounded-sm font-medium transition-colors"
+          className="px-6 py-2 bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:text-white rounded-sm font-medium transition-colors"
         >
           Cancel
         </button>

@@ -59,8 +59,8 @@ function InstagramEmbed({ url }: { url: string }) {
 
 function PullQuote({ text }: { text: string }) {
   return (
-    <blockquote className="border-l-4 border-burnt-orange pl-6 my-8 max-w-2xl">
-      <p className="font-serif text-xl md:text-2xl italic text-text-secondary leading-relaxed">
+    <blockquote className="border-l-4 border-[var(--bsi-primary)] pl-6 my-8 max-w-2xl">
+      <p className="font-serif text-xl md:text-2xl italic text-[var(--bsi-dust)] leading-relaxed">
         &ldquo;{text}&rdquo;
       </p>
     </blockquote>
@@ -69,7 +69,7 @@ function PullQuote({ text }: { text: string }) {
 
 function Prose({ children }: { children: React.ReactNode }) {
   return (
-    <div className="max-w-3xl mx-auto font-serif text-text-secondary text-base md:text-lg leading-relaxed space-y-5">
+    <div className="max-w-3xl mx-auto font-serif text-[var(--bsi-dust)] text-base md:text-lg leading-relaxed space-y-5">
       {children}
     </div>
   );
@@ -85,7 +85,7 @@ function EraImage({ src, alt }: { src: string; alt: string }) {
         className="w-full max-h-[500px] object-cover"
         onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
       />
-      <figcaption className="text-xs text-text-muted px-4 py-2 bg-surface-light">
+      <figcaption className="text-xs text-[rgba(196,184,165,0.35)] px-4 py-2 bg-[var(--surface-press-box)]">
         {alt}
       </figcaption>
     </figure>
@@ -111,15 +111,15 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
         <Section padding="sm" className="border-b border-border">
           <Container>
             <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 College Baseball
               </Link>
-              <span className="text-text-muted">/</span>
-              <Link href="/college-baseball/editorial" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <Link href="/college-baseball/editorial" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 Editorial
               </Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-primary">{data.programName} Baseball History</span>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[var(--bsi-bone)]">{data.programName} Baseball History</span>
             </nav>
           </Container>
         </Section>
@@ -133,17 +133,17 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
               <div className="max-w-4xl">
                 <div className="flex items-center gap-3 mb-6">
                   <Badge variant="primary">{data.badgeText}</Badge>
-                  <span className="text-text-muted text-sm">{data.date}</span>
-                  <span className="text-text-muted text-sm">{data.readTime}</span>
+                  <span className="text-[rgba(196,184,165,0.35)] text-sm">{data.date}</span>
+                  <span className="text-[rgba(196,184,165,0.35)] text-sm">{data.readTime}</span>
                 </div>
                 <h1 className="font-display text-[clamp(2.5rem,6vw,5rem)] font-bold uppercase tracking-wide leading-[1.05] mb-6">
                   {data.programName}:{' '}
-                  <span className="text-gradient-blaze">{data.heroTitle}</span>
+                  <span className="text-[var(--bsi-primary)]">{data.heroTitle}</span>
                 </h1>
-                <p className="text-text-secondary text-lg md:text-xl leading-relaxed mb-4">
+                <p className="text-[var(--bsi-dust)] text-lg md:text-xl leading-relaxed mb-4">
                   {data.heroSubtitle}
                 </p>
-                <div className="flex items-center gap-4 text-sm text-text-muted">
+                <div className="flex items-center gap-4 text-sm text-[rgba(196,184,165,0.35)]">
                   <span>By Austin Humphrey</span>
                   <span>|</span>
                   <span>Blaze Sports Intel</span>
@@ -170,7 +170,7 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none" />
                   </div>
-                  <figcaption className="text-xs text-text-muted px-4 py-2 bg-surface-light">
+                  <figcaption className="text-xs text-[rgba(196,184,165,0.35)] px-4 py-2 bg-[var(--surface-press-box)]">
                     {data.heroImageCaption || data.heroImageAlt || data.programName}
                   </figcaption>
                 </figure>
@@ -215,7 +215,7 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
               <ScrollReveal direction="up">
                 <div className="flex items-center gap-4 mb-6">
                   <span className="heritage-stamp text-sm">{era.years}</span>
-                  <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary">
+                  <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-[var(--bsi-bone)]">
                     {era.name}
                   </h2>
                 </div>
@@ -224,22 +224,22 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
               <div className="grid lg:grid-cols-[280px_1fr] gap-8">
                 {/* Era stats sidebar */}
                 <ScrollReveal direction="left" delay={100}>
-                  <Card variant="default" padding="lg" className="border-t-2 border-burnt-orange">
+                  <Card variant="default" padding="lg" className="border-t-2 border-[var(--bsi-primary)]">
                     <div className="space-y-4">
                       <div>
-                        <div className="text-xs uppercase tracking-wide text-text-muted">Record</div>
-                        <div className="font-mono text-lg text-burnt-orange mt-1">{era.record}</div>
+                        <div className="text-xs uppercase tracking-wide text-[rgba(196,184,165,0.35)]">Record</div>
+                        <div className="font-mono text-lg text-[var(--bsi-primary)] mt-1">{era.record}</div>
                       </div>
                       <div>
-                        <div className="text-xs uppercase tracking-wide text-text-muted">National Titles</div>
-                        <div className="font-mono text-lg text-text-primary mt-1">{era.titles}</div>
+                        <div className="text-xs uppercase tracking-wide text-[rgba(196,184,165,0.35)]">National Titles</div>
+                        <div className="font-mono text-lg text-[var(--bsi-bone)] mt-1">{era.titles}</div>
                       </div>
                       <div>
-                        <div className="text-xs uppercase tracking-wide text-text-muted">CWS Appearances</div>
-                        <div className="font-mono text-lg text-text-primary mt-1">{era.cwsAppearances}</div>
+                        <div className="text-xs uppercase tracking-wide text-[rgba(196,184,165,0.35)]">CWS Appearances</div>
+                        <div className="font-mono text-lg text-[var(--bsi-bone)] mt-1">{era.cwsAppearances}</div>
                       </div>
                       <div className="pt-3 border-t border-border">
-                        <div className="text-xs uppercase tracking-wide text-text-muted mb-2">Key Players</div>
+                        <div className="text-xs uppercase tracking-wide text-[rgba(196,184,165,0.35)] mb-2">Key Players</div>
                         <div className="flex flex-wrap gap-1.5">
                           {era.keyPlayers.map((p) => (
                             <Badge key={p} variant="secondary" size="sm">{p}</Badge>
@@ -252,7 +252,7 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
 
                 {/* Era narrative */}
                 <ScrollReveal direction="up" delay={150}>
-                  <div className="font-serif text-text-secondary text-base md:text-lg leading-relaxed space-y-5">
+                  <div className="font-serif text-[var(--bsi-dust)] text-base md:text-lg leading-relaxed space-y-5">
                     {era.narrative.split('\n\n').map((p, i) => (
                       <p key={i}>{p}</p>
                     ))}
@@ -269,10 +269,10 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-2 text-text-primary">
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-2 text-[var(--bsi-bone)]">
                 Six National Championships
               </h2>
-              <p className="text-text-muted mb-8">From Omaha to the record books</p>
+              <p className="text-[rgba(196,184,165,0.35)] mb-8">From Omaha to the record books</p>
             </ScrollReveal>
 
             {/* Horizontal Championship Timeline */}
@@ -290,12 +290,12 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
                     >
                       <div className={`w-12 h-12 rounded-full border-2 flex items-center justify-center font-mono text-sm font-bold transition-colors ${
                         c.year === activeChampionship
-                          ? 'border-burnt-orange bg-burnt-orange text-white'
-                          : 'border-border-subtle bg-[var(--surface-dugout)] text-text-muted group-hover:border-burnt-orange'
+                          ? 'border-[var(--bsi-primary)] bg-[var(--bsi-primary)] text-white'
+                          : 'border-[var(--border-vintage)] bg-[var(--surface-dugout)] text-[rgba(196,184,165,0.35)] group-hover:border-[var(--bsi-primary)]'
                       }`}>
                         {String(c.year).slice(-2)}
                       </div>
-                      <span className="text-[10px] text-text-muted">{c.year}</span>
+                      <span className="text-[10px] text-[rgba(196,184,165,0.35)]">{c.year}</span>
                     </button>
                   ))}
                 </div>
@@ -303,16 +303,16 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
                   const champ = data.championships.find((c) => c.year === activeChampionship);
                   if (!champ) return null;
                   return (
-                    <div className="mt-4 rounded-sm bg-[var(--surface-dugout)] border border-border-subtle p-4 animate-in fade-in">
+                    <div className="mt-4 rounded-sm bg-[var(--surface-dugout)] border border-[var(--border-vintage)] p-4 animate-in fade-in">
                       <div className="flex items-start gap-3 mb-2">
-                        <span className="font-display text-2xl font-bold text-burnt-orange">{champ.year}</span>
+                        <span className="font-display text-2xl font-bold text-[var(--bsi-primary)]">{champ.year}</span>
                         <Badge variant="primary" size="sm">Champion</Badge>
                       </div>
-                      <div className="font-mono text-sm text-text-primary mb-1">{champ.record}</div>
-                      <div className="text-xs text-text-muted mb-2">
+                      <div className="font-mono text-sm text-[var(--bsi-bone)] mb-1">{champ.record}</div>
+                      <div className="text-xs text-[rgba(196,184,165,0.35)] mb-2">
                         vs {champ.titleGameOpponent} &middot; {champ.titleGameScore} &middot; MOP: {champ.mop}
                       </div>
-                      <p className="text-text-secondary text-sm leading-relaxed">{champ.narrative}</p>
+                      <p className="text-[var(--bsi-dust)] text-sm leading-relaxed">{champ.narrative}</p>
                     </div>
                   );
                 })()}
@@ -334,15 +334,15 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
                       />
                     )}
                     <div className="flex items-start justify-between mb-3">
-                      <h3 className="font-display text-3xl font-bold text-burnt-orange">{c.year}</h3>
+                      <h3 className="font-display text-3xl font-bold text-[var(--bsi-primary)]">{c.year}</h3>
                       <Badge variant="primary" size="sm">Champion</Badge>
                     </div>
-                    <div className="font-mono text-sm text-text-primary mb-1">{c.record}</div>
-                    <div className="text-xs text-text-muted mb-3">
+                    <div className="font-mono text-sm text-[var(--bsi-bone)] mb-1">{c.record}</div>
+                    <div className="text-xs text-[rgba(196,184,165,0.35)] mb-3">
                       vs {c.titleGameOpponent} &middot; {c.titleGameScore}
                     </div>
-                    <div className="text-xs text-burnt-orange mb-3">MOP: {c.mop}</div>
-                    <p className="text-text-secondary text-sm leading-relaxed">{c.narrative}</p>
+                    <div className="text-xs text-[var(--bsi-primary)] mb-3">MOP: {c.mop}</div>
+                    <p className="text-[var(--bsi-dust)] text-sm leading-relaxed">{c.narrative}</p>
                   </Card>
                 </ScrollReveal>
               ))}
@@ -354,7 +354,7 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-6 text-text-primary text-center">
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-6 text-[var(--bsi-bone)] text-center">
                 By the Numbers
               </h2>
             </ScrollReveal>
@@ -363,9 +363,9 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
               {data.programRecords.map((stat) => (
                 <ScrollReveal key={stat.label} direction="up">
                   <Card variant="default" padding="md" className="text-center">
-                    <div className="font-mono text-2xl md:text-3xl font-bold text-burnt-orange">{stat.value}</div>
-                    <div className="text-text-muted text-xs mt-1 uppercase tracking-wide">{stat.label}</div>
-                    {stat.context && <div className="text-text-muted text-xs mt-1">{stat.context}</div>}
+                    <div className="font-mono text-2xl md:text-3xl font-bold text-[var(--bsi-primary)]">{stat.value}</div>
+                    <div className="text-[rgba(196,184,165,0.35)] text-xs mt-1 uppercase tracking-wide">{stat.label}</div>
+                    {stat.context && <div className="text-[rgba(196,184,165,0.35)] text-xs mt-1">{stat.context}</div>}
                   </Card>
                 </ScrollReveal>
               ))}
@@ -377,10 +377,10 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-2 text-text-primary">
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-2 text-[var(--bsi-bone)]">
                 The Pantheon
               </h2>
-              <p className="text-text-muted mb-8">Retired numbers and defining players</p>
+              <p className="text-[rgba(196,184,165,0.35)] mb-8">Retired numbers and defining players</p>
             </ScrollReveal>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -399,17 +399,17 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
                     )}
                     <div className="flex items-start justify-between mb-2">
                       <div>
-                        <h3 className="font-display font-bold text-text-primary uppercase">
+                        <h3 className="font-display font-bold text-[var(--bsi-bone)] uppercase">
                           {player.name}
                         </h3>
-                        <span className="text-xs text-text-muted">{player.position} &middot; {player.years}</span>
+                        <span className="text-xs text-[rgba(196,184,165,0.35)]">{player.position} &middot; {player.years}</span>
                       </div>
                       {player.number && (
-                        <span className="font-mono text-2xl font-bold text-burnt-orange">#{player.number}</span>
+                        <span className="font-mono text-2xl font-bold text-[var(--bsi-primary)]">#{player.number}</span>
                       )}
                     </div>
-                    <p className="text-burnt-orange text-sm font-semibold mb-2">{player.headline}</p>
-                    <div className="font-mono text-xs text-text-muted mb-2">{player.stats}</div>
+                    <p className="text-[var(--bsi-primary)] text-sm font-semibold mb-2">{player.headline}</p>
+                    <div className="font-mono text-xs text-[rgba(196,184,165,0.35)] mb-2">{player.stats}</div>
                     {player.retired && (
                       <Badge variant="primary" size="sm">Jersey Retired</Badge>
                     )}
@@ -424,7 +424,7 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-6 text-text-primary">
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-6 text-[var(--bsi-bone)]">
                 The Cathedral
               </h2>
             </ScrollReveal>
@@ -451,7 +451,7 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
           <Container>
             <ScrollReveal direction="up">
               <div className="corner-marks p-6 md:p-10">
-                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-6 text-text-primary">
+                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-6 text-[var(--bsi-bone)]">
                   The Culture
                 </h2>
                 <Prose>
@@ -479,7 +479,7 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
           <Section padding="lg" borderTop>
             <Container size="md">
               <ScrollReveal direction="up">
-                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-6 text-text-primary">
+                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-6 text-[var(--bsi-bone)]">
                   Archive
                 </h2>
               </ScrollReveal>
@@ -487,13 +487,13 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
                 <ScrollReveal key={i} direction="up" delay={i * 100}>
                   {embed.type === 'youtube' && embed.id && (
                     <div>
-                      <p className="text-text-muted text-sm mb-2">{embed.title}</p>
+                      <p className="text-[rgba(196,184,165,0.35)] text-sm mb-2">{embed.title}</p>
                       <YouTubeEmbed id={embed.id} title={embed.title} />
                     </div>
                   )}
                   {embed.type === 'instagram' && (
                     <div>
-                      <p className="text-text-muted text-sm mb-2">{embed.title}</p>
+                      <p className="text-[rgba(196,184,165,0.35)] text-sm mb-2">{embed.title}</p>
                       <InstagramEmbed url={embed.url} />
                     </div>
                   )}
@@ -503,11 +503,11 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
                         href={embed.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-burnt-orange hover:text-ember transition-colors text-sm"
+                        className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors text-sm"
                       >
                         {embed.title} &rarr;
                       </a>
-                      <p className="text-text-muted text-xs mt-1">{embed.placement}</p>
+                      <p className="text-[rgba(196,184,165,0.35)] text-xs mt-1">{embed.placement}</p>
                     </Card>
                   )}
                 </ScrollReveal>
@@ -538,15 +538,15 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
         <Section padding="md" borderTop>
           <Container>
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="text-xs text-text-muted">
+              <div className="text-xs text-[rgba(196,184,165,0.35)]">
                 Written by Austin Humphrey &middot; Blaze Sports Intel
               </div>
               <div className="flex flex-wrap gap-4">
-                <Link href="/college-baseball/editorial" className="text-sm text-burnt-orange hover:text-ember transition-colors">
+                <Link href="/college-baseball/editorial" className="text-sm text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors">
                   More Editorial &rarr;
                 </Link>
                 {data.relatedLinks.map((link) => (
-                  <Link key={link.href} href={link.href} className="text-sm text-text-muted hover:text-text-primary transition-colors">
+                  <Link key={link.href} href={link.href} className="text-sm text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] transition-colors">
                     {link.label} &rarr;
                   </Link>
                 ))}

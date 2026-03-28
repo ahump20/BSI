@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { HealthDot } from './HealthDot';
 
-const footerLink = 'text-sm hover:text-burnt-orange transition-colors';
+const footerLink = 'text-sm hover:text-[var(--bsi-primary)] transition-colors';
 const sectionTitle = 'text-[10px] font-semibold uppercase tracking-[0.15em] mb-4 font-mono';
 
 export function Footer() {
@@ -35,7 +35,7 @@ export function Footer() {
               href="https://x.com/BlazeSportsHQ"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-burnt-orange transition-colors"
+              className="hover:text-[var(--bsi-primary)] transition-colors"
               style={{ color: 'var(--bsi-dust)' }}
               aria-label="BSI on X"
             >

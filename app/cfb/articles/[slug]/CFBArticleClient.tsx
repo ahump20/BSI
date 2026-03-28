@@ -63,11 +63,11 @@ export function CFBArticleClient() {
 
   return (
     <>
-      <div className="min-h-screen bg-midnight">
+      <div className="min-h-screen bg-[var(--surface-scoreboard)]">
         {/* Hero Section */}
         <Section
           padding="lg"
-          className="bg-gradient-to-b from-charcoal to-midnight relative overflow-hidden"
+          className="bg-gradient-to-b from-[#1A1A1A] to-midnight relative overflow-hidden"
         >
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/5 via-transparent to-transparent pointer-events-none" />
 
@@ -75,9 +75,9 @@ export function CFBArticleClient() {
             <div className="max-w-3xl mx-auto">
               {/* Breadcrumb */}
               <nav className="mb-6">
-                <ol className="flex items-center gap-2 text-sm text-text-tertiary">
+                <ol className="flex items-center gap-2 text-sm text-[rgba(196,184,165,0.5)]">
                   <li>
-                    <Link href="/cfb" className="hover:text-burnt-orange transition-colors">
+                    <Link href="/cfb" className="hover:text-[var(--bsi-primary)] transition-colors">
                       CFB
                     </Link>
                   </li>
@@ -94,8 +94,8 @@ export function CFBArticleClient() {
                 </div>
               ) : error ? (
                 <Card variant="default" padding="lg" className="text-center">
-                  <h1 className="text-2xl font-semibold text-text-primary mb-4">{error}</h1>
-                  <p className="text-text-tertiary mb-6">
+                  <h1 className="text-2xl font-semibold text-[var(--bsi-bone)] mb-4">{error}</h1>
+                  <p className="text-[rgba(196,184,165,0.5)] mb-6">
                     The article you&apos;re looking for doesn&apos;t exist or has been removed.
                   </p>
                   <Link href="/cfb">
@@ -124,16 +124,16 @@ export function CFBArticleClient() {
                       )}
                     </div>
 
-                    <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-text-primary mb-4">
+                    <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-[var(--bsi-bone)] mb-4">
                       {article.title}
                     </h1>
 
                     {article.summary && (
-                      <p className="text-lg text-text-secondary">{article.summary}</p>
+                      <p className="text-lg text-[var(--bsi-dust)]">{article.summary}</p>
                     )}
 
                     {/* Meta info */}
-                    <div className="flex flex-wrap items-center gap-4 mt-6 text-sm text-text-tertiary">
+                    <div className="flex flex-wrap items-center gap-4 mt-6 text-sm text-[rgba(196,184,165,0.5)]">
                       <span>{formatDate(article.published_at)}</span>
                       {article.metadata?.source && (
                         <>
@@ -154,12 +154,12 @@ export function CFBArticleClient() {
                   {article.home_team_name && article.away_team_name && (
                     <Card variant="default" padding="md" className="mb-8">
                       <div className="flex items-center justify-center gap-4 text-lg font-semibold">
-                        <span className="text-text-primary">{article.away_team_name}</span>
-                        <span className="text-text-tertiary">@</span>
-                        <span className="text-text-primary">{article.home_team_name}</span>
+                        <span className="text-[var(--bsi-bone)]">{article.away_team_name}</span>
+                        <span className="text-[rgba(196,184,165,0.5)]">@</span>
+                        <span className="text-[var(--bsi-bone)]">{article.home_team_name}</span>
                       </div>
                       {article.game_date && (
-                        <div className="text-center text-sm text-text-tertiary mt-2">
+                        <div className="text-center text-sm text-[rgba(196,184,165,0.5)] mt-2">
                           {formatDate(article.game_date)}
                         </div>
                       )}
@@ -178,20 +178,20 @@ export function CFBArticleClient() {
               <div className="max-w-3xl mx-auto">
                 <Card variant="default" padding="lg">
                   <article className="prose prose-invert prose-lg max-w-none">
-                    <div className="whitespace-pre-line text-text-secondary leading-relaxed">
+                    <div className="whitespace-pre-line text-[var(--bsi-dust)] leading-relaxed">
                       {article.content}
                     </div>
                   </article>
 
                   {/* Article Footer */}
-                  <div className="mt-8 pt-6 border-t border-border-subtle">
+                  <div className="mt-8 pt-6 border-t border-[var(--border-vintage)]">
                     <div className="flex flex-wrap items-center justify-between gap-4">
-                      <div className="text-xs text-text-tertiary">
+                      <div className="text-xs text-[rgba(196,184,165,0.5)]">
                         {article.metadata?.model && (
                           <span className="inline-flex items-center gap-1">
                             <svg
                               viewBox="0 0 24 24"
-                              className="w-4 h-4 stroke-burnt-orange fill-none stroke-[1.5]"
+                              className="w-4 h-4 stroke-[var(--bsi-primary)] fill-none stroke-[1.5]"
                             >
                               <rect x="4" y="4" width="16" height="16" rx="2" />
                               <circle cx="9" cy="9" r="1.5" />
@@ -208,7 +208,7 @@ export function CFBArticleClient() {
                           href={article.source_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-burnt-orange text-sm hover:text-ember transition-colors"
+                          className="text-[var(--bsi-primary)] text-sm hover:text-[var(--bsi-primary)] transition-colors"
                         >
                           View Original Source →
                         </a>

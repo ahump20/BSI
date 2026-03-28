@@ -62,8 +62,8 @@ export function WatchlistButton({
       onClick={onToggle}
       className={`inline-flex items-center gap-2 rounded-sm border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] transition-colors ${
         active
-          ? 'border-burnt-orange bg-burnt-orange/15 text-burnt-orange'
-          : 'border-[var(--border-vintage)] bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:border-burnt-orange/40'
+          ? 'border-[var(--bsi-primary)] bg-[var(--bsi-primary)]/15 text-[var(--bsi-primary)]'
+          : 'border-[var(--border-vintage)] bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:border-[var(--bsi-primary)]/40'
       }`}
     >
       <span>{active ? 'Tracked' : 'Track'}</span>
@@ -78,7 +78,7 @@ export function SurfaceNav() {
         <Link
           key={link.href}
           href={link.href}
-          className="rounded-sm border border-[var(--border-vintage)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] transition-colors hover:border-burnt-orange/40 hover:text-burnt-orange"
+          className="rounded-sm border border-[var(--border-vintage)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] transition-colors hover:border-[var(--bsi-primary)]/40 hover:text-[var(--bsi-primary)]"
         >
           {link.label}
         </Link>
@@ -102,16 +102,16 @@ export function ShowSurfaceFrame({
       <section className="border-b border-[var(--border-vintage)] bg-[radial-gradient(circle_at_top,_rgba(191,87,0,0.16),_transparent_55%),linear-gradient(180deg,rgba(13,13,13,0.95),rgba(26,26,26,1))] py-12">
         <Container size="xl">
           <div className="mb-6 flex items-center gap-3 text-sm text-[var(--bsi-dust)]">
-            <Link href="/mlb" className="hover:text-burnt-orange transition-colors">MLB</Link>
+            <Link href="/mlb" className="hover:text-[var(--bsi-primary)] transition-colors">MLB</Link>
             <span>/</span>
-            <Link href="/mlb/the-show-26" className="hover:text-burnt-orange transition-colors">The Show 26</Link>
+            <Link href="/mlb/the-show-26" className="hover:text-[var(--bsi-primary)] transition-colors">The Show 26</Link>
             <span>/</span>
             <span>Diamond Dynasty</span>
           </div>
 
           <div className="grid gap-8 lg:grid-cols-[1.4fr_0.6fr] lg:items-end">
             <div>
-              <div className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-burnt-orange">{eyebrow}</div>
+              <div className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--bsi-primary)]">{eyebrow}</div>
               <h1 className="font-display text-4xl font-bold uppercase tracking-display text-[var(--bsi-bone)] md:text-5xl">
                 {title}
               </h1>
@@ -121,7 +121,7 @@ export function ShowSurfaceFrame({
               </div>
             </div>
 
-            <Card variant="elevated" padding="lg" className="border-burnt-orange/20">
+            <Card variant="elevated" padding="lg" className="border-[var(--bsi-primary)]/20">
               <CardTitle size="sm">Data Trust</CardTitle>
               <CardContent className="space-y-3 px-0 pb-0 pt-4">
                 <DataFreshnessIndicator

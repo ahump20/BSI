@@ -47,9 +47,9 @@ interface TeamDetailResponse {
 
 function StatCard({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="text-center p-4 bg-background-tertiary rounded-sm">
-      <p className="text-2xl md:text-3xl font-bold text-text-primary">{value}</p>
-      <p className="text-xs text-text-tertiary uppercase tracking-wider mt-1">{label}</p>
+    <div className="text-center p-4 bg-[var(--surface-dugout)] rounded-sm">
+      <p className="text-2xl md:text-3xl font-bold text-[var(--bsi-bone)]">{value}</p>
+      <p className="text-xs text-[rgba(196,184,165,0.5)] uppercase tracking-wider mt-1">{label}</p>
     </div>
   );
 }
@@ -58,13 +58,13 @@ function SkeletonTeamProfile() {
   return (
     <div className="animate-pulse">
       <div className="flex flex-col md:flex-row gap-8 items-center">
-        <div className="w-32 h-32 bg-background-tertiary rounded-sm flex-shrink-0" />
+        <div className="w-32 h-32 bg-[var(--surface-dugout)] rounded-sm flex-shrink-0" />
         <div className="flex-1 space-y-4 text-center md:text-left">
-          <div className="h-10 bg-background-tertiary rounded-sm w-2/3 mx-auto md:mx-0" />
-          <div className="h-6 bg-background-tertiary/50 rounded-sm w-1/3 mx-auto md:mx-0" />
+          <div className="h-10 bg-[var(--surface-dugout)] rounded-sm w-2/3 mx-auto md:mx-0" />
+          <div className="h-6 bg-[var(--surface-dugout)]/50 rounded-sm w-1/3 mx-auto md:mx-0" />
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-20 bg-background-tertiary rounded-sm" />
+              <div key={i} className="h-20 bg-[var(--surface-dugout)] rounded-sm" />
             ))}
           </div>
         </div>
@@ -126,24 +126,24 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/cfb"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 CFB
               </Link>
-              <span className="text-text-tertiary">/</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
               <Link
                 href="/cfb/teams"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 Teams
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">
                 {loading ? 'Loading...' : team?.displayName || team?.name || 'Team'}
               </span>
             </nav>
@@ -163,10 +163,10 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
             {error && (
               <Card variant="default" padding="lg" className="mb-6 bg-error/10 border-error/30">
                 <p className="text-error font-semibold">Error loading team</p>
-                <p className="text-text-secondary text-sm mt-1">{error}</p>
+                <p className="text-[var(--bsi-dust)] text-sm mt-1">{error}</p>
                 <button
                   onClick={fetchTeam}
-                  className="mt-3 px-4 py-2 bg-burnt-orange text-white rounded-sm text-sm hover:bg-burnt-orange/80 transition-colors"
+                  className="mt-3 px-4 py-2 bg-[var(--bsi-primary)] text-white rounded-sm text-sm hover:bg-[var(--bsi-primary)]/80 transition-colors"
                 >
                   Try Again
                 </button>
@@ -202,7 +202,7 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
 
                   {/* Team Info */}
                   <div className="flex-1 text-center md:text-left">
-                    <h1 className="font-display text-3xl md:text-4xl font-bold text-text-primary">
+                    <h1 className="font-display text-3xl md:text-4xl font-bold text-[var(--bsi-bone)]">
                       {team.displayName || team.name}
                     </h1>
 
@@ -214,7 +214,7 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
                         {team.abbreviation}
                       </Badge>
                       {team.conference && (
-                        <span className="text-text-secondary">{team.conference}</span>
+                        <span className="text-[var(--bsi-dust)]">{team.conference}</span>
                       )}
                     </div>
 
@@ -237,7 +237,7 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
             <Container>
               <ScrollReveal direction="up">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-                  <h2 className="font-display text-2xl font-bold text-text-primary">
+                  <h2 className="font-display text-2xl font-bold text-[var(--bsi-bone)]">
                     Roster ({roster.length})
                   </h2>
 
@@ -249,8 +249,8 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
                         onClick={() => setPositionFilter(pos)}
                         className={`px-3 py-1.5 rounded-sm text-xs font-semibold transition-all whitespace-nowrap ${
                           positionFilter === pos
-                            ? 'bg-burnt-orange text-white'
-                            : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
+                            ? 'bg-[var(--bsi-primary)] text-white'
+                            : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:bg-[var(--surface-press-box)]'
                         }`}
                       >
                         {pos}
@@ -262,7 +262,7 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
                         onChange={(e) => {
                           if (e.target.value) setPositionFilter(e.target.value);
                         }}
-                        className="px-2 py-1.5 bg-background-tertiary border border-border-subtle rounded-sm text-text-secondary text-xs focus:outline-none focus:border-burnt-orange"
+                        className="px-2 py-1.5 bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm text-[var(--bsi-dust)] text-xs focus:outline-none focus:border-[var(--bsi-primary)]"
                       >
                         <option value="">More...</option>
                         {positions.slice(8).map((pos) => (
@@ -276,7 +276,7 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
 
               {displayRoster.length === 0 ? (
                 <Card variant="default" padding="lg" className="text-center">
-                  <p className="text-text-secondary">
+                  <p className="text-[var(--bsi-dust)]">
                     {roster.length === 0 ? 'No roster data available' : 'No players at this position'}
                   </p>
                 </Card>
@@ -285,28 +285,28 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="border-b border-border-subtle">
-                          <th className="text-left p-3 text-text-tertiary font-semibold">#</th>
-                          <th className="text-left p-3 text-text-tertiary font-semibold">Name</th>
-                          <th className="text-left p-3 text-text-tertiary font-semibold">Pos</th>
-                          <th className="text-left p-3 text-text-tertiary font-semibold hidden sm:table-cell">Yr</th>
-                          <th className="text-left p-3 text-text-tertiary font-semibold hidden md:table-cell">Ht</th>
-                          <th className="text-left p-3 text-text-tertiary font-semibold hidden md:table-cell">Wt</th>
+                        <tr className="border-b border-[var(--border-vintage)]">
+                          <th className="text-left p-3 text-[rgba(196,184,165,0.5)] font-semibold">#</th>
+                          <th className="text-left p-3 text-[rgba(196,184,165,0.5)] font-semibold">Name</th>
+                          <th className="text-left p-3 text-[rgba(196,184,165,0.5)] font-semibold">Pos</th>
+                          <th className="text-left p-3 text-[rgba(196,184,165,0.5)] font-semibold hidden sm:table-cell">Yr</th>
+                          <th className="text-left p-3 text-[rgba(196,184,165,0.5)] font-semibold hidden md:table-cell">Ht</th>
+                          <th className="text-left p-3 text-[rgba(196,184,165,0.5)] font-semibold hidden md:table-cell">Wt</th>
                         </tr>
                       </thead>
                       <tbody>
                         {displayRoster.map((player) => (
                           <tr
                             key={player.id}
-                            className="border-b border-border-subtle last:border-0 hover:bg-surface-light transition-colors"
+                            className="border-b border-[var(--border-vintage)] last:border-0 hover:bg-[var(--surface-press-box)] transition-colors"
                           >
-                            <td className="p-3 font-mono text-burnt-orange font-bold">
+                            <td className="p-3 font-mono text-[var(--bsi-primary)] font-bold">
                               {player.jersey || '-'}
                             </td>
                             <td className="p-3">
                               <Link
                                 href={`/cfb/players/${player.id}`}
-                                className="text-text-primary hover:text-burnt-orange transition-colors font-medium"
+                                className="text-[var(--bsi-bone)] hover:text-[var(--bsi-primary)] transition-colors font-medium"
                               >
                                 {player.name}
                               </Link>
@@ -316,13 +316,13 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
                                 {player.position}
                               </Badge>
                             </td>
-                            <td className="p-3 text-text-secondary hidden sm:table-cell">
+                            <td className="p-3 text-[var(--bsi-dust)] hidden sm:table-cell">
                               {player.year || '-'}
                             </td>
-                            <td className="p-3 text-text-secondary hidden md:table-cell">
+                            <td className="p-3 text-[var(--bsi-dust)] hidden md:table-cell">
                               {player.height || '-'}
                             </td>
-                            <td className="p-3 text-text-secondary hidden md:table-cell">
+                            <td className="p-3 text-[var(--bsi-dust)] hidden md:table-cell">
                               {player.weight ? `${player.weight} lbs` : '-'}
                             </td>
                           </tr>
@@ -349,19 +349,19 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/cfb/teams"
-                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
+                className="px-6 py-3 bg-[var(--surface-dugout)] rounded-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-all"
               >
                 All Teams
               </Link>
               <Link
                 href="/cfb/scores"
-                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
+                className="px-6 py-3 bg-[var(--surface-dugout)] rounded-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-all"
               >
                 Live Scores
               </Link>
               <Link
                 href="/cfb/standings"
-                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
+                className="px-6 py-3 bg-[var(--surface-dugout)] rounded-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-all"
               >
                 Standings
               </Link>

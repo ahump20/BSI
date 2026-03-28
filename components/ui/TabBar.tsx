@@ -28,14 +28,14 @@ const variantClasses = {
   default: {
     container: 'flex border-b border-border',
     tab: 'border-b-2 border-transparent transition-colors',
-    active: 'border-b-2 border-burnt-orange text-text-primary',
-    inactive: 'text-text-muted hover:text-text-primary',
+    active: 'border-b-2 border-[var(--bsi-primary)] text-[var(--bsi-bone)]',
+    inactive: 'text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)]',
   },
   pills: {
-    container: 'flex gap-2 p-1 bg-surface-light rounded-sm',
+    container: 'flex gap-2 p-1 bg-[var(--surface-press-box)] rounded-sm',
     tab: 'rounded-sm transition-colors',
-    active: 'bg-burnt-orange text-white',
-    inactive: 'text-text-secondary hover:text-text-primary hover:bg-surface-light',
+    active: 'bg-[var(--bsi-primary)] text-white',
+    inactive: 'text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)]',
   },
 };
 
@@ -122,7 +122,7 @@ export function TabBar({
             {Icon && <Icon className="w-4 h-4" />}
             <span>{tab.label}</span>
             {tab.badge !== undefined && (
-              <span className="ml-1 inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-burnt-orange text-white text-xs font-semibold">
+              <span className="ml-1 inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-[var(--bsi-primary)] text-white text-xs font-semibold">
                 {tab.badge}
               </span>
             )}

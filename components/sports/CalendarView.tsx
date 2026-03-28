@@ -85,16 +85,16 @@ export function CalendarView({ initialDate }: CalendarViewProps) {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <button onClick={() => shiftWeek(-1)} className="px-3 py-1.5 rounded-sm bg-charcoal text-text-secondary hover:text-text-primary transition-colors" aria-label="Previous week">&larr; Prev</button>
-        <span className="text-text-primary font-medium">{formatDate(weekDates[0])} &ndash; {formatDate(weekDates[6])}</span>
-        <button onClick={() => shiftWeek(1)} className="px-3 py-1.5 rounded-sm bg-charcoal text-text-secondary hover:text-text-primary transition-colors" aria-label="Next week">Next &rarr;</button>
+        <button onClick={() => shiftWeek(-1)} className="px-3 py-1.5 rounded-sm bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] transition-colors" aria-label="Previous week">&larr; Prev</button>
+        <span className="text-[var(--bsi-bone)] font-medium">{formatDate(weekDates[0])} &ndash; {formatDate(weekDates[6])}</span>
+        <button onClick={() => shiftWeek(1)} className="px-3 py-1.5 rounded-sm bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] transition-colors" aria-label="Next week">Next &rarr;</button>
       </div>
       {loading ? (
         <div className="grid grid-cols-7 gap-2">
           {DAYS.map((d) => (
             <div key={d} className="animate-pulse">
-              <div className="text-center text-xs text-text-tertiary mb-1">{d}</div>
-              <div className="h-24 bg-charcoal rounded-sm" />
+              <div className="text-center text-xs text-[rgba(196,184,165,0.5)] mb-1">{d}</div>
+              <div className="h-24 bg-[var(--surface-dugout)] rounded-sm" />
             </div>
           ))}
         </div>
@@ -105,13 +105,13 @@ export function CalendarView({ initialDate }: CalendarViewProps) {
             const isToday = date === new Date().toISOString().split('T')[0];
             return (
               <div key={date}>
-                <div className={`text-center text-xs mb-1 ${isToday ? 'text-burnt-orange font-bold' : 'text-text-tertiary'}`}>
+                <div className={`text-center text-xs mb-1 ${isToday ? 'text-[var(--bsi-primary)] font-bold' : 'text-[rgba(196,184,165,0.5)]'}`}>
                   {DAYS[i]}
                   <div className="text-[10px]">{formatDate(date)}</div>
                 </div>
-                <div className={`min-h-[6rem] rounded-sm border p-1.5 space-y-1 ${isToday ? 'border-burnt-orange/40 bg-burnt-orange/5' : 'border-border-subtle bg-charcoal/30'}`}>
+                <div className={`min-h-[6rem] rounded-sm border p-1.5 space-y-1 ${isToday ? 'border-[var(--bsi-primary)]/40 bg-[var(--bsi-primary)]/5' : 'border-[var(--border-vintage)] bg-[var(--surface-dugout)]/30'}`}>
                   {dayGames.length === 0 ? (
-                    <p className="text-text-tertiary text-[10px] text-center mt-4">No games</p>
+                    <p className="text-[rgba(196,184,165,0.5)] text-[10px] text-center mt-4">No games</p>
                   ) : (
                     dayGames.slice(0, 3).map((g) => {
                       const away = teamName(g.awayTeam);
@@ -120,14 +120,14 @@ export function CalendarView({ initialDate }: CalendarViewProps) {
                       const hScore = teamScore(g.homeTeam);
                       const scoreStr = aScore !== null && hScore !== null ? `${aScore}-${hScore}` : g.time;
                       return (
-                        <Link key={g.id} href={`/college-baseball/game/${g.id}`} className="block p-1 rounded-sm bg-charcoal/60 hover:bg-slate/60 transition-colors">
-                          <div className="text-[10px] text-text-primary truncate">{away} @ {home}</div>
-                          <div className="text-[9px] text-text-tertiary">{g.score || scoreStr}</div>
+                        <Link key={g.id} href={`/college-baseball/game/${g.id}`} className="block p-1 rounded-sm bg-[var(--surface-dugout)]/60 hover:bg-slate/60 transition-colors">
+                          <div className="text-[10px] text-[var(--bsi-bone)] truncate">{away} @ {home}</div>
+                          <div className="text-[9px] text-[rgba(196,184,165,0.5)]">{g.score || scoreStr}</div>
                         </Link>
                       );
                     })
                   )}
-                  {dayGames.length > 3 && <p className="text-[9px] text-burnt-orange text-center">+{dayGames.length - 3} more</p>}
+                  {dayGames.length > 3 && <p className="text-[9px] text-[var(--bsi-primary)] text-center">+{dayGames.length - 3} more</p>}
                 </div>
               </div>
             );

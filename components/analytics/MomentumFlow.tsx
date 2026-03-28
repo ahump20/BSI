@@ -260,19 +260,19 @@ export function MomentumFlow({
   const hasSampleData = snapshots.length >= 2;
 
   return (
-    <div className={`bg-background-primary border border-border-subtle rounded-sm overflow-hidden ${className}`}>
+    <div className={`bg-[var(--surface-scoreboard)] border border-[var(--border-vintage)] rounded-sm overflow-hidden ${className}`}>
       {/* Header */}
       <div className="px-5 pt-5 pb-3">
         <div className="flex items-center justify-between mb-1">
-          <h3 className="font-display text-sm uppercase tracking-widest text-text-secondary">
+          <h3 className="font-display text-sm uppercase tracking-widest text-[var(--bsi-dust)]">
             Momentum Flow
           </h3>
           {excitementRating && (
             <span className={`text-[9px] uppercase tracking-wider font-display px-2 py-0.5 rounded-full ${
-              excitementRating === 'instant-classic' ? 'bg-burnt-orange/10 text-burnt-orange' :
+              excitementRating === 'instant-classic' ? 'bg-[var(--bsi-primary)]/10 text-[var(--bsi-primary)]' :
               excitementRating === 'thriller' ? 'bg-[var(--bsi-warning)]/10 text-[var(--bsi-warning)]' :
               excitementRating === 'competitive' ? 'bg-[var(--heritage-columbia-blue)]/10 text-[var(--heritage-columbia-blue)]' :
-              'bg-surface-light text-text-muted'
+              'bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.35)]'
             }`}>
               {excitementRating.replace('-', ' ')}
             </span>
@@ -280,11 +280,11 @@ export function MomentumFlow({
         </div>
         <div className="flex items-center justify-between text-xs">
           <span className="text-[#6B8DB2] font-medium">{awayTeam}</span>
-          <div className="flex gap-4 text-text-muted">
+          <div className="flex gap-4 text-[rgba(196,184,165,0.35)]">
             {volatility != null && <span>Vol: {volatility.toFixed(1)}</span>}
             {leadChanges != null && <span>Leads: {leadChanges}</span>}
           </div>
-          <span className="text-burnt-orange font-medium">{homeTeam}</span>
+          <span className="text-[var(--bsi-primary)] font-medium">{homeTeam}</span>
         </div>
       </div>
 
@@ -295,7 +295,7 @@ export function MomentumFlow({
             <svg ref={svgRef} className="w-full" />
             {tooltip && (
               <div
-                className="absolute z-10 pointer-events-none bg-surface-medium border border-border-subtle rounded-sm px-3 py-2 shadow-lg"
+                className="absolute z-10 pointer-events-none bg-surface-medium border border-[var(--border-vintage)] rounded-sm px-3 py-2 shadow-lg"
                 style={{
                   left: Math.min(tooltip.x, dimensions.width - 180),
                   top: Math.max(tooltip.y - 70, 0),
@@ -307,18 +307,18 @@ export function MomentumFlow({
                   }}>
                     {tooltip.snap.mmi_value > 0 ? '+' : ''}{tooltip.snap.mmi_value.toFixed(1)}
                   </span>
-                  <span className="text-[9px] uppercase text-text-muted">
+                  <span className="text-[9px] uppercase text-[rgba(196,184,165,0.35)]">
                     {tooltip.snap.inning_half === 'top' ? 'T' : 'B'}{tooltip.snap.inning}
                   </span>
                 </div>
                 {tooltip.snap.event_description && (
-                  <p className="text-[11px] text-text-tertiary max-w-[160px]">{tooltip.snap.event_description}</p>
+                  <p className="text-[11px] text-[rgba(196,184,165,0.5)] max-w-[160px]">{tooltip.snap.event_description}</p>
                 )}
               </div>
             )}
           </>
         ) : (
-          <div className="flex items-center justify-center h-[200px] text-text-muted text-sm">
+          <div className="flex items-center justify-center h-[200px] text-[rgba(196,184,165,0.35)] text-sm">
             Momentum data populates during live games
           </div>
         )}

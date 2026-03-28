@@ -44,14 +44,14 @@ export default function CFBArticlesPage() {
   return (
     <>
       <div>
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/cfb" className="text-text-tertiary hover:text-burnt-orange transition-colors">
+              <Link href="/cfb" className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors">
                 CFB
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">Articles</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">Articles</span>
             </nav>
           </Container>
         </Section>
@@ -63,12 +63,12 @@ export default function CFBArticlesPage() {
               <Badge variant="primary" className="mb-4">Coverage</Badge>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-gradient-blaze mb-4">
+              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-[var(--bsi-primary)] mb-4">
                 CFB Articles
               </h1>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={150}>
-              <p className="text-text-secondary max-w-2xl">
+              <p className="text-[var(--bsi-dust)] max-w-2xl">
                 Previews, recaps, and analysis from across college football. AI-powered coverage that goes beyond the box score.
               </p>
             </ScrollReveal>
@@ -80,7 +80,7 @@ export default function CFBArticlesPage() {
             {loading ? (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="bg-background-tertiary rounded-sm p-6 animate-pulse">
+                  <div key={i} className="bg-[var(--surface-dugout)] rounded-sm p-6 animate-pulse">
                     <div className="h-4 bg-surface-secondary rounded-sm w-1/4 mb-3" />
                     <div className="h-6 bg-surface-secondary rounded-sm w-3/4 mb-2" />
                     <div className="h-4 bg-surface-secondary rounded-sm w-full" />
@@ -89,14 +89,14 @@ export default function CFBArticlesPage() {
               </div>
             ) : error ? (
               <Card variant="default" padding="lg" className="text-center">
-                <p className="text-text-secondary mb-2">Unable to load articles</p>
-                <p className="text-text-tertiary text-sm">{error}</p>
+                <p className="text-[var(--bsi-dust)] mb-2">Unable to load articles</p>
+                <p className="text-[rgba(196,184,165,0.5)] text-sm">{error}</p>
               </Card>
             ) : articles.length === 0 ? (
               <Card variant="default" padding="lg" className="text-center">
                 <div className="py-8">
-                  <p className="text-text-secondary text-lg mb-2">No articles published yet</p>
-                  <p className="text-text-tertiary text-sm">
+                  <p className="text-[var(--bsi-dust)] text-lg mb-2">No articles published yet</p>
+                  <p className="text-[rgba(196,184,165,0.5)] text-sm">
                     CFB coverage will appear here as articles are generated during the season.
                   </p>
                 </div>
@@ -115,15 +115,15 @@ export default function CFBArticlesPage() {
                             <Badge variant="secondary" size="sm">{article.conference}</Badge>
                           )}
                         </div>
-                        <h3 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide mb-2 line-clamp-2">
+                        <h3 className="font-display text-lg font-bold text-[var(--bsi-bone)] uppercase tracking-wide mb-2 line-clamp-2">
                           {article.title}
                         </h3>
                         {article.summary && (
-                          <p className="text-text-secondary text-sm line-clamp-3 mb-3">
+                          <p className="text-[var(--bsi-dust)] text-sm line-clamp-3 mb-3">
                             {article.summary}
                           </p>
                         )}
-                        <p className="text-text-tertiary text-xs">{formatDate(article.published_at)}</p>
+                        <p className="text-[rgba(196,184,165,0.5)] text-xs">{formatDate(article.published_at)}</p>
                       </Card>
                     </Link>
                   </ScrollReveal>

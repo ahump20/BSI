@@ -114,8 +114,8 @@ function LeaguesDropdown({ items }: { items: LeagueNavItem[] }) {
         onClick={() => setOpen(!open)}
         className={`flex items-center gap-1 px-3 py-1.5 rounded-sm text-sm font-medium transition-all ${
           hasActiveSport
-            ? 'bg-burnt-orange/15 text-ember'
-            : 'text-text-secondary hover:text-text-primary hover:bg-surface-light'
+            ? 'bg-[var(--bsi-primary)]/15 text-ember'
+            : 'text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)]'
         }`}
         aria-expanded={open}
         aria-haspopup="true"
@@ -128,7 +128,7 @@ function LeaguesDropdown({ items }: { items: LeagueNavItem[] }) {
       {open && (
         <div
           id="leagues-menu"
-          className="absolute top-full left-0 mt-2 w-56 bg-midnight/95 backdrop-blur-xl border border-border rounded-sm shadow-2xl py-1 z-50"
+          className="absolute top-full left-0 mt-2 w-56 bg-[var(--surface-scoreboard)]/95 backdrop-blur-xl border border-border rounded-sm shadow-2xl py-1 z-50"
           role="menu"
         >
           {items.map((item, idx) => {
@@ -141,7 +141,7 @@ function LeaguesDropdown({ items }: { items: LeagueNavItem[] }) {
 
             return (
               <div key={item.href}>
-                {showDivider && <div className="border-t border-border-subtle my-1" />}
+                {showDivider && <div className="border-t border-[var(--border-vintage)] my-1" />}
                 <Link
                   href={item.href}
                   onClick={() => setOpen(false)}
@@ -149,17 +149,17 @@ function LeaguesDropdown({ items }: { items: LeagueNavItem[] }) {
                   className={`flex items-center justify-between px-4 py-2.5 text-sm transition-colors ${
                     isFeatured
                       ? active
-                        ? 'text-ember bg-burnt-orange/10'
-                        : 'text-burnt-orange hover:text-ember hover:bg-burnt-orange/10'
+                        ? 'text-ember bg-[var(--bsi-primary)]/10'
+                        : 'text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] hover:bg-[var(--bsi-primary)]/10'
                       : active
-                        ? 'text-ember bg-surface-light'
-                        : 'text-text-secondary hover:text-text-primary hover:bg-surface-light'
+                        ? 'text-ember bg-[var(--surface-press-box)]'
+                        : 'text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)]'
                   }`}
                 >
                   <span className={isFeatured ? 'font-semibold' : ''}>{item.label}</span>
                   <span className="flex items-center gap-2">
                     {item.phaseLabel && (
-                      <span className={`text-[10px] ${isFeatured ? 'text-burnt-orange/80' : 'text-text-muted'}`}>
+                      <span className={`text-[10px] ${isFeatured ? 'text-[var(--bsi-primary)]/80' : 'text-[rgba(196,184,165,0.35)]'}`}>
                         {item.phaseLabel}
                       </span>
                     )}
@@ -200,8 +200,8 @@ function AnalyticsDropdown({ items }: { items: MainNavItem[] }) {
         onClick={() => setOpen(!open)}
         className={`flex items-center gap-1 px-3 py-1.5 rounded-sm text-sm font-medium transition-all ${
           hasActiveItem
-            ? 'bg-burnt-orange/15 text-ember'
-            : 'text-text-secondary hover:text-text-primary hover:bg-surface-light'
+            ? 'bg-[var(--bsi-primary)]/15 text-ember'
+            : 'text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)]'
         }`}
         aria-expanded={open}
         aria-haspopup="true"
@@ -214,7 +214,7 @@ function AnalyticsDropdown({ items }: { items: MainNavItem[] }) {
       {open && (
         <div
           id="analytics-menu"
-          className="absolute top-full left-0 mt-2 w-52 bg-midnight/95 backdrop-blur-xl border border-border rounded-sm shadow-2xl py-1 z-50"
+          className="absolute top-full left-0 mt-2 w-52 bg-[var(--surface-scoreboard)]/95 backdrop-blur-xl border border-border rounded-sm shadow-2xl py-1 z-50"
           role="menu"
         >
           {items.map((item) => {
@@ -227,8 +227,8 @@ function AnalyticsDropdown({ items }: { items: MainNavItem[] }) {
                 role="menuitem"
                 className={`block px-4 py-2.5 text-sm transition-colors ${
                   active
-                    ? 'text-ember bg-surface-light'
-                    : 'text-text-secondary hover:text-text-primary hover:bg-surface-light'
+                    ? 'text-ember bg-[var(--surface-press-box)]'
+                    : 'text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)]'
                 }`}
               >
                 {item.label}
@@ -254,7 +254,7 @@ function MoreDropdown({ items }: { items: NavItem[] }) {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1 px-3 py-1.5 rounded-sm text-sm font-medium text-text-muted hover:text-text-primary hover:bg-surface-light transition-all"
+        className="flex items-center gap-1 px-3 py-1.5 rounded-sm text-sm font-medium text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-all"
         aria-expanded={open}
         aria-haspopup="true"
         aria-controls="more-menu"
@@ -264,14 +264,14 @@ function MoreDropdown({ items }: { items: NavItem[] }) {
       </button>
 
       {open && (
-        <div id="more-menu" className="absolute top-full right-0 mt-2 w-48 bg-midnight/95 backdrop-blur-xl border border-border rounded-sm shadow-2xl py-1 z-50" role="menu">
+        <div id="more-menu" className="absolute top-full right-0 mt-2 w-48 bg-[var(--surface-scoreboard)]/95 backdrop-blur-xl border border-border rounded-sm shadow-2xl py-1 z-50" role="menu">
           {items.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               onClick={() => setOpen(false)}
               role="menuitem"
-              className="block px-4 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light transition-colors"
+              className="block px-4 py-2.5 text-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-colors"
             >
               {item.label}
             </Link>
@@ -328,7 +328,7 @@ export function Navbar({ primary, leagues, secondary, analytics = [] }: NavbarPr
         } ${
           navIsOverlay
             ? 'border-transparent bg-gradient-to-b from-black/80 via-black/35 to-transparent'
-            : 'border-b border-border-subtle bg-midnight/92 backdrop-blur-xl shadow-[0_18px_50px_rgba(0,0,0,0.28)]'
+            : 'border-b border-[var(--border-vintage)] bg-[var(--surface-scoreboard)]/92 backdrop-blur-xl shadow-[0_18px_50px_rgba(0,0,0,0.28)]'
         }`}
         role="navigation"
         aria-label="Main navigation"
@@ -355,8 +355,8 @@ export function Navbar({ primary, leagues, secondary, analytics = [] }: NavbarPr
                   href={item.href}
                   className={`px-3 py-1.5 rounded-sm text-sm font-medium transition-all ${
                     isActive(item.href)
-                      ? 'bg-burnt-orange/15 text-ember'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-surface-light'
+                      ? 'bg-[var(--bsi-primary)]/15 text-ember'
+                      : 'text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)]'
                   }`}
                   aria-current={isActive(item.href) ? 'page' : undefined}
                 >
@@ -372,7 +372,7 @@ export function Navbar({ primary, leagues, secondary, analytics = [] }: NavbarPr
             <div className="flex items-center gap-3">
               {/* News ticker — desktop only, subtle */}
               <span
-                className={`hidden lg:block max-w-[200px] truncate text-xs ${isHome ? 'xl:hidden' : ''} text-text-muted`}
+                className={`hidden lg:block max-w-[200px] truncate text-xs ${isHome ? 'xl:hidden' : ''} text-[rgba(196,184,165,0.35)]`}
                 aria-live="polite"
               >
                 {tickerText}
@@ -384,7 +384,7 @@ export function Navbar({ primary, leagues, secondary, analytics = [] }: NavbarPr
                 className={`hidden md:flex items-center gap-2 rounded-sm border px-3 py-1.5 text-sm transition-all ${
                   navIsOverlay
                     ? 'border-white/10 bg-black/20 text-[rgba(245,240,235,0.78)] hover:bg-black/35 hover:text-[var(--bsi-bone)]'
-                    : 'border-border-subtle bg-surface-light text-text-muted hover:bg-surface-medium hover:text-text-secondary'
+                    : 'border-[var(--border-vintage)] bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.35)] hover:bg-[var(--surface-press-box)] hover:text-[var(--bsi-dust)]'
                 }`}
                 aria-label="Open search"
               >
@@ -392,7 +392,7 @@ export function Navbar({ primary, leagues, secondary, analytics = [] }: NavbarPr
                 <span className="hidden lg:inline">Search...</span>
                 <kbd
                   className={`hidden rounded-sm px-1.5 py-0.5 font-mono text-[10px] lg:inline ${
-                    navIsOverlay ? 'bg-black/35 text-[rgba(245,240,235,0.65)]' : 'bg-surface-light text-text-muted'
+                    navIsOverlay ? 'bg-black/35 text-[rgba(245,240,235,0.65)]' : 'bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.35)]'
                   }`}
                 >
                   ⌘K
@@ -402,7 +402,7 @@ export function Navbar({ primary, leagues, secondary, analytics = [] }: NavbarPr
               {/* Mobile: search icon */}
               <button
                 onClick={openCommandPalette}
-                className="md:hidden h-11 w-11 flex items-center justify-center rounded-sm border border-border-subtle bg-surface-light/70 text-text-muted hover:text-text-primary hover:bg-surface-medium transition-colors"
+                className="md:hidden h-11 w-11 flex items-center justify-center rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)]/70 text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-colors"
                 aria-label="Open search"
               >
                 <Search className="w-5 h-5" />
@@ -411,7 +411,7 @@ export function Navbar({ primary, leagues, secondary, analytics = [] }: NavbarPr
               {/* Mobile hamburger */}
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="md:hidden h-11 w-11 flex items-center justify-center rounded-sm border border-border-subtle bg-surface-light/70 text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-colors"
+                className="md:hidden h-11 w-11 flex items-center justify-center rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)]/70 text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-colors"
                 aria-label={menuOpen ? 'Close menu' : 'Open menu'}
                 aria-expanded={menuOpen}
               >

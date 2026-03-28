@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { FilterPill } from '@/components/ui/FilterPill';
-import { HeroGlow } from '@/components/ui/HeroGlow';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { formatDateInTimezone } from '@/lib/utils/timezone';
@@ -63,7 +62,7 @@ function categoryLabel(cat: string): string {
 function FeaturedCard({ post }: { post: BlogPost }) {
   return (
     <Link href={`/blog-post-feed/${post.slug}`} className="block group">
-      <div className="relative rounded-sm overflow-hidden border border-burnt-orange/30 bg-gradient-to-br from-charcoal-900 via-background-tertiary to-background-primary hover:border-burnt-orange/60 transition-all duration-300">
+      <div className="relative rounded-sm overflow-hidden border border-[var(--bsi-primary)]/30 bg-gradient-to-br from-[#1A1A1A]-900 via-background-tertiary to-[var(--surface-scoreboard)] hover:border-[var(--bsi-primary)]/60 transition-all duration-300">
         {/* Glow accent */}
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-burnt-orange via-ember to-burnt-orange/50" />
         <div className="p-8 md:p-10">
@@ -80,31 +79,31 @@ function FeaturedCard({ post }: { post: BlogPost }) {
             ))}
           </div>
 
-          <h2 className="font-display text-2xl md:text-3xl lg:text-4xl font-bold uppercase tracking-display text-text-primary mb-3 group-hover:text-burnt-orange transition-colors duration-200 leading-tight">
+          <h2 className="font-display text-2xl md:text-3xl lg:text-4xl font-bold uppercase tracking-display text-[var(--bsi-bone)] mb-3 group-hover:text-[var(--bsi-primary)] transition-colors duration-200 leading-tight">
             {post.title}
           </h2>
 
           {post.subtitle && (
-            <p className="text-text-secondary text-lg mb-4 leading-relaxed">
+            <p className="text-[var(--bsi-dust)] text-lg mb-4 leading-relaxed">
               {post.subtitle}
             </p>
           )}
 
           {post.description && (
-            <p className="text-text-tertiary text-sm line-clamp-3 mb-6 max-w-2xl">
+            <p className="text-[rgba(196,184,165,0.5)] text-sm line-clamp-3 mb-6 max-w-2xl">
               {post.description}
             </p>
           )}
 
-          <div className="flex flex-wrap items-center gap-4 text-sm text-text-tertiary">
-            <span className="font-medium text-text-secondary">{post.author}</span>
+          <div className="flex flex-wrap items-center gap-4 text-sm text-[rgba(196,184,165,0.5)]">
+            <span className="font-medium text-[var(--bsi-dust)]">{post.author}</span>
             <span>·</span>
             <span>{formatDate(post.published_at)}</span>
             <span>·</span>
             <span>{post.read_time_mins} min read</span>
           </div>
 
-          <div className="mt-6 inline-flex items-center gap-2 text-burnt-orange font-medium text-sm group-hover:gap-3 transition-all duration-200">
+          <div className="mt-6 inline-flex items-center gap-2 text-[var(--bsi-primary)] font-medium text-sm group-hover:gap-3 transition-all duration-200">
             Read article
             <span className="text-base">→</span>
           </div>
@@ -131,17 +130,17 @@ function ArticleCard({ post }: { post: BlogPost }) {
           </Badge>
         </div>
 
-        <h3 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide mb-2 line-clamp-2 leading-snug flex-1">
+        <h3 className="font-display text-lg font-bold text-[var(--bsi-bone)] uppercase tracking-wide mb-2 line-clamp-2 leading-snug flex-1">
           {post.title}
         </h3>
 
         {post.description && (
-          <p className="text-text-secondary text-sm line-clamp-3 mb-4 leading-relaxed">
+          <p className="text-[var(--bsi-dust)] text-sm line-clamp-3 mb-4 leading-relaxed">
             {post.description}
           </p>
         )}
 
-        <div className="mt-auto pt-3 border-t border-border-subtle flex items-center justify-between text-xs text-text-tertiary">
+        <div className="mt-auto pt-3 border-t border-[var(--border-vintage)] flex items-center justify-between text-xs text-[rgba(196,184,165,0.5)]">
           <span>{formatDate(post.published_at)}</span>
           <span>{post.read_time_mins} min</span>
         </div>
@@ -156,7 +155,7 @@ function ArticleCard({ post }: { post: BlogPost }) {
 
 function SkeletonCard() {
   return (
-    <div className="bg-background-tertiary rounded-sm p-6 animate-pulse">
+    <div className="bg-[var(--surface-dugout)] rounded-sm p-6 animate-pulse">
       <div className="h-4 bg-surface-secondary rounded-sm w-1/4 mb-3" />
       <div className="h-6 bg-surface-secondary rounded-sm w-3/4 mb-2" />
       <div className="h-4 bg-surface-secondary rounded-sm w-full mb-1" />
@@ -210,33 +209,32 @@ export default function BlogPostFeedPage() {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
-            <nav className="flex items-center gap-2 text-sm text-text-tertiary">
-              <Link href="/" className="hover:text-burnt-orange transition-colors">
+            <nav className="flex items-center gap-2 text-sm text-[rgba(196,184,165,0.5)]">
+              <Link href="/" className="hover:text-[var(--bsi-primary)] transition-colors">
                 BSI
               </Link>
               <span>/</span>
-              <span className="text-text-primary font-medium">Editorial</span>
+              <span className="text-[var(--bsi-bone)] font-medium">Editorial</span>
             </nav>
           </Container>
         </Section>
 
         {/* Hero header */}
         <Section padding="lg" className="pt-6 relative overflow-hidden">
-          <HeroGlow />
           <Container>
             <div className="relative">
             <ScrollReveal direction="up">
-              <span className="section-label block mb-4">Editorial</span>
+              <span className="heritage-stamp block mb-4">Editorial</span>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={80}>
-              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-text-primary mb-3">
+              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-[var(--bsi-bone)] mb-3">
                 The Blaze Intel
               </h1>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={150}>
-              <p className="text-burnt-orange font-serif italic text-lg leading-relaxed max-w-xl">
+              <p className="text-[var(--bsi-primary)] font-serif italic text-lg leading-relaxed max-w-xl">
                 Original analysis on the athletes, programs, and markets that mainstream sports
                 media passes over. Old-school instinct, new-school data.
               </p>
@@ -246,7 +244,7 @@ export default function BlogPostFeedPage() {
         </Section>
 
         {/* Category tabs */}
-        <Section padding="none" className="border-b border-border-subtle bg-midnight/40">
+        <Section padding="none" className="border-b border-[var(--border-vintage)] bg-[var(--surface-scoreboard)]/40">
           <Container>
             <div className="flex items-center gap-1 overflow-x-auto py-3 scrollbar-none">
               {CATEGORIES.map((cat) => (
@@ -268,7 +266,7 @@ export default function BlogPostFeedPage() {
           <Container>
             {loading ? (
               <div className="space-y-8">
-                <div className="animate-pulse rounded-sm bg-background-tertiary h-64" />
+                <div className="animate-pulse rounded-sm bg-[var(--surface-dugout)] h-64" />
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {[1, 2, 3, 4, 5].map((i) => (
                     <SkeletonCard key={i} />
@@ -277,16 +275,16 @@ export default function BlogPostFeedPage() {
               </div>
             ) : error ? (
               <Card variant="default" padding="lg" className="text-center">
-                <p className="text-text-secondary mb-2">Unable to load articles</p>
-                <p className="text-text-tertiary text-sm">{error}</p>
+                <p className="text-[var(--bsi-dust)] mb-2">Unable to load articles</p>
+                <p className="text-[rgba(196,184,165,0.5)] text-sm">{error}</p>
               </Card>
             ) : filteredPosts.length === 0 ? (
               <Card variant="default" padding="lg" className="text-center">
                 <div className="py-10">
-                  <p className="text-text-secondary text-lg mb-2">No articles in this category yet</p>
+                  <p className="text-[var(--bsi-dust)] text-lg mb-2">No articles in this category yet</p>
                   <button
                     onClick={() => setActiveCategory('all')}
-                    className="text-burnt-orange text-sm hover:text-ember transition-colors mt-2"
+                    className="text-[var(--bsi-primary)] text-sm hover:text-[var(--bsi-primary)] transition-colors mt-2"
                   >
                     ← View all articles
                   </button>
@@ -306,7 +304,7 @@ export default function BlogPostFeedPage() {
                   <>
                     {featuredPost && (
                       <div className="flex items-center gap-3">
-                        <span className="font-display text-sm uppercase tracking-widest text-text-tertiary">
+                        <span className="font-display text-sm uppercase tracking-widest text-[rgba(196,184,165,0.5)]">
                           More Articles
                         </span>
                         <div className="flex-1 h-px bg-border-subtle" />

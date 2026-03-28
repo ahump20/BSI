@@ -18,7 +18,6 @@ import { Card } from '@/components/ui/Card';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SearchBar } from '@/components/layout-ds/SearchBar';
-import { HeroGlow } from '@/components/ui/HeroGlow';
 import { FilterPill } from '@/components/ui/FilterPill';
 
 // ============================================================================
@@ -76,7 +75,7 @@ function getSportLabel(sport: string): string {
 }
 
 function getSportColor(sport: string): string {
-  return SPORT_COLORS[sport.toLowerCase()] || 'bg-background-tertiary';
+  return SPORT_COLORS[sport.toLowerCase()] || 'bg-[var(--surface-dugout)]';
 }
 
 // ============================================================================
@@ -89,8 +88,8 @@ function SearchLoading() {
       <div>
         <Section padding="lg" className="pt-6 min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-burnt-orange mx-auto mb-4" />
-            <p className="text-text-secondary">Loading search...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--bsi-primary)] mx-auto mb-4" />
+            <p className="text-[var(--bsi-dust)]">Loading search...</p>
           </div>
         </Section>
       </div>
@@ -191,15 +190,14 @@ function SearchContent() {
       <div>
         {/* Header */}
         <Section padding="md" className="relative overflow-hidden">
-          <HeroGlow />
 
           <Container>
             <ScrollReveal direction="up">
-              <span className="section-label block mb-4">Search</span>
+              <span className="heritage-stamp block mb-4">Search</span>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-text-primary mb-6">
+              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-[var(--bsi-bone)] mb-6">
                 {initialQuery ? `Results for "${initialQuery}"` : 'Cross-Sport Search'}
               </h1>
             </ScrollReveal>
@@ -239,7 +237,7 @@ function SearchContent() {
 
             {/* Results Count */}
             {!isLoading && initialQuery && (
-              <p className="text-text-secondary mb-6">
+              <p className="text-[var(--bsi-dust)] mb-6">
                 Found {filteredResults.length} result{filteredResults.length !== 1 ? 's' : ''}
                 {filters.sport && ` in ${getSportLabel(filters.sport)}`}
               </p>
@@ -248,7 +246,7 @@ function SearchContent() {
             {/* Loading State */}
             {isLoading && (
               <div className="flex items-center justify-center py-16">
-                <div className="animate-spin w-8 h-8 border-2 border-burnt-orange border-t-transparent rounded-full" />
+                <div className="animate-spin w-8 h-8 border-2 border-[var(--bsi-primary)] border-t-transparent rounded-full" />
               </div>
             )}
 
@@ -258,7 +256,7 @@ function SearchContent() {
                 <p className="text-[var(--bsi-danger)] mb-4">{error}</p>
                 <button
                   onClick={() => window.location.reload()}
-                  className="px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange-dark transition-colors"
+                  className="px-4 py-2 bg-[var(--bsi-primary)] text-white rounded-sm hover:bg-[var(--bsi-primary)]-dark transition-colors"
                 >
                   Try Again
                 </button>
@@ -268,31 +266,31 @@ function SearchContent() {
             {/* No Results */}
             {!isLoading && !error && initialQuery && filteredResults.length === 0 && (
               <Card variant="default" padding="lg" className="text-center">
-                <div className="mb-4 flex justify-center"><svg viewBox="0 0 24 24" fill="none" className="w-14 h-14 text-text-muted" stroke="currentColor" strokeWidth={1.5}><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></svg></div>
-                <h2 className="text-xl font-semibold text-text-primary mb-2">No Results Found</h2>
-                <p className="text-text-secondary mb-4">
+                <div className="mb-4 flex justify-center"><svg viewBox="0 0 24 24" fill="none" className="w-14 h-14 text-[rgba(196,184,165,0.35)]" stroke="currentColor" strokeWidth={1.5}><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></svg></div>
+                <h2 className="text-xl font-semibold text-[var(--bsi-bone)] mb-2">No Results Found</h2>
+                <p className="text-[var(--bsi-dust)] mb-4">
                   No matches for &ldquo;{initialQuery}&rdquo;
                   {filters.sport && ` in ${getSportLabel(filters.sport)}`}
                 </p>
-                <p className="text-sm text-text-tertiary mb-6">
-                  Try <Link href="/" className="text-burnt-orange hover:text-ember transition-colors font-medium">Ask BSI</Link> on the homepage — it understands natural language questions like &ldquo;{initialQuery}&rdquo;.
+                <p className="text-sm text-[rgba(196,184,165,0.5)] mb-6">
+                  Try <Link href="/" className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors font-medium">Ask BSI</Link> on the homepage — it understands natural language questions like &ldquo;{initialQuery}&rdquo;.
                 </p>
                 <div className="flex flex-wrap justify-center gap-3">
                   <Link
                     href="/college-baseball/teams"
-                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-sm hover:bg-surface-light transition-colors"
+                    className="px-4 py-2 bg-[var(--surface-dugout)] text-[var(--bsi-bone)] rounded-sm hover:bg-[var(--surface-press-box)] transition-colors"
                   >
                     Browse NCAA Baseball
                   </Link>
                   <Link
                     href="/mlb/teams"
-                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-sm hover:bg-surface-light transition-colors"
+                    className="px-4 py-2 bg-[var(--surface-dugout)] text-[var(--bsi-bone)] rounded-sm hover:bg-[var(--surface-press-box)] transition-colors"
                   >
                     Browse MLB Teams
                   </Link>
                   <Link
                     href="/nfl/teams"
-                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-sm hover:bg-surface-light transition-colors"
+                    className="px-4 py-2 bg-[var(--surface-dugout)] text-[var(--bsi-bone)] rounded-sm hover:bg-[var(--surface-press-box)] transition-colors"
                   >
                     Browse NFL Teams
                   </Link>
@@ -305,7 +303,7 @@ function SearchContent() {
               <div className="space-y-8">
                 {/* Popular Searches */}
                 <div>
-                  <h2 className="font-display text-lg font-bold uppercase tracking-wide text-text-primary mb-4">
+                  <h2 className="font-display text-lg font-bold uppercase tracking-wide text-[var(--bsi-bone)] mb-4">
                     Popular Searches
                   </h2>
                   <div className="flex flex-wrap gap-2">
@@ -317,7 +315,7 @@ function SearchContent() {
                       <Link
                         key={term}
                         href={`/search?q=${encodeURIComponent(term)}`}
-                        className="px-3 py-1.5 text-sm bg-surface-light border border-border-subtle rounded-sm text-text-secondary hover:text-burnt-orange hover:border-burnt-orange/30 transition-colors"
+                        className="px-3 py-1.5 text-sm bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-primary)] hover:border-[var(--bsi-primary)]/30 transition-colors"
                       >
                         {term}
                       </Link>
@@ -326,24 +324,24 @@ function SearchContent() {
                 </div>
 
                 {/* Ask BSI Callout */}
-                <Card variant="default" padding="lg" className="border-burnt-orange/20">
+                <Card variant="default" padding="lg" className="border-[var(--bsi-primary)]/20">
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-sm bg-burnt-orange/10 flex items-center justify-center shrink-0">
-                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-burnt-orange" stroke="currentColor" strokeWidth={1.5}>
+                    <div className="w-12 h-12 rounded-sm bg-[var(--bsi-primary)]/10 flex items-center justify-center shrink-0">
+                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-[var(--bsi-primary)]" stroke="currentColor" strokeWidth={1.5}>
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" />
                         <path d="M12 16v-4M12 8h.01" />
                       </svg>
                     </div>
                     <div>
-                      <h3 className="font-display text-base font-bold uppercase tracking-wide text-text-primary mb-1">
+                      <h3 className="font-display text-base font-bold uppercase tracking-wide text-[var(--bsi-bone)] mb-1">
                         Try Ask BSI
                       </h3>
-                      <p className="text-sm text-text-secondary mb-3">
+                      <p className="text-sm text-[var(--bsi-dust)] mb-3">
                         Ask questions in plain English — &ldquo;Is Texas a CWS contender?&rdquo; or &ldquo;Who leads D1 in wOBA?&rdquo; — and get answers with links to the right page.
                       </p>
                       <Link
                         href="/"
-                        className="text-sm text-burnt-orange font-semibold hover:text-ember transition-colors"
+                        className="text-sm text-[var(--bsi-primary)] font-semibold hover:text-[var(--bsi-primary)] transition-colors"
                       >
                         Ask BSI on the homepage &rarr;
                       </Link>
@@ -353,7 +351,7 @@ function SearchContent() {
 
                 {/* Browse by Sport */}
                 <div>
-                  <h2 className="font-display text-lg font-bold uppercase tracking-wide text-text-primary mb-4">
+                  <h2 className="font-display text-lg font-bold uppercase tracking-wide text-[var(--bsi-bone)] mb-4">
                     Browse by Sport
                   </h2>
                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 max-w-3xl">
@@ -367,10 +365,10 @@ function SearchContent() {
                       <Link
                         key={sport.href}
                         href={sport.href}
-                        className="p-4 bg-background-tertiary rounded-sm hover:bg-surface-light transition-colors"
+                        className="p-4 bg-[var(--surface-dugout)] rounded-sm hover:bg-[var(--surface-press-box)] transition-colors"
                       >
-                        <p className="font-medium text-text-primary">{sport.label}</p>
-                        <p className="text-xs text-text-tertiary">{sport.sub}</p>
+                        <p className="font-medium text-[var(--bsi-bone)]">{sport.label}</p>
+                        <p className="text-xs text-[rgba(196,184,165,0.5)]">{sport.sub}</p>
                       </Link>
                     ))}
                   </div>
@@ -383,13 +381,13 @@ function SearchContent() {
               <div className="space-y-8">
                 {Object.entries(resultsBySport).map(([sport, items]) => (
                   <div key={sport}>
-                    <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+                    <h2 className="text-lg font-semibold text-[var(--bsi-bone)] mb-4 flex items-center gap-2">
                       <span
                         className={`w-3 h-3 rounded-full ${getSportColor(sport)}`}
                         aria-hidden="true"
                       />
                       {getSportLabel(sport)}
-                      <span className="text-text-tertiary font-normal">({items.length})</span>
+                      <span className="text-[rgba(196,184,165,0.5)] font-normal">({items.length})</span>
                     </h2>
 
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -399,7 +397,7 @@ function SearchContent() {
                             <Card
                               variant="default"
                               padding="md"
-                              className="h-full transition-all group-hover:border-burnt-orange"
+                              className="h-full transition-all group-hover:border-[var(--bsi-primary)]"
                             >
                               <div className="flex items-center gap-4">
                                 {/* Type Badge */}
@@ -411,10 +409,10 @@ function SearchContent() {
 
                                 {/* Info */}
                                 <div className="flex-1 min-w-0">
-                                  <p className="font-semibold text-text-primary group-hover:text-burnt-orange transition-colors truncate">
+                                  <p className="font-semibold text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors truncate">
                                     {item.name}
                                   </p>
-                                  <p className="text-xs text-text-tertiary truncate capitalize">
+                                  <p className="text-xs text-[rgba(196,184,165,0.5)] truncate capitalize">
                                     {item.type} {item.sport ? `· ${item.sport}` : ''}
                                   </p>
                                 </div>
@@ -422,7 +420,7 @@ function SearchContent() {
                                 {/* Arrow */}
                                 <svg
                                   viewBox="0 0 24 24"
-                                  className="w-5 h-5 text-text-tertiary group-hover:text-burnt-orange transition-colors shrink-0"
+                                  className="w-5 h-5 text-[rgba(196,184,165,0.5)] group-hover:text-[var(--bsi-primary)] transition-colors shrink-0"
                                   fill="none"
                                   stroke="currentColor"
                                   strokeWidth="2"

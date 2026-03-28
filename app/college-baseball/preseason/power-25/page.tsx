@@ -386,10 +386,10 @@ const power25: RankedTeam[] = [
 ];
 
 const tierColors = {
-  elite: 'border-burnt-orange/50 bg-burnt-orange/10',
+  elite: 'border-[var(--bsi-primary)]/50 bg-[var(--bsi-primary)]/10',
   contender: 'border-gold/50 bg-gold/10',
   sleeper: 'border-[var(--heritage-columbia-blue)]/50 bg-[var(--heritage-columbia-blue)]/10',
-  bubble: 'border-border-strong bg-surface-light',
+  bubble: 'border-[rgba(140,98,57,0.5)] bg-[var(--surface-press-box)]',
 };
 
 // Reserved for future tier display feature
@@ -418,7 +418,7 @@ export default function Power25Page() {
     const change = team.lastRank - team.rank;
     if (change > 0) return { icon: TrendingUp, color: 'text-success', label: `+${change}` };
     if (change < 0) return { icon: TrendingDown, color: 'text-error', label: `${change}` };
-    return { icon: Minus, color: 'text-text-tertiary', label: '—' };
+    return { icon: Minus, color: 'text-[rgba(196,184,165,0.5)]', label: '—' };
   };
 
   return (
@@ -433,18 +433,18 @@ export default function Power25Page() {
               <ScrollReveal direction="up">
                 <div className="flex items-center gap-3 mb-6">
                   <Badge variant="primary">Rankings</Badge>
-                  <span className="text-text-secondary text-sm">15 min read</span>
+                  <span className="text-[var(--bsi-dust)] text-sm">15 min read</span>
                 </div>
 
-                <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display text-text-primary mb-4 max-w-4xl">
-                  2026 Preseason <span className="text-burnt-orange">Power 25</span>
+                <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display text-[var(--bsi-bone)] mb-4 max-w-4xl">
+                  2026 Preseason <span className="text-[var(--bsi-primary)]">Power 25</span>
                 </h1>
 
-                <p className="text-text-secondary text-xl md:text-2xl font-medium mb-6 max-w-3xl">
+                <p className="text-[var(--bsi-dust)] text-xl md:text-2xl font-medium mb-6 max-w-3xl">
                   Breaking Down Every Ranked Team
                 </p>
 
-                <p className="text-text-secondary max-w-2xl text-lg leading-relaxed">
+                <p className="text-[var(--bsi-dust)] max-w-2xl text-lg leading-relaxed">
                   Conference realignment has reshuffled college baseball. The SEC now boasts 12
                   ranked teams. Texas and Texas A&M enter as #1 and #2. Here&apos;s our
                   comprehensive breakdown of every team in the preseason poll—tier by tier.
@@ -460,24 +460,24 @@ export default function Power25Page() {
             <ScrollReveal direction="up" delay={100}>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Card padding="md" className="text-center">
-                  <div className="font-display text-3xl font-bold text-burnt-orange">
+                  <div className="font-display text-3xl font-bold text-[var(--bsi-primary)]">
                     {texasTeams.length}
                   </div>
-                  <div className="text-text-tertiary text-sm">Texas Teams Ranked</div>
+                  <div className="text-[rgba(196,184,165,0.5)] text-sm">Texas Teams Ranked</div>
                 </Card>
                 <Card padding="md" className="text-center">
-                  <div className="font-display text-3xl font-bold text-burnt-orange">
+                  <div className="font-display text-3xl font-bold text-[var(--bsi-primary)]">
                     {eliteTeams.length}
                   </div>
-                  <div className="text-text-tertiary text-sm">Omaha Favorites</div>
+                  <div className="text-[rgba(196,184,165,0.5)] text-sm">Omaha Favorites</div>
                 </Card>
                 <Card padding="md" className="text-center">
-                  <div className="font-display text-3xl font-bold text-burnt-orange">12</div>
-                  <div className="text-text-tertiary text-sm">SEC Teams in Top 25</div>
+                  <div className="font-display text-3xl font-bold text-[var(--bsi-primary)]">12</div>
+                  <div className="text-[rgba(196,184,165,0.5)] text-sm">SEC Teams in Top 25</div>
                 </Card>
                 <Card padding="md" className="text-center">
-                  <div className="font-display text-3xl font-bold text-burnt-orange">3</div>
-                  <div className="text-text-tertiary text-sm">Conference Newcomers</div>
+                  <div className="font-display text-3xl font-bold text-[var(--bsi-primary)]">3</div>
+                  <div className="text-[rgba(196,184,165,0.5)] text-sm">Conference Newcomers</div>
                 </Card>
               </div>
             </ScrollReveal>
@@ -488,18 +488,18 @@ export default function Power25Page() {
         <Section padding="sm">
           <Container>
             <ScrollReveal direction="up" delay={150}>
-              <h2 className="font-display text-xl font-bold uppercase tracking-display text-text-primary mb-4">
-                <Users className="w-5 h-5 inline mr-2 text-burnt-orange" />
+              <h2 className="font-display text-xl font-bold uppercase tracking-display text-[var(--bsi-bone)] mb-4">
+                <Users className="w-5 h-5 inline mr-2 text-[var(--bsi-primary)]" />
                 Conference Distribution
               </h2>
               <div className="flex flex-wrap gap-3">
                 {conferenceBreakdown.map((conf) => (
                   <Card key={conf.conference} padding="sm" className="flex items-center gap-2">
-                    <span className="text-text-primary font-bold">{conf.conference}</span>
+                    <span className="text-[var(--bsi-bone)] font-bold">{conf.conference}</span>
                     <Badge variant={conf.conference === 'SEC' ? 'primary' : 'secondary'}>
                       {conf.count}
                     </Badge>
-                    <span className="text-text-tertiary text-xs hidden sm:inline">{conf.note}</span>
+                    <span className="text-[rgba(196,184,165,0.5)] text-xs hidden sm:inline">{conf.note}</span>
                   </Card>
                 ))}
               </div>
@@ -512,8 +512,8 @@ export default function Power25Page() {
           <Container>
             <ScrollReveal direction="up" delay={200}>
               <div className="flex items-center gap-3 mb-6">
-                <Trophy className="w-6 h-6 text-burnt-orange" />
-                <h2 className="font-display text-2xl font-bold uppercase tracking-display text-text-primary">
+                <Trophy className="w-6 h-6 text-[var(--bsi-primary)]" />
+                <h2 className="font-display text-2xl font-bold uppercase tracking-display text-[var(--bsi-bone)]">
                   Tier 1: Omaha Favorites
                 </h2>
                 <Badge variant="primary">{eliteTeams.length} Teams</Badge>
@@ -530,7 +530,7 @@ export default function Power25Page() {
                     >
                       <div className="flex flex-col md:flex-row md:items-start gap-4">
                         <div className="flex items-center gap-4">
-                          <div className="font-display text-4xl font-bold text-burnt-orange w-12">
+                          <div className="font-display text-4xl font-bold text-[var(--bsi-primary)] w-12">
                             #{team.rank}
                           </div>
                           <div className="flex items-center gap-1">
@@ -541,23 +541,23 @@ export default function Power25Page() {
 
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
-                            <h3 className="font-display text-xl font-bold text-text-primary uppercase">
+                            <h3 className="font-display text-xl font-bold text-[var(--bsi-bone)] uppercase">
                               {team.name} {team.mascot}
                             </h3>
                             <Badge variant="secondary">{team.conference}</Badge>
                             {team.isTexas && (
                               <span title="Texas">
-                                <MapPin className="w-4 h-4 text-burnt-orange" />
+                                <MapPin className="w-4 h-4 text-[var(--bsi-primary)]" />
                               </span>
                             )}
                           </div>
 
-                          <div className="flex flex-wrap gap-4 text-sm text-text-tertiary mb-3">
+                          <div className="flex flex-wrap gap-4 text-sm text-[rgba(196,184,165,0.5)] mb-3">
                             <span>2025: {team.record2025}</span>
                             <span>{team.postseason2025}</span>
                           </div>
 
-                          <p className="text-text-secondary text-sm leading-relaxed mb-3">
+                          <p className="text-[var(--bsi-dust)] text-sm leading-relaxed mb-3">
                             {team.outlook}
                           </p>
 
@@ -565,7 +565,7 @@ export default function Power25Page() {
                             {team.keyPlayers.map((player) => (
                               <span
                                 key={player}
-                                className="text-xs bg-surface-light px-2 py-1 rounded-sm text-text-tertiary"
+                                className="text-xs bg-[var(--surface-press-box)] px-2 py-1 rounded-sm text-[rgba(196,184,165,0.5)]"
                               >
                                 {player}
                               </span>
@@ -587,7 +587,7 @@ export default function Power25Page() {
             <ScrollReveal direction="up" delay={250}>
               <div className="flex items-center gap-3 mb-6">
                 <Star className="w-6 h-6 text-gold" />
-                <h2 className="font-display text-2xl font-bold uppercase tracking-display text-text-primary">
+                <h2 className="font-display text-2xl font-bold uppercase tracking-display text-[var(--bsi-bone)]">
                   Tier 2: Contenders
                 </h2>
                 <Badge variant="secondary">
@@ -612,18 +612,18 @@ export default function Power25Page() {
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <h3 className="font-display text-lg font-bold text-text-primary uppercase">
+                              <h3 className="font-display text-lg font-bold text-[var(--bsi-bone)] uppercase">
                                 {team.name}
                               </h3>
                               <Badge variant="secondary" className="text-xs">
                                 {team.conference}
                               </Badge>
-                              {team.isTexas && <MapPin className="w-3 h-3 text-burnt-orange" />}
+                              {team.isTexas && <MapPin className="w-3 h-3 text-[var(--bsi-primary)]" />}
                             </div>
-                            <div className="text-xs text-text-tertiary mb-2">
+                            <div className="text-xs text-[rgba(196,184,165,0.5)] mb-2">
                               {team.record2025} · {team.postseason2025}
                             </div>
-                            <p className="text-text-secondary text-sm leading-relaxed">
+                            <p className="text-[var(--bsi-dust)] text-sm leading-relaxed">
                               {team.outlook}
                             </p>
                           </div>
@@ -646,7 +646,7 @@ export default function Power25Page() {
             <ScrollReveal direction="up" delay={300}>
               <div className="flex items-center gap-3 mb-6">
                 <TrendingUp className="w-6 h-6 text-[var(--heritage-columbia-blue)]" />
-                <h2 className="font-display text-2xl font-bold uppercase tracking-display text-text-primary">
+                <h2 className="font-display text-2xl font-bold uppercase tracking-display text-[var(--bsi-bone)]">
                   Tier 3: Dark Horses
                 </h2>
                 <Badge variant="secondary">
@@ -663,9 +663,9 @@ export default function Power25Page() {
                         <span className="font-display text-lg font-bold text-[var(--heritage-columbia-blue)]">
                           #{team.rank}
                         </span>
-                        <span className="font-bold text-text-primary text-sm">{team.name}</span>
+                        <span className="font-bold text-[var(--bsi-bone)] text-sm">{team.name}</span>
                       </div>
-                      <div className="text-xs text-text-tertiary">
+                      <div className="text-xs text-[rgba(196,184,165,0.5)]">
                         {team.conference} · {team.record2025}
                       </div>
                     </Card>
@@ -680,8 +680,8 @@ export default function Power25Page() {
           <Container>
             <ScrollReveal direction="up" delay={350}>
               <div className="flex items-center gap-3 mb-6">
-                <Minus className="w-6 h-6 text-text-tertiary" />
-                <h2 className="font-display text-2xl font-bold uppercase tracking-display text-text-primary">
+                <Minus className="w-6 h-6 text-[rgba(196,184,165,0.5)]" />
+                <h2 className="font-display text-2xl font-bold uppercase tracking-display text-[var(--bsi-bone)]">
                   Tier 4: Bubble
                 </h2>
                 <Badge variant="secondary">
@@ -699,13 +699,13 @@ export default function Power25Page() {
                       className={`${tierColors.bubble} ${team.isTexas ? 'ring-1 ring-burnt-orange/30' : ''}`}
                     >
                       <div className="flex items-center gap-2">
-                        <span className="font-display text-lg font-bold text-text-tertiary">
+                        <span className="font-display text-lg font-bold text-[rgba(196,184,165,0.5)]">
                           #{team.rank}
                         </span>
-                        <span className="font-bold text-text-primary text-sm">{team.name}</span>
-                        {team.isTexas && <MapPin className="w-3 h-3 text-burnt-orange" />}
+                        <span className="font-bold text-[var(--bsi-bone)] text-sm">{team.name}</span>
+                        {team.isTexas && <MapPin className="w-3 h-3 text-[var(--bsi-primary)]" />}
                       </div>
-                      <div className="text-xs text-text-tertiary">{team.conference}</div>
+                      <div className="text-xs text-[rgba(196,184,165,0.5)]">{team.conference}</div>
                     </Card>
                   ))}
               </div>
@@ -717,17 +717,17 @@ export default function Power25Page() {
         <Section padding="lg">
           <Container>
             <ScrollReveal direction="up" delay={400}>
-              <Card padding="lg" className="text-center border-burnt-orange/30">
-                <h2 className="font-display text-2xl font-bold uppercase tracking-display text-text-primary mb-4">
+              <Card padding="lg" className="text-center border-[var(--bsi-primary)]/30">
+                <h2 className="font-display text-2xl font-bold uppercase tracking-display text-[var(--bsi-bone)] mb-4">
                   Texas Takes the SEC
                 </h2>
-                <p className="text-text-secondary mb-6 max-w-xl mx-auto">
+                <p className="text-[var(--bsi-dust)] mb-6 max-w-xl mx-auto">
                   For the first time ever, Texas and Texas A&M enter the same conference as the top
                   two teams in the nation. The Lone Star Rivalry just entered a new era.
                 </p>
                 <Link
                   href="/college-baseball/preseason/lone-star-rivalry"
-                  className="inline-flex items-center px-6 py-3 bg-burnt-orange text-white font-medium rounded-sm hover:bg-burnt-orange/80 transition-colors"
+                  className="inline-flex items-center px-6 py-3 bg-[var(--bsi-primary)] text-white font-medium rounded-sm hover:bg-[var(--bsi-primary)]/80 transition-colors"
                 >
                   Read: The Lone Star Rivalry Enters the SEC
                   <ChevronRight className="w-5 h-5 ml-1" />
@@ -740,7 +740,7 @@ export default function Power25Page() {
         {/* Attribution */}
         <Section padding="sm" className="pb-16">
           <Container>
-            <div className="text-center text-xs text-text-tertiary">
+            <div className="text-center text-xs text-[rgba(196,184,165,0.5)]">
               <p>
                 Rankings based on D1Baseball 2026 Preseason Poll. Season records and postseason
                 results from 2025 NCAA statistics. Tier assignments reflect Blaze Sports Intel

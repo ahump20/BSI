@@ -82,8 +82,8 @@ export function TechMaturityMap({ className = '' }: { className?: string }) {
             aria-pressed={activeSport === sport}
             className={`px-3 py-1.5 text-xs font-semibold rounded-sm border transition-all ${
               activeSport === sport
-                ? 'bg-burnt-orange/20 text-burnt-orange border-burnt-orange/40'
-                : 'bg-surface-light text-text-tertiary border-border hover:text-text-primary hover:border-border-strong'
+                ? 'bg-[var(--bsi-primary)]/20 text-[var(--bsi-primary)] border-[var(--bsi-primary)]/40'
+                : 'bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.5)] border-border hover:text-[var(--bsi-bone)] hover:border-[rgba(140,98,57,0.5)]'
             }`}
           >
             {sport}
@@ -98,8 +98,8 @@ export function TechMaturityMap({ className = '' }: { className?: string }) {
           aria-pressed={activeMaturity === 'all'}
           className={`px-3 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-sm border transition-all ${
             activeMaturity === 'all'
-              ? 'bg-surface text-text-primary border-border-strong'
-              : 'bg-transparent text-text-tertiary border-border-subtle hover:text-text-primary'
+              ? 'bg-surface text-[var(--bsi-bone)] border-[rgba(140,98,57,0.5)]'
+              : 'bg-transparent text-[rgba(196,184,165,0.5)] border-[var(--border-vintage)] hover:text-[var(--bsi-bone)]'
           }`}
         >
           All Stages
@@ -111,8 +111,8 @@ export function TechMaturityMap({ className = '' }: { className?: string }) {
             aria-pressed={activeMaturity === m}
             className={`px-3 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-sm border transition-all ${
               activeMaturity === m
-                ? `bg-surface text-text-primary border-border-strong`
-                : 'bg-transparent text-text-tertiary border-border-subtle hover:text-text-primary'
+                ? `bg-surface text-[var(--bsi-bone)] border-[rgba(140,98,57,0.5)]`
+                : 'bg-transparent text-[rgba(196,184,165,0.5)] border-[var(--border-vintage)] hover:text-[var(--bsi-bone)]'
             }`}
           >
             {maturityConfig[m].label}
@@ -124,31 +124,31 @@ export function TechMaturityMap({ className = '' }: { className?: string }) {
       <div className="space-y-6" aria-live="polite">
         {Object.entries(grouped).map(([domain, entries]) => (
           <div key={domain}>
-            <h4 className="text-xs uppercase tracking-wider text-text-tertiary font-semibold mb-3 flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-burnt-orange" />
+            <h4 className="text-xs uppercase tracking-wider text-[rgba(196,184,165,0.5)] font-semibold mb-3 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--bsi-primary)]" />
               {domain}
             </h4>
             <div className="grid gap-2">
               {entries.map((entry) => (
                 <div
                   key={entry.company}
-                  className="group bg-surface-light hover:bg-surface-light border border-border-subtle hover:border-border rounded-sm px-4 py-3 transition-all"
+                  className="group bg-[var(--surface-press-box)] hover:bg-[var(--surface-press-box)] border border-[var(--border-vintage)] hover:border-border rounded-sm px-4 py-3 transition-all"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-text-primary font-semibold text-sm">{entry.company}</span>
+                        <span className="text-[var(--bsi-bone)] font-semibold text-sm">{entry.company}</span>
                         <Badge variant={maturityConfig[entry.maturity].variant} size="sm">
                           {maturityConfig[entry.maturity].label}
                         </Badge>
                       </div>
-                      <p className="text-text-tertiary text-xs mt-1 leading-relaxed">{entry.detail}</p>
+                      <p className="text-[rgba(196,184,165,0.5)] text-xs mt-1 leading-relaxed">{entry.detail}</p>
                     </div>
                     <div className="flex gap-1 flex-shrink-0 flex-wrap justify-end">
                       {entry.sports.filter((s) => s !== 'All').map((sport) => (
                         <span
                           key={sport}
-                          className="text-[9px] px-1.5 py-0.5 rounded-sm bg-surface-light text-text-muted font-mono"
+                          className="text-[9px] px-1.5 py-0.5 rounded-sm bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.35)] font-mono"
                         >
                           {sport}
                         </span>
@@ -163,15 +163,15 @@ export function TechMaturityMap({ className = '' }: { className?: string }) {
       </div>
 
       {/* Summary */}
-      <div className="mt-6 pt-4 border-t border-border-subtle flex items-center justify-between">
-        <span className="text-text-muted text-xs">
+      <div className="mt-6 pt-4 border-t border-[var(--border-vintage)] flex items-center justify-between">
+        <span className="text-[rgba(196,184,165,0.35)] text-xs">
           {filtered.length} {filtered.length === 1 ? 'technology' : 'technologies'} shown
         </span>
         <div className="flex gap-3">
           {(Object.keys(maturityConfig) as Maturity[]).map((m) => {
             const count = filtered.filter((e) => e.maturity === m).length;
             return (
-              <span key={m} className="text-[10px] text-text-muted flex items-center gap-1">
+              <span key={m} className="text-[10px] text-[rgba(196,184,165,0.35)] flex items-center gap-1">
                 <span className={`w-1.5 h-1.5 rounded-full ${
                   m === 'production' ? 'bg-[var(--bsi-success)]' : m === 'growth' ? 'bg-[var(--bsi-warning)]' : 'bg-white/30'
                 }`} />

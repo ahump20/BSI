@@ -129,7 +129,7 @@ export function DiamondDynastyCardClient() {
           <Card padding="lg">
             <CardContent className="space-y-3 px-0 pb-0 pt-0">
               <p className="text-sm text-[var(--bsi-dust)]">
-                Start from the <Link href="/mlb/the-show-26/diamond-dynasty/marketplace" className="text-burnt-orange">marketplace board</Link> and open a card from there.
+                Start from the <Link href="/mlb/the-show-26/diamond-dynasty/marketplace" className="text-[var(--bsi-primary)]">marketplace board</Link> and open a card from there.
               </p>
             </CardContent>
           </Card>
@@ -188,7 +188,7 @@ export function DiamondDynastyCardClient() {
                     <div className="space-y-4">
                       <div className="flex items-start justify-between gap-4">
                         <div>
-                          <div className="text-xs font-semibold uppercase tracking-[0.18em] text-burnt-orange">
+                          <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-primary)]">
                             {detail.detail.card.rarity} • {detail.detail.card.series}
                           </div>
                           <h2 className="mt-2 font-display text-3xl uppercase tracking-display text-[var(--bsi-bone)]">
@@ -200,7 +200,7 @@ export function DiamondDynastyCardClient() {
                           </p>
                         </div>
                         <div className="text-right">
-                          <div className="font-mono text-3xl text-burnt-orange">{detail.detail.card.overall}</div>
+                          <div className="font-mono text-3xl text-[var(--bsi-primary)]">{detail.detail.card.overall}</div>
                           <div className="text-xs uppercase tracking-[0.18em] text-[var(--bsi-dust)]">Overall</div>
                         </div>
                       </div>
@@ -218,7 +218,7 @@ export function DiamondDynastyCardClient() {
                         />
                         <Link
                           href={`/mlb/the-show-26/diamond-dynasty/team-builder?card=${encodeURIComponent(detail.detail.card.id)}`}
-                          className="rounded-sm border border-[var(--border-vintage)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] transition-colors hover:border-burnt-orange/40 hover:text-burnt-orange"
+                          className="rounded-sm border border-[var(--border-vintage)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] transition-colors hover:border-[var(--bsi-primary)]/40 hover:text-[var(--bsi-primary)]"
                         >
                           Add to build
                         </Link>
@@ -283,7 +283,7 @@ export function DiamondDynastyCardClient() {
                           onClick={() => setRange(option)}
                           className={`rounded-sm border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${
                             range === option
-                              ? 'border-burnt-orange bg-burnt-orange/15 text-burnt-orange'
+                              ? 'border-[var(--bsi-primary)] bg-[var(--bsi-primary)]/15 text-[var(--bsi-primary)]'
                               : 'border-[var(--border-vintage)] text-[var(--bsi-dust)]'
                           }`}
                         >
@@ -301,7 +301,7 @@ export function DiamondDynastyCardClient() {
                           onClick={() => setMetric(option.value)}
                           className={`rounded-sm border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${
                             metric === option.value
-                              ? 'border-burnt-orange bg-burnt-orange/15 text-burnt-orange'
+                              ? 'border-[var(--bsi-primary)] bg-[var(--bsi-primary)]/15 text-[var(--bsi-primary)]'
                               : 'border-[var(--border-vintage)] text-[var(--bsi-dust)]'
                           }`}
                         >
@@ -369,7 +369,7 @@ export function DiamondDynastyCardClient() {
                         {detail.detail.collections.length ? (
                           detail.detail.collections.map((collection) => (
                             <div key={collection.id} className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3">
-                              <Link href={buildCollectionHref(collection.id)} className="text-sm font-semibold text-[var(--bsi-bone)] transition-colors hover:text-burnt-orange">
+                              <Link href={buildCollectionHref(collection.id)} className="text-sm font-semibold text-[var(--bsi-bone)] transition-colors hover:text-[var(--bsi-primary)]">
                                 {collection.name}
                               </Link>
                               <div className="mt-1 text-xs uppercase tracking-[0.18em] text-[var(--bsi-dust)]">
@@ -437,7 +437,7 @@ function Metric({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-4">
       <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)]">{label}</div>
-      <div className="mt-2 font-mono text-2xl text-burnt-orange">{value}</div>
+      <div className="mt-2 font-mono text-2xl text-[var(--bsi-primary)]">{value}</div>
     </div>
   );
 }

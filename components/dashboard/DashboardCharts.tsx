@@ -71,7 +71,7 @@ export function StandingsBarChart({ data, isLoading }: StandingsBarChartProps) {
         </BarChart>
       </ResponsiveContainer>
       {data.length === 0 && (
-        <p className="mt-2 text-xs text-text-muted">Showing last known standings snapshot.</p>
+        <p className="mt-2 text-xs text-[rgba(196,184,165,0.35)]">Showing last known standings snapshot.</p>
       )}
     </div>
   );

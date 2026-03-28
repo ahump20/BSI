@@ -76,7 +76,7 @@ export default function SwingLandingPage() {
                 style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', lineHeight: 1.05 }}
               >
                 See Your Swing.<br />
-                <span className="text-burnt-orange">Understand It.</span>
+                <span className="text-[var(--bsi-primary)]">Understand It.</span>
               </h1>
               <p className="text-bsi-dust text-base sm:text-lg leading-relaxed max-w-xl mx-auto mb-8">
                 Record your swing from any phone camera. Get AI-powered biomechanical analysis across 12 dimensions — then ask follow-up questions about what you see.
@@ -99,7 +99,7 @@ export default function SwingLandingPage() {
       </Section>
 
       {/* Sports Strip */}
-      <div className="border-y-2 border-burnt-orange/20 bg-surface-press-box">
+      <div className="border-y-2 border-[var(--bsi-primary)]/20 bg-surface-press-box">
         <Container>
           <div className="flex items-center justify-center gap-4 sm:gap-8 py-4 overflow-x-auto">
             {SPORTS.map((sport) => (
@@ -107,7 +107,7 @@ export default function SwingLandingPage() {
                 <div className="text-xs font-bold text-bsi-bone font-display uppercase tracking-wider">
                   {sport.name}
                 </div>
-                <div className="text-[10px] text-text-muted mt-0.5">{sport.emphasis}</div>
+                <div className="text-[10px] text-[rgba(196,184,165,0.35)] mt-0.5">{sport.emphasis}</div>
               </div>
             ))}
           </div>
@@ -134,9 +134,9 @@ export default function SwingLandingPage() {
               { step: '04', title: 'Ask', desc: 'Chat with your AI coach about what the numbers mean and how to improve.' },
             ].map((item, i) => (
               <ScrollReveal key={item.step} delay={i * 0.1}>
-                <div className="rounded-sm bg-surface-dugout border border-border-subtle p-6 text-center h-full">
-                  <div className="w-10 h-10 rounded-sm bg-burnt-orange/15 flex items-center justify-center mx-auto mb-4">
-                    <span className="text-burnt-orange font-mono font-bold text-sm">{item.step}</span>
+                <div className="rounded-sm bg-surface-dugout border border-[var(--border-vintage)] p-6 text-center h-full">
+                  <div className="w-10 h-10 rounded-sm bg-[var(--bsi-primary)]/15 flex items-center justify-center mx-auto mb-4">
+                    <span className="text-[var(--bsi-primary)] font-mono font-bold text-sm">{item.step}</span>
                   </div>
                   <h3 className="font-display text-lg font-bold uppercase tracking-wide text-bsi-bone mb-2">
                     {item.title}
@@ -164,11 +164,11 @@ export default function SwingLandingPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {FEATURES.map((feature, i) => {
               const card = (
-                <div className={`rounded-sm bg-surface-dugout border border-border-subtle p-5 h-full transition-colors ${feature.href ? 'hover:border-burnt-orange/40 group cursor-pointer' : 'hover:border-burnt-orange/20'}`}>
-                  <div className="w-10 h-10 rounded-sm bg-burnt-orange/10 flex items-center justify-center mb-4">
+                <div className={`rounded-sm bg-surface-dugout border border-[var(--border-vintage)] p-5 h-full transition-colors ${feature.href ? 'hover:border-[var(--bsi-primary)]/40 group cursor-pointer' : 'hover:border-[var(--bsi-primary)]/20'}`}>
+                  <div className="w-10 h-10 rounded-sm bg-[var(--bsi-primary)]/10 flex items-center justify-center mb-4">
                     <svg
                       viewBox="0 0 24 24"
-                      className="w-5 h-5 text-burnt-orange"
+                      className="w-5 h-5 text-[var(--bsi-primary)]"
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="1.5"
@@ -181,7 +181,7 @@ export default function SwingLandingPage() {
                   <h3 className="font-semibold text-bsi-bone text-sm mb-2">
                     {feature.title}
                     {feature.href && (
-                      <span className="inline-block ml-1.5 text-burnt-orange opacity-0 group-hover:opacity-100 transition-opacity">&rarr;</span>
+                      <span className="inline-block ml-1.5 text-[var(--bsi-primary)] opacity-0 group-hover:opacity-100 transition-opacity">&rarr;</span>
                     )}
                   </h3>
                   <p className="text-xs text-bsi-dust leading-relaxed">{feature.desc}</p>
@@ -203,7 +203,7 @@ export default function SwingLandingPage() {
         <Container>
           <ScrollReveal>
             <div className="max-w-2xl mx-auto">
-              <div className="rounded-sm bg-surface-dugout border border-burnt-orange/20 p-6 sm:p-8 corner-marks relative">
+              <div className="rounded-sm bg-surface-dugout border border-[var(--bsi-primary)]/20 p-6 sm:p-8 corner-marks relative">
                 <span className="heritage-stamp text-xs mb-4 block">BSI Labs</span>
                 <h2 className="font-display text-xl sm:text-2xl font-bold uppercase tracking-wide text-bsi-bone mb-3">
                   Go Deeper in the Lab
@@ -241,31 +241,31 @@ export default function SwingLandingPage() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="rounded-sm bg-surface-dugout border border-border-subtle p-6 corner-marks relative">
+                <div className="rounded-sm bg-surface-dugout border border-[var(--border-vintage)] p-6 corner-marks relative">
                   <h3 className="font-display text-lg font-bold uppercase text-bsi-bone mb-4">Free</h3>
                   <ul className="space-y-2 text-xs text-bsi-dust">
                     <li className="flex gap-2"><span className="text-[var(--bsi-success)]">✓</span> 3 swing analyses per month</li>
                     <li className="flex gap-2"><span className="text-[var(--bsi-success)]">✓</span> Full 12-metric report</li>
                     <li className="flex gap-2"><span className="text-[var(--bsi-success)]">✓</span> Video + skeleton overlay</li>
                     <li className="flex gap-2"><span className="text-[var(--bsi-success)]">✓</span> AI narrated analysis</li>
-                    <li className="flex gap-2"><span className="text-text-muted">–</span> 2 follow-up questions per swing</li>
-                    <li className="flex gap-2"><span className="text-text-muted">–</span> Last 3 swings history</li>
+                    <li className="flex gap-2"><span className="text-[rgba(196,184,165,0.35)]">–</span> 2 follow-up questions per swing</li>
+                    <li className="flex gap-2"><span className="text-[rgba(196,184,165,0.35)]">–</span> Last 3 swings history</li>
                   </ul>
                 </div>
 
-                <div className="rounded-sm bg-surface-dugout border-2 border-burnt-orange p-6 relative">
-                  <div className="absolute -top-3 left-4 bg-burnt-orange text-white text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-sm">
+                <div className="rounded-sm bg-surface-dugout border-2 border-[var(--bsi-primary)] p-6 relative">
+                  <div className="absolute -top-3 left-4 bg-[var(--bsi-primary)] text-white text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-sm">
                     Pro
                   </div>
                   <h3 className="font-display text-lg font-bold uppercase text-bsi-bone mb-4">BSI Pro</h3>
                   <ul className="space-y-2 text-xs text-bsi-dust">
-                    <li className="flex gap-2"><span className="text-burnt-orange">✓</span> Unlimited swing analyses</li>
-                    <li className="flex gap-2"><span className="text-burnt-orange">✓</span> Full 12-metric report</li>
-                    <li className="flex gap-2"><span className="text-burnt-orange">✓</span> Video + skeleton overlay</li>
-                    <li className="flex gap-2"><span className="text-burnt-orange">✓</span> AI narrated analysis</li>
-                    <li className="flex gap-2"><span className="text-burnt-orange">✓</span> Unlimited follow-up questions</li>
-                    <li className="flex gap-2"><span className="text-burnt-orange">✓</span> Full history + progress charts</li>
-                    <li className="flex gap-2"><span className="text-burnt-orange">✓</span> Personalized drill prescriptions</li>
+                    <li className="flex gap-2"><span className="text-[var(--bsi-primary)]">✓</span> Unlimited swing analyses</li>
+                    <li className="flex gap-2"><span className="text-[var(--bsi-primary)]">✓</span> Full 12-metric report</li>
+                    <li className="flex gap-2"><span className="text-[var(--bsi-primary)]">✓</span> Video + skeleton overlay</li>
+                    <li className="flex gap-2"><span className="text-[var(--bsi-primary)]">✓</span> AI narrated analysis</li>
+                    <li className="flex gap-2"><span className="text-[var(--bsi-primary)]">✓</span> Unlimited follow-up questions</li>
+                    <li className="flex gap-2"><span className="text-[var(--bsi-primary)]">✓</span> Full history + progress charts</li>
+                    <li className="flex gap-2"><span className="text-[var(--bsi-primary)]">✓</span> Personalized drill prescriptions</li>
                   </ul>
                 </div>
               </div>

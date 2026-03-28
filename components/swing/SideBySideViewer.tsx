@@ -101,9 +101,9 @@ export function SideBySideViewer({ videoUrl, frames, phases, width = 640, seekTo
   const panelHeight = Math.round(halfWidth * aspectRatio);
 
   return (
-    <div className="rounded-sm overflow-hidden bg-surface-scoreboard border border-border-subtle">
+    <div className="rounded-sm overflow-hidden bg-surface-scoreboard border border-[var(--border-vintage)]">
       {/* Phase indicator strip */}
-      <div className="flex items-center gap-2 px-4 py-2 bg-surface-press-box border-b border-border-subtle overflow-x-auto">
+      <div className="flex items-center gap-2 px-4 py-2 bg-surface-press-box border-b border-[var(--border-vintage)] overflow-x-auto">
         {phases.phases.map((p) => (
           <button
             key={p.phase}
@@ -111,7 +111,7 @@ export function SideBySideViewer({ videoUrl, frames, phases, width = 640, seekTo
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[10px] font-mono uppercase tracking-wider transition-all whitespace-nowrap ${
               currentPhase === p.phase
                 ? 'text-white'
-                : 'text-text-muted hover:text-bsi-dust'
+                : 'text-[rgba(196,184,165,0.35)] hover:text-bsi-dust'
             }`}
             style={currentPhase === p.phase ? { backgroundColor: `${PHASE_COLORS[p.phase]}33`, color: PHASE_COLORS[p.phase] } : undefined}
           >
@@ -160,12 +160,12 @@ export function SideBySideViewer({ videoUrl, frames, phases, width = 640, seekTo
       </div>
 
       {/* Controls */}
-      <div className="px-4 py-3 bg-surface-press-box border-t border-border-subtle">
+      <div className="px-4 py-3 bg-surface-press-box border-t border-[var(--border-vintage)]">
         <div className="flex items-center gap-3">
           {/* Play/Pause */}
           <button
             onClick={togglePlay}
-            className="w-8 h-8 rounded-sm bg-burnt-orange/15 flex items-center justify-center text-burnt-orange hover:bg-burnt-orange/25 transition-colors"
+            className="w-8 h-8 rounded-sm bg-[var(--bsi-primary)]/15 flex items-center justify-center text-[var(--bsi-primary)] hover:bg-[var(--bsi-primary)]/25 transition-colors"
           >
             {isPlaying ? (
               <svg viewBox="0 0 16 16" className="w-4 h-4" fill="currentColor">
@@ -196,7 +196,7 @@ export function SideBySideViewer({ videoUrl, frames, phases, width = 640, seekTo
           />
 
           {/* Frame counter */}
-          <span className="text-[10px] font-mono text-text-muted tabular-nums w-20 text-right">
+          <span className="text-[10px] font-mono text-[rgba(196,184,165,0.35)] tabular-nums w-20 text-right">
             {currentFrame + 1}/{frames.length}
           </span>
         </div>

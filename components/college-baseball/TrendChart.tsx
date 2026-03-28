@@ -59,9 +59,9 @@ function CustomTooltip({
     : String(entry.value);
 
   return (
-    <div className="bg-charcoal border border-border-strong rounded-sm px-3 py-2 shadow-lg">
-      <p className="text-text-muted text-xs mb-1">{formattedDate}</p>
-      <p className="text-text-primary font-mono text-sm font-semibold">
+    <div className="bg-[var(--surface-dugout)] border border-[rgba(140,98,57,0.5)] rounded-sm px-3 py-2 shadow-lg">
+      <p className="text-[rgba(196,184,165,0.35)] text-xs mb-1">{formattedDate}</p>
+      <p className="text-[var(--bsi-bone)] font-mono text-sm font-semibold">
         {entry.payload.label ?? formattedValue}
       </p>
     </div>
@@ -79,7 +79,7 @@ export function TrendChart({
 }: TrendChartProps) {
   if (data.length === 0) {
     return (
-      <div className="flex items-center justify-center text-text-muted text-sm" style={{ height }}>
+      <div className="flex items-center justify-center text-[rgba(196,184,165,0.35)] text-sm" style={{ height }}>
         Trend data builds over the season
       </div>
     );
@@ -89,7 +89,7 @@ export function TrendChart({
 
   return (
     <div>
-      <h4 className="text-xs uppercase tracking-wider text-text-muted mb-3 font-semibold">
+      <h4 className="text-xs uppercase tracking-wider text-[rgba(196,184,165,0.35)] mb-3 font-semibold">
         {title}
       </h4>
       <ResponsiveContainer width="100%" height={height}>

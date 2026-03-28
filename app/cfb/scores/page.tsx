@@ -54,13 +54,13 @@ function GameCard({ game }: { game: ESPNGame }) {
 
   return (
     <Card variant="hover" padding="none" className={`overflow-hidden transition-all ${isLive ? 'border-success/50' : ''}`}>
-      <div className={`px-4 py-2 flex items-center justify-between ${isLive ? 'bg-success/20' : isCompleted ? 'bg-background-secondary' : 'bg-burnt-orange/20'}`}>
-        <span className={`text-xs font-semibold uppercase ${isLive ? 'text-success' : isCompleted ? 'text-text-tertiary' : 'text-burnt-orange'}`}>
+      <div className={`px-4 py-2 flex items-center justify-between ${isLive ? 'bg-success/20' : isCompleted ? 'bg-[var(--surface-dugout)]' : 'bg-[var(--bsi-primary)]/20'}`}>
+        <span className={`text-xs font-semibold uppercase ${isLive ? 'text-success' : isCompleted ? 'text-[rgba(196,184,165,0.5)]' : 'text-[var(--bsi-primary)]'}`}>
           {isLive && <span className="inline-block w-2 h-2 bg-success rounded-full animate-pulse mr-1.5" />}
           {statusText}
         </span>
         {game.venue?.fullName && (
-          <span className="text-xs text-text-tertiary truncate max-w-[140px]">{game.venue.fullName}</span>
+          <span className="text-xs text-[rgba(196,184,165,0.5)] truncate max-w-[140px]">{game.venue.fullName}</span>
         )}
       </div>
       <div className="p-4 space-y-3">
@@ -74,20 +74,20 @@ function GameCard({ game }: { game: ESPNGame }) {
                 {logoUrl ? (
                   <img src={logoUrl} alt={`${team.team.displayName || team.team.abbreviation} logo`} className="w-8 h-8 object-contain" loading="lazy" decoding="async" />
                 ) : (
-                  <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
+                  <div className="w-8 h-8 bg-[var(--surface-dugout)] rounded-full flex items-center justify-center text-xs font-bold text-[var(--bsi-primary)]">
                     {team.team.abbreviation}
                   </div>
                 )}
                 <div className="min-w-0">
-                  <p className={`font-semibold truncate ${isWinner ? 'text-text-primary' : 'text-text-secondary'}`}>
+                  <p className={`font-semibold truncate ${isWinner ? 'text-[var(--bsi-bone)]' : 'text-[var(--bsi-dust)]'}`}>
                     {team.team.displayName}
                   </p>
                   {team.records?.[0]?.summary && (
-                    <p className="text-xs text-text-tertiary">{team.records[0].summary}</p>
+                    <p className="text-xs text-[rgba(196,184,165,0.5)]">{team.records[0].summary}</p>
                   )}
                 </div>
               </div>
-              <span className={`text-2xl font-bold font-mono ${isWinner ? 'text-text-primary' : team.score ? 'text-text-secondary' : 'text-text-tertiary'}`}>
+              <span className={`text-2xl font-bold font-mono ${isWinner ? 'text-[var(--bsi-bone)]' : team.score ? 'text-[var(--bsi-dust)]' : 'text-[rgba(196,184,165,0.5)]'}`}>
                 {team.score ?? '-'}
               </span>
             </div>
@@ -124,12 +124,12 @@ export default function CFBScoresPage() {
   return (
     <>
       <div>
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/cfb" className="text-text-tertiary hover:text-burnt-orange transition-colors">CFB</Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">Scores</span>
+              <Link href="/cfb" className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors">CFB</Link>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">Scores</span>
             </nav>
           </Container>
         </Section>
@@ -142,7 +142,7 @@ export default function CFBScoresPage() {
               {hasLive && <FreshnessBadge isLive fetchedAt={lastUpdated} />}
             </div>
             <ScrollReveal direction="up">
-              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-gradient-blaze">
+              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-[var(--bsi-primary)]">
                 College Football Scores
               </h1>
             </ScrollReveal>
@@ -160,8 +160,8 @@ export default function CFBScoresPage() {
                     onClick={() => setSelectedDate(val)}
                     className={`px-4 py-2 min-h-[44px] rounded-sm font-semibold text-sm whitespace-nowrap transition-all ${
                       selectedDate === val
-                        ? 'bg-burnt-orange text-white'
-                        : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
+                        ? 'bg-[var(--bsi-primary)] text-white'
+                        : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:bg-[var(--surface-press-box)]'
                     }`}
                   >
                     {opt.label}
@@ -173,14 +173,14 @@ export default function CFBScoresPage() {
             {loading ? (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="h-40 bg-background-tertiary rounded-sm animate-pulse" />
+                  <div key={i} className="h-40 bg-[var(--surface-dugout)] rounded-sm animate-pulse" />
                 ))}
               </div>
             ) : error ? (
               <Card padding="lg" className="bg-error/10 border-error/30">
                 <p className="text-error font-semibold">Data Unavailable</p>
-                <p className="text-text-secondary text-sm mt-1">{error}</p>
-                <button onClick={retry} className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-sm text-sm">
+                <p className="text-[var(--bsi-dust)] text-sm mt-1">{error}</p>
+                <button onClick={retry} className="mt-4 px-4 py-2 bg-[var(--bsi-primary)] text-white rounded-sm text-sm">
                   Retry
                 </button>
               </Card>
@@ -208,9 +208,9 @@ export default function CFBScoresPage() {
               </div>
             )}
 
-            <div className="mt-8 pt-4 border-t border-border-subtle">
+            <div className="mt-8 pt-4 border-t border-[var(--border-vintage)]">
               <DataSourceBadge source="SportsDataIO" timestamp={formatTimestamp(lastUpdated)} />
-              {hasLive && <span className="text-xs text-text-tertiary ml-4">Auto-refreshing every 30s</span>}
+              {hasLive && <span className="text-xs text-[rgba(196,184,165,0.5)] ml-4">Auto-refreshing every 30s</span>}
             </div>
           </Container>
         </Section>

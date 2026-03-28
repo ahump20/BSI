@@ -145,17 +145,17 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
         <Section padding="sm" className="border-b border-border">
           <Container>
             <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm flex-wrap">
-              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 College Baseball
               </Link>
-              <span className="text-text-muted">/</span>
-              <Link href="/college-baseball/texas-intelligence" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <Link href="/college-baseball/texas-intelligence" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 Texas Intel
               </Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-muted">Scouting</span>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-primary">{opponentName}</span>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[rgba(196,184,165,0.35)]">Scouting</span>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[var(--bsi-bone)]">{opponentName}</span>
             </nav>
           </Container>
         </Section>
@@ -166,7 +166,7 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
           <Container>
             <ScrollReveal direction="up">
               <div className="flex flex-col sm:flex-row items-start gap-5">
-                <div className="w-16 h-16 flex-shrink-0 rounded-sm bg-surface-light/50 flex items-center justify-center overflow-hidden">
+                <div className="w-16 h-16 flex-shrink-0 rounded-sm bg-[var(--surface-press-box)]/50 flex items-center justify-center overflow-hidden">
                   <img
                     src={opponentLogo}
                     alt={opponentName}
@@ -183,10 +183,10 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
                       </Badge>
                     )}
                   </div>
-                  <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-wide text-text-primary">
+                  <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-wide text-[var(--bsi-bone)]">
                     Texas vs {opponent?.name ?? opponentName}
                   </h1>
-                  <p className="text-text-secondary text-sm mt-2 max-w-xl">
+                  <p className="text-[var(--bsi-dust)] text-sm mt-2 max-w-xl">
                     Pre-series intelligence brief &mdash; offense, pitching, key matchups, and game plan.
                   </p>
                 </div>
@@ -201,22 +201,22 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
             <Container>
               <ScrollReveal direction="up">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Card variant="default" padding="md" className="border-t-2 border-burnt-orange">
+                  <Card variant="default" padding="md" className="border-t-2 border-[var(--bsi-primary)]">
                     <CardContent>
                       <span className="heritage-stamp text-[10px] block mb-2">Recent Form</span>
-                      <p className="text-text-secondary text-xs leading-relaxed">{brief.overview.slice(0, 200)}{brief.overview.length > 200 ? '...' : ''}</p>
+                      <p className="text-[var(--bsi-dust)] text-xs leading-relaxed">{brief.overview.slice(0, 200)}{brief.overview.length > 200 ? '...' : ''}</p>
                     </CardContent>
                   </Card>
                   <Card variant="default" padding="md" className="border-t-2 border-[var(--heritage-columbia-blue)]">
                     <CardContent>
                       <span className="heritage-stamp text-[10px] block mb-2">Key Matchup</span>
-                      <p className="text-text-secondary text-xs leading-relaxed">{brief.key_matchups.slice(0, 200)}{brief.key_matchups.length > 200 ? '...' : ''}</p>
+                      <p className="text-[var(--bsi-dust)] text-xs leading-relaxed">{brief.key_matchups.slice(0, 200)}{brief.key_matchups.length > 200 ? '...' : ''}</p>
                     </CardContent>
                   </Card>
                   <Card variant="default" padding="md" className="border-t-2 border-[var(--bsi-dust)]">
                     <CardContent>
                       <span className="heritage-stamp text-[10px] block mb-2">Texas Edge</span>
-                      <p className="text-text-secondary text-xs leading-relaxed">{brief.game_plan.slice(0, 200)}{brief.game_plan.length > 200 ? '...' : ''}</p>
+                      <p className="text-[var(--bsi-dust)] text-xs leading-relaxed">{brief.game_plan.slice(0, 200)}{brief.game_plan.length > 200 ? '...' : ''}</p>
                     </CardContent>
                   </Card>
                 </div>
@@ -231,7 +231,7 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
             <Container>
               <div className="space-y-4">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="h-24 bg-surface-light rounded-sm animate-pulse" />
+                  <div key={i} className="h-24 bg-[var(--surface-press-box)] rounded-sm animate-pulse" />
                 ))}
               </div>
             </Container>
@@ -240,7 +240,7 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
           <Section padding="lg" borderTop>
             <Container>
               <Card padding="lg" className="text-center">
-                <p className="text-text-muted text-sm">
+                <p className="text-[rgba(196,184,165,0.35)] text-sm">
                   Unable to load scouting data for this opponent. Try refreshing the page.
                 </p>
               </Card>
@@ -253,7 +253,7 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
               <Section padding="lg" borderTop>
                 <Container>
                   <ScrollReveal direction="up">
-                    <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-6 text-text-primary">
+                    <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-6 text-[var(--bsi-bone)]">
                       Intelligence Brief
                     </h2>
                   </ScrollReveal>
@@ -284,7 +284,7 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
                         <div className="overflow-x-auto">
                           <table className="w-full text-sm">
                             <thead>
-                              <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                              <tr className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
                                 <th className="text-left py-2 px-2">Name</th>
                                 <th className="text-left py-2 px-2">Pos</th>
                                 <th className="text-right py-2 px-2">PA</th>
@@ -296,18 +296,18 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
                             </thead>
                             <tbody>
                               {topHitters.map((h, idx) => (
-                                <tr key={`${h.player_name}-${idx}`} className="border-t border-border-subtle">
-                                  <td className="py-2 px-2 text-text-primary font-medium">{h.player_name}</td>
-                                  <td className="py-2 px-2 text-text-muted text-xs">{h.position}</td>
-                                  <td className="py-2 px-2 text-right font-mono text-text-muted">{h.pa}</td>
-                                  <td className="py-2 px-2 text-right font-mono text-text-secondary">{fmt3(h.avg)}</td>
+                                <tr key={`${h.player_name}-${idx}`} className="border-t border-[var(--border-vintage)]">
+                                  <td className="py-2 px-2 text-[var(--bsi-bone)] font-medium">{h.player_name}</td>
+                                  <td className="py-2 px-2 text-[rgba(196,184,165,0.35)] text-xs">{h.position}</td>
+                                  <td className="py-2 px-2 text-right font-mono text-[rgba(196,184,165,0.35)]">{h.pa}</td>
+                                  <td className="py-2 px-2 text-right font-mono text-[var(--bsi-dust)]">{fmt3(h.avg)}</td>
                                   <td className="py-2 px-2 text-right font-mono" style={{ color: h.woba > 0.370 ? ACCENT : undefined }}>
                                     {fmt3(h.woba)}
                                   </td>
                                   <td className="py-2 px-2 text-right font-mono font-semibold" style={{ color: h.wrc_plus >= 100 ? ACCENT : undefined }}>
                                     {Math.round(h.wrc_plus)}
                                   </td>
-                                  <td className="py-2 px-2 text-right font-mono text-text-secondary">{h.hr}</td>
+                                  <td className="py-2 px-2 text-right font-mono text-[var(--bsi-dust)]">{h.hr}</td>
                                 </tr>
                               ))}
                             </tbody>
@@ -336,7 +336,7 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
                         <div className="overflow-x-auto">
                           <table className="w-full text-sm">
                             <thead>
-                              <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                              <tr className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
                                 <th className="text-left py-2 px-2">Name</th>
                                 <th className="text-left py-2 px-2">Pos</th>
                                 <th className="text-right py-2 px-2">IP</th>
@@ -348,18 +348,18 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
                             </thead>
                             <tbody>
                               {topPitchers.map((p, idx) => (
-                                <tr key={`${p.player_name}-${idx}`} className="border-t border-border-subtle">
-                                  <td className="py-2 px-2 text-text-primary font-medium">{p.player_name}</td>
-                                  <td className="py-2 px-2 text-text-muted text-xs">{p.position}</td>
-                                  <td className="py-2 px-2 text-right font-mono text-text-muted">{fmt1(p.ip)}</td>
+                                <tr key={`${p.player_name}-${idx}`} className="border-t border-[var(--border-vintage)]">
+                                  <td className="py-2 px-2 text-[var(--bsi-bone)] font-medium">{p.player_name}</td>
+                                  <td className="py-2 px-2 text-[rgba(196,184,165,0.35)] text-xs">{p.position}</td>
+                                  <td className="py-2 px-2 text-right font-mono text-[rgba(196,184,165,0.35)]">{fmt1(p.ip)}</td>
                                   <td className="py-2 px-2 text-right font-mono font-semibold" style={{ color: p.era <= 3.50 ? ACCENT : undefined }}>
                                     {fmt2(p.era)}
                                   </td>
                                   <td className="py-2 px-2 text-right font-mono" style={{ color: p.fip <= 3.50 ? ACCENT : undefined }}>
                                     {fmt2(p.fip)}
                                   </td>
-                                  <td className="py-2 px-2 text-right font-mono text-text-secondary">{fmt1(p.k_9)}</td>
-                                  <td className="py-2 px-2 text-right font-mono text-text-secondary">{fmt1(p.bb_9)}</td>
+                                  <td className="py-2 px-2 text-right font-mono text-[var(--bsi-dust)]">{fmt1(p.k_9)}</td>
+                                  <td className="py-2 px-2 text-right font-mono text-[var(--bsi-dust)]">{fmt1(p.bb_9)}</td>
                                 </tr>
                               ))}
                             </tbody>
@@ -377,7 +377,7 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
               <Section padding="lg" background="charcoal" borderTop>
                 <Container>
                   <ScrollReveal direction="up">
-                    <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-6 text-text-primary">
+                    <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-6 text-[var(--bsi-bone)]">
                       Team Comparison
                     </h2>
                   </ScrollReveal>
@@ -393,7 +393,7 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
                           <div className="overflow-x-auto">
                             <table className="w-full text-sm">
                               <thead>
-                                <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                                <tr className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
                                   <th className="text-left py-2 px-2">Stat</th>
                                   <th className="text-right py-2 px-2" style={{ color: ACCENT }}>Texas</th>
                                   <th className="text-right py-2 px-2">{opponent.name.split(' ').pop()}</th>
@@ -473,7 +473,7 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
                           <div className="overflow-x-auto">
                             <table className="w-full text-sm">
                               <thead>
-                                <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                                <tr className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
                                   <th className="text-left py-2 px-2">Stat</th>
                                   <th className="text-right py-2 px-2" style={{ color: ACCENT }}>Texas</th>
                                   <th className="text-right py-2 px-2">{opponent.name.split(' ').pop()}</th>
@@ -537,7 +537,7 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
                 <Container>
                   <ScrollReveal direction="up">
                     <Card variant="default" padding="lg" className="max-w-md">
-                      <div className="absolute top-0 left-0 right-0 h-0.5 bg-burnt-orange" />
+                      <div className="absolute top-0 left-0 right-0 h-0.5 bg-[var(--bsi-primary)]" />
                       <CardHeader>
                         <CardTitle className="flex items-center gap-3">
                           <span>Conference Strength</span>
@@ -550,19 +550,19 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
                             <div className="font-mono text-xl font-bold" style={{ color: ACCENT }}>
                               {confStrength.strength_index.toFixed(1)}
                             </div>
-                            <div className="text-text-muted text-xs mt-1">Strength Index</div>
+                            <div className="text-[rgba(196,184,165,0.35)] text-xs mt-1">Strength Index</div>
                           </div>
                           <div>
-                            <div className="font-mono text-xl font-bold text-text-primary">
+                            <div className="font-mono text-xl font-bold text-[var(--bsi-bone)]">
                               {fmt3(confStrength.avg_woba)}
                             </div>
-                            <div className="text-text-muted text-xs mt-1">Avg wOBA</div>
+                            <div className="text-[rgba(196,184,165,0.35)] text-xs mt-1">Avg wOBA</div>
                           </div>
                           <div>
-                            <div className="font-mono text-xl font-bold text-text-primary">
+                            <div className="font-mono text-xl font-bold text-[var(--bsi-bone)]">
                               {fmt2(confStrength.avg_era)}
                             </div>
-                            <div className="text-text-muted text-xs mt-1">Avg ERA</div>
+                            <div className="text-[rgba(196,184,165,0.35)] text-xs mt-1">Avg ERA</div>
                           </div>
                         </div>
                       </CardContent>
@@ -595,13 +595,13 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
               <div className="flex flex-wrap gap-4">
                 <Link
                   href="/college-baseball/texas-intelligence"
-                  className="text-sm text-burnt-orange hover:text-ember transition-colors"
+                  className="text-sm text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
                 >
                   &larr; Back to Hub
                 </Link>
                 <Link
                   href="/college-baseball/texas-intelligence/roster"
-                  className="text-sm text-text-muted hover:text-text-primary transition-colors"
+                  className="text-sm text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] transition-colors"
                 >
                   Texas Roster &rarr;
                 </Link>
@@ -630,7 +630,7 @@ function BriefCard({
   return (
     <ScrollReveal direction="up">
       <Card variant="default" padding="lg" className="relative overflow-hidden">
-        {accent && <div className="absolute top-0 left-0 right-0 h-0.5 bg-burnt-orange" />}
+        {accent && <div className="absolute top-0 left-0 right-0 h-0.5 bg-[var(--bsi-primary)]" />}
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <span>{title}</span>
@@ -638,7 +638,7 @@ function BriefCard({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-text-secondary text-sm leading-relaxed" style={{ fontFamily: 'var(--font-body, "Cormorant Garamond", serif)' }}>
+          <p className="text-[var(--bsi-dust)] text-sm leading-relaxed" style={{ fontFamily: 'var(--font-body, "Cormorant Garamond", serif)' }}>
             {content}
           </p>
         </CardContent>
@@ -668,8 +668,8 @@ function ComparisonRow({
   }
 
   return (
-    <tr className="border-t border-border-subtle">
-      <td className="py-2 px-2 text-text-muted text-xs uppercase tracking-wider">{label}</td>
+    <tr className="border-t border-[var(--border-vintage)]">
+      <td className="py-2 px-2 text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider">{label}</td>
       <td
         className="py-2 px-2 text-right font-mono font-semibold"
         style={{ color: texas && texasWins ? ACCENT : undefined }}

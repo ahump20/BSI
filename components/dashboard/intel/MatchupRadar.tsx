@@ -21,9 +21,9 @@ export function MatchupRadar({ game }: MatchupRadarProps) {
   if (data.length === 0) return null;
 
   return (
-    <div className="rounded-sm border border-border-subtle bg-surface-light p-3">
+    <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)] p-3">
       <div className="flex items-center justify-between mb-2">
-        <span className="font-mono text-[10px] text-text-muted uppercase tracking-wider">Matchup Radar</span>
+        <span className="font-mono text-[10px] text-[rgba(196,184,165,0.35)] uppercase tracking-wider">Matchup Radar</span>
         <div className="flex items-center gap-3 font-mono text-[10px]">
           <span style={{ color: BSI_CHART_COLORS.secondary }}>
             {game.away.abbreviation || 'Away'}

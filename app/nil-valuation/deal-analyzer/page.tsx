@@ -92,26 +92,26 @@ export default function DealAnalyzerPage() {
   const update = (partial: Partial<DealInput>) => setInput(prev => ({ ...prev, ...partial }));
 
   return (
-    <div className="min-h-screen bg-background-primary text-text-primary">
+    <div className="min-h-screen bg-[var(--surface-scoreboard)] text-[var(--bsi-bone)]">
       <Section className="pt-4 pb-0">
         <Container>
-          <nav className="flex items-center gap-2 text-sm text-text-muted">
-            <Link href="/nil-valuation" className="hover:text-burnt-orange transition-colors">NIL Valuation</Link>
+          <nav className="flex items-center gap-2 text-sm text-[rgba(196,184,165,0.35)]">
+            <Link href="/nil-valuation" className="hover:text-[var(--bsi-primary)] transition-colors">NIL Valuation</Link>
             <span>/</span>
-            <span className="text-text-secondary">Deal Analyzer</span>
+            <span className="text-[var(--bsi-dust)]">Deal Analyzer</span>
           </nav>
         </Container>
       </Section>
 
-      <Section className="pt-6 pb-12 bg-gradient-to-b from-background-secondary to-background-primary">
+      <Section className="pt-6 pb-12 bg-gradient-to-b from-background-secondary to-[var(--surface-scoreboard)]">
         <Container>
           <ScrollReveal>
             <div className="max-w-3xl mx-auto text-center">
               <Badge variant="primary" className="mb-4">Pro Tool</Badge>
               <h1 className="text-4xl md:text-5xl font-bold mb-4 font-display uppercase tracking-wide">
-                <span className="text-burnt-orange">Deal</span> Analyzer
+                <span className="text-[var(--bsi-primary)]">Deal</span> Analyzer
               </h1>
-              <p className="text-lg text-text-secondary max-w-2xl mx-auto">
+              <p className="text-lg text-[var(--bsi-dust)] max-w-2xl mx-auto">
                 Input deal terms and compare against BSI fair market estimates. Know if a deal is fair before you sign.
               </p>
             </div>
@@ -128,27 +128,27 @@ export default function DealAnalyzerPage() {
                 <CardHeader><CardTitle>Deal Terms</CardTitle></CardHeader>
                 <CardContent className="p-6 space-y-5">
                   <div>
-                    <label className="block text-sm font-semibold text-text-secondary mb-1">Player Name</label>
+                    <label className="block text-sm font-semibold text-[var(--bsi-dust)] mb-1">Player Name</label>
                     <input type="text" value={input.playerName} onChange={e => update({ playerName: e.target.value })}
-                      placeholder="e.g. John Smith" className="w-full p-2.5 rounded-sm bg-background-secondary border border-border text-text-primary text-sm focus:border-burnt-orange focus:outline-none" />
+                      placeholder="e.g. John Smith" className="w-full p-2.5 rounded-sm bg-[var(--surface-dugout)] border border-border text-[var(--bsi-bone)] text-sm focus:border-[var(--bsi-primary)] focus:outline-none" />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-text-secondary mb-1">Sport</label>
+                    <label className="block text-sm font-semibold text-[var(--bsi-dust)] mb-1">Sport</label>
                     <div className="grid grid-cols-3 gap-2">
                       {(['baseball', 'football', 'basketball'] as const).map(s => (
                         <button key={s} onClick={() => update({ sport: s })}
-                          className={`p-2 rounded-sm border text-xs font-semibold capitalize transition-all ${input.sport === s ? 'border-burnt-orange bg-burnt-orange/10 text-burnt-orange' : 'border-border text-text-tertiary hover:border-text-muted'}`}>
+                          className={`p-2 rounded-sm border text-xs font-semibold capitalize transition-all ${input.sport === s ? 'border-[var(--bsi-primary)] bg-[var(--bsi-primary)]/10 text-[var(--bsi-primary)]' : 'border-border text-[rgba(196,184,165,0.5)] hover:border-text-muted'}`}>
                           {s}
                         </button>
                       ))}
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-text-secondary mb-1">Market Size</label>
+                    <label className="block text-sm font-semibold text-[var(--bsi-dust)] mb-1">Market Size</label>
                     <div className="grid grid-cols-3 gap-2">
                       {(['large', 'medium', 'small'] as const).map(m => (
                         <button key={m} onClick={() => update({ marketSize: m })}
-                          className={`p-2 rounded-sm border text-xs font-semibold capitalize transition-all ${input.marketSize === m ? 'border-burnt-orange bg-burnt-orange/10 text-burnt-orange' : 'border-border text-text-tertiary hover:border-text-muted'}`}>
+                          className={`p-2 rounded-sm border text-xs font-semibold capitalize transition-all ${input.marketSize === m ? 'border-[var(--bsi-primary)] bg-[var(--bsi-primary)]/10 text-[var(--bsi-primary)]' : 'border-border text-[rgba(196,184,165,0.5)] hover:border-text-muted'}`}>
                           {m}
                         </button>
                       ))}
@@ -156,29 +156,29 @@ export default function DealAnalyzerPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-semibold text-text-secondary mb-1">Deal Amount ($)</label>
+                      <label className="block text-sm font-semibold text-[var(--bsi-dust)] mb-1">Deal Amount ($)</label>
                       <input type="number" value={input.dealAmount} onChange={e => update({ dealAmount: Number(e.target.value) })}
-                        className="w-full p-2.5 rounded-sm bg-background-secondary border border-border text-text-primary text-sm focus:border-burnt-orange focus:outline-none" />
+                        className="w-full p-2.5 rounded-sm bg-[var(--surface-dugout)] border border-border text-[var(--bsi-bone)] text-sm focus:border-[var(--bsi-primary)] focus:outline-none" />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-text-secondary mb-1">Duration (months)</label>
+                      <label className="block text-sm font-semibold text-[var(--bsi-dust)] mb-1">Duration (months)</label>
                       <input type="number" value={input.durationMonths} onChange={e => update({ durationMonths: Number(e.target.value) })}
-                        className="w-full p-2.5 rounded-sm bg-background-secondary border border-border text-text-primary text-sm focus:border-burnt-orange focus:outline-none" />
+                        className="w-full p-2.5 rounded-sm bg-[var(--surface-dugout)] border border-border text-[var(--bsi-bone)] text-sm focus:border-[var(--bsi-primary)] focus:outline-none" />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-semibold text-text-secondary mb-1">Guaranteed (%)</label>
+                      <label className="block text-sm font-semibold text-[var(--bsi-dust)] mb-1">Guaranteed (%)</label>
                       <input type="number" min={0} max={100} value={input.guaranteedPct} onChange={e => update({ guaranteedPct: Number(e.target.value) })}
-                        className="w-full p-2.5 rounded-sm bg-background-secondary border border-border text-text-primary text-sm focus:border-burnt-orange focus:outline-none" />
+                        className="w-full p-2.5 rounded-sm bg-[var(--surface-dugout)] border border-border text-[var(--bsi-bone)] text-sm focus:border-[var(--bsi-primary)] focus:outline-none" />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-text-secondary mb-1">Performance Bonus ($)</label>
+                      <label className="block text-sm font-semibold text-[var(--bsi-dust)] mb-1">Performance Bonus ($)</label>
                       <input type="number" value={input.performanceBonus} onChange={e => update({ performanceBonus: Number(e.target.value) })}
-                        className="w-full p-2.5 rounded-sm bg-background-secondary border border-border text-text-primary text-sm focus:border-burnt-orange focus:outline-none" />
+                        className="w-full p-2.5 rounded-sm bg-[var(--surface-dugout)] border border-border text-[var(--bsi-bone)] text-sm focus:border-[var(--bsi-primary)] focus:outline-none" />
                     </div>
                   </div>
-                  <Button variant="primary" className="w-full bg-burnt-orange" onClick={handleAnalyze}>
+                  <Button variant="primary" className="w-full bg-[var(--bsi-primary)]" onClick={handleAnalyze}>
                     Analyze Deal
                   </Button>
                 </CardContent>
@@ -191,40 +191,40 @@ export default function DealAnalyzerPage() {
                 <div className="space-y-4">
                   <Card className="border-l-4 border-l-burnt-orange">
                     <CardContent className="p-6 text-center">
-                      <div className="text-sm text-text-muted uppercase tracking-wide mb-1">Deal Rating</div>
+                      <div className="text-sm text-[rgba(196,184,165,0.35)] uppercase tracking-wide mb-1">Deal Rating</div>
                       <div className={`text-3xl font-bold ${result.ratingColor}`}>{result.ratingLabel}</div>
-                      {input.playerName && <p className="text-text-muted text-sm mt-2">for {input.playerName}</p>}
+                      {input.playerName && <p className="text-[rgba(196,184,165,0.35)] text-sm mt-2">for {input.playerName}</p>}
                     </CardContent>
                   </Card>
 
                   <div className="grid grid-cols-3 gap-3">
                     <Card className="text-center"><CardContent className="p-4">
-                      <div className="text-xs text-text-muted mb-1">Fair Low</div>
-                      <div className="text-lg font-bold text-text-secondary">{formatCurrency(result.fairValueLow)}</div>
+                      <div className="text-xs text-[rgba(196,184,165,0.35)] mb-1">Fair Low</div>
+                      <div className="text-lg font-bold text-[var(--bsi-dust)]">{formatCurrency(result.fairValueLow)}</div>
                     </CardContent></Card>
-                    <Card className="text-center border-burnt-orange/40"><CardContent className="p-4">
-                      <div className="text-xs text-burnt-orange mb-1">Fair Market</div>
-                      <div className="text-xl font-bold text-burnt-orange">{formatCurrency(result.fairValueMid)}</div>
+                    <Card className="text-center border-[var(--bsi-primary)]/40"><CardContent className="p-4">
+                      <div className="text-xs text-[var(--bsi-primary)] mb-1">Fair Market</div>
+                      <div className="text-xl font-bold text-[var(--bsi-primary)]">{formatCurrency(result.fairValueMid)}</div>
                     </CardContent></Card>
                     <Card className="text-center"><CardContent className="p-4">
-                      <div className="text-xs text-text-muted mb-1">Fair High</div>
-                      <div className="text-lg font-bold text-text-secondary">{formatCurrency(result.fairValueHigh)}</div>
+                      <div className="text-xs text-[rgba(196,184,165,0.35)] mb-1">Fair High</div>
+                      <div className="text-lg font-bold text-[var(--bsi-dust)]">{formatCurrency(result.fairValueHigh)}</div>
                     </CardContent></Card>
                   </div>
 
                   <Card>
                     <CardContent className="p-5 space-y-3">
                       <div className="flex justify-between text-sm">
-                        <span className="text-text-muted">Annualized Value</span>
-                        <span className="font-semibold text-text-primary">{formatCurrency(result.annualized)}</span>
+                        <span className="text-[rgba(196,184,165,0.35)]">Annualized Value</span>
+                        <span className="font-semibold text-[var(--bsi-bone)]">{formatCurrency(result.annualized)}</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-text-muted">Guaranteed Amount</span>
-                        <span className="font-semibold text-text-primary">{formatCurrency(result.guaranteedAmount)}</span>
+                        <span className="text-[rgba(196,184,165,0.35)]">Guaranteed Amount</span>
+                        <span className="font-semibold text-[var(--bsi-bone)]">{formatCurrency(result.guaranteedAmount)}</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-text-muted">Total w/ Bonus</span>
-                        <span className="font-semibold text-text-primary">{formatCurrency(input.dealAmount + input.performanceBonus)}</span>
+                        <span className="text-[rgba(196,184,165,0.35)]">Total w/ Bonus</span>
+                        <span className="font-semibold text-[var(--bsi-bone)]">{formatCurrency(input.dealAmount + input.performanceBonus)}</span>
                       </div>
                     </CardContent>
                   </Card>
@@ -232,10 +232,10 @@ export default function DealAnalyzerPage() {
                   {result.riskFactors.length > 0 && (
                     <Card className="border-l-4 border-l-yellow-500">
                       <CardContent className="p-5">
-                        <h3 className="text-sm font-bold text-text-primary mb-3">Risk Factors</h3>
+                        <h3 className="text-sm font-bold text-[var(--bsi-bone)] mb-3">Risk Factors</h3>
                         <ul className="space-y-2">
                           {result.riskFactors.map((rf, i) => (
-                            <li key={i} className="text-sm text-text-tertiary flex gap-2">
+                            <li key={i} className="text-sm text-[rgba(196,184,165,0.5)] flex gap-2">
                               <span className="text-[var(--bsi-warning)] shrink-0">!</span>
                               {rf}
                             </li>
@@ -249,7 +249,7 @@ export default function DealAnalyzerPage() {
                 <Card className="h-full flex items-center justify-center min-h-[300px]">
                   <CardContent className="text-center p-8">
                     <div className="text-4xl mb-4 opacity-20">$</div>
-                    <p className="text-text-muted">Enter deal terms and click Analyze to see the breakdown.</p>
+                    <p className="text-[rgba(196,184,165,0.35)]">Enter deal terms and click Analyze to see the breakdown.</p>
                   </CardContent>
                 </Card>
               )}

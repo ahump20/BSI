@@ -143,7 +143,7 @@ export function EspnScoreboard({
       <div className="flex items-center justify-center gap-8 md:gap-16 py-6">
         {/* Away Team */}
         <div className="text-center">
-          <div className="w-16 h-16 bg-background-secondary rounded-full flex items-center justify-center overflow-hidden mx-auto mb-2">
+          <div className="w-16 h-16 bg-[var(--surface-dugout)] rounded-full flex items-center justify-center overflow-hidden mx-auto mb-2">
             {getTeamLogo(awayTeam) ? (
               <img
                 src={getTeamLogo(awayTeam)!}
@@ -151,20 +151,20 @@ export function EspnScoreboard({
                 className="w-12 h-12 object-contain"
               />
             ) : (
-              <span className="text-xl font-bold text-burnt-orange">
+              <span className="text-xl font-bold text-[var(--bsi-primary)]">
                 {awayTeam?.team?.abbreviation || 'AWY'}
               </span>
             )}
           </div>
-          <p className="font-semibold text-text-primary">
+          <p className="font-semibold text-[var(--bsi-bone)]">
             {awayTeam?.team?.shortDisplayName || awayTeam?.team?.displayName || 'Away'}
           </p>
-          <p className="text-xs text-text-tertiary">
+          <p className="text-xs text-[rgba(196,184,165,0.5)]">
             {awayTeam?.records?.[0]?.summary || ''}
           </p>
           <p
             className={`text-4xl font-bold font-mono mt-2 ${
-              final && awayTeam?.winner ? 'text-text-primary' : 'text-text-secondary'
+              final && awayTeam?.winner ? 'text-[var(--bsi-bone)]' : 'text-[var(--bsi-dust)]'
             }`}
           >
             {awayTeam?.score || '-'}
@@ -179,9 +179,9 @@ export function EspnScoreboard({
               {periodPrefix}{game.status?.period || '?'} {game.status?.displayClock || ''}
             </span>
           ) : final ? (
-            <span className="text-text-tertiary font-semibold">FINAL</span>
+            <span className="text-[rgba(196,184,165,0.5)] font-semibold">FINAL</span>
           ) : (
-            <span className="text-burnt-orange font-semibold">
+            <span className="text-[var(--bsi-primary)] font-semibold">
               {game.status?.type?.shortDetail || 'Scheduled'}
             </span>
           )}
@@ -189,7 +189,7 @@ export function EspnScoreboard({
 
         {/* Home Team */}
         <div className="text-center">
-          <div className="w-16 h-16 bg-background-secondary rounded-full flex items-center justify-center overflow-hidden mx-auto mb-2">
+          <div className="w-16 h-16 bg-[var(--surface-dugout)] rounded-full flex items-center justify-center overflow-hidden mx-auto mb-2">
             {getTeamLogo(homeTeam) ? (
               <img
                 src={getTeamLogo(homeTeam)!}
@@ -197,20 +197,20 @@ export function EspnScoreboard({
                 className="w-12 h-12 object-contain"
               />
             ) : (
-              <span className="text-xl font-bold text-burnt-orange">
+              <span className="text-xl font-bold text-[var(--bsi-primary)]">
                 {homeTeam?.team?.abbreviation || 'HME'}
               </span>
             )}
           </div>
-          <p className="font-semibold text-text-primary">
+          <p className="font-semibold text-[var(--bsi-bone)]">
             {homeTeam?.team?.shortDisplayName || homeTeam?.team?.displayName || 'Home'}
           </p>
-          <p className="text-xs text-text-tertiary">
+          <p className="text-xs text-[rgba(196,184,165,0.5)]">
             {homeTeam?.records?.[0]?.summary || ''}
           </p>
           <p
             className={`text-4xl font-bold font-mono mt-2 ${
-              final && homeTeam?.winner ? 'text-text-primary' : 'text-text-secondary'
+              final && homeTeam?.winner ? 'text-[var(--bsi-bone)]' : 'text-[var(--bsi-dust)]'
             }`}
           >
             {homeTeam?.score || '-'}
@@ -224,21 +224,21 @@ export function EspnScoreboard({
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-b border-border-subtle text-text-tertiary">
+                <tr className="border-b border-[var(--border-vintage)] text-[rgba(196,184,165,0.5)]">
                   <th className="text-left p-1.5 w-12">Team</th>
                   {Array.from({ length: maxPeriods }, (_, i) => (
                     <th key={i} className="text-center p-1.5 w-8">
                       {getPeriodLabel(i)}
                     </th>
                   ))}
-                  <th className="text-center p-1.5 w-8 border-l border-border-subtle text-burnt-orange font-bold">
+                  <th className="text-center p-1.5 w-8 border-l border-[var(--border-vintage)] text-[var(--bsi-primary)] font-bold">
                     T
                   </th>
                 </tr>
               </thead>
-              <tbody className="text-text-secondary">
-                <tr className="border-b border-border-subtle">
-                  <td className="p-1.5 font-semibold text-text-primary">
+              <tbody className="text-[var(--bsi-dust)]">
+                <tr className="border-b border-[var(--border-vintage)]">
+                  <td className="p-1.5 font-semibold text-[var(--bsi-bone)]">
                     {awayTeam?.team?.abbreviation || 'AWY'}
                   </td>
                   {Array.from({ length: maxPeriods }, (_, i) => (
@@ -246,12 +246,12 @@ export function EspnScoreboard({
                       {awayTeam?.linescores?.[i]?.value ?? '-'}
                     </td>
                   ))}
-                  <td className="text-center p-1.5 font-mono font-bold text-text-primary border-l border-border-subtle">
+                  <td className="text-center p-1.5 font-mono font-bold text-[var(--bsi-bone)] border-l border-[var(--border-vintage)]">
                     {awayTeam?.score || '-'}
                   </td>
                 </tr>
                 <tr>
-                  <td className="p-1.5 font-semibold text-text-primary">
+                  <td className="p-1.5 font-semibold text-[var(--bsi-bone)]">
                     {homeTeam?.team?.abbreviation || 'HME'}
                   </td>
                   {Array.from({ length: maxPeriods }, (_, i) => (
@@ -259,7 +259,7 @@ export function EspnScoreboard({
                       {homeTeam?.linescores?.[i]?.value ?? '-'}
                     </td>
                   ))}
-                  <td className="text-center p-1.5 font-mono font-bold text-text-primary border-l border-border-subtle">
+                  <td className="text-center p-1.5 font-mono font-bold text-[var(--bsi-bone)] border-l border-[var(--border-vintage)]">
                     {homeTeam?.score || '-'}
                   </td>
                 </tr>

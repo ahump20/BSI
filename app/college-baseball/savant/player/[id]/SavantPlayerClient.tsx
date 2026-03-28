@@ -353,7 +353,7 @@ export default function SavantPlayerClient() {
         <Section padding="lg">
           <Container>
             <div className="flex items-center justify-center py-20">
-              <div className="w-10 h-10 border-4 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
+              <div className="w-10 h-10 border-4 border-[var(--bsi-primary)]/30 border-t-[var(--bsi-primary)] rounded-full animate-spin" />
             </div>
           </Container>
         </Section>
@@ -368,15 +368,15 @@ export default function SavantPlayerClient() {
           <Section padding="lg">
             <Container>
               <Card padding="lg" className="text-center">
-                <h2 className="text-xl font-bold text-text-primary mb-2">
+                <h2 className="text-xl font-bold text-[var(--bsi-bone)] mb-2">
                   {error ? 'Temporarily Unavailable' : 'Player not found'}
                 </h2>
-                <p className="text-text-muted mb-4 text-sm">
+                <p className="text-[rgba(196,184,165,0.35)] mb-4 text-sm">
                   {error || 'Advanced metrics may not be available for this player yet.'}
                 </p>
                 <Link
                   href="/college-baseball/savant"
-                  className="text-burnt-orange hover:text-ember transition-colors"
+                  className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
                 >
                   Back to Savant
                 </Link>

@@ -115,7 +115,7 @@ export default function SwingAnalysisClient() {
         message: 'Generating AI analysis...',
       });
 
-      const swingId = `swing_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+      const swingId = `swing_${Date.now()}_${crypto.randomUUID().slice(0, 8)}`;
       const ctx = createChatContext(result, swingId);
       setChatContext(ctx);
 
@@ -177,7 +177,7 @@ export default function SwingAnalysisClient() {
   if (usage === null) {
     return (
       <div className="min-h-screen bg-surface-scoreboard flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-burnt-orange border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[var(--bsi-primary)] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -188,8 +188,8 @@ export default function SwingAnalysisClient() {
     return (
       <div className="min-h-screen bg-surface-scoreboard">
         <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-          <div className="w-16 h-16 mx-auto mb-6 rounded-sm bg-burnt-orange/10 flex items-center justify-center">
-            <svg viewBox="0 0 24 24" className="w-8 h-8 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <div className="w-16 h-16 mx-auto mb-6 rounded-sm bg-[var(--bsi-primary)]/10 flex items-center justify-center">
+            <svg viewBox="0 0 24 24" className="w-8 h-8 text-[var(--bsi-primary)]" fill="none" stroke="currentColor" strokeWidth="1.5">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
               <path d="M7 11V7a5 5 0 0 1 10 0v4" />
             </svg>
@@ -205,9 +205,9 @@ export default function SwingAnalysisClient() {
           <a href="/pricing" className="btn-heritage-fill px-8 py-3 text-sm inline-block">
             Upgrade to Pro
           </a>
-          <p className="text-xs text-text-muted mt-4">
+          <p className="text-xs text-[rgba(196,184,165,0.35)] mt-4">
             Already a subscriber?{' '}
-            <a href="/auth/login" className="text-burnt-orange hover:text-ember transition-colors">
+            <a href="/auth/login" className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors">
               Log in
             </a>
           </p>
@@ -227,10 +227,10 @@ export default function SwingAnalysisClient() {
                 <div
                   className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
                     step === s
-                      ? 'bg-burnt-orange text-white'
+                      ? 'bg-[var(--bsi-primary)] text-white'
                       : ['sport', 'upload', 'processing'].indexOf(step) > i
-                        ? 'bg-burnt-orange/20 text-burnt-orange'
-                        : 'bg-white/[0.06] text-text-muted'
+                        ? 'bg-[var(--bsi-primary)]/20 text-[var(--bsi-primary)]'
+                        : 'bg-white/[0.06] text-[rgba(196,184,165,0.35)]'
                   }`}
                 >
                   {i + 1}
@@ -239,7 +239,7 @@ export default function SwingAnalysisClient() {
                   <div
                     className={`w-12 sm:w-20 h-px transition-colors ${
                       ['sport', 'upload', 'processing'].indexOf(step) > i
-                        ? 'bg-burnt-orange/40'
+                        ? 'bg-[var(--bsi-primary)]/40'
                         : 'bg-white/[0.06]'
                     }`}
                   />
@@ -268,7 +268,7 @@ export default function SwingAnalysisClient() {
 
               {!usage.isPro && (
                 <div className="mt-6 text-center">
-                  <span className="text-[10px] font-mono text-text-muted">
+                  <span className="text-[10px] font-mono text-[rgba(196,184,165,0.35)]">
                     {usage.analysesThisMonth} of {FREE_ANALYSES_PER_MONTH} free analyses used this month
                   </span>
                 </div>
@@ -288,7 +288,7 @@ export default function SwingAnalysisClient() {
                 <div>
                   <button
                     onClick={() => setStep('sport')}
-                    className="text-xs text-text-muted hover:text-burnt-orange transition-colors mb-2 flex items-center gap-1"
+                    className="text-xs text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors mb-2 flex items-center gap-1"
                   >
                     <svg viewBox="0 0 16 16" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M10 12L6 8l4-4" />
@@ -334,7 +334,7 @@ export default function SwingAnalysisClient() {
                     Analyze My Swing
                   </button>
                   {!usage.isPro && (
-                    <p className="text-[10px] font-mono text-text-muted mt-3">
+                    <p className="text-[10px] font-mono text-[rgba(196,184,165,0.35)] mt-3">
                       {FREE_ANALYSES_PER_MONTH - usage.analysesThisMonth} free {FREE_ANALYSES_PER_MONTH - usage.analysesThisMonth === 1 ? 'analysis' : 'analyses'} remaining this month
                     </p>
                   )}
@@ -352,10 +352,10 @@ export default function SwingAnalysisClient() {
               exit={{ opacity: 0 }}
               className="text-center py-16"
             >
-              <div className="w-20 h-20 mx-auto mb-6 rounded-sm bg-burnt-orange/10 flex items-center justify-center">
+              <div className="w-20 h-20 mx-auto mb-6 rounded-sm bg-[var(--bsi-primary)]/10 flex items-center justify-center">
                 <motion.svg
                   viewBox="0 0 24 24"
-                  className="w-10 h-10 text-burnt-orange"
+                  className="w-10 h-10 text-[var(--bsi-primary)]"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="1.5"
@@ -373,16 +373,16 @@ export default function SwingAnalysisClient() {
               <div className="max-w-md mx-auto mt-6">
                 <div className="h-2 rounded-full bg-white/[0.06] overflow-hidden">
                   <motion.div
-                    className="h-full rounded-full bg-burnt-orange"
+                    className="h-full rounded-full bg-[var(--bsi-primary)]"
                     initial={{ width: 0 }}
                     animate={{ width: `${processing.progress}%` }}
                     transition={{ duration: 0.5 }}
                   />
                 </div>
-                <p className="text-xs text-text-muted mt-2 font-mono">{processing.progress}%</p>
+                <p className="text-xs text-[rgba(196,184,165,0.35)] mt-2 font-mono">{processing.progress}%</p>
               </div>
 
-              <div className="mt-8 space-y-2 text-xs text-text-muted">
+              <div className="mt-8 space-y-2 text-xs text-[rgba(196,184,165,0.35)]">
                 <p className={processing.stage === 'loading-model' ? 'text-bsi-dust' : ''}>
                   Loading AI model...
                   {processing.stage !== 'loading-model' && ' ✓'}
@@ -412,7 +412,7 @@ export default function SwingAnalysisClient() {
               <div className="flex items-center justify-between mb-6">
                 <button
                   onClick={startOver}
-                  className="text-xs text-text-muted hover:text-burnt-orange transition-colors flex items-center gap-1"
+                  className="text-xs text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors flex items-center gap-1"
                 >
                   <svg viewBox="0 0 16 16" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M10 12L6 8l4-4" />

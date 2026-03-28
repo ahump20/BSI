@@ -45,14 +45,14 @@ export function LiveStatsBadge({ espnId }: LiveStatsBadgeProps) {
     : null;
 
   return (
-    <div className="mt-6 rounded-sm bg-[var(--surface-press-box)] border border-border-subtle p-4">
+    <div className="mt-6 rounded-sm bg-[var(--surface-press-box)] border border-[var(--border-vintage)] p-4">
       <div className="flex items-center gap-2 mb-3">
         <div className="w-2 h-2 rounded-full bg-[var(--bsi-primary)] animate-pulse" />
-        <span className="text-[10px] uppercase tracking-wider text-text-muted font-semibold">
+        <span className="text-[10px] uppercase tracking-wider text-[rgba(196,184,165,0.35)] font-semibold">
           Live Data
         </span>
         {timestamp && (
-          <span className="text-[10px] text-text-muted ml-auto">{timestamp}</span>
+          <span className="text-[10px] text-[rgba(196,184,165,0.35)] ml-auto">{timestamp}</span>
         )}
       </div>
       <div className="flex flex-wrap gap-4">
@@ -63,7 +63,7 @@ export function LiveStatsBadge({ espnId }: LiveStatsBadgeProps) {
           >
             {fmt3(data.batting.woba)}
           </div>
-          <div className="text-text-muted text-[10px]">wOBA</div>
+          <div className="text-[rgba(196,184,165,0.35)] text-[10px]">wOBA</div>
         </div>
         <div>
           <div
@@ -72,7 +72,7 @@ export function LiveStatsBadge({ espnId }: LiveStatsBadgeProps) {
           >
             {Math.round(data.batting.wrc_plus)}
           </div>
-          <div className="text-text-muted text-[10px]">wRC+</div>
+          <div className="text-[rgba(196,184,165,0.35)] text-[10px]">wRC+</div>
         </div>
         <div>
           <div
@@ -81,19 +81,19 @@ export function LiveStatsBadge({ espnId }: LiveStatsBadgeProps) {
           >
             {data.pitching.fip.toFixed(2)}
           </div>
-          <div className="text-text-muted text-[10px]">FIP</div>
+          <div className="text-[rgba(196,184,165,0.35)] text-[10px]">FIP</div>
         </div>
         <div>
-          <div className="font-mono text-lg font-bold text-text-primary">
+          <div className="font-mono text-lg font-bold text-[var(--bsi-bone)]">
             {fmtPct(data.batting.k_pct)}
           </div>
-          <div className="text-text-muted text-[10px]">K%</div>
+          <div className="text-[rgba(196,184,165,0.35)] text-[10px]">K%</div>
         </div>
         <div>
-          <div className="font-mono text-lg font-bold text-text-primary">
+          <div className="font-mono text-lg font-bold text-[var(--bsi-bone)]">
             {fmtPct(data.batting.bb_pct)}
           </div>
-          <div className="text-text-muted text-[10px]">BB%</div>
+          <div className="text-[rgba(196,184,165,0.35)] text-[10px]">BB%</div>
         </div>
       </div>
     </div>

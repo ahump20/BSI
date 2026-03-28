@@ -14,37 +14,37 @@ export default function CollegeBaseballGamesPage() {
         <Section padding="lg">
           <Container>
             <div className="flex items-center gap-3 mb-2">
-              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">College Baseball</Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-primary">Schedule</span>
+              <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">College Baseball</Link>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[var(--bsi-bone)]">Schedule</span>
             </div>
 
             <div className="mb-8">
-              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-text-primary">
-                Game <span className="text-burnt-orange">Schedule</span>
+              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-[var(--bsi-bone)]">
+                Game <span className="text-[var(--bsi-primary)]">Schedule</span>
               </h1>
-              <p className="text-text-secondary mt-2">NCAA Division I baseball schedule and calendar view</p>
+              <p className="text-[var(--bsi-dust)] mt-2">NCAA Division I baseball schedule and calendar view</p>
             </div>
 
             <CalendarView />
 
             {/* Quick Links — prevents dead-end */}
             <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-3">
-              <Link href="/scores" className="block p-4 rounded-sm border border-border-subtle hover:border-burnt-orange/30 transition-colors text-center group">
-                <span className="text-xs text-text-muted uppercase tracking-wider block mb-1">Live</span>
-                <span className="text-sm font-semibold text-text-primary group-hover:text-burnt-orange transition-colors">Scores</span>
+              <Link href="/scores" className="block p-4 rounded-sm border border-[var(--border-vintage)] hover:border-[var(--bsi-primary)]/30 transition-colors text-center group">
+                <span className="text-xs text-[rgba(196,184,165,0.35)] uppercase tracking-wider block mb-1">Live</span>
+                <span className="text-sm font-semibold text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors">Scores</span>
               </Link>
-              <Link href="/college-baseball/standings" className="block p-4 rounded-sm border border-border-subtle hover:border-burnt-orange/30 transition-colors text-center group">
-                <span className="text-xs text-text-muted uppercase tracking-wider block mb-1">Current</span>
-                <span className="text-sm font-semibold text-text-primary group-hover:text-burnt-orange transition-colors">Standings</span>
+              <Link href="/college-baseball/standings" className="block p-4 rounded-sm border border-[var(--border-vintage)] hover:border-[var(--bsi-primary)]/30 transition-colors text-center group">
+                <span className="text-xs text-[rgba(196,184,165,0.35)] uppercase tracking-wider block mb-1">Current</span>
+                <span className="text-sm font-semibold text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors">Standings</span>
               </Link>
-              <Link href="/college-baseball/rankings" className="block p-4 rounded-sm border border-border-subtle hover:border-burnt-orange/30 transition-colors text-center group">
-                <span className="text-xs text-text-muted uppercase tracking-wider block mb-1">National</span>
-                <span className="text-sm font-semibold text-text-primary group-hover:text-burnt-orange transition-colors">Rankings</span>
+              <Link href="/college-baseball/rankings" className="block p-4 rounded-sm border border-[var(--border-vintage)] hover:border-[var(--bsi-primary)]/30 transition-colors text-center group">
+                <span className="text-xs text-[rgba(196,184,165,0.35)] uppercase tracking-wider block mb-1">National</span>
+                <span className="text-sm font-semibold text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors">Rankings</span>
               </Link>
-              <Link href="/college-baseball/editorial" className="block p-4 rounded-sm border border-border-subtle hover:border-burnt-orange/30 transition-colors text-center group">
-                <span className="text-xs text-text-muted uppercase tracking-wider block mb-1">Latest</span>
-                <span className="text-sm font-semibold text-text-primary group-hover:text-burnt-orange transition-colors">Editorial</span>
+              <Link href="/college-baseball/editorial" className="block p-4 rounded-sm border border-[var(--border-vintage)] hover:border-[var(--bsi-primary)]/30 transition-colors text-center group">
+                <span className="text-xs text-[rgba(196,184,165,0.35)] uppercase tracking-wider block mb-1">Latest</span>
+                <span className="text-sm font-semibold text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors">Editorial</span>
               </Link>
             </div>
 

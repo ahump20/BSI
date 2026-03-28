@@ -94,9 +94,9 @@ const SCOUTING_GRADES: ScoutingGrade[] = [
 
 function gradeColor(grade: number): string {
   if (grade >= 70) return 'text-[#C9A227]';
-  if (grade >= 60) return 'text-burnt-orange';
-  if (grade >= 55) return 'text-text-secondary';
-  return 'text-text-tertiary';
+  if (grade >= 60) return 'text-[var(--bsi-primary)]';
+  if (grade >= 55) return 'text-[var(--bsi-dust)]';
+  return 'text-[rgba(196,184,165,0.5)]';
 }
 
 // ── Page ─────────────────────────────────────────────────────────────
@@ -111,21 +111,21 @@ export default function PetersonDraftProfilePage() {
         url="/college-baseball/editorial/liam-peterson-2026-draft-profile"
         sport="College Baseball"
       />
-      <div className="pt-6 bg-midnight">
+      <div className="pt-6 bg-[var(--surface-scoreboard)]">
         {/* ── Hero ── */}
         <Section padding="lg">
           <Container size="narrow">
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-4 text-sm">
-                <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
+                <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                   College Baseball
                 </Link>
-                <span className="text-text-muted">/</span>
-                <Link href="/college-baseball/editorial" className="text-text-muted hover:text-burnt-orange transition-colors">
+                <span className="text-[rgba(196,184,165,0.35)]">/</span>
+                <Link href="/college-baseball/editorial" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                   Editorial
                 </Link>
-                <span className="text-text-muted">/</span>
-                <span className="text-text-tertiary">Draft Profile</span>
+                <span className="text-[rgba(196,184,165,0.35)]">/</span>
+                <span className="text-[rgba(196,184,165,0.5)]">Draft Profile</span>
               </div>
 
               <div className="flex flex-wrap items-center gap-3 mb-4">
@@ -134,11 +134,11 @@ export default function PetersonDraftProfilePage() {
                 <DataSourceBadge source="BSI Analytics" />
               </div>
 
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display text-text-primary leading-[0.95] mb-4">
+              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display text-[var(--bsi-bone)] leading-[0.95] mb-4">
                 Liam Peterson
               </h1>
 
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-text-tertiary mb-6">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-[rgba(196,184,165,0.5)] mb-6">
                 <span>RHP &middot; Florida Gators</span>
                 <span className="hidden sm:inline">&middot;</span>
                 <span>No. 9 Overall &middot; No. 3 College Arm (BA)</span>
@@ -146,7 +146,7 @@ export default function PetersonDraftProfilePage() {
                 <span>February 25, 2026</span>
               </div>
 
-              <p className="font-serif text-xl md:text-2xl leading-relaxed text-text-secondary">
+              <p className="font-serif text-xl md:text-2xl leading-relaxed text-[var(--bsi-dust)]">
                 The consensus is clear: Liam Peterson is a top-10 pick with Friday-night stuff and a fastball that sits mid-90s with life. Then Opening Day happened &mdash; 5 walks, out before the fourth inning, and a loss to UAB that raised the one question no scouting report had anticipated. The arm is elite. The command is the variable.
               </p>
             </ScrollReveal>
@@ -168,10 +168,10 @@ export default function PetersonDraftProfilePage() {
         <Section padding="lg">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-6 pb-2 border-b border-[var(--bsi-primary)]/15">
                 What Happened on Opening Day
               </h2>
-              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                 <p>
                   Florida hosted UAB on February 14 for Opening Day. Peterson &mdash; the Friday-night ace, the arm scouts project as the third college pitcher off the 2026 draft board &mdash; did not survive the fourth inning. He walked 5 batters. The Gators committed 3 errors and issued 8 total walks as a staff. UAB won 9&ndash;7 in 10 innings.
                 </p>
@@ -190,10 +190,10 @@ export default function PetersonDraftProfilePage() {
         <Section padding="lg" background="charcoal">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-text-primary mb-6 pb-2 border-b border-border">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mb-6 pb-2 border-b border-border">
                 The Arsenal
               </h2>
-              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                 <p>
                   The stuff has never been the question. Peterson&rsquo;s fastball sits 94&ndash;96 mph with above-average ride through the zone &mdash; the kind of rising action that generates swings underneath the ball and turns barrel contact into harmless fly outs. He can reach 97 when he needs to. The fastball alone would make him a bullpen prospect. Paired with the slider, it makes him a starter.
                 </p>
@@ -212,28 +212,28 @@ export default function PetersonDraftProfilePage() {
         <Section padding="lg">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-6 pb-2 border-b border-[var(--bsi-primary)]/15">
                 BSI Scouting Grades (20&ndash;80 Scale)
               </h2>
-              <p className="text-xs text-text-muted mb-4 uppercase tracking-widest">
+              <p className="text-xs text-[rgba(196,184,165,0.35)] mb-4 uppercase tracking-widest">
                 Based on early-season performance + pre-draft consensus. Not a final evaluation.
               </p>
               <div className="space-y-4">
                 {SCOUTING_GRADES.map((g) => (
-                  <div key={g.tool} className="flex items-start gap-4 py-3 border-b border-border-subtle">
-                    <span className="font-display text-sm font-bold uppercase tracking-wider text-text-tertiary w-16 shrink-0 pt-0.5">{g.tool}</span>
+                  <div key={g.tool} className="flex items-start gap-4 py-3 border-b border-[var(--border-vintage)]">
+                    <span className="font-display text-sm font-bold uppercase tracking-wider text-[rgba(196,184,165,0.5)] w-16 shrink-0 pt-0.5">{g.tool}</span>
                     <div className="flex items-center gap-3 shrink-0">
                       <div className="text-center">
-                        <span className="text-[10px] text-text-muted block uppercase tracking-widest">Now</span>
+                        <span className="text-[10px] text-[rgba(196,184,165,0.35)] block uppercase tracking-widest">Now</span>
                         <span className={`font-mono text-lg font-bold ${gradeColor(g.current)}`}>{g.current}</span>
                       </div>
-                      <span className="text-text-muted">&rarr;</span>
+                      <span className="text-[rgba(196,184,165,0.35)]">&rarr;</span>
                       <div className="text-center">
-                        <span className="text-[10px] text-text-muted block uppercase tracking-widest">Proj</span>
+                        <span className="text-[10px] text-[rgba(196,184,165,0.35)] block uppercase tracking-widest">Proj</span>
                         <span className={`font-mono text-lg font-bold ${gradeColor(g.future)}`}>{g.future}</span>
                       </div>
                     </div>
-                    <span className="text-sm text-text-tertiary leading-snug">{g.note}</span>
+                    <span className="text-sm text-[rgba(196,184,165,0.5)] leading-snug">{g.note}</span>
                   </div>
                 ))}
               </div>
@@ -245,18 +245,18 @@ export default function PetersonDraftProfilePage() {
         <Section padding="lg" background="charcoal">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-text-primary mb-6 pb-2 border-b border-border">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mb-6 pb-2 border-b border-border">
                 Mechanical or Mental?
               </h2>
-              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                 <p>
                   The walk problem has two possible explanations, and they carry very different draft implications.
                 </p>
                 <p>
-                  <strong className="text-text-primary font-semibold">Explanation 1: Opening Day adrenaline.</strong> Peterson overthrew. The fastball was up in the zone and out of the zone simultaneously &mdash; good velocity, bad location. The slider was starting in the dirt instead of the bottom of the zone. Nothing was repeatable because the delivery was rushed. This is the benign explanation. It happens to elite arms on Opening Day. Justin Verlander walked 5 in his first start of 2006. Max Scherzer walked 4 in his 2019 opener. The analogy isn&rsquo;t exact &mdash; those were major leaguers, not college sophomores &mdash; but the phenomenon is the same. If this is the explanation, the next two Friday starts should look like a different pitcher.
+                  <strong className="text-[var(--bsi-bone)] font-semibold">Explanation 1: Opening Day adrenaline.</strong> Peterson overthrew. The fastball was up in the zone and out of the zone simultaneously &mdash; good velocity, bad location. The slider was starting in the dirt instead of the bottom of the zone. Nothing was repeatable because the delivery was rushed. This is the benign explanation. It happens to elite arms on Opening Day. Justin Verlander walked 5 in his first start of 2006. Max Scherzer walked 4 in his 2019 opener. The analogy isn&rsquo;t exact &mdash; those were major leaguers, not college sophomores &mdash; but the phenomenon is the same. If this is the explanation, the next two Friday starts should look like a different pitcher.
                 </p>
                 <p>
-                  <strong className="text-text-primary font-semibold">Explanation 2: A mechanical flaw that shows under pressure.</strong> If Peterson&rsquo;s delivery has a timing inconsistency &mdash; early hip rotation, rushed front side, inconsistent release point &mdash; it might only surface when the game tempo is fastest. Fall bullpens and February scrimmages don&rsquo;t replicate the pace and pressure of live SEC innings. If the walk problem recurs in Weeks 3 or 4, especially against quality lineups that can punish mistakes in the zone and lay off balls out of it, the issue is structural. And structural issues change draft trajectories. A pitcher with a 55-command grade and a timing flaw is a reliever, not a starter. The difference in draft value is one to two rounds.
+                  <strong className="text-[var(--bsi-bone)] font-semibold">Explanation 2: A mechanical flaw that shows under pressure.</strong> If Peterson&rsquo;s delivery has a timing inconsistency &mdash; early hip rotation, rushed front side, inconsistent release point &mdash; it might only surface when the game tempo is fastest. Fall bullpens and February scrimmages don&rsquo;t replicate the pace and pressure of live SEC innings. If the walk problem recurs in Weeks 3 or 4, especially against quality lineups that can punish mistakes in the zone and lay off balls out of it, the issue is structural. And structural issues change draft trajectories. A pitcher with a 55-command grade and a timing flaw is a reliever, not a starter. The difference in draft value is one to two rounds.
                 </p>
               </div>
             </ScrollReveal>
@@ -267,8 +267,8 @@ export default function PetersonDraftProfilePage() {
         <Section padding="md">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <blockquote className="border-l-[3px] border-burnt-orange pl-6 py-2 my-4">
-                <p className="font-serif text-xl italic font-medium text-text-primary leading-relaxed">
+              <blockquote className="border-l-[3px] border-[var(--bsi-primary)] pl-6 py-2 my-4">
+                <p className="font-serif text-xl italic font-medium text-[var(--bsi-bone)] leading-relaxed">
                   Peterson is too talented for five walks to be his baseline. But if it recurs in Week 3 or 4, it&rsquo;s a mechanical issue, not a bad night &mdash; and that changes his draft trajectory.
                 </p>
               </blockquote>
@@ -280,10 +280,10 @@ export default function PetersonDraftProfilePage() {
         <Section padding="lg">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-6 pb-2 border-b border-[var(--bsi-primary)]/15">
                 The Florida Factor
               </h2>
-              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                 <p>
                   Kevin O&rsquo;Sullivan has built Florida into a program that produces first-round arms the way Alabama produces first-round pass rushers &mdash; systemically, with an infrastructure designed to develop and showcase pitching talent. Brady Singer (2018, No. 18 overall), Jackson Kowar (2018, No. 33), Tommy Mace (2021, No. 105), and Hunter Barco (2022, No. 64) all came through Gainesville with similar profiles: mid-90s velocity, reliable secondaries, and the kind of command that translates to pro ball.
                 </p>
@@ -312,49 +312,49 @@ export default function PetersonDraftProfilePage() {
         <Section padding="lg">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h3 className="font-display text-sm font-semibold uppercase tracking-widest text-text-muted mb-4">More 2026 Draft Profiles</h3>
+              <h3 className="font-display text-sm font-semibold uppercase tracking-widest text-[rgba(196,184,165,0.35)] mb-4">More 2026 Draft Profiles</h3>
               <div className="grid md:grid-cols-2 gap-4 mb-6">
-                <Link href="/college-baseball/editorial/roch-cholowsky-2026-draft-profile" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
-                  <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
-                  <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
+                <Link href="/college-baseball/editorial/roch-cholowsky-2026-draft-profile" className="group block p-4 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)] hover:border-[var(--bsi-primary)]/30 transition-colors">
+                  <span className="text-[10px] text-[rgba(196,184,165,0.35)] uppercase tracking-widest">Draft Profile</span>
+                  <p className="text-sm font-display uppercase tracking-wide text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors mt-1">
                     Roch Cholowsky &mdash; No. 1 Overall Pick
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/dylan-volantis-2026-draft-profile" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
-                  <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
-                  <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
+                <Link href="/college-baseball/editorial/dylan-volantis-2026-draft-profile" className="group block p-4 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)] hover:border-[var(--bsi-primary)]/30 transition-colors">
+                  <span className="text-[10px] text-[rgba(196,184,165,0.35)] uppercase tracking-widest">Draft Profile</span>
+                  <p className="text-sm font-display uppercase tracking-wide text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors mt-1">
                     Dylan Volantis &mdash; 14 IP, 0 ER, The Conversion
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/jackson-flora-2026-draft-profile" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
-                  <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
-                  <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
+                <Link href="/college-baseball/editorial/jackson-flora-2026-draft-profile" className="group block p-4 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)] hover:border-[var(--bsi-primary)]/30 transition-colors">
+                  <span className="text-[10px] text-[rgba(196,184,165,0.35)] uppercase tracking-widest">Draft Profile</span>
+                  <p className="text-sm font-display uppercase tracking-wide text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors mt-1">
                     Jackson Flora &mdash; 100 MPH, New Arsenal
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/tyce-armstrong-2026-draft-profile" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
-                  <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
-                  <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
+                <Link href="/college-baseball/editorial/tyce-armstrong-2026-draft-profile" className="group block p-4 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)] hover:border-[var(--bsi-primary)]/30 transition-colors">
+                  <span className="text-[10px] text-[rgba(196,184,165,0.35)] uppercase tracking-widest">Draft Profile</span>
+                  <p className="text-sm font-display uppercase tracking-wide text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors mt-1">
                     Tyce Armstrong &mdash; 3 Grand Slams, 50 Years
                   </p>
                 </Link>
               </div>
               <div className="grid md:grid-cols-2 gap-4 mb-8">
-                <Link href="/college-baseball/editorial/what-two-weekends-told-us" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
-                  <span className="text-[10px] text-text-muted uppercase tracking-widest">Related</span>
-                  <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
+                <Link href="/college-baseball/editorial/what-two-weekends-told-us" className="group block p-4 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)] hover:border-[var(--bsi-primary)]/30 transition-colors">
+                  <span className="text-[10px] text-[rgba(196,184,165,0.35)] uppercase tracking-widest">Related</span>
+                  <p className="text-sm font-display uppercase tracking-wide text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors mt-1">
                     What Two Weekends Actually Told Us
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/florida-2026" className="group block p-4 rounded-sm border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
-                  <span className="text-[10px] text-text-muted uppercase tracking-widest">Team Preview</span>
-                  <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
+                <Link href="/college-baseball/editorial/florida-2026" className="group block p-4 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)] hover:border-[var(--bsi-primary)]/30 transition-colors">
+                  <span className="text-[10px] text-[rgba(196,184,165,0.35)] uppercase tracking-widest">Team Preview</span>
+                  <p className="text-sm font-display uppercase tracking-wide text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors mt-1">
                     Florida 2026 Season Preview
                   </p>
                 </Link>
               </div>
 
-              <Link href="/college-baseball/players" className="text-xs text-text-muted hover:text-burnt-orange transition-colors uppercase tracking-widest">
+              <Link href="/college-baseball/players" className="text-xs text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors uppercase tracking-widest">
                 Full Player Database &rarr;
               </Link>
             </ScrollReveal>

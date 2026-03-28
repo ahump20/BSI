@@ -15,15 +15,15 @@ export interface BadgeProps {
 }
 
 const variantClasses: Record<string, string> = {
-  primary: 'bg-burnt-orange/20 text-burnt-orange border-burnt-orange/30',
-  secondary: 'bg-surface text-text-secondary border-border-strong',
+  primary: 'bg-[var(--bsi-primary)]/20 text-[var(--bsi-primary)] border-[var(--bsi-primary)]/30',
+  secondary: 'bg-surface text-[var(--bsi-dust)] border-[rgba(140,98,57,0.5)]',
   success: 'bg-success/20 text-success-light border-success/30',
   warning: 'bg-warning/20 text-warning-light border-warning/30',
   error: 'bg-error/20 text-error-light border-error/30',
-  outline: 'bg-transparent text-text-secondary border-border-strong',
-  default: 'bg-surface text-text-secondary border-border-strong',
+  outline: 'bg-transparent text-[var(--bsi-dust)] border-[rgba(140,98,57,0.5)]',
+  default: 'bg-surface text-[var(--bsi-dust)] border-[rgba(140,98,57,0.5)]',
   info: 'bg-info/20 text-info-light border-info/30',
-  accent: 'bg-burnt-orange/20 text-ember border-burnt-orange/30',
+  accent: 'bg-[var(--bsi-primary)]/20 text-ember border-[var(--bsi-primary)]/30',
   /* Savant percentile tiers */
   elite: 'bg-[#ef4444]/20 text-[#ef4444] border-[#ef4444]/30',
   great: 'bg-[#f97316]/20 text-[#f97316] border-[#f97316]/30',
@@ -113,7 +113,7 @@ export function DataSourceBadge({ source, timestamp, meta, className = '' }: Dat
   const effectiveTimestamp = normalized?.lastUpdated ?? timestamp;
 
   return (
-    <div className={`flex items-center gap-2 text-xs text-text-muted ${className}`} suppressHydrationWarning>
+    <div className={`flex items-center gap-2 text-xs text-[rgba(196,184,165,0.35)] ${className}`} suppressHydrationWarning>
       <span className="font-medium">{effectiveSource}</span>
       {effectiveTimestamp && (
         <>

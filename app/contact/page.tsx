@@ -39,9 +39,9 @@ export default function ContactPage() {
             <ScrollReveal direction="up">
               <div className="max-w-2xl mx-auto text-center mb-12">
                 <h1 className="font-display text-4xl md:text-5xl font-bold uppercase tracking-display mb-4">
-                  Get in <span className="text-gradient-blaze">Touch</span>
+                  Get in <span className="text-[var(--bsi-primary)]">Touch</span>
                 </h1>
-                <p className="text-text-secondary">
+                <p className="text-[var(--bsi-dust)]">
                   Questions about our sports coverage? Partnership opportunities? Or just want to
                   talk sports? I read every email.
                 </p>
@@ -53,7 +53,7 @@ export default function ContactPage() {
                   <div>
                     <label
                       htmlFor="name"
-                      className="block text-sm font-medium text-text-secondary mb-2"
+                      className="block text-sm font-medium text-[var(--bsi-dust)] mb-2"
                     >
                       Name
                     </label>
@@ -69,7 +69,7 @@ export default function ContactPage() {
                   <div>
                     <label
                       htmlFor="email"
-                      className="block text-sm font-medium text-text-secondary mb-2"
+                      className="block text-sm font-medium text-[var(--bsi-dust)] mb-2"
                     >
                       Email
                     </label>
@@ -85,7 +85,7 @@ export default function ContactPage() {
                   <div>
                     <label
                       htmlFor="subject"
-                      className="block text-sm font-medium text-text-secondary mb-2"
+                      className="block text-sm font-medium text-[var(--bsi-dust)] mb-2"
                     >
                       Subject
                     </label>
@@ -100,7 +100,7 @@ export default function ContactPage() {
                   <div>
                     <label
                       htmlFor="message"
-                      className="block text-sm font-medium text-text-secondary mb-2"
+                      className="block text-sm font-medium text-[var(--bsi-dust)] mb-2"
                     >
                       Message
                     </label>
@@ -111,7 +111,7 @@ export default function ContactPage() {
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       placeholder="Your message..."
                       required
-                      className="w-full px-4 py-3 bg-background-secondary border border-border-subtle rounded-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-burnt-orange/50 focus:border-burnt-orange/30 transition-all resize-none"
+                      className="w-full px-4 py-3 bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)] focus:outline-none focus:ring-2 focus:ring-[var(--bsi-primary)]/50 focus:border-[var(--bsi-primary)]/30 transition-all resize-none"
                     />
                   </div>
                   <Button type="submit" variant="primary" size="lg" className="w-full">
@@ -122,15 +122,15 @@ export default function ContactPage() {
             </ScrollReveal>
             <ScrollReveal direction="up" delay={200}>
               <div className="max-w-xl mx-auto mt-12 text-center">
-                <p className="text-text-tertiary text-sm mb-4">Or reach out directly:</p>
+                <p className="text-[rgba(196,184,165,0.5)] text-sm mb-4">Or reach out directly:</p>
                 <a
                   href="mailto:Austin@blazesportsintel.com"
-                  className="text-burnt-orange hover:text-ember transition-colors font-semibold"
+                  className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors font-semibold"
                 >
                   Austin@blazesportsintel.com
                 </a>
-                <p className="text-text-secondary mt-2">(210) 275-5538</p>
-                <p className="text-text-tertiary text-sm mt-8">
+                <p className="text-[var(--bsi-dust)] mt-2">(210) 275-5538</p>
+                <p className="text-[rgba(196,184,165,0.5)] text-sm mt-8">
                   Blaze Intelligence LLC - Boerne, Texas
                 </p>
               </div>

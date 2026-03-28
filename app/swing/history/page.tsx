@@ -72,7 +72,7 @@ export default function SwingHistoryPage() {
           {loading ? (
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="rounded-sm bg-surface-dugout border border-border-subtle p-6 animate-pulse">
+                <div key={i} className="rounded-sm bg-surface-dugout border border-[var(--border-vintage)] p-6 animate-pulse">
                   <div className="h-5 bg-white/[0.06] rounded-sm w-48 mb-3" />
                   <div className="h-3 bg-white/[0.04] rounded-sm w-32" />
                 </div>
@@ -82,8 +82,8 @@ export default function SwingHistoryPage() {
             <Card variant="default" padding="lg">
               <CardContent>
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-sm bg-burnt-orange/10 flex items-center justify-center">
-                    <svg viewBox="0 0 24 24" className="w-8 h-8 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-sm bg-[var(--bsi-primary)]/10 flex items-center justify-center">
+                    <svg viewBox="0 0 24 24" className="w-8 h-8 text-[var(--bsi-primary)]" fill="none" stroke="currentColor" strokeWidth="1.5">
                       <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
                       <circle cx="12" cy="13" r="4" />
                     </svg>
@@ -121,7 +121,7 @@ export default function SwingHistoryPage() {
                           <div>
                             <div className="flex items-center gap-2 mb-1">
                               <span className="heritage-stamp text-[9px]">{model.displayName}</span>
-                              <span className="text-[10px] text-text-muted font-mono">
+                              <span className="text-[10px] text-[rgba(196,184,165,0.35)] font-mono">
                                 {new Date(entry.createdAt).toLocaleDateString('en-US', {
                                   month: 'short',
                                   day: 'numeric',
@@ -131,7 +131,7 @@ export default function SwingHistoryPage() {
                             </div>
                             <div className="flex items-center gap-4 mt-2">
                               {entry.metrics.slice(0, 4).map((m) => (
-                                <span key={m.key} className="text-[10px] text-text-muted">
+                                <span key={m.key} className="text-[10px] text-[rgba(196,184,165,0.35)]">
                                   {m.label}: <strong className="text-bsi-dust">{m.value}</strong>
                                 </span>
                               ))}
@@ -149,7 +149,7 @@ export default function SwingHistoryPage() {
                             >
                               {entry.overallScore}
                             </div>
-                            <span className="text-[9px] text-text-muted font-mono uppercase">Score</span>
+                            <span className="text-[9px] text-[rgba(196,184,165,0.35)] font-mono uppercase">Score</span>
                           </div>
                         </div>
                       </CardContent>
@@ -157,11 +157,11 @@ export default function SwingHistoryPage() {
                     {isLocked && (
                       <div className="absolute inset-0 flex items-center justify-center rounded-sm bg-surface-scoreboard/60">
                         <div className="text-center">
-                          <svg viewBox="0 0 24 24" className="w-5 h-5 text-text-muted mx-auto mb-1" fill="none" stroke="currentColor" strokeWidth="1.5">
+                          <svg viewBox="0 0 24 24" className="w-5 h-5 text-[rgba(196,184,165,0.35)] mx-auto mb-1" fill="none" stroke="currentColor" strokeWidth="1.5">
                             <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                             <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                           </svg>
-                          <a href="/pricing" className="text-[10px] text-burnt-orange hover:text-ember font-mono uppercase tracking-wider transition-colors">
+                          <a href="/pricing" className="text-[10px] text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] font-mono uppercase tracking-wider transition-colors">
                             Upgrade for full history
                           </a>
                         </div>
@@ -173,10 +173,10 @@ export default function SwingHistoryPage() {
 
               {!isPro && history.length > FREE_HISTORY_LIMIT && (
                 <div className="text-center py-4">
-                  <p className="text-xs text-text-muted mb-2">
+                  <p className="text-xs text-[rgba(196,184,165,0.35)] mb-2">
                     Showing {FREE_HISTORY_LIMIT} of {history.length} swings
                   </p>
-                  <a href="/pricing" className="text-xs text-burnt-orange hover:text-ember font-mono uppercase tracking-wider transition-colors">
+                  <a href="/pricing" className="text-xs text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] font-mono uppercase tracking-wider transition-colors">
                     Upgrade to Pro for full history →
                   </a>
                 </div>

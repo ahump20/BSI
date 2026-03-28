@@ -48,15 +48,15 @@ export default function ACCOpeningWeekendPage() {
         <Section padding="sm" className="border-b border-border">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 College Baseball
               </Link>
-              <span className="text-text-muted">/</span>
-              <Link href="/college-baseball/editorial" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <Link href="/college-baseball/editorial" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 Editorial
               </Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-primary">ACC Opening Weekend</span>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[var(--bsi-bone)]">ACC Opening Weekend</span>
             </nav>
           </Container>
         </Section>
@@ -69,19 +69,19 @@ export default function ACCOpeningWeekendPage() {
               <div className="max-w-3xl">
                 <div className="flex items-center gap-3 mb-6">
                   <Badge variant="primary">Conference Preview</Badge>
-                  <span className="text-text-muted text-sm">February 12, 2026</span>
-                  <span className="text-text-muted text-sm">8 min read</span>
+                  <span className="text-[rgba(196,184,165,0.35)] text-sm">February 12, 2026</span>
+                  <span className="text-[rgba(196,184,165,0.35)] text-sm">8 min read</span>
                 </div>
                 <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-wide mb-6">
                   ACC Opening Weekend:{' '}
-                  <span className="text-gradient-blaze">Coast to Coast</span>
+                  <span className="text-[var(--bsi-primary)]">Coast to Coast</span>
                 </h1>
-                <p className="text-text-tertiary text-lg md:text-xl leading-relaxed mb-4">
+                <p className="text-[rgba(196,184,165,0.5)] text-lg md:text-xl leading-relaxed mb-4">
                   Stanford and Cal arrive from the Pac-12. Wake Forest reloads after a CWS finals run.
                   Virginia, Clemson, and North Carolina sharpen for Omaha. Eight ranked teams make the ACC
                   deeper than the national conversation gives it credit for.
                 </p>
-                <div className="flex items-center gap-4 text-sm text-text-muted">
+                <div className="flex items-center gap-4 text-sm text-[rgba(196,184,165,0.35)]">
                   <span>By Blaze Sports Intel</span>
                   <span>|</span>
                   <span>Austin, TX</span>
@@ -97,20 +97,20 @@ export default function ACCOpeningWeekendPage() {
             <ScrollReveal direction="up" delay={100}>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Card variant="default" padding="md" className="text-center">
-                  <div className="font-mono text-3xl font-bold text-burnt-orange">8</div>
-                  <div className="text-text-muted text-xs mt-1">Ranked Teams</div>
+                  <div className="font-mono text-3xl font-bold text-[var(--bsi-primary)]">8</div>
+                  <div className="text-[rgba(196,184,165,0.35)] text-xs mt-1">Ranked Teams</div>
                 </Card>
                 <Card variant="default" padding="md" className="text-center">
-                  <div className="font-mono text-3xl font-bold text-burnt-orange">5</div>
-                  <div className="text-text-muted text-xs mt-1">In Top 20</div>
+                  <div className="font-mono text-3xl font-bold text-[var(--bsi-primary)]">5</div>
+                  <div className="text-[rgba(196,184,165,0.35)] text-xs mt-1">In Top 20</div>
                 </Card>
                 <Card variant="default" padding="md" className="text-center">
-                  <div className="font-mono text-3xl font-bold text-burnt-orange">2</div>
-                  <div className="text-text-muted text-xs mt-1">New Members</div>
+                  <div className="font-mono text-3xl font-bold text-[var(--bsi-primary)]">2</div>
+                  <div className="text-[rgba(196,184,165,0.35)] text-xs mt-1">New Members</div>
                 </Card>
                 <Card variant="default" padding="md" className="text-center">
-                  <div className="font-mono text-3xl font-bold text-burnt-orange">1</div>
-                  <div className="text-text-muted text-xs mt-1">CWS Finalist</div>
+                  <div className="font-mono text-3xl font-bold text-[var(--bsi-primary)]">1</div>
+                  <div className="text-[rgba(196,184,165,0.35)] text-xs mt-1">CWS Finalist</div>
                 </Card>
               </div>
             </ScrollReveal>
@@ -121,40 +121,40 @@ export default function ACCOpeningWeekendPage() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-2 text-text-primary">
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-2 text-[var(--bsi-bone)]">
                 ACC Team Capsules
               </h2>
-              <p className="text-text-muted mb-8">Ranked ACC teams with opening matchup and key player</p>
+              <p className="text-[rgba(196,184,165,0.35)] mb-8">Ranked ACC teams with opening matchup and key player</p>
             </ScrollReveal>
 
             <div className="space-y-4">
               {accTeams.map((team) => (
                 <ScrollReveal key={team.rank} direction="up">
                   <Card variant="default" padding="md" className={
-                    team.rank <= 6 ? 'border-burnt-orange/30 bg-burnt-orange/5' : ''
+                    team.rank <= 6 ? 'border-[var(--bsi-primary)]/30 bg-[var(--bsi-primary)]/5' : ''
                   }>
                     <div className="flex flex-col md:flex-row md:items-start gap-4">
                       <div className="flex items-center gap-3 md:w-48 flex-shrink-0">
-                        <span className="font-display text-2xl font-bold text-burnt-orange">#{team.rank}</span>
+                        <span className="font-display text-2xl font-bold text-[var(--bsi-primary)]">#{team.rank}</span>
                         <div>
                           {team.slug ? (
-                            <Link href={`/college-baseball/teams/${team.slug}`} className="font-display text-lg font-bold text-text-primary uppercase hover:text-burnt-orange transition-colors">
+                            <Link href={`/college-baseball/teams/${team.slug}`} className="font-display text-lg font-bold text-[var(--bsi-bone)] uppercase hover:text-[var(--bsi-primary)] transition-colors">
                               {team.team}
                             </Link>
                           ) : (
-                            <span className="font-display text-lg font-bold text-text-primary uppercase">{team.team}</span>
+                            <span className="font-display text-lg font-bold text-[var(--bsi-bone)] uppercase">{team.team}</span>
                           )}
                           <div className="flex items-center gap-2">
-                            <span className="text-text-muted text-xs">{team.record} | {team.postseason}</span>
+                            <span className="text-[rgba(196,184,165,0.35)] text-xs">{team.record} | {team.postseason}</span>
                             {team.isNew && <Badge variant="secondary" className="text-[10px]">ACC Debut</Badge>}
                           </div>
                         </div>
                       </div>
                       <div className="flex-1">
-                        <p className="text-text-tertiary text-sm mb-2">{team.capsule}</p>
+                        <p className="text-[rgba(196,184,165,0.5)] text-sm mb-2">{team.capsule}</p>
                         <div className="flex flex-wrap items-center gap-3">
-                          <span className="text-xs bg-surface-light px-2 py-1 rounded-sm text-text-muted">{team.keyPlayer}</span>
-                          <span className="text-xs text-text-muted">{team.opener}</span>
+                          <span className="text-xs bg-[var(--surface-press-box)] px-2 py-1 rounded-sm text-[rgba(196,184,165,0.35)]">{team.keyPlayer}</span>
+                          <span className="text-xs text-[rgba(196,184,165,0.35)]">{team.opener}</span>
                         </div>
                       </div>
                     </div>
@@ -169,20 +169,20 @@ export default function ACCOpeningWeekendPage() {
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-2 text-text-primary">
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide mb-2 text-[var(--bsi-bone)]">
                 Storylines to Watch
               </h2>
-              <p className="text-text-muted mb-8">The narratives shaping the 2026 ACC season</p>
+              <p className="text-[rgba(196,184,165,0.35)] mb-8">The narratives shaping the 2026 ACC season</p>
             </ScrollReveal>
 
             <div className="grid md:grid-cols-2 gap-6">
               {storylines.map((story) => (
                 <ScrollReveal key={story.title} direction="up">
                   <Card variant="default" padding="lg" className="h-full">
-                    <h3 className="font-display text-lg font-bold uppercase tracking-wide text-burnt-orange mb-3">
+                    <h3 className="font-display text-lg font-bold uppercase tracking-wide text-[var(--bsi-primary)] mb-3">
                       {story.title}
                     </h3>
-                    <p className="text-text-tertiary text-sm leading-relaxed">{story.description}</p>
+                    <p className="text-[rgba(196,184,165,0.5)] text-sm leading-relaxed">{story.description}</p>
                   </Card>
                 </ScrollReveal>
               ))}
@@ -202,10 +202,10 @@ export default function ACCOpeningWeekendPage() {
                 }) + ' CT'}
               />
               <div className="flex gap-4">
-                <Link href="/college-baseball/editorial" className="text-sm text-burnt-orange hover:text-ember transition-colors">
+                <Link href="/college-baseball/editorial" className="text-sm text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors">
                   More Editorial →
                 </Link>
-                <Link href="/college-baseball/editorial/sec-opening-weekend" className="text-sm text-text-muted hover:text-text-primary transition-colors">
+                <Link href="/college-baseball/editorial/sec-opening-weekend" className="text-sm text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] transition-colors">
                   SEC Preview →
                 </Link>
               </div>

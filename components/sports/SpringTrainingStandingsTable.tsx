@@ -33,7 +33,7 @@ export function SpringTrainingStandingsTable({ title, teams }: SpringTrainingSta
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border text-text-muted text-xs uppercase tracking-wider">
+              <tr className="border-b border-border text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider">
                 <th className="text-left px-4 py-3 w-8">#</th>
                 <th className="text-left px-4 py-3">Team</th>
                 <th className="text-right px-4 py-3">W</th>
@@ -47,9 +47,9 @@ export function SpringTrainingStandingsTable({ title, teams }: SpringTrainingSta
               {sorted.map((team, i) => (
                 <tr
                   key={team.id}
-                  className="border-b border-border-subtle hover:bg-surface-light transition-colors"
+                  className="border-b border-[var(--border-vintage)] hover:bg-[var(--surface-press-box)] transition-colors"
                 >
-                  <td className="px-4 py-3 text-text-muted font-mono text-xs">{i + 1}</td>
+                  <td className="px-4 py-3 text-[rgba(196,184,165,0.35)] font-mono text-xs">{i + 1}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       {team.logo && (
@@ -60,26 +60,26 @@ export function SpringTrainingStandingsTable({ title, teams }: SpringTrainingSta
                           loading="lazy"
                         />
                       )}
-                      <span className="text-text-primary font-medium">{team.name}</span>
-                      <span className="text-text-muted text-xs">{team.abbreviation}</span>
+                      <span className="text-[var(--bsi-bone)] font-medium">{team.name}</span>
+                      <span className="text-[rgba(196,184,165,0.35)] text-xs">{team.abbreviation}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-right font-mono text-text-primary">{team.wins}</td>
-                  <td className="px-4 py-3 text-right font-mono text-text-secondary">{team.losses}</td>
-                  <td className="px-4 py-3 text-right font-mono text-burnt-orange font-semibold">
+                  <td className="px-4 py-3 text-right font-mono text-[var(--bsi-bone)]">{team.wins}</td>
+                  <td className="px-4 py-3 text-right font-mono text-[var(--bsi-dust)]">{team.losses}</td>
+                  <td className="px-4 py-3 text-right font-mono text-[var(--bsi-primary)] font-semibold">
                     {fmt3(team.winPct)}
                   </td>
-                  <td className="px-4 py-3 text-right font-mono text-text-muted">
+                  <td className="px-4 py-3 text-right font-mono text-[rgba(196,184,165,0.35)]">
                     {team.runsFor ?? '—'}
                   </td>
-                  <td className="px-4 py-3 text-right font-mono text-text-muted">
+                  <td className="px-4 py-3 text-right font-mono text-[rgba(196,184,165,0.35)]">
                     {team.runsAgainst ?? '—'}
                   </td>
                 </tr>
               ))}
               {sorted.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-text-muted">
+                  <td colSpan={7} className="px-4 py-8 text-center text-[rgba(196,184,165,0.35)]">
                     Standings update once games are underway
                   </td>
                 </tr>

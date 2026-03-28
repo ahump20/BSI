@@ -308,17 +308,17 @@ export default function NFLTeamsPage() {
     <Card
       variant="default"
       padding="md"
-      className="h-full transition-all hover:border-burnt-orange group"
+      className="h-full transition-all hover:border-[var(--bsi-primary)] group"
     >
       <div className="flex items-center gap-4">
-        <div className="w-16 h-16 bg-background-secondary rounded-sm flex items-center justify-center text-xl font-bold text-burnt-orange group-hover:bg-burnt-orange/10 transition-colors">
+        <div className="w-16 h-16 bg-[var(--surface-dugout)] rounded-sm flex items-center justify-center text-xl font-bold text-[var(--bsi-primary)] group-hover:bg-[var(--bsi-primary)]/10 transition-colors">
           {team.abbreviation}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-text-primary group-hover:text-burnt-orange transition-colors truncate">
+          <p className="font-semibold text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors truncate">
             {team.city} {team.name}
           </p>
-          <p className="text-xs text-text-tertiary">
+          <p className="text-xs text-[rgba(196,184,165,0.5)]">
             {team.conference} {team.division}
           </p>
         </div>
@@ -330,17 +330,17 @@ export default function NFLTeamsPage() {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/nfl"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 NFL
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">Teams</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">Teams</span>
             </nav>
           </Container>
         </Section>
@@ -356,13 +356,13 @@ export default function NFLTeamsPage() {
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-gradient-blaze mb-4">
+              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-[var(--bsi-primary)] mb-4">
                 NFL Teams
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="text-text-secondary max-w-2xl">
+              <p className="text-[var(--bsi-dust)] max-w-2xl">
                 All 32 NFL teams across 8 divisions. Titans, Cowboys, Chiefs—every franchise, no
                 network filter.
               </p>
@@ -379,10 +379,10 @@ export default function NFLTeamsPage() {
 
               return (
                 <div key={division} className="mb-8">
-                  <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+                  <h2 className="text-lg font-semibold text-[var(--bsi-bone)] mb-4 flex items-center gap-2">
                     <svg
                       viewBox="0 0 24 24"
-                      className="w-5 h-5 text-burnt-orange"
+                      className="w-5 h-5 text-[var(--bsi-primary)]"
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="1.5"

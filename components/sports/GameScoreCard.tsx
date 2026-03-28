@@ -30,14 +30,14 @@ interface GameScoreCardProps {
 function TeamRow({ team, isLive }: { team: GameTeam; isLive: boolean }) {
   return (
     <div className="flex items-center gap-2 mb-2">
-      <span className="font-semibold text-text-primary">{team.name}</span>
+      <span className="font-semibold text-[var(--bsi-bone)]">{team.name}</span>
       {team.isWinner && (
         <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
         </svg>
       )}
       <span
-        className="ml-auto text-burnt-orange font-bold text-lg"
+        className="ml-auto text-[var(--bsi-primary)] font-bold text-lg"
         {...(isLive ? { 'aria-live': 'polite' as const } : {})}
       >
         {team.score}
@@ -70,17 +70,17 @@ function CardContent({ game, showHitsErrors }: { game: GameScoreCardGame; showHi
         ) : (
           <div
             className={`font-semibold text-sm ${
-              game.isFinal ? 'text-text-tertiary' : 'text-burnt-orange'
+              game.isFinal ? 'text-[rgba(196,184,165,0.5)]' : 'text-[var(--bsi-primary)]'
             }`}
           >
             {game.status}
           </div>
         )}
         {game.venue && (
-          <div className="text-xs text-text-tertiary mt-1">{game.venue}</div>
+          <div className="text-xs text-[rgba(196,184,165,0.5)] mt-1">{game.venue}</div>
         )}
         {showHitsErrors && (game.isFinal || game.isLive) && (
-          <div className="text-xs text-text-tertiary mt-1">
+          <div className="text-xs text-[rgba(196,184,165,0.5)] mt-1">
             H: {game.away.hits ?? 0}-{game.home.hits ?? 0} | E:{' '}
             {game.away.errors ?? 0}-{game.home.errors ?? 0}
           </div>

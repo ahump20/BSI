@@ -32,25 +32,25 @@ export default function ConferenceIndexPage() {
 
   return (
     <>
-      <div>
+      <div className="min-h-screen bg-[#0A0A0A] text-bsi-bone">
         <Section padding="lg" className="pt-6">
           <Container size="wide">
             {/* Breadcrumb */}
             <ScrollReveal direction="up">
               <nav className="flex items-center gap-2 text-sm mb-6">
-                <Link href="/" className="text-text-muted hover:text-burnt-orange transition-colors">
+                <Link href="/" className="text-bsi-dust/50 hover:text-[var(--bsi-primary)] transition-colors">
                   Home
                 </Link>
-                <span className="text-text-muted">/</span>
-                <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
+                <span className="text-bsi-dust/50">/</span>
+                <Link href="/college-baseball" className="text-bsi-dust/50 hover:text-[var(--bsi-primary)] transition-colors">
                   College Baseball
                 </Link>
-                <span className="text-text-muted">/</span>
-                <Link href="/college-baseball/savant" className="text-text-muted hover:text-burnt-orange transition-colors">
+                <span className="text-bsi-dust/50">/</span>
+                <Link href="/college-baseball/savant" className="text-bsi-dust/50 hover:text-[var(--bsi-primary)] transition-colors">
                   Savant
                 </Link>
-                <span className="text-text-muted">/</span>
-                <span className="text-text-secondary">Conference Index</span>
+                <span className="text-bsi-dust/50">/</span>
+                <span className="text-bsi-dust">Conference Index</span>
               </nav>
             </ScrollReveal>
 
@@ -60,10 +60,10 @@ export default function ConferenceIndexPage() {
                 <div className="flex items-center gap-3 mb-3">
                   <Badge variant="accent" size="sm">CONFERENCE ANALYTICS</Badge>
                 </div>
-                <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-wider text-text-primary">
-                  Conference <span className="text-burnt-orange">Strength Index</span>
+                <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-wider text-bsi-bone">
+                  Conference <span className="text-[var(--bsi-primary)]">Strength Index</span>
                 </h1>
-                <p className="text-text-tertiary mt-3 max-w-2xl text-base leading-relaxed">
+                <p className="text-bsi-dust mt-3 max-w-2xl text-base leading-relaxed">
                   Composite ranking of conference competitiveness. Weighs inter-conference
                   record, RPI, collective offense (OPS, wOBA), and pitching (ERA). Recomputed
                   daily at 6 AM CT.
@@ -80,7 +80,7 @@ export default function ConferenceIndexPage() {
                   <p className="text-error mb-4">{error}</p>
                   <button
                     onClick={retry}
-                    className="px-5 py-2 bg-burnt-orange/20 text-burnt-orange rounded-sm text-sm font-medium hover:bg-burnt-orange/30 transition-colors"
+                    className="px-5 py-2 bg-[var(--bsi-primary)]/20 text-[var(--bsi-primary)] rounded-sm text-sm font-medium hover:bg-[var(--bsi-primary)]/30 transition-colors"
                   >
                     Try again
                   </button>
@@ -93,10 +93,10 @@ export default function ConferenceIndexPage() {
             {/* Methodology note */}
             <ScrollReveal direction="up" delay={150}>
               <Card padding="md" className="mt-8">
-                <h3 className="font-display text-sm uppercase tracking-wider text-text-primary mb-2">
+                <h3 className="font-display text-sm uppercase tracking-wider text-bsi-bone mb-2">
                   Methodology
                 </h3>
-                <p className="text-[11px] text-text-muted leading-relaxed max-w-3xl">
+                <p className="text-[11px] text-bsi-dust/50 leading-relaxed max-w-3xl">
                   The Conference Strength Index is a 0-100 composite. Inter-conference win
                   percentage contributes 40%, RPI 30%, collective wOBA 15%,
                   and collective ERA 15%. RPI is placeholder (0.500) until sufficient
@@ -118,16 +118,16 @@ export default function ConferenceIndexPage() {
 function ChartSkeleton() {
   return (
     <Card padding="none" className="overflow-hidden">
-      <div className="px-5 py-4 border-b border-border-subtle">
-        <div className="h-5 w-48 bg-surface-medium rounded-sm animate-pulse" />
+      <div className="px-5 py-4 border-b border-[rgba(140,98,57,0.3)]">
+        <div className="h-5 w-48 bg-[#161616] rounded-sm animate-pulse" />
       </div>
       <div className="px-5 py-4 space-y-4">
         {Array.from({ length: 8 }).map((_, i) => (
           <div key={i} className="flex items-center gap-3">
-            <div className="h-4 w-4 bg-surface-light rounded-sm animate-pulse" />
-            <div className="h-4 w-20 bg-surface-medium rounded-sm animate-pulse" />
-            <div className="flex-1 h-[10px] bg-surface-light rounded-full animate-pulse" />
-            <div className="h-4 w-8 bg-surface-light rounded-sm animate-pulse" />
+            <div className="h-4 w-4 bg-[#111111] rounded-sm animate-pulse" />
+            <div className="h-4 w-20 bg-[#161616] rounded-sm animate-pulse" />
+            <div className="flex-1 h-[10px] bg-[#111111] rounded-full animate-pulse" />
+            <div className="h-4 w-8 bg-[#111111] rounded-sm animate-pulse" />
           </div>
         ))}
       </div>

@@ -246,14 +246,14 @@ export function EraFipGap({
   }, [filteredData, data, onPlayerClick]);
 
   return (
-    <div className={`bg-background-primary border border-border-subtle rounded-sm overflow-hidden ${className}`}>
+    <div className={`bg-[var(--surface-scoreboard)] border border-[var(--border-vintage)] rounded-sm overflow-hidden ${className}`}>
       {/* Header */}
-      <div className="px-5 py-4 border-b border-border-subtle flex items-center justify-between flex-wrap gap-3">
+      <div className="px-5 py-4 border-b border-[var(--border-vintage)] flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h3 className="font-display text-base uppercase tracking-wider text-text-primary">
+          <h3 className="font-display text-base uppercase tracking-wider text-[var(--bsi-bone)]">
             ERA vs FIP Gap
           </h3>
-          <p className="text-[10px] font-mono text-text-muted mt-0.5">
+          <p className="text-[10px] font-mono text-[rgba(196,184,165,0.35)] mt-0.5">
             Points above the diagonal = ERA exceeds FIP (regression candidate) · Bubble size = innings pitched
           </p>
         </div>
@@ -261,10 +261,10 @@ export function EraFipGap({
           aria-label="Filter by conference"
           value={selectedConf}
           onChange={(e) => setSelectedConf(e.target.value)}
-          className="bg-surface-light border border-border rounded-sm px-2.5 py-1.5 text-xs text-text-tertiary font-mono appearance-none cursor-pointer hover:border-border-strong transition-colors focus:outline-none focus:border-burnt-orange/40"
+          className="bg-[var(--surface-press-box)] border border-border rounded-sm px-2.5 py-1.5 text-xs text-[rgba(196,184,165,0.5)] font-mono appearance-none cursor-pointer hover:border-[rgba(140,98,57,0.5)] transition-colors focus:outline-none focus:border-[var(--bsi-primary)]/40"
         >
           {conferences.map(c => (
-            <option key={c} value={c} className="bg-background-secondary text-text-primary">
+            <option key={c} value={c} className="bg-[var(--surface-dugout)] text-[var(--bsi-bone)]">
               {c || 'All Conferences'}
             </option>
           ))}
@@ -283,40 +283,40 @@ export function EraFipGap({
         {/* Tooltip */}
         {tooltip && (
           <div
-            className="absolute z-50 pointer-events-none bg-background-secondary border border-border shadow-xl rounded-sm px-3 py-2"
+            className="absolute z-50 pointer-events-none bg-[var(--surface-dugout)] border border-border shadow-xl rounded-sm px-3 py-2"
             style={{
               left: tooltip.x + 12,
               top: tooltip.y - 10,
               transform: tooltip.x > (containerRef.current?.clientWidth ?? 400) / 2 ? 'translateX(-110%)' : 'none',
             }}
           >
-            <div className="text-sm text-text-primary font-medium">{tooltip.player.player_name}</div>
-            <div className="text-[10px] text-text-muted">{tooltip.player.team} · {tooltip.player.conference}</div>
+            <div className="text-sm text-[var(--bsi-bone)] font-medium">{tooltip.player.player_name}</div>
+            <div className="text-[10px] text-[rgba(196,184,165,0.35)]">{tooltip.player.team} · {tooltip.player.conference}</div>
             <div className="flex gap-3 mt-1.5">
               <div>
-                <span className="text-[9px] text-text-muted font-mono">ERA</span>
-                <span className="block text-xs font-mono font-bold text-text-primary">
+                <span className="text-[9px] text-[rgba(196,184,165,0.35)] font-mono">ERA</span>
+                <span className="block text-xs font-mono font-bold text-[var(--bsi-bone)]">
                   {tooltip.player.era.toFixed(2)}
                 </span>
               </div>
               <div>
-                <span className="text-[9px] text-text-muted font-mono">FIP</span>
-                <span className="block text-xs font-mono font-bold text-text-primary">
+                <span className="text-[9px] text-[rgba(196,184,165,0.35)] font-mono">FIP</span>
+                <span className="block text-xs font-mono font-bold text-[var(--bsi-bone)]">
                   {tooltip.player.fip.toFixed(2)}
                 </span>
               </div>
               <div>
-                <span className="text-[9px] text-text-muted font-mono">Gap</span>
+                <span className="text-[9px] text-[rgba(196,184,165,0.35)] font-mono">Gap</span>
                 <span className={`block text-xs font-mono font-bold ${
-                  tooltip.gap > 0.3 ? 'text-[var(--bsi-danger)]' : tooltip.gap < -0.3 ? 'text-[var(--bsi-success)]' : 'text-text-primary'
+                  tooltip.gap > 0.3 ? 'text-[var(--bsi-danger)]' : tooltip.gap < -0.3 ? 'text-[var(--bsi-success)]' : 'text-[var(--bsi-bone)]'
                 }`}>
                   {tooltip.gap > 0 ? '+' : ''}{tooltip.gap.toFixed(2)}
                 </span>
               </div>
               {tooltip.player.ip != null && (
                 <div>
-                  <span className="text-[9px] text-text-muted font-mono">IP</span>
-                  <span className="block text-xs font-mono font-bold text-text-primary">
+                  <span className="text-[9px] text-[rgba(196,184,165,0.35)] font-mono">IP</span>
+                  <span className="block text-xs font-mono font-bold text-[var(--bsi-bone)]">
                     {tooltip.player.ip.toFixed(1)}
                   </span>
                 </div>
@@ -327,7 +327,7 @@ export function EraFipGap({
       </div>
 
       {/* Legend */}
-      <div className="px-5 py-3 border-t border-border-subtle flex flex-wrap items-center justify-center gap-4">
+      <div className="px-5 py-3 border-t border-[var(--border-vintage)] flex flex-wrap items-center justify-center gap-4">
         {[
           { label: 'Overperforming (ERA < FIP)', color: '#10B981' },
           { label: 'Neutral', color: '#aaaaaa' },
@@ -335,7 +335,7 @@ export function EraFipGap({
         ].map(item => (
           <div key={item.label} className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
-            <span className="text-[9px] font-mono text-text-muted">{item.label}</span>
+            <span className="text-[9px] font-mono text-[rgba(196,184,165,0.35)]">{item.label}</span>
           </div>
         ))}
       </div>

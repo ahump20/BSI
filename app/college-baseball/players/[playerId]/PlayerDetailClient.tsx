@@ -144,14 +144,14 @@ function HAVFBar({ label, score, color }: { label: string; score: number; color:
   const pct = Math.min(score * 100, 100);
   return (
     <div className="flex items-center gap-3">
-      <span className="text-xs text-text-muted uppercase tracking-widest w-8 shrink-0 font-mono">{label}</span>
-      <div className="flex-1 h-2 bg-surface-light rounded-full overflow-hidden">
+      <span className="text-xs text-[rgba(196,184,165,0.35)] uppercase tracking-widest w-8 shrink-0 font-mono">{label}</span>
+      <div className="flex-1 h-2 bg-[var(--surface-press-box)] rounded-full overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-700"
           style={{ width: `${pct}%`, backgroundColor: color }}
         />
       </div>
-      <span className="text-sm font-mono text-text-secondary w-12 text-right">{(score * 100).toFixed(0)}</span>
+      <span className="text-sm font-mono text-[var(--bsi-dust)] w-12 text-right">{(score * 100).toFixed(0)}</span>
     </div>
   );
 }
@@ -249,7 +249,7 @@ export default function PlayerDetailClient() {
         <Section padding="lg">
           <Container>
             <div className="flex items-center justify-center py-20">
-              <div className="w-10 h-10 border-4 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
+              <div className="w-10 h-10 border-4 border-[var(--bsi-primary)]/30 border-t-[var(--bsi-primary)] rounded-full animate-spin" />
             </div>
           </Container>
         </Section>
@@ -272,11 +272,11 @@ export default function PlayerDetailClient() {
         <Section padding="lg">
           <Container>
             <Card padding="lg" className="text-center">
-              <h2 className="text-xl font-bold text-text-primary mb-2">
+              <h2 className="text-xl font-bold text-[var(--bsi-bone)] mb-2">
                 {error ? 'Temporarily Unavailable' : 'Player not found'}
               </h2>
-              {error && <p className="text-text-muted mb-3 text-sm">{error}</p>}
-              <Link href="/college-baseball/players" className="text-burnt-orange hover:text-ember">
+              {error && <p className="text-[rgba(196,184,165,0.35)] mb-3 text-sm">{error}</p>}
+              <Link href="/college-baseball/players" className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)]">
                 Back to Players
               </Link>
             </Card>
@@ -293,21 +293,21 @@ export default function PlayerDetailClient() {
           <Container>
             {/* Breadcrumb */}
             <div className="flex items-center gap-3 mb-2">
-              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 College Baseball
               </Link>
-              <span className="text-text-muted">/</span>
-              <Link href="/college-baseball/players" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <Link href="/college-baseball/players" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 Players
               </Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-primary">{player.name}</span>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[var(--bsi-bone)]">{player.name}</span>
             </div>
 
             {/* Player Header — with headshot */}
             <div className="flex items-start gap-4 mb-8">
               {player.headshot && (
-                <div className="shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-2 border-border-strong bg-surface-light">
+                <div className="shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-2 border-[rgba(140,98,57,0.5)] bg-[var(--surface-press-box)]">
                   <Image
                     src={player.headshot}
                     alt={player.name}
@@ -319,7 +319,7 @@ export default function PlayerDetailClient() {
                 </div>
               )}
               <div>
-                <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-text-primary">
+                <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-[var(--bsi-bone)]">
                   {player.name}
                 </h1>
                 <div className="flex flex-wrap items-center gap-3 mt-2">
@@ -332,7 +332,7 @@ export default function PlayerDetailClient() {
                         ? 'bg-[var(--bsi-success)]/15 border-[var(--bsi-success)]/30 text-[var(--bsi-success)]'
                         : player.portalStatus === 'withdrawn'
                           ? 'bg-[var(--bsi-dust)]/15 border-[var(--bsi-dust)]/30 text-[var(--bsi-dust)]'
-                          : 'bg-burnt-orange/15 border-burnt-orange/30 text-burnt-orange'
+                          : 'bg-[var(--bsi-primary)]/15 border-[var(--bsi-primary)]/30 text-[var(--bsi-primary)]'
                     }`}>
                       <svg className="w-3 h-3" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
                         <path d="M8 2v12M2 8h12" />
@@ -341,7 +341,7 @@ export default function PlayerDetailClient() {
                     </span>
                   )}
                   {player.team && (
-                    <Link href={`/college-baseball/teams/${player.team.id}`} className="text-text-tertiary hover:text-burnt-orange transition-colors text-sm">
+                    <Link href={`/college-baseball/teams/${player.team.id}`} className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors text-sm">
                       {player.team.name}
                     </Link>
                   )}
@@ -352,7 +352,7 @@ export default function PlayerDetailClient() {
                         href="/nil-valuation"
                         className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm ${tierInfo.bg} border border-[#BF5700]/20 hover:border-[#BF5700]/40 transition-colors`}
                       >
-                        <span className="text-[10px] text-text-muted uppercase tracking-widest leading-none">Est. NIL</span>
+                        <span className="text-[10px] text-[rgba(196,184,165,0.35)] uppercase tracking-widest leading-none">Est. NIL</span>
                         <span className="text-sm font-bold text-[#BF5700] font-mono leading-none">
                           {formatNILValue(nilPlayer.estimated_mid)}
                         </span>
@@ -369,8 +369,8 @@ export default function PlayerDetailClient() {
                     }
                     className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm border transition-colors cursor-pointer ${
                       watched
-                        ? 'bg-burnt-orange/15 border-burnt-orange/30 text-burnt-orange'
-                        : 'bg-transparent border-border hover:border-burnt-orange/30 text-text-muted hover:text-burnt-orange'
+                        ? 'bg-[var(--bsi-primary)]/15 border-[var(--bsi-primary)]/30 text-[var(--bsi-primary)]'
+                        : 'bg-transparent border-border hover:border-[var(--bsi-primary)]/30 text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)]'
                     }`}
                     aria-label={watched ? 'Remove from watchlist' : 'Add to watchlist'}
                   >
@@ -388,10 +388,10 @@ export default function PlayerDetailClient() {
             {/* Bio Card */}
             <Card padding="lg" className="mb-6">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {player.height && <div><span className="text-xs text-text-muted block">Height</span><span className="text-text-primary font-medium">{player.height}</span></div>}
-                {player.weight && <div><span className="text-xs text-text-muted block">Weight</span><span className="text-text-primary font-medium">{player.weight} lbs</span></div>}
-                {player.dateOfBirth && <div><span className="text-xs text-text-muted block">DOB</span><span className="text-text-primary font-medium">{player.dateOfBirth}</span></div>}
-                {player.team?.conference?.name && <div><span className="text-xs text-text-muted block">Conference</span><span className="text-text-primary font-medium">{player.team.conference.name}</span></div>}
+                {player.height && <div><span className="text-xs text-[rgba(196,184,165,0.35)] block">Height</span><span className="text-[var(--bsi-bone)] font-medium">{player.height}</span></div>}
+                {player.weight && <div><span className="text-xs text-[rgba(196,184,165,0.35)] block">Weight</span><span className="text-[var(--bsi-bone)] font-medium">{player.weight} lbs</span></div>}
+                {player.dateOfBirth && <div><span className="text-xs text-[rgba(196,184,165,0.35)] block">DOB</span><span className="text-[var(--bsi-bone)] font-medium">{player.dateOfBirth}</span></div>}
+                {player.team?.conference?.name && <div><span className="text-xs text-[rgba(196,184,165,0.35)] block">Conference</span><span className="text-[var(--bsi-bone)] font-medium">{player.team.conference.name}</span></div>}
               </div>
             </Card>
 
@@ -402,12 +402,12 @@ export default function PlayerDetailClient() {
                 <Card padding="none" className="mb-6 overflow-hidden">
                   <div className="px-4 py-3 bg-gradient-to-r from-[#BF5700]/15 to-transparent border-b border-border">
                     <div className="flex items-center justify-between">
-                      <h2 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide">
+                      <h2 className="font-display text-lg font-bold text-[var(--bsi-bone)] uppercase tracking-wide">
                         NIL Valuation
                       </h2>
                       <Link
                         href="/nil-valuation"
-                        className="text-[10px] text-text-muted hover:text-burnt-orange transition-colors uppercase tracking-widest"
+                        className="text-[10px] text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors uppercase tracking-widest"
                       >
                         Full NIL Hub &rarr;
                       </Link>
@@ -416,14 +416,14 @@ export default function PlayerDetailClient() {
                   <div className="p-4 md:p-6">
                     <div className="grid grid-cols-3 gap-6">
                       <div className="text-center">
-                        <span className="text-xs text-text-muted block mb-1">Low Estimate</span>
-                        <span className="font-display text-xl font-bold text-text-secondary font-mono">
+                        <span className="text-xs text-[rgba(196,184,165,0.35)] block mb-1">Low Estimate</span>
+                        <span className="font-display text-xl font-bold text-[var(--bsi-dust)] font-mono">
                           {formatNILValue(nilPlayer.estimated_low)}
                         </span>
                       </div>
                       <div className="text-center">
-                        <span className="text-xs text-text-muted block mb-1">Fair Market Value</span>
-                        <span className="font-display text-3xl font-bold text-burnt-orange font-mono">
+                        <span className="text-xs text-[rgba(196,184,165,0.35)] block mb-1">Fair Market Value</span>
+                        <span className="font-display text-3xl font-bold text-[var(--bsi-primary)] font-mono">
                           {formatNILValue(nilPlayer.estimated_mid)}
                         </span>
                         <span className={`block text-xs font-semibold mt-1 ${tierInfo.text}`}>
@@ -431,21 +431,21 @@ export default function PlayerDetailClient() {
                         </span>
                       </div>
                       <div className="text-center">
-                        <span className="text-xs text-text-muted block mb-1">High Estimate</span>
-                        <span className="font-display text-xl font-bold text-text-secondary font-mono">
+                        <span className="text-xs text-[rgba(196,184,165,0.35)] block mb-1">High Estimate</span>
+                        <span className="font-display text-xl font-bold text-[var(--bsi-dust)] font-mono">
                           {formatNILValue(nilPlayer.estimated_high)}
                         </span>
                       </div>
                     </div>
-                    <div className="mt-4 pt-3 border-t border-border-subtle flex items-center justify-between">
-                      <span className="text-[10px] text-text-muted">
-                        Index Score: <span className="text-text-secondary font-mono">{nilPlayer.index_score}</span>/100
+                    <div className="mt-4 pt-3 border-t border-[var(--border-vintage)] flex items-center justify-between">
+                      <span className="text-[10px] text-[rgba(196,184,165,0.35)]">
+                        Index Score: <span className="text-[var(--bsi-dust)] font-mono">{nilPlayer.index_score}</span>/100
                       </span>
                       <div className="flex gap-3">
-                        <Link href="/nil-valuation/comparables" className="text-[10px] text-text-muted hover:text-burnt-orange transition-colors">
+                        <Link href="/nil-valuation/comparables" className="text-[10px] text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                           Comparables &rarr;
                         </Link>
-                        <Link href="/nil-valuation/draft-leverage" className="text-[10px] text-text-muted hover:text-burnt-orange transition-colors">
+                        <Link href="/nil-valuation/draft-leverage" className="text-[10px] text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                           Draft Leverage &rarr;
                         </Link>
                       </div>
@@ -466,13 +466,13 @@ export default function PlayerDetailClient() {
               return (
                 <Card padding="none" className="mb-6 overflow-hidden">
                   <div className="px-4 py-3 bg-gradient-to-r from-[#BF5700]/10 to-transparent border-b border-border">
-                    <h2 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide">
+                    <h2 className="font-display text-sm font-bold text-[var(--bsi-bone)] uppercase tracking-wide">
                       Draft &amp; Portal Context
                     </h2>
                   </div>
                   <div className="p-4 flex flex-wrap items-center gap-3">
                     {isDraftEligible && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-burnt-orange/15 border border-burnt-orange/30 text-burnt-orange text-xs font-semibold uppercase tracking-wider">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-[var(--bsi-primary)]/15 border border-[var(--bsi-primary)]/30 text-[var(--bsi-primary)] text-xs font-semibold uppercase tracking-wider">
                         <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M8 1v14M4 5l4-4 4 4" />
                         </svg>
@@ -493,11 +493,11 @@ export default function PlayerDetailClient() {
                     {draftProfile && (
                       <Link
                         href={`/college-baseball/editorial/${draftProfile.slug}`}
-                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border border-border hover:border-burnt-orange/40 text-text-secondary hover:text-burnt-orange transition-colors text-xs font-medium group"
+                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border border-border hover:border-[var(--bsi-primary)]/40 text-[var(--bsi-dust)] hover:text-[var(--bsi-primary)] transition-colors text-xs font-medium group"
                       >
-                        <span className="text-burnt-orange font-semibold uppercase tracking-wider">Draft Profile</span>
+                        <span className="text-[var(--bsi-primary)] font-semibold uppercase tracking-wider">Draft Profile</span>
                         <span className="truncate max-w-[200px]">{draftProfile.title}</span>
-                        <span className="text-text-muted group-hover:text-burnt-orange transition-colors">&rarr;</span>
+                        <span className="text-[rgba(196,184,165,0.35)] group-hover:text-[var(--bsi-primary)] transition-colors">&rarr;</span>
                       </Link>
                     )}
                   </div>
@@ -510,12 +510,12 @@ export default function PlayerDetailClient() {
               <Card padding="none" className="mb-6 overflow-hidden">
                 <div className="px-4 py-3 bg-gradient-to-r from-burnt-orange/20 to-transparent border-b border-border">
                   <div className="flex items-center justify-between">
-                    <h2 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide">
+                    <h2 className="font-display text-lg font-bold text-[var(--bsi-bone)] uppercase tracking-wide">
                       HAV-F Evaluation
                     </h2>
                     <Link
                       href="/models/havf"
-                      className="text-[10px] text-text-muted hover:text-burnt-orange transition-colors uppercase tracking-widest"
+                      className="text-[10px] text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors uppercase tracking-widest"
                     >
                       Methodology &rarr;
                     </Link>
@@ -529,21 +529,21 @@ export default function PlayerDetailClient() {
                       <HAVFBar label="V" score={havfPlayer.v_score} color="var(--bsi-warning)" />
                       <HAVFBar label="F" score={havfPlayer.f_score} color="var(--bsi-texas-soil)" />
                     </div>
-                    <div className="flex flex-col items-center justify-center md:border-l md:border-border-subtle md:pl-6">
-                      <span className="text-xs text-text-muted uppercase tracking-widest mb-1">Composite</span>
-                      <span className="font-display text-4xl md:text-5xl font-bold text-burnt-orange">
+                    <div className="flex flex-col items-center justify-center md:border-l md:border-[var(--border-vintage)] md:pl-6">
+                      <span className="text-xs text-[rgba(196,184,165,0.35)] uppercase tracking-widest mb-1">Composite</span>
+                      <span className="font-display text-4xl md:text-5xl font-bold text-[var(--bsi-primary)]">
                         {(havfPlayer.havf_composite * 100).toFixed(0)}
                       </span>
-                      <span className="text-xs text-text-muted mt-1">percentile</span>
+                      <span className="text-xs text-[rgba(196,184,165,0.35)] mt-1">percentile</span>
                     </div>
                   </div>
-                  <div className="mt-4 pt-3 border-t border-border-subtle flex items-center justify-between">
-                    <span className="text-[10px] text-text-muted">
+                  <div className="mt-4 pt-3 border-t border-[var(--border-vintage)] flex items-center justify-between">
+                    <span className="text-[10px] text-[rgba(196,184,165,0.35)]">
                       Hitting &middot; At-Bat Quality &middot; Velocity &middot; Fielding
                     </span>
                     <Link
                       href="/college-baseball/analytics"
-                      className="text-[10px] text-text-muted hover:text-burnt-orange transition-colors"
+                      className="text-[10px] text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors"
                     >
                       Full Leaderboard &rarr;
                     </Link>
@@ -599,8 +599,8 @@ export default function PlayerDetailClient() {
                     onClick={() => setActiveTab('season')}
                     className={`px-4 py-2 text-sm font-semibold uppercase tracking-wider rounded-t transition-colors ${
                       activeTab === 'season'
-                        ? 'bg-charcoal text-text-primary border-b-2 border-burnt-orange'
-                        : 'bg-surface-light text-text-muted hover:text-text-secondary'
+                        ? 'bg-[var(--surface-dugout)] text-[var(--bsi-bone)] border-b-2 border-[var(--bsi-primary)]'
+                        : 'bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-dust)]'
                     }`}
                   >
                     Season Stats
@@ -609,8 +609,8 @@ export default function PlayerDetailClient() {
                     onClick={() => setActiveTab('gamelog')}
                     className={`px-4 py-2 text-sm font-semibold uppercase tracking-wider rounded-t transition-colors ${
                       activeTab === 'gamelog'
-                        ? 'bg-charcoal text-text-primary border-b-2 border-burnt-orange'
-                        : 'bg-surface-light text-text-muted hover:text-text-secondary'
+                        ? 'bg-[var(--surface-dugout)] text-[var(--bsi-bone)] border-b-2 border-[var(--bsi-primary)]'
+                        : 'bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-dust)]'
                     }`}
                   >
                     Game Log{hasGameLog ? ` (${gameLogGames.length})` : ''}
@@ -623,35 +623,35 @@ export default function PlayerDetailClient() {
                     {/* Batting Stats */}
                     {stats?.batting && (
                       <Card padding="none" className="mb-6 overflow-hidden">
-                        <div className="px-4 py-3 bg-charcoal border-b border-border-strong">
-                          <h2 className="font-display text-lg font-bold text-text-primary">Batting Statistics</h2>
+                        <div className="px-4 py-3 bg-[var(--surface-dugout)] border-b border-[rgba(140,98,57,0.5)]">
+                          <h2 className="font-display text-lg font-bold text-[var(--bsi-bone)]">Batting Statistics</h2>
                         </div>
                         <div className="overflow-x-auto">
                           <table className="w-full">
                             <thead>
-                              <tr className="border-b border-border-strong">
+                              <tr className="border-b border-[rgba(140,98,57,0.5)]">
                                 {['G', 'AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'BB', 'SO', 'SB', 'AVG', 'OBP', 'SLG', 'OPS'].map((h) => (
-                                  <th key={h} className="py-3 px-3 text-xs font-semibold text-text-muted uppercase text-center">{h}</th>
+                                  <th key={h} className="py-3 px-3 text-xs font-semibold text-[rgba(196,184,165,0.35)] uppercase text-center">{h}</th>
                                 ))}
                               </tr>
                             </thead>
                             <tbody>
                               <tr className="border-b border-border">
-                                <td className="py-3 px-3 text-center text-text-primary">{stats.batting.games}</td>
-                                <td className="py-3 px-3 text-center text-text-primary">{stats.batting.atBats}</td>
-                                <td className="py-3 px-3 text-center text-text-primary">{stats.batting.runs}</td>
-                                <td className="py-3 px-3 text-center text-text-primary">{stats.batting.hits}</td>
-                                <td className="py-3 px-3 text-center text-text-primary">{stats.batting.doubles}</td>
-                                <td className="py-3 px-3 text-center text-text-primary">{stats.batting.triples}</td>
-                                <td className="py-3 px-3 text-center text-burnt-orange font-bold">{stats.batting.homeRuns}</td>
-                                <td className="py-3 px-3 text-center text-text-primary">{stats.batting.rbi}</td>
-                                <td className="py-3 px-3 text-center text-text-primary">{stats.batting.walks}</td>
-                                <td className="py-3 px-3 text-center text-text-primary">{stats.batting.strikeouts}</td>
-                                <td className="py-3 px-3 text-center text-text-primary">{stats.batting.stolenBases}</td>
-                                <td className="py-3 px-3 text-center text-text-primary font-mono">{stats.batting.battingAverage.toFixed(3)}</td>
-                                <td className="py-3 px-3 text-center text-text-primary font-mono">{stats.batting.onBasePercentage.toFixed(3)}</td>
-                                <td className="py-3 px-3 text-center text-text-primary font-mono">{stats.batting.sluggingPercentage.toFixed(3)}</td>
-                                <td className="py-3 px-3 text-center text-burnt-orange font-bold font-mono">{stats.batting.ops.toFixed(3)}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-bone)]">{stats.batting.games}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-bone)]">{stats.batting.atBats}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-bone)]">{stats.batting.runs}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-bone)]">{stats.batting.hits}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-bone)]">{stats.batting.doubles}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-bone)]">{stats.batting.triples}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-primary)] font-bold">{stats.batting.homeRuns}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-bone)]">{stats.batting.rbi}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-bone)]">{stats.batting.walks}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-bone)]">{stats.batting.strikeouts}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-bone)]">{stats.batting.stolenBases}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-bone)] font-mono">{stats.batting.battingAverage.toFixed(3)}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-bone)] font-mono">{stats.batting.onBasePercentage.toFixed(3)}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-bone)] font-mono">{stats.batting.sluggingPercentage.toFixed(3)}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-primary)] font-bold font-mono">{stats.batting.ops.toFixed(3)}</td>
                               </tr>
                             </tbody>
                           </table>
@@ -662,32 +662,32 @@ export default function PlayerDetailClient() {
                     {/* Pitching Stats */}
                     {stats?.pitching && (
                       <Card padding="none" className="mb-6 overflow-hidden">
-                        <div className="px-4 py-3 bg-charcoal border-b border-border-strong">
-                          <h2 className="font-display text-lg font-bold text-text-primary">Pitching Statistics</h2>
+                        <div className="px-4 py-3 bg-[var(--surface-dugout)] border-b border-[rgba(140,98,57,0.5)]">
+                          <h2 className="font-display text-lg font-bold text-[var(--bsi-bone)]">Pitching Statistics</h2>
                         </div>
                         <div className="overflow-x-auto">
                           <table className="w-full">
                             <thead>
-                              <tr className="border-b border-border-strong">
+                              <tr className="border-b border-[rgba(140,98,57,0.5)]">
                                 {['G', 'GS', 'W', 'L', 'SV', 'IP', 'H', 'ER', 'BB', 'SO', 'ERA', 'WHIP'].map((h) => (
-                                  <th key={h} className="py-3 px-3 text-xs font-semibold text-text-muted uppercase text-center">{h}</th>
+                                  <th key={h} className="py-3 px-3 text-xs font-semibold text-[rgba(196,184,165,0.35)] uppercase text-center">{h}</th>
                                 ))}
                               </tr>
                             </thead>
                             <tbody>
                               <tr className="border-b border-border">
-                                <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.games}</td>
-                                <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.gamesStarted}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-bone)]">{stats.pitching.games}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-bone)]">{stats.pitching.gamesStarted}</td>
                                 <td className="py-3 px-3 text-center text-[var(--bsi-success)] font-bold">{stats.pitching.wins}</td>
                                 <td className="py-3 px-3 text-center text-[var(--bsi-error)] font-bold">{stats.pitching.losses}</td>
-                                <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.saves}</td>
-                                <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.inningsPitched.toFixed(1)}</td>
-                                <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.hits}</td>
-                                <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.earnedRuns}</td>
-                                <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.walks}</td>
-                                <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.strikeouts}</td>
-                                <td className="py-3 px-3 text-center text-burnt-orange font-bold font-mono">{stats.pitching.era.toFixed(2)}</td>
-                                <td className="py-3 px-3 text-center text-text-primary font-mono">{stats.pitching.whip.toFixed(2)}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-bone)]">{stats.pitching.saves}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-bone)]">{stats.pitching.inningsPitched.toFixed(1)}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-bone)]">{stats.pitching.hits}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-bone)]">{stats.pitching.earnedRuns}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-bone)]">{stats.pitching.walks}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-bone)]">{stats.pitching.strikeouts}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-primary)] font-bold font-mono">{stats.pitching.era.toFixed(2)}</td>
+                                <td className="py-3 px-3 text-center text-[var(--bsi-bone)] font-mono">{stats.pitching.whip.toFixed(2)}</td>
                               </tr>
                             </tbody>
                           </table>
@@ -700,8 +700,8 @@ export default function PlayerDetailClient() {
                 {/* Game Log Tab */}
                 {activeTab === 'gamelog' && (
                   <Card padding="none" className="mb-6 overflow-hidden">
-                    <div className="px-4 py-3 bg-charcoal border-b border-border-strong">
-                      <h2 className="font-display text-lg font-bold text-text-primary">
+                    <div className="px-4 py-3 bg-[var(--surface-dugout)] border-b border-[rgba(140,98,57,0.5)]">
+                      <h2 className="font-display text-lg font-bold text-[var(--bsi-bone)]">
                         2026 Game Log
                       </h2>
                     </div>
@@ -711,17 +711,17 @@ export default function PlayerDetailClient() {
                         {gameLogGames.some((g) => g.batting) && (
                           <table className="w-full">
                             <thead>
-                              <tr className="border-b border-border-strong">
+                              <tr className="border-b border-[rgba(140,98,57,0.5)]">
                                 {['Date', 'OPP', '', 'AB', 'R', 'H', 'RBI', 'HR', 'BB', 'K', 'AVG'].map((h) => (
-                                  <th key={h} className="py-2 px-2 text-xs font-semibold text-text-muted uppercase text-center whitespace-nowrap">{h}</th>
+                                  <th key={h} className="py-2 px-2 text-xs font-semibold text-[rgba(196,184,165,0.35)] uppercase text-center whitespace-nowrap">{h}</th>
                                 ))}
                               </tr>
                             </thead>
                             <tbody>
                               {gameLogGames.filter((g) => g.batting).map((g) => (
-                                <tr key={`bat-${g.gameId}`} className="border-b border-border hover:bg-surface-light/50 transition-colors">
-                                  <td className="py-2 px-2 text-center text-text-secondary text-xs whitespace-nowrap">{g.date}</td>
-                                  <td className="py-2 px-2 text-center text-text-primary text-xs whitespace-nowrap">
+                                <tr key={`bat-${g.gameId}`} className="border-b border-border hover:bg-[var(--surface-press-box)]/50 transition-colors">
+                                  <td className="py-2 px-2 text-center text-[var(--bsi-dust)] text-xs whitespace-nowrap">{g.date}</td>
+                                  <td className="py-2 px-2 text-center text-[var(--bsi-bone)] text-xs whitespace-nowrap">
                                     {g.isHome ? 'vs' : '@'} {g.opponent || '—'}
                                   </td>
                                   <td className="py-2 px-2 text-center text-xs">
@@ -729,14 +729,14 @@ export default function PlayerDetailClient() {
                                       {g.result || '—'}
                                     </span>
                                   </td>
-                                  <td className="py-2 px-2 text-center text-text-primary text-xs">{g.batting!.ab}</td>
-                                  <td className="py-2 px-2 text-center text-text-primary text-xs">{g.batting!.r}</td>
-                                  <td className="py-2 px-2 text-center text-text-primary text-xs">{g.batting!.h}</td>
-                                  <td className="py-2 px-2 text-center text-text-primary text-xs">{g.batting!.rbi}</td>
-                                  <td className="py-2 px-2 text-center text-burnt-orange font-bold text-xs">{g.batting!.hr || '—'}</td>
-                                  <td className="py-2 px-2 text-center text-text-primary text-xs">{g.batting!.bb}</td>
-                                  <td className="py-2 px-2 text-center text-text-primary text-xs">{g.batting!.k}</td>
-                                  <td className="py-2 px-2 text-center text-text-primary font-mono text-xs">{g.batting!.avg.toFixed(3)}</td>
+                                  <td className="py-2 px-2 text-center text-[var(--bsi-bone)] text-xs">{g.batting!.ab}</td>
+                                  <td className="py-2 px-2 text-center text-[var(--bsi-bone)] text-xs">{g.batting!.r}</td>
+                                  <td className="py-2 px-2 text-center text-[var(--bsi-bone)] text-xs">{g.batting!.h}</td>
+                                  <td className="py-2 px-2 text-center text-[var(--bsi-bone)] text-xs">{g.batting!.rbi}</td>
+                                  <td className="py-2 px-2 text-center text-[var(--bsi-primary)] font-bold text-xs">{g.batting!.hr || '—'}</td>
+                                  <td className="py-2 px-2 text-center text-[var(--bsi-bone)] text-xs">{g.batting!.bb}</td>
+                                  <td className="py-2 px-2 text-center text-[var(--bsi-bone)] text-xs">{g.batting!.k}</td>
+                                  <td className="py-2 px-2 text-center text-[var(--bsi-bone)] font-mono text-xs">{g.batting!.avg.toFixed(3)}</td>
                                 </tr>
                               ))}
                             </tbody>
@@ -747,23 +747,23 @@ export default function PlayerDetailClient() {
                         {gameLogGames.some((g) => g.pitching) && (
                           <>
                             {gameLogGames.some((g) => g.batting) && (
-                              <div className="px-4 py-2 bg-surface-light border-y border-border">
-                                <span className="text-xs text-text-muted uppercase tracking-widest">Pitching</span>
+                              <div className="px-4 py-2 bg-[var(--surface-press-box)] border-y border-border">
+                                <span className="text-xs text-[rgba(196,184,165,0.35)] uppercase tracking-widest">Pitching</span>
                               </div>
                             )}
                             <table className="w-full">
                               <thead>
-                                <tr className="border-b border-border-strong">
+                                <tr className="border-b border-[rgba(140,98,57,0.5)]">
                                   {['Date', 'OPP', '', 'IP', 'H', 'ER', 'BB', 'SO', 'ERA'].map((h) => (
-                                    <th key={h} className="py-2 px-2 text-xs font-semibold text-text-muted uppercase text-center whitespace-nowrap">{h}</th>
+                                    <th key={h} className="py-2 px-2 text-xs font-semibold text-[rgba(196,184,165,0.35)] uppercase text-center whitespace-nowrap">{h}</th>
                                   ))}
                                 </tr>
                               </thead>
                               <tbody>
                                 {gameLogGames.filter((g) => g.pitching).map((g) => (
-                                  <tr key={`pitch-${g.gameId}`} className="border-b border-border hover:bg-surface-light/50 transition-colors">
-                                    <td className="py-2 px-2 text-center text-text-secondary text-xs whitespace-nowrap">{g.date}</td>
-                                    <td className="py-2 px-2 text-center text-text-primary text-xs whitespace-nowrap">
+                                  <tr key={`pitch-${g.gameId}`} className="border-b border-border hover:bg-[var(--surface-press-box)]/50 transition-colors">
+                                    <td className="py-2 px-2 text-center text-[var(--bsi-dust)] text-xs whitespace-nowrap">{g.date}</td>
+                                    <td className="py-2 px-2 text-center text-[var(--bsi-bone)] text-xs whitespace-nowrap">
                                       {g.isHome ? 'vs' : '@'} {g.opponent || '—'}
                                     </td>
                                     <td className="py-2 px-2 text-center text-xs">
@@ -771,12 +771,12 @@ export default function PlayerDetailClient() {
                                         {g.result || '—'}
                                       </span>
                                     </td>
-                                    <td className="py-2 px-2 text-center text-text-primary text-xs">{g.pitching!.ip.toFixed(1)}</td>
-                                    <td className="py-2 px-2 text-center text-text-primary text-xs">{g.pitching!.h}</td>
-                                    <td className="py-2 px-2 text-center text-text-primary text-xs">{g.pitching!.er}</td>
-                                    <td className="py-2 px-2 text-center text-text-primary text-xs">{g.pitching!.bb}</td>
-                                    <td className="py-2 px-2 text-center text-text-primary text-xs">{g.pitching!.so}</td>
-                                    <td className="py-2 px-2 text-center text-burnt-orange font-bold font-mono text-xs">{g.pitching!.era.toFixed(2)}</td>
+                                    <td className="py-2 px-2 text-center text-[var(--bsi-bone)] text-xs">{g.pitching!.ip.toFixed(1)}</td>
+                                    <td className="py-2 px-2 text-center text-[var(--bsi-bone)] text-xs">{g.pitching!.h}</td>
+                                    <td className="py-2 px-2 text-center text-[var(--bsi-bone)] text-xs">{g.pitching!.er}</td>
+                                    <td className="py-2 px-2 text-center text-[var(--bsi-bone)] text-xs">{g.pitching!.bb}</td>
+                                    <td className="py-2 px-2 text-center text-[var(--bsi-bone)] text-xs">{g.pitching!.so}</td>
+                                    <td className="py-2 px-2 text-center text-[var(--bsi-primary)] font-bold font-mono text-xs">{g.pitching!.era.toFixed(2)}</td>
                                   </tr>
                                 ))}
                               </tbody>
@@ -785,7 +785,7 @@ export default function PlayerDetailClient() {
                         )}
                       </div>
                     ) : (
-                      <div className="p-6 text-center text-text-muted text-sm">
+                      <div className="p-6 text-center text-[rgba(196,184,165,0.35)] text-sm">
                         Game log data populates as games are ingested. Check back after upcoming games.
                       </div>
                     )}
@@ -797,21 +797,21 @@ export default function PlayerDetailClient() {
             {/* Career & Scouting — links to editorial draft profiles */}
             {draftProfile && (
               <Card padding="lg" className="mb-6">
-                <h2 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide mb-3">
+                <h2 className="font-display text-lg font-bold text-[var(--bsi-bone)] uppercase tracking-wide mb-3">
                   Scouting Report
                 </h2>
                 <Link
                   href={`/college-baseball/editorial/${draftProfile.slug}`}
-                  className="block p-3 rounded-sm border border-border hover:border-burnt-orange/40 transition-colors group"
+                  className="block p-3 rounded-sm border border-border hover:border-[var(--bsi-primary)]/40 transition-colors group"
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <span className="text-xs text-burnt-orange uppercase tracking-widest font-semibold">Draft Profile</span>
-                      <p className="text-text-primary font-medium mt-1 group-hover:text-burnt-orange transition-colors">
+                      <span className="text-xs text-[var(--bsi-primary)] uppercase tracking-widest font-semibold">Draft Profile</span>
+                      <p className="text-[var(--bsi-bone)] font-medium mt-1 group-hover:text-[var(--bsi-primary)] transition-colors">
                         {draftProfile.title}
                       </p>
                     </div>
-                    <span className="text-text-muted group-hover:text-burnt-orange transition-colors">&rarr;</span>
+                    <span className="text-[rgba(196,184,165,0.35)] group-hover:text-[var(--bsi-primary)] transition-colors">&rarr;</span>
                   </div>
                 </Link>
               </Card>
@@ -820,8 +820,8 @@ export default function PlayerDetailClient() {
             {/* Video Highlights — renders only when curated content exists */}
             {highlights.length > 0 && (
               <Card padding="none" className="mb-6 overflow-hidden">
-                <div className="px-4 py-3 bg-charcoal border-b border-border-strong">
-                  <h2 className="font-display text-lg font-bold text-text-primary">Highlights</h2>
+                <div className="px-4 py-3 bg-[var(--surface-dugout)] border-b border-[rgba(140,98,57,0.5)]">
+                  <h2 className="font-display text-lg font-bold text-[var(--bsi-bone)]">Highlights</h2>
                 </div>
                 <div className="p-4 grid gap-3 sm:grid-cols-2">
                   {highlights.map((hl) => (
@@ -830,19 +830,19 @@ export default function PlayerDetailClient() {
                       href={hl.videoUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block p-3 rounded-sm border border-border hover:border-burnt-orange/40 transition-colors group"
+                      className="block p-3 rounded-sm border border-border hover:border-[var(--bsi-primary)]/40 transition-colors group"
                     >
                       <div className="flex items-center gap-3">
                         {hl.thumbnailUrl && (
-                          <div className="w-16 h-12 rounded-sm overflow-hidden bg-surface-light shrink-0">
+                          <div className="w-16 h-12 rounded-sm overflow-hidden bg-[var(--surface-press-box)] shrink-0">
                             <Image src={hl.thumbnailUrl} alt={hl.title} width={64} height={48} className="w-full h-full object-cover" unoptimized />
                           </div>
                         )}
                         <div className="min-w-0">
-                          <p className="text-sm text-text-primary font-medium truncate group-hover:text-burnt-orange transition-colors">
+                          <p className="text-sm text-[var(--bsi-bone)] font-medium truncate group-hover:text-[var(--bsi-primary)] transition-colors">
                             {hl.title}
                           </p>
-                          <p className="text-xs text-text-muted mt-0.5">
+                          <p className="text-xs text-[rgba(196,184,165,0.35)] mt-0.5">
                             {hl.gameContext || hl.date}{hl.duration ? ` · ${hl.duration}` : ''}
                           </p>
                         </div>
@@ -855,7 +855,7 @@ export default function PlayerDetailClient() {
 
             {/* HAV-F methodology link */}
             <div className="mt-8 mb-2">
-              <Link href="/models/havf" className="text-xs text-text-muted hover:text-burnt-orange transition-colors uppercase tracking-widest">
+              <Link href="/models/havf" className="text-xs text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors uppercase tracking-widest">
                 How BSI evaluates players &rarr;
               </Link>
             </div>

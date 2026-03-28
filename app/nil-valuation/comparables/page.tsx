@@ -34,10 +34,10 @@ function formatValue(value: number): string {
 
 function tierColor(tier: string | undefined): string {
   switch ((tier || '').toLowerCase()) {
-    case 'elite': return 'text-burnt-orange';
+    case 'elite': return 'text-[var(--bsi-primary)]';
     case 'high': return 'text-[var(--bsi-success)]';
     case 'mid': return 'text-[var(--heritage-columbia-blue)]';
-    default: return 'text-text-tertiary';
+    default: return 'text-[rgba(196,184,165,0.5)]';
   }
 }
 
@@ -78,28 +78,28 @@ export default function ComparablesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background-primary text-text-primary">
+    <div className="min-h-screen bg-[var(--surface-scoreboard)] text-[var(--bsi-bone)]">
       {/* Breadcrumb */}
       <Section className="pt-4 pb-0">
         <Container>
-          <nav className="flex items-center gap-2 text-sm text-text-muted">
-            <Link href="/nil-valuation" className="hover:text-burnt-orange transition-colors">NIL Valuation</Link>
+          <nav className="flex items-center gap-2 text-sm text-[rgba(196,184,165,0.35)]">
+            <Link href="/nil-valuation" className="hover:text-[var(--bsi-primary)] transition-colors">NIL Valuation</Link>
             <span>/</span>
-            <span className="text-text-secondary">Comparable Analysis</span>
+            <span className="text-[var(--bsi-dust)]">Comparable Analysis</span>
           </nav>
         </Container>
       </Section>
 
       {/* Hero */}
-      <Section className="pt-6 pb-12 bg-gradient-to-b from-background-secondary to-background-primary">
+      <Section className="pt-6 pb-12 bg-gradient-to-b from-background-secondary to-[var(--surface-scoreboard)]">
         <Container>
           <ScrollReveal>
             <div className="max-w-3xl mx-auto text-center">
               <Badge variant="primary" className="mb-4">Pro Tool</Badge>
               <h1 className="text-4xl md:text-5xl font-bold mb-4 font-display uppercase tracking-wide">
-                <span className="text-burnt-orange">Comparable</span> Analysis
+                <span className="text-[var(--bsi-primary)]">Comparable</span> Analysis
               </h1>
-              <p className="text-lg text-text-secondary max-w-2xl mx-auto">
+              <p className="text-lg text-[var(--bsi-dust)] max-w-2xl mx-auto">
                 Search any player and see the 10 most similar NIL profiles across college athletics. Same tier, similar production, comparable market.
               </p>
             </div>
@@ -114,20 +114,20 @@ export default function ComparablesPage() {
             <ScrollReveal>
               <Card className="max-w-lg mx-auto text-center border-l-4 border-l-burnt-orange">
                 <CardContent className="p-8">
-                  <h2 className="text-2xl font-bold text-text-primary mb-3">Pro Access Required</h2>
-                  <p className="text-text-tertiary mb-6">
+                  <h2 className="text-2xl font-bold text-[var(--bsi-bone)] mb-3">Pro Access Required</h2>
+                  <p className="text-[rgba(196,184,165,0.5)] mb-6">
                     Comparable analysis is available on the Pro tier. Upgrade to unlock player-by-player NIL comps.
                   </p>
                   <Link href="/pricing">
-                    <Button size="lg" className="bg-burnt-orange">Upgrade to Pro</Button>
+                    <Button size="lg" className="bg-[var(--bsi-primary)]">Upgrade to Pro</Button>
                   </Link>
                 </CardContent>
               </Card>
             </ScrollReveal>
           ) : loading ? (
             <div className="text-center py-20">
-              <div className="animate-spin w-8 h-8 border-2 border-burnt-orange border-t-transparent rounded-full mx-auto mb-4" />
-              <p className="text-text-muted">Loading player database...</p>
+              <div className="animate-spin w-8 h-8 border-2 border-[var(--bsi-primary)] border-t-transparent rounded-full mx-auto mb-4" />
+              <p className="text-[rgba(196,184,165,0.35)]">Loading player database...</p>
             </div>
           ) : error ? (
             <Card className="max-w-lg mx-auto text-center">
@@ -146,18 +146,18 @@ export default function ComparablesPage() {
                   onChange={e => { setSearchQuery(e.target.value); setShowDropdown(true); }}
                   onFocus={() => setShowDropdown(true)}
                   placeholder="Search player name..."
-                  className="w-full px-4 py-3 rounded-sm bg-background-secondary border border-border text-text-primary placeholder:text-text-muted focus:outline-none focus:border-burnt-orange transition-colors"
+                  className="w-full px-4 py-3 rounded-sm bg-[var(--surface-dugout)] border border-border text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)] focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
                 />
                 {showDropdown && filtered.length > 0 && (
-                  <div className="absolute z-10 w-full mt-1 bg-background-secondary border border-border rounded-sm shadow-lg max-h-64 overflow-y-auto">
+                  <div className="absolute z-10 w-full mt-1 bg-[var(--surface-dugout)] border border-border rounded-sm shadow-lg max-h-64 overflow-y-auto">
                     {filtered.map(p => (
                       <button
                         key={p.player_id}
                         onClick={() => selectPlayer(p)}
-                        className="w-full text-left px-4 py-3 hover:bg-surface-light transition-colors border-b border-border last:border-0"
+                        className="w-full text-left px-4 py-3 hover:bg-[var(--surface-press-box)] transition-colors border-b border-border last:border-0"
                       >
-                        <span className="font-medium text-text-primary">{p.player_name}</span>
-                        <span className="text-sm text-text-muted ml-2">{p.team} &middot; {p.conference}</span>
+                        <span className="font-medium text-[var(--bsi-bone)]">{p.player_name}</span>
+                        <span className="text-sm text-[rgba(196,184,165,0.35)] ml-2">{p.team} &middot; {p.conference}</span>
                       </button>
                     ))}
                   </div>
@@ -174,11 +174,11 @@ export default function ComparablesPage() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="flex flex-wrap gap-4 text-sm text-text-secondary">
+                      <div className="flex flex-wrap gap-4 text-sm text-[var(--bsi-dust)]">
                         <span>{selectedPlayer.team}</span>
                         <span>{selectedPlayer.conference}</span>
-                        <span>Index: <strong className="text-text-primary">{selectedPlayer.index_score.toFixed(1)}</strong></span>
-                        <span>Est. Value: <strong className="text-burnt-orange">{formatValue(selectedPlayer.estimated_mid)}</strong></span>
+                        <span>Index: <strong className="text-[var(--bsi-bone)]">{selectedPlayer.index_score.toFixed(1)}</strong></span>
+                        <span>Est. Value: <strong className="text-[var(--bsi-primary)]">{formatValue(selectedPlayer.estimated_mid)}</strong></span>
                         <span className={tierColor(playerTier(selectedPlayer))}>{playerTier(selectedPlayer)}</span>
                       </div>
                     </CardContent>
@@ -188,8 +188,8 @@ export default function ComparablesPage() {
 
               {compLoading && (
                 <div className="text-center py-12">
-                  <div className="animate-spin w-8 h-8 border-2 border-burnt-orange border-t-transparent rounded-full mx-auto mb-4" />
-                  <p className="text-text-muted">Finding comparable players...</p>
+                  <div className="animate-spin w-8 h-8 border-2 border-[var(--bsi-primary)] border-t-transparent rounded-full mx-auto mb-4" />
+                  <p className="text-[rgba(196,184,165,0.35)]">Finding comparable players...</p>
                 </div>
               )}
 
@@ -198,7 +198,7 @@ export default function ComparablesPage() {
                   <div className="overflow-x-auto">
                     <table className="w-full text-left">
                       <thead>
-                        <tr className="border-b border-border text-text-muted text-sm">
+                        <tr className="border-b border-border text-[rgba(196,184,165,0.35)] text-sm">
                           <th className="py-3 px-4">#</th>
                           <th className="py-3 px-4">Player</th>
                           <th className="py-3 px-4">Team</th>
@@ -210,13 +210,13 @@ export default function ComparablesPage() {
                       </thead>
                       <tbody>
                         {comparables.slice(0, 10).map((comp, i) => (
-                          <tr key={comp.player_id} className="border-b border-border hover:bg-surface-light transition-colors">
-                            <td className="py-3 px-4 text-text-muted">{i + 1}</td>
-                            <td className="py-3 px-4 font-medium text-text-primary">{comp.player_name}</td>
-                            <td className="py-3 px-4 text-text-secondary">{comp.team}</td>
-                            <td className="py-3 px-4 text-text-secondary">{comp.conference}</td>
-                            <td className="py-3 px-4 text-right text-text-primary">{comp.index_score.toFixed(1)}</td>
-                            <td className="py-3 px-4 text-right text-burnt-orange font-medium">{formatValue(comp.estimated_mid)}</td>
+                          <tr key={comp.player_id} className="border-b border-border hover:bg-[var(--surface-press-box)] transition-colors">
+                            <td className="py-3 px-4 text-[rgba(196,184,165,0.35)]">{i + 1}</td>
+                            <td className="py-3 px-4 font-medium text-[var(--bsi-bone)]">{comp.player_name}</td>
+                            <td className="py-3 px-4 text-[var(--bsi-dust)]">{comp.team}</td>
+                            <td className="py-3 px-4 text-[var(--bsi-dust)]">{comp.conference}</td>
+                            <td className="py-3 px-4 text-right text-[var(--bsi-bone)]">{comp.index_score.toFixed(1)}</td>
+                            <td className="py-3 px-4 text-right text-[var(--bsi-primary)] font-medium">{formatValue(comp.estimated_mid)}</td>
                             <td className={`py-3 px-4 text-right font-medium ${tierColor(comp.tier)}`}>{comp.tier}</td>
                           </tr>
                         ))}
@@ -227,7 +227,7 @@ export default function ComparablesPage() {
               )}
 
               {!selectedPlayer && !compLoading && (
-                <p className="text-center text-text-muted py-12">
+                <p className="text-center text-[rgba(196,184,165,0.35)] py-12">
                   Search and select a player above to see their comparable NIL profiles.
                 </p>
               )}

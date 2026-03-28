@@ -30,10 +30,10 @@ export default function EvaluateClient() {
           <Container>
             <ScrollReveal>
               <div className="text-center max-w-2xl mx-auto">
-                <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-wider text-text-primary">
+                <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-wider text-[var(--bsi-bone)]">
                   Player Evaluation
                 </h1>
-                <p className="text-text-muted text-sm md:text-base mt-3 font-body max-w-lg mx-auto">
+                <p className="text-[rgba(196,184,165,0.35)] text-sm md:text-base mt-3 font-body max-w-lg mx-auto">
                   Search any player across college baseball, MLB, NFL, and NBA.
                   See where they rank among peers with percentile-based evaluation.
                 </p>
@@ -63,29 +63,29 @@ export default function EvaluateClient() {
             <ScrollReveal delay={0.2}>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto">
                 <Card padding="md" className="text-center">
-                  <div className="text-3xl font-display font-bold text-burnt-orange mb-2">1</div>
-                  <h3 className="text-sm font-display uppercase tracking-wider text-text-primary mb-1">
+                  <div className="text-3xl font-display font-bold text-[var(--bsi-primary)] mb-2">1</div>
+                  <h3 className="text-sm font-display uppercase tracking-wider text-[var(--bsi-bone)] mb-1">
                     Search
                   </h3>
-                  <p className="text-[11px] text-text-muted">
+                  <p className="text-[11px] text-[rgba(196,184,165,0.35)]">
                     Find any player across four sports with cross-sport search.
                   </p>
                 </Card>
                 <Card padding="md" className="text-center">
-                  <div className="text-3xl font-display font-bold text-burnt-orange mb-2">2</div>
-                  <h3 className="text-sm font-display uppercase tracking-wider text-text-primary mb-1">
+                  <div className="text-3xl font-display font-bold text-[var(--bsi-primary)] mb-2">2</div>
+                  <h3 className="text-sm font-display uppercase tracking-wider text-[var(--bsi-bone)] mb-1">
                     Evaluate
                   </h3>
-                  <p className="text-[11px] text-text-muted">
+                  <p className="text-[11px] text-[rgba(196,184,165,0.35)]">
                     See percentile rankings normalized to their sport and position.
                   </p>
                 </Card>
                 <Card padding="md" className="text-center">
-                  <div className="text-3xl font-display font-bold text-burnt-orange mb-2">3</div>
-                  <h3 className="text-sm font-display uppercase tracking-wider text-text-primary mb-1">
+                  <div className="text-3xl font-display font-bold text-[var(--bsi-primary)] mb-2">3</div>
+                  <h3 className="text-sm font-display uppercase tracking-wider text-[var(--bsi-bone)] mb-1">
                     Compare
                   </h3>
-                  <p className="text-[11px] text-text-muted">
+                  <p className="text-[11px] text-[rgba(196,184,165,0.35)]">
                     Place any two players side-by-side with mirrored evaluation cards.
                   </p>
                 </Card>
@@ -99,12 +99,12 @@ export default function EvaluateClient() {
           <Container>
             <ScrollReveal delay={0.3}>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="font-display text-lg uppercase tracking-wider text-text-primary">
+                <h2 className="font-display text-lg uppercase tracking-wider text-[var(--bsi-bone)]">
                   Compare Players
                 </h2>
                 <button
                   onClick={() => setShowCompare(!showCompare)}
-                  className="text-xs font-mono text-burnt-orange hover:text-ember transition-colors uppercase tracking-wide"
+                  className="text-xs font-mono text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors uppercase tracking-wide"
                 >
                   {showCompare ? 'Hide' : 'Show'} Compare Tool
                 </button>

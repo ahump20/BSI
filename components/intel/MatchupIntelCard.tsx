@@ -52,9 +52,9 @@ function StatRow({
 }) {
   return (
     <div className="grid grid-cols-3 gap-2 py-1.5 border-b border-background-tertiary last:border-0">
-      <span className="text-text-tertiary text-xs">{label}</span>
-      <span className="font-mono text-xs text-text-primary text-right">{home}</span>
-      <span className="font-mono text-xs text-text-primary text-right">{away}</span>
+      <span className="text-[rgba(196,184,165,0.5)] text-xs">{label}</span>
+      <span className="font-mono text-xs text-[var(--bsi-bone)] text-right">{home}</span>
+      <span className="font-mono text-xs text-[var(--bsi-bone)] text-right">{away}</span>
     </div>
   );
 }
@@ -123,14 +123,14 @@ export function MatchupIntelCard({
 
   if (status === 'idle' || status === 'loading') {
     return (
-      <div className="rounded-sm border border-border-subtle bg-surface-light overflow-hidden animate-pulse">
+      <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)] overflow-hidden animate-pulse">
         <div className="flex items-center justify-between px-4 py-3 border-b border-background-tertiary">
-          <div className="h-3 w-40 bg-background-tertiary rounded-sm" />
-          <div className="h-4 w-8 bg-background-tertiary rounded-full" />
+          <div className="h-3 w-40 bg-[var(--surface-dugout)] rounded-sm" />
+          <div className="h-4 w-8 bg-[var(--surface-dugout)] rounded-full" />
         </div>
         <div className="p-4 space-y-3">
-          <div className="h-3 w-64 bg-background-tertiary rounded-sm" />
-          <div className="h-[200px] bg-background-tertiary rounded-sm" />
+          <div className="h-3 w-64 bg-[var(--surface-dugout)] rounded-sm" />
+          <div className="h-[200px] bg-[var(--surface-dugout)] rounded-sm" />
         </div>
       </div>
     );
@@ -140,28 +140,28 @@ export function MatchupIntelCard({
 
   if (status === 'upgrade') {
     return (
-      <div className="rounded-sm border border-border-subtle bg-surface-light overflow-hidden">
+      <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)] overflow-hidden">
         <div className="flex items-center justify-between px-4 py-3 border-b border-background-tertiary">
           <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-burnt-orange" />
-            <span className="font-display text-xs font-semibold uppercase tracking-widest text-text-secondary">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--bsi-primary)]" />
+            <span className="font-display text-xs font-semibold uppercase tracking-widest text-[var(--bsi-dust)]">
               Matchup Intelligence
             </span>
           </div>
-          <span className="text-[10px] font-display font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-burnt-orange/10 text-burnt-orange border border-burnt-orange/30">
+          <span className="text-[10px] font-display font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-[var(--bsi-primary)]/10 text-[var(--bsi-primary)] border border-[var(--bsi-primary)]/30">
             PRO
           </span>
         </div>
         <div className="px-4 py-8 text-center space-y-3">
-          <p className="text-text-secondary text-sm">
+          <p className="text-[var(--bsi-dust)] text-sm">
             Matchup Intelligence is a Pro feature.
           </p>
-          <p className="text-text-tertiary text-xs">
+          <p className="text-[rgba(196,184,165,0.5)] text-xs">
             Advanced sabermetrics, AI-powered matchup breakdowns, and win probability.
           </p>
           <Link
             href="/pricing"
-            className="inline-block mt-2 px-4 py-2 rounded-sm text-xs font-display font-bold uppercase tracking-wider text-white bg-burnt-orange hover:bg-ember transition-colors"
+            className="inline-block mt-2 px-4 py-2 rounded-sm text-xs font-display font-bold uppercase tracking-wider text-white bg-[var(--bsi-primary)] hover:bg-ember transition-colors"
           >
             Upgrade to Pro
           </Link>
@@ -174,23 +174,23 @@ export function MatchupIntelCard({
 
   if (status === 'error') {
     return (
-      <div className="rounded-sm border border-border-subtle bg-surface-light overflow-hidden">
+      <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)] overflow-hidden">
         <div className="flex items-center justify-between px-4 py-3 border-b border-background-tertiary">
           <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-burnt-orange" />
-            <span className="font-display text-xs font-semibold uppercase tracking-widest text-text-secondary">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--bsi-primary)]" />
+            <span className="font-display text-xs font-semibold uppercase tracking-widest text-[var(--bsi-dust)]">
               Matchup Intelligence
             </span>
           </div>
-          <span className="text-[10px] font-display font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-burnt-orange/10 text-burnt-orange border border-burnt-orange/30">
+          <span className="text-[10px] font-display font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-[var(--bsi-primary)]/10 text-[var(--bsi-primary)] border border-[var(--bsi-primary)]/30">
             PRO
           </span>
         </div>
         <div className="px-4 py-6 flex items-center justify-between">
-          <p className="text-text-tertiary text-sm">Unable to load matchup analysis.</p>
+          <p className="text-[rgba(196,184,165,0.5)] text-sm">Unable to load matchup analysis.</p>
           <button
             onClick={() => setRetryCount((c) => c + 1)}
-            className="text-xs text-burnt-orange font-semibold hover:text-ember transition-colors"
+            className="text-xs text-[var(--bsi-primary)] font-semibold hover:text-[var(--bsi-primary)] transition-colors"
           >
             Try Again
           </button>
@@ -207,16 +207,16 @@ export function MatchupIntelCard({
   const awayName = card.offense.away.teamName;
 
   return (
-    <div className="rounded-sm border border-border-subtle bg-surface-light overflow-hidden">
+    <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)] overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-background-tertiary">
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-burnt-orange" />
-          <span className="font-display text-xs font-semibold uppercase tracking-widest text-text-secondary">
+          <span className="w-1.5 h-1.5 rounded-full bg-[var(--bsi-primary)]" />
+          <span className="font-display text-xs font-semibold uppercase tracking-widest text-[var(--bsi-dust)]">
             Matchup Intelligence
           </span>
         </div>
-        <span className="text-[10px] font-display font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-burnt-orange/10 text-burnt-orange border border-burnt-orange/30">
+        <span className="text-[10px] font-display font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-[var(--bsi-primary)]/10 text-[var(--bsi-primary)] border border-[var(--bsi-primary)]/30">
           PRO
         </span>
       </div>
@@ -224,14 +224,14 @@ export function MatchupIntelCard({
       <div className="px-4 pt-3 pb-1">
         {/* Subheader */}
         {gameTime && (
-          <p className="text-text-secondary text-xs mb-3">
+          <p className="text-[var(--bsi-dust)] text-xs mb-3">
             {awayTeam} vs. {homeTeam} · {gameTime}
           </p>
         )}
 
         {/* Key Edge */}
-        <p className="text-burnt-orange font-semibold text-sm mb-4">
-          <span className="font-display uppercase tracking-wide text-[10px] text-text-tertiary mr-2">
+        <p className="text-[var(--bsi-primary)] font-semibold text-sm mb-4">
+          <span className="font-display uppercase tracking-wide text-[10px] text-[rgba(196,184,165,0.5)] mr-2">
             Key Edge
           </span>
           {card.keyEdge}
@@ -240,13 +240,13 @@ export function MatchupIntelCard({
         {/* Offense section */}
         <div className="mb-4">
           <div className="grid grid-cols-3 gap-2 mb-1">
-            <span className="font-display text-[10px] uppercase tracking-widest text-text-tertiary">
+            <span className="font-display text-[10px] uppercase tracking-widest text-[rgba(196,184,165,0.5)]">
               Offense
             </span>
-            <span className="font-display text-[10px] uppercase tracking-widest text-text-tertiary text-right truncate">
+            <span className="font-display text-[10px] uppercase tracking-widest text-[rgba(196,184,165,0.5)] text-right truncate">
               {homeName}
             </span>
-            <span className="font-display text-[10px] uppercase tracking-widest text-text-tertiary text-right truncate">
+            <span className="font-display text-[10px] uppercase tracking-widest text-[rgba(196,184,165,0.5)] text-right truncate">
               {awayName}
             </span>
           </div>
@@ -270,13 +270,13 @@ export function MatchupIntelCard({
         {/* Pitching section */}
         <div className="mb-4">
           <div className="grid grid-cols-3 gap-2 mb-1">
-            <span className="font-display text-[10px] uppercase tracking-widest text-text-tertiary">
+            <span className="font-display text-[10px] uppercase tracking-widest text-[rgba(196,184,165,0.5)]">
               Pitching
             </span>
-            <span className="font-display text-[10px] uppercase tracking-widest text-text-tertiary text-right truncate">
+            <span className="font-display text-[10px] uppercase tracking-widest text-[rgba(196,184,165,0.5)] text-right truncate">
               {homeName}
             </span>
-            <span className="font-display text-[10px] uppercase tracking-widest text-text-tertiary text-right truncate">
+            <span className="font-display text-[10px] uppercase tracking-widest text-[rgba(196,184,165,0.5)] text-right truncate">
               {awayName}
             </span>
           </div>
@@ -304,16 +304,16 @@ export function MatchupIntelCard({
 
         {/* Prediction */}
         <div className="py-2 border-t border-background-tertiary">
-          <span className="font-display text-[10px] uppercase tracking-widest text-text-tertiary block mb-1">
+          <span className="font-display text-[10px] uppercase tracking-widest text-[rgba(196,184,165,0.5)] block mb-1">
             Prediction
           </span>
-          <p className="text-text-secondary text-xs">
-            <span className="text-text-primary font-semibold">{card.prediction.favoriteTeam}</span>
+          <p className="text-[var(--bsi-dust)] text-xs">
+            <span className="text-[var(--bsi-bone)] font-semibold">{card.prediction.favoriteTeam}</span>
             {' '}win{' '}
-            <span className="font-mono text-text-primary">{card.prediction.winProbability}%</span>
+            <span className="font-mono text-[var(--bsi-bone)]">{card.prediction.winProbability}%</span>
             {' '}·{' '}
             Total{' '}
-            <span className="font-mono text-text-primary">{card.prediction.predictedTotal}</span>
+            <span className="font-mono text-[var(--bsi-bone)]">{card.prediction.predictedTotal}</span>
             {' '}runs
           </p>
         </div>
@@ -323,7 +323,7 @@ export function MatchupIntelCard({
       <div className="px-4 pb-4">
         <button
           onClick={() => setExpanded((v) => !v)}
-          className="mt-2 text-xs text-text-muted hover:text-text-secondary transition-colors flex items-center gap-1"
+          className="mt-2 text-xs text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-dust)] transition-colors flex items-center gap-1"
           aria-expanded={expanded}
         >
           Full Analysis
@@ -336,7 +336,7 @@ export function MatchupIntelCard({
 
         {expanded && (
           <div className="border-t border-background-tertiary pt-4 mt-3">
-            <p className="font-body text-text-secondary text-sm leading-relaxed">
+            <p className="font-body text-[var(--bsi-dust)] text-sm leading-relaxed">
               {card.fullAnalysis}
             </p>
           </div>

@@ -137,15 +137,15 @@ export function IntelStreamCard({
       <div style={cardStyle}>
         <style>{keyframes}</style>
         <div className="flex items-center gap-2 px-4 py-3" style={headerBorderStyle}>
-          <span className="w-1.5 h-1.5 rounded-full bg-burnt-orange animate-pulse" />
-          <span className="font-display text-[10px] font-semibold uppercase tracking-widest text-text-tertiary">
+          <span className="w-1.5 h-1.5 rounded-full bg-[var(--bsi-primary)] animate-pulse" />
+          <span className="font-display text-[10px] font-semibold uppercase tracking-widest text-[rgba(196,184,165,0.5)]">
             BLAZE INTEL
           </span>
         </div>
         <div className="px-4 py-5 space-y-3">
-          <div className="h-3 rounded-sm animate-pulse bg-background-tertiary" style={{ width: '91.666%' }} />
-          <div className="h-3 rounded-sm animate-pulse bg-background-tertiary" style={{ width: '75%' }} />
-          <div className="h-3 rounded-sm animate-pulse bg-background-tertiary" style={{ width: '83.333%' }} />
+          <div className="h-3 rounded-sm animate-pulse bg-[var(--surface-dugout)]" style={{ width: '91.666%' }} />
+          <div className="h-3 rounded-sm animate-pulse bg-[var(--surface-dugout)]" style={{ width: '75%' }} />
+          <div className="h-3 rounded-sm animate-pulse bg-[var(--surface-dugout)]" style={{ width: '83.333%' }} />
         </div>
       </div>
     );
@@ -159,11 +159,11 @@ export function IntelStreamCard({
         <style>{keyframes}</style>
         <div className="flex items-center gap-2 px-4 py-3" style={headerBorderStyle}>
           <span className="w-1.5 h-1.5 rounded-full bg-text-tertiary" />
-          <span className="font-display text-[10px] font-semibold uppercase tracking-widest text-text-tertiary">
+          <span className="font-display text-[10px] font-semibold uppercase tracking-widest text-[rgba(196,184,165,0.5)]">
             BLAZE INTEL
           </span>
         </div>
-        <p className="px-4 py-5 text-text-tertiary text-sm">Analysis unavailable.</p>
+        <p className="px-4 py-5 text-[rgba(196,184,165,0.5)] text-sm">Analysis unavailable.</p>
       </div>
     );
   }
@@ -186,7 +186,7 @@ export function IntelStreamCard({
               animation: streaming ? 'pulse 1.4s cubic-bezier(0.4,0,0.6,1) infinite' : 'none',
             }}
           />
-          <span className="font-display text-[10px] font-semibold uppercase tracking-widest text-text-tertiary">
+          <span className="font-display text-[10px] font-semibold uppercase tracking-widest text-[rgba(196,184,165,0.5)]">
             BLAZE INTEL
           </span>
         </div>
@@ -216,7 +216,7 @@ export function IntelStreamCard({
       {/* Footer — visible only when stream is complete */}
       {!streaming && (
         <div className="px-4 pb-3 flex justify-end">
-          <span className="font-mono text-[10px] text-text-tertiary">
+          <span className="font-mono text-[10px] text-[rgba(196,184,165,0.5)]">
             BSI · Powered by Claude
           </span>
         </div>

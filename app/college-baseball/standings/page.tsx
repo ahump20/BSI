@@ -15,7 +15,6 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { DataAttribution } from '@/components/ui/DataAttribution';
-import { HeroGlow } from '@/components/ui/HeroGlow';
 import { SkeletonStandingsTable } from '@/components/ui/Skeleton';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import type { RankingsTeam, RankingsResponse } from '@/lib/types/rankings';
@@ -213,7 +212,6 @@ function CollegeBaseballStandingsPageInner() {
     <>
       <div>
         <Section padding="lg" className="pt-6 relative overflow-hidden">
-          <HeroGlow position="50% 15%" spread="65%" />
           <Container>
             <ScrollReveal direction="up">
               <Breadcrumb
@@ -225,11 +223,11 @@ function CollegeBaseballStandingsPageInner() {
                 ]}
               />
               <div className="mb-8">
-                <span className="section-label block mb-3">Conference Standings</span>
+                <span className="heritage-stamp block mb-3">Conference Standings</span>
                 <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display">
-                  Conference <span className="text-gradient-blaze">Standings</span>
+                  Conference <span className="text-[var(--bsi-primary)]">Standings</span>
                 </h1>
-                <p className="text-burnt-orange font-serif italic text-lg mt-2">
+                <p className="text-[var(--bsi-primary)] font-serif italic text-lg mt-2">
                   {seasonYear} NCAA Division I baseball — updated daily.
                 </p>
               </div>
@@ -249,14 +247,14 @@ function CollegeBaseballStandingsPageInner() {
                     {undefeatedTeams.map((team) => (
                       <span
                         key={team.name || team.team}
-                        className="inline-flex items-center gap-2 text-sm text-text-primary"
+                        className="inline-flex items-center gap-2 text-sm text-[var(--bsi-bone)]"
                       >
                         <span className="font-semibold">{team.name || team.team}</span>
-                        <span className="text-text-muted font-mono text-xs">
+                        <span className="text-[rgba(196,184,165,0.35)] font-mono text-xs">
                           {team.record || `${team.wins}-0`}
                         </span>
                         {team.conference && (
-                          <span className="text-[10px] text-text-muted">({team.conference})</span>
+                          <span className="text-[10px] text-[rgba(196,184,165,0.35)]">({team.conference})</span>
                         )}
                       </span>
                     ))}
@@ -312,10 +310,10 @@ function CollegeBaseballStandingsPageInner() {
               <Card padding="lg" className="mb-6">
                 <div className="flex items-center justify-between flex-wrap gap-4">
                   <div>
-                    <h2 className="font-display text-2xl font-bold text-text-primary">
+                    <h2 className="font-display text-2xl font-bold text-[var(--bsi-bone)]">
                       {currentConf?.displayName}
                     </h2>
-                    <p className="text-text-tertiary text-sm mt-1">
+                    <p className="text-[rgba(196,184,165,0.5)] text-sm mt-1">
                       {seasonYear} Conference Standings
                     </p>
                   </div>
@@ -335,24 +333,24 @@ function CollegeBaseballStandingsPageInner() {
                   )}
                 </div>
                 {confStrength && (
-                  <div className="flex flex-wrap gap-3 mt-3 pt-3 border-t border-border-subtle">
+                  <div className="flex flex-wrap gap-3 mt-3 pt-3 border-t border-[var(--border-vintage)]">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-text-tertiary">Strength</span>
+                      <span className="text-xs text-[rgba(196,184,165,0.5)]">Strength</span>
                       <span
-                        className={`text-sm font-mono font-semibold ${confStrength.strength_index >= 70 ? 'text-success' : confStrength.strength_index >= 50 ? 'text-burnt-orange' : 'text-text-secondary'}`}
+                        className={`text-sm font-mono font-semibold ${confStrength.strength_index >= 70 ? 'text-success' : confStrength.strength_index >= 50 ? 'text-[var(--bsi-primary)]' : 'text-[var(--bsi-dust)]'}`}
                       >
                         {confStrength.strength_index.toFixed(1)}
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-text-tertiary">Avg ERA</span>
-                      <span className="text-sm font-mono text-text-primary">
+                      <span className="text-xs text-[rgba(196,184,165,0.5)]">Avg ERA</span>
+                      <span className="text-sm font-mono text-[var(--bsi-bone)]">
                         {confStrength.avg_era.toFixed(2)}
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-text-tertiary">Avg wOBA</span>
-                      <span className="text-sm font-mono text-text-primary">
+                      <span className="text-xs text-[rgba(196,184,165,0.5)]">Avg wOBA</span>
+                      <span className="text-sm font-mono text-[var(--bsi-bone)]">
                         {confStrength.avg_woba.toFixed(3)}
                       </span>
                     </div>
@@ -376,7 +374,7 @@ function CollegeBaseballStandingsPageInner() {
               {error && (
                 <Card padding="lg" className="text-center">
                   <p className="text-warning mb-4">{error}</p>
-                  <p className="text-text-tertiary text-sm">
+                  <p className="text-[rgba(196,184,165,0.5)] text-sm">
                     {isInSeason
                       ? 'Standings data is updating — check back shortly.'
                       : 'College baseball returns in February.'}
@@ -387,11 +385,11 @@ function CollegeBaseballStandingsPageInner() {
               {/* Empty State */}
               {!loading && !error && standings.length === 0 && (
                 <Card padding="lg" className="text-center">
-                  <p className="text-text-secondary mb-2">
+                  <p className="text-[var(--bsi-dust)] mb-2">
                     Standings for {currentConf?.displayName || currentConf?.shortName} update as
                     conference play begins.
                   </p>
-                  <p className="text-text-tertiary text-sm">
+                  <p className="text-[rgba(196,184,165,0.5)] text-sm">
                     {isInSeason
                       ? 'Conference play may not have started yet. Overall records update daily.'
                       : 'College baseball returns in February.'}
@@ -399,7 +397,7 @@ function CollegeBaseballStandingsPageInner() {
                   {isInSeason && (
                     <Link
                       href="/college-baseball/editorial"
-                      className="text-burnt-orange hover:text-ember text-sm mt-3 inline-block"
+                      className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] text-sm mt-3 inline-block"
                     >
                       Browse preseason editorial previews →
                     </Link>
@@ -473,19 +471,19 @@ function CollegeBaseballStandingsPageInner() {
                           {sortedStandings.map((standing, index) => (
                             <tr
                               key={standing.team?.id || index}
-                              className={`border-b border-border-subtle hover:bg-background-secondary/50 transition-colors ${
+                              className={`border-b border-[var(--border-vintage)] hover:bg-[var(--surface-dugout)]/50 transition-colors ${
                                 index < 4 ? 'bg-success/5' : ''
                               }`}
                             >
                               <td className="py-3 px-4">
-                                <span className="font-display text-lg font-bold text-burnt-orange">
+                                <span className="font-display text-lg font-bold text-[var(--bsi-primary)]">
                                   {standing.rank || index + 1}
                                 </span>
                               </td>
                               <td className="py-3 px-4">
                                 <Link
                                   href={`/college-baseball/teams/${standing.team?.id}`}
-                                  className="flex items-center gap-3 hover:text-burnt-orange transition-colors"
+                                  className="flex items-center gap-3 hover:text-[var(--bsi-primary)] transition-colors"
                                 >
                                   {standing.team?.logo && (
                                     <Image
@@ -497,14 +495,14 @@ function CollegeBaseballStandingsPageInner() {
                                       unoptimized
                                     />
                                   )}
-                                  <span className="font-semibold text-text-primary">
+                                  <span className="font-semibold text-[var(--bsi-bone)]">
                                     {standing.team?.name || standing.team?.shortName || 'Unknown'}
                                   </span>
                                 </Link>
                               </td>
                               {hasConferencePlay && (
                                 <td className="py-3 px-4 text-center">
-                                  <span className="text-text-primary">
+                                  <span className="text-[var(--bsi-bone)]">
                                     {standing.conferenceRecord?.wins > 0 ||
                                     standing.conferenceRecord?.losses > 0
                                       ? `${standing.conferenceRecord.wins}-${standing.conferenceRecord.losses}`
@@ -516,7 +514,7 @@ function CollegeBaseballStandingsPageInner() {
                                 </td>
                               )}
                               <td className="py-3 px-4 text-center">
-                                <span className="text-text-primary font-medium">
+                                <span className="text-[var(--bsi-bone)] font-medium">
                                   {standing.overallRecord?.wins ?? 0}-
                                   {standing.overallRecord?.losses ?? 0}
                                 </span>
@@ -533,7 +531,7 @@ function CollegeBaseballStandingsPageInner() {
                                       ? 'text-success'
                                       : standing.streak?.startsWith('L')
                                         ? 'text-error'
-                                        : 'text-text-tertiary'
+                                        : 'text-[rgba(196,184,165,0.5)]'
                                   }`}
                                 >
                                   {standing.streak || '—'}
@@ -547,14 +545,14 @@ function CollegeBaseballStandingsPageInner() {
                                         ? 'text-success'
                                         : standing.pointDifferential < 0
                                           ? 'text-error'
-                                          : 'text-text-tertiary'
+                                          : 'text-[rgba(196,184,165,0.5)]'
                                     }`}
                                   >
                                     {standing.pointDifferential > 0 ? '+' : ''}
                                     {standing.pointDifferential}
                                   </span>
                                 ) : (
-                                  <span className="text-text-tertiary">—</span>
+                                  <span className="text-[rgba(196,184,165,0.5)]">—</span>
                                 )}
                               </td>
                             </tr>

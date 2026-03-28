@@ -87,10 +87,10 @@ export default function BubbleWatchPage() {
             <Badge variant="warning" className="mb-4">
               {isTournamentWindow ? 'Live Rankings' : 'Coming May 2026'}
             </Badge>
-            <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-text-primary mb-4">
+            <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-[var(--bsi-bone)] mb-4">
               Bubble Watch
             </h1>
-            <p className="text-text-tertiary text-lg leading-relaxed mb-8">
+            <p className="text-[rgba(196,184,165,0.5)] text-lg leading-relaxed mb-8">
               Tracking the NCAA tournament field of 64 — who&#39;s locked in, who&#39;s out, and
               who needs a strong conference tournament to punch their ticket.
             </p>
@@ -98,15 +98,15 @@ export default function BubbleWatchPage() {
             {loading && !hasBubbleData && (
               <div className="space-y-3 mb-8">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="h-14 bg-surface-light rounded-sm animate-pulse" />
+                  <div key={i} className="h-14 bg-[var(--surface-press-box)] rounded-sm animate-pulse" />
                 ))}
               </div>
             )}
 
             {error && !hasBubbleData && (
-              <div className="mb-8 text-xs text-text-muted flex items-center gap-3">
+              <div className="mb-8 text-xs text-[rgba(196,184,165,0.35)] flex items-center gap-3">
                 <span>Could not load rankings data</span>
-                <button onClick={retry} className="text-burnt-orange hover:text-ember transition-colors">
+                <button onClick={retry} className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors">
                   Retry
                 </button>
               </div>
@@ -123,19 +123,19 @@ export default function BubbleWatchPage() {
                       className={`flex items-center justify-between gap-4 border rounded-sm p-3 ${style}`}
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <span className="text-xs font-mono w-8 shrink-0 text-text-muted">
+                        <span className="text-xs font-mono w-8 shrink-0 text-[rgba(196,184,165,0.35)]">
                           #{team.rank}
                         </span>
                         <div className="min-w-0">
-                          <p className="text-sm text-text-secondary font-medium truncate">
+                          <p className="text-sm text-[var(--bsi-dust)] font-medium truncate">
                             {team.name || team.team}
                           </p>
-                          <p className="text-[10px] text-text-muted">{team.conference}</p>
+                          <p className="text-[10px] text-[rgba(196,184,165,0.35)]">{team.conference}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 shrink-0">
                         {team.record && (
-                          <span className="text-xs font-mono text-text-muted">{team.record}</span>
+                          <span className="text-xs font-mono text-[rgba(196,184,165,0.35)]">{team.record}</span>
                         )}
                         <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm border border-current">
                           {zone}
@@ -145,25 +145,25 @@ export default function BubbleWatchPage() {
                   );
                 })}
                 {lastUpdated && (
-                  <p className="text-[10px] text-text-muted pt-3">
+                  <p className="text-[10px] text-[rgba(196,184,165,0.35)] pt-3">
                     Rankings updated {lastUpdated.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
                   </p>
                 )}
               </div>
             ) : !loading && (
-              <div className="bg-surface-light border border-dashed border-border rounded-sm p-8 text-center">
-                <p className="text-sm text-text-muted mb-2">
+              <div className="bg-[var(--surface-press-box)] border border-dashed border-border rounded-sm p-8 text-center">
+                <p className="text-sm text-[rgba(196,184,165,0.35)] mb-2">
                   Bubble data populates when conference tournaments begin in late May.
                 </p>
-                <p className="text-xs text-text-muted">
+                <p className="text-xs text-[rgba(196,184,165,0.35)]">
                   RPI, strength of schedule, and selection committee criteria will drive the bubble
                   rankings once the dataset is available.
                 </p>
               </div>
             )}
 
-            <div className="mt-8 flex flex-wrap gap-4 text-sm text-text-muted">
-              <Link href="/college-baseball/tournament" className="hover:text-text-secondary transition-colors">
+            <div className="mt-8 flex flex-wrap gap-4 text-sm text-[rgba(196,184,165,0.35)]">
+              <Link href="/college-baseball/tournament" className="hover:text-[var(--bsi-dust)] transition-colors">
                 &#8592; Tournament HQ
               </Link>
             </div>

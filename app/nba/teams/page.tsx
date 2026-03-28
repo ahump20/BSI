@@ -49,10 +49,10 @@ function SkeletonTeamCard() {
   return (
     <Card variant="default" padding="md" className="animate-pulse">
       <div className="flex items-center gap-4">
-        <div className="w-16 h-16 bg-background-tertiary rounded-full" />
+        <div className="w-16 h-16 bg-[var(--surface-dugout)] rounded-full" />
         <div className="flex-1 space-y-2">
-          <div className="h-5 bg-background-tertiary rounded-sm w-3/4" />
-          <div className="h-4 bg-background-tertiary/50 rounded-sm w-1/2" />
+          <div className="h-5 bg-[var(--surface-dugout)] rounded-sm w-3/4" />
+          <div className="h-4 bg-[var(--surface-dugout)]/50 rounded-sm w-1/2" />
         </div>
       </div>
     </Card>
@@ -93,8 +93,8 @@ function TeamCard({ team }: { team: NBATeam }) {
           </div>
 
           <div className="flex-1 min-w-0">
-            <h3 className="font-display font-bold text-text-primary text-lg truncate">{team.name}</h3>
-            <p className="text-text-secondary text-sm">{team.location}</p>
+            <h3 className="font-display font-bold text-[var(--bsi-bone)] text-lg truncate">{team.name}</h3>
+            <p className="text-[var(--bsi-dust)] text-sm">{team.location}</p>
           </div>
 
           <Badge variant="secondary" className="text-xs">
@@ -142,17 +142,17 @@ export default function NBATeamsPage() {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/nba"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 NBA
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">Teams</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">Teams</span>
             </nav>
           </Container>
         </Section>
@@ -169,13 +169,13 @@ export default function NBATeamsPage() {
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-gradient-blaze">
+              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-[var(--bsi-primary)]">
                 NBA Teams
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="text-text-secondary mt-2">
+              <p className="text-[var(--bsi-dust)] mt-2">
                 All 30 NBA teams • Click any team for full roster and schedule
               </p>
             </ScrollReveal>
@@ -194,8 +194,8 @@ export default function NBATeamsPage() {
                     onClick={() => setSelectedConference(conf)}
                     className={`px-4 py-2 rounded-sm font-semibold transition-all text-sm ${
                       selectedConference === conf
-                        ? 'bg-burnt-orange text-white'
-                        : 'bg-background-tertiary text-text-secondary hover:bg-surface-light'
+                        ? 'bg-[var(--bsi-primary)] text-white'
+                        : 'bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:bg-[var(--surface-press-box)]'
                     }`}
                   >
                     {conf === 'All' ? 'All Teams' : `${conf} Conference`}
@@ -210,12 +210,12 @@ export default function NBATeamsPage() {
                   placeholder="Search teams..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-4 py-2 bg-background-tertiary border border-border-subtle rounded-sm text-text-primary placeholder-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors"
+                  className="w-full px-4 py-2 bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm text-[var(--bsi-bone)] placeholder-[rgba(196,184,165,0.5)] focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
                 />
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-primary"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-bone)]"
                   >
                     ✕
                   </button>
@@ -231,10 +231,10 @@ export default function NBATeamsPage() {
             {error && (
               <Card variant="default" padding="lg" className="mb-6 bg-error/10 border-error/30">
                 <p className="text-error font-semibold">Error loading teams</p>
-                <p className="text-text-secondary text-sm mt-1">{error}</p>
+                <p className="text-[var(--bsi-dust)] text-sm mt-1">{error}</p>
                 <button
                   onClick={fetchTeams}
-                  className="mt-3 px-4 py-2 bg-burnt-orange text-white rounded-sm text-sm hover:bg-burnt-orange/80 transition-colors"
+                  className="mt-3 px-4 py-2 bg-[var(--bsi-primary)] text-white rounded-sm text-sm hover:bg-[var(--bsi-primary)]/80 transition-colors"
                 >
                   Try Again
                 </button>
@@ -253,7 +253,7 @@ export default function NBATeamsPage() {
                 {Object.entries(divisions).map(([conference, divs]) => (
                   <div key={conference}>
                     <ScrollReveal direction="up">
-                      <h2 className="font-display text-2xl font-bold text-burnt-orange mb-6">
+                      <h2 className="font-display text-2xl font-bold text-[var(--bsi-primary)] mb-6">
                         {conference} Conference
                       </h2>
                     </ScrollReveal>
@@ -265,8 +265,8 @@ export default function NBATeamsPage() {
                         return (
                           <ScrollReveal key={division} direction="up" delay={divIndex * 100}>
                             <div>
-                              <h3 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
-                                <span className="w-2 h-2 bg-burnt-orange rounded-full" />
+                              <h3 className="text-lg font-semibold text-[var(--bsi-bone)] mb-4 flex items-center gap-2">
+                                <span className="w-2 h-2 bg-[var(--bsi-primary)] rounded-full" />
                                 {division} Division
                               </h3>
 
@@ -288,7 +288,7 @@ export default function NBATeamsPage() {
               <>
                 {filteredTeams.length === 0 ? (
                   <Card variant="default" padding="lg" className="text-center">
-                    <p className="text-text-secondary">
+                    <p className="text-[var(--bsi-dust)]">
                       {searchQuery
                         ? `No teams found matching "${searchQuery}"`
                         : 'No teams found'}
@@ -307,7 +307,7 @@ export default function NBATeamsPage() {
             )}
 
             {/* Data Source Footer */}
-            <div className="mt-8 pt-4 border-t border-border-subtle">
+            <div className="mt-8 pt-4 border-t border-[var(--border-vintage)]">
               <DataSourceBadge source="ESPN NBA API" timestamp={lastUpdatedStr} />
             </div>
           </Container>
@@ -319,19 +319,19 @@ export default function NBATeamsPage() {
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/nba/games"
-                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
+                className="px-6 py-3 bg-[var(--surface-dugout)] rounded-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-all"
               >
                 Live Scores →
               </Link>
               <Link
                 href="/nba/standings"
-                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
+                className="px-6 py-3 bg-[var(--surface-dugout)] rounded-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-all"
               >
                 Standings →
               </Link>
               <Link
                 href="/nba/news"
-                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
+                className="px-6 py-3 bg-[var(--surface-dugout)] rounded-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-all"
               >
                 Latest News →
               </Link>

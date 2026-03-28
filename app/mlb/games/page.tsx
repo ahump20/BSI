@@ -16,10 +16,10 @@ export default function MLBGamesPage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-midnight flex items-center justify-center">
+    <div className="min-h-screen bg-[var(--surface-scoreboard)] flex items-center justify-center">
       <div className="text-center">
-        <div className="w-8 h-8 border-2 border-burnt-orange border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-        <p className="text-text-secondary">Redirecting to scores...</p>
+        <div className="w-8 h-8 border-2 border-[var(--bsi-primary)] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+        <p className="text-[var(--bsi-dust)]">Redirecting to scores...</p>
       </div>
     </div>
   );

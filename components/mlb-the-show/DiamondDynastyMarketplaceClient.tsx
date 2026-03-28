@@ -150,7 +150,7 @@ export function DiamondDynastyMarketplaceClient() {
                     value={search}
                     onChange={(event) => setSearch(event.target.value)}
                     placeholder="Aaron Judge, Yankees, Live Series..."
-                    className="w-full rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-2 text-sm text-[var(--bsi-bone)] outline-none transition-colors focus:border-burnt-orange/45"
+                    className="w-full rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-2 text-sm text-[var(--bsi-bone)] outline-none transition-colors focus:border-[var(--bsi-primary)]/45"
                   />
                 </label>
 
@@ -208,7 +208,7 @@ export function DiamondDynastyMarketplaceClient() {
                   <div className="overflow-x-auto">
                     <table className="w-full min-w-[900px]">
                       <thead>
-                        <tr className="border-b border-burnt-orange/35 text-left text-xs uppercase tracking-[0.18em] text-[var(--bsi-dust)]">
+                        <tr className="border-b border-[var(--bsi-primary)]/35 text-left text-xs uppercase tracking-[0.18em] text-[var(--bsi-dust)]">
                           <th className="px-3 py-3">Card</th>
                           <th className="px-3 py-3">Team</th>
                           <th className="px-3 py-3">Series</th>
@@ -226,7 +226,7 @@ export function DiamondDynastyMarketplaceClient() {
                           return (
                             <tr key={card.id} className="border-b border-[var(--border-vintage)] text-sm text-[var(--bsi-bone)]">
                               <td className="px-3 py-3">
-                                <Link href={buildCardHref(card.id)} className="block hover:text-burnt-orange transition-colors">
+                                <Link href={buildCardHref(card.id)} className="block hover:text-[var(--bsi-primary)] transition-colors">
                                   <div className="font-semibold">{card.name}</div>
                                   <div className="text-xs uppercase tracking-[0.18em] text-[var(--bsi-dust)]">
                                     {card.rarity} • {card.setName ?? 'No set label'}
@@ -236,7 +236,7 @@ export function DiamondDynastyMarketplaceClient() {
                               <td className="px-3 py-3">{card.team}</td>
                               <td className="px-3 py-3">{card.series}</td>
                               <td className="px-3 py-3">{card.primaryPosition}</td>
-                              <td className="px-3 py-3 font-mono text-burnt-orange">{card.overall}</td>
+                              <td className="px-3 py-3 font-mono text-[var(--bsi-primary)]">{card.overall}</td>
                               <td className="px-3 py-3 font-mono">{formatCompactStub(card.market?.bestSellNow)}</td>
                               <td className="px-3 py-3 font-mono">{formatCompactStub(card.market?.bestBuyNow)}</td>
                               <td className="px-3 py-3 font-mono">{card.market?.spread !== null ? card.market?.spread?.toLocaleString() : 'N/A'}</td>
@@ -305,7 +305,7 @@ function Select({
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="w-full rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-2 text-sm text-[var(--bsi-bone)] outline-none transition-colors focus:border-burnt-orange/45"
+        className="w-full rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-2 text-sm text-[var(--bsi-bone)] outline-none transition-colors focus:border-[var(--bsi-primary)]/45"
       >
         <option value="">All</option>
         {options.map((option) => (

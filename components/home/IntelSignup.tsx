@@ -68,14 +68,14 @@ export function IntelSignup({ sport, onSignup }: IntelSignupProps = {}) {
     return (
       <div className="glass-default rounded-sm p-4 border border-[var(--bsi-primary)]/20 mb-4">
         <p className="text-sm text-[var(--bsi-primary)] font-medium">You&apos;re in.</p>
-        <p className="text-xs text-text-muted mt-1">Roster-market intelligence, delivered first.</p>
+        <p className="text-xs text-[rgba(196,184,165,0.35)] mt-1">Roster-market intelligence, delivered first.</p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="glass-default rounded-sm p-4 border border-border-subtle mb-4">
-      <p className="text-sm font-display text-text-primary uppercase tracking-wide mb-3">
+    <form onSubmit={handleSubmit} className="glass-default rounded-sm p-4 border border-[var(--border-vintage)] mb-4">
+      <p className="text-sm font-display text-[var(--bsi-bone)] uppercase tracking-wide mb-3">
         Get Portal &amp; Draft Intel
       </p>
 
@@ -87,7 +87,7 @@ export function IntelSignup({ sport, onSignup }: IntelSignupProps = {}) {
           placeholder="you@email.com"
           required
           aria-label="Email address for intel signup"
-          className="flex-1 min-w-0 bg-surface-light border border-border rounded-sm px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-burnt-orange/50 transition-colors"
+          className="flex-1 min-w-0 bg-[var(--surface-press-box)] border border-border rounded-sm px-3 py-2 text-sm text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)] focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-colors"
         />
         <button
           type="submit"
@@ -103,9 +103,9 @@ export function IntelSignup({ sport, onSignup }: IntelSignupProps = {}) {
           type="checkbox"
           checked={consent}
           onChange={(e) => setConsent(e.target.checked)}
-          className="rounded-sm border-border-strong bg-surface-light text-burnt-orange focus:ring-burnt-orange/50 h-3.5 w-3.5"
+          className="rounded-sm border-[rgba(140,98,57,0.5)] bg-[var(--surface-press-box)] text-[var(--bsi-primary)] focus:ring-[var(--bsi-primary)]/50 h-3.5 w-3.5"
         />
-        <span className="text-[11px] text-text-muted">Portal &amp; draft intelligence — I agree to receive emails</span>
+        <span className="text-[11px] text-[rgba(196,184,165,0.35)]">Portal &amp; draft intelligence — I agree to receive emails</span>
       </label>
 
       {state === 'error' && errorMsg && (

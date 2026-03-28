@@ -46,37 +46,37 @@ export function FeedbackButton() {
 
   return (
     <>
-      <button onClick={() => setOpen(true)} className="fixed bottom-24 md:bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-burnt-orange hover:bg-burnt-orange/80 text-white shadow-lg flex items-center justify-center transition-colors" aria-label="Send feedback">
+      <button onClick={() => setOpen(true)} className="fixed bottom-24 md:bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-[var(--bsi-primary)] hover:bg-[var(--bsi-primary)]/80 text-white shadow-lg flex items-center justify-center transition-colors" aria-label="Send feedback">
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
       </button>
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={(e) => { if (e.target === e.currentTarget) setOpen(false); }}>
-          <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="feedback-heading" className="bg-background-secondary border border-border rounded-sm p-6 w-full max-w-md">
+          <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="feedback-heading" className="bg-[var(--surface-dugout)] border border-border rounded-sm p-6 w-full max-w-md">
             {submitted ? (
-              <div className="text-center py-8"><div aria-hidden="true" className="text-4xl mb-3">&#10003;</div><p className="text-text-primary font-medium">Thanks for your feedback!</p></div>
+              <div className="text-center py-8"><div aria-hidden="true" className="text-4xl mb-3">&#10003;</div><p className="text-[var(--bsi-bone)] font-medium">Thanks for your feedback!</p></div>
             ) : (
               <>
                 <div className="flex items-center justify-between mb-4">
-                  <h2 id="feedback-heading" className="text-lg font-bold text-text-primary">Send Feedback</h2>
-                  <button onClick={() => setOpen(false)} className="text-text-muted hover:text-text-primary" aria-label="Close">&times;</button>
+                  <h2 id="feedback-heading" className="text-lg font-bold text-[var(--bsi-bone)]">Send Feedback</h2>
+                  <button onClick={() => setOpen(false)} className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)]" aria-label="Close">&times;</button>
                 </div>
                 <div className="mb-4">
-                  <label className="block text-xs text-text-muted mb-1.5 uppercase tracking-wider">Category</label>
+                  <label className="block text-xs text-[rgba(196,184,165,0.35)] mb-1.5 uppercase tracking-wider">Category</label>
                   <div className="flex flex-wrap gap-2">
-                    {CATEGORIES.map((c) => (<button key={c} onClick={() => setCategory(c)} className={`px-3 py-1 rounded-sm text-sm transition-colors ${category === c ? 'bg-burnt-orange text-white' : 'bg-surface text-text-muted hover:text-text-primary'}`}>{c}</button>))}
+                    {CATEGORIES.map((c) => (<button key={c} onClick={() => setCategory(c)} className={`px-3 py-1 rounded-sm text-sm transition-colors ${category === c ? 'bg-[var(--bsi-primary)] text-white' : 'bg-surface text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)]'}`}>{c}</button>))}
                   </div>
                 </div>
                 <div className="mb-4">
-                  <label className="block text-xs text-text-muted mb-1.5 uppercase tracking-wider">Rating</label>
+                  <label className="block text-xs text-[rgba(196,184,165,0.35)] mb-1.5 uppercase tracking-wider">Rating</label>
                   <div className="flex gap-1">
-                    {[1, 2, 3, 4, 5].map((n) => (<button key={n} onClick={() => setRating(n)} className={`text-2xl transition-colors ${n <= rating ? 'text-burnt-orange' : 'text-text-muted'}`} aria-label={`Rate ${n} of 5`}>&#9733;</button>))}
+                    {[1, 2, 3, 4, 5].map((n) => (<button key={n} onClick={() => setRating(n)} className={`text-2xl transition-colors ${n <= rating ? 'text-[var(--bsi-primary)]' : 'text-[rgba(196,184,165,0.35)]'}`} aria-label={`Rate ${n} of 5`}>&#9733;</button>))}
                   </div>
                 </div>
                 <div className="mb-4">
-                  <label className="block text-xs text-text-muted mb-1.5 uppercase tracking-wider">Your Feedback</label>
-                  <textarea value={text} onChange={(e) => setText(e.target.value)} rows={4} className="w-full bg-surface border border-border-strong rounded-sm p-3 text-text-primary text-sm placeholder:text-text-muted resize-none focus:outline-none focus:border-burnt-orange" placeholder="Tell us what you think..." />
+                  <label className="block text-xs text-[rgba(196,184,165,0.35)] mb-1.5 uppercase tracking-wider">Your Feedback</label>
+                  <textarea value={text} onChange={(e) => setText(e.target.value)} rows={4} className="w-full bg-surface border border-[rgba(140,98,57,0.5)] rounded-sm p-3 text-[var(--bsi-bone)] text-sm placeholder:text-[rgba(196,184,165,0.35)] resize-none focus:outline-none focus:border-[var(--bsi-primary)]" placeholder="Tell us what you think..." />
                 </div>
-                <button onClick={submit} disabled={submitting || !text.trim()} className="w-full py-2.5 bg-burnt-orange hover:bg-burnt-orange/80 disabled:opacity-50 text-white rounded-sm font-medium transition-colors">{submitting ? 'Sending...' : 'Send Feedback'}</button>
+                <button onClick={submit} disabled={submitting || !text.trim()} className="w-full py-2.5 bg-[var(--bsi-primary)] hover:bg-[var(--bsi-primary)]/80 disabled:opacity-50 text-white rounded-sm font-medium transition-colors">{submitting ? 'Sending...' : 'Send Feedback'}</button>
               </>
             )}
           </div>

@@ -47,18 +47,18 @@ export default function PlayerEvaluationClient() {
           <Container>
             {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-sm mb-6">
-              <Link href="/" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <Link href="/" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 Home
               </Link>
-              <span className="text-text-muted">/</span>
-              <Link href="/evaluate" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <Link href="/evaluate" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 Evaluate
               </Link>
-              <span className="text-text-muted">/</span>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
               {data ? (
-                <span className="text-text-secondary">{data.player.name}</span>
+                <span className="text-[var(--bsi-dust)]">{data.player.name}</span>
               ) : (
-                <span className="text-text-muted">
+                <span className="text-[rgba(196,184,165,0.35)]">
                   {SPORT_LABELS[sport as EvaluationSport] || sport}
                 </span>
               )}
@@ -70,15 +70,15 @@ export default function PlayerEvaluationClient() {
             {/* Error */}
             {error && !loading && (
               <div className="text-center py-12">
-                <h2 className="font-display text-xl font-bold text-text-primary mb-2">
+                <h2 className="font-display text-xl font-bold text-[var(--bsi-bone)] mb-2">
                   Player Not Found
                 </h2>
-                <p className="text-text-muted text-sm mb-4">
+                <p className="text-[rgba(196,184,165,0.35)] text-sm mb-4">
                   {error}
                 </p>
                 <Link
                   href="/evaluate"
-                  className="text-burnt-orange hover:text-ember transition-colors text-sm"
+                  className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors text-sm"
                 >
                   Back to Evaluate
                 </Link>
@@ -92,7 +92,7 @@ export default function PlayerEvaluationClient() {
 
                 {/* Compare Section */}
                 <div>
-                  <h2 className="font-display text-lg uppercase tracking-wider text-text-primary mb-4">
+                  <h2 className="font-display text-lg uppercase tracking-wider text-[var(--bsi-bone)] mb-4">
                     Compare
                   </h2>
                   <EvaluationCompare
@@ -104,7 +104,7 @@ export default function PlayerEvaluationClient() {
 
             {/* Data Attribution */}
             {data?.meta && (
-              <p className="text-[10px] text-text-muted mt-6 font-mono">
+              <p className="text-[10px] text-[rgba(196,184,165,0.35)] mt-6 font-mono">
                 Source: {data.meta.source} · Updated: {new Date(data.meta.fetched_at).toLocaleString('en-US', { timeZone: 'America/Chicago' })} CT
               </p>
             )}

@@ -123,7 +123,7 @@ export function MobileMenu({ isOpen, onClose, items, actions }: MobileMenuProps)
       {/* Backdrop */}
       <div
         className={cn(
-          'fixed inset-0 bg-midnight/80 backdrop-blur-sm z-modal transition-opacity duration-300',
+          'fixed inset-0 bg-[var(--surface-scoreboard)]/80 backdrop-blur-sm z-modal transition-opacity duration-300',
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         )}
         onClick={onClose}
@@ -139,19 +139,19 @@ export function MobileMenu({ isOpen, onClose, items, actions }: MobileMenuProps)
         aria-label="Navigation menu"
         onKeyDown={handleKeyDown}
         className={cn(
-          'fixed top-0 right-0 h-full w-full max-w-sm bg-charcoal z-modal',
-          'border-l border-border-subtle shadow-2xl',
+          'fixed top-0 right-0 h-full w-full max-w-sm bg-[var(--surface-dugout)] z-modal',
+          'border-l border-[var(--border-vintage)] shadow-2xl',
           'transition-transform duration-300 ease-out',
           isOpen ? 'translate-x-0' : 'translate-x-full'
         )}
       >
         {/* Header */}
-        <div className="flex items-center justify-between h-16 px-6 border-b border-border-subtle">
-          <span className="font-display text-lg font-bold text-text-primary">Menu</span>
+        <div className="flex items-center justify-between h-16 px-6 border-b border-[var(--border-vintage)]">
+          <span className="font-display text-lg font-bold text-[var(--bsi-bone)]">Menu</span>
           <button
             ref={closeButtonRef}
             onClick={onClose}
-            className="p-2 -mr-2 text-text-secondary hover:text-text-primary transition-colors"
+            className="p-2 -mr-2 text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] transition-colors"
             aria-label="Close menu"
           >
             <CloseIcon />
@@ -170,8 +170,8 @@ export function MobileMenu({ isOpen, onClose, items, actions }: MobileMenuProps)
                     'text-lg font-medium transition-colors',
                     'hover:bg-graphite',
                     isActive(item.href)
-                      ? 'text-burnt-orange bg-burnt-orange/10'
-                      : 'text-text-primary'
+                      ? 'text-[var(--bsi-primary)] bg-[var(--bsi-primary)]/10'
+                      : 'text-[var(--bsi-bone)]'
                   )}
                   style={{
                     animationDelay: `${index * 50}ms`,
@@ -179,7 +179,7 @@ export function MobileMenu({ isOpen, onClose, items, actions }: MobileMenuProps)
                 >
                   <span>{item.label}</span>
                   {item.badge && (
-                    <span className="px-2 py-0.5 text-xs font-semibold rounded-sm bg-burnt-orange/20 text-burnt-orange">
+                    <span className="px-2 py-0.5 text-xs font-semibold rounded-sm bg-[var(--bsi-primary)]/20 text-[var(--bsi-primary)]">
                       {item.badge}
                     </span>
                   )}
@@ -196,8 +196,8 @@ export function MobileMenu({ isOpen, onClose, items, actions }: MobileMenuProps)
         {actions && <div className="px-6 py-6">{actions}</div>}
 
         {/* Footer */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-border-subtle">
-          <p className="text-xs text-text-muted text-center" suppressHydrationWarning>
+        <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-[var(--border-vintage)]">
+          <p className="text-xs text-[rgba(196,184,165,0.35)] text-center" suppressHydrationWarning>
             © {new Date().getFullYear()} Blaze Sports Intel
           </p>
         </div>

@@ -20,8 +20,8 @@ const paddingClasses: Record<string, string> = {
 
 const bgClasses: Record<string, string> = {
   default: '',
-  charcoal: 'bg-background-secondary',
-  midnight: 'bg-background-primary',
+  charcoal: 'bg-[var(--surface-dugout)]',
+  midnight: 'bg-[var(--surface-scoreboard)]',
   cream: 'bg-[#FAF8F5]',
 };
 

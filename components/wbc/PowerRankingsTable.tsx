@@ -4,15 +4,15 @@ const TIER_COLORS = {
   1: { bg: 'bg-[var(--bsi-warning)]/10', border: 'border-[var(--bsi-warning)]/20', text: 'text-[var(--bsi-warning)]', label: 'Tier 1' },
   2: { bg: 'bg-[var(--bsi-dust)]/10', border: 'border-[var(--bsi-dust)]/20', text: 'text-[var(--bsi-dust)]', label: 'Tier 2' },
   3: { bg: 'bg-[var(--bsi-warning)]/10', border: 'border-[var(--bsi-warning)]/20', text: 'text-[var(--bsi-warning)]', label: 'Tier 3' },
-  4: { bg: 'bg-surface-light/5', border: 'border-border-subtle', text: 'text-text-muted', label: 'Tier 4' },
-  5: { bg: 'bg-surface-light/5', border: 'border-border-subtle', text: 'text-text-muted', label: 'Tier 5' },
+  4: { bg: 'bg-[var(--surface-press-box)]/5', border: 'border-[var(--border-vintage)]', text: 'text-[rgba(196,184,165,0.35)]', label: 'Tier 4' },
+  5: { bg: 'bg-[var(--surface-press-box)]/5', border: 'border-[var(--border-vintage)]', text: 'text-[rgba(196,184,165,0.35)]', label: 'Tier 5' },
 } as const;
 
 const POOL_DANGER: Record<string, { label: string; color: string }> = {
   D: { label: 'POOL OF DEATH', color: 'text-ember bg-ember/10 border-ember/20' },
   C: { label: 'HIGH', color: 'text-[var(--bsi-warning)] bg-[var(--bsi-warning)]/10 border-[var(--bsi-warning)]/20' },
-  B: { label: 'MED-HIGH', color: 'text-text-secondary bg-surface-light border-border-subtle' },
-  A: { label: 'MEDIUM', color: 'text-text-secondary bg-surface-light border-border-subtle' },
+  B: { label: 'MED-HIGH', color: 'text-[var(--bsi-dust)] bg-[var(--surface-press-box)] border-[var(--border-vintage)]' },
+  A: { label: 'MEDIUM', color: 'text-[var(--bsi-dust)] bg-[var(--surface-press-box)] border-[var(--border-vintage)]' },
 };
 
 interface RankingRow {
@@ -53,9 +53,9 @@ function PctBar({ value, max = 100 }: { value: number; max?: number }) {
   const width = Math.min((value / max) * 100, 100);
   return (
     <div className="flex items-center gap-2">
-      <div className="flex-1 h-1 bg-surface-light rounded-full overflow-hidden">
+      <div className="flex-1 h-1 bg-[var(--surface-press-box)] rounded-full overflow-hidden">
         <div
-          className="h-full bg-burnt-orange rounded-full transition-all"
+          className="h-full bg-[var(--bsi-primary)] rounded-full transition-all"
           style={{ width: `${width}%` }}
         />
       </div>
@@ -69,10 +69,10 @@ export function PowerRankingsTable() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="font-display text-2xl font-bold uppercase tracking-wide text-text-primary">
+          <h2 className="font-display text-2xl font-bold uppercase tracking-wide text-[var(--bsi-bone)]">
             Power Rankings
           </h2>
-          <p className="text-text-muted text-sm mt-1">BSI probability model · 200K simulations · pre-tournament baseline</p>
+          <p className="text-[rgba(196,184,165,0.35)] text-sm mt-1">BSI probability model · 200K simulations · pre-tournament baseline</p>
         </div>
         <div className="hidden sm:flex gap-2 flex-wrap justify-end">
           {Object.entries(TIER_COLORS).map(([tier, style]) => (
@@ -90,14 +90,14 @@ export function PowerRankingsTable() {
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full" aria-label="WBC 2026 Power Rankings">
           <thead>
-            <tr className="border-b-2 border-burnt-orange">
-              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold text-sm w-12">#</th>
-              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold text-sm">Team</th>
-              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold text-sm">Pool</th>
-              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold text-sm min-w-[120px]">QF%</th>
-              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold text-sm min-w-[120px]">SF%</th>
-              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold text-sm min-w-[120px]">Final%</th>
-              <th scope="col" className="text-right p-3 text-text-tertiary font-semibold text-sm">Title%</th>
+            <tr className="border-b-2 border-[var(--bsi-primary)]">
+              <th scope="col" className="text-left p-3 text-[rgba(196,184,165,0.5)] font-semibold text-sm w-12">#</th>
+              <th scope="col" className="text-left p-3 text-[rgba(196,184,165,0.5)] font-semibold text-sm">Team</th>
+              <th scope="col" className="text-left p-3 text-[rgba(196,184,165,0.5)] font-semibold text-sm">Pool</th>
+              <th scope="col" className="text-left p-3 text-[rgba(196,184,165,0.5)] font-semibold text-sm min-w-[120px]">QF%</th>
+              <th scope="col" className="text-left p-3 text-[rgba(196,184,165,0.5)] font-semibold text-sm min-w-[120px]">SF%</th>
+              <th scope="col" className="text-left p-3 text-[rgba(196,184,165,0.5)] font-semibold text-sm min-w-[120px]">Final%</th>
+              <th scope="col" className="text-right p-3 text-[rgba(196,184,165,0.5)] font-semibold text-sm">Title%</th>
             </tr>
           </thead>
           <tbody>
@@ -107,14 +107,14 @@ export function PowerRankingsTable() {
               return (
                 <tr
                   key={row.team}
-                  className="border-b border-border-subtle hover:bg-surface-light/30 transition-colors"
+                  className="border-b border-[var(--border-vintage)] hover:bg-[var(--surface-press-box)]/30 transition-colors"
                 >
                   <td className="p-3">
                     <span className={`font-bold ${tier.text}`}>{row.rank}</span>
                   </td>
                   <td className="p-3">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-text-primary">{row.team}</span>
+                      <span className="font-semibold text-[var(--bsi-bone)]">{row.team}</span>
                       <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-sm border ${tier.bg} ${tier.border} ${tier.text}`}>
                         {tier.label.toUpperCase()}
                       </span>
@@ -122,7 +122,7 @@ export function PowerRankingsTable() {
                   </td>
                   <td className="p-3">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-text-secondary font-mono text-sm">Pool {row.pool}</span>
+                      <span className="text-[var(--bsi-dust)] font-mono text-sm">Pool {row.pool}</span>
                       {row.pool === 'D' && (
                         <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-sm border hidden lg:inline ${poolDanger.color}`}>
                           ☠
@@ -134,7 +134,7 @@ export function PowerRankingsTable() {
                   <td className="p-3"><PctBar value={row.sfPct} /></td>
                   <td className="p-3"><PctBar value={row.finalPct} /></td>
                   <td className="p-3 text-right">
-                    <span className="font-bold text-burnt-orange tabular-nums">{row.titlePct}%</span>
+                    <span className="font-bold text-[var(--bsi-primary)] tabular-nums">{row.titlePct}%</span>
                   </td>
                 </tr>
               );
@@ -150,25 +150,25 @@ export function PowerRankingsTable() {
           return (
             <div
               key={row.team}
-              className="flex items-center justify-between p-3 rounded-sm bg-surface-light/20 border border-border-subtle"
+              className="flex items-center justify-between p-3 rounded-sm bg-[var(--surface-press-box)]/20 border border-[var(--border-vintage)]"
             >
               <div className="flex items-center gap-3">
                 <span className={`text-lg font-bold ${tier.text} w-8 tabular-nums`}>{row.rank}</span>
                 <div>
-                  <div className="font-semibold text-text-primary text-sm">{row.team}</div>
-                  <div className="text-text-muted text-xs">Pool {row.pool}</div>
+                  <div className="font-semibold text-[var(--bsi-bone)] text-sm">{row.team}</div>
+                  <div className="text-[rgba(196,184,165,0.35)] text-xs">Pool {row.pool}</div>
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-burnt-orange font-bold">{row.titlePct}%</div>
-                <div className="text-text-muted text-xs">title</div>
+                <div className="text-[var(--bsi-primary)] font-bold">{row.titlePct}%</div>
+                <div className="text-[rgba(196,184,165,0.35)] text-xs">title</div>
               </div>
             </div>
           );
         })}
       </div>
 
-      <p className="text-text-muted text-xs mt-4 pt-4 border-t border-border-subtle">
+      <p className="text-[rgba(196,184,165,0.35)] text-xs mt-4 pt-4 border-t border-[var(--border-vintage)]">
         BSI probability model (200K Monte Carlo simulations) · Pre-tournament baseline · March 4, 2026
       </p>
     </div>

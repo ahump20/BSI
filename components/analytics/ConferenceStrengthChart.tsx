@@ -72,18 +72,18 @@ export function ConferenceStrengthChart({
     return (
       <div key={conf.conference}>
         <button
-          className="flex items-center gap-3 w-full py-2 hover:bg-surface-light transition-colors rounded-sm px-1 -mx-1"
+          className="flex items-center gap-3 w-full py-2 hover:bg-[var(--surface-press-box)] transition-colors rounded-sm px-1 -mx-1"
           onClick={() => setExpandedConf(isExpanded ? null : conf.conference)}
         >
           <span className={`text-xs font-mono w-4 tabular-nums ${
-            globalRank <= 3 ? 'text-burnt-orange font-bold' : 'text-text-muted'
+            globalRank <= 3 ? 'text-[var(--bsi-primary)] font-bold' : 'text-[rgba(196,184,165,0.35)]'
           }`}>
             {globalRank}
           </span>
-          <span className="text-sm text-text-primary w-24 shrink-0 truncate text-left">
+          <span className="text-sm text-[var(--bsi-bone)] w-24 shrink-0 truncate text-left">
             {conf.conference}
           </span>
-          <div className="flex-1 h-[10px] rounded-full bg-surface-light overflow-hidden">
+          <div className="flex-1 h-[10px] rounded-full bg-[var(--surface-press-box)] overflow-hidden">
             <div
               className="h-full rounded-full transition-all duration-700"
               style={{
@@ -105,18 +105,18 @@ export function ConferenceStrengthChart({
             <SubBadge label="OPS" value={conf.avg_ops.toFixed(3)} color={getPercentileColor(opsPctl, true)} />
           </div>
           {conf.is_power === 1 && (
-            <span className="text-[8px] text-burnt-orange font-mono uppercase tracking-wider">
+            <span className="text-[8px] text-[var(--bsi-primary)] font-mono uppercase tracking-wider">
               P5
             </span>
           )}
-          <span className="text-[10px] text-text-muted ml-1">
+          <span className="text-[10px] text-[rgba(196,184,165,0.35)] ml-1">
             {isExpanded ? '▲' : '▼'}
           </span>
         </button>
 
         {/* Expanded detail row */}
         {isExpanded && (
-          <div className="ml-8 mb-2 pl-4 border-l border-border-subtle py-2 space-y-2">
+          <div className="ml-8 mb-2 pl-4 border-l border-[var(--border-vintage)] py-2 space-y-2">
             <div className="grid grid-cols-3 gap-3">
               <SubMetricBar label="ERA" value={conf.avg_era} pctl={eraPctl} format={(v) => v.toFixed(2)} higherIsBetter={false} />
               <SubMetricBar label="wOBA" value={conf.avg_woba} pctl={wobaPctl} format={(v) => v.toFixed(3)} higherIsBetter={true} />
@@ -131,19 +131,19 @@ export function ConferenceStrengthChart({
   let globalRank = 0;
 
   return (
-    <div className={`bg-background-primary border border-border-subtle rounded-sm overflow-hidden ${className}`}>
-      <div className="px-5 py-4 border-b border-border-subtle" style={{ borderTop: '2px solid var(--svt-accent, #BF5700)' }}>
-        <h3 className="font-display text-base uppercase tracking-wider text-text-primary">
+    <div className={`bg-[var(--surface-scoreboard)] border border-[var(--border-vintage)] rounded-sm overflow-hidden ${className}`}>
+      <div className="px-5 py-4 border-b border-[var(--border-vintage)]" style={{ borderTop: '2px solid var(--svt-accent, #BF5700)' }}>
+        <h3 className="font-display text-base uppercase tracking-wider text-[var(--bsi-bone)]">
           Conference Strength Index
         </h3>
-        <p className="text-[10px] text-text-muted mt-1 font-mono">
+        <p className="text-[10px] text-[rgba(196,184,165,0.35)] mt-1 font-mono">
           Composite of inter-conference record, RPI, offense, and pitching · Click to expand
         </p>
       </div>
 
       {/* Horizontal bar chart */}
       {displayData.length > 3 && (
-        <div className="px-3 py-4 border-b border-border-subtle" style={{ background: SAVANT_CHART_COLORS.bg }}>
+        <div className="px-3 py-4 border-b border-[var(--border-vintage)]" style={{ background: SAVANT_CHART_COLORS.bg }}>
           <ResponsiveContainer width="100%" height={Math.max(200, displayData.length * 32)}>
             <BarChart
               data={sorted.map(c => ({ ...c, name: c.conference }))}
@@ -194,9 +194,9 @@ export function ConferenceStrengthChart({
         {/* Tier separator */}
         {showTierSeparator && (
           <div className="flex items-center gap-3 py-2">
-            <div className="flex-1 border-t border-border-subtle" />
-            <span className="text-[9px] font-mono text-text-muted uppercase tracking-widest">Mid-Major</span>
-            <div className="flex-1 border-t border-border-subtle" />
+            <div className="flex-1 border-t border-[var(--border-vintage)]" />
+            <span className="text-[9px] font-mono text-[rgba(196,184,165,0.35)] uppercase tracking-widest">Mid-Major</span>
+            <div className="flex-1 border-t border-[var(--border-vintage)]" />
           </div>
         )}
 
@@ -208,29 +208,29 @@ export function ConferenceStrengthChart({
       </div>
 
       {isPro && displayData.length > 0 && (
-        <div className="px-5 py-3 border-t border-border-subtle">
+        <div className="px-5 py-3 border-t border-[var(--border-vintage)]">
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
-              <span className="text-[10px] text-text-muted font-display uppercase tracking-widest block">Avg ERA</span>
-              <span className="text-sm text-text-primary font-mono">{(displayData.reduce((s, c) => s + c.avg_era, 0) / displayData.length).toFixed(2)}</span>
+              <span className="text-[10px] text-[rgba(196,184,165,0.35)] font-display uppercase tracking-widest block">Avg ERA</span>
+              <span className="text-sm text-[var(--bsi-bone)] font-mono">{(displayData.reduce((s, c) => s + c.avg_era, 0) / displayData.length).toFixed(2)}</span>
             </div>
             <div>
-              <span className="text-[10px] text-text-muted font-display uppercase tracking-widest block">Avg wOBA</span>
-              <span className="text-sm text-text-primary font-mono">{(displayData.reduce((s, c) => s + c.avg_woba, 0) / displayData.length).toFixed(3)}</span>
+              <span className="text-[10px] text-[rgba(196,184,165,0.35)] font-display uppercase tracking-widest block">Avg wOBA</span>
+              <span className="text-sm text-[var(--bsi-bone)] font-mono">{(displayData.reduce((s, c) => s + c.avg_woba, 0) / displayData.length).toFixed(3)}</span>
             </div>
             <div>
-              <span className="text-[10px] text-text-muted font-display uppercase tracking-widest block">Avg OPS</span>
-              <span className="text-sm text-text-primary font-mono">{(displayData.reduce((s, c) => s + c.avg_ops, 0) / displayData.length).toFixed(3)}</span>
+              <span className="text-[10px] text-[rgba(196,184,165,0.35)] font-display uppercase tracking-widest block">Avg OPS</span>
+              <span className="text-sm text-[var(--bsi-bone)] font-mono">{(displayData.reduce((s, c) => s + c.avg_ops, 0) / displayData.length).toFixed(3)}</span>
             </div>
           </div>
         </div>
       )}
 
       {!isPro && (total ?? data.length) > 5 && (
-        <div className="px-5 py-3 border-t border-border-subtle text-center">
+        <div className="px-5 py-3 border-t border-[var(--border-vintage)] text-center">
           <a
             href="/pricing"
-            className="text-xs text-burnt-orange hover:text-ember font-medium transition-colors"
+            className="text-xs text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] font-medium transition-colors"
           >
             Upgrade to Pro for all {total ?? data.length} conferences
           </a>
@@ -250,7 +250,7 @@ function SubBadge({ label, value, color }: { label: string; value: string; color
       className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-[9px] font-mono"
       style={{ backgroundColor: withAlpha(color, 0.09), color }}
     >
-      <span className="text-text-muted">{label}</span>
+      <span className="text-[rgba(196,184,165,0.35)]">{label}</span>
       {value}
     </span>
   );
@@ -273,10 +273,10 @@ function SubMetricBar({
   return (
     <div>
       <div className="flex items-center justify-between mb-1">
-        <span className="text-[9px] text-text-muted font-mono uppercase">{label}</span>
+        <span className="text-[9px] text-[rgba(196,184,165,0.35)] font-mono uppercase">{label}</span>
         <span className="text-xs font-mono font-bold" style={{ color }}>{format(value)}</span>
       </div>
-      <div className="h-[4px] rounded-full bg-surface-light overflow-hidden">
+      <div className="h-[4px] rounded-full bg-[var(--surface-press-box)] overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-500"
           style={{ width: `${Math.max(5, pctl)}%`, backgroundColor: color }}

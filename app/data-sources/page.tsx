@@ -2,7 +2,6 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
-import { HeroGlow } from '@/components/ui/HeroGlow';
 import { Footer } from '@/components/layout-ds/Footer';
 
 export const metadata: Metadata = {
@@ -113,14 +112,13 @@ export default function DataSourcesPage() {
     <>
       <div>
         <Section padding="lg" className="pt-6 relative overflow-hidden">
-          <HeroGlow position="30% 20%" intensity={0.05} spread="60%" />
           <Container>
             <div className="max-w-4xl mx-auto relative">
-              <span className="section-label block mb-4">Transparency</span>
-              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-text-primary mb-3">
+              <span className="heritage-stamp block mb-4">Transparency</span>
+              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-[var(--bsi-bone)] mb-3">
                 Data Sources
               </h1>
-              <p className="text-burnt-orange font-serif italic text-lg leading-relaxed mb-12 max-w-2xl">
+              <p className="text-[var(--bsi-primary)] font-serif italic text-lg leading-relaxed mb-12 max-w-2xl">
                 Every feed on BSI includes timestamps and source attribution. This page documents
                 exactly where the data comes from, how often it refreshes, and what to expect
                 during edge-case windows like Spring Training and early-season coverage.
@@ -128,14 +126,14 @@ export default function DataSourcesPage() {
 
               {/* Providers */}
               <section className="mb-16">
-                <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-text-primary mb-6">
+                <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-[var(--bsi-bone)] mb-6">
                   Providers
                 </h2>
                 <div className="space-y-4">
                   {PROVIDERS.map((p) => (
                     <div
                       key={p.name}
-                      className="bg-surface-light border border-border-subtle rounded-sm p-5 sm:p-6"
+                      className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-5 sm:p-6"
                     >
                       <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
                         <div>
@@ -143,17 +141,17 @@ export default function DataSourcesPage() {
                             href={p.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-text-primary font-semibold hover:text-burnt-orange transition-colors"
+                            className="text-[var(--bsi-bone)] font-semibold hover:text-[var(--bsi-primary)] transition-colors"
                           >
                             {p.name}
                           </a>
-                          <p className="text-text-muted text-sm mt-0.5">{p.role}</p>
+                          <p className="text-[rgba(196,184,165,0.35)] text-sm mt-0.5">{p.role}</p>
                         </div>
                         <div className="flex flex-wrap gap-1.5">
                           {p.sports.map((s) => (
                             <span
                               key={s}
-                              className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-burnt-orange bg-burnt-orange/10 rounded-sm"
+                              className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--bsi-primary)] bg-[var(--bsi-primary)]/10 rounded-sm"
                             >
                               {s}
                             </span>
@@ -162,13 +160,13 @@ export default function DataSourcesPage() {
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                         <div>
-                          <span className="text-text-muted text-xs uppercase tracking-wider">Refresh</span>
-                          <p className="text-text-secondary mt-0.5">{p.refresh}</p>
+                          <span className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider">Refresh</span>
+                          <p className="text-[var(--bsi-dust)] mt-0.5">{p.refresh}</p>
                         </div>
                         {p.notes && (
                           <div>
-                            <span className="text-text-muted text-xs uppercase tracking-wider">Notes</span>
-                            <p className="text-text-secondary mt-0.5">{p.notes}</p>
+                            <span className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider">Notes</span>
+                            <p className="text-[var(--bsi-dust)] mt-0.5">{p.notes}</p>
                           </div>
                         )}
                       </div>
@@ -179,23 +177,23 @@ export default function DataSourcesPage() {
 
               {/* Internal Systems */}
               <section className="mb-16">
-                <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-text-primary mb-6">
+                <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-[var(--bsi-bone)] mb-6">
                   Internal Systems
                 </h2>
                 <div className="space-y-4">
                   {INTERNAL_SYSTEMS.map((p) => (
-                    <div key={p.name} className="bg-surface-light border border-border-subtle rounded-sm p-5 sm:p-6">
+                    <div key={p.name} className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-5 sm:p-6">
                       <div className="flex flex-wrap items-center gap-3 mb-3">
-                        <h3 className="font-display text-lg font-bold text-text-primary">{p.name}</h3>
+                        <h3 className="font-display text-lg font-bold text-[var(--bsi-bone)]">{p.name}</h3>
                         {p.sports.map((s) => (
-                          <span key={s} className="text-[10px] uppercase tracking-[0.15em] px-2 py-0.5 border border-border-subtle rounded-sm text-text-muted">{s}</span>
+                          <span key={s} className="text-[10px] uppercase tracking-[0.15em] px-2 py-0.5 border border-[var(--border-vintage)] rounded-sm text-[rgba(196,184,165,0.35)]">{s}</span>
                         ))}
                       </div>
-                      <p className="text-text-secondary text-sm mb-3">{p.role}</p>
-                      <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-text-muted">
+                      <p className="text-[var(--bsi-dust)] text-sm mb-3">{p.role}</p>
+                      <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-[rgba(196,184,165,0.35)]">
                         <div>
                           <span className="uppercase tracking-wider">Refresh</span>
-                          <p className="text-text-secondary mt-0.5">{p.refresh}</p>
+                          <p className="text-[var(--bsi-dust)] mt-0.5">{p.refresh}</p>
                         </div>
                       </div>
                     </div>
@@ -205,23 +203,23 @@ export default function DataSourcesPage() {
 
               {/* Storage Layers */}
               <section className="mb-16">
-                <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-text-primary mb-6">
+                <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-[var(--bsi-bone)] mb-6">
                   Storage Layers
                 </h2>
-                <div className="bg-surface-light border border-border-subtle rounded-sm overflow-hidden">
-                  <div className="grid grid-cols-[1fr_2fr_2fr] gap-px bg-surface-light text-xs uppercase tracking-wider text-text-muted font-medium">
-                    <div className="bg-background-primary p-3 sm:p-4">Layer</div>
-                    <div className="bg-background-primary p-3 sm:p-4">Purpose</div>
-                    <div className="bg-background-primary p-3 sm:p-4">TTL / Lifecycle</div>
+                <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm overflow-hidden">
+                  <div className="grid grid-cols-[1fr_2fr_2fr] gap-px bg-[var(--surface-press-box)] text-xs uppercase tracking-wider text-[rgba(196,184,165,0.35)] font-medium">
+                    <div className="bg-[var(--surface-scoreboard)] p-3 sm:p-4">Layer</div>
+                    <div className="bg-[var(--surface-scoreboard)] p-3 sm:p-4">Purpose</div>
+                    <div className="bg-[var(--surface-scoreboard)] p-3 sm:p-4">TTL / Lifecycle</div>
                   </div>
                   {STORAGE_TIERS.map((t) => (
                     <div
                       key={t.layer}
-                      className="grid grid-cols-[1fr_2fr_2fr] gap-px bg-surface-light text-sm"
+                      className="grid grid-cols-[1fr_2fr_2fr] gap-px bg-[var(--surface-press-box)] text-sm"
                     >
-                      <div className="bg-background-primary p-3 sm:p-4 text-text-primary font-medium">{t.layer}</div>
-                      <div className="bg-background-primary p-3 sm:p-4 text-text-tertiary">{t.purpose}</div>
-                      <div className="bg-background-primary p-3 sm:p-4 text-text-muted">{t.ttls}</div>
+                      <div className="bg-[var(--surface-scoreboard)] p-3 sm:p-4 text-[var(--bsi-bone)] font-medium">{t.layer}</div>
+                      <div className="bg-[var(--surface-scoreboard)] p-3 sm:p-4 text-[rgba(196,184,165,0.5)]">{t.purpose}</div>
+                      <div className="bg-[var(--surface-scoreboard)] p-3 sm:p-4 text-[rgba(196,184,165,0.35)]">{t.ttls}</div>
                     </div>
                   ))}
                 </div>
@@ -229,19 +227,19 @@ export default function DataSourcesPage() {
 
               {/* Seasonal Caveats */}
               <section className="mb-16">
-                <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-text-primary mb-6">
+                <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-[var(--bsi-bone)] mb-6">
                   Seasonal Caveats
                 </h2>
                 <div className="space-y-3">
                   {SEASONAL_CAVEATS.map((c) => (
                     <div
                       key={c.sport}
-                      className="flex gap-4 items-start bg-surface-light border border-border-subtle rounded-sm p-4 sm:p-5"
+                      className="flex gap-4 items-start bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4 sm:p-5"
                     >
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-burnt-orange mt-0.5 shrink-0 w-20">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--bsi-primary)] mt-0.5 shrink-0 w-20">
                         {c.sport}
                       </span>
-                      <p className="text-sm text-text-tertiary leading-relaxed">{c.caveat}</p>
+                      <p className="text-sm text-[rgba(196,184,165,0.5)] leading-relaxed">{c.caveat}</p>
                     </div>
                   ))}
                 </div>
@@ -249,11 +247,11 @@ export default function DataSourcesPage() {
 
               {/* Philosophy */}
               <section className="mb-16">
-                <div className="bg-surface-light border border-border-subtle rounded-sm p-6 sm:p-8">
-                  <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-text-primary mb-4">
+                <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-6 sm:p-8">
+                  <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-[var(--bsi-bone)] mb-4">
                     How It Works
                   </h2>
-                  <div className="text-sm text-text-tertiary leading-relaxed space-y-3">
+                  <div className="text-sm text-[rgba(196,184,165,0.5)] leading-relaxed space-y-3">
                     <p>
                       External APIs are never called from your browser. A Cloudflare Worker sits
                       between you and every data provider — it fetches, transforms, caches, and
@@ -261,10 +259,10 @@ export default function DataSourcesPage() {
                       sports so client requests read from KV in under 10ms.
                     </p>
                     <p>
-                      Every API response carries a <code className="text-text-secondary bg-surface-light px-1.5 py-0.5 rounded-sm text-xs">meta</code> object
-                      with <code className="text-text-secondary bg-surface-light px-1.5 py-0.5 rounded-sm text-xs">source</code>,{' '}
-                      <code className="text-text-secondary bg-surface-light px-1.5 py-0.5 rounded-sm text-xs">fetched_at</code>, and{' '}
-                      <code className="text-text-secondary bg-surface-light px-1.5 py-0.5 rounded-sm text-xs">timezone</code>.
+                      Every API response carries a <code className="text-[var(--bsi-dust)] bg-[var(--surface-press-box)] px-1.5 py-0.5 rounded-sm text-xs">meta</code> object
+                      with <code className="text-[var(--bsi-dust)] bg-[var(--surface-press-box)] px-1.5 py-0.5 rounded-sm text-xs">source</code>,{' '}
+                      <code className="text-[var(--bsi-dust)] bg-[var(--surface-press-box)] px-1.5 py-0.5 rounded-sm text-xs">fetched_at</code>, and{' '}
+                      <code className="text-[var(--bsi-dust)] bg-[var(--surface-press-box)] px-1.5 py-0.5 rounded-sm text-xs">timezone</code>.
                       The UI always shows when data was last updated and where it came from.
                     </p>
                     <p>
@@ -277,11 +275,11 @@ export default function DataSourcesPage() {
               </section>
 
               {/* Cross-link to expanded methodology */}
-              <div className="bg-burnt-orange/5 border border-burnt-orange/20 rounded-sm p-5 sm:p-6 mb-12">
-                <p className="text-sm text-text-tertiary leading-relaxed">
+              <div className="bg-[var(--bsi-primary)]/5 border border-[var(--bsi-primary)]/20 rounded-sm p-5 sm:p-6 mb-12">
+                <p className="text-sm text-[rgba(196,184,165,0.5)] leading-relaxed">
                   For cross-reference methodology, API response times, and freshness guarantees,
                   see the expanded{' '}
-                  <Link href="/models/data-quality" className="text-burnt-orange hover:text-ember font-semibold transition-colors">
+                  <Link href="/models/data-quality" className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] font-semibold transition-colors">
                     Data Quality & Sources
                   </Link>{' '}
                   page in the Models hub.
@@ -289,14 +287,14 @@ export default function DataSourcesPage() {
               </div>
 
               {/* Back links */}
-              <div className="flex flex-wrap gap-4 text-sm text-text-muted">
-                <Link href="/college-baseball/savant" className="hover:text-text-secondary transition-colors">
+              <div className="flex flex-wrap gap-4 text-sm text-[rgba(196,184,165,0.35)]">
+                <Link href="/college-baseball/savant" className="hover:text-[var(--bsi-dust)] transition-colors">
                   &#8592; BSI Savant
                 </Link>
-                <Link href="/college-baseball/savant/methodology" className="hover:text-text-secondary transition-colors">
+                <Link href="/college-baseball/savant/methodology" className="hover:text-[var(--bsi-dust)] transition-colors">
                   Methodology
                 </Link>
-                <Link href="/about" className="hover:text-text-secondary transition-colors">
+                <Link href="/about" className="hover:text-[var(--bsi-dust)] transition-colors">
                   About BSI
                 </Link>
               </div>

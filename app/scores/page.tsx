@@ -170,7 +170,7 @@ function GameStateBadge({ state, detail }: { state: string; detail: string }) {
   if (state === 'final') {
     return <span className="text-bsi-dust/60 text-xs font-semibold">FINAL</span>;
   }
-  return <span className="text-burnt-orange text-xs">{detail || 'Upcoming'}</span>;
+  return <span className="text-[var(--bsi-primary)] text-xs">{detail || 'Upcoming'}</span>;
 }
 
 // ── Mini Score Card ──
@@ -243,7 +243,7 @@ function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) 
     <div className={`rounded-sm border p-3.5 transition-all ${
       game.state === 'live'
         ? 'border-success/30 bg-[linear-gradient(180deg,rgba(16,185,129,0.09)_0%,rgba(14,15,18,0.96)_100%)]'
-        : 'border-border-vintage bg-[linear-gradient(180deg,rgba(191,87,0,0.08)_0%,rgba(20,20,20,0.94)_100%)] hover:border-burnt-orange/50'
+        : 'border-border-vintage bg-[linear-gradient(180deg,rgba(191,87,0,0.08)_0%,rgba(20,20,20,0.94)_100%)] hover:border-[var(--bsi-primary)]/50'
     }`}>
       <div className="mb-3 flex items-start justify-between gap-3">
         <GameStateBadge state={game.state} detail={game.detail} />
@@ -307,7 +307,7 @@ function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) 
         <div className="mt-2 pt-2 border-t border-border-vintage">
           <button
             onClick={handleIntelToggle}
-            className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-burnt-orange hover:text-ember transition-colors"
+            className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
           >
             <svg viewBox="0 0 16 16" fill="currentColor" className="w-3 h-3">
               <path d="M8 1a7 7 0 100 14A7 7 0 008 1zm-.75 3.5a.75.75 0 011.5 0v4a.75.75 0 01-1.5 0v-4zM8 11a.75.75 0 100 1.5.75.75 0 000-1.5z" />
@@ -317,10 +317,10 @@ function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) 
 
           {/* Expanded intel panel */}
           {intelOpen && (
-            <div className="mt-2 max-h-48 overflow-y-auto rounded-sm bg-midnight/50 p-2">
+            <div className="mt-2 max-h-48 overflow-y-auto rounded-sm bg-[var(--surface-scoreboard)]/50 p-2">
               {intelLoading && (
                 <div className="flex items-center gap-2 text-bsi-dust/60 text-xs">
-                  <span className="w-1.5 h-1.5 bg-burnt-orange rounded-full animate-pulse" />
+                  <span className="w-1.5 h-1.5 bg-[var(--bsi-primary)] rounded-full animate-pulse" />
                   Loading pregame intel...
                 </div>
               )}
@@ -331,7 +331,7 @@ function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) 
                 <p className="text-xs text-bsi-dust leading-relaxed whitespace-pre-wrap">{intelText}</p>
               )}
               {intelCached && !intelLoading && (
-                <span className="inline-block mt-1.5 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider bg-burnt-orange/20 text-burnt-orange rounded-sm">
+                <span className="inline-block mt-1.5 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider bg-[var(--bsi-primary)]/20 text-[var(--bsi-primary)] rounded-sm">
                   Cached
                 </span>
               )}
@@ -858,7 +858,7 @@ function ScoresHubContent() {
                         </h2>
                         <Link
                           href={sport.href}
-                          className="text-burnt-orange text-sm font-semibold hover:text-ember transition-colors"
+                          className="text-[var(--bsi-primary)] text-sm font-semibold hover:text-[var(--bsi-primary)] transition-colors"
                         >
                           View All
                         </Link>
@@ -894,7 +894,7 @@ function ScoresHubContent() {
                     </h2>
                     <Link
                       href={activeSportData.href}
-                      className="text-burnt-orange text-sm font-semibold hover:text-ember transition-colors"
+                      className="text-[var(--bsi-primary)] text-sm font-semibold hover:text-[var(--bsi-primary)] transition-colors"
                     >
                       View All {activeSportData.todayCount} {activeSportData.todayCount === 1 ? 'Game' : 'Games'}
                     </Link>
@@ -913,7 +913,7 @@ function ScoresHubContent() {
                   </p>
                   <Link
                     href={activeSportData.href}
-                    className="text-burnt-orange text-sm mt-3 inline-block hover:text-ember transition-colors"
+                    className="text-[var(--bsi-primary)] text-sm mt-3 inline-block hover:text-[var(--bsi-primary)] transition-colors"
                   >
                     View {activeSportData.name} Hub
                   </Link>
@@ -975,7 +975,7 @@ function ScoresHubContent() {
                             <span className="text-bsi-dust/70">
                               {sport.todayCount > 0 ? `${sport.todayCount} ${sport.todayCount === 1 ? 'game' : 'games'} on deck` : sport.season}
                             </span>
-                            <span className="text-burnt-orange">Open hub →</span>
+                            <span className="text-[var(--bsi-primary)]">Open hub →</span>
                           </div>
                         </div>
                       </Link>
@@ -999,7 +999,7 @@ function ScoresHubContent() {
                       <Link
                         key={link.href}
                         href={link.href}
-                        className="px-3 py-1.5 bg-surface-dugout hover:bg-burnt-orange/20 text-bsi-dust hover:text-burnt-orange rounded-sm text-xs font-medium transition-colors"
+                        className="px-3 py-1.5 bg-surface-dugout hover:bg-[var(--bsi-primary)]/20 text-bsi-dust hover:text-[var(--bsi-primary)] rounded-sm text-xs font-medium transition-colors"
                       >
                         {link.label}
                       </Link>

@@ -43,14 +43,14 @@ export default function SpringTrainingStandingsPage() {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/mlb" className="text-text-tertiary hover:text-burnt-orange transition-colors">MLB</Link>
-              <span className="text-text-tertiary">/</span>
-              <Link href="/mlb/spring-training" className="text-text-tertiary hover:text-burnt-orange transition-colors">Spring Training</Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">Standings</span>
+              <Link href="/mlb" className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors">MLB</Link>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <Link href="/mlb/spring-training" className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors">Spring Training</Link>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">Standings</span>
             </nav>
           </Container>
         </Section>
@@ -59,10 +59,10 @@ export default function SpringTrainingStandingsPage() {
           <Container>
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
               <div>
-                <h1 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display text-gradient-blaze">
+                <h1 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display text-[var(--bsi-primary)]">
                   Spring Training Standings
                 </h1>
-                <p className="text-text-secondary mt-2">
+                <p className="text-[var(--bsi-dust)] mt-2">
                   2026 Cactus &amp; Grapefruit League standings
                 </p>
               </div>
@@ -92,7 +92,7 @@ export default function SpringTrainingStandingsPage() {
                       teams={data?.grapefruit ?? []}
                     />
                   )}
-                  <div className="pt-4 border-t border-border-subtle">
+                  <div className="pt-4 border-t border-[var(--border-vintage)]">
                     <DataSourceBadge
                       source={data?.meta?.dataSource ?? 'ESPN'}
                       timestamp={formatTimestamp(data?.meta?.lastUpdated)}

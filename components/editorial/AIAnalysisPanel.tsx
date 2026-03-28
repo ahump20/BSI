@@ -92,11 +92,11 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
   return (
     <div className="fixed inset-0 z-50 flex justify-end" role="dialog" aria-modal="true" aria-labelledby="ai-panel-heading">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} aria-hidden="true" />
-      <div className="relative w-full max-w-[480px] bg-background-primary border-l border-border overflow-y-auto">
+      <div className="relative w-full max-w-[480px] bg-[var(--surface-scoreboard)] border-l border-border overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-background-primary border-b border-border p-4 flex items-center justify-between">
-          <h2 id="ai-panel-heading" className="font-display text-lg uppercase tracking-wider text-text-primary">AI Game Analysis</h2>
-          <button onClick={onClose} aria-label="Close AI analysis panel" className="text-text-muted hover:text-text-primary transition-colors">
+        <div className="sticky top-0 bg-[var(--surface-scoreboard)] border-b border-border p-4 flex items-center justify-between">
+          <h2 id="ai-panel-heading" className="font-display text-lg uppercase tracking-wider text-[var(--bsi-bone)]">AI Game Analysis</h2>
+          <button onClick={onClose} aria-label="Close AI analysis panel" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] transition-colors">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -104,16 +104,16 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
         </div>
 
         {/* Model toggle */}
-        <div className="p-4 border-b border-border-subtle">
-          <div className="flex bg-background-secondary rounded-sm overflow-hidden">
+        <div className="p-4 border-b border-[var(--border-vintage)]">
+          <div className="flex bg-[var(--surface-dugout)] rounded-sm overflow-hidden">
             {(['claude', 'gemini'] as const).map((m) => (
               <button
                 key={m}
                 onClick={() => setSelectedModel(m)}
                 className={`flex-1 py-2 text-xs font-mono uppercase tracking-wider transition-colors ${
                   selectedModel === m
-                    ? 'bg-burnt-orange text-white'
-                    : 'text-text-muted hover:text-text-secondary'
+                    ? 'bg-[var(--bsi-primary)] text-white'
+                    : 'text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-dust)]'
                 }`}
               >
                 {m === 'claude' ? 'Claude' : 'Gemini'}
@@ -131,14 +131,14 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
                 disabled={loading}
                 className={`w-full text-left p-3 rounded-sm border transition-colors ${
                   selectedPrompt === prompt.id
-                    ? 'border-burnt-orange/40 bg-burnt-orange/5'
-                    : 'border-border-subtle hover:border-border bg-background-secondary'
+                    ? 'border-[var(--bsi-primary)]/40 bg-[var(--bsi-primary)]/5'
+                    : 'border-[var(--border-vintage)] hover:border-border bg-[var(--surface-dugout)]'
                 } ${loading ? 'opacity-50 cursor-wait' : ''}`}
               >
-                <div className="font-mono text-xs uppercase tracking-wider text-burnt-orange mb-1">
+                <div className="font-mono text-xs uppercase tracking-wider text-[var(--bsi-primary)] mb-1">
                   {prompt.label}
                 </div>
-                <div className="text-text-muted text-xs">{prompt.description}</div>
+                <div className="text-[rgba(196,184,165,0.35)] text-xs">{prompt.description}</div>
               </button>
               {prompt.id === 'custom' && (
                 <div className="mt-2 space-y-2">
@@ -146,12 +146,12 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
                     value={customQuestion}
                     onChange={(e) => setCustomQuestion(e.target.value)}
                     placeholder="What do you want to know about this game?"
-                    className="w-full bg-background-secondary border border-border rounded-sm p-3 text-sm text-text-primary placeholder:text-text-muted resize-none h-20 focus:outline-none focus:border-burnt-orange/30"
+                    className="w-full bg-[var(--surface-dugout)] border border-border rounded-sm p-3 text-sm text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)] resize-none h-20 focus:outline-none focus:border-[var(--bsi-primary)]/30"
                   />
                   <button
                     onClick={() => handleAnalyze('custom')}
                     disabled={loading || !customQuestion.trim()}
-                    className="w-full py-2 bg-burnt-orange hover:bg-ember disabled:opacity-40 text-white text-xs font-mono uppercase tracking-wider rounded-sm transition-colors"
+                    className="w-full py-2 bg-[var(--bsi-primary)] hover:bg-ember disabled:opacity-40 text-white text-xs font-mono uppercase tracking-wider rounded-sm transition-colors"
                   >
                     {loading ? 'Analyzing...' : 'Analyze'}
                   </button>
@@ -163,11 +163,11 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
 
         {/* Response */}
         {(loading || response || error) && (
-          <div className="p-4 border-t border-border-subtle">
+          <div className="p-4 border-t border-[var(--border-vintage)]">
             {loading && (
               <div className="space-y-3">
                 {[...Array(4)].map((_, i) => (
-                  <div key={i} className="h-4 bg-burnt-orange/10 rounded-sm animate-pulse" style={{ width: `${80 - i * 15}%` }} />
+                  <div key={i} className="h-4 bg-[var(--bsi-primary)]/10 rounded-sm animate-pulse" style={{ width: `${80 - i * 15}%` }} />
                 ))}
               </div>
             )}
@@ -176,7 +176,7 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
                 <p className="text-[var(--bsi-danger)]/80 text-sm">{error}</p>
                 <button
                   onClick={() => selectedPrompt && handleAnalyze(selectedPrompt)}
-                  className="text-xs font-mono uppercase tracking-wider text-burnt-orange hover:text-ember transition-colors"
+                  className="text-xs font-mono uppercase tracking-wider text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
                 >
                   Retry
                 </button>
@@ -185,12 +185,12 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
             {response && (
               <div className="space-y-4">
                 <div className="prose prose-invert prose-sm max-w-none">
-                  <div className="text-text-secondary text-sm leading-relaxed whitespace-pre-wrap">{response}</div>
+                  <div className="text-[var(--bsi-dust)] text-sm leading-relaxed whitespace-pre-wrap">{response}</div>
                 </div>
                 <div className="flex gap-2">
                   <button
                     onClick={handleCopy}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider text-text-muted hover:text-burnt-orange border border-border rounded-sm transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] border border-border rounded-sm transition-colors"
                   >
                     Copy
                   </button>

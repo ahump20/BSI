@@ -6,7 +6,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { HeroGlow } from '@/components/ui/HeroGlow';
 import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
 
@@ -107,14 +106,13 @@ export default function ModelsHubPage() {
         </Section>
 
         <Section padding="lg" className="relative overflow-hidden">
-          <HeroGlow />
           <Container>
             <div className="max-w-3xl">
-              <span className="section-label">Methodology</span>
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display mb-4 text-text-primary">
+              <span className="heritage-stamp">Methodology</span>
+              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display mb-4 text-[var(--bsi-bone)]">
                 Models & Methodology
               </h1>
-              <p className="text-burnt-orange font-serif italic text-lg leading-relaxed">
+              <p className="text-[var(--bsi-primary)] font-serif italic text-lg leading-relaxed">
                 Every BSI model documents its inputs, assumptions, validation approach, and failure
                 modes. No black boxes. If you can&#39;t see how it works, you shouldn&#39;t trust it.
               </p>
@@ -124,12 +122,12 @@ export default function ModelsHubPage() {
 
         {/* Live health status bar */}
         {hasHealthData && (
-          <Section padding="sm" className="border-b border-border-subtle">
+          <Section padding="sm" className="border-b border-[var(--border-vintage)]">
             <Container>
-              <div className="flex items-center gap-4 text-xs text-text-muted">
+              <div className="flex items-center gap-4 text-xs text-[rgba(196,184,165,0.35)]">
                 <span className="inline-block w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
                 <span>
-                  Latest accuracy: <span className="text-text-secondary font-mono">{(latestAccuracy!.accuracy * 100).toFixed(1)}%</span>
+                  Latest accuracy: <span className="text-[var(--bsi-dust)] font-mono">{(latestAccuracy!.accuracy * 100).toFixed(1)}%</span>
                   {' '}({latestAccuracy!.sport} — week {latestAccuracy!.week})
                 </span>
                 {lastUpdated && (
@@ -143,9 +141,9 @@ export default function ModelsHubPage() {
         )}
 
         {loading && !hasHealthData && (
-          <Section padding="sm" className="border-b border-border-subtle">
+          <Section padding="sm" className="border-b border-[var(--border-vintage)]">
             <Container>
-              <div className="flex items-center gap-3 text-xs text-text-muted">
+              <div className="flex items-center gap-3 text-xs text-[rgba(196,184,165,0.35)]">
                 <div className="w-1.5 h-1.5 rounded-full bg-surface-medium animate-pulse" />
                 <span>Loading model health data...</span>
               </div>
@@ -154,11 +152,11 @@ export default function ModelsHubPage() {
         )}
 
         {error && !hasHealthData && (
-          <Section padding="sm" className="border-b border-border-subtle">
+          <Section padding="sm" className="border-b border-[var(--border-vintage)]">
             <Container>
               <div className="flex items-center gap-3 text-xs">
                 <span className="text-error/60">Model health unavailable</span>
-                <button onClick={retry} className="text-burnt-orange hover:text-ember transition-colors">
+                <button onClick={retry} className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors">
                   Retry
                 </button>
               </div>
@@ -173,22 +171,22 @@ export default function ModelsHubPage() {
                 const status = statusStyles[model.status];
                 return (
                   <Link key={model.slug} href={`/models/${model.slug}`} className="block group">
-                    <Card variant="default" padding="lg" className="h-full hover:border-border-accent hover:bg-surface-light transition-all">
+                    <Card variant="default" padding="lg" className="h-full hover:border-border-accent hover:bg-[var(--surface-press-box)] transition-all">
                       <div className="flex items-start justify-between mb-3">
                         <Badge variant={status.variant} size="sm">{status.label}</Badge>
-                        <span className="text-[10px] font-mono text-text-muted">{model.version}</span>
+                        <span className="text-[10px] font-mono text-[rgba(196,184,165,0.35)]">{model.version}</span>
                       </div>
-                      <h2 className="font-display text-lg font-bold uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mb-2">
+                      <h2 className="font-display text-lg font-bold uppercase tracking-wide text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors mb-2">
                         {model.title}
                       </h2>
-                      <p className="text-sm text-text-muted leading-relaxed mb-4">
+                      <p className="text-sm text-[rgba(196,184,165,0.35)] leading-relaxed mb-4">
                         {model.description}
                       </p>
                       <div className="flex flex-wrap gap-1.5">
                         {model.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-text-muted bg-surface-light rounded-sm"
+                            className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[rgba(196,184,165,0.35)] bg-[var(--surface-press-box)] rounded-sm"
                           >
                             {tag}
                           </span>
@@ -204,11 +202,11 @@ export default function ModelsHubPage() {
 
         <Section padding="md" borderTop>
           <Container>
-            <div className="bg-surface-light border border-border-subtle rounded-sm p-6 sm:p-8">
-              <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-text-primary mb-4">
+            <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-6 sm:p-8">
+              <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-[var(--bsi-bone)] mb-4">
                 Why Document This?
               </h2>
-              <div className="text-sm text-text-tertiary leading-relaxed space-y-3 max-w-2xl">
+              <div className="text-sm text-[rgba(196,184,165,0.5)] leading-relaxed space-y-3 max-w-2xl">
                 <p>
                   Most sports analytics platforms market model outputs — win probability numbers,
                   projection percentages — without explaining what feeds them. That makes the numbers

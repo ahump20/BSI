@@ -222,9 +222,9 @@ export default function CollegeBaseballPlayersPage() {
               <div className="mb-8">
                 <span className="kicker block mb-2">Player Database and Draft Prospects</span>
                 <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display">
-                  College Baseball <span className="text-gradient-blaze">Players</span>
+                  College Baseball <span className="text-[var(--bsi-primary)]">Players</span>
                 </h1>
-                <p className="text-text-secondary mt-2 max-w-2xl">
+                <p className="text-[var(--bsi-dust)] mt-2 max-w-2xl">
                   Individual player statistics, MLB Draft prospect tracking, and scouting reports.
                   Practice to Play. Blaze Data Wins the Day.
                 </p>
@@ -243,12 +243,12 @@ export default function CollegeBaseballPlayersPage() {
                       onChange={(e) => setFilters({ ...filters, search: e.target.value })}
                       onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                       placeholder="Search by player name, team, or hometown..."
-                      className="flex-1 px-4 py-2 bg-background-secondary border border-border-subtle rounded-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors"
+                      className="flex-1 px-4 py-2 bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.5)] focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
                       aria-label="Search players"
                     />
                     <button
                       onClick={handleSearch}
-                      className="px-6 py-2 bg-burnt-orange text-white font-semibold rounded-sm hover:bg-burnt-orange/90 transition-colors"
+                      className="px-6 py-2 bg-[var(--bsi-primary)] text-white font-semibold rounded-sm hover:bg-[var(--bsi-primary)]/90 transition-colors"
                       aria-label="Search"
                     >
                       Search
@@ -260,7 +260,7 @@ export default function CollegeBaseballPlayersPage() {
                     <select
                       value={filters.team}
                       onChange={(e) => setFilters({ ...filters, team: e.target.value })}
-                      className="px-3 py-2 bg-background-secondary border border-border-subtle rounded-sm text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
+                      className="px-3 py-2 bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm text-[var(--bsi-bone)] focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
                       aria-label="Filter by team"
                     >
                       {conferences.map((conf) => (
@@ -273,7 +273,7 @@ export default function CollegeBaseballPlayersPage() {
                     <select
                       value={filters.position}
                       onChange={(e) => setFilters({ ...filters, position: e.target.value })}
-                      className="px-3 py-2 bg-background-secondary border border-border-subtle rounded-sm text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
+                      className="px-3 py-2 bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm text-[var(--bsi-bone)] focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
                       aria-label="Filter by position"
                     >
                       {positions.map((pos) => (
@@ -286,7 +286,7 @@ export default function CollegeBaseballPlayersPage() {
                     <select
                       value={filters.classYear}
                       onChange={(e) => setFilters({ ...filters, classYear: e.target.value })}
-                      className="px-3 py-2 bg-background-secondary border border-border-subtle rounded-sm text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
+                      className="px-3 py-2 bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm text-[var(--bsi-bone)] focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
                       aria-label="Filter by class year"
                     >
                       {classYears.map((year) => (
@@ -296,14 +296,14 @@ export default function CollegeBaseballPlayersPage() {
                       ))}
                     </select>
 
-                    <label className="flex items-center gap-2 px-3 py-2 bg-background-secondary border border-border-subtle rounded-sm cursor-pointer hover:border-burnt-orange/50 transition-colors">
+                    <label className="flex items-center gap-2 px-3 py-2 bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm cursor-pointer hover:border-[var(--bsi-primary)]/50 transition-colors">
                       <input
                         type="checkbox"
                         checked={filters.draftOnly}
                         onChange={(e) => setFilters({ ...filters, draftOnly: e.target.checked })}
                         className="w-4 h-4 accent-burnt-orange"
                       />
-                      <span className="text-sm text-text-primary">Draft Prospects Only</span>
+                      <span className="text-sm text-[var(--bsi-bone)]">Draft Prospects Only</span>
                     </label>
                   </div>
                 </div>
@@ -314,34 +314,34 @@ export default function CollegeBaseballPlayersPage() {
             <ScrollReveal direction="up" delay={150}>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                 <Card padding="md" className="text-center">
-                  <div className="font-display text-2xl md:text-3xl font-bold text-burnt-orange">
+                  <div className="font-display text-2xl md:text-3xl font-bold text-[var(--bsi-primary)]">
                     {stats.total}
                   </div>
-                  <div className="text-xs text-text-tertiary uppercase tracking-wider mt-1">
+                  <div className="text-xs text-[rgba(196,184,165,0.5)] uppercase tracking-wider mt-1">
                     Total Players
                   </div>
                 </Card>
                 <Card padding="md" className="text-center">
-                  <div className="font-display text-2xl md:text-3xl font-bold text-burnt-orange">
+                  <div className="font-display text-2xl md:text-3xl font-bold text-[var(--bsi-primary)]">
                     {stats.withStats}
                   </div>
-                  <div className="text-xs text-text-tertiary uppercase tracking-wider mt-1">
+                  <div className="text-xs text-[rgba(196,184,165,0.5)] uppercase tracking-wider mt-1">
                     With Stats
                   </div>
                 </Card>
                 <Card padding="md" className="text-center">
-                  <div className="font-display text-2xl md:text-3xl font-bold text-burnt-orange">
+                  <div className="font-display text-2xl md:text-3xl font-bold text-[var(--bsi-primary)]">
                     {stats.pitchers}
                   </div>
-                  <div className="text-xs text-text-tertiary uppercase tracking-wider mt-1">
+                  <div className="text-xs text-[rgba(196,184,165,0.5)] uppercase tracking-wider mt-1">
                     Pitchers
                   </div>
                 </Card>
                 <Card padding="md" className="text-center">
-                  <div className="font-display text-2xl md:text-3xl font-bold text-burnt-orange">
+                  <div className="font-display text-2xl md:text-3xl font-bold text-[var(--bsi-primary)]">
                     {stats.positionPlayers}
                   </div>
-                  <div className="text-xs text-text-tertiary uppercase tracking-wider mt-1">
+                  <div className="text-xs text-[rgba(196,184,165,0.5)] uppercase tracking-wider mt-1">
                     Position Players
                   </div>
                 </Card>
@@ -351,11 +351,11 @@ export default function CollegeBaseballPlayersPage() {
             {/* Sort Bar */}
             <ScrollReveal direction="up" delay={200}>
               <Card padding="sm" className="mb-6 flex items-center justify-between">
-                <span className="text-sm text-text-tertiary">Sort by:</span>
+                <span className="text-sm text-[rgba(196,184,165,0.5)]">Sort by:</span>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="px-3 py-1.5 bg-background-secondary border border-border-subtle rounded-sm text-text-primary text-sm focus:outline-none focus:border-burnt-orange transition-colors"
+                  className="px-3 py-1.5 bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm text-[var(--bsi-bone)] text-sm focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
                   aria-label="Sort players"
                 >
                   {sortOptions.map((opt) => (
@@ -370,20 +370,20 @@ export default function CollegeBaseballPlayersPage() {
             {/* Players Grid */}
             {loading ? (
               <div className="text-center py-16">
-                <div className="inline-block w-10 h-10 border-4 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin mb-4" />
-                <p className="text-text-secondary">Loading players...</p>
+                <div className="inline-block w-10 h-10 border-4 border-[var(--bsi-primary)]/30 border-t-[var(--bsi-primary)] rounded-full animate-spin mb-4" />
+                <p className="text-[var(--bsi-dust)]">Loading players...</p>
               </div>
             ) : error ? (
               <Card padding="lg" className="text-center">
                 <div className="text-error text-4xl mb-4">!</div>
-                <h3 className="text-xl font-semibold text-text-primary mb-2">Error Loading Players</h3>
-                <p className="text-text-secondary">{error}</p>
+                <h3 className="text-xl font-semibold text-[var(--bsi-bone)] mb-2">Error Loading Players</h3>
+                <p className="text-[var(--bsi-dust)]">{error}</p>
               </Card>
             ) : sortedPlayers.length === 0 ? (
               <Card padding="lg" className="text-center">
-                <div className="text-text-tertiary text-4xl mb-4">?</div>
-                <h3 className="text-xl font-semibold text-text-primary mb-2">No Players Found</h3>
-                <p className="text-text-secondary">Try adjusting your search or filter criteria.</p>
+                <div className="text-[rgba(196,184,165,0.5)] text-4xl mb-4">?</div>
+                <h3 className="text-xl font-semibold text-[var(--bsi-bone)] mb-2">No Players Found</h3>
+                <p className="text-[var(--bsi-dust)]">Try adjusting your search or filter criteria.</p>
               </Card>
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -391,21 +391,21 @@ export default function CollegeBaseballPlayersPage() {
                   <ScrollReveal key={player.id} direction="up" delay={index * 30}>
                     <Card variant="hover" padding="none" className="overflow-hidden">
                       {/* Player Header */}
-                      <div className="p-4 bg-gradient-to-r from-burnt-orange/20 to-transparent border-b border-border-subtle">
+                      <div className="p-4 bg-gradient-to-r from-burnt-orange/20 to-transparent border-b border-[var(--border-vintage)]">
                         <div className="flex items-center gap-3">
                           {player.headshot && (
-                            <img src={player.headshot} alt={player.name || 'Player'} className="w-10 h-10 rounded-full object-cover bg-background-secondary" loading="lazy" decoding="async" />
+                            <img src={player.headshot} alt={player.name || 'Player'} className="w-10 h-10 rounded-full object-cover bg-[var(--surface-dugout)]" loading="lazy" decoding="async" />
                           )}
                           <div className="min-w-0">
-                            <h3 className="font-display text-xl font-bold text-text-primary">
-                              <Link href={`/college-baseball/players/${player.id}`} className="hover:text-burnt-orange transition-colors">
+                            <h3 className="font-display text-xl font-bold text-[var(--bsi-bone)]">
+                              <Link href={`/college-baseball/players/${player.id}`} className="hover:text-[var(--bsi-primary)] transition-colors">
                                 {player.name}
                               </Link>
                             </h3>
-                            <p className="text-text-secondary text-sm">{player.team}</p>
+                            <p className="text-[var(--bsi-dust)] text-sm">{player.team}</p>
                           </div>
                         </div>
-                        <div className="flex flex-wrap gap-3 mt-2 text-xs text-text-tertiary">
+                        <div className="flex flex-wrap gap-3 mt-2 text-xs text-[rgba(196,184,165,0.5)]">
                           {player.jersey && <span>#{player.jersey}</span>}
                           {player.position && <span>{player.position}</span>}
                           {player.classYear && <span>{player.classYear}</span>}
@@ -417,36 +417,36 @@ export default function CollegeBaseballPlayersPage() {
 
                       {/* Bio — only show if meaningful data exists */}
                       {(player.bio.height || player.bio.weight > 0 || player.bio.bats || player.bio.throws || player.bio.hometown) && (
-                      <div className="p-4 bg-charcoal/30 border-b border-border-subtle">
+                      <div className="p-4 bg-[var(--surface-dugout)]/30 border-b border-[var(--border-vintage)]">
                         <div className="flex flex-wrap gap-4 text-center text-sm">
                           {player.bio.height && (
                             <div>
-                              <div className="text-text-tertiary text-xs uppercase">Height</div>
-                              <div className="text-text-primary font-medium">{player.bio.height}</div>
+                              <div className="text-[rgba(196,184,165,0.5)] text-xs uppercase">Height</div>
+                              <div className="text-[var(--bsi-bone)] font-medium">{player.bio.height}</div>
                             </div>
                           )}
                           {player.bio.weight > 0 && (
                             <div>
-                              <div className="text-text-tertiary text-xs uppercase">Weight</div>
-                              <div className="text-text-primary font-medium">{player.bio.weight} lbs</div>
+                              <div className="text-[rgba(196,184,165,0.5)] text-xs uppercase">Weight</div>
+                              <div className="text-[var(--bsi-bone)] font-medium">{player.bio.weight} lbs</div>
                             </div>
                           )}
                           {player.bio.bats && (
                             <div>
-                              <div className="text-text-tertiary text-xs uppercase">Bats</div>
-                              <div className="text-text-primary font-medium">{player.bio.bats}</div>
+                              <div className="text-[rgba(196,184,165,0.5)] text-xs uppercase">Bats</div>
+                              <div className="text-[var(--bsi-bone)] font-medium">{player.bio.bats}</div>
                             </div>
                           )}
                           {player.bio.throws && (
                             <div>
-                              <div className="text-text-tertiary text-xs uppercase">Throws</div>
-                              <div className="text-text-primary font-medium">{player.bio.throws}</div>
+                              <div className="text-[rgba(196,184,165,0.5)] text-xs uppercase">Throws</div>
+                              <div className="text-[var(--bsi-bone)] font-medium">{player.bio.throws}</div>
                             </div>
                           )}
                           {player.bio.hometown && (
                             <div>
-                              <div className="text-text-tertiary text-xs uppercase">Hometown</div>
-                              <div className="text-text-primary font-medium truncate">{player.bio.hometown}</div>
+                              <div className="text-[rgba(196,184,165,0.5)] text-xs uppercase">Hometown</div>
+                              <div className="text-[var(--bsi-bone)] font-medium truncate">{player.bio.hometown}</div>
                             </div>
                           )}
                         </div>
@@ -458,59 +458,59 @@ export default function CollegeBaseballPlayersPage() {
                         {player.pitchingStats && !player.battingStats ? (
                           <div className="grid grid-cols-4 gap-2 text-center">
                             <div>
-                              <div className="text-burnt-orange font-display text-lg font-bold">
+                              <div className="text-[var(--bsi-primary)] font-display text-lg font-bold">
                                 {player.pitchingStats.era.toFixed(2)}
                               </div>
-                              <div className="text-text-tertiary text-xs">ERA</div>
+                              <div className="text-[rgba(196,184,165,0.5)] text-xs">ERA</div>
                             </div>
                             <div>
-                              <div className="text-burnt-orange font-display text-lg font-bold">
+                              <div className="text-[var(--bsi-primary)] font-display text-lg font-bold">
                                 {player.pitchingStats.strikeouts}
                               </div>
-                              <div className="text-text-tertiary text-xs">K</div>
+                              <div className="text-[rgba(196,184,165,0.5)] text-xs">K</div>
                             </div>
                             <div>
-                              <div className="text-burnt-orange font-display text-lg font-bold">
+                              <div className="text-[var(--bsi-primary)] font-display text-lg font-bold">
                                 {player.pitchingStats.inningsPitched}
                               </div>
-                              <div className="text-text-tertiary text-xs">IP</div>
+                              <div className="text-[rgba(196,184,165,0.5)] text-xs">IP</div>
                             </div>
                             <div>
-                              <div className="text-burnt-orange font-display text-lg font-bold">
+                              <div className="text-[var(--bsi-primary)] font-display text-lg font-bold">
                                 {player.pitchingStats.whip.toFixed(2)}
                               </div>
-                              <div className="text-text-tertiary text-xs">WHIP</div>
+                              <div className="text-[rgba(196,184,165,0.5)] text-xs">WHIP</div>
                             </div>
                           </div>
                         ) : player.battingStats ? (
                           <div className="grid grid-cols-4 gap-2 text-center">
                             <div>
-                              <div className="text-burnt-orange font-display text-lg font-bold">
+                              <div className="text-[var(--bsi-primary)] font-display text-lg font-bold">
                                 {fmt3(player.battingStats.avg)}
                               </div>
-                              <div className="text-text-tertiary text-xs">AVG</div>
+                              <div className="text-[rgba(196,184,165,0.5)] text-xs">AVG</div>
                             </div>
                             <div>
-                              <div className="text-burnt-orange font-display text-lg font-bold">
+                              <div className="text-[var(--bsi-primary)] font-display text-lg font-bold">
                                 {player.battingStats.homeRuns}
                               </div>
-                              <div className="text-text-tertiary text-xs">HR</div>
+                              <div className="text-[rgba(196,184,165,0.5)] text-xs">HR</div>
                             </div>
                             <div>
-                              <div className="text-burnt-orange font-display text-lg font-bold">
+                              <div className="text-[var(--bsi-primary)] font-display text-lg font-bold">
                                 {player.battingStats.rbi}
                               </div>
-                              <div className="text-text-tertiary text-xs">RBI</div>
+                              <div className="text-[rgba(196,184,165,0.5)] text-xs">RBI</div>
                             </div>
                             <div>
-                              <div className="text-burnt-orange font-display text-lg font-bold">
+                              <div className="text-[var(--bsi-primary)] font-display text-lg font-bold">
                                 {player.battingStats.hits}
                               </div>
-                              <div className="text-text-tertiary text-xs">H</div>
+                              <div className="text-[rgba(196,184,165,0.5)] text-xs">H</div>
                             </div>
                           </div>
                         ) : (
-                          <p className="text-text-tertiary text-center text-sm">
+                          <p className="text-[rgba(196,184,165,0.5)] text-center text-sm">
                             No stats available
                           </p>
                         )}
@@ -523,7 +523,7 @@ export default function CollegeBaseballPlayersPage() {
                             MLB Draft Rank: #{player.draftProspect.mlbRank}
                           </Badge>
                           {player.draftProspect.projection && (
-                            <p className="text-text-secondary text-sm mb-3">
+                            <p className="text-[var(--bsi-dust)] text-sm mb-3">
                               <strong>Projection:</strong> {player.draftProspect.projection}
                             </p>
                           )}
@@ -538,7 +538,7 @@ export default function CollegeBaseballPlayersPage() {
                                   >
                                     {grade}
                                   </div>
-                                  <div className="text-text-tertiary text-xs mt-1 capitalize">
+                                  <div className="text-[rgba(196,184,165,0.5)] text-xs mt-1 capitalize">
                                     {tool}
                                   </div>
                                 </div>
@@ -559,7 +559,7 @@ export default function CollegeBaseballPlayersPage() {
             </div>
 
             {/* Data Attribution */}
-            <div className="mt-12 text-center text-xs text-text-tertiary">
+            <div className="mt-12 text-center text-xs text-[rgba(196,184,165,0.5)]">
               <p>Stats accumulated from ESPN box scores via BSI D1 pipeline.</p>
               <p className="mt-1" suppressHydrationWarning>
                 Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}{' '}

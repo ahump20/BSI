@@ -111,17 +111,17 @@ export function SwingChat({ swingId, systemPrompt, onSeekToFrame, disabled, isPr
   };
 
   return (
-    <div className="flex flex-col rounded-sm bg-surface-dugout border border-border-subtle overflow-hidden h-[70vh] sm:h-[500px]">
+    <div className="flex flex-col rounded-sm bg-surface-dugout border border-[var(--border-vintage)] overflow-hidden h-[70vh] sm:h-[500px]">
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-border-subtle bg-surface-press-box">
-        <div className="w-8 h-8 rounded-sm bg-burnt-orange/15 flex items-center justify-center">
-          <svg viewBox="0 0 16 16" className="w-4 h-4 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--border-vintage)] bg-surface-press-box">
+        <div className="w-8 h-8 rounded-sm bg-[var(--bsi-primary)]/15 flex items-center justify-center">
+          <svg viewBox="0 0 16 16" className="w-4 h-4 text-[var(--bsi-primary)]" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M1 14l3-1 9-9-2-2-9 9zM11 2l2 2" />
           </svg>
         </div>
         <div>
           <h3 className="text-sm font-semibold text-bsi-bone">Swing Coach AI</h3>
-          <p className="text-[10px] text-text-muted">Ask about your swing mechanics</p>
+          <p className="text-[10px] text-[rgba(196,184,165,0.35)]">Ask about your swing mechanics</p>
         </div>
       </div>
 
@@ -129,7 +129,7 @@ export function SwingChat({ swingId, systemPrompt, onSeekToFrame, disabled, isPr
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
         {messages.length === 0 && (
           <div className="space-y-3">
-            <p className="text-xs text-text-muted text-center mb-4">
+            <p className="text-xs text-[rgba(196,184,165,0.35)] text-center mb-4">
               Ask me anything about your swing. I can reference specific frames and measurements.
             </p>
             <div className="space-y-2">
@@ -138,7 +138,7 @@ export function SwingChat({ swingId, systemPrompt, onSeekToFrame, disabled, isPr
                   key={q}
                   onClick={() => sendMessage(q)}
                   disabled={disabled}
-                  className="block w-full text-left px-3 py-2 rounded-sm bg-white/[0.03] border border-border-subtle text-xs text-bsi-dust hover:bg-white/[0.06] hover:border-burnt-orange/20 transition-all disabled:opacity-50"
+                  className="block w-full text-left px-3 py-2 rounded-sm bg-white/[0.03] border border-[var(--border-vintage)] text-xs text-bsi-dust hover:bg-white/[0.06] hover:border-[var(--bsi-primary)]/20 transition-all disabled:opacity-50"
                 >
                   {q}
                 </button>
@@ -158,8 +158,8 @@ export function SwingChat({ swingId, systemPrompt, onSeekToFrame, disabled, isPr
               <div
                 className={`max-w-[85%] rounded-sm px-3 py-2.5 text-sm leading-relaxed ${
                   msg.role === 'user'
-                    ? 'bg-burnt-orange/15 text-bsi-bone'
-                    : 'bg-white/[0.04] text-bsi-dust border border-border-subtle'
+                    ? 'bg-[var(--bsi-primary)]/15 text-bsi-bone'
+                    : 'bg-white/[0.04] text-bsi-dust border border-[var(--border-vintage)]'
                 }`}
               >
                 {msg.role === 'assistant' ? renderMessage(msg.content) : msg.content}
@@ -174,12 +174,12 @@ export function SwingChat({ swingId, systemPrompt, onSeekToFrame, disabled, isPr
             animate={{ opacity: 1 }}
             className="flex justify-start"
           >
-            <div className="bg-white/[0.04] border border-border-subtle rounded-sm px-4 py-3">
+            <div className="bg-white/[0.04] border border-[var(--border-vintage)] rounded-sm px-4 py-3">
               <div className="flex gap-1">
                 {[0, 1, 2].map((i) => (
                   <motion.div
                     key={i}
-                    className="w-1.5 h-1.5 rounded-full bg-burnt-orange"
+                    className="w-1.5 h-1.5 rounded-full bg-[var(--bsi-primary)]"
                     animate={{ opacity: [0.3, 1, 0.3] }}
                     transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
                   />
@@ -195,7 +195,7 @@ export function SwingChat({ swingId, systemPrompt, onSeekToFrame, disabled, isPr
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="px-4 py-3 bg-burnt-orange/10 border-t border-burnt-orange/20"
+          className="px-4 py-3 bg-[var(--bsi-primary)]/10 border-t border-[var(--bsi-primary)]/20"
         >
           <p className="text-xs text-bsi-bone font-semibold mb-1">
             {FREE_QUESTIONS_PER_SWING} free questions used
@@ -205,7 +205,7 @@ export function SwingChat({ swingId, systemPrompt, onSeekToFrame, disabled, isPr
           </p>
           <a
             href="/pricing"
-            className="inline-block text-[10px] font-mono uppercase tracking-wider text-burnt-orange hover:text-ember transition-colors"
+            className="inline-block text-[10px] font-mono uppercase tracking-wider text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
           >
             Upgrade to Pro →
           </a>
@@ -213,7 +213,7 @@ export function SwingChat({ swingId, systemPrompt, onSeekToFrame, disabled, isPr
       )}
 
       {/* Input */}
-      <div className="border-t border-border-subtle p-3 bg-surface-press-box">
+      <div className="border-t border-[var(--border-vintage)] p-3 bg-surface-press-box">
         <div className="flex items-end gap-2">
           <textarea
             ref={inputRef}
@@ -223,12 +223,12 @@ export function SwingChat({ swingId, systemPrompt, onSeekToFrame, disabled, isPr
             placeholder={isGated ? 'Upgrade to Pro for unlimited questions' : disabled ? 'Upgrade to ask follow-up questions' : 'Ask about your swing...'}
             disabled={disabled || isLoading || isGated}
             rows={1}
-            className="flex-1 resize-none rounded-sm bg-surface-dugout border border-border-subtle px-3 py-2 text-sm text-bsi-bone placeholder-text-muted focus:outline-none focus:border-burnt-orange/40 disabled:opacity-50 transition-colors"
+            className="flex-1 resize-none rounded-sm bg-surface-dugout border border-[var(--border-vintage)] px-3 py-2 text-sm text-bsi-bone placeholder-text-muted focus:outline-none focus:border-[var(--bsi-primary)]/40 disabled:opacity-50 transition-colors"
           />
           <button
             onClick={() => sendMessage(input)}
             disabled={!input.trim() || isLoading || disabled || isGated}
-            className="w-8 h-8 rounded-sm bg-burnt-orange flex items-center justify-center text-white disabled:opacity-30 transition-opacity shrink-0"
+            className="w-8 h-8 rounded-sm bg-[var(--bsi-primary)] flex items-center justify-center text-white disabled:opacity-30 transition-opacity shrink-0"
           >
             <svg viewBox="0 0 16 16" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <path d="M2 14l12-6L2 2v5l8 1-8 1z" />

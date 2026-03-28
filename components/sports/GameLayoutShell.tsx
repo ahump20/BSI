@@ -215,24 +215,24 @@ export default function GameLayoutShell({ config, children }: GameLayoutShellPro
     <GameContext.Provider value={{ game, loading, error, meta, refresh: fetchGame }}>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href={config.breadcrumb.sportHref}
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 {config.breadcrumb.sportLabel}
               </Link>
-              <span className="text-text-tertiary">/</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
               <Link
                 href={config.breadcrumb.scoresHref}
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 {config.breadcrumb.scoresLabel}
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">
                 {matchupLabel || `Game ${gameId}`}
               </span>
             </nav>
@@ -254,13 +254,13 @@ export default function GameLayoutShell({ config, children }: GameLayoutShellPro
             <Container>
               <Card variant="default" padding="lg" className="bg-error/10 border-error/30">
                 <p className="text-error font-semibold">Unable to Load Game</p>
-                <p className="text-text-secondary text-sm mt-1">{error}</p>
+                <p className="text-[var(--bsi-dust)] text-sm mt-1">{error}</p>
                 {config.errorHint && (
-                  <p className="text-text-tertiary text-xs mt-2">{config.errorHint}</p>
+                  <p className="text-[rgba(196,184,165,0.5)] text-xs mt-2">{config.errorHint}</p>
                 )}
                 <button
                   onClick={fetchGame}
-                  className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange/80 transition-colors"
+                  className="mt-4 px-4 py-2 bg-[var(--bsi-primary)] text-white rounded-sm hover:bg-[var(--bsi-primary)]/80 transition-colors"
                 >
                   {config.retryLabel || 'Retry'}
                 </button>
@@ -280,15 +280,15 @@ export default function GameLayoutShell({ config, children }: GameLayoutShellPro
             {/* Tab Navigation */}
             <Section padding="none" background="charcoal" borderTop>
               <Container>
-                <div className="flex gap-2 border-b border-border-subtle overflow-x-auto pb-px">
+                <div className="flex gap-2 border-b border-[var(--border-vintage)] overflow-x-auto pb-px">
                   {tabs.map((tab) => (
                     <Link
                       key={tab.id}
                       href={tab.href}
                       className={`px-6 py-3 text-sm font-semibold whitespace-nowrap transition-colors border-b-2 -mb-px ${
                         activeTab === tab.id
-                          ? 'text-burnt-orange border-burnt-orange'
-                          : 'text-text-tertiary border-transparent hover:text-text-primary'
+                          ? 'text-[var(--bsi-primary)] border-[var(--bsi-primary)]'
+                          : 'text-[rgba(196,184,165,0.5)] border-transparent hover:text-[var(--bsi-bone)]'
                       }`}
                     >
                       {tab.label}
@@ -310,7 +310,7 @@ export default function GameLayoutShell({ config, children }: GameLayoutShellPro
                   className="mt-8"
                 />
                 {live && (
-                  <p className="text-xs text-text-tertiary text-center mt-2">
+                  <p className="text-xs text-[rgba(196,184,165,0.5)] text-center mt-2">
                     Auto-refreshing every {pollSeconds} seconds
                   </p>
                 )}

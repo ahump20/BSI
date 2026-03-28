@@ -54,13 +54,13 @@ export function ConferencePositionCard({
   );
 
   if (loading) {
-    return <div className="h-48 bg-surface-light rounded-sm animate-pulse" />;
+    return <div className="h-48 bg-[var(--surface-press-box)] rounded-sm animate-pulse" />;
   }
 
   if (error) {
     return (
-      <div className="bg-surface-light border border-border rounded-sm p-6 text-center">
-        <p className="text-text-muted text-sm">Conference data temporarily unavailable</p>
+      <div className="bg-[var(--surface-press-box)] border border-border rounded-sm p-6 text-center">
+        <p className="text-[rgba(196,184,165,0.35)] text-sm">Conference data temporarily unavailable</p>
       </div>
     );
   }
@@ -103,19 +103,19 @@ export function ConferencePositionCard({
               <div className="font-mono text-2xl font-bold" style={{ color: accent }}>
                 {teamRank}
               </div>
-              <div className="text-text-muted text-xs mt-1">Overall CPI</div>
+              <div className="text-[rgba(196,184,165,0.35)] text-xs mt-1">Overall CPI</div>
             </div>
             <div className="text-center">
               <div className="font-mono text-2xl font-bold" style={{ color: wobaRank <= 3 ? accent : undefined }}>
                 {wobaRank || '—'}
               </div>
-              <div className="text-text-muted text-xs mt-1">Batting (wOBA)</div>
+              <div className="text-[rgba(196,184,165,0.35)] text-xs mt-1">Batting (wOBA)</div>
             </div>
             <div className="text-center">
               <div className="font-mono text-2xl font-bold" style={{ color: fipRank <= 3 ? accent : undefined }}>
                 {fipRank || '—'}
               </div>
-              <div className="text-text-muted text-xs mt-1">Pitching (FIP)</div>
+              <div className="text-[rgba(196,184,165,0.35)] text-xs mt-1">Pitching (FIP)</div>
             </div>
           </div>
         )}
@@ -124,7 +124,7 @@ export function ConferencePositionCard({
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+              <tr className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
                 <th className="text-center py-2 px-2 w-8">#</th>
                 <th className="text-left py-2 px-2">Team</th>
                 <th className="text-center py-2 px-2">Record</th>
@@ -139,19 +139,19 @@ export function ConferencePositionCard({
                 return (
                   <tr
                     key={t.team_id}
-                    className={`border-t border-border-subtle transition-colors ${
-                      isTeam ? 'bg-burnt-orange/10' : ''
+                    className={`border-t border-[var(--border-vintage)] transition-colors ${
+                      isTeam ? 'bg-[var(--bsi-primary)]/10' : ''
                     }`}
                   >
-                    <td className="py-2 px-2 text-center font-mono text-text-muted">{t.rank}</td>
-                    <td className={`py-2 px-2 font-medium ${isTeam ? 'text-burnt-orange' : 'text-text-primary'}`}>
+                    <td className="py-2 px-2 text-center font-mono text-[rgba(196,184,165,0.35)]">{t.rank}</td>
+                    <td className={`py-2 px-2 font-medium ${isTeam ? 'text-[var(--bsi-primary)]' : 'text-[var(--bsi-bone)]'}`}>
                       {t.team}
                     </td>
-                    <td className="py-2 px-2 text-center font-mono text-text-secondary text-xs">
+                    <td className="py-2 px-2 text-center font-mono text-[var(--bsi-dust)] text-xs">
                       {t.wins}-{t.losses}
                     </td>
-                    <td className="py-2 px-2 text-right font-mono text-text-secondary">{fmt3(t.woba)}</td>
-                    <td className="py-2 px-2 text-right font-mono text-text-secondary">{fmt2(t.fip)}</td>
+                    <td className="py-2 px-2 text-right font-mono text-[var(--bsi-dust)]">{fmt3(t.woba)}</td>
+                    <td className="py-2 px-2 text-right font-mono text-[var(--bsi-dust)]">{fmt2(t.fip)}</td>
                     <td className="py-2 px-2 text-right font-mono font-semibold" style={{ color: isTeam ? accent : undefined }}>
                       {fmt3(t.cpi)}
                     </td>
@@ -163,7 +163,7 @@ export function ConferencePositionCard({
         </div>
 
         {/* Conference size indicator */}
-        <div className="mt-3 text-center text-[10px] text-text-muted">
+        <div className="mt-3 text-center text-[10px] text-[rgba(196,184,165,0.35)]">
           {data.teams.length} teams · {data.season} season
         </div>
       </CardContent>

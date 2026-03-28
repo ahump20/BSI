@@ -246,16 +246,16 @@ export function LiveScoreStrip() {
             <ScrollReveal>
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <h2 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide">
+                  <h2 className="font-display text-lg font-bold text-[var(--bsi-bone)] uppercase tracking-wide">
                     Yesterday&apos;s Results
                   </h2>
-                  <span className="text-[10px] text-text-muted uppercase tracking-wider bg-surface-light px-2 py-0.5 rounded-sm border border-border">
+                  <span className="text-[10px] text-[rgba(196,184,165,0.35)] uppercase tracking-wider bg-[var(--surface-press-box)] px-2 py-0.5 rounded-sm border border-border">
                     No games today
                   </span>
                 </div>
                 <Link
                   href="/college-baseball/scores"
-                  className="text-sm text-burnt-orange hover:text-ember transition-colors"
+                  className="text-sm text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
                 >
                   Full Scoreboard →
                 </Link>
@@ -269,16 +269,16 @@ export function LiveScoreStrip() {
               </div>
             </ScrollReveal>
           ) : (
-            <div className="bg-surface-light border border-border rounded-sm p-5">
+            <div className="bg-[var(--surface-press-box)] border border-border rounded-sm p-5">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide">
+                <h2 className="font-display text-lg font-bold text-[var(--bsi-bone)] uppercase tracking-wide">
                   Today&apos;s Games
                 </h2>
-                <Link href="/college-baseball/scores" className="text-sm text-burnt-orange hover:text-ember transition-colors">
+                <Link href="/college-baseball/scores" className="text-sm text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors">
                   Full Schedule →
                 </Link>
               </div>
-              <p className="text-text-muted text-sm mb-4">No games scheduled today. Check the schedule for upcoming matchups.</p>
+              <p className="text-[rgba(196,184,165,0.35)] text-sm mb-4">No games scheduled today. Check the schedule for upcoming matchups.</p>
               <div className="flex flex-wrap gap-2">
                 {[
                   { label: 'Rankings', href: '/college-baseball?tab=rankings' },
@@ -290,7 +290,7 @@ export function LiveScoreStrip() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="px-3 py-1.5 text-xs font-medium bg-surface border border-border rounded-sm text-text-secondary hover:text-burnt-orange hover:border-burnt-orange/30 transition-all"
+                    className="px-3 py-1.5 text-xs font-medium bg-surface border border-border rounded-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-primary)] hover:border-[var(--bsi-primary)]/30 transition-all"
                   >
                     {link.label}
                   </Link>
@@ -310,7 +310,7 @@ export function LiveScoreStrip() {
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <h2 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide">
+              <h2 className="font-display text-lg font-bold text-[var(--bsi-bone)] uppercase tracking-wide">
                 Today&apos;s Games
               </h2>
               {liveCount > 0 && (
@@ -322,7 +322,7 @@ export function LiveScoreStrip() {
             </div>
             <Link
               href="/college-baseball/scores"
-              className="text-sm text-burnt-orange hover:text-ember transition-colors"
+              className="text-sm text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
             >
               Full Scoreboard →
             </Link>

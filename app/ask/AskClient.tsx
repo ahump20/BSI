@@ -11,7 +11,7 @@ export default function AskClient() {
 
   return (
     <>
-      <div className="min-h-screen bg-midnight">
+      <div className="min-h-screen bg-[var(--surface-scoreboard)]">
         {/* Hero */}
         <section className="pt-8 pb-4 px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">

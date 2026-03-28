@@ -70,10 +70,10 @@ function StatItem({
   highlight?: boolean;
 }) {
   return (
-    <div className="text-center p-4 rounded-sm bg-charcoal-800/50">
-      <p className="text-xs text-text-muted uppercase tracking-wider mb-1">{label}</p>
+    <div className="text-center p-4 rounded-sm bg-[var(--surface-dugout)]-800/50">
+      <p className="text-xs text-[rgba(196,184,165,0.35)] uppercase tracking-wider mb-1">{label}</p>
       <p
-        className={`text-xl font-display font-bold ${highlight ? 'text-burnt-orange' : 'text-text-primary'}`}
+        className={`text-xl font-display font-bold ${highlight ? 'text-[var(--bsi-primary)]' : 'text-[var(--bsi-bone)]'}`}
       >
         {value}
       </p>
@@ -118,12 +118,12 @@ export function PlayerDetailClient() {
   if (loading) {
     return (
       <>
-        <div className="min-h-screen bg-midnight">
+        <div className="min-h-screen bg-[var(--surface-scoreboard)]">
           <Section className="pt-6 pb-16">
             <Container>
               <div className="text-center py-16">
-                <div className="inline-block w-10 h-10 border-4 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin mb-4" />
-                <p className="text-text-secondary">Loading player profile...</p>
+                <div className="inline-block w-10 h-10 border-4 border-[var(--bsi-primary)]/30 border-t-[var(--bsi-primary)] rounded-full animate-spin mb-4" />
+                <p className="text-[var(--bsi-dust)]">Loading player profile...</p>
               </div>
             </Container>
           </Section>
@@ -136,14 +136,14 @@ export function PlayerDetailClient() {
   if (!player) {
     return (
       <>
-        <div className="min-h-screen bg-midnight">
+        <div className="min-h-screen bg-[var(--surface-scoreboard)]">
           <Section className="pt-6 pb-16">
             <Container>
               <div className="text-center py-16">
-                <h1 className="text-2xl font-display font-bold text-text-primary mb-4">
+                <h1 className="text-2xl font-display font-bold text-[var(--bsi-bone)] mb-4">
                   {error ? 'Temporarily Unavailable' : 'Player Not Found'}
                 </h1>
-                <p className="text-text-secondary mb-8">
+                <p className="text-[var(--bsi-dust)] mb-8">
                   {error || "The player profile you're looking for doesn't exist."}
                 </p>
                 <Link href="/college-baseball/transfer-portal">
@@ -160,23 +160,23 @@ export function PlayerDetailClient() {
 
   return (
     <>
-      <div className="min-h-screen bg-midnight">
+      <div className="min-h-screen bg-[var(--surface-scoreboard)]">
         {/* Breadcrumb */}
         <Section className="pt-6 pb-4">
           <Container>
-            <div className="flex items-center gap-2 text-sm text-text-tertiary">
-              <Link href="/college-baseball" className="hover:text-burnt-orange transition-colors">
+            <div className="flex items-center gap-2 text-sm text-[rgba(196,184,165,0.5)]">
+              <Link href="/college-baseball" className="hover:text-[var(--bsi-primary)] transition-colors">
                 College Baseball
               </Link>
               <span>/</span>
               <Link
                 href="/college-baseball/transfer-portal"
-                className="hover:text-burnt-orange transition-colors"
+                className="hover:text-[var(--bsi-primary)] transition-colors"
               >
                 Transfer Portal
               </Link>
               <span>/</span>
-              <span className="text-text-primary">{player.player_name}</span>
+              <span className="text-[var(--bsi-bone)]">{player.player_name}</span>
             </div>
           </Container>
         </Section>
@@ -188,12 +188,12 @@ export function PlayerDetailClient() {
               <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
                 <div>
                   <div className="flex items-center gap-4 mb-2">
-                    <h1 className="font-display text-4xl md:text-5xl font-bold text-text-primary">
+                    <h1 className="font-display text-4xl md:text-5xl font-bold text-[var(--bsi-bone)]">
                       {player.player_name}
                     </h1>
                     <StatusBadge status={player.status} size="lg" />
                   </div>
-                  <p className="text-xl text-text-secondary">
+                  <p className="text-xl text-[var(--bsi-dust)]">
                     {player.position} • {player.class_year} • {player.conference}
                   </p>
                 </div>
@@ -221,20 +221,20 @@ export function PlayerDetailClient() {
             <ScrollReveal delay={0.1}>
               <Card
                 padding="lg"
-                className="bg-gradient-to-br from-charcoal-800/80 to-charcoal-900/80"
+                className="bg-gradient-to-br from-[#1A1A1A]-800/80 to-charcoal-900/80"
               >
                 <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12">
                   <div className="text-center">
-                    <p className="text-sm text-text-muted mb-2">FROM</p>
-                    <p className="text-2xl font-display font-bold text-burnt-orange">
+                    <p className="text-sm text-[rgba(196,184,165,0.35)] mb-2">FROM</p>
+                    <p className="text-2xl font-display font-bold text-[var(--bsi-primary)]">
                       {player.school_from}
                     </p>
-                    <p className="text-sm text-text-tertiary">{player.conference}</p>
+                    <p className="text-sm text-[rgba(196,184,165,0.5)]">{player.conference}</p>
                   </div>
 
                   <div className="flex items-center">
                     <svg
-                      className="w-8 h-8 text-burnt-orange"
+                      className="w-8 h-8 text-[var(--bsi-primary)]"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -245,13 +245,13 @@ export function PlayerDetailClient() {
                   </div>
 
                   <div className="text-center">
-                    <p className="text-sm text-text-muted mb-2">TO</p>
+                    <p className="text-sm text-[rgba(196,184,165,0.35)] mb-2">TO</p>
                     {player.school_to ? (
                       <>
                         <p className="text-2xl font-display font-bold text-success-light">
                           {player.school_to}
                         </p>
-                        <p className="text-sm text-text-tertiary">Committed</p>
+                        <p className="text-sm text-[rgba(196,184,165,0.5)]">Committed</p>
                       </>
                     ) : (
                       <p className="text-2xl font-display font-bold text-dust italic">TBD</p>
@@ -259,7 +259,7 @@ export function PlayerDetailClient() {
                   </div>
                 </div>
 
-                <div className="mt-6 pt-6 border-t border-border-subtle text-center text-sm text-text-muted">
+                <div className="mt-6 pt-6 border-t border-[var(--border-vintage)] text-center text-sm text-[rgba(196,184,165,0.35)]">
                   Entered portal on{' '}
                   {new Date(player.portal_date).toLocaleDateString('en-US', {
                     month: 'long',
@@ -277,7 +277,7 @@ export function PlayerDetailClient() {
           <Section className="py-8">
             <Container>
               <ScrollReveal delay={0.2}>
-                <h2 className="font-display text-2xl font-bold text-text-primary mb-6">
+                <h2 className="font-display text-2xl font-bold text-[var(--bsi-bone)] mb-6">
                   2026 Season Stats
                 </h2>
                 <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
@@ -335,44 +335,44 @@ export function PlayerDetailClient() {
           <Section className="py-8">
             <Container>
               <ScrollReveal delay={0.3}>
-                <h2 className="font-display text-2xl font-bold text-text-primary mb-6">
+                <h2 className="font-display text-2xl font-bold text-[var(--bsi-bone)] mb-6">
                   Player Info
                 </h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {player.bio.height && (
-                    <div className="p-4 rounded-sm bg-charcoal-800/30">
-                      <p className="text-xs text-text-muted uppercase mb-1">Height</p>
-                      <p className="text-text-primary font-medium">{player.bio.height}</p>
+                    <div className="p-4 rounded-sm bg-[var(--surface-dugout)]-800/30">
+                      <p className="text-xs text-[rgba(196,184,165,0.35)] uppercase mb-1">Height</p>
+                      <p className="text-[var(--bsi-bone)] font-medium">{player.bio.height}</p>
                     </div>
                   )}
                   {player.bio.weight && (
-                    <div className="p-4 rounded-sm bg-charcoal-800/30">
-                      <p className="text-xs text-text-muted uppercase mb-1">Weight</p>
-                      <p className="text-text-primary font-medium">{player.bio.weight}</p>
+                    <div className="p-4 rounded-sm bg-[var(--surface-dugout)]-800/30">
+                      <p className="text-xs text-[rgba(196,184,165,0.35)] uppercase mb-1">Weight</p>
+                      <p className="text-[var(--bsi-bone)] font-medium">{player.bio.weight}</p>
                     </div>
                   )}
                   {player.bio.bats && (
-                    <div className="p-4 rounded-sm bg-charcoal-800/30">
-                      <p className="text-xs text-text-muted uppercase mb-1">Bats</p>
-                      <p className="text-text-primary font-medium">{player.bio.bats}</p>
+                    <div className="p-4 rounded-sm bg-[var(--surface-dugout)]-800/30">
+                      <p className="text-xs text-[rgba(196,184,165,0.35)] uppercase mb-1">Bats</p>
+                      <p className="text-[var(--bsi-bone)] font-medium">{player.bio.bats}</p>
                     </div>
                   )}
                   {player.bio.throws && (
-                    <div className="p-4 rounded-sm bg-charcoal-800/30">
-                      <p className="text-xs text-text-muted uppercase mb-1">Throws</p>
-                      <p className="text-text-primary font-medium">{player.bio.throws}</p>
+                    <div className="p-4 rounded-sm bg-[var(--surface-dugout)]-800/30">
+                      <p className="text-xs text-[rgba(196,184,165,0.35)] uppercase mb-1">Throws</p>
+                      <p className="text-[var(--bsi-bone)] font-medium">{player.bio.throws}</p>
                     </div>
                   )}
                   {player.bio.hometown && (
-                    <div className="p-4 rounded-sm bg-charcoal-800/30 col-span-2">
-                      <p className="text-xs text-text-muted uppercase mb-1">Hometown</p>
-                      <p className="text-text-primary font-medium">{player.bio.hometown}</p>
+                    <div className="p-4 rounded-sm bg-[var(--surface-dugout)]-800/30 col-span-2">
+                      <p className="text-xs text-[rgba(196,184,165,0.35)] uppercase mb-1">Hometown</p>
+                      <p className="text-[var(--bsi-bone)] font-medium">{player.bio.hometown}</p>
                     </div>
                   )}
                   {player.bio.high_school && (
-                    <div className="p-4 rounded-sm bg-charcoal-800/30 col-span-2">
-                      <p className="text-xs text-text-muted uppercase mb-1">High School</p>
-                      <p className="text-text-primary font-medium">{player.bio.high_school}</p>
+                    <div className="p-4 rounded-sm bg-[var(--surface-dugout)]-800/30 col-span-2">
+                      <p className="text-xs text-[rgba(196,184,165,0.35)] uppercase mb-1">High School</p>
+                      <p className="text-[var(--bsi-bone)] font-medium">{player.bio.high_school}</p>
                     </div>
                   )}
                 </div>

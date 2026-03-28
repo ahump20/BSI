@@ -70,36 +70,36 @@ export default function DailyEditorialClient() {
   return (
     <>
       <div>
-        <Section padding="lg" className="pt-6 bg-gradient-to-b from-charcoal to-midnight">
+        <Section padding="lg" className="pt-6 bg-gradient-to-b from-[#1A1A1A] to-midnight">
           <Container size="narrow">
             <ScrollReveal direction="up">
               <nav className="flex items-center gap-3 mb-6 text-sm">
-                <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
+                <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                   College Baseball
                 </Link>
-                <span className="text-text-muted">/</span>
-                <Link href="/college-baseball/editorial" className="text-text-muted hover:text-burnt-orange transition-colors">
+                <span className="text-[rgba(196,184,165,0.35)]">/</span>
+                <Link href="/college-baseball/editorial" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                   Editorial
                 </Link>
-                <span className="text-text-muted">/</span>
-                <span className="text-text-tertiary">Daily Digest</span>
+                <span className="text-[rgba(196,184,165,0.35)]">/</span>
+                <span className="text-[rgba(196,184,165,0.5)]">Daily Digest</span>
               </nav>
 
-              <h1 className="font-display text-2xl md:text-3xl font-bold text-text-primary uppercase tracking-wide mb-2">
+              <h1 className="font-display text-2xl md:text-3xl font-bold text-[var(--bsi-bone)] uppercase tracking-wide mb-2">
                 BSI Daily Digest
               </h1>
-              <p className="text-text-muted text-sm">{formattedDate}</p>
+              <p className="text-[rgba(196,184,165,0.35)] text-sm">{formattedDate}</p>
             </ScrollReveal>
           </Container>
         </Section>
 
-        <Section padding="lg" className="bg-midnight">
+        <Section padding="lg" className="bg-[var(--surface-scoreboard)]">
           <Container size="narrow">
             {loading && (
               <Card padding="lg" className="text-center">
                 <div className="py-12">
-                  <div className="w-8 h-8 border-2 border-burnt-orange border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                  <p className="text-text-muted text-sm">Loading editorial...</p>
+                  <div className="w-8 h-8 border-2 border-[var(--bsi-primary)] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                  <p className="text-[rgba(196,184,165,0.35)] text-sm">Loading editorial...</p>
                 </div>
               </Card>
             )}
@@ -110,7 +110,7 @@ export default function DailyEditorialClient() {
                   <p className="text-error mb-2">{error}</p>
                   <Link
                     href="/college-baseball/editorial"
-                    className="text-burnt-orange hover:text-burnt-orange/80 transition-colors text-sm"
+                    className="text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)]/80 transition-colors text-sm"
                   >
                     Back to Editorial
                   </Link>
@@ -121,23 +121,23 @@ export default function DailyEditorialClient() {
             {data && !loading && (
               <ScrollReveal direction="up">
                 <article className="prose prose-invert prose-lg max-w-none">
-                  <h2 className="font-display text-xl font-bold text-text-primary uppercase tracking-wide mb-6">
+                  <h2 className="font-display text-xl font-bold text-[var(--bsi-bone)] uppercase tracking-wide mb-6">
                     {data.title}
                   </h2>
                   <div
-                    className="text-text-secondary leading-relaxed space-y-4 [&_h2]:font-display [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-text-primary [&_h2]:uppercase [&_h2]:tracking-wide [&_h2]:mt-8 [&_h2]:mb-3 [&_h3]:font-display [&_h3]:text-base [&_h3]:font-semibold [&_h3]:text-burnt-orange [&_h3]:uppercase [&_h3]:tracking-wide [&_h3]:mt-6 [&_h3]:mb-2"
+                    className="text-[var(--bsi-dust)] leading-relaxed space-y-4 [&_h2]:font-display [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-[var(--bsi-bone)] [&_h2]:uppercase [&_h2]:tracking-wide [&_h2]:mt-8 [&_h2]:mb-3 [&_h3]:font-display [&_h3]:text-base [&_h3]:font-semibold [&_h3]:text-[var(--bsi-primary)] [&_h3]:uppercase [&_h3]:tracking-wide [&_h3]:mt-6 [&_h3]:mb-2"
                     dangerouslySetInnerHTML={{ __html: data.content }}
                   />
                 </article>
 
                 {data.teams && (
                   <div className="mt-8 pt-4 border-t border-border">
-                    <p className="text-text-muted text-xs uppercase tracking-wider mb-2">Teams mentioned</p>
+                    <p className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider mb-2">Teams mentioned</p>
                     <div className="flex flex-wrap gap-2">
                       {data.teams.split(',').map((team) => (
                         <span
                           key={team.trim()}
-                          className="px-2.5 py-1 bg-surface-light border border-border rounded-sm text-text-tertiary text-xs"
+                          className="px-2.5 py-1 bg-[var(--surface-press-box)] border border-border rounded-sm text-[rgba(196,184,165,0.5)] text-xs"
                         >
                           {team.trim()}
                         </span>

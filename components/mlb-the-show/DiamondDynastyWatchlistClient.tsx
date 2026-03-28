@@ -97,7 +97,7 @@ export function DiamondDynastyWatchlistClient() {
               <CardContent className="space-y-3 px-0 pb-0 pt-0">
                 <CardTitle size="sm">No Tracked Cards Yet</CardTitle>
                 <p className="text-sm text-[var(--bsi-dust)]">
-                  Add cards from the <Link href="/mlb/the-show-26/diamond-dynasty/marketplace" className="text-burnt-orange">marketplace board</Link> or individual card pages.
+                  Add cards from the <Link href="/mlb/the-show-26/diamond-dynasty/marketplace" className="text-[var(--bsi-primary)]">marketplace board</Link> or individual card pages.
                 </p>
               </CardContent>
             </Card>
@@ -110,7 +110,7 @@ export function DiamondDynastyWatchlistClient() {
                     events.slice(0, 6).map((event) => (
                       <div key={event.eventId} className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3">
                         <div className="text-sm font-semibold text-[var(--bsi-bone)]">{event.cardName}</div>
-                        <div className="mt-1 text-xs uppercase tracking-[0.18em] text-burnt-orange">{event.eventLabel}</div>
+                        <div className="mt-1 text-xs uppercase tracking-[0.18em] text-[var(--bsi-primary)]">{event.eventLabel}</div>
                         <div className="mt-1 text-xs text-[var(--bsi-dust)]">
                           {event.deltaValue !== null ? `${event.deltaValue > 0 ? '+' : ''}${event.deltaValue.toLocaleString()} stubs` : 'N/A'} • {new Date(event.triggeredAt).toLocaleString()}
                         </div>
@@ -130,7 +130,7 @@ export function DiamondDynastyWatchlistClient() {
                       <CardContent className="space-y-4 px-0 pb-0 pt-0">
                         <div className="flex items-start justify-between gap-4">
                           <div>
-                            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-burnt-orange">
+                            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-primary)]">
                               {detail.detail.card.rarity} • {detail.detail.card.series}
                             </div>
                             <h2 className="mt-2 text-lg font-semibold text-[var(--bsi-bone)]">{detail.detail.card.name}</h2>
@@ -138,7 +138,7 @@ export function DiamondDynastyWatchlistClient() {
                               {detail.detail.card.team} • {detail.detail.card.primaryPosition}
                             </p>
                           </div>
-                          <div className="font-mono text-2xl text-burnt-orange">{detail.detail.card.overall}</div>
+                          <div className="font-mono text-2xl text-[var(--bsi-primary)]">{detail.detail.card.overall}</div>
                         </div>
 
                         <div className="grid gap-3 md:grid-cols-2">
@@ -148,7 +148,7 @@ export function DiamondDynastyWatchlistClient() {
 
                         {latestEvent ? (
                           <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3">
-                            <div className="text-xs uppercase tracking-[0.18em] text-burnt-orange">{latestEvent.eventLabel}</div>
+                            <div className="text-xs uppercase tracking-[0.18em] text-[var(--bsi-primary)]">{latestEvent.eventLabel}</div>
                             <div className="mt-1 text-sm text-[var(--bsi-dust)]">
                               {latestEvent.deltaValue !== null ? `${latestEvent.deltaValue > 0 ? '+' : ''}${latestEvent.deltaValue.toLocaleString()} stubs` : 'N/A'}
                             </div>
@@ -156,7 +156,7 @@ export function DiamondDynastyWatchlistClient() {
                         ) : null}
 
                         <div className="flex items-center justify-between gap-3">
-                          <Link href={buildCardHref(detail.detail.card.id)} className="text-sm font-semibold text-burnt-orange">
+                          <Link href={buildCardHref(detail.detail.card.id)} className="text-sm font-semibold text-[var(--bsi-primary)]">
                             Open detail
                           </Link>
                           <WatchlistButton

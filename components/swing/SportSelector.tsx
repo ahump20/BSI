@@ -40,14 +40,14 @@ export function SportSelector({ selected, onSelect }: SportSelectorProps) {
             onClick={() => onSelect(sport.key)}
             className={`relative overflow-hidden rounded-sm border-2 p-6 text-left transition-all duration-300 cursor-pointer ${
               isSelected
-                ? 'border-burnt-orange bg-burnt-orange/10 shadow-[0_0_30px_rgba(191,87,0,0.15)]'
-                : 'border-border-subtle bg-surface-dugout hover:border-burnt-orange/40 hover:bg-surface-dugout/80'
+                ? 'border-[var(--bsi-primary)] bg-[var(--bsi-primary)]/10 shadow-[0_0_30px_rgba(191,87,0,0.15)]'
+                : 'border-[var(--border-vintage)] bg-surface-dugout hover:border-[var(--bsi-primary)]/40 hover:bg-surface-dugout/80'
             }`}
           >
             {isSelected && (
               <motion.div
                 layoutId="sport-selected"
-                className="absolute inset-0 rounded-sm border-2 border-burnt-orange"
+                className="absolute inset-0 rounded-sm border-2 border-[var(--bsi-primary)]"
                 transition={{ type: 'spring', stiffness: 400, damping: 30 }}
               />
             )}
@@ -57,14 +57,14 @@ export function SportSelector({ selected, onSelect }: SportSelectorProps) {
                 <div
                   className={`w-10 h-10 rounded-sm flex items-center justify-center transition-colors ${
                     isSelected
-                      ? 'bg-burnt-orange/20'
+                      ? 'bg-[var(--bsi-primary)]/20'
                       : 'bg-white/[0.04]'
                   }`}
                 >
                   <svg
                     viewBox="0 0 24 24"
                     className={`w-5 h-5 transition-colors ${
-                      isSelected ? 'text-burnt-orange' : 'text-bsi-dust'
+                      isSelected ? 'text-[var(--bsi-primary)]' : 'text-bsi-dust'
                     }`}
                     fill="none"
                     stroke="currentColor"
@@ -79,7 +79,7 @@ export function SportSelector({ selected, onSelect }: SportSelectorProps) {
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="w-5 h-5 rounded-full bg-burnt-orange flex items-center justify-center"
+                    className="w-5 h-5 rounded-full bg-[var(--bsi-primary)] flex items-center justify-center"
                   >
                     <svg viewBox="0 0 16 16" className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <path d="M3 8l3 3 7-7" />
@@ -95,7 +95,7 @@ export function SportSelector({ selected, onSelect }: SportSelectorProps) {
               >
                 {sport.label}
               </h3>
-              <p className="text-xs text-text-muted leading-relaxed">{sport.desc}</p>
+              <p className="text-xs text-[rgba(196,184,165,0.35)] leading-relaxed">{sport.desc}</p>
             </div>
           </button>
         );

@@ -144,50 +144,50 @@ export default function TransferPortalPage() {
 
   return (
     <>
-      <div className="pt-6">
+      <div className="min-h-screen pt-6 bg-[#0A0A0A] text-bsi-bone">
         {/* Hero */}
         <Section padding="lg" className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
           <Container center>
             <ScrollReveal direction="up">
               <div className="flex items-center justify-center gap-3 mb-4">
-                <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors text-sm">
+                <Link href="/college-baseball" className="text-bsi-dust/50 hover:text-[var(--bsi-primary)] transition-colors text-sm">
                   College Baseball
                 </Link>
-                <span className="text-text-muted">/</span>
-                <span className="text-text-tertiary text-sm">Transfer Portal</span>
+                <span className="text-bsi-dust/50">/</span>
+                <span className="text-bsi-dust text-sm">Transfer Portal</span>
               </div>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
               <Badge variant="success" className="mb-4">
-                <span className="w-2 h-2 bg-burnt-orange rounded-full animate-pulse mr-2" />
+                <span className="w-2 h-2 bg-[var(--bsi-primary)] rounded-full animate-pulse mr-2" />
                 Intelligence Product
               </Badge>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-center uppercase tracking-wide mb-4">
-                Transfer Portal <span className="text-gradient-blaze">Intelligence</span>
+                Transfer Portal <span className="text-[var(--bsi-primary)]">Intelligence</span>
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={200}>
-              <p className="text-lg md:text-xl text-text-tertiary max-w-3xl mx-auto text-center mb-6 leading-relaxed">
+              <p className="text-lg md:text-xl text-bsi-dust max-w-3xl mx-auto text-center mb-6 leading-relaxed">
                 Structured portal tracking for D1 baseball — not news mentions, not tweet
                 aggregation. Real-time entry and commitment data with roster impact analysis.
               </p>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={250}>
-              <div className="flex items-center justify-center gap-6 text-sm text-text-muted">
+              <div className="flex items-center justify-center gap-6 text-sm text-bsi-dust/50">
                 <span className="flex items-center gap-2">
-                  <span className="font-mono text-burnt-orange font-bold">2,845+</span>
+                  <span className="font-mono text-[var(--bsi-primary)] font-bold">2,845+</span>
                   D1 portal entrants annually
                 </span>
                 <span className="hidden sm:inline text-border-subtle">|</span>
                 <span className="hidden sm:flex items-center gap-2">
-                  <span className="font-mono text-burnt-orange font-bold">297</span>
+                  <span className="font-mono text-[var(--bsi-primary)] font-bold">297</span>
                   teams tracked
                 </span>
               </div>
@@ -200,10 +200,10 @@ export default function TransferPortalPage() {
           <Container>
             <ScrollReveal direction="up">
               <div className="text-center mb-12">
-                <span className="inline-block text-xs font-semibold uppercase tracking-[0.2em] text-burnt-orange mb-3">
+                <span className="inline-block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--bsi-primary)] mb-3">
                   What&apos;s Coming
                 </span>
-                <h2 className="text-2xl md:text-3xl font-display font-bold text-text-primary uppercase tracking-wide">
+                <h2 className="text-2xl md:text-3xl font-display font-bold text-bsi-bone uppercase tracking-wide">
                   Intelligence ESPN Doesn&apos;t Build
                 </h2>
               </div>
@@ -214,12 +214,12 @@ export default function TransferPortalPage() {
                 <ScrollReveal key={prop.title} direction="up" delay={i * 80}>
                   <Card variant="default" padding="lg" className="h-full">
                     <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-sm bg-burnt-orange/10 flex items-center justify-center text-burnt-orange flex-shrink-0">
+                      <div className="w-12 h-12 rounded-sm bg-[var(--bsi-primary)]/10 flex items-center justify-center text-[var(--bsi-primary)] flex-shrink-0">
                         {prop.icon}
                       </div>
                       <div>
-                        <h3 className="font-semibold text-text-primary mb-1">{prop.title}</h3>
-                        <p className="text-sm text-text-tertiary leading-relaxed">{prop.description}</p>
+                        <h3 className="font-semibold text-bsi-bone mb-1">{prop.title}</h3>
+                        <p className="text-sm text-bsi-dust leading-relaxed">{prop.description}</p>
                       </div>
                     </div>
                   </Card>
@@ -235,10 +235,10 @@ export default function TransferPortalPage() {
             <div className="max-w-xl mx-auto">
               <ScrollReveal direction="up">
                 <div className="text-center mb-6">
-                  <h2 className="text-xl md:text-2xl font-display font-bold text-text-primary uppercase tracking-wide mb-2">
+                  <h2 className="text-xl md:text-2xl font-display font-bold text-bsi-bone uppercase tracking-wide mb-2">
                     Be First When Portal Intel Goes Live
                   </h2>
-                  <p className="text-sm text-text-tertiary">
+                  <p className="text-sm text-bsi-dust">
                     Roster-market intelligence, delivered before anyone else has it.
                   </p>
                 </div>
@@ -252,25 +252,25 @@ export default function TransferPortalPage() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary mb-6">
-                Live Portal <span className="text-burnt-orange">Activity</span>
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-bsi-bone mb-6">
+                Live Portal <span className="text-[var(--bsi-primary)]">Activity</span>
               </h2>
             </ScrollReveal>
 
             <DataErrorBoundary name="Transfer Portal">
             {loading ? (
               <div className="flex items-center justify-center py-20">
-                <div className="w-10 h-10 border-4 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
+                <div className="w-10 h-10 border-4 border-[var(--bsi-primary)]/30 border-t-[var(--bsi-primary)] rounded-full animate-spin" />
               </div>
             ) : entries.length === 0 ? (
               <Card padding="lg" className="text-center">
-                <div className="text-text-muted text-4xl mb-4">
+                <div className="text-bsi-dust/50 text-4xl mb-4">
                   <svg viewBox="0 0 24 24" className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" strokeWidth="1.5">
                     <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-bold text-text-primary mb-2">Portal tracker loading</h3>
-                <p className="text-text-tertiary text-sm max-w-md mx-auto">
+                <h3 className="text-lg font-bold text-bsi-bone mb-2">Portal tracker loading</h3>
+                <p className="text-bsi-dust text-sm max-w-md mx-auto">
                   The real-time portal feed is being connected. Sign up above to get notified the moment it goes live.
                 </p>
               </Card>
@@ -280,16 +280,16 @@ export default function TransferPortalPage() {
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
-                        <tr className="bg-charcoal border-b border-border-strong">
-                          <th className="text-left py-3 px-4 text-xs font-semibold text-text-muted uppercase">Player</th>
-                          <th className="text-left py-3 px-4 text-xs font-semibold text-text-muted uppercase">Pos</th>
-                          <th className="text-left py-3 px-4 text-xs font-semibold text-text-muted uppercase">From</th>
-                          <th className="text-left py-3 px-4 text-xs font-semibold text-text-muted uppercase">To</th>
-                          <th className="text-right py-3 px-4 text-xs font-semibold text-text-muted uppercase">Est. NIL</th>
-                          <th className="text-center py-3 px-4 text-xs font-semibold text-text-muted uppercase">Status</th>
-                          <th className="text-right py-3 px-4 text-xs font-semibold text-text-muted uppercase">When</th>
-                          <th className="text-center py-3 px-2 text-xs font-semibold text-text-muted uppercase w-10">
-                            <svg className="w-3.5 h-3.5 mx-auto text-text-muted" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <tr className="bg-[#161616] border-b border-[rgba(140,98,57,0.5)]">
+                          <th className="text-left py-3 px-4 text-xs font-semibold text-bsi-dust/50 uppercase">Player</th>
+                          <th className="text-left py-3 px-4 text-xs font-semibold text-bsi-dust/50 uppercase">Pos</th>
+                          <th className="text-left py-3 px-4 text-xs font-semibold text-bsi-dust/50 uppercase">From</th>
+                          <th className="text-left py-3 px-4 text-xs font-semibold text-bsi-dust/50 uppercase">To</th>
+                          <th className="text-right py-3 px-4 text-xs font-semibold text-bsi-dust/50 uppercase">Est. NIL</th>
+                          <th className="text-center py-3 px-4 text-xs font-semibold text-bsi-dust/50 uppercase">Status</th>
+                          <th className="text-right py-3 px-4 text-xs font-semibold text-bsi-dust/50 uppercase">When</th>
+                          <th className="text-center py-3 px-2 text-xs font-semibold text-bsi-dust/50 uppercase w-10">
+                            <svg className="w-3.5 h-3.5 mx-auto text-bsi-dust/50" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                               <path d="M8 1.5l2 4.5 5 .5-3.5 3.5 1 5L8 12.5 3.5 15l1-5L1 6.5l5-.5z" />
                             </svg>
                           </th>
@@ -297,20 +297,20 @@ export default function TransferPortalPage() {
                       </thead>
                       <tbody>
                         {displayed.map((entry) => (
-                          <tr key={entry.id} className="border-b border-border hover:bg-charcoal/50 transition-colors">
+                          <tr key={entry.id} className="border-b border-[rgba(140,98,57,0.3)] hover:bg-[#161616]/50 transition-colors">
                             <td className="py-3 px-4 text-sm">
-                              <Link href={`/college-baseball/players/${entry.id}`} className="text-text-primary font-medium hover:text-burnt-orange transition-colors">
+                              <Link href={`/college-baseball/players/${entry.id}`} className="text-bsi-bone font-medium hover:text-[var(--bsi-primary)] transition-colors">
                                 {entry.playerName}
                               </Link>
                             </td>
-                            <td className="py-3 px-4 text-text-tertiary text-sm">{entry.position}</td>
-                            <td className="py-3 px-4 text-text-tertiary text-sm">{entry.fromSchool}</td>
-                            <td className="py-3 px-4 text-sm">{entry.toSchool ? <span className="text-burnt-orange">{entry.toSchool}</span> : <span className="text-text-muted">TBD</span>}</td>
+                            <td className="py-3 px-4 text-bsi-dust text-sm">{entry.position}</td>
+                            <td className="py-3 px-4 text-bsi-dust text-sm">{entry.fromSchool}</td>
+                            <td className="py-3 px-4 text-sm">{entry.toSchool ? <span className="text-[var(--bsi-primary)]">{entry.toSchool}</span> : <span className="text-bsi-dust/50">TBD</span>}</td>
                             <td className="py-3 px-4 text-right text-sm">
                               {entry.nilValue ? (
-                                <span className="text-burnt-orange font-semibold">{formatNILValue(entry.nilValue)}</span>
+                                <span className="text-[var(--bsi-primary)] font-semibold">{formatNILValue(entry.nilValue)}</span>
                               ) : (
-                                <span className="text-text-muted">—</span>
+                                <span className="text-bsi-dust/50">—</span>
                               )}
                             </td>
                             <td className="py-3 px-4 text-center">
@@ -318,7 +318,7 @@ export default function TransferPortalPage() {
                                 {entry.status}
                               </Badge>
                             </td>
-                            <td className="py-3 px-4 text-right text-xs text-text-muted">{relativeTime(entry.enteredDate)}</td>
+                            <td className="py-3 px-4 text-right text-xs text-bsi-dust/50">{relativeTime(entry.enteredDate)}</td>
                             <td className="py-3 px-2 text-center">
                               {(() => {
                                 const watched = isWatched(entry.id);
@@ -330,8 +330,8 @@ export default function TransferPortalPage() {
                                     }
                                     className={`p-1.5 rounded-sm transition-colors cursor-pointer ${
                                       watched
-                                        ? 'text-burnt-orange hover:text-ember'
-                                        : 'text-text-muted hover:text-burnt-orange'
+                                        ? 'text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)]'
+                                        : 'text-bsi-dust/50 hover:text-[var(--bsi-primary)]'
                                     }`}
                                     aria-label={watched ? `Remove ${entry.playerName} from watchlist` : `Add ${entry.playerName} to watchlist`}
                                   >
@@ -351,9 +351,9 @@ export default function TransferPortalPage() {
 
                 {totalPages > 1 && (
                   <div className="flex items-center justify-center gap-2 mt-6">
-                    <button onClick={() => setPage(Math.max(0, page - 1))} disabled={page === 0} className="px-3 py-1.5 bg-surface-medium text-text-tertiary rounded-sm text-sm disabled:opacity-30">Prev</button>
-                    <span className="text-text-muted text-sm">Page {page + 1} of {totalPages}</span>
-                    <button onClick={() => setPage(Math.min(totalPages - 1, page + 1))} disabled={page >= totalPages - 1} className="px-3 py-1.5 bg-surface-medium text-text-tertiary rounded-sm text-sm disabled:opacity-30">Next</button>
+                    <button onClick={() => setPage(Math.max(0, page - 1))} disabled={page === 0} className="px-3 py-1.5 bg-[#161616] text-bsi-dust rounded-sm text-sm disabled:opacity-30">Prev</button>
+                    <span className="text-bsi-dust/50 text-sm">Page {page + 1} of {totalPages}</span>
+                    <button onClick={() => setPage(Math.min(totalPages - 1, page + 1))} disabled={page >= totalPages - 1} className="px-3 py-1.5 bg-[#161616] text-bsi-dust rounded-sm text-sm disabled:opacity-30">Next</button>
                   </div>
                 )}
               </>

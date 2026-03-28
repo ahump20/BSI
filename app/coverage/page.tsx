@@ -6,7 +6,6 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { HeroGlow } from '@/components/ui/HeroGlow';
 import { ScrollReveal } from '@/components/cinematic';
 import { withAlpha } from '@/lib/utils/color';
 // Navbar is rendered by the root layout — no page-level import needed
@@ -178,22 +177,21 @@ const dataSources = [
 
 export default function CoveragePage() {
   return (
-    <div className="min-h-screen bg-background-primary text-text-primary">
+    <div className="min-h-screen bg-[var(--surface-scoreboard)] text-[var(--bsi-bone)]">
       {/* Navbar provided by root layout */}
 
       {/* Hero Section */}
       <Section className="pt-6 pb-16 relative overflow-hidden">
-        <HeroGlow />
         <Container>
           <ScrollReveal>
             <div className="max-w-4xl mx-auto text-center">
-              <span className="section-label">Data Coverage</span>
+              <span className="heritage-stamp">Data Coverage</span>
               <h1
-                className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display mb-6 text-text-primary"
+                className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display mb-6 text-[var(--bsi-bone)]"
               >
                 Complete Coverage Where It Matters
               </h1>
-              <p className="text-burnt-orange font-serif italic text-lg leading-relaxed mb-8 max-w-2xl mx-auto">
+              <p className="text-[var(--bsi-primary)] font-serif italic text-lg leading-relaxed mb-8 max-w-2xl mx-auto">
                 Real-time data from official sources. MLB, NFL, NBA, and the most comprehensive college baseball coverage anywhere.
               </p>
             </div>
@@ -202,31 +200,31 @@ export default function CoveragePage() {
       </Section>
 
       {/* Stats Bar */}
-      <div className="bg-background-secondary border-y border-border py-8">
+      <div className="bg-[var(--surface-dugout)] border-y border-border py-8">
         <Container>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <ScrollReveal>
               <div>
-                <div className="text-3xl md:text-4xl font-mono font-bold text-burnt-orange">392+</div>
-                <p className="text-text-tertiary mt-1">Teams Tracked</p>
+                <div className="text-3xl md:text-4xl font-mono font-bold text-[var(--bsi-primary)]">392+</div>
+                <p className="text-[rgba(196,184,165,0.5)] mt-1">Teams Tracked</p>
               </div>
             </ScrollReveal>
             <ScrollReveal delay={100}>
               <div>
-                <div className="text-3xl md:text-4xl font-mono font-bold text-burnt-orange">30s</div>
-                <p className="text-text-tertiary mt-1">Update Frequency</p>
+                <div className="text-3xl md:text-4xl font-mono font-bold text-[var(--bsi-primary)]">30s</div>
+                <p className="text-[rgba(196,184,165,0.5)] mt-1">Update Frequency</p>
               </div>
             </ScrollReveal>
             <ScrollReveal delay={200}>
               <div>
-                <div className="text-3xl md:text-4xl font-mono font-bold text-burnt-orange">6</div>
-                <p className="text-text-tertiary mt-1">Data Sources</p>
+                <div className="text-3xl md:text-4xl font-mono font-bold text-[var(--bsi-primary)]">6</div>
+                <p className="text-[rgba(196,184,165,0.5)] mt-1">Data Sources</p>
               </div>
             </ScrollReveal>
             <ScrollReveal delay={300}>
               <div>
-                <div className="text-3xl md:text-4xl font-mono font-bold text-burnt-orange">99.7%</div>
-                <p className="text-text-tertiary mt-1">Uptime</p>
+                <div className="text-3xl md:text-4xl font-mono font-bold text-[var(--bsi-primary)]">99.7%</div>
+                <p className="text-[rgba(196,184,165,0.5)] mt-1">Uptime</p>
               </div>
             </ScrollReveal>
           </div>
@@ -238,8 +236,8 @@ export default function CoveragePage() {
         <Container>
           <ScrollReveal>
             <div className="text-center mb-12">
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display text-text-primary mb-4">Sports Coverage</h2>
-              <p className="text-text-tertiary max-w-2xl mx-auto">
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display text-[var(--bsi-bone)] mb-4">Sports Coverage</h2>
+              <p className="text-[rgba(196,184,165,0.5)] max-w-2xl mx-auto">
                 Comprehensive coverage across professional and college sports.
               </p>
             </div>
@@ -254,11 +252,11 @@ export default function CoveragePage() {
                     <div className="md:col-span-1">
                       <Link href={sport.href} className="group">
                         <div className="flex items-center gap-3 mb-3">
-                          <span className="text-text-secondary">
+                          <span className="text-[var(--bsi-dust)]">
                             {(() => { const Icon = COVERAGE_ICONS[sport.name]; return Icon ? <Icon /> : null; })()}
                           </span>
                           <div>
-                            <h3 className="text-xl font-semibold text-text-primary group-hover:text-burnt-orange transition-colors">
+                            <h3 className="text-xl font-semibold text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors">
                               {sport.name}
                             </h3>
                             <Badge
@@ -269,16 +267,16 @@ export default function CoveragePage() {
                             </Badge>
                           </div>
                         </div>
-                        <p className="text-text-tertiary text-sm">{sport.teams}</p>
+                        <p className="text-[rgba(196,184,165,0.5)] text-sm">{sport.teams}</p>
                       </Link>
                     </div>
 
                     {/* Features */}
                     <div className="md:col-span-2">
-                      <h4 className="text-sm font-semibold text-text-muted uppercase mb-3">Features</h4>
+                      <h4 className="text-sm font-semibold text-[rgba(196,184,165,0.35)] uppercase mb-3">Features</h4>
                       <ul className="grid grid-cols-2 gap-2">
                         {sport.features.map((feature) => (
-                          <li key={feature} className="flex items-center gap-2 text-text-secondary text-sm">
+                          <li key={feature} className="flex items-center gap-2 text-[var(--bsi-dust)] text-sm">
                             <span className="text-success">✓</span>
                             {feature}
                           </li>
@@ -289,7 +287,7 @@ export default function CoveragePage() {
                     {/* Sources & Frequency */}
                     <div className="md:col-span-1">
                       <div className="mb-4">
-                        <h4 className="text-sm font-semibold text-text-muted uppercase mb-2">Data Sources</h4>
+                        <h4 className="text-sm font-semibold text-[rgba(196,184,165,0.35)] uppercase mb-2">Data Sources</h4>
                         <div className="flex flex-wrap gap-2">
                           {sport.sources.map((source) => (
                             <Badge key={source} variant="secondary" className="text-xs">
@@ -299,7 +297,7 @@ export default function CoveragePage() {
                         </div>
                       </div>
                       <div>
-                        <h4 className="text-sm font-semibold text-text-muted uppercase mb-1">Updates</h4>
+                        <h4 className="text-sm font-semibold text-[rgba(196,184,165,0.35)] uppercase mb-1">Updates</h4>
                         <p className="text-sm text-ember">{sport.updateFrequency}</p>
                       </div>
                     </div>
@@ -312,12 +310,12 @@ export default function CoveragePage() {
       </Section>
 
       {/* Data Sources */}
-      <Section className="py-20 bg-background-secondary">
+      <Section className="py-20 bg-[var(--surface-dugout)]">
         <Container>
           <ScrollReveal>
             <div className="text-center mb-12">
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display text-text-primary mb-4">Our Data Sources</h2>
-              <p className="text-text-tertiary max-w-2xl mx-auto">
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display text-[var(--bsi-bone)] mb-4">Our Data Sources</h2>
+              <p className="text-[rgba(196,184,165,0.5)] max-w-2xl mx-auto">
                 We pull from official APIs and trusted sources. Every stat is verified and timestamped.
               </p>
             </div>
@@ -332,8 +330,8 @@ export default function CoveragePage() {
                       <Badge variant="secondary">{source.sport}</Badge>
                       <span className="text-xs text-success">{source.reliability} Uptime</span>
                     </div>
-                    <h3 className="text-lg font-semibold text-text-primary mb-2">{source.name}</h3>
-                    <p className="text-text-tertiary text-sm">{source.description}</p>
+                    <h3 className="text-lg font-semibold text-[var(--bsi-bone)] mb-2">{source.name}</h3>
+                    <p className="text-[rgba(196,184,165,0.5)] text-sm">{source.description}</p>
                   </CardContent>
                 </Card>
               </ScrollReveal>
@@ -348,44 +346,44 @@ export default function CoveragePage() {
           <ScrollReveal>
             <div className="max-w-3xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display text-text-primary mb-4">Our Data Quality Commitment</h2>
+                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display text-[var(--bsi-bone)] mb-4">Our Data Quality Commitment</h2>
               </div>
 
               <Card className="border-l-4 border-l-burnt-orange">
                 <CardContent className="p-8">
                   <div className="space-y-6">
                     <div className="flex items-start gap-4">
-                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-burnt-orange" stroke="currentColor" strokeWidth={1.5}><rect x="3" y="3" width="7" height="18" rx="1" /><rect x="14" y="8" width="7" height="13" rx="1" /><path d="M6 7v10M17.5 12v5" /></svg>
+                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-[var(--bsi-primary)]" stroke="currentColor" strokeWidth={1.5}><rect x="3" y="3" width="7" height="18" rx="1" /><rect x="14" y="8" width="7" height="13" rx="1" /><path d="M6 7v10M17.5 12v5" /></svg>
                       <div>
-                        <h3 className="text-lg font-semibold text-text-primary mb-2">Cross-Referenced Data</h3>
-                        <p className="text-text-tertiary">
+                        <h3 className="text-lg font-semibold text-[var(--bsi-bone)] mb-2">Cross-Referenced Data</h3>
+                        <p className="text-[rgba(196,184,165,0.5)]">
                           Every critical statistic is cross-referenced against 3+ sources before publication. We do not guess.
                         </p>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
-                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-burnt-orange" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg>
+                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-[var(--bsi-primary)]" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg>
                       <div>
-                        <h3 className="text-lg font-semibold text-text-primary mb-2">America/Chicago Timestamps</h3>
-                        <p className="text-text-tertiary">
+                        <h3 className="text-lg font-semibold text-[var(--bsi-bone)] mb-2">America/Chicago Timestamps</h3>
+                        <p className="text-[rgba(196,184,165,0.5)]">
                           All data points include precise timestamps. You always know exactly when information was captured.
                         </p>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
-                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-burnt-orange" stroke="currentColor" strokeWidth={1.5}><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" /></svg>
+                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-[var(--bsi-primary)]" stroke="currentColor" strokeWidth={1.5}><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" /></svg>
                       <div>
-                        <h3 className="text-lg font-semibold text-text-primary mb-2">Source Citations</h3>
-                        <p className="text-text-tertiary">
+                        <h3 className="text-lg font-semibold text-[var(--bsi-bone)] mb-2">Source Citations</h3>
+                        <p className="text-[rgba(196,184,165,0.5)]">
                           Every stat includes its source. Full transparency on where our data comes from.
                         </p>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
-                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-burnt-orange" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M4.93 4.93l14.14 14.14" /></svg>
+                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-[var(--bsi-primary)]" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M4.93 4.93l14.14 14.14" /></svg>
                       <div>
-                        <h3 className="text-lg font-semibold text-text-primary mb-2">Zero Placeholders</h3>
-                        <p className="text-text-tertiary">
+                        <h3 className="text-lg font-semibold text-[var(--bsi-bone)] mb-2">Zero Placeholders</h3>
+                        <p className="text-[rgba(196,184,165,0.5)]">
                           Real numbers or we do not ship it. No estimates, no placeholder data, no made-up statistics.
                         </p>
                       </div>
@@ -399,21 +397,21 @@ export default function CoveragePage() {
       </Section>
 
       {/* CTA Section */}
-      <Section className="py-20 bg-gradient-to-b from-background-secondary to-background-primary">
+      <Section className="py-20 bg-gradient-to-b from-background-secondary to-[var(--surface-scoreboard)]">
         <Container>
           <ScrollReveal>
             <div className="max-w-2xl mx-auto text-center">
               <h2
                 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display mb-6"
               >
-                See Our <span className="text-burnt-orange">Data in Action</span>
+                See Our <span className="text-[var(--bsi-primary)]">Data in Action</span>
               </h2>
-              <p className="text-xl text-text-tertiary mb-8">
+              <p className="text-xl text-[rgba(196,184,165,0.5)] mb-8">
                 Start your 14-day free trial and explore the most comprehensive sports data platform built for fans.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/pricing">
-                  <Button size="lg" className="bg-burnt-orange hover:bg-burnt-orange/90">
+                  <Button size="lg" className="bg-[var(--bsi-primary)] hover:bg-[var(--bsi-primary)]/90">
                     Start Free Trial
                   </Button>
                 </Link>

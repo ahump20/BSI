@@ -65,7 +65,7 @@ interface LiveTickerProps {
 const PRIORITY_COLORS: Record<Priority, string> = {
   1: 'bg-[var(--heritage-oiler-red)]', // Breaking
   2: 'bg-[var(--bsi-warning)]', // Important
-  3: 'bg-charcoal', // Standard
+  3: 'bg-[var(--surface-dugout)]', // Standard
 };
 
 // ── SVG league markers (renders consistently across devices) ──
@@ -254,7 +254,7 @@ export function LiveTicker({
 
   return (
     <div
-      className={`bg-midnight/90 backdrop-blur-sm border border-charcoal/50 rounded-sm ${className}`}
+      className={`bg-[var(--surface-scoreboard)]/90 backdrop-blur-sm border border-charcoal/50 rounded-sm ${className}`}
     >
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-charcoal/50">
@@ -271,7 +271,7 @@ export function LiveTicker({
             <div
               key={idx}
               className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                idx === currentIndex ? 'bg-ember' : 'bg-charcoal'
+                idx === currentIndex ? 'bg-ember' : 'bg-[var(--surface-dugout)]'
               }`}
             />
           ))}

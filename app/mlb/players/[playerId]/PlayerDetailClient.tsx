@@ -157,24 +157,24 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/mlb"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 MLB
               </Link>
-              <span className="text-text-tertiary">/</span>
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
               <Link
                 href="/mlb/players"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 Players
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">
+              <span className="text-[rgba(196,184,165,0.5)]">/</span>
+              <span className="text-[var(--bsi-bone)] font-medium">
                 {loading ? 'Loading...' : player?.fullName || 'Player'}
               </span>
             </nav>
@@ -185,8 +185,8 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
           <Section padding="lg">
             <Container>
               <div className="text-center py-16">
-                <div className="inline-block w-10 h-10 border-4 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin mb-4" />
-                <p className="text-text-secondary">Loading player data...</p>
+                <div className="inline-block w-10 h-10 border-4 border-[var(--bsi-primary)]/30 border-t-[var(--bsi-primary)] rounded-full animate-spin mb-4" />
+                <p className="text-[var(--bsi-dust)]">Loading player data...</p>
               </div>
             </Container>
           </Section>
@@ -195,11 +195,11 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
             <Container>
               <Card padding="lg" className="text-center">
                 <div className="text-error text-4xl mb-4">!</div>
-                <h3 className="text-xl font-semibold text-text-primary mb-2">Error Loading Player</h3>
-                <p className="text-text-secondary mb-4">{error}</p>
+                <h3 className="text-xl font-semibold text-[var(--bsi-bone)] mb-2">Error Loading Player</h3>
+                <p className="text-[var(--bsi-dust)] mb-4">{error}</p>
                 <Link
                   href="/mlb/players"
-                  className="inline-block px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange/90 transition-colors"
+                  className="inline-block px-4 py-2 bg-[var(--bsi-primary)] text-white rounded-sm hover:bg-[var(--bsi-primary)]/90 transition-colors"
                 >
                   Back to Players
                 </Link>
@@ -216,7 +216,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                 <div className="flex flex-col md:flex-row gap-8 items-start">
                   {/* Headshot */}
                   <ScrollReveal direction="left">
-                    <div className="relative w-40 h-40 rounded-sm overflow-hidden bg-background-tertiary border border-border-subtle">
+                    <div className="relative w-40 h-40 rounded-sm overflow-hidden bg-[var(--surface-dugout)] border border-[var(--border-vintage)]">
                       {assets?.headshot ? (
                         <Image
                           src={assets.headshot}
@@ -226,7 +226,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                           unoptimized
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-4xl text-text-tertiary">
+                        <div className="w-full h-full flex items-center justify-center text-4xl text-[rgba(196,184,165,0.5)]">
                           {player.firstName?.[0]}
                           {player.lastName?.[0]}
                         </div>
@@ -253,13 +253,13 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                     </ScrollReveal>
 
                     <ScrollReveal direction="up" delay={50}>
-                      <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-gradient-blaze mb-2">
+                      <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-[var(--bsi-primary)] mb-2">
                         {player.fullName}
                       </h1>
                     </ScrollReveal>
 
                     <ScrollReveal direction="up" delay={100}>
-                      <p className="text-text-secondary text-lg mb-4">
+                      <p className="text-[var(--bsi-dust)] text-lg mb-4">
                         {player.currentTeam?.name || 'Free Agent'}
                       </p>
                     </ScrollReveal>
@@ -269,38 +269,38 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                       <div className="flex flex-wrap gap-6 text-sm">
                         {player.currentAge && (
                           <div>
-                            <span className="text-text-tertiary">Age:</span>{' '}
-                            <span className="text-text-primary font-medium">{player.currentAge}</span>
+                            <span className="text-[rgba(196,184,165,0.5)]">Age:</span>{' '}
+                            <span className="text-[var(--bsi-bone)] font-medium">{player.currentAge}</span>
                           </div>
                         )}
                         {player.height && (
                           <div>
-                            <span className="text-text-tertiary">Height:</span>{' '}
-                            <span className="text-text-primary font-medium">{player.height}</span>
+                            <span className="text-[rgba(196,184,165,0.5)]">Height:</span>{' '}
+                            <span className="text-[var(--bsi-bone)] font-medium">{player.height}</span>
                           </div>
                         )}
                         {player.weight && (
                           <div>
-                            <span className="text-text-tertiary">Weight:</span>{' '}
-                            <span className="text-text-primary font-medium">{player.weight} lbs</span>
+                            <span className="text-[rgba(196,184,165,0.5)]">Weight:</span>{' '}
+                            <span className="text-[var(--bsi-bone)] font-medium">{player.weight} lbs</span>
                           </div>
                         )}
                         <div>
-                          <span className="text-text-tertiary">Bats:</span>{' '}
-                          <span className="text-text-primary font-medium">
+                          <span className="text-[rgba(196,184,165,0.5)]">Bats:</span>{' '}
+                          <span className="text-[var(--bsi-bone)] font-medium">
                             {player.batSide?.description || player.batSide?.code}
                           </span>
                         </div>
                         <div>
-                          <span className="text-text-tertiary">Throws:</span>{' '}
-                          <span className="text-text-primary font-medium">
+                          <span className="text-[rgba(196,184,165,0.5)]">Throws:</span>{' '}
+                          <span className="text-[var(--bsi-bone)] font-medium">
                             {player.pitchHand?.description || player.pitchHand?.code}
                           </span>
                         </div>
                         {player.birthCity && (
                           <div>
-                            <span className="text-text-tertiary">From:</span>{' '}
-                            <span className="text-text-primary font-medium">
+                            <span className="text-[rgba(196,184,165,0.5)]">From:</span>{' '}
+                            <span className="text-[var(--bsi-bone)] font-medium">
                               {player.birthCity}
                               {player.birthStateProvince && `, ${player.birthStateProvince}`}
                             </span>
@@ -314,62 +314,62 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                   <ScrollReveal direction="right" delay={100}>
                     <Card padding="md" className="min-w-[200px]">
                       <div className="text-center mb-4">
-                        <p className="text-text-tertiary text-xs uppercase tracking-wider mb-1">
+                        <p className="text-[rgba(196,184,165,0.5)] text-xs uppercase tracking-wider mb-1">
                           {stats?.season} Season
                         </p>
                       </div>
                       {isPitcher ? (
                         <div className="grid grid-cols-2 gap-4 text-center">
                           <div>
-                            <div className="font-display text-2xl font-bold text-burnt-orange">
+                            <div className="font-display text-2xl font-bold text-[var(--bsi-primary)]">
                               {formatStat(primaryStats.era as number, 2)}
                             </div>
-                            <div className="text-text-tertiary text-xs uppercase">ERA</div>
+                            <div className="text-[rgba(196,184,165,0.5)] text-xs uppercase">ERA</div>
                           </div>
                           <div>
-                            <div className="font-display text-2xl font-bold text-text-primary">
+                            <div className="font-display text-2xl font-bold text-[var(--bsi-bone)]">
                               {primaryStats.wins ?? '-'}-{primaryStats.losses ?? '-'}
                             </div>
-                            <div className="text-text-tertiary text-xs uppercase">W-L</div>
+                            <div className="text-[rgba(196,184,165,0.5)] text-xs uppercase">W-L</div>
                           </div>
                           <div>
-                            <div className="font-display text-2xl font-bold text-text-primary">
+                            <div className="font-display text-2xl font-bold text-[var(--bsi-bone)]">
                               {formatStat(primaryStats.strikeOuts as number, 0)}
                             </div>
-                            <div className="text-text-tertiary text-xs uppercase">K</div>
+                            <div className="text-[rgba(196,184,165,0.5)] text-xs uppercase">K</div>
                           </div>
                           <div>
-                            <div className="font-display text-2xl font-bold text-burnt-orange">
+                            <div className="font-display text-2xl font-bold text-[var(--bsi-primary)]">
                               {formatStat(primaryStats.whip as number, 2)}
                             </div>
-                            <div className="text-text-tertiary text-xs uppercase">WHIP</div>
+                            <div className="text-[rgba(196,184,165,0.5)] text-xs uppercase">WHIP</div>
                           </div>
                         </div>
                       ) : (
                         <div className="grid grid-cols-2 gap-4 text-center">
                           <div>
-                            <div className="font-display text-2xl font-bold text-burnt-orange">
+                            <div className="font-display text-2xl font-bold text-[var(--bsi-primary)]">
                               {formatStat(primaryStats.avg as number)}
                             </div>
-                            <div className="text-text-tertiary text-xs uppercase">AVG</div>
+                            <div className="text-[rgba(196,184,165,0.5)] text-xs uppercase">AVG</div>
                           </div>
                           <div>
-                            <div className="font-display text-2xl font-bold text-text-primary">
+                            <div className="font-display text-2xl font-bold text-[var(--bsi-bone)]">
                               {formatStat(primaryStats.homeRuns as number, 0)}
                             </div>
-                            <div className="text-text-tertiary text-xs uppercase">HR</div>
+                            <div className="text-[rgba(196,184,165,0.5)] text-xs uppercase">HR</div>
                           </div>
                           <div>
-                            <div className="font-display text-2xl font-bold text-text-primary">
+                            <div className="font-display text-2xl font-bold text-[var(--bsi-bone)]">
                               {formatStat(primaryStats.rbi as number, 0)}
                             </div>
-                            <div className="text-text-tertiary text-xs uppercase">RBI</div>
+                            <div className="text-[rgba(196,184,165,0.5)] text-xs uppercase">RBI</div>
                           </div>
                           <div>
-                            <div className="font-display text-2xl font-bold text-burnt-orange">
+                            <div className="font-display text-2xl font-bold text-[var(--bsi-primary)]">
                               {formatStat(primaryStats.ops as number)}
                             </div>
-                            <div className="text-text-tertiary text-xs uppercase">OPS</div>
+                            <div className="text-[rgba(196,184,165,0.5)] text-xs uppercase">OPS</div>
                           </div>
                         </div>
                       )}
@@ -382,7 +382,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
             {/* Tabs */}
             <Section
               padding="none"
-              className="border-b border-border-subtle sticky top-0 bg-background-secondary z-10"
+              className="border-b border-[var(--border-vintage)] sticky top-0 bg-[var(--surface-dugout)] z-10"
             >
               <Container>
                 <div className="flex gap-1 overflow-x-auto">
@@ -392,8 +392,8 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                       onClick={() => setActiveTab(tab.id)}
                       className={`px-6 py-4 text-sm font-medium transition-colors whitespace-nowrap ${
                         activeTab === tab.id
-                          ? 'text-burnt-orange border-b-2 border-burnt-orange'
-                          : 'text-text-secondary hover:text-text-primary'
+                          ? 'text-[var(--bsi-primary)] border-b-2 border-[var(--bsi-primary)]'
+                          : 'text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)]'
                       }`}
                     >
                       {tab.label}
@@ -432,10 +432,10 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                                 { label: 'HR', value: primaryStats.homeRuns, decimals: 0 },
                               ].map((stat) => (
                                 <div key={stat.label} className="text-center">
-                                  <div className="text-text-primary font-mono font-semibold">
+                                  <div className="text-[var(--bsi-bone)] font-mono font-semibold">
                                     {formatStat(stat.value as number, stat.decimals)}
                                   </div>
-                                  <div className="text-text-tertiary text-xs uppercase">
+                                  <div className="text-[rgba(196,184,165,0.5)] text-xs uppercase">
                                     {stat.label}
                                   </div>
                                 </div>
@@ -458,10 +458,10 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                                 { label: 'BB', value: primaryStats.baseOnBalls, decimals: 0 },
                               ].map((stat) => (
                                 <div key={stat.label} className="text-center">
-                                  <div className="text-text-primary font-mono font-semibold">
+                                  <div className="text-[var(--bsi-bone)] font-mono font-semibold">
                                     {formatStat(stat.value as number, stat.decimals)}
                                   </div>
-                                  <div className="text-text-tertiary text-xs uppercase">
+                                  <div className="text-[rgba(196,184,165,0.5)] text-xs uppercase">
                                     {stat.label}
                                   </div>
                                 </div>
@@ -479,35 +479,35 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                         <CardContent>
                           <dl className="space-y-3">
                             <div className="flex justify-between">
-                              <dt className="text-text-tertiary">Full Name</dt>
-                              <dd className="text-text-primary">{player.fullName}</dd>
+                              <dt className="text-[rgba(196,184,165,0.5)]">Full Name</dt>
+                              <dd className="text-[var(--bsi-bone)]">{player.fullName}</dd>
                             </div>
                             <div className="flex justify-between">
-                              <dt className="text-text-tertiary">Position</dt>
-                              <dd className="text-text-primary">{player.primaryPosition.name}</dd>
+                              <dt className="text-[rgba(196,184,165,0.5)]">Position</dt>
+                              <dd className="text-[var(--bsi-bone)]">{player.primaryPosition.name}</dd>
                             </div>
                             <div className="flex justify-between">
-                              <dt className="text-text-tertiary">Bats/Throws</dt>
-                              <dd className="text-text-primary">
+                              <dt className="text-[rgba(196,184,165,0.5)]">Bats/Throws</dt>
+                              <dd className="text-[var(--bsi-bone)]">
                                 {player.batSide?.code}/{player.pitchHand?.code}
                               </dd>
                             </div>
                             {player.mlbDebutDate && (
                               <div className="flex justify-between">
-                                <dt className="text-text-tertiary">MLB Debut</dt>
-                                <dd className="text-text-primary">{player.mlbDebutDate}</dd>
+                                <dt className="text-[rgba(196,184,165,0.5)]">MLB Debut</dt>
+                                <dd className="text-[var(--bsi-bone)]">{player.mlbDebutDate}</dd>
                               </div>
                             )}
                             {player.draftYear && (
                               <div className="flex justify-between">
-                                <dt className="text-text-tertiary">Draft Year</dt>
-                                <dd className="text-text-primary">{player.draftYear}</dd>
+                                <dt className="text-[rgba(196,184,165,0.5)]">Draft Year</dt>
+                                <dd className="text-[var(--bsi-bone)]">{player.draftYear}</dd>
                               </div>
                             )}
                             {player.birthCountry && (
                               <div className="flex justify-between">
-                                <dt className="text-text-tertiary">Birth Country</dt>
-                                <dd className="text-text-primary">{player.birthCountry}</dd>
+                                <dt className="text-[rgba(196,184,165,0.5)]">Birth Country</dt>
+                                <dd className="text-[var(--bsi-bone)]">{player.birthCountry}</dd>
                               </div>
                             )}
                           </dl>
@@ -524,10 +524,10 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                             <div className="grid grid-cols-4 md:grid-cols-6 gap-4">
                               {Object.entries(stats.advancedStats).map(([key, value]) => (
                                 <div key={key} className="text-center">
-                                  <div className="text-burnt-orange font-mono font-semibold">
+                                  <div className="text-[var(--bsi-primary)] font-mono font-semibold">
                                     {formatStat(value, 3)}
                                   </div>
-                                  <div className="text-text-tertiary text-xs uppercase">{key}</div>
+                                  <div className="text-[rgba(196,184,165,0.5)] text-xs uppercase">{key}</div>
                                 </div>
                               ))}
                             </div>
@@ -552,7 +552,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                                 .slice(0, 9)
                                 .map(([key, value]) => (
                                   <div key={key} className="text-center">
-                                    <div className="text-text-primary font-mono font-semibold">
+                                    <div className="text-[var(--bsi-bone)] font-mono font-semibold">
                                       {formatStat(
                                         value,
                                         key.includes('avg') ||
@@ -562,7 +562,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                                           : 0
                                       )}
                                     </div>
-                                    <div className="text-text-tertiary text-xs uppercase">
+                                    <div className="text-[rgba(196,184,165,0.5)] text-xs uppercase">
                                       {key}
                                     </div>
                                   </div>
@@ -582,7 +582,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                                 .slice(0, 9)
                                 .map(([key, value]) => (
                                   <div key={key} className="text-center">
-                                    <div className="text-text-primary font-mono font-semibold">
+                                    <div className="text-[var(--bsi-bone)] font-mono font-semibold">
                                       {formatStat(
                                         value,
                                         key.includes('avg') ||
@@ -592,7 +592,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                                           : 0
                                       )}
                                     </div>
-                                    <div className="text-text-tertiary text-xs uppercase">
+                                    <div className="text-[rgba(196,184,165,0.5)] text-xs uppercase">
                                       {key}
                                     </div>
                                   </div>
@@ -612,7 +612,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                                 .slice(0, 9)
                                 .map(([key, value]) => (
                                   <div key={key} className="text-center">
-                                    <div className="text-text-primary font-mono font-semibold">
+                                    <div className="text-[var(--bsi-bone)] font-mono font-semibold">
                                       {formatStat(
                                         value,
                                         key.includes('avg') ||
@@ -622,7 +622,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                                           : 0
                                       )}
                                     </div>
-                                    <div className="text-text-tertiary text-xs uppercase">
+                                    <div className="text-[rgba(196,184,165,0.5)] text-xs uppercase">
                                       {key}
                                     </div>
                                   </div>
@@ -642,7 +642,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                                 .slice(0, 9)
                                 .map(([key, value]) => (
                                   <div key={key} className="text-center">
-                                    <div className="text-text-primary font-mono font-semibold">
+                                    <div className="text-[var(--bsi-bone)] font-mono font-semibold">
                                       {formatStat(
                                         value,
                                         key.includes('avg') ||
@@ -652,7 +652,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                                           : 0
                                       )}
                                     </div>
-                                    <div className="text-text-tertiary text-xs uppercase">
+                                    <div className="text-[rgba(196,184,165,0.5)] text-xs uppercase">
                                       {key}
                                     </div>
                                   </div>
@@ -672,17 +672,17 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                         <div className="overflow-x-auto">
                           <table className="w-full text-left">
                             <thead>
-                              <tr className="border-b border-border-subtle text-text-tertiary text-xs uppercase tracking-wider">
+                              <tr className="border-b border-[var(--border-vintage)] text-[rgba(196,184,165,0.5)] text-xs uppercase tracking-wider">
                                 <th className="py-3 px-4">Date</th>
                                 <th className="py-3 px-4">Opponent</th>
                                 {/* Add relevant stat columns */}
                               </tr>
                             </thead>
-                            <tbody className="divide-y divide-border-subtle">
+                            <tbody className="divide-y divide-[var(--border-vintage)]">
                               {stats.gameLog.map((game, idx) => (
-                                <tr key={idx} className="hover:bg-surface-light transition-colors">
-                                  <td className="py-3 px-4 text-text-primary text-sm">{game.date}</td>
-                                  <td className="py-3 px-4 text-text-secondary text-sm">
+                                <tr key={idx} className="hover:bg-[var(--surface-press-box)] transition-colors">
+                                  <td className="py-3 px-4 text-[var(--bsi-bone)] text-sm">{game.date}</td>
+                                  <td className="py-3 px-4 text-[var(--bsi-dust)] text-sm">
                                     {game.opponent}
                                   </td>
                                 </tr>
@@ -691,7 +691,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                           </table>
                         </div>
                       ) : (
-                        <div className="p-8 text-center text-text-secondary">
+                        <div className="p-8 text-center text-[var(--bsi-dust)]">
                           Game log data not available. Enable game log in API request.
                         </div>
                       )}
@@ -710,17 +710,17 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                           <div className="grid grid-cols-3 md:grid-cols-6 gap-6">
                             {Object.entries(stats.advancedStats).map(([key, value]) => (
                               <div key={key} className="text-center">
-                                <div className="text-burnt-orange font-display text-xl font-bold">
+                                <div className="text-[var(--bsi-primary)] font-display text-xl font-bold">
                                   {formatStat(value, 3)}
                                 </div>
-                                <div className="text-text-tertiary text-xs uppercase mt-1">
+                                <div className="text-[rgba(196,184,165,0.5)] text-xs uppercase mt-1">
                                   {key}
                                 </div>
                               </div>
                             ))}
                           </div>
                         ) : (
-                          <p className="text-text-secondary text-center">
+                          <p className="text-[var(--bsi-dust)] text-center">
                             Advanced metrics not available for this player.
                           </p>
                         )}
@@ -730,7 +730,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                 )}
 
                 {/* Data Source Footer */}
-                <div className="mt-8 pt-4 border-t border-border-subtle">
+                <div className="mt-8 pt-4 border-t border-[var(--border-vintage)]">
                   <DataSourceBadge
                     source={meta?.dataSource || 'MLB Stats API'}
                     timestamp={displayTimestamp(meta?.lastUpdated)}

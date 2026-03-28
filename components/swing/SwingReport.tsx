@@ -58,7 +58,7 @@ export function SwingReport({ analysis, chatContext, videoUrl, frames, narration
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="heritage-stamp text-xs">{model.displayName}</span>
-            <span className="text-[10px] font-mono text-text-muted">
+            <span className="text-[10px] font-mono text-[rgba(196,184,165,0.35)]">
               {analysis.frameCount} frames at {analysis.phases.fps}fps
             </span>
           </div>
@@ -78,7 +78,7 @@ export function SwingReport({ analysis, chatContext, videoUrl, frames, narration
           >
             {analysis.overallScore}
           </div>
-          <span className="text-[10px] text-text-muted font-mono uppercase tracking-wider">
+          <span className="text-[10px] text-[rgba(196,184,165,0.35)] font-mono uppercase tracking-wider">
             Overall Score
           </span>
         </div>
@@ -98,22 +98,22 @@ export function SwingReport({ analysis, chatContext, videoUrl, frames, narration
       )}
 
       {/* Tabs */}
-      <div className="flex gap-1 border-b-2 border-border-subtle">
+      <div className="flex gap-1 border-b-2 border-[var(--border-vintage)]">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`px-4 py-2.5 text-sm font-medium transition-all relative ${
               activeTab === tab.id
-                ? 'text-burnt-orange'
-                : 'text-text-muted hover:text-bsi-dust'
+                ? 'text-[var(--bsi-primary)]'
+                : 'text-[rgba(196,184,165,0.35)] hover:text-bsi-dust'
             }`}
           >
             {tab.label}
             {activeTab === tab.id && (
               <motion.div
                 layoutId="report-tab"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-burnt-orange"
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--bsi-primary)]"
                 transition={{ type: 'spring', stiffness: 400, damping: 30 }}
               />
             )}
@@ -134,7 +134,7 @@ export function SwingReport({ analysis, chatContext, videoUrl, frames, narration
               {analysis.metrics.slice(0, 4).map((m) => (
                 <div
                   key={m.key}
-                  className="rounded-sm bg-surface-dugout border border-border-subtle p-3 text-center"
+                  className="rounded-sm bg-surface-dugout border border-[var(--border-vintage)] p-3 text-center"
                 >
                   <div
                     className={`text-xl font-bold font-display ${
@@ -147,13 +147,13 @@ export function SwingReport({ analysis, chatContext, videoUrl, frames, narration
                   >
                     {m.value}
                   </div>
-                  <div className="text-[10px] text-text-muted mt-1 truncate">{m.label}</div>
+                  <div className="text-[10px] text-[rgba(196,184,165,0.35)] mt-1 truncate">{m.label}</div>
                 </div>
               ))}
             </div>
 
             {/* Key findings */}
-            <div className="rounded-sm bg-surface-dugout border border-border-subtle p-5">
+            <div className="rounded-sm bg-surface-dugout border border-[var(--border-vintage)] p-5">
               <h3 className="heritage-stamp text-xs mb-3">Key Findings</h3>
               <div className="space-y-3">
                 {/* Strengths */}
@@ -190,12 +190,12 @@ export function SwingReport({ analysis, chatContext, videoUrl, frames, narration
             </div>
 
             {/* Sport-specific notes */}
-            <div className="rounded-sm bg-surface-dugout border border-border-subtle p-5">
+            <div className="rounded-sm bg-surface-dugout border border-[var(--border-vintage)] p-5">
               <h3 className="heritage-stamp text-xs mb-3">{model.displayName} Notes</h3>
               <ul className="space-y-2">
                 {model.analysisNotes.map((note, i) => (
                   <li key={i} className="flex gap-2 text-xs text-bsi-dust">
-                    <span className="text-burnt-orange mt-0.5 shrink-0">•</span>
+                    <span className="text-[var(--bsi-primary)] mt-0.5 shrink-0">•</span>
                     {note}
                   </li>
                 ))}
@@ -226,7 +226,7 @@ export function SwingReport({ analysis, chatContext, videoUrl, frames, narration
             )}
             <div className="space-y-3">
               <span className="heritage-stamp text-[10px]">Drill Library</span>
-              <p className="text-xs text-text-muted">
+              <p className="text-xs text-[rgba(196,184,165,0.35)]">
                 {isPro ? 'Supplementary drills from our curated library.' : 'Based on your weakest metrics, here are targeted drills to improve your swing.'}
               </p>
               {drills.map((drill, i) => (

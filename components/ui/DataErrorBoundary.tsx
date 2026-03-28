@@ -46,21 +46,21 @@ export class DataErrorBoundary extends Component<DataErrorBoundaryProps, State> 
 
       return (
         <div role="alert" className={`flex flex-col items-center justify-center text-center ${compact ? 'py-6 px-4' : 'py-12 px-4'}`}>
-          <div className="text-text-muted mb-3">
+          <div className="text-[rgba(196,184,165,0.35)] mb-3">
             <svg className="w-8 h-8 mx-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10" />
               <path d="M12 8v4M12 16h.01" />
             </svg>
           </div>
-          <p className="text-xs font-display font-bold uppercase tracking-wider text-text-muted mb-1">
+          <p className="text-xs font-display font-bold uppercase tracking-wider text-[rgba(196,184,165,0.35)] mb-1">
             {label}
           </p>
-          <p className="text-[10px] text-text-muted mb-3 max-w-xs">
+          <p className="text-[10px] text-[rgba(196,184,165,0.35)] mb-3 max-w-xs">
             This data updates automatically. If the issue persists, try refreshing the page.
           </p>
           <button
             onClick={this.handleRetry}
-            className="px-4 py-1.5 rounded-sm text-[10px] uppercase tracking-wider font-bold font-display cursor-pointer transition-all bg-burnt-orange/10 border border-burnt-orange/25 text-burnt-orange hover:bg-burnt-orange/20"
+            className="px-4 py-1.5 rounded-sm text-[10px] uppercase tracking-wider font-bold font-display cursor-pointer transition-all bg-[var(--bsi-primary)]/10 border border-[var(--bsi-primary)]/25 text-[var(--bsi-primary)] hover:bg-[var(--bsi-primary)]/20"
           >
             Retry
           </button>

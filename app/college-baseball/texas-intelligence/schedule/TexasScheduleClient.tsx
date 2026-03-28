@@ -122,11 +122,11 @@ export default function TexasScheduleClient() {
         <Section padding="sm" className="border-b border-border">
           <Container>
             <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">College Baseball</Link>
-              <span className="text-text-muted">/</span>
-              <Link href="/college-baseball/texas-intelligence" className="text-text-muted hover:text-burnt-orange transition-colors">Texas Intel</Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-primary">Schedule</span>
+              <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">College Baseball</Link>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <Link href="/college-baseball/texas-intelligence" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">Texas Intel</Link>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[var(--bsi-bone)]">Schedule</span>
             </nav>
           </Container>
         </Section>
@@ -140,7 +140,7 @@ export default function TexasScheduleClient() {
                 <img src={logoUrl} alt="" className="w-12 h-12 object-contain" loading="lazy" />
                 <div>
                   <span className="heritage-stamp text-[10px]">Schedule & Results</span>
-                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-text-primary mt-1">
+                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-[var(--bsi-bone)] mt-1">
                     Texas Schedule
                   </h1>
                 </div>
@@ -153,15 +153,15 @@ export default function TexasScheduleClient() {
                 <div className="grid grid-cols-3 gap-4 mt-6 max-w-md">
                   <Card variant="default" padding="sm" className="text-center">
                     <div className="font-mono text-2xl font-bold" style={{ color: ACCENT }}>{record.w}-{record.l}</div>
-                    <div className="text-text-muted text-xs uppercase tracking-wide mt-1">Record</div>
+                    <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wide mt-1">Record</div>
                   </Card>
                   <Card variant="default" padding="sm" className="text-center">
-                    <div className="font-mono text-2xl font-bold text-text-primary">{completed.length}</div>
-                    <div className="text-text-muted text-xs uppercase tracking-wide mt-1">Played</div>
+                    <div className="font-mono text-2xl font-bold text-[var(--bsi-bone)]">{completed.length}</div>
+                    <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wide mt-1">Played</div>
                   </Card>
                   <Card variant="default" padding="sm" className="text-center">
-                    <div className="font-mono text-2xl font-bold text-text-primary">{upcoming.length}</div>
-                    <div className="text-text-muted text-xs uppercase tracking-wide mt-1">Remaining</div>
+                    <div className="font-mono text-2xl font-bold text-[var(--bsi-bone)]">{upcoming.length}</div>
+                    <div className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wide mt-1">Remaining</div>
                   </Card>
                 </div>
               </ScrollReveal>
@@ -180,8 +180,8 @@ export default function TexasScheduleClient() {
                     onClick={() => setView(mode)}
                     className={`px-4 py-2 rounded-sm font-mono text-sm transition-all ${
                       view === mode
-                        ? 'bg-burnt-orange/15 text-burnt-orange border border-burnt-orange/30'
-                        : 'text-text-muted hover:text-text-primary border border-transparent'
+                        ? 'bg-[var(--bsi-primary)]/15 text-[var(--bsi-primary)] border border-[var(--bsi-primary)]/30'
+                        : 'text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] border border-transparent'
                     }`}
                   >
                     {mode === 'all' ? `All (${games.length})` : mode === 'completed' ? `Results (${completed.length})` : `Upcoming (${upcoming.length})`}
@@ -195,8 +195,8 @@ export default function TexasScheduleClient() {
                     onClick={() => setLayout(l)}
                     className={`px-3 py-1.5 rounded-sm text-xs font-mono uppercase tracking-wider transition-colors ${
                       layout === l
-                        ? 'bg-burnt-orange text-white'
-                        : 'text-text-muted hover:text-text-primary'
+                        ? 'bg-[var(--bsi-primary)] text-white'
+                        : 'text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)]'
                     }`}
                   >
                     {l === 'games' ? 'Games' : 'Series'}
@@ -213,7 +213,7 @@ export default function TexasScheduleClient() {
             <Container>
               <div className="space-y-3">
                 {Array.from({ length: 10 }).map((_, i) => (
-                  <div key={i} className="h-14 bg-surface-light rounded-sm animate-pulse" />
+                  <div key={i} className="h-14 bg-[var(--surface-press-box)] rounded-sm animate-pulse" />
                 ))}
               </div>
             </Container>
@@ -225,7 +225,7 @@ export default function TexasScheduleClient() {
           <Section padding="lg">
             <Container>
               <Card padding="lg" className="text-center">
-                <p className="text-text-muted">Unable to load schedule. Try refreshing.</p>
+                <p className="text-[rgba(196,184,165,0.35)]">Unable to load schedule. Try refreshing.</p>
               </Card>
             </Container>
           </Section>
@@ -253,21 +253,21 @@ export default function TexasScheduleClient() {
                         <CardContent>
                           <div className="flex items-center justify-between gap-4">
                             <div className="flex items-center gap-3 min-w-0">
-                              <div className="text-text-muted text-xs font-mono w-20 shrink-0">
+                              <div className="text-[rgba(196,184,165,0.35)] text-xs font-mono w-20 shrink-0">
                                 {formatDate(game.date)}
                               </div>
                               <div className="min-w-0">
-                                <div className="text-text-primary text-sm font-medium truncate">
+                                <div className="text-[var(--bsi-bone)] text-sm font-medium truncate">
                                   {game.isHome ? 'vs' : '@'} {game.opponent}
                                 </div>
                                 {game.detail && (
-                                  <div className="text-text-muted text-xs truncate">{game.detail}</div>
+                                  <div className="text-[rgba(196,184,165,0.35)] text-xs truncate">{game.detail}</div>
                                 )}
                               </div>
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
                               {isDone && game.score && (
-                                <span className="font-mono text-sm text-text-primary">
+                                <span className="font-mono text-sm text-[var(--bsi-bone)]">
                                   {game.score.home}-{game.score.away}
                                 </span>
                               )}
@@ -280,7 +280,7 @@ export default function TexasScheduleClient() {
                                 </Badge>
                               )}
                               {!isDone && (
-                                <span className="text-text-muted text-xs font-mono">
+                                <span className="text-[rgba(196,184,165,0.35)] text-xs font-mono">
                                   {game.status === 'pre' ? 'Scheduled' : game.status}
                                 </span>
                               )}
@@ -320,10 +320,10 @@ export default function TexasScheduleClient() {
                         <CardContent>
                           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                             <div>
-                              <div className="text-text-primary font-medium">
+                              <div className="text-[var(--bsi-bone)] font-medium">
                                 {series.isHome ? 'vs' : '@'} {series.opponent}
                               </div>
-                              <div className="text-text-muted text-xs font-mono mt-0.5">
+                              <div className="text-[rgba(196,184,165,0.35)] text-xs font-mono mt-0.5">
                                 {series.dateRange} · {series.games.length} {series.games.length === 1 ? 'game' : 'games'}
                               </div>
                             </div>
@@ -334,7 +334,7 @@ export default function TexasScheduleClient() {
                                 return (
                                   <div key={g.id} className="flex items-center gap-1.5">
                                     {isDone && g.score && (
-                                      <span className="font-mono text-xs text-text-muted">
+                                      <span className="font-mono text-xs text-[rgba(196,184,165,0.35)]">
                                         {g.score.home}-{g.score.away}
                                       </span>
                                     )}
@@ -343,7 +343,7 @@ export default function TexasScheduleClient() {
                                         ? isWin
                                           ? 'bg-[var(--bsi-success)]/10 text-[var(--bsi-success)]'
                                           : 'bg-[var(--bsi-danger)]/10 text-[var(--bsi-danger)]'
-                                        : 'bg-surface-light text-text-muted'
+                                        : 'bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.35)]'
                                     }`}>
                                       {isDone ? g.result : formatDate(g.date).split(',')[0]}
                                     </span>
@@ -351,7 +351,7 @@ export default function TexasScheduleClient() {
                                 );
                               })}
                               {allDone && series.games.length > 1 && (
-                                <span className="ml-2 text-xs font-mono text-text-muted">
+                                <span className="ml-2 text-xs font-mono text-[rgba(196,184,165,0.35)]">
                                   ({wins}-{losses})
                                 </span>
                               )}

@@ -39,11 +39,11 @@ export function SportHero({
 
       <Container center>
         <ScrollReveal direction="up">
-          <span className="section-label block mb-4 text-center">{leagueName}</span>
+          <span className="heritage-stamp block mb-4 text-center">{leagueName}</span>
         </ScrollReveal>
 
         <ScrollReveal direction="up" delay={100}>
-          <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-center uppercase tracking-display text-text-primary mb-4">
+          <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-center uppercase tracking-display text-[var(--bsi-bone)] mb-4">
             {sport} Intelligence
           </h1>
         </ScrollReveal>
@@ -56,13 +56,13 @@ export function SportHero({
         </ScrollReveal>
 
         <ScrollReveal direction="up" delay={150}>
-          <p className="text-burnt-orange font-serif italic text-lg leading-relaxed text-center mb-4">
+          <p className="text-[var(--bsi-primary)] font-serif italic text-lg leading-relaxed text-center mb-4">
             {tagline}
           </p>
         </ScrollReveal>
 
         <ScrollReveal direction="up" delay={200}>
-          <p className="text-text-secondary text-center max-w-2xl mx-auto mb-8">
+          <p className="text-[var(--bsi-dust)] text-center max-w-2xl mx-auto mb-8">
             {description}
           </p>
         </ScrollReveal>
@@ -86,10 +86,10 @@ export function SportHero({
           <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 p-6 heritage-card">
             {stats.map((stat) => (
               <div key={stat.label} className="text-center p-4">
-                <div className="font-mono text-3xl font-bold text-burnt-orange">
+                <div className="font-mono text-3xl font-bold text-[var(--bsi-primary)]">
                   {stat.value}
                 </div>
-                <div className="text-xs uppercase tracking-wider text-text-tertiary mt-1">
+                <div className="text-xs uppercase tracking-wider text-[rgba(196,184,165,0.5)] mt-1">
                   {stat.label}
                 </div>
               </div>

@@ -113,8 +113,8 @@ export function TeamBrowser() {
   if (error) {
     return (
       <div className="text-center py-8">
-        <p className="text-text-muted text-sm mb-2">Failed to load teams</p>
-        <p className="text-text-tertiary text-xs">{error}</p>
+        <p className="text-[rgba(196,184,165,0.35)] text-sm mb-2">Failed to load teams</p>
+        <p className="text-[rgba(196,184,165,0.5)] text-xs">{error}</p>
       </div>
     );
   }
@@ -129,7 +129,7 @@ export function TeamBrowser() {
           onChange={handleSearchChange}
           placeholder="Search teams..."
           aria-label="Search teams"
-          className="w-full px-4 py-2.5 bg-surface-light border border-border rounded-sm text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-burnt-orange/50 transition-colors"
+          className="w-full px-4 py-2.5 bg-[var(--surface-press-box)] border border-border rounded-sm text-sm text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)] focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-colors"
         />
       </div>
 
@@ -141,8 +141,8 @@ export function TeamBrowser() {
             onClick={() => setConference(conf)}
             className={`flex-shrink-0 px-3 py-1.5 rounded-sm text-xs font-medium transition-colors ${
               conference === conf
-                ? 'bg-burnt-orange text-white'
-                : 'bg-surface-light text-text-muted hover:text-text-primary hover:bg-surface-medium'
+                ? 'bg-[var(--bsi-primary)] text-white'
+                : 'bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)]'
             }`}
           >
             {conf}
@@ -151,7 +151,7 @@ export function TeamBrowser() {
       </div>
 
       {/* Results count */}
-      <p className="text-xs text-text-muted mb-3">
+      <p className="text-xs text-[rgba(196,184,165,0.35)] mb-3">
         {filteredTeams.length} team{filteredTeams.length !== 1 ? 's' : ''}
         {conference !== 'All' ? ` in ${conference}` : ''}
         {debouncedSearch ? ` matching "${debouncedSearch}"` : ''}
@@ -172,7 +172,7 @@ export function TeamBrowser() {
             >
               <Link
                 href={`/college-baseball/teams/${team.slug}`}
-                className="block p-3 bg-surface-light border border-border rounded-sm hover:border-burnt-orange/40 hover:bg-surface-medium transition-all group"
+                className="block p-3 bg-[var(--surface-press-box)] border border-border rounded-sm hover:border-[var(--bsi-primary)]/40 hover:bg-[var(--surface-press-box)] transition-all group"
               >
                 <div className="flex items-center gap-3">
                   <div className="relative w-10 h-10 flex-shrink-0">
@@ -186,25 +186,25 @@ export function TeamBrowser() {
                         unoptimized
                       />
                     ) : (
-                      <div className="w-10 h-10 rounded-full bg-surface-medium text-text-muted text-xs font-bold flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-full bg-surface-medium text-[rgba(196,184,165,0.35)] text-xs font-bold flex items-center justify-center">
                         {team.abbreviation.slice(0, 3)}
                       </div>
                     )}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-text-primary group-hover:text-burnt-orange transition-colors truncate">
+                    <p className="text-sm font-medium text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors truncate">
                       {team.abbreviation}
                     </p>
-                    <p className="text-[11px] text-text-muted truncate">{team.conference}</p>
+                    <p className="text-[11px] text-[rgba(196,184,165,0.35)] truncate">{team.conference}</p>
                     {(team.record.wins > 0 || team.record.losses > 0) && (
-                      <p className="text-[10px] text-text-tertiary">
+                      <p className="text-[10px] text-[rgba(196,184,165,0.5)]">
                         {team.record.wins}-{team.record.losses}
                       </p>
                     )}
                   </div>
                 </div>
                 {team.ranking && team.ranking <= 25 && (
-                  <span className="absolute top-1 right-1 px-1.5 py-0.5 bg-burnt-orange/20 text-burnt-orange text-[10px] font-bold rounded-sm">
+                  <span className="absolute top-1 right-1 px-1.5 py-0.5 bg-[var(--bsi-primary)]/20 text-[var(--bsi-primary)] text-[10px] font-bold rounded-sm">
                     #{team.ranking}
                   </span>
                 )}
@@ -216,10 +216,10 @@ export function TeamBrowser() {
 
       {filteredTeams.length === 0 && (
         <div className="text-center py-8">
-          <p className="text-text-muted text-sm">No teams found</p>
+          <p className="text-[rgba(196,184,165,0.35)] text-sm">No teams found</p>
           <button
             onClick={() => { setSearch(''); setConference('All'); }}
-            className="mt-2 text-xs text-burnt-orange hover:text-burnt-orange/80 underline"
+            className="mt-2 text-xs text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)]/80 underline"
           >
             Clear filters
           </button>

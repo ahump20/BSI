@@ -157,7 +157,7 @@ export default function SpringTrainingPage() {
                           </div>
                         ))}
                       </div>
-                      <div className="mt-4 pt-4 border-t border-border-subtle">
+                      <div className="mt-4 pt-4 border-t border-[var(--border-vintage)]">
                         <DataSourceBadge
                           source={scoresData?.meta?.dataSource ?? 'ESPN'}
                           timestamp={formatTimestamp(scoresData?.meta?.lastUpdated)}
@@ -193,7 +193,7 @@ export default function SpringTrainingPage() {
                       teams={standingsData?.grapefruit ?? []}
                     />
                   )}
-                  <div className="pt-4 border-t border-border-subtle">
+                  <div className="pt-4 border-t border-[var(--border-vintage)]">
                     <DataSourceBadge
                       source={standingsData?.meta?.dataSource ?? 'ESPN'}
                       timestamp={formatTimestamp(standingsData?.meta?.lastUpdated)}
@@ -230,11 +230,11 @@ export default function SpringTrainingPage() {
                         {filteredSchedule.slice(0, 50).map((game) => (
                           <div
                             key={game.id}
-                            className="flex items-center justify-between p-3 bg-background-tertiary rounded-sm"
+                            className="flex items-center justify-between p-3 bg-[var(--surface-dugout)] rounded-sm"
                           >
                             <div className="flex-1 min-w-0">
-                              <p className="text-text-primary text-sm font-medium truncate">{game.name}</p>
-                              <p className="text-text-tertiary text-xs mt-1">
+                              <p className="text-[var(--bsi-bone)] text-sm font-medium truncate">{game.name}</p>
+                              <p className="text-[rgba(196,184,165,0.5)] text-xs mt-1">
                                 {new Date(game.date).toLocaleDateString('en-US', {
                                   month: 'short',
                                   day: 'numeric',
@@ -266,13 +266,13 @@ export default function SpringTrainingPage() {
         <Section padding="md" background="midnight" borderTop>
           <Container>
             <div className="flex flex-wrap gap-3 justify-center">
-              <Link href="/mlb/spring-training/scores" className="px-4 py-2 bg-background-tertiary rounded-sm text-text-primary text-sm hover:bg-burnt-orange/20 transition-colors">
+              <Link href="/mlb/spring-training/scores" className="px-4 py-2 bg-[var(--surface-dugout)] rounded-sm text-[var(--bsi-bone)] text-sm hover:bg-[var(--bsi-primary)]/20 transition-colors">
                 Scores
               </Link>
-              <Link href="/mlb/spring-training/standings" className="px-4 py-2 bg-background-tertiary rounded-sm text-text-primary text-sm hover:bg-burnt-orange/20 transition-colors">
+              <Link href="/mlb/spring-training/standings" className="px-4 py-2 bg-[var(--surface-dugout)] rounded-sm text-[var(--bsi-bone)] text-sm hover:bg-[var(--bsi-primary)]/20 transition-colors">
                 Standings
               </Link>
-              <Link href="/mlb" className="px-4 py-2 bg-background-tertiary rounded-sm text-text-tertiary text-sm hover:text-text-primary transition-colors">
+              <Link href="/mlb" className="px-4 py-2 bg-[var(--surface-dugout)] rounded-sm text-[rgba(196,184,165,0.5)] text-sm hover:text-[var(--bsi-bone)] transition-colors">
                 Back to MLB Hub
               </Link>
             </div>

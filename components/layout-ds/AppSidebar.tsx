@@ -262,7 +262,7 @@ export function AppSidebar() {
                   <>
                     <motion.div
                       layoutId="sidebar-active"
-                      className="absolute inset-0 rounded-sm bg-burnt-orange/[0.12] shadow-[0_0_20px_rgba(191,87,0,0.08)]"
+                      className="absolute inset-0 rounded-sm bg-[var(--bsi-primary)]/[0.12] shadow-[0_0_20px_rgba(191,87,0,0.08)]"
                       transition={{ type: 'spring', stiffness: 400, damping: 35 }}
                     />
                     <motion.div
@@ -351,7 +351,7 @@ export function AppSidebar() {
       {/* ── Mobile hamburger ── */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="md:hidden fixed top-3 left-3 z-50 p-2 rounded-sm glass-default cursor-pointer text-text-primary"
+        className="md:hidden fixed top-3 left-3 z-50 p-2 rounded-sm glass-default cursor-pointer text-[var(--bsi-bone)]"
         aria-label="Open navigation"
       >
         <IconMenu />
@@ -376,7 +376,7 @@ export function AppSidebar() {
               animate={{ x: 0 }}
               exit={{ x: -280 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="md:hidden fixed inset-y-0 left-0 z-50 w-64 border-r border-white/[0.06] flex flex-col bg-midnight"
+              className="md:hidden fixed inset-y-0 left-0 z-50 w-64 border-r border-white/[0.06] flex flex-col bg-[var(--surface-scoreboard)]"
               style={{ paddingTop: 'env(safe-area-inset-top, 0px)', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
             >
               <div className="flex items-center justify-between px-4 h-14 border-b border-white/[0.06]">

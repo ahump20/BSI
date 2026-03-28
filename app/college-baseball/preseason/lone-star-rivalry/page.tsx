@@ -70,18 +70,18 @@ export default function LoneStarRivalryPage() {
               <ScrollReveal direction="up">
                 <div className="flex items-center gap-3 mb-6">
                   <Badge variant="primary">Feature Story</Badge>
-                  <span className="text-text-secondary text-sm">8 min read</span>
+                  <span className="text-[var(--bsi-dust)] text-sm">8 min read</span>
                 </div>
 
-                <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display text-text-primary mb-4 max-w-4xl">
-                  The Lone Star Rivalry <span className="text-burnt-orange">Enters the SEC</span>
+                <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display text-[var(--bsi-bone)] mb-4 max-w-4xl">
+                  The Lone Star Rivalry <span className="text-[var(--bsi-primary)]">Enters the SEC</span>
                 </h1>
 
-                <p className="text-text-secondary text-xl md:text-2xl font-medium mb-6 max-w-3xl">
+                <p className="text-[var(--bsi-dust)] text-xl md:text-2xl font-medium mb-6 max-w-3xl">
                   Texas and Texas A&M: #1 vs #2 in Baseball&apos;s Biggest Stage
                 </p>
 
-                <p className="text-text-secondary max-w-2xl text-lg leading-relaxed">
+                <p className="text-[var(--bsi-dust)] max-w-2xl text-lg leading-relaxed">
                   For the first time in history, the Longhorns and Aggies enter SEC play
                   together—and they&apos;re doing it as the top two teams in the nation. This
                   isn&apos;t just realignment. This is a seismic shift in college baseball.
@@ -99,51 +99,51 @@ export default function LoneStarRivalryPage() {
                 {/* Texas Card */}
                 <Card
                   padding="lg"
-                  className="border-burnt-orange/30 hover:border-burnt-orange/60 transition-colors"
+                  className="border-[var(--bsi-primary)]/30 hover:border-[var(--bsi-primary)]/60 transition-colors"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-burnt-orange font-display text-4xl font-bold">
+                        <span className="text-[var(--bsi-primary)] font-display text-4xl font-bold">
                           #{texasStats.ranking}
                         </span>
                         <Badge variant="primary">Preseason</Badge>
                       </div>
-                      <h2 className="font-display text-2xl font-bold text-text-primary uppercase">
+                      <h2 className="font-display text-2xl font-bold text-[var(--bsi-bone)] uppercase">
                         Texas Longhorns
                       </h2>
                     </div>
-                    <div className="w-16 h-16 bg-burnt-orange rounded-sm flex items-center justify-center">
+                    <div className="w-16 h-16 bg-[var(--bsi-primary)] rounded-sm flex items-center justify-center">
                       <span className="font-display text-2xl font-bold text-white">UT</span>
                     </div>
                   </div>
 
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-text-tertiary">2025 Record</span>
-                      <span className="text-text-primary font-medium">{texasStats.lastSeason}</span>
+                      <span className="text-[rgba(196,184,165,0.5)]">2025 Record</span>
+                      <span className="text-[var(--bsi-bone)] font-medium">{texasStats.lastSeason}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-text-tertiary">Postseason</span>
-                      <span className="text-text-primary font-medium">{texasStats.cws}</span>
+                      <span className="text-[rgba(196,184,165,0.5)]">Postseason</span>
+                      <span className="text-[var(--bsi-bone)] font-medium">{texasStats.cws}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-text-tertiary">Key Returners</span>
-                      <span className="text-text-primary font-medium">{texasStats.keyReturners}</span>
+                      <span className="text-[rgba(196,184,165,0.5)]">Key Returners</span>
+                      <span className="text-[var(--bsi-bone)] font-medium">{texasStats.keyReturners}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-text-tertiary">Preseason All-Americans</span>
-                      <span className="text-text-primary font-medium">{texasStats.allAmericans}</span>
+                      <span className="text-[rgba(196,184,165,0.5)]">Preseason All-Americans</span>
+                      <span className="text-[var(--bsi-bone)] font-medium">{texasStats.allAmericans}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-text-tertiary">Head Coach</span>
-                      <span className="text-text-primary font-medium">{texasStats.headCoach}</span>
+                      <span className="text-[rgba(196,184,165,0.5)]">Head Coach</span>
+                      <span className="text-[var(--bsi-bone)] font-medium">{texasStats.headCoach}</span>
                     </div>
                   </div>
 
                   <Link
                     href="/college-baseball/teams/texas"
-                    className="mt-4 inline-flex items-center text-burnt-orange font-medium hover:text-text-primary transition-colors"
+                    className="mt-4 inline-flex items-center text-[var(--bsi-primary)] font-medium hover:text-[var(--bsi-bone)] transition-colors"
                   >
                     Full Team Profile <ArrowRight className="w-4 h-4 ml-1" />
                   </Link>
@@ -162,7 +162,7 @@ export default function LoneStarRivalryPage() {
                         </span>
                         <Badge variant="secondary">Preseason</Badge>
                       </div>
-                      <h2 className="font-display text-2xl font-bold text-text-primary uppercase">
+                      <h2 className="font-display text-2xl font-bold text-[var(--bsi-bone)] uppercase">
                         Texas A&M Aggies
                       </h2>
                     </div>
@@ -173,30 +173,30 @@ export default function LoneStarRivalryPage() {
 
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-text-tertiary">2025 Record</span>
-                      <span className="text-text-primary font-medium">{aggieStats.lastSeason}</span>
+                      <span className="text-[rgba(196,184,165,0.5)]">2025 Record</span>
+                      <span className="text-[var(--bsi-bone)] font-medium">{aggieStats.lastSeason}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-text-tertiary">Postseason</span>
-                      <span className="text-text-primary font-medium">{aggieStats.cws}</span>
+                      <span className="text-[rgba(196,184,165,0.5)]">Postseason</span>
+                      <span className="text-[var(--bsi-bone)] font-medium">{aggieStats.cws}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-text-tertiary">Key Returners</span>
-                      <span className="text-text-primary font-medium">{aggieStats.keyReturners}</span>
+                      <span className="text-[rgba(196,184,165,0.5)]">Key Returners</span>
+                      <span className="text-[var(--bsi-bone)] font-medium">{aggieStats.keyReturners}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-text-tertiary">Preseason All-Americans</span>
-                      <span className="text-text-primary font-medium">{aggieStats.allAmericans}</span>
+                      <span className="text-[rgba(196,184,165,0.5)]">Preseason All-Americans</span>
+                      <span className="text-[var(--bsi-bone)] font-medium">{aggieStats.allAmericans}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-text-tertiary">Head Coach</span>
-                      <span className="text-text-primary font-medium">{aggieStats.headCoach}</span>
+                      <span className="text-[rgba(196,184,165,0.5)]">Head Coach</span>
+                      <span className="text-[var(--bsi-bone)] font-medium">{aggieStats.headCoach}</span>
                     </div>
                   </div>
 
                   <Link
                     href="/college-baseball/teams/texas-am"
-                    className="mt-4 inline-flex items-center text-[#500000] font-medium hover:text-text-primary transition-colors"
+                    className="mt-4 inline-flex items-center text-[#500000] font-medium hover:text-[var(--bsi-bone)] transition-colors"
                   >
                     Full Team Profile <ArrowRight className="w-4 h-4 ml-1" />
                   </Link>
@@ -211,19 +211,19 @@ export default function LoneStarRivalryPage() {
           <Container>
             <ScrollReveal direction="up" delay={150}>
               <div className="max-w-3xl mx-auto">
-                <h2 className="font-display text-2xl font-bold uppercase tracking-display text-text-primary mb-6">
+                <h2 className="font-display text-2xl font-bold uppercase tracking-display text-[var(--bsi-bone)] mb-6">
                   The Story
                 </h2>
 
                 <div className="prose prose-invert prose-lg max-w-none">
-                  <p className="text-text-secondary leading-relaxed mb-6">
+                  <p className="text-[var(--bsi-dust)] leading-relaxed mb-6">
                     When Texas and Texas A&M announced their move to the SEC in 2024, college
                     football fans braced for the renewal of one of sport&apos;s most bitter
                     rivalries. What they didn&apos;t fully appreciate was what this meant for
                     baseball.
                   </p>
 
-                  <p className="text-text-secondary leading-relaxed mb-6">
+                  <p className="text-[var(--bsi-dust)] leading-relaxed mb-6">
                     The Lone Star State has quietly become the epicenter of college baseball. Texas
                     has six national championships—more than any program in history. Texas A&M
                     reached the College World Series in 2025 and returns the core of a team that won
@@ -232,14 +232,14 @@ export default function LoneStarRivalryPage() {
                     order: Texas at #1, Texas A&M at #2.
                   </p>
 
-                  <blockquote className="border-l-4 border-burnt-orange pl-6 my-8 italic text-text-secondary">
+                  <blockquote className="border-l-4 border-[var(--bsi-primary)] pl-6 my-8 italic text-[var(--bsi-dust)]">
                     &ldquo;This is bigger than any single series. This is two programs that
                     genuinely believe they&apos;re the best in the country, now playing in the same
                     conference for the first time in over a decade. The intensity is going to be
                     incredible.&rdquo;
                   </blockquote>
 
-                  <p className="text-text-secondary leading-relaxed mb-6">
+                  <p className="text-[var(--bsi-dust)] leading-relaxed mb-6">
                     The Longhorns enter 2026 with arguably the deepest pitching staff in America.
                     Three projected first-round picks anchor a rotation that dominated the Big 12
                     last season. Add in a lineup that returns its entire middle infield and the
@@ -247,14 +247,14 @@ export default function LoneStarRivalryPage() {
                     built for Omaha.
                   </p>
 
-                  <p className="text-text-secondary leading-relaxed mb-6">
+                  <p className="text-[var(--bsi-dust)] leading-relaxed mb-6">
                     The Aggies counter with their own formula: elite defense, contact-oriented
                     hitting, and Jim Schlossnagle&apos;s knack for developing mid-week arms into
                     weekend starters. A&M&apos;s 2025 run to Omaha wasn&apos;t a fluke—it was
                     validation of a program that has recruited at an elite level for years.
                   </p>
 
-                  <p className="text-text-secondary leading-relaxed">
+                  <p className="text-[var(--bsi-dust)] leading-relaxed">
                     When these teams meet in SEC play, it won&apos;t just be about conference
                     standings. It will be about Texas pride, recruiting battles, and the eternal
                     question that divides families across the state: burnt orange or maroon?
@@ -269,17 +269,17 @@ export default function LoneStarRivalryPage() {
         <Section padding="md">
           <Container>
             <ScrollReveal direction="up" delay={200}>
-              <h2 className="font-display text-xl font-bold uppercase tracking-display text-text-primary mb-6">
-                <Calendar className="w-5 h-5 inline mr-2 text-burnt-orange" />
+              <h2 className="font-display text-xl font-bold uppercase tracking-display text-[var(--bsi-bone)] mb-6">
+                <Calendar className="w-5 h-5 inline mr-2 text-[var(--bsi-primary)]" />
                 Key Dates
               </h2>
 
               <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {keyDates.map((date, index) => (
                   <Card key={index} padding="md">
-                    <div className="text-burnt-orange text-sm font-medium mb-1">{date.date}</div>
-                    <div className="text-text-primary font-bold mb-1">{date.event}</div>
-                    <div className="text-text-tertiary text-sm">{date.note}</div>
+                    <div className="text-[var(--bsi-primary)] text-sm font-medium mb-1">{date.date}</div>
+                    <div className="text-[var(--bsi-bone)] font-bold mb-1">{date.event}</div>
+                    <div className="text-[rgba(196,184,165,0.5)] text-sm">{date.note}</div>
                   </Card>
                 ))}
               </div>
@@ -291,8 +291,8 @@ export default function LoneStarRivalryPage() {
         <Section padding="md">
           <Container>
             <ScrollReveal direction="up" delay={250}>
-              <h2 className="font-display text-xl font-bold uppercase tracking-display text-text-primary mb-6">
-                <Trophy className="w-5 h-5 inline mr-2 text-burnt-orange" />
+              <h2 className="font-display text-xl font-bold uppercase tracking-display text-[var(--bsi-bone)] mb-6">
+                <Trophy className="w-5 h-5 inline mr-2 text-[var(--bsi-primary)]" />
                 Recent Head-to-Head
               </h2>
 
@@ -301,29 +301,29 @@ export default function LoneStarRivalryPage() {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-border">
-                        <th className="text-left py-3 text-text-tertiary font-medium">Year</th>
-                        <th className="text-left py-3 text-text-tertiary font-medium">Winner</th>
-                        <th className="text-left py-3 text-text-tertiary font-medium">Score</th>
-                        <th className="text-left py-3 text-text-tertiary font-medium">Location</th>
+                        <th className="text-left py-3 text-[rgba(196,184,165,0.5)] font-medium">Year</th>
+                        <th className="text-left py-3 text-[rgba(196,184,165,0.5)] font-medium">Winner</th>
+                        <th className="text-left py-3 text-[rgba(196,184,165,0.5)] font-medium">Score</th>
+                        <th className="text-left py-3 text-[rgba(196,184,165,0.5)] font-medium">Location</th>
                       </tr>
                     </thead>
                     <tbody>
                       {headToHeadHistory.map((game, index) => (
-                        <tr key={index} className="border-b border-border-subtle last:border-0">
-                          <td className="py-3 text-text-primary">{game.year}</td>
+                        <tr key={index} className="border-b border-[var(--border-vintage)] last:border-0">
+                          <td className="py-3 text-[var(--bsi-bone)]">{game.year}</td>
                           <td className="py-3">
                             <span
                               className={
                                 game.winner === 'Texas'
-                                  ? 'text-burnt-orange font-medium'
+                                  ? 'text-[var(--bsi-primary)] font-medium'
                                   : 'text-[#500000] font-medium'
                               }
                             >
                               {game.winner}
                             </span>
                           </td>
-                          <td className="py-3 text-text-primary">{game.score}</td>
-                          <td className="py-3 text-text-tertiary">{game.location}</td>
+                          <td className="py-3 text-[var(--bsi-bone)]">{game.score}</td>
+                          <td className="py-3 text-[rgba(196,184,165,0.5)]">{game.location}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -339,16 +339,16 @@ export default function LoneStarRivalryPage() {
           <Container>
             <ScrollReveal direction="up" delay={300}>
               <Card padding="lg" className="text-center">
-                <h2 className="font-display text-2xl font-bold uppercase tracking-display text-text-primary mb-4">
+                <h2 className="font-display text-2xl font-bold uppercase tracking-display text-[var(--bsi-bone)] mb-4">
                   Follow the Rivalry All Season
                 </h2>
-                <p className="text-text-secondary mb-6 max-w-xl mx-auto">
+                <p className="text-[var(--bsi-dust)] mb-6 max-w-xl mx-auto">
                   Blaze Sports Intel delivers real-time coverage, advanced analytics, and in-depth
                   previews for every Texas vs Texas A&M showdown.
                 </p>
                 <div className="flex flex-wrap gap-4 justify-center">
                   <Link href="/college-baseball/teams/texas">
-                    <span className="inline-flex items-center px-6 py-3 bg-burnt-orange text-white font-medium rounded-sm hover:bg-burnt-orange/80 transition-colors">
+                    <span className="inline-flex items-center px-6 py-3 bg-[var(--bsi-primary)] text-white font-medium rounded-sm hover:bg-[var(--bsi-primary)]/80 transition-colors">
                       Texas Longhorns
                     </span>
                   </Link>
@@ -366,7 +366,7 @@ export default function LoneStarRivalryPage() {
         {/* Attribution */}
         <Section padding="sm" className="pb-16">
           <Container>
-            <div className="text-center text-xs text-text-tertiary">
+            <div className="text-center text-xs text-[rgba(196,184,165,0.5)]">
               <p>
                 Rankings data sourced from D1Baseball 2026 Preseason Poll. Season records from 2025
                 NCAA statistics.

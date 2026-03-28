@@ -95,7 +95,7 @@ export function CardTitle({
   const sizeClass = size === 'sm' ? 'text-base' : size === 'lg' ? 'text-xl' : 'text-lg';
   return (
     <h3
-      className={`${sizeClass} font-display uppercase tracking-wide font-semibold text-text-primary ${className}`}
+      className={`${sizeClass} font-display uppercase tracking-wide font-semibold text-[var(--bsi-bone)] ${className}`}
     >
       {children}
     </h3>
@@ -109,9 +109,9 @@ export function CardContent({ children, className = '' }: { children: ReactNode;
 export function StatCard({ label, value, helperText, className = '' }: StatCardProps) {
   return (
     <Card variant="default" padding="md" className={className}>
-      <div className="text-xs uppercase tracking-wide text-text-tertiary">{label}</div>
-      <div className="mt-1 text-2xl font-display text-text-primary">{value}</div>
-      {helperText ? <div className="mt-1 text-xs text-text-muted">{helperText}</div> : null}
+      <div className="text-xs uppercase tracking-wide text-[rgba(196,184,165,0.5)]">{label}</div>
+      <div className="mt-1 text-2xl font-display text-[var(--bsi-bone)]">{value}</div>
+      {helperText ? <div className="mt-1 text-xs text-[rgba(196,184,165,0.35)]">{helperText}</div> : null}
     </Card>
   );
 }

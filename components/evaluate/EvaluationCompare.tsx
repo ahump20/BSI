@@ -30,7 +30,7 @@ function CompareSlot({
 
   return (
     <div className="flex-1 min-w-0">
-      <p className="text-[10px] font-mono uppercase tracking-widest text-text-muted mb-2">
+      <p className="text-[10px] font-mono uppercase tracking-widest text-[rgba(196,184,165,0.35)] mb-2">
         {label}
       </p>
       <PlayerSearch onSelect={onSelect} placeholder={`Search ${label.toLowerCase()}\u2026`} />
@@ -44,7 +44,7 @@ function CompareSlot({
             exit={{ opacity: 0 }}
             className="mt-4 flex justify-center py-12"
           >
-            <div className="w-8 h-8 border-3 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
+            <div className="w-8 h-8 border-3 border-[var(--bsi-primary)]/30 border-t-[var(--bsi-primary)] rounded-full animate-spin" />
           </motion.div>
         )}
 
@@ -86,12 +86,12 @@ export function EvaluationCompare({ initialPlayer1, className = '' }: Evaluation
         <div className="hidden lg:flex items-center justify-center px-2">
           <div className="flex flex-col items-center gap-2">
             <div className="w-px h-16 bg-border-subtle" />
-            <span className="font-display text-lg text-burnt-orange font-bold">VS</span>
+            <span className="font-display text-lg text-[var(--bsi-primary)] font-bold">VS</span>
             <div className="w-px h-16 bg-border-subtle" />
           </div>
         </div>
         <div className="lg:hidden flex items-center justify-center py-2">
-          <span className="font-display text-lg text-burnt-orange font-bold">VS</span>
+          <span className="font-display text-lg text-[var(--bsi-primary)] font-bold">VS</span>
         </div>
 
         <CompareSlot

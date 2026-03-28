@@ -137,20 +137,20 @@ function LineScoreTable({ scores, label }: { scores: InningScore[]; label: strin
   const inningCount = scores[0].innings.length;
   return (
     <Card variant="default" padding="none">
-      <div className="bg-burnt-orange/5 text-center py-2">
-        <span className="font-display text-[10px] uppercase tracking-[3px] text-burnt-orange">
+      <div className="bg-[var(--bsi-primary)]/5 text-center py-2">
+        <span className="font-display text-[10px] uppercase tracking-[3px] text-[var(--bsi-primary)]">
           {label}
         </span>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full min-w-[540px]">
           <thead>
-            <tr className="font-display text-[11px] uppercase tracking-widest text-text-muted bg-black/30">
+            <tr className="font-display text-[11px] uppercase tracking-widest text-[rgba(196,184,165,0.35)] bg-black/30">
               <th className="text-left py-2.5 px-4 w-36" />
               {Array.from({ length: inningCount }, (_, i) => (
                 <th key={i} className="text-center py-2.5 w-10">{i + 1}</th>
               ))}
-              <th className="text-center py-2.5 w-12 border-l border-border-subtle">R</th>
+              <th className="text-center py-2.5 w-12 border-l border-[var(--border-vintage)]">R</th>
               <th className="text-center py-2.5 w-12">H</th>
               <th className="text-center py-2.5 w-12">E</th>
             </tr>
@@ -159,20 +159,20 @@ function LineScoreTable({ scores, label }: { scores: InningScore[]; label: strin
             {scores.map((row) => {
               const isTexas = row.team === 'Texas';
               return (
-                <tr key={row.team} className="border-t border-border-subtle">
-                  <td className={`py-3 px-4 font-display text-sm font-semibold uppercase tracking-wide ${isTexas ? 'text-burnt-orange' : 'text-text-tertiary'}`}>
+                <tr key={row.team} className="border-t border-[var(--border-vintage)]">
+                  <td className={`py-3 px-4 font-display text-sm font-semibold uppercase tracking-wide ${isTexas ? 'text-[var(--bsi-primary)]' : 'text-[rgba(196,184,165,0.5)]'}`}>
                     {row.team}
                   </td>
                   {row.innings.map((val, i) => (
-                    <td key={i} className={`text-center py-3 ${typeof val === 'string' ? 'text-text-muted' : Number(val) > 0 ? (isTexas ? 'text-text-primary font-semibold' : 'text-text-secondary font-medium') : 'text-text-muted'}`}>
+                    <td key={i} className={`text-center py-3 ${typeof val === 'string' ? 'text-[rgba(196,184,165,0.35)]' : Number(val) > 0 ? (isTexas ? 'text-[var(--bsi-bone)] font-semibold' : 'text-[var(--bsi-dust)] font-medium') : 'text-[rgba(196,184,165,0.35)]'}`}>
                       {val}
                     </td>
                   ))}
-                  <td className={`text-center py-3 border-l border-border-subtle font-bold text-lg ${isTexas ? 'text-burnt-orange' : 'text-text-tertiary'}`}>
+                  <td className={`text-center py-3 border-l border-[var(--border-vintage)] font-bold text-lg ${isTexas ? 'text-[var(--bsi-primary)]' : 'text-[rgba(196,184,165,0.5)]'}`}>
                     {row.r}
                   </td>
-                  <td className="text-center py-3 text-text-muted">{row.h}</td>
-                  <td className="text-center py-3 text-text-muted">{row.e}</td>
+                  <td className="text-center py-3 text-[rgba(196,184,165,0.35)]">{row.h}</td>
+                  <td className="text-center py-3 text-[rgba(196,184,165,0.35)]">{row.e}</td>
                 </tr>
               );
             })}
@@ -186,12 +186,12 @@ function LineScoreTable({ scores, label }: { scores: InningScore[]; label: strin
 function PitchingTable({ pitchers, teamLabel }: { pitchers: PitchingLine[]; teamLabel: string }) {
   return (
     <div>
-      <h3 className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-3">{teamLabel} Pitching</h3>
+      <h3 className="font-display text-sm uppercase tracking-wider text-[var(--bsi-primary)] mb-3">{teamLabel} Pitching</h3>
       <Card variant="default" padding="none">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[400px] font-mono text-sm">
             <thead>
-              <tr className="text-[10px] uppercase tracking-wider text-text-muted bg-black/20">
+              <tr className="text-[10px] uppercase tracking-wider text-[rgba(196,184,165,0.35)] bg-black/20">
                 <th className="text-left py-2 px-3">Pitcher</th>
                 <th className="text-center py-2 w-10">IP</th>
                 <th className="text-center py-2 w-8">H</th>
@@ -203,17 +203,17 @@ function PitchingTable({ pitchers, teamLabel }: { pitchers: PitchingLine[]; team
             </thead>
             <tbody>
               {pitchers.map((p) => (
-                <tr key={p.name} className="border-t border-border-subtle">
-                  <td className="py-2 px-3 text-text-secondary">
+                <tr key={p.name} className="border-t border-[var(--border-vintage)]">
+                  <td className="py-2 px-3 text-[var(--bsi-dust)]">
                     {p.name}
-                    {p.decision && <span className="text-burnt-orange ml-1 text-xs">({p.decision})</span>}
+                    {p.decision && <span className="text-[var(--bsi-primary)] ml-1 text-xs">({p.decision})</span>}
                   </td>
-                  <td className="text-center text-text-tertiary">{p.ip}</td>
-                  <td className="text-center text-text-muted">{p.h}</td>
-                  <td className="text-center text-text-muted">{p.r}</td>
-                  <td className="text-center text-text-muted">{p.er}</td>
-                  <td className="text-center text-text-muted">{p.bb}</td>
-                  <td className="text-center text-text-primary font-medium">{p.so}</td>
+                  <td className="text-center text-[rgba(196,184,165,0.5)]">{p.ip}</td>
+                  <td className="text-center text-[rgba(196,184,165,0.35)]">{p.h}</td>
+                  <td className="text-center text-[rgba(196,184,165,0.35)]">{p.r}</td>
+                  <td className="text-center text-[rgba(196,184,165,0.35)]">{p.er}</td>
+                  <td className="text-center text-[rgba(196,184,165,0.35)]">{p.bb}</td>
+                  <td className="text-center text-[var(--bsi-bone)] font-medium">{p.so}</td>
                 </tr>
               ))}
             </tbody>
@@ -252,15 +252,15 @@ export default function TexasWeek3RecapPage() {
         <Section padding="sm" className="border-b border-border">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 College Baseball
               </Link>
-              <span className="text-text-muted">/</span>
-              <Link href="/college-baseball/editorial" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <Link href="/college-baseball/editorial" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 Editorial
               </Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-secondary">Texas Week 3</span>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[var(--bsi-dust)]">Texas Week 3</span>
             </nav>
           </Container>
         </Section>
@@ -276,23 +276,23 @@ export default function TexasWeek3RecapPage() {
                   <Badge variant="primary">Texas Weekly</Badge>
                   <Badge variant="accent">No. 3 Texas</Badge>
                   <Badge variant="outline">11-0</Badge>
-                  <span className="font-mono text-xs text-text-muted">Tournament Champions</span>
+                  <span className="font-mono text-xs text-[rgba(196,184,165,0.35)]">Tournament Champions</span>
                 </div>
 
                 <h1 className="font-display font-bold uppercase tracking-wide leading-none mb-4">
-                  <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-text-primary mb-1">
+                  <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-[var(--bsi-bone)] mb-1">
                     Swept, Celebrated,
                   </span>
-                  <span className="block text-gradient-blaze text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
+                  <span className="block text-[var(--bsi-primary)] text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
                     Still Perfect.
                   </span>
                 </h1>
 
-                <p className="font-serif text-lg sm:text-xl text-text-tertiary italic leading-relaxed mb-6">
+                <p className="font-serif text-lg sm:text-xl text-[rgba(196,184,165,0.5)] italic leading-relaxed mb-6">
                   The Longhorns went 3-0 at the BRUCE BOLT College Classic, beat a Top 10 team, collected a coaching milestone, and extended the best start in four years. The schedule asked its first real question. Texas answered 23&ndash;6.
                 </p>
 
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] text-text-muted tracking-wide">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] text-[rgba(196,184,165,0.35)] tracking-wide">
                   <span>February 27 &ndash; March 1, 2026</span>
                   <span className="hidden sm:inline">&middot;</span>
                   <span>Daikin Park, Houston</span>
@@ -302,7 +302,7 @@ export default function TexasWeek3RecapPage() {
                   <span>BRUCE BOLT College Classic</span>
                 </div>
 
-                <div className="flex items-center gap-4 text-sm text-text-muted mt-4">
+                <div className="flex items-center gap-4 text-sm text-[rgba(196,184,165,0.35)] mt-4">
                   <span>By Blaze Sports Intel</span>
                   <span>|</span>
                   <span>March 3, 2026</span>
@@ -342,10 +342,10 @@ export default function TexasWeek3RecapPage() {
               <p className="font-serif text-xl sm:text-[23px] font-medium leading-relaxed text-[#FAF7F2] mb-6">
                 The BRUCE BOLT Classic was built to answer the question that two weekends of home dominance couldn&rsquo;t: what happens when Texas faces real arms on neutral ground? Coastal Carolina brought a top-10 ranking and a 2025 CWS runner-up pedigree. Baylor brought an in-state rivalry and the pressure of a coaching milestone on the line. Ohio State brought a championship game. Texas won all three by a combined 23&ndash;6, played error-free ball in two of three contests, and hit a season-best four home runs in a single night.
               </p>
-              <p className="font-serif text-lg leading-relaxed text-text-secondary mb-6">
-                Three different types of wins. Friday was pure overpowering &mdash; Riojas struck out 11 in five innings and the bats launched four home runs against a ranked opponent. Saturday was institutional &mdash; a bullpen grinding out 5.2 scoreless innings to deliver Schlossnagle&rsquo;s 1,000th career D1 victory. Sunday was an avalanche &mdash; a 7-run third inning that turned a championship game into a procession. <strong className="text-text-primary">The identity didn&rsquo;t just hold away from home. It sharpened.</strong>
+              <p className="font-serif text-lg leading-relaxed text-[var(--bsi-dust)] mb-6">
+                Three different types of wins. Friday was pure overpowering &mdash; Riojas struck out 11 in five innings and the bats launched four home runs against a ranked opponent. Saturday was institutional &mdash; a bullpen grinding out 5.2 scoreless innings to deliver Schlossnagle&rsquo;s 1,000th career D1 victory. Sunday was an avalanche &mdash; a 7-run third inning that turned a championship game into a procession. <strong className="text-[var(--bsi-bone)]">The identity didn&rsquo;t just hold away from home. It sharpened.</strong>
               </p>
-              <p className="font-serif text-lg leading-relaxed text-text-tertiary">
+              <p className="font-serif text-lg leading-relaxed text-[rgba(196,184,165,0.5)]">
                 Eleven games down, no losses, and the only remaining conversation about this start is where it leads. Ole Miss in ten days.
               </p>
             </ScrollReveal>
@@ -357,11 +357,11 @@ export default function TexasWeek3RecapPage() {
           <Container>
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-1 h-8 rounded-full bg-burnt-orange" />
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange">
+                <div className="w-1 h-8 rounded-full bg-[var(--bsi-primary)]" />
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)]">
                   Game 1: Texas 8, No. 9 Coastal Carolina 1
                 </h2>
-                <span className="font-mono text-xs text-text-muted">Friday &middot; Feb 27</span>
+                <span className="font-mono text-xs text-[rgba(196,184,165,0.35)]">Friday &middot; Feb 27</span>
               </div>
 
               <div className="mb-6">
@@ -371,7 +371,7 @@ export default function TexasWeek3RecapPage() {
 
             <Container size="narrow">
               <ScrollReveal direction="up" delay={100}>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
                     This was the test the first two weekends couldn&rsquo;t provide and the one Texas couldn&rsquo;t fake its way through. Coastal Carolina reached the College World Series finals in 2025 with a 56-14 record. They carried a top-10 ranking into Daikin Park. Riojas threw five innings of one-hit ball and struck out 11 &mdash; more strikeouts than baserunners allowed. The Chanticleers managed three hits total and committed two errors. Texas played clean defense, zero errors, and hit four home runs in a single game for the first time this season.
                   </p>
@@ -380,7 +380,7 @@ export default function TexasWeek3RecapPage() {
                     Temo Becerra authored the offensive statement. His first career multi-homer game &mdash; two home runs and three RBI against a program that went to the CWS finals eight months ago. The power wasn&rsquo;t manufactured off mistake pitches in empty counts. Becerra drove the ball with authority against a rotation built for postseason baseball. Robbins added a 466-foot bomb, the longest measured Longhorn home run this season, the kind of distance that stops a Houston press box mid-sentence. Larson connected for the fourth. Four different bats, four different swings, all leaving the yard.
                   </p>
 
-                  <p className="text-text-tertiary">
+                  <p className="text-[rgba(196,184,165,0.5)]">
                     The bullpen was clean behind Riojas. Grubbs, Walker, Crossland, and Hamilton combined for four innings of relief, allowing one run on two hits with seven strikeouts. Texas totaled 17 strikeouts as a staff &mdash; the highest single-game mark of the season against the best lineup they&rsquo;ve faced.
                   </p>
                 </div>
@@ -401,10 +401,10 @@ export default function TexasWeek3RecapPage() {
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-1 h-8 rounded-full bg-[#C9A227]" />
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange">
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)]">
                   Game 2: Texas 5, Baylor 2
                 </h2>
-                <span className="font-mono text-xs text-text-muted">Saturday &middot; Feb 28</span>
+                <span className="font-mono text-xs text-[rgba(196,184,165,0.35)]">Saturday &middot; Feb 28</span>
               </div>
 
               <div className="mb-6">
@@ -414,7 +414,7 @@ export default function TexasWeek3RecapPage() {
 
             <Container size="narrow">
               <ScrollReveal direction="up" delay={100}>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
                     Harrison lasted 3.1 innings before Schlossnagle pulled him, and in most programs that early exit writes the narrative. Not this one. The bullpen entered with a 3-2 lead in the fourth and didn&rsquo;t allow a baserunner to score for the final 5.2 innings. Grubbs got the win with 1.2 scoreless. Winter, Leffew, and Walker each threw a scoreless frame. Burns closed the door in the ninth for his second save. Five relievers, zero runs, game over.
                   </p>
@@ -433,24 +433,24 @@ export default function TexasWeek3RecapPage() {
                       Milestone
                     </div>
                   </div>
-                  <div className="font-display text-lg font-semibold text-text-primary uppercase tracking-wide mb-1">
+                  <div className="font-display text-lg font-semibold text-[var(--bsi-bone)] uppercase tracking-wide mb-1">
                     Jim Schlossnagle &mdash; 1,000th D1 Win
                   </div>
                   <div className="font-mono text-sm text-[#C9A227] mb-4">
                     25 seasons &middot; 1,000-469 (.681) &middot; 7th active coach &middot; 70th in NCAA history
                   </div>
-                  <p className="font-serif text-sm text-text-tertiary leading-relaxed mb-3">
+                  <p className="font-serif text-sm text-[rgba(196,184,165,0.5)] leading-relaxed mb-3">
                     The milestone didn&rsquo;t come at Disch-Falk in front of an Austin crowd. It came at a neutral-site tournament in Houston, against an in-state rival, with five relievers combining to shut the door. That&rsquo;s fitting. Schlossnagle&rsquo;s career has been defined by building programs that travel &mdash; from UNLV to TCU to Texas A&amp;M and now Texas.
                   </p>
-                  <p className="font-serif text-sm text-text-muted leading-relaxed">
+                  <p className="font-serif text-sm text-[rgba(196,184,165,0.35)] leading-relaxed">
                     He is the seventh active Division I coach to reach 1,000 wins and the 70th in the history of the sport. The number itself matters less than what it represents: twenty-five years of programs that performed away from home, in neutral-site tournaments, in postseason elimination games. A thousand wins earned in motion.
                   </p>
                 </div>
               </ScrollReveal>
 
               <ScrollReveal direction="up" delay={200}>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-4">
-                  <p className="text-text-tertiary">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-4">
+                  <p className="text-[rgba(196,184,165,0.5)]">
                     The Saturday formula has emerged across three weekends. Harrison starts but doesn&rsquo;t need to go deep. The bullpen bridge &mdash; Grubbs into the middle relievers into Burns &mdash; covers the back end. Texas is 3-0 in Saturday games despite Harrison averaging fewer than four innings per start. The depth absorbs the short outing every time.
                   </p>
                 </div>
@@ -470,11 +470,11 @@ export default function TexasWeek3RecapPage() {
           <Container>
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-1 h-8 rounded-full bg-burnt-orange" />
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange">
+                <div className="w-1 h-8 rounded-full bg-[var(--bsi-primary)]" />
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)]">
                   Game 3: Texas 10, Ohio State 3
                 </h2>
-                <span className="font-mono text-xs text-text-muted">Sunday &middot; Mar 1 &middot; Championship</span>
+                <span className="font-mono text-xs text-[rgba(196,184,165,0.35)]">Sunday &middot; Mar 1 &middot; Championship</span>
               </div>
 
               <div className="mb-6">
@@ -484,16 +484,16 @@ export default function TexasWeek3RecapPage() {
 
             <Container size="narrow">
               <ScrollReveal direction="up" delay={100}>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
                     The third inning broke the game open and it didn&rsquo;t close. Texas sent twelve batters to the plate, scored seven runs, and knocked Ohio State starter Herrenbruck out of the game before the frame was over. Becerra added another home run &mdash; his third of the tournament &mdash; with three RBI. Mendoza drove in a run and scored. Rodriguez doubled home a run. Robbins singled in a run. The damage was distributed. No single hitter carried the inning; the lineup cycled through and everyone contributed.
                   </p>
 
                   <p>
-                    Volantis continued what has become the most reliable pitching performance in the rotation. Four and two-thirds innings, one run allowed, eight strikeouts. Through three Sunday starts: <strong className="text-text-primary">18.2 innings pitched, 1 earned run, 25 strikeouts.</strong> The converted closer who saved 12 games as a freshman has allowed one earned run in nearly nineteen innings as a starter. The role change is no longer an experiment. It&rsquo;s a structural advantage.
+                    Volantis continued what has become the most reliable pitching performance in the rotation. Four and two-thirds innings, one run allowed, eight strikeouts. Through three Sunday starts: <strong className="text-[var(--bsi-bone)]">18.2 innings pitched, 1 earned run, 25 strikeouts.</strong> The converted closer who saved 12 games as a freshman has allowed one earned run in nearly nineteen innings as a starter. The role change is no longer an experiment. It&rsquo;s a structural advantage.
                   </p>
 
-                  <p className="text-text-tertiary">
+                  <p className="text-[rgba(196,184,165,0.5)]">
                     Brett Crossland earned his first collegiate win in relief, throwing 1.1 innings in the middle of the game. Brody Walls struck out two in his inning of work. Cal Higgins closed with two scoreless innings and two strikeouts. The pen held a 7-run lead without incident &mdash; the kind of game where the depth arms get meaningful innings and the championship still never feels in doubt.
                   </p>
                 </div>
@@ -519,7 +519,7 @@ export default function TexasWeek3RecapPage() {
                   <p>
                     Schlossnagle&rsquo;s 1,000th win is the kind of milestone that invites reflection on everything before it &mdash; UNLV, TCU, Texas A&amp;M &mdash; but the more useful frame is what it means for now. He is managing a roster that hasn&rsquo;t lost in eleven games, a pitching staff with a 1.55 ERA, and a lineup that generates runs from multiple spots in the order. The program depth is the product of the same institutional discipline that produced the first 999 wins.
                   </p>
-                  <p className="text-text-secondary">
+                  <p className="text-[var(--bsi-dust)]">
                     But 11-0 against the current strength of schedule is a foundation, not a conclusion. The SEC opens March 13 at Ole Miss. That&rsquo;s when the foundation bears weight &mdash; when the weekend rotation faces conference arms in hostile parks, when the bullpen gets tested in close games against ranked opponents four weekends in a row. Everything so far says Texas is built for it. Nothing so far has proven it.
                   </p>
         </BSIVerdict>
@@ -529,10 +529,10 @@ export default function TexasWeek3RecapPage() {
           <Container size="narrow">
             <ScrollReveal direction="up">
               <div className="text-center py-4">
-                <blockquote className="font-serif text-2xl sm:text-3xl italic text-text-primary leading-snug mb-4">
+                <blockquote className="font-serif text-2xl sm:text-3xl italic text-[var(--bsi-bone)] leading-snug mb-4">
                   &ldquo;Eleven strikeouts in five innings against a CWS-finals lineup. The transformation isn&rsquo;t trending &mdash; it&rsquo;s arrived.&rdquo;
                 </blockquote>
-                <div className="font-mono text-xs text-burnt-orange tracking-wider uppercase">
+                <div className="font-mono text-xs text-[var(--bsi-primary)] tracking-wider uppercase">
                   On Ruger Riojas vs. No. 9 Coastal Carolina
                 </div>
               </div>
@@ -544,14 +544,14 @@ export default function TexasWeek3RecapPage() {
         <Section padding="lg" background="charcoal">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-5 pb-2 border-b border-burnt-orange/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-5 pb-2 border-b border-[var(--bsi-primary)]/15">
                 Looking Ahead
               </h2>
-              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-4">
+              <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-4">
                 <p>
                   HCU visits Disch-Falk on Tuesday. USC Upstate comes to Austin for a three-game weekend set March 7&ndash;9. Both are opportunities to manage workload and get depth arms extended reps before the schedule tilts toward the conference gauntlet.
                 </p>
-                <p className="text-text-tertiary">
+                <p className="text-[rgba(196,184,165,0.5)]">
                   Then comes March 13: Ole Miss in Oxford. The Rebels were 8-0 and carrying the No. 1 RPI when they shared the Daikin Park concourse with Texas this past weekend. They didn&rsquo;t play each other. In ten days, they will. That series is where the 11-0 record meets a program built to contest it. Everything before Oxford is preparation. Everything after it is conference baseball.
                 </p>
               </div>
@@ -564,25 +564,25 @@ export default function TexasWeek3RecapPage() {
           <Container>
             <ScrollReveal direction="up">
               <div className="text-center mb-8">
-                <span className="font-mono text-[10px] uppercase tracking-[3px] text-burnt-orange">Powered by AI</span>
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-text-primary mt-2">
+                <span className="font-mono text-[10px] uppercase tracking-[3px] text-[var(--bsi-primary)]">Powered by AI</span>
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mt-2">
                   Go Deeper
                 </h2>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
                 <button
                   onClick={() => openAI('claude')}
-                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded-sm transition-colors text-left"
+                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-[var(--bsi-primary)]/10 hover:border-[var(--bsi-primary)]/30 rounded-sm transition-colors text-left"
                 >
-                  <div className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-1">Claude Analysis</div>
-                  <div className="text-text-muted text-xs">Anthropic-powered tournament breakdown</div>
+                  <div className="font-display text-sm uppercase tracking-wider text-[var(--bsi-primary)] mb-1">Claude Analysis</div>
+                  <div className="text-[rgba(196,184,165,0.35)] text-xs">Anthropic-powered tournament breakdown</div>
                 </button>
                 <button
                   onClick={() => openAI('gemini')}
-                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded-sm transition-colors text-left"
+                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-[var(--bsi-primary)]/10 hover:border-[var(--bsi-primary)]/30 rounded-sm transition-colors text-left"
                 >
-                  <div className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-1">Gemini Analysis</div>
-                  <div className="text-text-muted text-xs">Google-powered scouting insights</div>
+                  <div className="font-display text-sm uppercase tracking-wider text-[var(--bsi-primary)] mb-1">Gemini Analysis</div>
+                  <div className="text-[rgba(196,184,165,0.35)] text-xs">Google-powered scouting insights</div>
                 </button>
               </div>
             </ScrollReveal>
@@ -594,11 +594,11 @@ export default function TexasWeek3RecapPage() {
           <Container size="narrow">
             <ScrollReveal direction="up">
               <div className="text-center">
-                <span className="font-mono text-[10px] uppercase tracking-[3px] text-text-muted block mb-2">NotebookLM Integration</span>
-                <h3 className="font-display text-lg uppercase tracking-wider text-text-primary mb-4">
+                <span className="font-mono text-[10px] uppercase tracking-[3px] text-[rgba(196,184,165,0.35)] block mb-2">NotebookLM Integration</span>
+                <h3 className="font-display text-lg uppercase tracking-wider text-[var(--bsi-bone)] mb-4">
                   Turn This Recap Into a Podcast
                 </h3>
-                <p className="text-text-muted text-sm mb-6 max-w-md mx-auto">
+                <p className="text-[rgba(196,184,165,0.35)] text-sm mb-6 max-w-md mx-auto">
                   One click copies the full recap to your clipboard and opens Google NotebookLM. Paste it in and generate an audio overview.
                 </p>
                 <NotebookLMExport articleText={ARTICLE_TEXT} />
@@ -608,7 +608,7 @@ export default function TexasWeek3RecapPage() {
         </Section>
 
         {/* ── Source Attribution ── */}
-        <Section padding="md" className="border-t border-burnt-orange/10">
+        <Section padding="md" className="border-t border-[var(--bsi-primary)]/10">
           <Container size="narrow">
             <div className="space-y-4">
               <div className="flex flex-wrap gap-3">
@@ -618,14 +618,14 @@ export default function TexasWeek3RecapPage() {
                 <DataSourceBadge source="ohiostatebuckeyes.com" timestamp="March 1, 2026 CT" />
                 <DataSourceBadge source="d1baseball.com" timestamp="March 3, 2026 CT" />
               </div>
-              <div className="font-mono text-[11px] text-text-muted leading-relaxed">
+              <div className="font-mono text-[11px] text-[rgba(196,184,165,0.35)] leading-relaxed">
                 Box scores sourced from Texas Longhorns, Coastal Carolina, Baylor, and Ohio State official stats. Tournament data from D1Baseball and BRUCE BOLT College Classic records.
               </div>
               <div className="flex flex-wrap gap-6 pt-2">
-                <Link href="/college-baseball/editorial/weekend-3-recap" className="font-display text-[13px] uppercase tracking-widest text-burnt-orange hover:opacity-70 transition-opacity">
+                <Link href="/college-baseball/editorial/weekend-3-recap" className="font-display text-[13px] uppercase tracking-widest text-[var(--bsi-primary)] hover:opacity-70 transition-opacity">
                   &larr; Weekend 3 Recap
                 </Link>
-                <Link href="/college-baseball/editorial/texas-week-2-recap" className="font-display text-[13px] uppercase tracking-widest text-burnt-orange hover:opacity-70 transition-opacity">
+                <Link href="/college-baseball/editorial/texas-week-2-recap" className="font-display text-[13px] uppercase tracking-widest text-[var(--bsi-primary)] hover:opacity-70 transition-opacity">
                   Texas Week 2 Recap &rarr;
                 </Link>
               </div>

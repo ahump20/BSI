@@ -102,12 +102,12 @@ export function IntelStream({
   const hasOutput = output.length > 0;
 
   return (
-    <div className="rounded-sm border border-border-subtle bg-surface-light overflow-hidden">
+    <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)] overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border-subtle">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-vintage)]">
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-burnt-orange" />
-          <span className="font-display text-xs font-semibold uppercase tracking-widest text-text-secondary">
+          <span className="w-1.5 h-1.5 rounded-full bg-[var(--bsi-primary)]" />
+          <span className="font-display text-xs font-semibold uppercase tracking-widest text-[var(--bsi-dust)]">
             {label ?? 'BSI Intelligence'}
           </span>
         </div>
@@ -115,15 +115,15 @@ export function IntelStream({
           {meta && (
             <>
               {meta.cached && (
-                <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider">Cached</span>
+                <span className="text-[10px] font-mono text-[rgba(196,184,165,0.35)] uppercase tracking-wider">Cached</span>
               )}
               {meta.ttftMs !== null && !meta.cached && (
-                <span className="text-[10px] font-mono text-text-muted">{meta.ttftMs}ms</span>
+                <span className="text-[10px] font-mono text-[rgba(196,184,165,0.35)]">{meta.ttftMs}ms</span>
               )}
             </>
           )}
           {isStreaming && (
-            <span className="text-[10px] font-mono text-burnt-orange animate-pulse">streaming</span>
+            <span className="text-[10px] font-mono text-[var(--bsi-primary)] animate-pulse">streaming</span>
           )}
         </div>
       </div>
@@ -131,10 +131,10 @@ export function IntelStream({
       {/* Output panel — only shown once streaming begins */}
       {hasOutput && (
         <div className="px-4 pt-4 pb-3">
-          <p className="text-sm text-text-secondary leading-relaxed font-serif">
+          <p className="text-sm text-[var(--bsi-dust)] leading-relaxed font-serif">
             {output}
             {isStreaming && (
-              <span className="inline-block w-0.5 h-3.5 bg-burnt-orange ml-0.5 align-middle animate-pulse" />
+              <span className="inline-block w-0.5 h-3.5 bg-[var(--bsi-primary)] ml-0.5 align-middle animate-pulse" />
             )}
           </p>
         </div>
@@ -157,7 +157,7 @@ export function IntelStream({
                 <button
                   key={s}
                   onClick={() => handleSuggestion(s)}
-                  className="text-[11px] text-text-muted border border-border-subtle rounded-sm px-3 py-1 hover:text-text-secondary hover:border-border-strong transition-colors"
+                  className="text-[11px] text-[rgba(196,184,165,0.35)] border border-[var(--border-vintage)] rounded-sm px-3 py-1 hover:text-[var(--bsi-dust)] hover:border-[rgba(140,98,57,0.5)] transition-colors"
                 >
                   {s}
                 </button>
@@ -173,12 +173,12 @@ export function IntelStream({
               placeholder="Ask about this game…"
               aria-label="Ask a question about this game"
               disabled={isStreaming}
-              className="flex-1 bg-surface-light border border-border rounded-sm px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-burnt-orange/50 disabled:opacity-40 transition-colors"
+              className="flex-1 bg-[var(--surface-press-box)] border border-border rounded-sm px-3 py-2 text-sm text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)] focus:outline-none focus:border-[var(--bsi-primary)]/50 disabled:opacity-40 transition-colors"
             />
             <button
               type="submit"
               disabled={isStreaming || !question.trim()}
-              className="px-4 py-2 rounded-sm bg-burnt-orange text-white text-xs font-display font-bold uppercase tracking-wider hover:bg-ember disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-2 rounded-sm bg-[var(--bsi-primary)] text-white text-xs font-display font-bold uppercase tracking-wider hover:bg-ember disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
               {isStreaming ? '…' : 'Ask'}
             </button>
@@ -191,7 +191,7 @@ export function IntelStream({
         <div className="px-4 pb-3 pt-1">
           <button
             onClick={() => fire(initialQuestion)}
-            className="text-[11px] text-text-muted hover:text-text-muted transition-colors"
+            className="text-[11px] text-[rgba(196,184,165,0.35)] hover:text-[rgba(196,184,165,0.35)] transition-colors"
           >
             Refresh analysis ↻
           </button>

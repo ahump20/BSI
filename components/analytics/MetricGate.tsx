@@ -33,16 +33,16 @@ export function MetricGate({
       <div className="blur-[6px] select-none pointer-events-none" aria-hidden="true">
         {children}
       </div>
-      <div className="absolute inset-0 flex flex-col items-center justify-center bg-background-primary/60 rounded-sm">
-        <span className="text-[10px] font-display uppercase tracking-widest text-burnt-orange mb-1">
+      <div className="absolute inset-0 flex flex-col items-center justify-center bg-[var(--surface-scoreboard)]/60 rounded-sm">
+        <span className="text-[10px] font-display uppercase tracking-widest text-[var(--bsi-primary)] mb-1">
           PRO
         </span>
-        <span className="text-xs text-text-muted text-center max-w-[200px]">
+        <span className="text-xs text-[rgba(196,184,165,0.35)] text-center max-w-[200px]">
           Unlock {metricName}
         </span>
         <a
           href="/pricing"
-          className="mt-2 text-[10px] font-mono text-ember hover:text-text-primary transition-colors uppercase tracking-wider"
+          className="mt-2 text-[10px] font-mono text-ember hover:text-[var(--bsi-bone)] transition-colors uppercase tracking-wider"
         >
           Upgrade →
         </a>

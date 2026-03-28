@@ -59,9 +59,9 @@ function SectionHeading({
   return (
     <h2
       id={id}
-      className="font-display text-xl md:text-2xl font-bold uppercase tracking-wide text-text-primary mt-20 mb-8 scroll-mt-24 flex items-center gap-4"
+      className="font-display text-xl md:text-2xl font-bold uppercase tracking-wide text-[var(--bsi-bone)] mt-20 mb-8 scroll-mt-24 flex items-center gap-4"
     >
-      <span className="w-8 h-px bg-burnt-orange/50 shrink-0 hidden md:block" />
+      <span className="w-8 h-px bg-[var(--bsi-primary)]/50 shrink-0 hidden md:block" />
       <span>{children}</span>
     </h2>
   );
@@ -70,9 +70,9 @@ function SectionHeading({
 function P({ children, drop }: { children: React.ReactNode; drop?: boolean }) {
   return (
     <p
-      className={`font-serif text-[1.1rem] md:text-[1.15rem] leading-[1.9] text-text-secondary mb-6 ${
+      className={`font-serif text-[1.1rem] md:text-[1.15rem] leading-[1.9] text-[var(--bsi-dust)] mb-6 ${
         drop
-          ? 'first-letter:text-5xl first-letter:font-display first-letter:font-bold first-letter:text-burnt-orange first-letter:float-left first-letter:mr-3 first-letter:mt-1 first-letter:leading-[0.8]'
+          ? 'first-letter:text-5xl first-letter:font-display first-letter:font-bold first-letter:text-[var(--bsi-primary)] first-letter:float-left first-letter:mr-3 first-letter:mt-1 first-letter:leading-[0.8]'
           : ''
       }`}
     >
@@ -85,7 +85,7 @@ function BlockQuote({ children }: { children: React.ReactNode }) {
   return (
     <blockquote className="relative my-10 pl-8 md:pl-10">
       <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full bg-gradient-to-b from-burnt-orange/50 via-burnt-orange/20 to-transparent" />
-      <p className="font-serif text-lg md:text-xl italic text-text-tertiary leading-relaxed">
+      <p className="font-serif text-lg md:text-xl italic text-[rgba(196,184,165,0.5)] leading-relaxed">
         {children}
       </p>
     </blockquote>
@@ -103,8 +103,8 @@ function DataTable({
 }) {
   return (
     <figure className="my-10">
-      <figcaption className="font-display text-xs uppercase tracking-[0.15em] text-burnt-orange/70 mb-4 flex items-center gap-3">
-        <span className="w-4 h-px bg-burnt-orange/40" />
+      <figcaption className="font-display text-xs uppercase tracking-[0.15em] text-[var(--bsi-primary)]/70 mb-4 flex items-center gap-3">
+        <span className="w-4 h-px bg-[var(--bsi-primary)]/40" />
         {caption}
       </figcaption>
       <div className="overflow-x-auto rounded-sm border border-border/40">
@@ -114,7 +114,7 @@ function DataTable({
               {headers.map((h) => (
                 <th
                   key={h}
-                  className="text-left px-4 py-3 border-b border-burnt-orange/15 font-mono text-[10px] uppercase tracking-[0.15em] text-text-muted whitespace-nowrap"
+                  className="text-left px-4 py-3 border-b border-[var(--bsi-primary)]/15 font-mono text-[10px] uppercase tracking-[0.15em] text-[rgba(196,184,165,0.35)] whitespace-nowrap"
                 >
                   {h}
                 </th>
@@ -127,15 +127,15 @@ function DataTable({
                 key={i}
                 className={`${
                   i % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.015]'
-                } hover:bg-burnt-orange/[0.03] transition-colors`}
+                } hover:bg-[var(--bsi-primary)]/[0.03] transition-colors`}
               >
                 {row.map((cell, j) => (
                   <td
                     key={j}
                     className={`px-4 py-2.5 border-b border-border/30 whitespace-nowrap ${
                       j === 0
-                        ? 'font-serif text-text-secondary font-medium'
-                        : 'font-mono text-xs text-text-muted'
+                        ? 'font-serif text-[var(--bsi-dust)] font-medium'
+                        : 'font-mono text-xs text-[rgba(196,184,165,0.35)]'
                     }`}
                   >
                     {cell}
@@ -152,7 +152,7 @@ function DataTable({
 
 function Ref({ children }: { children: React.ReactNode }) {
   return (
-    <p className="pl-8 -indent-8 font-serif text-[0.85rem] leading-[1.7] text-text-muted/80 mb-2">
+    <p className="pl-8 -indent-8 font-serif text-[0.85rem] leading-[1.7] text-[rgba(196,184,165,0.35)]/80 mb-2">
       {children}
     </p>
   );
@@ -160,7 +160,7 @@ function Ref({ children }: { children: React.ReactNode }) {
 
 function RefDoi({ href, children }: { href: string; children: React.ReactNode }) {
   return (
-    <a href={href} className="text-burnt-orange/50 hover:text-burnt-orange transition-colors break-all">
+    <a href={href} className="text-[var(--bsi-primary)]/50 hover:text-[var(--bsi-primary)] transition-colors break-all">
       {children}
     </a>
   );
@@ -168,8 +168,8 @@ function RefDoi({ href, children }: { href: string; children: React.ReactNode })
 
 function RefSectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="font-display text-[10px] uppercase tracking-[0.2em] text-burnt-orange/40 mt-10 mb-4 flex items-center gap-3">
-      <span className="w-6 h-px bg-burnt-orange/20" />
+    <p className="font-display text-[10px] uppercase tracking-[0.2em] text-[var(--bsi-primary)]/40 mt-10 mb-4 flex items-center gap-3">
+      <span className="w-6 h-px bg-[var(--bsi-primary)]/20" />
       {children}
     </p>
   );
@@ -187,19 +187,19 @@ export default function NILAnalysisPage() {
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/"
-                className="text-text-muted hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 Home
               </Link>
-              <span className="text-text-muted/40">/</span>
+              <span className="text-[rgba(196,184,165,0.35)]/40">/</span>
               <Link
                 href="/research"
-                className="text-text-muted hover:text-burnt-orange transition-colors"
+                className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors"
               >
                 Research
               </Link>
-              <span className="text-text-muted/40">/</span>
-              <span className="text-text-primary">NIL Analysis</span>
+              <span className="text-[rgba(196,184,165,0.35)]/40">/</span>
+              <span className="text-[var(--bsi-bone)]">NIL Analysis</span>
             </nav>
           </Container>
         </Section>
@@ -211,12 +211,12 @@ export default function NILAnalysisPage() {
             <div className="max-w-4xl">
               {/* Research division marker */}
               <div className="flex items-center gap-3 mb-10">
-                <div className="h-px w-8 bg-burnt-orange/60" />
-                <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-burnt-orange/70">
+                <div className="h-px w-8 bg-[var(--bsi-primary)]/60" />
+                <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-[var(--bsi-primary)]/70">
                   BSI Research Division
                 </span>
-                <span className="text-text-muted/30">&middot;</span>
-                <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-text-muted/50">
+                <span className="text-[rgba(196,184,165,0.35)]/30">&middot;</span>
+                <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-[rgba(196,184,165,0.35)]/50">
                   March 2026
                 </span>
               </div>
@@ -225,10 +225,10 @@ export default function NILAnalysisPage() {
               <h1 className="font-display text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold uppercase tracking-wide mb-5 leading-[1.1]">
                 The $1 Billion Experiment
               </h1>
-              <p className="font-serif text-xl md:text-2xl text-burnt-orange/60 italic mb-8 max-w-3xl leading-relaxed">
+              <p className="font-serif text-xl md:text-2xl text-[var(--bsi-primary)]/60 italic mb-8 max-w-3xl leading-relaxed">
                 Money, Power, and Transparency in the NCAA&rsquo;s NIL Era
               </p>
-              <p className="font-serif text-base md:text-lg text-text-tertiary leading-relaxed max-w-2xl">
+              <p className="font-serif text-base md:text-lg text-[rgba(196,184,165,0.5)] leading-relaxed max-w-2xl">
                 A scholarly analysis of name, image, and likeness financial flows, legal architecture,
                 and institutional impact, 2021&ndash;2026
               </p>
@@ -236,21 +236,21 @@ export default function NILAnalysisPage() {
               {/* Author attribution */}
               <div className="mt-10 pt-6 border-t border-border/30 flex flex-col sm:flex-row sm:items-center gap-4">
                 <div>
-                  <p className="text-sm text-text-secondary font-medium">
+                  <p className="text-sm text-[var(--bsi-dust)] font-medium">
                     Austin Humphrey
                   </p>
-                  <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-muted/60 mt-0.5">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[rgba(196,184,165,0.35)]/60 mt-0.5">
                     Founder &amp; Research Director
                   </p>
                 </div>
                 <div className="hidden sm:block h-8 w-px bg-border/30" />
-                <div className="flex items-center gap-4 font-mono text-[10px] uppercase tracking-[0.15em] text-text-muted/50">
+                <div className="flex items-center gap-4 font-mono text-[10px] uppercase tracking-[0.15em] text-[rgba(196,184,165,0.35)]/50">
                   <span>43 references</span>
-                  <span className="text-text-muted/20">&middot;</span>
+                  <span className="text-[rgba(196,184,165,0.35)]/20">&middot;</span>
                   <span>4 data tables</span>
-                  <span className="text-text-muted/20">&middot;</span>
+                  <span className="text-[rgba(196,184,165,0.35)]/20">&middot;</span>
                   <span>35+ citations</span>
-                  <span className="text-text-muted/20">&middot;</span>
+                  <span className="text-[rgba(196,184,165,0.35)]/20">&middot;</span>
                   <span>45 min read</span>
                 </div>
               </div>
@@ -266,7 +266,7 @@ export default function NILAnalysisPage() {
               <aside className="hidden xl:block w-56 shrink-0">
                 <div className="sticky top-24">
                   <div className="rounded-sm bg-white/[0.02] border border-border/30 p-5">
-                    <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-burnt-orange/50 mb-5">
+                    <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-[var(--bsi-primary)]/50 mb-5">
                       Contents
                     </p>
                     <nav className="space-y-0.5">
@@ -274,7 +274,7 @@ export default function NILAnalysisPage() {
                         <a
                           key={item.id}
                           href={`#${item.id}`}
-                          className="block text-[13px] font-serif text-text-muted/60 hover:text-burnt-orange transition-colors py-1.5 border-l border-border/20 hover:border-burnt-orange/40 pl-4"
+                          className="block text-[13px] font-serif text-[rgba(196,184,165,0.35)]/60 hover:text-[var(--bsi-primary)] transition-colors py-1.5 border-l border-border/20 hover:border-[var(--bsi-primary)]/40 pl-4"
                         >
                           {item.label}
                         </a>
@@ -292,8 +292,8 @@ export default function NILAnalysisPage() {
                   <P>
                     The NCAA&rsquo;s name, image, and likeness market &mdash; reaching an estimated $2.26 billion in annual activity by its fourth year and projected to exceed $2.75 billion under the <em>House v. NCAA</em> revenue-sharing framework (Opendorse, 2025) &mdash; is not a reform. It is an unregulated financial experiment conducted on eighteen- to twenty-two-year-olds, and the primary beneficiaries are not the athletes it was designed to liberate. This analysis examines how structural opacity in NIL financial flows concentrates advantage among intermediaries &mdash; collectives, platform companies, hedge fund&ndash;adjacent donor vehicles, and institutional compliance offices &mdash; while athletes navigate a marketplace with no standardized disclosure requirements, no collective bargaining rights, and no fiduciary protections. Findings span four domains: market concentration, where a small number of high-revenue sport athletes capture the overwhelming majority of NIL dollars while the median Division I athlete earns approximately $500&ndash;$713 annually; gender inequity, where women&rsquo;s sports athletes receive less than 3.5% of collective-backed funds despite generating measurable and growing marginal revenue; compliance fragmentation, where thirty-plus different state laws produce a regulatory patchwork that advantages programs in permissive jurisdictions; and predatory financial vehicles, where charitable-structure collectives and NIL hedge funds operate with minimal transparency obligations while functioning as de facto recruiting war chests and speculative instruments. The $2.8 billion <em>House v. NCAA</em> settlement, far from resolving these tensions, layers a revenue-sharing model atop an already opaque system &mdash; adding institutional money without institutional accountability. The central argument is straightforward: transparency is not a feature request. It is the minimum standard for any marketplace that routes billions of dollars through the labor of unpaid (or newly, unevenly paid) young people.
                   </P>
-                  <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-text-muted/50">
-                    <strong className="text-text-muted/70">Keywords:</strong>{' '}
+                  <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-[rgba(196,184,165,0.35)]/50">
+                    <strong className="text-[rgba(196,184,165,0.35)]/70">Keywords:</strong>{' '}
                     NCAA, name image and likeness, NIL, college athletics, antitrust, Title IX, athlete compensation, collectives, House v. NCAA, monopsony
                   </p>
                 </div>
@@ -526,25 +526,25 @@ export default function NILAnalysisPage() {
                 </P>
 
                 {/* ── Interactive Tools CTA ─────────────────────────── */}
-                <div className="my-12 p-6 rounded-sm border border-burnt-orange/20 bg-burnt-orange/[0.04]">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-burnt-orange mb-3">
+                <div className="my-12 p-6 rounded-sm border border-[var(--bsi-primary)]/20 bg-[var(--bsi-primary)]/[0.04]">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--bsi-primary)] mb-3">
                     Explore the Data
                   </p>
-                  <p className="text-text-secondary text-sm leading-relaxed mb-4">
+                  <p className="text-[var(--bsi-dust)] text-sm leading-relaxed mb-4">
                     The market data, gender equity figures, and collective growth trends from
                     this research are now interactive on BSI.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3">
                     <a
                       href="/nil-valuation"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-burnt-orange/10 border border-burnt-orange/30 text-burnt-orange text-sm font-medium hover:bg-burnt-orange/20 transition-colors"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-[var(--bsi-primary)]/10 border border-[var(--bsi-primary)]/30 text-[var(--bsi-primary)] text-sm font-medium hover:bg-[var(--bsi-primary)]/20 transition-colors"
                     >
                       NIL Market Intelligence Dashboard
                       <span className="text-xs opacity-60">&rarr;</span>
                     </a>
                     <a
                       href="/nil-valuation/performance-index"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-white/[0.04] border border-white/10 text-text-secondary text-sm font-medium hover:bg-white/[0.08] transition-colors"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-white/[0.04] border border-white/10 text-[var(--bsi-dust)] text-sm font-medium hover:bg-white/[0.08] transition-colors"
                     >
                       Calculate a Player&rsquo;s NIL Index
                       <span className="text-xs opacity-60">&rarr;</span>
@@ -611,15 +611,15 @@ export default function NILAnalysisPage() {
                 {/* ── Footer attribution ─────────────────────────── */}
                 <div className="mt-20 pt-8 border-t border-border/30">
                   <div className="flex items-start gap-4">
-                    <div className="w-[3px] h-12 rounded-full bg-burnt-orange/30 shrink-0 mt-1" />
+                    <div className="w-[3px] h-12 rounded-full bg-[var(--bsi-primary)]/30 shrink-0 mt-1" />
                     <div>
-                      <p className="text-sm text-text-secondary font-medium">
+                      <p className="text-sm text-[var(--bsi-dust)] font-medium">
                         Austin Humphrey
                       </p>
-                      <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-muted/50 mt-1">
+                      <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[rgba(196,184,165,0.35)]/50 mt-1">
                         BSI Research Division &middot; March 2026
                       </p>
-                      <p className="text-xs text-text-muted/40 mt-3 max-w-xl leading-relaxed">
+                      <p className="text-xs text-[rgba(196,184,165,0.35)]/40 mt-3 max-w-xl leading-relaxed">
                         This analysis was produced by Blaze Sports Intel for publication on blazesportsintel.com.
                         All citations are to peer-reviewed or publicly verifiable sources. No fabricated statistics.
                       </p>

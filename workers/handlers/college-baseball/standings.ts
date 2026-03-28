@@ -135,6 +135,7 @@ export async function handleCollegeBaseballStandings(
           id: meta?.slug ?? teamId,
           name: (team.displayName as string) ?? '',
           shortName: meta?.shortName ?? (team.abbreviation as string) ?? '',
+          conference: meta?.conference ?? lookupConference((team.displayName as string) ?? '') ?? '',
           logo,
         },
         conferenceRecord: { wins: confWins, losses: confLosses, pct: leagueWinPct },

@@ -82,24 +82,24 @@ export function DashboardSidebar({
 
   return (
     <motion.aside
-      className="hidden lg:flex flex-col bg-surface-light/50 border border-border rounded-sm backdrop-blur-sm h-fit sticky top-28 overflow-hidden"
+      className="hidden lg:flex flex-col bg-[var(--surface-press-box)]/50 border border-border rounded-sm backdrop-blur-sm h-fit sticky top-28 overflow-hidden"
       animate={{ width: collapsed ? 64 : 240 }}
       transition={{ type: 'spring', damping: 25, stiffness: 300 }}
     >
       {/* Collapse toggle */}
       <button
         onClick={toggleCollapse}
-        className="flex items-center justify-center p-3 hover:bg-surface-medium transition-colors border-b border-border-subtle"
+        className="flex items-center justify-center p-3 hover:bg-[var(--surface-press-box)] transition-colors border-b border-[var(--border-vintage)]"
         aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
       >
         {collapsed ? (
-          <ChevronRight className="w-4 h-4 text-text-muted" />
+          <ChevronRight className="w-4 h-4 text-[rgba(196,184,165,0.35)]" />
         ) : (
           <div className="flex items-center justify-between w-full px-1">
-            <span className="text-[10px] uppercase tracking-widest text-text-muted font-medium">
+            <span className="text-[10px] uppercase tracking-widest text-[rgba(196,184,165,0.35)] font-medium">
               Sports
             </span>
-            <ChevronLeft className="w-4 h-4 text-text-muted" />
+            <ChevronLeft className="w-4 h-4 text-[rgba(196,184,165,0.35)]" />
           </div>
         )}
       </button>
@@ -114,15 +114,15 @@ export function DashboardSidebar({
               onClick={() => onSportChange(sport.key)}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-sm transition-all text-sm ${
                 active
-                  ? 'bg-burnt-orange/15 text-burnt-orange font-semibold'
-                  : 'text-text-secondary hover:text-text-primary hover:bg-surface-medium'
+                  ? 'bg-[var(--bsi-primary)]/15 text-[var(--bsi-primary)] font-semibold'
+                  : 'text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)]'
               }`}
               title={sport.label}
             >
               <span className="flex-shrink-0"><sport.icon /></span>
               {!collapsed && <span>{sport.label}</span>}
               {active && !collapsed && (
-                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-burnt-orange" />
+                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[var(--bsi-primary)]" />
               )}
             </button>
           );
@@ -132,9 +132,9 @@ export function DashboardSidebar({
       {/* Quick Links */}
       {!collapsed && (
         <>
-          <div className="mx-3 my-1 border-t border-border-subtle" />
+          <div className="mx-3 my-1 border-t border-[var(--border-vintage)]" />
           <div className="px-4 pt-2 pb-1">
-            <span className="text-[10px] uppercase tracking-widest text-text-muted font-medium">
+            <span className="text-[10px] uppercase tracking-widest text-[rgba(196,184,165,0.35)] font-medium">
               Quick Links
             </span>
           </div>
@@ -145,7 +145,7 @@ export function DashboardSidebar({
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="flex items-center gap-3 px-3 py-2 rounded-sm text-sm text-text-muted hover:text-text-primary hover:bg-surface-medium transition-colors"
+                  className="flex items-center gap-3 px-3 py-2 rounded-sm text-sm text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-colors"
                 >
                   <Icon className="w-4 h-4 flex-shrink-0" />
                   <span>{link.label}</span>
@@ -159,7 +159,7 @@ export function DashboardSidebar({
       {/* Collapsed quick links — icon only */}
       {collapsed && (
         <>
-          <div className="mx-2 my-1 border-t border-border-subtle" />
+          <div className="mx-2 my-1 border-t border-[var(--border-vintage)]" />
           <div className="p-2 space-y-0.5">
             {QUICK_LINKS.slice(0, 4).map((link) => {
               const Icon = link.icon;
@@ -167,7 +167,7 @@ export function DashboardSidebar({
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="flex items-center justify-center p-2 rounded-sm text-text-muted hover:text-text-primary hover:bg-surface-medium transition-colors"
+                  className="flex items-center justify-center p-2 rounded-sm text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-colors"
                   title={link.label}
                 >
                   <Icon className="w-4 h-4" />
@@ -179,10 +179,10 @@ export function DashboardSidebar({
       )}
 
       {/* Settings */}
-      <div className="mt-auto border-t border-border-subtle">
+      <div className="mt-auto border-t border-[var(--border-vintage)]">
         <button
           onClick={onOpenConfigurator}
-          className="w-full flex items-center gap-3 px-4 py-3 text-text-muted hover:text-text-primary hover:bg-surface-medium transition-colors"
+          className="w-full flex items-center gap-3 px-4 py-3 text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)] transition-colors"
           title="Customize Dashboard"
         >
           <Settings className="w-4 h-4 flex-shrink-0" />

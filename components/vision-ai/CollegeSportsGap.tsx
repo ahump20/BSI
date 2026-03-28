@@ -71,54 +71,54 @@ export function CollegeSportsGap({ className = '' }: { className?: string }) {
       <div className="grid grid-cols-3 gap-4 mb-6" role="group" aria-label="Coverage summary">
         <div className="text-center p-3 bg-[var(--bsi-success)]/5 rounded-sm border border-[var(--bsi-success)]/10">
           <p className="text-2xl font-bold font-mono text-[var(--bsi-success)]">{proFull}/{TRACKING_DATA.length}</p>
-          <p className="text-[10px] text-text-tertiary uppercase tracking-wider mt-1">Pro: Full Coverage</p>
+          <p className="text-[10px] text-[rgba(196,184,165,0.5)] uppercase tracking-wider mt-1">Pro: Full Coverage</p>
         </div>
         <div className="text-center p-3 bg-[var(--bsi-warning)]/5 rounded-sm border border-[var(--bsi-warning)]/10">
           <p className="text-2xl font-bold font-mono text-[var(--bsi-warning)]">{collegeFull}/{TRACKING_DATA.length}</p>
-          <p className="text-[10px] text-text-tertiary uppercase tracking-wider mt-1">College: Full</p>
+          <p className="text-[10px] text-[rgba(196,184,165,0.5)] uppercase tracking-wider mt-1">College: Full</p>
         </div>
-        <div className="text-center p-3 bg-burnt-orange/5 rounded-sm border border-burnt-orange/10">
-          <p className="text-2xl font-bold font-mono text-burnt-orange">{collegeNone}</p>
-          <p className="text-[10px] text-text-tertiary uppercase tracking-wider mt-1">Critical Gaps</p>
+        <div className="text-center p-3 bg-[var(--bsi-primary)]/5 rounded-sm border border-[var(--bsi-primary)]/10">
+          <p className="text-2xl font-bold font-mono text-[var(--bsi-primary)]">{collegeNone}</p>
+          <p className="text-[10px] text-[rgba(196,184,165,0.5)] uppercase tracking-wider mt-1">Critical Gaps</p>
         </div>
       </div>
 
       {/* Comparison table */}
       <div className="space-y-3">
         {TRACKING_DATA.map((row) => (
-          <div key={row.category} className="bg-surface-light rounded-sm p-4 border border-border-subtle hover:border-border transition-colors">
-            <div className="text-text-primary font-semibold text-sm mb-3">{row.category}</div>
+          <div key={row.category} className="bg-[var(--surface-press-box)] rounded-sm p-4 border border-[var(--border-vintage)] hover:border-border transition-colors">
+            <div className="text-[var(--bsi-bone)] font-semibold text-sm mb-3">{row.category}</div>
             <div className="grid grid-cols-2 gap-4">
               {/* Pro */}
               <div>
                 <div className="flex items-center gap-2 mb-1.5">
-                  <span className="text-[10px] uppercase tracking-wider text-text-muted font-semibold w-10">Pro</span>
-                  <div className="flex-1 h-1.5 bg-surface-light rounded-full overflow-hidden">
+                  <span className="text-[10px] uppercase tracking-wider text-[rgba(196,184,165,0.35)] font-semibold w-10">Pro</span>
+                  <div className="flex-1 h-1.5 bg-[var(--surface-press-box)] rounded-full overflow-hidden">
                     <div className={`h-full ${levelConfig[row.pro.level].color} ${levelConfig[row.pro.level].bar} rounded-full transition-all`} />
                   </div>
                   <span className={`text-[9px] font-mono ${
-                    row.pro.level === 'full' ? 'text-[var(--bsi-success)]' : row.pro.level === 'partial' ? 'text-[var(--bsi-warning)]' : 'text-text-muted'
+                    row.pro.level === 'full' ? 'text-[var(--bsi-success)]' : row.pro.level === 'partial' ? 'text-[var(--bsi-warning)]' : 'text-[rgba(196,184,165,0.35)]'
                   }`}>
                     {levelConfig[row.pro.level].label}
                   </span>
                 </div>
-                <p className="text-text-tertiary text-[11px] leading-relaxed pl-12">{row.pro.detail}</p>
+                <p className="text-[rgba(196,184,165,0.5)] text-[11px] leading-relaxed pl-12">{row.pro.detail}</p>
               </div>
 
               {/* College */}
               <div>
                 <div className="flex items-center gap-2 mb-1.5">
-                  <span className="text-[10px] uppercase tracking-wider text-text-muted font-semibold w-10">Coll</span>
-                  <div className="flex-1 h-1.5 bg-surface-light rounded-full overflow-hidden">
+                  <span className="text-[10px] uppercase tracking-wider text-[rgba(196,184,165,0.35)] font-semibold w-10">Coll</span>
+                  <div className="flex-1 h-1.5 bg-[var(--surface-press-box)] rounded-full overflow-hidden">
                     <div className={`h-full ${levelConfig[row.college.level].color} ${levelConfig[row.college.level].bar} rounded-full transition-all`} />
                   </div>
                   <span className={`text-[9px] font-mono ${
-                    row.college.level === 'full' ? 'text-[var(--bsi-success)]' : row.college.level === 'partial' ? 'text-[var(--bsi-warning)]' : 'text-text-muted'
+                    row.college.level === 'full' ? 'text-[var(--bsi-success)]' : row.college.level === 'partial' ? 'text-[var(--bsi-warning)]' : 'text-[rgba(196,184,165,0.35)]'
                   }`}>
                     {levelConfig[row.college.level].label}
                   </span>
                 </div>
-                <p className="text-text-tertiary text-[11px] leading-relaxed pl-12">{row.college.detail}</p>
+                <p className="text-[rgba(196,184,165,0.5)] text-[11px] leading-relaxed pl-12">{row.college.detail}</p>
               </div>
             </div>
           </div>
@@ -126,12 +126,12 @@ export function CollegeSportsGap({ className = '' }: { className?: string }) {
       </div>
 
       {/* BSI editorial take */}
-      <div className="mt-6 bg-burnt-orange/5 border border-burnt-orange/15 rounded-sm p-4">
+      <div className="mt-6 bg-[var(--bsi-primary)]/5 border border-[var(--bsi-primary)]/15 rounded-sm p-4">
         <div className="flex items-center gap-2 mb-2">
-          <span className="w-1 h-4 bg-burnt-orange rounded-full" />
-          <span className="text-burnt-orange text-xs font-semibold uppercase tracking-wider">BSI Take</span>
+          <span className="w-1 h-4 bg-[var(--bsi-primary)] rounded-full" />
+          <span className="text-[var(--bsi-primary)] text-xs font-semibold uppercase tracking-wider">BSI Take</span>
         </div>
-        <p className="text-text-secondary text-sm leading-relaxed">
+        <p className="text-[var(--bsi-dust)] text-sm leading-relaxed">
           Pro leagues have near-complete tracking coverage. College sports — BSI&apos;s flagship territory —
           have massive gaps in optical tracking, biomechanics, and real-time data. The programs investing
           now (Rapsodo at mid-tier, KinaTrax at elite) are gaining a measurable scouting and development

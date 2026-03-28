@@ -57,11 +57,11 @@ export default function TexasMediaClient() {
         <Section padding="sm" className="border-b border-border">
           <Container>
             <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">College Baseball</Link>
-              <span className="text-text-muted">/</span>
-              <Link href="/college-baseball/texas-intelligence" className="text-text-muted hover:text-burnt-orange transition-colors">Texas Intel</Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-primary">Media</span>
+              <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">College Baseball</Link>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <Link href="/college-baseball/texas-intelligence" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">Texas Intel</Link>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[var(--bsi-bone)]">Media</span>
             </nav>
           </Container>
         </Section>
@@ -75,10 +75,10 @@ export default function TexasMediaClient() {
                 <img src={logoUrl} alt="Texas" className="w-12 h-12 object-contain" loading="eager" />
                 <div>
                   <span className="heritage-stamp text-[10px]">Media Archive</span>
-                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-text-primary mt-1">
+                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-[var(--bsi-bone)] mt-1">
                     Texas Media Archive
                   </h1>
-                  <p className="text-text-secondary text-sm mt-2">
+                  <p className="text-[var(--bsi-dust)] text-sm mt-2">
                     Video highlights, news, and social content — curated and live-aggregated.
                   </p>
                 </div>
@@ -93,7 +93,7 @@ export default function TexasMediaClient() {
             <ScrollReveal direction="up">
               <div className="mb-6">
                 <span className="heritage-stamp text-[10px]">BSI Film Room</span>
-                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary mt-1">
+                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-[var(--bsi-bone)] mt-1">
                   Film Room
                 </h2>
               </div>
@@ -110,7 +110,7 @@ export default function TexasMediaClient() {
             <ScrollReveal direction="up">
               <div className="mb-6">
                 <span className="heritage-stamp text-[10px]">News Intelligence</span>
-                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary mt-1">
+                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-[var(--bsi-bone)] mt-1">
                   Latest News
                 </h2>
               </div>
@@ -119,7 +119,7 @@ export default function TexasMediaClient() {
             {newsLoading ? (
               <div className="space-y-3">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="h-20 bg-surface-light rounded-sm animate-pulse" />
+                  <div key={i} className="h-20 bg-[var(--surface-press-box)] rounded-sm animate-pulse" />
                 ))}
               </div>
             ) : news && news.articles.length > 0 ? (
@@ -132,21 +132,21 @@ export default function TexasMediaClient() {
                       rel="noopener noreferrer"
                       className="block"
                     >
-                      <Card variant="default" padding="md" className="hover:border-burnt-orange/30 transition-colors cursor-pointer">
+                      <Card variant="default" padding="md" className="hover:border-[var(--bsi-primary)]/30 transition-colors cursor-pointer">
                         <CardContent>
                           <div className="flex items-center gap-2 mb-1.5">
                             <Badge variant="secondary" size="sm">{article.source}</Badge>
-                            <span className="text-text-muted text-[10px]">
+                            <span className="text-[rgba(196,184,165,0.35)] text-[10px]">
                               {new Date(article.publishedAt).toLocaleDateString('en-US', {
                                 month: 'short', day: 'numeric',
                               })}
                             </span>
                           </div>
-                          <h3 className="font-display font-bold text-sm uppercase tracking-wide text-text-primary line-clamp-2">
+                          <h3 className="font-display font-bold text-sm uppercase tracking-wide text-[var(--bsi-bone)] line-clamp-2">
                             {article.title}
                           </h3>
                           {article.description && (
-                            <p className="text-text-muted text-xs leading-relaxed mt-1 line-clamp-2">
+                            <p className="text-[rgba(196,184,165,0.35)] text-xs leading-relaxed mt-1 line-clamp-2">
                               {article.description}
                             </p>
                           )}
@@ -158,7 +158,7 @@ export default function TexasMediaClient() {
               </div>
             ) : (
               <Card padding="lg" className="text-center">
-                <p className="text-text-muted text-sm">
+                <p className="text-[rgba(196,184,165,0.35)] text-sm">
                   {newsError ? 'Unable to load news. Try refreshing the page.' : 'News aggregation is refreshing. Check back soon.'}
                 </p>
               </Card>
@@ -198,10 +198,10 @@ export default function TexasMediaClient() {
                 }
               />
               <div className="flex flex-wrap gap-4">
-                <Link href="/college-baseball/texas-intelligence" className="text-sm text-burnt-orange hover:text-ember transition-colors">
+                <Link href="/college-baseball/texas-intelligence" className="text-sm text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors">
                   &larr; Back to Hub
                 </Link>
-                <Link href="/college-baseball/editorial" className="text-sm text-text-muted hover:text-text-primary transition-colors">
+                <Link href="/college-baseball/editorial" className="text-sm text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] transition-colors">
                   All Editorial &rarr;
                 </Link>
               </div>

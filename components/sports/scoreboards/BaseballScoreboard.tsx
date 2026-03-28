@@ -93,21 +93,21 @@ export function BaseballScoreboard({
       <div className="flex items-center justify-center gap-8 md:gap-16 py-6">
         {/* Away Team */}
         <div className="text-center">
-          <div className="w-16 h-16 bg-background-secondary rounded-full flex items-center justify-center text-xl font-bold text-burnt-orange mx-auto mb-2 relative">
+          <div className="w-16 h-16 bg-[var(--surface-dugout)] rounded-full flex items-center justify-center text-xl font-bold text-[var(--bsi-primary)] mx-auto mb-2 relative">
             {away.abbreviation}
             {showRankings && away.ranking && (
-              <span className="absolute -top-1 -right-1 w-6 h-6 bg-burnt-orange text-white text-xs font-bold rounded-full flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 w-6 h-6 bg-[var(--bsi-primary)] text-white text-xs font-bold rounded-full flex items-center justify-center">
                 {away.ranking}
               </span>
             )}
           </div>
-          <p className="font-semibold text-text-primary">{away.name}</p>
-          <p className="text-xs text-text-tertiary">{away.record || ''}</p>
+          <p className="font-semibold text-[var(--bsi-bone)]">{away.name}</p>
+          <p className="text-xs text-[rgba(196,184,165,0.5)]">{away.record || ''}</p>
           <p
             className={`text-4xl font-bold font-mono mt-2 ${
               game.status.isFinal && away.isWinner
-                ? 'text-text-primary'
-                : 'text-text-secondary'
+                ? 'text-[var(--bsi-bone)]'
+                : 'text-[var(--bsi-dust)]'
             }`}
           >
             {away.score}
@@ -122,32 +122,32 @@ export function BaseballScoreboard({
               {game.status.inningState} {game.status.inning}
             </span>
           ) : game.status.isFinal ? (
-            <span className="text-text-tertiary font-semibold">FINAL</span>
+            <span className="text-[rgba(196,184,165,0.5)] font-semibold">FINAL</span>
           ) : (
-            <span className="text-burnt-orange font-semibold">
+            <span className="text-[var(--bsi-primary)] font-semibold">
               {game.status.detailedState}
             </span>
           )}
-          <p className="text-xs text-text-tertiary mt-1">{game.venue?.name}</p>
+          <p className="text-xs text-[rgba(196,184,165,0.5)] mt-1">{game.venue?.name}</p>
         </div>
 
         {/* Home Team */}
         <div className="text-center">
-          <div className="w-16 h-16 bg-background-secondary rounded-full flex items-center justify-center text-xl font-bold text-burnt-orange mx-auto mb-2 relative">
+          <div className="w-16 h-16 bg-[var(--surface-dugout)] rounded-full flex items-center justify-center text-xl font-bold text-[var(--bsi-primary)] mx-auto mb-2 relative">
             {home.abbreviation}
             {showRankings && home.ranking && (
-              <span className="absolute -top-1 -right-1 w-6 h-6 bg-burnt-orange text-white text-xs font-bold rounded-full flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 w-6 h-6 bg-[var(--bsi-primary)] text-white text-xs font-bold rounded-full flex items-center justify-center">
                 {home.ranking}
               </span>
             )}
           </div>
-          <p className="font-semibold text-text-primary">{home.name}</p>
-          <p className="text-xs text-text-tertiary">{home.record || ''}</p>
+          <p className="font-semibold text-[var(--bsi-bone)]">{home.name}</p>
+          <p className="text-xs text-[rgba(196,184,165,0.5)]">{home.record || ''}</p>
           <p
             className={`text-4xl font-bold font-mono mt-2 ${
               game.status.isFinal && home.isWinner
-                ? 'text-text-primary'
-                : 'text-text-secondary'
+                ? 'text-[var(--bsi-bone)]'
+                : 'text-[var(--bsi-dust)]'
             }`}
           >
             {home.score}
@@ -161,23 +161,23 @@ export function BaseballScoreboard({
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-b border-border-subtle text-text-tertiary">
+                <tr className="border-b border-[var(--border-vintage)] text-[rgba(196,184,165,0.5)]">
                   <th className="text-left p-1.5 w-12">Team</th>
                   {Array.from({ length: inningCount }, (_, i) => (
                     <th key={i} className="text-center p-1.5 w-5">
                       {i + 1}
                     </th>
                   ))}
-                  <th className="text-center p-1.5 w-6 border-l border-border-subtle text-burnt-orange font-bold">
+                  <th className="text-center p-1.5 w-6 border-l border-[var(--border-vintage)] text-[var(--bsi-primary)] font-bold">
                     R
                   </th>
                   <th className="text-center p-1.5 w-6">H</th>
                   <th className="text-center p-1.5 w-6">E</th>
                 </tr>
               </thead>
-              <tbody className="text-text-secondary">
-                <tr className="border-b border-border-subtle">
-                  <td className="p-1.5 font-semibold text-text-primary">
+              <tbody className="text-[var(--bsi-dust)]">
+                <tr className="border-b border-[var(--border-vintage)]">
+                  <td className="p-1.5 font-semibold text-[var(--bsi-bone)]">
                     {away.abbreviation}
                   </td>
                   {Array.from({ length: inningCount }, (_, i) => (
@@ -185,7 +185,7 @@ export function BaseballScoreboard({
                       {game.linescore?.innings[i]?.away ?? '-'}
                     </td>
                   ))}
-                  <td className="text-center p-1.5 font-mono font-bold text-text-primary border-l border-border-subtle">
+                  <td className="text-center p-1.5 font-mono font-bold text-[var(--bsi-bone)] border-l border-[var(--border-vintage)]">
                     {game.linescore.totals.away.runs}
                   </td>
                   <td className="text-center p-1.5 font-mono">
@@ -196,7 +196,7 @@ export function BaseballScoreboard({
                   </td>
                 </tr>
                 <tr>
-                  <td className="p-1.5 font-semibold text-text-primary">
+                  <td className="p-1.5 font-semibold text-[var(--bsi-bone)]">
                     {home.abbreviation}
                   </td>
                   {Array.from({ length: inningCount }, (_, i) => (
@@ -204,7 +204,7 @@ export function BaseballScoreboard({
                       {game.linescore?.innings[i]?.home ?? '-'}
                     </td>
                   ))}
-                  <td className="text-center p-1.5 font-mono font-bold text-text-primary border-l border-border-subtle">
+                  <td className="text-center p-1.5 font-mono font-bold text-[var(--bsi-bone)] border-l border-[var(--border-vintage)]">
                     {game.linescore.totals.home.runs}
                   </td>
                   <td className="text-center p-1.5 font-mono">

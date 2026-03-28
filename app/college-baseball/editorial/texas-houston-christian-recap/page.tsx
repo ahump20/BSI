@@ -107,20 +107,20 @@ function LineScoreTable({ scores, label }: { scores: InningScore[]; label: strin
   const inningCount = scores[0].innings.length;
   return (
     <Card variant="default" padding="none">
-      <div className="bg-burnt-orange/5 text-center py-2">
-        <span className="font-display text-[10px] uppercase tracking-[3px] text-burnt-orange">
+      <div className="bg-[var(--bsi-primary)]/5 text-center py-2">
+        <span className="font-display text-[10px] uppercase tracking-[3px] text-[var(--bsi-primary)]">
           {label}
         </span>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full min-w-[540px]">
           <thead>
-            <tr className="font-display text-[11px] uppercase tracking-widest text-text-muted bg-black/30">
+            <tr className="font-display text-[11px] uppercase tracking-widest text-[rgba(196,184,165,0.35)] bg-black/30">
               <th className="text-left py-2.5 px-4 w-36" />
               {Array.from({ length: inningCount }, (_, i) => (
                 <th key={i} className="text-center py-2.5 w-10">{i + 1}</th>
               ))}
-              <th className="text-center py-2.5 w-12 border-l border-border-subtle">R</th>
+              <th className="text-center py-2.5 w-12 border-l border-[var(--border-vintage)]">R</th>
               <th className="text-center py-2.5 w-12">H</th>
               <th className="text-center py-2.5 w-12">E</th>
             </tr>
@@ -129,20 +129,20 @@ function LineScoreTable({ scores, label }: { scores: InningScore[]; label: strin
             {scores.map((row) => {
               const isTexas = row.team === 'Texas';
               return (
-                <tr key={row.team} className="border-t border-border-subtle">
-                  <td className={`py-3 px-4 font-display text-sm font-semibold uppercase tracking-wide ${isTexas ? 'text-burnt-orange' : 'text-text-tertiary'}`}>
+                <tr key={row.team} className="border-t border-[var(--border-vintage)]">
+                  <td className={`py-3 px-4 font-display text-sm font-semibold uppercase tracking-wide ${isTexas ? 'text-[var(--bsi-primary)]' : 'text-[rgba(196,184,165,0.5)]'}`}>
                     {row.team}
                   </td>
                   {row.innings.map((val, i) => (
-                    <td key={i} className={`text-center py-3 ${typeof val === 'string' ? 'text-text-muted' : Number(val) > 0 ? (isTexas ? 'text-text-primary font-semibold' : 'text-text-secondary font-medium') : 'text-text-muted'}`}>
+                    <td key={i} className={`text-center py-3 ${typeof val === 'string' ? 'text-[rgba(196,184,165,0.35)]' : Number(val) > 0 ? (isTexas ? 'text-[var(--bsi-bone)] font-semibold' : 'text-[var(--bsi-dust)] font-medium') : 'text-[rgba(196,184,165,0.35)]'}`}>
                       {val}
                     </td>
                   ))}
-                  <td className={`text-center py-3 border-l border-border-subtle font-bold text-lg ${isTexas ? 'text-burnt-orange' : 'text-text-tertiary'}`}>
+                  <td className={`text-center py-3 border-l border-[var(--border-vintage)] font-bold text-lg ${isTexas ? 'text-[var(--bsi-primary)]' : 'text-[rgba(196,184,165,0.5)]'}`}>
                     {row.r}
                   </td>
-                  <td className="text-center py-3 text-text-muted">{row.h}</td>
-                  <td className="text-center py-3 text-text-muted">{row.e}</td>
+                  <td className="text-center py-3 text-[rgba(196,184,165,0.35)]">{row.h}</td>
+                  <td className="text-center py-3 text-[rgba(196,184,165,0.35)]">{row.e}</td>
                 </tr>
               );
             })}
@@ -156,12 +156,12 @@ function LineScoreTable({ scores, label }: { scores: InningScore[]; label: strin
 function PitchingTable({ pitchers, teamLabel }: { pitchers: PitchingLine[]; teamLabel: string }) {
   return (
     <div>
-      <h3 className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-3">{teamLabel} Pitching</h3>
+      <h3 className="font-display text-sm uppercase tracking-wider text-[var(--bsi-primary)] mb-3">{teamLabel} Pitching</h3>
       <Card variant="default" padding="none">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[400px] font-mono text-sm">
             <thead>
-              <tr className="text-[10px] uppercase tracking-wider text-text-muted bg-black/20">
+              <tr className="text-[10px] uppercase tracking-wider text-[rgba(196,184,165,0.35)] bg-black/20">
                 <th className="text-left py-2 px-3">Pitcher</th>
                 <th className="text-center py-2 w-10">IP</th>
                 <th className="text-center py-2 w-8">H</th>
@@ -174,19 +174,19 @@ function PitchingTable({ pitchers, teamLabel }: { pitchers: PitchingLine[]; team
             </thead>
             <tbody>
               {pitchers.map((p) => (
-                <tr key={p.name} className="border-t border-border-subtle">
-                  <td className="py-2 px-3 text-text-secondary">
+                <tr key={p.name} className="border-t border-[var(--border-vintage)]">
+                  <td className="py-2 px-3 text-[var(--bsi-dust)]">
                     {p.name}
-                    {p.decision && <span className="text-burnt-orange ml-1 text-xs">({p.decision})</span>}
+                    {p.decision && <span className="text-[var(--bsi-primary)] ml-1 text-xs">({p.decision})</span>}
                   </td>
-                  <td className="text-center text-text-tertiary">{p.ip}</td>
-                  <td className="text-center text-text-muted">{p.h}</td>
-                  <td className="text-center text-text-muted">{p.r}</td>
-                  <td className="text-center text-text-muted">{p.er}</td>
-                  <td className="text-center text-text-muted">{p.bb}</td>
-                  <td className="text-center text-text-primary font-medium">{p.so}</td>
+                  <td className="text-center text-[rgba(196,184,165,0.5)]">{p.ip}</td>
+                  <td className="text-center text-[rgba(196,184,165,0.35)]">{p.h}</td>
+                  <td className="text-center text-[rgba(196,184,165,0.35)]">{p.r}</td>
+                  <td className="text-center text-[rgba(196,184,165,0.35)]">{p.er}</td>
+                  <td className="text-center text-[rgba(196,184,165,0.35)]">{p.bb}</td>
+                  <td className="text-center text-[var(--bsi-bone)] font-medium">{p.so}</td>
                   {pitchers.some(pp => pp.pitches) && (
-                    <td className="text-center text-text-muted">{p.pitches ?? '\u2014'}</td>
+                    <td className="text-center text-[rgba(196,184,165,0.35)]">{p.pitches ?? '\u2014'}</td>
                   )}
                 </tr>
               ))}
@@ -226,15 +226,15 @@ export default function TexasHoustonChristianRecapPage() {
         <Section padding="sm" className="border-b border-border">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 College Baseball
               </Link>
-              <span className="text-text-muted">/</span>
-              <Link href="/college-baseball/editorial" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <Link href="/college-baseball/editorial" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 Editorial
               </Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-secondary">Texas vs. Houston Christian Recap</span>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[var(--bsi-dust)]">Texas vs. Houston Christian Recap</span>
             </nav>
           </Container>
         </Section>
@@ -250,23 +250,23 @@ export default function TexasHoustonChristianRecapPage() {
                   <Badge variant="primary">Game Recap</Badge>
                   <Badge variant="accent">No. 3 Texas</Badge>
                   <Badge variant="outline">12-0</Badge>
-                  <span className="font-mono text-xs text-text-muted">Final/7 &middot; Mercy Rule</span>
+                  <span className="font-mono text-xs text-[rgba(196,184,165,0.35)]">Final/7 &middot; Mercy Rule</span>
                 </div>
 
                 <h1 className="font-display font-bold uppercase tracking-wide leading-none mb-4">
-                  <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-text-primary mb-1">
+                  <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-[var(--bsi-bone)] mb-1">
                     Still Perfect,
                   </span>
-                  <span className="block text-gradient-blaze text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
+                  <span className="block text-[var(--bsi-primary)] text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
                     Still Building.
                   </span>
                 </h1>
 
-                <p className="font-serif text-lg sm:text-xl text-text-tertiary italic leading-relaxed mb-6">
+                <p className="font-serif text-lg sm:text-xl text-[rgba(196,184,165,0.5)] italic leading-relaxed mb-6">
                   Texas scored 16 runs in a mercy-rule blowout of Houston Christian. Sam Cozart struck out six in five dominant innings. The preview said the score doesn&rsquo;t matter&nbsp;&mdash;&nbsp;the depth arms do. The blowout denied the test.
                 </p>
 
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] text-text-muted tracking-wide">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] text-[rgba(196,184,165,0.35)] tracking-wide">
                   <span>March 3, 2026</span>
                   <span className="hidden sm:inline">&middot;</span>
                   <span>UFCU Disch-Falk Field, Austin</span>
@@ -274,7 +274,7 @@ export default function TexasHoustonChristianRecapPage() {
                   <span>Texas 16, HCU 3</span>
                 </div>
 
-                <div className="flex items-center gap-4 text-sm text-text-muted mt-4">
+                <div className="flex items-center gap-4 text-sm text-[rgba(196,184,165,0.35)] mt-4">
                   <span>By Blaze Sports Intel</span>
                   <span>|</span>
                   <span>March 4, 2026</span>
@@ -314,11 +314,11 @@ export default function TexasHoustonChristianRecapPage() {
               <p className="font-serif text-xl sm:text-[23px] font-medium leading-relaxed text-[#FAF7F2] mb-6">
                 The preview framed Tuesday night around a single question: what do the fourth and fifth bullpen arms look like throwing live innings before the schedule tilts toward conference play? Texas scored 16 runs on 14 hits, triggered the 10-run mercy rule after seven innings, and never got to the back of the pen. The blowout that was supposed to be a testing ground became a showcase instead.
               </p>
-              <p className="font-serif text-lg leading-relaxed text-text-secondary mb-6">
+              <p className="font-serif text-lg leading-relaxed text-[var(--bsi-dust)] mb-6">
                 Sam Cozart threw five innings of one-hit ball, striking out six on 73 pitches. Jason Flores covered the final two. Two pitchers. Seven innings. That&rsquo;s it. The depth evaluation will have to wait for the weekend &mdash; or for the SEC, which arrives in ten days.
               </p>
-              <p className="font-serif text-lg leading-relaxed text-text-tertiary">
-                What did happen: <strong className="text-text-primary">the offense announced that the BRUCE BOLT Classic breakout was not a one-weekend event.</strong> Fourteen hits by nine players, four multi-hit performances, and a 355-foot home run from Carson Tinney. The lineup is clicking from multiple spots in the order, and the run production is getting distributed rather than dependent on any single bat.
+              <p className="font-serif text-lg leading-relaxed text-[rgba(196,184,165,0.5)]">
+                What did happen: <strong className="text-[var(--bsi-bone)]">the offense announced that the BRUCE BOLT Classic breakout was not a one-weekend event.</strong> Fourteen hits by nine players, four multi-hit performances, and a 355-foot home run from Carson Tinney. The lineup is clicking from multiple spots in the order, and the run production is getting distributed rather than dependent on any single bat.
               </p>
             </ScrollReveal>
           </Container>
@@ -329,11 +329,11 @@ export default function TexasHoustonChristianRecapPage() {
           <Container>
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-1 h-8 rounded-full bg-burnt-orange" />
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange">
+                <div className="w-1 h-8 rounded-full bg-[var(--bsi-primary)]" />
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)]">
                   Texas 16, Houston Christian 3
                 </h2>
-                <span className="font-mono text-xs text-text-muted">Final/7 &middot; Mercy Rule</span>
+                <span className="font-mono text-xs text-[rgba(196,184,165,0.35)]">Final/7 &middot; Mercy Rule</span>
               </div>
 
               <div className="mb-6">
@@ -343,7 +343,7 @@ export default function TexasHoustonChristianRecapPage() {
 
             <Container size="narrow">
               <ScrollReveal direction="up" delay={100}>
-                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
                   <p>
                     Cozart set the tone immediately. He retired the side in order in the first three innings, the only baserunner a solo home run in the fourth that he left in the rearview without changing his approach. Six strikeouts in five innings, zero walks, 73 pitches. For a freshman right-hander making his third Tuesday start, the efficiency tells you more than the line: he was never in trouble, never laboring, never giving the opposition free baserunners. HCU managed one hit against him. One.
                   </p>
@@ -356,7 +356,7 @@ export default function TexasHoustonChristianRecapPage() {
                     The fifth added the exclamation point. Three straight singles loaded the bases before Carson Tinney launched a 355-foot three-run home run that made it 12&ndash;1. Tinney, the catcher, has been quietly productive all season &mdash; and that swing was loud. The sixth inning piled on four more, anchored by Robbins&rsquo; two-run single past the Houston Christian shortstop, and the mercy rule closed the game after HCU batted in the seventh.
                   </p>
 
-                  <p className="text-text-tertiary">
+                  <p className="text-[rgba(196,184,165,0.5)]">
                     Ethan Mendoza was the night&rsquo;s best individual performer: 3-for-5 with two RBI and three runs scored, extending his multi-hit streak to four games. Borba scored three times. The offense produced 16 runs on 14 hits against a team that committed three errors &mdash; but the damage was real, not gifted. Eleven of those 14 hits were clean singles and extra-base knocks that would have landed against any defense.
                   </p>
                 </div>
@@ -375,17 +375,17 @@ export default function TexasHoustonChristianRecapPage() {
         <Section padding="lg" background="charcoal">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-5 pb-2 border-b border-burnt-orange/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-5 pb-2 border-b border-[var(--bsi-primary)]/15">
                 Tuesday Night Nationally
               </h2>
-              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-4">
+              <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-4">
                 <p>
-                  The headline entering the night was whether USC or Texas would blink first. Neither did. <strong className="text-text-primary">USC beat UC Irvine 6&ndash;4 at Dedeaux Field to stay perfect at 12&ndash;0.</strong> Texas and USC remain the only unbeaten Top 25 teams in the country.
+                  The headline entering the night was whether USC or Texas would blink first. Neither did. <strong className="text-[var(--bsi-bone)]">USC beat UC Irvine 6&ndash;4 at Dedeaux Field to stay perfect at 12&ndash;0.</strong> Texas and USC remain the only unbeaten Top 25 teams in the country.
                 </p>
                 <p>
                   Elsewhere, the upsets came on the other end. Mississippi State&rsquo;s winning streak ended at Southern Miss. Vanderbilt fell at home to Central Arkansas 4&ndash;5 &mdash; a result that will sting in Nashville with conference play ten days out. Oregon lost to in-state rival Oregon State.
                 </p>
-                <p className="text-text-tertiary">
+                <p className="text-[rgba(196,184,165,0.5)]">
                   On the dominant side: Florida shut out FAU 4&ndash;0. Georgia blasted Kennesaw State 11&ndash;1. Arkansas rolled Oral Roberts 10&ndash;2. Tennessee handled ETSU 7&ndash;1. Texas A&amp;M mercy-ruled Incarnate Word 11&ndash;1 in seven. Alabama survived Jacksonville State 6&ndash;5. The SEC programs that needed Tuesday tune-ups got them &mdash; the ones that didn&rsquo;t will spend Wednesday answering questions.
                 </p>
               </div>
@@ -397,8 +397,8 @@ export default function TexasHoustonChristianRecapPage() {
         <Section padding="lg">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <div className="relative bg-gradient-to-br from-burnt-orange/8 to-texas-soil/5 border border-burnt-orange/15 rounded-sm p-8 sm:p-10">
-                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-midnight text-burnt-orange px-3">
+              <div className="relative bg-gradient-to-br from-burnt-orange/8 to-texas-soil/5 border border-[var(--bsi-primary)]/15 rounded-sm p-8 sm:p-10">
+                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-[var(--surface-scoreboard)] text-[var(--bsi-primary)] px-3">
                   BSI Verdict
                 </div>
                 <div className="font-serif text-lg sm:text-xl leading-relaxed text-[#FAF7F2] space-y-4">
@@ -408,7 +408,7 @@ export default function TexasHoustonChristianRecapPage() {
                   <p>
                     Cozart, though, answered his question emphatically. Three starts, three wins, one hit allowed tonight, six strikeouts on 73 pitches. He is not auditioning for the midweek role anymore. He owns it. The confidence was visible &mdash; one solo home run in the fourth didn&rsquo;t change his pace, didn&rsquo;t alter his sequencing, didn&rsquo;t send him looking over his shoulder at the bullpen. He pitched through it and finished five clean innings.
                   </p>
-                  <p className="text-text-secondary">
+                  <p className="text-[var(--bsi-dust)]">
                     USC Upstate arrives this weekend. Three games at Disch-Falk, and hopefully three games where the starters don&rsquo;t pitch so deep that the pen sits idle again. Then March 13: Ole Miss at Disch-Falk for the SEC opener. That series is no longer a distant landmark &mdash; it&rsquo;s the next meaningful thing on the schedule. Everything between now and then is preparation for it. Tuesday night was a dominant result. Whether it was a useful one depends on what Schlossnagle can get out of the weekend.
                   </p>
                 </div>
@@ -422,10 +422,10 @@ export default function TexasHoustonChristianRecapPage() {
           <Container size="narrow">
             <ScrollReveal direction="up">
               <div className="text-center py-4">
-                <blockquote className="font-serif text-2xl sm:text-3xl italic text-text-primary leading-snug mb-4">
+                <blockquote className="font-serif text-2xl sm:text-3xl italic text-[var(--bsi-bone)] leading-snug mb-4">
                   &ldquo;The preview said the score doesn&rsquo;t matter. It was right. What mattered was Cozart&rsquo;s 73 pitches, and those were flawless.&rdquo;
                 </blockquote>
-                <div className="font-mono text-xs text-burnt-orange tracking-wider uppercase">
+                <div className="font-mono text-xs text-[var(--bsi-primary)] tracking-wider uppercase">
                   On Sam Cozart&rsquo;s Tuesday Dominance
                 </div>
               </div>
@@ -437,14 +437,14 @@ export default function TexasHoustonChristianRecapPage() {
         <Section padding="lg">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-5 pb-2 border-b border-burnt-orange/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-5 pb-2 border-b border-[var(--bsi-primary)]/15">
                 Looking Ahead
               </h2>
-              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-4">
+              <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-4">
                 <p>
                   USC Upstate comes to Disch-Falk for a three-game weekend series March 7&ndash;9. This is the final non-conference weekend before the schedule turns. Riojas gets Friday. Harrison or a combination gets Saturday. Volantis owns Sunday. The weekend starters are set. The question is what happens in the innings behind them.
                 </p>
-                <p className="text-text-tertiary">
+                <p className="text-[rgba(196,184,165,0.5)]">
                   Then comes March 13: Ole Miss at Disch-Falk to open SEC play. The Rebels just beat Memphis and carry the swagger of a program that expects to be in the conversation every March through June. Texas hasn&rsquo;t lost in twelve games. Ole Miss hasn&rsquo;t lost its edge. That series is where the 12&ndash;0 record meets the conference that will test whether it means something.
                 </p>
               </div>
@@ -457,25 +457,25 @@ export default function TexasHoustonChristianRecapPage() {
           <Container>
             <ScrollReveal direction="up">
               <div className="text-center mb-8">
-                <span className="font-mono text-[10px] uppercase tracking-[3px] text-burnt-orange">Powered by AI</span>
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-text-primary mt-2">
+                <span className="font-mono text-[10px] uppercase tracking-[3px] text-[var(--bsi-primary)]">Powered by AI</span>
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mt-2">
                   Go Deeper
                 </h2>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
                 <button
                   onClick={() => openAI('claude')}
-                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded-sm transition-colors text-left"
+                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-[var(--bsi-primary)]/10 hover:border-[var(--bsi-primary)]/30 rounded-sm transition-colors text-left"
                 >
-                  <div className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-1">Claude Analysis</div>
-                  <div className="text-text-muted text-xs">Anthropic-powered game breakdown</div>
+                  <div className="font-display text-sm uppercase tracking-wider text-[var(--bsi-primary)] mb-1">Claude Analysis</div>
+                  <div className="text-[rgba(196,184,165,0.35)] text-xs">Anthropic-powered game breakdown</div>
                 </button>
                 <button
                   onClick={() => openAI('gemini')}
-                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded-sm transition-colors text-left"
+                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-[var(--bsi-primary)]/10 hover:border-[var(--bsi-primary)]/30 rounded-sm transition-colors text-left"
                 >
-                  <div className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-1">Gemini Analysis</div>
-                  <div className="text-text-muted text-xs">Google-powered scouting insights</div>
+                  <div className="font-display text-sm uppercase tracking-wider text-[var(--bsi-primary)] mb-1">Gemini Analysis</div>
+                  <div className="text-[rgba(196,184,165,0.35)] text-xs">Google-powered scouting insights</div>
                 </button>
               </div>
             </ScrollReveal>
@@ -487,11 +487,11 @@ export default function TexasHoustonChristianRecapPage() {
           <Container size="narrow">
             <ScrollReveal direction="up">
               <div className="text-center">
-                <span className="font-mono text-[10px] uppercase tracking-[3px] text-text-muted block mb-2">NotebookLM Integration</span>
-                <h3 className="font-display text-lg uppercase tracking-wider text-text-primary mb-4">
+                <span className="font-mono text-[10px] uppercase tracking-[3px] text-[rgba(196,184,165,0.35)] block mb-2">NotebookLM Integration</span>
+                <h3 className="font-display text-lg uppercase tracking-wider text-[var(--bsi-bone)] mb-4">
                   Turn This Recap Into a Podcast
                 </h3>
-                <p className="text-text-muted text-sm mb-6 max-w-md mx-auto">
+                <p className="text-[rgba(196,184,165,0.35)] text-sm mb-6 max-w-md mx-auto">
                   One click copies the full recap to your clipboard and opens Google NotebookLM. Paste it in and generate an audio overview.
                 </p>
                 <NotebookLMExport articleText={ARTICLE_TEXT} />
@@ -501,7 +501,7 @@ export default function TexasHoustonChristianRecapPage() {
         </Section>
 
         {/* ── Source Attribution ── */}
-        <Section padding="md" className="border-t border-burnt-orange/10">
+        <Section padding="md" className="border-t border-[var(--bsi-primary)]/10">
           <Container size="narrow">
             <div className="space-y-4">
               <div className="flex flex-wrap gap-3">
@@ -509,14 +509,14 @@ export default function TexasHoustonChristianRecapPage() {
                 <DataSourceBadge source="burntorangenation.com" timestamp="March 4, 2026 CT" />
                 <DataSourceBadge source="Highlightly Scoreboard" timestamp="March 4, 2026 CT" />
               </div>
-              <div className="font-mono text-[11px] text-text-muted leading-relaxed">
+              <div className="font-mono text-[11px] text-[rgba(196,184,165,0.35)] leading-relaxed">
                 Box score data from Texas Longhorns official statistics and Burnt Orange Nation game reporting. National scoreboard data from Highlightly and D1Baseball.
               </div>
               <div className="flex flex-wrap gap-6 pt-2">
-                <Link href="/college-baseball/editorial/texas-houston-christian-preview" className="font-display text-[13px] uppercase tracking-widest text-burnt-orange hover:opacity-70 transition-opacity">
+                <Link href="/college-baseball/editorial/texas-houston-christian-preview" className="font-display text-[13px] uppercase tracking-widest text-[var(--bsi-primary)] hover:opacity-70 transition-opacity">
                   &larr; HCU Preview
                 </Link>
-                <Link href="/college-baseball/editorial/texas-week-3-recap" className="font-display text-[13px] uppercase tracking-widest text-burnt-orange hover:opacity-70 transition-opacity">
+                <Link href="/college-baseball/editorial/texas-week-3-recap" className="font-display text-[13px] uppercase tracking-widest text-[var(--bsi-primary)] hover:opacity-70 transition-opacity">
                   Week 3 Recap &rarr;
                 </Link>
               </div>

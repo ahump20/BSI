@@ -56,7 +56,7 @@ function MetricBar({ metric }: { metric: MetricResult }) {
       <div className="flex-1 min-w-0">
         <div className="flex items-baseline justify-between mb-1">
           <span className="text-xs font-medium text-bsi-bone truncate">{metric.label}</span>
-          <span className="text-[10px] text-text-muted ml-2 shrink-0">
+          <span className="text-[10px] text-[rgba(196,184,165,0.35)] ml-2 shrink-0">
             {metric.value}{metric.unit}
           </span>
         </div>
@@ -88,13 +88,13 @@ export function MetricsPanel({ metrics, overallScore }: MetricsPanelProps) {
   return (
     <div className="space-y-6">
       {/* Overall Score */}
-      <div className="flex items-center gap-5 p-5 rounded-sm bg-surface-dugout border border-border-subtle">
+      <div className="flex items-center gap-5 p-5 rounded-sm bg-surface-dugout border border-[var(--border-vintage)]">
         <ScoreRing score={overallScore} size={88} />
         <div>
           <h3 className="font-display text-lg font-bold uppercase tracking-wide text-bsi-bone">
             Overall Score
           </h3>
-          <p className="text-xs text-text-muted mt-1">
+          <p className="text-xs text-[rgba(196,184,165,0.35)] mt-1">
             {overallScore >= 80
               ? 'Strong fundamentals across all phases'
               : overallScore >= 50
@@ -115,7 +115,7 @@ export function MetricsPanel({ metrics, overallScore }: MetricsPanelProps) {
         );
 
         return (
-          <div key={groupName} className="rounded-sm bg-surface-dugout border border-border-subtle p-4">
+          <div key={groupName} className="rounded-sm bg-surface-dugout border border-[var(--border-vintage)] p-4">
             <div className="flex items-center justify-between mb-3">
               <h4 className="heritage-stamp text-xs">{groupName}</h4>
               <span

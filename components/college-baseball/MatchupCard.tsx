@@ -58,9 +58,9 @@ export default function MatchupCard({ pitcher, batter, isLive }: MatchupCardProp
   if (!pitcher && !batter) return null;
 
   return (
-    <div className="bg-midnight rounded-sm border border-border-subtle overflow-hidden">
+    <div className="bg-[var(--surface-scoreboard)] rounded-sm border border-[var(--border-vintage)] overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-2.5 border-b border-border-subtle bg-charcoal">
+      <div className="flex items-center justify-between px-4 py-2.5 border-b border-[var(--border-vintage)] bg-[var(--surface-dugout)]">
         <h3 className="font-display text-xs font-semibold uppercase tracking-wide text-bone">
           {isLive ? 'Current Matchup' : 'Matchup'}
         </h3>
@@ -79,26 +79,26 @@ export default function MatchupCard({ pitcher, batter, isLive }: MatchupCardProp
           {pitcher ? (
             <div className="text-center">
               {/* Pitcher icon */}
-              <div className="w-14 h-14 bg-charcoal rounded-full flex items-center justify-center mx-auto mb-3">
-                <svg viewBox="0 0 24 24" className="w-7 h-7 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <div className="w-14 h-14 bg-[var(--surface-dugout)] rounded-full flex items-center justify-center mx-auto mb-3">
+                <svg viewBox="0 0 24 24" className="w-7 h-7 text-[var(--bsi-primary)]" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <circle cx="12" cy="7" r="4" />
                   <path d="M5.5 21c0-4.5 3-7 6.5-7s6.5 2.5 6.5 7" />
                   <path d="M15 3c1 1.5 2 3 1 5" strokeLinecap="round" />
                 </svg>
               </div>
 
-              <p className="font-display text-sm font-semibold uppercase text-text-primary">
+              <p className="font-display text-sm font-semibold uppercase text-[var(--bsi-bone)]">
                 {pitcher.name}
               </p>
-              <p className="text-text-tertiary text-xs mt-0.5">{pitcher.team}</p>
+              <p className="text-[rgba(196,184,165,0.5)] text-xs mt-0.5">{pitcher.team}</p>
 
               {/* Stats */}
               <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs">
-                <div className="text-right text-text-tertiary">ERA</div>
+                <div className="text-right text-[rgba(196,184,165,0.5)]">ERA</div>
                 <div className="text-left text-bone font-mono">{formatEra(pitcher.stats.era)}</div>
                 {pitcher.stats.wins != null && pitcher.stats.losses != null && (
                   <>
-                    <div className="text-right text-text-tertiary">W-L</div>
+                    <div className="text-right text-[rgba(196,184,165,0.5)]">W-L</div>
                     <div className="text-left text-bone font-mono">
                       {pitcher.stats.wins}-{pitcher.stats.losses}
                     </div>
@@ -106,13 +106,13 @@ export default function MatchupCard({ pitcher, batter, isLive }: MatchupCardProp
                 )}
                 {pitcher.stats.strikeouts != null && (
                   <>
-                    <div className="text-right text-text-tertiary">K</div>
+                    <div className="text-right text-[rgba(196,184,165,0.5)]">K</div>
                     <div className="text-left text-bone font-mono">{pitcher.stats.strikeouts}</div>
                   </>
                 )}
                 {pitcher.stats.ip != null && (
                   <>
-                    <div className="text-right text-text-tertiary">IP</div>
+                    <div className="text-right text-[rgba(196,184,165,0.5)]">IP</div>
                     <div className="text-left text-bone font-mono">{pitcher.stats.ip}</div>
                   </>
                 )}
@@ -120,15 +120,15 @@ export default function MatchupCard({ pitcher, batter, isLive }: MatchupCardProp
             </div>
           ) : (
             <div className="text-center py-4">
-              <p className="text-text-tertiary text-sm">Pitcher TBD</p>
+              <p className="text-[rgba(196,184,165,0.5)] text-sm">Pitcher TBD</p>
             </div>
           )}
         </div>
 
         {/* VS divider */}
         <div className="flex items-center">
-          <div className="w-10 h-10 bg-burnt-orange/20 border border-burnt-orange/40 rounded-full flex items-center justify-center">
-            <span className="font-display text-xs font-bold text-burnt-orange uppercase">VS</span>
+          <div className="w-10 h-10 bg-[var(--bsi-primary)]/20 border border-[var(--bsi-primary)]/40 rounded-full flex items-center justify-center">
+            <span className="font-display text-xs font-bold text-[var(--bsi-primary)] uppercase">VS</span>
           </div>
         </div>
 
@@ -137,38 +137,38 @@ export default function MatchupCard({ pitcher, batter, isLive }: MatchupCardProp
           {batter ? (
             <div className="text-center">
               {/* Batter icon */}
-              <div className="w-14 h-14 bg-charcoal rounded-full flex items-center justify-center mx-auto mb-3">
-                <svg viewBox="0 0 24 24" className="w-7 h-7 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <div className="w-14 h-14 bg-[var(--surface-dugout)] rounded-full flex items-center justify-center mx-auto mb-3">
+                <svg viewBox="0 0 24 24" className="w-7 h-7 text-[var(--bsi-primary)]" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <circle cx="12" cy="7" r="4" />
                   <path d="M5.5 21c0-4.5 3-7 6.5-7s6.5 2.5 6.5 7" />
                   <path d="M16 4l3-2" strokeLinecap="round" strokeWidth="2" />
                 </svg>
               </div>
 
-              <p className="font-display text-sm font-semibold uppercase text-text-primary">
+              <p className="font-display text-sm font-semibold uppercase text-[var(--bsi-bone)]">
                 {batter.name}
               </p>
-              <p className="text-text-tertiary text-xs mt-0.5">{batter.team}</p>
+              <p className="text-[rgba(196,184,165,0.5)] text-xs mt-0.5">{batter.team}</p>
 
               {/* Stats */}
               <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs">
-                <div className="text-right text-text-tertiary">AVG</div>
+                <div className="text-right text-[rgba(196,184,165,0.5)]">AVG</div>
                 <div className="text-left text-bone font-mono">{formatAvg(batter.stats.avg)}</div>
                 {batter.stats.hr != null && (
                   <>
-                    <div className="text-right text-text-tertiary">HR</div>
+                    <div className="text-right text-[rgba(196,184,165,0.5)]">HR</div>
                     <div className="text-left text-bone font-mono">{batter.stats.hr}</div>
                   </>
                 )}
                 {batter.stats.rbi != null && (
                   <>
-                    <div className="text-right text-text-tertiary">RBI</div>
+                    <div className="text-right text-[rgba(196,184,165,0.5)]">RBI</div>
                     <div className="text-left text-bone font-mono">{batter.stats.rbi}</div>
                   </>
                 )}
                 {batter.stats.hits != null && batter.stats.ab != null && (
                   <>
-                    <div className="text-right text-text-tertiary">H/AB</div>
+                    <div className="text-right text-[rgba(196,184,165,0.5)]">H/AB</div>
                     <div className="text-left text-bone font-mono">
                       {batter.stats.hits}/{batter.stats.ab}
                     </div>
@@ -178,7 +178,7 @@ export default function MatchupCard({ pitcher, batter, isLive }: MatchupCardProp
             </div>
           ) : (
             <div className="text-center py-4">
-              <p className="text-text-tertiary text-sm">Batter TBD</p>
+              <p className="text-[rgba(196,184,165,0.5)] text-sm">Batter TBD</p>
             </div>
           )}
         </div>

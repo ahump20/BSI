@@ -491,12 +491,12 @@ function CollegeBaseballPageInner() {
                       <Link
                         key={feature.href}
                         href={feature.href}
-                        className="flex flex-col gap-2 p-3 bg-surface-light border border-border rounded-sm hover:border-burnt-orange/30 transition-all group"
+                        className="flex flex-col gap-2 p-3 bg-[var(--surface-press-box)] border border-border rounded-sm hover:border-[var(--bsi-primary)]/30 transition-all group"
                       >
                         <div className="flex items-center justify-between">
                           <svg
                             viewBox="0 0 24 24"
-                            className="w-5 h-5 text-burnt-orange opacity-70"
+                            className="w-5 h-5 text-[var(--bsi-primary)] opacity-70"
                             fill="none"
                             stroke="currentColor"
                             strokeWidth="1.5"
@@ -506,16 +506,16 @@ function CollegeBaseballPageInner() {
                             <path d={feature.icon} />
                           </svg>
                           {'badge' in feature && feature.badge && (
-                            <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 bg-burnt-orange/15 text-burnt-orange rounded-sm">
+                            <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 bg-[var(--bsi-primary)]/15 text-[var(--bsi-primary)] rounded-sm">
                               {feature.badge}
                             </span>
                           )}
                         </div>
                         <div>
-                          <div className="text-xs font-semibold text-text-primary group-hover:text-burnt-orange transition-colors">
+                          <div className="text-xs font-semibold text-[var(--bsi-bone)] group-hover:text-[var(--bsi-primary)] transition-colors">
                             {feature.label}
                           </div>
-                          <div className="text-[10px] text-text-muted leading-tight mt-0.5">
+                          <div className="text-[10px] text-[rgba(196,184,165,0.35)] leading-tight mt-0.5">
                             {feature.desc}
                           </div>
                         </div>
@@ -562,8 +562,8 @@ function CollegeBaseballPageInner() {
                     <Link
                       key={link.href}
                       href={link.href}
-                      className={`px-3 py-1.5 text-[11px] font-mono uppercase tracking-wider text-text-muted hover:text-burnt-orange transition-colors whitespace-nowrap ${
-                        i === 0 ? 'border-l-2 border-burnt-orange/40 pl-3' : ''
+                      className={`px-3 py-1.5 text-[11px] font-mono uppercase tracking-wider text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors whitespace-nowrap ${
+                        i === 0 ? 'border-l-2 border-[var(--bsi-primary)]/40 pl-3' : ''
                       }`}
                     >
                       {link.label}
@@ -622,7 +622,7 @@ function CollegeBaseballPageInner() {
                       <div>
                         <Card variant="default" padding="lg" className="mb-6">
                           <div className="text-center py-8">
-                            <p className="text-text-tertiary">
+                            <p className="text-[rgba(196,184,165,0.5)]">
                               Season hasn&apos;t started yet. Browse conferences below.
                             </p>
                           </div>
@@ -631,8 +631,8 @@ function CollegeBaseballPageInner() {
                           {conferenceList.map((conf) => (
                             <Link key={conf.name} href={conf.href}>
                               <Card variant="hover" padding="md" className="text-center h-full">
-                                <div className="font-semibold text-text-primary">{conf.name}</div>
-                                <div className="text-xs text-text-muted mt-1">
+                                <div className="font-semibold text-[var(--bsi-bone)]">{conf.name}</div>
+                                <div className="text-xs text-[rgba(196,184,165,0.35)] mt-1">
                                   {conf.teams} Teams
                                 </div>
                               </Card>
@@ -650,7 +650,7 @@ function CollegeBaseballPageInner() {
                             <div className="overflow-x-auto">
                               <table className="w-full">
                                 <thead>
-                                  <tr className="border-b-2 border-burnt-orange">
+                                  <tr className="border-b-2 border-[var(--bsi-primary)]">
                                     {['#', 'Team', 'Conf', 'W', 'L', 'Conf W-L'].map((h) => (
                                       <th
                                         key={h}
@@ -665,18 +665,18 @@ function CollegeBaseballPageInner() {
                                   {standings.map((team, idx) => (
                                     <tr
                                       key={team.teamName}
-                                      className="border-b border-border-subtle hover:bg-surface-light transition-colors"
+                                      className="border-b border-[var(--border-vintage)] hover:bg-[var(--surface-press-box)] transition-colors"
                                     >
-                                      <td className="p-3 text-burnt-orange font-bold">{idx + 1}</td>
-                                      <td className="p-3 font-semibold text-text-primary">
+                                      <td className="p-3 text-[var(--bsi-primary)] font-bold">{idx + 1}</td>
+                                      <td className="p-3 font-semibold text-[var(--bsi-bone)]">
                                         {team.teamName}
                                       </td>
-                                      <td className="p-3 text-text-secondary">
+                                      <td className="p-3 text-[var(--bsi-dust)]">
                                         {team.conference || '-'}
                                       </td>
-                                      <td className="p-3 text-text-primary">{team.wins}</td>
-                                      <td className="p-3 text-text-primary">{team.losses}</td>
-                                      <td className="p-3 text-text-secondary">
+                                      <td className="p-3 text-[var(--bsi-bone)]">{team.wins}</td>
+                                      <td className="p-3 text-[var(--bsi-bone)]">{team.losses}</td>
+                                      <td className="p-3 text-[var(--bsi-dust)]">
                                         {team.conferenceWins != null
                                           ? `${team.conferenceWins}-${team.conferenceLosses}`
                                           : '-'}
@@ -713,7 +713,7 @@ function CollegeBaseballPageInner() {
                           ),
                         )
                       }
-                      className="p-2 text-text-muted hover:text-text-primary transition-colors flex-shrink-0"
+                      className="p-2 text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] transition-colors flex-shrink-0"
                       aria-label="Previous days"
                     >
                       <svg
@@ -736,8 +736,8 @@ function CollegeBaseballPageInner() {
                           onClick={() => setSelectedDate(dateValue)}
                           className={`px-4 py-2 rounded-sm font-semibold text-sm whitespace-nowrap transition-all flex-shrink-0 ${
                             isSelected
-                              ? 'bg-burnt-orange text-white'
-                              : 'bg-surface-light text-text-tertiary hover:bg-surface-medium hover:text-text-primary'
+                              ? 'bg-[var(--bsi-primary)] text-white'
+                              : 'bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.5)] hover:bg-[var(--surface-press-box)] hover:text-[var(--bsi-bone)]'
                           }`}
                         >
                           {option.label}
@@ -755,7 +755,7 @@ function CollegeBaseballPageInner() {
                           ),
                         )
                       }
-                      className="p-2 text-text-muted hover:text-text-primary transition-colors flex-shrink-0"
+                      className="p-2 text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] transition-colors flex-shrink-0"
                       aria-label="Next days"
                     >
                       <svg
@@ -778,8 +778,8 @@ function CollegeBaseballPageInner() {
                         onClick={() => setSelectedConference(conf)}
                         className={`px-3 py-1.5 rounded-sm text-xs font-medium transition-all ${
                           selectedConference === conf
-                            ? 'bg-burnt-orange text-white'
-                            : 'bg-surface-light text-text-tertiary hover:text-text-primary hover:bg-surface-medium'
+                            ? 'bg-[var(--bsi-primary)] text-white'
+                            : 'bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.5)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-press-box)]'
                         }`}
                       >
                         {conf}
@@ -788,7 +788,7 @@ function CollegeBaseballPageInner() {
                     {!showAllConferences && hiddenCount > 0 && (
                       <button
                         onClick={() => setShowAllConferences(true)}
-                        className="px-3 py-1.5 rounded-sm text-xs font-medium bg-surface-light text-burnt-orange hover:bg-surface-medium transition-all"
+                        className="px-3 py-1.5 rounded-sm text-xs font-medium bg-[var(--surface-press-box)] text-[var(--bsi-primary)] hover:bg-[var(--surface-press-box)] transition-all"
                       >
                         +{hiddenCount} More
                       </button>
@@ -810,7 +810,7 @@ function CollegeBaseballPageInner() {
                       <div className="text-center py-8">
                         <svg
                           viewBox="0 0 24 24"
-                          className="w-16 h-16 text-text-muted mx-auto mb-4"
+                          className="w-16 h-16 text-[rgba(196,184,165,0.35)] mx-auto mb-4"
                           fill="none"
                           stroke="currentColor"
                           strokeWidth="1.5"
@@ -820,10 +820,10 @@ function CollegeBaseballPageInner() {
                           <line x1="8" y1="2" x2="8" y2="6" />
                           <line x1="3" y1="10" x2="21" y2="10" />
                         </svg>
-                        <p className="text-text-tertiary">
+                        <p className="text-[rgba(196,184,165,0.5)]">
                           No games scheduled for {formatScheduleDate(selectedDate)}
                         </p>
-                        <p className="text-text-muted text-sm mt-2">
+                        <p className="text-[rgba(196,184,165,0.35)] text-sm mt-2">
                           D1 baseball season runs February through June. Try navigating to a game
                           day.
                         </p>
@@ -833,7 +833,7 @@ function CollegeBaseballPageInner() {
                     <>
                       {filteredGames.some((g) => g.status === 'live') && (
                         <div className="mb-6">
-                          <h3 className="text-sm font-semibold text-text-primary mb-3 flex items-center gap-2">
+                          <h3 className="text-sm font-semibold text-[var(--bsi-bone)] mb-3 flex items-center gap-2">
                             <span className="w-2 h-2 bg-[var(--bsi-primary)] rounded-full animate-pulse" />
                             Live Games
                           </h3>
@@ -848,7 +848,7 @@ function CollegeBaseballPageInner() {
                       )}
                       {filteredGames.some((g) => g.status === 'scheduled') && (
                         <div className="mb-6">
-                          <h3 className="text-sm font-semibold text-text-primary mb-3">Upcoming</h3>
+                          <h3 className="text-sm font-semibold text-[var(--bsi-bone)] mb-3">Upcoming</h3>
                           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
                             {filteredGames
                               .filter((g) => g.status === 'scheduled')
@@ -860,7 +860,7 @@ function CollegeBaseballPageInner() {
                       )}
                       {filteredGames.some((g) => g.status === 'final') && (
                         <div className="mb-6">
-                          <h3 className="text-sm font-semibold text-text-tertiary mb-3">Final</h3>
+                          <h3 className="text-sm font-semibold text-[rgba(196,184,165,0.5)] mb-3">Final</h3>
                           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
                             {filteredGames
                               .filter((g) => g.status === 'final')
@@ -877,7 +877,7 @@ function CollegeBaseballPageInner() {
                         />
                         <Link
                           href="/college-baseball/scores"
-                          className="text-sm text-burnt-orange hover:text-ember transition-colors"
+                          className="text-sm text-[var(--bsi-primary)] hover:text-[var(--bsi-primary)] transition-colors"
                         >
                           View Full Scoreboard →
                         </Link>
@@ -895,12 +895,12 @@ function CollegeBaseballPageInner() {
                         value={teamSearch}
                         onChange={(e) => setTeamSearch(e.target.value)}
                         placeholder="Search teams..."
-                        className="flex-1 px-4 py-2.5 bg-surface-light border border-border rounded-sm text-text-primary placeholder-text-muted text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
+                        className="flex-1 px-4 py-2.5 bg-[var(--surface-press-box)] border border-border rounded-sm text-[var(--bsi-bone)] placeholder-text-muted text-sm focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-all"
                       />
                       <select
                         value={teamConfFilter}
                         onChange={(e) => setTeamConfFilter(e.target.value)}
-                        className="px-3 py-2.5 bg-surface-light border border-border rounded-sm text-text-primary text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
+                        className="px-3 py-2.5 bg-[var(--surface-press-box)] border border-border rounded-sm text-[var(--bsi-bone)] text-sm focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-all"
                       >
                         <option value="All">All Conferences</option>
                         {conferenceList
@@ -916,12 +916,12 @@ function CollegeBaseballPageInner() {
                     {teamsLoading ? (
                       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                         {Array.from({ length: 12 }).map((_, i) => (
-                          <div key={i} className="bg-surface-light rounded-sm p-4 animate-pulse">
+                          <div key={i} className="bg-[var(--surface-press-box)] rounded-sm p-4 animate-pulse">
                             <div className="flex items-center gap-3">
                               <div className="w-8 h-8 bg-surface-medium rounded-full" />
                               <div>
                                 <div className="h-4 bg-surface-medium rounded-sm w-24 mb-1" />
-                                <div className="h-3 bg-surface-light rounded-sm w-16" />
+                                <div className="h-3 bg-[var(--surface-press-box)] rounded-sm w-16" />
                               </div>
                             </div>
                           </div>
@@ -948,15 +948,15 @@ function CollegeBaseballPageInner() {
                                       decoding="async"
                                     />
                                   ) : (
-                                    <div className="w-8 h-8 bg-burnt-orange/15 rounded-full flex items-center justify-center text-[10px] font-bold text-burnt-orange">
+                                    <div className="w-8 h-8 bg-[var(--bsi-primary)]/15 rounded-full flex items-center justify-center text-[10px] font-bold text-[var(--bsi-primary)]">
                                       {(team.shortName || team.name).slice(0, 3).toUpperCase()}
                                     </div>
                                   )}
                                   <div className="min-w-0">
-                                    <div className="font-semibold text-text-primary text-sm truncate">
+                                    <div className="font-semibold text-[var(--bsi-bone)] text-sm truncate">
                                       {team.name}
                                     </div>
-                                    <div className="text-xs text-text-muted">
+                                    <div className="text-xs text-[rgba(196,184,165,0.35)]">
                                       {team.conference || ''}
                                     </div>
                                   </div>
@@ -971,8 +971,8 @@ function CollegeBaseballPageInner() {
                         {conferenceList.map((conf) => (
                           <Link key={conf.name} href={conf.href}>
                             <Card variant="hover" padding="md" className="text-center h-full">
-                              <div className="font-semibold text-text-primary">{conf.name}</div>
-                              <div className="text-xs text-text-muted mt-1">
+                              <div className="font-semibold text-[var(--bsi-bone)]">{conf.name}</div>
+                              <div className="text-xs text-[rgba(196,184,165,0.35)] mt-1">
                                 {conf.name === 'All Conferences'
                                   ? `View All ${conf.teams}`
                                   : `${conf.teams} Teams`}
@@ -983,7 +983,7 @@ function CollegeBaseballPageInner() {
                       </div>
                     ) : (
                       <div className="text-center py-8">
-                        <p className="text-text-muted">No teams match &quot;{teamSearch}&quot;</p>
+                        <p className="text-[rgba(196,184,165,0.35)]">No teams match &quot;{teamSearch}&quot;</p>
                       </div>
                     )}
 
@@ -1009,7 +1009,7 @@ function CollegeBaseballPageInner() {
             <Section padding="lg" borderTop>
               <Container>
                 <ScrollReveal>
-                  <div className="relative rounded-sm overflow-hidden border border-burnt-orange/15">
+                  <div className="relative rounded-sm overflow-hidden border border-[var(--bsi-primary)]/15">
                     <div
                       className="absolute inset-0 pointer-events-none"
                       style={{
@@ -1019,11 +1019,11 @@ function CollegeBaseballPageInner() {
                     />
                     <div className="relative p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                       <div className="max-w-xl">
-                        <span className="section-label block mb-3">Advanced Analytics</span>
-                        <h3 className="font-display text-2xl font-bold uppercase tracking-wide text-text-primary mb-3">
+                        <span className="heritage-stamp block mb-3">Advanced Analytics</span>
+                        <h3 className="font-display text-2xl font-bold uppercase tracking-wide text-[var(--bsi-bone)] mb-3">
                           BSI Labs Portal
                         </h3>
-                        <p className="text-sm text-text-secondary leading-relaxed">
+                        <p className="text-sm text-[var(--bsi-dust)] leading-relaxed">
                           Sortable leaderboards, team comparison tools, conference strength
                           rankings, park factor analysis, bubble watch — all in one portal with
                           percentile-scaled heatmaps and team-branded visuals.
@@ -1051,10 +1051,10 @@ function CollegeBaseballPageInner() {
                 <ScrollReveal>
                   <Card variant="default" padding="lg">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 rounded-sm bg-burnt-orange/15 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-sm bg-[var(--bsi-primary)]/15 flex items-center justify-center">
                         <svg
                           viewBox="0 0 24 24"
-                          className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]"
+                          className="w-5 h-5 stroke-[var(--bsi-primary)] fill-none stroke-[1.5]"
                         >
                           <circle cx="12" cy="12" r="10" />
                           <circle cx="12" cy="12" r="3" />
@@ -1066,37 +1066,37 @@ function CollegeBaseballPageInner() {
                       </div>
                       <div>
                         <CardTitle size="md">Tracking &amp; Vision AI</CardTitle>
-                        <p className="text-text-tertiary text-xs mt-0.5">
+                        <p className="text-[rgba(196,184,165,0.5)] text-xs mt-0.5">
                           How college baseball uses tracking data
                         </p>
                       </div>
                     </div>
-                    <ul className="space-y-3 text-sm text-text-secondary">
+                    <ul className="space-y-3 text-sm text-[var(--bsi-dust)]">
                       <li className="flex gap-2">
-                        <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
+                        <span className="text-[var(--bsi-primary)] mt-1 shrink-0">&bull;</span>
                         <span>
-                          <strong className="text-text-primary">TrackMan:</strong> pitch velocity,
+                          <strong className="text-[var(--bsi-bone)]">TrackMan:</strong> pitch velocity,
                           spin rate, extension — D1 standard since 2018, installed at most programs
                         </span>
                       </li>
                       <li className="flex gap-2">
-                        <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
+                        <span className="text-[var(--bsi-primary)] mt-1 shrink-0">&bull;</span>
                         <span>
-                          <strong className="text-text-primary">Yakkertech:</strong> batted-ball
+                          <strong className="text-[var(--bsi-bone)]">Yakkertech:</strong> batted-ball
                           data — exit velo, launch angle, spray charts at programs using optical
                           tracking
                         </span>
                       </li>
                       <li className="flex gap-2">
-                        <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
+                        <span className="text-[var(--bsi-primary)] mt-1 shrink-0">&bull;</span>
                         <span>
-                          <strong className="text-text-primary">BSI HAV-F &amp; MMI:</strong>{' '}
+                          <strong className="text-[var(--bsi-bone)]">BSI HAV-F &amp; MMI:</strong>{' '}
                           proprietary analytics layered on tracking data — hit quality, at-bat
                           grading, velocity trends, fielding value, and in-game momentum shifts
                         </span>
                       </li>
                     </ul>
-                    <div className="mt-5 pt-4 border-t border-border-subtle">
+                    <div className="mt-5 pt-4 border-t border-[var(--border-vintage)]">
                       <Link href="/vision-ai">
                         <Button variant="ghost" size="sm">
                           Full Vision AI Landscape &rarr;

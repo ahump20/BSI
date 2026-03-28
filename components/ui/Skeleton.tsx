@@ -25,7 +25,7 @@ export function Skeleton({ variant = 'rectangular', width, height, className = '
 
 export function SkeletonTableRow({ columns = 5 }: { columns?: number }) {
   return (
-    <tr className="border-b border-border-subtle">
+    <tr className="border-b border-[var(--border-vintage)]">
       {Array.from({ length: columns }).map((_, i) => (
         <td key={i} className="p-3">
           <Skeleton variant="text" height={16} />
@@ -37,7 +37,7 @@ export function SkeletonTableRow({ columns = 5 }: { columns?: number }) {
 
 export function SkeletonScoreCard() {
   return (
-    <div className="bg-surface-light rounded-sm p-4">
+    <div className="bg-[var(--surface-press-box)] rounded-sm p-4">
       <div className="flex justify-between items-center mb-3">
         <Skeleton variant="text" width={120} height={16} />
         <Skeleton variant="text" width={40} height={24} />
@@ -82,7 +82,7 @@ export function SkeletonPageHeader() {
 /** Generic card-shaped skeleton — matches Card padding="md" footprint */
 export function SkeletonCard({ className = '' }: { className?: string }) {
   return (
-    <div className={`bg-surface-light rounded-sm p-4 animate-pulse ${className}`} aria-hidden="true">
+    <div className={`bg-[var(--surface-press-box)] rounded-sm p-4 animate-pulse ${className}`} aria-hidden="true">
       <div className="flex items-center gap-3 mb-3">
         <div className="w-8 h-8 rounded-full bg-surface-medium" />
         <div className="flex-1 space-y-2">
@@ -102,7 +102,7 @@ export function SkeletonCard({ className = '' }: { className?: string }) {
 /** Table skeleton — rows of equally-spaced cells */
 export function SkeletonTable({ rows = 5 }: { rows?: number }) {
   return (
-    <div className="bg-surface-light rounded-sm overflow-hidden animate-pulse" aria-hidden="true">
+    <div className="bg-[var(--surface-press-box)] rounded-sm overflow-hidden animate-pulse" aria-hidden="true">
       {/* Header row */}
       <div className="flex gap-4 px-4 py-3 border-b border-border bg-surface-medium">
         {[40, 120, 80, 80, 60].map((w, i) => (
@@ -111,7 +111,7 @@ export function SkeletonTable({ rows = 5 }: { rows?: number }) {
       </div>
       {/* Data rows */}
       {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} className="flex gap-4 px-4 py-3 border-b border-border-subtle last:border-0">
+        <div key={i} className="flex gap-4 px-4 py-3 border-b border-[var(--border-vintage)] last:border-0">
           {[40, 120, 80, 80, 60].map((w, j) => (
             <div key={j} className="h-3 bg-surface-medium rounded-sm" style={{ width: w }} />
           ))}
@@ -123,7 +123,7 @@ export function SkeletonTable({ rows = 5 }: { rows?: number }) {
 
 export function SkeletonStandingsTable({ rows = 10, columns = 5 }: { rows?: number; columns?: number }) {
   return (
-    <div className="bg-surface-light rounded-sm p-4">
+    <div className="bg-[var(--surface-press-box)] rounded-sm p-4">
       <Skeleton variant="text" width={140} height={20} className="mb-4" />
       <table className="w-full">
         <thead>

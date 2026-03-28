@@ -52,15 +52,15 @@ export default function Week1PreviewPage() {
         <Section padding="sm" className="border-b border-border">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 College Baseball
               </Link>
-              <span className="text-text-muted">/</span>
-              <Link href="/college-baseball/editorial" className="text-text-muted hover:text-burnt-orange transition-colors">
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <Link href="/college-baseball/editorial" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
                 Editorial
               </Link>
-              <span className="text-text-muted">/</span>
-              <span className="text-text-primary">Week 1 Preview</span>
+              <span className="text-[rgba(196,184,165,0.35)]">/</span>
+              <span className="text-[var(--bsi-bone)]">Week 1 Preview</span>
             </nav>
           </Container>
         </Section>
@@ -73,14 +73,14 @@ export default function Week1PreviewPage() {
               <div className="max-w-3xl">
                 <div className="flex items-center gap-3 mb-6">
                   <Badge variant="primary">Weekly Preview</Badge>
-                  <span className="text-text-muted text-sm">February 11, 2026</span>
-                  <span className="text-text-muted text-sm">6 min read</span>
+                  <span className="text-[rgba(196,184,165,0.35)] text-sm">February 11, 2026</span>
+                  <span className="text-[rgba(196,184,165,0.35)] text-sm">6 min read</span>
                 </div>
                 <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-wide mb-6">
                   Week 1:{' '}
-                  <span className="text-gradient-blaze">What to Watch</span>
+                  <span className="text-[var(--bsi-primary)]">What to Watch</span>
                 </h1>
-                <p className="font-serif text-xl text-text-tertiary leading-relaxed">
+                <p className="font-serif text-xl text-[rgba(196,184,165,0.5)] leading-relaxed">
                   The matchups, pitching duels, and storylines that matter most as 300+ programs open the 2026 college baseball season.
                 </p>
               </div>
@@ -92,7 +92,7 @@ export default function Week1PreviewPage() {
         <Section padding="lg" background="charcoal">
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-6 pb-2 border-b border-[var(--bsi-primary)]/15">
                 Six Series to Watch
               </h2>
             </ScrollReveal>
@@ -101,11 +101,11 @@ export default function Week1PreviewPage() {
                 <ScrollReveal key={m.home} direction="up" delay={Math.min(i * 50, 250)}>
                   <Card variant="default" padding="md">
                     <div className="flex flex-wrap items-center gap-3 mb-2">
-                      <span className="font-display text-sm font-bold uppercase tracking-wide text-text-primary">{m.away} at {m.home}</span>
-                      <span className="font-mono text-[10px] text-text-muted">{m.date}</span>
+                      <span className="font-display text-sm font-bold uppercase tracking-wide text-[var(--bsi-bone)]">{m.away} at {m.home}</span>
+                      <span className="font-mono text-[10px] text-[rgba(196,184,165,0.35)]">{m.date}</span>
                       <Badge variant="outline">{m.network}</Badge>
                     </div>
-                    <p className="font-serif text-sm text-text-tertiary leading-relaxed">{m.why}</p>
+                    <p className="font-serif text-sm text-[rgba(196,184,165,0.5)] leading-relaxed">{m.why}</p>
                   </Card>
                 </ScrollReveal>
               ))}
@@ -117,7 +117,7 @@ export default function Week1PreviewPage() {
         <Section padding="lg">
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-6 pb-2 border-b border-[var(--bsi-primary)]/15">
                 Pitching Duels
               </h2>
             </ScrollReveal>
@@ -125,10 +125,10 @@ export default function Week1PreviewPage() {
               {pitchingDuels.map((d, i) => (
                 <ScrollReveal key={d.starter} direction="up" delay={i * 80}>
                   <Card variant="default" padding="md" className="h-full">
-                    <div className="font-display text-xs uppercase tracking-wider text-burnt-orange mb-2">{d.day}</div>
-                    <div className="font-display text-sm font-bold uppercase tracking-wide text-text-primary mb-1">{d.starter}</div>
-                    <div className="font-mono text-[10px] text-text-muted mb-3">vs {d.opponent}</div>
-                    <p className="font-serif text-sm text-text-tertiary leading-relaxed">{d.note}</p>
+                    <div className="font-display text-xs uppercase tracking-wider text-[var(--bsi-primary)] mb-2">{d.day}</div>
+                    <div className="font-display text-sm font-bold uppercase tracking-wide text-[var(--bsi-bone)] mb-1">{d.starter}</div>
+                    <div className="font-mono text-[10px] text-[rgba(196,184,165,0.35)] mb-3">vs {d.opponent}</div>
+                    <p className="font-serif text-sm text-[rgba(196,184,165,0.5)] leading-relaxed">{d.note}</p>
                   </Card>
                 </ScrollReveal>
               ))}
@@ -140,16 +140,16 @@ export default function Week1PreviewPage() {
         <Section padding="lg" background="charcoal">
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-6 pb-2 border-b border-[var(--bsi-primary)]/15">
                 The Storylines
               </h2>
             </ScrollReveal>
             <div className="space-y-8">
               {storylines.map((s, i) => (
                 <ScrollReveal key={s.title} direction="up" delay={i * 60}>
-                  <div className="border-l-[3px] border-burnt-orange/40 pl-6">
-                    <h3 className="font-display text-lg font-medium uppercase tracking-wide text-text-primary mb-2">{s.title}</h3>
-                    <p className="font-serif text-base text-text-tertiary leading-relaxed">{s.description}</p>
+                  <div className="border-l-[3px] border-[var(--bsi-primary)]/40 pl-6">
+                    <h3 className="font-display text-lg font-medium uppercase tracking-wide text-[var(--bsi-bone)] mb-2">{s.title}</h3>
+                    <p className="font-serif text-base text-[rgba(196,184,165,0.5)] leading-relaxed">{s.description}</p>
                   </div>
                 </ScrollReveal>
               ))}
@@ -158,12 +158,12 @@ export default function Week1PreviewPage() {
         </Section>
 
         {/* Attribution */}
-        <Section padding="md" className="border-t border-burnt-orange/10">
+        <Section padding="md" className="border-t border-[var(--bsi-primary)]/10">
           <Container size="narrow">
             <div className="space-y-4">
               <DataSourceBadge source="D1Baseball / ESPN / BSI Projections" timestamp="February 11, 2026 CT" />
               <div className="flex flex-wrap gap-6 pt-2">
-                <Link href="/college-baseball/editorial" className="font-display text-[13px] uppercase tracking-widest text-burnt-orange hover:opacity-70 transition-opacity">
+                <Link href="/college-baseball/editorial" className="font-display text-[13px] uppercase tracking-widest text-[var(--bsi-primary)] hover:opacity-70 transition-opacity">
                   All Editorial &rarr;
                 </Link>
               </div>
