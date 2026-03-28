@@ -14,6 +14,7 @@ interface Message {
 }
 
 let msgId = 0;
+const MAX_DISPLAYED_MESSAGES = 24;
 
 function sanitizeAssistantText(text: string): string {
   return text
@@ -255,7 +256,7 @@ export default function AIChatWidget() {
               aria-live="polite"
               aria-atomic="false"
             >
-              {messages.map((msg) => (
+              {messages.slice(-MAX_DISPLAYED_MESSAGES).map((msg) => (
                 <div
                   key={msg.id}
                   className={`text-sm leading-relaxed ${
@@ -323,8 +324,25 @@ export default function AIChatWidget() {
               <div ref={bottomRef} />
             </div>
 
-            {/* Input */}
+            {/* Input + controls */}
             <div className="p-3 border-t border-bone/5">
+              {/* Clear conversation — only visible after user has sent messages */}
+              {hasUserMessage && !loading && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMessages([{ id: ++msgId, role: 'assistant', text: AI_CHAT_GREETING }]);
+                    setInput('');
+                    setStreamingText('');
+                  }}
+                  className="mb-2 flex items-center gap-1 font-mono text-[0.55rem] uppercase tracking-[0.2em] text-warm-gray/40 transition-colors duration-200 hover:text-burnt-orange/70"
+                >
+                  <svg className="h-2.5 w-2.5" viewBox="0 0 12 12" fill="none">
+                    <path d="M1 1L11 11M11 1L1 11" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+                  </svg>
+                  Clear
+                </button>
+              )}
               <div className="flex gap-2">
                 <input
                   type="text"
