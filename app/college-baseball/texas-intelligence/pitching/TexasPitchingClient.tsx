@@ -102,7 +102,7 @@ export default function TexasPitchingClient() {
     <>
       <main id="main-content">
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm">
               <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">College Baseball</Link>
@@ -301,7 +301,7 @@ export default function TexasPitchingClient() {
               <Card variant="default" padding="none" className="overflow-x-auto border-t-2 border-[var(--bsi-primary)]">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-border bg-[var(--surface-press-box)]">
+                    <tr className="border-b border-[var(--border-vintage)] bg-[var(--surface-press-box)]">
                       <th className="text-left py-2 px-3 text-xs text-[rgba(196,184,165,0.35)] font-semibold">Pitcher</th>
                       <SortTh label="ERA" field="era" current={sortField} onSort={setSortField} />
                       <SortTh label="WHIP" field="whip" current={sortField} onSort={setSortField} />

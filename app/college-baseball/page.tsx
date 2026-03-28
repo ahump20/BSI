@@ -491,7 +491,7 @@ function CollegeBaseballPageInner() {
                       <Link
                         key={feature.href}
                         href={feature.href}
-                        className="flex flex-col gap-2 p-3 bg-[var(--surface-press-box)] border border-border rounded-sm hover:border-[var(--bsi-primary)]/30 transition-all group"
+                        className="flex flex-col gap-2 p-3 bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm hover:border-[var(--bsi-primary)]/30 transition-all group"
                       >
                         <div className="flex items-center justify-between">
                           <svg
@@ -686,7 +686,7 @@ function CollegeBaseballPageInner() {
                                 </tbody>
                               </table>
                             </div>
-                            <div className="mt-4 pt-4 border-t border-border">
+                            <div className="mt-4 pt-4 border-t border-[var(--border-vintage)]">
                               <DataSourceBadge
                                 source="NCAA / D1Baseball"
                                 timestamp={formatTimestamp(lastUpdated)}
@@ -870,7 +870,7 @@ function CollegeBaseballPageInner() {
                           </div>
                         </div>
                       )}
-                      <div className="mt-6 pt-4 border-t border-border flex items-center justify-between flex-wrap gap-4">
+                      <div className="mt-6 pt-4 border-t border-[var(--border-vintage)] flex items-center justify-between flex-wrap gap-4">
                         <DataSourceBadge
                           source={dataSource || 'ESPN College Baseball API'}
                           timestamp={formatTimestamp(lastUpdated)}
@@ -895,12 +895,12 @@ function CollegeBaseballPageInner() {
                         value={teamSearch}
                         onChange={(e) => setTeamSearch(e.target.value)}
                         placeholder="Search teams..."
-                        className="flex-1 px-4 py-2.5 bg-[var(--surface-press-box)] border border-border rounded-sm text-[var(--bsi-bone)] placeholder-text-muted text-sm focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-all"
+                        className="flex-1 px-4 py-2.5 bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm text-[var(--bsi-bone)] placeholder-text-muted text-sm focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-all"
                       />
                       <select
                         value={teamConfFilter}
                         onChange={(e) => setTeamConfFilter(e.target.value)}
-                        className="px-3 py-2.5 bg-[var(--surface-press-box)] border border-border rounded-sm text-[var(--bsi-bone)] text-sm focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-all"
+                        className="px-3 py-2.5 bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm text-[var(--bsi-bone)] text-sm focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-all"
                       >
                         <option value="All">All Conferences</option>
                         {conferenceList

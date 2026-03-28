@@ -36,7 +36,7 @@ export default function MLBSeasonPreview2026() {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link href="/mlb" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">

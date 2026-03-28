@@ -95,7 +95,7 @@ export function SonyEmpireTimeline({ className = '' }: { className?: string }) {
                         ? 'bg-[var(--bsi-primary)] text-white border-[var(--bsi-primary)] shadow-[0_0_20px_rgba(191,87,0,0.4)]'
                         : isExpanded
                           ? 'bg-[var(--bsi-primary)]/20 text-[var(--bsi-primary)] border-[var(--bsi-primary)]/40'
-                          : 'bg-graphite text-[var(--bsi-dust)] border-border hover:border-[var(--bsi-primary)]/30 hover:text-[var(--bsi-primary)]'
+                          : 'bg-graphite text-[var(--bsi-dust)] border-[var(--border-vintage)] hover:border-[var(--bsi-primary)]/30 hover:text-[var(--bsi-primary)]'
                     }`}
                     aria-expanded={isExpanded}
                     aria-label={`${acq.year}: ${acq.company}`}

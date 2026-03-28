@@ -33,7 +33,7 @@ export function SpringTrainingStandingsTable({ title, teams }: SpringTrainingSta
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider">
+              <tr className="border-b border-[var(--border-vintage)] text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider">
                 <th className="text-left px-4 py-3 w-8">#</th>
                 <th className="text-left px-4 py-3">Team</th>
                 <th className="text-right px-4 py-3">W</th>

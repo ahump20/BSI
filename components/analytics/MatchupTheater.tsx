@@ -178,7 +178,7 @@ function PlayerSelector({
         aria-label={`Select ${label.toLowerCase()}`}
         value={selected}
         onChange={(e) => onSelect(e.target.value)}
-        className={`w-full bg-[var(--surface-press-box)] border border-border rounded-sm px-3 py-2 text-sm text-[rgba(196,184,165,0.5)] font-mono appearance-none cursor-pointer hover:border-[rgba(140,98,57,0.5)] transition-colors focus:outline-none focus:border-[var(--bsi-primary)]/40 ${align === 'right' ? 'text-right' : ''}`}
+        className={`w-full bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm px-3 py-2 text-sm text-[rgba(196,184,165,0.5)] font-mono appearance-none cursor-pointer hover:border-[rgba(140,98,57,0.5)] transition-colors focus:outline-none focus:border-[var(--bsi-primary)]/40 ${align === 'right' ? 'text-right' : ''}`}
       >
         <option value="" className="bg-[var(--surface-dugout)] text-[var(--bsi-bone)]">
           Select {label.toLowerCase()}...

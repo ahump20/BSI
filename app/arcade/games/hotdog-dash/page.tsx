@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 export default function HotdogDashPage() {
   return (
     <div className="flex flex-col h-[calc(100vh-64px)]">
-      <div className="flex items-center justify-between px-4 py-2 bg-[var(--surface-scoreboard)] border-b border-border">
+      <div className="flex items-center justify-between px-4 py-2 bg-[var(--surface-scoreboard)] border-b border-[var(--border-vintage)]">
         <h1 className="font-display text-lg text-[var(--bsi-bone)] uppercase tracking-wide">Blaze Hot Dog</h1>
         <a
           href="/games/hotdog-dash/"

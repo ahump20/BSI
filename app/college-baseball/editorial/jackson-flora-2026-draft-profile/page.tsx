@@ -188,7 +188,7 @@ export default function FloraDraftProfilePage() {
         <Section padding="lg" background="charcoal">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mb-6 pb-2 border-b border-border">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mb-6 pb-2 border-b border-[var(--border-vintage)]">
                 The Arsenal: Four Pitches Deep
               </h2>
               <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
@@ -243,7 +243,7 @@ export default function FloraDraftProfilePage() {
         <Section padding="lg" background="charcoal">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mb-6 pb-2 border-b border-border">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mb-6 pb-2 border-b border-[var(--border-vintage)]">
                 The Draft Question: Top 5 or Top 15?
               </h2>
               <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">

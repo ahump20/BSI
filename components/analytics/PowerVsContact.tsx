@@ -268,7 +268,7 @@ export function PowerVsContact({
           aria-label="Filter by conference"
           value={selectedConf}
           onChange={(e) => setSelectedConf(e.target.value)}
-          className="bg-[var(--surface-press-box)] border border-border rounded-sm px-2.5 py-1.5 text-xs text-[rgba(196,184,165,0.5)] font-mono appearance-none cursor-pointer hover:border-[rgba(140,98,57,0.5)] transition-colors focus:outline-none focus:border-[var(--bsi-primary)]/40"
+          className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm px-2.5 py-1.5 text-xs text-[rgba(196,184,165,0.5)] font-mono appearance-none cursor-pointer hover:border-[rgba(140,98,57,0.5)] transition-colors focus:outline-none focus:border-[var(--bsi-primary)]/40"
         >
           {conferences.map(c => (
             <option key={c} value={c} className="bg-[var(--surface-dugout)] text-[var(--bsi-bone)]">
@@ -290,7 +290,7 @@ export function PowerVsContact({
         {/* Tooltip */}
         {tooltip && (
           <div
-            className="absolute z-50 pointer-events-none bg-[var(--surface-dugout)] border border-border shadow-xl rounded-sm px-3 py-2"
+            className="absolute z-50 pointer-events-none bg-[var(--surface-dugout)] border border-[var(--border-vintage)] shadow-xl rounded-sm px-3 py-2"
             style={{
               left: tooltip.x + 12,
               top: tooltip.y - 10,

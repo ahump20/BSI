@@ -119,7 +119,7 @@ export default function TexasScheduleClient() {
     <>
       <main id="main-content">
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm">
               <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">College Baseball</Link>
@@ -170,7 +170,7 @@ export default function TexasScheduleClient() {
         </Section>
 
         {/* View Toggle */}
-        <Section padding="sm" className="border-b border-border">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex gap-2">

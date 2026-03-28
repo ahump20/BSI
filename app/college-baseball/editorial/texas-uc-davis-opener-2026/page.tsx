@@ -188,7 +188,7 @@ export default function TexasUCDavisOpener2026Page() {
       />
       <div>
         {/* ── Breadcrumb ── */}
-        <Section padding="sm" className="border-b border-border">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
@@ -571,7 +571,7 @@ export default function TexasUCDavisOpener2026Page() {
                             <td className="text-center text-[rgba(196,184,165,0.35)]">{b.so}</td>
                           </tr>
                         ))}
-                        <tr className="border-t-2 border-border font-semibold">
+                        <tr className="border-t-2 border-[var(--border-vintage)] font-semibold">
                           <td className="py-2 px-3 text-[rgba(196,184,165,0.35)]" colSpan={2}>Totals</td>
                           <td className="text-center text-[rgba(196,184,165,0.5)]">{sumCol(ucdavisBatting, 'ab')}</td>
                           <td className="text-center text-[rgba(196,184,165,0.5)]">{sumCol(ucdavisBatting, 'r')}</td>

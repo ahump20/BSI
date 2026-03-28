@@ -99,7 +99,7 @@ export default function TeamDossiersIndexPage() {
   return (
     <>
       <div>
-        <Section padding="sm" className="border-b border-border">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <Breadcrumb
               items={[
@@ -173,7 +173,7 @@ export default function TeamDossiersIndexPage() {
               })}
             </div>
 
-            <div className="mt-8 bg-[var(--surface-press-box)] border border-dashed border-border rounded-sm p-6 text-center">
+            <div className="mt-8 bg-[var(--surface-press-box)] border border-dashed border-[var(--border-vintage)] rounded-sm p-6 text-center">
               <p className="text-sm text-[rgba(196,184,165,0.35)]">
                 {liveDossiers.length > 0
                   ? `Showing top 25 from live rankings. Full dossier set building through the 2026 season.`

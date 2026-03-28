@@ -198,7 +198,7 @@ export default function VolantisDraftProfilePage() {
         <Section padding="lg" background="charcoal">
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mb-6 pb-2 border-b border-border">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mb-6 pb-2 border-b border-[var(--border-vintage)]">
                 2026 Sunday Starts
               </h2>
               <div className="overflow-x-auto">
@@ -212,7 +212,7 @@ export default function VolantisDraftProfilePage() {
                   </thead>
                   <tbody>
                     {STARTS_2026.map((g) => (
-                      <tr key={g.game} className="border-b border-border">
+                      <tr key={g.game} className="border-b border-[var(--border-vintage)]">
                         <td className="py-3 px-3 text-[var(--bsi-bone)] text-sm font-medium">{g.game}</td>
                         <td className="py-3 px-3 text-[var(--bsi-bone)] text-sm">{g.opponent}</td>
                         <td className="py-3 px-3 text-success text-sm font-semibold">{g.result}</td>
@@ -269,7 +269,7 @@ export default function VolantisDraftProfilePage() {
         <Section padding="lg" background="charcoal">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mb-6 pb-2 border-b border-border">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mb-6 pb-2 border-b border-[var(--border-vintage)]">
                 2025 Freshman Season
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">

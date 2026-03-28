@@ -131,7 +131,7 @@ export function BoxScoreTable({
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-[var(--bsi-bone)]" aria-label="Linescore">
             <thead>
-              <tr className="border-b border-border text-xs text-[rgba(196,184,165,0.35)] uppercase">
+              <tr className="border-b border-[var(--border-vintage)] text-xs text-[rgba(196,184,165,0.35)] uppercase">
                 <th scope="col" className="text-left px-4 py-2 w-32">Team</th>
                 {linescore.innings.map((_, i) => (
                   <th scope="col" key={i} className="px-2 py-2 text-center w-8">
@@ -168,7 +168,7 @@ export function BoxScoreTable({
       )}
 
       {/* Tab bar */}
-      <div className="flex border-b border-border">
+      <div className="flex border-b border-[var(--border-vintage)]">
         {(['batting', 'pitching'] as const).map((tab) => (
           <button
             key={tab}
@@ -227,7 +227,7 @@ export function BoxScoreTable({
                         {!isCompact && <td className="text-center tabular-nums">{b.slg ?? '-'}</td>}
                       </tr>
                     ))}
-                    <tr className="border-t border-border font-bold">
+                    <tr className="border-t border-[var(--border-vintage)] font-bold">
                       <td className="py-1">TOTALS</td>
                       <td className="text-center tabular-nums">{sumBatting(side.batting, 'ab')}</td>
                       <td className="text-center tabular-nums">{sumBatting(side.batting, 'r')}</td>

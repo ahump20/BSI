@@ -165,7 +165,7 @@ function CheckoutReturnContent() {
                         </p>
                       </div>
                     )}
-                    <div className="bg-[var(--surface-dugout)]/50 border border-border rounded-sm p-4 mb-8">
+                    <div className="bg-[var(--surface-dugout)]/50 border border-[var(--border-vintage)] rounded-sm p-4 mb-8">
                       <p className="text-[var(--bsi-dust)] text-sm">
                         Check your inbox for an email from BSI with your API key.
                         Enter it on the login page to access your dashboard.

@@ -124,7 +124,7 @@ function SummaryRow({ summary }: { summary: TeamSummary }) {
   ];
 
   return (
-    <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-[#0D0D0D] gap-4 flex-wrap">
+    <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-vintage)] bg-[#0D0D0D] gap-4 flex-wrap">
       <div className="flex items-center gap-3">
         {stats.map(({ label, count, color, activeBg }) => (
           <div
@@ -241,9 +241,9 @@ export function SocialIntelTeamPanel({ teamId }: SocialIntelTeamPanelProps) {
   if (!loading && (!data || data.signals.length === 0)) return null;
 
   return (
-    <div className="rounded-sm border border-border overflow-hidden bg-[#111111]">
+    <div className="rounded-sm border border-[var(--border-vintage)] overflow-hidden bg-[#111111]">
       {/* Panel header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-vintage)]">
         <div className="flex items-center gap-2">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#BF5700] opacity-50" />

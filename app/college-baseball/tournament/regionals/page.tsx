@@ -29,7 +29,7 @@ export default function RegionalsPage() {
   return (
     <>
       <div>
-        <Section padding="sm" className="border-b border-border">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <Breadcrumb
               items={[
@@ -130,7 +130,7 @@ export default function RegionalsPage() {
             </section>
 
             {/* Empty state for bracket data */}
-            <div className="bg-[var(--surface-press-box)] border border-dashed border-border rounded-sm p-8 text-center mb-8">
+            <div className="bg-[var(--surface-press-box)] border border-dashed border-[var(--border-vintage)] rounded-sm p-8 text-center mb-8">
               <p className="text-sm text-[rgba(196,184,165,0.35)] mb-2">
                 Bracket data populates on Selection Monday (late May / early June).
               </p>

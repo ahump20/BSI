@@ -61,7 +61,7 @@ export function WeeklyBriefClient() {
   return (
     <>
       <div>
-        <Section padding="sm" className="border-b border-border">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <Breadcrumb
               items={[
@@ -181,7 +181,7 @@ export function WeeklyBriefClient() {
                       10–15 editorial decisions per week, documented with rationale. What got covered,
                       what got cut, and why.
                     </p>
-                    <div className="bg-[var(--surface-press-box)] border border-dashed border-border rounded-sm p-4 text-center">
+                    <div className="bg-[var(--surface-press-box)] border border-dashed border-[var(--border-vintage)] rounded-sm p-4 text-center">
                       <p className="text-xs text-[rgba(196,184,165,0.35)]">
                         {data?.message || 'First decision register publishes Week 2 of the 2026 season.'}
                       </p>

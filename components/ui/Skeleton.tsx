@@ -104,7 +104,7 @@ export function SkeletonTable({ rows = 5 }: { rows?: number }) {
   return (
     <div className="bg-[var(--surface-press-box)] rounded-sm overflow-hidden animate-pulse" aria-hidden="true">
       {/* Header row */}
-      <div className="flex gap-4 px-4 py-3 border-b border-border bg-surface-medium">
+      <div className="flex gap-4 px-4 py-3 border-b border-[var(--border-vintage)] bg-surface-medium">
         {[40, 120, 80, 80, 60].map((w, i) => (
           <div key={i} className="h-3 bg-surface rounded-sm" style={{ width: w }} />
         ))}
@@ -127,7 +127,7 @@ export function SkeletonStandingsTable({ rows = 10, columns = 5 }: { rows?: numb
       <Skeleton variant="text" width={140} height={20} className="mb-4" />
       <table className="w-full">
         <thead>
-          <tr className="border-b border-border">
+          <tr className="border-b border-[var(--border-vintage)]">
             {Array.from({ length: columns }).map((_, i) => (
               <th key={i} className="pb-2 px-2">
                 <Skeleton variant="text" height={14} />

@@ -102,7 +102,7 @@ export default function GlossaryPage() {
   return (
     <>
       <div>
-        <Section padding="sm" className="border-b border-border">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Glossary' }]} />
           </Container>
@@ -128,7 +128,7 @@ export default function GlossaryPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search terms..."
-                className="flex-1 min-w-0 bg-[var(--surface-press-box)] border border-border rounded-sm px-4 py-2.5 text-sm text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)] focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-colors"
+                className="flex-1 min-w-0 bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm px-4 py-2.5 text-sm text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)] focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-colors"
               />
               <div className="flex gap-1.5 overflow-x-auto">
                 {(Object.keys(CATEGORY_LABELS) as CategoryFilter[]).map((cat) => (

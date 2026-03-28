@@ -135,7 +135,7 @@ export default function CollectiveROIPage() {
                   <select
                     value={confFilter}
                     onChange={e => setConfFilter(e.target.value)}
-                    className="p-2 rounded-sm bg-[var(--surface-dugout)] border border-border text-[var(--bsi-bone)] text-sm focus:border-[var(--bsi-primary)] focus:outline-none"
+                    className="p-2 rounded-sm bg-[var(--surface-dugout)] border border-[var(--border-vintage)] text-[var(--bsi-bone)] text-sm focus:border-[var(--bsi-primary)] focus:outline-none"
                   >
                     <option value="">All Conferences</option>
                     {conferences.map(c => <option key={c} value={c}>{c}</option>)}
@@ -162,7 +162,7 @@ export default function CollectiveROIPage() {
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="border-b border-border text-[rgba(196,184,165,0.35)]">
+                          <tr className="border-b border-[var(--border-vintage)] text-[rgba(196,184,165,0.35)]">
                             <th className="text-left p-4 font-medium">#</th>
                             <th className="text-left p-4 font-medium">Team</th>
                             <th className="text-left p-4 font-medium">Conference</th>

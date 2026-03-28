@@ -249,7 +249,7 @@ export function LiveScoreStrip() {
                   <h2 className="font-display text-lg font-bold text-[var(--bsi-bone)] uppercase tracking-wide">
                     Yesterday&apos;s Results
                   </h2>
-                  <span className="text-[10px] text-[rgba(196,184,165,0.35)] uppercase tracking-wider bg-[var(--surface-press-box)] px-2 py-0.5 rounded-sm border border-border">
+                  <span className="text-[10px] text-[rgba(196,184,165,0.35)] uppercase tracking-wider bg-[var(--surface-press-box)] px-2 py-0.5 rounded-sm border border-[var(--border-vintage)]">
                     No games today
                   </span>
                 </div>
@@ -269,7 +269,7 @@ export function LiveScoreStrip() {
               </div>
             </ScrollReveal>
           ) : (
-            <div className="bg-[var(--surface-press-box)] border border-border rounded-sm p-5">
+            <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-5">
               <div className="flex items-center justify-between mb-3">
                 <h2 className="font-display text-lg font-bold text-[var(--bsi-bone)] uppercase tracking-wide">
                   Today&apos;s Games
@@ -290,7 +290,7 @@ export function LiveScoreStrip() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="px-3 py-1.5 text-xs font-medium bg-surface border border-border rounded-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-primary)] hover:border-[var(--bsi-primary)]/30 transition-all"
+                    className="px-3 py-1.5 text-xs font-medium bg-surface border border-[var(--border-vintage)] rounded-sm text-[var(--bsi-dust)] hover:text-[var(--bsi-primary)] hover:border-[var(--bsi-primary)]/30 transition-all"
                   >
                     {link.label}
                   </Link>

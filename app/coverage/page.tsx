@@ -200,7 +200,7 @@ export default function CoveragePage() {
       </Section>
 
       {/* Stats Bar */}
-      <div className="bg-[var(--surface-dugout)] border-y border-border py-8">
+      <div className="bg-[var(--surface-dugout)] border-y border-[var(--border-vintage)] py-8">
         <Container>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <ScrollReveal>

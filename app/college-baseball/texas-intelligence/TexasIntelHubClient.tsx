@@ -360,7 +360,7 @@ export default function TexasIntelHubClient() {
     <>
       <main id="main-content">
         {/* ── Breadcrumb ──────────────────────────────────────────── */}
-        <Section padding="sm" className="border-b border-border">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm">
               <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
@@ -431,7 +431,7 @@ export default function TexasIntelHubClient() {
         </Section>
 
         {/* ── 2. Live Dashboard Strip ────────────────────────────── */}
-        <Section padding="md" className="bg-[var(--surface-dugout)] border-y border-border">
+        <Section padding="md" className="bg-[var(--surface-dugout)] border-y border-[var(--border-vintage)]">
           <Container>
             <div className="flex items-center justify-between mb-3">
               {/* Item 9: Data freshness indicator */}
@@ -633,7 +633,7 @@ export default function TexasIntelHubClient() {
                     <button
                       onClick={() => setAnalysisIdx((i) => Math.max(0, i - 1))}
                       disabled={analysisIdx === 0}
-                      className="w-8 h-8 rounded-sm border border-border flex items-center justify-center text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] disabled:opacity-30 transition-colors"
+                      className="w-8 h-8 rounded-sm border border-[var(--border-vintage)] flex items-center justify-center text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] disabled:opacity-30 transition-colors"
                       aria-label="Previous game"
                     >
                       &larr;
@@ -641,7 +641,7 @@ export default function TexasIntelHubClient() {
                     <button
                       onClick={() => setAnalysisIdx((i) => Math.min(recentAnalyses.length - 1, i + 1))}
                       disabled={analysisIdx >= recentAnalyses.length - 1}
-                      className="w-8 h-8 rounded-sm border border-border flex items-center justify-center text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] disabled:opacity-30 transition-colors"
+                      className="w-8 h-8 rounded-sm border border-[var(--border-vintage)] flex items-center justify-center text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] disabled:opacity-30 transition-colors"
                       aria-label="Next game"
                     >
                       &rarr;

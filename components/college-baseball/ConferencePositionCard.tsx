@@ -59,7 +59,7 @@ export function ConferencePositionCard({
 
   if (error) {
     return (
-      <div className="bg-[var(--surface-press-box)] border border-border rounded-sm p-6 text-center">
+      <div className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-6 text-center">
         <p className="text-[rgba(196,184,165,0.35)] text-sm">Conference data temporarily unavailable</p>
       </div>
     );

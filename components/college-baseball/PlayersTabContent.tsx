@@ -53,13 +53,13 @@ export function PlayersTabContent() {
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name (min 2 chars)..."
             aria-label="Search players by name"
-            className="flex-1 px-4 py-2.5 bg-[var(--surface-press-box)] border border-border rounded-sm text-[var(--bsi-bone)] placeholder-text-muted text-sm focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-all"
+            className="flex-1 px-4 py-2.5 bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm text-[var(--bsi-bone)] placeholder-text-muted text-sm focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-all"
           />
           <select
             aria-label="Filter by position"
             value={posFilter}
             onChange={(e) => setPosFilter(e.target.value)}
-            className="px-3 py-2.5 bg-[var(--surface-press-box)] border border-border rounded-sm text-[var(--bsi-bone)] text-sm focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-all"
+            className="px-3 py-2.5 bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm text-[var(--bsi-bone)] text-sm focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-all"
           >
             <option value="All">All Positions</option>
             {['P', 'C', '1B', '2B', '3B', 'SS', 'OF', 'DH', 'UTL'].map(p => (
@@ -70,7 +70,7 @@ export function PlayersTabContent() {
             aria-label="Filter by class year"
             value={classFilter}
             onChange={(e) => setClassFilter(e.target.value)}
-            className="px-3 py-2.5 bg-[var(--surface-press-box)] border border-border rounded-sm text-[var(--bsi-bone)] text-sm focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-all"
+            className="px-3 py-2.5 bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm text-[var(--bsi-bone)] text-sm focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-all"
           >
             <option value="All">All Classes</option>
             {['Fr', 'So', 'Jr', 'Sr', 'Gr'].map(c => (

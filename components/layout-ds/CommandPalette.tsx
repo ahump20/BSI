@@ -258,7 +258,7 @@ export function CommandPalette() {
 
       {/* Palette container */}
       <div className="relative flex items-start justify-center pt-[15vh] sm:pt-[20vh] px-4">
-        <div className="w-full max-w-xl bg-[var(--surface-scoreboard)] border border-border rounded-sm shadow-2xl overflow-hidden">
+        <div className="w-full max-w-xl bg-[var(--surface-scoreboard)] border border-[var(--border-vintage)] rounded-sm shadow-2xl overflow-hidden">
           {/* Search input */}
           <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--border-vintage)]">
             <Search className="w-5 h-5 text-[rgba(196,184,165,0.35)] shrink-0" />

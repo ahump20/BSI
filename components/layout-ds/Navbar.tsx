@@ -128,7 +128,7 @@ function LeaguesDropdown({ items }: { items: LeagueNavItem[] }) {
       {open && (
         <div
           id="leagues-menu"
-          className="absolute top-full left-0 mt-2 w-56 bg-[var(--surface-scoreboard)]/95 backdrop-blur-xl border border-border rounded-sm shadow-2xl py-1 z-50"
+          className="absolute top-full left-0 mt-2 w-56 bg-[var(--surface-scoreboard)]/95 backdrop-blur-xl border border-[var(--border-vintage)] rounded-sm shadow-2xl py-1 z-50"
           role="menu"
         >
           {items.map((item, idx) => {
@@ -214,7 +214,7 @@ function AnalyticsDropdown({ items }: { items: MainNavItem[] }) {
       {open && (
         <div
           id="analytics-menu"
-          className="absolute top-full left-0 mt-2 w-52 bg-[var(--surface-scoreboard)]/95 backdrop-blur-xl border border-border rounded-sm shadow-2xl py-1 z-50"
+          className="absolute top-full left-0 mt-2 w-52 bg-[var(--surface-scoreboard)]/95 backdrop-blur-xl border border-[var(--border-vintage)] rounded-sm shadow-2xl py-1 z-50"
           role="menu"
         >
           {items.map((item) => {
@@ -264,7 +264,7 @@ function MoreDropdown({ items }: { items: NavItem[] }) {
       </button>
 
       {open && (
-        <div id="more-menu" className="absolute top-full right-0 mt-2 w-48 bg-[var(--surface-scoreboard)]/95 backdrop-blur-xl border border-border rounded-sm shadow-2xl py-1 z-50" role="menu">
+        <div id="more-menu" className="absolute top-full right-0 mt-2 w-48 bg-[var(--surface-scoreboard)]/95 backdrop-blur-xl border border-[var(--border-vintage)] rounded-sm shadow-2xl py-1 z-50" role="menu">
           {items.map((item) => (
             <Link
               key={item.href}

@@ -146,15 +146,15 @@ export default function ComparablesPage() {
                   onChange={e => { setSearchQuery(e.target.value); setShowDropdown(true); }}
                   onFocus={() => setShowDropdown(true)}
                   placeholder="Search player name..."
-                  className="w-full px-4 py-3 rounded-sm bg-[var(--surface-dugout)] border border-border text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)] focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
+                  className="w-full px-4 py-3 rounded-sm bg-[var(--surface-dugout)] border border-[var(--border-vintage)] text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)] focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
                 />
                 {showDropdown && filtered.length > 0 && (
-                  <div className="absolute z-10 w-full mt-1 bg-[var(--surface-dugout)] border border-border rounded-sm shadow-lg max-h-64 overflow-y-auto">
+                  <div className="absolute z-10 w-full mt-1 bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm shadow-lg max-h-64 overflow-y-auto">
                     {filtered.map(p => (
                       <button
                         key={p.player_id}
                         onClick={() => selectPlayer(p)}
-                        className="w-full text-left px-4 py-3 hover:bg-[var(--surface-press-box)] transition-colors border-b border-border last:border-0"
+                        className="w-full text-left px-4 py-3 hover:bg-[var(--surface-press-box)] transition-colors border-b border-[var(--border-vintage)] last:border-0"
                       >
                         <span className="font-medium text-[var(--bsi-bone)]">{p.player_name}</span>
                         <span className="text-sm text-[rgba(196,184,165,0.35)] ml-2">{p.team} &middot; {p.conference}</span>
@@ -198,7 +198,7 @@ export default function ComparablesPage() {
                   <div className="overflow-x-auto">
                     <table className="w-full text-left">
                       <thead>
-                        <tr className="border-b border-border text-[rgba(196,184,165,0.35)] text-sm">
+                        <tr className="border-b border-[var(--border-vintage)] text-[rgba(196,184,165,0.35)] text-sm">
                           <th className="py-3 px-4">#</th>
                           <th className="py-3 px-4">Player</th>
                           <th className="py-3 px-4">Team</th>
@@ -210,7 +210,7 @@ export default function ComparablesPage() {
                       </thead>
                       <tbody>
                         {comparables.slice(0, 10).map((comp, i) => (
-                          <tr key={comp.player_id} className="border-b border-border hover:bg-[var(--surface-press-box)] transition-colors">
+                          <tr key={comp.player_id} className="border-b border-[var(--border-vintage)] hover:bg-[var(--surface-press-box)] transition-colors">
                             <td className="py-3 px-4 text-[rgba(196,184,165,0.35)]">{i + 1}</td>
                             <td className="py-3 px-4 font-medium text-[var(--bsi-bone)]">{comp.player_name}</td>
                             <td className="py-3 px-4 text-[var(--bsi-dust)]">{comp.team}</td>

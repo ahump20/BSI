@@ -134,7 +134,7 @@ export default function NILValuationPage() {
         </Section>
 
       {/* Live Stats Bar */}
-      <div className="bg-[var(--surface-dugout)] border-y border-border py-8">
+      <div className="bg-[var(--surface-dugout)] border-y border-[var(--border-vintage)] py-8">
         <Container>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <ScrollReveal>
@@ -187,7 +187,7 @@ export default function NILValuationPage() {
                       <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                           <thead>
-                            <tr className="border-b border-border text-[rgba(196,184,165,0.35)]">
+                            <tr className="border-b border-[var(--border-vintage)] text-[rgba(196,184,165,0.35)]">
                               <th className="text-left p-4 font-medium w-8">#</th>
                               <th className="text-left p-4 font-medium">Player</th>
                               <th className="text-left p-4 font-medium">Team</th>
@@ -331,11 +331,11 @@ export default function NILValuationPage() {
                         <div className="text-2xl font-bold text-[var(--bsi-primary)]">{sport.avgValue}</div>
                         <div className="text-xs text-[rgba(196,184,165,0.35)]">Average Value</div>
                       </div>
-                      <div className="border-t border-border pt-3">
+                      <div className="border-t border-[var(--border-vintage)] pt-3">
                         <div className="text-lg font-semibold text-[var(--bsi-bone)]">{sport.topValue}</div>
                         <div className="text-xs text-[rgba(196,184,165,0.35)]">Top Player</div>
                       </div>
-                      <div className="border-t border-border pt-3">
+                      <div className="border-t border-[var(--border-vintage)] pt-3">
                         <div className="text-sm text-[rgba(196,184,165,0.5)]">{sport.players} tracked</div>
                       </div>
                     </div>

@@ -45,7 +45,7 @@ const FEATURE_ARTICLES: FeatureArticle[] = [
 
 function TagFilterBar({ activeTag, onTagChange }: { activeTag: FilterTag; onTagChange: (tag: FilterTag) => void }) {
   return (
-    <Section padding="sm" className="border-b border-border sticky top-0 z-30 bg-[var(--surface-dugout)]/95 backdrop-blur-sm">
+    <Section padding="sm" className="border-b border-[var(--border-vintage)] sticky top-0 z-30 bg-[var(--surface-dugout)]/95 backdrop-blur-sm">
       <Container>
         <nav className="flex items-center gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1 py-1" aria-label="Filter articles by tag">
           {FILTER_TAGS.map((tag) => {
@@ -59,7 +59,7 @@ function TagFilterBar({ activeTag, onTagChange }: { activeTag: FilterTag; onTagC
                   border transition-all whitespace-nowrap
                   ${isActive
                     ? 'bg-[var(--bsi-primary)]/20 text-[var(--bsi-primary)] border-[var(--bsi-primary)]/40'
-                    : 'bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.35)] border-border hover:text-[var(--bsi-dust)] hover:border-[var(--border-vintage)]'
+                    : 'bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.35)] border-[var(--border-vintage)] hover:text-[var(--bsi-dust)] hover:border-[var(--border-vintage)]'
                   }
                 `}
                 aria-pressed={isActive}
@@ -90,7 +90,7 @@ export default function MLBEditorialPage() {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link href="/mlb" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">

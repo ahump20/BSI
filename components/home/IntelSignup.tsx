@@ -66,7 +66,7 @@ export function IntelSignup({ sport, onSignup }: IntelSignupProps = {}) {
 
   if (state === 'success') {
     return (
-      <div className="glass-default rounded-sm p-4 border border-[var(--bsi-primary)]/20 mb-4">
+      <div className="bg-[var(--surface-dugout)] rounded-sm p-4 border border-[var(--bsi-primary)]/20 mb-4">
         <p className="text-sm text-[var(--bsi-primary)] font-medium">You&apos;re in.</p>
         <p className="text-xs text-[rgba(196,184,165,0.35)] mt-1">Roster-market intelligence, delivered first.</p>
       </div>
@@ -74,7 +74,7 @@ export function IntelSignup({ sport, onSignup }: IntelSignupProps = {}) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="glass-default rounded-sm p-4 border border-[var(--border-vintage)] mb-4">
+    <form onSubmit={handleSubmit} className="bg-[var(--surface-dugout)] rounded-sm p-4 border border-[var(--border-vintage)] mb-4">
       <p className="text-sm font-display text-[var(--bsi-bone)] uppercase tracking-wide mb-3">
         Get Portal &amp; Draft Intel
       </p>
@@ -87,7 +87,7 @@ export function IntelSignup({ sport, onSignup }: IntelSignupProps = {}) {
           placeholder="you@email.com"
           required
           aria-label="Email address for intel signup"
-          className="flex-1 min-w-0 bg-[var(--surface-press-box)] border border-border rounded-sm px-3 py-2 text-sm text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)] focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-colors"
+          className="flex-1 min-w-0 bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm px-3 py-2 text-sm text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)] focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-colors"
         />
         <button
           type="submit"

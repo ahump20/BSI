@@ -279,7 +279,7 @@ export default function TexasWeek2RecapPage() {
       />
       <div>
         {/* ── Breadcrumb ── */}
-        <Section padding="sm" className="border-b border-border">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
@@ -754,7 +754,7 @@ export default function TexasWeek2RecapPage() {
 
                 {/* Matchup analysis */}
                 <div className="mb-8">
-                  <h4 className="font-display text-sm uppercase tracking-wider text-[rgba(196,184,165,0.5)] mb-4 pb-2 border-b border-border">
+                  <h4 className="font-display text-sm uppercase tracking-wider text-[rgba(196,184,165,0.5)] mb-4 pb-2 border-b border-[var(--border-vintage)]">
                     Matchup Analysis
                   </h4>
                   <div className="font-serif text-base text-[var(--bsi-dust)] leading-relaxed space-y-6">
@@ -789,7 +789,7 @@ export default function TexasWeek2RecapPage() {
 
                 {/* Other teams in the field */}
                 <div className="mb-8">
-                  <h4 className="font-display text-sm uppercase tracking-wider text-[rgba(196,184,165,0.5)] mb-4 pb-2 border-b border-border">
+                  <h4 className="font-display text-sm uppercase tracking-wider text-[rgba(196,184,165,0.5)] mb-4 pb-2 border-b border-[var(--border-vintage)]">
                     Also in the Field
                   </h4>
                   <div className="grid grid-cols-2 gap-3">

@@ -16,7 +16,7 @@ const variantClasses: Record<string, string> = {
   primary: 'bg-[var(--bsi-primary)] hover:brightness-110 text-white border-transparent',
   secondary: 'bg-transparent hover:bg-[var(--surface-press-box)] text-[var(--bsi-bone)] border-border',
   ghost: 'bg-transparent hover:bg-[var(--surface-press-box)] text-[var(--bsi-dust)] border-transparent',
-  outline: 'bg-transparent text-[var(--bsi-bone)] border-border hover:border-[var(--bsi-primary)] hover:text-[var(--bsi-primary)]',
+  outline: 'bg-transparent text-[var(--bsi-bone)] border-[var(--border-vintage)] hover:border-[var(--bsi-primary)] hover:text-[var(--bsi-primary)]',
 };
 
 const sizeClasses: Record<string, string> = {

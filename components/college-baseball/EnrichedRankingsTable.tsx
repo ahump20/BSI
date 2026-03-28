@@ -219,7 +219,7 @@ export function EnrichedRankingsTable({
               </table>
             </div>
           )}
-          <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
+          <div className="mt-4 pt-4 border-t border-[var(--border-vintage)] flex items-center justify-between">
             <div className="flex items-center gap-3">
               <DataSourceBadge source="D1Baseball / NCAA" timestamp={formatTimestamp(lastUpdated)} />
               {!isLive && !loading && !error && (

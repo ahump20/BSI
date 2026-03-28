@@ -353,7 +353,7 @@ export default function SavantHubPage() {
             )}
 
             {/* Tab navigation — immediate, no animation */}
-            <div className="flex items-center gap-0.5 border-b border-border mb-4 overflow-x-auto">
+            <div className="flex items-center gap-0.5 border-b border-[var(--border-vintage)] mb-4 overflow-x-auto">
               {TABS.map((tab) => (
                 <button
                   key={tab.key}
@@ -626,7 +626,7 @@ function FilterSelect({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         aria-label={`Filter by ${label.toLowerCase()}`}
-        className="bg-[var(--surface-press-box)] border border-border rounded-sm px-2.5 py-1.5 text-xs text-[rgba(196,184,165,0.5)] font-mono appearance-none cursor-pointer hover:border-[rgba(140,98,57,0.5)] transition-colors focus:outline-none focus:border-[var(--bsi-primary)]/40 focus:ring-1 focus:ring-[var(--bsi-primary)]/30"
+        className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm px-2.5 py-1.5 text-xs text-[rgba(196,184,165,0.5)] font-mono appearance-none cursor-pointer hover:border-[rgba(140,98,57,0.5)] transition-colors focus:outline-none focus:border-[var(--bsi-primary)]/40 focus:ring-1 focus:ring-[var(--bsi-primary)]/30"
       >
         {options.map(opt => (
           <option key={opt} value={opt} className="bg-[var(--surface-dugout)] text-[var(--bsi-bone)]">

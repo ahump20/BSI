@@ -425,7 +425,7 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
                 )}
                 <button
                   onClick={handleSignOut}
-                  className="px-3 py-1.5 text-xs text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-dust)] border border-border hover:border-[var(--border-vintage)] rounded-sm transition-colors"
+                  className="px-3 py-1.5 text-xs text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-dust)] border border-[var(--border-vintage)] hover:border-[var(--border-vintage)] rounded-sm transition-colors"
                 >
                   Sign Out
                 </button>

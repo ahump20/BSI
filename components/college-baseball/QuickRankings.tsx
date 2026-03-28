@@ -30,7 +30,7 @@ export function QuickRankings({ rankings, loading }: QuickRankingsProps) {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
             {Array.from({ length: 10 }, (_, i) => (
-              <div key={i} className="h-12 bg-[var(--surface-press-box)] border border-border rounded-sm animate-pulse" />
+              <div key={i} className="h-12 bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm animate-pulse" />
             ))}
           </div>
         </Container>
@@ -60,7 +60,7 @@ export function QuickRankings({ rankings, loading }: QuickRankingsProps) {
             {top10.map((entry) => {
               const meta = entry.slug ? teamMetadata[entry.slug] : null;
               const inner = (
-                <div className="flex items-center gap-2.5 bg-[var(--surface-press-box)] border border-border rounded-sm px-3 py-2.5 hover:border-[var(--bsi-primary)]/30 transition-all group">
+                <div className="flex items-center gap-2.5 bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm px-3 py-2.5 hover:border-[var(--bsi-primary)]/30 transition-all group">
                   <span className="text-[var(--bsi-primary)] font-mono text-xs font-bold w-5 text-right shrink-0">
                     {entry.rank}
                   </span>

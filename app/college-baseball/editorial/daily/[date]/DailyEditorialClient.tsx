@@ -131,13 +131,13 @@ export default function DailyEditorialClient() {
                 </article>
 
                 {data.teams && (
-                  <div className="mt-8 pt-4 border-t border-border">
+                  <div className="mt-8 pt-4 border-t border-[var(--border-vintage)]">
                     <p className="text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider mb-2">Teams mentioned</p>
                     <div className="flex flex-wrap gap-2">
                       {data.teams.split(',').map((team) => (
                         <span
                           key={team.trim()}
-                          className="px-2.5 py-1 bg-[var(--surface-press-box)] border border-border rounded-sm text-[rgba(196,184,165,0.5)] text-xs"
+                          className="px-2.5 py-1 bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm text-[rgba(196,184,165,0.5)] text-xs"
                         >
                           {team.trim()}
                         </span>

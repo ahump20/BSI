@@ -130,7 +130,7 @@ export default function DealAnalyzerPage() {
                   <div>
                     <label className="block text-sm font-semibold text-[var(--bsi-dust)] mb-1">Player Name</label>
                     <input type="text" value={input.playerName} onChange={e => update({ playerName: e.target.value })}
-                      placeholder="e.g. John Smith" className="w-full p-2.5 rounded-sm bg-[var(--surface-dugout)] border border-border text-[var(--bsi-bone)] text-sm focus:border-[var(--bsi-primary)] focus:outline-none" />
+                      placeholder="e.g. John Smith" className="w-full p-2.5 rounded-sm bg-[var(--surface-dugout)] border border-[var(--border-vintage)] text-[var(--bsi-bone)] text-sm focus:border-[var(--bsi-primary)] focus:outline-none" />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-[var(--bsi-dust)] mb-1">Sport</label>
@@ -158,24 +158,24 @@ export default function DealAnalyzerPage() {
                     <div>
                       <label className="block text-sm font-semibold text-[var(--bsi-dust)] mb-1">Deal Amount ($)</label>
                       <input type="number" value={input.dealAmount} onChange={e => update({ dealAmount: Number(e.target.value) })}
-                        className="w-full p-2.5 rounded-sm bg-[var(--surface-dugout)] border border-border text-[var(--bsi-bone)] text-sm focus:border-[var(--bsi-primary)] focus:outline-none" />
+                        className="w-full p-2.5 rounded-sm bg-[var(--surface-dugout)] border border-[var(--border-vintage)] text-[var(--bsi-bone)] text-sm focus:border-[var(--bsi-primary)] focus:outline-none" />
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-[var(--bsi-dust)] mb-1">Duration (months)</label>
                       <input type="number" value={input.durationMonths} onChange={e => update({ durationMonths: Number(e.target.value) })}
-                        className="w-full p-2.5 rounded-sm bg-[var(--surface-dugout)] border border-border text-[var(--bsi-bone)] text-sm focus:border-[var(--bsi-primary)] focus:outline-none" />
+                        className="w-full p-2.5 rounded-sm bg-[var(--surface-dugout)] border border-[var(--border-vintage)] text-[var(--bsi-bone)] text-sm focus:border-[var(--bsi-primary)] focus:outline-none" />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-semibold text-[var(--bsi-dust)] mb-1">Guaranteed (%)</label>
                       <input type="number" min={0} max={100} value={input.guaranteedPct} onChange={e => update({ guaranteedPct: Number(e.target.value) })}
-                        className="w-full p-2.5 rounded-sm bg-[var(--surface-dugout)] border border-border text-[var(--bsi-bone)] text-sm focus:border-[var(--bsi-primary)] focus:outline-none" />
+                        className="w-full p-2.5 rounded-sm bg-[var(--surface-dugout)] border border-[var(--border-vintage)] text-[var(--bsi-bone)] text-sm focus:border-[var(--bsi-primary)] focus:outline-none" />
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-[var(--bsi-dust)] mb-1">Performance Bonus ($)</label>
                       <input type="number" value={input.performanceBonus} onChange={e => update({ performanceBonus: Number(e.target.value) })}
-                        className="w-full p-2.5 rounded-sm bg-[var(--surface-dugout)] border border-border text-[var(--bsi-bone)] text-sm focus:border-[var(--bsi-primary)] focus:outline-none" />
+                        className="w-full p-2.5 rounded-sm bg-[var(--surface-dugout)] border border-[var(--border-vintage)] text-[var(--bsi-bone)] text-sm focus:border-[var(--bsi-primary)] focus:outline-none" />
                     </div>
                   </div>
                   <Button variant="primary" className="w-full bg-[var(--bsi-primary)]" onClick={handleAnalyze}>

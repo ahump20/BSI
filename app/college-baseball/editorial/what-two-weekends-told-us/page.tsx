@@ -170,7 +170,7 @@ export default function WhatTwoWeekendsToldUsPage() {
         <Section padding="lg" background="charcoal">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mb-6 pb-2 border-b border-border">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mb-6 pb-2 border-b border-[var(--border-vintage)]">
                 Signal 1: Eight Undefeated Teams Is Not Eight Elite Teams
               </h2>
               <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
@@ -193,7 +193,7 @@ export default function WhatTwoWeekendsToldUsPage() {
                   </thead>
                   <tbody>
                     {UNDEFEATED.map((t) => (
-                      <tr key={t.team} className="border-b border-border">
+                      <tr key={t.team} className="border-b border-[var(--border-vintage)]">
                         <td className="py-3 px-3 text-[var(--bsi-bone)] text-sm font-mono">{t.rank}</td>
                         <td className="py-3 px-3 text-[var(--bsi-bone)] text-sm font-semibold">{t.team}</td>
                         <td className="py-3 px-3 text-success text-sm font-bold">{t.record}</td>
@@ -253,7 +253,7 @@ export default function WhatTwoWeekendsToldUsPage() {
         <Section padding="lg" background="charcoal">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mb-6 pb-2 border-b border-border">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mb-6 pb-2 border-b border-[var(--border-vintage)]">
                 Signal 3: The Transfer Portal Decided Week 1 Before Week 1 Happened
               </h2>
               <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
@@ -297,7 +297,7 @@ export default function WhatTwoWeekendsToldUsPage() {
         <Section padding="lg" background="charcoal">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mb-6 pb-2 border-b border-border">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mb-6 pb-2 border-b border-[var(--border-vintage)]">
                 What Was Noise
               </h2>
               <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">

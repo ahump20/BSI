@@ -173,7 +173,7 @@ export function IntelStream({
               placeholder="Ask about this game…"
               aria-label="Ask a question about this game"
               disabled={isStreaming}
-              className="flex-1 bg-[var(--surface-press-box)] border border-border rounded-sm px-3 py-2 text-sm text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)] focus:outline-none focus:border-[var(--bsi-primary)]/50 disabled:opacity-40 transition-colors"
+              className="flex-1 bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm px-3 py-2 text-sm text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)] focus:outline-none focus:border-[var(--bsi-primary)]/50 disabled:opacity-40 transition-colors"
             />
             <button
               type="submit"

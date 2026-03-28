@@ -20,7 +20,7 @@ export function IntelSearch({ query, onChange, onFocus, className = '' }: IntelS
         onFocus={onFocus}
         placeholder="Search teams, games, signals... (press /)"
         aria-label="Search teams, games, and signals"
-        className="h-9 w-full rounded-sm border border-border bg-[var(--surface-press-box)] pl-8 pr-3 font-mono text-[12px] text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)] outline-none transition-colors focus:border-[rgba(140,98,57,0.5)] focus:bg-[var(--surface-press-box)]"
+        className="h-9 w-full rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-press-box)] pl-8 pr-3 font-mono text-[12px] text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)] outline-none transition-colors focus:border-[rgba(140,98,57,0.5)] focus:bg-[var(--surface-press-box)]"
       />
     </div>
   );

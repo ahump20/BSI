@@ -111,7 +111,7 @@ export default function MarketTrendsPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-border text-[rgba(196,184,165,0.35)]">
+                      <tr className="border-b border-[var(--border-vintage)] text-[rgba(196,184,165,0.35)]">
                         <th className="text-left p-4 font-medium">Sport</th>
                         <th className="text-right p-4 font-medium">Market Share</th>
                         <th className="text-right p-4 font-medium">Avg Deal</th>
@@ -176,7 +176,7 @@ export default function MarketTrendsPage() {
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="border-b border-border text-[rgba(196,184,165,0.35)]">
+                        <tr className="border-b border-[var(--border-vintage)] text-[rgba(196,184,165,0.35)]">
                           <th className="text-left p-4 font-medium">Conference</th>
                           <th className="text-right p-4 font-medium">Players</th>
                           <th className="text-right p-4 font-medium">Avg Index</th>

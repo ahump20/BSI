@@ -79,7 +79,7 @@ export function NILDashboardClient() {
           </p>
 
           {/* At-a-glance headline stats */}
-          <div className="flex flex-wrap justify-center gap-8 md:gap-12 py-4 px-6 rounded-sm bg-[var(--surface-press-box)] border border-border max-w-2xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-8 md:gap-12 py-4 px-6 rounded-sm bg-[var(--surface-press-box)] border border-[var(--border-vintage)] max-w-2xl mx-auto">
             <HeadlineStat label="Year 4 Market" value="$2.26B" accent />
             <div className="w-px bg-border hidden md:block" />
             <HeadlineStat label="Active Collectives" value="200+" />

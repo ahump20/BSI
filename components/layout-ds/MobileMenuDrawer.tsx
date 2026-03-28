@@ -271,7 +271,7 @@ export function MobileMenuDrawer({
             role="dialog"
             aria-modal="true"
             aria-label="Navigation menu"
-            className="fixed top-0 right-0 bottom-0 z-50 w-[85vw] max-w-sm bg-[var(--surface-scoreboard)]/95 backdrop-blur-xl border-l border-border overflow-y-auto"
+            className="fixed top-0 right-0 bottom-0 z-50 w-[85vw] max-w-sm bg-[var(--surface-scoreboard)]/95 backdrop-blur-xl border-l border-[var(--border-vintage)] overflow-y-auto"
             style={{
               paddingBottom: 'env(safe-area-inset-bottom, 0px)',
               x: dragX,

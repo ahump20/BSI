@@ -28,7 +28,7 @@ function StrikeZone({
   size?: string;
 }) {
   return (
-    <div className="relative w-48 h-60 bg-[var(--surface-dugout)] rounded-sm border border-border">
+    <div className="relative w-48 h-60 bg-[var(--surface-dugout)] rounded-sm border border-[var(--border-vintage)]">
       {/* Zone outline */}
       <div className="absolute inset-6 border border-[rgba(140,98,57,0.5)] rounded-sm" />
       {/* Pitch dots */}

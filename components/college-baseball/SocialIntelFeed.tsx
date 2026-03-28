@@ -151,7 +151,7 @@ function SignalCard({ signal }: { signal: SocialSignal }) {
     <div
       className={`
         group relative rounded-sm border p-4 transition-all duration-200
-        bg-[#111111] border-border
+        bg-[#111111]border-[var(--border-vintage)]
         hover:border-[#BF5700]/40 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30
         ${signal.post_url ? 'cursor-pointer' : ''}
       `}
@@ -354,7 +354,7 @@ export function SocialIntelFeed() {
     : [], [data, activeTab]);
 
   return (
-    <div className="rounded-sm border border-border bg-[#0D0D0D] overflow-hidden">
+    <div className="rounded-sm border border-[var(--border-vintage)] bg-[#0D0D0D] overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-5 pt-5 pb-0">
         <div className="flex items-center gap-2.5">
@@ -393,7 +393,7 @@ export function SocialIntelFeed() {
       {/* Tab bar */}
       <div
         role="tablist"
-        className="flex border-b border-border overflow-x-auto px-2 mt-3 scrollbar-none"
+        className="flex border-b border-[var(--border-vintage)] overflow-x-auto px-2 mt-3 scrollbar-none"
         aria-label="Social signal type filter"
       >
         {TABS.map(tab => (
@@ -435,7 +435,7 @@ export function SocialIntelFeed() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="px-3 py-1.5 text-xs font-medium bg-surface border border-border rounded-sm text-[var(--bsi-dust)] hover:text-[#BF5700] hover:border-[#BF5700]/30 transition-all"
+                  className="px-3 py-1.5 text-xs font-medium bg-surface border border-[var(--border-vintage)] rounded-sm text-[var(--bsi-dust)] hover:text-[#BF5700] hover:border-[#BF5700]/30 transition-all"
                 >
                   {link.label}
                 </Link>

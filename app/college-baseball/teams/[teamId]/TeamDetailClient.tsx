@@ -508,7 +508,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
         </div>
 
         {/* Tabs */}
-        <Section padding="none" className="bg-[var(--surface-dugout)] border-b border-border sticky top-16 z-30">
+        <Section padding="none" className="bg-[var(--surface-dugout)] border-b border-[var(--border-vintage)] sticky top-16 z-30">
           <Container>
             <div className="flex gap-1">
               {(['overview', 'roster', 'schedule', 'advanced'] as const).map((tab) => (
@@ -1099,7 +1099,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   return (
                     <ScrollReveal direction="up" className="mt-6">
                       <Card padding="none" className="overflow-hidden">
-                        <div className="px-4 py-3 border-b border-border flex items-center justify-between" style={{ backgroundColor: withAlpha(accent, 0.08) }}>
+                        <div className="px-4 py-3 border-b border-[var(--border-vintage)] flex items-center justify-between" style={{ backgroundColor: withAlpha(accent, 0.08) }}>
                           <h3 className="font-display text-base font-bold uppercase tracking-wide text-[var(--bsi-bone)]">
                             NIL Valuation — Roster
                           </h3>
@@ -1169,7 +1169,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="border-b border-border text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider">
+                          <tr className="border-b border-[var(--border-vintage)] text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider">
                             <th className="text-left px-4 py-3">Date</th>
                             <th className="text-left px-4 py-3">Opponent</th>
                             <th className="text-center px-4 py-3">Result</th>
@@ -1305,14 +1305,14 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                     return (
                       <ScrollReveal key={group} direction="up">
                         <Card padding="none" className="overflow-hidden">
-                          <div className="px-4 py-3 border-b border-border" style={{ backgroundColor: withAlpha(accent, 0.05) }}>
+                          <div className="px-4 py-3 border-b border-[var(--border-vintage)]" style={{ backgroundColor: withAlpha(accent, 0.05) }}>
                             <h3 className="font-display text-sm font-bold uppercase tracking-wider" style={{ color: accent }}>{group}</h3>
                             <span className="text-[rgba(196,184,165,0.35)] text-xs">{groupPlayers.length} player{groupPlayers.length !== 1 ? 's' : ''}</span>
                           </div>
                           <div className="overflow-x-auto">
                             <table className="w-full text-sm">
                               <thead>
-                                <tr className="border-b border-border text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider">
+                                <tr className="border-b border-[var(--border-vintage)] text-[rgba(196,184,165,0.35)] text-xs uppercase tracking-wider">
                                   <th className="text-left px-4 py-2 sticky left-0 bg-[var(--surface-dugout)]">Player</th>
                                   <th className="text-left px-3 py-2">Pos</th>
                                   {isPitcherGroup ? (

@@ -271,7 +271,7 @@ export default function TexasWeek1RecapPage() {
       />
       <div>
         {/* ── Breadcrumb ── */}
-        <Section padding="sm" className="border-b border-border">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
@@ -732,7 +732,7 @@ export default function TexasWeek1RecapPage() {
 
                 {/* MSU key players */}
                 <div className="mb-8">
-                  <h4 className="font-display text-sm uppercase tracking-wider text-[rgba(196,184,165,0.5)] mb-4 pb-2 border-b border-border">
+                  <h4 className="font-display text-sm uppercase tracking-wider text-[rgba(196,184,165,0.5)] mb-4 pb-2 border-b border-[var(--border-vintage)]">
                     Spartans to Watch
                   </h4>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

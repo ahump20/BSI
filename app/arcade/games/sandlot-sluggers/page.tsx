@@ -11,7 +11,7 @@ const SANDLOT_GAME_PATH = '/games/sandlot-sluggers/index.html';
 export default function SandlotSluggersPage() {
   return (
     <div className="min-h-[calc(100dvh-64px)] bg-[var(--surface-scoreboard)] text-[var(--bsi-bone)]">
-      <div className="border-b border-border bg-[var(--surface-scoreboard)]/95 backdrop-blur">
+      <div className="border-b border-[var(--border-vintage)] bg-[var(--surface-scoreboard)]/95 backdrop-blur">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--bsi-primary)]/80">Arcade</p>
@@ -34,7 +34,7 @@ export default function SandlotSluggersPage() {
       </div>
 
       <div className="mx-auto grid w-full max-w-6xl flex-1 gap-4 px-4 py-4 lg:grid-cols-[260px_minmax(0,1fr)] lg:py-5">
-        <aside className="rounded-sm border border-border bg-[var(--surface-scoreboard)]/70 p-4">
+        <aside className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-scoreboard)]/70 p-4">
           <h2 className="font-display text-sm uppercase tracking-[0.16em] text-[var(--bsi-bone)]">
             Before You Swing
           </h2>
@@ -58,7 +58,7 @@ export default function SandlotSluggersPage() {
           </div>
         </aside>
 
-        <div className="overflow-hidden rounded-sm border border-border bg-black shadow-[0_18px_60px_rgba(0,0,0,0.45)]">
+        <div className="overflow-hidden rounded-sm border border-[var(--border-vintage)] bg-black shadow-[0_18px_60px_rgba(0,0,0,0.45)]">
           <iframe
             src={SANDLOT_GAME_PATH}
             title="Sandlot Sluggers"

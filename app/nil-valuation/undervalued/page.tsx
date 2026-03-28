@@ -154,7 +154,7 @@ export default function UndervaluedPage() {
                             </div>
                           </div>
 
-                          <div className="mt-4 pt-3 border-t border-border flex items-center justify-between">
+                          <div className="mt-4 pt-3 border-t border-[var(--border-vintage)] flex items-center justify-between">
                             <span className="text-sm text-[rgba(196,184,165,0.35)]">Est. Value</span>
                             <span className="text-lg font-bold text-[var(--bsi-primary)]">{formatValue(player.estimated_mid)}</span>
                           </div>

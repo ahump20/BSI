@@ -34,7 +34,7 @@ export function DataSourcePanel({ sources, lastUpdated, meta, refreshInterval, c
   const effectiveTimezone = normalized?.timezone ?? 'America/Chicago';
 
   return (
-    <div className={`bg-[var(--surface-press-box)] border border-border rounded-sm p-4 ${className}`}>
+    <div className={`bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4 ${className}`}>
       <div className="flex items-center gap-2 mb-3">
         <svg viewBox="0 0 24 24" className="w-4 h-4 text-[rgba(196,184,165,0.35)]" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
@@ -84,7 +84,7 @@ export function BottomNav({ items, className = '' }: { items: BottomNavItem[]; c
 
   return (
     <nav
-      className={`fixed bottom-0 left-0 right-0 z-40 bg-[var(--surface-scoreboard)]/95 backdrop-blur-md border-t border-border ${className}`}
+      className={`fixed bottom-0 left-0 right-0 z-40 bg-[var(--surface-scoreboard)]/95 backdrop-blur-md border-t border-[var(--border-vintage)] ${className}`}
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       role="navigation"
       aria-label="Bottom navigation"
@@ -146,7 +146,7 @@ export function CitationFooter({ sources, source, fetchedAt, meta, additionalSou
   const resolvedSources = sources ?? (normalized?.source ? [{ name: getDataSourceLabel(normalized), url: '', fetchedAt: normalized.lastUpdated ?? '' }] : []);
   if (resolvedSources.length === 0) return null;
   return (
-    <footer className={`border-t border-border pt-4 mt-8 ${className}`}>
+    <footer className={`border-t border-[var(--border-vintage)] pt-4 mt-8 ${className}`}>
       <p className="text-xs text-[rgba(196,184,165,0.35)] mb-2">Sources</p>
       <div className="flex flex-wrap gap-2">
         {resolvedSources.map((s) => (

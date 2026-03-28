@@ -117,7 +117,7 @@ export default function HAVFMethodologyPage() {
         }}
       />
       <div>
-        <Section padding="sm" className="border-b border-border">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <Breadcrumb
               items={[

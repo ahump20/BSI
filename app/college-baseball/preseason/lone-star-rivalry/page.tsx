@@ -300,7 +300,7 @@ export default function LoneStarRivalryPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-border">
+                      <tr className="border-b border-[var(--border-vintage)]">
                         <th className="text-left py-3 text-[rgba(196,184,165,0.5)] font-medium">Year</th>
                         <th className="text-left py-3 text-[rgba(196,184,165,0.5)] font-medium">Winner</th>
                         <th className="text-left py-3 text-[rgba(196,184,165,0.5)] font-medium">Score</th>

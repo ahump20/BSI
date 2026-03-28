@@ -176,7 +176,7 @@ export default function DraftLeveragePage() {
                         {(grouped[q.key] || []).length > 0 ? (
                           <div className="space-y-2">
                             {(grouped[q.key] || []).slice(0, 8).map(p => (
-                              <div key={p.player_id} className="flex items-center justify-between py-2 border-b border-border/30 last:border-0">
+                              <div key={p.player_id} className="flex items-center justify-between py-2 border-b border-[rgba(140,98,57,0.09)] last:border-0">
                                 <div>
                                   <span className="text-sm font-semibold text-[var(--bsi-bone)]">{p.player_name}</span>
                                   <span className="text-xs text-[rgba(196,184,165,0.35)] ml-2">{p.team}</span>

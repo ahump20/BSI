@@ -157,7 +157,7 @@ export default function MMITrendingPage() {
                   {methodologyWeights.map((w) => (
                     <div
                       key={w.abbr}
-                      className="bg-[var(--surface-press-box)] border border-border rounded-sm p-4"
+                      className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-4"
                     >
                       <div className="flex items-baseline gap-2 mb-1">
                         <span className="font-mono text-[var(--bsi-primary)] font-bold text-lg">

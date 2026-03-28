@@ -51,7 +51,7 @@ export function FeedbackButton() {
       </button>
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={(e) => { if (e.target === e.currentTarget) setOpen(false); }}>
-          <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="feedback-heading" className="bg-[var(--surface-dugout)] border border-border rounded-sm p-6 w-full max-w-md">
+          <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="feedback-heading" className="bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm p-6 w-full max-w-md">
             {submitted ? (
               <div className="text-center py-8"><div aria-hidden="true" className="text-4xl mb-3">&#10003;</div><p className="text-[var(--bsi-bone)] font-medium">Thanks for your feedback!</p></div>
             ) : (

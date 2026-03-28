@@ -56,7 +56,7 @@ export default function AdminDashboardPage() {
             <div className="max-w-sm mx-auto">
               <Card padding="lg" className="text-center">
                 <h1 className="text-xl font-bold text-[var(--bsi-bone)] mb-4">Admin Access</h1>
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && login()} placeholder="Password" className="w-full bg-[var(--surface-dugout)] border border-border rounded-sm px-3 py-2 text-sm text-[var(--bsi-bone)] mb-4 focus:outline-none focus:border-[var(--bsi-primary)]" />
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && login()} placeholder="Password" className="w-full bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm px-3 py-2 text-sm text-[var(--bsi-bone)] mb-4 focus:outline-none focus:border-[var(--bsi-primary)]" />
                 <button onClick={login} className="w-full py-2.5 bg-[var(--bsi-primary)] text-white rounded-sm font-medium">Enter</button>
               </Card>
             </div>

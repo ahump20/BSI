@@ -59,7 +59,7 @@ export default function Weekend3PreviewPage() {
       />
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
@@ -448,14 +448,14 @@ export default function Weekend3PreviewPage() {
         </BSIVerdict>
 
         {/* Attribution */}
-        <Section padding="md" className="border-t border-border">
+        <Section padding="md" className="border-t border-[var(--border-vintage)]">
           <Container>
             <div className="max-w-3xl mx-auto">
               <DataSourceBadge
                 source="D1Baseball / Baseball America / NCAA.com / Globe Life Field"
                 timestamp="February 25, 2026 — 10:00 AM CT"
               />
-              <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
+              <div className="flex items-center justify-between mt-8 pt-6 border-t border-[var(--border-vintage)]">
                 <Link
                   href="/college-baseball/editorial"
                   className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors text-sm"

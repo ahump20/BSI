@@ -69,7 +69,7 @@ export function MetricExplainer({
       </svg>
 
       {open && (
-        <span className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 sm:w-64 p-3 rounded-sm bg-[var(--surface-dugout)] border border-border shadow-xl pointer-events-auto">
+        <span className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 sm:w-64 p-3 rounded-sm bg-[var(--surface-dugout)] border border-[var(--border-vintage)] shadow-xl pointer-events-auto">
           <span className="block text-xs font-mono text-[var(--bsi-primary)] font-bold mb-1">
             {def.abbr}
           </span>

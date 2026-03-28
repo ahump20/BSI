@@ -115,7 +115,7 @@ export function SportLeaders({ sport, className = '' }: SportLeadersProps) {
   }, [sport, config]);
 
   return (
-    <div className={`bg-[var(--surface-press-box)] border border-border rounded-sm p-6 ${className}`}>
+    <div className={`bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-6 ${className}`}>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-[var(--bsi-bone)]">{config.title}</h3>
         <Link

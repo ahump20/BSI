@@ -370,7 +370,7 @@ export default function PlayerDetailClient() {
                     className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm border transition-colors cursor-pointer ${
                       watched
                         ? 'bg-[var(--bsi-primary)]/15 border-[var(--bsi-primary)]/30 text-[var(--bsi-primary)]'
-                        : 'bg-transparent border-border hover:border-[var(--bsi-primary)]/30 text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)]'
+                        : 'bg-transparent border-[var(--border-vintage)] hover:border-[var(--bsi-primary)]/30 text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)]'
                     }`}
                     aria-label={watched ? 'Remove from watchlist' : 'Add to watchlist'}
                   >
@@ -400,7 +400,7 @@ export default function PlayerDetailClient() {
               const tierInfo = NIL_TIER_COLORS[nilPlayer.tier] || NIL_TIER_COLORS.developmental;
               return (
                 <Card padding="none" className="mb-6 overflow-hidden">
-                  <div className="px-4 py-3 bg-gradient-to-r from-[#BF5700]/15 to-transparent border-b border-border">
+                  <div className="px-4 py-3 bg-gradient-to-r from-[#BF5700]/15 to-transparent border-b border-[var(--border-vintage)]">
                     <div className="flex items-center justify-between">
                       <h2 className="font-display text-lg font-bold text-[var(--bsi-bone)] uppercase tracking-wide">
                         NIL Valuation
@@ -465,7 +465,7 @@ export default function PlayerDetailClient() {
               if (!showCard) return null;
               return (
                 <Card padding="none" className="mb-6 overflow-hidden">
-                  <div className="px-4 py-3 bg-gradient-to-r from-[#BF5700]/10 to-transparent border-b border-border">
+                  <div className="px-4 py-3 bg-gradient-to-r from-[#BF5700]/10 to-transparent border-b border-[var(--border-vintage)]">
                     <h2 className="font-display text-sm font-bold text-[var(--bsi-bone)] uppercase tracking-wide">
                       Draft &amp; Portal Context
                     </h2>
@@ -493,7 +493,7 @@ export default function PlayerDetailClient() {
                     {draftProfile && (
                       <Link
                         href={`/college-baseball/editorial/${draftProfile.slug}`}
-                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border border-border hover:border-[var(--bsi-primary)]/40 text-[var(--bsi-dust)] hover:text-[var(--bsi-primary)] transition-colors text-xs font-medium group"
+                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border border-[var(--border-vintage)] hover:border-[var(--bsi-primary)]/40 text-[var(--bsi-dust)] hover:text-[var(--bsi-primary)] transition-colors text-xs font-medium group"
                       >
                         <span className="text-[var(--bsi-primary)] font-semibold uppercase tracking-wider">Draft Profile</span>
                         <span className="truncate max-w-[200px]">{draftProfile.title}</span>
@@ -508,7 +508,7 @@ export default function PlayerDetailClient() {
             {/* HAV-F Analytics Section */}
             {havfPlayer && (
               <Card padding="none" className="mb-6 overflow-hidden">
-                <div className="px-4 py-3 bg-gradient-to-r from-burnt-orange/20 to-transparent border-b border-border">
+                <div className="px-4 py-3 bg-gradient-to-r from-burnt-orange/20 to-transparent border-b border-[var(--border-vintage)]">
                   <div className="flex items-center justify-between">
                     <h2 className="font-display text-lg font-bold text-[var(--bsi-bone)] uppercase tracking-wide">
                       HAV-F Evaluation
@@ -636,7 +636,7 @@ export default function PlayerDetailClient() {
                               </tr>
                             </thead>
                             <tbody>
-                              <tr className="border-b border-border">
+                              <tr className="border-b border-[var(--border-vintage)]">
                                 <td className="py-3 px-3 text-center text-[var(--bsi-bone)]">{stats.batting.games}</td>
                                 <td className="py-3 px-3 text-center text-[var(--bsi-bone)]">{stats.batting.atBats}</td>
                                 <td className="py-3 px-3 text-center text-[var(--bsi-bone)]">{stats.batting.runs}</td>
@@ -675,7 +675,7 @@ export default function PlayerDetailClient() {
                               </tr>
                             </thead>
                             <tbody>
-                              <tr className="border-b border-border">
+                              <tr className="border-b border-[var(--border-vintage)]">
                                 <td className="py-3 px-3 text-center text-[var(--bsi-bone)]">{stats.pitching.games}</td>
                                 <td className="py-3 px-3 text-center text-[var(--bsi-bone)]">{stats.pitching.gamesStarted}</td>
                                 <td className="py-3 px-3 text-center text-[var(--bsi-success)] font-bold">{stats.pitching.wins}</td>
@@ -719,7 +719,7 @@ export default function PlayerDetailClient() {
                             </thead>
                             <tbody>
                               {gameLogGames.filter((g) => g.batting).map((g) => (
-                                <tr key={`bat-${g.gameId}`} className="border-b border-border hover:bg-[var(--surface-press-box)]/50 transition-colors">
+                                <tr key={`bat-${g.gameId}`} className="border-b border-[var(--border-vintage)] hover:bg-[var(--surface-press-box)]/50 transition-colors">
                                   <td className="py-2 px-2 text-center text-[var(--bsi-dust)] text-xs whitespace-nowrap">{g.date}</td>
                                   <td className="py-2 px-2 text-center text-[var(--bsi-bone)] text-xs whitespace-nowrap">
                                     {g.isHome ? 'vs' : '@'} {g.opponent || '—'}
@@ -747,7 +747,7 @@ export default function PlayerDetailClient() {
                         {gameLogGames.some((g) => g.pitching) && (
                           <>
                             {gameLogGames.some((g) => g.batting) && (
-                              <div className="px-4 py-2 bg-[var(--surface-press-box)] border-y border-border">
+                              <div className="px-4 py-2 bg-[var(--surface-press-box)] border-y border-[var(--border-vintage)]">
                                 <span className="text-xs text-[rgba(196,184,165,0.35)] uppercase tracking-widest">Pitching</span>
                               </div>
                             )}
@@ -761,7 +761,7 @@ export default function PlayerDetailClient() {
                               </thead>
                               <tbody>
                                 {gameLogGames.filter((g) => g.pitching).map((g) => (
-                                  <tr key={`pitch-${g.gameId}`} className="border-b border-border hover:bg-[var(--surface-press-box)]/50 transition-colors">
+                                  <tr key={`pitch-${g.gameId}`} className="border-b border-[var(--border-vintage)] hover:bg-[var(--surface-press-box)]/50 transition-colors">
                                     <td className="py-2 px-2 text-center text-[var(--bsi-dust)] text-xs whitespace-nowrap">{g.date}</td>
                                     <td className="py-2 px-2 text-center text-[var(--bsi-bone)] text-xs whitespace-nowrap">
                                       {g.isHome ? 'vs' : '@'} {g.opponent || '—'}
@@ -802,7 +802,7 @@ export default function PlayerDetailClient() {
                 </h2>
                 <Link
                   href={`/college-baseball/editorial/${draftProfile.slug}`}
-                  className="block p-3 rounded-sm border border-border hover:border-[var(--bsi-primary)]/40 transition-colors group"
+                  className="block p-3 rounded-sm border border-[var(--border-vintage)] hover:border-[var(--bsi-primary)]/40 transition-colors group"
                 >
                   <div className="flex items-center justify-between">
                     <div>
@@ -830,7 +830,7 @@ export default function PlayerDetailClient() {
                       href={hl.videoUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block p-3 rounded-sm border border-border hover:border-[var(--bsi-primary)]/40 transition-colors group"
+                      className="block p-3 rounded-sm border border-[var(--border-vintage)] hover:border-[var(--bsi-primary)]/40 transition-colors group"
                     >
                       <div className="flex items-center gap-3">
                         {hl.thumbnailUrl && (

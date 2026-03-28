@@ -78,7 +78,7 @@ export function MyTeamsPanel({ teamSlugs }: MyTeamsPanelProps) {
         <Link
           key={team.slug}
           href={`/college-baseball/teams/${team.slug}`}
-          className="flex-shrink-0 flex items-center gap-3 px-4 py-3 bg-[var(--surface-press-box)] border border-border rounded-sm hover:border-[var(--bsi-primary)]/40 transition-all group min-w-[160px]"
+          className="flex-shrink-0 flex items-center gap-3 px-4 py-3 bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm hover:border-[var(--bsi-primary)]/40 transition-all group min-w-[160px]"
         >
           <Image
             src={team.logo}

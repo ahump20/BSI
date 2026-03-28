@@ -75,7 +75,7 @@ export function CiteWidget({ title, path, date = '2026-02-17', author = 'Austin 
               className={`px-2.5 py-1 rounded-sm text-[10px] font-semibold uppercase tracking-wider border transition-all ${
                 format === f
                   ? 'bg-[var(--bsi-primary)]/20 text-[var(--bsi-primary)] border-[var(--bsi-primary)]/30'
-                  : 'bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.35)] border-border hover:text-[var(--bsi-dust)]'
+                  : 'bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.35)] border-[var(--border-vintage)] hover:text-[var(--bsi-dust)]'
               }`}
             >
               {f === 'apa' ? 'APA' : 'BibTeX'}
@@ -88,7 +88,7 @@ export function CiteWidget({ title, path, date = '2026-02-17', author = 'Austin 
       </pre>
       <button
         onClick={handleCopy}
-        className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-semibold bg-[var(--surface-press-box)] border border-border text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-dust)] hover:border-[rgba(140,98,57,0.5)] transition-all"
+        className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-semibold bg-[var(--surface-press-box)] border border-[var(--border-vintage)] text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-dust)] hover:border-[rgba(140,98,57,0.5)] transition-all"
       >
         {copied ? (
           <>

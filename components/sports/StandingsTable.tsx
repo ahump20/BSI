@@ -133,8 +133,8 @@ export function StandingsTable({
   })();
 
   return (
-    <div className={`bg-[var(--surface-press-box)] border border-border rounded-sm ${className}`}>
-      <div className="px-6 py-4 border-b border-border flex items-center justify-between">
+    <div className={`bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm ${className}`}>
+      <div className="px-6 py-4 border-b border-[var(--border-vintage)] flex items-center justify-between">
         <h3 className="text-lg font-semibold text-[var(--bsi-bone)]">Standings</h3>
         {groupBy === 'none' && (
           <span className="text-xs text-[rgba(196,184,165,0.35)] uppercase tracking-wider">Top {limit}</span>
@@ -166,7 +166,7 @@ export function StandingsTable({
               )}
               <table className="w-full" aria-label={`${group.label || sport} standings`}>
                 <thead>
-                  <tr className="border-b border-border">
+                  <tr className="border-b border-[var(--border-vintage)]">
                     <th scope="col" className="text-left p-3 text-xs text-[rgba(196,184,165,0.35)] font-semibold">#</th>
                     <th scope="col" className="text-left p-3 text-xs text-[rgba(196,184,165,0.35)] font-semibold">Team</th>
                     <th scope="col" className="text-left p-3 text-xs text-[rgba(196,184,165,0.35)] font-semibold">W</th>

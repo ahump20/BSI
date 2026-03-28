@@ -48,7 +48,7 @@ export function NewsCard({
       rel={url.startsWith('/') ? undefined : 'noopener noreferrer'}
       className="block group"
     >
-      <div className="bg-[var(--surface-dugout)] border border-border rounded-[2px] overflow-hidden hover:border-[var(--bsi-primary)]/40 hover:-translate-y-0.5 transition-all duration-200">
+      <div className="bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-[2px] overflow-hidden hover:border-[var(--bsi-primary)]/40 hover:-translate-y-0.5 transition-all duration-200">
         {/* Image header (optional) */}
         {imageUrl && (
           <div className="relative h-40 overflow-hidden bg-[var(--surface-press-box)]">

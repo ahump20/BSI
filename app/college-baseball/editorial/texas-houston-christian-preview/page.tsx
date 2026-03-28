@@ -54,7 +54,7 @@ export default function TexasHoustonChristianPreviewPage() {
       />
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">College Baseball</Link>
@@ -133,7 +133,7 @@ export default function TexasHoustonChristianPreviewPage() {
               <div className="max-w-3xl mx-auto">
                 <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-primary)] mb-8">The Matchup</h2>
                 <div className="font-serif text-lg leading-[1.78] text-[var(--bsi-dust)] space-y-6">
-                  <div className="bg-surface-elevated/50 border border-border rounded-sm p-6 mb-6">
+                  <div className="bg-surface-elevated/50 border border-[var(--border-vintage)] rounded-sm p-6 mb-6">
                     <p className="font-display text-lg font-semibold uppercase tracking-wide text-[var(--bsi-bone)]">
                       No. 3 Texas vs. Houston Christian
                     </p>
@@ -245,11 +245,11 @@ export default function TexasHoustonChristianPreviewPage() {
         </BSIVerdict>
 
         {/* Attribution */}
-        <Section padding="md" className="border-t border-border">
+        <Section padding="md" className="border-t border-[var(--border-vintage)]">
           <Container>
             <div className="max-w-3xl mx-auto">
               <DataSourceBadge source="texaslonghorns.com / hcuhuskies.com / D1Baseball" timestamp="March 3, 2026 — 2:00 PM CT" />
-              <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
+              <div className="flex items-center justify-between mt-8 pt-6 border-t border-[var(--border-vintage)]">
                 <Link href="/college-baseball/editorial" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors text-sm">
                   &larr; All Editorial
                 </Link>

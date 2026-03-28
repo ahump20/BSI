@@ -236,7 +236,7 @@ export function TeamDossierClient({ slug }: { slug: string }) {
         }}
       />
       <div>
-        <Section padding="sm" className="border-b border-border">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <Breadcrumb
               items={[

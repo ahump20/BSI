@@ -211,7 +211,7 @@ export default function CholowskyDraftProfilePage() {
         <Section padding="lg" background="charcoal">
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mb-6 pb-2 border-b border-border">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mb-6 pb-2 border-b border-[var(--border-vintage)]">
                 Weekend 2 vs No. 7 TCU &mdash; Game Log
               </h2>
               <div className="overflow-x-auto">
@@ -225,7 +225,7 @@ export default function CholowskyDraftProfilePage() {
                   </thead>
                   <tbody>
                     {UCLA_TCU_SERIES.map((g) => (
-                      <tr key={g.game} className="border-b border-border">
+                      <tr key={g.game} className="border-b border-[var(--border-vintage)]">
                         <td className="py-3 px-3 text-[var(--bsi-bone)] text-sm font-medium">{g.game}</td>
                         <td className="py-3 px-3 text-success text-sm font-semibold">{g.result}</td>
                         <td className="py-3 px-3 text-[var(--bsi-bone)] text-sm text-center">{g.ab}</td>
@@ -281,7 +281,7 @@ export default function CholowskyDraftProfilePage() {
         <Section padding="lg" background="charcoal">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mb-6 pb-2 border-b border-border">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[var(--bsi-bone)] mb-6 pb-2 border-b border-[var(--border-vintage)]">
                 BSI Scouting Grades (20&ndash;80 Scale)
               </h2>
               <p className="text-xs text-[rgba(196,184,165,0.35)] mb-4 uppercase tracking-widest">

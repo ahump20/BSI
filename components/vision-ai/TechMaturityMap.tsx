@@ -83,7 +83,7 @@ export function TechMaturityMap({ className = '' }: { className?: string }) {
             className={`px-3 py-1.5 text-xs font-semibold rounded-sm border transition-all ${
               activeSport === sport
                 ? 'bg-[var(--bsi-primary)]/20 text-[var(--bsi-primary)] border-[var(--bsi-primary)]/40'
-                : 'bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.5)] border-border hover:text-[var(--bsi-bone)] hover:border-[rgba(140,98,57,0.5)]'
+                : 'bg-[var(--surface-press-box)] text-[rgba(196,184,165,0.5)] border-[var(--border-vintage)] hover:text-[var(--bsi-bone)] hover:border-[rgba(140,98,57,0.5)]'
             }`}
           >
             {sport}

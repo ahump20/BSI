@@ -142,7 +142,7 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
     <>
       <main id="main-content">
         {/* ── Breadcrumb ──────────────────────────────────────────── */}
-        <Section padding="sm" className="border-b border-border">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm flex-wrap">
               <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
@@ -197,7 +197,7 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
 
         {/* ── Quick Brief (3-point summary) ─────────────────────── */}
         {!loading && brief && (
-          <Section padding="md" className="bg-[var(--surface-dugout)] border-y border-border">
+          <Section padding="md" className="bg-[var(--surface-dugout)] border-y border-[var(--border-vintage)]">
             <Container>
               <ScrollReveal direction="up">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

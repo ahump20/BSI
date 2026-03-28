@@ -70,7 +70,7 @@ export default function BubbleWatchPage() {
   return (
     <>
       <div>
-        <Section padding="sm" className="border-b border-border">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <Breadcrumb
               items={[
@@ -151,7 +151,7 @@ export default function BubbleWatchPage() {
                 )}
               </div>
             ) : !loading && (
-              <div className="bg-[var(--surface-press-box)] border border-dashed border-border rounded-sm p-8 text-center">
+              <div className="bg-[var(--surface-press-box)] border border-dashed border-[var(--border-vintage)] rounded-sm p-8 text-center">
                 <p className="text-sm text-[rgba(196,184,165,0.35)] mb-2">
                   Bubble data populates when conference tournaments begin in late May.
                 </p>

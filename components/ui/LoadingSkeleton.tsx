@@ -34,7 +34,7 @@ export function TableSkeleton({ rows = 5, cols = 6, className = '' }: SkeletonPr
   return (
     <div className={`rounded-sm border border-[var(--border-vintage)] overflow-hidden ${className}`}>
       {/* Header */}
-      <div className="flex gap-4 px-4 py-3 bg-[var(--surface-dugout)] border-b border-border">
+      <div className="flex gap-4 px-4 py-3 bg-[var(--surface-dugout)] border-b border-[var(--border-vintage)]">
         {Array.from({ length: cols }).map((_, i) => (
           <Skeleton key={`h-${i}`} className="h-3 flex-1" />
         ))}

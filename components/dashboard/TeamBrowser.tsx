@@ -129,7 +129,7 @@ export function TeamBrowser() {
           onChange={handleSearchChange}
           placeholder="Search teams..."
           aria-label="Search teams"
-          className="w-full px-4 py-2.5 bg-[var(--surface-press-box)] border border-border rounded-sm text-sm text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)] focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-colors"
+          className="w-full px-4 py-2.5 bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm text-sm text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)] focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-colors"
         />
       </div>
 
@@ -172,7 +172,7 @@ export function TeamBrowser() {
             >
               <Link
                 href={`/college-baseball/teams/${team.slug}`}
-                className="block p-3 bg-[var(--surface-press-box)] border border-border rounded-sm hover:border-[var(--bsi-primary)]/40 hover:bg-[var(--surface-press-box)] transition-all group"
+                className="block p-3 bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm hover:border-[var(--bsi-primary)]/40 hover:bg-[var(--surface-press-box)] transition-all group"
               >
                 <div className="flex items-center gap-3">
                   <div className="relative w-10 h-10 flex-shrink-0">

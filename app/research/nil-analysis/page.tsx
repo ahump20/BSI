@@ -107,7 +107,7 @@ function DataTable({
         <span className="w-4 h-px bg-[var(--bsi-primary)]/40" />
         {caption}
       </figcaption>
-      <div className="overflow-x-auto rounded-sm border border-border/40">
+      <div className="overflow-x-auto rounded-sm border border-[rgba(140,98,57,0.12)]">
         <table className="w-full border-collapse text-sm">
           <thead>
             <tr className="bg-white/[0.02]">
@@ -132,7 +132,7 @@ function DataTable({
                 {row.map((cell, j) => (
                   <td
                     key={j}
-                    className={`px-4 py-2.5 border-b border-border/30 whitespace-nowrap ${
+                    className={`px-4 py-2.5 border-b border-[rgba(140,98,57,0.09)] whitespace-nowrap ${
                       j === 0
                         ? 'font-serif text-[var(--bsi-dust)] font-medium'
                         : 'font-mono text-xs text-[rgba(196,184,165,0.35)]'
@@ -182,7 +182,7 @@ export default function NILAnalysisPage() {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
@@ -234,7 +234,7 @@ export default function NILAnalysisPage() {
               </p>
 
               {/* Author attribution */}
-              <div className="mt-10 pt-6 border-t border-border/30 flex flex-col sm:flex-row sm:items-center gap-4">
+              <div className="mt-10 pt-6 border-t border-[rgba(140,98,57,0.09)] flex flex-col sm:flex-row sm:items-center gap-4">
                 <div>
                   <p className="text-sm text-[var(--bsi-dust)] font-medium">
                     Austin Humphrey
@@ -265,7 +265,7 @@ export default function NILAnalysisPage() {
               {/* Sticky TOC — desktop only */}
               <aside className="hidden xl:block w-56 shrink-0">
                 <div className="sticky top-24">
-                  <div className="rounded-sm bg-white/[0.02] border border-border/30 p-5">
+                  <div className="rounded-sm bg-white/[0.02] border border-[rgba(140,98,57,0.09)] p-5">
                     <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-[var(--bsi-primary)]/50 mb-5">
                       Contents
                     </p>
@@ -274,7 +274,7 @@ export default function NILAnalysisPage() {
                         <a
                           key={item.id}
                           href={`#${item.id}`}
-                          className="block text-[13px] font-serif text-[rgba(196,184,165,0.35)]/60 hover:text-[var(--bsi-primary)] transition-colors py-1.5 border-l border-border/20 hover:border-[var(--bsi-primary)]/40 pl-4"
+                          className="block text-[13px] font-serif text-[rgba(196,184,165,0.35)]/60 hover:text-[var(--bsi-primary)] transition-colors py-1.5 border-l border-[rgba(140,98,57,0.06)] hover:border-[var(--bsi-primary)]/40 pl-4"
                         >
                           {item.label}
                         </a>
@@ -288,7 +288,7 @@ export default function NILAnalysisPage() {
               <article className="min-w-0 max-w-3xl">
                 {/* ── Abstract ──────────────────────────────────────── */}
                 <SectionHeading id="abstract">Abstract</SectionHeading>
-                <div className="bg-white/[0.02] border border-border/30 rounded-sm p-6 md:p-8 mb-12">
+                <div className="bg-white/[0.02] border border-[rgba(140,98,57,0.09)] rounded-sm p-6 md:p-8 mb-12">
                   <P>
                     The NCAA&rsquo;s name, image, and likeness market &mdash; reaching an estimated $2.26 billion in annual activity by its fourth year and projected to exceed $2.75 billion under the <em>House v. NCAA</em> revenue-sharing framework (Opendorse, 2025) &mdash; is not a reform. It is an unregulated financial experiment conducted on eighteen- to twenty-two-year-olds, and the primary beneficiaries are not the athletes it was designed to liberate. This analysis examines how structural opacity in NIL financial flows concentrates advantage among intermediaries &mdash; collectives, platform companies, hedge fund&ndash;adjacent donor vehicles, and institutional compliance offices &mdash; while athletes navigate a marketplace with no standardized disclosure requirements, no collective bargaining rights, and no fiduciary protections. Findings span four domains: market concentration, where a small number of high-revenue sport athletes capture the overwhelming majority of NIL dollars while the median Division I athlete earns approximately $500&ndash;$713 annually; gender inequity, where women&rsquo;s sports athletes receive less than 3.5% of collective-backed funds despite generating measurable and growing marginal revenue; compliance fragmentation, where thirty-plus different state laws produce a regulatory patchwork that advantages programs in permissive jurisdictions; and predatory financial vehicles, where charitable-structure collectives and NIL hedge funds operate with minimal transparency obligations while functioning as de facto recruiting war chests and speculative instruments. The $2.8 billion <em>House v. NCAA</em> settlement, far from resolving these tensions, layers a revenue-sharing model atop an already opaque system &mdash; adding institutional money without institutional accountability. The central argument is straightforward: transparency is not a feature request. It is the minimum standard for any marketplace that routes billions of dollars through the labor of unpaid (or newly, unevenly paid) young people.
                   </P>
@@ -609,7 +609,7 @@ export default function NILAnalysisPage() {
                 </div>
 
                 {/* ── Footer attribution ─────────────────────────── */}
-                <div className="mt-20 pt-8 border-t border-border/30">
+                <div className="mt-20 pt-8 border-t border-[rgba(140,98,57,0.09)]">
                   <div className="flex items-start gap-4">
                     <div className="w-[3px] h-12 rounded-full bg-[var(--bsi-primary)]/30 shrink-0 mt-1" />
                     <div>

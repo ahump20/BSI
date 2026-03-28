@@ -92,9 +92,9 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
   return (
     <div className="fixed inset-0 z-50 flex justify-end" role="dialog" aria-modal="true" aria-labelledby="ai-panel-heading">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} aria-hidden="true" />
-      <div className="relative w-full max-w-[480px] bg-[var(--surface-scoreboard)] border-l border-border overflow-y-auto">
+      <div className="relative w-full max-w-[480px] bg-[var(--surface-scoreboard)] border-l border-[var(--border-vintage)] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-[var(--surface-scoreboard)] border-b border-border p-4 flex items-center justify-between">
+        <div className="sticky top-0 bg-[var(--surface-scoreboard)] border-b border-[var(--border-vintage)] p-4 flex items-center justify-between">
           <h2 id="ai-panel-heading" className="font-display text-lg uppercase tracking-wider text-[var(--bsi-bone)]">AI Game Analysis</h2>
           <button onClick={onClose} aria-label="Close AI analysis panel" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-bone)] transition-colors">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -146,7 +146,7 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
                     value={customQuestion}
                     onChange={(e) => setCustomQuestion(e.target.value)}
                     placeholder="What do you want to know about this game?"
-                    className="w-full bg-[var(--surface-dugout)] border border-border rounded-sm p-3 text-sm text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)] resize-none h-20 focus:outline-none focus:border-[var(--bsi-primary)]/30"
+                    className="w-full bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm p-3 text-sm text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)] resize-none h-20 focus:outline-none focus:border-[var(--bsi-primary)]/30"
                   />
                   <button
                     onClick={() => handleAnalyze('custom')}
@@ -190,7 +190,7 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
                 <div className="flex gap-2">
                   <button
                     onClick={handleCopy}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] border border-border rounded-sm transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] border border-[var(--border-vintage)] rounded-sm transition-colors"
                   >
                     Copy
                   </button>

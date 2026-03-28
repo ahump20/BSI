@@ -94,7 +94,7 @@ export default function SettingsPage() {
                 {settings.theme === 'dark' ? 'Dark' : 'Light'}
               </span>
             </div>
-            <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
+            <div className="mt-4 pt-4 border-t border-[var(--border-vintage)] flex items-center justify-between">
               <div>
                 <p className="text-[var(--bsi-bone)] font-medium">Time Format</p>
                 <p className="text-xs text-[rgba(196,184,165,0.5)]">12-hour or 24-hour clock</p>

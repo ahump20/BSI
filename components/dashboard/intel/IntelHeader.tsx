@@ -49,7 +49,7 @@ export function IntelHeader({
       <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
         <div className="flex items-center gap-3">
           <div
-            className="grid h-10 w-10 place-items-center border border-border"
+            className="grid h-10 w-10 place-items-center border border-[var(--border-vintage)]"
             style={{
               background: 'linear-gradient(135deg, var(--bsi-intel-accent, var(--bsi-primary)), var(--bsi-accent))',
               borderRadius: '2px',
@@ -146,7 +146,7 @@ export function IntelHeader({
             aria-label="Select team lens"
             value=""
             onChange={(e) => e.target.value && onTeamLensChange(e.target.value)}
-            className="h-8 border border-border bg-[var(--surface-press-box)] px-2 text-[11px] text-[var(--bsi-dust)] outline-none focus:border-[rgba(140,98,57,0.5)]"
+            className="h-8 border border-[var(--border-vintage)] bg-[var(--surface-press-box)] px-2 text-[11px] text-[var(--bsi-dust)] outline-none focus:border-[rgba(140,98,57,0.5)]"
             style={{ fontFamily: 'var(--intel-mono)', borderRadius: '2px' }}
           >
             <option value="">Team lens...</option>

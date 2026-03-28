@@ -173,7 +173,7 @@ export function PlayerCompareCard({ player1, player2, comparison }: PlayerCompar
 
       {/* Radar Chart */}
       {radarData.length >= 3 && (
-        <CardContent className="border-b border-border">
+        <CardContent className="border-b border-[var(--border-vintage)]">
           <StatRadarChart player1Name={p1Name} player2Name={p2Name} data={radarData} />
         </CardContent>
       )}
@@ -181,13 +181,13 @@ export function PlayerCompareCard({ player1, player2, comparison }: PlayerCompar
       {/* Batting Stats Table */}
       {battingRows.length > 0 && (
         <div>
-          <div className="px-6 py-3 bg-[var(--surface-dugout)]/50 border-b border-border">
+          <div className="px-6 py-3 bg-[var(--surface-dugout)]/50 border-b border-[var(--border-vintage)]">
             <h3 className="text-sm font-display uppercase tracking-wider text-[var(--bsi-dust)]">Batting</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full" aria-label="Batting comparison">
               <thead>
-                <tr className="border-b border-border">
+                <tr className="border-b border-[var(--border-vintage)]">
                   <th scope="col" className="py-2 px-4 text-left text-xs font-semibold text-[rgba(196,184,165,0.35)] uppercase w-1/4">{p1Name.split(' ').pop()}</th>
                   <th scope="col" className="py-2 px-4 text-center text-xs font-semibold text-[rgba(196,184,165,0.35)] uppercase w-1/4">Stat</th>
                   <th scope="col" className="py-2 px-4 text-right text-xs font-semibold text-[rgba(196,184,165,0.35)] uppercase w-1/4">{p2Name.split(' ').pop()}</th>
@@ -214,13 +214,13 @@ export function PlayerCompareCard({ player1, player2, comparison }: PlayerCompar
       {/* Pitching Stats Table */}
       {pitchingRows.length > 0 && (
         <div>
-          <div className="px-6 py-3 bg-[var(--surface-dugout)]/50 border-b border-border">
+          <div className="px-6 py-3 bg-[var(--surface-dugout)]/50 border-b border-[var(--border-vintage)]">
             <h3 className="text-sm font-display uppercase tracking-wider text-[var(--bsi-dust)]">Pitching</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full" aria-label="Pitching comparison">
               <thead>
-                <tr className="border-b border-border">
+                <tr className="border-b border-[var(--border-vintage)]">
                   <th scope="col" className="py-2 px-4 text-left text-xs font-semibold text-[rgba(196,184,165,0.35)] uppercase w-1/4">{p1Name.split(' ').pop()}</th>
                   <th scope="col" className="py-2 px-4 text-center text-xs font-semibold text-[rgba(196,184,165,0.35)] uppercase w-1/4">Stat</th>
                   <th scope="col" className="py-2 px-4 text-right text-xs font-semibold text-[rgba(196,184,165,0.35)] uppercase w-1/4">{p2Name.split(' ').pop()}</th>

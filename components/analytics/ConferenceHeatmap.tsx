@@ -215,7 +215,7 @@ export function ConferenceHeatmap({
         {/* Tooltip */}
         {tooltip && (
           <div
-            className="absolute z-50 pointer-events-none bg-[var(--surface-dugout)] border border-border shadow-xl rounded-sm px-3 py-2"
+            className="absolute z-50 pointer-events-none bg-[var(--surface-dugout)] border border-[var(--border-vintage)] shadow-xl rounded-sm px-3 py-2"
             style={{
               left: tooltip.x + 12,
               top: tooltip.y - 10,

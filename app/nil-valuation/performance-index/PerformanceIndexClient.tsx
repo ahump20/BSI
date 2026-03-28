@@ -129,7 +129,7 @@ export function PerformanceIndexClient() {
   }, [battingRes, pitchingRes]);
 
   return (
-    <Section padding="lg" className="bg-[var(--surface-dugout)] border-t border-border">
+    <Section padding="lg" className="bg-[var(--surface-dugout)] border-t border-[var(--border-vintage)]">
       <Container>
         <div className="max-w-3xl mx-auto">
           {/* Search */}
@@ -149,7 +149,7 @@ export function PerformanceIndexClient() {
                       : 'Type a player name or team...'
                   }
                   disabled={loading}
-                  className="w-full bg-[var(--surface-scoreboard)] border border-border rounded-sm px-4 py-3 text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)]/40 focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-colors font-serif"
+                  className="w-full bg-[var(--surface-scoreboard)] border border-[var(--border-vintage)] rounded-sm px-4 py-3 text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)]/40 focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-colors font-serif"
                 />
                 {loading && (
                   <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -160,12 +160,12 @@ export function PerformanceIndexClient() {
 
               {/* Search Results Dropdown */}
               {filtered.length > 0 && (
-                <div className="mt-2 border border-border rounded-sm overflow-hidden bg-[var(--surface-scoreboard)]">
+                <div className="mt-2 border border-[var(--border-vintage)] rounded-sm overflow-hidden bg-[var(--surface-scoreboard)]">
                   {filtered.map((player, i) => (
                     <button
                       key={`${player.player_name}-${player.team}-${i}`}
                       onClick={() => selectPlayer(player)}
-                      className="w-full text-left px-4 py-3 hover:bg-[var(--bsi-primary)]/10 transition-colors border-b border-border last:border-b-0 cursor-pointer"
+                      className="w-full text-left px-4 py-3 hover:bg-[var(--bsi-primary)]/10 transition-colors border-b border-[var(--border-vintage)] last:border-b-0 cursor-pointer"
                     >
                       <span className="font-semibold text-[var(--bsi-bone)]">
                         {player.player_name}
@@ -218,7 +218,7 @@ export function PerformanceIndexClient() {
                   </div>
 
                   {/* Tier context bar */}
-                  <div className="mt-5 pt-4 border-t border-border">
+                  <div className="mt-5 pt-4 border-t border-[var(--border-vintage)]">
                     <TierScale activeTier={result.tier} />
                   </div>
                 </CardContent>
@@ -256,7 +256,7 @@ export function PerformanceIndexClient() {
                     </div>
 
                     {/* Dollar Range Bar */}
-                    <div className="border-t border-border pt-4">
+                    <div className="border-t border-[var(--border-vintage)] pt-4">
                       <h4 className="text-xs font-mono uppercase tracking-wider text-[rgba(196,184,165,0.35)] mb-3">
                         Estimated NIL Range
                       </h4>

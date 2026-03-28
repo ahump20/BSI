@@ -202,12 +202,12 @@ export function DashboardConfigurator({ prefs, onChange, onClose }: DashboardCon
             }}
             placeholder="Search teams to add..."
             aria-label="Search teams to add to dashboard"
-            className="w-full px-3 py-2 bg-[var(--surface-dugout)] border border-border rounded-sm text-sm text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)] focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-colors"
+            className="w-full px-3 py-2 bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm text-sm text-[var(--bsi-bone)] placeholder:text-[rgba(196,184,165,0.35)] focus:outline-none focus:border-[var(--bsi-primary)]/50 transition-colors"
           />
 
           {/* Dropdown */}
           {showDropdown && filteredTeams.length > 0 && (
-            <div className="absolute z-20 top-full left-0 right-0 mt-1 bg-[var(--surface-scoreboard)] border border-border rounded-sm overflow-hidden shadow-lg max-h-48 overflow-y-auto">
+            <div className="absolute z-20 top-full left-0 right-0 mt-1 bg-[var(--surface-scoreboard)] border border-[var(--border-vintage)] rounded-sm overflow-hidden shadow-lg max-h-48 overflow-y-auto">
               {filteredTeams.map((team) => (
                 <button
                   key={team.slug}

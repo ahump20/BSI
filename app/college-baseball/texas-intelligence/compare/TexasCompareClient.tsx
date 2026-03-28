@@ -197,7 +197,7 @@ export default function TexasCompareClient() {
     <>
       <main id="main-content">
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm">
               <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">College Baseball</Link>
@@ -240,7 +240,7 @@ export default function TexasCompareClient() {
                   <select
                     value={playerA}
                     onChange={(e) => setPlayerA(e.target.value)}
-                    className="w-full bg-[var(--surface-dugout)] border border-border rounded-sm px-3 py-2.5 text-sm text-[var(--bsi-bone)] focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
+                    className="w-full bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm px-3 py-2.5 text-sm text-[var(--bsi-bone)] focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
                     aria-label="Select first player"
                   >
                     <option value="">Select a player...</option>
@@ -256,7 +256,7 @@ export default function TexasCompareClient() {
                   <select
                     value={playerB}
                     onChange={(e) => setPlayerB(e.target.value)}
-                    className="w-full bg-[var(--surface-dugout)] border border-border rounded-sm px-3 py-2.5 text-sm text-[var(--bsi-bone)] focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
+                    className="w-full bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm px-3 py-2.5 text-sm text-[var(--bsi-bone)] focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
                     aria-label="Select second player"
                   >
                     <option value="">Select a player...</option>

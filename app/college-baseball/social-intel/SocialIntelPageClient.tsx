@@ -136,7 +136,7 @@ function SignalRow({ signal, index }: { signal: SocialSignal; index: number }) {
 
   const inner = (
     <div
-      className="group relative flex gap-4 px-5 py-4 border-b border-border/40 last:border-0 hover:bg-white/[0.02] transition-colors duration-150"
+      className="group relative flex gap-4 px-5 py-4 border-b border-[rgba(140,98,57,0.12)] last:border-0 hover:bg-white/[0.02] transition-colors duration-150"
       style={{ animationDelay: `${index * 30}ms` }}
     >
       {/* Left accent + index */}
@@ -223,7 +223,7 @@ function Skeleton() {
       {[...Array(8)].map((_, i) => (
         <div
           key={i}
-          className="flex gap-4 px-5 py-4 border-b border-border/40 last:border-0"
+          className="flex gap-4 px-5 py-4 border-b border-[rgba(140,98,57,0.12)] last:border-0"
           style={{ animationDelay: `${i * 50}ms` }}
         >
           <div className="w-px bg-[#1e1e1e] animate-pulse min-h-[2.5rem]" />
@@ -296,7 +296,7 @@ export function SocialIntelPageClient() {
       </div>
 
       {/* Header */}
-      <div className="border-b border-border bg-[#111111]">
+      <div className="border-b border-[var(--border-vintage)] bg-[#111111]">
         <Container>
           <div className="py-8 md:py-10">
             <div className="flex items-start justify-between gap-4 mb-6">
@@ -356,7 +356,7 @@ export function SocialIntelPageClient() {
       </div>
 
       {/* Filter tabs */}
-      <div className="sticky top-0 z-10 border-b border-border bg-[#0D0D0D]/95 backdrop-blur-sm">
+      <div className="sticky top-0 z-10 border-b border-[var(--border-vintage)] bg-[#0D0D0D]/95 backdrop-blur-sm">
         <Container>
           <div className="flex gap-0 overflow-x-auto scrollbar-hide">
             {FILTER_TABS.map(tab => {
@@ -394,7 +394,7 @@ export function SocialIntelPageClient() {
       <Container>
         <div className="py-6">
           {loading ? (
-            <div className="rounded-sm border border-border overflow-hidden bg-[#111111]">
+            <div className="rounded-sm border border-[var(--border-vintage)] overflow-hidden bg-[#111111]">
               <Skeleton />
             </div>
           ) : filtered.length === 0 ? (
@@ -409,9 +409,9 @@ export function SocialIntelPageClient() {
               </p>
             </div>
           ) : (
-            <div className="rounded-sm border border-border overflow-hidden bg-[#111111]">
+            <div className="rounded-sm border border-[var(--border-vintage)] overflow-hidden bg-[#111111]">
               {/* Feed header */}
-              <div className="flex items-center justify-between px-5 py-3 border-b border-border bg-[#0D0D0D]/60">
+              <div className="flex items-center justify-between px-5 py-3 border-b border-[var(--border-vintage)] bg-[#0D0D0D]/60">
                 <span className="font-mono text-[10px] uppercase tracking-wider text-[rgba(196,184,165,0.35)]">
                   {filtered.length} signal{filtered.length !== 1 ? 's' : ''}
                   {activeFilter !== 'all' && ` · ${SIGNAL_CONFIG[activeFilter as keyof typeof SIGNAL_CONFIG]?.label ?? activeFilter}`}

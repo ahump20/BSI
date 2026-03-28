@@ -12,7 +12,7 @@ import type { ProgramHistoryData } from './types';
 
 function YouTubeEmbed({ id, title }: { id: string; title: string }) {
   return (
-    <div className="aspect-video w-full rounded-sm overflow-hidden border border-border my-8">
+    <div className="aspect-video w-full rounded-sm overflow-hidden border border-[var(--border-vintage)] my-8">
       <iframe
         src={`https://www.youtube.com/embed/${id}`}
         title={title}
@@ -77,7 +77,7 @@ function Prose({ children }: { children: React.ReactNode }) {
 
 function EraImage({ src, alt }: { src: string; alt: string }) {
   return (
-    <figure className="my-8 rounded-sm overflow-hidden border border-border">
+    <figure className="my-8 rounded-sm overflow-hidden border border-[var(--border-vintage)]">
       <img
         src={src}
         alt={alt}
@@ -108,7 +108,7 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
       `}</style>
       <main id="main-content">
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border">
+        <Section padding="sm" className="border-b border-[var(--border-vintage)]">
           <Container>
             <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm">
               <Link href="/college-baseball" className="text-[rgba(196,184,165,0.35)] hover:text-[var(--bsi-primary)] transition-colors">
@@ -158,7 +158,7 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
           <Section padding="md">
             <Container>
               <ScrollReveal direction="up">
-                <figure className="my-8 rounded-sm overflow-hidden border border-border relative">
+                <figure className="my-8 rounded-sm overflow-hidden border border-[var(--border-vintage)] relative">
                   <div className="relative overflow-hidden max-h-[500px]">
                     <img
                       src={data.heroImage}
@@ -238,7 +238,7 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
                         <div className="text-xs uppercase tracking-wide text-[rgba(196,184,165,0.35)]">CWS Appearances</div>
                         <div className="font-mono text-lg text-[var(--bsi-bone)] mt-1">{era.cwsAppearances}</div>
                       </div>
-                      <div className="pt-3 border-t border-border">
+                      <div className="pt-3 border-t border-[var(--border-vintage)]">
                         <div className="text-xs uppercase tracking-wide text-[rgba(196,184,165,0.35)] mb-2">Key Players</div>
                         <div className="flex flex-wrap gap-1.5">
                           {era.keyPlayers.map((p) => (
