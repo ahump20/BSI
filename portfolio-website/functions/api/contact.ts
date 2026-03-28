@@ -21,9 +21,8 @@ interface ContactPayload {
 }
 
 const RECIPIENT = 'Austin@BlazeSportsIntel.com';
-// Use onboarding@resend.dev if austinhumphrey.com isn't verified in Resend
-// Switch to contact@austinhumphrey.com once domain is verified
-const FROM_ADDRESS = 'onboarding@resend.dev';
+// blazesportsintel.com is verified in Resend — use that domain for sending
+const FROM_ADDRESS = 'noreply@blazesportsintel.com';
 
 const corsHeaders: Record<string, string> = {
   'Access-Control-Allow-Origin': '*',
