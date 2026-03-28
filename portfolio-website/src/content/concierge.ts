@@ -1,6 +1,6 @@
 import { PLATFORM_URLS, PRIMARY_EMAIL } from './site';
 
-export const AI_CHAT_GREETING = 'Austin Humphrey — builder, BSI founder, Texas-born. Ask me anything.';
+export const AI_CHAT_GREETING = 'Austin Humphrey — builder of BSI, Texas-born. Ask me anything.';
 
 export const AI_CHAT_SUGGESTED_PROMPTS = [
   'What is BSI?',
@@ -31,12 +31,12 @@ export const AI_CHAT_FALLBACK_RESPONSES: Array<{
   {
     keywords: ['education', 'school', 'ut', 'university', 'degree', 'full sail', 'mccombs'],
     response:
-      'B.A. International Relations & Global Studies from UT Austin (minors in Economics and European Studies). M.S. Entertainment Business — Sports Management from Full Sail University (GPA 3.56). Currently pursuing an AI & Machine Learning Postgraduate Certificate from UT Austin McCombs.',
+      'B.A. International Relations & Global Studies from UT Austin (minors in Economics and European Studies). M.S. Entertainment Business — Sports Management from Full Sail University (GPA 3.77). Currently pursuing an AI & Machine Learning Postgraduate Certificate from UT Austin McCombs.',
   },
   {
     keywords: ['experience', 'work', 'job', 'career', 'spectrum', 'northwestern'],
     response:
-      'Founder & Builder at BSI (2023-present). Before that: Advertising Account Executive at Spectrum Reach covering Austin/San Antonio DMA (2022-2025), Financial Representative at Northwestern Mutual earning the "Power of 10" Award for top 10% nationally (2020-2022).',
+      'Builder at BSI (2023-present). Before that: Advertising Account Executive at Spectrum Reach covering Austin/San Antonio DMA (2022-2025), Financial Representative at Northwestern Mutual earning the "Power of 10" Award for top 10% nationally (2020-2022).',
   },
   {
     keywords: ['philosophy', 'covenant', 'believe', 'values'],
