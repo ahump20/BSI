@@ -45,6 +45,3 @@ export { Tooltip } from './Tooltip';
 
 // ToggleGroup
 export { ToggleGroup } from './ToggleGroup';
-
-// Decorative
-export { HeroGlow } from './HeroGlow';

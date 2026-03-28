@@ -6,8 +6,6 @@ import { Section } from '@/components/ui/Section';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
-import { HeroGlow } from '@/components/ui/HeroGlow';
-
 interface SportHeroProps {
   sport: string;
   leagueName: string;
@@ -35,7 +33,13 @@ export function SportHero({
 }: SportHeroProps) {
   return (
     <Section padding="lg" className="relative overflow-hidden">
-      <HeroGlow shape="70% 60%" position="50% 30%" intensity={0.08} />
+      {/* Heritage radial warmth — replaces HeroGlow */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse 70% 60% at 50% 30%, rgba(191,87,0,0.08) 0%, transparent 70%)',
+        }}
+      />
 
       <Container center>
         <ScrollReveal direction="up">
