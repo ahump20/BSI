@@ -102,11 +102,11 @@ function SkeletonPlayerCard() {
   return (
     <Card variant="default" padding="md" className="animate-pulse">
       <div className="flex items-center gap-4">
-        <div className="w-16 h-16 bg-background-tertiary rounded-full" />
+        <div className="w-16 h-16 rounded-full" style={{ background: 'var(--surface-dugout)' }} />
         <div className="flex-1 space-y-2">
-          <div className="h-5 bg-background-tertiary rounded-sm w-3/4" />
-          <div className="h-4 bg-background-tertiary/50 rounded-sm w-1/2" />
-          <div className="h-3 bg-background-tertiary/30 rounded-sm w-1/3" />
+          <div className="h-5 rounded-sm w-3/4" style={{ background: 'var(--surface-dugout)' }} />
+          <div className="h-4 rounded-sm w-1/2" style={{ background: 'var(--surface-dugout)', opacity: 0.5 }} />
+          <div className="h-3 rounded-sm w-1/3" style={{ background: 'var(--surface-dugout)', opacity: 0.3 }} />
         </div>
       </div>
     </Card>
@@ -141,10 +141,10 @@ function PlayerCard({ player }: { player: Player }) {
           </div>
 
           <div className="flex-1 min-w-0">
-            <h3 className="font-display font-bold text-text-primary text-lg truncate group-hover:text-burnt-orange transition-colors">
+            <h3 className="font-bold text-lg truncate transition-colors" style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}>
               {player.name}
             </h3>
-            <div className="flex items-center gap-2 text-sm text-text-secondary">
+            <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--bsi-dust)' }}>
               <span>#{player.jersey}</span>
               <span>•</span>
               <span>{player.position}</span>
@@ -160,13 +160,13 @@ function PlayerCard({ player }: { player: Player }) {
                   unoptimized
                 />
               )}
-              <span className="text-xs text-text-tertiary">{player.team?.name}</span>
+              <span className="text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>{player.team?.name}</span>
             </div>
           </div>
 
           <div className="text-right hidden sm:block">
-            <p className="text-text-secondary text-sm">{player.height}</p>
-            <p className="text-text-tertiary text-xs">{player.weight} lbs</p>
+            <p className="text-sm" style={{ color: 'var(--bsi-dust)' }}>{player.height}</p>
+            <p className="text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>{player.weight} lbs</p>
           </div>
         </div>
       </Card>
@@ -234,19 +234,22 @@ export default function NFLPlayersPage() {
 
   return (
     <>
-      <div>
+      <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/nfl"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="transition-colors"
+                style={{ color: 'rgba(196,184,165,0.5)' }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--bsi-primary)')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(196,184,165,0.5)')}
               >
                 NFL
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">Players</span>
+              <span style={{ color: 'rgba(196,184,165,0.5)' }}>/</span>
+              <span className="font-medium" style={{ color: 'var(--bsi-bone)' }}>Players</span>
             </nav>
           </Container>
         </Section>
@@ -263,13 +266,13 @@ export default function NFLPlayersPage() {
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-gradient-blaze">
+              <h1 className="text-3xl md:text-4xl font-bold uppercase tracking-wider" style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}>
                 NFL Players
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="text-text-secondary mt-2">
+              <p className="mt-2" style={{ color: 'var(--bsi-dust)' }}>
                 Browse and search NFL players • Click any player for full profile
               </p>
             </ScrollReveal>
@@ -287,12 +290,14 @@ export default function NFLPlayersPage() {
                   placeholder="Search players or teams..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-4 py-2 bg-background-tertiary border border-border-subtle rounded-sm text-text-primary placeholder-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors"
+                  className="w-full px-4 py-2 rounded-sm focus:outline-none transition-colors"
+                  style={{ background: 'var(--surface-dugout)', border: '1px solid var(--border-vintage)', color: 'var(--bsi-bone)' }}
                 />
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-primary"
+                    className="absolute right-3 top-1/2 -translate-y-1/2"
+                    style={{ color: 'rgba(196,184,165,0.5)' }}
                   >
                     ✕
                   </button>
@@ -306,11 +311,12 @@ export default function NFLPlayersPage() {
                     <button
                       key={pos}
                       onClick={() => setSelectedPosition(pos)}
-                      className={`px-3 py-1.5 rounded-sm font-medium transition-all text-sm ${
+                      className="px-3 py-1.5 rounded-sm font-medium transition-all text-sm"
+                      style={
                         selectedPosition === pos
-                          ? 'bg-burnt-orange text-white'
-                          : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
-                      }`}
+                          ? { background: 'var(--bsi-primary)', color: '#fff' }
+                          : { background: 'var(--surface-dugout)', color: 'var(--bsi-dust)' }
+                      }
                     >
                       {pos}
                     </button>
@@ -321,7 +327,8 @@ export default function NFLPlayersPage() {
                 <select
                   value={selectedTeam}
                   onChange={(e) => setSelectedTeam(e.target.value)}
-                  className="px-4 py-2 bg-background-tertiary border border-border-subtle rounded-sm text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
+                  className="px-4 py-2 rounded-sm focus:outline-none transition-colors"
+                  style={{ background: 'var(--surface-dugout)', border: '1px solid var(--border-vintage)', color: 'var(--bsi-bone)' }}
                 >
                   <option value="All">All Teams</option>
                   {nflTeams
@@ -343,10 +350,11 @@ export default function NFLPlayersPage() {
             {error && (
               <Card variant="default" padding="lg" className="mb-6 bg-error/10 border-error/30">
                 <p className="text-error font-semibold">Error loading players</p>
-                <p className="text-text-secondary text-sm mt-1">{error}</p>
+                <p className="text-sm mt-1" style={{ color: 'var(--bsi-dust)' }}>{error}</p>
                 <button
                   onClick={selectedTeam === 'All' ? retryAllPlayers : retryRoster}
-                  className="mt-3 px-4 py-2 bg-burnt-orange text-white rounded-sm text-sm hover:bg-burnt-orange/80 transition-colors"
+                  className="mt-3 px-4 py-2 text-white rounded-sm text-sm transition-colors"
+                  style={{ background: 'var(--bsi-primary)' }}
                 >
                   Try Again
                 </button>
@@ -355,7 +363,7 @@ export default function NFLPlayersPage() {
 
             {/* Results count */}
             {!loading && !error && (
-              <p className="text-text-tertiary text-sm mb-4">
+              <p className="text-sm mb-4" style={{ color: 'rgba(196,184,165,0.5)' }}>
                 {filteredPlayers.length} player{filteredPlayers.length !== 1 ? 's' : ''} found
               </p>
             )}
@@ -369,13 +377,13 @@ export default function NFLPlayersPage() {
             ) : filteredPlayers.length === 0 ? (
               <Card variant="default" padding="lg" className="text-center">
                 <div className="py-8">
-                  <SportIcon sport="nfl" className="w-16 h-16 mx-auto mb-4 text-text-tertiary" />
-                  <p className="text-text-secondary text-lg">
+                  <SportIcon sport="nfl" className="w-16 h-16 mx-auto mb-4" style={{ color: 'rgba(196,184,165,0.5)' }} />
+                  <p className="text-lg" style={{ color: 'var(--bsi-dust)' }}>
                     {searchQuery || selectedPosition !== 'All' || selectedTeam !== 'All'
                       ? 'No players match your filters'
                       : 'No players found'}
                   </p>
-                  <p className="text-text-tertiary text-sm mt-2">
+                  <p className="text-sm mt-2" style={{ color: 'rgba(196,184,165,0.5)' }}>
                     Try adjusting your search or filters
                   </p>
                 </div>
@@ -391,7 +399,7 @@ export default function NFLPlayersPage() {
             )}
 
             {/* Data Source Footer */}
-            <div className="mt-8 pt-4 border-t border-border-subtle">
+            <div className="mt-8 pt-4" style={{ borderTop: '1px solid var(--border-vintage)' }}>
               <DataSourceBadge source="ESPN NFL API" timestamp={lastUpdated} />
             </div>
           </Container>
@@ -403,19 +411,22 @@ export default function NFLPlayersPage() {
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/nfl/games"
-                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
+                className="px-6 py-3 rounded-sm transition-all"
+                style={{ background: 'var(--surface-dugout)', color: 'var(--bsi-dust)' }}
               >
                 Live Scores →
               </Link>
               <Link
                 href="/nfl/standings"
-                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
+                className="px-6 py-3 rounded-sm transition-all"
+                style={{ background: 'var(--surface-dugout)', color: 'var(--bsi-dust)' }}
               >
                 Standings →
               </Link>
               <Link
                 href="/nfl/teams"
-                className="px-6 py-3 bg-background-tertiary rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
+                className="px-6 py-3 rounded-sm transition-all"
+                style={{ background: 'var(--surface-dugout)', color: 'var(--bsi-dust)' }}
               >
                 All Teams →
               </Link>

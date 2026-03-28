@@ -1,15 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Container } from '@/components/ui/Container';
-import { Section } from '@/components/ui/Section';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { Button } from '@/components/ui/Button';
-import { HeroGlow } from '@/components/ui/HeroGlow';
 import { ScrollReveal } from '@/components/cinematic';
-import { withAlpha } from '@/lib/utils/color';
-// Navbar is rendered by the root layout — no page-level import needed
 import { Footer } from '@/components/layout-ds/Footer';
 
 // ── SVG Sport Icons ──
@@ -57,7 +49,7 @@ const sportsCoverage = [
   {
     name: 'College Baseball',
     status: 'Full Coverage',
-    statusColor: 'var(--bsi-success, #22C55E)',
+    statusColor: '#22C55E',
     href: '/college-baseball',
     teams: 'Every D1 Program',
     features: [
@@ -74,7 +66,7 @@ const sportsCoverage = [
   {
     name: 'MLB',
     status: 'Full Coverage',
-    statusColor: 'var(--bsi-success, #22C55E)',
+    statusColor: '#22C55E',
     href: '/mlb',
     teams: 'All 30 Teams',
     features: [
@@ -91,7 +83,7 @@ const sportsCoverage = [
   {
     name: 'NFL',
     status: 'Full Coverage',
-    statusColor: 'var(--bsi-success, #22C55E)',
+    statusColor: '#22C55E',
     href: '/nfl',
     teams: 'All 32 Teams',
     features: [
@@ -107,7 +99,7 @@ const sportsCoverage = [
   {
     name: 'NBA',
     status: 'Full Coverage',
-    statusColor: 'var(--bsi-success, #22C55E)',
+    statusColor: '#22C55E',
     href: '/nba',
     teams: 'All 30 Teams',
     features: [
@@ -122,7 +114,7 @@ const sportsCoverage = [
   {
     name: 'College Football',
     status: 'Full Coverage',
-    statusColor: 'var(--bsi-success, #22C55E)',
+    statusColor: '#22C55E',
     href: '/cfb',
     teams: '134 FBS Programs',
     features: [
@@ -178,68 +170,110 @@ const dataSources = [
 
 export default function CoveragePage() {
   return (
-    <div className="min-h-screen bg-background-primary text-text-primary">
-      {/* Navbar provided by root layout */}
-
-      {/* Hero Section */}
-      <Section className="pt-6 pb-16 relative overflow-hidden">
-        <HeroGlow />
-        <Container>
+    <div
+      className="min-h-screen grain-overlay"
+      style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}
+    >
+      {/* ================================================================
+          HERO
+          ================================================================ */}
+      <section
+        className="relative overflow-hidden"
+        style={{ padding: 'clamp(4rem, 8vw, 7rem) 0 clamp(3rem, 6vw, 5rem)' }}
+      >
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <ScrollReveal>
-            <div className="max-w-4xl mx-auto text-center">
-              <span className="section-label">Data Coverage</span>
-              <h1
-                className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display mb-6 text-text-primary"
-              >
-                Complete Coverage Where It Matters
-              </h1>
-              <p className="text-burnt-orange font-serif italic text-lg leading-relaxed mb-8 max-w-2xl mx-auto">
-                Real-time data from official sources. MLB, NFL, NBA, and the most comprehensive college baseball coverage anywhere.
-              </p>
-            </div>
+            <span className="heritage-stamp">Data Coverage</span>
+            <h1
+              className="mt-4 font-bold uppercase tracking-tight leading-[0.95] mb-5"
+              style={{
+                fontFamily: 'var(--bsi-font-display-hero)',
+                fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
+                color: 'var(--bsi-bone)',
+                textShadow: '2px 2px 0px rgba(0,0,0,0.5)',
+              }}
+            >
+              Complete Coverage Where It Matters
+            </h1>
+            <p
+              className="font-serif italic text-lg leading-relaxed mb-8 max-w-2xl mx-auto"
+              style={{ color: 'var(--bsi-primary)' }}
+            >
+              Real-time data from official sources. MLB, NFL, NBA, and the most comprehensive college baseball coverage anywhere.
+            </p>
           </ScrollReveal>
-        </Container>
-      </Section>
+        </div>
+      </section>
 
-      {/* Stats Bar */}
-      <div className="bg-background-secondary border-y border-border py-8">
-        <Container>
+      {/* ================================================================
+          STATS BAR
+          ================================================================ */}
+      <div
+        className="relative"
+        style={{
+          background: 'var(--surface-dugout)',
+          padding: 'clamp(1.5rem, 3vw, 2.5rem) 0',
+        }}
+      >
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(191,87,0,0.15)] to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[rgba(191,87,0,0.15)] to-transparent" />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <ScrollReveal>
-              <div>
-                <div className="text-3xl md:text-4xl font-mono font-bold text-burnt-orange">392+</div>
-                <p className="text-text-tertiary mt-1">Teams Tracked</p>
-              </div>
-            </ScrollReveal>
-            <ScrollReveal delay={100}>
-              <div>
-                <div className="text-3xl md:text-4xl font-mono font-bold text-burnt-orange">30s</div>
-                <p className="text-text-tertiary mt-1">Update Frequency</p>
-              </div>
-            </ScrollReveal>
-            <ScrollReveal delay={200}>
-              <div>
-                <div className="text-3xl md:text-4xl font-mono font-bold text-burnt-orange">6</div>
-                <p className="text-text-tertiary mt-1">Data Sources</p>
-              </div>
-            </ScrollReveal>
-            <ScrollReveal delay={300}>
-              <div>
-                <div className="text-3xl md:text-4xl font-mono font-bold text-burnt-orange">99.7%</div>
-                <p className="text-text-tertiary mt-1">Uptime</p>
-              </div>
-            </ScrollReveal>
+            {[
+              { value: '392+', label: 'Teams Tracked' },
+              { value: '30s', label: 'Update Frequency' },
+              { value: '6', label: 'Data Sources' },
+              { value: '99.7%', label: 'Uptime' },
+            ].map((stat, i) => (
+              <ScrollReveal key={stat.label} delay={i * 100}>
+                <div>
+                  <div
+                    className="text-3xl md:text-4xl font-bold"
+                    style={{
+                      fontFamily: 'var(--bsi-font-data, var(--font-mono))',
+                      color: 'var(--bsi-primary)',
+                    }}
+                  >
+                    {stat.value}
+                  </div>
+                  <p
+                    className="mt-1 text-sm"
+                    style={{ color: 'rgba(196,184,165,0.5)' }}
+                  >
+                    {stat.label}
+                  </p>
+                </div>
+              </ScrollReveal>
+            ))}
           </div>
-        </Container>
+        </div>
       </div>
 
-      {/* Sports Coverage */}
-      <Section className="py-20">
-        <Container>
+      {/* ================================================================
+          SPORTS COVERAGE
+          ================================================================ */}
+      <section
+        className="relative"
+        style={{ padding: 'clamp(3rem, 6vw, 5rem) 0' }}
+      >
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center mb-12">
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display text-text-primary mb-4">Sports Coverage</h2>
-              <p className="text-text-tertiary max-w-2xl mx-auto">
+              <span className="heritage-stamp">Sports Coverage</span>
+              <h2
+                className="mt-3 font-bold uppercase tracking-wide mb-4"
+                style={{
+                  fontFamily: 'var(--bsi-font-display)',
+                  fontSize: 'clamp(1.75rem, 4vw, 2.5rem)',
+                  color: 'var(--bsi-bone)',
+                }}
+              >
+                Sports Coverage
+              </h2>
+              <p
+                className="max-w-2xl mx-auto text-sm"
+                style={{ color: 'rgba(196,184,165,0.5)' }}
+              >
                 Comprehensive coverage across professional and college sports.
               </p>
             </div>
@@ -248,38 +282,66 @@ export default function CoveragePage() {
           <div className="space-y-6">
             {sportsCoverage.map((sport, index) => (
               <ScrollReveal key={sport.name} delay={index * 100}>
-                <Card className="overflow-hidden">
+                <div
+                  className="heritage-card overflow-hidden"
+                  style={{ borderTop: '2px solid var(--border-vintage)' }}
+                >
                   <div className="grid md:grid-cols-4 gap-6 p-6">
                     {/* Sport Header */}
                     <div className="md:col-span-1">
                       <Link href={sport.href} className="group">
                         <div className="flex items-center gap-3 mb-3">
-                          <span className="text-text-secondary">
+                          <span style={{ color: 'var(--bsi-dust)' }}>
                             {(() => { const Icon = COVERAGE_ICONS[sport.name]; return Icon ? <Icon /> : null; })()}
                           </span>
                           <div>
-                            <h3 className="text-xl font-semibold text-text-primary group-hover:text-burnt-orange transition-colors">
+                            <h3
+                              className="text-xl font-semibold transition-colors"
+                              style={{ color: 'var(--bsi-bone)' }}
+                              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--bsi-primary)')}
+                              onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--bsi-bone)')}
+                            >
                               {sport.name}
                             </h3>
-                            <Badge
-                              variant="secondary"
-                              style={{ backgroundColor: withAlpha(sport.statusColor, 0.12), color: sport.statusColor }}
+                            <span
+                              className="inline-block text-[10px] font-bold uppercase tracking-[0.15em] px-2 py-0.5 rounded-sm"
+                              style={{
+                                background: `${sport.statusColor}1F`,
+                                color: sport.statusColor,
+                              }}
                             >
                               {sport.status}
-                            </Badge>
+                            </span>
                           </div>
                         </div>
-                        <p className="text-text-tertiary text-sm">{sport.teams}</p>
+                        <p
+                          className="text-sm"
+                          style={{ color: 'rgba(196,184,165,0.5)' }}
+                        >
+                          {sport.teams}
+                        </p>
                       </Link>
                     </div>
 
                     {/* Features */}
                     <div className="md:col-span-2">
-                      <h4 className="text-sm font-semibold text-text-muted uppercase mb-3">Features</h4>
+                      <h4
+                        className="text-sm font-semibold uppercase mb-3"
+                        style={{
+                          fontFamily: 'var(--bsi-font-display)',
+                          color: 'rgba(196,184,165,0.35)',
+                        }}
+                      >
+                        Features
+                      </h4>
                       <ul className="grid grid-cols-2 gap-2">
                         {sport.features.map((feature) => (
-                          <li key={feature} className="flex items-center gap-2 text-text-secondary text-sm">
-                            <span className="text-success">✓</span>
+                          <li
+                            key={feature}
+                            className="flex items-center gap-2 text-sm"
+                            style={{ color: 'var(--bsi-dust)' }}
+                          >
+                            <span style={{ color: '#22C55E' }}>&#10003;</span>
                             {feature}
                           </li>
                         ))}
@@ -289,35 +351,85 @@ export default function CoveragePage() {
                     {/* Sources & Frequency */}
                     <div className="md:col-span-1">
                       <div className="mb-4">
-                        <h4 className="text-sm font-semibold text-text-muted uppercase mb-2">Data Sources</h4>
+                        <h4
+                          className="text-sm font-semibold uppercase mb-2"
+                          style={{
+                            fontFamily: 'var(--bsi-font-display)',
+                            color: 'rgba(196,184,165,0.35)',
+                          }}
+                        >
+                          Data Sources
+                        </h4>
                         <div className="flex flex-wrap gap-2">
                           {sport.sources.map((source) => (
-                            <Badge key={source} variant="secondary" className="text-xs">
+                            <span
+                              key={source}
+                              className="inline-block text-[10px] font-bold uppercase tracking-[0.1em] px-2 py-0.5 rounded-sm"
+                              style={{
+                                background: 'var(--surface-press-box)',
+                                color: 'var(--bsi-dust)',
+                              }}
+                            >
                               {source}
-                            </Badge>
+                            </span>
                           ))}
                         </div>
                       </div>
                       <div>
-                        <h4 className="text-sm font-semibold text-text-muted uppercase mb-1">Updates</h4>
-                        <p className="text-sm text-ember">{sport.updateFrequency}</p>
+                        <h4
+                          className="text-sm font-semibold uppercase mb-1"
+                          style={{
+                            fontFamily: 'var(--bsi-font-display)',
+                            color: 'rgba(196,184,165,0.35)',
+                          }}
+                        >
+                          Updates
+                        </h4>
+                        <p
+                          className="text-sm"
+                          style={{ color: 'var(--bsi-primary)' }}
+                        >
+                          {sport.updateFrequency}
+                        </p>
                       </div>
                     </div>
                   </div>
-                </Card>
+                </div>
               </ScrollReveal>
             ))}
           </div>
-        </Container>
-      </Section>
+        </div>
+      </section>
 
-      {/* Data Sources */}
-      <Section className="py-20 bg-background-secondary">
-        <Container>
+      {/* ================================================================
+          DATA SOURCES
+          ================================================================ */}
+      <section
+        className="relative"
+        style={{
+          padding: 'clamp(3rem, 6vw, 5rem) 0',
+          background: 'var(--surface-dugout)',
+        }}
+      >
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(191,87,0,0.15)] to-transparent" />
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center mb-12">
-              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display text-text-primary mb-4">Our Data Sources</h2>
-              <p className="text-text-tertiary max-w-2xl mx-auto">
+              <span className="heritage-stamp">Sources</span>
+              <h2
+                className="mt-3 font-bold uppercase tracking-wide mb-4"
+                style={{
+                  fontFamily: 'var(--bsi-font-display)',
+                  fontSize: 'clamp(1.75rem, 4vw, 2.5rem)',
+                  color: 'var(--bsi-bone)',
+                }}
+              >
+                Our Data Sources
+              </h2>
+              <p
+                className="max-w-2xl mx-auto text-sm"
+                style={{ color: 'rgba(196,184,165,0.5)' }}
+              >
                 We pull from official APIs and trusted sources. Every stat is verified and timestamped.
               </p>
             </div>
@@ -326,107 +438,190 @@ export default function CoveragePage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {dataSources.map((source, index) => (
               <ScrollReveal key={source.name} delay={index * 100}>
-                <Card className="h-full">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between mb-3">
-                      <Badge variant="secondary">{source.sport}</Badge>
-                      <span className="text-xs text-success">{source.reliability} Uptime</span>
-                    </div>
-                    <h3 className="text-lg font-semibold text-text-primary mb-2">{source.name}</h3>
-                    <p className="text-text-tertiary text-sm">{source.description}</p>
-                  </CardContent>
-                </Card>
+                <div
+                  className="heritage-card h-full p-6"
+                  style={{ borderTop: '2px solid var(--border-vintage)' }}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span
+                      className="inline-block text-[10px] font-bold uppercase tracking-[0.1em] px-2 py-0.5 rounded-sm"
+                      style={{
+                        background: 'var(--surface-press-box)',
+                        color: 'var(--bsi-dust)',
+                      }}
+                    >
+                      {source.sport}
+                    </span>
+                    <span
+                      className="text-xs"
+                      style={{ color: '#22C55E' }}
+                    >
+                      {source.reliability} Uptime
+                    </span>
+                  </div>
+                  <h3
+                    className="text-lg font-semibold mb-2"
+                    style={{ color: 'var(--bsi-bone)' }}
+                  >
+                    {source.name}
+                  </h3>
+                  <p
+                    className="text-sm font-serif"
+                    style={{ color: 'rgba(196,184,165,0.5)' }}
+                  >
+                    {source.description}
+                  </p>
+                </div>
               </ScrollReveal>
             ))}
           </div>
-        </Container>
-      </Section>
+        </div>
+      </section>
 
-      {/* Data Quality Commitment */}
-      <Section className="py-20">
-        <Container>
+      {/* ================================================================
+          DATA QUALITY COMMITMENT
+          ================================================================ */}
+      <section
+        className="relative"
+        style={{ padding: 'clamp(3rem, 6vw, 5rem) 0' }}
+      >
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(191,87,0,0.15)] to-transparent" />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
-            <div className="max-w-3xl mx-auto">
-              <div className="text-center mb-12">
-                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display text-text-primary mb-4">Our Data Quality Commitment</h2>
-              </div>
-
-              <Card className="border-l-4 border-l-burnt-orange">
-                <CardContent className="p-8">
-                  <div className="space-y-6">
-                    <div className="flex items-start gap-4">
-                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-burnt-orange" stroke="currentColor" strokeWidth={1.5}><rect x="3" y="3" width="7" height="18" rx="1" /><rect x="14" y="8" width="7" height="13" rx="1" /><path d="M6 7v10M17.5 12v5" /></svg>
-                      <div>
-                        <h3 className="text-lg font-semibold text-text-primary mb-2">Cross-Referenced Data</h3>
-                        <p className="text-text-tertiary">
-                          Every critical statistic is cross-referenced against 3+ sources before publication. We do not guess.
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-4">
-                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-burnt-orange" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg>
-                      <div>
-                        <h3 className="text-lg font-semibold text-text-primary mb-2">America/Chicago Timestamps</h3>
-                        <p className="text-text-tertiary">
-                          All data points include precise timestamps. You always know exactly when information was captured.
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-4">
-                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-burnt-orange" stroke="currentColor" strokeWidth={1.5}><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" /></svg>
-                      <div>
-                        <h3 className="text-lg font-semibold text-text-primary mb-2">Source Citations</h3>
-                        <p className="text-text-tertiary">
-                          Every stat includes its source. Full transparency on where our data comes from.
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-4">
-                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-burnt-orange" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M4.93 4.93l14.14 14.14" /></svg>
-                      <div>
-                        <h3 className="text-lg font-semibold text-text-primary mb-2">Zero Placeholders</h3>
-                        <p className="text-text-tertiary">
-                          Real numbers or we do not ship it. No estimates, no placeholder data, no made-up statistics.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </ScrollReveal>
-        </Container>
-      </Section>
-
-      {/* CTA Section */}
-      <Section className="py-20 bg-gradient-to-b from-background-secondary to-background-primary">
-        <Container>
-          <ScrollReveal>
-            <div className="max-w-2xl mx-auto text-center">
+            <div className="text-center mb-12">
+              <span className="heritage-stamp">Quality</span>
               <h2
-                className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display mb-6"
+                className="mt-3 font-bold uppercase tracking-wide mb-4"
+                style={{
+                  fontFamily: 'var(--bsi-font-display)',
+                  fontSize: 'clamp(1.75rem, 4vw, 2.5rem)',
+                  color: 'var(--bsi-bone)',
+                }}
               >
-                See Our <span className="text-burnt-orange">Data in Action</span>
+                Our Data Quality Commitment
               </h2>
-              <p className="text-xl text-text-tertiary mb-8">
-                Start your 14-day free trial and explore the most comprehensive sports data platform built for fans.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/pricing">
-                  <Button size="lg" className="bg-burnt-orange hover:bg-burnt-orange/90">
-                    Start Free Trial
-                  </Button>
-                </Link>
-                <Link href="/college-baseball">
-                  <Button variant="outline" size="lg">
-                    Explore College Baseball
-                  </Button>
-                </Link>
+            </div>
+
+            <div
+              className="heritage-card p-8"
+              style={{ borderLeft: '4px solid var(--bsi-primary)' }}
+            >
+              <div className="space-y-6">
+                <div className="flex items-start gap-4">
+                  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0" style={{ color: 'var(--bsi-primary)' }} stroke="currentColor" strokeWidth={1.5}><rect x="3" y="3" width="7" height="18" rx="1" /><rect x="14" y="8" width="7" height="13" rx="1" /><path d="M6 7v10M17.5 12v5" /></svg>
+                  <div>
+                    <h3
+                      className="text-lg font-semibold mb-2"
+                      style={{ color: 'var(--bsi-bone)' }}
+                    >
+                      Cross-Referenced Data
+                    </h3>
+                    <p
+                      className="text-sm font-serif"
+                      style={{ color: 'rgba(196,184,165,0.5)' }}
+                    >
+                      Every critical statistic is cross-referenced against 3+ sources before publication. We do not guess.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0" style={{ color: 'var(--bsi-primary)' }} stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg>
+                  <div>
+                    <h3
+                      className="text-lg font-semibold mb-2"
+                      style={{ color: 'var(--bsi-bone)' }}
+                    >
+                      America/Chicago Timestamps
+                    </h3>
+                    <p
+                      className="text-sm font-serif"
+                      style={{ color: 'rgba(196,184,165,0.5)' }}
+                    >
+                      All data points include precise timestamps. You always know exactly when information was captured.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0" style={{ color: 'var(--bsi-primary)' }} stroke="currentColor" strokeWidth={1.5}><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" /></svg>
+                  <div>
+                    <h3
+                      className="text-lg font-semibold mb-2"
+                      style={{ color: 'var(--bsi-bone)' }}
+                    >
+                      Source Citations
+                    </h3>
+                    <p
+                      className="text-sm font-serif"
+                      style={{ color: 'rgba(196,184,165,0.5)' }}
+                    >
+                      Every stat includes its source. Full transparency on where our data comes from.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0" style={{ color: 'var(--bsi-primary)' }} stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M4.93 4.93l14.14 14.14" /></svg>
+                  <div>
+                    <h3
+                      className="text-lg font-semibold mb-2"
+                      style={{ color: 'var(--bsi-bone)' }}
+                    >
+                      Zero Placeholders
+                    </h3>
+                    <p
+                      className="text-sm font-serif"
+                      style={{ color: 'rgba(196,184,165,0.5)' }}
+                    >
+                      Real numbers or we do not ship it. No estimates, no placeholder data, no made-up statistics.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </ScrollReveal>
-        </Container>
-      </Section>
+        </div>
+      </section>
+
+      {/* ================================================================
+          CTA
+          ================================================================ */}
+      <section
+        className="relative"
+        style={{
+          padding: 'clamp(3rem, 6vw, 5rem) 0',
+          background: 'var(--surface-scoreboard)',
+        }}
+      >
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(191,87,0,0.15)] to-transparent" />
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <ScrollReveal>
+            <h2
+              className="font-bold uppercase tracking-wide mb-6"
+              style={{
+                fontFamily: 'var(--bsi-font-display)',
+                fontSize: 'clamp(1.75rem, 4vw, 2.5rem)',
+                color: 'var(--bsi-bone)',
+              }}
+            >
+              See Our{' '}
+              <span style={{ color: 'var(--bsi-primary)' }}>Data in Action</span>
+            </h2>
+            <p
+              className="text-lg font-serif mb-8"
+              style={{ color: 'rgba(196,184,165,0.5)' }}
+            >
+              Start your 14-day free trial and explore the most comprehensive sports data platform built for fans.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/pricing" className="btn-heritage-fill px-8 py-3 text-center">
+                Start Free Trial
+              </Link>
+              <Link href="/college-baseball" className="btn-heritage px-8 py-3 text-center">
+                Explore College Baseball
+              </Link>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
 
       <Footer />
     </div>

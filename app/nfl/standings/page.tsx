@@ -55,19 +55,22 @@ export default function NFLStandingsPage() {
 
   return (
     <>
-      <div>
+      <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/nfl"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="transition-colors"
+                style={{ color: 'rgba(196,184,165,0.5)' }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--bsi-primary)')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(196,184,165,0.5)')}
               >
                 NFL
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">Standings</span>
+              <span style={{ color: 'rgba(196,184,165,0.5)' }}>/</span>
+              <span className="font-medium" style={{ color: 'var(--bsi-bone)' }}>Standings</span>
             </nav>
           </Container>
         </Section>
@@ -84,13 +87,13 @@ export default function NFLStandingsPage() {
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-gradient-blaze">
+              <h1 className="text-3xl md:text-4xl font-bold uppercase tracking-wider" style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}>
                 NFL Standings
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="text-text-secondary mt-2">
+              <p className="mt-2" style={{ color: 'var(--bsi-dust)' }}>
                 Complete AFC and NFC standings with playoff positioning
               </p>
             </ScrollReveal>
@@ -105,11 +108,12 @@ export default function NFLStandingsPage() {
                 <button
                   key={conf}
                   onClick={() => setSelectedConference(conf)}
-                  className={`px-6 py-3 min-h-[44px] rounded-sm font-semibold transition-all ${
+                  className="px-6 py-3 min-h-[44px] rounded-sm font-semibold transition-all"
+                  style={
                     selectedConference === conf
-                      ? 'bg-burnt-orange text-white'
-                      : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
-                  }`}
+                      ? { background: 'var(--bsi-primary)', color: '#fff' }
+                      : { background: 'var(--surface-dugout)', color: 'var(--bsi-dust)' }
+                  }
                 >
                   {conf}
                 </button>
@@ -125,9 +129,9 @@ export default function NFLStandingsPage() {
 
             <DataErrorBoundary name="NFL Standings">
             {isOffSeason && (
-              <Card variant="default" padding="md" className="mb-6 bg-surface-light border-border-subtle">
-                <p className="text-text-primary font-semibold">Off-Season</p>
-                <p className="text-text-secondary text-sm mt-1">
+              <Card variant="default" padding="md" className="mb-6" style={{ background: 'var(--surface-press-box)', borderColor: 'var(--border-vintage)' }}>
+                <p className="font-semibold" style={{ color: 'var(--bsi-bone)' }}>Off-Season</p>
+                <p className="text-sm mt-1" style={{ color: 'var(--bsi-dust)' }}>
                   The 2025-26 NFL season has concluded. Final standings will display when live data is available from our API. The 2026 season kicks off in September.
                 </p>
               </Card>
@@ -138,10 +142,10 @@ export default function NFLStandingsPage() {
                 {[1, 2, 3, 4].map((i) => (
                   <Card key={i} variant="default" padding="lg">
                     <div className="animate-pulse">
-                      <div className="h-6 bg-background-tertiary rounded-sm w-32 mb-4"></div>
+                      <div className="h-6 rounded-sm w-32 mb-4" style={{ background: 'var(--surface-dugout)' }}></div>
                       <div className="space-y-2">
                         {[1, 2, 3, 4].map((j) => (
-                          <div key={j} className="h-10 bg-background-tertiary rounded-sm"></div>
+                          <div key={j} className="h-10 rounded-sm" style={{ background: 'var(--surface-dugout)' }}></div>
                         ))}
                       </div>
                     </div>
@@ -151,7 +155,7 @@ export default function NFLStandingsPage() {
             ) : error ? (
               <Card variant="default" padding="lg">
                 <div className="text-center py-12">
-                  <p className="text-text-secondary mb-4">Standings could not be loaded right now.</p>
+                  <p className="mb-4" style={{ color: 'var(--bsi-dust)' }}>Standings could not be loaded right now.</p>
                   <button onClick={retry} className="btn-heritage text-sm">Try Again</button>
                 </div>
               </Card>
@@ -169,39 +173,39 @@ export default function NFLStandingsPage() {
                 {currentConference?.divisions.map((division, index) => (
                   <ScrollReveal key={division.name} direction="up" delay={index * 100}>
                     <Card variant="default" padding="lg">
-                      <h3 className="text-lg font-display font-bold text-burnt-orange mb-4">
+                      <h3 className="text-lg font-bold mb-4" style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary)' }}>
                         {division.name}
                       </h3>
 
                       <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                           <thead>
-                            <tr className="border-b border-border-subtle">
-                              <th className="text-left py-2 px-2 text-text-tertiary font-semibold">
+                            <tr style={{ borderBottom: '1px solid var(--border-vintage)' }}>
+                              <th className="text-left py-2 px-2 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>
                                 Team
                               </th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                              <th className="text-center py-2 px-2 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>
                                 W
                               </th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                              <th className="text-center py-2 px-2 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>
                                 L
                               </th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                              <th className="text-center py-2 px-2 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>
                                 T
                               </th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                              <th className="text-center py-2 px-2 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>
                                 PCT
                               </th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">
+                              <th className="text-center py-2 px-2 font-semibold hidden md:table-cell" style={{ color: 'rgba(196,184,165,0.5)' }}>
                                 PF
                               </th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">
+                              <th className="text-center py-2 px-2 font-semibold hidden md:table-cell" style={{ color: 'rgba(196,184,165,0.5)' }}>
                                 PA
                               </th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">
+                              <th className="text-center py-2 px-2 font-semibold hidden md:table-cell" style={{ color: 'rgba(196,184,165,0.5)' }}>
                                 DIFF
                               </th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden lg:table-cell">
+                              <th className="text-center py-2 px-2 font-semibold hidden lg:table-cell" style={{ color: 'rgba(196,184,165,0.5)' }}>
                                 STRK
                               </th>
                             </tr>
@@ -210,43 +214,45 @@ export default function NFLStandingsPage() {
                             {division.teams.map((team, teamIndex) => (
                               <tr
                                 key={team.abbreviation}
-                                className={`border-b border-border-subtle last:border-0 ${
+                                className={`last:border-0 ${
                                   teamIndex === 0 ? 'bg-success/5' : ''
                                 }`}
+                                style={{ borderBottom: '1px solid var(--border-vintage)' }}
                               >
                                 <td className="py-3 px-2">
                                   <div className="flex items-center gap-2">
-                                    <span className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
+                                    <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: 'var(--surface-dugout)', color: 'var(--bsi-primary)' }}>
                                       {team.abbreviation}
                                     </span>
-                                    <span className="font-semibold text-text-primary">{team.name}</span>
+                                    <span className="font-semibold" style={{ color: 'var(--bsi-bone)' }}>{team.name}</span>
                                   </div>
                                 </td>
-                                <td className="text-center py-3 px-2 text-text-primary font-mono">
+                                <td className="text-center py-3 px-2 font-mono" style={{ color: 'var(--bsi-bone)' }}>
                                   {team.wins}
                                 </td>
-                                <td className="text-center py-3 px-2 text-text-primary font-mono">
+                                <td className="text-center py-3 px-2 font-mono" style={{ color: 'var(--bsi-bone)' }}>
                                   {team.losses}
                                 </td>
-                                <td className="text-center py-3 px-2 text-text-primary font-mono">
+                                <td className="text-center py-3 px-2 font-mono" style={{ color: 'var(--bsi-bone)' }}>
                                   {team.ties}
                                 </td>
-                                <td className="text-center py-3 px-2 text-text-primary font-mono">
+                                <td className="text-center py-3 px-2 font-mono" style={{ color: 'var(--bsi-bone)' }}>
                                   {team.pct.toFixed(3)}
                                 </td>
-                                <td className="text-center py-3 px-2 text-text-secondary font-mono hidden md:table-cell">
+                                <td className="text-center py-3 px-2 font-mono hidden md:table-cell" style={{ color: 'var(--bsi-dust)' }}>
                                   {team.pf}
                                 </td>
-                                <td className="text-center py-3 px-2 text-text-secondary font-mono hidden md:table-cell">
+                                <td className="text-center py-3 px-2 font-mono hidden md:table-cell" style={{ color: 'var(--bsi-dust)' }}>
                                   {team.pa}
                                 </td>
                                 <td
-                                  className={`text-center py-3 px-2 font-mono hidden md:table-cell ${team.diff > 0 ? 'text-success' : team.diff < 0 ? 'text-error' : 'text-text-secondary'}`}
+                                  className={`text-center py-3 px-2 font-mono hidden md:table-cell ${team.diff > 0 ? 'text-success' : team.diff < 0 ? 'text-error' : ''}`}
+                                  style={team.diff === 0 ? { color: 'var(--bsi-dust)' } : undefined}
                                 >
                                   {team.diff > 0 ? '+' : ''}
                                   {team.diff}
                                 </td>
-                                <td className="text-center py-3 px-2 text-text-secondary hidden lg:table-cell">
+                                <td className="text-center py-3 px-2 hidden lg:table-cell" style={{ color: 'var(--bsi-dust)' }}>
                                   {team.streak}
                                 </td>
                               </tr>
@@ -261,7 +267,7 @@ export default function NFLStandingsPage() {
             )}
 
             {/* Data Source Footer */}
-            <div className="mt-8 pt-4 border-t border-border-subtle">
+            <div className="mt-8 pt-4" style={{ borderTop: '1px solid var(--border-vintage)' }}>
               <DataSourceBadge source="ESPN NFL API" timestamp={formatTimestamp()} />
             </div>
             </DataErrorBoundary>
