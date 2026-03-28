@@ -37,7 +37,7 @@ export function Section({
   return (
     <section
       id={id}
-      className={`${paddingClasses[padding]} ${bgClasses[background]} ${borderTop ? 'border-t border-border' : ''} ${className}`}
+      className={`${paddingClasses[padding]} ${bgClasses[background]} ${borderTop ? 'border-t border-[var(--border-vintage)]' : ''} ${className}`}
       style={style}
     >
       {children}

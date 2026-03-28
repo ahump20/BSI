@@ -15,8 +15,8 @@ import { metadata as layoutMetadata } from '@/app/layout';
 import { websiteJsonLd } from '@/lib/seo/structured-data';
 
 describe('homepage metadata', () => {
-  it('positions the homepage around college baseball sabermetrics', () => {
-    expect(homeMetadata.title).toBe('Blaze Sports Intel | College Baseball Sabermetrics, Live Scores, and Editorial');
+  it('positions the homepage around multi-sport coverage with sabermetrics', () => {
+    expect(homeMetadata.title).toBe('Blaze Sports Intel | Live Scores, Sabermetrics, and Original Coverage');
     expect(homeMetadata.description).toContain('college baseball');
     expect(homeMetadata.description).toContain('sabermetrics');
   });
