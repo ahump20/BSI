@@ -51,7 +51,18 @@ export default function Hero() {
           transition={{ duration: 0.7, delay: 0.6, ease: EASE_OUT_EXPO }}
           className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start"
         >
-          <a href="#work" className="btn-primary">
+          <a
+            href="#work"
+            className="btn-primary"
+            onClick={(e) => {
+              e.preventDefault();
+              const el = document.getElementById('work');
+              if (el) {
+                const top = Math.max(el.getBoundingClientRect().top + window.scrollY - 88, 0);
+                window.scrollTo({ top, behavior: 'smooth' });
+              }
+            }}
+          >
             See the Work
           </a>
           <a
