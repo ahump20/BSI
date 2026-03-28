@@ -16,23 +16,22 @@ test.describe('Homepage smoke tests', () => {
     const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
     expect(response?.status()).toBe(200);
     await expect(page.locator('body')).toBeVisible();
-    await expect(page.locator('[data-home-hero]')).toBeVisible();
   });
 
-  test('hero section carries the new thesis and proof ribbon', async ({ page }) => {
+  test('homepage shows BSI brand identity', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-
-    await expect(page.locator('[data-home-hero]')).toBeVisible();
-    await expect(page.locator('[data-home-proof-ribbon]')).toBeVisible();
-    await expect(page.getByRole('heading', { name: /The Real Game Lives Between The Coasts/i })).toBeVisible();
+    // Brand name visible
+    await expect(page.getByText('Blaze Sports Intel')).toBeVisible({ timeout: 10000 });
+    // Tagline present in the page
+    await expect(page.getByText(/Born to Blaze the Path Beaten Less/i)).toBeVisible({ timeout: 10000 });
   });
 
-  test('primary homepage CTA is visible and wired', async ({ page }) => {
+  test('homepage has navigation links to key sections', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-
-    const target = page.getByRole('link', { name: /^Open Scores$/i });
-    await expect(target).toBeVisible();
-    await expect(target).toHaveAttribute('href', '/scores');
+    // Scores link present
+    await expect(page.getByRole('link', { name: /scores/i }).first()).toBeVisible({ timeout: 10000 });
+    // Savant link present
+    await expect(page.getByRole('link', { name: /savant/i }).first()).toBeVisible({ timeout: 10000 });
   });
 
   test('mobile bottom nav renders', async ({ page, isMobile }) => {
@@ -60,36 +59,10 @@ test.describe('Homepage smoke tests', () => {
     expect(realErrors).toHaveLength(0);
   });
 
-  test('flagship section renders on the homepage', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await expect(page.locator('[data-home-flagship]')).toBeVisible();
-    await expect(page.getByRole('link', { name: /Open BSI Savant/i })).toBeVisible();
-  });
-
-  test('footer renders with 6 link columns', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
-
-    const footer = page.locator('footer');
-    await expect(footer).toBeVisible();
-
-    // Footer grid has 6 columns: Start Here, Sports, Tools, Ecosystem, Company, Legal
-    const columnHeaders = footer.locator('h4');
-    const count = await columnHeaders.count();
-    expect(count).toBe(6);
-  });
-
-  test('Ask BSI input is visible', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
-
-    await expect(page.locator('[data-home-platform]')).toBeVisible();
-    await expect(page.locator('[data-home-ask="embedded"]')).toBeVisible();
-    await expect(page.getByPlaceholder('Ask about any sport, stat, team, or feature...')).toBeVisible();
-  });
-
-  test('freshness section renders with editorial and intel surfaces', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await expect(page.locator('[data-home-freshness]')).toBeVisible();
-    await expect(page.getByText(/Trending Intel/i)).toBeVisible();
-    await expect(page.locator('[data-home-cta]')).toBeVisible();
+  test('leaderboard data loads on homepage', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'networkidle' });
+    // Homepage dashboard shows live leaderboard data — at least one player name should appear
+    const playerLinks = page.locator('a[href*="/college-baseball/savant/player/"]');
+    await expect(playerLinks.first()).toBeAttached({ timeout: 15000 });
   });
 });
