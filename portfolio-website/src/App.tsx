@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense, useCallback, useEffect } from 'react';
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
 import Work from './components/Work';
@@ -45,7 +45,10 @@ function PhotoBreak({
   );
 }
 
+const SECTION_ORDER = ['hero', 'work', 'proof', 'origin', 'contact'] as const;
+
 function App() {
+  // Route-based scroll on initial load
   useEffect(() => {
     const routeToSection: Record<string, string> = {
       '/': 'hero',
@@ -65,6 +68,45 @@ function App() {
 
     requestAnimationFrame(scrollToTarget);
   }, []);
+
+  // Keyboard section navigation — j/k or arrows when not in an input
+  const handleKeyNav = useCallback((e: KeyboardEvent) => {
+    const tag = (e.target as HTMLElement).tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+
+    const isNext = e.key === 'j' || e.key === 'ArrowDown';
+    const isPrev = e.key === 'k' || e.key === 'ArrowUp';
+    if (!isNext && !isPrev) return;
+
+    // Find current section based on scroll position
+    const viewportMid = window.scrollY + window.innerHeight / 3;
+    let currentIdx = 0;
+    for (let i = SECTION_ORDER.length - 1; i >= 0; i--) {
+      const el = document.getElementById(SECTION_ORDER[i]);
+      if (el && el.offsetTop <= viewportMid) {
+        currentIdx = i;
+        break;
+      }
+    }
+
+    const nextIdx = isNext
+      ? Math.min(currentIdx + 1, SECTION_ORDER.length - 1)
+      : Math.max(currentIdx - 1, 0);
+
+    if (nextIdx === currentIdx) return;
+
+    e.preventDefault();
+    const target = document.getElementById(SECTION_ORDER[nextIdx]);
+    if (target) {
+      const offset = Math.max(target.getBoundingClientRect().top + window.scrollY - 88, 0);
+      window.scrollTo({ top: offset, behavior: 'smooth' });
+    }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyNav);
+    return () => window.removeEventListener('keydown', handleKeyNav);
+  }, [handleKeyNav]);
 
   return (
     <ErrorBoundary>
