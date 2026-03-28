@@ -104,7 +104,7 @@ export default function Origin() {
     <section
       id="origin"
       aria-labelledby="origin-heading"
-      className="section-padding section-border"
+      className="section-padding"
     >
       <div className="container-custom">
         <motion.div

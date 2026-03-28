@@ -16,7 +16,7 @@ export default function Proof() {
     <section
       id="proof"
       aria-labelledby="proof-heading"
-      className="section-padding section-border"
+      className="section-padding"
     >
       <div className="container-custom">
         <motion.div
