@@ -54,9 +54,9 @@ export const FLAGSHIP = {
   thesis:
     'I built BSI because the work I wanted to read did not exist. The gap between genuine interest in the game and real access to useful coverage is still wide — especially once you move past the prestige-market defaults.',
   stats: [
-    { value: '6', label: 'Leagues' },
-    { value: '330+', label: 'D1 Programs' },
-    { value: '58+', label: 'Editorial Pieces' },
+    { value: '6', label: 'Leagues Covered' },
+    { value: '330+', label: 'D1 Programs Tracked' },
+    { value: '58+', label: 'Original Editorials' },
   ],
   capabilities: [
     'Live scores, standings, and rankings across college baseball, MLB, NFL, NCAA football, NBA, and college basketball.',
