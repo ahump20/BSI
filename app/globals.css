@@ -756,27 +756,7 @@ textarea:focus-visible,
     color: var(--color-info);
   }
 
-  /* ---- Text color aliases ---- */
-  .text-text-primary {
-    color: var(--color-text-primary);
-  }
-
-  .text-text-secondary {
-    color: var(--color-text-secondary);
-  }
-
-  .text-text-tertiary {
-    color: var(--color-text-tertiary);
-  }
-
-  .text-text-muted {
-    color: var(--color-text-muted);
-  }
-
-  /* ---- Border aliases ---- */
-  .border-border {
-    border-color: var(--color-border-default);
-  }
+  /* Legacy text/border aliases removed — Heritage v2.1 uses inline CSS vars */
 
   /* ---- Shadow utilities ---- */
   .shadow-glow-sm {
