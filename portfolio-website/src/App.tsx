@@ -25,7 +25,7 @@ function PhotoBreak({
 }) {
   return (
     <div
-      className="relative w-full overflow-hidden"
+      className="photo-break-parallax relative w-full overflow-hidden"
       style={{ height }}
       aria-hidden="true"
     >

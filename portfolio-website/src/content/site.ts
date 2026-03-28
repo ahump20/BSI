@@ -97,6 +97,7 @@ export type ProofPiece = {
   pullQuote: string;
   tag: string;
   href: string;
+  readTime: string;
 };
 
 export const PROOF_PIECES: ProofPiece[] = [
@@ -106,6 +107,7 @@ export const PROOF_PIECES: ProofPiece[] = [
       'A full-field read on every program in the league — rotation shape, lineup depth, transfer impact — written before the easy narratives set in.',
     tag: 'Conference Preview',
     href: 'https://blazesportsintel.com/college-baseball/editorial/big-12',
+    readTime: '18 min read',
   },
   {
     title: 'SEC Conference Baseball Preview 2026',
@@ -113,6 +115,7 @@ export const PROOF_PIECES: ProofPiece[] = [
       'Sixteen programs, one conference, and a real attempt to explain where the leverage lives instead of reciting brand names.',
     tag: 'Conference Preview',
     href: 'https://blazesportsintel.com/college-baseball/editorial/sec',
+    readTime: '22 min read',
   },
   {
     title: 'Texas Longhorns: Week 1 in Review',
@@ -120,6 +123,7 @@ export const PROOF_PIECES: ProofPiece[] = [
       'A team-level breakdown connecting the eye test, the pitching shape, and the postseason implications — without hiding behind recap language.',
     tag: 'Team Analysis',
     href: 'https://blazesportsintel.com/blog-post-feed/texas-baseball-week-1-recap-lamar-preview-michigan-state-series-2026',
+    readTime: '7 min read',
   },
 ];
 

@@ -68,6 +68,16 @@
     overflow-x: hidden;
   }
 
+  /* Smooth page entrance — fades from black on load */
+  #root {
+    animation: page-entrance 0.6s ease-out forwards;
+  }
+
+  @keyframes page-entrance {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
   body {
     @apply font-serif;
     background-color: var(--color-bg);
@@ -510,6 +520,22 @@
     rgba(13,13,13,0.15) 100%
   );
   pointer-events: none;
+}
+
+/* Photo break parallax — image scrolls slower for depth */
+.photo-break-parallax img {
+  height: 130%;
+  top: -15%;
+  position: absolute;
+  will-change: transform;
+}
+
+/* Disable parallax on mobile/reduced-motion for performance */
+@media (max-width: 768px), (prefers-reduced-motion: reduce) {
+  .photo-break-parallax img {
+    height: 100%;
+    top: 0;
+  }
 }
 
 /* Full-bleed photo break — escapes container-custom */

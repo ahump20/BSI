@@ -46,9 +46,14 @@ export default function Proof() {
               >
                 <div className="grid gap-4 md:grid-cols-[minmax(0,0.35fr)_minmax(0,0.65fr)] md:items-start md:gap-8">
                   <div>
-                    <p className="font-mono text-[0.58rem] uppercase tracking-[0.26em] text-burnt-orange/75">
-                      {piece.tag}
-                    </p>
+                    <div className="flex items-center gap-3">
+                      <p className="font-mono text-[0.58rem] uppercase tracking-[0.26em] text-burnt-orange/75">
+                        {piece.tag}
+                      </p>
+                      <span className="font-mono text-[0.52rem] uppercase tracking-[0.2em] text-warm-gray/50">
+                        {piece.readTime}
+                      </span>
+                    </div>
                     <h3 className="mt-3 font-sans text-base font-semibold uppercase tracking-[0.14em] text-bone transition-colors duration-300 group-hover:text-burnt-orange md:text-lg">
                       {piece.title}
                     </h3>
