@@ -59,9 +59,9 @@ export const FLAGSHIP = {
     { value: '58+', label: 'Original Editorials' },
   ],
   capabilities: [
-    'Live scores, standings, and rankings across college baseball, MLB, NFL, NCAA football, NBA, and college basketball.',
-    'Advanced sabermetrics — wOBA, FIP, wRC+, park factors — recomputed every six hours from primary data.',
-    'Original editorial that does analytical work, not recap language.',
+    'Live scores with 30-second refresh across six leagues, including 330 D1 baseball programs that ESPN buries behind two clicks.',
+    'Advanced sabermetrics — wOBA, FIP, wRC+, park factors — recomputed every six hours from primary source data, not scraped aggregators.',
+    'Original editorial that breaks down rotation shape, lineup depth, and transfer impact instead of recycling press conference quotes.',
   ],
   tech: 'Cloudflare Workers, D1, KV, R2, Next.js, React, TypeScript — all organized around speed, signal, and maintainability.',
 } as const;
