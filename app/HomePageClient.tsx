@@ -49,7 +49,15 @@ interface LeaderboardResponse {
 // Nav Items — product entry points
 // ---------------------------------------------------------------------------
 
-const NAV_ITEMS = [
+const SPORT_HUBS = [
+  { title: 'College Baseball', href: '/college-baseball/', desc: 'Savant analytics' },
+  { title: 'MLB', href: '/mlb/', desc: 'Scores & standings' },
+  { title: 'NFL', href: '/nfl/', desc: 'Scores & standings' },
+  { title: 'NBA', href: '/nba/', desc: 'Scores & standings' },
+  { title: 'College Football', href: '/cfb/', desc: 'Scores & standings' },
+] as const;
+
+const TOOL_ITEMS = [
   { title: 'Savant', href: '/college-baseball/savant/', icon: '◈', desc: 'Leaderboards' },
   { title: 'Scores', href: '/scores/', icon: '⚾', desc: 'Live games' },
   { title: 'Rankings', href: '/college-baseball/rankings/', icon: '▲', desc: 'National poll' },
@@ -207,37 +215,73 @@ export function HomePageClient() {
               Blaze Sports Intel
             </h1>
             <p className="text-[10px] font-mono mt-1" style={{ color: 'var(--bsi-dust)' }}>
-              D1 baseball sabermetrics &middot; live scores &middot; scouting
+              5 sports &middot; live scores &middot; sabermetrics &middot; scouting
             </p>
           </div>
 
-          {/* Nav grid */}
-          <nav className="grid grid-cols-2 gap-1.5" aria-label="Quick navigation">
-            {NAV_ITEMS.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="group flex items-center gap-2 px-2.5 py-2 rounded-sm transition-all duration-100
-                           hover:bg-[rgba(191,87,0,0.06)] border"
-                style={{ borderColor: 'rgba(196,184,165,0.06)', background: 'transparent' }}
-              >
-                <span className="text-sm shrink-0 opacity-50 group-hover:opacity-100 transition-opacity" style={{ color: 'var(--bsi-primary)' }}>
-                  {item.icon}
-                </span>
-                <div className="min-w-0">
+          {/* Sport hubs */}
+          <div>
+            <h2
+              className="text-[9px] uppercase tracking-[0.2em] font-bold mb-2"
+              style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-dust)' }}
+            >
+              Sports
+            </h2>
+            <nav className="flex flex-wrap gap-1.5" aria-label="Sport navigation">
+              {SPORT_HUBS.map((sport) => (
+                <Link
+                  key={sport.href}
+                  href={sport.href}
+                  className="group px-2.5 py-1.5 rounded-sm transition-all duration-100
+                             hover:bg-[rgba(191,87,0,0.08)] border"
+                  style={{ borderColor: 'rgba(196,184,165,0.08)', background: 'transparent' }}
+                >
                   <span
-                    className="text-[10px] font-bold uppercase tracking-wider block group-hover:text-[var(--bsi-primary)] transition-colors"
-                    style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-bone)' }}
+                    className="text-[10px] font-bold uppercase tracking-wider group-hover:text-[var(--bsi-primary)] transition-colors"
+                    style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
                   >
-                    {item.title}
+                    {sport.title}
                   </span>
-                  <span className="text-[8px] font-mono block" style={{ color: 'rgba(196,184,165,0.5)' }}>
-                    {item.desc}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* Tools grid */}
+          <div>
+            <h2
+              className="text-[9px] uppercase tracking-[0.2em] font-bold mb-2"
+              style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-dust)' }}
+            >
+              Tools
+            </h2>
+            <nav className="grid grid-cols-2 gap-1.5" aria-label="Quick navigation">
+              {TOOL_ITEMS.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="group flex items-center gap-2 px-2.5 py-2 rounded-sm transition-all duration-100
+                             hover:bg-[rgba(191,87,0,0.06)] border"
+                  style={{ borderColor: 'rgba(196,184,165,0.06)', background: 'transparent' }}
+                >
+                  <span className="text-sm shrink-0 opacity-50 group-hover:opacity-100 transition-opacity" style={{ color: 'var(--bsi-primary)' }}>
+                    {item.icon}
                   </span>
-                </div>
-              </Link>
-            ))}
-          </nav>
+                  <div className="min-w-0">
+                    <span
+                      className="text-[10px] font-bold uppercase tracking-wider block group-hover:text-[var(--bsi-primary)] transition-colors"
+                      style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                    >
+                      {item.title}
+                    </span>
+                    <span className="text-[8px] font-mono block" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                      {item.desc}
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </nav>
+          </div>
 
           {/* Standout hitter */}
           {topHitter && (
