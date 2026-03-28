@@ -192,6 +192,7 @@ import { handleWeeklyPulse } from './handlers/weekly-pulse';
 import { handleContact, handleLead, handleFeedback, handleCSPReport } from './handlers/lead';
 import { handlePredictionSubmit, handlePredictionAccuracy } from './handlers/predictions';
 import { handleIntelNews, handleESPNNews } from './handlers/news';
+import { handlePodcasts } from './handlers/media';
 import {
   handleTexasIntelVideos,
   handleTexasIntelNews,
@@ -568,6 +569,9 @@ app.get('/api/blog-post-feed', (c) =>
 app.get('/api/blog-post-feed/:slug', (c) =>
   handleBlogPostFeedItem(c.req.param('slug'), c.env)
 );
+
+// --- Media ---
+app.get('/api/media/podcasts', (c) => handlePodcasts(c.env));
 
 // --- MLB ---
 app.get('/api/mlb/scores', (c) => safeESPN(() => handleMLBScores(new URL(c.req.url), c.env), 'games', [], c.env));
