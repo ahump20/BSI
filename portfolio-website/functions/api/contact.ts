@@ -21,7 +21,9 @@ interface ContactPayload {
 }
 
 const RECIPIENT = 'Austin@BlazeSportsIntel.com';
-const FROM_ADDRESS = 'contact@austinhumphrey.com';
+// Use onboarding@resend.dev if austinhumphrey.com isn't verified in Resend
+// Switch to contact@austinhumphrey.com once domain is verified
+const FROM_ADDRESS = 'onboarding@resend.dev';
 
 const corsHeaders: Record<string, string> = {
   'Access-Control-Allow-Origin': '*',
@@ -97,40 +99,45 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   // Send via Resend
   try {
+    const resendPayload = {
+      from: `AustinHumphrey.com <${FROM_ADDRESS}>`,
+      to: [RECIPIENT],
+      reply_to: email.trim(),
+      subject: `[Portfolio] Message from ${name.trim()}`,
+      text: [
+        `Name: ${name.trim()}`,
+        `Email: ${email.trim()}`,
+        `Site: ${body.site || 'austinhumphrey.com'}`,
+        `Time: ${new Date().toISOString()}`,
+        '',
+        '---',
+        '',
+        message.trim(),
+      ].join('\n'),
+    };
+
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${env.RESEND_API_KEY}`,
       },
-      body: JSON.stringify({
-        from: `AustinHumphrey.com <${FROM_ADDRESS}>`,
-        to: [RECIPIENT],
-        reply_to: email.trim(),
-        subject: `[Portfolio] Message from ${name.trim()}`,
-        text: [
-          `Name: ${name.trim()}`,
-          `Email: ${email.trim()}`,
-          `Site: ${body.site || 'austinhumphrey.com'}`,
-          `Time: ${new Date().toISOString()}`,
-          '',
-          '---',
-          '',
-          message.trim(),
-        ].join('\n'),
-      }),
+      body: JSON.stringify(resendPayload),
+      signal: AbortSignal.timeout(6000),
     });
 
     if (!res.ok) {
-      const errorText = await res.text();
-      console.error('Resend API error:', res.status, errorText);
-      return jsonResponse({ error: 'Unable to send your message right now.' }, 502);
+      let errorDetail = '';
+      try { errorDetail = await res.text(); } catch { /* ignore */ }
+      console.error('Resend API error:', res.status, errorDetail);
+      return jsonResponse({ error: 'Unable to send your message right now.', detail: `Resend ${res.status}` }, 200);
     }
 
     return jsonResponse({ ok: true }, 200);
   } catch (err) {
-    console.error('Contact function error:', err);
-    return jsonResponse({ error: 'Internal error' }, 500);
+    const msg = err instanceof Error ? err.message : 'Unknown error';
+    console.error('Contact function error:', msg);
+    return jsonResponse({ error: 'Unable to send right now. Try emailing Austin@BlazeSportsIntel.com directly.', detail: msg }, 200);
   }
 };
 

@@ -52,6 +52,7 @@ function App() {
   useEffect(() => {
     const routeToSection: Record<string, string> = {
       '/': 'hero',
+      '/work': 'work',
       '/about': 'origin',
       '/contact': 'contact',
     };

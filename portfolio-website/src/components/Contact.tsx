@@ -94,8 +94,8 @@ export default function Contact() {
         signal: controller.signal,
       });
 
-      const data = (await res.json().catch(() => null)) as { error?: string } | null;
-      if (!res.ok) {
+      const data = (await res.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
+      if (!res.ok || (data && data.error && !data.ok)) {
         throw new Error(data?.error || 'Unable to send your message right now.');
       }
 
