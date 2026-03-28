@@ -64,13 +64,13 @@ export function ScrollReveal({ children, direction = 'up', delay = 0, className 
       }
     });
 
-    // Hard fallback: if observer hasn't fired within 500ms, force reveal
+    // Hard fallback: if observer hasn't fired within 200ms, force reveal
     const fallbackTimer = setTimeout(() => {
       if (!revealed.current) {
         reveal();
         observer.disconnect();
       }
-    }, 500);
+    }, 200);
 
     return () => {
       clearTimeout(fallbackTimer);

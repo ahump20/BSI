@@ -1352,9 +1352,9 @@ textarea:focus-visible,
 
 .reveal {
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.8s cubic-bezier(0.25, 0.1, 0.25, 1), transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
-  animation: reveal-safety-net 0s 2s forwards;
+  transform: translateY(20px);
+  transition: opacity 0.7s cubic-bezier(0.25, 0.1, 0.25, 1), transform 0.7s cubic-bezier(0.25, 0.1, 0.25, 1);
+  animation: reveal-safety-net 0.6s 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
 }
 
 .reveal.revealed {
@@ -1370,10 +1370,10 @@ textarea:focus-visible,
   }
 }
 
-.reveal-left { transform: translateX(-30px); }
+.reveal-left { transform: translateX(-20px); }
 .reveal-left.revealed { transform: translateX(0); }
 
-.reveal-right { transform: translateX(30px); }
+.reveal-right { transform: translateX(20px); }
 .reveal-right.revealed { transform: translateX(0); }
 
 .reveal-scale { transform: scale(0.95); }

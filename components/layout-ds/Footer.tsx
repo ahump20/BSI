@@ -26,7 +26,7 @@ export function Footer() {
               Born to Blaze the Path Beaten Less
             </p>
             <p className="text-xs leading-relaxed font-serif italic" style={{ color: 'var(--bsi-dust)' }}>
-              Park-adjusted sabermetrics, live scores, and original editorial for college baseball.
+              Live scores, sabermetrics, and original coverage across college baseball, MLB, NFL, NBA, and college football.
             </p>
           </div>
           <div className="flex items-center gap-4">
