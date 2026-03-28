@@ -12,63 +12,304 @@ export const PRIMARY_EMAIL = 'Austin@BlazeSportsIntel.com';
 export const PLATFORM_URLS = {
   bsi: 'https://blazesportsintel.com',
   blazecraft: 'https://blazecraft.app',
-  labs: 'https://labs.blazesportsintel.com',
   arcade: 'https://arcade.blazesportsintel.com',
   dna: 'https://dna.austinhumphrey.com',
   linkedin: 'https://linkedin.com/in/ahump20',
   github: 'https://github.com/ahump20',
-  x: 'https://x.com/BlazeSportsIntel',
   email: `mailto:${PRIMARY_EMAIL}`,
 } as const;
 
-/* ── Navigation ── */
+// ─── Hero ───────────────────────────────────────────
+
+export const HERO_CONTENT = {
+  thesis:
+    'The coverage most people consume is built for the markets that already get attention. I build the alternative — real analytics, real editorial, real product — for every program and athlete that gets left out.',
+  name: 'Austin Humphrey',
+  cta: { label: 'See the Work', href: '#work' },
+} as const;
+
+// ─── Navigation ─────────────────────────────────────
 
 export const NAV_ITEMS = [
   { id: 'hero', label: 'Home' },
   { id: 'work', label: 'Work' },
   { id: 'proof', label: 'Proof' },
-  { id: 'platform', label: 'Platform' },
   { id: 'origin', label: 'Origin' },
-  { id: 'career', label: 'Career' },
   { id: 'contact', label: 'Contact' },
 ] as const;
 
-export const FOOTER_LINK_GROUPS = [
-  {
-    title: 'Navigate',
-    links: [
-      { label: 'Work', href: '#work' },
-      { label: 'Proof', href: '#proof' },
-      { label: 'Platform', href: '#platform' },
-      { label: 'Origin', href: '#origin' },
-      { label: 'Career', href: '#career' },
-      { label: 'Contact', href: '#contact' },
-    ] satisfies SiteLink[],
-  },
-  {
-    title: 'BSI',
-    links: [
-      { label: 'BlazeSportsIntel.com', href: PLATFORM_URLS.bsi, external: true },
-      { label: 'BSI Radar Lab', href: PLATFORM_URLS.labs, external: true },
-      { label: 'BlazeCraft Dashboard', href: PLATFORM_URLS.blazecraft, external: true },
-      { label: 'BSI Arcade', href: PLATFORM_URLS.arcade, external: true },
-      { label: 'A Documented Heritage', href: PLATFORM_URLS.dna, external: true },
-    ] satisfies SiteLink[],
-  },
-  {
-    title: 'Social',
-    links: [
-      { label: 'LinkedIn', href: PLATFORM_URLS.linkedin, external: true },
-      { label: 'GitHub', href: PLATFORM_URLS.github, external: true },
-      { label: 'X / Twitter', href: PLATFORM_URLS.x, external: true },
-      { label: 'Email', href: PLATFORM_URLS.email },
-    ] satisfies SiteLink[],
-  },
-] as const;
+// ─── Work (merged Work + Platform) ──────────────────
 
-/* ── Contact ── */
+export type Project = {
+  name: string;
+  category: string;
+  outcome: string;
+  href: string;
+  state?: 'live' | 'building';
+};
 
-export type ContactChannelIcon = 'email' | 'linkedin' | 'bsi' | 'github' | 'x';
+export const FLAGSHIP = {
+  name: 'Blaze Sports Intel',
+  href: PLATFORM_URLS.bsi,
+  thesis:
+    'I built BSI because the work I wanted to read did not exist. The gap between genuine interest in the game and real access to useful coverage is still wide — especially once you move past the prestige-market defaults.',
+  stats: [
+    { value: '6', label: 'Leagues' },
+    { value: '330+', label: 'D1 Programs' },
+    { value: '58+', label: 'Editorial Pieces' },
+  ],
+  capabilities: [
+    'Live scores, standings, and rankings across college baseball, MLB, NFL, NCAA football, NBA, and college basketball.',
+    'Advanced sabermetrics — wOBA, FIP, wRC+, park factors — recomputed every six hours from primary data.',
+    'Original editorial that does analytical work, not recap language.',
+  ],
+  tech: 'Cloudflare Workers, D1, KV, R2, Next.js, React, TypeScript — all organized around speed, signal, and maintainability.',
+} as const;
+
+export const SUPPORTING_PROJECTS: Project[] = [
+  {
+    name: 'BlazeCraft',
+    category: 'System Health',
+    outcome: 'Warcraft-inspired infrastructure dashboard. Live BSI system status at a glance.',
+    href: PLATFORM_URLS.blazecraft,
+    state: 'live',
+  },
+  {
+    name: 'Sandlot Sluggers',
+    category: 'Browser Game',
+    outcome: '3D baseball arcade wired to real college rosters via BSI API.',
+    href: PLATFORM_URLS.arcade,
+    state: 'live',
+  },
+  {
+    name: 'A Documented Heritage',
+    category: 'Personal Archive',
+    outcome: 'Interactive self-portrait built from charts, motion, and cross-referenced personal data.',
+    href: PLATFORM_URLS.dna,
+    state: 'building',
+  },
+];
+
+// ─── Proof (editorial + speaking) ───────────────────
+
+export type ProofPiece = {
+  title: string;
+  pullQuote: string;
+  tag: string;
+  href: string;
+};
+
+export const PROOF_PIECES: ProofPiece[] = [
+  {
+    title: 'Big 12 Conference Baseball Preview 2026',
+    pullQuote:
+      'A full-field read on every program in the league — rotation shape, lineup depth, transfer impact — written before the easy narratives set in.',
+    tag: 'Conference Preview',
+    href: 'https://blazesportsintel.com/college-baseball/editorial/big-12',
+  },
+  {
+    title: 'SEC Conference Baseball Preview 2026',
+    pullQuote:
+      'Sixteen programs, one conference, and a real attempt to explain where the leverage lives instead of reciting brand names.',
+    tag: 'Conference Preview',
+    href: 'https://blazesportsintel.com/college-baseball/editorial/sec',
+  },
+  {
+    title: 'Texas Longhorns: Week 1 in Review',
+    pullQuote:
+      'A team-level breakdown connecting the eye test, the pitching shape, and the postseason implications — without hiding behind recap language.',
+    tag: 'Team Analysis',
+    href: 'https://blazesportsintel.com/blog-post-feed/texas-baseball-week-1-recap-lamar-preview-michigan-state-series-2026',
+  },
+];
+
+export const SPEAKING_REEL = {
+  title: 'Talking Sports: The Analytical Lens',
+  summary:
+    'The same thinking in spoken form — direct, unscripted, clear enough to hold up without a graphic package carrying the argument.',
+  videoSrc: '/assets/austin-speaking-sports.mp4',
+} as const;
+
+// ─── Origin ─────────────────────────────────────────
+
+export const ORIGIN_FACTS = [
+  { label: 'Born', value: 'August 17, 1995' },
+  { label: 'Birth Soil', value: 'West Columbia, TX' },
+  { label: 'Named After', value: 'Austin, Texas' },
+];
+
+export type OriginPhoto = {
+  src: string;
+  srcSet: string;
+  alt: string;
+  wide?: boolean;
+};
+
+export type DocumentaryChapter = {
+  id: string;
+  label: string;
+  narrative?: string;
+  photos: OriginPhoto[];
+};
+
+export const ORIGIN_CHAPTERS: DocumentaryChapter[] = [
+  {
+    id: 'roots',
+    label: 'The Soil',
+    narrative:
+      'Austin was born in Memphis, but his parents brought Texas soil from West Columbia and placed it beneath his mother before he was born. The point was never symbolism for later. It was continuity in real time.',
+    photos: [
+      {
+        src: '/assets/texas-soil.jpg',
+        srcSet: '/assets/optimized/texas-soil-640w.webp 640w, /assets/optimized/texas-soil-1024w.webp 1024w',
+        alt: 'West Columbia soil — the family tradition that grounded everything before it started',
+      },
+      {
+        src: '/assets/birth-article.jpg',
+        srcSet: '/assets/optimized/birth-article-640w.webp 640w, /assets/optimized/birth-article-1024w.webp 1024w',
+        alt: 'The article that documented the beginning',
+      },
+    ],
+  },
+  {
+    id: 'identity',
+    label: 'Identity',
+    narrative:
+      'Ricky Williams, UT season tickets, youth baseball, Friday night lights, and the Forty Acres all belonged to the same world. Texas was not scenery. It was the standard.',
+    photos: [
+      {
+        src: '/assets/young-austin-longhorns.jpg',
+        srcSet: '/assets/optimized/young-austin-longhorns-640w.webp 640w, /assets/optimized/young-austin-longhorns-1024w.webp 1024w',
+        alt: 'Longhorn identity arrived early and never needed a sales pitch',
+        wide: true,
+      },
+    ],
+  },
+  {
+    id: 'athlete',
+    label: 'The Athlete',
+    narrative:
+      'The competitive instinct was never theoretical. It came from real fields, real opponents, real stakes — the kind where you learn what effort actually costs before anyone tells you what it is worth.',
+    photos: [
+      {
+        src: '/assets/football-uniform.jpg',
+        srcSet: '/assets/optimized/football-uniform-640w.webp 640w, /assets/optimized/football-uniform-1024w.webp 1024w',
+        alt: 'Game day uniform — the part where effort and identity merged',
+      },
+      {
+        src: '/assets/running-vs-tivy.jpg',
+        srcSet: '/assets/optimized/running-vs-tivy-640w.webp 640w, /assets/optimized/running-vs-tivy-1024w.webp 1024w',
+        alt: 'Running against Tivy — the scoreboard never told the full story',
+      },
+    ],
+  },
+  {
+    id: 'family',
+    label: 'The Roots',
+    narrative:
+      'Sports was never a solo pursuit. It was handed down — from fathers to sons, from bleachers to backyard, from shared seasons to shared language.',
+    photos: [
+      {
+        src: '/assets/baseball-with-father.jpg',
+        srcSet: '/assets/optimized/baseball-with-father-640w.webp 640w, /assets/optimized/baseball-with-father-1024w.webp 1024w',
+        alt: 'Baseball with Dad — the first coach and the longest mentor',
+        wide: true,
+      },
+      {
+        src: '/assets/chargers-with-dad.jpg',
+        srcSet: '/assets/optimized/chargers-with-dad-640w.webp 640w, /assets/optimized/chargers-with-dad-1024w.webp 1024w',
+        alt: "Chargers game — some traditions don't need an explanation",
+      },
+      {
+        src: '/assets/ballpark-kids.jpg',
+        srcSet: '/assets/optimized/ballpark-kids-640w.webp 640w, /assets/optimized/ballpark-kids-1024w.webp 1024w',
+        alt: 'The ballpark — where the next generation learns the same language',
+      },
+    ],
+  },
+  {
+    id: 'transition',
+    label: 'The Transition',
+    photos: [
+      {
+        src: '/assets/last-game-silhouette.jpg',
+        srcSet: '/assets/optimized/last-game-silhouette-640w.webp 640w, /assets/optimized/last-game-silhouette-1024w.webp 1024w',
+        alt: 'Friday night lights stayed part of the operating system long after the jersey came off',
+        wide: true,
+      },
+    ],
+  },
+  {
+    id: 'milestones',
+    label: 'The Thread',
+    narrative:
+      'Blaze Sports Intel did not come from a naming exercise. It came from a dog named Blaze, a youth baseball team, and a long memory for how sports identity actually takes shape.',
+    photos: [
+      {
+        src: '/assets/nana-graduation.jpg',
+        srcSet: '/assets/optimized/nana-graduation-640w.webp 640w, /assets/optimized/nana-graduation-1024w.webp 1024w',
+        alt: 'Graduation with Nana — the milestone that earned its weight',
+      },
+      {
+        src: '/assets/blaze-dog.jpg',
+        srcSet: '/assets/optimized/blaze-dog-640w.webp 640w, /assets/optimized/blaze-dog-1024w.webp 1024w',
+        alt: 'Blaze — the dog who named the brand before the brand existed',
+      },
+    ],
+  },
+  {
+    id: 'community',
+    label: 'The People',
+    photos: [
+      {
+        src: '/assets/friendsgiving.jpg',
+        srcSet: '/assets/optimized/friendsgiving-640w.webp 640w, /assets/optimized/friendsgiving-1024w.webp 1024w',
+        alt: 'Friendsgiving — the table that proves the network is real',
+      },
+      {
+        src: '/assets/titans-halloween.jpg',
+        srcSet: '/assets/optimized/titans-halloween-640w.webp 640w, /assets/optimized/titans-halloween-1024w.webp 1024w',
+        alt: 'Titans Halloween — the group that never took itself too seriously',
+      },
+    ],
+  },
+  {
+    id: 'document',
+    label: 'Full Circle',
+    photos: [
+      {
+        src: '/assets/birth-certificate.jpg',
+        srcSet: '/assets/optimized/birth-certificate-640w.webp 640w, /assets/optimized/birth-certificate-1024w.webp 1024w',
+        alt: 'The birth certificate — proof that this story has a starting document',
+        wide: true,
+      },
+    ],
+  },
+];
+
+export const ORIGIN_MOMENTS = [
+  {
+    title: 'The soil came first',
+    text:
+      'Austin was born in Memphis, but his parents brought Texas soil from West Columbia and placed it beneath his mother before he was born. The point was never symbolism for later. It was continuity in real time.',
+  },
+  {
+    title: 'Sports culture was native, not added',
+    text:
+      'Ricky Williams, UT season tickets, youth baseball, Friday night lights, and the Forty Acres all belonged to the same world. Texas was not scenery. It was the standard.',
+  },
+  {
+    title: 'The product came out of lived fit',
+    text:
+      'Blaze Sports Intel did not come from a naming exercise. It came from a dog named Blaze, a youth baseball team, and a long memory for how sports identity actually takes shape.',
+  },
+];
+
+export const ORIGIN_CLOSER = "It's not where you're from. It's how you show up.";
+
+// ─── Contact (simplified) ───────────────────────────
+
+export type ContactChannelIcon = 'email' | 'linkedin' | 'bsi' | 'github';
 
 export const CONTACT_CHANNELS: Array<{
   label: string;
@@ -83,16 +324,16 @@ export const CONTACT_CHANNELS: Array<{
     icon: 'email',
   },
   {
-    label: 'LinkedIn',
-    value: 'linkedin.com/in/ahump20',
-    href: PLATFORM_URLS.linkedin,
-    icon: 'linkedin',
-  },
-  {
     label: 'BSI',
     value: 'BlazeSportsIntel.com',
     href: PLATFORM_URLS.bsi,
     icon: 'bsi',
+  },
+  {
+    label: 'LinkedIn',
+    value: 'linkedin.com/in/ahump20',
+    href: PLATFORM_URLS.linkedin,
+    icon: 'linkedin',
   },
   {
     label: 'GitHub',
@@ -100,142 +341,39 @@ export const CONTACT_CHANNELS: Array<{
     href: PLATFORM_URLS.github,
     icon: 'github',
   },
-  {
-    label: 'X',
-    value: '@BlazeSportsIntel',
-    href: PLATFORM_URLS.x,
-    icon: 'x',
-  },
 ];
 
-/* ── Projects (flat flagship grid) ── */
+// ─── Credentials (replaces standalone Career section) ─
 
-export type Project = {
-  name: string;
-  category: string;
-  outcome: string;
-  href: string;
-  techs: string[];
-  state: 'live' | 'building';
-};
+export const CREDENTIALS =
+  'Full Sail M.S. in Sports Management (2026) · UT Austin B.A. in International Relations & Global Studies (2020) · Spectrum Reach · Northwestern Mutual';
 
-export const PORTFOLIO_PROJECTS: Project[] = [
-  {
-    name: 'Blaze Sports Intel',
-    category: 'Analytics Platform',
-    outcome: 'Six leagues, solo-built, live in production.',
-    href: PLATFORM_URLS.bsi,
-    techs: ['Cloudflare Workers', 'Next.js', 'D1'],
-    state: 'live',
-  },
-  {
-    name: 'BSI Radar Lab',
-    category: 'Pitch Analytics',
-    outcome: 'Physics-based TrackMan quality auditor — six validation layers, all client-side.',
-    href: PLATFORM_URLS.labs,
-    techs: ['React', 'Recharts', 'TypeScript'],
-    state: 'live',
-  },
-  {
-    name: 'BlazeCraft',
-    category: 'System Health',
-    outcome: 'Game-inspired infrastructure dashboard with real-time Durable Object monitoring.',
-    href: PLATFORM_URLS.blazecraft,
-    techs: ['Workers', 'Durable Objects', 'Canvas2D'],
-    state: 'live',
-  },
-  {
-    name: 'Sandlot Sluggers',
-    category: 'Browser Game',
-    outcome: '3D baseball arcade with real college rosters via BSI API and leaderboard integration.',
-    href: PLATFORM_URLS.arcade,
-    techs: ['Three.js', 'JavaScript', 'Workers'],
-    state: 'live',
-  },
-  {
-    name: 'A Documented Heritage',
-    category: 'Personal Archive',
-    outcome: '12+ D3 visualizations cross-referencing 8 data sources into an interactive self-portrait.',
-    href: PLATFORM_URLS.dna,
-    techs: ['D3.js', 'Three.js', 'React'],
-    state: 'building',
-  },
-];
+// ─── Footer ─────────────────────────────────────────
 
-/* ── BSI Platform (lean evidence section) ── */
-
-export const BSI_PLATFORM = {
-  stats: [
-    { value: '6', label: 'Leagues' },
-    { value: '330+', label: 'D1 Programs' },
-    { value: '58+', label: 'Articles' },
-  ],
-  leagues: [
-    { name: 'College Baseball', note: 'Flagship' },
-    { name: 'MLB', note: 'Full Coverage' },
-    { name: 'NFL', note: 'Full Coverage' },
-    { name: 'NCAA Football', note: 'Full Coverage' },
-    { name: 'NBA', note: 'Full Coverage' },
-    { name: 'NCAA Basketball', note: 'Full Coverage' },
-  ],
-  techStackSentence:
-    'Built on Cloudflare Workers, D1, KV, R2, Hono, Next.js, React, and TypeScript.',
-} as const;
-
-/* ── Origin sidebar ── */
-
-export const ORIGIN_FACTS = [
-  { label: 'Born', value: 'August 17, 1995' },
-  { label: 'Birth Soil', value: 'West Columbia, TX' },
-  { label: 'Named After', value: 'Austin, Texas' },
-];
-
-export const ORIGIN_MOMENTS = [
+export const FOOTER_LINK_GROUPS = [
   {
-    title: 'The soil came first',
-    text: 'Austin was born in Memphis on August 17, 1995, but his parents brought Texas soil from West Columbia and placed it beneath his mother before he was born. The doctor told the family, "You know you ain\'t the first to do this, but they\'ve ALL been from Texas." The next day the El Campo Leader-News ran the headline "Tennessee Birth Will Be on Texas Soil." Not a gesture for a story later — a family continuation.',
+    title: 'Explore',
+    links: [
+      { label: 'Work', href: '#work' },
+      { label: 'Proof', href: '#proof' },
+      { label: 'Origin', href: '#origin' },
+      { label: 'Contact', href: '#contact' },
+    ] satisfies SiteLink[],
   },
   {
-    title: 'Sports culture was native, not added',
-    text: 'Ricky Williams, UT season tickets, youth baseball, Friday night lights, and the Forty Acres all formed the same worldview: Texas was never only geography. It was a standard for how to show up.',
+    title: 'Build',
+    links: [
+      { label: 'Blaze Sports Intel', href: PLATFORM_URLS.bsi, external: true },
+      { label: 'BlazeCraft', href: PLATFORM_URLS.blazecraft, external: true },
+      { label: 'Sandlot Sluggers', href: PLATFORM_URLS.arcade, external: true },
+    ] satisfies SiteLink[],
   },
   {
-    title: 'BSI came out of lived history',
-    text: 'Blaze Sports Intel was named from Bartlett Blaze, Austin\'s dachshund, whose name traces back to his first youth baseball team. The brand was not invented in a vacuum. It was remembered into form.',
+    title: 'Connect',
+    links: [
+      { label: 'Email', href: PLATFORM_URLS.email },
+      { label: 'LinkedIn', href: PLATFORM_URLS.linkedin, external: true },
+      { label: 'GitHub', href: PLATFORM_URLS.github, external: true },
+    ] satisfies SiteLink[],
   },
-];
-
-/* ── Career ── */
-
-export const CAREER_ENTRIES = [
-  {
-    title: 'Founder & Builder',
-    company: 'Blaze Sports Intel',
-    location: 'San Antonio, TX',
-    period: '2023 – Present',
-    accent: 'burnt-orange',
-    description:
-      'Production-grade sports analytics platform covering six leagues — dozens of specialized systems, multiple databases, 58+ editorial deep-dives. Full architecture designed, deployed, and maintained solo.',
-  },
-  {
-    title: 'Advertising Account Executive',
-    company: 'Spectrum Reach',
-    location: 'Austin / San Antonio, TX',
-    period: 'Nov 2022 – Dec 2025',
-    accent: 'spectrum-blue',
-    description:
-      'Advertising strategy across Austin and San Antonio — two of the fastest-growing markets in Texas — spanning linear TV, OTT/CTV, streaming, and digital. Turned raw campaign data into revenue decisions for local and regional businesses.',
-  },
-  {
-    title: 'Financial Representative',
-    company: 'Northwestern Mutual',
-    location: 'Austin, TX',
-    period: 'Dec 2020 – Aug 2022',
-    accent: 'nw-navy',
-    description:
-      'Top-5 nationally ranked intern program to full-time. Only person in the office daily during COVID. Nearly tripled the referral production of every other advisor. "Power of 10" Award — top 10% national performance.',
-  },
-];
-
-export const EDUCATION_LINE =
-  'Full Sail M.S. (2026) · UT Austin B.A. (2020) · McCombs AI/ML Certificate (in progress) · ATO Rush Captain, UT Austin';
+] as const;

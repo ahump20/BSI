@@ -59,11 +59,47 @@ export function HubHero({
     <section
       className="relative overflow-hidden"
       style={{
-        background: 'radial-gradient(ellipse at 50% 20%, rgba(191, 87, 0, 0.06) 0%, transparent 60%), var(--surface-scoreboard)',
+        background: 'var(--surface-scoreboard)',
         padding: 'clamp(2rem, 5vw, 4rem) 0 clamp(1.5rem, 3vw, 2rem)',
       }}
     >
-      {/* Subtle bottom border */}
+      {/* R2 stadium photography */}
+      <img
+        src="/api/assets/images/blaze-stadium-hero.png"
+        alt=""
+        aria-hidden="true"
+        loading="eager"
+        decoding="async"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+        style={{ opacity: 0.18 }}
+      />
+
+      {/* Gradient: readability + stadium mid-reveal */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `linear-gradient(
+            to bottom,
+            rgba(10,10,10,0.55) 0%,
+            rgba(10,10,10,0.3) 30%,
+            rgba(10,10,10,0.45) 65%,
+            var(--surface-scoreboard) 100%
+          )`,
+        }}
+      />
+
+      {/* Olive-green warmth for baseball identity */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse 55% 55% at 50% 30%, rgba(107,142,35,0.08) 0%, transparent 70%)',
+        }}
+      />
+
+      {/* Grain */}
+      <div className="absolute inset-0 pointer-events-none grain-overlay" style={{ opacity: 0.3 }} />
+
+      {/* Bottom border */}
       <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[rgba(191,87,0,0.15)] to-transparent" />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">

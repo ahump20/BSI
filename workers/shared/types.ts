@@ -4,6 +4,8 @@ export interface Env {
   PORTAL_POLLER: DurableObjectNamespace;
   DB: D1Database;
   ASSETS_BUCKET: R2Bucket;
+  WEB_ASSETS: R2Bucket;
+  BRAND_ASSETS: R2Bucket;
   ENVIRONMENT: string;
   API_VERSION: string;
   PAGES_ORIGIN: string;

@@ -120,9 +120,11 @@ export default function Navigation() {
               scrollToSection('hero');
             }}
           >
-            <div className="w-9 h-9 bg-burnt-orange rounded-full flex items-center justify-center font-sans font-bold text-white text-xs group-hover:scale-110 group-hover:shadow-[0_0_16px_rgba(191,87,0,0.4)] transition-all duration-300">
-              AH
-            </div>
+            <img
+              src="/assets/nana-graduation.jpg"
+              alt="Austin Humphrey"
+              className="w-9 h-9 rounded-full object-cover [object-position:65%_12%] border-2 border-burnt-orange/60 group-hover:scale-110 group-hover:border-burnt-orange group-hover:shadow-[0_0_16px_rgba(191,87,0,0.4)] transition-all duration-300"
+            />
             <span className="font-mono text-sm text-bone/70 hidden sm:block group-hover:text-burnt-orange transition-colors duration-300">
               Austin Humphrey
             </span>

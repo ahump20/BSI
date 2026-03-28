@@ -59,6 +59,14 @@ binding = "ASSETS_BUCKET"
 bucket_name = "bsi-game-assets"
 
 [[r2_buckets]]
+binding = "WEB_ASSETS"
+bucket_name = "bsi-web-assets"
+
+[[r2_buckets]]
+binding = "BRAND_ASSETS"
+bucket_name = "blazesports-assets"
+
+[[r2_buckets]]
 binding = "DATA_LAKE"
 bucket_name = "blaze-sports-data-lake"
 
@@ -156,6 +164,14 @@ id = "eb5a89bcb6034c97831b358b1a8b2eba"
 [[env.production.r2_buckets]]
 binding = "ASSETS_BUCKET"
 bucket_name = "bsi-game-assets"
+
+[[env.production.r2_buckets]]
+binding = "WEB_ASSETS"
+bucket_name = "bsi-web-assets"
+
+[[env.production.r2_buckets]]
+binding = "BRAND_ASSETS"
+bucket_name = "blazesports-assets"
 
 [[env.production.r2_buckets]]
 binding = "DATA_LAKE"

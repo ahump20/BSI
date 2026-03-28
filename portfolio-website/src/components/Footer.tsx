@@ -1,31 +1,25 @@
-import { FOOTER_LINK_GROUPS, PRIMARY_EMAIL, RESUME_PATH, SITE_LOCATION, SITE_TAGLINE } from '../content/site';
+import { CREDENTIALS, FOOTER_LINK_GROUPS, PRIMARY_EMAIL, RESUME_PATH, SITE_LOCATION, SITE_TAGLINE } from '../content/site';
 
 export default function Footer() {
   return (
-    <footer className="relative border-t border-bone/5 footer-bg">
-      {/* Angular accent line */}
-      <div
-        className="absolute top-0 left-0 right-0 h-px footer-accent-line"
-      />
-
-      <div className="max-w-6xl mx-auto px-6 py-16 md:py-20">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-10 mb-14">
+    <footer className="border-t border-bone/5 footer-bg">
+      <div className="mx-auto max-w-5xl px-6 py-14 md:px-12 md:py-16 lg:px-16">
+        <div className="grid gap-10 md:grid-cols-[repeat(3,minmax(0,1fr))_minmax(0,0.9fr)]">
           {FOOTER_LINK_GROUPS.map((group) => (
             <div key={group.title}>
-              <p className="font-sans text-xs uppercase tracking-[0.2em] text-bone font-medium mb-5">
+              <p className="font-mono text-[0.64rem] uppercase tracking-[0.24em] text-burnt-orange/82">
                 {group.title}
               </p>
-              <ul className="space-y-3">
+              <ul className="mt-5 space-y-3">
                 {group.links.map((link) => {
                   const isExternal = 'external' in link && Boolean(link.external);
-
                   return (
                     <li key={link.label}>
                       <a
                         href={link.href}
                         target={isExternal ? '_blank' : undefined}
                         rel={isExternal ? 'noopener noreferrer' : undefined}
-                        className="text-sm text-warm-gray hover:text-burnt-orange transition-colors duration-300 footer-link"
+                        className="footer-link text-sm text-warm-gray transition-colors duration-300 hover:text-burnt-orange"
                       >
                         {link.label}
                       </a>
@@ -36,39 +30,34 @@ export default function Footer() {
             </div>
           ))}
 
-          {/* Legal / Info */}
           <div>
-            <p className="font-sans text-xs uppercase tracking-[0.2em] text-bone font-medium mb-5">
+            <p className="font-mono text-[0.64rem] uppercase tracking-[0.24em] text-burnt-orange/82">
               Info
             </p>
-            <ul className="space-y-3">
-              <li className="text-sm text-warm-gray">{SITE_LOCATION}</li>
+            <ul className="mt-5 space-y-3 text-sm text-warm-gray">
+              <li>{SITE_LOCATION}</li>
               <li>
-                <a href={RESUME_PATH} download className="text-sm text-warm-gray hover:text-burnt-orange transition-colors duration-300 footer-link">
+                <a href={RESUME_PATH} download className="footer-link transition-colors duration-300 hover:text-burnt-orange">
                   Download Resume
                 </a>
               </li>
-              <li className="text-sm text-warm-gray break-all">{PRIMARY_EMAIL}</li>
+              <li className="break-all">{PRIMARY_EMAIL}</li>
             </ul>
-
-            {/* Built on Cloudflare badge */}
-            <div className="mt-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-sm bg-bone/5 border border-bone/5 hover:border-burnt-orange/20 hover:bg-bone/[0.07] transition-all duration-300">
-              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-warm-gray">
-                <path d="M16.5 9.4l-3.7 8.2c-.1.3-.4.4-.7.4H6.8c-.3 0-.5-.2-.6-.5l-1-2.8c-.4-1.2.1-2.5 1.2-3.1l4.5-2.5c.2-.1.2-.3 0-.4l-1.3-.6c-.2-.1-.2-.4.1-.4l7.1.5c.2 0 .3.2.2.4l-.5 1zm2.3-1.2l-1.4-.1c-.1 0-.2-.1-.2-.2l-.3-1.3c-.2-.7-.8-1.1-1.5-1.1h-1.8c-.1 0-.2.1-.2.2l-.4 1.8c0 .1-.1.2-.2.2l-8.4.6c-1 .1-1.8.8-2 1.8l-.3 1.5c0 .1 0 .2.1.2h1.5c.1 0 .2-.1.2-.2l.2-.8c.1-.4.5-.7.9-.7h12.8c.5 0 1 .4 1.1.9l.1.6c0 .1.1.2.2.2h1.3c.1 0 .2-.1.2-.2l-.1-1.4c-.1-.9-.8-1.7-1.7-1.8z" fill="currentColor" />
-              </svg>
-              <span className="font-mono text-[0.6rem] text-warm-gray/80 uppercase tracking-wider">
-                Built on Cloudflare
-              </span>
-            </div>
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="pt-10 border-t border-bone/5 text-center">
-          <p className="font-sans font-medium text-sm uppercase tracking-[0.15em] text-burnt-orange/70 mb-3">
+        {/* Credentials line — replaces standalone Career section */}
+        <div className="mt-10 border-t border-bone/5 pt-6">
+          <p className="font-mono text-[0.58rem] uppercase tracking-[0.18em] text-warm-gray/50">
+            {CREDENTIALS}
+          </p>
+        </div>
+
+        <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
+          <p className="font-sans text-sm font-medium uppercase tracking-[0.18em] text-burnt-orange/75">
             {SITE_TAGLINE}
           </p>
-          <p className="text-sm font-mono text-warm-gray/60">
+          <p className="text-sm font-mono text-warm-gray/58">
             &copy; {new Date().getFullYear()} Austin Humphrey
           </p>
         </div>

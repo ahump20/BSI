@@ -1,34 +1,103 @@
 import { motion } from 'framer-motion';
-import { staggerContainer, staggerItem, fadeInRight } from '../utils/animations';
-import { ORIGIN_FACTS, ORIGIN_MOMENTS } from '../content/site';
+import { staggerContainer, staggerItem } from '../utils/animations';
+import {
+  ORIGIN_CHAPTERS,
+  ORIGIN_CLOSER,
+  ORIGIN_FACTS,
+  type OriginPhoto,
+} from '../content/site';
 
-interface PhotoProps {
-  src: string;
-  srcSet: string;
-  alt: string;
-}
+// ── Photo Components ────────────────────────────
 
-function PhotoCard({ src, srcSet, alt }: PhotoProps) {
+function DocPhoto({ photo, className = '' }: { photo: OriginPhoto; className?: string }) {
   return (
-    <motion.div
-      variants={staggerItem}
-      className="group overflow-hidden rounded-sm border border-bone/10 bg-charcoal/40"
-    >
+    <figure className={`group overflow-hidden rounded-sm border border-bone/10 bg-charcoal/30 ${className}`}>
       <img
-        src={src}
-        srcSet={srcSet}
-        sizes="(max-width: 640px) 200px, 260px"
-        alt={alt}
+        src={photo.src}
+        srcSet={photo.srcSet}
+        sizes={photo.wide ? '(max-width: 768px) 100vw, 66vw' : '(max-width: 768px) 100vw, 50vw'}
+        alt={photo.alt}
         loading="lazy"
         decoding="async"
-        className="block h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+        className="photo-documentary block w-full object-cover group-hover:scale-[1.02]"
       />
-      <div className="border-t border-bone/10 px-4 py-3">
-        <p className="text-[0.65rem] font-mono uppercase tracking-[0.22em] text-warm-gray/80">{alt}</p>
+      <figcaption className="border-t border-bone/10 px-4 py-3 text-[0.62rem] font-mono uppercase tracking-[0.18em] text-warm-gray/70 leading-relaxed">
+        {photo.alt}
+      </figcaption>
+    </figure>
+  );
+}
+
+function PhotoGrid({ photos }: { photos: OriginPhoto[] }) {
+  // Single wide photo — full span
+  if (photos.length === 1 && photos[0].wide) {
+    return (
+      <motion.div variants={staggerItem}>
+        <DocPhoto photo={photos[0]} />
+      </motion.div>
+    );
+  }
+
+  // Single non-wide photo — constrained width
+  if (photos.length === 1) {
+    return (
+      <motion.div variants={staggerItem} className="max-w-lg">
+        <DocPhoto photo={photos[0]} />
+      </motion.div>
+    );
+  }
+
+  // Two photos — side by side
+  if (photos.length === 2) {
+    const hasWide = photos.some((p) => p.wide);
+    if (hasWide) {
+      return (
+        <motion.div variants={staggerItem} className="grid gap-4">
+          {photos.map((photo) => (
+            <DocPhoto key={photo.src} photo={photo} className={photo.wide ? 'md:col-span-2' : ''} />
+          ))}
+        </motion.div>
+      );
+    }
+    return (
+      <motion.div variants={staggerItem} className="grid gap-4 md:grid-cols-2">
+        {photos.map((photo) => (
+          <DocPhoto key={photo.src} photo={photo} />
+        ))}
+      </motion.div>
+    );
+  }
+
+  // Three photos — first wide (if flagged), rest in 2-col; or 2-col + 1
+  const widePhoto = photos.find((p) => p.wide);
+  const regularPhotos = photos.filter((p) => !p.wide);
+
+  if (widePhoto) {
+    return (
+      <div className="space-y-4">
+        <motion.div variants={staggerItem}>
+          <DocPhoto photo={widePhoto} />
+        </motion.div>
+        <motion.div variants={staggerItem} className="grid gap-4 md:grid-cols-2">
+          {regularPhotos.map((photo) => (
+            <DocPhoto key={photo.src} photo={photo} />
+          ))}
+        </motion.div>
       </div>
+    );
+  }
+
+  // Default: all in grid
+  return (
+    <motion.div variants={staggerItem} className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {photos.map((photo) => (
+        <DocPhoto key={photo.src} photo={photo} />
+      ))}
     </motion.div>
   );
 }
+
+// ── Main Component ──────────────────────────────
 
 export default function Origin() {
   return (
@@ -39,102 +108,109 @@ export default function Origin() {
     >
       <div className="container-custom">
         <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.05 }}
+          initial={false}
+          animate="visible"
           variants={staggerContainer}
         >
-          <motion.div variants={staggerItem}>
-            <p className="section-label">// The Origin</p>
-            <h2 id="origin-heading" className="section-title">
+          {/* Section header */}
+          <motion.div variants={staggerItem} className="max-w-3xl">
+            <p className="section-label">Origin</p>
+            <h2 id="origin-heading" className="section-title mb-4">
               Born in Memphis. Rooted in Texas Soil.
             </h2>
-            <p className="editorial-lead max-w-3xl mb-4">
-              Texas was never a backdrop. It was the standard behind the family, the sports, the
-              identity, and eventually the work.
+            <p className="text-base leading-8 text-bone/68 md:text-lg">
+              Texas is not decorative background in this story. It is the throughline between family, sports, identity, and the standard behind the work.
             </p>
           </motion.div>
 
-          <div className="grid gap-12 lg:grid-cols-[minmax(0,1.35fr)_minmax(300px,0.8fr)]">
-            <div className="space-y-10">
-              {/* Photos */}
-              <motion.div variants={staggerItem} className="grid gap-6 md:grid-cols-2">
-                <PhotoCard
-                  src="/assets/texas-soil.jpg"
-                  srcSet="/assets/optimized/texas-soil-640w.webp 640w, /assets/optimized/texas-soil-1024w.webp 1024w"
-                  alt="West Columbia soil, preserved article, and the beginning of the story"
-                />
-                <PhotoCard
-                  src="/assets/young-austin-longhorns.jpg"
-                  srcSet="/assets/optimized/young-austin-longhorns-640w.webp 640w, /assets/optimized/young-austin-longhorns-1024w.webp 1024w"
-                  alt="Longhorn allegiance started early and never needed explanation"
-                />
-              </motion.div>
+          {/* Documentary chapters — photo narrative flow */}
+          <div className="mt-14 space-y-16">
+            {ORIGIN_CHAPTERS.map((chapter) => (
+              <motion.article
+                key={chapter.id}
+                variants={staggerItem}
+                className="space-y-6"
+              >
+                {/* Chapter label */}
+                <p className="chapter-label">{chapter.label}</p>
 
-              {/* Origin narrative */}
-              <div className="space-y-8">
-                {ORIGIN_MOMENTS.map((moment) => (
-                  <motion.article
-                    key={moment.title}
-                    variants={staggerItem}
-                    className="border-t border-bone/10 pt-6"
-                  >
-                    <h3 className="font-sans text-base font-semibold uppercase tracking-[0.18em] text-bone mb-3">
-                      {moment.title}
-                    </h3>
-                    <p className="text-base leading-8 text-bone/85">{moment.text}</p>
-                  </motion.article>
-                ))}
-              </div>
+                {/* Narrative text — editorial lead style */}
+                {chapter.narrative && (
+                  <p className="editorial-lead max-w-2xl">
+                    {chapter.narrative}
+                  </p>
+                )}
 
-              {/* Covenant accent — closing punchline */}
-              <motion.div variants={staggerItem} className="pt-8">
-                <p className="font-sans font-bold uppercase tracking-[0.2em] text-xl md:text-2xl">
-                  <span className="text-burnt-orange">It&apos;s not where you&apos;re from.</span>
-                  <br />
-                  <span className="text-bone mt-1 block">It&apos;s how you show up.</span>
-                </p>
-              </motion.div>
+                {/* Photo grid — layout adapts to photo count and flags */}
+                <PhotoGrid photos={chapter.photos} />
+              </motion.article>
+            ))}
+          </div>
+
+          {/* Quick facts — floating element after the documentary */}
+          <motion.div variants={staggerItem} className="mt-16 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(260px,0.4fr)]">
+            <div className="space-y-8">
+              {/* Closing blockquote */}
+              <blockquote className="border-l border-burnt-orange/35 pl-6 text-xl italic leading-relaxed text-bone/84">
+                Texas is not a birthplace here. It is the standard behind how you carry effort, loyalty, and memory.
+              </blockquote>
+
+              {/* Closer — the punchline */}
+              <p className="font-sans text-xl font-bold uppercase tracking-[0.18em] text-bone md:text-2xl">
+                <span className="text-burnt-orange">{ORIGIN_CLOSER.split('. ')[0]}.</span>
+                <br />
+                <span className="mt-2 block">{ORIGIN_CLOSER.split('. ')[1]}</span>
+              </p>
             </div>
 
-            {/* Sidebar */}
-            <motion.div className="lg:col-span-1" variants={fadeInRight}>
-              <div className="lg:sticky lg:top-24 space-y-6">
-                {/* Facts */}
-                <div className="card p-6">
-                  <h3 className="section-label mb-6">Quick Facts</h3>
-                  <div className="space-y-4">
-                    {ORIGIN_FACTS.map((fact) => (
-                      <div key={fact.label} className="flex justify-between items-baseline">
-                        <span className="text-sm font-mono text-warm-gray">{fact.label}</span>
-                        <span className="text-sm font-semibold text-bone text-right">{fact.value}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Davy Crockett quote */}
-                <div className="card p-6 about-quote-card">
-                  <p className="text-[0.65rem] font-mono uppercase tracking-[0.22em] text-burnt-orange/80">
-                    The Quote
-                  </p>
-                  <p className="mt-4 text-lg italic leading-relaxed text-bone/85">
-                    &ldquo;You may all go to hell, and I will go to Texas.&rdquo;
-                  </p>
-                  <p className="mt-3 text-xs font-mono text-warm-gray">Davy Crockett, 1835</p>
-                </div>
-
-                {/* Blaze dog */}
-                <div className="card overflow-hidden border border-bone/10">
-                  <PhotoCard
-                    src="/assets/blaze-dog.jpg"
-                    srcSet="/assets/optimized/blaze-dog-640w.webp 640w, /assets/optimized/blaze-dog-1024w.webp 1024w"
-                    alt="Bartlett Blaze, the namesake that turned memory into brand"
+            {/* Sidebar — portrait, facts, and the Crockett quote */}
+            <aside className="space-y-5">
+              {/* Portrait */}
+              <figure className="overflow-hidden rounded-sm border border-bone/10 bg-charcoal/30">
+                <picture>
+                  <source
+                    srcSet="/assets/optimized/nana-graduation-640w.webp 640w, /assets/optimized/nana-graduation-1024w.webp 1024w"
+                    sizes="(max-width: 1024px) 100vw, 260px"
+                    type="image/webp"
                   />
+                  <img
+                    src="/assets/nana-graduation.jpg"
+                    alt="Austin with his grandmother"
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full max-h-[320px] object-cover [object-position:50%_12%] photo-documentary"
+                  />
+                </picture>
+                <figcaption className="border-t border-bone/10 px-4 py-3 text-[0.62rem] font-mono uppercase tracking-[0.18em] text-warm-gray/70">
+                  Austin with his grandmother
+                </figcaption>
+              </figure>
+
+              <div className="rounded-sm border border-bone/8 bg-charcoal/18 p-6">
+                <h3 className="font-mono text-[0.64rem] uppercase tracking-[0.24em] text-burnt-orange/82">
+                  Quick Facts
+                </h3>
+                <div className="mt-5 space-y-4">
+                  {ORIGIN_FACTS.map((fact) => (
+                    <div key={fact.label} className="flex items-baseline justify-between gap-4">
+                      <span className="text-sm font-mono text-warm-gray">{fact.label}</span>
+                      <span className="text-sm font-semibold text-bone text-right">{fact.value}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
-            </motion.div>
-          </div>
+
+              <div className="rounded-sm border border-bone/8 bg-charcoal/20 p-6">
+                <p className="font-mono text-[0.64rem] uppercase tracking-[0.24em] text-burnt-orange/82">
+                  The Quote
+                </p>
+                <p className="mt-4 text-lg italic leading-relaxed text-bone/84">
+                  &ldquo;You may all go to hell, and I will go to Texas.&rdquo;
+                </p>
+                <p className="mt-3 text-xs font-mono text-warm-gray/72">Davy Crockett, 1835</p>
+              </div>
+            </aside>
+          </motion.div>
         </motion.div>
       </div>
     </section>

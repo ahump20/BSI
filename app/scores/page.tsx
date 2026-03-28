@@ -671,10 +671,27 @@ function ScoresHubContent() {
         <section
           className="relative overflow-hidden"
           style={{
-            background: 'radial-gradient(ellipse at 50% 20%, rgba(191, 87, 0, 0.06) 0%, transparent 60%), var(--surface-scoreboard)',
+            background: 'var(--surface-scoreboard)',
             padding: 'clamp(2rem, 4vw, 3.5rem) 0 clamp(1.5rem, 3vw, 2rem)',
           }}
         >
+          {/* R2 stadium atmosphere */}
+          <img
+            src="/api/assets/images/blaze-full-banner.png"
+            alt=""
+            aria-hidden="true"
+            loading="eager"
+            decoding="async"
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+            style={{ opacity: 0.12 }}
+          />
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: 'linear-gradient(to bottom, rgba(10,10,10,0.5) 0%, rgba(10,10,10,0.35) 40%, var(--surface-scoreboard) 100%)',
+            }}
+          />
+          <div className="absolute inset-0 pointer-events-none grain-overlay" style={{ opacity: 0.25 }} />
           <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[rgba(191,87,0,0.15)] to-transparent" />
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Breadcrumb */}

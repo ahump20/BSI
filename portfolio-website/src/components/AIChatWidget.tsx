@@ -191,7 +191,7 @@ export default function AIChatWidget() {
           if (!open) window.posthog?.capture('chat_opened');
           setOpen(!open);
         }}
-        className={`fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-full border px-3 py-2.5 backdrop-blur-md transition-all duration-300 cursor-pointer group ${
+        className={`fixed bottom-4 right-4 z-50 flex items-center justify-center gap-2 rounded-full border p-3 backdrop-blur-md transition-all duration-300 cursor-pointer group sm:bottom-5 sm:right-5 sm:px-3 sm:py-2.5 ${
           open
             ? 'border-burnt-orange/40 bg-burnt-orange text-white shadow-lg shadow-burnt-orange/20'
             : 'border-bone/10 bg-charcoal/80 text-bone/85 hover:border-burnt-orange/30 hover:text-burnt-orange fab-idle-glow'
@@ -217,7 +217,7 @@ export default function AIChatWidget() {
             />
           </svg>
         )}
-        <span className="font-mono text-[0.62rem] uppercase tracking-[0.22em]">
+        <span className="hidden font-mono text-[0.62rem] uppercase tracking-[0.22em] sm:inline">
           {open ? 'Close' : '// Austin'}
         </span>
       </button>

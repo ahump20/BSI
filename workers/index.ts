@@ -21,6 +21,7 @@ import { checkInMemoryRateLimit, checkPostRateLimit, maybeCleanupRateLimit } fro
 import { proxyToPages } from './shared/proxy';
 import { requireApiKey, provisionKey, emailKey } from './shared/auth';
 import { handleScoutingReport } from './handlers/scouting';
+import { handleAssetRequest } from './handlers/assets';
 
 // --- Handlers ---
 import {
@@ -366,6 +367,13 @@ app.all('/api/auth/signup', (c) => c.redirect('/pricing', 302));
 
 // --- Hero Scores (homepage strip) ---
 app.get('/api/hero-scores', (c) => handleHeroScores(new URL(c.req.url), c.env));
+
+// --- R2 Asset Delivery ---
+app.get('/api/assets/:bucket/*', (c) => {
+  const bucket = c.req.param('bucket');
+  const objectKey = c.req.path.replace(`/api/assets/${bucket}/`, '');
+  return handleAssetRequest(c.req.raw, c.env, bucket, objectKey);
+});
 
 // --- Health ---
 app.get('/health', (c) => handleHealth(c.env));
