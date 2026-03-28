@@ -1,69 +1,76 @@
 import { motion } from 'framer-motion';
 import { EASE_OUT_EXPO } from '../utils/animations';
-import { PLATFORM_URLS } from '../content/site';
+import { HERO_CONTENT, SITE_TAGLINE } from '../content/site';
 
 export default function Hero() {
   return (
-    <section id="hero" aria-labelledby="hero-heading" className="relative min-h-screen flex items-center overflow-hidden bg-midnight hero-grain">
-      {/* Static editorial gradient */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 hero-gradient-mesh" />
+    <section
+      id="hero"
+      aria-labelledby="hero-heading"
+      className="relative overflow-hidden bg-midnight"
+    >
+      {/* Photo backdrop — silhouette lighting lets vignette do the heavy lifting */}
+      <picture className="absolute inset-0">
+        <source
+          srcSet="/assets/optimized/last-game-silhouette-640w.webp 640w, /assets/optimized/last-game-silhouette-1024w.webp 1024w"
+          sizes="100vw"
+          type="image/webp"
+        />
+        <img
+          src="/assets/last-game-silhouette.jpg"
+          alt=""
+          aria-hidden="true"
+          className="h-full w-full object-cover"
+        />
+      </picture>
+
+      {/* Gradient overlay — heavy at bottom where text lives, transparent at top for atmosphere */}
+      <div className="hero-photo-overlay" />
+
+      {/* Grain texture */}
+      <div className="absolute inset-0 pointer-events-none hero-grain" />
+
+      <div className="relative z-10 mx-auto flex min-h-[88svh] max-w-5xl flex-col justify-end px-6 pb-16 pt-28 md:min-h-[82svh] md:px-12 md:pb-20 md:pt-36 lg:px-16 lg:pb-24">
+        {/* Thesis — the anchor */}
+        <motion.p
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: EASE_OUT_EXPO }}
+          className="max-w-2xl font-serif text-xl leading-relaxed text-bone/90 md:text-2xl md:leading-relaxed [text-shadow:0_2px_12px_rgba(0,0,0,0.6)]"
+        >
+          {HERO_CONTENT.thesis}
+        </motion.p>
+
+        {/* Name — arrives after the thesis */}
+        <motion.h1
+          id="hero-heading"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.65, delay: 0.25, ease: EASE_OUT_EXPO }}
+          className="mt-10 font-sans font-bold uppercase leading-[0.88] tracking-[0.06em] text-bone md:mt-12 [text-shadow:0_4px_20px_rgba(0,0,0,0.5)]"
+        >
+          <span className="block hero-first-name">Austin</span>
+          <span className="mt-1 block hero-last-name text-burnt-orange">Humphrey</span>
+        </motion.h1>
+
+        {/* Tagline + CTA */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.5, ease: EASE_OUT_EXPO }}
+          className="mt-8 flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-8"
+        >
+          <a href={HERO_CONTENT.cta.href} className="btn-primary">
+            {HERO_CONTENT.cta.label}
+          </a>
+          <p className="font-mono text-[0.6rem] uppercase tracking-[0.3em] text-burnt-orange/80 [text-shadow:0_1px_6px_rgba(0,0,0,0.4)]">
+            {SITE_TAGLINE}
+          </p>
+        </motion.div>
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 px-6 md:px-12 lg:px-16 max-w-6xl mx-auto w-full py-32 md:py-0">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.1, ease: EASE_OUT_EXPO }}
-          className="text-center md:text-left"
-        >
-          <h1
-            id="hero-heading"
-            className="font-sans font-bold uppercase leading-[0.9] tracking-wider text-bone mb-6"
-          >
-            <span className="block hero-first-name">
-              Austin
-            </span>
-            <span className="block text-stroke text-burnt-orange hero-last-name">
-              Humphrey
-            </span>
-          </h1>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.35, ease: EASE_OUT_EXPO }}
-          className="text-center md:text-left space-y-2 mb-10"
-        >
-          <p className="font-sans font-semibold text-burnt-orange uppercase tracking-[0.2em] text-sm">
-            Founder of Blaze Sports Intel
-          </p>
-          <p className="text-warm-gray text-lg md:text-xl max-w-xl leading-relaxed">
-            Six leagues of live analytics and original editorial for the athletes outside the spotlight.
-          </p>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.6, ease: EASE_OUT_EXPO }}
-          className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start"
-        >
-          <a href="#work" className="btn-primary">
-            See the Work
-          </a>
-          <a
-            href={PLATFORM_URLS.bsi}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-outline"
-          >
-            Blaze Sports Intel
-          </a>
-        </motion.div>
-      </div>
+      {/* Bottom edge — subtle burnt-orange glow line */}
+      <div className="absolute bottom-0 left-0 right-0 h-px accent-line-narrow" />
     </section>
   );
 }

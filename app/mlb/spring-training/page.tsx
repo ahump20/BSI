@@ -97,6 +97,7 @@ export default function SpringTrainingPage() {
           primaryCta={{ label: 'View Scores', href: '/mlb/spring-training/scores' }}
           secondaryCta={{ label: 'Standings', href: '/mlb/spring-training/standings' }}
           stats={ST_HERO_STATS}
+          heroBg={{ bucket: 'images', imagePath: 'blaze-stadium-hero.png', opacity: 0.18 }}
         />
 
         <Section padding="lg" background="charcoal" borderTop>
