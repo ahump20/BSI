@@ -50,11 +50,11 @@ OTHER PROJECTS:
 
 EDUCATION:
 - B.A. International Relations & Global Studies, UT Austin (2014-2020), minors in Economics and European Studies
-- M.S. Entertainment Business — Sports Management, Full Sail University (graduated Feb 2026, GPA 3.56)
+- M.S. Entertainment Business — Sports Management, Full Sail University (graduated Feb 2026, GPA 3.77)
 - AI & Machine Learning Postgraduate Certificate, UT Austin McCombs (in progress)
 
 EXPERIENCE:
-- Founder & Builder, Blaze Sports Intel (2023-present)
+- Builder, Blaze Sports Intel (2023-present)
 - Advertising Account Executive, Spectrum Reach (Nov 2022-Dec 2025) — Austin/San Antonio DMA
 - Financial Representative, Northwestern Mutual (Dec 2020-Aug 2022) — "Power of 10" Award, top 10% nationally
 - Rush Captain & Alumni Relations Chair, Alpha Tau Omega at UT Austin (2015-2020)
