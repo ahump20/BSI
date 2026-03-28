@@ -5,10 +5,9 @@ const BASE = process.env.BASE_URL || 'https://blazesportsintel.com';
 test.describe('College Baseball Rankings', () => {
   test('page loads with h1 heading', async ({ page }) => {
     await page.goto(`${BASE}/college-baseball/rankings`);
-    const h1 = page.locator('h1');
-    // ScrollReveal starts at opacity:0 and transitions to visible — allow 10s
-    await expect(h1).toBeVisible({ timeout: 10000 });
-    await expect(h1).toContainText(/rankings/i);
+    // Use getByRole to target the visible content heading, not the mobile banner h1
+    const h1 = page.getByRole('heading', { level: 1, name: /rankings/i });
+    await expect(h1.first()).toBeVisible({ timeout: 10000 });
   });
 
   test('poll tabs are visible and clickable', async ({ page }) => {

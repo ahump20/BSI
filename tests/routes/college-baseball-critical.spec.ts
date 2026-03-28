@@ -23,7 +23,7 @@ const IN_SEASON =
 test.describe('CBB Hub', () => {
   test('loads and renders visible modules', async ({ page }) => {
     await page.goto(`${BASE}/college-baseball`);
-    await expect(page.locator('h1')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible({ timeout: 10000 });
     await expect(page.locator('main')).toBeVisible();
     // Check for no uncaught hydration errors
     const errors: string[] = [];
@@ -46,7 +46,7 @@ test.describe('CBB Hub', () => {
 test.describe('CBB Rankings — data integrity', () => {
   test('each poll tab renders actual ranked teams, not empty state', async ({ page }) => {
     await page.goto(`${BASE}/college-baseball/rankings`);
-    await expect(page.locator('h1')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible({ timeout: 10000 });
 
     // D1Baseball tab is default — should show teams
     await expect(page.getByText(/no rankings available/i)).not.toBeVisible({ timeout: 10000 });
@@ -76,7 +76,7 @@ test.describe('CBB Rankings — data integrity', () => {
 test.describe('CBB Standings — data integrity', () => {
   test('renders conference headers and populated records; no 2025 stale labels', async ({ page }) => {
     await page.goto(`${BASE}/college-baseball/standings`);
-    await expect(page.locator('h1')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible({ timeout: 10000 });
 
     // Should have visible conference section headers
     await expect(
@@ -104,7 +104,7 @@ test.describe('CBB Standings — data integrity', () => {
 test.describe('CBB Teams — list', () => {
   test('renders more than 10 team entries', async ({ page }) => {
     await page.goto(`${BASE}/college-baseball/teams`);
-    await expect(page.locator('h1')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible({ timeout: 10000 });
 
     // Team cards are Link > Card elements with hrefs to /college-baseball/teams/:slug
     const teamLinks = page.locator('a[href*="/college-baseball/teams/"]');
@@ -121,14 +121,14 @@ test.describe('CBB Teams — list', () => {
 test.describe('CBB Conferences', () => {
   test('conference grid renders visible conference cards', async ({ page }) => {
     await page.goto(`${BASE}/college-baseball/conferences`);
-    await expect(page.locator('h1')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible({ timeout: 10000 });
     await expect(page.locator('main')).toBeVisible();
   });
 
   for (const conf of ['sec', 'big-12', 'big-ten']) {
     test(`${conf} conference page renders team data`, async ({ page }) => {
       await page.goto(`${BASE}/college-baseball/conferences/${conf}`);
-      await expect(page.locator('h1')).toBeVisible({ timeout: 10000 });
+      await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible({ timeout: 10000 });
 
       // Conference page should have content in main
       await expect(page.locator('main')).toBeVisible();
@@ -195,7 +195,7 @@ test.describe('Mobile — no content clipping', () => {
 
   test('hub loads without clipped primary modules', async ({ page }) => {
     await page.goto(`${BASE}/college-baseball`, { waitUntil: 'networkidle' });
-    await expect(page.locator('h1').first()).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible({ timeout: 15000 });
     await expect(page.locator('main')).toBeVisible();
     // No horizontal overflow
     const bodyWidth = await page.evaluate(() => document.body.scrollWidth);
@@ -205,7 +205,7 @@ test.describe('Mobile — no content clipping', () => {
 
   test('rankings page loads on mobile without clipping', async ({ page }) => {
     await page.goto(`${BASE}/college-baseball/rankings`, { waitUntil: 'networkidle' });
-    await expect(page.locator('h1').first()).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible({ timeout: 15000 });
     const bodyWidth = await page.evaluate(() => document.body.scrollWidth);
     const viewportWidth = await page.evaluate(() => window.innerWidth);
     expect(bodyWidth).toBeLessThanOrEqual(viewportWidth + 4);
@@ -213,7 +213,7 @@ test.describe('Mobile — no content clipping', () => {
 
   test('sec conference page loads on mobile', async ({ page }) => {
     await page.goto(`${BASE}/college-baseball/conferences/sec`, { waitUntil: 'networkidle' });
-    await expect(page.locator('h1').first()).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible({ timeout: 15000 });
     const bodyWidth = await page.evaluate(() => document.body.scrollWidth);
     const viewportWidth = await page.evaluate(() => window.innerWidth);
     expect(bodyWidth).toBeLessThanOrEqual(viewportWidth + 4);
