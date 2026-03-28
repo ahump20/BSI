@@ -37,7 +37,7 @@ PERSONAL:
 BLAZE SPORTS INTEL (BSI):
 - Production-grade sports analytics platform Austin built solo
 - Covers MLB, NFL, NBA, NCAA football, college baseball (flagship), and NCAA basketball
-- Infrastructure: 27 Cloudflare Workers, 7 D1 databases, 15 KV namespaces, 18 R2 buckets
+- Infrastructure: 53 Cloudflare Workers, 12 D1 databases, 45 KV namespaces, 18 R2 buckets
 - Stack: Next.js 16 (static export), React 19, TypeScript, Cloudflare (Pages + Workers with Hono), Tailwind
 - Data sources: Highlightly Pro (primary), SportsDataIO, ESPN
 - 58+ editorial deep-dives covering SEC, Big 12, and Big Ten programs
