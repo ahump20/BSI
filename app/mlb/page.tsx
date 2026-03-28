@@ -320,6 +320,7 @@ export default function MLBPage() {
           primaryCta={{ label: 'View Live Scores', href: '/mlb/scores' }}
           secondaryCta={{ label: 'Division Standings', href: '/mlb/standings' }}
           stats={MLB_HERO_STATS}
+          heroBg={{ bucket: 'images', imagePath: 'blaze-hero-banner.png', opacity: 0.25 }}
         />
 
         {/* Spring Training Banner — visible during preseason */}

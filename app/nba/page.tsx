@@ -335,6 +335,7 @@ export default function NBAPage() {
           primaryCta={{ label: 'Live Scores', href: '/nba/games' }}
           secondaryCta={{ label: 'Standings', href: '/nba/standings' }}
           stats={NBA_HERO_STATS}
+          heroBg={{ bucket: 'images', imagePath: 'blaze-stadium-hero.png', opacity: 0.20 }}
         />
 
         {/* Tabs and Content */}

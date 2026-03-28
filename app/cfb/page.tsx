@@ -298,6 +298,7 @@ export default function CFBPage() {
           dataSource="SportsDataIO"
           primaryCta={{ label: 'Live Scores', href: '/cfb/scores' }}
           secondaryCta={{ label: 'Transfer Portal', href: '/cfb/transfer-portal' }}
+          heroBg={{ bucket: 'images', imagePath: 'blaze-hero-banner.png', opacity: 0.25 }}
           stats={[
             { value: '134', label: 'FBS Teams' },
             { value: '10', label: 'Conferences' },

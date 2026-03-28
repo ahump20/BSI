@@ -984,6 +984,18 @@ textarea:focus-visible,
   z-index: 1;
 }
 
+/* Score ticker — CSS marquee for homepage */
+.ticker-track {
+  animation: ticker-scroll 60s linear infinite;
+}
+.ticker-track:hover {
+  animation-play-state: paused;
+}
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
 /* Warm vignette — radial darkening at edges */
 .vignette-warm {
   position: absolute;
