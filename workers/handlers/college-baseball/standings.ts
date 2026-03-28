@@ -238,20 +238,21 @@ export async function handleCollegeBaseballStandings(
     });
   }
 
-  // Truly nothing — return empty
+  // Truly nothing — return empty with 200 so frontend shows empty state
+  // (502 triggers error monitoring noise for conferences with no data)
   const emptyPayload = withMeta({
-    success: false,
+    success: true,
     data: [],
     conference,
     timestamp: now,
-  }, 'error', {
+  }, 'none', {
     fetchedAt: now,
     sources: [],
     degraded: true,
-    extra: { sport: 'college-baseball' },
+    extra: { sport: 'college-baseball', reason: 'no-data-available' },
   });
-  return cachedJson(emptyPayload, 502, HTTP_CACHE.standings, {
-    ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR',
+  return cachedJson(emptyPayload, 200, HTTP_CACHE.standings, {
+    ...dataHeaders(now, 'none'), 'X-Cache': 'EMPTY',
   });
   } catch (err) {
     console.error('[handleCollegeBaseballStandings]', err instanceof Error ? err.message : err);
