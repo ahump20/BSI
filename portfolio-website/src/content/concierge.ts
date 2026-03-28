@@ -3,10 +3,10 @@ import { PLATFORM_URLS, PRIMARY_EMAIL } from './site';
 export const AI_CHAT_GREETING = 'Austin Humphrey — builder of BSI, Texas-born. Ask me anything.';
 
 export const AI_CHAT_SUGGESTED_PROMPTS = [
-  'What is BSI?',
-  'Tell me about the Texas soil',
-  "What's the tech stack?",
-  'How do I reach Austin?',
+  'Why did Austin build BSI?',
+  'What is the Texas soil story?',
+  'How is this all one person?',
+  'How do I get in touch?',
 ] as const;
 
 export const AI_CHAT_FALLBACK_RESPONSES: Array<{
