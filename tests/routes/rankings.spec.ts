@@ -6,7 +6,8 @@ test.describe('College Baseball Rankings', () => {
   test('page loads with h1 heading', async ({ page }) => {
     await page.goto(`${BASE}/college-baseball/rankings`);
     const h1 = page.locator('h1');
-    await expect(h1).toBeVisible();
+    // ScrollReveal starts at opacity:0 and transitions to visible — allow 10s
+    await expect(h1).toBeVisible({ timeout: 10000 });
     await expect(h1).toContainText(/rankings/i);
   });
 
