@@ -119,7 +119,6 @@ export default function Proof() {
                   controls={playing}
                   preload="metadata"
                   playsInline
-                  poster="/assets/optimized/last-game-silhouette-1024w.webp"
                   aria-label={SPEAKING_REEL.title}
                   className="h-full w-full object-cover"
                   onPlay={() => setPlaying(true)}

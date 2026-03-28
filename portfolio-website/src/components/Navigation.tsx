@@ -127,11 +127,9 @@ export default function Navigation() {
               scrollToSection('hero');
             }}
           >
-            <img
-              src="/assets/nana-graduation.jpg"
-              alt="Austin Humphrey"
-              className="w-9 h-9 rounded-full object-cover [object-position:65%_12%] border-2 border-burnt-orange/60 group-hover:scale-110 group-hover:border-burnt-orange group-hover:shadow-[0_0_16px_rgba(191,87,0,0.4)] transition-all duration-300"
-            />
+            <span className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-burnt-orange/60 bg-charcoal font-sans text-xs font-bold uppercase text-burnt-orange group-hover:scale-110 group-hover:border-burnt-orange group-hover:shadow-[0_0_16px_rgba(191,87,0,0.4)] transition-all duration-300">
+              AH
+            </span>
             <span className="font-mono text-sm text-bone/70 hidden sm:block group-hover:text-burnt-orange transition-colors duration-300">
               Austin Humphrey
             </span>
