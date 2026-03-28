@@ -37,7 +37,7 @@ PERSONAL:
 BLAZE SPORTS INTEL (BSI):
 - Production-grade sports analytics platform Austin built solo
 - Covers MLB, NFL, NBA, NCAA football, college baseball (flagship), and NCAA basketball
-- Infrastructure: 27 Cloudflare Workers, 7 D1 databases, 15 KV namespaces, 18 R2 buckets
+- Infrastructure: 53 Cloudflare Workers, 12 D1 databases, 45 KV namespaces, 18 R2 buckets
 - Stack: Next.js 16 (static export), React 19, TypeScript, Cloudflare (Pages + Workers with Hono), Tailwind
 - Data sources: Highlightly Pro (primary), SportsDataIO, ESPN
 - 58+ editorial deep-dives covering SEC, Big 12, and Big Ten programs
@@ -50,12 +50,12 @@ OTHER PROJECTS:
 
 EDUCATION:
 - B.A. International Relations & Global Studies, UT Austin (2014-2020), minors in Economics and European Studies
-- M.S. Entertainment Business — Sports Management, Full Sail University (graduated Feb 2026, GPA 3.56)
+- M.S. Entertainment Business — Sports Management, Full Sail University (graduated Feb 2026, GPA 3.77)
 - AI & Machine Learning Postgraduate Certificate, UT Austin McCombs (in progress)
 
 EXPERIENCE:
-- Founder & Builder, Blaze Sports Intel (2023-present)
-- Advertising Account Executive, Spectrum Reach (Nov 2022-Dec 2025) — Austin/San Antonio DMA
+- Builder, Blaze Sports Intel (2023-present)
+- Former Advertising Account Executive, Spectrum Reach (Nov 2022-Dec 2025) — Austin/San Antonio DMA
 - Financial Representative, Northwestern Mutual (Dec 2020-Aug 2022) — "Power of 10" Award, top 10% nationally
 - Rush Captain & Alumni Relations Chair, Alpha Tau Omega at UT Austin (2015-2020)
 

@@ -2,6 +2,26 @@ import { motion } from 'framer-motion';
 import { EASE_OUT_EXPO } from '../utils/animations';
 import { HERO_CONTENT, SITE_TAGLINE } from '../content/site';
 
+function ScrollIndicator() {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 1.8, duration: 0.8 }}
+      className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
+    >
+      <span className="font-mono text-[0.55rem] uppercase tracking-[0.3em] text-bone/30">
+        Scroll
+      </span>
+      <motion.div
+        animate={{ y: [0, 6, 0] }}
+        transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+        className="h-8 w-[1px] bg-gradient-to-b from-burnt-orange/50 to-transparent"
+      />
+    </motion.div>
+  );
+}
+
 export default function Hero() {
   return (
     <section
@@ -10,7 +30,7 @@ export default function Hero() {
       className="relative overflow-hidden bg-midnight"
     >
       {/* Photo backdrop — silhouette lighting lets vignette do the heavy lifting */}
-      <picture className="absolute inset-0">
+      <picture>
         <source
           srcSet="/assets/optimized/last-game-silhouette-640w.webp 640w, /assets/optimized/last-game-silhouette-1024w.webp 1024w"
           sizes="100vw"
@@ -20,7 +40,7 @@ export default function Hero() {
           src="/assets/last-game-silhouette.jpg"
           alt=""
           aria-hidden="true"
-          className="h-full w-full object-cover"
+          className="hero-bg-photo"
         />
       </picture>
 
@@ -30,7 +50,7 @@ export default function Hero() {
       {/* Grain texture */}
       <div className="absolute inset-0 pointer-events-none hero-grain" />
 
-      <div className="relative z-10 mx-auto flex min-h-[88svh] max-w-5xl flex-col justify-end px-6 pb-16 pt-28 md:min-h-[82svh] md:px-12 md:pb-20 md:pt-36 lg:px-16 lg:pb-24">
+      <div className="relative z-10 mx-auto flex min-h-[90svh] max-w-5xl flex-col justify-end px-6 pb-20 pt-28 md:min-h-[85svh] md:px-12 md:pb-24 md:pt-36 lg:px-16 lg:pb-28">
         {/* Thesis — the anchor */}
         <motion.p
           initial={{ opacity: 0, y: 24 }}
@@ -63,11 +83,14 @@ export default function Hero() {
           <a href={HERO_CONTENT.cta.href} className="btn-primary">
             {HERO_CONTENT.cta.label}
           </a>
-          <p className="font-mono text-[0.6rem] uppercase tracking-[0.3em] text-burnt-orange/80 [text-shadow:0_1px_6px_rgba(0,0,0,0.4)]">
+          <p className="font-mono text-[0.7rem] uppercase tracking-[0.25em] text-burnt-orange/80 [text-shadow:0_1px_6px_rgba(0,0,0,0.4)]">
             {SITE_TAGLINE}
           </p>
         </motion.div>
       </div>
+
+      {/* Scroll indicator — appears after entrance animations settle */}
+      <ScrollIndicator />
 
       {/* Bottom edge — subtle burnt-orange glow line */}
       <div className="absolute bottom-0 left-0 right-0 h-px accent-line-narrow" />

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { staggerContainer, staggerItem } from '../utils/animations';
+import { staggerContainer, staggerItem, SCROLL_VIEWPORT } from '../utils/animations';
 import {
   ORIGIN_CHAPTERS,
   ORIGIN_CLOSER,
@@ -108,8 +108,9 @@ export default function Origin() {
     >
       <div className="container-custom">
         <motion.div
-          initial={false}
-          animate="visible"
+          initial="hidden"
+          whileInView="visible"
+          viewport={SCROLL_VIEWPORT}
           variants={staggerContainer}
         >
           {/* Section header */}
@@ -128,17 +129,20 @@ export default function Origin() {
             {ORIGIN_CHAPTERS.map((chapter) => (
               <motion.article
                 key={chapter.id}
-                variants={staggerItem}
+                initial="hidden"
+                whileInView="visible"
+                viewport={SCROLL_VIEWPORT}
+                variants={staggerContainer}
                 className="space-y-6"
               >
                 {/* Chapter label */}
-                <p className="chapter-label">{chapter.label}</p>
+                <motion.p variants={staggerItem} className="chapter-label">{chapter.label}</motion.p>
 
                 {/* Narrative text — editorial lead style */}
                 {chapter.narrative && (
-                  <p className="editorial-lead max-w-2xl">
+                  <motion.p variants={staggerItem} className="editorial-lead max-w-2xl">
                     {chapter.narrative}
-                  </p>
+                  </motion.p>
                 )}
 
                 {/* Photo grid — layout adapts to photo count and flags */}
@@ -148,10 +152,16 @@ export default function Origin() {
           </div>
 
           {/* Quick facts — floating element after the documentary */}
-          <motion.div variants={staggerItem} className="mt-16 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(260px,0.4fr)]">
-            <div className="space-y-8">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={SCROLL_VIEWPORT}
+            variants={staggerContainer}
+            className="mt-16 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(260px,0.4fr)]"
+          >
+            <motion.div variants={staggerItem} className="space-y-8">
               {/* Closing blockquote */}
-              <blockquote className="border-l border-burnt-orange/35 pl-6 text-xl italic leading-relaxed text-bone/84">
+              <blockquote className="border-l-2 border-burnt-orange/40 pl-6 text-xl italic leading-relaxed text-bone/84">
                 Texas is not a birthplace here. It is the standard behind how you carry effort, loyalty, and memory.
               </blockquote>
 
@@ -161,10 +171,10 @@ export default function Origin() {
                 <br />
                 <span className="mt-2 block">{ORIGIN_CLOSER.split('. ')[1]}</span>
               </p>
-            </div>
+            </motion.div>
 
             {/* Sidebar — portrait, facts, and the Crockett quote */}
-            <aside className="space-y-5">
+            <motion.aside variants={staggerItem} className="space-y-5">
               {/* Portrait */}
               <figure className="overflow-hidden rounded-sm border border-bone/10 bg-charcoal/30">
                 <picture>
@@ -209,7 +219,7 @@ export default function Origin() {
                 </p>
                 <p className="mt-3 text-xs font-mono text-warm-gray/72">Davy Crockett, 1835</p>
               </div>
-            </aside>
+            </motion.aside>
           </motion.div>
         </motion.div>
       </div>

@@ -1,6 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useMotionValueEvent, useSpring, AnimatePresence } from 'framer-motion';
 import { NAV_ITEMS } from '../content/site';
+import { EASE_OUT_EXPO } from '../utils/animations';
+
+const mobileItemVariants = {
+  closed: { opacity: 0, x: -12 },
+  open: (i: number) => ({
+    opacity: 1,
+    x: 0,
+    transition: { delay: i * 0.05, duration: 0.3, ease: EASE_OUT_EXPO },
+  }),
+};
 
 export default function Navigation() {
   const [activeSection, setActiveSection] = useState('hero');
@@ -34,10 +44,8 @@ export default function Navigation() {
       });
     };
 
-    // Attach to existing sections
     attach();
 
-    // Watch for lazy-loaded sections appearing in the DOM
     const mo = new MutationObserver(attach);
     mo.observe(document.body, { childList: true, subtree: true });
 
@@ -78,7 +86,6 @@ export default function Navigation() {
           : sectionId === 'contact'
             ? '/contact'
             : `/#${sectionId}`;
-    // Section IDs updated: work, proof, platform, origin, career, contact
 
     window.history.replaceState(null, '', nextPath);
     const scrollTarget = Math.max(window.scrollY + target.getBoundingClientRect().top - 88, 0);
@@ -103,10 +110,10 @@ export default function Navigation() {
         aria-label="Main navigation"
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
+        transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           scrolled
-            ? 'bg-midnight/96 backdrop-blur-md border-b border-burnt-orange/15 shadow-[0_10px_32px_rgba(0,0,0,0.35)]'
+            ? 'bg-midnight/92 backdrop-blur-lg border-b border-burnt-orange/12 shadow-[0_10px_32px_rgba(0,0,0,0.35)]'
             : 'bg-transparent border-b border-transparent'
         }`}
       >
@@ -163,7 +170,7 @@ export default function Navigation() {
           {/* Mobile hamburger */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden border border-burnt-orange/30 bg-charcoal/90 px-2.5 py-2 text-bone/70 hover:border-burnt-orange hover:text-burnt-orange transition-colors"
+            className="md:hidden border border-burnt-orange/30 bg-charcoal/90 px-2.5 py-2 text-bone/70 hover:border-burnt-orange hover:text-burnt-orange transition-colors active:scale-95"
             aria-label="Navigation menu"
             aria-expanded={mobileOpen}
             aria-controls="mobile-nav-menu"
@@ -182,7 +189,7 @@ export default function Navigation() {
           </button>
         </div>
 
-        {/* Mobile menu */}
+        {/* Mobile menu — staggered item entrances */}
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
@@ -191,12 +198,18 @@ export default function Navigation() {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3, ease: [0.19, 1, 0.22, 1] }}
+              transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
               className="overflow-hidden md:hidden bg-midnight/98 backdrop-blur-lg border-t border-burnt-orange/10"
             >
               <ul className="px-6 py-4 space-y-1">
-                {NAV_ITEMS.map((item) => (
-                  <li key={item.id}>
+                {NAV_ITEMS.map((item, i) => (
+                  <motion.li
+                    key={item.id}
+                    custom={i}
+                    initial="closed"
+                    animate="open"
+                    variants={mobileItemVariants}
+                  >
                     <a
                       href={`#${item.id}`}
                       onClick={(event) => {
@@ -204,7 +217,7 @@ export default function Navigation() {
                         scrollToSection(item.id);
                       }}
                       aria-current={activeSection === item.id ? 'location' : undefined}
-                      className={`block px-4 py-3.5 font-sans text-xs uppercase tracking-[0.2em] rounded-sm transition-all duration-300 ${
+                      className={`block px-4 py-3.5 font-sans text-xs uppercase tracking-[0.2em] rounded-sm transition-all duration-300 active:scale-[0.98] ${
                         activeSection === item.id
                           ? 'text-burnt-orange bg-burnt-orange/10 border-l-2 border-burnt-orange'
                           : 'text-bone/50 hover:text-bone hover:bg-white/5 border-l-2 border-transparent'
@@ -212,7 +225,7 @@ export default function Navigation() {
                     >
                       {item.label}
                     </a>
-                  </li>
+                  </motion.li>
                 ))}
               </ul>
             </motion.div>

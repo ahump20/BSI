@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { staggerContainer, staggerItem } from '../utils/animations';
+import { staggerContainer, staggerItem, SCROLL_VIEWPORT } from '../utils/animations';
 import { PROOF_PIECES, SPEAKING_REEL } from '../content/site';
 
 export default function Proof() {
@@ -20,8 +20,9 @@ export default function Proof() {
     >
       <div className="container-custom">
         <motion.div
-          initial={false}
-          animate="visible"
+          initial="hidden"
+          whileInView="visible"
+          viewport={SCROLL_VIEWPORT}
           variants={staggerContainer}
         >
           <motion.div variants={staggerItem}>
@@ -31,16 +32,17 @@ export default function Proof() {
             </h2>
           </motion.div>
 
-          {/* Editorial pieces — pull-quote layout, not cards */}
+          {/* Editorial pieces — pull-quote layout with enhanced hover */}
           <div className="mt-10 space-y-0">
-            {PROOF_PIECES.map((piece) => (
+            {PROOF_PIECES.map((piece, i) => (
               <motion.a
                 key={piece.title}
                 variants={staggerItem}
+                custom={i}
                 href={piece.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group block border-t border-bone/8 py-8 transition-colors duration-300 hover:border-burnt-orange/20 md:py-10"
+                className="group block border-t border-bone/8 py-8 transition-all duration-400 hover:border-burnt-orange/20 hover:bg-burnt-orange/[0.02] md:py-10"
               >
                 <div className="grid gap-4 md:grid-cols-[minmax(0,0.35fr)_minmax(0,0.65fr)] md:items-start md:gap-8">
                   <div>
@@ -85,10 +87,13 @@ export default function Proof() {
 
           {/* Speaking reel — full-width cinematic presentation */}
           <motion.div
-            variants={staggerItem}
+            initial="hidden"
+            whileInView="visible"
+            viewport={SCROLL_VIEWPORT}
+            variants={staggerContainer}
             className="mt-16 border-t border-bone/8 pt-10"
           >
-            <div className="mb-8 text-center">
+            <motion.div variants={staggerItem} className="mb-8 text-center">
               <p className="font-mono text-[0.58rem] uppercase tracking-[0.26em] text-burnt-orange/75">
                 Speaking
               </p>
@@ -98,10 +103,10 @@ export default function Proof() {
               <p className="mx-auto mt-3 max-w-lg text-base leading-8 text-bone/65">
                 {SPEAKING_REEL.summary}
               </p>
-            </div>
+            </motion.div>
 
-            {/* Cinema-grade video container — breaks out of container for full impact */}
-            <div className="video-cinema">
+            {/* Cinema-grade video container */}
+            <motion.div variants={staggerItem} className="video-cinema">
               <div className="pointer-events-none absolute inset-0 z-10 vignette-deep" />
               <div className="aspect-video">
                 <video
@@ -109,6 +114,7 @@ export default function Proof() {
                   controls={playing}
                   preload="metadata"
                   playsInline
+                  poster="/assets/optimized/last-game-silhouette-1024w.webp"
                   aria-label={SPEAKING_REEL.title}
                   className="h-full w-full object-cover"
                   onPlay={() => setPlaying(true)}
@@ -131,7 +137,7 @@ export default function Proof() {
                   </span>
                 </button>
               )}
-            </div>
+            </motion.div>
           </motion.div>
         </motion.div>
       </div>

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { staggerContainer, staggerItem } from '../utils/animations';
+import { staggerContainer, staggerItem, SCROLL_VIEWPORT } from '../utils/animations';
 import { CONTACT_CHANNELS, PLATFORM_URLS, PRIMARY_EMAIL, RESUME_PATH } from '../content/site';
 
 const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY || '';
@@ -45,6 +45,7 @@ export default function Contact() {
   const [turnstileToken, setTurnstileToken] = useState('');
   const turnstileRef = useRef<HTMLDivElement>(null);
   const [website, setWebsite] = useState('');
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const renderTurnstile = useCallback(() => {
     const w = window as unknown as { turnstile?: { render: (el: HTMLElement, opts: Record<string, unknown>) => void } };
@@ -103,6 +104,7 @@ export default function Contact() {
       setEmail('');
       setMessage('');
       setTurnstileToken('');
+      setTouched({});
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') {
         setErrorMsg('Request timed out. Try again.');
@@ -116,6 +118,9 @@ export default function Contact() {
     }
   };
 
+  const markTouched = (field: string) => setTouched((prev) => ({ ...prev, [field]: true }));
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
   return (
     <section
       id="contact"
@@ -124,8 +129,9 @@ export default function Contact() {
     >
       <div className="container-custom">
         <motion.div
-          initial={false}
-          animate="visible"
+          initial="hidden"
+          whileInView="visible"
+          viewport={SCROLL_VIEWPORT}
           variants={staggerContainer}
           className="space-y-10"
         >
@@ -174,11 +180,12 @@ export default function Contact() {
             </a>
           </motion.div>
 
-          {/* Contact form — clean, no wrapper card */}
+          {/* Contact form */}
           <motion.form
             variants={staggerItem}
             onSubmit={handleSubmit}
             className="border-t border-bone/8 pt-10"
+            noValidate
           >
             <h3 className="font-sans text-sm font-medium uppercase tracking-[0.2em] text-burnt-orange">
               Send a Message
@@ -210,9 +217,17 @@ export default function Contact() {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full border-0 border-b border-bone/15 bg-transparent px-0 py-2 text-sm text-bone placeholder-warm-gray/70 transition-colors duration-300 focus:border-burnt-orange focus:outline-none"
+                  onBlur={() => markTouched('name')}
+                  className={`w-full border-0 border-b bg-transparent px-0 py-2 text-sm text-bone placeholder-warm-gray/50 transition-colors duration-300 focus:outline-none ${
+                    touched.name && !name.trim()
+                      ? 'border-orange-500/60'
+                      : 'border-bone/15 focus:border-burnt-orange'
+                  }`}
                   placeholder="Your name"
                 />
+                {touched.name && !name.trim() && (
+                  <p className="mt-1 text-[0.65rem] font-mono text-orange-400/80">Required</p>
+                )}
               </div>
               <div>
                 <label htmlFor="contact-email" className="mb-2 block text-xs font-mono text-warm-gray">
@@ -224,9 +239,17 @@ export default function Contact() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full border-0 border-b border-bone/15 bg-transparent px-0 py-2 text-sm text-bone placeholder-warm-gray/70 transition-colors duration-300 focus:border-burnt-orange focus:outline-none"
+                  onBlur={() => markTouched('email')}
+                  className={`w-full border-0 border-b bg-transparent px-0 py-2 text-sm text-bone placeholder-warm-gray/50 transition-colors duration-300 focus:outline-none ${
+                    touched.email && email && !isEmailValid
+                      ? 'border-orange-500/60'
+                      : 'border-bone/15 focus:border-burnt-orange'
+                  }`}
                   placeholder="your@email.com"
                 />
+                {touched.email && email && !isEmailValid && (
+                  <p className="mt-1 text-[0.65rem] font-mono text-orange-400/80">Valid email required</p>
+                )}
               </div>
             </div>
 
@@ -240,9 +263,17 @@ export default function Contact() {
                 rows={4}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                className="w-full resize-none border-0 border-b border-bone/15 bg-transparent px-0 py-2 text-sm text-bone placeholder-warm-gray/70 transition-colors duration-300 focus:border-burnt-orange focus:outline-none"
+                onBlur={() => markTouched('message')}
+                className={`w-full resize-none border-0 border-b bg-transparent px-0 py-2 text-sm text-bone placeholder-warm-gray/50 transition-colors duration-300 focus:outline-none ${
+                  touched.message && !message.trim()
+                    ? 'border-orange-500/60'
+                    : 'border-bone/15 focus:border-burnt-orange'
+                }`}
                 placeholder="What's on your mind?"
               />
+              {touched.message && !message.trim() && (
+                <p className="mt-1 text-[0.65rem] font-mono text-orange-400/80">Required</p>
+              )}
             </div>
 
             {TURNSTILE_SITE_KEY && <div ref={turnstileRef} className="mt-6 flex justify-center" />}
@@ -256,14 +287,24 @@ export default function Contact() {
             </button>
 
             {formState === 'sent' && (
-              <p className="mt-3 text-xs font-mono text-green-400" aria-live="polite">
+              <motion.p
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-3 text-xs font-mono text-green-400"
+                aria-live="polite"
+              >
                 Message received. Austin will get back to you.
-              </p>
+              </motion.p>
             )}
             {formState === 'error' && (
-              <p className="mt-3 text-xs font-mono text-orange-400" aria-live="polite">
+              <motion.p
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-3 text-xs font-mono text-orange-400"
+                aria-live="polite"
+              >
                 {errorMsg || `Couldn't send that. Try again or email ${PRIMARY_EMAIL} directly.`}
-              </p>
+              </motion.p>
             )}
           </motion.form>
         </motion.div>
