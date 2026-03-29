@@ -1,109 +1,113 @@
 # BSI Dream Queue
 
-**Generated:** 2026-03-28T11:10:00Z
-**Sports in season:** College Baseball (peak — 82 games today), College Basketball (March Madness Final Four in ~7 days), MLB (Opening Day weekend), NBA (playoff push)
-**Signal summary:** The highest-traffic data endpoint on the site — CBB scores at 12,520 requests/week — is returning zero results during March Madness. College baseball standings show 0-0 conference records for all 138 teams despite six weeks of games. MLB stats and leaderboards are unavailable exactly as Opening Day begins. All three failures trace to broken data-source connections while attention has been on portfolio work.
+**Generated:** 2026-03-29T11:15:00.000Z
+**Sports in season:** College Baseball (peak — conference play), MLB (Opening Day today), NBA (playoff push — final 2 weeks of regular season)
+**Signal summary:** MLB launched its regular season today with 15 live games, but the MLB stats and leaderboard pages return zero data — fans see empty tables on the biggest day of the year. College baseball is the platform's dominant traffic driver (10,780 API calls/week, #1 endpoint) and is performing well on scores, but the standings endpoint threw 130 5xx errors over the past week. The last 15 of 20 commits were portfolio work — sports data features have been idle while the calendar is at its most urgent.
 
 ---
 
 ## Priority Queue
 
-### 1. Restore college basketball scores for March Madness
-**What:** Visitors to any CBB scores page see real game data — live scores, final results, tournament matchups — instead of an empty feed.
-**Why now:** `/api/cbb/scores` is the highest-traffic data endpoint on the site at 12,520 requests this week and it has returned zero results all week with `source: "error"`. The Final Four is approximately one week away. A `bsi-cbb-ingest` worker was updated three days ago, suggesting the data pipeline exists but the connection between it and the scores handler is broken. This is the single worst active failure on the site.
+### 1. Fix MLB stats and leaderboards on Opening Day
+**What:** Visitors to the MLB hub will see real batting and pitching leaders instead of a blank page — on the day they're most likely to check.
+**Why now:** Today is Opening Day (15 games confirmed live). The `/api/mlb/leaderboards/batting` and `/api/mlb/stats/leaders` endpoints both return `unavailable: true` with zero data. Every fan landing on the MLB stats page right now sees nothing. Cloudflare logged 10 and 10 errors respectively on those routes over the past week — the failure predates today.
 **Scope:** 1 session
-**Verification:** `curl https://blazesportsintel.com/api/cbb/scores` returns games with real team names and scores. At least one in-progress or final tournament game appears.
-**First step:** Read the `bsi-cbb-ingest` worker source and `workers/handlers/cbb.ts` to find where SportsDataIO and the ESPN fallback are both failing — then check whether KV has data the handler isn't reading.
+**Verification:** Load `blazesportsintel.com/mlb/stats` and confirm batting and pitching leaders populate with at least 10 names and real season stats. Curl `/api/mlb/leaderboards/batting` and confirm `unavailable` is absent or false.
+**First step:** Read the MLB leaderboards handler in `workers/handlers/` to find what API call is failing and why it sets `unavailable: true`.
 
 ---
 
-### 2. Fix college baseball standings — conference records are 0-0 for every team
-**What:** The standings page shows each team's real conference record alongside their overall record, not 0-0 across the board.
-**Why now:** This is the #1 erroring route (70 errors/week) and the endpoint carries `degraded: true`. It's March 28 — six weeks into the season — yet all 138 teams in the response carry a 0-0 conference record. Anyone checking where their team stands in the SEC, ACC, or Big 12 sees no meaningful data. College baseball is at peak traffic with 12,270 requests/week on the scores route alone.
+### 2. Eliminate CBB standings 500 errors
+**What:** The college baseball standings page loads reliably for every conference, without intermittent crashes.
+**Why now:** Cloudflare logged 130 5xx errors on `/api/college-baseball/standings` over the past 7 days — the highest error count of any route on the platform. This is the peak of college baseball season and the standings page is the second thing fans check after scores. Conference-filtered queries (e.g. `?conference=SEC`) appear to trigger the crashes.
 **Scope:** 1 session
-**Verification:** `curl https://blazesportsintel.com/api/college-baseball/standings` returns teams where `conferenceRecord.wins` and `conferenceRecord.losses` reflect actual games played. USC (25-2 overall) should show a non-zero conference record. The `degraded` flag should be absent.
-**First step:** Read the college baseball standings handler and trace where `conferenceRecord` is sourced — the yesterday session added Highlightly enrichment but the field is still zeroed, so the enrichment path is not executing.
+**Verification:** Curl standings with at least 6 different conference values (SEC, ACC, Big 12, Big Ten, Pac-12, American) and confirm all return HTTP 200 with a non-empty `data` array. Run the full CBB gate: `npm run gate:cbb`.
+**First step:** Reproduce the crash: curl `/api/college-baseball/standings?conference=` with an empty or invalid conference string, then read the standings handler to identify the unguarded code path.
 
 ---
 
-### 3. Restore MLB stats and batting leaderboards for Opening Day
-**What:** The MLB stats and leaderboards pages show real 2026 season leaders in batting average, home runs, ERA, and other categories instead of empty tables.
-**Why now:** `/api/mlb/stats/leaders` and `/api/mlb/leaderboards/batting` both return `unavailable: true` with 50 combined errors this week. Opening Day is this weekend — the exact moment people check who is leading the league. This is the highest-impact missed opportunity for MLB coverage at its seasonal peak.
+### 3. Retire spring training content and redirect to regular season
+**What:** The MLB spring training scores page sends fans to current Opening Day action instead of showing a dead endpoint.
+**Why now:** Today is Opening Day — spring training ended last week. Cloudflare recorded 40 5xx errors on `/api/mlb/spring-training/scores` over the past week; the endpoint is becoming unreliable as the upstream source stops serving spring data. Fans following links to that page hit a broken experience on the most-watched day of the MLB calendar.
 **Scope:** 1 session
-**Verification:** `curl https://blazesportsintel.com/api/mlb/stats/leaders` returns a non-empty `leaders` array with at least 10 players and real stat values. Same for `/api/mlb/leaderboards/batting`.
-**First step:** Read the MLB stats handler and check if the SportsDataIO season parameter or endpoint path changed for the 2026 season — that is the most likely cause of `unavailable: true`.
+**Verification:** Load `blazesportsintel.com/mlb/spring-training` and confirm it either redirects to `/mlb/scores` or displays a clear "Spring Training has ended — see Opening Day scores" message with a working link. Curl `/api/mlb/spring-training/scores` and confirm no 5xx response.
+**First step:** Read `app/mlb/spring-training/page.tsx` and the spring training scores handler to decide whether to redirect, archive, or replace the route.
 
 ---
 
-### 4. Build a college basketball landing page before the Final Four
-**What:** BSI has a college basketball page showing today's scores and standings — live, not placeholder.
-**Why now:** `/api/cbb/scores` pulls 12,520 requests/week with no page to send visitors to — traffic is landing in a void. The `cbb.ts` handler and `bsi-cbb-ingest` worker both exist. Once item #1 restores the data, the full infrastructure for a CBB page is in place. The Final Four is the last major college basketball moment of the season and it arrives in ~7 days.
-**Scope:** 1 session
-**Verification:** `blazesportsintel.com/college-basketball/` loads with real scores and standings from the CBB endpoint. No empty states, no placeholder content.
-**First step:** Check `workers/handlers/cbb.ts` for all available routes (scores, standings, rankings), then scaffold `app/college-basketball/page.tsx` wired to those endpoints using Heritage Design System v2.1.
+### 4. Build real CBB game detail pages
+**What:** Fans clicking a college baseball game see a full in-game or post-game page — lineup, scoring by inning, and team stats — instead of a loading placeholder.
+**Why now:** College baseball scores is the #1 API endpoint on the platform at 10,780 calls per week. Every click from that page lands on a dynamic placeholder shell that assembles itself via client-side JS from `window.location`. Peak CBB season runs through June; building real detail pages now multiplies the value of the platform's busiest traffic flow for the next three months.
+**Scope:** multi-session
+**Verification:** Click three games on `blazesportsintel.com/college-baseball/scores` — one scheduled, one live, one final — and confirm each game page shows inning-by-inning scoring, team records, and venue. No "loading…" shell on direct URL load.
+**First step:** Read `app/college-baseball/games/page.tsx` and the game placeholder component, then fetch `/api/college-baseball/games/{a-real-game-id}` to confirm the data shape the detail page should render.
 
 ---
 
-### 5. Expand the Savant leaderboard from 25 batters to full D1 coverage
-**What:** The Savant advanced stats leaderboard shows hundreds of qualified D1 batters ranked by wOBA, wRC+, and other metrics instead of capping at 25.
-**Why now:** The savant endpoint is working and returning data, but only 25 batters appear for a sport with 300+ D1 programs. Peak season is now — coaches, scouts, and fans use this leaderboard to track talent. The `bsi-savant-compute` cron runs every 6 hours and its last run was successful. This is a depth problem, not a breakage — but it limits what is BSI's most differentiated product during its most important window.
+### 5. NBA playoff-race tracker before seeding locks
+**What:** Fans see a live playoff picture with clinching scenarios, current seeds, and games remaining — timed to when the NBA race actually matters.
+**Why now:** The NBA regular season ends in approximately 14 days and playoffs begin around April 19. The platform has working NBA scores (6 games today) and standings (30 teams). Building a seeding/clinching tracker now puts BSI in front of the coverage window before mainstream outlets flood the topic — which is the exact niche BSI is built for.
 **Scope:** 1 session
-**Verification:** `curl https://blazesportsintel.com/api/savant/batting/leaderboard` returns 150+ batters. The Savant page at `blazesportsintel.com/college-baseball/savant/` shows a full leaderboard scrollable beyond 25 rows.
-**First step:** Read the `bsi-savant-compute` worker's D1 query — determine whether the 25-batter cap is a `LIMIT` clause, a minimum plate appearances filter too aggressive for early season, or a data ingestion scope issue.
+**Verification:** Load `blazesportsintel.com/nba/standings` (or a new `/nba/playoff-race` page) and confirm it shows current seeds for both conferences, magic numbers or elimination numbers, and games remaining for bubble teams. Data should be live, not static.
+**First step:** Curl `/api/nba/standings` to confirm the current data shape and check whether games-remaining and conference seed are already present in the response before planning what to build.
 
 ---
 
 ## Signal Report
 
 ### Production Health
-| Endpoint | Status | Detail |
-|----------|--------|--------|
-| `/api/health` | OK | `{"status":"ok","mode":"hybrid-worker"}` |
-| `/api/college-baseball/scores` | OK | 82 games (12 final, 69 scheduled, 1 canceled) in `data[]` |
-| `/api/cbb/scores` | **BROKEN** | 0 games, `source: "error"` — SportsDataIO + ESPN both failing |
-| `/api/college-baseball/standings` | **DEGRADED** | 138 teams, all 0-0 conference records, `degraded: true` |
-| `/api/college-baseball/rankings` | Degraded | 25 teams ranked, `degraded: true` |
-| `/api/mlb/scores` | OK | 8 games |
-| `/api/mlb/standings` | OK | 30 teams across divisions |
-| `/api/mlb/spring-training/scores` | OK | 8 final games |
-| `/api/mlb/stats/leaders` | **BROKEN** | `unavailable: true`, empty leaders array |
-| `/api/mlb/leaderboards/batting` | **BROKEN** | `unavailable: true`, empty data array |
-| `/api/nba/scores` | OK | 10 games |
-| `/api/nba/standings` | OK | Eastern + Western conference |
-| `/api/savant/batting/leaderboard` | Partial | 25 batters (low D1 coverage) |
-| `/api/intel/news` | OK | 6 articles |
-| `/api/scores/overview` | OK | All 5 sports present |
+
+| Endpoint | Status | Notes |
+|----------|--------|-------|
+| `/api/health` | ✅ OK | `mode: hybrid-worker` |
+| `/api/college-baseball/scores` | ✅ 76 games | `data` key (not `games`) — UI handles both correctly |
+| `/api/college-baseball/standings` | ✅ 138 teams (cached) | 130 5xx errors in past 7 days — conference queries intermittently fail |
+| `/api/college-baseball/rankings` | ✅ 25 teams | Working |
+| `/api/mlb/scores` | ✅ 15 games | Opening Day, sourced from ESPN |
+| `/api/mlb/standings` | ✅ 30 teams | Working |
+| `/api/mlb/leaderboards/batting` | ❌ `unavailable: true` | 0 batters returned, 10 5xx errors in 7 days |
+| `/api/mlb/stats/leaders` | ❌ `unavailable` present | Degraded, 10 5xx errors in 7 days |
+| `/api/mlb/spring-training/scores` | ⚠️ 200 but stale | 40 5xx errors in 7 days, season is over |
+| `/api/savant/batting/leaderboard` | ✅ 25 batters | `tier: free` — paywall working as designed |
+| `/api/scores/overview` | ✅ All 5 sports present | Working |
+| `/api/intel/news` | ✅ 200 OK | 4th-highest traffic route |
 
 ### Recent Ships (last 20 commits)
-- **Last 10 commits** (Mar 24–28): Portfolio site work — chat widget, print stylesheet, photo documentary redesign, keyboard nav, structured data, scroll animations
-- **Before that** (Mar 21–24): Sports polish — MLB + NFL page design, R2 hero backgrounds across sport pages, Heritage CSS additions
-- **Before that** (Mar 19–21): Homepage rebuilt as live data dashboard with leaderboards and nav grid
-- **Pattern:** Engineering focus has been entirely on portfolio for ~5 days. Worker-level data handler fixes have not shipped since the standings Highlightly enrichment (yesterday), and that fix is not yet showing results in production.
 
-### Traffic Patterns (last 7 days — blazesportsintel-worker-prod)
+15 of 20 commits are portfolio work (`austin-humphrey.com`). Sports-touching commits:
+- `d2fefd5` — MLB + NFL page polish, contact/glossary/search/coverage design
+- `ef10b65` — R2 heroBg on all sport pages, Heritage CSS additions
+- `8dd224d` — R2 photography and Heritage craft across BSI ecosystem
+- `ea7da9f` — Homepage two-column dashboard layout
+- `16fe9a8` — Homepage meta property name fix
+
+No data or handler work shipped in last 20 commits. College baseball feature development stalled entering peak season.
+
+### Traffic Patterns (Cloudflare, last 7 days)
+
 | Route | Requests |
 |-------|----------|
-| `*/1 * * * *` (scheduled cron) | 53,020 |
-| `GET /api/cbb/scores` | 12,520 |
-| `GET /api/college-baseball/scores` | 12,270 |
-| `GET /api/status` | 10,580 |
-| `GET /api/intel/news` | 8,890 |
-| Static assets / Pages proxy | ~6,000–8,000 each |
+| Cron `*/1 * * * *` | 49,210 |
+| `GET /api/college-baseball/scores` | 10,780 |
+| `GET /api/status` | 10,750 |
+| `GET /images/brand/bsi-lettermark-square.png` | 8,980 |
+| `HEAD /college-baseball/` | 8,530 |
+| `GET /api/intel/news` | 7,980 |
+| `HEAD /scores/` | 7,240 |
+| `HEAD /` | 6,790 |
 
-**Error leaders (last 7 days):**
-| Route | Errors |
-|-------|--------|
-| `GET /api/college-baseball/standings` | 70 |
-| `GET /api/mlb/stats/leaders` | 30 |
-| `GET /api/mlb/spring-training/scores` | 30 |
-| `GET /api/mlb/leaderboards/batting` | 20 |
+**5xx errors by route:**
+- `/api/college-baseball/standings` — 130 errors (highest on platform)
+- `/api/mlb/spring-training/scores` — 40 errors
+- `/api/mlb/leaderboards/batting` — 10 errors
+- `/api/mlb/stats/leaders` — 10 errors
 
 ### Sports Calendar
-| Sport | Status | Notes |
-|-------|--------|-------|
-| College Baseball | **Peak season** | 82 games today, CWS in June |
-| College Basketball | **Peak season** | NCAA Tournament, Final Four ~April 4–6 |
-| MLB | **Opening Day** | Regular season starts this week, spring training final games March 28 |
-| NBA | In season | Playoff push, postseason begins mid-April |
-| NFL | Offseason | — |
-| CFB | Offseason | Spring practices |
+
+| Sport | Status | Key Date |
+|-------|--------|----------|
+| College Baseball | 🔴 Peak season — conference play underway | CWS: mid-June |
+| MLB | 🔴 Opening Day — TODAY (March 29) | 15 games confirmed |
+| NBA | 🟡 Final 2 weeks of regular season | Playoffs ~April 19 |
+| NFL | ⚪ Offseason | Draft: late April |
+| CFB | ⚪ Offseason | Spring games only |
