@@ -799,6 +799,20 @@ function ScoresHubContent() {
                 ))}
               </div>
             </ScrollReveal>
+            {!overviewLoading && totalLive === 0 && (
+              <ScrollReveal direction="up" delay={280}>
+                <p
+                  className="mt-6 italic"
+                  style={{
+                    fontFamily: 'var(--bsi-font-body)',
+                    color: 'var(--bsi-dust)',
+                    fontSize: '0.95rem',
+                  }}
+                >
+                  No live games right now. Check back during game time.
+                </p>
+              </ScrollReveal>
+            )}
           </div>
         </section>
 

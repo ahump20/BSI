@@ -235,7 +235,7 @@ const MLB_HERO_STATS = [
   { value: '30', label: 'MLB Teams' },
   { value: '162', label: 'Games/Season' },
   { value: 'Live', label: 'Real-Time Scores' },
-  { value: 'Statcast', label: 'Advanced Data' },
+  { value: 'Statcast', label: 'STATCAST ANALYTICS' },
 ];
 
 const STATCAST_BULLETS = [
@@ -316,6 +316,7 @@ export default function MLBPage() {
           leagueName="Major League Baseball"
           tagline="Cardinals. Rangers. Astros. Every game, every stat, no network filter."
           description="Live scores, division standings, and Statcast analytics for all 30 teams—pulled straight from MLB's official API. No third-party garbage. No guesswork."
+          icon={"\u25C7"}
           dataSource="SportsDataIO"
           primaryCta={{ label: 'View Live Scores', href: '/mlb/scores' }}
           secondaryCta={{ label: 'Division Standings', href: '/mlb/standings' }}

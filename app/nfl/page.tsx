@@ -61,7 +61,7 @@ const NFL_HERO_STATS = [
   { value: '32', label: 'NFL Teams' },
   { value: '18', label: 'Week Season' },
   { value: 'Live', label: 'Real-Time Scores' },
-  { value: 'EPA', label: 'Advanced Data' },
+  { value: 'EPA', label: 'EPA/PLAY METRICS' },
 ];
 
 const TRACKING_BULLETS = [
@@ -249,6 +249,7 @@ export default function NFLPage() {
           leagueName="National Football League"
           tagline="Titans. Cowboys. Chiefs. Every game, every stat, no network filter."
           description="Live scores, conference standings, and analytics for all 32 teams."
+          icon={"\uD83C\uDFC8"}
           dataSource="SportsDataIO"
           primaryCta={{ label: 'View Standings', href: '/nfl/standings' }}
           secondaryCta={{ label: 'Game Scores', href: '/nfl/games' }}

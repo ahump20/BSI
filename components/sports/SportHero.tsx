@@ -28,6 +28,7 @@ interface SportHeroProps {
   leagueName: string;
   tagline: string;
   description: string;
+  icon?: string;
 
   dataSource: string;
   refreshInterval?: number;
@@ -43,6 +44,7 @@ export function SportHero({
   leagueName,
   tagline,
   description,
+  icon,
 
   dataSource,
   refreshInterval = 30,
@@ -68,6 +70,7 @@ export function SportHero({
             className="text-3xl md:text-4xl lg:text-5xl font-bold text-center uppercase tracking-[0.1em] mb-4"
             style={{ fontFamily: 'var(--font-bebas, var(--font-hero))', color: 'var(--bsi-bone)' }}
           >
+            {icon && <span className="opacity-60 mr-2 text-[0.75em]">{icon}</span>}
             {sport} Intelligence
           </h1>
         </ScrollReveal>
@@ -82,7 +85,7 @@ export function SportHero({
         <ScrollReveal direction="up" delay={150}>
           <p
             className="text-lg leading-relaxed text-center mb-4"
-            style={{ fontFamily: 'var(--font-cormorant, serif)', color: 'var(--bsi-primary)', fontStyle: 'italic' }}
+            style={{ fontFamily: 'var(--font-cormorant, serif)', color: 'var(--bsi-dust)', fontStyle: 'italic' }}
           >
             {tagline}
           </p>

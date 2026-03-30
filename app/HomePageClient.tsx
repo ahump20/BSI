@@ -628,6 +628,16 @@ export function HomePageClient() {
         <ScoreTicker games={games} />
       </DataErrorBoundary>
 
+      {/* Newcomer orientation */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-6">
+        <p
+          className="text-sm italic hidden lg:block"
+          style={{ fontFamily: 'var(--font-cormorant, serif)', color: 'var(--bsi-dust)' }}
+        >
+          Real-time scores, advanced sabermetrics, and scouting intel across five sports — updated continuously.
+        </p>
+      </div>
+
       {/* ================================================================= */}
       {/* STANDOUT PLAYERS                                                   */}
       {/* ================================================================= */}
@@ -702,6 +712,12 @@ export function HomePageClient() {
               ) : null}
             </DataErrorBoundary>
           </ScrollReveal>
+
+          {/* Section rule between batting and pitching */}
+          <div
+            className="col-span-full my-2 border-t lg:hidden"
+            style={{ borderColor: 'var(--border-vintage)' }}
+          />
 
           <ScrollReveal delay={100}>
             <DataErrorBoundary name="PitchingLeaderboard" compact>

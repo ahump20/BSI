@@ -162,8 +162,17 @@ export default function PricingPage() {
               }}
             >
               Free to start.{' '}
-              <span style={{ color: 'var(--bsi-primary)' }}>Pro</span> when
-              you&apos;re ready.
+              <span
+                style={{
+                  color: 'var(--bsi-primary)',
+                  backgroundColor: 'rgba(191,87,0,0.12)',
+                  padding: '0.05em 0.3em',
+                  borderRadius: '3px',
+                }}
+              >
+                Pro
+              </span>
+              {' '}when you&apos;re ready.
             </h1>
 
             <p

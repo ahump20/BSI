@@ -57,7 +57,7 @@ const NBA_HERO_STATS = [
   { value: '30', label: 'NBA Teams' },
   { value: '82', label: 'Games/Season' },
   { value: 'Live', label: 'Real-Time Scores' },
-  { value: 'PER', label: 'Advanced Data' },
+  { value: 'PER', label: 'PLAYER EFFICIENCY' },
 ];
 
 const COURT_VISION_BULLETS = [
@@ -331,6 +331,7 @@ export default function NBAPage() {
           leagueName="National Basketball Association"
           tagline="Grizzlies. Mavericks. Thunder. Every game, every stat, no network filter."
           description="Live scores, conference standings, and analytics for all 30 teams."
+          icon={"\uD83C\uDFC0"}
           dataSource="SportsDataIO"
           primaryCta={{ label: 'Live Scores', href: '/nba/games' }}
           secondaryCta={{ label: 'Standings', href: '/nba/standings' }}
