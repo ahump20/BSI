@@ -328,7 +328,7 @@ function CollegeBaseballStandingsPageInner() {
                       <span
                         className={`w-2 h-2 rounded-full ${meta.degraded ? 'bg-[var(--bsi-warning)]' : 'bg-[var(--bsi-primary)]'}`}
                       />
-                      Sources: {meta.sources.join(' + ')}
+                      Sources: {meta.sources.map((s: string) => s.replace('espn-v2', 'ESPN').replace('highlightly', 'Highlightly')).join(' + ')}
                     </div>
                   ) : (
                     <Badge variant="primary">Updated Daily</Badge>

@@ -447,11 +447,57 @@ function StandoutSkeleton() {
 // Page Component
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Empty / Error States
+// ---------------------------------------------------------------------------
+
+function LeaderboardEmpty({ title, error, onRetry }: { title: string; error?: string | null; onRetry?: () => void }) {
+  return (
+    <div>
+      <div
+        className="flex items-center justify-between px-4 py-2.5"
+        style={{ background: 'var(--surface-press-box)', borderBottom: '2px solid rgba(191,87,0,0.3)' }}
+      >
+        <h2
+          className="text-xs uppercase tracking-[0.15em] font-bold"
+          style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary)' }}
+        >{title}</h2>
+      </div>
+      <div className="border border-t-0 px-4 py-8 text-center" style={{ borderColor: 'var(--border-vintage)' }}>
+        <p className="text-xs" style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}>
+          {error ? 'Data temporarily unavailable' : 'No leaderboard data available'}
+        </p>
+        {onRetry && (
+          <button
+            onClick={onRetry}
+            className="mt-3 text-[10px] uppercase tracking-wider px-3 py-1.5 border rounded-sm transition-colors hover:bg-[rgba(191,87,0,0.08)] hover:border-[var(--bsi-primary)]"
+            style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-primary)', borderColor: 'rgba(191,87,0,0.3)' }}
+          >Retry</button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function StandoutEmpty() {
+  return (
+    <div className="heritage-card p-5 flex items-center justify-center" style={{ minHeight: '120px' }}>
+      <p className="text-[10px] uppercase tracking-wider" style={{ fontFamily: 'var(--font-mono)', color: 'rgba(196,184,165,0.35)' }}>
+        Updating player data...
+      </p>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Page Component
+// ---------------------------------------------------------------------------
+
 export function HomePageClient() {
   // Data fetches
-  const { data: battingRes, loading: battingLoading } =
+  const { data: battingRes, loading: battingLoading, error: battingError, retry: retryBatting } =
     useSportData<LeaderboardResponse>('/api/savant/batting/leaderboard?limit=50', { refreshInterval: 300_000 });
-  const { data: pitchingRes, loading: pitchingLoading } =
+  const { data: pitchingRes, loading: pitchingLoading, error: pitchingError, retry: retryPitching } =
     useSportData<LeaderboardResponse>('/api/savant/pitching/leaderboard?limit=50', { refreshInterval: 300_000 });
   const { data: scoresRes } =
     useSportData<ScoresResponse>('/api/college-baseball/scores', { refreshInterval: 30_000 });
@@ -661,7 +707,9 @@ export function HomePageClient() {
                   ]}
                   href={topHitter.player_id ? `/college-baseball/savant/player/${topHitter.player_id}/` : '/college-baseball/savant/'}
                 />
-              ) : null}
+              ) : (
+                <StandoutEmpty />
+              )}
             </DataErrorBoundary>
 
             <DataErrorBoundary name="TopPitcher" compact>
@@ -681,7 +729,9 @@ export function HomePageClient() {
                   ]}
                   href={topPitcher.player_id ? `/college-baseball/savant/player/${topPitcher.player_id}/` : '/college-baseball/savant/'}
                 />
-              ) : null}
+              ) : (
+                <StandoutEmpty />
+              )}
             </DataErrorBoundary>
           </div>
         </ScrollReveal>
@@ -709,7 +759,9 @@ export function HomePageClient() {
                     { key: 'slg', label: 'SLG', format: fmt3 },
                   ]}
                 />
-              ) : null}
+              ) : (
+                <LeaderboardEmpty title="Batting Leaders" error={battingError} onRetry={retryBatting} />
+              )}
             </DataErrorBoundary>
           </ScrollReveal>
 
@@ -736,7 +788,9 @@ export function HomePageClient() {
                     { key: 'whip', label: 'WHIP', format: fmt2 },
                   ]}
                 />
-              ) : null}
+              ) : (
+                <LeaderboardEmpty title="Pitching Leaders" error={pitchingError} onRetry={retryPitching} />
+              )}
             </DataErrorBoundary>
           </ScrollReveal>
         </div>
