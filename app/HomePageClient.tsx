@@ -13,6 +13,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { ScrollReveal } from '@/components/cinematic';
+import { Stagger, StaggerItem } from '@/components/motion/Stagger';
+import { DataTransition } from '@/components/motion/DataTransition';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { fmt3, fmt2 } from '@/lib/analytics/viz';
 
@@ -72,9 +74,9 @@ interface ScoresResponse {
 const NAV_ITEMS: readonly { title: string; href: string; desc: string; accent?: boolean }[] = [
   { title: 'Savant', href: '/college-baseball/savant/', desc: 'Advanced leaderboards', accent: true },
   { title: 'Live Scores', href: '/scores/', desc: 'Real-time games', accent: true },
+  { title: 'Players', href: '/college-baseball/players/', desc: 'Search all D1 players', accent: true },
   { title: 'Rankings', href: '/college-baseball/rankings/', desc: 'National poll' },
   { title: 'Standings', href: '/college-baseball/standings/', desc: 'Conference tables' },
-  { title: 'Visuals', href: '/college-baseball/savant/visuals/', desc: '16 interactive charts' },
   { title: 'Compare', href: '/college-baseball/compare/', desc: 'Head-to-head analysis' },
   { title: 'Bubble', href: '/college-baseball/savant/bubble/', desc: 'Tournament projections' },
   { title: 'Ask BSI', href: '/ask/', desc: 'AI-powered analysis' },
@@ -655,12 +657,14 @@ export function HomePageClient() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
                 </span>
-                <span
-                  className="text-[10px] uppercase tracking-wider font-semibold"
-                  style={{ fontFamily: 'var(--font-mono)', color: '#10B981' }}
-                >
-                  {liveCount} {liveCount === 1 ? 'game' : 'games'} live
-                </span>
+                <DataTransition value={liveCount} mode="flip">
+                  <span
+                    className="text-[10px] uppercase tracking-wider font-semibold"
+                    style={{ fontFamily: 'var(--font-mono)', color: '#10B981' }}
+                  >
+                    {liveCount} {liveCount === 1 ? 'game' : 'games'} live
+                  </span>
+                </DataTransition>
               </Link>
             </ScrollReveal>
           )}
@@ -688,8 +692,8 @@ export function HomePageClient() {
       {/* STANDOUT PLAYERS                                                   */}
       {/* ================================================================= */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 pt-8 sm:pt-10">
-        <ScrollReveal>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        <Stagger speed="normal" className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          <StaggerItem>
             <DataErrorBoundary name="TopHitter" compact>
               {battingLoading ? (
                 <StandoutSkeleton />
@@ -711,7 +715,8 @@ export function HomePageClient() {
                 <StandoutEmpty />
               )}
             </DataErrorBoundary>
-
+          </StaggerItem>
+          <StaggerItem>
             <DataErrorBoundary name="TopPitcher" compact>
               {pitchingLoading ? (
                 <StandoutSkeleton />
@@ -733,8 +738,8 @@ export function HomePageClient() {
                 <StandoutEmpty />
               )}
             </DataErrorBoundary>
-          </div>
-        </ScrollReveal>
+          </StaggerItem>
+        </Stagger>
       </section>
 
       {/* ================================================================= */}
@@ -807,12 +812,13 @@ export function HomePageClient() {
           >
             Explore
           </h2>
-          <nav className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3" aria-label="Product navigation">
-            {NAV_ITEMS.map((item) => (
+        </ScrollReveal>
+        <Stagger speed="fast" as="div" className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+          {NAV_ITEMS.map((item) => (
+            <StaggerItem key={item.href}>
               <Link
-                key={item.href}
                 href={item.href}
-                className="group heritage-card px-4 py-3.5 transition-all"
+                className="group heritage-card px-4 py-3.5 transition-all block h-full"
               >
                 <p
                   className="text-[11px] sm:text-xs font-bold uppercase tracking-[0.12em] mb-1 transition-colors"
@@ -830,9 +836,9 @@ export function HomePageClient() {
                   {item.desc}
                 </p>
               </Link>
-            ))}
-          </nav>
-        </ScrollReveal>
+            </StaggerItem>
+          ))}
+        </Stagger>
       </section>
 
       {/* ================================================================= */}

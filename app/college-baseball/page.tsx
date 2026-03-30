@@ -463,6 +463,12 @@ function CollegeBaseballPageInner() {
                         icon: 'M18 20V10M12 20V4M6 20v-6',
                       },
                       {
+                        label: 'Player Directory',
+                        desc: 'Search and filter all D1 players',
+                        href: '/college-baseball/players',
+                        icon: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75',
+                      },
+                      {
                         label: 'Transfer Portal',
                         desc: 'Track every portal entry in real time',
                         href: '/college-baseball/transfer-portal',

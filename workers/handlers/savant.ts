@@ -782,6 +782,44 @@ export async function handleSavantPlayerDirectory(url: URL, env: Env, headers?: 
     // Add playerType flag
     output = output.map((row) => ({ ...row, playerType: type === 'batting' ? 'batter' : 'pitcher' }));
 
+    // --- Enrich missing position/class_year from player_season_stats ---
+    const missingIds = output
+      .filter((r) => !r.position || r.position === 'UN' || !r.class_year)
+      .map((r) => r.player_id as string)
+      .filter(Boolean);
+
+    if (missingIds.length > 0) {
+      try {
+        // Batch query — D1 supports up to ~100 binds, chunk if needed
+        const chunk = missingIds.slice(0, 80);
+        const placeholders = chunk.map(() => '?').join(',');
+        const enrichRows = await env.DB.prepare(
+          `SELECT espn_id, position, class_year FROM player_season_stats
+           WHERE espn_id IN (${placeholders}) AND sport = 'college-baseball' AND season = ?`
+        ).bind(...chunk, SEASON).all<{ espn_id: string; position: string; class_year: string }>();
+
+        const enrichMap = new Map<string, { position: string; class_year: string }>();
+        for (const row of enrichRows.results || []) {
+          enrichMap.set(row.espn_id, { position: row.position, class_year: row.class_year });
+        }
+
+        output = output.map((row) => {
+          const enrich = enrichMap.get(row.player_id as string);
+          if (!enrich) return row;
+          const updated = { ...row };
+          if (!updated.position || updated.position === 'UN') {
+            updated.position = enrich.position || updated.position;
+          }
+          if (!updated.class_year) {
+            updated.class_year = enrich.class_year || updated.class_year;
+          }
+          return updated;
+        });
+      } catch {
+        // Non-critical — continue without enrichment
+      }
+    }
+
     // --- Conference list (for filter dropdown) ---
     const confResult = await env.DB.prepare(
       `SELECT DISTINCT conference FROM ${table} WHERE season = ? AND conference IS NOT NULL ORDER BY conference`
