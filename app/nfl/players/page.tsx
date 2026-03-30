@@ -377,7 +377,7 @@ export default function NFLPlayersPage() {
             ) : filteredPlayers.length === 0 ? (
               <Card variant="default" padding="lg" className="text-center">
                 <div className="py-8">
-                  <SportIcon sport="nfl" className="w-16 h-16 mx-auto mb-4" style={{ color: 'rgba(196,184,165,0.5)' }} />
+                  <SportIcon sport="nfl" className="w-16 h-16 mx-auto mb-4 text-[rgba(196,184,165,0.5)]" />
                   <p className="text-lg" style={{ color: 'var(--bsi-dust)' }}>
                     {searchQuery || selectedPosition !== 'All' || selectedTeam !== 'All'
                       ? 'No players match your filters'
