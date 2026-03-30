@@ -72,8 +72,8 @@
     "release:guarded": "node scripts/release-guarded.mjs",
     "rollback:pages": "node scripts/pages-rollback.mjs",
     "rollback:pages:list": "node scripts/pages-rollback.mjs --list",
-    "test:visual": "npx playwright test tests/visual-regression/ --config=playwright.smoke.config.ts --project=chromium",
-    "test:visual:update": "npx playwright test tests/visual-regression/ --config=playwright.smoke.config.ts --project=chromium --update-snapshots",
+    "test:visual": "npx playwright test tests/visual-regression/ --config=playwright.config.ts --project=chromium",
+    "test:visual:update": "npx playwright test tests/visual-regression/ --config=playwright.config.ts --project=chromium --update-snapshots",
     "scan:secrets": "npx --no-install secretlint --secretlintrc .secretlintrc.json --secretlintignore .secretlintignore .",
     "scan:secrets:staged": "node scripts/secretlint-staged.mjs"
   },

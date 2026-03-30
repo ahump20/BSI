@@ -71,7 +71,7 @@ interface ScoresResponse {
 
 const NAV_ITEMS: readonly { title: string; href: string; desc: string; accent?: boolean }[] = [
   { title: 'Savant', href: '/college-baseball/savant/', desc: 'Advanced leaderboards', accent: true },
-  { title: 'Live Scores', href: '/scores/', desc: 'Real-time games' },
+  { title: 'Live Scores', href: '/scores/', desc: 'Real-time games', accent: true },
   { title: 'Rankings', href: '/college-baseball/rankings/', desc: 'National poll' },
   { title: 'Standings', href: '/college-baseball/standings/', desc: 'Conference tables' },
   { title: 'Visuals', href: '/college-baseball/savant/visuals/', desc: '16 interactive charts' },
