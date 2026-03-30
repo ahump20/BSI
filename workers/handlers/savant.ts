@@ -687,10 +687,10 @@ export async function handleSavantPlayerDirectory(url: URL, env: Env, headers?: 
     sortDir = LOWER_IS_BETTER.has(safeSort) ? 'ASC' : 'DESC';
   }
 
-  // Min thresholds — default 1 for directory (show all players)
+  // Min thresholds — default 25 PA / 10 IP to filter small-sample noise
   const minThreshold = isBatting
-    ? Math.max(0, parseInt(url.searchParams.get('min_pa') || '1', 10) || 1)
-    : Math.max(0, parseInt(url.searchParams.get('min_ip') || '1', 10) || 1);
+    ? Math.max(0, parseInt(url.searchParams.get('min_pa') || '25', 10) || 25)
+    : Math.max(0, parseInt(url.searchParams.get('min_ip') || '10', 10) || 10);
   const thresholdCol = isBatting ? 'pa' : 'ip';
 
   // Build cache key

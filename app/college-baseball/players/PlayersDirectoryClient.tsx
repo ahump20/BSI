@@ -496,7 +496,10 @@ export default function PlayersDirectoryClient() {
                             }
 
                             if (col.key === 'team' || col.key === 'conference' || col.key === 'position' || col.key === 'class_year') {
-                              const value = player[col.key as keyof PlayerRow] as string || '';
+                              let value = player[col.key as keyof PlayerRow] as string || '';
+                              // Clean up meaningless values
+                              if (value === 'UN' || value === 'null') value = '\u2014';
+                              if (!value) value = '\u2014';
                               return (
                                 <td key={col.key} className={`px-2 py-1.5 text-[var(--bsi-bone)] ${col.className || ''}`}>
                                   <span className="whitespace-nowrap">{value}</span>
