@@ -169,6 +169,7 @@ import {
   handleSavantParkFactors,
   handleSavantConferenceStrength,
   handleSavantExport,
+  handleSavantPlayerDirectory,
 } from './handlers/savant';
 import {
   handleNILLeaderboard,
@@ -667,6 +668,7 @@ app.get('/api/savant/conference-strength', (c) => handleSavantConferenceStrength
 app.get('/api/savant/batting/export', (c) => handleSavantExport('batting', new URL(c.req.url), c.env, c.req.raw.headers));
 app.get('/api/savant/pitching/export', (c) => handleSavantExport('pitching', new URL(c.req.url), c.env, c.req.raw.headers));
 app.get('/api/savant/league-context', (c) => handleLeagueContext(c.env));
+app.get('/api/savant/directory', (c) => handleSavantPlayerDirectory(new URL(c.req.url), c.env, c.req.raw.headers));
 
 // --- NIL Intelligence ---
 app.get('/api/nil/leaderboard', (c) => handleNILLeaderboard(new URL(c.req.url), c.env, c.req.raw.headers));

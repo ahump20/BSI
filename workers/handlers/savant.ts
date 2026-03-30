@@ -620,3 +620,189 @@ export async function handleSavantConferenceStrength(url: URL, env: Env, headers
     return json({ error: 'Failed to fetch conference strength', detail: msg }, 500);
   }
 }
+
+// ---------------------------------------------------------------------------
+// Player Directory
+// ---------------------------------------------------------------------------
+
+/** Metrics where lower = better, so default sort should be ASC. */
+const LOWER_IS_BETTER = new Set(['era', 'fip', 'x_fip', 'era_minus', 'whip', 'bb_9', 'hr_9', 'k_pct']);
+
+const BATTING_ALLOWED_SORTS = [
+  'avg', 'obp', 'slg', 'ops', 'k_pct', 'bb_pct', 'iso', 'babip',
+  'woba', 'wrc_plus', 'ops_plus', 'pa', 'hr', 'h', 'ab', 'g',
+  'player_name', 'team',
+];
+
+const PITCHING_ALLOWED_SORTS = [
+  'era', 'whip', 'k_9', 'bb_9', 'hr_9', 'fip', 'x_fip',
+  'era_minus', 'k_bb', 'lob_pct', 'babip', 'ip', 'so', 'g', 'gs',
+  'player_name', 'team',
+];
+
+/**
+ * GET /api/savant/directory
+ *
+ * Browsable directory of all D1 players with advanced metrics.
+ * Unlike the leaderboard (top-N by one metric, min PA/IP), this endpoint
+ * supports full search, multi-filter, and pagination for discovery.
+ *
+ * Query params:
+ *   type       — batting (default) or pitching
+ *   search     — LIKE match on player_name or team
+ *   conference — exact match
+ *   position   — P, C, IF, OF, or specific code
+ *   class      — Fr, So, Jr, Sr
+ *   sort       — metric column (default: woba for batting, fip for pitching)
+ *   dir        — asc or desc (auto-detected if omitted based on metric)
+ *   min_pa     — minimum plate appearances (default: 1)
+ *   min_ip     — minimum innings pitched (default: 1)
+ *   page       — page number (default: 1)
+ *   limit      — results per page (default: 50, max: 100)
+ */
+export async function handleSavantPlayerDirectory(url: URL, env: Env, headers?: Headers): Promise<Response> {
+  const type = url.searchParams.get('type') === 'pitching' ? 'pitching' : 'batting';
+  const search = url.searchParams.get('search') || '';
+  const conference = url.searchParams.get('conference') || '';
+  const position = url.searchParams.get('position') || '';
+  const classYear = url.searchParams.get('class') || '';
+  const sortParam = url.searchParams.get('sort') || '';
+  const dirParam = url.searchParams.get('dir') || '';
+  const page = Math.max(1, parseInt(url.searchParams.get('page') || '1', 10) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(url.searchParams.get('limit') || '50', 10) || 50));
+  const offset = (page - 1) * limit;
+  const tier = await resolveTier(url, headers ?? new Headers(), env);
+
+  const isBatting = type === 'batting';
+  const table = isBatting ? 'cbb_batting_advanced' : 'cbb_pitching_advanced';
+  const allowedSorts = isBatting ? BATTING_ALLOWED_SORTS : PITCHING_ALLOWED_SORTS;
+  const defaultSort = isBatting ? 'woba' : 'fip';
+  const safeSort = allowedSorts.includes(sortParam) ? sortParam : defaultSort;
+
+  // Auto-detect direction: lower-is-better metrics sort ASC by default
+  let sortDir: string;
+  if (dirParam === 'asc' || dirParam === 'desc') {
+    sortDir = dirParam.toUpperCase();
+  } else {
+    sortDir = LOWER_IS_BETTER.has(safeSort) ? 'ASC' : 'DESC';
+  }
+
+  // Min thresholds — default 1 for directory (show all players)
+  const minThreshold = isBatting
+    ? Math.max(0, parseInt(url.searchParams.get('min_pa') || '1', 10) || 1)
+    : Math.max(0, parseInt(url.searchParams.get('min_ip') || '1', 10) || 1);
+  const thresholdCol = isBatting ? 'pa' : 'ip';
+
+  // Build cache key
+  const cacheKey = `savant:dir:${type}:${search}:${conference}:${position}:${classYear}:${safeSort}:${sortDir}:${minThreshold}:${page}:${limit}:${tier}`;
+  const cached = await kvGet<{ players: unknown[]; total: number; conferences: string[] }>(env.KV, cacheKey);
+  if (cached) {
+    return cachedJson({
+      players: cached.players,
+      total: cached.total,
+      page,
+      totalPages: Math.ceil(cached.total / limit),
+      conferences: cached.conferences,
+      type,
+      tier,
+      meta: savantMeta('bsi-savant', true),
+    }, 200, HTTP_CACHE.standings, { 'X-Cache': 'HIT' });
+  }
+
+  try {
+    // --- Build conditions ---
+    const conditions = [`season = ?`, `${thresholdCol} >= ?`];
+    const binds: (string | number)[] = [SEASON, minThreshold];
+
+    if (search) {
+      conditions.push(`(player_name LIKE ? OR team LIKE ?)`);
+      const q = `%${search}%`;
+      binds.push(q, q);
+    }
+    if (conference) {
+      conditions.push(`conference = ?`);
+      binds.push(conference);
+    }
+    if (position) {
+      const upper = position.toUpperCase();
+      if (upper === 'IF') {
+        conditions.push(`position IN ('1B','2B','3B','SS','IF')`);
+      } else if (upper === 'OF') {
+        conditions.push(`position IN ('LF','CF','RF','OF')`);
+      } else if (upper === 'P' && !isBatting) {
+        // Pitching tab — all entries are pitchers, no position filter needed
+      } else {
+        conditions.push(`position = ?`);
+        binds.push(upper);
+      }
+    }
+    if (classYear) {
+      conditions.push(`class_year = ?`);
+      binds.push(classYear);
+    }
+
+    const whereClause = conditions.join(' AND ');
+
+    // --- Count total ---
+    const countResult = await env.DB.prepare(
+      `SELECT COUNT(*) as total FROM ${table} WHERE ${whereClause}`
+    ).bind(...binds).first<{ total: number }>();
+    const total = countResult?.total ?? 0;
+
+    // --- Fetch page ---
+    const selectCols = isBatting
+      ? `player_id, player_name, team, conference, position, class_year,
+         g, ab, pa, h, hr, bb, so,
+         avg, obp, slg, ops, k_pct, bb_pct, iso, babip,
+         woba, wrc_plus, ops_plus, e_ba, e_slg, e_woba`
+      : `player_id, player_name, team, conference, position, class_year,
+         g, gs, w, l, sv, ip, h, er, bb, hbp, so,
+         era, whip, k_9, bb_9, hr_9, fip, x_fip, era_minus, k_bb, lob_pct, babip`;
+
+    const dataBinds = [...binds, limit, offset];
+    const query = `
+      SELECT ${selectCols}
+      FROM ${table}
+      WHERE ${whereClause}
+      ORDER BY ${safeSort} ${sortDir}
+      LIMIT ? OFFSET ?
+    `;
+
+    const { results } = await env.DB.prepare(query).bind(...dataBinds).all();
+
+    // Percentile ranks
+    const percentileKeys = isBatting ? BATTING_PERCENTILE_KEYS : PITCHING_PERCENTILE_KEYS;
+    let output = computePercentileRanks(results as Record<string, unknown>[], percentileKeys);
+
+    // Tier gating
+    if (tier !== 'pro') {
+      output = output.map(stripProFields);
+    }
+
+    // Add playerType flag
+    output = output.map((row) => ({ ...row, playerType: type === 'batting' ? 'batter' : 'pitcher' }));
+
+    // --- Conference list (for filter dropdown) ---
+    const confResult = await env.DB.prepare(
+      `SELECT DISTINCT conference FROM ${table} WHERE season = ? AND conference IS NOT NULL ORDER BY conference`
+    ).bind(SEASON).all<{ conference: string }>();
+    const conferences = (confResult.results || []).map((r) => r.conference).filter(Boolean);
+
+    // Cache result
+    await kvPut(env.KV, cacheKey, { players: output, total, conferences }, 300);
+
+    return cachedJson({
+      players: output,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+      conferences,
+      type,
+      tier,
+      meta: savantMeta('bsi-savant', false),
+    }, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Unknown error';
+    return json({ error: 'Failed to fetch player directory', detail: msg }, 500);
+  }
+}

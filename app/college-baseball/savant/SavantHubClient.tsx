@@ -230,7 +230,7 @@ export default function SavantHubPage() {
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
             {/* Compact title + trust strip */}
-            <div className="flex items-center justify-between mb-5">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-5">
               <div className="flex items-center gap-3">
                 <span className="heritage-stamp">Savant</span>
                 <h1
@@ -589,6 +589,13 @@ export default function SavantHubPage() {
                     className="font-mono text-[10px] uppercase tracking-[0.12em] text-burnt-orange/50 hover:text-burnt-orange transition-colors"
                   >
                     Metric Glossary
+                  </Link>
+                  <span className="text-text-muted/20">&middot;</span>
+                  <Link
+                    href="/college-baseball/players"
+                    className="font-mono text-[10px] uppercase tracking-[0.12em] text-burnt-orange/50 hover:text-burnt-orange transition-colors"
+                  >
+                    Browse All Players
                   </Link>
                 </div>
               </div>
