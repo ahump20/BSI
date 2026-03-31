@@ -1,96 +1,107 @@
 # BSI Dream Queue
 
-**Generated:** 2026-03-30T11:15:00Z
-**Sports in season:** College Baseball (peak), MLB (Opening Week), NBA (regular season — playoffs approaching)
-**Signal summary:** College baseball is the undisputed traffic leader with 14,920 API calls in 7 days, but conference standings are degraded for all tested conferences — visitors filtering by SEC, WAC, or Big South see empty tables. Meanwhile MLB launched today with live scores but no stats layer. Two weeks of portfolio-focused commits left BSI sports product coasting on infrastructure.
+**Generated:** 2026-03-31T11:20:00Z
+**Sports in season:** College Baseball (PEAK — mid-season, conference play starting), MLB (Opening Week), NBA (final weeks of regular season), CFB/NFL (offseason)
+**Signal summary:** CBB conference standings have been 502ing for 7+ days — the most error-prone route on the entire platform, and it's failing at the worst possible moment as conference play begins. MLB's spring training endpoint is also misfiring now that the regular season opened. Savant batting coverage is thin (25 batters) for mid-season D1.
 
 ---
 
 ## Priority Queue
 
-### 1. College Baseball Conference Standings — Restore the Broken Filter
-**What:** Visitors who click into a conference (SEC, Big Ten, WAC, Big South) see real standings with records and rankings instead of a blank table.
-**Why now:** 70 server errors in the last 7 days, all from conference-filtered standings requests. The standings route gets 4,220 hits per week — the fifth-busiest API route on the site — and conference filtering is how most visitors actually use it. Peak mid-season window, conference races are heating up.
+### 1. Fix Conference Standings — Broken During Conference Season
+**What:** Visitors filtering the standings page by conference (WAC, Big South, Independent, and likely others) see an error instead of team records.
+**Why now:** 80 errors in the last 7 days — the #1 error source on the platform. Conference play is starting across D1 baseball right now, which is exactly when fans drill into conference-specific standings. This is broken at peak demand.
 **Scope:** 1 session
-**Verification:** Load `/college-baseball/standings` in a browser, filter to SEC — teams with win/loss records populate. Curl `/api/college-baseball/standings?conference=sec` returns non-empty `data` array with `degraded: false`.
-**First step:** Read the standings worker handler and trace why conference-filtered requests return `reason: no-data-available` while the unfiltered endpoint returns 138 teams correctly.
+**Verification:** Load `/college-baseball/standings?conference=wac`, `/college-baseball/standings?conference=big-south`, and `/college-baseball/standings?conference=independent` — each should show a populated standings table. Worker logs should show zero 502s on `GET /api/college-baseball/standings`.
+**First step:** Reproduce the 502 by calling `GET /api/college-baseball/standings?conference=wac` directly and reading the handler code to find where the upstream call fails.
 
 ---
 
-### 2. MLB Opening Week — Wire the Stats Layer
-**What:** Visitors on the MLB stats page see early-season batting and pitching leaders with real data from the first games of 2026, not a blank leaderboard.
-**Why now:** Opening Day is today, March 30. The MLB scores endpoint is already live (12 games). But `/api/mlb/leaderboards/batting` is returning empty with `unavailable: true` and logged 20 errors last week. The first week of the season is the highest-engagement moment for MLB readers — capturing that audience now compounds for the whole season.
+### 2. Retire Spring Training, Surface Opening Week MLB Scores
+**What:** The MLB section shows live regular season games with correct standings instead of stale spring training errors.
+**Why now:** MLB Opening Day was March 27. The spring training endpoint is still being called, logging 30 errors in 7 days. Fans landing on the MLB scores page during Opening Week deserve real games, not error states from a dead endpoint.
 **Scope:** 1 session
-**Verification:** Load `/mlb/stats` and confirm batting leaders populate with real names, teams, and stat lines. Curl `/api/mlb/leaderboards/batting` returns players with non-zero at-bats.
-**First step:** Check what data source and cron backs the MLB batting leaderboard, confirm whether the season-start data is available from SportsDataIO, and trace why the endpoint marks itself unavailable.
+**Verification:** Load `blazesportsintel.com/mlb/scores` and confirm it shows the current day's regular season games. Worker logs should show zero errors on `GET /api/mlb/spring-training/scores`. MLB standings should reflect real division records.
+**First step:** Read the MLB spring training handler and the main MLB scores handler to understand whether spring training is a separate route or a mode flag, then redirect or disable it.
 
 ---
 
-### 3. Savant Leaderboard — Show More, Gate Less
-**What:** Visitors on the Savant leaderboard see the top 50+ college baseball hitters by wOBA and wRC+ instead of a truncated list of 25 names with most stats hidden behind a paywall prompt.
-**Why now:** The Savant batting leaderboard is the 6th busiest API route — 3,920 requests last week — and the conference-strength endpoint behind it gets another 2,230. These visitors came specifically for advanced analytics. The current free tier returns 25 players with `_tier_gated: true` on all of them. The data is computed and fresh (25 batters with wRC+ and wOBA calculated from D1). Showing the top 50 free, gating deeper filtering or export, would convert more browsers to subscribers.
+### 3. Deepen Savant Batting Coverage
+**What:** The Savant leaderboard shows a full, meaningful ranking of qualifying batters — not just 25 — with accurate wOBA, wRC+, and percentile grades.
+**Why now:** The leaderboard currently surfaces 25 batters, which makes it feel like a demo rather than a real analytical tool. College baseball is at mid-season with hundreds of batters who have accumulated enough plate appearances to qualify. The player directory just launched, and users who discover a player there have nowhere to go for deeper advanced stats.
 **Scope:** 1 session
-**Verification:** Load `/college-baseball/savant` without being logged in — at least 50 batters visible with real wOBA/wRC+ values, clear upgrade prompt for full access.
-**First step:** Read the savant leaderboard handler and auth middleware to understand where the 25-row free-tier cap is set and what the gating logic controls.
+**Verification:** `GET /api/savant/batting/leaderboard` returns 100+ batters. The Savant page at `blazesportsintel.com/college-baseball/savant` shows a populated, filterable leaderboard with real percentile distributions.
+**First step:** Check `bsi-savant-compute` cron output and the D1 query that feeds the leaderboard to determine if the 25-batter cap is from the PA threshold, a query `LIMIT`, or sparse compute coverage.
 
 ---
 
-### 4. Intel/News Feed — Recover from Portfolio Sprint
-**What:** Visitors on the Intel and news pages see recently updated, sport-relevant articles and headlines rather than stale or missing content from weeks of neglected upkeep.
-**Why now:** The intel/news endpoint is the 3rd busiest route on the site — 7,990 requests last week — and logged 10 errors. The last 8 of 12 commits were entirely portfolio work (austin-humphrey.com). The sports product coasted. With college baseball in peak season and MLB just launched, the gap between traffic and freshness is widest right now.
+### 4. Wire the Conferences Page to Live Data
+**What:** The college baseball conferences page displays real standings, records, and leaders for each conference — not a blank or static shell.
+**Why now:** The `/college-baseball/conferences` route currently falls through to the static page (no Hono route registered), meaning the page has no live data backing. With conference play starting, this is the most natural destination for fans wanting to compare programs. CBB scores are the #1 traffic endpoint (15K requests/week) — the conferences section should capture that momentum.
 **Scope:** 1 session
-**Verification:** Load `/intel` and confirm news items carry current dates within the last 48 hours. Curl `/api/intel/news` returns articles with `published_at` from this week.
-**First step:** Curl `/api/intel/news` and inspect the response for article dates and sources — determine whether the issue is a stale cache, a failing external API, or missing editorial content.
+**Verification:** Load `blazesportsintel.com/college-baseball/conferences` and confirm each conference card shows current standings and at least one stat leader. `GET /api/college-baseball/conferences` returns valid JSON.
+**First step:** Confirm the Hono route for `/api/college-baseball/conferences` is missing, then read the existing conferences page component to understand what data shape it expects.
 
 ---
 
-### 5. Spring Training Endpoint — Retire It Before It Rots
-**What:** Any page or component still referencing spring training scores gracefully redirects visitors to the regular-season scoreboard instead of hitting a broken endpoint.
-**Why now:** `/api/mlb/spring-training/scores` logged 40 errors last week. Spring training ended and the regular season started today. Forty failures a week on a sunset endpoint is background noise that will only grow as MLB traffic climbs. Clean slate for Opening Week.
-**Scope:** 1 session
-**Verification:** A browser request to any spring training URL redirects to the MLB scores page with no console errors. Cloudflare error count for `GET /api/mlb/spring-training/scores` drops to zero within 24 hours.
-**First step:** Find every route, link, and navigation item pointing to spring training in `app/mlb/` and `workers/handlers/`, then decide whether to redirect, remove, or repurpose the endpoint for historical reference.
+### 5. Add Pitching Leaderboard to Savant
+**What:** Visitors can explore an ERA–, FIP, and K/9 leaderboard for college pitchers alongside the existing batting leaderboard — giving BSI's analytical product a complete two-sided view of the game.
+**Why now:** The `bsi-savant-compute` and `bsi-cbb-analytics` workers already compute FIP for pitchers, but there's no front-end surface for it. The batting Savant just got more visible via the player directory. Pitching is the natural next layer — especially in early conference play when aces are the story.
+**Scope:** multi-session
+**Verification:** `GET /api/savant/pitching/leaderboard` returns FIP, ERA–, and K/9 for qualifying starters. The Savant page at `blazesportsintel.com/college-baseball/savant` includes a toggle between Batting and Pitching views.
+**First step:** Read `bsi-savant-compute` and `bsi-cbb-analytics` worker code to confirm what pitching metrics are already computed and stored in D1, then scope the leaderboard query.
 
 ---
 
 ## Signal Report
 
 ### Production Health
-| Endpoint | Status |
-|---|---|
-| `/api/health` | ✅ OK |
-| `/api/college-baseball/scores` | ✅ 2 games today (Mon), 82 Sat / 76 Sun — working |
-| `/api/college-baseball/standings` (no filter) | ✅ 138 teams |
-| `/api/college-baseball/standings?conference=*` | ❌ Degraded — empty data, all tested conferences |
-| `/api/college-baseball/rankings` | ✅ 25 ranked teams |
-| `/api/mlb/scores` | ✅ 12 games (Opening Day) |
-| `/api/mlb/leaderboards/batting` | ❌ Empty — `unavailable: true` |
-| `/api/mlb/spring-training/scores` | ❌ 40 errors/week |
-| `/api/savant/batting/leaderboard` | ⚠️ 25 batters, all tier-gated |
-| `/api/scores/overview` | ✅ All 5 sports present |
-| `/api/nba/scores` | ✅ 9 games |
+| Endpoint | Status | Detail |
+|---|---|---|
+| `/api/health` | OK | `{"status":"ok","mode":"hybrid-worker"}` |
+| `/api/college-baseball/scores` | OK | Scheduled games for today returning (response key is `data`) |
+| `/api/college-baseball/standings` | BROKEN | Base route returns data; **all conference-filtered requests 502** |
+| `/api/mlb/scores` | OK | 15 games live |
+| `/api/mlb/standings` | OK | 30 teams |
+| `/api/nba/scores` | OK | 8 games |
+| `/api/nba/standings` | OK | East + West conference objects |
+| `/api/savant/batting/leaderboard` | THIN | 25 batters (low for mid-season D1) |
+| `/api/scores/overview` | OK | All 5 sports present |
+| `/api/college-baseball/teams` | MISSING | No Hono route — returns static HTML |
+| `/api/college-baseball/conferences` | MISSING | No Hono route — returns static HTML |
+| `/api/mlb/spring-training/scores` | STALE | 30 errors/week, season is over |
 
 ### Recent Ships (last 20 commits)
-Strong portfolio/blaze-field sprint (8 of 12 commits). BSI sports product last touched: `bsi-cbb-ingest` (Mar 25), `bsi-cbb-analytics` (Mar 26), main worker deployed (Mar 28). Design polish to MLB/NFL pages in `d2fefd5`. Homepage dashboard layout in `ea7da9f`.
+- **Player Discovery Engine** (3 commits) — searchable directory with sabermetric filtering and D1 position enrichment; fresh this week
+- **Visual regression system** — build-verify agent, Playwright baselines, live scores accent color
+- **10 UX design upgrades** — table headers, sticky scroll, sport differentiation, score badges, mobile reorder
+- **Portfolio work** (8 commits) — Lighthouse 100, contact form hardening, chat widget, reading times, print styles
 
-### Traffic Patterns
-Top API routes, last 7 days (`blazesportsintel-worker-prod`):
-1. `/api/college-baseball/scores` — 14,920 req
-2. `/api/status` — 11,380 req
-3. `/api/intel/news` — 7,990 req
-4. `/api/health` — 7,630 req
-5. `/api/college-baseball/standings` — 4,220 req
-6. `/api/savant/batting/leaderboard` — 3,920 req
-7. `/api/scores/overview` — 3,150 req
-8. `/api/college-baseball/rankings` — 2,470 req
-9. `/api/savant/conference-strength` — 2,230 req
-10. `/api/nil/leaderboard` — 1,310 req
+Pattern: heavy UI and portfolio investment over the past 2 weeks; backend and data coverage work paused. Player directory launched without a pitching data counterpart.
 
-**Error hotspots:** CBB standings (70 errors) · MLB spring training (40) · MLB batting leaderboard (20) · Status endpoint (20) · Intel/news (10)
+### Traffic Patterns (last 7 days, blazesportsintel-worker-prod)
+| Route | Requests | Notes |
+|---|---|---|
+| Cron `*/1 * * * *` | 52,400 | KV cache warming — expected |
+| `GET /api/college-baseball/scores` | 15,040 | #1 user-facing data route |
+| `GET /api/status` | 11,790 | Monitoring |
+| `/college-baseball/` page | ~9,360 | #1 page destination |
+| `/scores/` page | ~8,140 | |
+| `GET /api/intel/news` | 8,070 | Consistent demand |
+| `/ask/` page | ~6,900 | AI chat getting real user traffic |
+
+**Errors (7 days):**
+- `GET /api/college-baseball/standings` — **80 errors**, all 502, all conference-filtered (`?conference=wac`, `?conference=big-south`, `?conference=independent`)
+- `GET /api/mlb/spring-training/scores` — 30 errors (season over)
+- `GET /api/status` — 20 errors (sporadic)
+- `GET /api/mlb/the-show-26/cards/[id]` — 10 errors
+- `GET /api/intel/news` — 10 errors
 
 ### Sports Calendar
-- **College Baseball** — Peak mid-season. Conference races active. CWS June 13–24. Highest BSI traffic by a significant margin.
-- **MLB** — Opening Day today (March 30). Scores live, stats layer missing at launch.
-- **NBA** — Regular season, ~3 weeks to Play-In. Playoff positioning races underway.
-- **NFL** — Offseason. Free agency underway, draft (April 23) approaching.
-- **CFB** — Deep offseason. Spring practices beginning but no live data needed.
+| Sport | Status | Key Dates |
+|---|---|---|
+| **College Baseball** | PEAK — conference play starting | Regionals May, CWS mid-June |
+| **MLB** | Opening Week (Day 4) | Regular season started Mar 27 |
+| **NBA** | Late regular season | Playoffs begin mid-April |
+| **NFL** | Offseason | Draft late April |
+| **CFB** | Spring practices | Season Sep |
