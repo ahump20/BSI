@@ -1,55 +1,55 @@
 # BSI Dream Queue
 
-**Generated:** 2026-04-05T11:26:00Z
-**Sports in season:** College Baseball (peak — Week 8, full conference play), MLB (early regular season, Week 2), NBA (final 8 days of regular season, playoffs begin ~April 13)
-**Signal summary:** Three data pipelines remain broken into a third consecutive day: game detail returns null, conference standings are frozen at 0-0, and the transfer portal serves zero entries. The Savant cap issue from yesterday is resolved — the UI correctly requests 100 players and receives them. NBA playoff season starts in 8 days with no playoff picture page built yet. MLB stats endpoint is empty despite the season being two weeks old.
+**Generated:** 2026-04-06T11:23:00Z
+**Sports in season:** College Baseball (peak — Week 8, full conference play), MLB (regular season Week 2), NBA (final 7 days of regular season, playoffs begin April 13)
+**Signal summary:** Four consecutive days of broken game detail pages and frozen conference standings in college baseball — the two highest-value features during the most important month of the season. Transfer portal remains empty during active spring movement. NBA playoffs open in 7 days with no playoff picture page despite healthy standings data. MLB stats endpoint returns no content despite two weeks of games on the board.
 
 ---
 
 ## Priority Queue
 
-### 1. Game detail pages blank for every game — third day
-**What:** Clicking any college baseball game from the scores board opens a real box score — inning-by-inning scoring, team stats, and play-by-play — instead of a dead page with no data.
-**Why now:** The game detail handler returns `game: null` for every game ID regardless of state. Tested today against IDs `1143815`, `1143802`, and `1139792` — all null. This is the highest-intent click on the site: a fan who sees a score wants to go deeper. Today is Sunday, the biggest game day of the week in college baseball. Three days without any fix.
+### 1. Game detail pages still returning nothing — fourth consecutive day
+**What:** Clicking any college baseball game from the scores board opens a real box score — inning-by-inning scoring, team stats, and key plays — instead of a blank page with no data.
+**Why now:** Confirmed again today: `/api/college-baseball/games/1147546` (Oklahoma at Dallas Baptist, scheduled for tonight) returns `game: null`. Every game ID returns null regardless of game state. This is the highest-intent click on the entire site — a fan who sees a score always wants to go deeper. Four consecutive days with no fix during peak season.
 **Scope:** 1 session
-**Verification:** `curl https://blazesportsintel.com/api/college-baseball/games/1139792` returns a non-null `game` object with team names, score, and inning data. The game page at `blazesportsintel.com/college-baseball/game/1139792/` renders a real box score.
-**First step:** Read the `handleCollegeBaseballGame` function in `workers/handlers/college-baseball/` — trace why Highlightly's match fetch returns nothing and whether the ESPN fallback attempts the request with a game ID format that matches what the scores endpoint produces.
+**Verification:** `curl https://blazesportsintel.com/api/college-baseball/games/1147546` returns a non-null `game` object with team names, scheduled time, and available state data. The game page at `blazesportsintel.com/college-baseball/game/1147546/` renders matchup information instead of a blank shell.
+**First step:** Read the game detail handler in `workers/handlers/college-baseball/` — trace why the Highlightly game fetch returns null and whether the game IDs from the scores endpoint (`data[].id`) match the format the game detail handler uses to query Highlightly.
 
 ---
 
-### 2. Conference standings frozen at 0-0 — third consecutive day
-**What:** The college baseball standings page shows each team's real conference record — SEC, ACC, Big 12, Pac-12 races all visible — instead of every team showing 0 wins and 0 losses in conference play.
-**Why now:** Confirmed for the third day running: all 138 teams show `conferenceRecord: { wins: 0, losses: 0 }`. Overall records are correct (UCLA 28-2, North Carolina 27-5) but the conference split is wrong. It's Week 8 — conference standings are the most consequential data of the season and they've been broken since at least April 3.
+### 2. Conference standings frozen at 0-0 — fourth consecutive day
+**What:** The college baseball standings page shows each team's real conference record — SEC, Big 12, ACC, and Pac-12 races updated with this week's results — instead of every team listed at 0 wins and 0 losses in conference play.
+**Why now:** Confirmed again: all 138 teams return `conferenceRecord: { wins: 0, losses: 0, pct: 0 }` while overall records are live (UCLA 29-2, North Carolina 27-5). It's Week 8 — the conference standings race is the central college baseball story right now and the data has been frozen for four straight days.
 **Scope:** 1 session
-**Verification:** `curl https://blazesportsintel.com/api/college-baseball/standings | python3 -c "import sys,json; d=json.load(sys.stdin); t=d['data'][0]; print(t['team']['name'], t['conferenceRecord'])"` — returns a real conference record, not `{wins: 0, losses: 0}`.
-**First step:** Read the college baseball standings worker handler and trace where `conferenceRecord` is assigned — the ESPN source includes a `record` or `statsList` field with conference breakdown; find which key is being missed or skipped in the transform layer.
+**Verification:** `curl https://blazesportsintel.com/api/college-baseball/standings | python3 -c "import sys,json; d=json.load(sys.stdin); t=d['data'][0]; print(t['team']['name'], t['conferenceRecord'])"` — returns a non-zero conference record for the #1 team.
+**First step:** Read the college baseball standings handler and trace where `conferenceRecord` is built — the ESPN source returns a `record` array per team with a conference split; find which field key the transform is missing or mapping incorrectly.
 
 ---
 
-### 3. Transfer portal showing zero entries in active portal season
-**What:** The college baseball transfer portal page populates with players currently in the portal — name, position, previous school, and status — reflecting real roster movement happening right now.
-**Why now:** The spring transfer portal is open and `curl https://blazesportsintel.com/api/college-baseball/transfer-portal` returns `totalEntries: 0`. The Player Discovery Engine shipped last week and is in the main nav — having zero portal data makes the roster movement feature feel disconnected from reality. Portal movement is one of the top college baseball stories every April.
+### 3. Transfer portal showing nothing during active spring movement
+**What:** The college baseball transfer portal page populates with players currently in the portal — name, position, previous school, and portal status — reflecting real April roster movement instead of an empty list.
+**Why now:** The endpoint confirms: `totalEntries: 0`, last synced 11:00 AM today. The spring portal is open and active. Portal movement is one of the top college baseball stories every April, and BSI has a full transfer portal page that shows nothing. The Player Discovery Engine launched two weeks ago — portal data would make it substantially more useful.
 **Scope:** 1 session
-**Verification:** `curl https://blazesportsintel.com/api/college-baseball/transfer-portal` returns `totalEntries > 0` with player names, positions, and schools.
-**First step:** Find which worker or cron is responsible for populating transfer portal data — check whether Highlightly or SportsDataIO has a portal endpoint, whether the KV key written matches the key the handler reads, and whether a scheduled fetch is even configured.
+**Verification:** `curl https://blazesportsintel.com/api/college-baseball/transfer-portal` returns `totalEntries > 0` with real player entries including name, position, and previous school.
+**First step:** Find the worker or cron responsible for portal sync — check whether Highlightly or SportsDataIO exposes a transfer portal endpoint, whether the KV write key matches the read key in the handler, and whether a scheduled fetch is actually configured to run.
 
 ---
 
-### 4. NBA playoff picture before the race locks in 8 days
-**What:** A dedicated NBA playoff seeding page shows both conference brackets — current seeds, play-in matchups (7 vs. 8, 9 vs. 10), and clinch indicators — sourced live from standings data that is already fully healthy.
-**Why now:** The regular season ends April 13 — 8 days away. Detroit leads the East at 57-21; their historic turnaround is the story of the year and BSI has no page to frame it. The NBA standings endpoint returns 30 teams, two full conferences, and complete records. Building now gives visitors a predictive playoff view for the final 8 games; waiting until April 14 produces a recap scoreboard instead of a preview tool.
+### 4. NBA playoff picture — 7 days before the race locks in
+**What:** A dedicated NBA playoff seeding page shows both conference brackets — current seeds, remaining schedule, play-in matchups (7 vs. 8 and 9 vs. 10), and clinch indicators — giving fans a live view of the playoff race through the final week.
+**Why now:** The regular season ends April 13. Detroit leads the East at 57-21 with a 23-game win streak — the biggest story in basketball — and BSI has no page to frame it. The standings endpoint is fully healthy (30 teams, both conferences, complete records). Building now gives visitors a predictive playoff view for the last 7 games. Waiting until April 14 produces only a retrospective scoreboard.
 **Scope:** 1 session
-**Verification:** Navigate to `blazesportsintel.com/nba/playoff-picture/` — both conference brackets render with current seeds, Detroit and OKC called out as leaders, and play-in seeds 7-10 flagged for both conferences. All data sourced live from `/api/nba/standings`.
-**First step:** Read `app/nba/standings/page.tsx` to confirm the data shape includes conference rank, wins, losses, and GB — then create `app/nba/playoff-picture/page.tsx` wired to the same `/api/nba/standings` endpoint, rendering a Heritage v2.1 bracket layout.
+**Verification:** Navigate to `blazesportsintel.com/nba/playoff-picture/` — both conference brackets render with current seeds, Detroit and OKC called out as division leaders, and play-in seeds 7-10 flagged. All data sourced live from `/api/nba/standings`.
+**First step:** Read `app/nba/standings/page.tsx` to confirm the data shape — then create `app/nba/playoff-picture/page.tsx` wired to `/api/nba/standings`, rendering a Heritage v2.1 two-column bracket layout with play-in zone indicators.
 
 ---
 
-### 5. MLB season stats surface — two weeks of data going nowhere
-**What:** An MLB stats leaderboard shows early-season batting and pitching leaders — average, home runs, ERA, strikeouts — giving visitors a reason to return to the MLB section every day during the week, not just on game days.
-**Why now:** The regular season is two weeks old with 16 games on the board today. The `/mlb/stats/` page exists but the API endpoint returns empty. Every visit to the MLB section ends at scores and standings — there is no second click. Early-season leaders are a high-interest story: who's hitting .400, who hasn't allowed an earned run through 10 appearances. This is the window when those numbers are novel.
+### 5. MLB stats endpoint returning nothing — Week 2 of the season
+**What:** An MLB leaderboard surfaces early-season batting and pitching leaders — average, home runs, ERA, strikeouts — giving visitors a reason to return to the MLB section on non-game days.
+**Why now:** The endpoint returns no content at all (empty body, not even JSON). MLB is two weeks old with 16 games on the board today. The `/mlb/stats/` page exists but serves nothing. Early-season statistical leaders are a high-interest story — who's off to a hot start, who's struggling — and this is the only window when early numbers are novel and surprising.
 **Scope:** 1 session
-**Verification:** `curl https://blazesportsintel.com/api/mlb/stats` returns structured stat leaders with player names and values. The stats page at `blazesportsintel.com/mlb/stats/` renders a leaderboard with qualified batters and pitchers.
-**First step:** Read `workers/handlers/mlb/` to find whether a stats handler exists and which SportsDataIO endpoint it targets — then determine whether the failure is a missing handler, a broken KV write, or a transform gap.
+**Verification:** `curl https://blazesportsintel.com/api/mlb/stats` returns a valid JSON response with batting and pitching leader arrays. The stats page at `blazesportsintel.com/mlb/stats/` renders a leaderboard with qualified players.
+**First step:** Read `workers/handlers/mlb/` to check whether a stats handler exists and which SportsDataIO endpoint it targets — then determine whether the failure is a missing route registration, a broken KV write, or a transform gap.
 
 ---
 
@@ -60,18 +60,16 @@
 | Endpoint | Status | Notes |
 |---|---|---|
 | `/api/health` | ✅ OK | Worker healthy, hybrid mode |
-| `/api/college-baseball/scores` | ✅ 17 games | 16 scheduled, 1 final — data in `data` key (not `games`) |
-| `/api/college-baseball/games/:id` | ❌ BROKEN | `game: null` for all IDs — 3rd day |
-| `/api/college-baseball/standings` | ⚠️ Degraded | 138 teams, all `conferenceRecord` frozen at 0-0 — 3rd day |
-| `/api/college-baseball/rankings` | ✅ Working | UCLA #1, full list returned |
-| `/api/college-baseball/news` | ⚠️ Thin | 6 articles, no published timestamps |
-| `/api/college-baseball/transfer-portal` | ❌ BROKEN | `totalEntries: 0` — active portal season |
-| `/api/savant/batting/leaderboard` | ✅ Working | 100 batters at limit=100; UI correctly requests 100 — resolved from Apr 4 queue |
-| `/api/savant/pitching/leaderboard` | ✅ Working | 100 pitchers at limit=100 |
+| `/api/college-baseball/scores` | ✅ 5 games | Scheduled for tonight — data in `data` key (not `games`) |
+| `/api/college-baseball/games/:id` | ❌ BROKEN | `game: null` for all IDs — 4th consecutive day |
+| `/api/college-baseball/standings` | ⚠️ Degraded | 138 teams, all `conferenceRecord` frozen at 0-0 — 4th day |
+| `/api/college-baseball/rankings` | ⚠️ Degraded | Returns 25 teams but `meta.degraded: true` |
+| `/api/college-baseball/transfer-portal` | ❌ BROKEN | `totalEntries: 0` — active spring portal season |
+| `/api/savant/batting/leaderboard` | ⚠️ Capped | Default returns 25; explicit `?limit=100` returns 100 — UI must request 100 |
 | `/api/mlb/scores` | ✅ 16 games | Week 2, healthy |
 | `/api/mlb/standings` | ✅ 30 teams | Full standings |
-| `/api/mlb/stats` | ❌ BROKEN | Returns empty / no response |
-| `/api/nba/scores` | ✅ 3 games | Final week of regular season |
+| `/api/mlb/stats` | ❌ BROKEN | Returns empty body (no JSON) |
+| `/api/nba/scores` | ✅ 11 games | Final week of regular season |
 | `/api/nba/standings` | ✅ 30 teams | Detroit leads East 57-21; OKC leads West |
 | `/api/scores/overview` | ✅ Working | All 5 sports present |
 
@@ -79,27 +77,25 @@
 
 | Commit | What shipped |
 |---|---|
-| `a9f31fc` | Dream queue auto-generated (Apr 4) |
-| `96e33b2` | Players directory added to navigation, position data enriched from D1 |
-| `2126bdc` | Homepage empty/error states for leaderboard and standout cards |
-| `91286eb` | Players directory: min PA default 25, UN/null position cleanup |
+| `dbf9238` | Dream queue auto-generated (Apr 5) |
+| `96e33b2` | Player directory added to navigation, position data enriched from D1 |
+| `2126bdc` | Empty/error states added to homepage leaderboard and standout cards |
+| `91286eb` | Player discovery defaults min PA to 25, cleans up position display |
 | `6ec204f` | Player Discovery Engine — searchable directory with advanced metrics |
 | `a20f5a5` | Visual regression baselines, build-verify agent, Live Scores accent |
-| `35b8f26` | NFL SportIcon style prop fix |
-| `09ca2f3` | 10 design upgrades: table headers, sticky scroll, sport differentiation, score badges, mobile |
 
-**Pattern:** Four sessions focused on college baseball player analytics and UI polish. Zero worker-side fixes in the recent window. The three broken data pipelines (game detail, conference records, transfer portal) have accumulated without attention while frontend work ran in parallel.
+**Pattern:** Recent work concentrated on the Player Discovery Engine and homepage polish. Game detail and conference standings — both broken for 4+ days — have received no commits.
 
 ### Traffic Patterns
 
-Cloudflare analytics unavailable — MCP tools not present in this session.
+Cloudflare analytics unavailable in this session. Signal derived from endpoint health checks.
 
 ### Sports Calendar
 
-| Sport | Status | Key Dates |
+| Sport | Status | Key Date |
 |---|---|---|
-| **College Baseball** | PEAK — Week 8, conference play | Regionals ~May 30. CWS June 13–24. |
-| **MLB** | Early regular season — Week 2 | All-Star Break mid-July. |
-| **NBA** | Final 8 days | Regular season ends April 13. Play-in April 15-18. Playoffs ~April 19. |
-| **NFL** | Offseason | Draft April 23–25. |
-| **CFB** | Deep offseason | Spring games late April. |
+| **College Baseball** | Peak — Week 8, conference play | CWS: mid-June |
+| **MLB** | Week 2 regular season | Postseason: October |
+| **NBA** | Final 7 days, playoffs imminent | Playoffs begin: April 13 |
+| **NFL** | Offseason | Draft: late April |
+| **CFB** | Offseason | Season: September |
