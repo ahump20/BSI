@@ -264,6 +264,9 @@ export async function handleCollegeBaseballGame(
         const isLive = description.toLowerCase().includes('inning') || description.toLowerCase().includes('progress');
         const isFinal = description.toLowerCase().includes('final');
 
+        const awayScoreNum = Number(String(score.current ?? '0 - 0').split(' - ')[0]) || 0;
+        const homeScoreNum = Number(String(score.current ?? '0 - 0').split(' - ').pop()) || 0;
+
         const game = {
           id: String(match.id),
           date: match.date ?? now,
@@ -277,17 +280,21 @@ export async function handleCollegeBaseballGame(
             away: {
               name: away.name ?? 'Away',
               abbreviation: away.shortName ?? '',
-              score: Number(String(score.current ?? '0 - 0').split(' - ')[0]) || 0,
+              score: awayScoreNum,
+              isWinner: isFinal && awayScoreNum > homeScoreNum,
               logo: away.logo,
+              conference: (away.conference as Record<string, unknown>)?.name,
             },
             home: {
               name: home.name ?? 'Home',
               abbreviation: home.shortName ?? '',
-              score: Number(String(score.current ?? '0 - 0').split(' - ').pop()) || 0,
+              score: homeScoreNum,
+              isWinner: isFinal && homeScoreNum > awayScoreNum,
               logo: home.logo,
+              conference: (home.conference as Record<string, unknown>)?.name,
             },
           },
-          innings: homeScore?.innings ?? [],
+          venue: { name: (match.venue as Record<string, unknown>)?.name ?? 'TBD' },
         };
 
         const payload = withMeta({ game }, 'scores-cache', {
