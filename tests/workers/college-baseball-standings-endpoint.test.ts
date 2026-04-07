@@ -62,7 +62,7 @@ describe('handleCollegeBaseballStandings', () => {
   let originalFetch: typeof globalThis.fetch;
 
   beforeEach(async () => {
-    env = createMockEnv();
+    env = createMockEnv({ HIGHLIGHTLY_API_KEY: 'test-highlightly-key' });
     worker = await import('../../workers/index');
     if ('default' in worker) worker = (worker as any).default;
     originalFetch = globalThis.fetch;

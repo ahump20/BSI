@@ -821,6 +821,7 @@ textarea:focus-visible,
   padding: 0.25rem 0.75rem;
   border: 1px solid var(--bsi-primary);
   border-radius: 1px;
+  background: rgba(0, 0, 0, 0.25);
 }
 
 /* Heritage divider — bronze gradient fade (wider) */

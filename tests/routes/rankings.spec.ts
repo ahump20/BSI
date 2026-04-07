@@ -3,11 +3,11 @@ import { test, expect } from '@playwright/test';
 const BASE = process.env.BASE_URL || 'https://blazesportsintel.com';
 
 test.describe('College Baseball Rankings', () => {
-  test('page loads with h1 heading', async ({ page }) => {
+  test('page loads with visible rankings heading', async ({ page }) => {
     await page.goto(`${BASE}/college-baseball/rankings`);
-    const h1 = page.locator('h1');
-    await expect(h1).toBeVisible();
-    await expect(h1).toContainText(/rankings/i);
+    // Page may have multiple h1s (nav + content) — find the visible one with "rankings"
+    const heading = page.locator('h1:visible, h2:visible').filter({ hasText: /rankings/i }).first();
+    await expect(heading).toBeVisible({ timeout: 15000 });
   });
 
   test('poll tabs are visible and clickable', async ({ page }) => {

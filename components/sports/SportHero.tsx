@@ -142,9 +142,9 @@ export function SportHero({
         className="relative overflow-hidden"
         style={{ borderBottom: '1px solid var(--border-vintage)' }}
       >
-        {/* R2 photography — visible, not whispered */}
+        {/* Hero photography — served from Pages static assets for Worker-independent resilience */}
         <img
-          src={`/api/assets/${heroBg.bucket}/${heroBg.imagePath}`}
+          src={`/${heroBg.bucket}/${heroBg.imagePath}`}
           alt=""
           aria-hidden="true"
           loading="eager"
@@ -177,7 +177,7 @@ export function SportHero({
 
         {/* BSI shield watermark — brand presence without words */}
         <img
-          src="/api/assets/brand/bsi-logo-seal-400.png"
+          src="/brand/bsi-logo-seal-400.png"
           alt=""
           aria-hidden="true"
           loading="eager"
