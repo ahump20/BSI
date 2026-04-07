@@ -102,13 +102,30 @@ export async function handleCollegeBaseballStandings(
   }
 
   // ---------------------------------------------------------------------------
-  // Step 2: Highlightly enrichment (optional overlay — richer conference W-L, rankings)
+  // Step 2: Highlightly enrichment (optional overlay — richer conference W-L)
+  // Parameter fix: was sending abbreviation= (400 error), now sends league= (correct).
   // ---------------------------------------------------------------------------
-  // NOTE: Highlightly /standings returns 400 Bad Request for college baseball
-  // (verified 2026-03-26, confirmed still broken 2026-04-07).
-  // Conference records are derived from ESPN's leagueWinPercent (LPCT) stat below.
-  // If Highlightly adds standings support in the future, re-enable this block.
-  // See memory: highlightly-api-capabilities.md
+  const hlClient = getHighlightlyClient(env);
+  let hlData: unknown[] = [];
+  let hlOk = false;
+
+  if (hlClient) {
+    try {
+      // Always fetch NCAA (all conferences) — per-conference filtering is unreliable
+      const result = await hlClient.getStandings('NCAA');
+      hlData = Array.isArray(result.data) ? result.data : [];
+      if (result.success && hlData.length > 0) {
+        ctx?.waitUntil(archiveRawResponse(env.DATA_LAKE, 'highlightly', 'college-baseball-standings', result.data));
+        hlOk = true;
+        sources.push('highlightly');
+        console.info(`[highlightly] standings enrichment: ${hlData.length} conferences, ${result.duration_ms}ms`);
+      } else {
+        console.warn(`[highlightly] standings: success=${result.success}, data_length=${hlData.length}, error=${result.error ?? 'none'}, ${result.duration_ms}ms`);
+      }
+    } catch (err) {
+      console.error('[highlightly] standings enrichment failed:', err instanceof Error ? err.message : err);
+    }
+  }
 
   // ---------------------------------------------------------------------------
   // Step 3: Resolve — build final response from available sources
@@ -213,7 +230,46 @@ export async function handleCollegeBaseballStandings(
       };
     });
 
-    // Sort by conference win percentage (LPCT-derived), then overall win percentage
+    // Enrich with Highlightly conference records when available (overrides LPCT estimates)
+    if (hlOk && hlData.length > 0) {
+      const hlByName = new Map<string, { confWins: number; confLosses: number; streak?: string }>();
+      const hlByAbbr = new Map<string, { confWins: number; confLosses: number; streak?: string }>();
+      for (const conf of hlData as Array<Record<string, unknown>>) {
+        const teams = (conf.teams as Array<Record<string, unknown>>) || [];
+        for (const t of teams) {
+          const teamDetail = (t.team as Record<string, unknown>) || {};
+          const name = String(teamDetail.name ?? '').toLowerCase();
+          const abbr = String(teamDetail.abbreviation ?? teamDetail.shortName ?? '').toLowerCase();
+          const record = {
+            confWins: Number(t.conferenceWins ?? t.confWins ?? 0),
+            confLosses: Number(t.conferenceLosses ?? t.confLosses ?? 0),
+            streak: t.streak ? String(t.streak) : undefined,
+          };
+          if (name) hlByName.set(name, record);
+          if (abbr) hlByAbbr.set(abbr, record);
+        }
+      }
+
+      for (const s of standings) {
+        const nameKey = s.team.name.toLowerCase();
+        const abbrKey = s.team.shortName.toLowerCase();
+        let hl = hlByName.get(nameKey) ?? hlByAbbr.get(abbrKey);
+        if (!hl) {
+          for (const [hlName, hlRecord] of hlByName) {
+            if (nameKey.includes(hlName) || hlName.includes(nameKey)) { hl = hlRecord; break; }
+          }
+        }
+        if (hl && (hl.confWins + hl.confLosses) > 0) {
+          s.conferenceRecord.wins = hl.confWins;
+          s.conferenceRecord.losses = hl.confLosses;
+          const ct = hl.confWins + hl.confLosses;
+          s.conferenceRecord.pct = ct > 0 ? hl.confWins / ct : 0;
+          if (hl.streak && !s.streak) s.streak = hl.streak;
+        }
+      }
+    }
+
+    // Sort by conference win percentage, then overall win percentage
     standings.sort((a, b) => {
       if (b.conferenceRecord.pct !== a.conferenceRecord.pct) return b.conferenceRecord.pct - a.conferenceRecord.pct;
       if (b.winPct !== a.winPct) return b.winPct - a.winPct;
@@ -221,10 +277,7 @@ export async function handleCollegeBaseballStandings(
     });
     standings.forEach((s, i) => { s.rank = i + 1; });
 
-    // Conference records derived from ESPN's leagueWinPercent (LPCT).
-    // Highlightly /standings returns 400 — not available for college baseball.
-    const hasSomeConfData = standings.some((s) => s.conferenceRecord.wins > 0 || s.conferenceRecord.losses > 0);
-    if (!hasSomeConfData) degraded = true;
+    if (!hlOk) degraded = true;
 
     const payload = withMeta({
       success: true,
@@ -244,21 +297,20 @@ export async function handleCollegeBaseballStandings(
     });
   }
 
-  // ESPN failed — no fallback available (Highlightly /standings returns 400)
-  {
+  // ESPN failed — try Highlightly as sole source
+  if (hlOk && hlData.length > 0) {
     const payload = withMeta({
-      success: false,
-      data: [],
+      success: true,
+      data: hlData,
       conference,
       timestamp: now,
-    }, 'error', {
+    }, 'highlightly', {
       fetchedAt: now,
-      sources: [],
+      sources: ['highlightly'],
       degraded: true,
       extra: { sport: 'college-baseball' },
     });
-    // Don't cache errors for long
-    await kvPut(env.KV, cacheKey, payload, 30);
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
     return cachedJson(payload, 200, HTTP_CACHE.standings, {
       ...dataHeaders(now, 'highlightly'), 'X-Cache': 'MISS',
     });
