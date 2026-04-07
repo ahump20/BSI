@@ -76,7 +76,11 @@ class_name = "CacheObject"
 
 [[migrations]]
 tag = "v1"
-new_classes = ["CacheObject"]
+new_classes = ["CacheObject", "PortalPoller"]
+
+[[migrations]]
+tag = "v2"
+deleted_classes = ["PortalPoller"]
 
 [[analytics_engine_datasets]]
 binding = "OPS_EVENTS"

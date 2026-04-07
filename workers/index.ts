@@ -512,3 +512,16 @@ export class CacheObject {
   }
 }
 
+/**
+ * PortalPoller — stub for Durable Objects migration cleanup.
+ * The real PortalPoller was removed but Cloudflare requires the class to
+ * exist during the delete-class migration transition. Safe to remove once
+ * the v2 migration has been applied to all environments.
+ */
+export class PortalPoller {
+  constructor(private state: DurableObjectState) {}
+  async fetch(): Promise<Response> {
+    return new Response('PortalPoller deprecated', { status: 410 });
+  }
+}
+
