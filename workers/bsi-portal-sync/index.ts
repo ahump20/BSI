@@ -32,9 +32,14 @@ interface PortalEntry {
 }
 
 const KV_KEY = 'portal:college-baseball:entries';
-const KV_TTL = 3600; // 1 hour — cron refreshes every 30 min so stale data auto-expires
+const KV_TTL = 86400; // 24 hours — survives multiple cron failures without data loss
 const MAX_PORTAL_ENTRIES = 2000; // Cap to prevent unbounded KV growth
 
+/**
+ * Highlightly is a scores/matches API — it does NOT have a /transfers endpoint.
+ * This function is kept as a placeholder for if/when a structured transfer portal
+ * API becomes available. Until then, it always returns [] and the ESPN fallback runs.
+ */
 async function fetchHighlightlyPortal(apiKey: string): Promise<PortalEntry[]> {
   try {
     const controller = new AbortController();
@@ -45,15 +50,17 @@ async function fetchHighlightlyPortal(apiKey: string): Promise<PortalEntry[]> {
     });
     clearTimeout(timer);
     if (!res.ok) {
-      console.warn(`[portal-sync] Highlightly API returned ${res.status} — falling back to ESPN`);
+      // Expected: Highlightly doesn't serve transfer data. Silent fallback.
       return [];
     }
 
     const raw = await res.json() as Record<string, unknown>;
     const transfers = (raw.data ?? raw.transfers ?? []) as Array<Record<string, unknown>>;
 
-    return transfers.map((t) => ({
-      id: String(t.id ?? t.playerId ?? `hl-${Math.random().toString(36).slice(2)}`),
+    if (transfers.length === 0) return [];
+
+    return transfers.map((t, i) => ({
+      id: String(t.id ?? t.playerId ?? `hl-${Date.now()}-${i}`),
       playerName: (t.playerName ?? t.name ?? (t.athlete as Record<string, unknown>)?.name ?? '') as string,
       position: (t.position ?? '') as string,
       fromSchool: (t.fromSchool ?? t.previousSchool ?? t.from ?? '') as string,
@@ -62,8 +69,8 @@ async function fetchHighlightlyPortal(apiKey: string): Promise<PortalEntry[]> {
       enteredDate: (t.date ?? t.enteredDate ?? undefined) as string | undefined,
       classification: (t.classification ?? t.year ?? undefined) as string | undefined,
     }));
-  } catch (err) {
-    console.warn('[portal-sync] Highlightly fetch failed:', err instanceof Error ? err.message : err);
+  } catch {
+    // Expected failure — Highlightly doesn't have this endpoint
     return [];
   }
 }
@@ -104,11 +111,25 @@ async function fetchPortalEntries(env: Env): Promise<PortalEntry[]> {
       const teamCat = categories.find((c) => c.type === 'team');
 
       if (athleteCat) {
+        // Structured: ESPN tagged an athlete in the article categories
         entries.push({
           id: String(athleteCat.athleteId ?? article.dataSourceIdentifier ?? `portal-${entries.length}`),
           playerName: (athleteCat.description as string) ?? 'Unknown',
           position: '',
           fromSchool: (teamCat?.description as string) ?? '',
+          status: headline.includes('commit') ? 'committed' : 'entered',
+          enteredDate: (article.published as string) ?? undefined,
+          classification: undefined,
+        });
+      } else if (teamCat) {
+        // Partial: article mentions a team + transfer but no athlete tag.
+        // Most ESPN transfer articles lack athlete categories — capture what we can.
+        const rawHeadline = (article.headline ?? article.title ?? '') as string;
+        entries.push({
+          id: String(article.dataSourceIdentifier ?? `portal-${entries.length}`),
+          playerName: rawHeadline, // headline is the best identifier we have
+          position: '',
+          fromSchool: (teamCat.description as string) ?? '',
           status: headline.includes('commit') ? 'committed' : 'entered',
           enteredDate: (article.published as string) ?? undefined,
           classification: undefined,
@@ -152,13 +173,20 @@ export default {
       try {
         const prev = JSON.parse(existing) as { entries?: PortalEntry[] };
         const prevEntries = prev.entries ?? [];
-        const newIds = new Set(entries.map((e) => e.id));
 
-        // Keep old entries not in the new batch + add new entries
-        merged = [
-          ...prevEntries.filter((e) => !newIds.has(e.id)),
-          ...entries,
-        ];
+        if (entries.length === 0) {
+          // Fetch returned nothing — preserve existing data and refresh TTL.
+          // Both Highlightly (no /transfers endpoint) and ESPN (news scraping)
+          // routinely return 0 results. Don't wipe good data.
+          merged = prevEntries;
+        } else {
+          const newIds = new Set(entries.map((e) => e.id));
+          // Keep old entries not in the new batch + add new entries
+          merged = [
+            ...prevEntries.filter((e) => !newIds.has(e.id)),
+            ...entries,
+          ];
+        }
       } catch {
         // Corrupt data — overwrite entirely
       }

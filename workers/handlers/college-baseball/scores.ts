@@ -179,12 +179,22 @@ export async function handleCollegeBaseballGame(
     return cachedJson(cached, 200, HTTP_CACHE.game, cachedPayloadHeaders(cached));
   }
 
+  // Extract numeric ID from composite formats like "highlightly-college_baseball-12345"
+  const resolveNumericId = (raw: string): number => {
+    if (/^\d+$/.test(raw)) return parseInt(raw, 10);
+    const parts = raw.split('-');
+    for (let i = parts.length - 1; i >= 0; i--) {
+      if (/^\d+$/.test(parts[i])) return parseInt(parts[i], 10);
+    }
+    return NaN;
+  };
+
   // Highlightly first (if API key is set)
   const hlClient = getHighlightlyClient(env);
   if (hlClient) {
     try {
-      const numericGameId = parseInt(gameId, 10);
-      if (isNaN(numericGameId)) throw new Error(`Non-numeric gameId: ${gameId}`);
+      const numericGameId = resolveNumericId(gameId);
+      if (isNaN(numericGameId)) throw new Error(`Cannot extract numeric gameId from: ${gameId}`);
       const [matchResult, boxResult] = await Promise.all([
         hlClient.getMatch(numericGameId),
         hlClient.getBoxScore(numericGameId),
@@ -206,10 +216,11 @@ export async function handleCollegeBaseballGame(
     }
   }
 
-  // NCAA/ESPN fallback
+  // ESPN game summary fallback (needs ESPN event ID — may not match Highlightly IDs)
   try {
     const client = getCollegeClient();
-    const matchResult = await client.getMatch(parseInt(gameId, 10));
+    const espnId = resolveNumericId(gameId);
+    const matchResult = await client.getMatch(isNaN(espnId) ? parseInt(gameId, 10) : espnId);
 
     if (matchResult.success && matchResult.data) {
       const summary = matchResult.data as Record<string, unknown>;
@@ -223,17 +234,81 @@ export async function handleCollegeBaseballGame(
         });
       }
     }
-
-    return json(
-      withMeta({ game: null }, 'error', { fetchedAt: now }),
-      502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' }
-    );
-  } catch {
-    return json(
-      withMeta({ game: null }, 'error', { fetchedAt: now }),
-      502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' }
-    );
+  } catch (err) {
+    console.error('[espn] game detail fallback:', err instanceof Error ? err.message : err);
   }
+
+  // Last resort: extract game from today's cached scores batch in KV.
+  // The scores cache stores the raw Highlightly response (data[], plan, pagination, meta).
+  // The match shape differs from HighlightlyMatch (uses state/date vs status/startTimestamp),
+  // so we do a lightweight transform here instead of using transformHighlightlyGame.
+  try {
+    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' }).format(new Date());
+    const scoresCached = await kvGet<Record<string, unknown>>(env.KV, `cb:scores:${today}`);
+    if (scoresCached) {
+      const matches = (scoresCached.data ?? []) as Array<Record<string, unknown>>;
+      const numId = resolveNumericId(gameId);
+      const match = matches.find((m) => {
+        const mId = m.id ?? m.matchId;
+        return String(mId) === gameId || Number(mId) === numId;
+      });
+      if (match) {
+        // Lightweight transform from raw Highlightly scores shape
+        const state = (match.state as Record<string, unknown>) ?? {};
+        const score = (state.score as Record<string, unknown>) ?? {};
+        const home = (match.homeTeam as Record<string, unknown>) ?? {};
+        const away = (match.awayTeam as Record<string, unknown>) ?? {};
+        const homeScore = score.home as Record<string, unknown> | undefined;
+        const awayScore = score.away as Record<string, unknown> | undefined;
+        const description = String(state.description ?? state.report ?? 'Scheduled');
+        const isLive = description.toLowerCase().includes('inning') || description.toLowerCase().includes('progress');
+        const isFinal = description.toLowerCase().includes('final');
+
+        const game = {
+          id: String(match.id),
+          date: match.date ?? now,
+          status: {
+            state: isLive ? 'in' : isFinal ? 'post' : 'pre',
+            detailedState: description,
+            isLive,
+            isFinal,
+          },
+          teams: {
+            away: {
+              name: away.name ?? 'Away',
+              abbreviation: away.shortName ?? '',
+              score: Number(String(score.current ?? '0 - 0').split(' - ')[0]) || 0,
+              logo: away.logo,
+            },
+            home: {
+              name: home.name ?? 'Home',
+              abbreviation: home.shortName ?? '',
+              score: Number(String(score.current ?? '0 - 0').split(' - ').pop()) || 0,
+              logo: home.logo,
+            },
+          },
+          innings: homeScore?.innings ?? [],
+        };
+
+        const payload = withMeta({ game }, 'scores-cache', {
+          fetchedAt: now,
+          degraded: true,
+          extra: { note: 'Extracted from scores cache — box score unavailable' },
+        });
+        await kvPut(env.KV, cacheKey, payload, 60);
+        return cachedJson(payload, 200, HTTP_CACHE.game, {
+          ...dataHeaders(now, 'scores-cache'), 'X-Cache': 'DEGRADED',
+        });
+      }
+    }
+  } catch (err) {
+    console.error('[scores-cache] game extraction failed:', err instanceof Error ? err.message : err);
+  }
+
+  return json(
+    withMeta({ game: null }, 'error', { fetchedAt: now }),
+    502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' }
+  );
   } catch (err) {
     console.error('[handleCollegeBaseballGame]', err instanceof Error ? err.message : err);
     return json({ error: 'Internal server error', status: 500 }, 500);

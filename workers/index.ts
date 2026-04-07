@@ -582,6 +582,7 @@ app.get('/api/blog-post-feed/:slug', (c) =>
 app.get('/api/mlb/scores', (c) => safeESPN(() => handleMLBScores(new URL(c.req.url), c.env), 'games', [], c.env));
 app.get('/api/mlb/standings', (c) => safeESPN(() => handleMLBStandings(c.env), 'standings', [], c.env));
 app.get('/api/mlb/news', (c) => safeESPN(() => handleMLBNews(c.env), 'articles', [], c.env));
+app.get('/api/mlb/stats', (c) => safeESPN(() => handleMLBStatsLeaders(new URL(c.req.url), c.env), 'leaders', [], c.env));
 app.get('/api/mlb/stats/leaders', (c) => safeESPN(() => handleMLBStatsLeaders(new URL(c.req.url), c.env), 'leaders', [], c.env));
 app.get('/api/mlb/leaderboards/:category', (c) => safeESPN(() => handleMLBLeaderboard(c.req.param('category'), new URL(c.req.url), c.env), 'data', [], c.env));
 app.get('/api/mlb/teams', (c) => safeESPN(() => handleMLBTeamsList(c.env), 'teams', [], c.env));
