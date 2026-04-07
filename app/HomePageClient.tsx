@@ -112,7 +112,7 @@ function ScoreTicker({ games }: { games: ScoreGame[] }) {
               {i > 0 && (
                 <span
                   className="mx-4 text-xs"
-                  style={{ color: 'var(--bsi-primary)', opacity: 0.6 }}
+                  style={{ color: 'var(--bsi-primary)', opacity: 0.75 }}
                   aria-hidden="true"
                 >
                   &#9670;
@@ -239,7 +239,7 @@ function StandoutCard({
             className="text-[10px] tabular-nums"
             style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
           >
-            {s.value} <span style={{ opacity: 0.6 }}>{s.label}</span>
+            {s.value} <span className="text-[var(--bsi-dust)]">{s.label}</span>
           </span>
         ))}
       </div>
@@ -853,9 +853,9 @@ export function HomePageClient() {
             <Image
               src="/brand/blaze-roundel.png"
               alt="Blaze Intelligence roundel"
-              width={44}
-              height={44}
-              className="w-10 h-10 sm:w-11 sm:h-11 opacity-60"
+              width={40}
+              height={40}
+              className="w-10 h-10 sm:w-11 sm:h-11 opacity-75"
             />
             <div>
               <p
