@@ -1,7 +1,6 @@
 export interface Env {
   KV: KVNamespace;
   CACHE: DurableObjectNamespace;
-  PORTAL_POLLER: DurableObjectNamespace;
   DB: D1Database;
   ASSETS_BUCKET: R2Bucket;
   WEB_ASSETS: R2Bucket;

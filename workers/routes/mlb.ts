@@ -20,6 +20,7 @@ import {
   handleMLBSpringStandings,
   handleMLBSpringSchedule,
   handleMLBSpringRoster,
+  handleMLBAbs,
 } from '../handlers/mlb';
 import {
   handleShowSourceStatus,
@@ -51,6 +52,9 @@ mlb.get('/spring-training/scores', (c) => safeESPN(() => handleMLBSpringScores(n
 mlb.get('/spring-training/standings', (c) => safeESPN(() => handleMLBSpringStandings(c.env), 'standings', {}, c.env));
 mlb.get('/spring-training/schedule', (c) => safeESPN(() => handleMLBSpringSchedule(new URL(c.req.url), c.env), 'schedule', [], c.env));
 mlb.get('/spring-training/roster/:teamKey', (c) => safeESPN(() => handleMLBSpringRoster(c.req.param('teamKey'), c.env), 'roster', [], c.env));
+
+// --- ABS Challenge Tracker ---
+mlb.get('/abs', (c) => handleMLBAbs(c.env));
 
 // --- Detail ---
 mlb.get('/game/:gameId', (c) => safeESPN(() => handleMLBGame(c.req.param('gameId'), c.env), 'game', null, c.env));

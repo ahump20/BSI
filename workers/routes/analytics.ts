@@ -38,12 +38,6 @@ import {
   handleNILCollectiveROI,
   handleNILDraftLeverage,
 } from '../handlers/nil';
-import {
-  handleCVPitcherMechanics,
-  handleCVPitcherHistory,
-  handleCVInjuryAlerts,
-  handleCVAdoption,
-} from '../handlers/cv';
 
 // --- Analytics: HAV-F ---
 const analytics = new Hono<{ Bindings: Env }>();
@@ -82,13 +76,6 @@ nil.get('/collective-roi', (c) => handleNILCollectiveROI(new URL(c.req.url), c.e
 nil.get('/draft-leverage', (c) => handleNILDraftLeverage(new URL(c.req.url), c.env, c.req.raw.headers));
 export { nil };
 
-// --- CV Intelligence ---
-const cv = new Hono<{ Bindings: Env }>();
-cv.get('/pitcher/:playerId/mechanics/history', (c) => handleCVPitcherHistory(c.req.param('playerId'), new URL(c.req.url), c.env));
-cv.get('/pitcher/:playerId/mechanics', (c) => handleCVPitcherMechanics(c.req.param('playerId'), c.env));
-cv.get('/alerts/injury-risk', (c) => handleCVInjuryAlerts(new URL(c.req.url), c.env));
-cv.get('/adoption', (c) => handleCVAdoption(new URL(c.req.url), c.env));
-export { cv };
 
 // --- Model Examples ---
 const models = new Hono<{ Bindings: Env }>();

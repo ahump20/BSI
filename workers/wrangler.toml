@@ -74,17 +74,9 @@ bucket_name = "blaze-sports-data-lake"
 name = "CACHE"
 class_name = "CacheObject"
 
-[[durable_objects.bindings]]
-name = "PORTAL_POLLER"
-class_name = "PortalPoller"
-
 [[migrations]]
 tag = "v1"
 new_classes = ["CacheObject"]
-
-[[migrations]]
-tag = "v2"
-new_classes = ["PortalPoller"]
 
 [[analytics_engine_datasets]]
 binding = "OPS_EVENTS"
@@ -181,9 +173,6 @@ bucket_name = "blaze-sports-data-lake"
 name = "CACHE"
 class_name = "CacheObject"
 
-[[env.production.durable_objects.bindings]]
-name = "PORTAL_POLLER"
-class_name = "PortalPoller"
 
 [[env.production.analytics_engine_datasets]]
 binding = "OPS_EVENTS"

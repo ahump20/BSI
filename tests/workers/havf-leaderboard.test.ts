@@ -29,7 +29,7 @@ describe('HAV-F leaderboard handler', () => {
   it('uses player_name column (matches production D1 schema)', () => {
     // The production D1 havf_scores table uses 'player_name' not 'name'
     // This test prevents the column mismatch bug from recurring
-    const cronPath = path.resolve(__dirname, '../../workers/handlers/cron.ts');
+    const cronPath = path.resolve(__dirname, '../../workers/handlers/cron/havf.ts');
     const cronSource = fs.readFileSync(cronPath, 'utf-8');
 
     // The INSERT statement should use player_name to match the table schema

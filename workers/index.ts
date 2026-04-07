@@ -19,7 +19,7 @@ import { corsOrigin, corsHeaders } from './shared/cors';
 import { securityMiddleware } from './shared/security';
 import { checkInMemoryRateLimit, checkPostRateLimit, maybeCleanupRateLimit } from './shared/rate-limit';
 import { proxyToPages } from './shared/proxy';
-import { requireApiKey, provisionKey, emailKey } from './shared/auth';
+import { requireApiKey } from './shared/auth';
 import { handleScoutingReport } from './handlers/scouting';
 import { handleAssetRequest } from './handlers/assets';
 
@@ -29,14 +29,14 @@ import { mlb } from './routes/mlb';
 import { nfl } from './routes/nfl';
 import { nba } from './routes/nba';
 import { cfb, cfbEditorial } from './routes/cfb';
-import { analytics, savant, nil, cv, models } from './routes/analytics';
+import { analytics, savant, nil, models } from './routes/analytics';
 
 // --- Handlers (shared / non-domain-specific) ---
 import { handleBlogPostFeedList, handleBlogPostFeedItem } from './handlers/blog-post-feed';
 import { handleSearch } from './handlers/search';
 import { handleEvaluatePlayer, handleEvaluateSearch } from './handlers/evaluate';
 import { handlePushRegister, handlePushSend } from './handlers/push';
-import { handleCreateEmbeddedCheckout, handleSessionStatus, handleCustomerPortal } from './handlers/stripe';
+import { handleCreateEmbeddedCheckout, handleSessionStatus, handleCustomerPortal, handleStripeWebhook } from './handlers/stripe';
 import { handleLogin, handleValidateKey } from './handlers/auth';
 import { handleScheduled, handleCachedScores, handleHealthProviders } from './handlers/cron';
 import { handleHealth, handleStatus, handleAdminHealth, handleAdminErrors, handleWebSocket } from './handlers/health';
@@ -362,7 +362,6 @@ app.get('/api/games/assets/*', (c) => {
 app.route('/api/analytics', analytics);
 app.route('/api/savant', savant);
 app.route('/api/nil', nil);
-app.route('/api/cv', cv);
 app.route('/api/models', models);
 
 // --- Cached scores (cron-warmed KV) ---
@@ -464,205 +463,7 @@ app.get('/api/premium/live/:gameId', async (c) => {
 });
 
 // --- Stripe webhook — provision key on successful checkout ---
-app.post('/webhooks/stripe', async (c) => {
-  const body = await c.req.text();
-  const sig = c.req.header('stripe-signature');
-  const webhookSecret = (c.env as Env & { STRIPE_WEBHOOK_SECRET?: string }).STRIPE_WEBHOOK_SECRET;
-
-  // HMAC-SHA256 signature verification using Web Crypto (Workers runtime)
-  // When webhook secret is configured, signature is mandatory.
-  if (webhookSecret && !sig) {
-    return c.json({ error: 'Missing stripe-signature header' }, 401);
-  }
-  if (webhookSecret && sig) {
-    const pairs = sig.split(',');
-    const tEntry = pairs.find((p) => p.startsWith('t='));
-    const v1Entry = pairs.find((p) => p.startsWith('v1='));
-    if (!tEntry || !v1Entry) return c.json({ error: 'Invalid signature header' }, 400);
-
-    const timestamp = tEntry.slice(2);
-    const expected = v1Entry.slice(3);
-    const payload = `${timestamp}.${body}`;
-
-    const key = await crypto.subtle.importKey(
-      'raw',
-      new TextEncoder().encode(webhookSecret),
-      { name: 'HMAC', hash: 'SHA-256' },
-      false,
-      ['sign'],
-    );
-    const sigBytes = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(payload));
-    const computed = Array.from(new Uint8Array(sigBytes))
-      .map((b) => b.toString(16).padStart(2, '0'))
-      .join('');
-
-    if (computed !== expected) return c.json({ error: 'Invalid signature' }, 401);
-  }
-
-  let event: { type: string; data: { object: Record<string, unknown> } };
-  try {
-    event = JSON.parse(body);
-  } catch {
-    return c.json({ error: 'Invalid JSON' }, 400);
-  }
-
-  if (!c.env.BSI_KEYS) {
-    return c.json({ error: 'BSI_KEYS namespace not configured' }, 500);
-  }
-
-  const kv = c.env.BSI_KEYS;
-
-  // --- checkout.session.completed: provision key for new subscriber ---
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object as {
-      customer_email?: string;
-      customer_details?: { email?: string };
-      customer?: string;
-      subscription?: string;
-      metadata?: { tier?: string };
-    };
-
-    const email =
-      session.customer_email ?? session.customer_details?.email ?? '';
-    if (!email) return c.json({ error: 'No email in session' }, 400);
-
-    const tier = (session.metadata?.tier as import('./shared/auth').KeyData['tier']) ?? 'pro';
-
-    const apiKey = await provisionKey(kv, email, tier, {
-      customerId: session.customer as string | undefined,
-      subscriptionId: session.subscription as string | undefined,
-    });
-    await emailKey(c.env.RESEND_API_KEY, email, apiKey, tier);
-  }
-
-  // --- customer.subscription.deleted: revoke access ---
-  if (event.type === 'customer.subscription.deleted') {
-    const sub = event.data.object as { customer?: string };
-    const customerId = sub.customer;
-    if (customerId) {
-      const email = await kv.get(`stripe:${customerId}`);
-      if (email) {
-        const keyUuid = await kv.get(`email:${email}`);
-        if (keyUuid) await kv.delete(`key:${keyUuid}`);
-        await kv.delete(`email:${email}`);
-        await kv.delete(`stripe:${customerId}`);
-        console.info(`[webhook] Revoked access for ${email} (subscription deleted)`);
-      }
-    }
-  }
-
-  // --- customer.subscription.updated: tier change ---
-  if (event.type === 'customer.subscription.updated') {
-    const sub = event.data.object as {
-      customer?: string;
-      metadata?: { tier?: string };
-    };
-    const customerId = sub.customer;
-    const newTier = sub.metadata?.tier as import('./shared/auth').KeyData['tier'] | undefined;
-    if (customerId && newTier) {
-      const email = await kv.get(`stripe:${customerId}`);
-      if (email) {
-        const keyUuid = await kv.get(`email:${email}`);
-        if (keyUuid) {
-          const raw = await kv.get(`key:${keyUuid}`);
-          if (raw) {
-            const keyData = JSON.parse(raw) as import('./shared/auth').KeyData;
-            keyData.tier = newTier;
-            await kv.put(`key:${keyUuid}`, JSON.stringify(keyData));
-            console.info(`[webhook] Updated tier to ${newTier} for ${email}`);
-          }
-        }
-      }
-    }
-  }
-
-  // --- customer.subscription.trial_will_end: loss-framed email 3 days before expiry ---
-  if (event.type === 'customer.subscription.trial_will_end') {
-    const sub = event.data.object as {
-      customer?: string;
-      trial_end?: number;
-    };
-    const customerId = sub.customer;
-    if (customerId) {
-      const email = await kv.get(`stripe:${customerId}`);
-      if (email && (c.env as Env & { RESEND_API_KEY?: string }).RESEND_API_KEY) {
-        const trialEndDate = sub.trial_end
-          ? new Date(sub.trial_end * 1000).toLocaleDateString('en-US', {
-              month: 'long', day: 'numeric', year: 'numeric',
-            })
-          : 'soon';
-
-        try {
-          const emailRes = await fetch('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${(c.env as Env & { RESEND_API_KEY?: string }).RESEND_API_KEY}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              from: 'BSI <noreply@blazesportsintel.com>',
-              to: email,
-              subject: 'Your BSI Pro trial ends in 3 days',
-              html: `
-                <h2>Your BSI Pro trial ends ${trialEndDate}</h2>
-                <p>After your trial, here's what you'll lose access to:</p>
-                <ul>
-                  <li>Live scores across MLB, NFL, NBA, NCAA</li>
-                  <li>Real-time game updates every 30 seconds</li>
-                  <li>Transfer portal tracking</li>
-                  <li>Player pro-projection comps</li>
-                  <li>Complete box scores with batting/pitching lines</li>
-                  <li>Conference standings and rankings</li>
-                  <li>Player comparison tools</li>
-                </ul>
-                <p><strong>No action needed to keep access</strong> — your card will be charged $12/mo on ${trialEndDate}.</p>
-                <p>Questions? Reply to this email.</p>
-                <p>— Austin @ BSI</p>
-              `,
-            }),
-          });
-          if (emailRes.ok) {
-            console.info(`[webhook] Trial ending email sent to ${email}`);
-          } else {
-            const errBody = await emailRes.text().catch(() => 'unknown');
-            console.error(`[webhook] Trial email failed for ${email}: ${emailRes.status} — ${errBody}`);
-          }
-        } catch (emailErr) {
-          console.error(`[webhook] Trial email error for ${email}:`, emailErr);
-        }
-      }
-    }
-  }
-
-  // --- invoice.payment_failed: log but don't revoke (Stripe retries) ---
-  if (event.type === 'invoice.payment_failed') {
-    const invoice = event.data.object as { customer?: string; attempt_count?: number };
-    console.warn(`[webhook] Payment failed for customer ${invoice.customer} (attempt ${invoice.attempt_count ?? '?'})`);
-  }
-
-  // --- invoice.paid: extend expiry on successful renewal ---
-  if (event.type === 'invoice.paid') {
-    const invoice = event.data.object as { customer?: string; billing_reason?: string };
-    // Only extend on renewal, not the initial subscription payment
-    if (invoice.billing_reason === 'subscription_cycle' && invoice.customer) {
-      const email = await kv.get(`stripe:${invoice.customer}`);
-      if (email) {
-        const keyUuid = await kv.get(`email:${email}`);
-        if (keyUuid) {
-          const raw = await kv.get(`key:${keyUuid}`);
-          if (raw) {
-            const keyData = JSON.parse(raw) as import('./shared/auth').KeyData;
-            keyData.expires = Date.now() + 365 * 24 * 60 * 60 * 1000;
-            await kv.put(`key:${keyUuid}`, JSON.stringify(keyData));
-            console.info(`[webhook] Extended expiry for ${email} (renewal paid)`);
-          }
-        }
-      }
-    }
-  }
-
-  return c.json({ received: true });
-});
+app.post('/webhooks/stripe', (c) => handleStripeWebhook(c));
 
 // --- Fallback: proxy to Cloudflare Pages ---
 app.all('*', (c) => proxyToPages(c.req.raw, c.env));
@@ -711,49 +512,3 @@ export class CacheObject {
   }
 }
 
-// =============================================================================
-// Durable Object — PortalPoller
-// =============================================================================
-
-export class PortalPoller {
-  private state: DurableObjectState;
-  private env: Env;
-
-  constructor(state: DurableObjectState, env: Env) {
-    this.state = state;
-    this.env = env;
-  }
-
-  async fetch(request: Request): Promise<Response> {
-    const url = new URL(request.url);
-
-    if (url.pathname === '/start') {
-      // Alarm disabled until real data source is wired.
-      // When ready: set alarm here with setAlarm(Date.now() + 30_000)
-      // and wire alarm() below to fetch from Highlightly /transfer-portal.
-      return new Response('PortalPoller stub — alarm not active');
-    }
-
-    if (url.pathname === '/stop') {
-      await this.state.storage.deleteAlarm();
-      return new Response('PortalPoller stopped');
-    }
-
-    if (url.pathname === '/status') {
-      const alarm = await this.state.storage.getAlarm();
-      const lastPoll = await this.state.storage.get<string>('lastPoll');
-      return new Response(
-        JSON.stringify({ alarmSet: !!alarm, lastPoll: lastPoll || 'never' }),
-        { headers: { 'Content-Type': 'application/json' } }
-      );
-    }
-
-    return new Response('Not found', { status: 404 });
-  }
-
-  async alarm(): Promise<void> {
-    // Stub — no-op until wired to Highlightly /transfer-portal.
-    // When active: fetch portal data, write to env.KV key 'portal:latest',
-    // update lastPoll in storage, and reschedule with setAlarm().
-  }
-}

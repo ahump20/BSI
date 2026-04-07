@@ -12,9 +12,10 @@ compatibility_flags = ["nodejs_compat"]
 [observability]
 enabled = true
 
-# Run every 6 hours
+# Run 30 min after bsi-cbb-analytics (which runs on the hour every 6h)
+# Ensures fresh sabermetric data in D1 before NIL scoring reads it
 [triggers]
-crons = ["0 */6 * * *"]
+crons = ["30 */6 * * *"]
 
 [[d1_databases]]
 binding = "DB"
