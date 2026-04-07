@@ -1,16 +1,17 @@
 .pageShell {
-  --burnt-orange: #bf5700;
+  /* Inherit Heritage Design System v2.1 tokens — local aliases for backward compat */
+  --burnt-orange: var(--bsi-primary, #bf5700);
   --texas-soil: #8b4513;
   --ember: #ff6b35;
   --gold: #f2bf6b;
   --gold-soft: #d99a45;
-  --charcoal: #1a1a1a;
-  --midnight: #0d0d0d;
-  --cream: #f7f0e6;
-  --muted: #cbb79c;
-  --panel: rgba(16, 16, 16, 0.9);
-  --panel-soft: rgba(24, 24, 24, 0.82);
-  --panel-border: rgba(255, 255, 255, 0.08);
+  --charcoal: var(--surface-dugout, #161616);
+  --midnight: var(--surface-scoreboard, #0a0a0a);
+  --cream: var(--bsi-bone, #f5f2eb);
+  --muted: var(--bsi-dust, #c4b8a5);
+  --panel: var(--surface-dugout, rgba(16, 16, 16, 0.9));
+  --panel-soft: var(--surface-press-box, rgba(24, 24, 24, 0.82));
+  --panel-border: var(--border-vintage, rgba(140, 98, 57, 0.3));
   min-height: 100vh;
   background:
     radial-gradient(circle at 10% 10%, rgba(255, 107, 53, 0.16), transparent 24%),
@@ -406,7 +407,6 @@
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02)),
     rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(10px);
 }
 
 .statValue {
