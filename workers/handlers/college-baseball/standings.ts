@@ -5,13 +5,48 @@
 import type { Env } from './shared';
 import { json, cachedJson, kvGet, kvPut, dataHeaders, cachedPayloadHeaders, withMeta, getCollegeClient, getHighlightlyClient, archiveRawResponse, HTTP_CACHE, CACHE_TTL, teamMetadata, metaByEspnId, getLogoUrl, lookupConference, buildLeaderCategories } from './shared';
 
+/**
+ * Normalize a conference slug (from URL params like "america-east") to the
+ * canonical display name used in teamMetadata (e.g. "America East").
+ * Falls through to the raw value for conferences where slug === name (SEC, ACC).
+ */
+const CONFERENCE_SLUG_MAP: Record<string, string> = {
+  'america-east': 'America East',
+  'big-12': 'Big 12',
+  'big-east': 'Big East',
+  'big-south': 'Big South',
+  'big-ten': 'Big Ten',
+  'big-west': 'Big West',
+  'missouri-valley': 'Missouri Valley',
+  'mountain-west': 'Mountain West',
+  'patriot-league': 'Patriot League',
+  'sun-belt': 'Sun Belt',
+  'a-10': 'A-10',
+};
+
+function normalizeConference(raw: string): string {
+  if (!raw || raw === 'NCAA') return raw;
+  // Check slug map first
+  const mapped = CONFERENCE_SLUG_MAP[raw.toLowerCase()];
+  if (mapped) return mapped;
+  // Single-word conferences: uppercase if short (SEC, ACC, AAC, WAC, CAA, WCC, CUSA)
+  if (raw.length <= 4 && /^[a-z]+$/i.test(raw)) return raw.toUpperCase();
+  // Title-case fallback for remaining multi-word slugs (e.g. "asun" → "ASUN", "southern" → "Southern")
+  const upper = raw.toUpperCase();
+  const knownUpper = ['ASUN', 'CUSA', 'CAA', 'WAC', 'WCC', 'AAC'];
+  if (knownUpper.includes(upper)) return upper;
+  // Capitalize first letter for display names like "Southern", "Horizon", "Summit", "Southland", "Independent"
+  return raw.charAt(0).toUpperCase() + raw.slice(1).toLowerCase();
+}
+
 export async function handleCollegeBaseballStandings(
   url: URL,
   env: Env,
   ctx?: ExecutionContext,
 ): Promise<Response> {
   try {
-  const conference = url.searchParams.get('conference') || 'NCAA';
+  const rawConference = url.searchParams.get('conference') || 'NCAA';
+  const conference = normalizeConference(rawConference);
   const cacheKey = `cb:standings:v3:${conference}`;
   const now = new Date().toISOString();
 
@@ -237,20 +272,23 @@ export async function handleCollegeBaseballStandings(
     });
   }
 
-  // Truly nothing — return empty
+  // No data for this conference from any source — return 200 with empty array
+  // so the frontend renders a clean "no data" state instead of an error page.
+  // Small conferences (America East, Patriot League, etc.) may not be covered
+  // by ESPN or Highlightly, so empty is the correct response, not an error.
   const emptyPayload = withMeta({
-    success: false,
+    success: true,
     data: [],
     conference,
     timestamp: now,
-  }, 'error', {
+  }, 'none', {
     fetchedAt: now,
     sources: [],
-    degraded: true,
-    extra: { sport: 'college-baseball' },
+    degraded: false,
+    extra: { sport: 'college-baseball', note: `No standings data available for ${conference}` },
   });
-  return cachedJson(emptyPayload, 502, HTTP_CACHE.standings, {
-    ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR',
+  return cachedJson(emptyPayload, 200, HTTP_CACHE.standings, {
+    ...dataHeaders(now, 'none'), 'X-Cache': 'MISS',
   });
   } catch (err) {
     console.error('[handleCollegeBaseballStandings]', err instanceof Error ? err.message : err);
