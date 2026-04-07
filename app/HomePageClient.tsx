@@ -276,7 +276,7 @@ function LeaderboardTable({
       >
         <h2
           className="text-xs uppercase tracking-[0.15em] font-bold"
-          style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary)' }}
+          style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary-light)' }}
         >
           {title}
         </h2>
@@ -314,7 +314,7 @@ function LeaderboardTable({
                   key={col.key}
                   className="text-right px-2 py-2 font-semibold"
                   style={{
-                    color: col.accent ? 'var(--bsi-primary)' : 'var(--bsi-dust)',
+                    color: col.accent ? 'var(--bsi-primary-light)' : 'var(--bsi-dust)',
                     fontSize: '9px',
                     fontFamily: 'var(--font-oswald)',
                   }}
@@ -375,7 +375,7 @@ function LeaderboardTable({
       {meta && (
         <div
           className="flex items-center justify-between px-4 py-1.5 text-[9px]"
-          style={{ fontFamily: 'var(--font-mono)', color: 'rgba(196,184,165,0.35)' }}
+          style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
         >
           <span>Source: {meta.source}</span>
           <span>
@@ -462,7 +462,7 @@ function LeaderboardEmpty({ title, error, onRetry }: { title: string; error?: st
       >
         <h2
           className="text-xs uppercase tracking-[0.15em] font-bold"
-          style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary)' }}
+          style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary-light)' }}
         >{title}</h2>
       </div>
       <div className="border border-t-0 px-4 py-8 text-center" style={{ borderColor: 'var(--border-vintage)' }}>
@@ -484,7 +484,7 @@ function LeaderboardEmpty({ title, error, onRetry }: { title: string; error?: st
 function StandoutEmpty() {
   return (
     <div className="heritage-card p-5 flex items-center justify-center" style={{ minHeight: '120px' }}>
-      <p className="text-[10px] uppercase tracking-wider" style={{ fontFamily: 'var(--font-mono)', color: 'rgba(196,184,165,0.35)' }}>
+      <p className="text-[10px] uppercase tracking-wider" style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}>
         Updating player data...
       </p>
     </div>
@@ -808,7 +808,7 @@ export function HomePageClient() {
         <ScrollReveal>
           <h2
             className="text-xs uppercase tracking-[0.15em] font-bold mb-4"
-            style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary)' }}
+            style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary-light)' }}
           >
             Explore
           </h2>
@@ -824,7 +824,7 @@ export function HomePageClient() {
                   className="text-[11px] sm:text-xs font-bold uppercase tracking-[0.12em] mb-1 transition-colors"
                   style={{
                     fontFamily: 'var(--font-oswald)',
-                    color: item.accent ? 'var(--bsi-primary)' : 'var(--bsi-bone)',
+                    color: item.accent ? 'var(--bsi-primary-light)' : 'var(--bsi-bone)',
                   }}
                 >
                   <span className="group-hover:text-[var(--bsi-primary)]">{item.title}</span>
@@ -855,7 +855,7 @@ export function HomePageClient() {
               alt="Blaze Intelligence roundel"
               width={44}
               height={44}
-              className="w-10 h-10 sm:w-11 sm:h-11 opacity-75"
+              className="w-10 h-10 sm:w-11 sm:h-11 opacity-75 object-contain"
             />
             <div>
               <p
@@ -866,7 +866,7 @@ export function HomePageClient() {
               </p>
               <p
                 className="text-[9px] mt-0.5"
-                style={{ fontFamily: 'var(--font-mono)', color: 'rgba(196,184,165,0.35)' }}
+                style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
               >
                 330 programs &middot; updated every 6 hours
               </p>

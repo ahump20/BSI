@@ -369,7 +369,7 @@ export default function PricingPage() {
               alt="Blaze Intelligence"
               width={36}
               height={36}
-              className="mx-auto mb-4 opacity-60"
+              className="mx-auto mb-4 opacity-75 object-contain"
             />
             <p
               className="text-xs font-mono uppercase tracking-[0.15em] mb-1"
