@@ -190,6 +190,7 @@ const proSports: SitemapEntry[] = [
   { path: '/nba', changeFrequency: 'daily', priority: 0.7 },
   { path: '/nba/scores', changeFrequency: 'hourly', priority: 0.7 },
   { path: '/nba/standings', changeFrequency: 'daily', priority: 0.7 },
+  { path: '/nba/playoff-picture', changeFrequency: 'daily', priority: 0.8 },
   { path: '/nba/games', changeFrequency: 'daily', priority: 0.7 },
   { path: '/nba/news', changeFrequency: 'daily', priority: 0.6 },
   { path: '/nba/players', changeFrequency: 'daily', priority: 0.6 },

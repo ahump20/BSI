@@ -160,7 +160,7 @@ function deriveStandingsInsights(
         description: `Seeds 7-10 in the ${conf.label} Conference: ${playInTeams}. The ${seed7.teamName} (${seed7.wins}-${seed7.losses}) hold the 7 seed; the ${seed10.teamName} (${seed10.wins}-${seed10.losses}) are 10th.`,
         badge: 'Postseason',
         badgeVariant: 'warning',
-        href: '/nba/standings',
+        href: '/nba/playoff-picture',
       });
       break; // Only show the tighter race
     }
@@ -333,8 +333,8 @@ export default function NBAPage() {
           description="Live scores, conference standings, and analytics for all 30 teams."
           icon={"\uD83C\uDFC0"}
           dataSource="SportsDataIO"
-          primaryCta={{ label: 'Live Scores', href: '/nba/games' }}
-          secondaryCta={{ label: 'Standings', href: '/nba/standings' }}
+          primaryCta={{ label: 'Playoff Picture', href: '/nba/playoff-picture' }}
+          secondaryCta={{ label: 'Live Scores', href: '/nba/games' }}
           stats={NBA_HERO_STATS}
           heroBg={{ bucket: 'images', imagePath: 'hero-nba.webp', opacity: 0.16 }}
         />

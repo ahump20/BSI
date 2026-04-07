@@ -100,6 +100,18 @@ export interface NBAStandingsTeam {
   conference: string;
   gamesBack: number;
   streak: string;
+  /** ESPN team ID */
+  id?: string;
+  /** Team abbreviation (e.g. "DET", "OKC") */
+  abbreviation?: string;
+  /** ESPN logo URL */
+  logo?: string;
+  /** Home record string (e.g. "30-9") */
+  home?: string;
+  /** Away record string (e.g. "26-13") */
+  away?: string;
+  /** Last 10 games record (e.g. "7-3") */
+  last10?: string;
 }
 
 export interface NBAApiConference {
@@ -107,11 +119,16 @@ export interface NBAApiConference {
   teams: {
     name: string;
     abbreviation?: string;
+    id?: string;
+    logo?: string;
     wins: number;
     losses: number;
     pct: number;
     gb: string;
     streak: string;
+    home?: string;
+    away?: string;
+    last10?: string;
   }[];
 }
 
@@ -137,6 +154,12 @@ export function flattenNBAStandings(conferences: NBAApiConference[]): NBAStandin
         conference: confLabel,
         gamesBack: isNaN(gbNum) ? 0 : gbNum,
         streak: t.streak,
+        id: t.id,
+        abbreviation: t.abbreviation,
+        logo: t.logo,
+        home: t.home,
+        away: t.away,
+        last10: t.last10,
       });
     }
   }
