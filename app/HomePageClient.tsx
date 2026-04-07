@@ -125,7 +125,7 @@ function ScoreTicker({ games }: { games: ScoreGame[] }) {
               >
                 <span style={{ color: 'var(--bsi-dust)' }}>{g.away_team ?? 'Away'}</span>
                 <span className="font-bold tabular-nums">{g.away_score ?? '-'}</span>
-                <span style={{ color: 'rgba(196,184,165,0.4)' }}>@</span>
+                <span style={{ color: 'rgba(196,184,165,0.7)' }}>@</span>
                 <span style={{ color: 'var(--bsi-dust)' }}>{g.home_team ?? 'Home'}</span>
                 <span className="font-bold tabular-nums">{g.home_score ?? '-'}</span>
                 {isLive && (
@@ -137,7 +137,7 @@ function ScoreTicker({ games }: { games: ScoreGame[] }) {
                   </span>
                 )}
                 {!isLive && g.status && (
-                  <span className="text-[10px] uppercase tracking-wider ml-1" style={{ color: 'rgba(196,184,165,0.4)' }}>
+                  <span className="text-[10px] uppercase tracking-wider ml-1" style={{ color: 'rgba(196,184,165,0.7)' }}>
                     {g.status}
                   </span>
                 )}
@@ -348,7 +348,7 @@ function LeaderboardTable({
                   </Link>
                   <span
                     className="block text-[9px] mt-px truncate"
-                    style={{ color: 'rgba(196,184,165,0.5)' }}
+                    style={{ color: 'rgba(196,184,165,0.7)' }}
                   >
                     {row.team}
                   </span>
@@ -853,8 +853,8 @@ export function HomePageClient() {
             <Image
               src="/brand/blaze-roundel.png"
               alt="Blaze Intelligence roundel"
-              width={40}
-              height={40}
+              width={44}
+              height={44}
               className="w-10 h-10 sm:w-11 sm:h-11 opacity-75"
             />
             <div>
