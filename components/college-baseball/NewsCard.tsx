@@ -54,7 +54,7 @@ export function NewsCard({
           <div className="relative h-40 overflow-hidden bg-surface-light">
             <img
               src={imageUrl}
-              alt=""
+              alt={title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               loading="lazy"
             />

@@ -65,7 +65,7 @@ export function HubHero({
     >
       {/* R2 stadium photography */}
       <img
-        src="/api/assets/images/blaze-stadium-hero.png"
+        src="/api/assets/images/hero-college-baseball.webp"
         alt=""
         aria-hidden="true"
         loading="eager"

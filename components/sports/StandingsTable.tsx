@@ -196,7 +196,7 @@ export function StandingsTable({
                               {showLogos && team.logo && (
                                 <img
                                   src={team.logo}
-                                  alt=""
+                                  alt={team.name}
                                   width={20}
                                   height={20}
                                   className="rounded-sm"

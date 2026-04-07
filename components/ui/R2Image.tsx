@@ -9,7 +9,7 @@
  *
  * Usage:
  *   <R2Image bucket="brand" path="bsi-logo-shield-200.png" alt="BSI Shield" width={200} height={200} />
- *   <R2Image bucket="images" path="blaze-stadium-hero.png" alt="" fill className="object-cover" />
+ *   <R2Image bucket="images" path="blaze-stadium-hero.png" alt="BSI stadium hero" fill className="object-cover" />
  */
 
 interface R2ImageProps {

@@ -254,7 +254,7 @@ export default function NFLPage() {
           primaryCta={{ label: 'View Standings', href: '/nfl/standings' }}
           secondaryCta={{ label: 'Game Scores', href: '/nfl/games' }}
           stats={NFL_HERO_STATS}
-          heroBg={{ bucket: 'images', imagePath: 'blaze-full-banner.png', opacity: 0.22 }}
+          heroBg={{ bucket: 'images', imagePath: 'hero-nfl.webp', opacity: 0.18 }}
         />
 
         {/* League Leaders */}

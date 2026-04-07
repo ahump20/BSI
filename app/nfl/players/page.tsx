@@ -261,7 +261,7 @@ export default function NFLPlayersPage() {
           <Container>
             <ScrollReveal direction="up">
               <Badge variant="primary" className="mb-4">
-                2024 Season
+                {new Date().getFullYear()} Season
               </Badge>
             </ScrollReveal>
 
