@@ -539,62 +539,27 @@ export function HomePageClient() {
         className="relative overflow-hidden corner-marks"
         style={{ background: 'var(--surface-scoreboard)' }}
       >
-        {/* R2 stadium photograph — pushed harder, the venue IS the brand */}
-        <img
-          src="/api/assets/images/blaze-stadium-hero.png"
-          alt=""
-          aria-hidden="true"
-          loading="eager"
-          decoding="async"
-          className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none"
-          style={{ opacity: 0.38 }}
-        />
-
-        {/* Gradient overlay — breathes in the center, locks down at edges for text */}
+        {/* Warm radial glow — centered on the shield, burnt-orange atmosphere */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: `linear-gradient(
-              to bottom,
-              rgba(10,10,10,0.6) 0%,
-              rgba(10,10,10,0.2) 25%,
-              rgba(10,10,10,0.15) 45%,
-              rgba(10,10,10,0.3) 70%,
-              var(--surface-scoreboard) 95%
-            )`,
+            background: 'radial-gradient(ellipse 55% 65% at 50% 40%, rgba(191,87,0,0.12) 0%, transparent 70%)',
           }}
         />
 
-        {/* Burnt-orange radial warmth — wider, centered on the shield */}
+        {/* Cool counter-glow — top-right, columbia-blue for depth */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: 'radial-gradient(ellipse 60% 70% at 50% 42%, rgba(191,87,0,0.18) 0%, transparent 75%)',
+            background: 'radial-gradient(ellipse 40% 40% at 80% 15%, rgba(75,156,211,0.04) 0%, transparent 70%)',
           }}
         />
 
-        {/* BSI shield watermark — faint brand echo in bottom-right */}
-        <img
-          src="/api/assets/brand/bsi-logo-seal-400.png"
-          alt=""
-          aria-hidden="true"
-          loading="eager"
-          decoding="async"
-          className="absolute pointer-events-none hidden lg:block"
-          style={{
-            width: '280px',
-            height: '280px',
-            right: '6%',
-            bottom: '12%',
-            opacity: 0.04,
-          }}
-        />
-
-        {/* Cinematic vignette — heavier at edges, draws eye to center content */}
+        {/* Vignette — draws focus to center content */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: 'radial-gradient(ellipse 85% 80% at 50% 45%, transparent 35%, rgba(0,0,0,0.65) 100%)',
+            background: 'radial-gradient(ellipse 80% 75% at 50% 45%, transparent 30%, rgba(0,0,0,0.55) 100%)',
           }}
         />
 
