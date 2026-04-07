@@ -298,7 +298,7 @@ describe('College Baseball Transforms', () => {
   // -----------------------------------------------------------------------
 
   describe('GET /api/college-baseball/transfer-portal', () => {
-    it('returns empty entries when KV has no data', async () => {
+    it('returns empty entries when D1 has no transfer signals', async () => {
       globalThis.fetch = mockFetchForHighlightly();
       const req = new Request('https://blazesportsintel.com/api/college-baseball/transfer-portal');
       const res = await worker.fetch(req, env, createMockCtx());
@@ -308,16 +308,29 @@ describe('College Baseball Transforms', () => {
       expect(body.entries).toEqual([]);
       expect(body.totalEntries).toBe(0);
       expect(body.meta).toBeDefined();
+      expect(body.meta.source).toBe('social-intel');
     });
 
-    it('returns portal data from KV when populated', async () => {
-      const portalData = {
-        entries: [
-          { id: '1', playerName: 'Test Player', position: 'SS', fromSchool: 'Texas', status: 'entered' },
-        ],
-        lastUpdated: '2026-02-13T00:00:00Z',
-      };
-      env.KV._store.set('portal:college-baseball:entries', JSON.stringify(portalData));
+    it('returns portal entries from D1 social intel signals', async () => {
+      // Seed D1 mock with a transfer_portal signal
+      env.DB.prepare = vi.fn().mockReturnValue({
+        all: vi.fn().mockResolvedValue({
+          results: [
+            {
+              id: 'reddit-abc123',
+              playerName: 'Jace LaViolette',
+              fromSchool: 'texas-am',
+              summary: 'Jace LaViolette enters the transfer portal from Texas A&M',
+              enteredDate: '2026-04-07T12:00:00Z',
+              confidence: 0.92,
+              sourceUrl: 'https://reddit.com/r/collegebaseball/abc123',
+              platform: 'reddit',
+              author: 'cbb_insider',
+            },
+          ],
+        }),
+        bind: vi.fn().mockReturnThis(),
+      });
       globalThis.fetch = mockFetchForHighlightly();
 
       const req = new Request('https://blazesportsintel.com/api/college-baseball/transfer-portal');
@@ -325,9 +338,11 @@ describe('College Baseball Transforms', () => {
       const body = await res.json() as any;
 
       expect(body.entries).toHaveLength(1);
-      expect(body.entries[0].playerName).toBe('Test Player');
+      expect(body.entries[0].playerName).toBe('Jace LaViolette');
+      expect(body.entries[0].fromSchool).toBe('texas-am');
+      expect(body.entries[0].confidence).toBe(0.92);
       expect(body.totalEntries).toBe(1);
-      expect(body.meta.source).toBe('portal-sync');
+      expect(body.meta.source).toBe('social-intel');
     });
   });
 
@@ -459,8 +474,7 @@ describe('College Baseball Transforms', () => {
       // Linescore may still exist from match.innings, but boxscore batting/pitching should be absent
     });
 
-    it('transfer portal with valid JSON but missing entries key returns empty', async () => {
-      env.KV._store.set('portal:college-baseball:entries', JSON.stringify({ foo: 'bar' }));
+    it('transfer portal returns empty when D1 query returns no results', async () => {
       globalThis.fetch = mockFetchForHighlightly();
 
       const req = new Request('https://blazesportsintel.com/api/college-baseball/transfer-portal');
@@ -470,7 +484,7 @@ describe('College Baseball Transforms', () => {
       expect(res.status).toBe(200);
       expect(body.entries).toEqual([]);
       expect(body.totalEntries).toBe(0);
-      expect(body.meta.source).toBe('portal-sync');
+      expect(body.meta.source).toBe('social-intel');
     });
   });
 });
