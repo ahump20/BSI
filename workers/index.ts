@@ -23,114 +23,15 @@ import { requireApiKey, provisionKey, emailKey } from './shared/auth';
 import { handleScoutingReport } from './handlers/scouting';
 import { handleAssetRequest } from './handlers/assets';
 
-// --- Handlers ---
-import {
-  handleCollegeBaseballScores,
-  handleCollegeBaseballStandings,
-  handleCollegeBaseballRankings,
-  handleCollegeBaseballTeam,
-  handleCollegeBaseballPlayer,
-  handleCollegeBaseballGame,
-  handleCollegeBaseballSchedule,
-  handleCollegeBaseballTrending,
-  handleCollegeBaseballDaily,
-  handleCollegeBaseballNews,
-  handleCollegeBaseballPlayersList,
-  handleCollegeBaseballTransferPortal,
-  handlePortalPlayerDetail,
-  handleCollegeBaseballEditorialList,
-  handleCollegeBaseballEditorialContent,
-  handleCollegeBaseballNewsEnhanced,
-  handleCollegeBaseballPlayerCompare,
-  handlePlayerGameLog,
-  handleCollegeBaseballTrends,
-  handleCollegeBaseballTeamSchedule,
-  handleCollegeBaseballTeamsAll,
-  handleCollegeBaseballLeaders,
-  handleIngestStats,
-  processFinishedGames,
-  handleCBBLeagueSabermetrics,
-  handleCBBTeamSabermetrics,
-  handleCBBTeamSOS,
-  handleCBBConferencePowerIndex,
-  handleCBBSeasonArc,
-  handleLeagueContext,
-  handleCBBBulkSync,
-  handleHighlightlySync,
-  handleGameLogBackfill,
-  handleSocialIntelFeed,
-  handleSocialIntelTeam,
-} from './handlers/college-baseball';
+// --- Domain Routers (extracted from this file — see workers/routes/*.ts) ---
+import { cbb } from './routes/college-baseball';
+import { mlb } from './routes/mlb';
+import { nfl } from './routes/nfl';
+import { nba } from './routes/nba';
+import { cfb, cfbEditorial } from './routes/cfb';
+import { analytics, savant, nil, cv, models } from './routes/analytics';
 
-import {
-  handleV1Seasons,
-  handleV1Teams,
-  handleV1Team,
-  handleV1Players,
-  handleV1Player,
-  handleV1Games,
-  handleV1Game,
-  handleV1Boxscore,
-  handleV1PBP,
-  handleV1MetricsPlayers,
-  handleV1MetricsTeams,
-  handleV1PlayerSplits,
-  handleV1Provenance,
-} from './handlers/college-baseball/ncaa-v1';
-
-import {
-  handleMLBScores,
-  handleMLBStandings,
-  handleMLBGame,
-  handleMLBPlayer,
-  handleMLBTeam,
-  handleMLBTeamsList,
-  handleMLBNews,
-  handleMLBStatsLeaders,
-  handleMLBLeaderboard,
-  handleMLBSpringScores,
-  handleMLBSpringStandings,
-  handleMLBSpringSchedule,
-  handleMLBSpringRoster,
-} from './handlers/mlb';
-
-import {
-  handleNFLScores,
-  handleNFLStandings,
-  handleNFLGame,
-  handleNFLPlayer,
-  handleNFLTeam,
-  handleNFLTeamsList,
-  handleNFLNews,
-  handleNFLPlayers,
-  handleNFLLeaders,
-} from './handlers/nfl';
-
-import {
-  handleNBAScores,
-  handleNBAStandings,
-  handleNBAGame,
-  handleNBAPlayer,
-  handleNBATeamFull,
-  handleNBATeamsList,
-  handleNBANews,
-  handleNBALeaders,
-} from './handlers/nba';
-
-import {
-  handleCFBTransferPortal,
-  handleCFBScores,
-  handleCFBStandings,
-  handleCFBRankings,
-  handleCFBNews,
-  handleCFBArticle,
-  handleCFBArticlesList,
-  handleCFBTeamsList,
-  handleCFBTeam,
-  handleCFBGame,
-  handleCFBPlayer,
-} from './handlers/cfb';
-
+// --- Handlers (shared / non-domain-specific) ---
 import { handleBlogPostFeedList, handleBlogPostFeedItem } from './handlers/blog-post-feed';
 import { handleSearch } from './handlers/search';
 import { handleEvaluatePlayer, handleEvaluateSearch } from './handlers/evaluate';
@@ -140,47 +41,9 @@ import { handleLogin, handleValidateKey } from './handlers/auth';
 import { handleScheduled, handleCachedScores, handleHealthProviders } from './handlers/cron';
 import { handleHealth, handleStatus, handleAdminHealth, handleAdminErrors, handleWebSocket } from './handlers/health';
 import { handleFreshness } from './handlers/freshness';
-import { handlePowerRankings } from './handlers/college-baseball/power-rankings';
 import { handleMcpRequest } from './handlers/mcp';
 import { handleHeroScores } from './handlers/hero-scores';
 import { handleScoresOverview } from './handlers/scores';
-import {
-  handleCVPitcherMechanics,
-  handleCVPitcherHistory,
-  handleCVInjuryAlerts,
-  handleCVAdoption,
-} from './handlers/cv';
-import {
-  handleHAVFLeaderboard,
-  handleHAVFPlayer,
-  handleHAVFCompare,
-  handleHAVFCompute,
-  handleMMILive,
-  handleMMIGame,
-  handleMMITrending,
-  handleMMITeam,
-  handleWinProbExample,
-  handleMonteCarloExample,
-} from './handlers/analytics';
-import {
-  handleSavantBattingLeaderboard,
-  handleSavantPitchingLeaderboard,
-  handleSavantPlayer,
-  handleSavantParkFactors,
-  handleSavantConferenceStrength,
-  handleSavantExport,
-  handleSavantPlayerDirectory,
-} from './handlers/savant';
-import {
-  handleNILLeaderboard,
-  handleNILPlayer,
-  handleNILComparables,
-  handleNILUndervalued,
-  handleNILTrends,
-  handleWARToNIL,
-  handleNILCollectiveROI,
-  handleNILDraftLeverage,
-} from './handlers/nil';
 import {
   handleLeaderboard,
   handleLeaderboardSubmit,
@@ -190,38 +53,17 @@ import {
   handleArcadeSession,
 } from './handlers/games';
 import { handleTeams, handleModelHealth, handleAnalyticsEvent, handleWeeklyBrief } from './handlers/general';
-import { handleWeeklyPulse } from './handlers/weekly-pulse';
 import { handleContact, handleLead, handleFeedback, handleCSPReport } from './handlers/lead';
 import { handlePredictionSubmit, handlePredictionAccuracy } from './handlers/predictions';
 import { handleIntelNews, handleESPNNews } from './handlers/news';
+import { handlePortalPlayerDetail } from './handlers/college-baseball';
+import { processFinishedGames } from './handlers/college-baseball';
 import {
-  handleTexasIntelVideos,
-  handleTexasIntelNews,
-  handleTexasIntelDigest,
-  handleTexasPlayerProfile,
-  handleTexasOpponentScout,
-  handleTexasGameAnalysisGenerate,
-  handleTexasGameAnalyses,
-  handleTexasPitchingStaff,
-  handleTexasScheduleHeatMap,
-  handleTexasMatchup,
-  handleTexasDraftBoard,
-  handleTexasPortalIntel,
-  handleTexasTrends,
-} from './handlers/texas-intel';
-import {
-  handleShowSourceStatus,
-  handleShowMarketOverview,
-  handleShowCards,
-  handleShowCardDetail,
-  handleShowCardHistory,
-  handleShowCollections,
-  handleShowCollectionDetail,
-  handleShowWatchEvents,
-  handleShowTeamBuilderReference,
-  handleShowBuildCreate,
-  handleShowBuildGet,
-} from './handlers/mlb-the-show';
+  handleV1Seasons, handleV1Teams, handleV1Team, handleV1Players, handleV1Player,
+  handleV1Games, handleV1Game, handleV1Boxscore, handleV1PBP,
+  handleV1MetricsPlayers, handleV1MetricsTeams, handleV1PlayerSplits, handleV1Provenance,
+} from './handlers/college-baseball/ncaa-v1';
+import { handleCBBScores as handleCBBBasketballScores, handleCBBStandings as handleCBBBasketballStandings, handleCBBTeams as handleCBBBasketballTeams } from './handlers/cbb';
 
 // =============================================================================
 // Hono App
@@ -445,82 +287,11 @@ app.options('/api/live/*', (c) => {
   });
 });
 
-// --- College Baseball ---
-app.get('/api/college-baseball/scores', (c) => {
-  let ctx: ExecutionContext | undefined;
-  try { ctx = c.executionCtx; } catch { /* test env */ }
-  return handleCollegeBaseballScores(new URL(c.req.url), c.env, ctx);
-});
-app.get('/api/college-baseball/standings', (c) => {
-  let ctx: ExecutionContext | undefined;
-  try { ctx = c.executionCtx; } catch { /* test env */ }
-  return handleCollegeBaseballStandings(new URL(c.req.url), c.env, ctx);
-});
-app.get('/api/college-baseball/rankings', (c) => handleCollegeBaseballRankings(c.env));
-app.get('/api/college-baseball/power-rankings', (c) => handlePowerRankings(new URL(c.req.url), c.env));
-app.get('/api/college-baseball/leaders', (c) => handleCollegeBaseballLeaders(c.env));
-app.get('/api/college-baseball/ingest-stats', (c) => {
-  const url = new URL(c.req.url);
-  return handleIngestStats(c.env, url.searchParams.get('date') || undefined);
-});
-app.get('/api/college-baseball/schedule', (c) => handleCollegeBaseballSchedule(new URL(c.req.url), c.env));
-app.get('/api/college-baseball/trending', (c) => handleCollegeBaseballTrending(c.env));
-app.get('/api/college-baseball/news', (c) => handleCollegeBaseballNews(c.env));
-app.get('/api/college-baseball/news/enhanced', (c) => handleCollegeBaseballNewsEnhanced(c.env));
-app.get('/api/college-baseball/players', (c) => handleCollegeBaseballPlayersList(new URL(c.req.url), c.env));
-app.get('/api/college-baseball/transfer-portal', (c) => handleCollegeBaseballTransferPortal(c.env));
+// =============================================================================
+// Domain Routers (see workers/routes/*.ts for route definitions)
+// =============================================================================
+app.route('/api/college-baseball', cbb);
 app.get('/api/portal/player/:playerId', (c) => handlePortalPlayerDetail(c.req.param('playerId'), c.env));
-app.get('/api/college-baseball/daily', (c) => handleCollegeBaseballDaily(new URL(c.req.url), c.env));
-app.get('/api/college-baseball/sabermetrics', (c) => handleCBBLeagueSabermetrics(c.env));
-app.get('/api/college-baseball/teams/all', (c) => handleCollegeBaseballTeamsAll(c.env));
-app.get('/api/college-baseball/teams/:teamId/schedule', (c) => handleCollegeBaseballTeamSchedule(c.req.param('teamId'), c.env));
-app.get('/api/college-baseball/teams/:teamId/sabermetrics', (c) => handleCBBTeamSabermetrics(c.req.param('teamId'), c.env));
-// Diagnostics endpoint removed after ESPN verification (2026-02-25)
-app.get('/api/college-baseball/sync-stats', (c) => handleCBBBulkSync(new URL(c.req.url), c.env));
-app.get('/api/college-baseball/sync-highlightly', (c) => handleHighlightlySync(new URL(c.req.url), c.env));
-app.get('/api/college-baseball/backfill-game-log', (c) => handleGameLogBackfill(new URL(c.req.url), c.env));
-app.get('/api/college-baseball/teams/:teamId/sos', (c) => handleCBBTeamSOS(c.req.param('teamId'), c.env));
-app.get('/api/college-baseball/teams/:teamId/season-arc', (c) => handleCBBSeasonArc(c.req.param('teamId'), new URL(c.req.url), c.env));
-app.get('/api/college-baseball/conferences/:conf/power-index', (c) => handleCBBConferencePowerIndex(c.req.param('conf'), c.env));
-app.get('/api/college-baseball/weekly-pulse', (c) => handleWeeklyPulse(c.env));
-app.get('/api/college-baseball/teams/:teamId', (c) => {
-  let ctx: ExecutionContext | undefined;
-  try { ctx = c.executionCtx; } catch { /* test env */ }
-  return handleCollegeBaseballTeam(c.req.param('teamId'), c.env, ctx);
-});
-app.get('/api/college-baseball/players/compare/:p1/:p2', (c) => handleCollegeBaseballPlayerCompare(c.req.param('p1'), c.req.param('p2'), c.env));
-app.get('/api/college-baseball/players/:playerId/game-log', (c) => handlePlayerGameLog(c.req.param('playerId'), c.env));
-app.get('/api/college-baseball/players/:playerId/scouting-report', (c) => handleScoutingReport(c.req.param('playerId'), c.req.raw, c.env));
-app.get('/api/college-baseball/players/:playerId', (c) => handleCollegeBaseballPlayer(c.req.param('playerId'), c.env));
-app.get('/api/college-baseball/game/:gameId', (c) => handleCollegeBaseballGame(c.req.param('gameId'), c.env));
-app.get('/api/college-baseball/games/:gameId', (c) => handleCollegeBaseballGame(c.req.param('gameId'), c.env));
-app.get('/api/college-baseball/trends/:teamId', (c) => handleCollegeBaseballTrends(c.req.param('teamId'), c.env));
-app.get('/api/college-baseball/editorial/list', (c) => handleCollegeBaseballEditorialList(c.env));
-app.get('/api/college-baseball/editorial/daily/:date', (c) => handleCollegeBaseballEditorialContent(c.req.param('date'), c.env));
-app.get('/api/college-baseball/social-intel', (c) => handleSocialIntelFeed(c.env));
-app.get('/api/college-baseball/social-intel/team/:teamId', (c) => handleSocialIntelTeam(c.req.param('teamId'), c.env));
-
-// --- Texas Intelligence ---
-app.get('/api/college-baseball/texas-intelligence/videos', (c) => handleTexasIntelVideos(c.env));
-app.get('/api/college-baseball/texas-intelligence/news', (c) => handleTexasIntelNews(c.env));
-app.get('/api/college-baseball/texas-intelligence/digest', (c) => handleTexasIntelDigest(c.env));
-app.get('/api/college-baseball/texas-intelligence/pitching', (c) => handleTexasPitchingStaff(c.env));
-app.get('/api/college-baseball/texas-intelligence/schedule', (c) => handleTexasScheduleHeatMap(c.env));
-app.get('/api/college-baseball/texas-intelligence/draft', (c) => handleTexasDraftBoard(c.env));
-app.get('/api/college-baseball/texas-intelligence/portal', (c) => handleTexasPortalIntel(c.env));
-app.get('/api/college-baseball/texas-intelligence/trends', (c) => handleTexasTrends(c.env));
-app.get('/api/college-baseball/texas-intelligence/game-analyses', (c) => handleTexasGameAnalyses(c.env));
-app.get('/api/college-baseball/texas-intelligence/game-analysis/:gameId', (c) => handleTexasGameAnalysisGenerate(c.env, c.req.param('gameId')));
-app.get('/api/college-baseball/texas-intelligence/players/:playerId', (c) => handleTexasPlayerProfile(c.env, c.req.param('playerId')));
-app.get('/api/college-baseball/texas-intelligence/scouting/:opponentId', (c) => handleTexasOpponentScout(c.env, c.req.param('opponentId')));
-app.get('/api/college-baseball/texas-intelligence/matchup/:opponentId', (c) => handleTexasMatchup(c.env, c.req.param('opponentId')));
-
-app.get('/api/college-baseball/scores/ws', (c) => {
-  if (c.req.header('Upgrade') !== 'websocket') {
-    return c.json({ error: 'Expected websocket upgrade' }, 400);
-  }
-  return c.json({ error: 'WebSocket scores available at bsi-live-scores worker', redirect: true }, 501);
-});
 
 // --- NCAA Baseball v1 API ---
 // Default cache headers for v1 API responses (60s browser, 5min edge)
@@ -545,25 +316,16 @@ app.get('/v1/metrics/teams', (c) => handleV1MetricsTeams(new URL(c.req.url), c.e
 app.get('/v1/provenance/:resource', (c) => handleV1Provenance(c.req.param('resource'), new URL(c.req.url), c.env));
 
 // --- CFB ---
-app.get('/api/cfb/transfer-portal', (c) => handleCFBTransferPortal(c.env));
-app.get('/api/cfb/scores', (c) => safeESPN(() => handleCFBScores(new URL(c.req.url), c.env), 'games', [], c.env));
-app.get('/api/cfb/standings', (c) => safeESPN(() => handleCFBStandings(c.env), 'standings', [], c.env));
-app.get('/api/cfb/rankings', (c) => safeESPN(() => handleCFBRankings(c.env), 'rankings', [], c.env));
-app.get('/api/cfb/news', (c) => safeESPN(() => handleCFBNews(c.env), 'articles', [], c.env));
+app.route('/api/cfb', cfb);
+app.route('/api/college-football', cfbEditorial);
 app.get('/api/ncaa/scores', (c) => {
-  if (c.req.query('sport') === 'football') return safeESPN(() => handleCFBScores(new URL(c.req.url), c.env), 'games', [], c.env);
+  if (c.req.query('sport') === 'football') return safeESPN(() => import('./handlers/cfb').then(m => m.handleCFBScores(new URL(c.req.url), c.env)), 'games', [], c.env);
   return c.json({ error: 'Specify ?sport=football' }, 400);
 });
 app.get('/api/ncaa/standings', (c) => {
-  if (c.req.query('sport') === 'football') return safeESPN(() => handleCFBStandings(c.env), 'standings', [], c.env);
+  if (c.req.query('sport') === 'football') return safeESPN(() => import('./handlers/cfb').then(m => m.handleCFBStandings(c.env)), 'standings', [], c.env);
   return c.json({ error: 'Specify ?sport=football' }, 400);
 });
-app.get('/api/college-football/articles', (c) => handleCFBArticlesList(new URL(c.req.url), c.env));
-app.get('/api/college-football/articles/:slug', (c) => handleCFBArticle(c.req.param('slug'), c.env));
-app.get('/api/cfb/teams', (c) => safeESPN(() => handleCFBTeamsList(c.env), 'teams', [], c.env));
-app.get('/api/cfb/game/:gameId', (c) => safeESPN(() => handleCFBGame(c.req.param('gameId'), c.env), 'game', null, c.env));
-app.get('/api/cfb/players/:playerId', (c) => safeESPN(() => handleCFBPlayer(c.req.param('playerId'), c.env), 'player', null, c.env));
-app.get('/api/cfb/teams/:teamId', (c) => safeESPN(() => handleCFBTeam(c.req.param('teamId'), c.env), 'team', null, c.env));
 
 // --- Blog Post Feed ---
 app.get('/api/blog-post-feed', (c) =>
@@ -579,62 +341,16 @@ app.get('/api/blog-post-feed/:slug', (c) =>
 );
 
 // --- MLB ---
-app.get('/api/mlb/scores', (c) => safeESPN(() => handleMLBScores(new URL(c.req.url), c.env), 'games', [], c.env));
-app.get('/api/mlb/standings', (c) => safeESPN(() => handleMLBStandings(c.env), 'standings', [], c.env));
-app.get('/api/mlb/news', (c) => safeESPN(() => handleMLBNews(c.env), 'articles', [], c.env));
-app.get('/api/mlb/stats', (c) => safeESPN(() => handleMLBStatsLeaders(new URL(c.req.url), c.env), 'leaders', [], c.env));
-app.get('/api/mlb/stats/leaders', (c) => safeESPN(() => handleMLBStatsLeaders(new URL(c.req.url), c.env), 'leaders', [], c.env));
-app.get('/api/mlb/leaderboards/:category', (c) => safeESPN(() => handleMLBLeaderboard(c.req.param('category'), new URL(c.req.url), c.env), 'data', [], c.env));
-app.get('/api/mlb/teams', (c) => safeESPN(() => handleMLBTeamsList(c.env), 'teams', [], c.env));
-// Spring Training
-app.get('/api/mlb/spring-training/scores', (c) => safeESPN(() => handleMLBSpringScores(new URL(c.req.url), c.env), 'games', [], c.env));
-app.get('/api/mlb/spring-training/standings', (c) => safeESPN(() => handleMLBSpringStandings(c.env), 'standings', {}, c.env));
-app.get('/api/mlb/spring-training/schedule', (c) => safeESPN(() => handleMLBSpringSchedule(new URL(c.req.url), c.env), 'schedule', [], c.env));
-app.get('/api/mlb/spring-training/roster/:teamKey', (c) => safeESPN(() => handleMLBSpringRoster(c.req.param('teamKey'), c.env), 'roster', [], c.env));
-app.get('/api/mlb/game/:gameId', (c) => safeESPN(() => handleMLBGame(c.req.param('gameId'), c.env), 'game', null, c.env));
-app.get('/api/mlb/players/:playerId', (c) => safeESPN(() => handleMLBPlayer(c.req.param('playerId'), c.env), 'player', null, c.env));
-app.get('/api/mlb/teams/:teamId', (c) => safeESPN(() => handleMLBTeam(c.req.param('teamId'), c.env), 'team', null, c.env));
+app.route('/api/mlb', mlb);
 
-// --- MLB The Show 26 / Diamond Dynasty ---
-app.get('/api/mlb/the-show-26/source-status', (c) => handleShowSourceStatus(c.env));
-app.get('/api/mlb/the-show-26/market/overview', (c) => handleShowMarketOverview(c.env));
-app.get('/api/mlb/the-show-26/cards', (c) => handleShowCards(new URL(c.req.url), c.env));
-app.get('/api/mlb/the-show-26/cards/:cardId', (c) => handleShowCardDetail(c.req.param('cardId'), c.env));
-app.get('/api/mlb/the-show-26/cards/:cardId/history', (c) => handleShowCardHistory(c.req.param('cardId'), new URL(c.req.url), c.env));
-app.get('/api/mlb/the-show-26/collections', (c) => handleShowCollections(c.env));
-app.get('/api/mlb/the-show-26/collections/:collectionId', (c) => handleShowCollectionDetail(c.req.param('collectionId'), new URL(c.req.url), c.env));
-app.get('/api/mlb/the-show-26/watch-events', (c) => handleShowWatchEvents(new URL(c.req.url), c.env));
-app.get('/api/mlb/the-show-26/team-builder/reference', (c) => handleShowTeamBuilderReference(c.env));
-app.post('/api/mlb/the-show-26/builds', (c) => handleShowBuildCreate(c.req.raw, c.env));
-app.get('/api/mlb/the-show-26/builds/:buildId', (c) => handleShowBuildGet(c.req.param('buildId'), c.env));
-
-// --- NFL ---
-app.get('/api/nfl/scores', (c) => safeESPN(() => handleNFLScores(new URL(c.req.url), c.env), 'games', [], c.env));
-app.get('/api/nfl/standings', (c) => safeESPN(() => handleNFLStandings(c.env), 'standings', [], c.env));
-app.get('/api/nfl/news', (c) => safeESPN(() => handleNFLNews(c.env), 'articles', [], c.env));
-app.get('/api/nfl/teams', (c) => safeESPN(() => handleNFLTeamsList(c.env), 'teams', [], c.env));
-app.get('/api/nfl/players', (c) => safeESPN(() => handleNFLPlayers(new URL(c.req.url), c.env), 'players', [], c.env));
-app.get('/api/nfl/leaders', (c) => safeESPN(() => handleNFLLeaders(c.env), 'categories', [], c.env));
-app.get('/api/nfl/game/:gameId', (c) => safeESPN(() => handleNFLGame(c.req.param('gameId'), c.env), 'game', null, c.env));
-app.get('/api/nfl/players/:playerId', (c) => safeESPN(() => handleNFLPlayer(c.req.param('playerId'), c.env), 'player', null, c.env));
-app.get('/api/nfl/teams/:teamId', (c) => safeESPN(() => handleNFLTeam(c.req.param('teamId'), c.env), 'team', null, c.env));
-
-// --- NBA ---
-app.get('/api/nba/scores', (c) => safeESPN(() => handleNBAScores(new URL(c.req.url), c.env), 'games', [], c.env));
-app.get('/api/nba/scoreboard', (c) => safeESPN(() => handleNBAScores(new URL(c.req.url), c.env), 'games', [], c.env));
-app.get('/api/nba/standings', (c) => safeESPN(() => handleNBAStandings(c.env), 'standings', [], c.env));
-app.get('/api/nba/news', (c) => safeESPN(() => handleNBANews(c.env), 'articles', [], c.env));
-app.get('/api/nba/teams', (c) => safeESPN(() => handleNBATeamsList(c.env), 'teams', [], c.env));
-app.get('/api/nba/leaders', (c) => safeESPN(() => handleNBALeaders(c.env), 'categories', [], c.env));
-app.get('/api/nba/game/:gameId', (c) => safeESPN(() => handleNBAGame(c.req.param('gameId'), c.env), 'game', null, c.env));
-app.get('/api/nba/players/:playerId', (c) => safeESPN(() => handleNBAPlayer(c.req.param('playerId'), c.env), 'player', null, c.env));
-app.get('/api/nba/teams/:teamId', (c) => safeESPN(() => handleNBATeamFull(c.req.param('teamId'), c.env), 'team', null, c.env));
+// --- NFL, NBA ---
+app.route('/api/nfl', nfl);
+app.route('/api/nba', nba);
 
 // --- CBB (College Basketball) ---
-import { handleCBBScores, handleCBBStandings, handleCBBTeams } from './handlers/cbb';
-app.get('/api/cbb/scores', (c) => handleCBBScores(new URL(c.req.url), c.env));
-app.get('/api/cbb/standings', (c) => handleCBBStandings(c.env));
-app.get('/api/cbb/teams', (c) => handleCBBTeams(c.env));
+app.get('/api/cbb/scores', (c) => handleCBBBasketballScores(new URL(c.req.url), c.env));
+app.get('/api/cbb/standings', (c) => handleCBBBasketballStandings(c.env));
+app.get('/api/cbb/teams', (c) => handleCBBBasketballTeams(c.env));
 
 // --- R2 Game assets ---
 app.get('/api/games/assets/*', (c) => {
@@ -642,44 +358,12 @@ app.get('/api/games/assets/*', (c) => {
   return path ? handleGameAsset(path, c.env) : c.json({ error: 'Asset path required' }, 400);
 });
 
-// --- CV Intelligence ---
-app.get('/api/cv/pitcher/:playerId/mechanics/history', (c) => handleCVPitcherHistory(c.req.param('playerId'), new URL(c.req.url), c.env));
-app.get('/api/cv/pitcher/:playerId/mechanics', (c) => handleCVPitcherMechanics(c.req.param('playerId'), c.env));
-app.get('/api/cv/alerts/injury-risk', (c) => handleCVInjuryAlerts(new URL(c.req.url), c.env));
-app.get('/api/cv/adoption', (c) => handleCVAdoption(new URL(c.req.url), c.env));
-
-// --- Analytics: HAV-F ---
-app.get('/api/analytics/havf/leaderboard', (c) => handleHAVFLeaderboard(new URL(c.req.url), c.env));
-app.get('/api/analytics/havf/player/:id', (c) => handleHAVFPlayer(c.req.param('id'), c.env));
-app.get('/api/analytics/havf/compare/:p1/:p2', (c) => handleHAVFCompare(c.req.param('p1'), c.req.param('p2'), c.env));
-app.post('/api/analytics/havf/compute', requireApiKey, (c) => handleHAVFCompute(c.req.raw, c.env));
-
-// --- Analytics: MMI ---
-app.get('/api/analytics/mmi/live/:gameId', (c) => handleMMILive(c.req.param('gameId'), c.env));
-app.get('/api/analytics/mmi/game/:gameId', (c) => handleMMIGame(c.req.param('gameId'), c.env));
-app.get('/api/analytics/mmi/trending', (c) => handleMMITrending(c.env));
-app.get('/api/analytics/mmi/team/:teamId', (c) => handleMMITeam(c.req.param('teamId'), c.env));
-
-// --- Savant: College Baseball Advanced Analytics ---
-app.get('/api/savant/batting/leaderboard', (c) => handleSavantBattingLeaderboard(new URL(c.req.url), c.env, c.req.raw.headers));
-app.get('/api/savant/pitching/leaderboard', (c) => handleSavantPitchingLeaderboard(new URL(c.req.url), c.env, c.req.raw.headers));
-app.get('/api/savant/player/:id', (c) => handleSavantPlayer(c.req.param('id'), new URL(c.req.url), c.env, c.req.raw.headers));
-app.get('/api/savant/park-factors', (c) => handleSavantParkFactors(new URL(c.req.url), c.env, c.req.raw.headers));
-app.get('/api/savant/conference-strength', (c) => handleSavantConferenceStrength(new URL(c.req.url), c.env, c.req.raw.headers));
-app.get('/api/savant/batting/export', (c) => handleSavantExport('batting', new URL(c.req.url), c.env, c.req.raw.headers));
-app.get('/api/savant/pitching/export', (c) => handleSavantExport('pitching', new URL(c.req.url), c.env, c.req.raw.headers));
-app.get('/api/savant/league-context', (c) => handleLeagueContext(c.env));
-app.get('/api/savant/directory', (c) => handleSavantPlayerDirectory(new URL(c.req.url), c.env, c.req.raw.headers));
-
-// --- NIL Intelligence ---
-app.get('/api/nil/leaderboard', (c) => handleNILLeaderboard(new URL(c.req.url), c.env, c.req.raw.headers));
-app.get('/api/nil/player/:id', (c) => handleNILPlayer(c.req.param('id'), new URL(c.req.url), c.env, c.req.raw.headers));
-app.get('/api/nil/comparables/:id', (c) => handleNILComparables(c.req.param('id'), new URL(c.req.url), c.env, c.req.raw.headers));
-app.get('/api/nil/undervalued', (c) => handleNILUndervalued(new URL(c.req.url), c.env, c.req.raw.headers));
-app.get('/api/nil/trends', (c) => handleNILTrends(new URL(c.req.url), c.env, c.req.raw.headers));
-app.get('/api/nil/war-to-nil', (c) => handleWARToNIL(new URL(c.req.url)));
-app.get('/api/nil/collective-roi', (c) => handleNILCollectiveROI(new URL(c.req.url), c.env, c.req.raw.headers));
-app.get('/api/nil/draft-leverage', (c) => handleNILDraftLeverage(new URL(c.req.url), c.env, c.req.raw.headers));
+// --- Analytics, Savant, NIL, CV (see workers/routes/analytics.ts) ---
+app.route('/api/analytics', analytics);
+app.route('/api/savant', savant);
+app.route('/api/nil', nil);
+app.route('/api/cv', cv);
+app.route('/api/models', models);
 
 // --- Cached scores (cron-warmed KV) ---
 app.get('/api/scores/cached', (c) => {
@@ -711,10 +395,6 @@ app.get('/api/news/:sport', (c) => handleESPNNews(c.req.param('sport'), c.env));
 
 // --- Model Health ---
 app.get('/api/model-health', (c) => handleModelHealth(c.env));
-
-// --- Model Examples ---
-app.get('/api/models/win-probability/example', (c) => handleWinProbExample(c.env));
-app.get('/api/models/monte-carlo/example', (c) => handleMonteCarloExample(c.env));
 
 // --- Intel Weekly Brief ---
 app.get('/api/intel/weekly-brief', (c) => handleWeeklyBrief(c.env));
