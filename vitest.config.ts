@@ -33,6 +33,7 @@ export default defineConfig({
       'tests/flows/**',
       'tests/smoke/**',
       'tests/e2e/**',
+      'tests/visual-regression/**',
       'node_modules/**',
     ],
 
