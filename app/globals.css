@@ -1411,6 +1411,27 @@ textarea:focus-visible,
 .reveal-scale { transform: scale(0.95); }
 .reveal-scale.revealed { transform: scale(1); }
 
+.reveal-down { transform: translateY(-30px); }
+.reveal-down.revealed { transform: translateY(0); }
+
+.reveal-fade { transform: none; }
+.reveal-fade.revealed { transform: none; }
+
+/* Reduced motion: instant reveal, no animation */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    animation: none;
+  }
+  .reveal-stagger > * {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 .reveal-stagger > * {
   opacity: 0;
   transform: translateY(20px);
