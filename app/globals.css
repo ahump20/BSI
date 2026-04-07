@@ -26,7 +26,7 @@
   --color-text-primary: var(--bsi-text);
   --color-text-secondary: var(--bsi-text-muted);
   --color-text-tertiary: rgba(245, 240, 235, 0.55);
-  --color-text-muted: rgba(245, 240, 235, 0.40);
+  --color-text-muted: rgba(245, 240, 235, 0.55);
 
   /* Borders (aliased) */
   --color-border-subtle: var(--bsi-border);
@@ -817,7 +817,7 @@ textarea:focus-visible,
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--bsi-primary);
+  color: var(--bsi-primary-light);
   padding: 0.25rem 0.75rem;
   border: 1px solid var(--bsi-primary);
   border-radius: 1px;
