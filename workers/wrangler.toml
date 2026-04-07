@@ -29,6 +29,11 @@ binding = "DB"
 database_name = "bsi-prod-db"
 database_id = "6921617f-5351-4df3-aeab-07425e72ec6b"
 
+[[d1_databases]]
+binding = "SHOW_DB"
+database_name = "bsi-show-dd-db"
+database_id = "a0b187a0-3e47-4ad8-92b1-eedb363f5d0e"
+
 [[kv_namespaces]]
 binding = "ERROR_LOG"
 id = "7edf894ff9ba4dd08b5433ed76ebc9c6"
@@ -135,6 +140,11 @@ id = "e6cb68e815cd45babeee0e10460dbfee"
 binding = "DB"
 database_name = "bsi-prod-db"
 database_id = "6921617f-5351-4df3-aeab-07425e72ec6b"
+
+[[env.production.d1_databases]]
+binding = "SHOW_DB"
+database_name = "bsi-show-dd-db"
+database_id = "a0b187a0-3e47-4ad8-92b1-eedb363f5d0e"
 
 [[env.production.kv_namespaces]]
 binding = "ERROR_LOG"

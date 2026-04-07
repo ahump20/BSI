@@ -2,6 +2,8 @@ export interface Env {
   KV: KVNamespace;
   CACHE: DurableObjectNamespace;
   DB: D1Database;
+  /** Isolated D1 database for MLB The Show Diamond Dynasty tables */
+  SHOW_DB?: D1Database;
   ASSETS_BUCKET: R2Bucket;
   WEB_ASSETS: R2Bucket;
   BRAND_ASSETS: R2Bucket;

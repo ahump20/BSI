@@ -1,5 +1,19 @@
 /**
- * Texas Intelligence — content aggregation, roster, analytics, and scheduling handlers.
+ * Texas Intelligence — Intentional Product Vertical
+ *
+ * Deep-coverage intelligence suite for the Texas Longhorns baseball program.
+ * 13 handlers covering: YouTube aggregation, RSS feeds, daily digest, player
+ * profiles, opponent scouting, game analysis, pitching staff, schedule heatmap,
+ * head-to-head matchups, draft board, transfer portal, and trend analysis.
+ *
+ * This is NOT general-purpose team coverage — it is a deliberate product
+ * vertical built around one program as a proof-of-concept for deep team
+ * intelligence. All KV keys are prefixed `texas-intel:*` and D1 queries
+ * reference TEXAS_TEAM_ID directly.
+ *
+ * Future: generalize to `[teamId]` parameter so other programs can receive
+ * the same depth of coverage. The handler structure is already modular enough
+ * to support this with a config-driven team ID.
  */
 
 import type { Env } from '../shared/types';

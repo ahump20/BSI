@@ -1,5 +1,8 @@
 import type { Env } from '../shared/types';
 import { cachedJson, json, kvGet, kvPut } from '../shared/helpers';
+
+/** Use isolated Show DB when available, fall back to main DB during migration. */
+function showDb(env: Env): D1Database { return env.SHOW_DB ?? env.DB; }
 import {
   fetchShowCard,
   fetchShowListingsPage,
@@ -58,12 +61,12 @@ function buildCacheKey(scope: string, suffix = '') {
 }
 
 async function getCollectionCount(env: Env): Promise<number> {
-  const row = await env.DB.prepare('SELECT COUNT(*) as count FROM show_collections').first<{ count: number }>();
+  const row = await showDb(env).prepare('SELECT COUNT(*) as count FROM show_collections').first<{ count: number }>();
   return row?.count ?? 0;
 }
 
 async function getLastSyncAt(env: Env): Promise<string | null> {
-  const row = await env.DB.prepare(
+  const row = await showDb(env).prepare(
     `SELECT COALESCE(finished_at, started_at) as synced_at
      FROM show_ingest_runs
      ORDER BY started_at DESC

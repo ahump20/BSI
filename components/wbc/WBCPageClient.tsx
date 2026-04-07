@@ -78,6 +78,16 @@ export function WBCPageClient() {
 
   return (
     <div className="bsi-theme-baseball">
+      {/* Archive Banner */}
+      <div className="bg-surface-press-box border-b border-burnt-orange/30">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
+          <span className="text-burnt-orange font-display text-sm uppercase tracking-wider">Archived</span>
+          <span className="text-bsi-dust text-sm">
+            The 2026 World Baseball Classic concluded March 17. Results and analysis below are final.
+          </span>
+        </div>
+      </div>
+
       {/* Hero */}
       <WBCHero />
 

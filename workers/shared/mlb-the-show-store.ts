@@ -1,4 +1,7 @@
 import type { Env } from './types';
+
+/** Use isolated Show DB when available, fall back to main DB during migration. */
+function showDb(env: Env): D1Database { return env.SHOW_DB ?? env.DB; }
 import type {
   DDBuildCardSelection,
   DDBuildRecord,
@@ -316,19 +319,19 @@ export function deserializeBuild(row: ShowBuildRow): DDBuildRecord {
 }
 
 export async function getShowCardCount(env: Env): Promise<number> {
-  const row = await env.DB.prepare('SELECT COUNT(*) as count FROM show_cards').first<{ count: number }>();
+  const row = await showDb(env).prepare('SELECT COUNT(*) as count FROM show_cards').first<{ count: number }>();
   return row?.count ?? 0;
 }
 
 async function batchRun(env: Env, statements: D1PreparedStatement[]) {
   for (const group of chunk(statements, 50)) {
-    await env.DB.batch(group);
+    await showDb(env).batch(group);
   }
 }
 
 export async function upsertCards(env: Env, cards: ShowCardSummary[]) {
   const statements = cards.map((card) =>
-    env.DB.prepare(
+    showDb(env).prepare(
       `INSERT INTO show_cards (
         card_id, name, overall, rarity, team, team_short_name, series, series_year, set_name, is_live_set,
         primary_position, secondary_positions_json, bats, throws, born, image_url, baked_image_url,
@@ -397,7 +400,7 @@ export async function upsertCards(env: Env, cards: ShowCardSummary[]) {
 
 export async function upsertCardAttributeSnapshots(env: Env, cards: ShowCardSummary[]) {
   const statements = cards.map((card) =>
-    env.DB.prepare(
+    showDb(env).prepare(
       `INSERT OR IGNORE INTO show_card_attributes (
         card_id, captured_at, overall, attributes_json, source_name
       ) VALUES (?, ?, ?, ?, ?)`,
@@ -416,7 +419,7 @@ export async function upsertMarketData(
 
   for (const entry of entries) {
     currentStatements.push(
-      env.DB.prepare(
+      showDb(env).prepare(
         `INSERT INTO show_market_current (
           card_id, best_buy_now, best_sell_now, last_sale_price, mid_price, spread, listing_count, source_kind, source_name, captured_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -445,7 +448,7 @@ export async function upsertMarketData(
     );
 
     snapshotStatements.push(
-      env.DB.prepare(
+      showDb(env).prepare(
         `INSERT OR IGNORE INTO show_market_snapshots (
           card_id, captured_at, best_buy_now, best_sell_now, last_sale_price, mid_price, spread, listing_count, source_kind, source_name, payload_r2_key
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -470,7 +473,7 @@ export async function upsertMarketData(
 
 export async function upsertCaptains(env: Env, captains: ShowCaptainCard[]) {
   const statements = captains.map((captain) =>
-    env.DB.prepare(
+    showDb(env).prepare(
       `INSERT INTO show_captains (
         card_id, name, team, overall, image_url, baked_image_url, position, ability_name, ability_description, updated_at, boosts_json
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -505,7 +508,7 @@ export async function upsertCaptains(env: Env, captains: ShowCaptainCard[]) {
 export async function upsertAcquisitionPaths(env: Env, paths: ShowAcquisitionPath[]) {
   if (paths.length === 0) return;
   const statements = paths.map((path) =>
-    env.DB.prepare(
+    showDb(env).prepare(
       `INSERT INTO show_acquisition_paths (card_id, label, source_name, source_kind, confidence)
        VALUES (?, ?, ?, ?, ?)
        ON CONFLICT(card_id, label) DO UPDATE SET
@@ -518,12 +521,12 @@ export async function upsertAcquisitionPaths(env: Env, paths: ShowAcquisitionPat
 }
 
 export async function replaceOfficialDailyHistory(env: Env, cardId: string, points: ShowHistoryPoint[]) {
-  await env.DB.prepare(
+  await showDb(env).prepare(
     `DELETE FROM show_market_daily WHERE card_id = ? AND series_type IN ('official_daily', 'official_completed_orders')`,
   ).bind(cardId).run();
 
   const statements = points.map((point) =>
-    env.DB.prepare(
+    showDb(env).prepare(
       `INSERT OR IGNORE INTO show_market_daily (
         card_id, label, captured_at, best_buy_now, best_sell_now, last_sale_price, spread, listing_count, series_type, source_name
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -544,7 +547,7 @@ export async function replaceOfficialDailyHistory(env: Env, cardId: string, poin
 }
 
 export async function rebuildCollections(env: Env) {
-  const { results } = await env.DB.prepare(
+  const { results } = await showDb(env).prepare(
     `SELECT
       c.card_id,
       c.series,
@@ -585,8 +588,8 @@ export async function rebuildCollections(env: Env) {
     }
   }
 
-  await env.DB.prepare('DELETE FROM show_collection_cards').run();
-  await env.DB.prepare('DELETE FROM show_collections').run();
+  await showDb(env).prepare('DELETE FROM show_collection_cards').run();
+  await showDb(env).prepare('DELETE FROM show_collections').run();
 
   const collectionStatements: D1PreparedStatement[] = [];
   const mappingStatements: D1PreparedStatement[] = [];
@@ -594,7 +597,7 @@ export async function rebuildCollections(env: Env) {
   for (const collection of collections.values()) {
     const sortedPrices = collection.prices.sort((a, b) => a - b);
     collectionStatements.push(
-      env.DB.prepare(
+      showDb(env).prepare(
         `INSERT INTO show_collections (collection_id, name, type, card_count, low_stub_cost, high_stub_cost, updated_at)
          VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
       ).bind(
@@ -609,7 +612,7 @@ export async function rebuildCollections(env: Env) {
 
     for (const cardId of collection.cardIds) {
       mappingStatements.push(
-        env.DB.prepare(
+        showDb(env).prepare(
           `INSERT INTO show_collection_cards (collection_id, card_id, source_name) VALUES (?, ?, ?)`,
         ).bind(collection.id, cardId, 'bsi-derived'),
       );
@@ -620,7 +623,7 @@ export async function rebuildCollections(env: Env) {
 }
 
 export async function listCollections(env: Env, limit = 24) {
-  const { results } = await env.DB.prepare(
+  const { results } = await showDb(env).prepare(
     `SELECT collection_id, name, type, card_count, low_stub_cost, high_stub_cost
      FROM show_collections
      ORDER BY card_count DESC, name ASC
@@ -635,7 +638,7 @@ export async function getCollectionDetailFromDb(
   collectionIdValue: string,
   searchParams: URLSearchParams,
 ): Promise<ShowCollectionDetail | null> {
-  const collectionRow = await env.DB.prepare(
+  const collectionRow = await showDb(env).prepare(
     `SELECT collection_id, name, type, card_count, low_stub_cost, high_stub_cost
      FROM show_collections
      WHERE collection_id = ?`,
@@ -682,11 +685,11 @@ export async function getCollectionDetailFromDb(
     LEFT JOIN show_market_current mc ON mc.card_id = c.card_id
     LEFT JOIN show_captains scp ON scp.card_id = c.card_id`;
 
-  const countRow = await env.DB.prepare(
+  const countRow = await showDb(env).prepare(
     `SELECT COUNT(*) as count ${fromSql} ${whereSql}`,
   ).bind(...binds).first<{ count: number }>();
 
-  const { results } = await env.DB.prepare(
+  const { results } = await showDb(env).prepare(
     `SELECT
       c.*,
       mc.best_buy_now,
@@ -741,7 +744,7 @@ export async function getCollectionDetailFromDb(
 }
 
 export async function listCaptains(env: Env, limit = 16) {
-  const { results } = await env.DB.prepare(
+  const { results } = await showDb(env).prepare(
     `SELECT card_id, name, team, overall, image_url, baked_image_url, position, ability_name, ability_description, updated_at, boosts_json
      FROM show_captains
      ORDER BY overall DESC, name ASC
@@ -775,7 +778,7 @@ export async function listWatchEvents(
   }
 
   const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
-  const { results } = await env.DB.prepare(
+  const { results } = await showDb(env).prepare(
     `SELECT
       swe.event_id,
       swe.card_id,
@@ -802,14 +805,14 @@ export async function listWatchEvents(
 }
 
 export async function getCardFromDb(env: Env, cardId: string): Promise<ShowCardSummary | null> {
-  const row = await env.DB.prepare(
+  const row = await showDb(env).prepare(
     `SELECT * FROM show_cards WHERE card_id = ?`,
   ).bind(cardId).first<ShowCardRow>();
   return row ? deserializeCard(row) : null;
 }
 
 export async function getCurrentMarketFromDb(env: Env, cardId: string): Promise<ShowMarketCurrent | null> {
-  const row = await env.DB.prepare(
+  const row = await showDb(env).prepare(
     `SELECT * FROM show_market_current WHERE card_id = ?`,
   ).bind(cardId).first<ShowMarketRow>();
   return row ? deserializeMarket(row) : null;
@@ -820,9 +823,9 @@ export async function getCardDetailFromDb(env: Env, cardId: string, sourceStatus
   if (!card) return null;
 
   const [marketRow, captainRow, acquisitionRows, collectionRows, historyRows] = await Promise.all([
-    env.DB.prepare(`SELECT * FROM show_market_current WHERE card_id = ?`).bind(cardId).first<ShowMarketRow>(),
-    env.DB.prepare(`SELECT * FROM show_captains WHERE card_id = ?`).bind(cardId).first<ShowCaptainRow>(),
-    env.DB.prepare(
+    showDb(env).prepare(`SELECT * FROM show_market_current WHERE card_id = ?`).bind(cardId).first<ShowMarketRow>(),
+    showDb(env).prepare(`SELECT * FROM show_captains WHERE card_id = ?`).bind(cardId).first<ShowCaptainRow>(),
+    showDb(env).prepare(
       `SELECT card_id, label, source_name, source_kind, confidence FROM show_acquisition_paths WHERE card_id = ? ORDER BY label ASC`,
     ).bind(cardId).all<{
       card_id: string;
@@ -831,7 +834,7 @@ export async function getCardDetailFromDb(env: Env, cardId: string, sourceStatus
       source_kind: ShowAcquisitionPath['sourceKind'];
       confidence: ShowAcquisitionPath['confidence'];
     }>(),
-    env.DB.prepare(
+    showDb(env).prepare(
       `SELECT sc.collection_id, sc.name, sc.type, sc.card_count, sc.low_stub_cost, sc.high_stub_cost
        FROM show_collection_cards scc
        INNER JOIN show_collections sc ON sc.collection_id = scc.collection_id
@@ -839,7 +842,7 @@ export async function getCardDetailFromDb(env: Env, cardId: string, sourceStatus
        ORDER BY sc.type ASC, sc.card_count DESC, sc.name ASC
        LIMIT 12`,
     ).bind(cardId).all<ShowCollectionRow>(),
-    env.DB.prepare(
+    showDb(env).prepare(
       `SELECT card_id, label, captured_at, best_buy_now, best_sell_now, last_sale_price, spread, listing_count, series_type, source_name
        FROM show_market_daily
        WHERE card_id = ?
@@ -957,7 +960,7 @@ export async function queryCardsFromDb(
 
   const captainCardId = searchParams.get('captain_card_id')?.trim();
   if (captainCardId) {
-    const captainRow = await env.DB.prepare('SELECT team FROM show_captains WHERE card_id = ?').bind(captainCardId).first<{ team: string }>();
+    const captainRow = await showDb(env).prepare('SELECT team FROM show_captains WHERE card_id = ?').bind(captainCardId).first<{ team: string }>();
     if (captainRow?.team) {
       where.push('c.team = ?');
       binds.push(captainRow.team);
@@ -995,11 +998,11 @@ export async function queryCardsFromDb(
   const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
   const fromSql = `FROM show_cards c LEFT JOIN show_market_current mc ON mc.card_id = c.card_id ${joins}`;
 
-  const countRow = await env.DB.prepare(
+  const countRow = await showDb(env).prepare(
     `SELECT COUNT(DISTINCT c.card_id) as count ${fromSql} ${whereSql}`,
   ).bind(...binds).first<{ count: number }>();
 
-  const { results } = await env.DB.prepare(
+  const { results } = await showDb(env).prepare(
     `SELECT
       c.*,
       mc.best_buy_now,
@@ -1062,7 +1065,7 @@ export async function getHistoryFromDb(
           ? `AND captured_at >= datetime('now', '-30 day')`
           : '';
 
-  const { results: snapshots } = await env.DB.prepare(
+  const { results: snapshots } = await showDb(env).prepare(
     `SELECT
       card_id,
       captured_at,
@@ -1087,7 +1090,7 @@ export async function getHistoryFromDb(
     source_name: string;
   }>();
 
-  const { results: daily } = await env.DB.prepare(
+  const { results: daily } = await showDb(env).prepare(
     `SELECT
       card_id,
       label,
@@ -1147,13 +1150,13 @@ export async function getHistoryFromDb(
 
 export async function getOverviewFromDb(env: Env, sourceStatus: ShowSourceStatus): Promise<ShowMarketOverview> {
   const [countsRow, topSellRows, topBuyRows, captainRows, newestRows] = await Promise.all([
-    env.DB.prepare(
+    showDb(env).prepare(
       `SELECT
          COUNT(*) as total_cards,
          SUM(CASE WHEN is_sellable = 1 THEN 1 ELSE 0 END) as sellable_cards
        FROM show_cards`,
     ).first<{ total_cards: number; sellable_cards: number }>(),
-    env.DB.prepare(
+    showDb(env).prepare(
       `SELECT c.*, mc.best_buy_now, mc.best_sell_now, mc.last_sale_price, mc.mid_price, mc.spread, mc.listing_count, mc.source_kind as market_source_kind, mc.source_name as market_source_name, mc.captured_at as market_captured_at
        FROM show_cards c
        INNER JOIN show_market_current mc ON mc.card_id = c.card_id
@@ -1161,7 +1164,7 @@ export async function getOverviewFromDb(env: Env, sourceStatus: ShowSourceStatus
        ORDER BY mc.best_sell_now DESC
        LIMIT 8`,
     ).all<Record<string, unknown>>(),
-    env.DB.prepare(
+    showDb(env).prepare(
       `SELECT c.*, mc.best_buy_now, mc.best_sell_now, mc.last_sale_price, mc.mid_price, mc.spread, mc.listing_count, mc.source_kind as market_source_kind, mc.source_name as market_source_name, mc.captured_at as market_captured_at
        FROM show_cards c
        INNER JOIN show_market_current mc ON mc.card_id = c.card_id
@@ -1169,13 +1172,13 @@ export async function getOverviewFromDb(env: Env, sourceStatus: ShowSourceStatus
        ORDER BY mc.best_buy_now DESC
        LIMIT 8`,
     ).all<Record<string, unknown>>(),
-    env.DB.prepare(
+    showDb(env).prepare(
       `SELECT card_id, name, team, overall, image_url, baked_image_url, position, ability_name, ability_description, updated_at, boosts_json
        FROM show_captains
        ORDER BY overall DESC
        LIMIT 6`,
     ).all<ShowCaptainRow>(),
-    env.DB.prepare(
+    showDb(env).prepare(
       `SELECT * FROM show_cards ORDER BY source_updated_at DESC LIMIT 8`,
     ).all<ShowCardRow>(),
   ]);
@@ -1209,7 +1212,7 @@ export async function getOverviewFromDb(env: Env, sourceStatus: ShowSourceStatus
 }
 
 export async function saveBuild(env: Env, build: DDBuildRecord) {
-  await env.DB.prepare(
+  await showDb(env).prepare(
     `INSERT INTO show_builds (
       build_id, title, season_label, captain_card_id, cards_json, summary_json, created_at, updated_at
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -1233,7 +1236,7 @@ export async function saveBuild(env: Env, build: DDBuildRecord) {
 }
 
 export async function getBuild(env: Env, buildId: string): Promise<DDBuildRecord | null> {
-  const row = await env.DB.prepare(
+  const row = await showDb(env).prepare(
     `SELECT build_id, title, season_label, captain_card_id, cards_json, summary_json, created_at, updated_at
      FROM show_builds WHERE build_id = ?`,
   ).bind(buildId).first<ShowBuildRow>();
