@@ -1,8 +1,5 @@
 import type { Env } from '../shared/types';
 import { cachedJson, json, kvGet, kvPut } from '../shared/helpers';
-
-/** Use isolated Show DB when available, fall back to main DB during migration. */
-function showDb(env: Env): D1Database { return env.SHOW_DB ?? env.DB; }
 import {
   fetchShowCard,
   fetchShowListingsPage,
@@ -12,6 +9,7 @@ import {
   normalizeAcquisitionPaths,
 } from '../shared/mlb-the-show-source';
 import {
+  showDb,
   getBuild,
   getCardDetailFromDb,
   getCollectionDetailFromDb,

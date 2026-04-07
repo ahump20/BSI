@@ -1,7 +1,7 @@
 import type { Env } from './types';
 
 /** Use isolated Show DB when available, fall back to main DB during migration. */
-function showDb(env: Env): D1Database { return env.SHOW_DB ?? env.DB; }
+export function showDb(env: Env): D1Database { return env.SHOW_DB ?? env.DB; }
 import type {
   DDBuildCardSelection,
   DDBuildRecord,

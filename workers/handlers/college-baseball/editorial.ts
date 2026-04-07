@@ -333,7 +333,7 @@ export async function handleCollegeBaseballTransferPortal(env: Env): Promise<Res
  * Portal player detail — serves /api/portal/player/:playerId
  *
  * Looks up a player by slug (e.g. "jace-laviolette") from the KV portal entries
- * written by bsi-portal-sync. Returns the shape PlayerDetailClient.tsx expects.
+ * written to KV. Returns the shape PlayerDetailClient.tsx expects.
  */
 export async function handlePortalPlayerDetail(
   playerId: string,
