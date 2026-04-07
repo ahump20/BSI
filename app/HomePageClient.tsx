@@ -539,6 +539,17 @@ export function HomePageClient() {
         className="relative overflow-hidden corner-marks"
         style={{ background: 'var(--surface-scoreboard)' }}
       >
+        {/* Hero backdrop — cinematic baseball at dusk, Hudl-style photography */}
+        <img
+          src="/images/brand/bsi-hero-backdrop.webp"
+          alt=""
+          aria-hidden="true"
+          loading="eager"
+          decoding="async"
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+          style={{ opacity: 0.18 }}
+        />
+
         {/* Warm radial glow — centered on the shield, burnt-orange atmosphere */}
         <div
           className="absolute inset-0 pointer-events-none"
@@ -602,7 +613,7 @@ export function HomePageClient() {
                 color: 'var(--bsi-dust)',
               }}
             >
-              Park-adjusted analytics for 330 D1 programs
+              Sabermetric simplicity in sports
             </p>
           </ScrollReveal>
 
