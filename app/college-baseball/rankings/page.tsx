@@ -96,6 +96,25 @@ interface RankingsApiResponse {
   };
 }
 
+/** Look up a team's conference from teamMetadata by matching name. */
+function lookupConference(teamName: string): string {
+  const lower = teamName.toLowerCase();
+  for (const meta of Object.values(teamMetadata)) {
+    if (meta.name.toLowerCase() === lower || meta.shortName.toLowerCase() === lower) {
+      return meta.conference;
+    }
+  }
+  // Fallback: try matching just the school name (first word(s) before mascot)
+  const words = teamName.split(' ');
+  if (words.length > 1) {
+    const school = words.slice(0, -1).join(' ').toLowerCase();
+    for (const meta of Object.values(teamMetadata)) {
+      if (meta.shortName.toLowerCase() === school) return meta.conference;
+    }
+  }
+  return '';
+}
+
 // Transform rankings API response to our internal format.
 // Handles both flat format (handler-normalized) and legacy ESPN nested format.
 function transformESPNRankings(data: RankingsApiResponse): RankingPoll | null {
@@ -116,10 +135,10 @@ function transformESPNRankings(data: RankingsApiResponse): RankingPoll | null {
         rank: entry.rank as number,
         previousRank: (entry.prev_rank as number) ?? undefined,
         team: (entry.team as string) || 'Unknown',
-        conference: '',
+        conference: lookupConference((entry.team as string) || ''),
         record: (entry.record as string) || '',
-        points: (entry.points as number) ?? 0,
-        firstPlace: (entry.firstPlaceVotes as number) ?? 0,
+        points: (entry.points as number) || undefined,
+        firstPlace: (entry.firstPlaceVotes as number) || undefined,
       })),
     };
   }
@@ -132,17 +151,20 @@ function transformESPNRankings(data: RankingsApiResponse): RankingPoll | null {
     id: 'espn',
     name: poll.name || 'ESPN Top 25',
     lastUpdated: data.meta?.lastUpdated || new Date().toISOString(),
-    teams: poll.ranks.map((entry) => ({
-      rank: entry.current,
-      previousRank: entry.previous,
-      team: entry.team?.location
+    teams: poll.ranks.map((entry) => {
+      const teamName = entry.team?.location
         ? `${entry.team.location} ${entry.team.name}`
-        : entry.team?.nickname || entry.team?.name || 'Unknown',
-      conference: '',
-      record: entry.recordSummary || '',
-      points: entry.points,
-      firstPlace: entry.firstPlaceVotes,
-    })),
+        : entry.team?.nickname || entry.team?.name || 'Unknown';
+      return {
+        rank: entry.current,
+        previousRank: entry.previous,
+        team: teamName,
+        conference: lookupConference(teamName),
+        record: entry.recordSummary || '',
+        points: entry.points || undefined,
+        firstPlace: entry.firstPlaceVotes || undefined,
+      };
+    }),
   };
 }
 
@@ -153,6 +175,12 @@ export default function CollegeBaseballRankingsPage() {
     '/api/college-baseball/rankings'
   );
   const rankings = rawData ? transformESPNRankings(rawData) : null;
+
+  // Determine which optional columns have real data
+  const hasPoints = rankings?.teams.some((t) => t.points != null && t.points > 0) ?? false;
+  const hasFirstPlace = rankings?.teams.some((t) => t.firstPlace != null && t.firstPlace > 0) ?? false;
+  const hasStreak = rankings?.teams.some((t) => t.streak && t.streak !== '-') ?? false;
+  const hasConference = rankings?.teams.some((t) => t.conference && t.conference.length > 0) ?? false;
 
   const getRankChange = (current: number, previous?: number) => {
     if (!previous || current === previous) return null;
@@ -279,32 +307,34 @@ export default function CollegeBaseballRankingsPage() {
                           <th className="text-left py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider">
                             Team
                           </th>
-                          <th className="text-left py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden md:table-cell">
-                            Conference
-                          </th>
+                          {hasConference && (
+                            <th className="text-left py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden md:table-cell">
+                              Conference
+                            </th>
+                          )}
                           <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider">
                             Record
                           </th>
                           {selectedPoll === 'rpi' && (
-                            <>
-                              <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden lg:table-cell">
-                                SOS
-                              </th>
-                            </>
+                            <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden lg:table-cell">
+                              SOS
+                            </th>
                           )}
-                          {(selectedPoll === 'd1baseball' || selectedPoll === 'coaches') && (
-                            <>
-                              <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden lg:table-cell">
-                                Points
-                              </th>
-                              <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden lg:table-cell">
-                                #1 Votes
-                              </th>
-                            </>
+                          {hasPoints && (
+                            <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden lg:table-cell">
+                              Points
+                            </th>
                           )}
-                          <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden md:table-cell">
-                            Streak
-                          </th>
+                          {hasFirstPlace && (
+                            <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden lg:table-cell">
+                              #1 Votes
+                            </th>
+                          )}
+                          {hasStreak && (
+                            <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden md:table-cell">
+                              Streak
+                            </th>
+                          )}
                           <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider w-24">
                             Change
                           </th>
@@ -339,34 +369,36 @@ export default function CollegeBaseballRankingsPage() {
                                   {team.team}
                                 </Link>
                               </td>
-                              <td className="py-4 px-4 text-text-secondary hidden md:table-cell">
-                                {team.conference}
-                              </td>
+                              {hasConference && (
+                                <td className="py-4 px-4 text-text-secondary hidden md:table-cell">
+                                  {team.conference}
+                                </td>
+                              )}
                               <td className="py-4 px-4 text-center">
                                 <span className="text-text-primary font-mono">{team.record}</span>
                               </td>
                               {selectedPoll === 'rpi' && (
-                                <>
-                                  <td className="py-4 px-4 text-center text-text-secondary font-mono hidden lg:table-cell">
-                                    {team.sos ?? '-'}
-                                  </td>
-                                </>
+                                <td className="py-4 px-4 text-center text-text-secondary font-mono hidden lg:table-cell">
+                                  {team.sos ?? '-'}
+                                </td>
                               )}
-                              {(selectedPoll === 'd1baseball' || selectedPoll === 'coaches') && (
-                                <>
-                                  <td className="py-4 px-4 text-center text-text-secondary font-mono hidden lg:table-cell">
-                                    {team.points ?? '-'}
-                                  </td>
-                                  <td className="py-4 px-4 text-center text-text-secondary hidden lg:table-cell">
-                                    {team.firstPlace ? `(${team.firstPlace})` : '-'}
-                                  </td>
-                                </>
+                              {hasPoints && (
+                                <td className="py-4 px-4 text-center text-text-secondary font-mono hidden lg:table-cell">
+                                  {team.points ?? '-'}
+                                </td>
                               )}
-                              <td
-                                className={`py-4 px-4 text-center font-semibold hidden md:table-cell ${getStreakClass(team.streak)}`}
-                              >
-                                {team.streak ?? '-'}
-                              </td>
+                              {hasFirstPlace && (
+                                <td className="py-4 px-4 text-center text-text-secondary hidden lg:table-cell">
+                                  {team.firstPlace ? `(${team.firstPlace})` : '-'}
+                                </td>
+                              )}
+                              {hasStreak && (
+                                <td
+                                  className={`py-4 px-4 text-center font-semibold hidden md:table-cell ${getStreakClass(team.streak)}`}
+                                >
+                                  {team.streak ?? '-'}
+                                </td>
+                              )}
                               <td className="py-4 px-4 text-center">
                                 {change ? (
                                   <span

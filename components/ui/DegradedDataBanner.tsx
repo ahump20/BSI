@@ -30,7 +30,7 @@ export function DegradedDataBanner({ degraded, source }: DegradedDataBannerProps
         </span>
         {' \u2014 '}
         <span className="font-cormorant">
-          Data may be delayed{source ? ` (${source})` : ''}
+          Showing basic data — detailed stats updating shortly{source ? ` (${source})` : ''}
         </span>
       </p>
     </div>

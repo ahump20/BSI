@@ -321,7 +321,7 @@ export default function MLBPage() {
           primaryCta={{ label: 'View Live Scores', href: '/mlb/scores' }}
           secondaryCta={{ label: 'Division Standings', href: '/mlb/standings' }}
           stats={MLB_HERO_STATS}
-          heroBg={{ bucket: 'images', imagePath: 'blaze-hero-banner.png', opacity: 0.25 }}
+          heroBg={{ bucket: 'images', imagePath: 'hero-mlb.webp', opacity: 0.18 }}
         />
 
         {/* Spring Training Banner — visible during preseason */}
@@ -361,65 +361,7 @@ export default function MLBPage() {
           </Section>
         )}
 
-        {/* Features Section */}
-        <Section padding="lg" background="charcoal" borderTop>
-          <Container>
-            <ScrollReveal>
-              <div className="text-center mb-12">
-                <span className="kicker">All 30 Teams</span>
-                <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display mt-2">
-                  The Data You <span className="text-gradient-blaze">Actually Need</span>
-                </h2>
-                <p className="text-text-secondary mt-4 max-w-2xl mx-auto">
-                  Scores, standings, Statcast. Straight from MLB—no middleman.
-                </p>
-              </div>
-            </ScrollReveal>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-              {mlbFeatures.map((feature, index) => (
-                <ScrollReveal key={feature.title} delay={index * 100}>
-                  <Link href={feature.href} className="block group">
-                    <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
-                      <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
-
-                      <div className="w-12 h-12 mb-5 bg-burnt-orange/15 rounded-sm flex items-center justify-center">
-                        {feature.icon}
-                      </div>
-
-                      <h3 className="text-lg font-semibold text-text-primary mb-3">{feature.title}</h3>
-                      <p className="text-text-tertiary text-sm leading-relaxed mb-4">
-                        {feature.description}
-                      </p>
-
-                      <div className="flex items-center justify-between pt-4 border-t border-border-subtle">
-                        {feature.isLive ? (
-                          <FreshnessBadge isLive fetchedAt={meta?.lastUpdated} />
-                        ) : (
-                          <Badge variant={feature.badgeVariant}>{feature.badge}</Badge>
-                        )}
-                        <span className="text-burnt-orange text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
-                          View
-                          <svg
-                            viewBox="0 0 24 24"
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          >
-                            <path d="M5 12h14M12 5l7 7-7 7" />
-                          </svg>
-                        </span>
-                      </div>
-                    </Card>
-                  </Link>
-                </ScrollReveal>
-              ))}
-            </div>
-          </Container>
-        </Section>
-
-        {/* Tabs and Content */}
+        {/* Tabs and Content — data first, directory links below */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <TabBar tabs={tabs} active={activeTab} onChange={(id) => setActiveTab(id as TabType)} size="sm" />
@@ -729,6 +671,20 @@ export default function MLBPage() {
               )}
               </DataErrorBoundary>
             </TabPanel>
+          </Container>
+        </Section>
+
+        {/* Quick Links */}
+        <Section padding="md" background="charcoal" borderTop>
+          <Container>
+            <div className="flex flex-wrap gap-3">
+              {mlbFeatures.map((feature) => (
+                <Link key={feature.title} href={feature.href} className="group inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-[var(--surface-dugout)] border border-[var(--border-vintage)] hover:border-burnt-orange transition-colors">
+                  <span className="text-text-primary text-sm font-medium group-hover:text-burnt-orange transition-colors">{feature.title}</span>
+                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-burnt-orange opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                </Link>
+              ))}
+            </div>
           </Container>
         </Section>
 

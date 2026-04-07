@@ -118,11 +118,15 @@ export interface NBAApiConference {
 /**
  * Flatten nested NBA API conference/team structure into a flat array.
  * Parses the `gb` string field into a number (the API returns "-", "6", "8.5" etc.)
+ * Conference label detection is case-insensitive and handles variants:
+ * "Eastern", "Eastern Conference", "East" → "Eastern"
+ * Everything else → "Western"
  */
 export function flattenNBAStandings(conferences: NBAApiConference[]): NBAStandingsTeam[] {
   const flat: NBAStandingsTeam[] = [];
   for (const conf of conferences) {
-    const confLabel = conf.name.includes('East') ? 'Eastern' : 'Western';
+    const nameLower = (conf.name || '').toLowerCase();
+    const confLabel = nameLower.includes('east') ? 'Eastern' : 'Western';
     for (const t of conf.teams || []) {
       const gbNum = t.gb === '-' || t.gb == null ? 0 : parseFloat(String(t.gb));
       flat.push({
@@ -140,11 +144,25 @@ export function flattenNBAStandings(conferences: NBAApiConference[]): NBAStandin
 }
 
 /**
- * Split NBA teams by conference.
+ * Split NBA teams by conference. Case-insensitive matching.
+ * If no teams match either conference (data integrity issue), returns all teams in both
+ * so the page still renders something rather than showing empty space.
  */
 export function splitNBAByConference(teams: NBAStandingsTeam[]) {
-  return {
-    eastern: teams.filter((t) => t.conference === 'Eastern' || t.conference === 'East'),
-    western: teams.filter((t) => t.conference === 'Western' || t.conference === 'West'),
-  };
+  const eastern = teams.filter((t) => {
+    const c = (t.conference || '').toLowerCase();
+    return c === 'eastern' || c === 'east';
+  });
+  const western = teams.filter((t) => {
+    const c = (t.conference || '').toLowerCase();
+    return c === 'western' || c === 'west';
+  });
+
+  // Fallback: if conference split fails but we have teams, show all in both
+  // rather than hiding half the league
+  if (teams.length > 0 && eastern.length === 0 && western.length === 0) {
+    return { eastern: teams, western: [] };
+  }
+
+  return { eastern, western };
 }

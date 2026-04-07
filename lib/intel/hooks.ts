@@ -509,6 +509,38 @@ function normalizeCollegeBaseballStandings(data: Record<string, unknown>): Stand
 function normalizeStandings(data: Record<string, unknown>): StandingsTeam[] {
   const normalized: StandingsTeam[] = [];
 
+  // Grouped format (NBA/MLB SDIO): { standings: [{ name, teams: [...] }] }
+  // Detect by checking if standings is an array of objects that each have a `teams` array.
+  const standingsValue = asArray(dig(data, 'standings'));
+  if (standingsValue.length > 0 && standingsValue.every(g => {
+    const obj = asObject(g);
+    return obj !== null && Array.isArray(obj.teams);
+  })) {
+    for (const groupRaw of standingsValue) {
+      const group = asObject(groupRaw);
+      if (!group) continue;
+      const conference = String(group.name || '').trim() || undefined;
+      for (const teamRaw of asArray(group.teams)) {
+        const t = asObject(teamRaw);
+        if (!t) continue;
+        const teamName = String(t.displayName || t.name || '').trim();
+        if (!teamName) continue;
+        normalized.push({
+          teamName,
+          abbreviation: String(t.abbreviation || '').toUpperCase() || undefined,
+          logo: typeof t.logo === 'string' ? t.logo : undefined,
+          wins: asNumber(t.wins) ?? 0,
+          losses: asNumber(t.losses) ?? 0,
+          winPct: asNumber(t.pct) ?? asNumber(t.winPercentage) ?? undefined,
+          netRating: asNumber(t.netRating) ?? undefined,
+          conference,
+        });
+      }
+    }
+    if (normalized.length > 0) return normalized;
+    // Fall through to generic parsing if grouped format yielded nothing
+  }
+
   const directList = asArray(dig(data, 'standings', 'teams', 'entries'));
   const blocks = directList.length > 0
     ? directList
