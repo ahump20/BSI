@@ -8,6 +8,70 @@ import { DateTime } from 'luxon';
 import { json, cachedJson, kvGet, kvPut, dataHeaders, getHighlightlyClient, HTTP_CACHE, CACHE_TTL, getScoreboard, getGameSummary, parseInningsToThirds, teamMetadata, metaByEspnId, getLogoUrl } from './shared';
 import { parseEspnBattingLine, parseEspnPitchingLine } from '../../../lib/api-clients/espn-college-baseball';
 
+// ---------------------------------------------------------------------------
+// ESPN Response Types — shapes used throughout this ingest pipeline
+// ---------------------------------------------------------------------------
+
+interface EspnTeamRef {
+  id?: string;
+  displayName?: string;
+  shortDisplayName?: string;
+  abbreviation?: string;
+  logo?: string;
+}
+
+interface EspnCompetitor {
+  homeAway?: string;
+  team?: EspnTeamRef;
+  score?: string | number;
+  records?: Array<{ type: string; summary?: string }>;
+}
+
+interface EspnCompetition {
+  competitors?: EspnCompetitor[];
+  date?: string;
+  status?: { type?: { completed?: boolean; description?: string } };
+}
+
+interface EspnEvent {
+  id: string;
+  competitions?: EspnCompetition[];
+  status?: { type?: { completed?: boolean; description?: string } };
+}
+
+interface EspnScoreboard {
+  events?: EspnEvent[];
+}
+
+interface EspnAthleteEntry {
+  athlete?: { id?: string; displayName?: string; jersey?: string; position?: { abbreviation?: string } };
+  stats?: string[];
+  starter?: boolean;
+}
+
+interface EspnStatGroup {
+  name?: string;
+  type?: string;
+  labels?: string[];
+  athletes?: EspnAthleteEntry[];
+  keys?: string[];
+}
+
+interface EspnTeamBox {
+  team?: EspnTeamRef;
+  statistics?: EspnStatGroup[];
+}
+
+interface EspnBoxscore {
+  players?: EspnTeamBox[];
+}
+
+interface EspnGameSummary {
+  boxscore?: EspnBoxscore;
+  header?: { competitions?: EspnCompetition[] };
+  gameInfo?: Record<string, unknown>;
+}
+
 /**
  * Process finished college baseball games from today's scoreboard.
  * Fetches box scores for each final game not yet processed, and upserts
@@ -25,13 +89,12 @@ export async function processFinishedGames(
   const affectedTeamIdSet = new Set<string>();
 
   // 1. Fetch today's scoreboard
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const scoreboard = await getScoreboard('college-baseball', espnDate) as any;
+  const scoreboard = await getScoreboard('college-baseball', espnDate) as EspnScoreboard;
   const events = scoreboard?.events || [];
 
   // 2. Filter for completed games
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const finals = events.filter((e: any) => {
+
+  const finals = events.filter((e: EspnEvent) => {
     const st = e?.status?.type || e?.competitions?.[0]?.status?.type || {};
     return st.completed === true;
   });
@@ -39,8 +102,8 @@ export async function processFinishedGames(
   if (finals.length === 0) return result;
 
   // 3. Check which games are already processed (chunk to stay under D1's 100-param limit)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const gameIds = finals.map((e: any) => String(e.id));
+
+  const gameIds = finals.map((e: EspnEvent) => String(e.id));
   const processedSet = new Set<string>();
   const PARAM_CHUNK = 80;
   for (let i = 0; i < gameIds.length; i += PARAM_CHUNK) {
@@ -53,8 +116,8 @@ export async function processFinishedGames(
   }
 
   // 4. Process each unprocessed final
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  for (const event of finals as any[]) {
+
+  for (const event of finals) {
     const gameId = String(event.id);
     if (processedSet.has(gameId)) {
       result.skipped++;
@@ -62,8 +125,8 @@ export async function processFinishedGames(
     }
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const summary = await getGameSummary('college-baseball', gameId) as any;
+    
+      const summary = await getGameSummary('college-baseball', gameId) as EspnGameSummary;
       const boxPlayers = summary?.boxscore?.players || [];
 
       // Each entry in boxPlayers is a team: { team: {...}, statistics: [batting, pitching] }
@@ -72,14 +135,14 @@ export async function processFinishedGames(
       const playerEspnIds = new Set<string>();
 
       // Extract competitor info for game log + downstream use
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    
       const competitions = event.competitions || [];
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const competitors = (competitions[0] as any)?.competitors || [];
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const homeCompetitor = competitors.find((c: any) => c.homeAway === 'home');
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const awayCompetitor = competitors.find((c: any) => c.homeAway === 'away');
+    
+      const competitors = (competitions[0] as EspnCompetition)?.competitors || [];
+    
+      const homeCompetitor = competitors.find((c: EspnCompetitor) => c.homeAway === 'home');
+    
+      const awayCompetitor = competitors.find((c: EspnCompetitor) => c.homeAway === 'away');
       const homeTeam = homeCompetitor?.team?.displayName || '';
       const awayTeam = awayCompetitor?.team?.displayName || '';
       const homeTeamId = String(homeCompetitor?.team?.id ?? '');
@@ -88,8 +151,8 @@ export async function processFinishedGames(
       const awayScore = Number(awayCompetitor?.score ?? 0);
 
       // Parse box scores using centralized label-based parser
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      for (const teamBox of boxPlayers as any[]) {
+    
+      for (const teamBox of boxPlayers as EspnTeamBox[]) {
         const teamName = teamBox.team?.displayName || teamBox.team?.shortDisplayName || '';
         const teamId = String(teamBox.team?.id || '');
 
@@ -98,8 +161,8 @@ export async function processFinishedGames(
           const isBatting = labels.includes('AB') || labels.includes('H-AB');
           const isPitching = labels.includes('IP') || labels.includes('ERA');
 
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          for (const athleteEntry of (statGroup.athletes || []) as any[]) {
+        
+          for (const athleteEntry of (statGroup.athletes || []) as EspnAthleteEntry[]) {
             const athlete = athleteEntry.athlete || {};
             const espnId = String(athlete.id || '');
             if (!espnId) continue;
@@ -339,16 +402,16 @@ export async function syncTeamCumulativeStats(
 
   while (currentDate <= today) {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const scoreboard = await getScoreboard('college-baseball', currentDate) as any;
+    
+      const scoreboard = await getScoreboard('college-baseball', currentDate) as EspnScoreboard;
       const events = scoreboard?.events || [];
 
       for (const event of events) {
         const competitions = event.competitions || [];
         for (const comp of competitions) {
           const competitors = comp.competitors || [];
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const isTeamGame = competitors.some((c: any) => String(c.team?.id) === teamId);
+        
+          const isTeamGame = competitors.some((c: EspnCompetitor) => String(c.team?.id) === teamId);
           const isCompleted = comp.status?.type?.completed === true;
 
           if (isTeamGame && isCompleted) {
@@ -396,25 +459,25 @@ export async function syncTeamCumulativeStats(
     }
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const summary = await getGameSummary('college-baseball', game.id) as any;
+    
+      const summary = await getGameSummary('college-baseball', game.id) as EspnGameSummary;
       const boxPlayers = summary?.boxscore?.players || [];
 
       // Check if any team has athlete data (ESPN coverage varies)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const hasAthletes = boxPlayers.some((tb: any) =>
+    
+      const hasAthletes = boxPlayers.some((tb: EspnTeamBox) =>
         (tb.statistics || []).some((sg: { athletes?: unknown[] }) => (sg.athletes || []).length > 0)
       );
 
       if (!hasAthletes) {
         gamesNoData++;
         // Still mark as processed — extract scores from summary header even without athlete data
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      
         const noAthComps = summary?.header?.competitions?.[0]?.competitors || [];
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const noAthHome = noAthComps.find((c: any) => c.homeAway === 'home');
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const noAthAway = noAthComps.find((c: any) => c.homeAway === 'away');
+      
+        const noAthHome = noAthComps.find((c: EspnCompetitor) => c.homeAway === 'home');
+      
+        const noAthAway = noAthComps.find((c: EspnCompetitor) => c.homeAway === 'away');
         const noAthHomeTeam = noAthHome?.team?.displayName || '';
         const noAthAwayTeam = noAthAway?.team?.displayName || '';
         const noAthHomeId = String(noAthHome?.team?.id ?? '');
@@ -439,8 +502,8 @@ export async function syncTeamCumulativeStats(
       // Parse box scores using centralized label-based parser
       const stmts: D1PreparedStatement[] = [];
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      for (const teamBox of boxPlayers as any[]) {
+    
+      for (const teamBox of boxPlayers as EspnTeamBox[]) {
         const tbName = teamBox.team?.displayName || teamBox.team?.shortDisplayName || '';
         const tbId = String(teamBox.team?.id || '');
         if (tbId === teamId) teamName = tbName;
@@ -450,8 +513,8 @@ export async function syncTeamCumulativeStats(
           const isBatting = labels.includes('AB') || labels.includes('H-AB');
           const isPitching = labels.includes('IP') || labels.includes('ERA');
 
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          for (const athleteEntry of (statGroup.athletes || []) as any[]) {
+        
+          for (const athleteEntry of (statGroup.athletes || []) as EspnAthleteEntry[]) {
             const athlete = athleteEntry.athlete || {};
             const espnId = String(athlete.id || '');
             if (!espnId) continue;
@@ -531,10 +594,10 @@ export async function syncTeamCumulativeStats(
 
       // Extract scores from summary header (mirrors processFinishedGames pattern)
       const syncComps = summary?.header?.competitions?.[0]?.competitors || [];
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const syncHome = syncComps.find((c: any) => c.homeAway === 'home');
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const syncAway = syncComps.find((c: any) => c.homeAway === 'away');
+    
+      const syncHome = syncComps.find((c: EspnCompetitor) => c.homeAway === 'home');
+    
+      const syncAway = syncComps.find((c: EspnCompetitor) => c.homeAway === 'away');
       const syncHomeTeam = syncHome?.team?.displayName || '';
       const syncAwayTeam = syncAway?.team?.displayName || '';
       const syncHomeId = String(syncHome?.team?.id ?? '');
@@ -665,7 +728,7 @@ export async function handleHighlightlySync(
   }
 
   // Process each target team
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const results: Array<{
     team: string;
     slug: string;
@@ -1042,8 +1105,8 @@ async function backfillGameLogForDate(
       batch.map(async (game) => {
         const stmts: D1PreparedStatement[] = [];
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const summary = await getGameSummary('college-baseball', game.game_id) as any;
+      
+        const summary = await getGameSummary('college-baseball', game.game_id) as EspnGameSummary;
         const boxPlayers = summary?.boxscore?.players || [];
 
         for (const teamBox of boxPlayers) {
@@ -1054,8 +1117,8 @@ async function backfillGameLogForDate(
             const isBatting = labels.includes('AB') || labels.includes('H-AB');
             const isPitching = labels.includes('IP') || labels.includes('ERA');
 
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            for (const athleteEntry of (statGroup.athletes || []) as any[]) {
+          
+            for (const athleteEntry of (statGroup.athletes || []) as EspnAthleteEntry[]) {
               const athlete = athleteEntry.athlete || {};
               const espnId = String(athlete.id || '');
               if (!espnId) continue;
