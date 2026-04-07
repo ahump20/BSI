@@ -1,19 +1,18 @@
 'use client';
 
 /**
- * BSI Homepage — Monument / Brand-Forward
+ * BSI Homepage — Editorial Intelligence Landing
  *
- * Broadcast opening sequence: fire dachshund shield at monument scale,
- * tagline as declaration, live score ticker, standout players, leaderboards,
- * navigation grid. Heritage Design System v2.1 throughout.
+ * Structure: Hero → Score Ticker → Value Proposition (pitch + standout proof) →
+ * Savant Leaderboard Preview → Multi-sport News → Product Grid → Closing CTA → Brand Strip
+ *
+ * Heritage Design System v2.1 throughout. All data wired to live APIs.
  */
 
 import { useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSportData } from '@/lib/hooks/useSportData';
-import { ScrollReveal } from '@/components/cinematic';
-import { Stagger, StaggerItem } from '@/components/motion/Stagger';
 import { DataTransition } from '@/components/motion/DataTransition';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { fmt3, fmt2 } from '@/lib/analytics/viz';
@@ -67,6 +66,19 @@ interface ScoresResponse {
   meta?: { source: string; fetched_at: string; timezone: string };
 }
 
+interface NewsArticle {
+  headline?: string;
+  description?: string;
+  link?: string;
+  published?: string;
+  images?: { url: string; caption?: string }[];
+}
+
+interface NewsBucket {
+  sport: string;
+  data: { articles: NewsArticle[] };
+}
+
 // ---------------------------------------------------------------------------
 // Navigation items — product entry points
 // ---------------------------------------------------------------------------
@@ -82,6 +94,16 @@ const NAV_ITEMS: readonly { title: string; href: string; desc: string; accent?: 
   { title: 'Ask BSI', href: '/ask/', desc: 'AI-powered analysis' },
 ];
 
+// Sport labels for news
+const SPORT_LABELS: Record<string, string> = {
+  nfl: 'NFL',
+  nba: 'NBA',
+  mlb: 'MLB',
+  ncaafb: 'CFB',
+  cbb: 'CBB',
+  d1bb: 'College Baseball',
+};
+
 // ---------------------------------------------------------------------------
 // Score Ticker
 // ---------------------------------------------------------------------------
@@ -89,7 +111,6 @@ const NAV_ITEMS: readonly { title: string; href: string; desc: string; accent?: 
 function ScoreTicker({ games }: { games: ScoreGame[] }) {
   if (!games.length) return null;
 
-  // Duplicate the list so the marquee loops seamlessly
   const doubled = [...games, ...games];
 
   return (
@@ -147,7 +168,6 @@ function ScoreTicker({ games }: { games: ScoreGame[] }) {
         })}
       </div>
 
-      {/* Fade edges for seamless infinite scroll */}
       <div
         className="absolute left-0 top-0 bottom-0 w-12 z-10 pointer-events-none"
         style={{ background: 'linear-gradient(to right, var(--surface-dugout), transparent)' }}
@@ -156,8 +176,6 @@ function ScoreTicker({ games }: { games: ScoreGame[] }) {
         className="absolute right-0 top-0 bottom-0 w-12 z-10 pointer-events-none"
         style={{ background: 'linear-gradient(to left, var(--surface-dugout), transparent)' }}
       />
-
-      {/* Animation defined in globals.css: .ticker-track / @keyframes ticker-scroll */}
     </div>
   );
 }
@@ -266,7 +284,6 @@ function LeaderboardTable({
 }) {
   return (
     <div>
-      {/* Header bar */}
       <div
         className="flex items-center justify-between px-4 py-2.5"
         style={{
@@ -289,7 +306,6 @@ function LeaderboardTable({
         </Link>
       </div>
 
-      {/* Table */}
       <div
         className="border border-t-0 overflow-x-auto"
         style={{ borderColor: 'var(--border-vintage)', borderRadius: '0 0 2px 2px' }}
@@ -371,7 +387,6 @@ function LeaderboardTable({
         </table>
       </div>
 
-      {/* Trust cue */}
       {meta && (
         <div
           className="flex items-center justify-between px-4 py-1.5 text-[9px]"
@@ -395,7 +410,7 @@ function LeaderboardTable({
 }
 
 // ---------------------------------------------------------------------------
-// Table Skeleton
+// Skeletons
 // ---------------------------------------------------------------------------
 
 function TableSkeleton() {
@@ -423,10 +438,6 @@ function TableSkeleton() {
   );
 }
 
-// ---------------------------------------------------------------------------
-// Standout Skeleton
-// ---------------------------------------------------------------------------
-
 function StandoutSkeleton() {
   return (
     <div className="heritage-card p-5 animate-pulse">
@@ -444,10 +455,6 @@ function StandoutSkeleton() {
     </div>
   );
 }
-
-// ---------------------------------------------------------------------------
-// Page Component
-// ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
 // Empty / Error States
@@ -492,6 +499,73 @@ function StandoutEmpty() {
 }
 
 // ---------------------------------------------------------------------------
+// News Card
+// ---------------------------------------------------------------------------
+
+function NewsCard({ article, sport }: { article: NewsArticle; sport: string }) {
+  const sportLabel = SPORT_LABELS[sport] ?? sport.toUpperCase();
+  const imgUrl = article.images?.[0]?.url;
+
+  return (
+    <a
+      href={article.link ?? '#'}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group heritage-card overflow-hidden flex flex-col"
+    >
+      {imgUrl && (
+        <div className="relative h-32 sm:h-36 overflow-hidden">
+          <img
+            src={imgUrl}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            style={{ filter: 'brightness(0.8) saturate(0.9)' }}
+          />
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{ background: 'linear-gradient(to top, rgba(22,22,22,0.9) 0%, transparent 60%)' }}
+          />
+          <span
+            className="absolute bottom-2 left-3 text-[9px] uppercase tracking-[0.15em] font-bold px-1.5 py-0.5"
+            style={{
+              fontFamily: 'var(--font-oswald)',
+              color: 'var(--bsi-bone)',
+              background: 'var(--bsi-primary)',
+            }}
+          >
+            {sportLabel}
+          </span>
+        </div>
+      )}
+      {!imgUrl && (
+        <div className="px-3 pt-3">
+          <span
+            className="text-[9px] uppercase tracking-[0.15em] font-bold px-1.5 py-0.5 inline-block mb-2"
+            style={{
+              fontFamily: 'var(--font-oswald)',
+              color: 'var(--bsi-bone)',
+              background: 'var(--bsi-primary)',
+            }}
+          >
+            {sportLabel}
+          </span>
+        </div>
+      )}
+      <div className="px-3 pb-3 pt-2 flex-1">
+        <p
+          className="text-xs sm:text-sm font-semibold leading-snug line-clamp-2 group-hover:text-[var(--bsi-primary)] transition-colors"
+          style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+        >
+          {article.headline}
+        </p>
+      </div>
+    </a>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Page Component
 // ---------------------------------------------------------------------------
 
@@ -503,10 +577,26 @@ export function HomePageClient() {
     useSportData<LeaderboardResponse>('/api/savant/pitching/leaderboard?limit=50', { refreshInterval: 300_000 });
   const { data: scoresRes } =
     useSportData<ScoresResponse>('/api/college-baseball/scores', { refreshInterval: 30_000 });
+  const { data: newsRes } =
+    useSportData<NewsBucket[]>('/api/intel/news', { refreshInterval: 600_000 });
 
   const batters = battingRes?.data ?? [];
   const pitchers = pitchingRes?.data ?? [];
   const games: ScoreGame[] = scoresRes?.games ?? scoresRes?.data ?? [];
+
+  // Derived: news articles — pick top 2 per sport, max 6 total
+  const newsArticles = useMemo(() => {
+    if (!Array.isArray(newsRes)) return [];
+    const articles: { article: NewsArticle; sport: string }[] = [];
+    for (const bucket of newsRes) {
+      const sport = bucket.sport;
+      const items = bucket.data?.articles ?? [];
+      for (const a of items.slice(0, 2)) {
+        if (a.headline) articles.push({ article: a, sport });
+      }
+    }
+    return articles.slice(0, 6);
+  }, [newsRes]);
 
   // Derived: standout players
   const topHitter = useMemo(() => {
@@ -533,13 +623,13 @@ export function HomePageClient() {
     <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard)' }}>
 
       {/* ================================================================= */}
-      {/* HERO — Monument shield, tagline, live badge                        */}
+      {/* HERO — Headline-led, always visible (no ScrollReveal)             */}
       {/* ================================================================= */}
       <section
-        className="relative overflow-hidden corner-marks"
+        className="relative overflow-hidden"
         style={{ background: 'var(--surface-scoreboard)' }}
       >
-        {/* Hero backdrop — cinematic baseball at dusk, Hudl-style photography */}
+        {/* Hero backdrop */}
         <img
           src="/images/brand/bsi-hero-backdrop.webp"
           alt=""
@@ -547,103 +637,108 @@ export function HomePageClient() {
           loading="eager"
           decoding="async"
           className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-          style={{ opacity: 0.18 }}
+          style={{ opacity: 0.15 }}
         />
 
-        {/* Warm radial glow — centered on the shield, burnt-orange atmosphere */}
+        {/* Atmospheric overlays */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: 'radial-gradient(ellipse 55% 65% at 50% 40%, rgba(191,87,0,0.12) 0%, transparent 70%)',
+            background: 'radial-gradient(ellipse 55% 65% at 50% 40%, rgba(191,87,0,0.10) 0%, transparent 70%)',
           }}
         />
-
-        {/* Cool counter-glow — top-right, columbia-blue for depth */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: 'radial-gradient(ellipse 40% 40% at 80% 15%, rgba(75,156,211,0.04) 0%, transparent 70%)',
+            background: 'radial-gradient(ellipse 80% 75% at 50% 45%, transparent 30%, rgba(0,0,0,0.50) 100%)',
           }}
         />
+        <div className="absolute inset-0 pointer-events-none grain-overlay" style={{ opacity: 0.3 }} />
 
-        {/* Vignette — draws focus to center content */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: 'radial-gradient(ellipse 80% 75% at 50% 45%, transparent 30%, rgba(0,0,0,0.55) 100%)',
-          }}
-        />
+        {/* Hero content — always visible, CSS-animated */}
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-8 pb-6 sm:pt-12 sm:pb-8 md:pt-14 md:pb-10">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-8">
 
-        {/* Grain texture */}
-        <div className="absolute inset-0 pointer-events-none grain-overlay" style={{ opacity: 0.35 }} />
+            {/* Shield logo — accent scale, not monument */}
+            <div className="shrink-0 hero-entrance" style={{ animationDelay: '0ms' }}>
+              <Image
+                src="/images/brand/bsi-logo-primary.webp"
+                alt="Blaze Sports Intel"
+                width={120}
+                height={120}
+                className="w-[72px] sm:w-[88px] md:w-[100px] h-auto drop-shadow-[0_0_40px_rgba(191,87,0,0.2)]"
+                priority
+              />
+            </div>
 
-        <div className="relative z-10 flex flex-col items-center text-center px-4 pt-12 pb-8 sm:pt-16 sm:pb-10 md:pt-20 md:pb-12">
-
-          {/* Shield logo — monument scale */}
-          <ScrollReveal direction="scale" delay={0} className="mb-6">
-            <Image
-              src="/images/brand/bsi-logo-primary.webp"
-              alt="Blaze Sports Intel — fire dachshund shield"
-              width={400}
-              height={400}
-              className="w-[240px] sm:w-[300px] md:w-[360px] lg:w-[400px] h-auto drop-shadow-[0_0_60px_rgba(191,87,0,0.25)]"
-              priority
-            />
-          </ScrollReveal>
-
-          {/* Tagline */}
-          <ScrollReveal delay={150}>
-            <p
-              className="text-lg sm:text-xl md:text-2xl italic tracking-wide"
-              style={{
-                fontFamily: 'var(--font-cormorant)',
-                color: 'var(--bsi-primary)',
-              }}
-            >
-              Born to Blaze the Path Beaten Less
-            </p>
-          </ScrollReveal>
-
-          {/* Subtitle */}
-          <ScrollReveal delay={300}>
-            <p
-              className="mt-3 text-[11px] sm:text-xs uppercase tracking-[0.2em]"
-              style={{
-                fontFamily: 'var(--font-oswald)',
-                color: 'var(--bsi-dust)',
-              }}
-            >
-              Sabermetric simplicity in sports
-            </p>
-          </ScrollReveal>
-
-          {/* Live badge */}
-          {liveCount > 0 && (
-            <ScrollReveal delay={450}>
-              <Link
-                href="/scores/"
-                className="mt-5 inline-flex items-center gap-2 px-4 py-1.5 rounded-sm border transition-all
-                           hover:bg-[rgba(16,185,129,0.08)] hover:border-[rgba(16,185,129,0.3)]"
+            {/* Text column */}
+            <div className="hero-entrance" style={{ animationDelay: '100ms' }}>
+              <h1
+                className="text-2xl sm:text-3xl md:text-4xl font-bold uppercase tracking-wide leading-tight"
+                style={{ fontFamily: 'var(--font-bebas)', color: 'var(--bsi-bone)' }}
+              >
+                Sports Intelligence,{' '}
+                <span style={{ color: 'var(--bsi-primary)' }}>Unfiltered</span>
+              </h1>
+              <p
+                className="mt-2 text-sm sm:text-base italic tracking-wide"
                 style={{
-                  borderColor: 'rgba(16,185,129,0.2)',
-                  background: 'rgba(16,185,129,0.04)',
+                  fontFamily: 'var(--font-cormorant)',
+                  color: 'var(--bsi-primary)',
                 }}
               >
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
-                </span>
-                <DataTransition value={liveCount} mode="flip">
+                Born to Blaze the Path Beaten Less
+              </p>
+              <p
+                className="mt-2 text-[11px] sm:text-xs leading-relaxed max-w-lg"
+                style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)' }}
+              >
+                Real-time scores, park-adjusted sabermetrics, and scouting intel across college baseball, MLB, NFL, NBA, and college football — updated continuously.
+              </p>
+
+              {/* Action row */}
+              <div className="flex items-center gap-3 mt-4">
+                <Link
+                  href="/scores/"
+                  className="btn-heritage-fill text-[11px] uppercase tracking-wider px-4 py-2"
+                  style={{ fontFamily: 'var(--font-oswald)' }}
+                >
+                  Live Scores
+                </Link>
+                <Link
+                  href="/college-baseball/savant/"
+                  className="btn-heritage text-[11px] uppercase tracking-wider px-4 py-2"
+                  style={{ fontFamily: 'var(--font-oswald)' }}
+                >
+                  BSI Savant
+                </Link>
+
+                {/* Live badge */}
+                {liveCount > 0 && (
                   <span
-                    className="text-[10px] uppercase tracking-wider font-semibold"
-                    style={{ fontFamily: 'var(--font-mono)', color: '#10B981' }}
+                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border ml-1"
+                    style={{
+                      borderColor: 'rgba(16,185,129,0.25)',
+                      background: 'rgba(16,185,129,0.06)',
+                    }}
                   >
-                    {liveCount} {liveCount === 1 ? 'game' : 'games'} live
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+                    </span>
+                    <DataTransition value={liveCount} mode="flip">
+                      <span
+                        className="text-[10px] uppercase tracking-wider font-semibold"
+                        style={{ fontFamily: 'var(--font-mono)', color: '#10B981' }}
+                      >
+                        {liveCount} live
+                      </span>
+                    </DataTransition>
                   </span>
-                </DataTransition>
-              </Link>
-            </ScrollReveal>
-          )}
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -654,201 +749,399 @@ export function HomePageClient() {
         <ScoreTicker games={games} />
       </DataErrorBoundary>
 
-      {/* Newcomer orientation */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-6">
-        <p
-          className="text-sm italic hidden lg:block"
-          style={{ fontFamily: 'var(--font-cormorant, serif)', color: 'var(--bsi-dust)' }}
-        >
-          Real-time scores, advanced sabermetrics, and scouting intel across five sports — updated continuously.
-        </p>
-      </div>
+      {/* ================================================================= */}
+      {/* VALUE PROPOSITION — Asymmetric split: pitch + live proof           */}
+      {/* ================================================================= */}
+      <section
+        className="relative"
+        style={{
+          borderTop: '1px solid var(--border-vintage)',
+          background: 'linear-gradient(180deg, var(--surface-press-box) 0%, var(--surface-scoreboard) 100%)',
+        }}
+      >
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14 md:py-16">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
 
-      {/* ================================================================= */}
-      {/* STANDOUT PLAYERS                                                   */}
-      {/* ================================================================= */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 pt-8 sm:pt-10">
-        <Stagger speed="normal" className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-          <StaggerItem>
-            <DataErrorBoundary name="TopHitter" compact>
-              {battingLoading ? (
-                <StandoutSkeleton />
-              ) : topHitter ? (
-                <StandoutCard
-                  label="Top Hitter"
-                  accentColor="#10B981"
-                  player={{ name: topHitter.player_name, team: topHitter.team }}
-                  statLabel="wRC+"
-                  statValue={String(Math.round(topHitter.wrc_plus ?? 0))}
-                  supportingStats={[
-                    { label: 'wOBA', value: fmt3(topHitter.woba ?? 0) },
-                    { label: 'AVG', value: fmt3(topHitter.avg ?? 0) },
-                    { label: 'ISO', value: fmt3(topHitter.iso ?? 0) },
-                  ]}
-                  href={topHitter.player_id ? `/college-baseball/savant/player/${topHitter.player_id}/` : '/college-baseball/savant/'}
-                />
-              ) : (
-                <StandoutEmpty />
-              )}
-            </DataErrorBoundary>
-          </StaggerItem>
-          <StaggerItem>
-            <DataErrorBoundary name="TopPitcher" compact>
-              {pitchingLoading ? (
-                <StandoutSkeleton />
-              ) : topPitcher ? (
-                <StandoutCard
-                  label="Top Pitcher"
-                  accentColor="#4B9CD3"
-                  player={{ name: topPitcher.player_name, team: topPitcher.team }}
-                  statLabel="FIP"
-                  statValue={fmt2(topPitcher.fip ?? 0)}
-                  supportingStats={[
-                    { label: 'ERA', value: fmt2(topPitcher.era ?? 0) },
-                    { label: 'K/9', value: fmt2(topPitcher.k_9 ?? 0) },
-                    { label: 'WHIP', value: fmt2(topPitcher.whip ?? 0) },
-                  ]}
-                  href={topPitcher.player_id ? `/college-baseball/savant/player/${topPitcher.player_id}/` : '/college-baseball/savant/'}
-                />
-              ) : (
-                <StandoutEmpty />
-              )}
-            </DataErrorBoundary>
-          </StaggerItem>
-        </Stagger>
+            {/* Left column — the pitch */}
+            <div className="lg:col-span-7">
+              <div
+                className="section-rule-thick mb-5"
+                style={{ width: '2.5rem' }}
+              />
+              <h2
+                className="text-xl sm:text-2xl md:text-3xl font-bold uppercase leading-tight"
+                style={{ fontFamily: 'var(--font-bebas)', color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}
+              >
+                The numbers scouts<br className="hidden sm:block" />{' '}
+                actually argue about
+              </h2>
+              <p
+                className="mt-4 text-sm sm:text-base leading-relaxed max-w-lg"
+                style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)', lineHeight: 1.75 }}
+              >
+                Park-adjusted wOBA. Fielding-independent pitching. Conference strength indexes.
+                BSI computes the advanced metrics that separate the signal from the box score
+                — across all 330 D1 programs, recalculated every six hours.
+              </p>
+
+              {/* Proof points — inline, not cards */}
+              <div
+                className="mt-6 pt-5 border-t flex flex-wrap gap-x-8 gap-y-3"
+                style={{ borderColor: 'rgba(140,98,57,0.15)' }}
+              >
+                {[
+                  { stat: '330', label: 'D1 Programs' },
+                  { stat: '6hr', label: 'Recompute Cycle' },
+                  { stat: '5', label: 'Sports Covered' },
+                ].map((p) => (
+                  <div key={p.label}>
+                    <span
+                      className="text-lg sm:text-xl font-bold tabular-nums"
+                      style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-primary)' }}
+                    >
+                      {p.stat}
+                    </span>
+                    <span
+                      className="block text-[9px] uppercase tracking-[0.15em] mt-0.5"
+                      style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-dust)' }}
+                    >
+                      {p.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right column — live proof (standout cards) */}
+            <div className="lg:col-span-5 flex flex-col gap-3 sm:gap-4">
+              <p
+                className="text-[10px] uppercase tracking-[0.15em] font-semibold mb-1"
+                style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-dust)' }}
+              >
+                Right now on the leaderboard
+              </p>
+              <DataErrorBoundary name="TopHitter" compact>
+                {battingLoading ? (
+                  <StandoutSkeleton />
+                ) : topHitter ? (
+                  <StandoutCard
+                    label="Top Hitter"
+                    accentColor="#10B981"
+                    player={{ name: topHitter.player_name, team: topHitter.team }}
+                    statLabel="wRC+"
+                    statValue={String(Math.round(topHitter.wrc_plus ?? 0))}
+                    supportingStats={[
+                      { label: 'wOBA', value: fmt3(topHitter.woba ?? 0) },
+                      { label: 'AVG', value: fmt3(topHitter.avg ?? 0) },
+                      { label: 'ISO', value: fmt3(topHitter.iso ?? 0) },
+                    ]}
+                    href={topHitter.player_id ? `/college-baseball/savant/player/${topHitter.player_id}/` : '/college-baseball/savant/'}
+                  />
+                ) : (
+                  <StandoutEmpty />
+                )}
+              </DataErrorBoundary>
+              <DataErrorBoundary name="TopPitcher" compact>
+                {pitchingLoading ? (
+                  <StandoutSkeleton />
+                ) : topPitcher ? (
+                  <StandoutCard
+                    label="Top Pitcher"
+                    accentColor="#4B9CD3"
+                    player={{ name: topPitcher.player_name, team: topPitcher.team }}
+                    statLabel="FIP"
+                    statValue={fmt2(topPitcher.fip ?? 0)}
+                    supportingStats={[
+                      { label: 'ERA', value: fmt2(topPitcher.era ?? 0) },
+                      { label: 'K/9', value: fmt2(topPitcher.k_9 ?? 0) },
+                      { label: 'WHIP', value: fmt2(topPitcher.whip ?? 0) },
+                    ]}
+                    href={topPitcher.player_id ? `/college-baseball/savant/player/${topPitcher.player_id}/` : '/college-baseball/savant/'}
+                  />
+                ) : (
+                  <StandoutEmpty />
+                )}
+              </DataErrorBoundary>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* ================================================================= */}
-      {/* LEADERBOARDS                                                       */}
+      {/* SECTION DIVIDER                                                    */}
       {/* ================================================================= */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 pt-8 sm:pt-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
-          <ScrollReveal delay={0}>
-            <DataErrorBoundary name="BattingLeaderboard" compact>
-              {battingLoading ? (
-                <TableSkeleton />
-              ) : batters.length > 0 ? (
-                <LeaderboardTable
-                  title="Batting Leaders"
-                  href="/college-baseball/savant/"
-                  data={batters}
-                  meta={battingRes?.meta ? { source: battingRes.meta.source, fetched_at: battingRes.meta.fetched_at } : undefined}
-                  columns={[
-                    { key: 'woba', label: 'wOBA', format: fmt3, accent: true },
-                    { key: 'wrc_plus', label: 'wRC+', format: (v) => String(Math.round(v)) },
-                    { key: 'avg', label: 'AVG', format: fmt3 },
-                    { key: 'slg', label: 'SLG', format: fmt3 },
-                  ]}
-                />
-              ) : (
-                <LeaderboardEmpty title="Batting Leaders" error={battingError} onRetry={retryBatting} />
-              )}
-            </DataErrorBoundary>
-          </ScrollReveal>
+      <div className="section-break" aria-hidden="true">
+        <span className="section-break-diamond" />
+      </div>
 
-          {/* Section rule between batting and pitching */}
+      {/* ================================================================= */}
+      {/* SAVANT PREVIEW — Leaderboards framed as product teaser             */}
+      {/* ================================================================= */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 mb-6">
+          <div>
+            <h2
+              className="text-lg sm:text-xl md:text-2xl font-bold uppercase"
+              style={{ fontFamily: 'var(--font-bebas)', color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}
+            >
+              BSI Savant Leaderboard
+            </h2>
+            <p
+              className="text-xs mt-1 max-w-md"
+              style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)' }}
+            >
+              wOBA, wRC+, FIP, and ERA- for every qualifier in D1 baseball. Park-adjusted. Conference-weighted.
+            </p>
+          </div>
+          <Link
+            href="/college-baseball/savant/"
+            className="btn-heritage text-[10px] uppercase tracking-wider px-4 py-2 shrink-0 self-start sm:self-auto"
+            style={{ fontFamily: 'var(--font-oswald)' }}
+          >
+            Open full Savant &rarr;
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
+          <DataErrorBoundary name="BattingLeaderboard" compact>
+            {battingLoading ? (
+              <TableSkeleton />
+            ) : batters.length > 0 ? (
+              <LeaderboardTable
+                title="Batting Leaders"
+                href="/college-baseball/savant/"
+                data={batters}
+                meta={battingRes?.meta ? { source: battingRes.meta.source, fetched_at: battingRes.meta.fetched_at } : undefined}
+                columns={[
+                  { key: 'woba', label: 'wOBA', format: fmt3, accent: true },
+                  { key: 'wrc_plus', label: 'wRC+', format: (v) => String(Math.round(v)) },
+                  { key: 'avg', label: 'AVG', format: fmt3 },
+                  { key: 'slg', label: 'SLG', format: fmt3 },
+                ]}
+              />
+            ) : (
+              <LeaderboardEmpty title="Batting Leaders" error={battingError} onRetry={retryBatting} />
+            )}
+          </DataErrorBoundary>
+
           <div
             className="col-span-full my-2 border-t lg:hidden"
             style={{ borderColor: 'var(--border-vintage)' }}
           />
 
-          <ScrollReveal delay={100}>
-            <DataErrorBoundary name="PitchingLeaderboard" compact>
-              {pitchingLoading ? (
-                <TableSkeleton />
-              ) : pitchers.length > 0 ? (
-                <LeaderboardTable
-                  title="Pitching Leaders"
-                  href="/college-baseball/savant/"
-                  data={pitchers}
-                  meta={pitchingRes?.meta ? { source: pitchingRes.meta.source, fetched_at: pitchingRes.meta.fetched_at } : undefined}
-                  columns={[
-                    { key: 'fip', label: 'FIP', format: fmt2, accent: true },
-                    { key: 'era', label: 'ERA', format: fmt2 },
-                    { key: 'k_9', label: 'K/9', format: fmt2 },
-                    { key: 'whip', label: 'WHIP', format: fmt2 },
-                  ]}
-                />
-              ) : (
-                <LeaderboardEmpty title="Pitching Leaders" error={pitchingError} onRetry={retryPitching} />
-              )}
-            </DataErrorBoundary>
-          </ScrollReveal>
+          <DataErrorBoundary name="PitchingLeaderboard" compact>
+            {pitchingLoading ? (
+              <TableSkeleton />
+            ) : pitchers.length > 0 ? (
+              <LeaderboardTable
+                title="Pitching Leaders"
+                href="/college-baseball/savant/"
+                data={pitchers}
+                meta={pitchingRes?.meta ? { source: pitchingRes.meta.source, fetched_at: pitchingRes.meta.fetched_at } : undefined}
+                columns={[
+                  { key: 'fip', label: 'FIP', format: fmt2, accent: true },
+                  { key: 'era', label: 'ERA', format: fmt2 },
+                  { key: 'k_9', label: 'K/9', format: fmt2 },
+                  { key: 'whip', label: 'WHIP', format: fmt2 },
+                ]}
+              />
+            ) : (
+              <LeaderboardEmpty title="Pitching Leaders" error={pitchingError} onRetry={retryPitching} />
+            )}
+          </DataErrorBoundary>
         </div>
       </section>
 
       {/* ================================================================= */}
-      {/* NAVIGATION GRID                                                    */}
+      {/* SECTION DIVIDER                                                    */}
       {/* ================================================================= */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 pt-10 sm:pt-12">
-        <ScrollReveal>
-          <h2
-            className="text-xs uppercase tracking-[0.15em] font-bold mb-4"
-            style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary-light)' }}
-          >
-            Explore
-          </h2>
-        </ScrollReveal>
-        <Stagger speed="fast" as="div" className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-          {NAV_ITEMS.map((item) => (
-            <StaggerItem key={item.href}>
-              <Link
-                href={item.href}
-                className="group heritage-card px-4 py-3.5 transition-all block h-full"
-              >
+      <div className="section-break" aria-hidden="true">
+        <span className="section-break-diamond" />
+      </div>
+
+      {/* ================================================================= */}
+      {/* MULTI-SPORT NEWS                                                   */}
+      {/* ================================================================= */}
+      {newsArticles.length > 0 && (
+        <section className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2
+              className="text-xs uppercase tracking-[0.15em] font-bold"
+              style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary-light)' }}
+            >
+              Across the Wire
+            </h2>
+            <Link
+              href="/intel/"
+              className="text-[10px] uppercase tracking-wider transition-colors hover:text-[var(--bsi-primary)]"
+              style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
+            >
+              All intel &rarr;
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+            {newsArticles.map(({ article, sport }, idx) => (
+              <NewsCard key={`${sport}-${idx}`} article={article} sport={sport} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ================================================================= */}
+      {/* SECTION DIVIDER                                                    */}
+      {/* ================================================================= */}
+      <div className="section-break" aria-hidden="true">
+        <span className="section-break-diamond" />
+      </div>
+
+      {/* ================================================================= */}
+      {/* PRODUCT GRID — Tiered hierarchy: primary + secondary               */}
+      {/* ================================================================= */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6">
+        <h2
+          className="text-xs uppercase tracking-[0.15em] font-bold mb-5"
+          style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary-light)' }}
+        >
+          Explore BSI
+        </h2>
+
+        {/* Primary tier — the three flagship products */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-3">
+          {NAV_ITEMS.filter((i) => i.accent).map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="group relative heritage-card overflow-hidden transition-all block"
+              style={{ borderColor: 'rgba(191,87,0,0.2)' }}
+            >
+              <div
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(191,87,0,0.06) 0%, transparent 70%)' }}
+              />
+              <div className="relative px-4 py-5 sm:py-6">
+                <div
+                  className="w-8 h-[2px] mb-3"
+                  style={{ background: 'var(--bsi-primary)' }}
+                />
                 <p
-                  className="text-[11px] sm:text-xs font-bold uppercase tracking-[0.12em] mb-1 transition-colors"
-                  style={{
-                    fontFamily: 'var(--font-oswald)',
-                    color: item.accent ? 'var(--bsi-primary-light)' : 'var(--bsi-bone)',
-                  }}
+                  className="text-sm sm:text-base font-bold uppercase tracking-[0.08em] transition-colors group-hover:text-[var(--bsi-primary)]"
+                  style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
                 >
-                  <span className="group-hover:text-[var(--bsi-primary)]">{item.title}</span>
+                  {item.title}
                 </p>
                 <p
-                  className="text-[9px] sm:text-[10px]"
-                  style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
+                  className="text-[10px] sm:text-[11px] mt-1.5"
+                  style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)' }}
                 >
                   {item.desc}
                 </p>
-              </Link>
-            </StaggerItem>
+              </div>
+            </Link>
           ))}
-        </Stagger>
+        </div>
+
+        {/* Secondary tier — the rest, compact */}
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+          {NAV_ITEMS.filter((i) => !i.accent).map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="group heritage-card px-3 py-2.5 transition-all block"
+            >
+              <p
+                className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.1em] transition-colors group-hover:text-[var(--bsi-primary)]"
+                style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-dust)' }}
+              >
+                {item.title}
+              </p>
+              <p
+                className="text-[9px] mt-0.5"
+                style={{ fontFamily: 'var(--font-mono)', color: 'rgba(196,184,165,0.5)' }}
+              >
+                {item.desc}
+              </p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* ================================================================= */}
+      {/* CLOSING CTA                                                        */}
+      {/* ================================================================= */}
+      <section
+        className="relative mt-12 sm:mt-16"
+        style={{
+          borderTop: '1px solid var(--border-vintage)',
+          background: 'var(--surface-press-box)',
+        }}
+      >
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse 60% 80% at 50% 30%, rgba(191,87,0,0.04) 0%, transparent 70%)' }}
+        />
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16 text-center">
+          <h2
+            className="text-xl sm:text-2xl md:text-3xl font-bold uppercase"
+            style={{ fontFamily: 'var(--font-bebas)', color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}
+          >
+            Start with the data.{' '}
+            <span style={{ color: 'var(--bsi-primary)' }}>See what you find.</span>
+          </h2>
+          <p
+            className="mt-3 text-sm max-w-md mx-auto"
+            style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)', lineHeight: 1.7 }}
+          >
+            Every leaderboard, every live game, every scouting metric — open and updating now.
+          </p>
+          <div className="flex items-center justify-center gap-3 mt-6">
+            <Link
+              href="/college-baseball/savant/"
+              className="btn-heritage-fill text-[11px] uppercase tracking-wider px-5 py-2.5"
+              style={{ fontFamily: 'var(--font-oswald)' }}
+            >
+              Open BSI Savant
+            </Link>
+            <Link
+              href="/scores/"
+              className="btn-heritage text-[11px] uppercase tracking-wider px-5 py-2.5"
+              style={{ fontFamily: 'var(--font-oswald)' }}
+            >
+              Live Scores
+            </Link>
+          </div>
+        </div>
       </section>
 
       {/* ================================================================= */}
       {/* BRAND FOOTER STRIP                                                 */}
       {/* ================================================================= */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 pt-10 pb-8 sm:pt-14 sm:pb-12">
-        <ScrollReveal>
-          <div
-            className="flex items-center justify-center gap-4 py-5 border-t"
-            style={{ borderColor: 'rgba(196,184,165,0.08)' }}
-          >
-            <Image
-              src="/brand/blaze-roundel.png"
-              alt="Blaze Intelligence roundel"
-              width={44}
-              height={44}
-              className="w-10 h-10 sm:w-11 sm:h-11 opacity-75 object-contain"
-            />
-            <div>
-              <p
-                className="text-[10px] uppercase tracking-[0.2em] font-semibold"
-                style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-dust)' }}
-              >
-                Blaze Intelligence
-              </p>
-              <p
-                className="text-[9px] mt-0.5"
-                style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
-              >
-                330 programs &middot; updated every 6 hours
-              </p>
-            </div>
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div
+          className="flex items-center justify-center gap-4 py-4 border-t"
+          style={{ borderColor: 'rgba(196,184,165,0.08)' }}
+        >
+          <Image
+            src="/brand/blaze-roundel.png"
+            alt="Blaze Intelligence roundel"
+            width={44}
+            height={44}
+            className="w-10 h-10 sm:w-11 sm:h-11 opacity-75 object-contain"
+          />
+          <div>
+            <p
+              className="text-[10px] uppercase tracking-[0.2em] font-semibold"
+              style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-dust)' }}
+            >
+              Blaze Intelligence
+            </p>
+            <p
+              className="text-[9px] mt-0.5"
+              style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
+            >
+              330 programs &middot; recalculated every 6 hours
+            </p>
           </div>
-        </ScrollReveal>
+        </div>
       </section>
     </div>
   );
