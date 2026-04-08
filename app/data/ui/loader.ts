@@ -10,7 +10,7 @@ export class DataLoader {
 
   showLoading(message = 'Loading...'): void {
     const loader = document.createElement('div');
-    loader.className = 'data-loader glass';
+    loader.className = 'data-loader heritage-card';
     loader.innerHTML = `
       <div class="loader-spinner"></div>
       <div class="loader-text">${message}</div>
@@ -28,7 +28,7 @@ export class DataLoader {
 
     if (!this.errorContainer) {
       this.errorContainer = document.createElement('div');
-      this.errorContainer.className = 'data-error glass';
+      this.errorContainer.className = 'data-error heritage-card';
       this.container.appendChild(this.errorContainer);
     }
 

@@ -66,7 +66,7 @@ export function IntelSignup({ sport, onSignup }: IntelSignupProps = {}) {
 
   if (state === 'success') {
     return (
-      <div className="bg-[var(--surface-dugout)] border border-[var(--bsi-primary)]/20 rounded-sm p-4 mb-4">
+      <div className="bg-[var(--surface-dugout)] border rounded-sm p-4 mb-4" style={{ borderColor: 'rgba(191, 87, 0, 0.2)' }}>
         <p className="text-sm text-[var(--bsi-primary)] font-medium">You&apos;re in.</p>
         <p className="text-xs text-text-muted mt-1">Roster-market intelligence, delivered first.</p>
       </div>
