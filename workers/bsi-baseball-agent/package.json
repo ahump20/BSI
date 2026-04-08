@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "agents": "^0.2.0",
+    "agents": "^0.3.10",
     "ai": "^6.0.137",
     "@ai-sdk/anthropic": "^1.2.0",
     "zod": "^3.23.0"
