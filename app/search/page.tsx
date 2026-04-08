@@ -85,7 +85,7 @@ function getSportColor(sport: string): string {
 function SearchLoading() {
   return (
     <>
-      <div style={{ minHeight: '100vh', background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
+      <div className="min-h-screen bg-surface-scoreboard text-bsi-bone">
         <Section padding="lg" className="pt-6 min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div
@@ -189,9 +189,9 @@ function SearchContent() {
 
   return (
     <>
-      <div style={{ minHeight: '100vh', background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
+      <div className="min-h-screen bg-surface-scoreboard text-bsi-bone">
         {/* Hero Header */}
-        <Section padding="md" className="relative overflow-hidden" style={{ background: 'var(--surface-scoreboard)' }}>
+        <Section padding="md" className="relative overflow-hidden bg-surface-scoreboard">
           <Container>
             <ScrollReveal direction="up">
               <span className="heritage-stamp block mb-4">Search</span>
@@ -290,27 +290,24 @@ function SearchContent() {
                   {filters.sport && ` in ${getSportLabel(filters.sport)}`}
                 </p>
                 <p className="text-sm mb-6" style={{ color: 'rgba(196,184,165,0.5)' }}>
-                  Try <Link href="/" className="font-medium transition-colors" style={{ color: 'var(--bsi-primary)' }}>Ask BSI</Link> on the homepage — it understands natural language questions like &ldquo;{initialQuery}&rdquo;.
+                  Try <Link href="/" className="font-medium transition-colors text-bsi-primary">Ask BSI</Link> on the homepage — it understands natural language questions like &ldquo;{initialQuery}&rdquo;.
                 </p>
                 <div className="flex flex-wrap justify-center gap-3">
                   <Link
                     href="/college-baseball/teams"
-                    className="px-4 py-2 rounded-sm transition-colors"
-                    style={{ background: 'var(--surface-dugout)', color: 'var(--bsi-bone)' }}
+                    className="px-4 py-2 rounded-sm transition-colors bg-surface-dugout text-bsi-bone"
                   >
                     Browse NCAA Baseball
                   </Link>
                   <Link
                     href="/mlb/teams"
-                    className="px-4 py-2 rounded-sm transition-colors"
-                    style={{ background: 'var(--surface-dugout)', color: 'var(--bsi-bone)' }}
+                    className="px-4 py-2 rounded-sm transition-colors bg-surface-dugout text-bsi-bone"
                   >
                     Browse MLB Teams
                   </Link>
                   <Link
                     href="/nfl/teams"
-                    className="px-4 py-2 rounded-sm transition-colors"
-                    style={{ background: 'var(--surface-dugout)', color: 'var(--bsi-bone)' }}
+                    className="px-4 py-2 rounded-sm transition-colors bg-surface-dugout text-bsi-bone"
                   >
                     Browse NFL Teams
                   </Link>
@@ -358,7 +355,7 @@ function SearchContent() {
                       className="w-12 h-12 rounded-sm flex items-center justify-center shrink-0"
                       style={{ background: 'rgba(191,87,0,0.1)' }}
                     >
-                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" style={{ color: 'var(--bsi-primary)' }} stroke="currentColor" strokeWidth={1.5}>
+                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-bsi-primary" stroke="currentColor" strokeWidth={1.5}>
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" />
                         <path d="M12 16v-4M12 8h.01" />
                       </svg>
@@ -370,13 +367,12 @@ function SearchContent() {
                       >
                         Try Ask BSI
                       </h3>
-                      <p className="text-sm mb-3" style={{ color: 'var(--bsi-dust)' }}>
+                      <p className="text-sm mb-3 text-bsi-dust">
                         Ask questions in plain English — &ldquo;Is Texas a CWS contender?&rdquo; or &ldquo;Who leads D1 in wOBA?&rdquo; — and get answers with links to the right page.
                       </p>
                       <Link
                         href="/"
-                        className="text-sm font-semibold transition-colors"
-                        style={{ color: 'var(--bsi-primary)' }}
+                        className="text-sm font-semibold transition-colors text-bsi-primary"
                       >
                         Ask BSI on the homepage &rarr;
                       </Link>
@@ -403,10 +399,9 @@ function SearchContent() {
                       <Link
                         key={sport.href}
                         href={sport.href}
-                        className="p-4 rounded-sm transition-colors"
-                        style={{ background: 'var(--surface-dugout)' }}
+                        className="p-4 rounded-sm transition-colors bg-surface-dugout"
                       >
-                        <p className="font-medium" style={{ color: 'var(--bsi-bone)' }}>{sport.label}</p>
+                        <p className="font-medium text-bsi-bone">{sport.label}</p>
                         <p className="text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>{sport.sub}</p>
                       </Link>
                     ))}
@@ -454,8 +449,7 @@ function SearchContent() {
                                 {/* Info */}
                                 <div className="flex-1 min-w-0">
                                   <p
-                                    className="font-semibold transition-colors truncate group-hover:text-bsi-primary"
-                                    style={{ color: 'var(--bsi-bone)' }}
+                                    className="font-semibold transition-colors truncate group-hover:text-bsi-primary text-bsi-bone"
                                   >
                                     {item.name}
                                   </p>

@@ -3,8 +3,7 @@ import Link from 'next/link';
 export default function NotFound() {
   return (
     <div
-      className="min-h-[80vh] flex items-center justify-center px-4"
-      style={{ background: 'var(--surface-scoreboard, #0A0A0A)' }}
+      className="min-h-[80vh] flex items-center justify-center px-4 bg-surface-scoreboard"
     >
       <div className="max-w-lg mx-auto text-center">
         {/* 404 number — Bebas Neue hero scale */}

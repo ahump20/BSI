@@ -533,8 +533,7 @@ export default function CollegeBaseballRankingsPage() {
             <div className="mt-10">
               <Link
                 href="/college-baseball/savant"
-                className="block p-4 transition-colors group"
-                style={{ background: 'var(--surface-dugout, #161616)', border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))' }}
+                className="block p-4 transition-colors group bg-surface-dugout border border-border-vintage"
               >
                 <div className="flex items-center justify-between">
                   <div>

@@ -446,8 +446,7 @@ export default function SavantPlayerClient() {
         {/*  SCOUTING DOSSIER HERO                                           */}
         {/* ================================================================ */}
         <section
-          className="relative overflow-hidden grain-overlay"
-          style={{ background: 'var(--surface-scoreboard, #0A0A0A)' }}
+          className="relative overflow-hidden grain-overlay bg-surface-scoreboard"
         >
           {/* Team color edge accent — left vertical bar */}
           <div
@@ -661,8 +660,7 @@ export default function SavantPlayerClient() {
                             <>
                               <span className="w-1 h-1 rounded-full" style={{ background: 'var(--bsi-dust)' }} aria-hidden="true" />
                               <span
-                                className="text-xs font-mono"
-                                style={{ color: 'var(--bsi-dust)' }}
+                                className="text-xs font-mono text-bsi-dust"
                               >
                                 {pitching.w}-{pitching.l}{pitching.sv > 0 ? `, ${pitching.sv} SV` : ''} &middot; {fmt1(pitching.ip)} IP
                               </span>
@@ -1129,7 +1127,7 @@ function ScoutingGrades({
           >
             Scouting Grades
           </h2>
-          <p className="text-[10px] mt-0.5" style={{ color: 'var(--bsi-dust)' }}>
+          <p className="text-[10px] mt-0.5 text-bsi-dust">
             20-80 scale from D1 percentile rank
           </p>
         </div>

@@ -14,9 +14,9 @@ export default function PageError({ error, reset }: ErrorProps) {
 
   return (
     <div className="min-h-[60vh] flex items-center justify-center px-4">
-      <div className="max-w-md w-full rounded-sm border p-8 text-center" style={{ backgroundColor: 'var(--surface-dugout)', borderColor: 'var(--border-vintage)' }}>
-        <h2 className="text-xl font-bold mb-2" style={{ color: 'var(--bsi-bone)' }}>Something went wrong</h2>
-        <p className="text-sm mb-6" style={{ color: 'var(--bsi-dust)' }}>
+      <div className="max-w-md w-full rounded-sm border p-8 text-center bg-surface-dugout border-border-vintage">
+        <h2 className="text-xl font-bold mb-2 text-bsi-bone">Something went wrong</h2>
+        <p className="text-sm mb-6 text-bsi-dust">
           {error.message || 'An unexpected error occurred. Please try again.'}
         </p>
         <button
@@ -27,8 +27,7 @@ export default function PageError({ error, reset }: ErrorProps) {
         </button>
         <a
           href="/"
-          className="block mt-3 text-sm transition-colors"
-          style={{ color: 'var(--heritage-columbia-blue)' }}
+          className="block mt-3 text-sm transition-colors text-heritage-columbia"
         >
           Back to home
         </a>

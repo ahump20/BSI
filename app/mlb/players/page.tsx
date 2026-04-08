@@ -188,7 +188,7 @@ export default function MLBPlayersPage() {
 
   return (
     <>
-      <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
+      <div className="min-h-screen bg-surface-scoreboard text-bsi-bone">
         {/* Breadcrumb */}
         <Section padding="sm" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
           <Container>
@@ -201,7 +201,7 @@ export default function MLBPlayersPage() {
                 MLB
               </Link>
               <span style={{ color: 'rgba(196,184,165,0.5)' }}>/</span>
-              <span className="font-medium" style={{ color: 'var(--bsi-bone)' }}>Players</span>
+              <span className="font-medium text-bsi-bone">Players</span>
             </nav>
           </Container>
         </Section>
@@ -227,7 +227,7 @@ export default function MLBPlayersPage() {
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="max-w-2xl" style={{ color: 'var(--bsi-dust)' }}>
+              <p className="max-w-2xl text-bsi-dust">
                 Browse player statistics with advanced sabermetrics. Click any player for detailed
                 stats, splits, and game logs.
               </p>
@@ -346,7 +346,7 @@ export default function MLBPlayersPage() {
                       className="w-4 h-4"
                       style={{ accentColor: 'var(--bsi-primary)' }}
                     />
-                    <span className="text-sm" style={{ color: 'var(--bsi-dust)' }}>Qualified Only</span>
+                    <span className="text-sm text-bsi-dust">Qualified Only</span>
                   </label>
                 </div>
               </Card>
@@ -372,7 +372,7 @@ export default function MLBPlayersPage() {
             ) : error ? (
               <Card padding="lg" className="text-center">
                 <div className="text-error text-4xl mb-4">!</div>
-                <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--bsi-bone)' }}>Error Loading Players</h3>
+                <h3 className="text-xl font-semibold mb-2 text-bsi-bone">Error Loading Players</h3>
                 <p style={{ color: 'var(--bsi-dust)' }}>{error}</p>
                 <button
                   onClick={fetchPlayers}
@@ -385,7 +385,7 @@ export default function MLBPlayersPage() {
             ) : players.length === 0 ? (
               <Card padding="lg" className="text-center">
                 <div className="text-4xl mb-4" style={{ color: 'rgba(196,184,165,0.5)' }}>?</div>
-                <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--bsi-bone)' }}>No Players Found</h3>
+                <h3 className="text-xl font-semibold mb-2 text-bsi-bone">No Players Found</h3>
                 <p style={{ color: 'var(--bsi-dust)' }}>Try adjusting your filters.</p>
               </Card>
             ) : (
@@ -435,58 +435,57 @@ export default function MLBPlayersPage() {
                           <td className="py-3 px-4">
                             <Link
                               href={`/mlb/players/${player.playerid}`}
-                              className="font-medium transition-colors"
-                              style={{ color: 'var(--bsi-bone)' }}
+                              className="font-medium transition-colors text-bsi-bone"
                             >
                               {player.Name}
                             </Link>
                           </td>
-                          <td className="py-3 px-4 text-sm" style={{ color: 'var(--bsi-dust)' }}>{player.Team}</td>
+                          <td className="py-3 px-4 text-sm text-bsi-dust">{player.Team}</td>
                           {statType === 'bat' ? (
                             <>
-                              <td className="py-3 px-4 text-right font-mono text-sm" style={{ color: 'var(--bsi-dust)' }}>
+                              <td className="py-3 px-4 text-right font-mono text-sm text-bsi-dust">
                                 {formatStat(player.G, 0)}
                               </td>
-                              <td className="py-3 px-4 text-right font-mono text-sm" style={{ color: 'var(--bsi-bone)' }}>
+                              <td className="py-3 px-4 text-right font-mono text-sm text-bsi-bone">
                                 {formatStat(player.AVG)}
                               </td>
-                              <td className="py-3 px-4 text-right font-mono text-sm font-semibold" style={{ color: 'var(--bsi-primary)' }}>
+                              <td className="py-3 px-4 text-right font-mono text-sm font-semibold text-bsi-primary">
                                 {formatStat(player.HR, 0)}
                               </td>
-                              <td className="py-3 px-4 text-right font-mono text-sm" style={{ color: 'var(--bsi-dust)' }}>
+                              <td className="py-3 px-4 text-right font-mono text-sm text-bsi-dust">
                                 {formatStat(player.RBI, 0)}
                               </td>
-                              <td className="py-3 px-4 text-right font-mono text-sm" style={{ color: 'var(--bsi-bone)' }}>
+                              <td className="py-3 px-4 text-right font-mono text-sm text-bsi-bone">
                                 {formatStat(player.OPS)}
                               </td>
-                              <td className="py-3 px-4 text-right font-mono text-sm font-semibold" style={{ color: 'var(--bsi-primary)' }}>
+                              <td className="py-3 px-4 text-right font-mono text-sm font-semibold text-bsi-primary">
                                 {formatStat(player['wRC+'], 0)}
                               </td>
-                              <td className="py-3 px-4 text-right font-mono text-sm font-semibold" style={{ color: 'var(--bsi-primary)' }}>
+                              <td className="py-3 px-4 text-right font-mono text-sm font-semibold text-bsi-primary">
                                 {formatStat(player.WAR, 1)}
                               </td>
                             </>
                           ) : (
                             <>
-                              <td className="py-3 px-4 text-right font-mono text-sm" style={{ color: 'var(--bsi-dust)' }}>
+                              <td className="py-3 px-4 text-right font-mono text-sm text-bsi-dust">
                                 {formatStat(player.G, 0)}
                               </td>
-                              <td className="py-3 px-4 text-right font-mono text-sm" style={{ color: 'var(--bsi-bone)' }}>
+                              <td className="py-3 px-4 text-right font-mono text-sm text-bsi-bone">
                                 {player.W ?? '-'}-{player.L ?? '-'}
                               </td>
-                              <td className="py-3 px-4 text-right font-mono text-sm font-semibold" style={{ color: 'var(--bsi-primary)' }}>
+                              <td className="py-3 px-4 text-right font-mono text-sm font-semibold text-bsi-primary">
                                 {formatStat(player.ERA, 2)}
                               </td>
-                              <td className="py-3 px-4 text-right font-mono text-sm" style={{ color: 'var(--bsi-dust)' }}>
+                              <td className="py-3 px-4 text-right font-mono text-sm text-bsi-dust">
                                 {formatStat(player.IP, 1)}
                               </td>
-                              <td className="py-3 px-4 text-right font-mono text-sm" style={{ color: 'var(--bsi-bone)' }}>
+                              <td className="py-3 px-4 text-right font-mono text-sm text-bsi-bone">
                                 {formatStat(player.K, 0)}
                               </td>
-                              <td className="py-3 px-4 text-right font-mono text-sm font-semibold" style={{ color: 'var(--bsi-primary)' }}>
+                              <td className="py-3 px-4 text-right font-mono text-sm font-semibold text-bsi-primary">
                                 {formatStat(player.FIP, 2)}
                               </td>
-                              <td className="py-3 px-4 text-right font-mono text-sm font-semibold" style={{ color: 'var(--bsi-primary)' }}>
+                              <td className="py-3 px-4 text-right font-mono text-sm font-semibold text-bsi-primary">
                                 {formatStat(player.WAR, 1)}
                               </td>
                             </>
@@ -506,19 +505,17 @@ export default function MLBPlayersPage() {
                   <button
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={page === 1}
-                    className="px-4 py-2 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    style={{ background: 'var(--surface-dugout)', color: 'var(--bsi-bone)' }}
+                    className="px-4 py-2 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-surface-dugout text-bsi-bone"
                   >
                     Previous
                   </button>
-                  <span className="px-4 py-2" style={{ color: 'var(--bsi-dust)' }}>
+                  <span className="px-4 py-2 text-bsi-dust">
                     Page {page} of {pagination.totalPages}
                   </span>
                   <button
                     onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
                     disabled={page === pagination.totalPages}
-                    className="px-4 py-2 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    style={{ background: 'var(--surface-dugout)', color: 'var(--bsi-bone)' }}
+                    className="px-4 py-2 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-surface-dugout text-bsi-bone"
                   >
                     Next
                   </button>

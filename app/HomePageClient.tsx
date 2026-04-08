@@ -345,10 +345,10 @@ function ScoreTicker({
               >
                 {g.sportShort}
               </span>
-              <span className="font-medium" style={{ color: 'var(--bsi-dust)' }}>{awayName}</span>
+              <span className="font-medium text-bsi-dust">{awayName}</span>
               <span className="font-bold tabular-nums mx-0.5" style={{ color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}>{awayScore}</span>
               <span className="mx-0.5" style={{ color: 'rgba(196,184,165,0.5)' }}>@</span>
-              <span className="font-medium" style={{ color: 'var(--bsi-dust)' }}>{homeName}</span>
+              <span className="font-medium text-bsi-dust">{homeName}</span>
               <span className="font-bold tabular-nums mx-0.5" style={{ color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}>{homeScore}</span>
               {isLive && (
                 <span className="inline-flex items-center gap-1 ml-1.5 px-1.5 py-0.5 rounded-sm" style={{ background: 'rgba(16,185,129,0.1)' }}>
@@ -677,14 +677,13 @@ function LeaderboardTable({
                 onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(191,87,0,0.04)')}
                 onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
               >
-                <td className="pl-4 pr-1 py-2 tabular-nums" style={{ color: 'var(--bsi-dust)' }}>
+                <td className="pl-4 pr-1 py-2 tabular-nums text-bsi-dust">
                   {idx + 1}
                 </td>
                 <td className="px-1 py-2 max-w-[180px]">
                   <Link
                     href={row.player_id ? `/college-baseball/savant/player/${row.player_id}/` : '#'}
-                    className="transition-colors duration-100 hover:text-bsi-primary"
-                    style={{ color: 'var(--bsi-bone)' }}
+                    className="transition-colors duration-100 hover:text-bsi-primary text-bsi-bone"
                   >
                     {row.player_name}
                   </Link>
@@ -743,8 +742,8 @@ function TableSkeleton() {
   return (
     <div>
       <div
-        className="h-10"
-        style={{ background: 'var(--surface-press-box)', borderBottom: '2px solid rgba(191,87,0,0.3)' }}
+        className="h-10 bg-surface-press-box"
+        style={{ borderBottom: '2px solid rgba(191,87,0,0.3)' }}
       />
       <div className="border border-t-0 overflow-hidden animate-pulse" style={{ borderColor: 'var(--border-vintage)' }}>
         {Array.from({ length: 8 }).map((_, i) => (
@@ -790,8 +789,8 @@ function LeaderboardEmpty({ title, error, onRetry }: { title: string; error?: st
   return (
     <div>
       <div
-        className="flex items-center justify-between px-4 py-2.5"
-        style={{ background: 'var(--surface-press-box)', borderBottom: '2px solid rgba(191,87,0,0.3)' }}
+        className="flex items-center justify-between px-4 py-2.5 bg-surface-press-box"
+        style={{ borderBottom: '2px solid rgba(191,87,0,0.3)' }}
       >
         <h2
           className="text-xs uppercase tracking-[0.15em] font-bold"
@@ -1014,7 +1013,7 @@ export function HomePageClient() {
   }, []);
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard)' }}>
+    <div className="min-h-screen bg-surface-scoreboard">
 
       {/* ================================================================= */}
       {/* MODE: LANDING PAGE — Selling zone. Hero + pitch + proof points.   */}

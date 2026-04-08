@@ -99,7 +99,7 @@ export function ParkFactorTable({ data, isPro = false, className = '' }: ParkFac
 
       <div className="overflow-x-auto max-h-[70vh] overflow-y-auto">
         <table className="w-full text-sm">
-          <thead className="sticky top-0 z-10" style={{ backgroundColor: 'var(--surface-press-box, #111111)' }}>
+          <thead className="sticky top-0 z-10" className="bg-surface-press-box">
             <tr className="border-b border-border-subtle">
               <th
                 className="pl-5 pr-2 py-3 text-left cursor-pointer"

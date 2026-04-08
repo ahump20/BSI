@@ -41,7 +41,7 @@ const jsonLd = {
 
 export default function MethodologyPage() {
   return (
-    <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard, #0A0A0A)' }}>
+    <div className="min-h-screen bg-surface-scoreboard">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -91,8 +91,7 @@ export default function MethodologyPage() {
             Data Pipeline
           </h2>
           <div
-            className="heritage-card p-6 mb-6"
-            style={{ background: 'var(--surface-dugout, #161616)', border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))' }}
+            className="heritage-card p-6 mb-6 bg-surface-dugout border border-border-vintage"
           >
             <div
               className="font-mono text-sm leading-relaxed"
@@ -122,7 +121,6 @@ export default function MethodologyPage() {
           </h2>
           <div
             className="heritage-card p-6"
-            style={{ background: 'var(--surface-dugout, #161616)', border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))' }}
           >
             <p
               className="font-cormorant mb-4"
@@ -133,8 +131,7 @@ export default function MethodologyPage() {
               single, and wOBA captures that gap precisely.
             </p>
             <div
-              className="font-mono text-sm p-4 mb-4"
-              style={{ background: 'var(--surface-press-box, #111111)', color: 'var(--heritage-columbia-blue, #4B9CD3)' }}
+              className="font-mono text-sm p-4 mb-4 bg-surface-press-box text-heritage-columbia"
             >
               wOBA = (0.69×BB + 0.72×HBP + 0.89×1B + 1.27×2B + 1.62×3B + 2.10×HR) / (AB + BB + SF + HBP)
             </div>
@@ -170,7 +167,6 @@ export default function MethodologyPage() {
           </h2>
           <div
             className="heritage-card p-6"
-            style={{ background: 'var(--surface-dugout, #161616)', border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))' }}
           >
             <p
               className="font-cormorant mb-4"
@@ -210,7 +206,6 @@ export default function MethodologyPage() {
           </h2>
           <div
             className="heritage-card p-6"
-            style={{ background: 'var(--surface-dugout, #161616)', border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))' }}
           >
             <p
               className="font-cormorant mb-4"
@@ -222,8 +217,7 @@ export default function MethodologyPage() {
               predictor of future ERA than ERA itself.
             </p>
             <div
-              className="font-mono text-sm p-4 mb-4"
-              style={{ background: 'var(--surface-press-box, #111111)', color: 'var(--heritage-columbia-blue, #4B9CD3)' }}
+              className="font-mono text-sm p-4 mb-4 bg-surface-press-box text-heritage-columbia"
             >
               FIP = ((13×HR + 3×(BB+HBP) - 2×K) / IP) + FIP constant
             </div>
@@ -257,7 +251,6 @@ export default function MethodologyPage() {
           </h2>
           <div
             className="heritage-card p-6"
-            style={{ background: 'var(--surface-dugout, #161616)', border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))' }}
           >
             <p
               className="font-cormorant"
@@ -283,7 +276,6 @@ export default function MethodologyPage() {
           </h2>
           <div
             className="heritage-card p-6"
-            style={{ background: 'var(--surface-dugout, #161616)', border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))' }}
           >
             <p
               className="font-cormorant mb-4"
@@ -325,7 +317,6 @@ export default function MethodologyPage() {
           </h2>
           <div
             className="heritage-card p-6"
-            style={{ background: 'var(--surface-dugout, #161616)', border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))' }}
           >
             <p
               className="font-cormorant mb-4"
@@ -359,7 +350,6 @@ export default function MethodologyPage() {
           </h2>
           <div
             className="heritage-card p-6"
-            style={{ background: 'var(--surface-dugout, #161616)', border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))' }}
           >
             <div className="space-y-3">
               <div className="flex items-start gap-3">
@@ -415,8 +405,7 @@ export default function MethodologyPage() {
             AI-Accessible via MCP
           </h2>
           <div
-            className="heritage-card p-6"
-            style={{ background: 'var(--surface-dugout, #161616)', border: '1px solid var(--bsi-primary, #BF5700)' }}
+            className="heritage-card p-6 bg-surface-dugout border border-bsi-primary"
           >
             <p
               className="font-cormorant mb-4"
@@ -436,8 +425,7 @@ export default function MethodologyPage() {
               every 30-60 seconds during live games.
             </p>
             <div
-              className="font-mono text-xs p-3"
-              style={{ background: 'var(--surface-press-box, #111)', color: 'var(--heritage-columbia-blue, #4B9CD3)' }}
+              className="font-mono text-xs p-3 bg-surface-press-box text-heritage-columbia"
             >
               sabermetrics.blazesportsintel.com
             </div>
@@ -454,7 +442,6 @@ export default function MethodologyPage() {
           </h2>
           <div
             className="heritage-card p-6"
-            style={{ background: 'var(--surface-dugout, #161616)', border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))' }}
           >
             <ul className="space-y-3">
               <li className="font-cormorant" style={{ color: 'var(--bsi-dust, #C4B8A5)', lineHeight: 1.7 }}>

@@ -31,7 +31,7 @@ export default function ContactPage() {
 
   return (
     <>
-      <div style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
+      <div className="bg-surface-scoreboard text-bsi-bone">
         <Section padding="lg" className="pt-6 relative overflow-hidden">
           <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 30% 20%, rgba(191,87,0,0.1), transparent 60%)' }} />
           <Container>
@@ -55,8 +55,7 @@ export default function ContactPage() {
                   <div>
                     <label
                       htmlFor="name"
-                      className="block text-sm font-medium mb-2"
-                      style={{ color: 'var(--bsi-dust)' }}
+                      className="block text-sm font-medium mb-2 text-bsi-dust"
                     >
                       Name
                     </label>
@@ -72,8 +71,7 @@ export default function ContactPage() {
                   <div>
                     <label
                       htmlFor="email"
-                      className="block text-sm font-medium mb-2"
-                      style={{ color: 'var(--bsi-dust)' }}
+                      className="block text-sm font-medium mb-2 text-bsi-dust"
                     >
                       Email
                     </label>
@@ -89,8 +87,7 @@ export default function ContactPage() {
                   <div>
                     <label
                       htmlFor="subject"
-                      className="block text-sm font-medium mb-2"
-                      style={{ color: 'var(--bsi-dust)' }}
+                      className="block text-sm font-medium mb-2 text-bsi-dust"
                     >
                       Subject
                     </label>
@@ -105,8 +102,7 @@ export default function ContactPage() {
                   <div>
                     <label
                       htmlFor="message"
-                      className="block text-sm font-medium mb-2"
-                      style={{ color: 'var(--bsi-dust)' }}
+                      className="block text-sm font-medium mb-2 text-bsi-dust"
                     >
                       Message
                     </label>
@@ -137,12 +133,11 @@ export default function ContactPage() {
                 <p className="text-sm mb-4" style={{ color: 'rgba(196,184,165,0.5)' }}>Or reach out directly:</p>
                 <a
                   href="mailto:Austin@blazesportsintel.com"
-                  className="font-semibold transition-colors"
-                  style={{ color: 'var(--bsi-primary)' }}
+                  className="font-semibold transition-colors text-bsi-primary"
                 >
                   Austin@blazesportsintel.com
                 </a>
-                <p className="mt-2" style={{ color: 'var(--bsi-dust)' }}>(210) 275-5538</p>
+                <p className="mt-2 text-bsi-dust">(210) 275-5538</p>
                 <p className="text-sm mt-8" style={{ color: 'rgba(196,184,165,0.5)' }}>
                   Blaze Intelligence LLC - Boerne, Texas
                 </p>

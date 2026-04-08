@@ -26,8 +26,7 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div
           role="alert"
-          className="min-h-screen flex flex-col items-center justify-center text-center px-4"
-          style={{ background: 'var(--surface-scoreboard, #0A0A0A)' }}
+          className="min-h-screen flex flex-col items-center justify-center text-center px-4 bg-surface-scoreboard"
         >
           <p
             className="text-base font-display uppercase tracking-widest mb-6"

@@ -666,7 +666,7 @@ function ScoresHubContent() {
 
   return (
     <>
-      <div className="grain-overlay" style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
+      <div className="grain-overlay bg-surface-scoreboard text-bsi-bone">
         {/* Header */}
         <section
           className="relative overflow-hidden"
@@ -731,7 +731,7 @@ function ScoresHubContent() {
               </h1>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={150}>
-              <p className="mt-2 text-base max-w-2xl font-serif" style={{ color: 'var(--bsi-dust)' }}>
+              <p className="mt-2 text-base max-w-2xl font-serif text-bsi-dust">
                 Live college baseball scores for every D1 program — updated in real time.
               </p>
             </ScrollReveal>
@@ -1044,7 +1044,7 @@ function ScoresHubContent() {
                 <Link
                   href="/college-baseball/savant"
                   className="block p-4 transition-colors group"
-                  style={{ background: 'var(--surface-dugout, #161616)', border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))' }}
+                  className="bg-surface-dugout border border-border-vintage"
                 >
                   <div className="flex items-center justify-between">
                     <div>

@@ -115,7 +115,7 @@ export default function GlossaryPage() {
   const sortedLetters = Array.from(grouped.keys()).sort();
 
   return (
-    <div style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)', minHeight: '100vh' }}>
+    <div className="bg-surface-scoreboard text-bsi-bone min-h-screen">
       <Section padding="sm" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
         <Container>
           <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Glossary' }]} />
@@ -219,8 +219,7 @@ export default function GlossaryPage() {
               <p className="text-sm" style={{ color: 'rgba(196,184,165,0.35)' }}>No terms match your search.</p>
               <button
                 onClick={() => { setSearch(''); setCategory('all'); }}
-                className="mt-4 text-sm font-semibold transition-colors"
-                style={{ color: 'var(--bsi-primary)' }}
+                className="mt-4 text-sm font-semibold transition-colors text-bsi-primary"
               >
                 Clear filters
               </button>

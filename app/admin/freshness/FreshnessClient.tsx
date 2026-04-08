@@ -144,7 +144,7 @@ function SummaryBar({ summary }: { summary: FreshnessReport['summary'] }) {
 function LiveEndpointTable({ endpoints }: { endpoints: DataSource[] }) {
   return (
     <div className="heritage-card overflow-hidden">
-      <div className="px-5 py-3" style={{ background: 'var(--surface-press-box)' }}>
+      <div className="px-5 py-3 bg-surface-press-box">
         <span className="heritage-stamp">Live Data Pipelines</span>
       </div>
       <div className="overflow-x-auto">
@@ -169,7 +169,7 @@ function LiveEndpointTable({ endpoints }: { endpoints: DataSource[] }) {
                 className="transition-colors hover:bg-[rgba(255,255,255,0.02)]"
                 style={{ borderBottom: '1px solid rgba(140,98,57,0.12)' }}
               >
-                <td className="px-4 py-2.5 font-semibold" style={{ color: 'var(--bsi-bone)' }}>
+                <td className="px-4 py-2.5 font-semibold text-bsi-bone">
                   {ep.name}
                 </td>
                 <td className="px-4 py-2.5">
@@ -183,13 +183,13 @@ function LiveEndpointTable({ endpoints }: { endpoints: DataSource[] }) {
                 <td className="px-4 py-2.5">
                   <StatusPill status={ep.status} />
                 </td>
-                <td className="px-4 py-2.5 font-mono text-xs" style={{ color: 'var(--bsi-dust)' }}>
+                <td className="px-4 py-2.5 font-mono text-xs text-bsi-dust">
                   {formatAge(ep.ageMinutes)}
                 </td>
-                <td className="px-4 py-2.5 font-mono text-xs" style={{ color: 'var(--bsi-bone)' }}>
+                <td className="px-4 py-2.5 font-mono text-xs text-bsi-bone">
                   {ep.itemCount ?? '—'}
                 </td>
-                <td className="px-4 py-2.5 text-xs" style={{ color: 'var(--bsi-dust)' }}>
+                <td className="px-4 py-2.5 text-xs text-bsi-dust">
                   {ep.source}
                 </td>
               </tr>
@@ -208,7 +208,7 @@ function LiveEndpointTable({ endpoints }: { endpoints: DataSource[] }) {
 function D1TableSection({ tables }: { tables: D1TableCheck[] }) {
   return (
     <div className="heritage-card overflow-hidden">
-      <div className="px-5 py-3" style={{ background: 'var(--surface-press-box)' }}>
+      <div className="px-5 py-3 bg-surface-press-box">
         <span className="heritage-stamp">Sabermetrics (Long-Term Memory)</span>
       </div>
       <div className="overflow-x-auto">
@@ -233,19 +233,19 @@ function D1TableSection({ tables }: { tables: D1TableCheck[] }) {
                 className="transition-colors hover:bg-[rgba(255,255,255,0.02)]"
                 style={{ borderBottom: '1px solid rgba(140,98,57,0.12)' }}
               >
-                <td className="px-4 py-2.5 font-semibold" style={{ color: 'var(--bsi-bone)' }}>
+                <td className="px-4 py-2.5 font-semibold text-bsi-bone">
                   {t.name}
                 </td>
                 <td className="px-4 py-2.5">
                   <StatusPill status={t.status} />
                 </td>
-                <td className="px-4 py-2.5 font-mono text-xs" style={{ color: 'var(--bsi-bone)' }}>
+                <td className="px-4 py-2.5 font-mono text-xs text-bsi-bone">
                   {t.rows.toLocaleString()}
                 </td>
-                <td className="px-4 py-2.5 font-mono text-xs" style={{ color: 'var(--bsi-dust)' }}>
+                <td className="px-4 py-2.5 font-mono text-xs text-bsi-dust">
                   {t.lastComputed || '—'}
                 </td>
-                <td className="px-4 py-2.5 font-mono text-xs" style={{ color: 'var(--bsi-dust)' }}>
+                <td className="px-4 py-2.5 font-mono text-xs text-bsi-dust">
                   {formatD1Age(t.ageHours)}
                 </td>
               </tr>
@@ -333,15 +333,14 @@ export default function FreshnessClient() {
 
   return (
     <>
-      <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard)' }}>
+      <div className="min-h-screen bg-surface-scoreboard">
         {/* Header */}
         <header className="px-4 sm:px-6 lg:px-8 pt-6 pb-4">
           <div className="max-w-5xl mx-auto flex items-center justify-between">
             <div>
               <span className="heritage-stamp">Admin</span>
               <h1
-                className="mt-2 font-display text-3xl sm:text-4xl font-bold uppercase tracking-wider"
-                style={{ color: 'var(--bsi-bone)' }}
+                className="mt-2 font-display text-3xl sm:text-4xl font-bold uppercase tracking-wider text-bsi-bone"
               >
                 Data Freshness
               </h1>
@@ -372,7 +371,7 @@ export default function FreshnessClient() {
             {needsAuth && (
               <div className="heritage-card p-6">
                 <span className="heritage-stamp">Authentication Required</span>
-                <p className="mt-3 text-sm" style={{ color: 'var(--bsi-dust)' }}>
+                <p className="mt-3 text-sm text-bsi-dust">
                   Enter admin key or add <code style={{ color: 'var(--heritage-columbia-blue)' }}>?key=</code> to the URL.
                 </p>
                 <form onSubmit={handleKeySubmit} className="mt-4 flex gap-3">
@@ -407,7 +406,7 @@ export default function FreshnessClient() {
             {loading && !report && !needsAuth && (
               <div className="heritage-card p-8 text-center">
                 <div className="w-6 h-6 mx-auto border-2 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
-                <p className="mt-3 text-sm" style={{ color: 'var(--bsi-dust)' }}>
+                <p className="mt-3 text-sm text-bsi-dust">
                   Checking all data sources\u2026
                 </p>
               </div>

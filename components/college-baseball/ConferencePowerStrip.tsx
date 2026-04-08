@@ -242,8 +242,7 @@ export function ConferencePowerStrip({
       <div className={`${className}`}>
         <div className="heritage-stamp mb-4">Conference Power</div>
         <div
-          className="rounded-sm p-4"
-          style={{ background: 'var(--surface-scoreboard)' }}
+          className="rounded-sm p-4 bg-surface-scoreboard"
         >
           {/* Desktop skeleton */}
           <div className="hidden md:flex gap-1">

@@ -183,13 +183,11 @@ export default function TeamsPage() {
               {conferences.map((conference, confIndex) => (
                 <ScrollReveal key={conference.name} direction="up" delay={confIndex * 40}>
                   <div
-                    className="rounded-sm border overflow-hidden"
-                    style={{ borderColor: 'var(--border-vintage)', background: 'var(--surface-scoreboard)' }}
+                    className="rounded-sm border overflow-hidden border-border-vintage bg-surface-scoreboard"
                   >
                     {/* Conference header — Heritage stamp pattern */}
                     <div
-                      className="flex items-center justify-between px-4 py-3"
-                      style={{ borderBottom: '1px solid var(--border-vintage)', background: 'var(--surface-press-box)' }}
+                      className="flex items-center justify-between px-4 py-3 bg-surface-press-box border-b border-border-vintage"
                     >
                       <div className="flex items-center gap-3">
                         <h2
@@ -198,7 +196,7 @@ export default function TeamsPage() {
                         >
                           {conference.name}
                         </h2>
-                        <span className="text-[10px] font-mono" style={{ color: 'var(--bsi-dust)' }}>
+                        <span className="text-[10px] font-mono text-bsi-dust">
                           {conference.fullName}
                         </span>
                       </div>

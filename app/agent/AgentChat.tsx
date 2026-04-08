@@ -143,7 +143,7 @@ function StreamingIndicator() {
           <span className="w-1.5 h-1.5 rounded-full bg-[var(--bsi-primary)] animate-pulse" />
           <span className="w-1.5 h-1.5 rounded-full bg-[var(--bsi-primary)] animate-pulse [animation-delay:0.2s]" />
           <span className="w-1.5 h-1.5 rounded-full bg-[var(--bsi-primary)] animate-pulse [animation-delay:0.4s]" />
-          <span className="text-xs ml-2" style={{ color: 'var(--bsi-dust)' }}>
+          <span className="text-xs ml-2 text-bsi-dust">
             Analyzing...
           </span>
         </div>
@@ -319,8 +319,7 @@ export function AgentChat() {
 
   return (
     <div
-      className="flex flex-col h-[calc(100vh-56px)]"
-      style={{ background: 'var(--surface-scoreboard)' }}
+      className="flex flex-col h-[calc(100vh-56px)] bg-surface-scoreboard"
     >
       {/* Header */}
       <div
@@ -354,7 +353,7 @@ export function AgentChat() {
             >
               BSI Baseball Agent
             </h1>
-            <p className="text-[10px]" style={{ color: 'var(--bsi-dust)' }}>
+            <p className="text-[10px] text-bsi-dust">
               College baseball intelligence, backed by live data
             </p>
           </div>

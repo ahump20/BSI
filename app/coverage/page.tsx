@@ -170,8 +170,7 @@ const dataSources = [
 export default function CoveragePage() {
   return (
     <div
-      className="min-h-screen grain-overlay"
-      style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}
+      className="min-h-screen grain-overlay bg-surface-scoreboard text-bsi-bone"
     >
       {/* ================================================================
           HERO
@@ -195,8 +194,7 @@ export default function CoveragePage() {
               Complete Coverage Where It Matters
             </h1>
             <p
-              className="font-serif italic text-lg leading-relaxed mb-8 max-w-2xl mx-auto"
-              style={{ color: 'var(--bsi-primary)' }}
+              className="font-serif italic text-lg leading-relaxed mb-8 max-w-2xl mx-auto text-bsi-primary"
             >
               Real-time data from official sources. MLB, NFL, NBA, and the most comprehensive college baseball coverage anywhere.
             </p>
@@ -295,8 +293,7 @@ export default function CoveragePage() {
                           </span>
                           <div>
                             <h3
-                              className="text-xl font-semibold transition-colors"
-                              style={{ color: 'var(--bsi-bone)' }}
+                              className="text-xl font-semibold transition-colors text-bsi-bone"
                               onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--bsi-primary)')}
                               onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--bsi-bone)')}
                             >
@@ -337,8 +334,7 @@ export default function CoveragePage() {
                         {sport.features.map((feature) => (
                           <li
                             key={feature}
-                            className="flex items-center gap-2 text-sm"
-                            style={{ color: 'var(--bsi-dust)' }}
+                            className="flex items-center gap-2 text-sm text-bsi-dust"
                           >
                             <span style={{ color: '#22C55E' }}>&#10003;</span>
                             {feature}
@@ -385,8 +381,7 @@ export default function CoveragePage() {
                           Updates
                         </h4>
                         <p
-                          className="text-sm"
-                          style={{ color: 'var(--bsi-primary)' }}
+                          className="text-sm text-bsi-primary"
                         >
                           {sport.updateFrequency}
                         </p>
@@ -459,8 +454,7 @@ export default function CoveragePage() {
                     </span>
                   </div>
                   <h3
-                    className="text-lg font-semibold mb-2"
-                    style={{ color: 'var(--bsi-bone)' }}
+                    className="text-lg font-semibold mb-2 text-bsi-bone"
                   >
                     {source.name}
                   </h3>
@@ -507,11 +501,10 @@ export default function CoveragePage() {
             >
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
-                  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0" style={{ color: 'var(--bsi-primary)' }} stroke="currentColor" strokeWidth={1.5}><rect x="3" y="3" width="7" height="18" rx="1" /><rect x="14" y="8" width="7" height="13" rx="1" /><path d="M6 7v10M17.5 12v5" /></svg>
+                  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-bsi-primary" stroke="currentColor" strokeWidth={1.5}><rect x="3" y="3" width="7" height="18" rx="1" /><rect x="14" y="8" width="7" height="13" rx="1" /><path d="M6 7v10M17.5 12v5" /></svg>
                   <div>
                     <h3
-                      className="text-lg font-semibold mb-2"
-                      style={{ color: 'var(--bsi-bone)' }}
+                      className="text-lg font-semibold mb-2 text-bsi-bone"
                     >
                       Cross-Referenced Data
                     </h3>
@@ -524,11 +517,10 @@ export default function CoveragePage() {
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
-                  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0" style={{ color: 'var(--bsi-primary)' }} stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg>
+                  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-bsi-primary" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg>
                   <div>
                     <h3
-                      className="text-lg font-semibold mb-2"
-                      style={{ color: 'var(--bsi-bone)' }}
+                      className="text-lg font-semibold mb-2 text-bsi-bone"
                     >
                       America/Chicago Timestamps
                     </h3>
@@ -541,11 +533,10 @@ export default function CoveragePage() {
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
-                  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0" style={{ color: 'var(--bsi-primary)' }} stroke="currentColor" strokeWidth={1.5}><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" /></svg>
+                  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-bsi-primary" stroke="currentColor" strokeWidth={1.5}><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" /></svg>
                   <div>
                     <h3
-                      className="text-lg font-semibold mb-2"
-                      style={{ color: 'var(--bsi-bone)' }}
+                      className="text-lg font-semibold mb-2 text-bsi-bone"
                     >
                       Source Citations
                     </h3>
@@ -558,11 +549,10 @@ export default function CoveragePage() {
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
-                  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0" style={{ color: 'var(--bsi-primary)' }} stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M4.93 4.93l14.14 14.14" /></svg>
+                  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-bsi-primary" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M4.93 4.93l14.14 14.14" /></svg>
                   <div>
                     <h3
-                      className="text-lg font-semibold mb-2"
-                      style={{ color: 'var(--bsi-bone)' }}
+                      className="text-lg font-semibold mb-2 text-bsi-bone"
                     >
                       Zero Placeholders
                     </h3>

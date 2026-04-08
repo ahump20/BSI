@@ -77,8 +77,7 @@ const originSections: StorySection[] = [
 export default function AboutPage() {
   return (
     <div
-      className="min-h-screen grain-overlay"
-      style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}
+      className="min-h-screen grain-overlay bg-surface-scoreboard text-bsi-bone"
     >
       {/* ═══════════ HERO ═══════════ */}
       <section
@@ -183,8 +182,7 @@ export default function AboutPage() {
             </div>
 
             <p
-              className="font-serif italic text-lg md:text-xl leading-relaxed max-w-2xl mx-auto"
-              style={{ color: 'var(--bsi-dust)' }}
+              className="font-serif italic text-lg md:text-xl leading-relaxed max-w-2xl mx-auto text-bsi-dust"
             >
               Major platforms paint a black-and-white picture &mdash; LeBron vs.
               MJ, Yankees or Dodgers, Cowboys or nothing. BSI exists to leave that
@@ -277,8 +275,7 @@ export default function AboutPage() {
                       )}
                     </h2>
                     <div
-                      className="space-y-4 leading-[1.8] font-serif"
-                      style={{ color: 'var(--bsi-dust)' }}
+                      className="space-y-4 leading-[1.8] font-serif text-bsi-dust"
                     >
                       {section.paragraphs.map((p, j) => (
                         <p key={j}>{p}</p>
@@ -317,8 +314,7 @@ export default function AboutPage() {
                 <span style={{ color: 'var(--bsi-primary)' }}>Every Game.</span>
               </h2>
               <p
-                className="mt-4 font-serif italic text-base md:text-lg max-w-2xl mx-auto leading-relaxed"
-                style={{ color: 'var(--bsi-dust)' }}
+                className="mt-4 font-serif italic text-base md:text-lg max-w-2xl mx-auto leading-relaxed text-bsi-dust"
               >
                 Park-adjusted sabermetrics. Every conference, every Tuesday night
                 mid-major matchup that nobody else covers. The same analytical depth
@@ -369,8 +365,7 @@ export default function AboutPage() {
                     {card.label}
                   </p>
                   <p
-                    className="text-sm leading-relaxed font-serif"
-                    style={{ color: 'var(--bsi-dust)' }}
+                    className="text-sm leading-relaxed font-serif text-bsi-dust"
                   >
                     {card.desc}
                   </p>
@@ -437,8 +432,7 @@ export default function AboutPage() {
                 </h2>
 
                 <div
-                  className="space-y-4 leading-[1.75] font-serif"
-                  style={{ color: 'var(--bsi-dust)' }}
+                  className="space-y-4 leading-[1.75] font-serif text-bsi-dust"
                 >
                   <p>
                     The coverage I wanted didn&apos;t exist. Not because the audience
@@ -483,8 +477,7 @@ export default function AboutPage() {
                   </a>
                   <a
                     href="mailto:Austin@blazesportsintel.com"
-                    className="text-sm font-serif transition-colors duration-200"
-                    style={{ color: 'var(--heritage-columbia-blue)' }}
+                    className="text-sm font-serif transition-colors duration-200 text-heritage-columbia"
                   >
                     Austin@blazesportsintel.com
                   </a>

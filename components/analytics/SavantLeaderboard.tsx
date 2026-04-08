@@ -200,7 +200,7 @@ export function SavantLeaderboard({
       {/* Table */}
       <div className="overflow-x-auto max-h-[80vh] overflow-y-auto">
         <table className="w-full text-sm">
-          <thead className="sticky top-0 z-10" style={{ backgroundColor: 'var(--surface-press-box, #111111)' }}>
+          <thead className="sticky top-0 z-10" className="bg-surface-press-box">
             <tr className="border-b border-border-subtle" style={{ borderTop: '2px solid var(--svt-accent, #BF5700)' }}>
               {onCompareToggle && (
                 <th className="pl-3 pr-0 py-3 w-8">

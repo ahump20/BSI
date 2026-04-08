@@ -94,12 +94,12 @@ function TeamRow({ team, woba, fip, color }: {
         </Link>
         <div className="flex items-center gap-2 mt-0.5">
           {team.conference && (
-            <span className="text-[10px] font-mono" style={{ color: 'var(--bsi-dust)' }}>
+            <span className="text-[10px] font-mono text-bsi-dust">
               {team.conference}
             </span>
           )}
           {team.record && (
-            <span className="text-[10px] font-mono" style={{ color: 'var(--bsi-dust)' }}>
+            <span className="text-[10px] font-mono text-bsi-dust">
               {team.record}
             </span>
           )}
@@ -234,7 +234,7 @@ export default function BubbleWatchPage() {
                 >
                   Bubble Watch
                 </h1>
-                <p className="text-sm mt-2 max-w-2xl" style={{ color: 'var(--bsi-dust)' }}>
+                <p className="text-sm mt-2 max-w-2xl text-bsi-dust">
                   NCAA Tournament field projection derived from national rankings, cross-referenced with
                   team-level batting (wOBA) and pitching (FIP) aggregates from BSI Savant.
                 </p>
@@ -246,10 +246,10 @@ export default function BubbleWatchPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {[1, 2].map(i => (
                   <Card key={i} padding="lg" className="animate-pulse">
-                    <div className="h-4 w-32 rounded" style={{ background: 'var(--surface-press-box)' }} />
+                    <div className="h-4 w-32 rounded bg-surface-press-box" />
                     <div className="mt-4 space-y-3">
                       {[1, 2, 3, 4].map(j => (
-                        <div key={j} className="h-12 rounded" style={{ background: 'var(--surface-press-box)' }} />
+                        <div key={j} className="h-12 rounded bg-surface-press-box" />
                       ))}
                     </div>
                   </Card>
@@ -269,11 +269,11 @@ export default function BubbleWatchPage() {
                         <h2 className="text-sm uppercase tracking-wider font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-bone)' }}>
                           Tournament Locks
                         </h2>
-                        <span className="ml-auto text-[10px] font-mono" style={{ color: 'var(--bsi-dust)' }}>
+                        <span className="ml-auto text-[10px] font-mono text-bsi-dust">
                           Ranks 1–12
                         </span>
                       </div>
-                      <p className="text-[10px] mt-1" style={{ color: 'var(--bsi-dust)' }}>
+                      <p className="text-[10px] mt-1 text-bsi-dust">
                         Virtually guaranteed selection
                       </p>
                     </div>
@@ -298,11 +298,11 @@ export default function BubbleWatchPage() {
                         <h2 className="text-sm uppercase tracking-wider font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-bone)' }}>
                           Bubble Watch
                         </h2>
-                        <span className="ml-auto text-[10px] font-mono" style={{ color: 'var(--bsi-dust)' }}>
+                        <span className="ml-auto text-[10px] font-mono text-bsi-dust">
                           Ranks 13–20
                         </span>
                       </div>
-                      <p className="text-[10px] mt-1" style={{ color: 'var(--bsi-dust)' }}>
+                      <p className="text-[10px] mt-1 text-bsi-dust">
                         On the edge — every series matters
                       </p>
                     </div>
@@ -325,28 +325,26 @@ export default function BubbleWatchPage() {
             {/* No data state */}
             {!rankingsLoading && rankings.length === 0 && (
               <Card padding="lg" className="text-center">
-                <p className="text-sm" style={{ color: 'var(--bsi-dust)' }}>
+                <p className="text-sm text-bsi-dust">
                   Rankings data not available yet. Check back during the season.
                 </p>
               </Card>
             )}
 
             {/* Attribution */}
-            <div className="mt-8 text-center text-xs" style={{ color: 'var(--bsi-dust)' }}>
+            <div className="mt-8 text-center text-xs text-bsi-dust">
               <p>
                 Data: BSI College Baseball Savant + National Rankings ·{' '}
                 <Link
                   href="/college-baseball/savant"
-                  className="hover:underline transition-colors"
-                  style={{ color: 'var(--bsi-primary)' }}
+                  className="hover:underline transition-colors text-bsi-primary"
                 >
                   Back to Leaderboards
                 </Link>
                 {' · '}
                 <Link
                   href="/college-baseball/savant/visuals/"
-                  className="hover:underline transition-colors"
-                  style={{ color: 'var(--heritage-columbia-blue)' }}
+                  className="hover:underline transition-colors text-heritage-columbia"
                 >
                   Visualization Tools
                 </Link>

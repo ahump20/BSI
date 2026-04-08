@@ -156,7 +156,7 @@ export default function MLBNewsPage() {
 
   return (
     <>
-      <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
+      <div className="min-h-screen bg-surface-scoreboard text-bsi-bone">
         {/* Breadcrumb */}
         <Section padding="sm" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
           <Container>
@@ -169,7 +169,7 @@ export default function MLBNewsPage() {
                 MLB
               </Link>
               <span style={{ color: 'rgba(196,184,165,0.5)' }}>/</span>
-              <span className="font-medium" style={{ color: 'var(--bsi-bone)' }}>News</span>
+              <span className="font-medium text-bsi-bone">News</span>
             </nav>
           </Container>
         </Section>
@@ -185,7 +185,7 @@ export default function MLBNewsPage() {
               >
                 MLB News
               </h1>
-              <p className="max-w-2xl" style={{ color: 'var(--bsi-dust)' }}>
+              <p className="max-w-2xl text-bsi-dust">
                 Trades, injuries, game recaps, and analysis—without the hot takes. Just the news
                 that matters.
               </p>
@@ -230,7 +230,7 @@ export default function MLBNewsPage() {
             ) : error ? (
               <Card variant="default" padding="lg" className="bg-error/10 border-error/30">
                 <p className="text-error font-semibold">Unable to Load News</p>
-                <p className="text-sm mt-1" style={{ color: 'var(--bsi-dust)' }}>{error}</p>
+                <p className="text-sm mt-1 text-bsi-dust">{error}</p>
               </Card>
             ) : filteredNews.length === 0 ? (
               <Card variant="default" padding="lg">
@@ -283,10 +283,10 @@ export default function MLBNewsPage() {
                             rel="noopener noreferrer"
                             className="block"
                           >
-                            <h3 className="font-semibold text-lg transition-colors" style={{ color: 'var(--bsi-bone)' }}>
+                            <h3 className="font-semibold text-lg transition-colors text-bsi-bone">
                               {item.title}
                             </h3>
-                            <p className="text-sm mt-1 line-clamp-2" style={{ color: 'var(--bsi-dust)' }}>
+                            <p className="text-sm mt-1 line-clamp-2 text-bsi-dust">
                               {item.summary}
                             </p>
                           </a>

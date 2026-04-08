@@ -314,11 +314,11 @@ export default function NFLTeamsPage() {
       onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--border-vintage)')}
     >
       <div className="flex items-center gap-4">
-        <div className="w-16 h-16 rounded-sm flex items-center justify-center text-xl font-bold transition-colors" style={{ background: 'var(--surface-dugout)', color: 'var(--bsi-primary)' }}>
+        <div className="w-16 h-16 rounded-sm flex items-center justify-center text-xl font-bold transition-colors  bg-surface-dugout text-bsi-primary">
           {team.abbreviation}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-semibold transition-colors truncate" style={{ color: 'var(--bsi-bone)' }}>
+          <p className="font-semibold transition-colors truncate text-bsi-bone">
             {team.city} {team.name}
           </p>
           <p className="text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>
@@ -331,7 +331,7 @@ export default function NFLTeamsPage() {
 
   return (
     <>
-      <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
+      <div className="min-h-screen bg-surface-scoreboard text-bsi-bone">
         {/* Breadcrumb */}
         <Section padding="sm" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
           <Container>
@@ -346,7 +346,7 @@ export default function NFLTeamsPage() {
                 NFL
               </Link>
               <span style={{ color: 'rgba(196,184,165,0.5)' }}>/</span>
-              <span className="font-medium" style={{ color: 'var(--bsi-bone)' }}>Teams</span>
+              <span className="font-medium text-bsi-bone">Teams</span>
             </nav>
           </Container>
         </Section>
@@ -368,7 +368,7 @@ export default function NFLTeamsPage() {
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="max-w-2xl" style={{ color: 'var(--bsi-dust)' }}>
+              <p className="max-w-2xl text-bsi-dust">
                 All 32 NFL teams across 8 divisions. Titans, Cowboys, Chiefs—every franchise, no
                 network filter.
               </p>
@@ -385,11 +385,10 @@ export default function NFLTeamsPage() {
 
               return (
                 <div key={division} className="mb-8">
-                  <h2 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: 'var(--bsi-bone)' }}>
+                  <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-bsi-bone">
                     <svg
                       viewBox="0 0 24 24"
-                      className="w-5 h-5"
-                      style={{ color: 'var(--bsi-primary)' }}
+                      className="w-5 h-5 text-bsi-primary"
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="1.5"
