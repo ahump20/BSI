@@ -160,7 +160,7 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
         </Section>
 
         {/* ── Hero ────────────────────────────────────────────────── */}
-        <Section padding="lg" className="relative overflow-hidden bg-[var(--surface-scoreboard)]">
+        <Section padding="lg" className="relative overflow-hidden bg-surface-scoreboard">
           <div className="absolute top-0 left-0 right-0 h-1" style={{ backgroundColor: ACCENT }} />
           <Container>
             <ScrollReveal direction="up">
@@ -196,7 +196,7 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
 
         {/* ── Quick Brief (3-point summary) ─────────────────────── */}
         {!loading && brief && (
-          <Section padding="md" className="bg-[var(--surface-dugout)] border-y border-border">
+          <Section padding="md" className="bg-surface-dugout border-y border-border">
             <Container>
               <ScrollReveal direction="up">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -283,7 +283,7 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
                         <div className="overflow-x-auto">
                           <table className="w-full text-sm">
                             <thead>
-                              <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                              <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                                 <th className="text-left py-2 px-2">Name</th>
                                 <th className="text-left py-2 px-2">Pos</th>
                                 <th className="text-right py-2 px-2">PA</th>
@@ -335,7 +335,7 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
                         <div className="overflow-x-auto">
                           <table className="w-full text-sm">
                             <thead>
-                              <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                              <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                                 <th className="text-left py-2 px-2">Name</th>
                                 <th className="text-left py-2 px-2">Pos</th>
                                 <th className="text-right py-2 px-2">IP</th>
@@ -392,7 +392,7 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
                           <div className="overflow-x-auto">
                             <table className="w-full text-sm">
                               <thead>
-                                <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                                <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                                   <th className="text-left py-2 px-2">Stat</th>
                                   <th className="text-right py-2 px-2" style={{ color: ACCENT }}>Texas</th>
                                   <th className="text-right py-2 px-2">{opponent.name.split(' ').pop()}</th>
@@ -472,7 +472,7 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
                           <div className="overflow-x-auto">
                             <table className="w-full text-sm">
                               <thead>
-                                <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                                <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                                   <th className="text-left py-2 px-2">Stat</th>
                                   <th className="text-right py-2 px-2" style={{ color: ACCENT }}>Texas</th>
                                   <th className="text-right py-2 px-2">{opponent.name.split(' ').pop()}</th>

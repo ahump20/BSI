@@ -70,7 +70,7 @@ export function ModelHealth() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle size="sm" className="flex items-center gap-2">
-            <Shield className="h-4 w-4 text-[var(--bsi-primary)]" />
+            <Shield className="h-4 w-4 text-bsi-primary" />
             Model Health
           </CardTitle>
           <div className="flex items-center gap-2">

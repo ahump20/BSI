@@ -445,7 +445,7 @@ export function GamePreviewModal({ sport, gameId, onClose }: GamePreviewModalPro
           </div>
           <button
             onClick={onClose}
-            className="text-lg leading-none transition-colors hover:text-[var(--bsi-primary)]"
+            className="text-lg leading-none transition-colors hover:text-bsi-primary"
             style={{ color: 'var(--bsi-dust)' }}
             aria-label="Close"
           >

@@ -43,7 +43,7 @@ function getOverallFromEndpoints(endpoints: EndpointStatus[]): 'healthy' | 'degr
 }
 
 const overallConfig = {
-  healthy: { label: 'All Systems Operational', color: 'text-[var(--bsi-primary)]', bg: 'bg-[var(--bsi-primary)]/10 border-[var(--bsi-primary)]/30' },
+  healthy: { label: 'All Systems Operational', color: 'text-bsi-primary', bg: 'bg-[var(--bsi-primary)]/10 border-[var(--bsi-primary)]/30' },
   degraded: { label: 'Partial Degradation', color: 'text-[var(--bsi-warning)]', bg: 'bg-[var(--bsi-warning)]/10 border-[var(--bsi-warning)]/30' },
   down: { label: 'Major Outage', color: 'text-[var(--bsi-danger)]', bg: 'bg-[var(--bsi-danger)]/10 border-[var(--bsi-danger)]/30' },
 };

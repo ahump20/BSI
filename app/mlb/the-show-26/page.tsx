@@ -31,7 +31,7 @@ const SURFACES = [
 export default function MLBTheShow26Page() {
   return (
     <div className="bsi-theme-baseball">
-      <section className="border-b border-[var(--border-vintage)] bg-[radial-gradient(circle_at_top,_rgba(191,87,0,0.16),_transparent_55%),linear-gradient(180deg,rgba(13,13,13,0.95),rgba(26,26,26,1))] py-16">
+      <section className="border-b border-border-vintage bg-[radial-gradient(circle_at_top,_rgba(191,87,0,0.16),_transparent_55%),linear-gradient(180deg,rgba(13,13,13,0.95),rgba(26,26,26,1))] py-16">
         <Container size="xl">
           <div className="mb-4 text-xs font-semibold uppercase tracking-[0.24em] text-burnt-orange">Standalone Launch Surface</div>
           <h1 className="font-display text-4xl font-bold uppercase tracking-display text-[var(--bsi-bone)] md:text-5xl">

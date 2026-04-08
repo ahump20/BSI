@@ -117,7 +117,7 @@ function RollingAreaChart({
 }) {
   if (data.length < 2) {
     return (
-      <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
+      <div className="rounded-sm border border-border-subtle bg-surface-dugout p-4 text-center">
         <p className="text-text-muted text-xs">{label} data will appear as the season progresses.</p>
       </div>
     );
@@ -149,7 +149,7 @@ function RollingAreaChart({
   const lastVal = values[values.length - 1];
 
   return (
-    <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4">
+    <div className="rounded-sm border border-border-subtle bg-surface-dugout p-4">
       <div className="flex items-center justify-between mb-2">
         <span className="text-[10px] uppercase tracking-wider text-text-muted">{label}</span>
         <span className="font-mono text-sm font-bold" style={{ color }}>{format(lastVal)}</span>
@@ -180,7 +180,7 @@ function RollingAreaChart({
 function RunDiffBarChart({ data }: { data: TeamRollingPoint[] }) {
   if (data.length < 2) {
     return (
-      <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
+      <div className="rounded-sm border border-border-subtle bg-surface-dugout p-4 text-center">
         <p className="text-text-muted text-xs">Run differential data will appear as the season progresses.</p>
       </div>
     );
@@ -198,7 +198,7 @@ function RunDiffBarChart({ data }: { data: TeamRollingPoint[] }) {
   const lastVal = values[values.length - 1];
 
   return (
-    <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4">
+    <div className="rounded-sm border border-border-subtle bg-surface-dugout p-4">
       <div className="flex items-center justify-between mb-2">
         <span className="text-[10px] uppercase tracking-wider text-text-muted">Run Differential</span>
         <span
@@ -263,7 +263,7 @@ export default function TexasTrendsClient() {
         </Section>
 
         {/* Hero */}
-        <Section padding="lg" className="relative overflow-hidden bg-[var(--surface-scoreboard)]">
+        <Section padding="lg" className="relative overflow-hidden bg-surface-scoreboard">
           <div className="absolute top-0 left-0 right-0 h-1" style={{ backgroundColor: ACCENT }} />
           <Container>
             <ScrollReveal direction="up">
@@ -290,7 +290,7 @@ export default function TexasTrendsClient() {
             <Container>
               <ScrollReveal direction="up">
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
+                  <div className="rounded-sm border border-border-subtle bg-surface-dugout p-4 text-center">
                     <div
                       className="font-mono text-2xl font-bold"
                       style={{
@@ -303,11 +303,11 @@ export default function TexasTrendsClient() {
                     </div>
                     <div className="text-[10px] uppercase tracking-wider text-text-muted mt-1">Run Diff (L5)</div>
                   </div>
-                  <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
+                  <div className="rounded-sm border border-border-subtle bg-surface-dugout p-4 text-center">
                     <div className="font-mono text-2xl font-bold text-orange-400">{momentum.hotPlayers}</div>
                     <div className="text-[10px] uppercase tracking-wider text-text-muted mt-1">Hot Bats</div>
                   </div>
-                  <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
+                  <div className="rounded-sm border border-border-subtle bg-surface-dugout p-4 text-center">
                     <div className="font-mono text-2xl font-bold text-[var(--heritage-columbia-blue)]">{momentum.coldPlayers}</div>
                     <div className="text-[10px] uppercase tracking-wider text-text-muted mt-1">Cold Bats</div>
                   </div>
@@ -393,7 +393,7 @@ export default function TexasTrendsClient() {
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                             <th className="text-left py-2 px-2">Player</th>
                             <th className="text-left py-2 px-2">Pos</th>
                             <th className="text-center py-2 px-2">Status</th>
@@ -454,7 +454,7 @@ export default function TexasTrendsClient() {
         <Section padding="md" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <div className="rounded-sm bg-[var(--surface-dugout)] border border-border-subtle p-4">
+              <div className="rounded-sm bg-surface-dugout border border-border-subtle p-4">
                 <span className="heritage-stamp text-[10px] block mb-2">How This Works</span>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-text-secondary">
                   <div>

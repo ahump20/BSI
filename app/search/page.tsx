@@ -75,7 +75,7 @@ function getSportLabel(sport: string): string {
 }
 
 function getSportColor(sport: string): string {
-  return SPORT_COLORS[sport.toLowerCase()] || 'bg-[var(--surface-dugout)]';
+  return SPORT_COLORS[sport.toLowerCase()] || 'bg-surface-dugout';
 }
 
 // ============================================================================
@@ -454,7 +454,7 @@ function SearchContent() {
                                 {/* Info */}
                                 <div className="flex-1 min-w-0">
                                   <p
-                                    className="font-semibold transition-colors truncate group-hover:text-[var(--bsi-primary)]"
+                                    className="font-semibold transition-colors truncate group-hover:text-bsi-primary"
                                     style={{ color: 'var(--bsi-bone)' }}
                                   >
                                     {item.name}
@@ -467,7 +467,7 @@ function SearchContent() {
                                 {/* Arrow */}
                                 <svg
                                   viewBox="0 0 24 24"
-                                  className="w-5 h-5 shrink-0 transition-colors group-hover:text-[var(--bsi-primary)]"
+                                  className="w-5 h-5 shrink-0 transition-colors group-hover:text-bsi-primary"
                                   style={{ color: 'rgba(196,184,165,0.5)' }}
                                   fill="none"
                                   stroke="currentColor"

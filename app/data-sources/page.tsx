@@ -147,7 +147,7 @@ export default function DataSourcesPage() {
                             href={p.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="font-semibold transition-colors hover:text-[var(--bsi-primary)]"
+                            className="font-semibold transition-colors hover:text-bsi-primary"
                             style={{ color: 'var(--bsi-bone)' }}
                           >
                             {p.name}

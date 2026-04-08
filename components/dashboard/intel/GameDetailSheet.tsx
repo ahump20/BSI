@@ -50,7 +50,7 @@ export function GameDetailSheet({ game, open, onClose }: GameDetailSheetProps) {
               {game.sport.toUpperCase()}
             </span>
             {isLive && (
-              <span className="inline-flex items-center gap-1 text-[var(--bsi-primary)] font-mono text-[10px]">
+              <span className="inline-flex items-center gap-1 text-bsi-primary font-mono text-[10px]">
                 <span className="h-1.5 w-1.5 rounded-full bg-[var(--bsi-primary)] animate-pulse" />
                 LIVE
               </span>

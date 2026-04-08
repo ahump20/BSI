@@ -299,7 +299,7 @@ export default function CollegeBaseballRankingsPage() {
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
-                        <tr className="bg-[var(--surface-press-box)] border-b border-[var(--border-vintage)]">
+                        <tr className="bg-surface-press-box border-b border-border-vintage">
                           <th className="text-left py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider w-16">
                             Rank
                           </th>
@@ -448,7 +448,7 @@ export default function CollegeBaseballRankingsPage() {
                   </div>
 
                   {/* Legend */}
-                  <div className="px-4 py-3 bg-[var(--surface-press-box)] border-t border-[var(--border-vintage)]">
+                  <div className="px-4 py-3 bg-surface-press-box border-t border-border-vintage">
                     <div className="flex flex-wrap items-center gap-4 text-xs text-[var(--bsi-dust)]">
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 bg-burnt-orange/20 rounded-sm" />
@@ -554,7 +554,7 @@ export default function CollegeBaseballRankingsPage() {
             </div>
 
             {/* Data Attribution */}
-            <div className="mt-6 pt-4 border-t border-[var(--border-vintage)] flex justify-center">
+            <div className="mt-6 pt-4 border-t border-border-vintage flex justify-center">
               <DataAttribution
                 source="D1Baseball"
                 lastUpdated={rankings?.lastUpdated}

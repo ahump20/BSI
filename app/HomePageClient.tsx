@@ -386,7 +386,7 @@ function ScoreTicker({
                 <button
                   type="button"
                   onClick={() => onGameClick(g.sport, g.id!)}
-                  className="inline-flex items-center gap-1.5 text-[13px] transition-colors hover:text-[var(--bsi-primary)] cursor-pointer"
+                  className="inline-flex items-center gap-1.5 text-[13px] transition-colors hover:text-bsi-primary cursor-pointer"
                   style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-bone)', textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
                 >
                   {scoreContent}
@@ -394,7 +394,7 @@ function ScoreTicker({
               ) : (
                 <Link
                   href={`/${g.sport}/`}
-                  className="inline-flex items-center gap-1.5 text-[13px] transition-colors hover:text-[var(--bsi-primary)]"
+                  className="inline-flex items-center gap-1.5 text-[13px] transition-colors hover:text-bsi-primary"
                   style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-bone)', textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
                 >
                   {scoreContent}
@@ -459,7 +459,7 @@ function SportPulseStrip({ pulse }: { pulse: Record<string, SportPulseData> }) {
                 }}
               >
                 <span
-                  className="text-[10px] uppercase tracking-[0.12em] font-bold whitespace-nowrap transition-colors group-hover:text-[var(--bsi-primary)]"
+                  className="text-[10px] uppercase tracking-[0.12em] font-bold whitespace-nowrap transition-colors group-hover:text-bsi-primary"
                   style={{
                     fontFamily: 'var(--font-oswald)',
                     color: hasGames ? 'var(--bsi-bone)' : 'var(--bsi-dust)',
@@ -545,7 +545,7 @@ function StandoutCard({
       <div className="flex items-end justify-between gap-3">
         <div className="min-w-0">
           <p
-            className="text-base sm:text-lg font-bold truncate group-hover:text-[var(--bsi-primary)] transition-colors"
+            className="text-base sm:text-lg font-bold truncate group-hover:text-bsi-primary transition-colors"
             style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
           >
             {player.name}
@@ -625,7 +625,7 @@ function LeaderboardTable({
         </h2>
         <Link
           href={href}
-          className="text-[10px] uppercase tracking-wider transition-colors hover:text-[var(--bsi-primary)]"
+          className="text-[10px] uppercase tracking-wider transition-colors hover:text-bsi-primary"
           style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
         >
           Full board &rarr;
@@ -683,7 +683,7 @@ function LeaderboardTable({
                 <td className="px-1 py-2 max-w-[180px]">
                   <Link
                     href={row.player_id ? `/college-baseball/savant/player/${row.player_id}/` : '#'}
-                    className="transition-colors duration-100 hover:text-[var(--bsi-primary)]"
+                    className="transition-colors duration-100 hover:text-bsi-primary"
                     style={{ color: 'var(--bsi-bone)' }}
                   >
                     {row.player_name}
@@ -885,7 +885,7 @@ function NewsCard({ article, sport }: { article: NewsArticle; sport: string }) {
       )}
       <div className="px-3 pb-3 pt-2 flex-1">
         <p
-          className="text-xs sm:text-sm font-semibold leading-snug line-clamp-2 group-hover:text-[var(--bsi-primary)] transition-colors"
+          className="text-xs sm:text-sm font-semibold leading-snug line-clamp-2 group-hover:text-bsi-primary transition-colors"
           style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
         >
           {article.headline}
@@ -1244,7 +1244,7 @@ export function HomePageClient() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-2">
                     <h3
-                      className="text-lg sm:text-xl font-bold uppercase tracking-[0.04em] transition-colors group-hover:text-[var(--bsi-primary)]"
+                      className="text-lg sm:text-xl font-bold uppercase tracking-[0.04em] transition-colors group-hover:text-bsi-primary"
                       style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
                     >
                       {SPORT_NAV[0].name}
@@ -1287,7 +1287,7 @@ export function HomePageClient() {
                     </span>
                   )}
                   <span
-                    className="text-[10px] uppercase tracking-wider transition-colors group-hover:text-[var(--bsi-primary)]"
+                    className="text-[10px] uppercase tracking-wider transition-colors group-hover:text-bsi-primary"
                     style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
                   >
                     Explore &rarr;
@@ -1513,7 +1513,7 @@ export function HomePageClient() {
                   style={{ background: 'rgba(191,87,0,0.4)' }}
                 />
                 <p
-                  className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.1em] transition-colors group-hover:text-[var(--bsi-primary)]"
+                  className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.1em] transition-colors group-hover:text-bsi-primary"
                   style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-dust)' }}
                 >
                   {item.title}
@@ -1548,7 +1548,7 @@ export function HomePageClient() {
               </h2>
               <Link
                 href="/intel/"
-                className="text-[10px] uppercase tracking-wider transition-colors hover:text-[var(--bsi-primary)]"
+                className="text-[10px] uppercase tracking-wider transition-colors hover:text-bsi-primary"
                 style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
               >
                 All intel &rarr;

@@ -14,7 +14,7 @@ interface FreshnessBadgeProps {
 const levelStyles: Record<FreshnessLevel, { dot: string; text: string; label: string; pulse: boolean }> = {
   fresh: {
     dot: 'bg-[var(--bsi-primary)]',
-    text: 'text-[var(--bsi-primary)]',
+    text: 'text-bsi-primary',
     label: 'LIVE',
     pulse: true,
   },

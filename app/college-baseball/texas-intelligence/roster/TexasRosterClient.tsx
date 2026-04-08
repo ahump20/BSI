@@ -125,7 +125,7 @@ export default function TexasRosterClient() {
         </Section>
 
         {/* Hero */}
-        <Section padding="lg" className="relative overflow-hidden bg-[var(--surface-scoreboard)]">
+        <Section padding="lg" className="relative overflow-hidden bg-surface-scoreboard">
           <div className="absolute top-0 left-0 right-0 h-1" style={{ backgroundColor: ACCENT }} />
           <Container>
             <ScrollReveal direction="up">
@@ -145,7 +145,7 @@ export default function TexasRosterClient() {
         {/* Tab Bar */}
         <Section padding="sm" className="border-b border-border">
           <Container>
-            <div className="flex gap-1 bg-[var(--surface-press-box)] rounded-sm p-1 w-fit">
+            <div className="flex gap-1 bg-surface-press-box rounded-sm p-1 w-fit">
               {(['all', 'position', 'pitchers'] as const).map((tab) => (
                 <button
                   key={tab}
@@ -208,7 +208,7 @@ export default function TexasRosterClient() {
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                             <th className="text-left py-2 px-2">Name</th>
                             <th className="text-left py-2 px-2">Pos</th>
                             <SortTh label="PA" field="pa" current={hitterSort} onSort={setHitterSort} />
@@ -270,7 +270,7 @@ export default function TexasRosterClient() {
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                             <th className="text-left py-2 px-2">Name</th>
                             <th className="text-left py-2 px-2">Pos</th>
                             <PitcherSortTh label="IP" field="ip" current={pitcherSort} onSort={setPitcherSort} />

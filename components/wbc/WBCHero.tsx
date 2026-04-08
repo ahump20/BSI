@@ -28,7 +28,7 @@ const PHASE_LABELS: Record<Phase, string> = {
 
 const PHASE_COLORS: Record<Phase, string> = {
   pre: 'text-text-tertiary',
-  pool: 'text-[var(--bsi-primary)]',
+  pool: 'text-bsi-primary',
   knockout: 'text-ember',
   final: 'text-burnt-orange',
   complete: 'text-text-secondary',

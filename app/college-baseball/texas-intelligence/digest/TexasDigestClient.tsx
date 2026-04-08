@@ -72,7 +72,7 @@ export default function TexasDigestClient() {
         </Section>
 
         {/* Hero */}
-        <Section padding="lg" className="relative overflow-hidden bg-[var(--surface-scoreboard)]">
+        <Section padding="lg" className="relative overflow-hidden bg-surface-scoreboard">
           <div className="absolute top-0 left-0 right-0 h-1" style={{ backgroundColor: ACCENT }} />
           <Container>
             <ScrollReveal direction="up">
@@ -120,7 +120,7 @@ export default function TexasDigestClient() {
         {!loading && data && (
           <>
             {/* Dashboard Strip */}
-            <Section padding="md" className="bg-[var(--surface-dugout)] border-y border-border">
+            <Section padding="md" className="bg-surface-dugout border-y border-border">
               <Container>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="text-center py-2">

@@ -290,7 +290,7 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
                       <div className={`w-12 h-12 rounded-full border-2 flex items-center justify-center font-mono text-sm font-bold transition-colors ${
                         c.year === activeChampionship
                           ? 'border-burnt-orange bg-burnt-orange text-white'
-                          : 'border-border-subtle bg-[var(--surface-dugout)] text-text-muted group-hover:border-burnt-orange'
+                          : 'border-border-subtle bg-surface-dugout text-text-muted group-hover:border-burnt-orange'
                       }`}>
                         {String(c.year).slice(-2)}
                       </div>
@@ -302,7 +302,7 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
                   const champ = data.championships.find((c) => c.year === activeChampionship);
                   if (!champ) return null;
                   return (
-                    <div className="mt-4 rounded-sm bg-[var(--surface-dugout)] border border-border-subtle p-4 animate-in fade-in">
+                    <div className="mt-4 rounded-sm bg-surface-dugout border border-border-subtle p-4 animate-in fade-in">
                       <div className="flex items-start gap-3 mb-2">
                         <span className="font-display text-2xl font-bold text-burnt-orange">{champ.year}</span>
                         <Badge variant="primary" size="sm">Champion</Badge>

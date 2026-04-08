@@ -194,8 +194,8 @@ export function DiamondDynastyTeamBuilderClient() {
         <DataErrorBoundary name="team builder">
           {loading ? (
             <div className="grid gap-4 lg:grid-cols-[0.66fr_0.34fr]">
-              <div className="h-[680px] animate-pulse rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)]" />
-              <div className="h-[680px] animate-pulse rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)]" />
+              <div className="h-[680px] animate-pulse rounded-sm border border-border-vintage bg-surface-dugout" />
+              <div className="h-[680px] animate-pulse rounded-sm border border-border-vintage bg-surface-dugout" />
             </div>
           ) : reference ? (
             <div className="grid gap-4 lg:grid-cols-[0.66fr_0.34fr]">
@@ -208,7 +208,7 @@ export function DiamondDynastyTeamBuilderClient() {
                       <input
                         value={title}
                         onChange={(event) => setTitle(event.target.value)}
-                        className="w-full rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-2 text-sm text-[var(--bsi-bone)]"
+                        className="w-full rounded-sm border border-border-vintage bg-surface-dugout px-3 py-2 text-sm text-[var(--bsi-bone)]"
                       />
                     </label>
                     <div className="flex items-end">
@@ -248,7 +248,7 @@ export function DiamondDynastyTeamBuilderClient() {
                                 className={`rounded-sm border px-4 py-4 text-left transition-colors ${
                                   active
                                     ? 'border-burnt-orange bg-burnt-orange/10'
-                                    : 'border-[var(--border-vintage)] bg-[var(--surface-dugout)]'
+                                    : 'border-border-vintage bg-surface-dugout'
                                 }`}
                               >
                                 <div className="flex items-center justify-between gap-4">
@@ -267,7 +267,7 @@ export function DiamondDynastyTeamBuilderClient() {
                                       onChange={(event) => updateSelection(slot.key, {
                                         localParallelLevel: Number(event.target.value),
                                       })}
-                                      className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-scoreboard)] px-3 py-2 text-xs text-[var(--bsi-bone)]"
+                                      className="rounded-sm border border-border-vintage bg-surface-scoreboard px-3 py-2 text-xs text-[var(--bsi-bone)]"
                                     >
                                       {DD_PARALLEL_LEVELS.map((level) => (
                                         <option key={level} value={level}>
@@ -280,7 +280,7 @@ export function DiamondDynastyTeamBuilderClient() {
                                       onChange={(event) => updateSelection(slot.key, {
                                         localParallelModLabel: event.target.value === 'None' ? null : event.target.value,
                                       })}
-                                      className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-scoreboard)] px-3 py-2 text-xs text-[var(--bsi-bone)]"
+                                      className="rounded-sm border border-border-vintage bg-surface-scoreboard px-3 py-2 text-xs text-[var(--bsi-bone)]"
                                     >
                                       {DD_PARALLEL_MODS.map((option) => (
                                         <option key={option} value={option}>
@@ -318,7 +318,7 @@ export function DiamondDynastyTeamBuilderClient() {
                       <StatCard label="Red Diamond" value={buildDiagnostics.redDiamondCards} helperText="Current build count of Red Diamond rarity cards." />
                     </div>
                     {captainCard ? (
-                      <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-4 text-sm text-[var(--bsi-dust)]">
+                      <div className="rounded-sm border border-border-vintage bg-surface-dugout px-4 py-4 text-sm text-[var(--bsi-dust)]">
                         <div className="font-semibold text-[var(--bsi-bone)]">{captainCard.name}</div>
                         <p className="mt-2">{captainCard.abilityDescription}</p>
                       </div>
@@ -333,7 +333,7 @@ export function DiamondDynastyTeamBuilderClient() {
                       value={search}
                       onChange={(event) => setSearch(event.target.value)}
                       placeholder="Search for cards"
-                      className="w-full rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-2 text-sm text-[var(--bsi-bone)]"
+                      className="w-full rounded-sm border border-border-vintage bg-surface-dugout px-3 py-2 text-sm text-[var(--bsi-bone)]"
                     />
 
                     <div className="grid gap-3 md:grid-cols-2">
@@ -342,7 +342,7 @@ export function DiamondDynastyTeamBuilderClient() {
                         <select
                           value={builderCollection}
                           onChange={(event) => setBuilderCollection(event.target.value)}
-                          className="w-full rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-2 text-sm text-[var(--bsi-bone)]"
+                          className="w-full rounded-sm border border-border-vintage bg-surface-dugout px-3 py-2 text-sm text-[var(--bsi-bone)]"
                         >
                           <option value="">All</option>
                           {reference.collections.map((collection) => (
@@ -353,11 +353,11 @@ export function DiamondDynastyTeamBuilderClient() {
                         </select>
                       </label>
                       <div className="grid gap-3">
-                        <label className="flex items-center gap-3 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-3 text-sm text-[var(--bsi-bone)]">
+                        <label className="flex items-center gap-3 rounded-sm border border-border-vintage bg-surface-dugout px-3 py-3 text-sm text-[var(--bsi-bone)]">
                           <input type="checkbox" checked={builderWbcOnly} onChange={(event) => setBuilderWbcOnly(event.target.checked)} />
                           WBC-tagged only
                         </label>
-                        <label className="flex items-center gap-3 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-3 text-sm text-[var(--bsi-bone)]">
+                        <label className="flex items-center gap-3 rounded-sm border border-border-vintage bg-surface-dugout px-3 py-3 text-sm text-[var(--bsi-bone)]">
                           <input type="checkbox" checked={builderCaptainOnly} onChange={(event) => setBuilderCaptainOnly(event.target.checked)} />
                           Captain cards only
                         </label>
@@ -367,7 +367,7 @@ export function DiamondDynastyTeamBuilderClient() {
                     {searchLoading ? (
                       <div className="space-y-3">
                         {Array.from({ length: 5 }).map((_, index) => (
-                          <div key={index} className="h-16 animate-pulse rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)]" />
+                          <div key={index} className="h-16 animate-pulse rounded-sm border border-border-vintage bg-surface-dugout" />
                         ))}
                       </div>
                     ) : results?.cards.length ? (
@@ -375,7 +375,7 @@ export function DiamondDynastyTeamBuilderClient() {
                         {results.cards.map((card) => (
                           <div
                             key={card.id}
-                            className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-4"
+                            className="rounded-sm border border-border-vintage bg-surface-dugout px-4 py-4"
                           >
                             <div className="flex items-center justify-between gap-4">
                               <div>

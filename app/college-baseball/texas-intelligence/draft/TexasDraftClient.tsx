@@ -103,7 +103,7 @@ export default function TexasDraftClient() {
         </Section>
 
         {/* Hero */}
-        <Section padding="lg" className="relative overflow-hidden bg-[var(--surface-scoreboard)]">
+        <Section padding="lg" className="relative overflow-hidden bg-surface-scoreboard">
           <div className="absolute top-0 left-0 right-0 h-1" style={{ backgroundColor: ACCENT }} />
           <Container>
             <ScrollReveal direction="up">
@@ -137,7 +137,7 @@ export default function TexasDraftClient() {
                       className={`rounded-sm border p-4 text-center transition-all ${
                         tierFilter === tier
                           ? 'border-burnt-orange bg-burnt-orange/10'
-                          : 'border-border-subtle bg-[var(--surface-dugout)] hover:border-burnt-orange/30'
+                          : 'border-border-subtle bg-surface-dugout hover:border-burnt-orange/30'
                       }`}
                     >
                       <div className="font-mono text-2xl font-bold text-text-primary">
@@ -190,7 +190,7 @@ export default function TexasDraftClient() {
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                             <th className="text-left py-2 px-2 w-8">#</th>
                             <th className="text-left py-2 px-2">Name</th>
                             <th className="text-left py-2 px-2">Pos</th>

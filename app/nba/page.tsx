@@ -388,7 +388,7 @@ export default function NBAPage() {
                               </thead>
                               <tbody>
                                 {conf.teams.sort((a, b) => b.wins - a.wins).map((team, idx) => (
-                                  <tr key={team.teamName} className="border-b border-border-subtle hover:bg-[var(--surface-dugout)] transition-colors">
+                                  <tr key={team.teamName} className="border-b border-border-subtle hover:bg-surface-dugout transition-colors">
                                     <td className="p-3 text-burnt-orange font-bold">{idx + 1}</td>
                                     <td className="p-3 font-semibold text-text-primary">{team.teamName}</td>
                                     <td className="p-3 text-text-secondary">{team.wins}</td>
@@ -474,7 +474,7 @@ export default function NBAPage() {
                             const isPlayIn = idx >= 6 && idx < 10;
                             return (
                               <Link key={team.teamName} href={`/nba/teams/${team.teamName.toLowerCase().replace(/\s+/g, '-')}`}>
-                                <div className="flex items-center justify-between py-3 px-2 hover:bg-[var(--surface-dugout)] rounded-sm transition-colors group">
+                                <div className="flex items-center justify-between py-3 px-2 hover:bg-surface-dugout rounded-sm transition-colors group">
                                   <div className="flex items-center gap-3">
                                     <span className={`text-sm font-bold w-6 text-center ${isPlayoffSeed ? 'text-burnt-orange' : isPlayIn ? 'text-text-secondary' : 'text-text-tertiary'}`}>
                                       {idx + 1}

@@ -19,7 +19,7 @@ const SOURCE_STYLES: Record<string, { bg: string; text: string; label: string }>
 };
 
 const CATEGORY_STYLES: Record<string, string> = {
-  scores: 'bg-[var(--bsi-primary)]/15 text-[var(--bsi-primary)] border-[var(--bsi-primary)]/30',
+  scores: 'bg-[var(--bsi-primary)]/15 text-bsi-primary border-[var(--bsi-primary)]/30',
   transfers: 'bg-[var(--bsi-warning)]/15 text-[var(--bsi-warning)] border-[var(--bsi-warning)]/30',
   recruiting: 'bg-[var(--heritage-columbia-blue)]/15 text-[var(--heritage-columbia-blue)] border-[var(--heritage-columbia-blue)]/30',
   editorial: 'bg-[var(--heritage-columbia-blue)]/15 text-[var(--heritage-columbia-blue)] border-[var(--heritage-columbia-blue)]/30',

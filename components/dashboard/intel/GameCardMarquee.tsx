@@ -39,7 +39,7 @@ export function GameCardMarquee({ game, onClick }: GameCardMarqueeProps) {
           {game.sport.toUpperCase()}
         </span>
         {isLive ? (
-          <span className="inline-flex items-center gap-1 text-[10px] text-[var(--bsi-primary)]" style={{ fontFamily: 'var(--intel-mono)' }}>
+          <span className="inline-flex items-center gap-1 text-[10px] text-bsi-primary" style={{ fontFamily: 'var(--intel-mono)' }}>
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--bsi-primary)] animate-pulse" />
             LIVE
           </span>

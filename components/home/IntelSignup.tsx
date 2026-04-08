@@ -66,15 +66,15 @@ export function IntelSignup({ sport, onSignup }: IntelSignupProps = {}) {
 
   if (state === 'success') {
     return (
-      <div className="bg-[var(--surface-dugout)] border rounded-sm p-4 mb-4" style={{ borderColor: 'rgba(191, 87, 0, 0.2)' }}>
-        <p className="text-sm text-[var(--bsi-primary)] font-medium">You&apos;re in.</p>
+      <div className="bg-surface-dugout border rounded-sm p-4 mb-4" style={{ borderColor: 'rgba(191, 87, 0, 0.2)' }}>
+        <p className="text-sm text-bsi-primary font-medium">You&apos;re in.</p>
         <p className="text-xs text-text-muted mt-1">Roster-market intelligence, delivered first.</p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm p-4 mb-4">
+    <form onSubmit={handleSubmit} className="bg-surface-dugout border border-border-vintage rounded-sm p-4 mb-4">
       <p className="text-sm font-display text-text-primary uppercase tracking-wide mb-3">
         Get Portal &amp; Draft Intel
       </p>

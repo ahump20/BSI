@@ -209,7 +209,7 @@ export default function TexasCompareClient() {
         </Section>
 
         {/* Hero */}
-        <Section padding="lg" className="relative overflow-hidden bg-[var(--surface-scoreboard)]">
+        <Section padding="lg" className="relative overflow-hidden bg-surface-scoreboard">
           <div className="absolute top-0 left-0 right-0 h-1" style={{ backgroundColor: ACCENT }} />
           <Container>
             <ScrollReveal direction="up">
@@ -239,7 +239,7 @@ export default function TexasCompareClient() {
                   <select
                     value={playerA}
                     onChange={(e) => setPlayerA(e.target.value)}
-                    className="w-full bg-[var(--surface-dugout)] border border-border rounded-sm px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
+                    className="w-full bg-surface-dugout border border-border rounded-sm px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
                     aria-label="Select first player"
                   >
                     <option value="">Select a player...</option>
@@ -255,7 +255,7 @@ export default function TexasCompareClient() {
                   <select
                     value={playerB}
                     onChange={(e) => setPlayerB(e.target.value)}
-                    className="w-full bg-[var(--surface-dugout)] border border-border rounded-sm px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
+                    className="w-full bg-surface-dugout border border-border rounded-sm px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
                     aria-label="Select second player"
                   >
                     <option value="">Select a player...</option>
@@ -328,7 +328,7 @@ export default function TexasCompareClient() {
                       <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                           <thead>
-                            <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                            <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                               <th className="text-right py-2 px-2" style={{ color: ACCENT }}>{selectedA.name}</th>
                               <th className="text-center py-2 px-2 w-20">Stat</th>
                               <th className="text-left py-2 px-2" style={{ color: COMPARE_COLOR }}>{selectedB.name}</th>

@@ -749,7 +749,7 @@ export default function SavantPlayerClient() {
 
                 <div className="relative flex-1 min-w-0">
                   <span
-                    className="text-sm font-semibold block group-hover:text-[var(--bsi-primary)] transition-colors"
+                    className="text-sm font-semibold block group-hover:text-bsi-primary transition-colors"
                     style={{
                       fontFamily: 'var(--bsi-font-display)',
                       color: 'var(--bsi-bone)',
@@ -884,14 +884,14 @@ export default function SavantPlayerClient() {
             >
               <Link
                 href={`/college-baseball/players/${playerId}`}
-                className="text-xs uppercase tracking-widest transition-colors hover:text-[var(--bsi-primary)]"
+                className="text-xs uppercase tracking-widest transition-colors hover:text-bsi-primary"
                 style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-display)' }}
               >
                 Full Player Profile &rarr;
               </Link>
               <Link
                 href="/college-baseball/savant"
-                className="text-xs uppercase tracking-widest transition-colors hover:text-[var(--bsi-primary)]"
+                className="text-xs uppercase tracking-widest transition-colors hover:text-bsi-primary"
                 style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-display)' }}
               >
                 Savant Leaderboard &rarr;

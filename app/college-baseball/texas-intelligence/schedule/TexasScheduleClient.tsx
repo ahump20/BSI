@@ -131,7 +131,7 @@ export default function TexasScheduleClient() {
         </Section>
 
         {/* Hero */}
-        <Section padding="lg" className="relative overflow-hidden bg-[var(--surface-scoreboard)]">
+        <Section padding="lg" className="relative overflow-hidden bg-surface-scoreboard">
           <div className="absolute top-0 left-0 right-0 h-1" style={{ backgroundColor: ACCENT }} />
           <Container>
             <ScrollReveal direction="up">
@@ -187,7 +187,7 @@ export default function TexasScheduleClient() {
                   </button>
                 ))}
               </div>
-              <div className="flex gap-1 bg-[var(--surface-press-box)] rounded-sm p-1">
+              <div className="flex gap-1 bg-surface-press-box rounded-sm p-1">
                 {(['games', 'series'] as const).map((l) => (
                   <button
                     key={l}

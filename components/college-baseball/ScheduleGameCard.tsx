@@ -46,7 +46,7 @@ export function ScheduleGameCard({ game }: { game: ScheduleGame }) {
           isLive ? 'bg-[var(--bsi-primary)]/10' : isFinal ? 'bg-surface-light' : 'bg-burnt-orange/10'
         }`}>
           <span className={`text-xs font-semibold uppercase ${
-            isLive ? 'text-[var(--bsi-primary)]' : isFinal ? 'text-text-muted' : 'text-burnt-orange'
+            isLive ? 'text-bsi-primary' : isFinal ? 'text-text-muted' : 'text-burnt-orange'
           }`}>
             {isLive ? (
               <span className="flex items-center gap-1.5">

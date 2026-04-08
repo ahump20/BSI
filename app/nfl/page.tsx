@@ -308,7 +308,7 @@ export default function NFLPage() {
                             {category.leaders.slice(0, 5).map((player, idx) => (
                               <div
                                 key={`${player.name}-${idx}`}
-                                className="flex items-center gap-3 py-2 border-b border-[var(--border-vintage)] last:border-0 group hover:bg-[var(--surface-dugout)] transition-colors rounded-sm px-1 -mx-1"
+                                className="flex items-center gap-3 py-2 border-b border-border-vintage last:border-0 group hover:bg-surface-dugout transition-colors rounded-sm px-1 -mx-1"
                               >
                                 <span className={`w-7 h-7 flex items-center justify-center rounded-full text-xs font-bold shrink-0 ${
                                   idx === 0 ? 'bg-burnt-orange text-white' : 'bg-burnt-orange/15 text-burnt-orange'
@@ -455,7 +455,7 @@ export default function NFLPage() {
                             </thead>
                             <tbody>
                               {standingsByDivision[division].map((team, idx) => (
-                                <tr key={team.teamName} className="border-b border-border-subtle hover:bg-[var(--surface-dugout)] transition-colors">
+                                <tr key={team.teamName} className="border-b border-border-subtle hover:bg-surface-dugout transition-colors">
                                   <td className="p-3 text-burnt-orange font-bold">{idx + 1}</td>
                                   <td className="p-3 font-semibold text-text-primary">{team.teamName}</td>
                                   <td className="p-3 text-text-secondary">{team.wins}</td>
@@ -544,11 +544,11 @@ export default function NFLPage() {
                                 return (
                                   <Link key={team.teamName} href={`/nfl/teams/${team.teamName.toLowerCase().replace(/\s+/g, '-')}`} className="block group">
                                     <div className={`flex items-center justify-between py-2 px-3 rounded-sm transition-colors ${
-                                      isLeader ? 'bg-burnt-orange/10 border border-burnt-orange/20' : 'hover:bg-[var(--surface-dugout)]'
+                                      isLeader ? 'bg-burnt-orange/10 border border-burnt-orange/20' : 'hover:bg-surface-dugout'
                                     }`}>
                                       <div className="flex items-center gap-3 min-w-0">
                                         <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] font-bold ${
-                                          isLeader ? 'bg-burnt-orange text-white' : 'bg-[var(--surface-dugout)] text-bsi-dust'
+                                          isLeader ? 'bg-burnt-orange text-white' : 'bg-surface-dugout text-bsi-dust'
                                         }`}>
                                           {idx + 1}
                                         </span>

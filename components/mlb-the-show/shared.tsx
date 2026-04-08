@@ -63,7 +63,7 @@ export function WatchlistButton({
       className={`inline-flex items-center gap-2 rounded-sm border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] transition-colors ${
         active
           ? 'border-burnt-orange bg-burnt-orange/15 text-burnt-orange'
-          : 'border-[var(--border-vintage)] bg-[var(--surface-dugout)] text-[var(--bsi-dust)] hover:border-burnt-orange/40'
+          : 'border-border-vintage bg-surface-dugout text-[var(--bsi-dust)] hover:border-burnt-orange/40'
       }`}
     >
       <span>{active ? 'Tracked' : 'Track'}</span>
@@ -78,7 +78,7 @@ export function SurfaceNav() {
         <Link
           key={link.href}
           href={link.href}
-          className="rounded-sm border border-[var(--border-vintage)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] transition-colors hover:border-burnt-orange/40 hover:text-burnt-orange"
+          className="rounded-sm border border-border-vintage px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] transition-colors hover:border-burnt-orange/40 hover:text-burnt-orange"
         >
           {link.label}
         </Link>
@@ -99,7 +99,7 @@ export function ShowSurfaceFrame({
 }: ShowSurfaceFrameProps) {
   return (
     <>
-      <section className="border-b border-[var(--border-vintage)] bg-[radial-gradient(circle_at_top,_rgba(191,87,0,0.16),_transparent_55%),linear-gradient(180deg,rgba(13,13,13,0.95),rgba(26,26,26,1))] py-12">
+      <section className="border-b border-border-vintage bg-[radial-gradient(circle_at_top,_rgba(191,87,0,0.16),_transparent_55%),linear-gradient(180deg,rgba(13,13,13,0.95),rgba(26,26,26,1))] py-12">
         <Container size="xl">
           <div className="mb-6 flex items-center gap-3 text-sm text-[var(--bsi-dust)]">
             <Link href="/mlb" className="hover:text-burnt-orange transition-colors">MLB</Link>

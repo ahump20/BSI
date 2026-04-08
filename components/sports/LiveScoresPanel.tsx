@@ -74,7 +74,7 @@ function GameCardList({ games }: { games: GameScore[] }) {
               <span className="w-1.5 h-1.5 bg-[var(--bsi-primary)] rounded-full animate-pulse" role="status" aria-label="Game in progress" />
             )}
             <span className={`text-xs ${
-              game.isLive ? 'text-[var(--bsi-primary)]'
+              game.isLive ? 'text-bsi-primary'
                 : game.isPostponed ? 'text-[var(--bsi-warning)]/60'
                 : game.isFinal ? 'text-text-muted'
                 : 'text-burnt-orange'

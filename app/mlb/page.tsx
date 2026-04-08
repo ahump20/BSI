@@ -458,7 +458,7 @@ export default function MLBPage() {
                                 {standingsByDivision[division].map((team, idx) => (
                                   <tr
                                     key={team.teamName}
-                                    className="border-b border-border-subtle hover:bg-[var(--surface-dugout)] transition-colors"
+                                    className="border-b border-border-subtle hover:bg-surface-dugout transition-colors"
                                   >
                                     <td className="p-3 text-burnt-orange font-bold">{idx + 1}</td>
                                     <td className="p-3 font-semibold text-text-primary">
