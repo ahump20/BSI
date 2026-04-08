@@ -181,8 +181,8 @@ export function getBottomNav(): readonly BottomNavEntry[] {
   return [
     { href: '/', label: 'Home', iconKey: 'home' },
     { href: '/scores', label: 'Scores', iconKey: 'activity' },
-    { href: '/college-baseball', label: 'Baseball', iconKey: 'baseball' },
-    { href: '/college-baseball/savant', label: 'Analytics', iconKey: 'chart' },
+    { href: '/college-baseball', label: 'CBB', iconKey: 'baseball' },
+    { href: '/college-baseball/savant', label: 'Savant', iconKey: 'chart' },
   ];
 }
 
@@ -198,41 +198,39 @@ export interface MorePanelSection {
 export function getMorePanelNav(): readonly MorePanelSection[] {
   return [
     {
-      label: 'Where to Start',
+      label: 'Sports',
       items: [
-        { label: 'Live Scores', href: '/scores' },
-        { label: 'Ask BSI', href: '/ask' },
-        { label: 'College Baseball', href: '/college-baseball' },
-        { label: 'Intelligence', href: '/intel' },
-        { label: 'Pricing', href: '/pricing' },
+        { label: 'College Baseball', href: '/college-baseball', iconKey: 'baseball' },
+        { label: 'MLB', href: '/mlb', iconKey: 'baseball' },
+        { label: 'NFL', href: '/nfl', iconKey: 'football' },
+        { label: 'NBA', href: '/nba', iconKey: 'basketball' },
+        { label: 'College Football', href: '/cfb', iconKey: 'football' },
       ],
     },
     {
       label: 'Analytics & Tools',
       items: [
-        { label: 'Savant', href: '/college-baseball/savant' },
-        { label: 'Power Rankings', href: '/college-baseball/power-rankings' },
-        { label: 'Weekly Pulse', href: '/college-baseball/weekly-pulse' },
+        { label: 'BSI Savant', href: '/college-baseball/savant' },
+        { label: 'Compare Teams', href: '/college-baseball/compare' },
+        { label: 'Rankings', href: '/college-baseball/rankings' },
+        { label: 'Standings', href: '/college-baseball/standings' },
         { label: 'Transfer Portal', href: '/college-baseball/transfer-portal' },
-        { label: 'NIL Valuation', href: '/nil-valuation' },
-        { label: 'Compare', href: '/college-baseball/compare' },
-        { label: 'Watchlist', href: '/college-baseball/watchlist' },
+        { label: 'Ask BSI', href: '/ask' },
       ],
     },
     {
-      label: 'College Baseball',
+      label: 'Content',
       items: [
-        { label: 'Rankings', href: '/college-baseball/rankings' },
+        { label: 'Editorial', href: '/college-baseball/editorial' },
+        { label: 'Intelligence', href: '/intel' },
+        { label: 'Podcast', href: '/podcast' },
         { label: 'Conferences', href: '/college-baseball/conferences' },
-        { label: 'Swing Intel', href: '/swing' },
       ],
     },
     {
       label: 'More',
       items: [
-        { label: 'Podcast', href: '/podcast' },
-        { label: 'Editorial', href: '/college-baseball/editorial' },
-        { label: 'Glossary', href: '/college-baseball/savant/glossary' },
+        { label: 'Pricing', href: '/pricing' },
         { label: 'About', href: '/about' },
         { label: 'Status', href: '/status' },
       ],
