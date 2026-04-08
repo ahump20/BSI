@@ -1,10 +1,12 @@
 'use client';
 
 /**
- * BSI Homepage — Editorial Intelligence Landing
+ * BSI Homepage — Multi-Sport Intelligence Landing
  *
- * Structure: Hero → Score Ticker → Value Proposition (pitch + standout proof) →
- * Savant Leaderboard Preview → Multi-sport News → Product Grid → Closing CTA → Brand Strip
+ * Structure: Hero → Score Ticker → Sport Pulse (live game counts) →
+ * Value Proposition (multi-sport pitch) → Sport Navigation →
+ * Savant Proof (standouts + leaderboards) → Multi-sport News →
+ * Closing CTA → Brand Strip
  *
  * Heritage Design System v2.1 throughout. All data wired to live APIs.
  */
@@ -80,20 +82,72 @@ interface NewsBucket {
   data: { articles: NewsArticle[] };
 }
 
+interface SportPulseData {
+  live: number;
+  total: number;
+}
+
 // ---------------------------------------------------------------------------
-// Navigation items — product entry points
+// Sport navigation — organized by sport, not by feature
 // ---------------------------------------------------------------------------
 
-const NAV_ITEMS: readonly { title: string; href: string; desc: string; accent?: boolean }[] = [
-  { title: 'Savant', href: '/college-baseball/savant/', desc: 'Advanced leaderboards', accent: true },
-  { title: 'Live Scores', href: '/scores/', desc: 'Real-time games', accent: true },
-  { title: 'Players', href: '/college-baseball/players/', desc: 'Search all D1 players', accent: true },
-  { title: 'Rankings', href: '/college-baseball/rankings/', desc: 'National poll' },
-  { title: 'Standings', href: '/college-baseball/standings/', desc: 'Conference tables' },
-  { title: 'Compare', href: '/college-baseball/compare/', desc: 'Head-to-head analysis' },
-  { title: 'Bubble', href: '/college-baseball/savant/bubble/', desc: 'Tournament projections' },
-  { title: 'Ask BSI', href: '/ask/', desc: 'AI-powered analysis' },
-];
+const SPORT_NAV = [
+  {
+    key: 'college-baseball',
+    name: 'College Baseball',
+    href: '/college-baseball/',
+    desc: 'Savant leaderboards, scouting grades, and advanced stats for 330 D1 programs',
+    flagship: true,
+    accent: 'var(--bsi-primary)',
+    badge: 'Deepest Analytics',
+  },
+  {
+    key: 'mlb',
+    name: 'MLB',
+    href: '/mlb/',
+    desc: 'Scores, standings, and player tracking across both leagues',
+    flagship: false,
+    accent: '#4B9CD3',
+    badge: null,
+  },
+  {
+    key: 'nfl',
+    name: 'NFL',
+    href: '/nfl/',
+    desc: 'Game scores, player stats, and weekly matchups',
+    flagship: false,
+    accent: '#10B981',
+    badge: null,
+  },
+  {
+    key: 'nba',
+    name: 'NBA',
+    href: '/nba/',
+    desc: 'Live scores, standings, and player performance',
+    flagship: false,
+    accent: '#F59E0B',
+    badge: null,
+  },
+  {
+    key: 'cfb',
+    name: 'College Football',
+    href: '/cfb/',
+    desc: 'Rankings, scores, and conference breakdowns',
+    flagship: false,
+    accent: '#8B5CF6',
+    badge: null,
+  },
+] as const;
+
+// Helper: count live/total games from a scores response
+function countGames(res: ScoresResponse | null): SportPulseData {
+  const g = res?.games ?? res?.data ?? [];
+  const live = g.filter((game) => {
+    const s = (game.status ?? '').toLowerCase();
+    return s.includes('live') || s.includes('in progress') || s.includes('top') || s.includes('bot');
+  }).length;
+  return { live, total: g.length };
+}
 
 // Sport labels for news
 const SPORT_LABELS: Record<string, string> = {
@@ -104,6 +158,15 @@ const SPORT_LABELS: Record<string, string> = {
   cbb: 'CBB',
   d1bb: 'College Baseball',
 };
+
+// Sport pulse config — maps API keys to display
+const PULSE_SPORTS = [
+  { key: 'college-baseball', apiPath: '/api/college-baseball/scores', label: 'College Baseball', short: 'CBB' },
+  { key: 'mlb', apiPath: '/api/mlb/scores', label: 'MLB', short: 'MLB' },
+  { key: 'nfl', apiPath: '/api/nfl/scores', label: 'NFL', short: 'NFL' },
+  { key: 'nba', apiPath: '/api/nba/scores', label: 'NBA', short: 'NBA' },
+  { key: 'cfb', apiPath: '/api/cfb/scores', label: 'CFB', short: 'CFB' },
+] as const;
 
 // ---------------------------------------------------------------------------
 // Score Ticker
@@ -177,6 +240,95 @@ function ScoreTicker({ games }: { games: ScoreGame[] }) {
         className="absolute right-0 top-0 bottom-0 w-12 z-10 pointer-events-none"
         style={{ background: 'linear-gradient(to left, var(--surface-dugout), transparent)' }}
       />
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Sport Pulse Strip — live game counts across all 5 sports
+// ---------------------------------------------------------------------------
+
+function SportPulseStrip({ pulse }: { pulse: Record<string, SportPulseData> }) {
+  const hasSomeData = Object.values(pulse).some((p) => p.total > 0);
+
+  if (!hasSomeData) return null;
+
+  return (
+    <div
+      className="relative"
+      style={{
+        background: 'var(--surface-press-box)',
+        borderBottom: '1px solid var(--border-vintage)',
+      }}
+    >
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <div
+          className="flex items-center overflow-x-auto no-scrollbar"
+          style={{ gap: 0 }}
+          role="status"
+          aria-label="Live game counts across sports"
+        >
+          {PULSE_SPORTS.map((sport, idx) => {
+            const data = pulse[sport.key];
+            const live = data?.live ?? 0;
+            const total = data?.total ?? 0;
+            const hasGames = total > 0;
+
+            return (
+              <Link
+                key={sport.key}
+                href={`/${sport.key === 'college-baseball' ? 'college-baseball' : sport.key}/`}
+                className="flex items-center gap-2.5 py-2.5 shrink-0 transition-colors group"
+                style={{
+                  paddingLeft: idx === 0 ? 0 : '1rem',
+                  paddingRight: '1rem',
+                  borderRight: idx < PULSE_SPORTS.length - 1 ? '1px solid rgba(140,98,57,0.15)' : 'none',
+                }}
+              >
+                <span
+                  className="text-[10px] uppercase tracking-[0.12em] font-bold whitespace-nowrap transition-colors group-hover:text-[var(--bsi-primary)]"
+                  style={{
+                    fontFamily: 'var(--font-oswald)',
+                    color: hasGames ? 'var(--bsi-bone)' : 'var(--bsi-dust)',
+                  }}
+                >
+                  <span className="hidden sm:inline">{sport.label}</span>
+                  <span className="sm:hidden">{sport.short}</span>
+                </span>
+
+                {live > 0 ? (
+                  <span className="inline-flex items-center gap-1">
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500" />
+                    </span>
+                    <span
+                      className="text-[10px] font-bold tabular-nums"
+                      style={{ fontFamily: 'var(--font-mono)', color: '#10B981' }}
+                    >
+                      {live}
+                    </span>
+                  </span>
+                ) : hasGames ? (
+                  <span
+                    className="text-[10px] tabular-nums"
+                    style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
+                  >
+                    {total}
+                  </span>
+                ) : (
+                  <span
+                    className="text-[9px]"
+                    style={{ fontFamily: 'var(--font-mono)', color: 'rgba(196,184,165,0.4)' }}
+                  >
+                    --
+                  </span>
+                )}
+              </Link>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
@@ -571,7 +723,7 @@ function NewsCard({ article, sport }: { article: NewsArticle; sport: string }) {
 // ---------------------------------------------------------------------------
 
 export function HomePageClient() {
-  // Data fetches
+  // Core data fetches — Savant leaderboards + college baseball scores (ticker)
   const { data: battingRes, loading: battingLoading, error: battingError, retry: retryBatting } =
     useSportData<LeaderboardResponse>('/api/savant/batting/leaderboard?limit=50', { refreshInterval: 300_000 });
   const { data: pitchingRes, loading: pitchingLoading, error: pitchingError, retry: retryPitching } =
@@ -581,9 +733,33 @@ export function HomePageClient() {
   const { data: newsRes } =
     useSportData<NewsBucket[]>('/api/intel/news', { refreshInterval: 600_000 });
 
+  // Multi-sport score fetches for pulse strip
+  const { data: mlbScoresRes } =
+    useSportData<ScoresResponse>('/api/mlb/scores', { refreshInterval: 60_000 });
+  const { data: nflScoresRes } =
+    useSportData<ScoresResponse>('/api/nfl/scores', { refreshInterval: 60_000 });
+  const { data: nbaScoresRes } =
+    useSportData<ScoresResponse>('/api/nba/scores', { refreshInterval: 60_000 });
+  const { data: cfbScoresRes } =
+    useSportData<ScoresResponse>('/api/cfb/scores', { refreshInterval: 60_000 });
+
   const batters = battingRes?.data ?? [];
   const pitchers = pitchingRes?.data ?? [];
   const games: ScoreGame[] = scoresRes?.games ?? scoresRes?.data ?? [];
+
+  // Derived: sport pulse — aggregated live/total counts per sport
+  const sportPulse = useMemo<Record<string, SportPulseData>>(() => ({
+    'college-baseball': countGames(scoresRes),
+    mlb: countGames(mlbScoresRes),
+    nfl: countGames(nflScoresRes),
+    nba: countGames(nbaScoresRes),
+    cfb: countGames(cfbScoresRes),
+  }), [scoresRes, mlbScoresRes, nflScoresRes, nbaScoresRes, cfbScoresRes]);
+
+  // Derived: total live count across all sports (for hero badge)
+  const totalLiveCount = useMemo(() => {
+    return Object.values(sportPulse).reduce((sum, p) => sum + p.live, 0);
+  }, [sportPulse]);
 
   // Derived: news articles — pick top 2 per sport, max 6 total
   const newsArticles = useMemo(() => {
@@ -611,14 +787,6 @@ export function HomePageClient() {
       .filter((p) => p.fip != null && (p.ip ?? 0) >= 10)
       .sort((a, b) => (a.fip ?? 99) - (b.fip ?? 99))[0] ?? null;
   }, [pitchers]);
-
-  // Derived: live game count
-  const liveCount = useMemo(() => {
-    return games.filter((g) => {
-      const s = (g.status ?? '').toLowerCase();
-      return s.includes('live') || s.includes('in progress') || s.includes('top') || s.includes('bot');
-    }).length;
-  }, [games]);
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard)' }}>
@@ -739,7 +907,7 @@ export function HomePageClient() {
             </Link>
 
             {/* Live badge */}
-            {liveCount > 0 && (
+            {totalLiveCount > 0 && (
               <span
                 className="inline-flex items-center gap-2 px-3 py-2 rounded-sm border"
                 style={{
@@ -751,12 +919,12 @@ export function HomePageClient() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
                 </span>
-                <DataTransition value={liveCount} mode="flip">
+                <DataTransition value={totalLiveCount} mode="flip">
                   <span
                     className="text-[10px] uppercase tracking-wider font-semibold"
                     style={{ fontFamily: 'var(--font-mono)', color: '#10B981' }}
                   >
-                    {liveCount} live
+                    {totalLiveCount} live
                   </span>
                 </DataTransition>
               </span>
@@ -770,7 +938,12 @@ export function HomePageClient() {
         <ScoreTicker games={games} />
       </DataErrorBoundary>
 
-      {/* VALUE PROPOSITION — Full-width pitch. No competing data cards.     */}
+      {/* SPORT PULSE — Live game counts across all 5 sports */}
+      <DataErrorBoundary name="SportPulse" compact>
+        <SportPulseStrip pulse={sportPulse} />
+      </DataErrorBoundary>
+
+      {/* VALUE PROPOSITION — Full-width pitch. Multi-sport, not CBB-only.   */}
       <section
         className="relative"
         style={{
@@ -787,16 +960,16 @@ export function HomePageClient() {
             className="text-2xl sm:text-3xl md:text-4xl font-bold uppercase leading-tight"
             style={{ fontFamily: 'var(--font-bebas)', color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}
           >
-            The numbers scouts{' '}
-            <span style={{ color: 'var(--bsi-primary)' }}>actually argue about</span>
+            Five sports. Every game.{' '}
+            <span style={{ color: 'var(--bsi-primary)' }}>No network filter.</span>
           </h2>
           <p
             className="mt-5 text-base sm:text-lg leading-relaxed"
             style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)', lineHeight: 1.8 }}
           >
-            Every D1 baseball program, measured the way scouts measure. Park-adjusted,
-            conference-weighted, recalculated every six hours. The stats the box score
-            doesn't show — and the context that makes them mean something.
+            College baseball, MLB, NFL, NBA, and college football — covered with the analytical
+            depth that mainstream sports media skip. Park-adjusted sabermetrics, real-time scores,
+            and scouting context recalculated every six hours.
           </p>
 
           {/* Proof points — inline, not cards */}
@@ -805,6 +978,7 @@ export function HomePageClient() {
             style={{ borderColor: 'rgba(140,98,57,0.2)' }}
           >
             {[
+              { stat: '5', label: 'Sports Covered' },
               { stat: '330', label: 'D1 Programs' },
               { stat: '6hr', label: 'Recompute Cycle' },
               { stat: '1,900+', label: 'Players Tracked' },
@@ -828,6 +1002,124 @@ export function HomePageClient() {
         </ScrollReveal>
       </section>
 
+      {/* SPORT NAVIGATION — Organized by sport, not by feature              */}
+      <section
+        className="relative"
+        style={{ borderTop: '1px solid var(--border-vintage)' }}
+      >
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+          <ScrollReveal stagger>
+            {/* Flagship sport — College Baseball gets hero treatment */}
+            <Link
+              href={SPORT_NAV[0].href}
+              className="group block heritage-card overflow-hidden mb-4 transition-all"
+              style={{ borderLeft: `3px solid ${SPORT_NAV[0].accent}` }}
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-5 sm:p-6">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h3
+                      className="text-lg sm:text-xl font-bold uppercase tracking-[0.04em] transition-colors group-hover:text-[var(--bsi-primary)]"
+                      style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                    >
+                      {SPORT_NAV[0].name}
+                    </h3>
+                    {SPORT_NAV[0].badge && (
+                      <span
+                        className="text-[8px] uppercase tracking-[0.15em] font-bold px-2 py-0.5 shrink-0"
+                        style={{
+                          fontFamily: 'var(--font-oswald)',
+                          color: 'var(--bsi-bone)',
+                          background: 'var(--bsi-primary)',
+                        }}
+                      >
+                        {SPORT_NAV[0].badge}
+                      </span>
+                    )}
+                  </div>
+                  <p
+                    className="text-sm leading-relaxed"
+                    style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)', lineHeight: 1.6 }}
+                  >
+                    {SPORT_NAV[0].desc}
+                  </p>
+                </div>
+
+                {/* Live indicator for flagship */}
+                <div className="flex items-center gap-4 shrink-0">
+                  {sportPulse['college-baseball']?.live > 0 && (
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+                      </span>
+                      <span
+                        className="text-[10px] font-bold tabular-nums"
+                        style={{ fontFamily: 'var(--font-mono)', color: '#10B981' }}
+                      >
+                        {sportPulse['college-baseball'].live} live
+                      </span>
+                    </span>
+                  )}
+                  <span
+                    className="text-[10px] uppercase tracking-wider transition-colors group-hover:text-[var(--bsi-primary)]"
+                    style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
+                  >
+                    Explore &rarr;
+                  </span>
+                </div>
+              </div>
+            </Link>
+
+            {/* Other 4 sports — compact row */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {SPORT_NAV.slice(1).map((sport) => {
+                const pulseData = sportPulse[sport.key];
+                return (
+                  <Link
+                    key={sport.key}
+                    href={sport.href}
+                    className="group block heritage-card p-4 transition-all"
+                    style={{ borderTop: `2px solid ${sport.accent}` }}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <h3
+                        className="text-sm font-bold uppercase tracking-[0.06em] transition-colors"
+                        style={{
+                          fontFamily: 'var(--font-oswald)',
+                          color: 'var(--bsi-bone)',
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.color = sport.accent)}
+                        onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--bsi-bone)')}
+                      >
+                        {sport.name}
+                      </h3>
+                      {pulseData?.live > 0 && (
+                        <span className="flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                          <span
+                            className="text-[9px] font-bold tabular-nums"
+                            style={{ fontFamily: 'var(--font-mono)', color: '#10B981' }}
+                          >
+                            {pulseData.live}
+                          </span>
+                        </span>
+                      )}
+                    </div>
+                    <p
+                      className="text-[11px] leading-snug line-clamp-2"
+                      style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)', lineHeight: 1.5 }}
+                    >
+                      {sport.desc}
+                    </p>
+                  </Link>
+                );
+              })}
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
       {/* ================================================================= */}
       {/* MODE THRESHOLD — Deliberate visual break between sell and serve    */}
       {/* ================================================================= */}
@@ -845,7 +1137,7 @@ export function HomePageClient() {
       {/* Components here are previews, not product.                         */}
       {/* ================================================================= */}
 
-      {/* RIGHT NOW — Standout players + capped leaderboards as proof       */}
+      {/* SAVANT PROOF — Standout players + capped leaderboards prove depth  */}
       <section
         className="relative"
         style={{
@@ -860,13 +1152,13 @@ export function HomePageClient() {
                 className="text-lg sm:text-xl md:text-2xl font-bold uppercase"
                 style={{ fontFamily: 'var(--font-bebas)', color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}
               >
-                Right Now
+                The BSI Savant Standard
               </h2>
               <p
                 className="text-xs mt-1"
                 style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)' }}
               >
-                Live from the BSI Savant leaderboard
+                What analytical depth actually looks like — live from the leaderboard
               </p>
             </div>
             <Link
@@ -976,180 +1268,15 @@ export function HomePageClient() {
         </ScrollReveal>
       </section>
 
-      {/* ================================================================= */}
-      {/* PRODUCT SHOWCASE — Visual windows, not nav tiles                   */}
-      {/* ================================================================= */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
-        <h2
-          className="text-xs uppercase tracking-[0.15em] font-bold mb-6"
-          style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary-light)' }}
-        >
-          Explore BSI
-        </h2>
-
-        {/* Primary tier — flagship products with visual preview headers */}
-        <ScrollReveal stagger>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 mb-4">
-            {/* Savant — leaderboard visual */}
-            <Link
-              href="/college-baseball/savant/"
-              className="group relative heritage-card overflow-hidden transition-all block"
-              style={{ borderColor: 'rgba(191,87,0,0.25)' }}
-            >
-              <div
-                className="relative h-20 overflow-hidden"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(191,87,0,0.12) 0%, var(--surface-dugout) 60%)',
-                }}
-              >
-                {/* Abstract leaderboard lines */}
-                <div className="absolute inset-0 flex flex-col justify-center gap-1.5 px-4 opacity-30">
-                  {[75, 60, 88, 52, 70].map((w, i) => (
-                    <div
-                      key={i}
-                      className="h-[3px] rounded-full"
-                      style={{ width: `${w}%`, background: 'var(--bsi-primary)', opacity: 1 - i * 0.15 }}
-                    />
-                  ))}
-                </div>
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{ background: 'linear-gradient(to bottom, transparent 30%, var(--surface-dugout) 100%)' }}
-                />
-              </div>
-              <div className="relative px-5 py-5">
-                <p
-                  className="text-base sm:text-lg font-bold uppercase tracking-[0.06em] transition-colors group-hover:text-[var(--bsi-primary)]"
-                  style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
-                >
-                  BSI Savant
-                </p>
-                <p
-                  className="text-xs sm:text-sm mt-2 leading-relaxed"
-                  style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)', lineHeight: 1.6 }}
-                >
-                  Park-adjusted wOBA, wRC+, FIP, and ERA- for every D1 qualifier. The leaderboard scouts actually use.
-                </p>
-              </div>
-            </Link>
-
-            {/* Scores — live game visual */}
-            <Link
-              href="/scores/"
-              className="group relative heritage-card overflow-hidden transition-all block"
-              style={{ borderColor: 'rgba(16,185,129,0.2)' }}
-            >
-              <div
-                className="relative h-20 overflow-hidden"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(16,185,129,0.08) 0%, var(--surface-dugout) 60%)',
-                }}
-              >
-                {/* Abstract score pairs */}
-                <div className="absolute inset-0 flex items-center justify-center gap-6 opacity-30">
-                  {[0, 1, 2].map((i) => (
-                    <div key={i} className="flex items-center gap-2">
-                      <div
-                        className="w-6 h-3 rounded-sm"
-                        style={{ background: 'var(--bsi-dust)', opacity: 0.4 }}
-                      />
-                      <span
-                        className="text-[10px] font-bold"
-                        style={{ fontFamily: 'var(--font-mono)', color: 'rgba(196,184,165,0.5)' }}
-                      >
-                        @
-                      </span>
-                      <div
-                        className="w-6 h-3 rounded-sm"
-                        style={{ background: 'var(--bsi-dust)', opacity: 0.4 }}
-                      />
-                    </div>
-                  ))}
-                </div>
-                {/* Live indicator */}
-                <div className="absolute top-3 right-3 flex items-center gap-1.5 opacity-60">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                  <span
-                    className="text-[8px] uppercase tracking-wider font-bold"
-                    style={{ fontFamily: 'var(--font-mono)', color: '#10B981' }}
-                  >
-                    Live
-                  </span>
-                </div>
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{ background: 'linear-gradient(to bottom, transparent 30%, var(--surface-dugout) 100%)' }}
-                />
-              </div>
-              <div className="relative px-5 py-5">
-                <p
-                  className="text-base sm:text-lg font-bold uppercase tracking-[0.06em] transition-colors group-hover:text-[#10B981]"
-                  style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
-                >
-                  Live Scores
-                </p>
-                <p
-                  className="text-xs sm:text-sm mt-2 leading-relaxed"
-                  style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)', lineHeight: 1.6 }}
-                >
-                  Real-time scores across college baseball, MLB, NFL, NBA, and college football. Updated every 15 seconds.
-                </p>
-              </div>
-            </Link>
-
-            {/* Player Search — percentile bar visual */}
-            <Link
-              href="/college-baseball/players/"
-              className="group relative heritage-card overflow-hidden transition-all block"
-              style={{ borderColor: 'rgba(75,156,211,0.2)' }}
-            >
-              <div
-                className="relative h-20 overflow-hidden"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(75,156,211,0.08) 0%, var(--surface-dugout) 60%)',
-                }}
-              >
-                {/* Abstract percentile bars */}
-                <div className="absolute inset-0 flex flex-col justify-center gap-2 px-4 opacity-30">
-                  {[92, 78, 85, 65].map((w, i) => (
-                    <div key={i} className="flex items-center gap-2">
-                      <div
-                        className="h-[3px] rounded-full"
-                        style={{
-                          width: `${w * 0.6}%`,
-                          background: w >= 80 ? '#4B9CD3' : 'var(--bsi-dust)',
-                          opacity: 1 - i * 0.15,
-                        }}
-                      />
-                    </div>
-                  ))}
-                </div>
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{ background: 'linear-gradient(to bottom, transparent 30%, var(--surface-dugout) 100%)' }}
-                />
-              </div>
-              <div className="relative px-5 py-5">
-                <p
-                  className="text-base sm:text-lg font-bold uppercase tracking-[0.06em] transition-colors group-hover:text-[#4B9CD3]"
-                  style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
-                >
-                  Player Search
-                </p>
-                <p
-                  className="text-xs sm:text-sm mt-2 leading-relaxed"
-                  style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)', lineHeight: 1.6 }}
-                >
-                  Find any D1 player. Full stat lines, advanced metrics, scouting context, and conference comparisons.
-                </p>
-              </div>
-            </Link>
-          </div>
-        </ScrollReveal>
-
-        {/* Secondary tier — compact links */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-          {NAV_ITEMS.filter((i) => !i.accent).map((item) => (
+      {/* Quick links — key BSI tools below the leaderboard proof */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {[
+            { title: 'Live Scores', href: '/scores/', desc: 'All sports, real-time' },
+            { title: 'Player Search', href: '/college-baseball/players/', desc: 'Find any D1 player' },
+            { title: 'Compare', href: '/college-baseball/compare/', desc: 'Head-to-head analysis' },
+            { title: 'Ask BSI', href: '/ask/', desc: 'AI-powered analysis' },
+          ].map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -1226,29 +1353,30 @@ export function HomePageClient() {
             className="text-xl sm:text-2xl md:text-3xl font-bold uppercase"
             style={{ fontFamily: 'var(--font-bebas)', color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}
           >
-            Every game. Every metric.{' '}
+            Five sports. One standard.{' '}
             <span style={{ color: 'var(--bsi-primary)' }}>No paywall.</span>
           </h2>
           <p
             className="mt-3 text-sm sm:text-base max-w-md mx-auto"
             style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)', lineHeight: 1.7 }}
           >
-            Open analytics for 330 D1 programs — live scores, scouting grades, and advanced stats updating now.
+            Live scores, advanced analytics, and scouting intel across college baseball,
+            MLB, NFL, NBA, and college football — updating now.
           </p>
           <div className="flex items-center justify-center gap-3 mt-8">
             <Link
-              href="/college-baseball/savant/"
+              href="/scores/"
               className="btn-heritage-fill text-xs uppercase tracking-wider px-6 py-3"
               style={{ fontFamily: 'var(--font-oswald)' }}
             >
-              Browse the Leaderboard
+              Live Scores
             </Link>
             <Link
-              href="/college-baseball/players/"
+              href="/college-baseball/savant/"
               className="btn-heritage text-xs uppercase tracking-wider px-6 py-3"
               style={{ fontFamily: 'var(--font-oswald)' }}
             >
-              Search a Player
+              BSI Savant
             </Link>
           </div>
         </ScrollReveal>
@@ -1278,7 +1406,7 @@ export function HomePageClient() {
               className="text-[9px] mt-0.5"
               style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
             >
-              330 programs &middot; recalculated every 6 hours
+              5 sports &middot; 330 programs &middot; recalculated every 6 hours
             </p>
           </div>
         </div>
