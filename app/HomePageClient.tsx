@@ -667,7 +667,10 @@ function NewsCard({ article, sport }: { article: NewsArticle; sport: string }) {
       className="group heritage-card overflow-hidden flex flex-col"
     >
       {imgUrl && (
-        <div className="relative h-32 sm:h-36 overflow-hidden">
+        <div
+          className="relative h-32 sm:h-36 overflow-hidden"
+          style={{ background: 'linear-gradient(135deg, rgba(191,87,0,0.12) 0%, var(--surface-dugout) 100%)' }}
+        >
           <img
             src={imgUrl}
             alt=""
@@ -675,6 +678,7 @@ function NewsCard({ article, sport }: { article: NewsArticle; sport: string }) {
             decoding="async"
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             style={{ filter: 'brightness(0.8) saturate(0.9)' }}
+            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
           />
           <div
             className="absolute inset-0 pointer-events-none"
