@@ -182,20 +182,31 @@ function normalizeTickerGame(g: ScoreGame): ScoreGame {
 
   const raw = g as Record<string, unknown>;
 
-  // Shape 1: Highlightly raw — homeTeam.name, awayTeam.name, homeScore, awayScore
+  // Shape 1: Highlightly raw — homeTeam.name, awayTeam.name, state.score.current
   const hlHome = raw.homeTeam as Record<string, unknown> | undefined;
   const hlAway = raw.awayTeam as Record<string, unknown> | undefined;
   if (hlHome || hlAway) {
     home_team = (hlHome?.displayName ?? hlHome?.name ?? hlHome?.shortName) as string | undefined;
     away_team = (hlAway?.displayName ?? hlAway?.name ?? hlAway?.shortName) as string | undefined;
+    // Highlightly scores: try top-level first, fall back to state.score.current ("X - Y")
     home_score = raw.homeScore as number | undefined;
     away_score = raw.awayScore as number | undefined;
+    if (home_score == null && raw.state) {
+      const stateObj = raw.state as Record<string, unknown>;
+      const scoreObj = stateObj.score as Record<string, unknown> | undefined;
+      const current = scoreObj?.current as string | undefined;
+      if (current?.includes(' - ')) {
+        const [a, h] = current.split(' - ').map((s) => parseInt(s.trim(), 10));
+        if (!isNaN(a)) away_score = a;
+        if (!isNaN(h)) home_score = h;
+      }
+    }
     if (!id) id = String(raw.id ?? '');
   }
 
-  // Shape 2: Transformed — teams.away.name, teams.home.name
-  const teams = raw.teams as Record<string, Record<string, unknown>> | undefined;
-  if (!away_team && teams) {
+  // Shape 2: Transformed — teams.away.name, teams.home.name (object with named keys, NOT array)
+  if (!away_team && raw.teams && !Array.isArray(raw.teams)) {
+    const teams = raw.teams as Record<string, Record<string, unknown>>;
     away_team = (teams.away?.name ?? teams.away?.displayName ?? teams.away?.abbreviation) as string | undefined;
     home_team = (teams.home?.name ?? teams.home?.displayName ?? teams.home?.abbreviation) as string | undefined;
     away_score = teams.away?.score as number | string | undefined;
@@ -227,9 +238,46 @@ function normalizeTickerGame(g: ScoreGame): ScoreGame {
     if (!id) id = String(raw.id ?? '');
   }
 
+  // Shape 5: ESPN flat teams array — teams[].team.displayName, teams[].score, teams[].homeAway
+  // Used by MLB, NBA, NFL, CFB score endpoints
+  if (!away_team && Array.isArray(raw.teams)) {
+    const teamsArr = raw.teams as Array<Record<string, unknown>>;
+    const homeEntry = teamsArr.find((t) => t.homeAway === 'home');
+    const awayEntry = teamsArr.find((t) => t.homeAway === 'away');
+    const homeTeamObj = homeEntry?.team as Record<string, unknown> | undefined;
+    const awayTeamObj = awayEntry?.team as Record<string, unknown> | undefined;
+    home_team = (homeTeamObj?.displayName ?? homeTeamObj?.shortDisplayName ?? homeTeamObj?.abbreviation) as string | undefined;
+    away_team = (awayTeamObj?.displayName ?? awayTeamObj?.shortDisplayName ?? awayTeamObj?.abbreviation) as string | undefined;
+    home_score = homeEntry?.score as number | string | undefined;
+    away_score = awayEntry?.score as number | string | undefined;
+    if (!id) id = String(raw.id ?? '');
+  }
+
+  // Normalize status → flat string for ticker display
+  // ESPN: status.type.detail ("Bottom 6th"), status.type.state ("in"/"post"/"pre")
+  // Highlightly: state.description ("Scheduled"/"In Progress"/"Completed"), state.report ("Wed, April 8th at 7:00 PM EDT")
+  let normalizedStatus = g.status;
+  if (typeof raw.status === 'object' && raw.status !== null) {
+    const statusObj = raw.status as Record<string, unknown>;
+    const statusType = statusObj.type as Record<string, unknown> | undefined;
+    if (statusType?.detail) {
+      normalizedStatus = String(statusType.detail);
+    } else if (statusType?.state) {
+      normalizedStatus = String(statusType.state);
+    } else if (statusObj.detailedState) {
+      normalizedStatus = String(statusObj.detailedState);
+    }
+  }
+  // Highlightly: status lives in state.description, not status
+  if (!normalizedStatus && raw.state && typeof raw.state === 'object') {
+    const stateObj = raw.state as Record<string, unknown>;
+    const desc = stateObj.description as string | undefined;
+    if (desc) normalizedStatus = desc;
+  }
+
   const finalAwayScore = away_score != null ? Number(away_score) : g.away_score;
   const finalHomeScore = home_score != null ? Number(home_score) : g.home_score;
-  return { ...g, id, away_team, home_team, away_score: isNaN(finalAwayScore as number) ? undefined : finalAwayScore, home_score: isNaN(finalHomeScore as number) ? undefined : finalHomeScore };
+  return { ...g, id, away_team, home_team, away_score: isNaN(finalAwayScore as number) ? undefined : finalAwayScore, home_score: isNaN(finalHomeScore as number) ? undefined : finalHomeScore, status: normalizedStatus };
 }
 
 // Sport pulse config — maps API keys to display
