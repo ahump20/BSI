@@ -620,8 +620,8 @@ function LeaderboardTable({
       </div>
 
       <div
-        className="border border-t-0 overflow-x-auto"
-        style={{ borderColor: 'var(--border-vintage)', borderRadius: '0 0 2px 2px' }}
+        className="border border-t-0 overflow-x-auto border-border-vintage"
+        style={{ borderRadius: '0 0 2px 2px' }}
       >
         <table className="w-full text-[11px] font-mono">
           <thead>

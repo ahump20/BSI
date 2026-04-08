@@ -229,8 +229,8 @@ export default function DataSourcesPage() {
                 </h2>
                 <div className="rounded-sm overflow-hidden bg-surface-press-box border border-border-vintage">
                   <div
-                    className="grid grid-cols-[1fr_2fr_2fr] gap-px text-xs uppercase tracking-wider font-medium"
-                    style={{ color: 'rgba(196,184,165,0.35)', background: 'var(--surface-press-box)' }}
+                    className="grid grid-cols-[1fr_2fr_2fr] gap-px text-xs uppercase tracking-wider font-medium bg-surface-press-box"
+                    style={{ color: 'rgba(196,184,165,0.35)' }}
                   >
                     <div className="p-3 sm:p-4 bg-surface-scoreboard">Layer</div>
                     <div className="p-3 sm:p-4 bg-surface-scoreboard">Purpose</div>
@@ -242,8 +242,8 @@ export default function DataSourcesPage() {
                       className="grid grid-cols-[1fr_2fr_2fr] gap-px text-sm bg-surface-press-box"
                     >
                       <div className="p-3 sm:p-4 font-medium bg-surface-scoreboard text-bsi-bone">{t.layer}</div>
-                      <div className="p-3 sm:p-4" style={{ background: 'var(--surface-scoreboard)', color: 'rgba(196,184,165,0.5)' }}>{t.purpose}</div>
-                      <div className="p-3 sm:p-4" style={{ background: 'var(--surface-scoreboard)', color: 'rgba(196,184,165,0.35)' }}>{t.ttls}</div>
+                      <div className="p-3 sm:p-4 bg-surface-scoreboard" style={{ color: 'rgba(196,184,165,0.5)' }}>{t.purpose}</div>
+                      <div className="p-3 sm:p-4 bg-surface-scoreboard" style={{ color: 'rgba(196,184,165,0.35)' }}>{t.ttls}</div>
                     </div>
                   ))}
                 </div>

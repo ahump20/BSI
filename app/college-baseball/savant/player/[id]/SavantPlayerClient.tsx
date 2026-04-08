@@ -527,7 +527,7 @@ export default function SavantPlayerClient() {
                       }}
                     >
                       {/* Player headshot or position silhouette fallback */}
-                      <div className="w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 mb-4 relative rounded-sm overflow-hidden" style={{ border: `2px solid ${teamColors.primary}44`, background: 'var(--surface-press-box, #111111)' }}>
+                      <div className="w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 mb-4 relative rounded-sm overflow-hidden bg-surface-press-box" style={{ border: `2px solid ${teamColors.primary}44` }}>
                         <PositionIcon position={position} color={teamColors.primary} />
                       </div>
 

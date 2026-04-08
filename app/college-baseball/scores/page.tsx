@@ -18,6 +18,7 @@ import { toDataMeta } from '@/lib/utils/data-meta';
 import { formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
 import type { DataMeta } from '@/lib/types/data-meta';
 import { IntelStreamCard } from '@/components/intel/IntelStreamCard';
+import { TeamCircle } from '@/components/sports/TeamCircle';
 import {
   COLLEGE_BASEBALL_CONFERENCES,
   normalizeCollegeBaseballConference,
@@ -30,6 +31,7 @@ interface Team {
   conference: string;
   score: number | null;
   record: { wins: number; losses: number };
+  logo?: string;
 }
 
 interface Game {
