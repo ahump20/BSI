@@ -77,29 +77,28 @@ export function getMainNavItems(date?: Date): {
     { label: 'Scores', href: '/scores' },
     { label: 'College Baseball', href: '/college-baseball' },
     { label: 'Intel', href: '/intel' },
-    { label: 'Agent', href: '/agent' },
+    { label: 'Ask BSI', href: '/ask' },
     { label: 'Pricing', href: '/pricing' },
   ];
 
-  const leagues: LeagueNavItem[] = [
-    ...getActiveSports(now).map(({ sport, phase, label }) => ({
-      label: SPORT_LABELS[sport],
-      href: SPORT_PATHS[sport],
-      sport,
-      phase,
-      phaseLabel: label,
-    })),
-  ];
+  // Only show college baseball in the sports dropdown until other sport pages have live data
+  const allSports = getActiveSports(now).map(({ sport, phase, label }) => ({
+    label: SPORT_LABELS[sport],
+    href: SPORT_PATHS[sport],
+    sport,
+    phase,
+    phaseLabel: label,
+  }));
+  const leagues: LeagueNavItem[] = allSports.filter(
+    (item) => item.href === '/college-baseball'
+  );
 
   const secondary: MainNavItem[] = [
+    { label: 'Baseball Agent', href: '/agent' },
     { label: 'Podcast', href: '/podcast' },
     { label: 'Editorial', href: '/college-baseball/editorial' },
-    { label: 'Diamond Dynasty', href: '/mlb/the-show-26/diamond-dynasty' },
-    { label: 'Research', href: '/research' },
-    { label: 'Arcade', href: '/arcade' },
     { label: 'Glossary', href: '/college-baseball/savant/glossary' },
     { label: 'Data Sources', href: '/data-sources' },
-    { label: 'Dashboard', href: '/dashboard' },
     { label: 'About', href: '/about' },
     { label: 'Status', href: '/status' },
     ...(isPresenceCoachEnabled() ? [{ label: 'Presence Coach', href: '/presence-coach' }] : []),
@@ -114,7 +113,10 @@ export function getMainNavItems(date?: Date): {
 
 export function getAnalyticsNavItems(): MainNavItem[] {
   return [
+    { label: 'Player Evaluation', href: '/evaluate' },
     { label: 'Savant', href: '/college-baseball/savant' },
+    { label: 'Power Rankings', href: '/college-baseball/power-rankings' },
+    { label: 'Weekly Pulse', href: '/college-baseball/weekly-pulse' },
     { label: 'Transfer Portal', href: '/college-baseball/transfer-portal' },
     { label: 'NIL Valuation', href: '/nil-valuation' },
     { label: 'Compare', href: '/college-baseball/compare' },
@@ -129,74 +131,37 @@ export function getAnalyticsNavItems(): MainNavItem[] {
 export function getSidebarNav(): readonly NavGroup[] {
   return [
     {
-      label: 'Watch',
+      label: 'Live',
       items: [
-        { href: '/', label: 'Dashboard', iconKey: 'grid' },
-        { href: '/scores', label: 'Live Scores', iconKey: 'activity' },
-        { href: '/intel', label: 'Intelligence', iconKey: 'brain' },
-        { href: '/agent', label: 'Agent', iconKey: 'brain' },
-      ],
-    },
-    {
-      label: 'College Baseball',
-      items: [
-        { href: '/college-baseball', label: 'Hub', iconKey: 'baseball' },
-        { href: '/college-baseball/rankings', label: 'Rankings', iconKey: 'list' },
-        { href: '/college-baseball/standings', label: 'Standings', iconKey: 'list' },
-        { href: '/college-baseball/savant', label: 'Savant', iconKey: 'target' },
-        { href: '/college-baseball/savant/glossary', label: 'Glossary', iconKey: 'book' },
-        { href: '/college-baseball/savant/visuals', label: 'Visuals', iconKey: 'chart' },
-        { href: '/college-baseball/savant/conference-index', label: 'Conf. Index', iconKey: 'globe' },
-        { href: '/college-baseball/savant/park-factors', label: 'Park Factors', iconKey: 'chart' },
-        { href: '/college-baseball/savant/team-compare', label: 'Compare Teams', iconKey: 'chart' },
-        { href: '/college-baseball/savant/conference-comparison', label: 'Compare Conf.', iconKey: 'globe' },
-        { href: '/college-baseball/savant/methodology', label: 'Methodology', iconKey: 'book' },
-        { href: '/college-baseball/conferences', label: 'Conferences', iconKey: 'globe' },
-        { href: '/college-baseball/compare', label: 'Compare', iconKey: 'chart' },
-        { href: '/college-baseball/teams', label: 'Teams', iconKey: 'baseball' },
-        { href: '/college-baseball/texas-intelligence', label: 'Texas Intel', iconKey: 'brain' },
-        { href: '/college-baseball/texas-intelligence/roster', label: 'Texas Roster', iconKey: 'list' },
-        { href: '/college-baseball/texas-intelligence/pitching', label: 'Texas Pitching', iconKey: 'target' },
-        { href: '/college-baseball/texas-intelligence/schedule', label: 'Texas Schedule', iconKey: 'activity' },
-        { href: '/college-baseball/texas-intelligence/draft', label: 'Texas Draft Board', iconKey: 'star' },
-        { href: '/college-baseball/texas-intelligence/trends', label: 'Texas Trends', iconKey: 'chart' },
-        { href: '/college-baseball/texas-history', label: 'Texas History', iconKey: 'book' },
-      ],
-    },
-    {
-      label: 'Pro Sports',
-      items: [
-        { href: '/mlb', label: 'MLB', iconKey: 'baseball' },
-        { href: '/mlb/the-show-26/diamond-dynasty', label: 'Diamond Dynasty', iconKey: 'target' },
-        { href: '/nfl', label: 'NFL', iconKey: 'football' },
-        { href: '/nba', label: 'NBA', iconKey: 'basketball' },
-        { href: '/cfb', label: 'College Football', iconKey: 'football' },
+        { href: '/scores', label: 'Scores', iconKey: 'activity' },
+        { href: '/college-baseball', label: 'College Baseball', iconKey: 'baseball' },
+        { href: '/college-baseball/rankings', label: 'Rankings', iconKey: 'star' },
       ],
     },
     {
       label: 'Analyze',
       items: [
-        { href: '/swing', label: 'Swing Intel', iconKey: 'target' },
-        { href: 'https://labs.blazesportsintel.com/athletic-analysis', label: 'Biomechanics Lab', iconKey: 'flask', external: true },
-        { href: 'https://labs.blazesportsintel.com/radar-lab', label: 'Radar Lab', iconKey: 'flask', external: true },
-        { href: '/nil-valuation', label: 'NIL Valuation', iconKey: 'dollar' },
-        { href: '/college-baseball/transfer-portal', label: 'Transfer Portal', iconKey: 'activity' },
-        { href: '/college-baseball/watchlist', label: 'Watchlist', iconKey: 'star' },
-        { href: '/research', label: 'Research', iconKey: 'book' },
-        { href: '/pricing', label: 'Pricing', iconKey: 'tag' },
+        { href: '/college-baseball/savant', label: 'Savant', iconKey: 'target' },
+        { href: '/college-baseball/savant/team-compare', label: 'Compare', iconKey: 'chart' },
+        { href: '/nil-valuation', label: 'NIL Explorer', iconKey: 'dollar' },
       ],
     },
     {
-      label: 'More',
+      label: 'Context',
       items: [
-        { href: '/podcast', label: 'Podcast', iconKey: 'activity' },
-        { href: '/college-baseball/editorial', label: 'Editorial', iconKey: 'pen' },
-        { href: '/arcade', label: 'Arcade', iconKey: 'activity' },
-        { href: 'https://labs.blazesportsintel.com', label: 'Labs', iconKey: 'flask', external: true },
-        { href: 'https://blazecraft.app', label: 'BlazeCraft', iconKey: 'grid', external: true },
+        { href: '/college-baseball/standings', label: 'Standings', iconKey: 'list' },
+        { href: '/college-baseball/power-rankings', label: 'Power Rankings', iconKey: 'list' },
+        { href: '/college-baseball/savant/conference-index', label: 'Conferences', iconKey: 'globe' },
+        { href: '/college-baseball/savant/park-factors', label: 'Park Factors', iconKey: 'chart' },
+      ],
+    },
+    {
+      label: 'Tools',
+      items: [
+        { href: '/college-baseball/savant/visuals', label: 'Visuals', iconKey: 'chart' },
+        { href: '/college-baseball/weekly-pulse', label: 'Weekly Pulse', iconKey: 'activity' },
+        { href: '/ask', label: 'Ask BSI', iconKey: 'brain' },
         { href: '/college-baseball/savant/glossary', label: 'Glossary', iconKey: 'book' },
-        { href: '/about', label: 'About', iconKey: 'info' },
-        { href: '/status', label: 'Status', iconKey: 'globe' },
       ],
     },
   ];
@@ -236,6 +201,7 @@ export function getMorePanelNav(): readonly MorePanelSection[] {
       label: 'Where to Start',
       items: [
         { label: 'Live Scores', href: '/scores' },
+        { label: 'Ask BSI', href: '/ask' },
         { label: 'College Baseball', href: '/college-baseball' },
         { label: 'Intelligence', href: '/intel' },
         { label: 'Pricing', href: '/pricing' },
@@ -245,6 +211,8 @@ export function getMorePanelNav(): readonly MorePanelSection[] {
       label: 'Analytics & Tools',
       items: [
         { label: 'Savant', href: '/college-baseball/savant' },
+        { label: 'Power Rankings', href: '/college-baseball/power-rankings' },
+        { label: 'Weekly Pulse', href: '/college-baseball/weekly-pulse' },
         { label: 'Transfer Portal', href: '/college-baseball/transfer-portal' },
         { label: 'NIL Valuation', href: '/nil-valuation' },
         { label: 'Compare', href: '/college-baseball/compare' },
@@ -252,24 +220,11 @@ export function getMorePanelNav(): readonly MorePanelSection[] {
       ],
     },
     {
-      label: 'Sports',
+      label: 'College Baseball',
       items: [
-        { label: 'MLB', href: '/mlb' },
-        { label: 'NFL', href: '/nfl' },
-        { label: 'NBA', href: '/nba' },
-        { label: 'College Football', href: '/cfb' },
         { label: 'Rankings', href: '/college-baseball/rankings' },
         { label: 'Conferences', href: '/college-baseball/conferences' },
-      ],
-    },
-    {
-      label: 'Labs & Tools',
-      items: [
         { label: 'Swing Intel', href: '/swing' },
-        { label: 'Biomechanics Lab', href: 'https://labs.blazesportsintel.com/athletic-analysis', external: true },
-        { label: 'Radar Lab', href: 'https://labs.blazesportsintel.com/radar-lab', external: true },
-        { label: 'Visuals', href: 'https://labs.blazesportsintel.com/visuals', external: true },
-        { label: 'Bubble Watch', href: 'https://labs.blazesportsintel.com/bubble', external: true },
       ],
     },
     {
@@ -277,8 +232,6 @@ export function getMorePanelNav(): readonly MorePanelSection[] {
       items: [
         { label: 'Podcast', href: '/podcast' },
         { label: 'Editorial', href: '/college-baseball/editorial' },
-        { label: 'Arcade', href: '/arcade' },
-        { label: 'Diamond Dynasty', href: '/mlb/the-show-26/diamond-dynasty' },
         { label: 'Glossary', href: '/college-baseball/savant/glossary' },
         { label: 'About', href: '/about' },
         { label: 'Status', href: '/status' },

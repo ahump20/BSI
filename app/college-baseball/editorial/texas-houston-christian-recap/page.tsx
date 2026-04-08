@@ -11,6 +11,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { GameRecapToolbar } from '@/components/editorial/GameRecapToolbar';
 import { AIAnalysisPanel } from '@/components/editorial/AIAnalysisPanel';
 import { NotebookLMExport } from '@/components/editorial/NotebookLMExport';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
 /* ────────────────────────────────────────────
    Types
@@ -213,6 +214,13 @@ export default function TexasHoustonChristianRecapPage() {
 
   return (
     <>
+      <ArticleJsonLd
+        headline="Texas Midweek Recap: Houston Christian & USC Watch"
+        description="Texas stays unbeaten through their midweek slate. USC and Texas remain the only undefeated Top 25 teams in the country. Full recap with box scores and analysis."
+        datePublished="2026-03-04"
+        url="/college-baseball/editorial/texas-houston-christian-recap"
+        sport="College Baseball"
+      />
       <div>
         {/* ── Breadcrumb ── */}
         <Section padding="sm" className="border-b border-border">

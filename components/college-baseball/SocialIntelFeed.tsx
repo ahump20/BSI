@@ -371,7 +371,9 @@ export function SocialIntelFeed() {
         <div className="flex items-center gap-2">
           {data && (
             <span className="text-[10px] text-text-muted">
-              {data.signals.length} signals · {relativeTime(data.generated_at)}
+              {data.signals.length} signals{data.signals.length > 0
+                ? ` · latest ${relativeTime(data.signals[0].posted_at)}`
+                : ''}
             </span>
           )}
           {/* Platform legend */}

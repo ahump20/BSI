@@ -31,8 +31,13 @@ interface StatusApiRaw {
   checked_at?: string;
 }
 
+function isEndpointHealthy(e: EndpointStatus): boolean {
+  const s = e.status as string | number;
+  return s === 'ok' || s === 200 || (typeof s === 'number' && s >= 200 && s < 300);
+}
+
 function getOverallFromEndpoints(endpoints: EndpointStatus[]): 'healthy' | 'degraded' | 'down' {
-  const failed = endpoints.filter((e) => e.status !== 'ok').length;
+  const failed = endpoints.filter((e) => !isEndpointHealthy(e)).length;
   if (failed === 0) return 'healthy';
   if (failed < endpoints.length) return 'degraded';
   return 'down';
@@ -157,30 +162,34 @@ export default function StatusPage() {
 
                 {/* Endpoint Grid */}
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {data.endpoints.map((endpoint) => (
+                  {data.endpoints.map((endpoint) => {
+                    const healthy = isEndpointHealthy(endpoint);
+                    const slow = endpoint.status === 'timeout';
+                    return (
                     <Card key={endpoint.name} padding="md">
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-sm font-semibold text-text-primary truncate">
                           {endpoint.name}
                         </span>
                         <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${
-                          endpoint.status === 'ok' ? 'bg-[var(--bsi-primary)]' :
-                          endpoint.status === 'timeout' ? 'bg-[var(--bsi-warning)]' : 'bg-[var(--bsi-danger)]'
+                          healthy ? 'bg-[var(--bsi-primary)]' :
+                          slow ? 'bg-[var(--bsi-warning)]' : 'bg-[var(--bsi-danger)]'
                         }`} />
                       </div>
                       <div className="flex items-center justify-between text-xs text-text-tertiary">
                         <Badge
-                          variant={endpoint.status === 'ok' ? 'success' : endpoint.status === 'timeout' ? 'warning' : 'error'}
+                          variant={healthy ? 'success' : slow ? 'warning' : 'error'}
                           size="sm"
                         >
-                          {endpoint.status === 'ok' ? 'Healthy' : endpoint.status === 'timeout' ? 'Slow' : 'Down'}
+                          {healthy ? 'Healthy' : slow ? 'Slow' : 'Down'}
                         </Badge>
                         {endpoint.latency != null && (
                           <span className="tabular-nums">{endpoint.latency}ms</span>
                         )}
                       </div>
                     </Card>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 {/* Refresh Note */}

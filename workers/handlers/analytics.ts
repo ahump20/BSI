@@ -52,8 +52,12 @@ export async function handleHAVFLeaderboard(url: URL, env: Env): Promise<Respons
       );
     }
 
-    let query = 'SELECT * FROM havf_scores WHERE league = ? AND season = ?';
-    const binds: (string | number)[] = [league, season];
+    const minPa = parseInt(url.searchParams.get('min_pa') || '50', 10) || 50;
+
+    let query = `SELECT * FROM havf_scores
+      WHERE league = ? AND season = ?
+      AND player_id IN (SELECT player_id FROM cbb_batting_advanced WHERE season = ? AND pa >= ?)`;
+    const binds: (string | number)[] = [league, season, season, minPa];
 
     if (team) {
       query += ' AND team = ?';

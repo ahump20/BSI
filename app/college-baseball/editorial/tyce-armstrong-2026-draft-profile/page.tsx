@@ -7,6 +7,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 import type { Metadata } from 'next';
 
 import { ogImage } from '@/lib/metadata';
@@ -124,6 +125,13 @@ function gradeColor(grade: number): string {
 export default function ArmstrongDraftProfilePage() {
   return (
     <>
+      <ArticleJsonLd
+        headline="Tyce Armstrong 2026 Draft Profile | Baylor 1B"
+        description="Tyce Armstrong draft profile — Baylor first baseman who hit three grand slams in a single game against New Mexico State, only the second player in NCAA Division I history to accomplish the feat."
+        datePublished="2026-02-25"
+        url="/college-baseball/editorial/tyce-armstrong-2026-draft-profile"
+        sport="College Baseball"
+      />
       <div className="pt-6 bg-midnight">
         {/* ── Hero ── */}
         <Section padding="lg">

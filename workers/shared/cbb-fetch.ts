@@ -1,6 +1,6 @@
 /**
  * Shared college baseball fetch helpers used across satellite workers.
- * Consumed by: bsi-cbb-ingest, bsi-college-baseball-daily, bsi-portal-sync
+ * Consumed by: bsi-cbb-ingest, bsi-college-baseball-daily
  *
  * No Env dependency — safe to import from any worker.
  */

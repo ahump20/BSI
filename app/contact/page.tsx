@@ -32,16 +32,19 @@ export default function ContactPage() {
 
   return (
     <>
-      <div>
+      <div style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
         <Section padding="lg" className="pt-6 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 30% 20%, rgba(191,87,0,0.1), transparent 60%)' }} />
           <Container>
             <ScrollReveal direction="up">
               <div className="max-w-2xl mx-auto text-center mb-12">
-                <h1 className="font-display text-4xl md:text-5xl font-bold uppercase tracking-display mb-4">
-                  Get in <span className="text-gradient-blaze">Touch</span>
+                <h1
+                  className="text-4xl md:text-5xl font-bold uppercase tracking-wider mb-4"
+                  style={{ fontFamily: 'var(--font-oswald)' }}
+                >
+                  Get in <span style={{ color: 'var(--bsi-primary)' }}>Touch</span>
                 </h1>
-                <p className="text-text-secondary">
+                <p style={{ color: 'var(--bsi-dust)' }}>
                   Questions about our sports coverage? Partnership opportunities? Or just want to
                   talk sports? I read every email.
                 </p>
@@ -53,7 +56,8 @@ export default function ContactPage() {
                   <div>
                     <label
                       htmlFor="name"
-                      className="block text-sm font-medium text-text-secondary mb-2"
+                      className="block text-sm font-medium mb-2"
+                      style={{ color: 'var(--bsi-dust)' }}
                     >
                       Name
                     </label>
@@ -69,7 +73,8 @@ export default function ContactPage() {
                   <div>
                     <label
                       htmlFor="email"
-                      className="block text-sm font-medium text-text-secondary mb-2"
+                      className="block text-sm font-medium mb-2"
+                      style={{ color: 'var(--bsi-dust)' }}
                     >
                       Email
                     </label>
@@ -85,7 +90,8 @@ export default function ContactPage() {
                   <div>
                     <label
                       htmlFor="subject"
-                      className="block text-sm font-medium text-text-secondary mb-2"
+                      className="block text-sm font-medium mb-2"
+                      style={{ color: 'var(--bsi-dust)' }}
                     >
                       Subject
                     </label>
@@ -100,7 +106,8 @@ export default function ContactPage() {
                   <div>
                     <label
                       htmlFor="message"
-                      className="block text-sm font-medium text-text-secondary mb-2"
+                      className="block text-sm font-medium mb-2"
+                      style={{ color: 'var(--bsi-dust)' }}
                     >
                       Message
                     </label>
@@ -111,7 +118,13 @@ export default function ContactPage() {
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       placeholder="Your message..."
                       required
-                      className="w-full px-4 py-3 bg-background-secondary border border-border-subtle rounded-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-burnt-orange/50 focus:border-burnt-orange/30 transition-all resize-none"
+                      className="w-full px-4 py-3 rounded-sm transition-all resize-none"
+                      style={{
+                        background: 'var(--surface-dugout)',
+                        border: '1px solid var(--border-vintage)',
+                        color: 'var(--bsi-bone)',
+                        outline: 'none',
+                      }}
                     />
                   </div>
                   <Button type="submit" variant="primary" size="lg" className="w-full">
@@ -122,15 +135,16 @@ export default function ContactPage() {
             </ScrollReveal>
             <ScrollReveal direction="up" delay={200}>
               <div className="max-w-xl mx-auto mt-12 text-center">
-                <p className="text-text-tertiary text-sm mb-4">Or reach out directly:</p>
+                <p className="text-sm mb-4" style={{ color: 'rgba(196,184,165,0.5)' }}>Or reach out directly:</p>
                 <a
                   href="mailto:Austin@blazesportsintel.com"
-                  className="text-burnt-orange hover:text-ember transition-colors font-semibold"
+                  className="font-semibold transition-colors"
+                  style={{ color: 'var(--bsi-primary)' }}
                 >
                   Austin@blazesportsintel.com
                 </a>
-                <p className="text-text-secondary mt-2">(210) 275-5538</p>
-                <p className="text-text-tertiary text-sm mt-8">
+                <p className="mt-2" style={{ color: 'var(--bsi-dust)' }}>(210) 275-5538</p>
+                <p className="text-sm mt-8" style={{ color: 'rgba(196,184,165,0.5)' }}>
                   Blaze Intelligence LLC - Boerne, Texas
                 </p>
               </div>

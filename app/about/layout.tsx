@@ -4,20 +4,20 @@ import { JsonLd } from '@/components/JsonLd';
 import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
-  title: 'About Blaze Sports Intel | Independent College Baseball & Pro Sports Analytics',
+  title: 'About | Blaze Sports Intel',
   description:
     'Founded by Austin Humphrey. Live scores, advanced sabermetrics, and independent editorial for college baseball, MLB, NFL, NBA, and college football. One platform. Every game.',
   openGraph: {
     title: 'About Blaze Sports Intel',
     description:
-      'Live scores, advanced sabermetrics, and independent editorial across 5 sports. Built by one person for the fans mainstream media forgot.',
+      'Live scores, advanced sabermetrics, and independent editorial across five sports. Built by one person for the fans mainstream media forgot.',
     images: ogImage(),
   },
   twitter: {
     card: 'summary_large_image',
     title: 'About Blaze Sports Intel',
     description:
-      'Live scores, advanced sabermetrics, and independent editorial across 5 sports. Built by one person for the fans mainstream media forgot.',
+      'Live scores, advanced sabermetrics, and independent editorial across five sports. Built by one person for the fans mainstream media forgot.',
   },
   alternates: {
     canonical: '/about',
@@ -32,7 +32,7 @@ export default function AboutLayout({ children }: { children: ReactNode }) {
         '@context': 'https://schema.org',
         '@type': 'Person',
         name: 'Austin Humphrey',
-        jobTitle: 'Founder & CEO',
+        jobTitle: 'Sports Intelligence Architect',
         worksFor: { '@type': 'Organization', name: 'Blaze Sports Intel' },
         url: 'https://blazesportsintel.com/about',
         description:

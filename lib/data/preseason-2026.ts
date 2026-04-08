@@ -1,3 +1,9 @@
+/**
+ * Preseason 2026 projections — static editorial data from February 2026.
+ * Used as fallback when live rankings API is unavailable.
+ * NOTE: This data is frozen at preseason. In-season rankings come from
+ * the live /api/college-baseball/rankings endpoint.
+ */
 export interface PreseasonTeamData {
   rank: number;
   tier: 'elite' | 'contender' | 'sleeper' | 'bubble';

@@ -74,7 +74,7 @@ export function NewsFeed({ articles, isLoading, sport = 'all' }: NewsFeedProps) 
                 {a.image ? (
                   <img
                     src={a.image}
-                    alt=""
+                    alt={a.headline}
                     className="h-28 w-full object-cover"
                     loading="lazy"
                   />

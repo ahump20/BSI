@@ -776,7 +776,7 @@ function QuickLinkCard({ href, icon, title, subtitle }: QuickLinkCardProps) {
       href={href}
       className="block p-4 heritage-card hover:border-[var(--border-active)] transition-all group"
     >
-      <Image src={icon} alt="" width={28} height={28} className="mb-2 opacity-60 group-hover:opacity-100 transition-opacity" />
+      <Image src={icon} alt="" width={28} height={28} className="mb-2 opacity-60 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
       <p className="font-semibold text-bsi-bone group-hover:text-burnt-orange transition-colors text-sm">
         {title}
       </p>

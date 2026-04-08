@@ -4,7 +4,8 @@ import { useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
 import { Providers } from '@/app/providers';
-import { PageTransition, MotionProvider } from '@/components/motion';
+import { PageTransition } from '@/components/motion/PageTransition';
+import { MotionProvider } from '@/components/motion/MotionProvider';
 import { AppSidebar } from '@/components/layout-ds/AppSidebar';
 import { AppTopBar } from '@/components/layout-ds/AppTopBar';
 import { BottomNavWrapper } from '@/components/layout-ds/BottomNavWrapper';
@@ -20,10 +21,29 @@ const ScrollToTopButton = dynamic(() => import('@/components/ui/ScrollToTopButto
 const PageTracker = dynamic(() => import('@/components/analytics/PageTracker').then((mod) => ({ default: mod.PageTracker })));
 const PostHogProvider = dynamic(() => import('@/components/analytics/PostHogProvider').then((mod) => ({ default: mod.PostHogProvider })));
 
-const APP_SHELL_PREFIXES = ['/dashboard', '/search', '/settings'];
+const APP_SHELL_PREFIXES = [
+  '/',
+  '/college-baseball/savant',
+  '/college-baseball/standings',
+  '/college-baseball/rankings',
+  '/college-baseball/power-rankings',
+  '/college-baseball/weekly-pulse',
+  '/college-baseball/compare',
+  '/college-baseball/conferences',
+  '/college-baseball/games',
+  '/scores',
+  '/dashboard',
+  '/search',
+  '/settings',
+  '/nil-valuation',
+];
 
 function usesAppShell(pathname: string): boolean {
-  return APP_SHELL_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+  // Special case: exact match for root
+  if (pathname === '/') return true;
+  return APP_SHELL_PREFIXES
+    .filter((p) => p !== '/')
+    .some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
 }
 
 export function SiteFrame({ children }: { children: React.ReactNode }) {
@@ -68,7 +88,7 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
             <KonamiCodeWrapper />
             <PageTracker />
             <PostHogProvider />
-            <main id="main-content" className="min-h-screen">
+            <main id="main-content" className="min-h-screen pb-24 md:pb-0">
               <PageTransition>{children}</PageTransition>
             </main>
             <BottomNavWrapper />

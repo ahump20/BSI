@@ -13,10 +13,10 @@ compatibility_flags = ["nodejs_compat"]
 [observability]
 enabled = true
 
-# Daily 6 AM CT (11 UTC): full recompute of all advanced metrics
+# Every 6 hours: full recompute of all advanced metrics
 # Sunday: also recalculates park factors + conference strength (checked in code)
 [triggers]
-crons = ["0 11 * * *"]
+crons = ["0 */6 * * *"]
 
 [[kv_namespaces]]
 binding = "KV"

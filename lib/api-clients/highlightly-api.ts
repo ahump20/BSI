@@ -400,9 +400,12 @@ export class HighlightlyApiClient {
   }
 
   async getStandings(
-    abbreviation: string = 'NCAA'
+    league: string = 'NCAA'
   ): Promise<HighlightlyApiResponse<HighlightlyStandings[]>> {
-    return this.fetch<HighlightlyStandings[]>('/standings', { abbreviation });
+    return this.fetch<HighlightlyStandings[]>('/standings', {
+      league,
+      season: String(new Date().getFullYear()),
+    });
   }
 
   async getPlayer(playerId: number): Promise<HighlightlyApiResponse<HighlightlyPlayer>> {

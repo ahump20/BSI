@@ -1,7 +1,7 @@
 /**
  * Shared utilities for BSI college baseball pipeline workers.
  *
- * Used by: bsi-cbb-ingest, bsi-portal-sync, bsi-college-baseball-daily.
+ * Used by: bsi-cbb-ingest, bsi-college-baseball-daily.
  * Wrangler bundles each worker independently — shared source, separate deploys.
  */
 

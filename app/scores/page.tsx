@@ -57,6 +57,33 @@ const INTEL_SPORT_MAP: Record<string, Sport> = {
   cfb: 'ncaa-football',
 };
 
+// ── Helpers ──
+
+/** Filter out games that are not from today (prevents future-dated games inflating counts). */
+function isGameToday(game: Record<string, unknown>): boolean {
+  const dateStr = game.date as string | undefined;
+  if (!dateStr) return false; // no date = can't confirm it's today
+  const gameDate = new Date(dateStr);
+  if (Number.isNaN(gameDate.getTime())) return false;
+  const now = new Date();
+  // Same calendar date (UTC)
+  return gameDate.getUTCFullYear() === now.getUTCFullYear()
+    && gameDate.getUTCMonth() === now.getUTCMonth()
+    && gameDate.getUTCDate() === now.getUTCDate();
+}
+
+/** Count only games from today (or in-progress regardless of date). */
+function countTodayGames(games: Array<Record<string, unknown>>): number {
+  return games.filter(g => {
+    // Always count live/in-progress games
+    const status = g.status as Record<string, unknown> | undefined;
+    const state = status?.type as Record<string, unknown> | undefined;
+    if (state?.state === 'in' || status?.state === 'in') return true;
+    // For pre/post games, only count if date is today
+    return isGameToday(g);
+  }).length;
+}
+
 // ── Game Types ──
 
 interface GameTeam {
@@ -95,26 +122,7 @@ const SPORT_SECTIONS: SportSection[] = [
     description: 'Every D1 program — live scores, box scores, and recaps',
     liveCount: 0, todayCount: 0, season: 'Feb - Jun', isActive: false, loaded: false, featured: [],
   },
-  {
-    id: 'mlb', name: 'MLB', href: '/mlb/scores',
-    description: 'Real-time MLB scores from the official Stats API',
-    liveCount: 0, todayCount: 0, season: 'Mar - Oct', isActive: true, loaded: false, featured: [],
-  },
-  {
-    id: 'nfl', name: 'NFL', href: '/nfl/games',
-    description: 'NFL scores, standings, and game analysis',
-    liveCount: 0, todayCount: 0, season: 'Sep - Feb', isActive: false, loaded: false, featured: [],
-  },
-  {
-    id: 'nba', name: 'NBA', href: '/nba/games',
-    description: 'NBA scores and standings',
-    liveCount: 0, todayCount: 0, season: 'Oct - Jun', isActive: false, loaded: false, featured: [],
-  },
-  {
-    id: 'cfb', name: 'College Football', href: '/cfb/scores',
-    description: 'FBS conference scores and matchups',
-    liveCount: 0, todayCount: 0, season: 'Aug - Jan', isActive: false, loaded: false, featured: [],
-  },
+  // Other sports hidden until their data surfaces are functional
 ];
 
 function createSportSections(): SportSection[] {
@@ -123,7 +131,12 @@ function createSportSections(): SportSection[] {
 
 function countLiveMlbGames(payload: Record<string, unknown>): number {
   const games = (payload.games as Array<Record<string, unknown>>) || [];
-  return games.filter((game) => (game.status as Record<string, boolean>)?.isLive).length;
+  return games.filter((game) => {
+    const status = (game.status as Record<string, unknown>) || {};
+    const type = (status.type as Record<string, unknown>) || {};
+    const state = String(type.state || '').toLowerCase();
+    return state === 'in';
+  }).length;
 }
 
 function countLiveEspnGames(payload: Record<string, unknown>): number {
@@ -227,23 +240,35 @@ function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) 
   }, []);
 
   const cardContent = (
-    <div className={`p-3 rounded-sm border transition-all hover:border-burnt-orange/50 ${
-      game.state === 'live' ? 'border-success/30 bg-success/5' : 'border-border-vintage bg-surface-dugout'
+    <div className={`rounded-sm border p-3.5 transition-all ${
+      game.state === 'live'
+        ? 'border-success/30 bg-[linear-gradient(180deg,rgba(16,185,129,0.09)_0%,rgba(14,15,18,0.96)_100%)]'
+        : 'border-border-vintage bg-[linear-gradient(180deg,rgba(191,87,0,0.08)_0%,rgba(20,20,20,0.94)_100%)] hover:border-burnt-orange/50'
     }`}>
-      <div className="flex items-center justify-between mb-1">
+      <div className="mb-3 flex items-start justify-between gap-3">
         <GameStateBadge state={game.state} detail={game.detail} />
+        <span className="max-w-[120px] text-right text-[10px] uppercase tracking-[0.12em] text-bsi-dust/60">
+          {game.detail || 'Matchup'}
+        </span>
       </div>
-      <div className="space-y-1">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+      <div className="space-y-2.5">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex min-w-0 items-start gap-2.5">
             {game.away.logo ? (
               <img src={game.away.logo} alt={`${game.away.name || game.away.abbreviation} logo`} className="w-4 h-4 object-contain" loading="lazy" />
             ) : (
-              <span className="text-[10px] font-bold text-bsi-dust w-4">{game.away.abbreviation}</span>
+              <span className="mt-0.5 inline-flex min-w-[2rem] justify-center rounded-sm border border-border-vintage px-1.5 py-1 text-[10px] font-bold text-bsi-dust">
+                {game.away.abbreviation}
+              </span>
             )}
-            <span className="text-sm text-bsi-bone font-medium truncate max-w-[120px]">
-              {game.away.name || game.away.abbreviation}
-            </span>
+            <div className="min-w-0">
+              <span className="block text-sm font-medium leading-tight text-bsi-bone line-clamp-2">
+                {game.away.name || game.away.abbreviation}
+              </span>
+              <span className="mt-1 block text-[10px] uppercase tracking-[0.12em] text-bsi-dust/60">
+                Away club
+              </span>
+            </div>
           </div>
           <span className={`font-mono text-sm font-bold ${
             game.state === 'final' && Number(game.away.score) > Number(game.home.score) ? 'text-bsi-bone' : 'text-bsi-dust'
@@ -251,16 +276,23 @@ function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) 
             {game.away.score ?? '-'}
           </span>
         </div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        <div className="flex items-start justify-between gap-3 border-t border-border-vintage/60 pt-2.5">
+          <div className="flex min-w-0 items-start gap-2.5">
             {game.home.logo ? (
               <img src={game.home.logo} alt={`${game.home.name || game.home.abbreviation} logo`} className="w-4 h-4 object-contain" loading="lazy" />
             ) : (
-              <span className="text-[10px] font-bold text-bsi-dust w-4">{game.home.abbreviation}</span>
+              <span className="mt-0.5 inline-flex min-w-[2rem] justify-center rounded-sm border border-border-vintage px-1.5 py-1 text-[10px] font-bold text-bsi-dust">
+                {game.home.abbreviation}
+              </span>
             )}
-            <span className="text-sm text-bsi-bone font-medium truncate max-w-[120px]">
-              {game.home.name || game.home.abbreviation}
-            </span>
+            <div className="min-w-0">
+              <span className="block text-sm font-medium leading-tight text-bsi-bone line-clamp-2">
+                {game.home.name || game.home.abbreviation}
+              </span>
+              <span className="mt-1 block text-[10px] uppercase tracking-[0.12em] text-bsi-dust/60">
+                Home club
+              </span>
+            </div>
           </div>
           <span className={`font-mono text-sm font-bold ${
             game.state === 'final' && Number(game.home.score) > Number(game.away.score) ? 'text-bsi-bone' : 'text-bsi-dust'
@@ -328,17 +360,58 @@ function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) 
 function extractMLBGames(data: Record<string, unknown>): FeaturedGame[] {
   const games = (data?.games as Array<Record<string, unknown>>) || [];
   return games.slice(0, 4).map(g => {
-    const away = (g.teams as Record<string, unknown>)?.away as Record<string, unknown> || {};
-    const home = (g.teams as Record<string, unknown>)?.home as Record<string, unknown> || {};
-    const status = g.status as Record<string, unknown> || {};
-    const isLive = Boolean((status as Record<string, boolean>)?.isLive);
-    const isFinal = Boolean((status as Record<string, unknown>)?.type && ((status as Record<string, Record<string, boolean>>).type?.completed));
+    // MLB scores API returns teams as an ESPN-format array with homeAway field,
+    // OR as a pre-normalized {away, home} object. Handle both.
+    let awayData: Record<string, unknown> = {};
+    let homeData: Record<string, unknown> = {};
+    let awayTeamName = '';
+    let homeTeamName = '';
+    let awayAbbr = 'AWY';
+    let homeAbbr = 'HME';
+    let awayLogo = '';
+    let homeLogo = '';
+    let awayScore = '';
+    let homeScore = '';
+
+    if (Array.isArray(g.teams)) {
+      const competitors = g.teams as Array<Record<string, unknown>>;
+      const awayEntry = competitors.find(t => t.homeAway === 'away') || competitors[0] || {};
+      const homeEntry = competitors.find(t => t.homeAway === 'home') || competitors[1] || {};
+      const awayTeam = (awayEntry.team || {}) as Record<string, string>;
+      const homeTeam = (homeEntry.team || {}) as Record<string, string>;
+      awayTeamName = String(awayTeam.displayName || awayTeam.shortDisplayName || '');
+      homeTeamName = String(homeTeam.displayName || homeTeam.shortDisplayName || '');
+      awayAbbr = String(awayTeam.abbreviation || 'AWY');
+      homeAbbr = String(homeTeam.abbreviation || 'HME');
+      awayLogo = String(awayTeam.logo || '');
+      homeLogo = String(homeTeam.logo || '');
+      awayScore = String(awayEntry.score ?? '');
+      homeScore = String(homeEntry.score ?? '');
+    } else if (g.teams && typeof g.teams === 'object') {
+      awayData = ((g.teams as Record<string, unknown>)?.away as Record<string, unknown>) || {};
+      homeData = ((g.teams as Record<string, unknown>)?.home as Record<string, unknown>) || {};
+      awayTeamName = String(awayData.name || '');
+      homeTeamName = String(homeData.name || '');
+      awayAbbr = String(awayData.abbreviation || 'AWY');
+      homeAbbr = String(homeData.abbreviation || 'HME');
+      awayLogo = String(awayData.logo || '');
+      homeLogo = String(homeData.logo || '');
+      awayScore = String(awayData.score ?? '');
+      homeScore = String(homeData.score ?? '');
+    }
+
+    const status = (g.status || {}) as Record<string, unknown>;
+    const statusType = (status.type || {}) as Record<string, unknown>;
+    const stateStr = String(statusType.state || '').toLowerCase();
+    const isLive = stateStr === 'in';
+    const isFinal = stateStr === 'post' || Boolean(statusType.completed);
+
     return {
       id: String(g.gamePk || g.id || ''),
-      away: { name: String(away.name || ''), abbreviation: String(away.abbreviation || 'AWY'), logo: String(away.logo || ''), score: String(away.score ?? '') },
-      home: { name: String(home.name || ''), abbreviation: String(home.abbreviation || 'HME'), logo: String(home.logo || ''), score: String(home.score ?? '') },
+      away: { name: awayTeamName, abbreviation: awayAbbr, logo: awayLogo, score: awayScore },
+      home: { name: homeTeamName, abbreviation: homeAbbr, logo: homeLogo, score: homeScore },
       state: isLive ? 'live' : isFinal ? 'final' : 'upcoming',
-      detail: String((status as Record<string, string>)?.detailedState || ''),
+      detail: String(statusType.detail || statusType.description || ''),
       href: `/mlb/game/${g.gamePk || g.id}`,
     } satisfies FeaturedGame;
   });
@@ -508,44 +581,47 @@ function ScoresHubContent() {
       if (sport.id === 'nfl') {
         const games = (payload.games as Array<Record<string, unknown>>) || [];
         const liveCount = countLiveEspnGames(payload);
+        const todayGames = countTodayGames(games);
         live += liveCount;
         return {
           ...sport,
           featured: extractESPNGames(payload, 'nfl'),
           fetchError: sportError,
-          isActive: games.length > 0,
+          isActive: todayGames > 0,
           liveCount,
           loaded: true,
-          todayCount: games.length,
+          todayCount: todayGames,
         };
       }
 
       if (sport.id === 'nba') {
         const games = (payload.games as Array<Record<string, unknown>>) || [];
         const liveCount = countLiveEspnGames(payload);
+        const todayGames = countTodayGames(games);
         live += liveCount;
         return {
           ...sport,
           featured: extractESPNGames(payload, 'nba'),
           fetchError: sportError,
-          isActive: games.length > 0,
+          isActive: todayGames > 0,
           liveCount,
           loaded: true,
-          todayCount: games.length,
+          todayCount: todayGames,
         };
       }
 
       const games = (payload.games as Array<Record<string, unknown>>) || [];
       const liveCount = countLiveCfbGames(payload);
+      const todayGames = countTodayGames(games);
       live += liveCount;
       return {
         ...sport,
         featured: extractESPNGames(payload, 'cfb'),
         fetchError: sportError,
-        isActive: games.length > 0,
+        isActive: todayGames > 0,
         liveCount,
         loaded: true,
-        todayCount: games.length,
+        todayCount: todayGames,
       };
     });
 
@@ -555,6 +631,13 @@ function ScoresHubContent() {
 
   const hasAnyLive = totalLive > 0;
   const fetchedAt = overviewMeta?.lastUpdated ?? overviewLastUpdated?.toISOString() ?? '';
+  const totalGamesToday = sports.reduce((sum, sport) => sum + sport.todayCount, 0);
+  const sportsInAction = sports.filter((sport) => sport.todayCount > 0).length;
+  const mostActiveSport = sports.reduce<SportSection | null>((best, sport) => {
+    if (!best) return sport;
+    return sport.todayCount > best.todayCount ? sport : best;
+  }, null);
+  const overviewSource = overview?.meta?.source || overviewMeta?.source || 'BSI Multi-Source';
 
   // Sync activeSport to URL search params
   const handleSetActiveSport = useCallback((id: string | null) => {
@@ -588,10 +671,27 @@ function ScoresHubContent() {
         <section
           className="relative overflow-hidden"
           style={{
-            background: 'radial-gradient(ellipse at 50% 20%, rgba(191, 87, 0, 0.06) 0%, transparent 60%), var(--surface-scoreboard)',
+            background: 'var(--surface-scoreboard)',
             padding: 'clamp(2rem, 4vw, 3.5rem) 0 clamp(1.5rem, 3vw, 2rem)',
           }}
         >
+          {/* R2 stadium atmosphere */}
+          <img
+            src="/api/assets/images/blaze-full-banner.png"
+            alt=""
+            aria-hidden="true"
+            loading="eager"
+            decoding="async"
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+            style={{ opacity: 0.12 }}
+          />
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: 'linear-gradient(to bottom, rgba(10,10,10,0.5) 0%, rgba(10,10,10,0.35) 40%, var(--surface-scoreboard) 100%)',
+            }}
+          />
+          <div className="absolute inset-0 pointer-events-none grain-overlay" style={{ opacity: 0.25 }} />
           <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[rgba(191,87,0,0.15)] to-transparent" />
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Breadcrumb */}
@@ -632,7 +732,7 @@ function ScoresHubContent() {
             </ScrollReveal>
             <ScrollReveal direction="up" delay={150}>
               <p className="mt-2 text-base max-w-2xl font-serif" style={{ color: 'var(--bsi-dust)' }}>
-                Real-time scores across MLB, NFL, NBA, college football, and every D1 college baseball program.
+                Live college baseball scores for every D1 program — updated in real time.
               </p>
             </ScrollReveal>
             {hasAnyLive && (
@@ -645,6 +745,74 @@ function ScoresHubContent() {
                 </div>
               </ScrollReveal>
             )}
+            <ScrollReveal direction="up" delay={240}>
+              <div className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                {[
+                  {
+                    label: 'Live Right Now',
+                    value: `${totalLive}`,
+                    note: hasAnyLive ? 'Games already underway' : 'Pre-game board',
+                  },
+                  {
+                    label: 'Today’s Slate',
+                    value: `${totalGamesToday}`,
+                    note: 'Tracked across the full board',
+                  },
+                  {
+                    label: 'Sports Active',
+                    value: `${sportsInAction}`,
+                    note: mostActiveSport ? `${mostActiveSport.name} leads the slate` : 'Waiting on first pitch',
+                  },
+                  {
+                    label: 'Refresh Rhythm',
+                    value: '60s',
+                    note: 'Auto-refreshes every minute · Central Time',
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.label}
+                    className="heritage-card p-4"
+                    style={{
+                      background:
+                        'linear-gradient(180deg, rgba(191, 87, 0, 0.08) 0%, rgba(16, 16, 16, 0.94) 100%)',
+                    }}
+                  >
+                    <p className="text-[10px] uppercase tracking-[0.18em] text-bsi-dust/70">
+                      {item.label}
+                    </p>
+                    <div className="mt-3 flex items-end justify-between gap-4">
+                      <span
+                        className="font-bold uppercase leading-none"
+                        style={{
+                          fontFamily: 'var(--bsi-font-display-hero)',
+                          fontSize: 'clamp(1.75rem, 4vw, 2.5rem)',
+                          color: 'var(--bsi-bone)',
+                        }}
+                      >
+                        {item.value}
+                      </span>
+                      <span className="max-w-[10rem] text-right text-[11px] leading-snug text-bsi-dust">
+                        {item.note}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ScrollReveal>
+            {!overviewLoading && totalLive === 0 && (
+              <ScrollReveal direction="up" delay={280}>
+                <p
+                  className="mt-6 italic"
+                  style={{
+                    fontFamily: 'var(--bsi-font-body)',
+                    color: 'var(--bsi-dust)',
+                    fontSize: '0.95rem',
+                  }}
+                >
+                  No live games right now. Check back during game time.
+                </p>
+              </ScrollReveal>
+            )}
           </div>
         </section>
 
@@ -652,8 +820,7 @@ function ScoresHubContent() {
         <nav
           className="sticky top-0 z-20"
           style={{
-            background: 'color-mix(in srgb, var(--surface-press-box) 96%, transparent)',
-            backdropFilter: 'blur(12px)',
+            background: 'var(--surface-press-box)',
             borderTop: '1px solid var(--border-vintage)',
             borderBottom: '1px solid var(--border-vintage)',
           }}
@@ -760,7 +927,7 @@ function ScoresHubContent() {
                       href={activeSportData.href}
                       className="text-burnt-orange text-sm font-semibold hover:text-ember transition-colors"
                     >
-                      View All {activeSportData.todayCount} Games
+                      View All {activeSportData.todayCount} {activeSportData.todayCount === 1 ? 'Game' : 'Games'}
                     </Link>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -800,9 +967,14 @@ function ScoresHubContent() {
                     <ScrollReveal key={sport.id} direction="up" delay={index * 60}>
                       <Link href={sport.href} className="block h-full">
                         <div
-                          className={`heritage-card p-4 h-full transition-all ${
+                          className={`heritage-card h-full p-5 transition-all ${
                             sport.liveCount > 0 ? 'border-success/50 bg-success/5' : ''
                           }`}
+                          style={{
+                            borderLeft: `2px solid ${
+                              sport.liveCount > 0 ? 'var(--bsi-success)' : 'var(--bsi-primary)'
+                            }`,
+                          }}
                         >
                           <div className="flex items-start justify-between mb-3">
                             <div className="flex items-center gap-2.5">
@@ -829,7 +1001,13 @@ function ScoresHubContent() {
                               <Badge variant={sport.fetchError ? 'error' : 'default'}>{sport.fetchError ? 'Unavailable' : sport.isActive ? 'No games' : 'Off-season'}</Badge>
                             )}
                           </div>
-                          <p className="text-bsi-dust text-xs">{sport.description}</p>
+                          <p className="text-bsi-dust text-xs leading-relaxed">{sport.description}</p>
+                          <div className="mt-4 flex items-center justify-between border-t border-border-vintage/60 pt-3 text-[11px] uppercase tracking-[0.12em]">
+                            <span className="text-bsi-dust/70">
+                              {sport.todayCount > 0 ? `${sport.todayCount} ${sport.todayCount === 1 ? 'game' : 'games'} on deck` : sport.season}
+                            </span>
+                            <span className="text-burnt-orange">Open hub →</span>
+                          </div>
                         </div>
                       </Link>
                     </ScrollReveal>
@@ -844,13 +1022,10 @@ function ScoresHubContent() {
                   <div className="flex flex-wrap gap-2">
                     {[
                       { href: '/college-baseball/scores', label: 'College Baseball Scores' },
-                      { href: '/mlb/scores', label: 'MLB Scores' },
-                      { href: '/nfl/games', label: 'NFL Scores' },
-                      { href: '/nba/games', label: 'NBA Scores' },
-                      { href: '/college-baseball/standings', label: 'CBB Standings' },
-                      { href: '/mlb/standings', label: 'MLB Standings' },
-                      { href: '/nfl/standings', label: 'NFL Standings' },
-                      { href: '/nba/standings', label: 'NBA Standings' },
+                      { href: '/college-baseball/standings', label: 'Standings' },
+                      { href: '/college-baseball/rankings', label: 'Rankings' },
+                      { href: '/college-baseball/savant', label: 'BSI Savant' },
+                      { href: '/college-baseball/editorial', label: 'Editorial' },
                     ].map(link => (
                       <Link
                         key={link.href}

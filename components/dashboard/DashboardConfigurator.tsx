@@ -166,7 +166,7 @@ export function DashboardConfigurator({ prefs, onChange, onClose }: DashboardCon
               >
                 <Image
                   src={team.logo}
-                  alt=""
+                  alt={team.name}
                   width={16}
                   height={16}
                   className="object-contain"
@@ -217,7 +217,7 @@ export function DashboardConfigurator({ prefs, onChange, onClose }: DashboardCon
                 >
                   <Image
                     src={team.logo}
-                    alt=""
+                    alt={team.name}
                     width={20}
                     height={20}
                     className="object-contain flex-shrink-0"

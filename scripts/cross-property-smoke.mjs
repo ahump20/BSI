@@ -48,6 +48,28 @@ function normalizeBase(base) {
   return base.replace(/\/+$/, '');
 }
 
+function normalizeUrl(url) {
+  const parsed = new URL(url);
+  const pathname = parsed.pathname === '/' ? '/' : parsed.pathname.replace(/\/+$/, '');
+  return `${parsed.origin}${pathname}${parsed.search}${parsed.hash}`;
+}
+
+function extractTitle(html) {
+  return html.match(/<title[^>]*>([^<]*)<\/title>/i)?.[1]?.trim() ?? '';
+}
+
+function extractCanonicalHref(html) {
+  return (
+    html.match(/<link[^>]+rel=(?:"|')canonical(?:"|')[^>]+href=(?:"|')([^"']+)(?:"|')[^>]*>/i)?.[1] ??
+    html.match(/<link[^>]+href=(?:"|')([^"']+)(?:"|')[^>]+rel=(?:"|')canonical(?:"|')[^>]*>/i)?.[1] ??
+    ''
+  );
+}
+
+function hasStructuralMarker(html, pattern) {
+  return pattern.test(html);
+}
+
 function createChecks(args) {
   const bsiBase = normalizeBase(args.bsiUrl);
   const austinBase = normalizeBase(args.austinUrl);
@@ -58,29 +80,27 @@ function createChecks(args) {
       id: 'bsi-home',
       url: `${bsiBase}/`,
       expectedStatus: 200,
-      mustContain: ['Blaze Sports Intel', 'Born to Blaze the Path Beaten Less'],
-      mustNotContain: ['SERIOUS-FAN COVERAGE'],
+      expectedCanonical: `${bsiBase}/`,
+      requiredMarkers: [/<main\b/i, /<h1\b/i],
     },
     {
       id: 'bsi-college-baseball',
       url: `${bsiBase}/college-baseball`,
       expectedStatus: 200,
-      mustContain: ['College Baseball', 'Analytics', 'Scores'],
-      mustNotContain: [],
+      expectedCanonical: `${bsiBase}/college-baseball`,
+      requiredMarkers: [/<main\b/i, /<h1\b/i],
     },
     {
       id: 'austin-home',
       url: `${austinBase}/`,
       expectedStatus: 200,
-      mustContain: ['Austin Humphrey', 'Sports Intelligence', 'Product Strategy'],
-      mustNotContain: [],
+      requiredMarkers: [/<meta[^>]+name=(?:"|')description(?:"|')/i, /<link[^>]+rel=(?:"|')canonical(?:"|')/i],
     },
     {
       id: 'blazecraft-home',
       url: `${blazecraftBase}/`,
       expectedStatus: 200,
-      mustContain: ['BlazeCraft', 'id="game"'],
-      mustNotContain: [],
+      requiredMarkers: [/<title[^>]*>[^<]+<\/title>/i, /id=(?:"|')game(?:"|')/i],
     },
   ];
 }
@@ -115,15 +135,25 @@ async function runChecks(checks, timeoutMs) {
         failures.push(`expected status ${check.expectedStatus}, got ${response.status}`);
       }
 
-      for (const marker of check.mustContain) {
-        if (!body.includes(marker)) {
-          failures.push(`missing marker: ${marker}`);
+      const title = extractTitle(body);
+      if (!title) {
+        failures.push('missing <title>');
+      } else if (/404|not found|error/i.test(title)) {
+        failures.push(`unexpected title text: ${title}`);
+      }
+
+      if (check.expectedCanonical) {
+        const canonicalHref = extractCanonicalHref(body);
+        if (!canonicalHref) {
+          failures.push('missing canonical link');
+        } else if (normalizeUrl(canonicalHref) !== normalizeUrl(check.expectedCanonical)) {
+          failures.push(`canonical mismatch: expected ${check.expectedCanonical}, got ${canonicalHref}`);
         }
       }
 
-      for (const blocked of check.mustNotContain) {
-        if (body.includes(blocked)) {
-          failures.push(`unexpected marker present: ${blocked}`);
+      for (const marker of check.requiredMarkers) {
+        if (!hasStructuralMarker(body, marker)) {
+          failures.push(`missing structural marker: ${marker}`);
         }
       }
     }

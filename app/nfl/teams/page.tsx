@@ -308,17 +308,20 @@ export default function NFLTeamsPage() {
     <Card
       variant="default"
       padding="md"
-      className="h-full transition-all hover:border-burnt-orange group"
+      className="h-full transition-all group"
+      style={{ borderColor: 'var(--border-vintage)' }}
+      onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--bsi-primary)')}
+      onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--border-vintage)')}
     >
       <div className="flex items-center gap-4">
-        <div className="w-16 h-16 bg-background-secondary rounded-sm flex items-center justify-center text-xl font-bold text-burnt-orange group-hover:bg-burnt-orange/10 transition-colors">
+        <div className="w-16 h-16 rounded-sm flex items-center justify-center text-xl font-bold transition-colors" style={{ background: 'var(--surface-dugout)', color: 'var(--bsi-primary)' }}>
           {team.abbreviation}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-text-primary group-hover:text-burnt-orange transition-colors truncate">
+          <p className="font-semibold transition-colors truncate" style={{ color: 'var(--bsi-bone)' }}>
             {team.city} {team.name}
           </p>
-          <p className="text-xs text-text-tertiary">
+          <p className="text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>
             {team.conference} {team.division}
           </p>
         </div>
@@ -328,19 +331,22 @@ export default function NFLTeamsPage() {
 
   return (
     <>
-      <div>
+      <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/nfl"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="transition-colors"
+                style={{ color: 'rgba(196,184,165,0.5)' }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--bsi-primary)')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(196,184,165,0.5)')}
               >
                 NFL
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">Teams</span>
+              <span style={{ color: 'rgba(196,184,165,0.5)' }}>/</span>
+              <span className="font-medium" style={{ color: 'var(--bsi-bone)' }}>Teams</span>
             </nav>
           </Container>
         </Section>
@@ -356,13 +362,13 @@ export default function NFLTeamsPage() {
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-gradient-blaze mb-4">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-wider mb-4" style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}>
                 NFL Teams
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="text-text-secondary max-w-2xl">
+              <p className="max-w-2xl" style={{ color: 'var(--bsi-dust)' }}>
                 All 32 NFL teams across 8 divisions. Titans, Cowboys, Chiefs—every franchise, no
                 network filter.
               </p>
@@ -379,10 +385,11 @@ export default function NFLTeamsPage() {
 
               return (
                 <div key={division} className="mb-8">
-                  <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+                  <h2 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: 'var(--bsi-bone)' }}>
                     <svg
                       viewBox="0 0 24 24"
-                      className="w-5 h-5 text-burnt-orange"
+                      className="w-5 h-5"
+                      style={{ color: 'var(--bsi-primary)' }}
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="1.5"

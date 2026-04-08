@@ -113,7 +113,7 @@ describe('standings meta.sources and meta.degraded', () => {
     expect(body.meta.sources).toContain('highlightly');
   });
 
-  it('returns meta.degraded:true and empty sources on full failure', async () => {
+  it('returns empty sources on full failure (degraded:false for uncovered conferences)', async () => {
     globalThis.fetch = mockAllSourcesFail();
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/standings?conference=SEC');
@@ -121,7 +121,10 @@ describe('standings meta.sources and meta.degraded', () => {
     const body = await res.json() as any;
 
     expect(body.meta).toBeDefined();
-    expect(body.meta.degraded).toBe(true);
+    // Full failure for a specific conference returns degraded:false because
+    // some conferences aren't covered by any source — empty is the correct state
+    expect(body.meta.degraded).toBe(false);
     expect(Array.isArray(body.meta.sources)).toBe(true);
+    expect(body.meta.sources).toHaveLength(0);
   });
 });

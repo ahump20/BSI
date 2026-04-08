@@ -45,7 +45,6 @@ export function createMockEnv(overrides: Record<string, unknown> = {}) {
     },
     KV: createMockKV(),
     CACHE: {} as any,
-    PORTAL_POLLER: {} as any,
     ASSETS_BUCKET: {} as any,
     DATA_LAKE: { put: vi.fn().mockResolvedValue(undefined) } as any,
     ENVIRONMENT: 'test',

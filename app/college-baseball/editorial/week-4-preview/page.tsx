@@ -6,6 +6,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { Footer } from '@/components/layout-ds/Footer';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 import type { Metadata } from 'next';
 
 import { ogImage } from '@/lib/metadata';
@@ -49,6 +50,13 @@ const STATS = [
 export default function Week4PreviewPage() {
   return (
     <>
+      <ArticleJsonLd
+        headline="Week 4 Preview: The Last Non-Conference Weekend"
+        description="Week 4 is the final non-conference weekend before SEC, Big 12, and ACC play opens. Virginia at North Carolina headlines. Texas hosts USC Upstate. The tune-up window closes Friday."
+        datePublished="2026-03-03"
+        url="/college-baseball/editorial/week-4-preview"
+        sport="College Baseball"
+      />
       <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">

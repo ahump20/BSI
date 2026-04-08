@@ -2,8 +2,8 @@
  * College Baseball — editorial, news, trending, and daily handlers.
  */
 
-import type { Env, EnhancedArticle } from './shared';
-import { json, cachedJson, kvGet, kvPut, dataHeaders, getCollegeClient, getHighlightlyClient, HTTP_CACHE, CACHE_TTL, categorizeArticle, titleSimilarity, CATEGORY_KEYWORDS } from './shared';
+import type { Env, EnhancedArticle, HighlightlyMatch } from './shared';
+import { json, cachedJson, kvGet, kvPut, dataHeaders, cachedPayloadHeaders, getCollegeClient, getHighlightlyClient, HTTP_CACHE, CACHE_TTL, categorizeArticle, titleSimilarity, CATEGORY_KEYWORDS } from './shared';
 
 export async function handleCollegeBaseballTrending(env: Env): Promise<Response> {
   try {
@@ -257,26 +257,72 @@ export async function handleCollegeBaseballNewsEnhanced(env: Env): Promise<Respo
 
 export async function handleCollegeBaseballTransferPortal(env: Env): Promise<Response> {
   try {
-    const raw = await env.KV.get('portal:college-baseball:entries', 'text');
-    if (raw) {
-      try {
-        const data = JSON.parse(raw) as Record<string, unknown>;
-        const entries = (data.entries ?? []) as unknown[];
-        return cachedJson({
-          entries,
-          totalEntries: entries.length,
-          lastUpdated: data.lastUpdated ?? null,
-          meta: { source: 'portal-sync', fetched_at: (data.lastUpdated as string) ?? new Date().toISOString(), timezone: 'America/Chicago' },
-        }, 200, HTTP_CACHE.trending);
-      } catch {
-        // Corrupt KV entry — fall through
-      }
+    const now = new Date().toISOString();
+    const cacheKey = 'cb:transfer-portal:v2';
+
+    // Serve from KV cache if fresh (5 min TTL)
+    const cached = await kvGet<Record<string, unknown>>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(cached, 200, HTTP_CACHE.trending, cachedPayloadHeaders(cached));
     }
-    return json({
-      entries: [], totalEntries: 0, lastUpdated: null,
-      meta: { source: 'none', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
-      message: 'No portal data available yet',
-    }, 200);
+
+    // Query D1 for social intel signals classified as transfer_portal.
+    // The bsi-social-intel worker ingests Reddit + Twitter, classifies with Claude,
+    // and writes transfer_portal signals with player/team associations.
+    const result = await env.DB.prepare(`
+      SELECT
+        post_id AS id,
+        player_mentioned AS playerName,
+        team_mentioned AS fromSchool,
+        summary,
+        posted_at AS enteredDate,
+        confidence,
+        post_url AS sourceUrl,
+        platform,
+        author
+      FROM cbb_social_signals
+      WHERE signal_type = 'transfer_portal'
+        AND confidence >= 0.5
+      ORDER BY posted_at DESC
+      LIMIT 200
+    `).all<{
+      id: string;
+      playerName: string | null;
+      fromSchool: string | null;
+      summary: string | null;
+      enteredDate: string;
+      confidence: number;
+      sourceUrl: string | null;
+      platform: string;
+      author: string | null;
+    }>();
+
+    const entries = (result.results ?? []).map((r) => ({
+      id: r.id,
+      playerName: r.playerName ?? r.summary?.split(/\s+/).slice(0, 3).join(' ') ?? 'Unknown',
+      position: '',
+      fromSchool: r.fromSchool ?? '',
+      toSchool: undefined,
+      status: 'reported',
+      enteredDate: r.enteredDate,
+      classification: undefined,
+      summary: r.summary,
+      confidence: r.confidence,
+      sourceUrl: r.sourceUrl,
+      platform: r.platform,
+      author: r.author,
+    }));
+
+    const payload = {
+      entries,
+      totalEntries: entries.length,
+      lastUpdated: entries[0]?.enteredDate ?? now,
+      meta: { source: 'social-intel', fetched_at: now, timezone: 'America/Chicago' as const },
+    };
+
+    // Cache for 5 minutes — social intel cron runs more frequently
+    await kvPut(env.KV, cacheKey, payload, 300);
+    return cachedJson(payload, 200, HTTP_CACHE.trending, dataHeaders(now, 'social-intel'));
   } catch (err) {
     console.error('[handleCollegeBaseballTransferPortal]', err instanceof Error ? err.message : err);
     return json({ error: 'Internal server error', status: 500 }, 500);
@@ -287,7 +333,7 @@ export async function handleCollegeBaseballTransferPortal(env: Env): Promise<Res
  * Portal player detail — serves /api/portal/player/:playerId
  *
  * Looks up a player by slug (e.g. "jace-laviolette") from the KV portal entries
- * written by bsi-portal-sync. Returns the shape PlayerDetailClient.tsx expects.
+ * written to KV. Returns the shape PlayerDetailClient.tsx expects.
  */
 export async function handlePortalPlayerDetail(
   playerId: string,

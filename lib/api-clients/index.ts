@@ -23,14 +23,3 @@ export type {
   HighlightlyPaginatedResponse,
 } from './highlightly-api';
 
-export { HighlightlyAdapter } from './highlightly-adapter';
-export type {
-  HighlightlySport,
-  GameStatus,
-  HighlightlyConfig,
-  HighlightlyGame,
-  HighlightlyTeam,
-  HighlightlyStanding,
-  HighlightlyRanking,
-  HighlightlyResponse,
-} from './highlightly-adapter';

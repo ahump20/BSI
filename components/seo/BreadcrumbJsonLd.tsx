@@ -44,6 +44,16 @@ const SEGMENT_LABELS: Record<string, string> = {
   methodology: 'Methodology',
   tools: 'Tools',
   abs: 'At-Bats',
+  'weekly-pulse': 'Weekly Pulse',
+  'power-rankings': 'Power Rankings',
+  savant: 'Savant',
+  player: 'Player',
+  ask: 'Ask BSI',
+  'park-factors': 'Park Factors',
+  'team-compare': 'Team Compare',
+  'conference-comparison': 'Conference Comparison',
+  'conference-index': 'Conference Index',
+  visuals: 'Visuals',
 };
 
 function labelFor(segment: string): string {

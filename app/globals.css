@@ -26,7 +26,7 @@
   --color-text-primary: var(--bsi-text);
   --color-text-secondary: var(--bsi-text-muted);
   --color-text-tertiary: rgba(245, 240, 235, 0.55);
-  --color-text-muted: rgba(245, 240, 235, 0.40);
+  --color-text-muted: rgba(245, 240, 235, 0.55);
 
   /* Borders (aliased) */
   --color-border-subtle: var(--bsi-border);
@@ -87,11 +87,67 @@ html {
 }
 
 body {
-  background-color: #0d0d0d;
+  background-color: var(--surface-scoreboard);
   color: var(--color-text-primary);
   min-height: 100vh;
   overflow-x: hidden;
   font-family: var(--font-cormorant), 'Cormorant Garamond', 'Georgia', serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Atmospheric grid texture — subtle warm lines */
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      var(--grid-line-color) 0,
+      var(--grid-line-color) 1px,
+      transparent 1px,
+      transparent 80px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      var(--grid-line-color) 0,
+      var(--grid-line-color) 1px,
+      transparent 1px,
+      transparent 80px
+    );
+  background-size: 80px 80px;
+  position: relative;
+}
+
+/* Radial atmospheric depth — warm zones that ground the viewport */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 600px 400px at 15% 20%, rgba(191, 87, 0, 0.04), transparent),
+    radial-gradient(ellipse 500px 500px at 85% 80%, rgba(59, 130, 246, 0.03), transparent),
+    radial-gradient(ellipse 800px 300px at 50% 50%, rgba(255, 255, 255, 0.01), transparent);
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Bottom-edge atmospheric glow — grounds the viewport */
+body::after {
+  content: '';
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  pointer-events: none;
+  z-index: 0;
+  background: linear-gradient(to top, rgba(191, 87, 0, 0.04), transparent);
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Content sits above atmosphere */
+#__next {
+  position: relative;
+  z-index: 1;
 }
 
 /* ---- Selection (portfolio orange) ---- */
@@ -268,18 +324,16 @@ textarea:focus-visible,
     background-color: var(--hover-bg) !important;
   }
 
-  /* Chart panel — glass card with left accent (from Labs) */
+  /* Chart panel — Heritage card with left accent */
   .chart-panel {
-    background: var(--glass-default-bg);
-    border: 1px solid var(--glass-default-border);
+    background: var(--surface-dugout);
+    border: 1px solid var(--border-vintage);
     border-left: 2px solid var(--bsi-primary);
     border-radius: 2px;
-    backdrop-filter: blur(var(--glass-default-blur));
-    -webkit-backdrop-filter: blur(var(--glass-default-blur));
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
   .chart-panel:hover {
-    border-color: rgba(255, 255, 255, 0.10);
+    border-color: rgba(140, 98, 57, 0.5);
     border-left-color: var(--bsi-primary);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   }
@@ -384,16 +438,15 @@ textarea:focus-visible,
   }
 
   .btn-ghost:hover {
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(140, 98, 57, 0.1);
     color: var(--color-text-primary);
   }
 
   /* ---- Stat components ---- */
   .stat-card {
-    background: var(--glass-default-bg);
-    backdrop-filter: blur(var(--glass-default-blur));
+    background: var(--surface-dugout);
     border-radius: 2px;
-    border: 1px solid var(--glass-default-border);
+    border: 1px solid var(--border-vintage);
     padding: 1rem;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
@@ -448,9 +501,7 @@ textarea:focus-visible,
     position: sticky;
     top: 0;
     z-index: 10;
-    background: var(--glass-elevated-bg);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    background: var(--surface-press-box);
   }
 
   .sticky-header thead tr {
@@ -631,15 +682,9 @@ textarea:focus-visible,
     z-index: 1030;
   }
 
-  /* ---- Backdrop blur ---- */
-  .backdrop-blur-glass {
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-  }
-
   /* ---- Background utilities ---- */
   .bg-midnight {
-    background-color: #0d0d0d;
+    background-color: var(--surface-scoreboard);
   }
 
   .bg-background-primary {
@@ -772,10 +817,11 @@ textarea:focus-visible,
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--bsi-primary);
+  color: var(--bsi-primary-light);
   padding: 0.25rem 0.75rem;
   border: 1px solid var(--bsi-primary);
   border-radius: 1px;
+  background: rgba(0, 0, 0, 0.25);
 }
 
 /* Heritage divider — bronze gradient fade (wider) */
@@ -937,6 +983,18 @@ textarea:focus-visible,
     rgba(255, 255, 255, 0.03) 4px
   );
   z-index: 1;
+}
+
+/* Score ticker — CSS marquee for homepage */
+.ticker-track {
+  animation: ticker-scroll 60s linear infinite;
+}
+.ticker-track:hover {
+  animation-play-state: paused;
+}
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 /* Warm vignette — radial darkening at edges */
@@ -1329,11 +1387,20 @@ textarea:focus-visible,
   opacity: 0;
   transform: translateY(30px);
   transition: opacity 0.8s cubic-bezier(0.25, 0.1, 0.25, 1), transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+  animation: reveal-safety-net 0s 2s forwards;
 }
 
 .reveal.revealed {
   opacity: 1;
   transform: translateY(0);
+  animation: none;
+}
+
+@keyframes reveal-safety-net {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .reveal-left { transform: translateX(-30px); }
@@ -1344,6 +1411,27 @@ textarea:focus-visible,
 
 .reveal-scale { transform: scale(0.95); }
 .reveal-scale.revealed { transform: scale(1); }
+
+.reveal-down { transform: translateY(-30px); }
+.reveal-down.revealed { transform: translateY(0); }
+
+.reveal-fade { transform: none; }
+.reveal-fade.revealed { transform: none; }
+
+/* Reduced motion: instant reveal, no animation */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    animation: none;
+  }
+  .reveal-stagger > * {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
 
 .reveal-stagger > * {
   opacity: 0;

@@ -97,6 +97,7 @@ export default function SpringTrainingPage() {
           primaryCta={{ label: 'View Scores', href: '/mlb/spring-training/scores' }}
           secondaryCta={{ label: 'Standings', href: '/mlb/spring-training/standings' }}
           stats={ST_HERO_STATS}
+          heroBg={{ bucket: 'images', imagePath: 'blaze-stadium-hero.png', opacity: 0.18 }}
         />
 
         <Section padding="lg" background="charcoal" borderTop>
@@ -129,7 +130,7 @@ export default function SpringTrainingPage() {
                           Today&apos;s Spring Training Games
                           {hasLive && <FreshnessBadge isLive fetchedAt={scoresData?.meta?.lastUpdated} />}
                         </span>
-                        <Badge variant="primary">{filteredGames.length} Games</Badge>
+                        <Badge variant="primary">{filteredGames.length} {filteredGames.length === 1 ? 'Game' : 'Games'}</Badge>
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -222,7 +223,7 @@ export default function SpringTrainingPage() {
                   <Card variant="default" padding="lg">
                     <CardHeader>
                       <CardTitle>
-                        Full Schedule ({filteredSchedule.length} games)
+                        Full Schedule ({filteredSchedule.length} {filteredSchedule.length === 1 ? 'game' : 'games'})
                       </CardTitle>
                     </CardHeader>
                     <CardContent>

@@ -328,7 +328,7 @@ function CollegeBaseballStandingsPageInner() {
                       <span
                         className={`w-2 h-2 rounded-full ${meta.degraded ? 'bg-[var(--bsi-warning)]' : 'bg-[var(--bsi-primary)]'}`}
                       />
-                      Sources: {meta.sources.join(' + ')}
+                      Sources: {meta.sources.map((s: string) => s.replace('espn-v2', 'ESPN').replace('highlightly', 'Highlightly')).join(' + ')}
                     </div>
                   ) : (
                     <Badge variant="primary">Updated Daily</Badge>
@@ -417,7 +417,7 @@ function CollegeBaseballStandingsPageInner() {
                         aria-label="College baseball standings by conference"
                       >
                         <thead>
-                          <tr className="bg-background-secondary border-b border-border-subtle">
+                          <tr className="bg-[var(--surface-press-box)] border-b border-[var(--border-vintage)]">
                             <SortableTh
                               label="#"
                               sortKey="rank"
@@ -427,7 +427,7 @@ function CollegeBaseballStandingsPageInner() {
                             />
                             <th
                               scope="col"
-                              className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider"
+                              className="text-left py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider"
                             >
                               Team
                             </th>
@@ -456,7 +456,7 @@ function CollegeBaseballStandingsPageInner() {
                             />
                             <th
                               scope="col"
-                              className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden md:table-cell"
+                              className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden md:table-cell"
                             >
                               Streak
                             </th>
@@ -522,7 +522,7 @@ function CollegeBaseballStandingsPageInner() {
                                 </span>
                               </td>
                               <td className="py-3 px-4 text-center hidden md:table-cell">
-                                <span className="text-text-secondary">
+                                <span className="text-[var(--bsi-bone)]">
                                   {standing.winPct ? (standing.winPct * 100).toFixed(1) + '%' : '—'}
                                 </span>
                               </td>
@@ -564,8 +564,8 @@ function CollegeBaseballStandingsPageInner() {
                     </div>
 
                     {/* Legend */}
-                    <div className="px-4 py-3 bg-background-secondary border-t border-border-subtle">
-                      <div className="flex items-center gap-4 text-xs text-text-tertiary">
+                    <div className="px-4 py-3 bg-[var(--surface-press-box)] border-t border-[var(--border-vintage)]">
+                      <div className="flex items-center gap-4 text-xs text-[var(--bsi-dust)]">
                         <div className="flex items-center gap-2">
                           <div className="w-3 h-3 bg-success/20 rounded-sm" />
                           <span>NCAA Tournament Projection</span>
@@ -577,7 +577,7 @@ function CollegeBaseballStandingsPageInner() {
               )}
 
               {/* Data Attribution */}
-              <div className="mt-8 pt-4 border-t border-white/[0.06] flex justify-center">
+              <div className="mt-8 pt-4 border-t border-[var(--border-vintage)] flex justify-center">
                 <DataAttribution
                   source={meta?.source || (meta?.sources ? meta.sources.join(' + ') : 'ESPN')}
                   lastUpdated={lastUpdated || undefined}

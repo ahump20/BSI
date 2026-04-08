@@ -26,7 +26,8 @@ interface HAVFPlayerAPI {
 }
 
 interface HAVFLeaderboardResponse {
-  data: HAVFPlayerAPI[];
+  data?: HAVFPlayerAPI[];
+  leaderboard?: HAVFPlayerAPI[];
   meta: {
     source: string;
     fetched_at: string;
@@ -47,8 +48,9 @@ export default function CollegeBaseballAnalyticsPage() {
   );
 
   const players = useMemo(() => {
-    if (!response?.data) return [];
-    return response.data.map((p) => ({
+    const items = response?.data || response?.leaderboard || [];
+    if (!items.length) return [];
+    return items.map((p) => ({
       playerId: p.player_id,
       playerName: p.player_name,
       team: p.team,

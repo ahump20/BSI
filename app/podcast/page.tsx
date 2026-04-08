@@ -117,6 +117,26 @@ const BLAZE_ASSET_URLS = {
 
 const CURATED_EPISODES: CuratedEpisode[] = [
   {
+    id: 'texas-longhorns-formula-2026',
+    title: '2026 Texas Longhorns Baseball Formula',
+    slug: '2026-texas-longhorns-baseball-formula',
+    publishedDate: '2026-03-26',
+    durationLabel: 'Audio Overview',
+    category: 'Baseball',
+    series: 'Weekly Intel',
+    description:
+      'Texas is 20-4, No. 2 nationally, No. 1 RPI heading into the Oklahoma series. Robbins hit 3 HR at Auburn. The bullpen hierarchy after SEC play. What the numbers say about Omaha odds.',
+    tags: ['Texas', 'College Baseball', '2026', 'SEC', 'NotebookLM'],
+    notebookStatus: 'public',
+    featuredTier: 'hero',
+    sourceCount: 29,
+    selectionReason:
+      'First weekly AI-generated audio overview for the 2026 season. 29 sources including UT Athletics, D1Baseball rankings, Houston Today, and BSI editorial.',
+    sourceLabel: 'NotebookLM Audio Overview',
+    notebookUrl: 'https://notebooklm.google.com/notebook/977a2568-a932-45ed-9625-a7e22c385e4c',
+    quote: 'The formula isn\'t complicated. It\'s execution.',
+  },
+  {
     id: 'garrido-code-public',
     title: 'The Garrido Code Podcast Series Outline notebook',
     slug: 'the-garrido-code-podcast-series-outline-notebook',

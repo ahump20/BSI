@@ -15,7 +15,6 @@ import { AdvancedStatsCard } from '@/components/analytics/AdvancedStatsCard';
 import { PlayerScoutingComposite } from '@/components/college-baseball/PlayerScoutingComposite';
 import { ScoutingReport } from '@/components/college-baseball/ScoutingReport';
 import { fmt3 } from '@/lib/utils/format';
-import { getPlayerHighlights } from '@/lib/data/player-highlights';
 import { useWatchlist } from '@/lib/hooks/useWatchlist';
 
 // ---------------------------------------------------------------------------
@@ -262,7 +261,7 @@ export default function PlayerDetailClient() {
   const havfPlayer = havf?.player;
   const nilPlayer = nil?.player ?? null;
   const draftProfile = player ? findDraftProfile(player.name) : null;
-  const highlights = getPlayerHighlights(playerId);
+  const highlights: { id: string; title: string; videoUrl: string; thumbnailUrl?: string; gameContext?: string; date: string; duration?: string }[] = [];
   const gameLogGames = gameLog?.games ?? [];
   const hasGameLog = gameLogGames.length > 0;
 

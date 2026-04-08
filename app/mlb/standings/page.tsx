@@ -12,6 +12,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton, SkeletonTableRow } from '@/components/ui/Skeleton';
 import { formatTimestamp } from '@/lib/utils/timezone';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { DegradedDataBanner } from '@/components/ui/DegradedDataBanner';
 import type { DataMeta } from '@/lib/types/data-meta';
 
 interface Team {
@@ -157,17 +158,20 @@ export default function MLBStandingsPage() {
     column,
     label,
     className = '',
+    style: extraStyle,
   }: {
     column: string;
     label: string;
     className?: string;
+    style?: React.CSSProperties;
   }) => (
     <th
       scope="col"
       tabIndex={0}
       role="columnheader"
       aria-sort={sortColumn === column ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'}
-      className={`text-left p-3 text-text-tertiary font-semibold cursor-pointer hover:text-burnt-orange transition-colors ${className}`}
+      className={`text-left p-3 font-semibold cursor-pointer transition-colors ${className}`}
+      style={{ color: 'rgba(196,184,165,0.5)', ...extraStyle }}
       onClick={() => handleSort(column)}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSort(column); } }}
     >
@@ -192,20 +196,20 @@ export default function MLBStandingsPage() {
     <div className="overflow-x-auto">
       <table className="w-full min-w-[700px]" aria-label="MLB division standings">
         <thead>
-          <tr className="border-b-2 border-burnt-orange">
-            <th scope="col" className="text-left p-3 text-text-tertiary font-semibold w-8">#</th>
-            <SortableHeader column="team" label="Team" className="sticky left-0 bg-background-secondary z-10" />
+          <tr style={{ borderBottom: '2px solid var(--bsi-primary)' }}>
+            <th scope="col" className="text-left p-3 font-semibold w-8" style={{ color: 'rgba(196,184,165,0.5)' }}>#</th>
+            <SortableHeader column="team" label="Team" className="sticky left-0 z-10" style={{ background: 'var(--surface-dugout)' } as React.CSSProperties} />
             <SortableHeader column="wins" label="W" />
             <SortableHeader column="losses" label="L" />
             <SortableHeader column="pct" label="PCT" />
             <SortableHeader column="gb" label="GB" />
-            <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">HOME</th>
-            <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">AWAY</th>
+            <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>HOME</th>
+            <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>AWAY</th>
             <SortableHeader column="rs" label="RS" />
             <SortableHeader column="ra" label="RA" />
             <SortableHeader column="diff" label="DIFF" />
-            <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">STRK</th>
-            <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">L10</th>
+            <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>STRK</th>
+            <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>L10</th>
           </tr>
         </thead>
         <tbody>
@@ -214,43 +218,49 @@ export default function MLBStandingsPage() {
             return (
               <tr
                 key={team.teamName}
-                className="border-b border-border-subtle hover:bg-surface-light transition-colors"
+                className="transition-colors"
+                style={{ borderBottom: '1px solid var(--border-vintage)' }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--surface-press-box)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = ''; }}
               >
-                <td className="p-3 text-burnt-orange font-bold">{idx + 1}</td>
-                <td className="p-3 sticky left-0 bg-background-secondary z-10">
+                <td className="p-3 font-bold" style={{ color: 'var(--bsi-primary)' }}>{idx + 1}</td>
+                <td className="p-3 sticky left-0 z-10" style={{ background: 'var(--surface-dugout)' }}>
                   <Link
                     href={`/mlb/teams/${teamSlug(team)}`}
-                    className="font-semibold text-text-primary hover:text-burnt-orange transition-colors flex items-center gap-2"
+                    className="font-semibold transition-colors flex items-center gap-2"
+                    style={{ color: 'var(--bsi-bone)' }}
                   >
                     {team.teamName}
                     {showDivision && (
-                      <span className="text-text-tertiary text-xs">{team.division}</span>
+                      <span className="text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>{team.division}</span>
                     )}
                   </Link>
                 </td>
-                <td className="p-3 text-text-secondary font-mono">{team.wins}</td>
-                <td className="p-3 text-text-secondary font-mono">{team.losses}</td>
-                <td className="p-3 text-text-secondary font-mono">
+                <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>{team.wins}</td>
+                <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>{team.losses}</td>
+                <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>
                   {team.winPercentage.toFixed(3).replace('0.', '.')}
                 </td>
-                <td className="p-3 text-text-secondary font-mono">
+                <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>
                   {team.gamesBack === 0 ? '-' : team.gamesBack.toFixed(1)}
                 </td>
-                <td className="p-3 text-text-secondary font-mono">{team.home || '-'}</td>
-                <td className="p-3 text-text-secondary font-mono">{team.away || '-'}</td>
-                <td className="p-3 text-text-secondary font-mono">{team.runsScored}</td>
-                <td className="p-3 text-text-secondary font-mono">{team.runsAllowed}</td>
+                <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>{team.home || '-'}</td>
+                <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>{team.away || '-'}</td>
+                <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>{team.runsScored}</td>
+                <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>{team.runsAllowed}</td>
                 <td
-                  className={`p-3 font-mono font-semibold ${diff > 0 ? 'text-success' : diff < 0 ? 'text-error' : 'text-text-secondary'}`}
+                  className={`p-3 font-mono font-semibold ${diff > 0 ? 'text-success' : diff < 0 ? 'text-error' : ''}`}
+                  style={diff === 0 ? { color: 'var(--bsi-dust)' } : undefined}
                 >
                   {diff > 0 ? `+${diff}` : diff}
                 </td>
                 <td
-                  className={`p-3 font-mono ${team.streakCode?.startsWith('W') ? 'text-success' : team.streakCode?.startsWith('L') ? 'text-error' : 'text-text-secondary'}`}
+                  className={`p-3 font-mono ${team.streakCode?.startsWith('W') ? 'text-success' : team.streakCode?.startsWith('L') ? 'text-error' : ''}`}
+                  style={!team.streakCode?.startsWith('W') && !team.streakCode?.startsWith('L') ? { color: 'var(--bsi-dust)' } : undefined}
                 >
                   {team.streakCode || '-'}
                 </td>
-                <td className="p-3 text-text-secondary font-mono">{team.last10 || '-'}</td>
+                <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>{team.last10 || '-'}</td>
               </tr>
             );
           })}
@@ -284,15 +294,15 @@ export default function MLBStandingsPage() {
       <div className="overflow-x-auto">
         <table className="w-full min-w-[600px]" aria-label="MLB wild card standings">
           <thead>
-            <tr className="border-b-2 border-burnt-orange">
-              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold w-8">WC</th>
-              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">Team</th>
-              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">W</th>
-              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">L</th>
-              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">PCT</th>
-              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">WCGB</th>
-              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">STRK</th>
-              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">L10</th>
+            <tr style={{ borderBottom: '2px solid var(--bsi-primary)' }}>
+              <th scope="col" className="text-left p-3 font-semibold w-8" style={{ color: 'rgba(196,184,165,0.5)' }}>WC</th>
+              <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>Team</th>
+              <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>W</th>
+              <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>L</th>
+              <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>PCT</th>
+              <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>WCGB</th>
+              <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>STRK</th>
+              <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>L10</th>
             </tr>
           </thead>
           <tbody>
@@ -306,49 +316,54 @@ export default function MLBStandingsPage() {
               return (
                 <tr
                   key={team.teamName}
-                  className={`border-b border-border-subtle hover:bg-surface-light transition-colors ${
-                    isInWCSpot
-                      ? 'bg-success/5'
-                      : idx === wcSpots
-                        ? 'border-t-2 border-burnt-orange'
-                        : ''
+                  className={`transition-colors ${
+                    isInWCSpot ? 'bg-success/5' : ''
                   }`}
+                  style={{
+                    borderBottom: '1px solid var(--border-vintage)',
+                    ...(idx === wcSpots ? { borderTop: '2px solid var(--bsi-primary)' } : {}),
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--surface-press-box)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = isInWCSpot ? '' : ''; }}
                 >
                   <td
-                    className={`p-3 font-bold ${isInWCSpot ? 'text-success' : 'text-text-tertiary'}`}
+                    className={`p-3 font-bold ${isInWCSpot ? 'text-success' : ''}`}
+                    style={!isInWCSpot ? { color: 'rgba(196,184,165,0.5)' } : undefined}
                   >
                     {isInWCSpot ? idx + 1 : '-'}
                   </td>
                   <td className="p-3">
                     <Link
                       href={`/mlb/teams/${teamSlug(team)}`}
-                      className="font-semibold text-text-primary hover:text-burnt-orange transition-colors flex items-center gap-2"
+                      className="font-semibold transition-colors flex items-center gap-2"
+                      style={{ color: 'var(--bsi-bone)' }}
                     >
                       {team.teamName}
-                      <span className="text-text-tertiary text-xs">{team.division}</span>
+                      <span className="text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>{team.division}</span>
                     </Link>
                   </td>
-                  <td className="p-3 text-text-secondary font-mono">{team.wins}</td>
-                  <td className="p-3 text-text-secondary font-mono">{team.losses}</td>
-                  <td className="p-3 text-text-secondary font-mono">
+                  <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>{team.wins}</td>
+                  <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>{team.losses}</td>
+                  <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>
                     {team.winPercentage.toFixed(3).replace('0.', '.')}
                   </td>
-                  <td className="p-3 text-text-secondary font-mono">
+                  <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>
                     {wcGb === 0 ? '-' : wcGb.toFixed(1)}
                   </td>
                   <td
-                    className={`p-3 font-mono ${team.streakCode?.startsWith('W') ? 'text-success' : team.streakCode?.startsWith('L') ? 'text-error' : 'text-text-secondary'}`}
+                    className={`p-3 font-mono ${team.streakCode?.startsWith('W') ? 'text-success' : team.streakCode?.startsWith('L') ? 'text-error' : ''}`}
+                    style={!team.streakCode?.startsWith('W') && !team.streakCode?.startsWith('L') ? { color: 'var(--bsi-dust)' } : undefined}
                   >
                     {team.streakCode || '-'}
                   </td>
-                  <td className="p-3 text-text-secondary font-mono">{team.last10 || '-'}</td>
+                  <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>{team.last10 || '-'}</td>
                 </tr>
               );
             })}
           </tbody>
         </table>
         {wcTeams.length > wcSpots && (
-          <div className="mt-4 text-xs text-text-tertiary">
+          <div className="mt-4 text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>
             Teams above the line are in Wild Card position
           </div>
         )}
@@ -358,19 +373,20 @@ export default function MLBStandingsPage() {
 
   return (
     <>
-      <div>
+      <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/mlb"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="transition-colors hover:opacity-80"
+                style={{ color: 'rgba(196,184,165,0.5)' }}
               >
                 MLB
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">Standings</span>
+              <span style={{ color: 'rgba(196,184,165,0.5)' }}>/</span>
+              <span className="font-medium" style={{ color: 'var(--bsi-bone)' }}>Standings</span>
             </nav>
           </Container>
         </Section>
@@ -387,13 +403,16 @@ export default function MLBStandingsPage() {
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-gradient-blaze mb-4">
+              <h1
+                className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-gradient-blaze mb-4"
+                style={{ fontFamily: 'var(--font-oswald)' }}
+              >
                 MLB Standings
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="text-text-secondary max-w-2xl">
+              <p className="max-w-2xl" style={{ color: 'var(--bsi-dust)' }}>
                 Complete Major League Baseball standings with division, league, and wild card views.
                 Updated throughout the season.
               </p>
@@ -404,17 +423,19 @@ export default function MLBStandingsPage() {
         {/* View Toggle & Content */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
+            <DegradedDataBanner degraded={!!meta?.degraded} source={meta?.dataSource} />
+
             {/* View Toggle */}
             <div className="flex flex-wrap gap-2 mb-8">
               {views.map((view) => (
                 <button
                   key={view.id}
                   onClick={() => setViewType(view.id)}
-                  className={`px-6 py-2.5 min-h-[44px] rounded-sm font-semibold text-sm transition-all ${
-                    viewType === view.id
-                      ? 'bg-burnt-orange text-white'
-                      : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium hover:text-text-primary'
-                  }`}
+                  className="px-6 py-2.5 min-h-[44px] rounded-sm font-semibold text-sm transition-all"
+                  style={{
+                    background: viewType === view.id ? 'var(--bsi-primary)' : 'var(--surface-dugout)',
+                    color: viewType === view.id ? '#fff' : 'var(--bsi-dust)',
+                  }}
                 >
                   {view.label}
                 </button>
@@ -433,7 +454,7 @@ export default function MLBStandingsPage() {
                       <div className="overflow-x-auto">
                         <table className="w-full">
                           <thead>
-                            <tr className="border-b-2 border-burnt-orange">
+                            <tr style={{ borderBottom: '2px solid var(--bsi-primary)' }}>
                               {[
                                 '#',
                                 'Team',
@@ -449,7 +470,7 @@ export default function MLBStandingsPage() {
                                 'STRK',
                                 'L10',
                               ].map((h) => (
-                                <th key={h} scope="col" className="text-left p-3 text-text-tertiary font-semibold">
+                                <th key={h} scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>
                                   {h}
                                 </th>
                               ))}
@@ -469,10 +490,11 @@ export default function MLBStandingsPage() {
             ) : error ? (
               <Card variant="default" padding="lg" className="bg-error/10 border-error/30">
                 <p className="text-error font-semibold">Data Unavailable</p>
-                <p className="text-text-secondary text-sm mt-1">{error}</p>
+                <p className="text-sm mt-1" style={{ color: 'var(--bsi-dust)' }}>{error}</p>
                 <button
                   onClick={retry}
-                  className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange/80 transition-colors"
+                  className="mt-4 px-4 py-2 text-white rounded-sm transition-colors"
+                  style={{ background: 'var(--bsi-primary)' }}
                 >
                   Retry
                 </button>
@@ -502,7 +524,8 @@ export default function MLBStandingsPage() {
                               <CardTitle className="flex items-center gap-3">
                                 <svg
                                   viewBox="0 0 24 24"
-                                  className="w-5 h-5 text-burnt-orange"
+                                  className="w-5 h-5"
+                                  style={{ color: 'var(--bsi-primary)' }}
                                   fill="currentColor"
                                 >
                                   <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
@@ -531,7 +554,8 @@ export default function MLBStandingsPage() {
                               <CardTitle className="flex items-center gap-3">
                                 <svg
                                   viewBox="0 0 24 24"
-                                  className="w-5 h-5 text-burnt-orange"
+                                  className="w-5 h-5"
+                                  style={{ color: 'var(--bsi-primary)' }}
                                   fill="currentColor"
                                 >
                                   <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
@@ -560,7 +584,8 @@ export default function MLBStandingsPage() {
                               <CardTitle className="flex items-center gap-3">
                                 <svg
                                   viewBox="0 0 24 24"
-                                  className="w-5 h-5 text-burnt-orange"
+                                  className="w-5 h-5"
+                                  style={{ color: 'var(--bsi-primary)' }}
                                   fill="none"
                                   stroke="currentColor"
                                   strokeWidth="2"
@@ -580,7 +605,7 @@ export default function MLBStandingsPage() {
                 )}
 
                 {/* Data Source Footer */}
-                <div className="mt-6 pt-4 border-t border-border-subtle">
+                <div className="mt-6 pt-4" style={{ borderTop: '1px solid var(--border-vintage)' }}>
                   <DataSourceBadge
                     source={meta?.dataSource || 'MLB Stats API'}
                     timestamp={formatTimestamp(meta?.lastUpdated)}

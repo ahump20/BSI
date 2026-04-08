@@ -29,6 +29,11 @@ binding = "DB"
 database_name = "bsi-prod-db"
 database_id = "6921617f-5351-4df3-aeab-07425e72ec6b"
 
+[[d1_databases]]
+binding = "SHOW_DB"
+database_name = "bsi-show-dd-db"
+database_id = "a0b187a0-3e47-4ad8-92b1-eedb363f5d0e"
+
 [[kv_namespaces]]
 binding = "ERROR_LOG"
 id = "7edf894ff9ba4dd08b5433ed76ebc9c6"
@@ -59,6 +64,14 @@ binding = "ASSETS_BUCKET"
 bucket_name = "bsi-game-assets"
 
 [[r2_buckets]]
+binding = "WEB_ASSETS"
+bucket_name = "bsi-web-assets"
+
+[[r2_buckets]]
+binding = "BRAND_ASSETS"
+bucket_name = "blazesports-assets"
+
+[[r2_buckets]]
 binding = "DATA_LAKE"
 bucket_name = "blaze-sports-data-lake"
 
@@ -66,17 +79,13 @@ bucket_name = "blaze-sports-data-lake"
 name = "CACHE"
 class_name = "CacheObject"
 
-[[durable_objects.bindings]]
-name = "PORTAL_POLLER"
-class_name = "PortalPoller"
-
 [[migrations]]
 tag = "v1"
-new_classes = ["CacheObject"]
+new_classes = ["CacheObject", "PortalPoller"]
 
 [[migrations]]
 tag = "v2"
-new_classes = ["PortalPoller"]
+deleted_classes = ["PortalPoller"]
 
 [[analytics_engine_datasets]]
 binding = "OPS_EVENTS"
@@ -109,7 +118,8 @@ name = "blazesportsintel-worker-prod"
 routes = [
   { pattern = "blazesportsintel.com/*", zone_name = "blazesportsintel.com" },
   { pattern = "www.blazesportsintel.com/*", zone_name = "blazesportsintel.com" },
-  { pattern = "wbc.blazesportsintel.com/*", zone_name = "blazesportsintel.com" }
+  { pattern = "wbc.blazesportsintel.com/*", zone_name = "blazesportsintel.com" },
+  { pattern = "labs.blazesportsintel.com/*", zone_name = "blazesportsintel.com" }
 ]
 
 [env.production.observability]
@@ -130,6 +140,11 @@ id = "e6cb68e815cd45babeee0e10460dbfee"
 binding = "DB"
 database_name = "bsi-prod-db"
 database_id = "6921617f-5351-4df3-aeab-07425e72ec6b"
+
+[[env.production.d1_databases]]
+binding = "SHOW_DB"
+database_name = "bsi-show-dd-db"
+database_id = "a0b187a0-3e47-4ad8-92b1-eedb363f5d0e"
 
 [[env.production.kv_namespaces]]
 binding = "ERROR_LOG"
@@ -157,6 +172,14 @@ binding = "ASSETS_BUCKET"
 bucket_name = "bsi-game-assets"
 
 [[env.production.r2_buckets]]
+binding = "WEB_ASSETS"
+bucket_name = "bsi-web-assets"
+
+[[env.production.r2_buckets]]
+binding = "BRAND_ASSETS"
+bucket_name = "blazesports-assets"
+
+[[env.production.r2_buckets]]
 binding = "DATA_LAKE"
 bucket_name = "blaze-sports-data-lake"
 
@@ -164,9 +187,6 @@ bucket_name = "blaze-sports-data-lake"
 name = "CACHE"
 class_name = "CacheObject"
 
-[[env.production.durable_objects.bindings]]
-name = "PORTAL_POLLER"
-class_name = "PortalPoller"
 
 [[env.production.analytics_engine_datasets]]
 binding = "OPS_EVENTS"

@@ -165,7 +165,7 @@ export function StandingsTable({
                 </div>
               )}
               <table className="w-full" aria-label={`${group.label || sport} standings`}>
-                <thead>
+                <thead className="sticky top-0 z-10" style={{ backgroundColor: 'var(--surface-press-box, #111111)' }}>
                   <tr className="border-b border-border">
                     <th scope="col" className="text-left p-3 text-xs text-text-muted font-semibold">#</th>
                     <th scope="col" className="text-left p-3 text-xs text-text-muted font-semibold">Team</th>
@@ -196,7 +196,7 @@ export function StandingsTable({
                               {showLogos && team.logo && (
                                 <img
                                   src={team.logo}
-                                  alt=""
+                                  alt={team.name}
                                   width={20}
                                   height={20}
                                   className="rounded-sm"

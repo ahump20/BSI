@@ -226,14 +226,22 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
     // Resolve slug to ESPN numeric team_id if non-numeric
     let resolvedId = teamId;
     if (!/^\d+$/.test(teamId)) {
-      // Convert slug to search term: "texas-am" → "%texas%a%m%"
-      const searchTerm = `%${teamId.replace(/-/g, '%')}%`;
-      const lookup = await env.DB.prepare(`
-        SELECT team_id FROM player_season_stats
-        WHERE sport = 'college-baseball' AND season = ? AND LOWER(team) LIKE LOWER(?)
-        LIMIT 1
-      `).bind(SEASON, searchTerm).first<{ team_id: string }>();
-      if (lookup?.team_id) resolvedId = lookup.team_id;
+      // Primary: exact slug match via teamMetadata (e.g. "texas" → "126")
+      const meta = teamMetadata[teamId];
+      if (meta?.espnId) {
+        resolvedId = meta.espnId;
+      } else {
+        // Fallback: fuzzy D1 lookup for teams not in metadata
+        // Note: "texas-am" → "%texas%a%m%" — LIKE without ORDER BY is
+        // nondeterministic and can return the wrong team for ambiguous slugs
+        const searchTerm = `%${teamId.replace(/-/g, '%')}%`;
+        const lookup = await env.DB.prepare(`
+          SELECT team_id FROM player_season_stats
+          WHERE sport = 'college-baseball' AND season = ? AND LOWER(team) LIKE LOWER(?)
+          LIMIT 1
+        `).bind(SEASON, searchTerm).first<{ team_id: string }>();
+        if (lookup?.team_id) resolvedId = lookup.team_id;
+      }
     }
 
     // Get league baseline from KV (computed by league handler or ingest cron)
@@ -500,13 +508,18 @@ export async function handleCBBTeamSOS(teamId: string, env: Env): Promise<Respon
     // Resolve slug to ESPN numeric team_id if non-numeric
     let resolvedId = teamId;
     if (!/^\d+$/.test(teamId)) {
-      const searchTerm = `%${teamId.replace(/-/g, '%')}%`;
-      const lookup = await env.DB.prepare(`
-        SELECT team_id FROM player_season_stats
-        WHERE sport = 'college-baseball' AND season = ? AND LOWER(team) LIKE LOWER(?)
-        LIMIT 1
-      `).bind(SEASON, searchTerm).first<{ team_id: string }>();
-      if (lookup?.team_id) resolvedId = lookup.team_id;
+      const meta = teamMetadata[teamId];
+      if (meta?.espnId) {
+        resolvedId = meta.espnId;
+      } else {
+        const searchTerm = `%${teamId.replace(/-/g, '%')}%`;
+        const lookup = await env.DB.prepare(`
+          SELECT team_id FROM player_season_stats
+          WHERE sport = 'college-baseball' AND season = ? AND LOWER(team) LIKE LOWER(?)
+          LIMIT 1
+        `).bind(SEASON, searchTerm).first<{ team_id: string }>();
+        if (lookup?.team_id) resolvedId = lookup.team_id;
+      }
     }
 
     // Get all processed games for the season
@@ -1052,7 +1065,7 @@ export async function handleCBBSeasonArc(espnId: string, url: URL, env: Env): Pr
     let foundConferenceStart = false;
 
     const dataPoints: SeasonDataPoint[] = games.results.map((g, idx) => {
-      const isHome = g.home_team_id === espnId;
+      const isHome = String(g.home_team_id) === String(espnId);
       const teamScore = isHome ? g.home_score : g.away_score;
       const oppScore = isHome ? g.away_score : g.home_score;
       const oppTeamId = isHome ? g.away_team_id : g.home_team_id;
@@ -1110,8 +1123,8 @@ export async function handleCBBSeasonArc(espnId: string, url: URL, env: Env): Pr
 
       if (progressWrcPlus !== null) {
         const varianceFactor = Math.max(2, 20 * (1 - fraction));
-        const seed = ((idx + 1) * 6364136223846793005n % 1000n);
-        const seedFloat = Number(seed) / 1000 - 0.5;
+        const seed = ((idx + 1) * 6364136223) % 1000;
+        const seedFloat = seed / 1000 - 0.5;
         wrcPlus = Math.round(progressWrcPlus + seedFloat * varianceFactor);
         wrcPlus = Math.max(20, Math.min(250, wrcPlus));
       }
@@ -1144,6 +1157,42 @@ export async function handleCBBSeasonArc(espnId: string, url: URL, env: Env): Pr
     return cachedJson(payload, 200, HTTP_CACHE.team, { 'X-Cache': 'MISS' });
   } catch (err) {
     console.error('[handleCBBSeasonArc]', err instanceof Error ? err.message : err);
+    return json({ error: 'Internal server error', status: 500 }, 500);
+  }
+}
+
+// ==========================================================================
+// League Run Environment
+// ==========================================================================
+
+/**
+ * GET /api/savant/league-context
+ *
+ * Returns the D1 run environment baseline — the numbers that make every
+ * other stat meaningful. Includes league-average wOBA, OBP, SLG, ERA,
+ * FIP constant, wOBA scale, and D1-derived linear weights.
+ */
+export async function handleLeagueContext(env: Env): Promise<Response> {
+  try {
+    const cacheKey = `savant:league-context:${SEASON}`;
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return cachedJson({ context: cached, meta: { source: 'bsi-savant-compute', fetched_at: new Date().toISOString(), timezone: 'America/Chicago', cache_hit: true } }, 200, HTTP_CACHE.standings, { 'X-Cache': 'HIT' });
+
+    const row = await env.DB.prepare(
+      'SELECT * FROM cbb_league_context WHERE season = ? ORDER BY computed_at DESC LIMIT 1'
+    ).bind(SEASON).first();
+
+    if (!row) {
+      return json({ error: 'League context not available', meta: { source: 'bsi-savant-compute', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' } }, 404);
+    }
+
+    await kvPut(env.KV, cacheKey, row, 3600);
+    return cachedJson(
+      { context: row, meta: { source: 'bsi-savant-compute', fetched_at: new Date().toISOString(), timezone: 'America/Chicago', cache_hit: false } },
+      200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' },
+    );
+  } catch (err) {
+    console.error('[handleLeagueContext]', err instanceof Error ? err.message : err);
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }

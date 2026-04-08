@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 /* ========================================================================== */
 
 const ROUTE_TITLES: Record<string, string> = {
-  '/': 'Dashboard',
+  '/': 'Home',
   '/scores': 'Live Scores',
   '/college-baseball': 'College Baseball',
   '/college-baseball/editorial': 'Editorial',
@@ -15,6 +15,8 @@ const ROUTE_TITLES: Record<string, string> = {
   '/college-baseball/rankings': 'Rankings',
   '/college-baseball/standings': 'Standings',
   '/college-baseball/conferences': 'Conferences',
+  '/college-baseball/weekly-pulse': 'Weekly Pulse',
+  '/college-baseball/power-rankings': 'Power Rankings',
   '/college-baseball/compare': 'Compare',
   '/college-baseball/transfer-portal': 'Transfer Portal',
   '/college-baseball/watchlist': 'Watchlist',
@@ -25,6 +27,7 @@ const ROUTE_TITLES: Record<string, string> = {
   '/cfb': 'College Football',
   '/college-baseball/savant/glossary': 'Glossary',
   '/pricing': 'Pricing',
+  '/ask': 'Ask BSI',
   '/search': 'Search',
   '/settings': 'Settings',
   '/intel': 'Intelligence',

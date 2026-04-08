@@ -7,6 +7,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 import type { Metadata } from 'next';
 
 import { ogImage } from '@/lib/metadata';
@@ -103,6 +104,13 @@ function gradeColor(grade: number): string {
 export default function PetersonDraftProfilePage() {
   return (
     <>
+      <ArticleJsonLd
+        headline="Liam Peterson 2026 Draft Profile | Florida RHP"
+        description="Liam Peterson draft profile — Florida ace and No. 9 overall prospect in the 2026 MLB Draft. The No. 3 college arm per Baseball America walked 5 batters on Opening Day. Scouting analysis and draft implications."
+        datePublished="2026-02-25"
+        url="/college-baseball/editorial/liam-peterson-2026-draft-profile"
+        sport="College Baseball"
+      />
       <div className="pt-6 bg-midnight">
         {/* ── Hero ── */}
         <Section padding="lg">

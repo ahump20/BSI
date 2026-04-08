@@ -97,9 +97,9 @@ export function ParkFactorTable({ data, isPro = false, className = '' }: ParkFac
         </button>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto max-h-[70vh] overflow-y-auto">
         <table className="w-full text-sm">
-          <thead>
+          <thead className="sticky top-0 z-10" style={{ backgroundColor: 'var(--surface-press-box, #111111)' }}>
             <tr className="border-b border-border-subtle">
               <th
                 className="pl-5 pr-2 py-3 text-left cursor-pointer"

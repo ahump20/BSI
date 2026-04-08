@@ -9,6 +9,7 @@ import {
   normalizeAcquisitionPaths,
 } from '../shared/mlb-the-show-source';
 import {
+  showDb,
   getBuild,
   getCardDetailFromDb,
   getCollectionDetailFromDb,
@@ -58,12 +59,12 @@ function buildCacheKey(scope: string, suffix = '') {
 }
 
 async function getCollectionCount(env: Env): Promise<number> {
-  const row = await env.DB.prepare('SELECT COUNT(*) as count FROM show_collections').first<{ count: number }>();
+  const row = await showDb(env).prepare('SELECT COUNT(*) as count FROM show_collections').first<{ count: number }>();
   return row?.count ?? 0;
 }
 
 async function getLastSyncAt(env: Env): Promise<string | null> {
-  const row = await env.DB.prepare(
+  const row = await showDb(env).prepare(
     `SELECT COALESCE(finished_at, started_at) as synced_at
      FROM show_ingest_runs
      ORDER BY started_at DESC

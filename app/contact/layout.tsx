@@ -9,6 +9,7 @@ export const metadata: Metadata = {
     title: 'Contact | Blaze Sports Intel',
     description: 'Get in touch with Blaze Sports Intel.',
    images: ogImage() },
+  alternates: { canonical: '/contact' },
 };
 
 export default function ContactLayout({ children }: { children: React.ReactNode }) {

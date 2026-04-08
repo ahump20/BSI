@@ -90,12 +90,14 @@ export function FeaturedProgramCard() {
                   </div>
                   <div className="text-text-muted text-[10px]">wRC+</div>
                 </div>
+                {data.pitching.fip > 0 && (
                 <div>
                   <div className="font-mono text-xl font-bold text-text-primary">
                     {data.pitching.fip.toFixed(2)}
                   </div>
                   <div className="text-text-muted text-[10px]">Team FIP</div>
                 </div>
+                )}
                 <div>
                   <div className="font-mono text-xl font-bold text-text-primary">
                     {data.batting.woba.toFixed(3)}

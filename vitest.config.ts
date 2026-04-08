@@ -34,6 +34,7 @@ export default defineConfig({
       'tests/smoke/**',
       'tests/workers/**',
       'tests/e2e/**',
+      'tests/visual-regression/**',
       'node_modules/**',
     ],
 

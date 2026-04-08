@@ -7,6 +7,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 export const metadata: Metadata = {
   title: 'Privacy Policy | Blaze Sports Intel',
   description: 'Privacy Policy for Blaze Sports Intel. How we handle your data.',
+  alternates: { canonical: '/privacy' },
 };
 
 export default function PrivacyPage() {

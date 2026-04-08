@@ -49,9 +49,11 @@ function TeamRow({ team, isLive }: { team: GameTeam; isLive: boolean }) {
 function CardContent({ game, showHitsErrors }: { game: GameScoreCardGame; showHitsErrors: boolean }) {
   return (
     <div
-      className={`bg-graphite rounded-sm p-4 flex justify-between items-center border ${
-        game.isLive ? 'border-success' : 'border-border-subtle'
-      }`}
+      className="rounded-sm p-4 flex justify-between items-center"
+      style={{
+        background: 'var(--surface-dugout)',
+        border: `1px solid ${game.isLive ? 'var(--bsi-primary)' : 'var(--border-vintage)'}`,
+      }}
     >
       <div className="flex-1">
         <TeamRow team={game.away} isLive={game.isLive} />
@@ -60,16 +62,25 @@ function CardContent({ game, showHitsErrors }: { game: GameScoreCardGame; showHi
       <div className="ml-6 text-right min-w-[100px]">
         {game.isLive ? (
           <div className="flex items-center justify-end gap-1.5">
-            <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
-            <span className="text-success font-semibold text-sm">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: 'var(--heritage-teal, #00B2A9)' }} />
+              <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: 'var(--heritage-teal, #00B2A9)' }} />
+            </span>
+            <span className="font-semibold text-sm uppercase" style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--heritage-teal, #00B2A9)' }}>
               {game.detail || 'Live'}
             </span>
           </div>
+        ) : game.isFinal ? (
+          <div
+            className="font-semibold text-xs uppercase tracking-wider"
+            style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-dust, #C4B8A5)' }}
+          >
+            Final
+          </div>
         ) : (
           <div
-            className={`font-semibold text-sm ${
-              game.isFinal ? 'text-text-tertiary' : 'text-burnt-orange'
-            }`}
+            className="font-semibold text-sm"
+            style={{ color: 'var(--bsi-primary, #BF5700)' }}
           >
             {game.status}
           </div>

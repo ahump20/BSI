@@ -4,6 +4,7 @@ import { Suspense, useState, useEffect, useMemo, useRef, useCallback } from 'rea
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useSportData } from '@/lib/hooks/useSportData';
+import { DegradedNotice } from '@/components/ui/DegradedNotice';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
@@ -407,6 +408,9 @@ function CollegeBaseballPageInner() {
               hasResults={allSearchResults.length > 0}
               lastUpdated={lastUpdated}
               dataSource={dataSource}
+              coverageCount={Object.keys(teamMetadata).length}
+              conferenceCount={conferenceList.length - 1}
+              rankingsCount={rankings.length}
             />
 
             {/* Live Score Strip — today's games at a glance */}
@@ -457,6 +461,12 @@ function CollegeBaseballPageInner() {
                         desc: 'Advanced metrics for every D1 player',
                         href: '/college-baseball/savant',
                         icon: 'M18 20V10M12 20V4M6 20v-6',
+                      },
+                      {
+                        label: 'Player Directory',
+                        desc: 'Search and filter all D1 players',
+                        href: '/college-baseball/players',
+                        icon: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75',
                       },
                       {
                         label: 'Transfer Portal',
@@ -548,6 +558,10 @@ function CollegeBaseballPageInner() {
                     { label: 'News', href: '/college-baseball/news' },
                     { label: 'Compare', href: '/college-baseball/compare' },
                     { label: 'Conferences', href: '/college-baseball/conferences' },
+                    { label: 'Weekly Pulse', href: '/college-baseball/weekly-pulse' },
+                    { label: 'Power Rankings', href: '/college-baseball/power-rankings' },
+                    { label: 'Tournament', href: '/college-baseball/tournament' },
+                    { label: 'HAV-F Grades', href: '/models/havf' },
                     { label: 'Scores', href: '/college-baseball/scores' },
                     { label: 'Texas Intel', href: '/college-baseball/texas-intelligence' },
                   ].map((link, i) => (
@@ -562,6 +576,16 @@ function CollegeBaseballPageInner() {
                     </Link>
                   ))}
                 </div>
+
+                <DegradedNotice
+                  meta={
+                    activeTab === 'rankings'
+                      ? rankingsRaw?.meta ? { source: rankingsRaw.meta.dataSource || '', sources: [], lastUpdated: rankingsRaw.meta.lastUpdated || null, timezone: 'America/Chicago', degraded: !!(rankingsRaw.meta as Record<string, unknown>).degraded } : null
+                      : activeTab === 'standings'
+                        ? standingsRaw?.meta ? { source: standingsRaw.meta.dataSource || '', sources: [], lastUpdated: standingsRaw.meta.lastUpdated || null, timezone: 'America/Chicago', degraded: !!(standingsRaw.meta as Record<string, unknown>).degraded } : null
+                        : null
+                  }
+                />
 
                 {/* Rankings Tab */}
                 <TabPanel id="rankings" activeTab={activeTab}>
@@ -636,7 +660,7 @@ function CollegeBaseballPageInner() {
                                     {['#', 'Team', 'Conf', 'W', 'L', 'Conf W-L'].map((h) => (
                                       <th
                                         key={h}
-                                        className="text-left p-3 text-text-muted font-semibold text-xs"
+                                        className="text-left p-3 text-[var(--bsi-dust)] font-semibold text-xs uppercase tracking-wider"
                                       >
                                         {h}
                                       </th>
@@ -653,12 +677,12 @@ function CollegeBaseballPageInner() {
                                       <td className="p-3 font-semibold text-text-primary">
                                         {team.teamName}
                                       </td>
-                                      <td className="p-3 text-text-tertiary">
+                                      <td className="p-3 text-text-secondary">
                                         {team.conference || '-'}
                                       </td>
-                                      <td className="p-3 text-text-tertiary">{team.wins}</td>
-                                      <td className="p-3 text-text-tertiary">{team.losses}</td>
-                                      <td className="p-3 text-text-tertiary">
+                                      <td className="p-3 text-text-primary">{team.wins}</td>
+                                      <td className="p-3 text-text-primary">{team.losses}</td>
+                                      <td className="p-3 text-text-secondary">
                                         {team.conferenceWins != null
                                           ? `${team.conferenceWins}-${team.conferenceLosses}`
                                           : '-'}
@@ -987,40 +1011,53 @@ function CollegeBaseballPageInner() {
             {/* League Leaders — live from ESPN */}
             <LeagueLeaders />
 
-            {/* BSI Labs Portal CTA */}
+            {/* BSI Savant CTA */}
             <Section padding="lg" borderTop>
               <Container>
                 <ScrollReveal>
-                  <div className="relative rounded-sm overflow-hidden border border-burnt-orange/15">
+                  <div className="relative rounded-sm overflow-hidden" style={{ border: '1px solid var(--border-vintage)' }}>
+                    {/* R2 background for the CTA band */}
+                    <img
+                      src="/api/assets/images/blaze-hero-banner.png"
+                      alt=""
+                      aria-hidden="true"
+                      loading="lazy"
+                      decoding="async"
+                      className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                      style={{ opacity: 0.1 }}
+                    />
                     <div
                       className="absolute inset-0 pointer-events-none"
                       style={{
                         background:
-                          'linear-gradient(135deg, rgba(191,87,0,0.06) 0%, transparent 40%, rgba(191,87,0,0.03) 100%)',
+                          'linear-gradient(135deg, rgba(10,10,10,0.8) 0%, rgba(10,10,10,0.6) 50%, rgba(10,10,10,0.8) 100%)',
                       }}
                     />
                     <div className="relative p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                       <div className="max-w-xl">
-                        <span className="section-label block mb-3">Advanced Analytics</span>
-                        <h3 className="font-display text-2xl font-bold uppercase tracking-wide text-text-primary mb-3">
-                          BSI Labs Portal
+                        <span
+                          className="text-[10px] font-bold uppercase tracking-[0.15em] block mb-3"
+                          style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary)' }}
+                        >
+                          Advanced Analytics
+                        </span>
+                        <h3
+                          className="text-2xl font-bold uppercase tracking-wide mb-3"
+                          style={{ fontFamily: 'var(--font-bebas)', color: 'var(--bsi-bone)' }}
+                        >
+                          BSI Savant
                         </h3>
-                        <p className="text-sm text-text-secondary leading-relaxed">
-                          Sortable leaderboards, team comparison tools, conference strength
-                          rankings, park factor analysis, bubble watch — all in one portal with
-                          percentile-scaled heatmaps and team-branded visuals.
+                        <p className="text-sm leading-relaxed" style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)' }}>
+                          Park-adjusted leaderboards, player profiles with scouting grades,
+                          conference strength rankings, park factor analysis, and 16 interactive
+                          visualization tools — all powered by live D1 data.
                         </p>
                       </div>
-                      <a
-                        href="https://labs.blazesportsintel.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="shrink-0"
-                      >
+                      <Link href="/college-baseball/savant/" className="shrink-0">
                         <Button variant="primary" size="lg">
-                          Explore Labs &rarr;
+                          Open Savant &rarr;
                         </Button>
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 </ScrollReveal>

@@ -12,6 +12,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { GameRecapToolbar } from '@/components/editorial/GameRecapToolbar';
 import { AIAnalysisPanel } from '@/components/editorial/AIAnalysisPanel';
 import { NotebookLMExport } from '@/components/editorial/NotebookLMExport';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
 /* ────────────────────────────────────────────
    Types
@@ -212,6 +213,13 @@ export default function TexasTexasStateRecapPage() {
 
   return (
     <>
+      <ArticleJsonLd
+        headline="Texas 15, Texas State 4: First Road Test, Same Answer"
+        description="No. 2 Texas (16-0) beat Texas State 15-4 at Bobcat Ballpark in their first true road game of 2026. Casey Borba hit two home runs. Full box score and analysis."
+        datePublished="2026-03-10"
+        url="/college-baseball/editorial/texas-texas-state-recap"
+        sport="College Baseball"
+      />
       <div>
         {/* ── Breadcrumb ── */}
         <Section padding="sm" className="border-b border-border">

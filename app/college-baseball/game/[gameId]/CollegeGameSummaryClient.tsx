@@ -78,7 +78,10 @@ interface SeriesGame {
 }
 
 function getSeriesWeekend(dateStr: string): string[] {
-  const d = new Date(dateStr + 'T12:00:00');
+  // dateStr may be full ISO ("2026-03-25T20:00Z") or date-only ("2026-03-25").
+  // Strip time component before appending noon anchor to avoid "Invalid time value".
+  const dateOnly = dateStr.split('T')[0];
+  const d = new Date(dateOnly + 'T12:00:00');
   const day = d.getDay(); // 0=Sun, 5=Fri, 6=Sat
   let friday: Date;
   if (day === 5) friday = new Date(d);

@@ -55,7 +55,7 @@ export function SpringTrainingStandingsTable({ title, teams }: SpringTrainingSta
                       {team.logo && (
                         <img
                           src={team.logo}
-                          alt=""
+                          alt={team.name}
                           className="w-5 h-5 object-contain"
                           loading="lazy"
                         />

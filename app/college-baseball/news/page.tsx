@@ -75,13 +75,15 @@ export default function CollegeBaseballNewsPage() {
   );
 
   const filtered = useMemo(() => {
-    const articles = data?.articles || [];
+    // Defensive: handle both { articles: [...] } and array-at-root shapes
+    const articles = Array.isArray(data) ? (data as unknown as EnhancedNewsItem[]) : (data?.articles || []);
     return articles.filter((item) => {
+      if (!item || !item.title) return false;
       const matchCategory = categoryFilter === 'all' || item.category === categoryFilter;
       const matchSource = sourceFilter === 'all' || item.source === sourceFilter;
       return matchCategory && matchSource;
     });
-  }, [data?.articles, categoryFilter, sourceFilter]);
+  }, [data, categoryFilter, sourceFilter]);
 
   const grouped = useMemo(() => {
     const groups = new Map<string, EnhancedNewsItem[]>();

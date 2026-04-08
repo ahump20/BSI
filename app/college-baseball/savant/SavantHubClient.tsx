@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
-import { MetricGate } from '@/components/analytics/MetricGate';
 import Link from 'next/link';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
@@ -21,6 +20,7 @@ import {
 import { ParkFactorTable } from '@/components/analytics/ParkFactorTable';
 import { ConferenceStrengthChart } from '@/components/analytics/ConferenceStrengthChart';
 import { getPercentileColor } from '@/components/analytics/PercentileBar';
+import { SavantComparePanel } from '@/components/analytics/SavantComparePanel';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { HeroGlow } from '@/components/ui/HeroGlow';
 
@@ -53,6 +53,21 @@ interface ConferenceRow {
   avg_ops: number;
   avg_woba: number;
   is_power: number;
+}
+
+interface LeagueContext {
+  season: number;
+  computed_at: string;
+  woba: number;
+  obp: number;
+  avg: number;
+  slg: number;
+  era: number;
+  fip_constant: number;
+  woba_scale: number;
+  sample_batting: number;
+  sample_pitching: number;
+  weights_source: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -113,6 +128,7 @@ export default function SavantHubPage() {
   const [positionFilter, setPositionFilter] = useState('');
   const [playerSearch, setPlayerSearch] = useState('');
   const [minPA, setMinPA] = useState(25);
+  const [compareIds, setCompareIds] = useState<Set<string>>(new Set());
 
   const { data: battingRes, loading: battingLoading } =
     useSportData<LeaderboardResponse>('/api/savant/batting/leaderboard?limit=100');
@@ -122,6 +138,8 @@ export default function SavantHubPage() {
     useSportData<{ data: ParkFactorRow[] }>('/api/savant/park-factors');
   const { data: confRes, loading: confLoading } =
     useSportData<{ data: ConferenceRow[]; total?: number }>('/api/savant/conference-strength');
+  const { data: leagueCtxRes } =
+    useSportData<{ context: LeagueContext }>('/api/savant/league-context');
 
   // Derive tier from API response — worker sets _tier_gated on free-tier rows
   const isPro = useMemo(() => {
@@ -180,121 +198,83 @@ export default function SavantHubPage() {
   const filteredBatting = useMemo(() => applyFilters(battingRes?.data ?? []), [applyFilters, battingRes]);
   const filteredPitching = useMemo(() => applyFilters(pitchingRes?.data ?? []), [applyFilters, pitchingRes]);
 
+  // Compare mode
+  const handleCompareToggle = useCallback((playerId: string) => {
+    setCompareIds(prev => {
+      const next = new Set(prev);
+      if (next.has(playerId)) {
+        next.delete(playerId);
+      } else if (next.size < 3) {
+        next.add(playerId);
+      }
+      return next;
+    });
+  }, []);
+
+  const comparePlayers = useMemo(() => {
+    if (compareIds.size === 0) return [];
+    const source = activeTab === 'pitching'
+      ? (pitchingRes?.data ?? [])
+      : (battingRes?.data ?? []);
+    return source.filter(row => compareIds.has(row.player_id as string));
+  }, [compareIds, activeTab, battingRes, pitchingRes]);
+
+  const batterCount = filteredBatting.length || (battingRes?.data?.length ?? 0);
+  const pitcherCount = filteredPitching.length || (pitchingRes?.data?.length ?? 0);
+  const confCount = confRes?.total ?? confRes?.data?.length ?? 0;
+
   return (
     <>
       <div>
-        <section
-          className="relative overflow-hidden savant-ambient"
-          style={{
-            padding: 'clamp(2rem, 4vw, 3rem) 0',
-          }}
-        >
-          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[rgba(191,87,0,0.15)] to-transparent" />
+        <section className="relative overflow-hidden pt-6 pb-4">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            {/* Breadcrumb */}
-            <nav className="flex items-center gap-2 text-xs mb-6" style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--bsi-dust)' }}>
-              <Link href="/" className="transition-colors hover:text-[var(--bsi-bone)]">Home</Link>
-              <span>/</span>
-              <Link href="/college-baseball" className="transition-colors hover:text-[var(--bsi-bone)]">College Baseball</Link>
-              <span>/</span>
-              <span style={{ color: 'var(--bsi-primary)' }}>Savant</span>
-            </nav>
 
-            {/* Hero */}
-            <ScrollReveal direction="up" delay={50}>
-              <div className="mb-10">
-                <span className="heritage-stamp mb-3">Advanced Analytics</span>
+            {/* Compact title + trust strip */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-5">
+              <div className="flex items-center gap-3">
+                <span className="heritage-stamp">Savant</span>
                 <h1
-                  className="mt-3 font-bold uppercase tracking-tight leading-none mb-4 font-savant-display"
-                  style={{
-                    fontFamily: 'var(--font-syne, var(--bsi-font-display-hero))',
-                    fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-                    color: 'var(--bsi-bone)',
-                    textShadow: '1px 1px 0px rgba(0,0,0,0.5)',
-                  }}
+                  className="text-lg font-bold uppercase tracking-wide"
+                  style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
                 >
-                  College Baseball <span style={{ color: 'var(--bsi-primary)' }}>Savant</span>
+                  D1 Sabermetrics
                 </h1>
-                <p className="mt-3 max-w-2xl text-base leading-relaxed font-serif italic" style={{ color: 'var(--bsi-dust)' }}>
-                  The metrics MLB Savant tracks — wOBA, FIP, wRC+, park factors, conference
-                  strength indices — applied to every D1 program. No other public platform
-                  does this for the college game.
-                </p>
-                <div className="mt-5 flex items-center gap-6 flex-wrap">
-                  <Link
-                    href="/college-baseball/savant/visuals"
-                    className="inline-flex items-center gap-2 text-sm transition-colors group"
-                    style={{ color: 'var(--bsi-primary)' }}
-                  >
-                    <span className="uppercase tracking-wider" style={{ fontFamily: 'var(--bsi-font-display)' }}>Interactive Visuals</span>
-                    <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                  <Link
-                    href="/college-baseball/savant/glossary"
-                    className="inline-flex items-center gap-2 text-sm transition-colors group"
-                    style={{ color: 'var(--svt-text-muted, var(--bsi-dust))' }}
-                  >
-                    <span className="uppercase tracking-wider" style={{ fontFamily: 'var(--bsi-font-display)' }}>Glossary</span>
-                    <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                  <Link
-                    href="/college-baseball/savant/methodology"
-                    className="inline-flex items-center gap-2 text-sm transition-colors group"
-                    style={{ color: 'var(--svt-text-muted, var(--bsi-dust))' }}
-                  >
-                    <span className="uppercase tracking-wider" style={{ fontFamily: 'var(--bsi-font-display)' }}>Methodology</span>
-                    <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                  <Link
-                    href="/college-baseball/savant/team-compare"
-                    className="inline-flex items-center gap-2 text-sm transition-colors group"
-                    style={{ color: 'var(--svt-text-muted, var(--bsi-dust))' }}
-                  >
-                    <span className="uppercase tracking-wider" style={{ fontFamily: 'var(--bsi-font-display)' }}>Compare Teams</span>
-                    <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                  <Link
-                    href="/college-baseball/savant/conference-comparison"
-                    className="inline-flex items-center gap-2 text-sm transition-colors group"
-                    style={{ color: 'var(--svt-text-muted, var(--bsi-dust))' }}
-                  >
-                    <span className="uppercase tracking-wider" style={{ fontFamily: 'var(--bsi-font-display)' }}>Compare Conferences</span>
-                    <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                  <a
-                    href="https://labs.blazesportsintel.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-sm transition-colors group"
-                    style={{ color: 'var(--bsi-dust)' }}
-                  >
-                    <span className="uppercase tracking-wider" style={{ fontFamily: 'var(--bsi-font-display)' }}>Labs Portal</span>
-                    <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M7 17L17 7M17 7H7M17 7v10" />
-                    </svg>
-                  </a>
-                </div>
               </div>
-            </ScrollReveal>
-
-            {/* Data Coverage — inline note, not boxed */}
-            <div className="mb-8 flex items-start gap-3 pl-4" style={{ borderLeft: '2px solid rgba(191, 87, 0, 0.2)' }}>
-              <p className="text-[11px] leading-relaxed" style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--bsi-dust)' }}>
-                {confLoading ? '...' : `${confRes?.total ?? confRes?.data?.length ?? 22} conferences tracked`} · ESPN box scores + Highlightly Pro · Recomputed every 6 hours
+              <p className="text-[10px] font-mono" style={{ color: 'var(--bsi-dust)' }}>
+                {confLoading ? '...' : `${confCount} conferences`} · Updated every 6h
                 {battingRes?.meta?.fetched_at && (
-                  <> · Last computed: {new Date(battingRes.meta.fetched_at).toLocaleString('en-US', { timeZone: 'America/Chicago', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })} CT</>
+                  <> · {new Date(battingRes.meta.fetched_at).toLocaleString('en-US', { timeZone: 'America/Chicago', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })} CT</>
                 )}
               </p>
+            </div>
+
+            {/* Hero stat pills — animated counters showing data scope */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+              {[
+                { label: 'Batters', value: batterCount, color: 'var(--bsi-primary)' },
+                { label: 'Pitchers', value: pitcherCount, color: 'var(--heritage-columbia-blue)' },
+                { label: 'Conferences', value: confCount, color: 'var(--bsi-dust)' },
+                { label: 'Parks', value: parkRes?.data?.length ?? 0, color: 'var(--bsi-success)' },
+              ].map((stat) => (
+                <div
+                  key={stat.label}
+                  className="heritage-card p-3 flex flex-col items-center text-center"
+                  style={{ borderTop: `2px solid ${stat.color}` }}
+                >
+                  <span
+                    className="text-2xl font-bold tabular-nums"
+                    style={{ fontFamily: 'var(--font-mono)', color: stat.color }}
+                  >
+                    {stat.value.toLocaleString()}
+                  </span>
+                  <span
+                    className="text-[9px] uppercase tracking-[0.15em] mt-1"
+                    style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-dust)' }}
+                  >
+                    {stat.label}
+                  </span>
+                </div>
+              ))}
             </div>
 
             <DataErrorBoundary name="Savant Analytics">
@@ -310,30 +290,28 @@ export default function SavantHubPage() {
                   return (
                     <div
                       key={spot.metricKey}
-                      className="savant-fade-in relative overflow-hidden rounded-sm bg-[rgba(26,26,26,0.6)] border border-[rgba(245,240,235,0.04)] hover:border-[var(--svt-accent)]/30 transition-all p-4"
+                      className="savant-fade-in relative overflow-hidden rounded-sm bg-[var(--surface-dugout)] border border-[var(--border-vintage)] hover:border-[rgba(140,98,57,0.5)] transition-all p-4"
                       style={{ borderLeftColor: color, borderLeftWidth: '2px', animationDelay: `${index * 50}ms` }}
                     >
                       <div className="flex items-baseline justify-between mb-2">
                         <span className="font-mono text-xs font-bold tracking-wide" style={{ color }}>{spot.abbr}</span>
                         <span className="text-[9px] font-mono text-text-muted uppercase">{spot.tab}</span>
                       </div>
-                      <MetricGate isPro={isPro} metricName={spot.label}>
-                        {leader ? (
-                          <div className="mb-2.5">
-                            <span className="block text-2xl font-mono font-bold tabular-nums leading-none" style={{ color }}>
-                              {spot.format(leader.value)}
-                            </span>
-                            <div className="mt-1.5">
-                              <span className="text-xs text-text-primary font-medium">{leader.name}</span>
-                              <span className="ml-1.5 text-[10px] text-text-muted">{leader.team}</span>
-                            </div>
+                      {leader ? (
+                        <div className="mb-2.5">
+                          <span className="block text-2xl font-mono font-bold tabular-nums leading-none" style={{ color }}>
+                            {spot.format(leader.value)}
+                          </span>
+                          <div className="mt-1.5">
+                            <span className="text-xs text-text-primary font-medium">{leader.name}</span>
+                            <span className="ml-1.5 text-[10px] text-text-muted">{leader.team}</span>
                           </div>
-                        ) : (
-                          <div className="mb-2.5 h-14 flex items-center">
-                            <div className="h-6 w-16 bg-surface-light rounded-sm animate-pulse" />
-                          </div>
-                        )}
-                      </MetricGate>
+                        </div>
+                      ) : (
+                        <div className="mb-2.5 h-14 flex items-center">
+                          <div className="h-6 w-16 bg-surface-light rounded-sm animate-pulse" />
+                        </div>
+                      )}
                       <p className="text-[10px] text-text-muted/70 leading-relaxed">
                         {spot.description}
                       </p>
@@ -343,16 +321,48 @@ export default function SavantHubPage() {
               </div>
             </ScrollReveal>
 
+            {/* 2026 D1 Run Environment — the baseline that makes every stat meaningful */}
+            {leagueCtxRes?.context && (
+              <ScrollReveal direction="up" delay={150}>
+                <div className="mb-6 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="heritage-stamp text-[9px]">2026 D1 Run Environment</span>
+                    <span className="text-[9px] text-text-muted font-mono">
+                      {leagueCtxRes.context.sample_batting.toLocaleString()} batters · {leagueCtxRes.context.sample_pitching.toLocaleString()} pitchers
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-4">
+                    {[
+                      { label: 'Lg wOBA', value: leagueCtxRes.context.woba.toFixed(3) },
+                      { label: 'Lg AVG', value: leagueCtxRes.context.avg.toFixed(3) },
+                      { label: 'Lg OBP', value: leagueCtxRes.context.obp.toFixed(3) },
+                      { label: 'Lg SLG', value: leagueCtxRes.context.slg.toFixed(3) },
+                      { label: 'Lg ERA', value: leagueCtxRes.context.era.toFixed(2) },
+                      { label: 'FIP Const', value: leagueCtxRes.context.fip_constant.toFixed(2) },
+                    ].map((stat) => (
+                      <div key={stat.label}>
+                        <div className="font-mono text-sm font-bold" style={{ color: 'var(--bsi-bone)' }}>{stat.value}</div>
+                        <div className="text-[9px] text-text-muted/60 uppercase tracking-wider">{stat.label}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-[9px] text-text-muted/40 mt-3 leading-relaxed">
+                    Every metric on this page is normalized against these baselines. A 100 wRC+ means exactly league average for the {leagueCtxRes.context.season} D1 season. Weights derived from actual D1 data, not MLB defaults.
+                  </p>
+                </div>
+              </ScrollReveal>
+            )}
+
             {/* Tab navigation — immediate, no animation */}
             <div className="flex items-center gap-0.5 border-b border-border mb-4 overflow-x-auto">
               {TABS.map((tab) => (
                 <button
                   key={tab.key}
-                  onClick={() => { setActiveTab(tab.key); setPositionFilter(''); }}
+                  onClick={() => { setActiveTab(tab.key); setPositionFilter(''); setCompareIds(new Set()); }}
                   className={`px-4 py-3 text-sm font-display uppercase tracking-wider whitespace-nowrap transition-colors border-b-2 ${
                     activeTab === tab.key
                       ? 'text-burnt-orange border-burnt-orange bg-burnt-orange/[0.04]'
-                      : 'text-text-muted border-transparent hover:text-text-tertiary hover:bg-white/[0.02]'
+                      : 'text-text-muted border-transparent hover:text-text-tertiary hover:bg-[rgba(140,98,57,0.06)]'
                   }`}
                 >
                   {tab.label}
@@ -455,6 +465,43 @@ export default function SavantHubPage() {
               </ScrollReveal>
             )}
 
+            {/* Compare mode indicator */}
+            {compareIds.size > 0 && (activeTab === 'batting' || activeTab === 'pitching') && (
+              <div
+                className="flex items-center justify-between px-4 py-2 mb-4 rounded-sm"
+                style={{
+                  background: 'rgba(191,87,0,0.08)',
+                  border: '1px solid rgba(191,87,0,0.2)',
+                }}
+              >
+                <span className="text-xs font-mono" style={{ color: 'var(--bsi-bone)' }}>
+                  <span style={{ color: 'var(--bsi-primary)' }}>{compareIds.size}</span> of 3 players selected
+                  {compareIds.size < 2 && ' — select at least 2 to compare'}
+                </span>
+                <button
+                  onClick={() => setCompareIds(new Set())}
+                  className="text-[10px] font-mono uppercase tracking-wider transition-colors cursor-pointer"
+                  style={{ color: 'var(--bsi-primary)' }}
+                >
+                  Clear
+                </button>
+              </div>
+            )}
+
+            {/* Compare panel */}
+            {comparePlayers.length >= 2 && (activeTab === 'batting' || activeTab === 'pitching') && (
+              <ScrollReveal direction="up" delay={175}>
+                <SavantComparePanel
+                  players={comparePlayers as { player_id: string; player_name: string; team: string; position: string; [key: string]: unknown }[]}
+                  columns={activeTab === 'pitching' ? PITCHING_COLUMNS : BATTING_COLUMNS}
+                  allData={activeTab === 'pitching' ? (pitchingRes?.data ?? []) : (battingRes?.data ?? [])}
+                  isPro={isPro}
+                  onRemove={(id) => handleCompareToggle(id)}
+                  onClear={() => setCompareIds(new Set())}
+                />
+              </ScrollReveal>
+            )}
+
             {/* Tab content */}
             <ScrollReveal direction="up" delay={200}>
               {activeTab === 'batting' && (
@@ -466,7 +513,10 @@ export default function SavantHubPage() {
                     columns={BATTING_COLUMNS}
                     title="Batting Leaders — Advanced"
                     isPro={isPro}
-                    initialRows={25}
+                    initialRows={50}
+                    defaultSortKey="woba"
+                    compareSelected={compareIds}
+                    onCompareToggle={handleCompareToggle}
                   />
                 )
               )}
@@ -480,7 +530,10 @@ export default function SavantHubPage() {
                     columns={PITCHING_COLUMNS}
                     title="Pitching Leaders — Advanced"
                     isPro={isPro}
-                    initialRows={25}
+                    initialRows={50}
+                    defaultSortKey="fip"
+                    compareSelected={compareIds}
+                    onCompareToggle={handleCompareToggle}
                   />
                 )
               )}
@@ -511,7 +564,7 @@ export default function SavantHubPage() {
 
             {/* Data attribution */}
             {battingRes && (
-              <div className="mt-10 pt-6 border-t border-white/[0.06]">
+              <div className="mt-10 pt-6 border-t border-[var(--border-vintage)]">
                 <div className="flex items-center justify-center gap-4 flex-wrap">
                   <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-muted/50">
                     Source: BSI Savant
@@ -536,6 +589,13 @@ export default function SavantHubPage() {
                     className="font-mono text-[10px] uppercase tracking-[0.12em] text-burnt-orange/50 hover:text-burnt-orange transition-colors"
                   >
                     Metric Glossary
+                  </Link>
+                  <span className="text-text-muted/20">&middot;</span>
+                  <Link
+                    href="/college-baseball/players"
+                    className="font-mono text-[10px] uppercase tracking-[0.12em] text-burnt-orange/50 hover:text-burnt-orange transition-colors"
+                  >
+                    Browse All Players
                   </Link>
                 </div>
               </div>
