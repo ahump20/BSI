@@ -14,10 +14,14 @@ import { useState, useEffect } from 'react';
  * @returns The resolved parameter value
  */
 export function useResolvedParam(paramValue: string, segment: string): string {
-  const [resolved, setResolved] = useState(paramValue);
+  // When paramValue is "placeholder", don't initialize with it — that would
+  // trigger an immediate fetch to /api/.../placeholder which errors.
+  // Initialize empty so the component skips the fetch until we resolve the real ID.
+  const needsResolution = paramValue === 'placeholder';
+  const [resolved, setResolved] = useState(needsResolution ? '' : paramValue);
 
   useEffect(() => {
-    if (paramValue === 'placeholder' && typeof window !== 'undefined') {
+    if (needsResolution && typeof window !== 'undefined') {
       const parts = window.location.pathname.split(`/${segment}/`);
       if (parts[1]) {
         const realId = parts[1].replace(/\/$/, '').split('/')[0];
@@ -26,7 +30,7 @@ export function useResolvedParam(paramValue: string, segment: string): string {
         }
       }
     }
-  }, [paramValue, segment]);
+  }, [needsResolution, segment]);
 
   return resolved;
 }

@@ -780,7 +780,7 @@ export function transformAthlete(
       jersey: (athlete.jersey || '') as string,
       position: (position?.abbreviation || '') as string,
       height: (athlete.displayHeight || '') as string,
-      weight: (athlete.displayWeight || athlete.weight?.toString() || '') as string,
+      weight: ((athlete.displayWeight || athlete.weight?.toString() || '') as string).replace(/\s*lbs\s*/i, ''),
       age: athlete.age as number | undefined,
       birthDate: (athlete.displayDOB || athlete.dateOfBirth || '') as string | undefined,
       birthPlace: (athlete.displayBirthPlace || (birthPlace
