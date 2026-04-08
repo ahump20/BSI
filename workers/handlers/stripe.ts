@@ -17,6 +17,14 @@ import { json } from '../shared/helpers';
 import type { KeyData } from '../shared/auth';
 import { provisionKey, emailKey } from '../shared/auth';
 
+/** Constant-time hex string comparison to prevent timing attacks on signatures. */
+function timingSafeHexEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let result = 0;
+  for (let i = 0; i < a.length; i++) result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return result === 0;
+}
+
 interface ExtendedEnv extends Env {
   STRIPE_PRICE_PRO?: string;
   STRIPE_PRICE_ENTERPRISE?: string;
@@ -278,7 +286,8 @@ export async function handleStripeWebhook(c: Context<{ Bindings: Env }>): Promis
       .map((b) => b.toString(16).padStart(2, '0'))
       .join('');
 
-    if (computed !== expected) return c.json({ error: 'Invalid signature' }, 401);
+    // Timing-safe comparison to prevent signature timing attacks
+    if (!timingSafeHexEqual(computed, expected)) return c.json({ error: 'Invalid signature' }, 401);
   }
 
   let event: { type: string; data: { object: Record<string, unknown> } };

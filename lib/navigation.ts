@@ -15,6 +15,7 @@ export interface MainNavItem {
   label: string;
   href: string;
   external?: boolean;
+  iconKey?: string;
 }
 
 export interface LeagueNavItem extends MainNavItem {

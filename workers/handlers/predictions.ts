@@ -3,27 +3,87 @@
  */
 
 import type { Env, PredictionPayload } from '../shared/types';
-import { cachedJson, json, kvGet, kvPut } from '../shared/helpers';
+import { cachedJson, json, kvGet, kvPut, logError } from '../shared/helpers';
+
+const VALID_SPORTS = new Set([
+  'college-baseball', 'mlb', 'nfl', 'nba', 'cfb', 'cbb',
+]);
+
+const MAX_STRING_LENGTH = 200;
+
+function validatePrediction(body: unknown): { valid: true; data: PredictionPayload } | { valid: false; error: string } {
+  if (!body || typeof body !== 'object') {
+    return { valid: false, error: 'Request body must be a JSON object' };
+  }
+
+  const b = body as Record<string, unknown>;
+  const { gameId, sport, predictedWinner, confidence, spread, overUnder } = b;
+
+  if (typeof gameId !== 'string' || gameId.length === 0 || gameId.length > MAX_STRING_LENGTH) {
+    return { valid: false, error: 'gameId must be a non-empty string (max 200 chars)' };
+  }
+  if (typeof sport !== 'string' || !VALID_SPORTS.has(sport)) {
+    return { valid: false, error: `sport must be one of: ${[...VALID_SPORTS].join(', ')}` };
+  }
+  if (typeof predictedWinner !== 'string' || predictedWinner.length === 0 || predictedWinner.length > MAX_STRING_LENGTH) {
+    return { valid: false, error: 'predictedWinner must be a non-empty string (max 200 chars)' };
+  }
+  if (confidence !== undefined && confidence !== null) {
+    if (typeof confidence !== 'number' || confidence < 0 || confidence > 1 || !isFinite(confidence)) {
+      return { valid: false, error: 'confidence must be a number between 0 and 1' };
+    }
+  }
+  if (spread !== undefined && spread !== null) {
+    if (typeof spread !== 'number' || !isFinite(spread)) {
+      return { valid: false, error: 'spread must be a finite number' };
+    }
+  }
+  if (overUnder !== undefined && overUnder !== null) {
+    if (typeof overUnder !== 'number' || !isFinite(overUnder) || overUnder < 0) {
+      return { valid: false, error: 'overUnder must be a non-negative finite number' };
+    }
+  }
+
+  return {
+    valid: true,
+    data: {
+      gameId: gameId as string,
+      sport: sport as string,
+      predictedWinner: predictedWinner as string,
+      confidence: (typeof confidence === 'number' ? confidence : 0),
+      spread: typeof spread === 'number' ? spread : undefined,
+      overUnder: typeof overUnder === 'number' ? overUnder : undefined,
+    },
+  };
+}
 
 export async function handlePredictionSubmit(request: Request, env: Env): Promise<Response> {
   try {
-    const body = await request.json() as PredictionPayload;
-    const { gameId, sport, predictedWinner, confidence, spread, overUnder } = body;
-
-    if (!gameId || !sport || !predictedWinner) {
-      return json({ error: 'Missing required fields: gameId, sport, predictedWinner' }, 400);
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return json({ error: 'Invalid JSON body' }, 400);
     }
+
+    const result = validatePrediction(body);
+    if (!result.valid) {
+      return json({ error: result.error }, 400);
+    }
+
+    const { gameId, sport, predictedWinner, confidence, spread, overUnder } = result.data;
 
     await env.DB
       .prepare(
         `INSERT INTO predictions (game_id, sport, predicted_winner, confidence, spread, over_under, created_at)
          VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`
       )
-      .bind(gameId, sport, predictedWinner, confidence || 0, spread || null, overUnder || null)
+      .bind(gameId, sport, predictedWinner, confidence, spread ?? null, overUnder ?? null)
       .run();
 
     return json({ success: true, gameId });
-  } catch {
+  } catch (err) {
+    await logError(env, err instanceof Error ? err.message : String(err), 'predictions:submit');
     return json({ error: 'Failed to record prediction' }, 500);
   }
 }
@@ -76,7 +136,7 @@ export async function handlePredictionAccuracy(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, 300);
     return cachedJson(payload, 200, 300, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[predictions] D1 query failed:', err instanceof Error ? err.message : err);
+    await logError(env, err instanceof Error ? err.message : String(err), 'predictions:accuracy');
     return json({
       overall: { total: 0, correct: 0, accuracy: 0 },
       bySport: {},

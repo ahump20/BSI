@@ -220,11 +220,28 @@ function requireAdmin(request: Request, env: Env): Response | null {
   const bearer = auth?.startsWith('Bearer ') ? auth.slice('Bearer '.length) : null;
   const provided = bearer || headerKey || queryKey;
 
-  if (!provided || provided !== env.ADMIN_KEY) {
+  if (!provided || !timingSafeEqual(provided, env.ADMIN_KEY)) {
     return json({ error: 'Unauthorized' }, 401);
   }
 
   return null;
+}
+
+/** Constant-time string comparison to prevent timing attacks on secret keys. */
+function timingSafeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) {
+    // Compare against b anyway to avoid leaking length info via timing
+    const dummy = new Uint8Array(b.length);
+    const bBytes = new TextEncoder().encode(b);
+    let result = a.length ^ b.length;
+    for (let i = 0; i < b.length; i++) result |= dummy[i] ^ bBytes[i];
+    return result === 0;
+  }
+  const aBytes = new TextEncoder().encode(a);
+  const bBytes = new TextEncoder().encode(b);
+  let result = 0;
+  for (let i = 0; i < aBytes.length; i++) result |= aBytes[i] ^ bBytes[i];
+  return result === 0;
 }
 
 async function paginateKVList(

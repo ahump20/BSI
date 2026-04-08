@@ -11,6 +11,7 @@ import { DashboardWidget } from '@/components/dashboard/DashboardWidget';
 import { DashboardConfigurator, useDashboardPrefs } from '@/components/dashboard/DashboardConfigurator';
 import { TeamBrowser } from '@/components/dashboard/TeamBrowser';
 import { MyTeamsPanel } from '@/components/dashboard/MyTeamsPanel';
+import { Footer } from '@/components/layout-ds';
 
 const StandingsBarChart = dynamic(
   () => import('@/components/dashboard/DashboardCharts').then((mod) => mod.StandingsBarChart),
