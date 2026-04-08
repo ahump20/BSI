@@ -70,59 +70,54 @@ describe('generate-static-params build source handling', () => {
     process.env.BSI_STATIC_PARAMS_BASE_URL = 'https://example.test';
     const fetchSpy = vi
       .spyOn(globalThis, 'fetch')
-      .mockResolvedValue(
-        new Response('', {
-          status: 500,
-          headers: { 'Content-Type': 'application/json' },
-        })
-      );
+      .mockImplementation(async (input: RequestInfo | URL) => {
+        const url = typeof input === 'string' ? input : input instanceof Request ? input.url : String(input);
+        // Return team data for the BSI teams call so ESPN roster calls fire
+        if (url.includes('/api/mlb/teams')) {
+          return new Response(JSON.stringify({ teams: [{ id: '1' }] }), {
+            status: 200, headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        // ESPN roster calls return empty
+        return new Response(JSON.stringify({ athletes: [] }), {
+          status: 200, headers: { 'Content-Type': 'application/json' },
+        });
+      });
 
     const { mlbPlayerParams } = await import('@/lib/generate-static-params');
+    await mlbPlayerParams();
 
-    try {
-      await mlbPlayerParams();
-    } catch {
-      // We only care about the URL passed to fetch, not the outcome.
-    }
-
-    expect(fetchSpy).toHaveBeenCalled();
-    const fetchUrl = fetchSpy.mock.calls[0][0] as unknown;
-    expect(typeof fetchUrl === 'string' || fetchUrl instanceof Request).toBe(true);
-
-    const urlString =
-      typeof fetchUrl === 'string' ? fetchUrl : (fetchUrl as Request).url;
-    expect(urlString.startsWith(process.env.BSI_STATIC_PARAMS_BASE_URL!)).toBe(
-      false
+    // Find the ESPN roster call (absolute URL, not prefixed)
+    const espnCall = fetchSpy.mock.calls.find(([url]) =>
+      typeof url === 'string' && url.includes('site.api.espn.com')
     );
+    expect(espnCall).toBeDefined();
+    expect((espnCall![0] as string).startsWith(process.env.BSI_STATIC_PARAMS_BASE_URL!)).toBe(false);
   });
 
   it('does not prefix ESPN NBA roster URLs with the static params base URL', async () => {
     process.env.BSI_STATIC_PARAMS_BASE_URL = 'https://example.test';
     const fetchSpy = vi
       .spyOn(globalThis, 'fetch')
-      .mockResolvedValue(
-        new Response('', {
-          status: 500,
-          headers: { 'Content-Type': 'application/json' },
-        })
-      );
+      .mockImplementation(async (input: RequestInfo | URL) => {
+        const url = typeof input === 'string' ? input : input instanceof Request ? input.url : String(input);
+        if (url.includes('/api/nba/teams')) {
+          return new Response(JSON.stringify({ teams: [{ id: '1' }] }), {
+            status: 200, headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        return new Response(JSON.stringify({ athletes: [] }), {
+          status: 200, headers: { 'Content-Type': 'application/json' },
+        });
+      });
 
     const { nbaPlayerParams } = await import('@/lib/generate-static-params');
+    await nbaPlayerParams();
 
-    try {
-      await nbaPlayerParams();
-    } catch {
-      // We only care about the URL passed to fetch, not the outcome.
-    }
-
-    expect(fetchSpy).toHaveBeenCalled();
-    const fetchUrl = fetchSpy.mock.calls[0][0] as unknown;
-    expect(typeof fetchUrl === 'string' || fetchUrl instanceof Request).toBe(true);
-
-    const urlString =
-      typeof fetchUrl === 'string' ? fetchUrl : (fetchUrl as Request).url;
-    expect(urlString.startsWith(process.env.BSI_STATIC_PARAMS_BASE_URL!)).toBe(
-      false
+    const espnCall = fetchSpy.mock.calls.find(([url]) =>
+      typeof url === 'string' && url.includes('site.api.espn.com')
     );
+    expect(espnCall).toBeDefined();
+    expect((espnCall![0] as string).startsWith(process.env.BSI_STATIC_PARAMS_BASE_URL!)).toBe(false);
   });
 });
