@@ -863,7 +863,7 @@ function ScoresHubContent() {
                       </span>
                     )}
                     {sport.liveCount === 0 && sport.todayCount > 0 && (
-                      <span className="ml-1 text-xs" style={{ color: 'var(--bsi-dust)', opacity: 0.6 }}>
+                      <span className="ml-1 text-xs text-bsi-dust opacity-60">
                         {sport.todayCount}
                       </span>
                     )}

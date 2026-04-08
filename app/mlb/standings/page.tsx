@@ -501,7 +501,7 @@ export default function MLBStandingsPage() {
                   <p className="italic" style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--bsi-dust, #C4B8A5)' }}>
                     Standings update once the season begins
                   </p>
-                  <p className="text-sm mt-2" style={{ color: 'var(--bsi-dust, #C4B8A5)', opacity: 0.7 }}>
+                  <p className="text-sm mt-2 text-bsi-dust opacity-70">
                     Division and league standings refresh daily during the season
                   </p>
                 </div>
