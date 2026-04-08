@@ -20,6 +20,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { useUserSettings } from '@/lib/hooks';
 import { useSportData } from '@/lib/hooks/useSportData';
+import { useResolvedParam } from '@/lib/hooks/useResolvedParam';
 import type { DataMeta } from '@/lib/types/data-meta';
 
 interface PlayerInfo {
@@ -102,12 +103,8 @@ interface PlayerDetailClientProps {
   playerId: string;
 }
 
-export default function PlayerDetailClient({ playerId: paramId }: PlayerDetailClientProps) {
-  // Placeholder shell fallback: read real player ID from the browser URL
-  const playerId = typeof window !== 'undefined' && paramId === 'placeholder'
-    ? window.location.pathname.split('/players/')[1]?.replace(/\/$/, '') || paramId
-    : paramId;
-
+export default function PlayerDetailClient({ playerId: rawId }: PlayerDetailClientProps) {
+  const playerId = useResolvedParam(rawId, 'players');
   const [activeTab, setActiveTab] = useState<TabType>('overview');
 
   // User timezone for formatting

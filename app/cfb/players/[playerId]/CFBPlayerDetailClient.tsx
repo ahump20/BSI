@@ -9,6 +9,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
+import { useResolvedParam } from '@/lib/hooks/useResolvedParam';
 import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface PlayerData {
@@ -90,13 +91,10 @@ interface CFBPlayerDetailClientProps {
   playerId: string;
 }
 
-export default function CFBPlayerDetailClient({ playerId: paramId }: CFBPlayerDetailClientProps) {
-  const playerId = typeof window !== 'undefined' && paramId === 'placeholder'
-    ? window.location.pathname.split('/players/')[1]?.replace(/\/$/, '') || paramId
-    : paramId;
-
+export default function CFBPlayerDetailClient({ playerId: rawId }: CFBPlayerDetailClientProps) {
+  const playerId = useResolvedParam(rawId, 'players');
   const { data: playerData, loading, error, retry: fetchPlayer, lastUpdated: lastUpdatedDate } = useSportData<PlayerResponse>(
-    playerId ? `/api/cfb/players/${playerId}` : null,
+    playerId && playerId !== 'placeholder' ? `/api/cfb/players/${playerId}` : null,
   );
 
   const player = playerData?.player || null;
