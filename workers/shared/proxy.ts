@@ -33,6 +33,12 @@ const PLAYER_DETAIL_PATTERN = /^\/(mlb|nfl|nba|cfb)\/players\/[^/]+\/?$/;
 /** Matches RSC metadata for pro sport player routes */
 const PLAYER_DETAIL_RSC_PATTERN = /^\/(mlb|nfl|nba|cfb)\/players\/[^/]+\/(__next\.[^?]+)/;
 
+/** Matches college baseball daily schedule: /college-baseball/daily/{date}/ */
+const CBB_DAILY_PATTERN = /^\/college-baseball\/daily\/[^/]+\/?$/;
+
+/** Matches RSC for daily schedule */
+const CBB_DAILY_RSC_PATTERN = /^\/college-baseball\/daily\/[^/]+\/(__next\.[^?]+)/;
+
 /** Matches pro sport team detail routes: /{sport}/teams/{id}/ */
 const TEAM_DETAIL_PATTERN = /^\/(nfl|nba|cfb)\/teams\/[^/]+\/?$/;
 
@@ -104,6 +110,17 @@ function buildPlaceholderPath(pathname: string): string | null {
   const teamRscMatch = pathname.match(TEAM_DETAIL_RSC_PATTERN);
   if (teamRscMatch) {
     return `/${teamRscMatch[1]}/teams/placeholder/${teamRscMatch[2]}`;
+  }
+
+  // College baseball daily schedule
+  const dailyMatch = pathname.match(CBB_DAILY_PATTERN);
+  if (dailyMatch) {
+    return '/college-baseball/daily/2026-02-14/';
+  }
+
+  const dailyRscMatch = pathname.match(CBB_DAILY_RSC_PATTERN);
+  if (dailyRscMatch) {
+    return `/college-baseball/daily/2026-02-14/${dailyRscMatch[1]}`;
   }
 
   return null;
