@@ -347,7 +347,7 @@ export default function NFLGamesPage() {
                 </ScrollReveal>
 
                 <ScrollReveal direction="up" delay={100}>
-                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-wider mb-4" style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}>
+                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-wider mb-4 font-display text-bsi-bone">
                     NFL Scores
                   </h1>
                 </ScrollReveal>

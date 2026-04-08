@@ -199,8 +199,7 @@ function SearchContent() {
 
             <ScrollReveal direction="up" delay={100}>
               <h1
-                className="text-3xl md:text-4xl font-bold uppercase tracking-wide mb-6"
-                style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                className="text-3xl md:text-4xl font-bold uppercase tracking-wide mb-6 font-display text-bsi-bone"
               >
                 {initialQuery ? `Results for "${initialQuery}"` : 'Cross-Sport Search'}
               </h1>
@@ -241,7 +240,7 @@ function SearchContent() {
 
             {/* Results Count */}
             {!isLoading && initialQuery && (
-              <p className="text-bsi-dust" className="mb-6">
+              <p className="text-bsi-dust mb-6">
                 Found {filteredResults.length} result{filteredResults.length !== 1 ? 's' : ''}
                 {filters.sport && ` in ${getSportLabel(filters.sport)}`}
               </p>
@@ -280,12 +279,11 @@ function SearchContent() {
                   </svg>
                 </div>
                 <h2
-                  className="text-xl font-semibold mb-2"
-                  style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                  className="text-xl font-semibold mb-2 font-display text-bsi-bone"
                 >
                   No Results Found
                 </h2>
-                <p className="text-bsi-dust" className="mb-4">
+                <p className="text-bsi-dust mb-4">
                   No matches for &ldquo;{initialQuery}&rdquo;
                   {filters.sport && ` in ${getSportLabel(filters.sport)}`}
                 </p>
@@ -321,8 +319,7 @@ function SearchContent() {
                 {/* Popular Searches */}
                 <div>
                   <h2
-                    className="text-lg font-bold uppercase tracking-wide mb-4"
-                    style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                    className="text-lg font-bold uppercase tracking-wide mb-4 font-display text-bsi-bone"
                   >
                     Popular Searches
                   </h2>
@@ -362,8 +359,7 @@ function SearchContent() {
                     </div>
                     <div>
                       <h3
-                        className="text-base font-bold uppercase tracking-wide mb-1"
-                        style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                        className="text-base font-bold uppercase tracking-wide mb-1 font-display text-bsi-bone"
                       >
                         Try Ask BSI
                       </h3>
@@ -383,8 +379,7 @@ function SearchContent() {
                 {/* Browse by Sport */}
                 <div>
                   <h2
-                    className="text-lg font-bold uppercase tracking-wide mb-4"
-                    style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                    className="text-lg font-bold uppercase tracking-wide mb-4 font-display text-bsi-bone"
                   >
                     Browse by Sport
                   </h2>
@@ -416,8 +411,7 @@ function SearchContent() {
                 {Object.entries(resultsBySport).map(([sport, items]) => (
                   <div key={sport}>
                     <h2
-                      className="text-lg font-semibold mb-4 flex items-center gap-2"
-                      style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                      className="text-lg font-semibold mb-4 flex items-center gap-2 font-display text-bsi-bone"
                     >
                       <span
                         className={`w-3 h-3 rounded-full ${getSportColor(sport)}`}

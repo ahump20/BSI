@@ -59,8 +59,7 @@ export default function AskClient() {
                     className="heritage-card p-4"
                   >
                     <p
-                      className="text-xs font-bold uppercase tracking-wider"
-                      style={{ color: 'var(--bsi-primary)', fontFamily: 'var(--bsi-font-data)' }}
+                      className="text-xs font-bold uppercase tracking-wider text-bsi-primary font-mono"
                     >
                       {sport.label}
                     </p>

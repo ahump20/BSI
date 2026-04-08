@@ -99,8 +99,7 @@ function MessageBubble({ message }: { message: ChatMessage }) {
       >
         {!isUser && (
           <span
-            className="text-[9px] uppercase tracking-[0.15em] block mb-1"
-            style={{ color: 'var(--bsi-primary)', fontFamily: 'var(--bsi-font-display)' }}
+            className="text-[9px] uppercase tracking-[0.15em] block mb-1 text-bsi-primary font-display"
           >
             BSI Agent
           </span>
@@ -115,8 +114,7 @@ function MessageBubble({ message }: { message: ChatMessage }) {
           {message.content}
         </p>
         <span
-          className="text-[9px] block mt-1 opacity-50"
-          style={{ fontFamily: 'var(--bsi-font-mono)' }}
+          className="text-[9px] block mt-1 opacity-50 font-mono"
         >
           {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </span>
@@ -134,8 +132,7 @@ function StreamingIndicator() {
     <div className="flex justify-start mb-4">
       <div className="heritage-card px-4 py-3 max-w-[85%]">
         <span
-          className="text-[9px] uppercase tracking-[0.15em] block mb-2"
-          style={{ color: 'var(--bsi-primary)', fontFamily: 'var(--bsi-font-display)' }}
+          className="text-[9px] uppercase tracking-[0.15em] block mb-2 text-bsi-primary font-display"
         >
           BSI Agent
         </span>
@@ -348,8 +345,7 @@ export function AgentChat() {
           </div>
           <div>
             <h1
-              className="text-sm font-bold uppercase tracking-wide"
-              style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+              className="text-sm font-bold uppercase tracking-wide font-display text-bsi-bone"
             >
               BSI Baseball Agent
             </h1>
@@ -407,8 +403,7 @@ export function AgentChat() {
               </svg>
             </div>
             <h2
-              className="text-lg font-bold uppercase tracking-wide mb-2"
-              style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+              className="text-lg font-bold uppercase tracking-wide mb-2 font-display text-bsi-bone"
             >
               Ask Anything About College Baseball
             </h2>
@@ -451,8 +446,7 @@ export function AgentChat() {
           <div className="flex justify-start mb-4">
             <div className="heritage-card px-4 py-3 max-w-[85%] sm:max-w-[75%]">
               <span
-                className="text-[9px] uppercase tracking-[0.15em] block mb-1"
-                style={{ color: 'var(--bsi-primary)', fontFamily: 'var(--bsi-font-display)' }}
+                className="text-[9px] uppercase tracking-[0.15em] block mb-1 text-bsi-primary font-display"
               >
                 BSI Agent
               </span>
@@ -534,8 +528,7 @@ export function AgentChat() {
           </button>
         </form>
         <p
-          className="text-center text-[9px] mt-2"
-          style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-mono)' }}
+          className="text-center text-[9px] mt-2 text-bsi-dust font-mono"
         >
           Powered by BSI data pipeline &middot; Responses may take a moment during tool calls
         </p>

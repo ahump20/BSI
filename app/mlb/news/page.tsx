@@ -180,8 +180,7 @@ export default function MLBNewsPage() {
           <Container>
             <ScrollReveal>
               <h1
-                className="text-3xl md:text-4xl font-bold uppercase tracking-display text-gradient-blaze mb-2"
-                style={{ fontFamily: 'var(--font-oswald)' }}
+                className="text-3xl md:text-4xl font-bold uppercase tracking-display text-gradient-blaze mb-2 font-display"
               >
                 MLB News
               </h1>

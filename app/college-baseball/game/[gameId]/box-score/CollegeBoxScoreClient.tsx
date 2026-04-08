@@ -2,6 +2,7 @@
 
 import { useGameData } from '../layout';
 import { Card, CardHeader, CardTitle } from '@/components/ui/Card';
+import { TeamCircle } from '@/components/sports/TeamCircle';
 import { Badge } from '@/components/ui/Badge';
 
 /**
@@ -49,14 +50,7 @@ export default function CollegeBoxScoreClient() {
       {/* Away Team */}
       <div>
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 bg-background-secondary rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange relative">
-            {game.teams.away.abbreviation}
-            {game.teams.away.ranking && (
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-burnt-orange text-white text-xs font-bold rounded-full flex items-center justify-center">
-                {game.teams.away.ranking}
-              </span>
-            )}
-          </div>
+          <TeamCircle logo={game.teams.away.logo} abbreviation={game.teams.away.abbreviation} size="w-10 h-10" textSize="text-sm" ranking={game.teams.away.ranking} />
           <div>
             <h3 className="font-semibold text-text-primary">{game.teams.away.name}</h3>
             <p className="text-text-tertiary text-sm">{game.teams.away.record}</p>
@@ -184,14 +178,7 @@ export default function CollegeBoxScoreClient() {
       {/* Home Team */}
       <div>
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 bg-background-secondary rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange relative">
-            {game.teams.home.abbreviation}
-            {game.teams.home.ranking && (
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-burnt-orange text-white text-xs font-bold rounded-full flex items-center justify-center">
-                {game.teams.home.ranking}
-              </span>
-            )}
-          </div>
+          <TeamCircle logo={game.teams.home.logo} abbreviation={game.teams.home.abbreviation} size="w-10 h-10" textSize="text-sm" ranking={game.teams.home.ranking} />
           <div>
             <h3 className="font-semibold text-text-primary">{game.teams.home.name}</h3>
             <p className="text-text-tertiary text-sm">{game.teams.home.record}</p>

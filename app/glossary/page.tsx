@@ -23,8 +23,7 @@ function TermCard({ term }: { term: GlossaryTerm }) {
     <div className="border-l-2 pl-5 sm:pl-6 py-4" style={{ borderColor: 'rgba(191,87,0,0.15)' }}>
       <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
         <h3
-          className="text-lg font-bold uppercase tracking-wide"
-          style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+          className="text-lg font-bold uppercase tracking-wide font-display text-bsi-bone"
         >
           {term.term}
         </h3>
@@ -76,8 +75,7 @@ function TermCard({ term }: { term: GlossaryTerm }) {
           <div className="pt-2" style={{ borderTop: '1px solid rgba(140,98,57,0.1)' }}>
             <Link
               href={term.bsiLink}
-              className="text-xs transition-colors"
-              style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-primary)' }}
+              className="text-xs transition-colors font-mono text-bsi-primary"
             >
               {term.bsiLinkLabel || 'Related BSI Model'} →
             </Link>
@@ -123,8 +121,7 @@ export default function GlossaryPage() {
           <div className="max-w-3xl mb-8 relative">
             <span className="heritage-stamp block mb-4">Reference</span>
             <h1
-              className="text-3xl md:text-4xl font-bold uppercase tracking-wide mb-3"
-              style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+              className="text-3xl md:text-4xl font-bold uppercase tracking-wide mb-3 font-display text-bsi-bone"
             >
               Analytics Glossary
             </h1>

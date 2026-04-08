@@ -130,7 +130,7 @@ export default function TeamComparePage() {
       <Container>
         <div className="py-10 sm:py-14 max-w-3xl mx-auto">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-xs mb-6" style={{ fontFamily: 'var(--bsi-font-data, monospace)', color: 'var(--bsi-dust, #C4B8A5)' }}>
+          <nav className="flex items-center gap-2 text-xs mb-6 font-mono text-bsi-dust">
             <Link href="/" className="hover:underline" style={{ color: 'var(--heritage-columbia-blue, #4B9CD3)' }}>Home</Link>
             <span>/</span>
             <Link href="/college-baseball" className="hover:underline" style={{ color: 'var(--heritage-columbia-blue, #4B9CD3)' }}>College Baseball</Link>

@@ -91,10 +91,10 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-border-vintage">
-          <p className="text-[10px] font-mono uppercase tracking-wider" className="text-bsi-dust">
+          <p className="text-[10px] font-mono uppercase tracking-wider text-bsi-dust">
             &copy; {currentYear} Blaze Sports Intel
           </p>
-          <p className="text-[10px] font-mono uppercase tracking-wider" className="text-bsi-dust">
+          <p className="text-[10px] font-mono uppercase tracking-wider text-bsi-dust">
             Built on Cloudflare &middot; Austin, TX
           </p>
         </div>

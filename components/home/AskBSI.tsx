@@ -112,7 +112,7 @@ function ActionStrip({ links }: { links: Array<{ label: string; href: string }> 
 
   return (
     <div className="mt-3 pt-3" style={{ borderTop: '1px solid var(--border-vintage)' }}>
-      <p className="text-[9px] uppercase tracking-[0.15em] mb-2" style={{ color: 'var(--heritage-bronze)', fontFamily: 'var(--bsi-font-data)' }}>
+      <p className="text-[9px] uppercase tracking-[0.15em] mb-2 text-heritage-bronze font-mono">
         Go to
       </p>
       <div className="flex flex-wrap gap-2">

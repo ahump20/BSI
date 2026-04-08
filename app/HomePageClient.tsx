@@ -482,8 +482,7 @@ function SportPulseStrip({ pulse }: { pulse: Record<string, SportPulseData> }) {
                   </span>
                 ) : hasGames ? (
                   <span
-                    className="text-[10px] tabular-nums"
-                    style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
+                    className="text-[10px] tabular-nums font-mono text-bsi-dust"
                   >
                     {total}
                   </span>
@@ -532,8 +531,7 @@ function StandoutCard({
           style={{ background: accentColor }}
         />
         <span
-          className="text-[10px] uppercase tracking-[0.15em] font-semibold"
-          style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-dust)' }}
+          className="text-[10px] uppercase tracking-[0.15em] font-semibold font-display text-bsi-dust"
         >
           {label}
         </span>
@@ -542,14 +540,12 @@ function StandoutCard({
       <div className="flex items-end justify-between gap-3">
         <div className="min-w-0">
           <p
-            className="text-base sm:text-lg font-bold truncate group-hover:text-bsi-primary transition-colors"
-            style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+            className="text-base sm:text-lg font-bold truncate group-hover:text-bsi-primary transition-colors font-display text-bsi-bone"
           >
             {player.name}
           </p>
           <p
-            className="text-[11px] mt-0.5"
-            style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
+            className="text-[11px] mt-0.5 font-mono text-bsi-dust"
           >
             {player.team}
           </p>
@@ -562,8 +558,7 @@ function StandoutCard({
             {statValue}
           </p>
           <p
-            className="text-[9px] uppercase tracking-wider mt-1"
-            style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
+            className="text-[9px] uppercase tracking-wider mt-1 font-mono text-bsi-dust"
           >
             {statLabel}
           </p>
@@ -577,8 +572,7 @@ function StandoutCard({
         {supportingStats.map((s) => (
           <span
             key={s.label}
-            className="text-[10px] tabular-nums"
-            style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
+            className="text-[10px] tabular-nums font-mono text-bsi-dust"
           >
             {s.value} <span className="text-bsi-dust">{s.label}</span>
           </span>
@@ -615,15 +609,13 @@ function LeaderboardTable({
         }}
       >
         <h2
-          className="text-xs uppercase tracking-[0.15em] font-bold"
-          style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary-light)' }}
+          className="text-xs uppercase tracking-[0.15em] font-bold font-display text-bsi-primary"
         >
           {title}
         </h2>
         <Link
           href={href}
-          className="text-[10px] uppercase tracking-wider transition-colors hover:text-bsi-primary"
-          style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
+          className="text-[10px] uppercase tracking-wider transition-colors hover:text-bsi-primary font-mono text-bsi-dust"
         >
           Full board &rarr;
         </Link>
@@ -711,8 +703,7 @@ function LeaderboardTable({
 
       {meta && (
         <div
-          className="flex items-center justify-between px-4 py-1.5 text-[9px]"
-          style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
+          className="flex items-center justify-between px-4 py-1.5 text-[9px] font-mono text-bsi-dust"
         >
           <span>Source: {meta.source}</span>
           <span>
@@ -790,12 +781,11 @@ function LeaderboardEmpty({ title, error, onRetry }: { title: string; error?: st
         style={{ borderBottom: '2px solid rgba(191,87,0,0.3)' }}
       >
         <h2
-          className="text-xs uppercase tracking-[0.15em] font-bold"
-          style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary-light)' }}
+          className="text-xs uppercase tracking-[0.15em] font-bold font-display text-bsi-primary"
         >{title}</h2>
       </div>
       <div className="border border-t-0 px-4 py-8 text-center border-border-vintage">
-        <p className="text-xs" style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}>
+        <p className="text-xs font-mono text-bsi-dust">
           {error ? 'Data temporarily unavailable' : 'No leaderboard data available'}
         </p>
         {onRetry && (
@@ -813,7 +803,7 @@ function LeaderboardEmpty({ title, error, onRetry }: { title: string; error?: st
 function StandoutEmpty() {
   return (
     <div className="heritage-card p-5 flex items-center justify-center" style={{ minHeight: '120px' }}>
-      <p className="text-[10px] uppercase tracking-wider" style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}>
+      <p className="text-[10px] uppercase tracking-wider font-mono text-bsi-dust">
         Updating player data...
       </p>
     </div>
@@ -881,8 +871,7 @@ function NewsCard({ article, sport }: { article: NewsArticle; sport: string }) {
       )}
       <div className="px-3 pb-3 pt-2 flex-1">
         <p
-          className="text-xs sm:text-sm font-semibold leading-snug line-clamp-2 group-hover:text-bsi-primary transition-colors"
-          style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+          className="text-xs sm:text-sm font-semibold leading-snug line-clamp-2 group-hover:text-bsi-primary transition-colors font-display text-bsi-bone"
         >
           {article.headline}
         </p>
@@ -1203,14 +1192,12 @@ export function HomePageClient() {
             ].map((p, idx) => (
               <div key={p.label} className="hero-entrance" style={{ animationDelay: `${idx * 100}ms` }}>
                 <span
-                  className="text-2xl sm:text-3xl md:text-4xl font-bold tabular-nums"
-                  style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-primary)' }}
+                  className="text-2xl sm:text-3xl md:text-4xl font-bold tabular-nums font-mono text-bsi-primary"
                 >
                   {p.stat}
                 </span>
                 <span
-                  className="block text-[10px] sm:text-[11px] uppercase tracking-[0.15em] mt-1.5"
-                  style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-dust)' }}
+                  className="block text-[10px] sm:text-[11px] uppercase tracking-[0.15em] mt-1.5 font-display text-bsi-dust"
                 >
                   {p.label}
                 </span>
@@ -1237,8 +1224,7 @@ export function HomePageClient() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-2">
                     <h3
-                      className="text-lg sm:text-xl font-bold uppercase tracking-[0.04em] transition-colors group-hover:text-bsi-primary"
-                      style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                      className="text-lg sm:text-xl font-bold uppercase tracking-[0.04em] transition-colors group-hover:text-bsi-primary font-display text-bsi-bone"
                     >
                       {SPORT_NAV[0].name}
                     </h3>
@@ -1279,8 +1265,7 @@ export function HomePageClient() {
                     </span>
                   )}
                   <span
-                    className="text-[10px] uppercase tracking-wider transition-colors group-hover:text-bsi-primary"
-                    style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
+                    className="text-[10px] uppercase tracking-wider transition-colors group-hover:text-bsi-primary font-mono text-bsi-dust"
                   >
                     Explore &rarr;
                   </span>
@@ -1371,8 +1356,7 @@ export function HomePageClient() {
                 The BSI Savant Standard
               </h2>
               <p
-                className="text-xs sm:text-sm mt-1.5"
-                style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)' }}
+                className="text-xs sm:text-sm mt-1.5 font-serif text-bsi-dust"
               >
                 What analytical depth actually looks like — live from the leaderboard
               </p>
@@ -1502,8 +1486,7 @@ export function HomePageClient() {
                   style={{ background: 'rgba(191,87,0,0.4)' }}
                 />
                 <p
-                  className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.1em] transition-colors group-hover:text-bsi-primary"
-                  style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-dust)' }}
+                  className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.1em] transition-colors group-hover:text-bsi-primary font-display text-bsi-dust"
                 >
                   {item.title}
                 </p>
@@ -1529,15 +1512,13 @@ export function HomePageClient() {
           <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
             <div className="flex items-center justify-between mb-5">
               <h2
-                className="text-xs uppercase tracking-[0.15em] font-bold"
-                style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary-light)' }}
+                className="text-xs uppercase tracking-[0.15em] font-bold font-display text-bsi-primary"
               >
                 Across the Wire
               </h2>
               <Link
                 href="/intel/"
-                className="text-[10px] uppercase tracking-wider transition-colors hover:text-bsi-primary"
-                style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
+                className="text-[10px] uppercase tracking-wider transition-colors hover:text-bsi-primary font-mono text-bsi-dust"
               >
                 All intel &rarr;
               </Link>
@@ -1576,8 +1557,7 @@ export function HomePageClient() {
             The Numbers Behind What You Already Know.
           </h2>
           <p
-            className="mt-2 text-sm sm:text-base uppercase tracking-[0.12em]"
-            style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary)' }}
+            className="mt-2 text-sm sm:text-base uppercase tracking-[0.12em] font-display text-bsi-primary"
           >
             No paywall.
           </p>
@@ -1620,14 +1600,12 @@ export function HomePageClient() {
           />
           <div>
             <p
-              className="text-[10px] uppercase tracking-[0.2em] font-semibold"
-              style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-dust)' }}
+              className="text-[10px] uppercase tracking-[0.2em] font-semibold font-display text-bsi-dust"
             >
               Blaze Intelligence
             </p>
             <p
-              className="text-[9px] mt-0.5"
-              style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
+              className="text-[9px] mt-0.5 font-mono text-bsi-dust"
             >
               5 sports &middot; 330 programs &middot; recalculated every 6 hours
             </p>

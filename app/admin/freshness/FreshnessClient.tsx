@@ -100,7 +100,7 @@ function SummaryBar({ summary }: { summary: FreshnessReport['summary'] }) {
           >
             {pct}%
           </p>
-          <p className="text-xs mt-1" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
+          <p className="text-xs mt-1 text-bsi-dust font-mono">
             {summary.fresh} of {summary.total} sources fresh
           </p>
         </div>
@@ -110,7 +110,7 @@ function SummaryBar({ summary }: { summary: FreshnessReport['summary'] }) {
               <p className="text-lg font-bold" style={{ color: STATUS_CONFIG[s].color, fontFamily: 'var(--bsi-font-display)' }}>
                 {summary[s]}
               </p>
-              <p className="text-[9px] uppercase tracking-[0.15em]" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
+              <p className="text-[9px] uppercase tracking-[0.15em] text-bsi-dust font-mono">
                 {s}
               </p>
             </div>
@@ -154,8 +154,7 @@ function LiveEndpointTable({ endpoints }: { endpoints: DataSource[] }) {
               {['Source', 'Sport', 'Status', 'Age', 'Items', 'Provider'].map((h) => (
                 <th
                   key={h}
-                  className="px-4 py-2.5 text-left text-[10px] uppercase tracking-[0.15em] font-semibold"
-                  style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}
+                  className="px-4 py-2.5 text-left text-[10px] uppercase tracking-[0.15em] font-semibold text-bsi-dust font-mono"
                 >
                   {h}
                 </th>
@@ -174,8 +173,7 @@ function LiveEndpointTable({ endpoints }: { endpoints: DataSource[] }) {
                 </td>
                 <td className="px-4 py-2.5">
                   <span
-                    className="text-[10px] uppercase tracking-[0.12em] font-semibold"
-                    style={{ color: 'var(--heritage-columbia-blue)', fontFamily: 'var(--bsi-font-data)' }}
+                    className="text-[10px] uppercase tracking-[0.12em] font-semibold text-heritage-columbia font-mono"
                   >
                     {ep.sport}
                   </span>
@@ -218,8 +216,7 @@ function D1TableSection({ tables }: { tables: D1TableCheck[] }) {
               {['Table', 'Status', 'Rows', 'Last Computed', 'Age'].map((h) => (
                 <th
                   key={h}
-                  className="px-4 py-2.5 text-left text-[10px] uppercase tracking-[0.15em] font-semibold"
-                  style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}
+                  className="px-4 py-2.5 text-left text-[10px] uppercase tracking-[0.15em] font-semibold text-bsi-dust font-mono"
                 >
                   {h}
                 </th>
@@ -344,7 +341,7 @@ export default function FreshnessClient() {
               >
                 Data Freshness
               </h1>
-              <p className="mt-1 text-xs" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
+              <p className="mt-1 text-xs text-bsi-dust font-mono">
                 Self-watching infrastructure — auto-refreshes every 60s
               </p>
             </div>
@@ -357,7 +354,7 @@ export default function FreshnessClient() {
                 {loading ? 'Checking\u2026' : 'Refresh'}
               </button>
               {lastRefresh && (
-                <p className="mt-1 text-[10px]" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
+                <p className="mt-1 text-[10px] text-bsi-dust font-mono">
                   Last check: {lastRefresh} CT
                 </p>
               )}

@@ -191,7 +191,7 @@ export default function NFLNewsPage() {
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
           <Container>
             <ScrollReveal>
-              <h1 className="text-3xl md:text-4xl font-bold uppercase tracking-wider mb-2" style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}>
+              <h1 className="text-3xl md:text-4xl font-bold uppercase tracking-wider mb-2 font-display text-bsi-bone">
                 NFL News
               </h1>
               <p className="max-w-2xl text-bsi-dust">

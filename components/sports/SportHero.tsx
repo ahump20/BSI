@@ -58,8 +58,7 @@ export function SportHero({
       <Container center>
         <ScrollReveal direction="up">
           <span
-            className="block mb-4 text-center text-[10px] font-bold uppercase tracking-[0.15em]"
-            style={{ fontFamily: 'var(--font-oswald, var(--font-display))', color: 'var(--bsi-primary)' }}
+            className="block mb-4 text-center text-[10px] font-bold uppercase tracking-[0.15em] font-display text-bsi-primary"
           >
             {leagueName}
           </span>

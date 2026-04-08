@@ -100,8 +100,7 @@ export function SavantComparePanel({
       >
         <div className="flex items-center gap-3">
           <h3
-            className="text-sm uppercase tracking-wider"
-            style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+            className="text-sm uppercase tracking-wider font-display text-bsi-bone"
           >
             Player Comparison
           </h3>

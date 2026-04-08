@@ -52,7 +52,7 @@ export function ArticleMeta({ readingTime, shareTitle, shareUrl }: ArticleMetaPr
   }, [shareTitle, shareUrl]);
 
   return (
-    <div className="flex items-center gap-4 text-xs" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
+    <div className="flex items-center gap-4 text-xs text-bsi-dust font-mono">
       <span className="flex items-center gap-1.5">
         <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="1.5">
           <circle cx="12" cy="12" r="10" />

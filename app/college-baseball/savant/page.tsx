@@ -10,7 +10,7 @@ const SavantHubClient = dynamic(
       <div className="min-h-screen grain-overlay bg-surface-scoreboard text-bsi-bone">
         <div className="max-w-6xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
           <p className="heritage-stamp mb-4">BSI Savant</p>
-          <h1 className="text-4xl font-bold uppercase tracking-tight mb-4" style={{ fontFamily: 'var(--bsi-font-display-hero)' }}>
+          <h1 className="text-4xl font-bold uppercase tracking-tight mb-4 font-display">
             College Baseball Sabermetrics
           </h1>
           <p className="font-serif text-lg mb-8 text-bsi-dust">

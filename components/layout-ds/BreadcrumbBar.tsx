@@ -57,7 +57,7 @@ export function BreadcrumbBar() {
       aria-label="Breadcrumb"
       className="px-4 md:px-6 py-2 border-b border-white/[0.03]"
     >
-      <ol className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.12em]" style={{ fontFamily: 'var(--font-mono)' }}>
+      <ol className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.12em] font-mono">
         <li>
           <Link href="/" className="text-text-muted hover:text-bsi-dust transition-colors">
             Home

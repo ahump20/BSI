@@ -29,8 +29,7 @@ export class ErrorBoundary extends Component<Props, State> {
           className="min-h-screen flex flex-col items-center justify-center text-center px-4 bg-surface-scoreboard"
         >
           <p
-            className="text-base font-display uppercase tracking-widest mb-6"
-            style={{ color: 'var(--bsi-bone, #F5F2EB)', fontFamily: 'Oswald, sans-serif' }}
+            className="text-base font-display uppercase tracking-widest mb-6 text-bsi-bone font-display"
           >
             Something went wrong — reload to try again
           </p>

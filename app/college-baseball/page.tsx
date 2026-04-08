@@ -1035,8 +1035,7 @@ function CollegeBaseballPageInner() {
                     <div className="relative p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                       <div className="max-w-xl">
                         <span
-                          className="text-[10px] font-bold uppercase tracking-[0.15em] block mb-3"
-                          style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary)' }}
+                          className="text-[10px] font-bold uppercase tracking-[0.15em] block mb-3 font-display text-bsi-primary"
                         >
                           Advanced Analytics
                         </span>
@@ -1046,7 +1045,7 @@ function CollegeBaseballPageInner() {
                         >
                           BSI Savant
                         </h3>
-                        <p className="text-sm leading-relaxed" style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)' }}>
+                        <p className="text-sm leading-relaxed font-serif text-bsi-dust">
                           Park-adjusted leaderboards, player profiles with scouting grades,
                           conference strength rankings, park factor analysis, and 16 interactive
                           visualization tools — all powered by live D1 data.

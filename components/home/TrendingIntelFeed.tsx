@@ -193,7 +193,7 @@ export function TrendingIntelFeed() {
       </div>
 
       {!loading && articles.length > 0 && lastFetched && (
-        <p className="text-[10px] mt-2" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
+        <p className="text-[10px] mt-2 text-bsi-dust font-mono">
           Source: ESPN News · Updated {lastFetched.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })} CT
         </p>
       )}

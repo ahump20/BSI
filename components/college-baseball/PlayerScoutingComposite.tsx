@@ -311,12 +311,11 @@ function RadarTooltipOverlay({
         }}
       >
         <p
-          className="text-[10px] uppercase tracking-wider mb-1"
-          style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-dust)' }}
+          className="text-[10px] uppercase tracking-wider mb-1 font-display text-bsi-dust"
         >
           {dimension}
         </p>
-        <p className="text-xs" style={{ fontFamily: 'var(--bsi-font-mono)', color: 'var(--bsi-bone)' }}>
+        <p className="text-xs font-mono text-bsi-bone">
           {format(rawValue)}{' '}
           <span style={{ color }}>({percentile}th)</span>
         </p>
@@ -358,8 +357,7 @@ function SparklineTooltipContent({
         {entry.payload.date}
       </p>
       <p
-        className="text-xs font-semibold"
-        style={{ fontFamily: 'var(--bsi-font-mono)', color: 'var(--bsi-bone)' }}
+        className="text-xs font-semibold font-mono text-bsi-bone"
       >
         {format(entry.value)}
       </p>
@@ -491,8 +489,7 @@ function Sparkline({
     <div>
       <div className="flex items-center justify-between mb-1">
         <span
-          className="text-[10px] uppercase tracking-wider"
-          style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-dust)' }}
+          className="text-[10px] uppercase tracking-wider font-display text-bsi-dust"
         >
           {label}
         </span>
@@ -667,8 +664,7 @@ export function PlayerScoutingComposite({
         >
           <div>
             <h3
-              className="text-sm uppercase tracking-wider font-bold"
-              style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+              className="text-sm uppercase tracking-wider font-bold font-display text-bsi-bone"
             >
               {data.player?.name ?? 'Player'} — Scouting Composite
             </h3>
@@ -754,8 +750,7 @@ export function PlayerScoutingComposite({
                   style={{ backgroundColor: item.color }}
                 />
                 <span
-                  className="text-[9px]"
-                  style={{ fontFamily: 'var(--bsi-font-mono)', color: 'var(--bsi-dust)' }}
+                  className="text-[9px] font-mono text-bsi-dust"
                 >
                   {item.label}
                 </span>

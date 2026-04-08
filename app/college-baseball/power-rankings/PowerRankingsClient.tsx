@@ -120,8 +120,7 @@ function MetricCell({ label, value, highlight }: { label: string; value: string;
         {value}
       </p>
       <p
-        className="text-[8px] uppercase tracking-[0.15em] mt-0.5"
-        style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}
+        className="text-[8px] uppercase tracking-[0.15em] mt-0.5 text-bsi-dust font-mono"
       >
         {label}
       </p>
@@ -155,7 +154,7 @@ export default function PowerRankingsClient() {
               Not borrowed. Earned.
             </p>
             {meta?.lastUpdated && (
-              <p className="mt-2 text-[10px]" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
+              <p className="mt-2 text-[10px] text-bsi-dust font-mono">
                 Last computed: {formatTimestamp(meta.lastUpdated)}
               </p>
             )}
@@ -203,7 +202,7 @@ export default function PowerRankingsClient() {
               <div className="heritage-card overflow-hidden">
                 <div className="px-5 py-3 flex items-center justify-between bg-surface-press-box">
                   <span className="heritage-stamp">Top {Math.min(data.rankings.length, 50)}</span>
-                  <span className="text-[9px] uppercase tracking-[0.12em]" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
+                  <span className="text-[9px] uppercase tracking-[0.12em] text-bsi-dust font-mono">
                     {data.season} Season
                   </span>
                 </div>
@@ -234,12 +233,11 @@ export default function PowerRankingsClient() {
                       {/* Composite score */}
                       <div className="text-right">
                         <p
-                          className="text-lg font-bold"
-                          style={{ color: 'var(--bsi-primary)', fontFamily: 'var(--bsi-font-display)' }}
+                          className="text-lg font-bold text-bsi-primary font-display"
                         >
                           {team.score.toFixed(1)}
                         </p>
-                        <p className="text-[8px] uppercase tracking-[0.15em]" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
+                        <p className="text-[8px] uppercase tracking-[0.15em] text-bsi-dust font-mono">
                           BSI Score
                         </p>
                       </div>

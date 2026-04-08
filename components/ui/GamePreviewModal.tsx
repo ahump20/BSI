@@ -222,8 +222,7 @@ function LinescoreTable({
   return (
     <div className="overflow-x-auto -mx-1">
       <table
-        className="w-full text-[10px] tabular-nums"
-        style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
+        className="w-full text-[10px] tabular-nums font-mono text-bsi-dust"
       >
         <thead>
           <tr>
@@ -458,15 +457,13 @@ export function GamePreviewModal({ sport, gameId, onClose }: GamePreviewModalPro
           ) : error ? (
             <div className="text-center py-6">
               <p
-                className="text-sm mb-3"
-                style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)' }}
+                className="text-sm mb-3 font-serif text-bsi-dust"
               >
                 {error}
               </p>
               <Link
                 href={`/${sport}/game/${gameId}/`}
-                className="btn-heritage text-[10px] uppercase tracking-wider px-4 py-2"
-                style={{ fontFamily: 'var(--font-oswald)' }}
+                className="btn-heritage text-[10px] uppercase tracking-wider px-4 py-2 font-display"
                 onClick={onClose}
               >
                 View Full Game &rarr;
@@ -483,14 +480,12 @@ export function GamePreviewModal({ sport, gameId, onClose }: GamePreviewModalPro
                   ].map((row) => (
                     <div key={row.label} className="flex items-center justify-between">
                       <span
-                        className="text-sm font-bold uppercase tracking-wide truncate max-w-[200px]"
-                        style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                        className="text-sm font-bold uppercase tracking-wide truncate max-w-[200px] font-display text-bsi-bone"
                       >
                         {row.team}
                       </span>
                       <span
-                        className="text-2xl font-bold tabular-nums"
-                        style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-bone)' }}
+                        className="text-2xl font-bold tabular-nums font-mono text-bsi-bone"
                       >
                         {row.score}
                       </span>
@@ -522,8 +517,7 @@ export function GamePreviewModal({ sport, gameId, onClose }: GamePreviewModalPro
               <div className="mt-4 text-center">
                 <Link
                   href={`/${sport}/game/${gameId}/`}
-                  className="btn-heritage text-[10px] uppercase tracking-wider px-5 py-2 inline-block"
-                  style={{ fontFamily: 'var(--font-oswald)' }}
+                  className="btn-heritage text-[10px] uppercase tracking-wider px-5 py-2 inline-block font-display"
                   onClick={onClose}
                 >
                   View Full Game &rarr;

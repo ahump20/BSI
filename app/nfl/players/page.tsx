@@ -141,7 +141,7 @@ function PlayerCard({ player }: { player: Player }) {
           </div>
 
           <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-lg truncate transition-colors" style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}>
+            <h3 className="font-bold text-lg truncate transition-colors font-display text-bsi-bone">
               {player.name}
             </h3>
             <div className="flex items-center gap-2 text-sm text-bsi-dust">
@@ -265,7 +265,7 @@ export default function NFLPlayersPage() {
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="text-3xl md:text-4xl font-bold uppercase tracking-wider" style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}>
+              <h1 className="text-3xl md:text-4xl font-bold uppercase tracking-wider font-display text-bsi-bone">
                 NFL Players
               </h1>
             </ScrollReveal>

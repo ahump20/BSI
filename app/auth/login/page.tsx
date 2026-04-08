@@ -118,8 +118,7 @@ export default function LoginPage() {
           <ScrollReveal direction="up" delay={80}>
             <div className="heritage-card p-6 mb-6">
               <h2
-                className="text-lg font-bold uppercase tracking-wide mb-1"
-                style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+                className="text-lg font-bold uppercase tracking-wide mb-1 font-display text-bsi-bone"
               >
                 Need Your Key?
               </h2>
@@ -198,8 +197,7 @@ export default function LoginPage() {
           <ScrollReveal direction="up" delay={140}>
             <div className="heritage-card p-6" style={{ borderTop: '3px solid var(--bsi-primary)' }}>
               <h2
-                className="text-lg font-bold uppercase tracking-wide mb-1"
-                style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+                className="text-lg font-bold uppercase tracking-wide mb-1 font-display text-bsi-bone"
               >
                 Have Your Key?
               </h2>

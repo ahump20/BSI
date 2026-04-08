@@ -86,8 +86,7 @@ function GradeBar({ label, grade }: { label: string; grade: number }) {
   return (
     <div className="flex items-center gap-3">
       <span
-        className="text-[10px] uppercase tracking-wider w-20 shrink-0"
-        style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-dust)' }}
+        className="text-[10px] uppercase tracking-wider w-20 shrink-0 font-display text-bsi-dust"
       >
         {label}
       </span>
@@ -133,8 +132,7 @@ function GradesSection({ grades, isHitter }: { grades: ScoutingGrades; isHitter:
       {/* Overall grade — prominent */}
       <div className="flex items-center gap-3 mb-4">
         <span
-          className="text-[10px] uppercase tracking-wider"
-          style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-dust)' }}
+          className="text-[10px] uppercase tracking-wider font-display text-bsi-dust"
         >
           Overall
         </span>
@@ -175,14 +173,12 @@ function KeyStatsGrid({ stats }: { stats: Record<string, string | number> }) {
           style={{ background: 'rgba(255,255,255,0.03)' }}
         >
           <p
-            className="text-[10px] uppercase tracking-wider mb-1"
-            style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-dust)' }}
+            className="text-[10px] uppercase tracking-wider mb-1 font-display text-bsi-dust"
           >
             {label}
           </p>
           <p
-            className="text-sm font-semibold"
-            style={{ fontFamily: 'var(--bsi-font-mono)', color: 'var(--bsi-bone)' }}
+            className="text-sm font-semibold font-mono text-bsi-bone"
           >
             {value}
           </p>
@@ -204,8 +200,7 @@ function ReportTeaser({ teaser }: { teaser: { sections: string[]; cta: string } 
         style={{ borderBottom: '1px solid var(--border-vintage)' }}
       >
         <h3
-          className="text-sm uppercase tracking-wider font-bold"
-          style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+          className="text-sm uppercase tracking-wider font-bold font-display text-bsi-bone"
         >
           AI Scouting Report
         </h3>
@@ -282,8 +277,7 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
             style={{ borderBottom: '1px solid var(--border-vintage)' }}
           >
             <h3
-              className="text-sm uppercase tracking-wider font-bold"
-              style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+              className="text-sm uppercase tracking-wider font-bold font-display text-bsi-bone"
             >
               AI Scouting Report
             </h3>
@@ -316,8 +310,7 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
           style={{ borderBottom: '1px solid var(--border-vintage)' }}
         >
           <h3
-            className="text-sm uppercase tracking-wider font-bold"
-            style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+            className="text-sm uppercase tracking-wider font-bold font-display text-bsi-bone"
           >
             AI Scouting Report
           </h3>
@@ -344,8 +337,7 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
           style={{ borderBottom: '1px solid var(--border-vintage)' }}
         >
           <h3
-            className="text-sm uppercase tracking-wider font-bold"
-            style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+            className="text-sm uppercase tracking-wider font-bold font-display text-bsi-bone"
           >
             AI Scouting Report
           </h3>
@@ -388,8 +380,7 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
         >
           <div>
             <h3
-              className="text-sm uppercase tracking-wider font-bold"
-              style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+              className="text-sm uppercase tracking-wider font-bold font-display text-bsi-bone"
             >
               AI Scouting Report
             </h3>
@@ -418,8 +409,7 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
           {/* Grades */}
           <div className="p-5" style={{ borderRight: '1px solid var(--border-vintage)' }}>
             <p
-              className="text-[10px] uppercase tracking-wider mb-3"
-              style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-primary)' }}
+              className="text-[10px] uppercase tracking-wider mb-3 font-display text-bsi-primary"
             >
               Scout Grades (20-80 Scale)
             </p>
@@ -429,8 +419,7 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
           {/* Key Stats */}
           <div className="p-5">
             <p
-              className="text-[10px] uppercase tracking-wider mb-3"
-              style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-primary)' }}
+              className="text-[10px] uppercase tracking-wider mb-3 font-display text-bsi-primary"
             >
               Key Numbers
             </p>
@@ -445,8 +434,7 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
         >
           <div className="p-5" style={{ borderRight: '1px solid var(--border-vintage)' }}>
             <p
-              className="text-[10px] uppercase tracking-wider mb-2"
-              style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-primary)' }}
+              className="text-[10px] uppercase tracking-wider mb-2 font-display text-bsi-primary"
             >
               Strengths
             </p>
@@ -461,8 +449,7 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
           </div>
           <div className="p-5">
             <p
-              className="text-[10px] uppercase tracking-wider mb-2"
-              style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-primary)' }}
+              className="text-[10px] uppercase tracking-wider mb-2 font-display text-bsi-primary"
             >
               Weaknesses
             </p>
@@ -480,8 +467,7 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
         {/* Projection */}
         <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
           <p
-            className="text-[10px] uppercase tracking-wider mb-2"
-            style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-primary)' }}
+            className="text-[10px] uppercase tracking-wider mb-2 font-display text-bsi-primary"
           >
             Projection
           </p>
@@ -497,8 +483,7 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
         {report.comparables.length > 0 && (
           <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
             <p
-              className="text-[10px] uppercase tracking-wider mb-2"
-              style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-primary)' }}
+              className="text-[10px] uppercase tracking-wider mb-2 font-display text-bsi-primary"
             >
               Comparables
             </p>
@@ -520,8 +505,7 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
             className="flex items-center gap-2 mb-2 group"
           >
             <p
-              className="text-[10px] uppercase tracking-wider"
-              style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-primary)' }}
+              className="text-[10px] uppercase tracking-wider font-display text-bsi-primary"
             >
               Full Narrative Report
             </p>

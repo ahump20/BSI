@@ -2,6 +2,7 @@
 
 import { useGameData } from '../layout';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { TeamCircle } from '@/components/sports/TeamCircle';
 
 /**
  * Team Stats Page
@@ -136,9 +137,7 @@ export default function TeamStatsClient() {
           {/* Team Headers */}
           <div className="flex items-center justify-between mb-6 px-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-background-secondary rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange">
-                {game.teams.away.abbreviation}
-              </div>
+              <TeamCircle logo={game.teams.away.logo} abbreviation={game.teams.away.abbreviation} size="w-12 h-12" textSize="text-sm" />
               <div>
                 <p className="font-semibold text-text-primary">{game.teams.away.name}</p>
                 <p className="text-text-tertiary text-sm">{game.teams.away.record}</p>
@@ -146,9 +145,7 @@ export default function TeamStatsClient() {
             </div>
             <span className="text-text-tertiary text-sm font-semibold">VS</span>
             <div className="flex items-center gap-3 flex-row-reverse">
-              <div className="w-12 h-12 bg-background-secondary rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange">
-                {game.teams.home.abbreviation}
-              </div>
+              <TeamCircle logo={game.teams.home.logo} abbreviation={game.teams.home.abbreviation} size="w-12 h-12" textSize="text-sm" />
               <div className="text-right">
                 <p className="font-semibold text-text-primary">{game.teams.home.name}</p>
                 <p className="text-text-tertiary text-sm">{game.teams.home.record}</p>

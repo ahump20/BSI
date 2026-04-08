@@ -115,8 +115,7 @@ export default function DataSourcesPage() {
             <div className="max-w-4xl mx-auto relative">
               <span className="heritage-stamp block mb-4">Transparency</span>
               <h1
-                className="text-3xl md:text-4xl font-bold uppercase tracking-wider mb-3"
-                style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                className="text-3xl md:text-4xl font-bold uppercase tracking-wider mb-3 font-display text-bsi-bone"
               >
                 Data Sources
               </h1>
@@ -129,8 +128,7 @@ export default function DataSourcesPage() {
               {/* Providers */}
               <section className="mb-16">
                 <h2
-                  className="text-xl font-semibold uppercase tracking-wide mb-6"
-                  style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                  className="text-xl font-semibold uppercase tracking-wide mb-6 font-display text-bsi-bone"
                 >
                   Providers
                 </h2>
@@ -184,8 +182,7 @@ export default function DataSourcesPage() {
               {/* Internal Systems */}
               <section className="mb-16">
                 <h2
-                  className="text-xl font-semibold uppercase tracking-wide mb-6"
-                  style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                  className="text-xl font-semibold uppercase tracking-wide mb-6 font-display text-bsi-bone"
                 >
                   Internal Systems
                 </h2>
@@ -197,8 +194,7 @@ export default function DataSourcesPage() {
                     >
                       <div className="flex flex-wrap items-center gap-3 mb-3">
                         <h3
-                          className="text-lg font-bold"
-                          style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                          className="text-lg font-bold font-display text-bsi-bone"
                         >
                           {p.name}
                         </h3>
@@ -227,8 +223,7 @@ export default function DataSourcesPage() {
               {/* Storage Layers */}
               <section className="mb-16">
                 <h2
-                  className="text-xl font-semibold uppercase tracking-wide mb-6"
-                  style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                  className="text-xl font-semibold uppercase tracking-wide mb-6 font-display text-bsi-bone"
                 >
                   Storage Layers
                 </h2>
@@ -257,8 +252,7 @@ export default function DataSourcesPage() {
               {/* Seasonal Caveats */}
               <section className="mb-16">
                 <h2
-                  className="text-xl font-semibold uppercase tracking-wide mb-6"
-                  style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                  className="text-xl font-semibold uppercase tracking-wide mb-6 font-display text-bsi-bone"
                 >
                   Seasonal Caveats
                 </h2>
@@ -285,8 +279,7 @@ export default function DataSourcesPage() {
                   className="rounded-sm p-6 sm:p-8 bg-surface-press-box border border-border-vintage"
                 >
                   <h2
-                    className="text-xl font-semibold uppercase tracking-wide mb-4"
-                    style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                    className="text-xl font-semibold uppercase tracking-wide mb-4 font-display text-bsi-bone"
                   >
                     How It Works
                   </h2>

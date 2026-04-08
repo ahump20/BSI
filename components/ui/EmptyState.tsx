@@ -58,8 +58,7 @@ export function EmptyState({ type, sport: _sport, message, action, onRetry }: Em
     <div className="flex flex-col items-center justify-center py-12 px-4">
       <Icon className="w-16 h-16 mb-4" style={{ color: 'var(--bsi-dust, #C4B8A5)' }} />
       <h3
-        className="text-xl md:text-2xl font-semibold mb-2"
-        style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone, #F5F2EB)' }}
+        className="text-xl md:text-2xl font-semibold mb-2 font-display text-bsi-bone"
       >
         {config.title}
       </h3>

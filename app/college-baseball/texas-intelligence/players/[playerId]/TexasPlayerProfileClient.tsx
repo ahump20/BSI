@@ -212,8 +212,7 @@ function RadarChart({ radar }: { radar: RadarScores }) {
             y={y}
             textAnchor="middle"
             dominantBaseline="middle"
-            className="fill-bsi-dust text-[9px] uppercase tracking-wider"
-            style={{ fontFamily: 'Oswald, sans-serif' }}
+            className="fill-bsi-dust text-[9px] uppercase tracking-wider font-display"
           >
             {label}
           </text>
@@ -237,8 +236,8 @@ function HavfBar({ label, description, value }: { label: string; description: st
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between text-xs">
-        <span className="font-semibold text-text-primary uppercase tracking-wider" style={{ fontFamily: 'Oswald, sans-serif' }}>
-          {label} <span className="text-text-muted font-normal normal-case" style={{ fontFamily: 'Cormorant Garamond, serif' }}>{description}</span>
+        <span className="font-semibold text-text-primary uppercase tracking-wider font-display">
+          {label} <span className="text-text-muted font-normal normal-case font-serif">{description}</span>
         </span>
         <span className="font-mono text-text-secondary">{value}</span>
       </div>
@@ -414,7 +413,7 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
                     {RADAR_KEYS.map((key, i) => (
                       <div key={key}>
                         <div className="font-mono text-sm text-text-primary">{radar[key]}</div>
-                        <div className="text-[10px] text-text-muted uppercase tracking-wider" style={{ fontFamily: 'Oswald, sans-serif' }}>{RADAR_LABELS[i]}</div>
+                        <div className="text-[10px] text-text-muted uppercase tracking-wider font-display">{RADAR_LABELS[i]}</div>
                       </div>
                     ))}
                   </div>
@@ -664,7 +663,7 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
 function QuickStat({ label, value }: { label: string; value: string }) {
   return (
     <div className="heritage-card p-4 text-center">
-      <div className="text-[10px] text-text-muted uppercase tracking-wider mb-1" style={{ fontFamily: 'Oswald, sans-serif' }}>
+      <div className="text-[10px] text-text-muted uppercase tracking-wider mb-1 font-display">
         {label}
       </div>
       <div className="text-2xl font-bold font-mono text-text-primary">{value}</div>

@@ -233,8 +233,7 @@ export default function SavantHubPage() {
               <div className="flex items-center gap-3">
                 <span className="heritage-stamp">Savant</span>
                 <h1
-                  className="text-lg font-bold uppercase tracking-wide"
-                  style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+                  className="text-lg font-bold uppercase tracking-wide font-display text-bsi-bone"
                 >
                   D1 Sabermetrics
                 </h1>

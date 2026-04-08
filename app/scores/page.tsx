@@ -695,7 +695,7 @@ function ScoresHubContent() {
           <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[rgba(191,87,0,0.15)] to-transparent" />
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Breadcrumb */}
-            <div className="flex items-center gap-2 mb-4 text-xs" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
+            <div className="flex items-center gap-2 mb-4 text-xs text-bsi-dust font-mono">
               <Link href="/" className="transition-colors hover:text-bsi-bone">Home</Link>
               <span>/</span>
               <span className="text-bsi-primary">Scores</span>
@@ -1043,8 +1043,7 @@ function ScoresHubContent() {
               <div className="mt-8 pt-6 border-t" style={{ borderColor: 'var(--border-vintage, rgba(140,98,57,0.3))' }}>
                 <Link
                   href="/college-baseball/savant"
-                  className="block p-4 transition-colors group"
-                  className="bg-surface-dugout border border-border-vintage"
+                  className="block p-4 transition-colors group bg-surface-dugout border border-border-vintage"
                 >
                   <div className="flex items-center justify-between">
                     <div>

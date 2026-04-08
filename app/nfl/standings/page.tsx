@@ -86,7 +86,7 @@ export default function NFLStandingsPage() {
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="text-3xl md:text-4xl font-bold uppercase tracking-wider" style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}>
+              <h1 className="text-3xl md:text-4xl font-bold uppercase tracking-wider font-display text-bsi-bone">
                 NFL Standings
               </h1>
             </ScrollReveal>
@@ -172,7 +172,7 @@ export default function NFLStandingsPage() {
                 {currentConference?.divisions.map((division, index) => (
                   <ScrollReveal key={division.name} direction="up" delay={index * 100}>
                     <Card variant="default" padding="lg">
-                      <h3 className="text-lg font-bold mb-4" style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary)' }}>
+                      <h3 className="text-lg font-bold mb-4 font-display text-bsi-primary">
                         {division.name}
                       </h3>
 

@@ -494,8 +494,7 @@ export default function SavantPlayerClient() {
             <div style={{ padding: 'clamp(1.25rem, 3vw, 2rem) 0 clamp(1.5rem, 3vw, 2.5rem)' }}>
               {/* Breadcrumb */}
               <nav
-                className="flex items-center gap-2 text-xs mb-6"
-                style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--bsi-dust)' }}
+                className="flex items-center gap-2 text-xs mb-6 font-mono text-bsi-dust"
                 aria-label="Breadcrumb"
               >
                 <Link href="/" className="transition-colors hover:text-bsi-bone">Home</Link>
@@ -857,13 +856,12 @@ export default function SavantPlayerClient() {
                         border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))',
                       }}
                     >
-                      <p className="text-xs" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
+                      <p className="text-xs text-bsi-dust font-mono">
                         {remaining} free profile{remaining === 1 ? '' : 's'} remaining
                       </p>
                       <Link
                         href="/pricing"
-                        className="text-xs uppercase tracking-wider transition-colors hover:text-bsi-bone"
-                        style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-primary)' }}
+                        className="text-xs uppercase tracking-wider transition-colors hover:text-bsi-bone font-display text-bsi-primary"
                       >
                         Go Pro
                       </Link>
@@ -1358,8 +1356,7 @@ function StatCell({ label, value }: { label: string; value: string }) {
         {label}
       </span>
       <span
-        className="text-sm font-bold tabular-nums"
-        style={{ color: 'var(--bsi-bone)', fontFamily: 'var(--bsi-font-data)' }}
+        className="text-sm font-bold tabular-nums text-bsi-bone font-mono"
       >
         {value}
       </span>

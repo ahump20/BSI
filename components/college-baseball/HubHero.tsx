@@ -135,7 +135,7 @@ export function HubHero({
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-bsi-primary opacity-75" />
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-bsi-primary" />
               </span>
-              <span className="text-[10px] uppercase tracking-wider" style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--bsi-dust)' }}>
+              <span className="text-[10px] uppercase tracking-wider font-mono text-bsi-dust">
                 Live &middot; {dataSource}
               </span>
             </div>
@@ -219,7 +219,7 @@ export function HubHero({
                       background: 'rgba(10,10,10,0.44)',
                     }}
                   >
-                    <span className="font-bold text-sm tracking-wide" style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--bsi-primary)' }}>
+                    <span className="font-bold text-sm tracking-wide font-mono text-bsi-primary">
                       {metric.abbr}
                     </span>
                     <p className="mt-2 text-xs leading-relaxed text-bsi-dust">
@@ -296,7 +296,7 @@ export function HubHero({
               href="/college-baseball/savant/visuals/"
               className="btn-heritage inline-flex items-center gap-2 px-5 py-2.5 text-sm group"
             >
-              <span className="uppercase tracking-wider font-semibold" style={{ fontFamily: 'var(--bsi-font-display)' }}>Visualization Tools</span>
+              <span className="uppercase tracking-wider font-semibold font-display">Visualization Tools</span>
               <span className="text-xs text-bsi-dust">16 interactive charts · D3 · Live data</span>
               <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M7 17L17 7M17 7H7M17 7v10" />
