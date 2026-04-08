@@ -287,7 +287,7 @@ export default function CompareHubPage() {
     const bWins = higherIsBetter ? numB > numA : numB < numA;
 
     return (
-      <div className="grid grid-cols-3 items-center py-3 border-b border-[var(--border-vintage)]/30">
+      <div className="grid grid-cols-3 items-center py-3 border-b border-[rgba(140,98,57,0.3)]">
         <div className="text-right pr-4">
           <span className={`font-mono text-sm ${aWins && !isNaN(numA) && !isNaN(numB) ? 'text-[var(--bsi-success)] font-bold' : 'text-bsi-bone'}`}>
             {fA}
@@ -312,7 +312,7 @@ export default function CompareHubPage() {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-[var(--border-vintage)]/30">
+        <Section padding="sm" className="border-b border-[rgba(140,98,57,0.3)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link href="/college-baseball" className="text-bsi-dust hover:text-burnt-orange transition-colors">
@@ -354,7 +354,7 @@ export default function CompareHubPage() {
                       setTeamA('');
                       setTeamB('');
                     }}
-                    className="appearance-none bg-surface-dugout border border-[var(--border-vintage)]/40 rounded-sm px-4 py-2 pr-10 text-bsi-bone text-sm focus:border-burnt-orange focus:outline-none cursor-pointer"
+                    className="appearance-none bg-surface-dugout border border-[rgba(140,98,57,0.4)] rounded-sm px-4 py-2 pr-10 text-bsi-bone text-sm focus:border-burnt-orange focus:outline-none cursor-pointer"
                   >
                     {conferences.map((c) => (
                       <option key={c} value={c}>{c === 'All' ? 'All Conferences' : c}</option>
@@ -372,7 +372,7 @@ export default function CompareHubPage() {
                   <select
                     value={teamA}
                     onChange={(e) => setTeamA(e.target.value)}
-                    className="w-full appearance-none bg-surface-dugout border border-[var(--border-vintage)]/40 rounded-sm px-4 py-3 text-bsi-bone text-sm focus:border-burnt-orange focus:outline-none cursor-pointer"
+                    className="w-full appearance-none bg-surface-dugout border border-[rgba(140,98,57,0.4)] rounded-sm px-4 py-3 text-bsi-bone text-sm focus:border-burnt-orange focus:outline-none cursor-pointer"
                   >
                     <option value="">Select a team...</option>
                     {teamNames.filter((n) => n !== teamB).map((name) => (
@@ -395,7 +395,7 @@ export default function CompareHubPage() {
                   <select
                     value={teamB}
                     onChange={(e) => setTeamB(e.target.value)}
-                    className="w-full appearance-none bg-surface-dugout border border-[var(--border-vintage)]/40 rounded-sm px-4 py-3 text-bsi-bone text-sm focus:border-burnt-orange focus:outline-none cursor-pointer"
+                    className="w-full appearance-none bg-surface-dugout border border-[rgba(140,98,57,0.4)] rounded-sm px-4 py-3 text-bsi-bone text-sm focus:border-burnt-orange focus:outline-none cursor-pointer"
                   >
                     <option value="">Select a team...</option>
                     {teamNames.filter((n) => n !== teamA).map((name) => (

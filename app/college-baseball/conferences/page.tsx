@@ -323,7 +323,7 @@ export default function ConferencesHubPage() {
                         const totalGames = (a?.totalWins || 0) + (a?.totalLosses || 0);
                         const winPct = totalGames > 0 ? (a?.totalWins || 0) / totalGames : undefined;
                         return (
-                          <tr key={conf.id} className="border-b border-[var(--border-vintage)]/20 hover:bg-surface-dugout/50 transition-colors">
+                          <tr key={conf.id} className="border-b border-[rgba(140,98,57,0.2)] hover:bg-surface-dugout/50 transition-colors">
                             <td className="px-4 py-3">
                               <Link href={`/college-baseball/conferences/${conf.id}`} className="text-bsi-bone hover:text-burnt-orange transition-colors font-display font-bold">
                                 {conf.name}

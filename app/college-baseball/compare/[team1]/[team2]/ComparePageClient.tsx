@@ -199,7 +199,7 @@ export default function ComparePageClient() {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-[var(--border-vintage)]/30">
+        <Section padding="sm" className="border-b border-[rgba(140,98,57,0.3)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
