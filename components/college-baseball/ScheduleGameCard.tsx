@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { TeamCircle } from '@/components/sports/TeamCircle';
 
 interface ScheduleGame {
   id: string;
@@ -15,6 +16,7 @@ interface ScheduleGame {
     conference: string;
     score: number | null;
     record: { wins: number; losses: number };
+    logo?: string;
   };
   awayTeam: {
     id: string;
@@ -23,6 +25,7 @@ interface ScheduleGame {
     conference: string;
     score: number | null;
     record: { wins: number; losses: number };
+    logo?: string;
   };
   venue: string;
   tv?: string;
@@ -62,9 +65,7 @@ export function ScheduleGameCard({ game }: { game: ScheduleGame }) {
         <div className="p-3 space-y-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-6 h-6 bg-surface-light rounded-full flex items-center justify-center text-[10px] font-bold text-burnt-orange flex-shrink-0">
-                {game.awayTeam.shortName?.slice(0, 3).toUpperCase() || 'AWY'}
-              </div>
+              <TeamCircle logo={game.awayTeam.logo} abbreviation={game.awayTeam.shortName?.slice(0, 3).toUpperCase() || 'AWY'} size="w-6 h-6" textSize="text-[10px]" />
               <span className={`font-semibold text-sm truncate ${awayWon ? 'text-text-primary' : 'text-text-secondary'}`}>
                 {game.awayTeam.name}
               </span>
@@ -77,9 +78,7 @@ export function ScheduleGameCard({ game }: { game: ScheduleGame }) {
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-6 h-6 bg-surface-light rounded-full flex items-center justify-center text-[10px] font-bold text-burnt-orange flex-shrink-0">
-                {game.homeTeam.shortName?.slice(0, 3).toUpperCase() || 'HME'}
-              </div>
+              <TeamCircle logo={game.homeTeam.logo} abbreviation={game.homeTeam.shortName?.slice(0, 3).toUpperCase() || 'HME'} size="w-6 h-6" textSize="text-[10px]" />
               <span className={`font-semibold text-sm truncate ${homeWon ? 'text-text-primary' : 'text-text-secondary'}`}>
                 {game.homeTeam.name}
               </span>

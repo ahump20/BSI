@@ -79,7 +79,7 @@ function CardContent({ game, showHitsErrors }: { game: GameScoreCardGame; showHi
         ) : (
           <div
             className="font-semibold text-sm"
-            style={{ color: 'var(--bsi-primary, #BF5700)' }}
+            className="text-bsi-primary"
           >
             {game.status}
           </div>

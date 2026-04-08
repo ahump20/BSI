@@ -131,18 +131,17 @@ export default function TeamComparePage() {
         <div className="py-10 sm:py-14 max-w-3xl mx-auto">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-xs mb-6 font-mono text-bsi-dust">
-            <Link href="/" className="hover:underline" style={{ color: 'var(--heritage-columbia-blue, #4B9CD3)' }}>Home</Link>
+            <Link href="/" className="hover:underline text-heritage-columbia">Home</Link>
             <span>/</span>
-            <Link href="/college-baseball" className="hover:underline" style={{ color: 'var(--heritage-columbia-blue, #4B9CD3)' }}>College Baseball</Link>
+            <Link href="/college-baseball" className="hover:underline text-heritage-columbia">College Baseball</Link>
             <span>/</span>
-            <Link href="/college-baseball/savant" className="hover:underline" style={{ color: 'var(--heritage-columbia-blue, #4B9CD3)' }}>Savant</Link>
+            <Link href="/college-baseball/savant" className="hover:underline text-heritage-columbia">Savant</Link>
             <span>/</span>
-            <span style={{ color: 'var(--bsi-primary, #BF5700)' }}>Team Compare</span>
+            <span className="text-bsi-primary">Team Compare</span>
           </nav>
 
           <h1
-            className="font-oswald uppercase text-2xl sm:text-3xl md:text-4xl font-bold tracking-wide mb-2"
-            style={{ color: 'var(--bsi-bone, #F5F2EB)' }}
+            className="font-oswald uppercase text-2xl sm:text-3xl md:text-4xl font-bold tracking-wide mb-2 text-bsi-bone"
           >
             Team Comparison
           </h1>
@@ -202,9 +201,9 @@ export default function TeamComparePage() {
             >
               {/* Header */}
               <div className="flex items-center justify-between px-4 py-3" style={{ borderBottom: '1px solid var(--border-vintage, rgba(140,98,57,0.3))' }}>
-                <span className="font-oswald uppercase text-sm font-bold" style={{ color: 'var(--bsi-primary, #BF5700)' }}>{leftName}</span>
+                <span className="font-oswald uppercase text-sm font-bold text-bsi-primary">{leftName}</span>
                 <span className="font-mono text-[10px] uppercase tracking-widest text-bsi-dust">Batting</span>
-                <span className="font-oswald uppercase text-sm font-bold" style={{ color: 'var(--heritage-columbia-blue, #4B9CD3)' }}>{rightName}</span>
+                <span className="font-oswald uppercase text-sm font-bold text-heritage-columbia">{rightName}</span>
               </div>
 
               {COMPARE_METRICS.filter(m => m.category === 'batting').map((m) => (
@@ -220,9 +219,9 @@ export default function TeamComparePage() {
 
               {/* Pitching header */}
               <div className="flex items-center justify-between px-4 py-3" style={{ borderTop: '2px solid var(--border-vintage, rgba(140,98,57,0.3))', borderBottom: '1px solid var(--border-vintage, rgba(140,98,57,0.3))' }}>
-                <span className="font-oswald uppercase text-sm font-bold" style={{ color: 'var(--bsi-primary, #BF5700)' }}>{leftName}</span>
+                <span className="font-oswald uppercase text-sm font-bold text-bsi-primary">{leftName}</span>
                 <span className="font-mono text-[10px] uppercase tracking-widest text-bsi-dust">Pitching</span>
-                <span className="font-oswald uppercase text-sm font-bold" style={{ color: 'var(--heritage-columbia-blue, #4B9CD3)' }}>{rightName}</span>
+                <span className="font-oswald uppercase text-sm font-bold text-heritage-columbia">{rightName}</span>
               </div>
 
               {COMPARE_METRICS.filter(m => m.category === 'pitching').map((m) => (

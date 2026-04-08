@@ -56,7 +56,7 @@ export function LegacyRouteBridge({
         >
           <p
             className="mb-4 text-xs font-semibold uppercase tracking-[0.24em]"
-            style={{ color: 'var(--bsi-primary)' }}
+            className="text-bsi-primary"
           >
             {eyebrow}
           </p>
@@ -86,7 +86,7 @@ export function LegacyRouteBridge({
           {note ? (
             <p
               className="mt-6 text-sm uppercase tracking-[0.12em]"
-              style={{ color: 'var(--bsi-dust)' }}
+              className="text-bsi-dust"
             >
               {note}
             </p>

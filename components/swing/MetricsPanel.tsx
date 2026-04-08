@@ -40,7 +40,7 @@ function ScoreRing({ score, size = 80 }: { score: number; size?: number }) {
           transition={{ duration: 1.2, ease: 'easeOut', delay: 0.3 }}
         />
       </svg>
-      <span className="absolute text-lg font-bold font-display" style={{ color }}>
+      <span className="absolute text-lg font-bold font-display">
         {score}
       </span>
     </div>

@@ -343,7 +343,7 @@ export function SimilarityMap({ batters, pitchers, onPlayerClick, className = ''
             >
               Player Similarity
             </h3>
-            <p className="text-[10px] font-mono mt-0.5" style={{ color: 'var(--bsi-dust)' }}>
+            <p className="text-[10px] font-mono mt-0.5 text-bsi-dust">
               Euclidean distance across z-scored stats · Click satellites to re-center
             </p>
           </div>
@@ -408,27 +408,27 @@ export function SimilarityMap({ batters, pitchers, onPlayerClick, className = ''
         <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mb-2">
           <div className="flex items-center gap-1.5">
             <div className="w-5 h-0.5 rounded" style={{ background: 'rgba(196,184,165,0.3)' }} />
-            <span className="text-[9px] font-mono" style={{ color: 'var(--bsi-dust)' }}>Thin = distant</span>
+            <span className="text-[9px] font-mono text-bsi-dust">Thin = distant</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-5 h-1 rounded" style={{ background: 'rgba(196,184,165,0.5)' }} />
-            <span className="text-[9px] font-mono" style={{ color: 'var(--bsi-dust)' }}>Thick = close match</span>
+            <span className="text-[9px] font-mono text-bsi-dust">Thick = close match</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-3 h-3 rounded-full" style={{ background: 'var(--bsi-primary)' }} />
-            <span className="text-[9px] font-mono" style={{ color: 'var(--bsi-dust)' }}>Center player</span>
+            <span className="text-[9px] font-mono text-bsi-dust">Center player</span>
           </div>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
           {Object.entries(CONF_COLORS).slice(0, 8).map(([conf, color]) => (
             <div key={conf} className="flex items-center gap-1">
               <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
-              <span className="text-[8px] font-mono" style={{ color: 'var(--bsi-dust)' }}>{conf}</span>
+              <span className="text-[8px] font-mono text-bsi-dust">{conf}</span>
             </div>
           ))}
         </div>
         <div className="text-center mt-2">
-          <span className="text-[9px] font-mono" style={{ color: 'var(--bsi-dust)' }}>
+          <span className="text-[9px] font-mono text-bsi-dust">
             Click any node to re-center · Stats: {playerType === 'batting' ? BATTER_KEYS.join(', ') : PITCHER_KEYS.join(', ')}
           </span>
         </div>

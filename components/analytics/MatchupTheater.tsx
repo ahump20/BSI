@@ -216,7 +216,7 @@ function IdentityPlate({
     <div className={`${align === 'right' ? 'text-right' : 'text-left'} mb-4`}>
       <h3
         className="font-display text-lg md:text-xl font-bold uppercase tracking-wider"
-        style={{ color }}
+       
       >
         {name}
       </h3>

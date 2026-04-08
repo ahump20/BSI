@@ -434,7 +434,7 @@ function SearchContent() {
                                 {/* Type Badge */}
                                 <div
                                   className={`w-12 h-12 rounded-sm flex items-center justify-center font-bold text-sm ${getSportColor(sport)} group-hover:scale-105 transition-transform`}
-                                  style={{ color: 'var(--bsi-bone)' }}
+                                  className="text-bsi-bone"
                                 >
                                   {item.name.substring(0, 2).toUpperCase()}
                                 </div>

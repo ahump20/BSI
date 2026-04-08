@@ -104,14 +104,13 @@ export function SavantComparePanel({
           >
             Player Comparison
           </h3>
-          <span className="text-[10px] font-mono tabular-nums" style={{ color: 'var(--bsi-dust)' }}>
+          <span className="text-[10px] font-mono tabular-nums text-bsi-dust">
             {players.length} player{players.length !== 1 ? 's' : ''}
           </span>
         </div>
         <button
           onClick={onClear}
-          className="text-[10px] font-mono uppercase tracking-wider transition-colors cursor-pointer"
-          style={{ color: 'var(--bsi-primary)' }}
+          className="text-[10px] font-mono uppercase tracking-wider transition-colors cursor-pointer text-bsi-primary"
         >
           Clear All
         </button>
@@ -139,7 +138,7 @@ export function SavantComparePanel({
             >
               {player.player_name}
             </Link>
-            <span className="text-[10px]" style={{ color: 'var(--bsi-dust)' }}>
+            <span className="text-[10px] text-bsi-dust">
               {player.team}
             </span>
             <button
@@ -171,8 +170,7 @@ export function SavantComparePanel({
             <div key={col.key} className="mb-4 last:mb-0">
               <div className="flex items-center gap-2 mb-2">
                 <span
-                  className="text-[10px] uppercase tracking-widest font-mono"
-                  style={{ color: 'var(--bsi-dust)' }}
+                  className="text-[10px] uppercase tracking-widest font-mono text-bsi-dust"
                 >
                   {col.label}
                 </span>
@@ -187,7 +185,7 @@ export function SavantComparePanel({
               {isGated ? (
                 <div className="h-8 rounded-sm flex items-center justify-center"
                   style={{ background: 'rgba(140,98,57,0.06)' }}>
-                  <span className="text-[10px] font-mono" style={{ color: 'var(--bsi-dust)' }}>
+                  <span className="text-[10px] font-mono text-bsi-dust">
                     Upgrade to compare
                   </span>
                 </div>
@@ -210,7 +208,7 @@ export function SavantComparePanel({
                           className="w-2 h-2 rounded-full shrink-0"
                           style={{ background: color }}
                         />
-                        <span className="text-[10px] font-mono w-20 truncate shrink-0" style={{ color }}>
+                        <span className="text-[10px] font-mono w-20 truncate shrink-0">
                           {player.player_name.split(' ').pop()}
                         </span>
                         <div className="flex-1 h-[8px] rounded-full overflow-hidden relative" style={{ background: 'rgba(140,98,57,0.12)' }}>

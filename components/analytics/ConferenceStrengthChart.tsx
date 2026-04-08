@@ -274,7 +274,7 @@ function SubMetricBar({
     <div>
       <div className="flex items-center justify-between mb-1">
         <span className="text-[9px] text-text-muted font-mono uppercase">{label}</span>
-        <span className="text-xs font-mono font-bold" style={{ color }}>{format(value)}</span>
+        <span className="text-xs font-mono font-bold">{format(value)}</span>
       </div>
       <div className="h-[4px] rounded-full bg-surface-light overflow-hidden">
         <div

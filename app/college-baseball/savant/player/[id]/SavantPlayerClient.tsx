@@ -1182,7 +1182,7 @@ function GradeCard({ label, grade }: { label: string; grade: number }) {
       </span>
       <span
         className="text-[9px] font-mono block mt-1.5 uppercase tracking-wider"
-        style={{ color }}
+       
       >
         {gradeLabel(grade)}
       </span>
