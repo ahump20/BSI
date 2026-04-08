@@ -74,8 +74,8 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
               <PostHogProvider />
               <main id="main-content" className="flex-1 overflow-y-auto pb-20 md:pb-0">
                 <PageTransition>{children}</PageTransition>
+                <Footer />
               </main>
-              <Footer />
             </div>
           </div>
         ) : (
