@@ -27,11 +27,11 @@ const SAVANT_PLAYER_PATTERN = /^\/college-baseball\/savant\/player\/[^/]+\/?$/;
 /** Matches RSC metadata for Savant player routes */
 const SAVANT_PLAYER_RSC_PATTERN = /^\/college-baseball\/savant\/player\/[^/]+\/(__next\.[^?]+)/;
 
-/** Matches pro sport player detail routes: /{sport}/players/{id}/ */
-const PLAYER_DETAIL_PATTERN = /^\/(mlb|nfl|nba|cfb)\/players\/[^/]+\/?$/;
+/** Matches player detail routes across all sports: /{sport}/players/{id}/ */
+const PLAYER_DETAIL_PATTERN = /^\/(mlb|nfl|nba|cfb|college-baseball)\/players\/[^/]+\/?$/;
 
-/** Matches RSC metadata for pro sport player routes */
-const PLAYER_DETAIL_RSC_PATTERN = /^\/(mlb|nfl|nba|cfb)\/players\/[^/]+\/(__next\.[^?]+)/;
+/** Matches RSC metadata for player routes */
+const PLAYER_DETAIL_RSC_PATTERN = /^\/(mlb|nfl|nba|cfb|college-baseball)\/players\/[^/]+\/(__next\.[^?]+)/;
 
 /** Matches college baseball daily schedule: /college-baseball/daily/{date}/ */
 const CBB_DAILY_PATTERN = /^\/college-baseball\/daily\/[^/]+\/?$/;
