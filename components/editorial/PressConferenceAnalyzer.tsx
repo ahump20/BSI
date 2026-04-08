@@ -337,7 +337,7 @@ export default function PressConferenceAnalyzer() {
                 <h2 className="heritage-stamp text-xs mb-4">Said vs. Implied</h2>
                 <div className="space-y-4">
                   {analysis.saidVsImplied.map((s, i) => (
-                    <div key={i} className="bg-surface-scoreboard/50 rounded-sm p-4">
+                    <div key={i} className="bg-[var(--surface-scoreboard,#0A0A0A)]/50 rounded-sm p-4">
                       <div className="flex items-start gap-2 mb-2">
                         <span className="text-xs text-text-muted font-mono uppercase shrink-0 mt-0.5">Said:</span>
                         <p className="text-sm text-bsi-bone italic">&ldquo;{s.quote}&rdquo;</p>

@@ -90,10 +90,12 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
             <KonamiCodeWrapper />
             <PageTracker />
             <PostHogProvider />
-            <main id="main-content" className="min-h-screen pb-24 md:pb-0">
+            <main id="main-content" className="min-h-screen">
               <PageTransition>{children}</PageTransition>
             </main>
-            <Footer />
+            <div className="pb-24 md:pb-0">
+              <Footer />
+            </div>
             <BottomNavWrapper />
           </>
         )}

@@ -525,7 +525,7 @@ export default function TexasIntelHubClient() {
         </Section>
 
         {/* ── Item 5: Sticky Secondary Nav ────────────────────────── */}
-        <div className={`sticky top-0 z-30 transition-all duration-300 ${showStickyNav ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'} bg-surface-scoreboard/95 backdrop-blur-sm border-b border-border`}>
+        <div className={`sticky top-0 z-30 transition-all duration-300 ${showStickyNav ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'} bg-[var(--surface-scoreboard,#0A0A0A)]/95 backdrop-blur-sm border-b border-border`}>
           <Container>
             <nav className="flex items-center gap-1 overflow-x-auto py-2 scrollbar-hide" aria-label="Intelligence sections">
               {INTEL_NAV.map((item) => (

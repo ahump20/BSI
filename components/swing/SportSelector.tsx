@@ -41,7 +41,7 @@ export function SportSelector({ selected, onSelect }: SportSelectorProps) {
             className={`relative overflow-hidden rounded-sm border-2 p-6 text-left transition-all duration-300 cursor-pointer ${
               isSelected
                 ? 'border-burnt-orange bg-burnt-orange/10 shadow-[0_0_30px_rgba(191,87,0,0.15)]'
-                : 'border-border-subtle bg-surface-dugout hover:border-burnt-orange/40 hover:bg-surface-dugout/80'
+                : 'border-border-subtle bg-surface-dugout hover:border-burnt-orange/40 hover:bg-[var(--surface-dugout,#161616)]/80'
             }`}
           >
             {isSelected && (

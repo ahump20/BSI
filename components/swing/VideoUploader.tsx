@@ -79,7 +79,7 @@ export function VideoUploader({ onVideoReady, isProcessing }: VideoUploaderProps
             className={`relative rounded-sm border-2 border-dashed p-12 text-center cursor-pointer transition-all duration-300 ${
               dragActive
                 ? 'border-burnt-orange bg-burnt-orange/5 shadow-[0_0_30px_rgba(191,87,0,0.1)]'
-                : 'border-border-subtle bg-surface-dugout hover:border-burnt-orange/30 hover:bg-surface-dugout/80'
+                : 'border-border-subtle bg-surface-dugout hover:border-burnt-orange/30 hover:bg-[var(--surface-dugout,#161616)]/80'
             }`}
           >
             <input
