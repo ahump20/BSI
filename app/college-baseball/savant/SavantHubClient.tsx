@@ -713,11 +713,11 @@ function LeaderboardError({ error, onRetry, lastUpdated }: { error: string; onRe
         <p className="font-display text-sm uppercase tracking-wider mb-2 text-bsi-dust">
           Data temporarily unavailable
         </p>
-        <p className="font-mono text-[10px] mb-4" style={{ color: 'var(--bsi-dust)', opacity: 0.6 }}>
+        <p className="font-mono text-[10px] mb-4 text-bsi-dust opacity-60">
           {error}
         </p>
         {lastUpdated && (
-          <p className="font-mono text-[10px] mb-4" style={{ color: 'var(--bsi-dust)', opacity: 0.5 }}>
+          <p className="font-mono text-[10px] mb-4 text-bsi-dust opacity-50">
             Last updated: {new Date(lastUpdated).toLocaleString('en-US', { timeZone: 'America/Chicago', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })} CT
           </p>
         )}
@@ -743,7 +743,7 @@ function LeaderboardEmpty({ type }: { type: 'batting' | 'pitching' }) {
         <p className="font-display text-sm uppercase tracking-wider mb-2 text-bsi-dust">
           No {type} data available yet
         </p>
-        <p className="font-mono text-[10px]" style={{ color: 'var(--bsi-dust)', opacity: 0.6 }}>
+        <p className="font-mono text-[10px] text-bsi-dust opacity-60">
           Stats recompute every 6 hours. Try adjusting filters or check back soon.
         </p>
       </div>

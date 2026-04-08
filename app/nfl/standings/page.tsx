@@ -163,7 +163,7 @@ export default function NFLStandingsPage() {
                 <p className="italic" style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--bsi-dust, #C4B8A5)' }}>
                   Standings update during the season
                 </p>
-                <p className="text-sm mt-2" style={{ color: 'var(--bsi-dust, #C4B8A5)', opacity: 0.7 }}>
+                <p className="text-sm mt-2 text-bsi-dust opacity-70">
                   The 2026 NFL season kicks off in September
                 </p>
               </div>
