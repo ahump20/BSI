@@ -302,7 +302,7 @@ export function AppSidebar() {
         {/* Logo bar */}
         <div className="flex items-center gap-3 px-4 h-14 border-b border-white/[0.05]">
           <img
-            src="/images/brand/bsi-lettermark-square.png"
+            src="/images/brand/bsi-mascot-200.png"
             alt="BSI"
             width={28}
             height={28}

@@ -113,7 +113,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   icons: {
-    icon: '/images/brand/bsi-lettermark-square.png',
+    icon: '/images/brand/bsi-mascot-64.png',
     apple: '/apple-touch-icon.png',
   },
   manifest: '/manifest.json',
@@ -159,7 +159,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://customer-mpdvoybjqct2pzls.cloudflarestream.com" />
         <link rel="dns-prefetch" href="https://a.espncdn.com" />
         <link rel="dns-prefetch" href="https://site.api.espn.com" />
-        <link rel="preload" as="image" href="/images/brand/bsi-lettermark-square.png" />
+        <link rel="preload" as="image" href="/images/brand/bsi-mascot-200.png" />
         {/* Static JSON-LD for SEO — hardcoded content, no user input */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdContent }} />
         <BreadcrumbJsonLd />
