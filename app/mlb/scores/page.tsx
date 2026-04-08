@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useSportData } from '@/lib/hooks/useSportData';
+import { TeamCircle } from '@/components/sports/TeamCircle';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -192,9 +193,7 @@ function GameCard({ game }: { game: Game }) {
           {/* Away Team */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
-                {away?.abbreviation || '—'}
-              </div>
+              <TeamCircle logo={away?.logo} abbreviation={away?.abbreviation || '—'} size="w-8 h-8" textSize="text-xs" />
               <div>
                 <div className="flex items-center gap-2">
                   <p className={`font-semibold ${isFinal && away?.isWinner ? 'text-text-primary' : 'text-text-secondary'}`}>
@@ -227,9 +226,7 @@ function GameCard({ game }: { game: Game }) {
           {/* Home Team */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
-                {home?.abbreviation || '—'}
-              </div>
+              <TeamCircle logo={home?.logo} abbreviation={home?.abbreviation || '—'} size="w-8 h-8" textSize="text-xs" />
               <div>
                 <div className="flex items-center gap-2">
                   <p className={`font-semibold ${isFinal && home?.isWinner ? 'text-text-primary' : 'text-text-secondary'}`}>
