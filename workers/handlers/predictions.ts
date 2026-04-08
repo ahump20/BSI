@@ -10,6 +10,7 @@ const VALID_SPORTS = new Set([
 ]);
 
 const MAX_STRING_LENGTH = 200;
+const SAFE_ID_PATTERN = /^[a-zA-Z0-9_-]+$/;
 
 function validatePrediction(body: unknown): { valid: true; data: PredictionPayload } | { valid: false; error: string } {
   if (!body || typeof body !== 'object') {
@@ -19,14 +20,14 @@ function validatePrediction(body: unknown): { valid: true; data: PredictionPaylo
   const b = body as Record<string, unknown>;
   const { gameId, sport, predictedWinner, confidence, spread, overUnder } = b;
 
-  if (typeof gameId !== 'string' || gameId.length === 0 || gameId.length > MAX_STRING_LENGTH) {
-    return { valid: false, error: 'gameId must be a non-empty string (max 200 chars)' };
+  if (typeof gameId !== 'string' || gameId.length === 0 || gameId.length > MAX_STRING_LENGTH || !SAFE_ID_PATTERN.test(gameId)) {
+    return { valid: false, error: 'gameId must be a non-empty alphanumeric string (max 200 chars, hyphens/underscores allowed)' };
   }
   if (typeof sport !== 'string' || !VALID_SPORTS.has(sport)) {
     return { valid: false, error: `sport must be one of: ${[...VALID_SPORTS].join(', ')}` };
   }
-  if (typeof predictedWinner !== 'string' || predictedWinner.length === 0 || predictedWinner.length > MAX_STRING_LENGTH) {
-    return { valid: false, error: 'predictedWinner must be a non-empty string (max 200 chars)' };
+  if (typeof predictedWinner !== 'string' || predictedWinner.length === 0 || predictedWinner.length > MAX_STRING_LENGTH || /[<>"'`;]/.test(predictedWinner)) {
+    return { valid: false, error: 'predictedWinner must be a non-empty string (max 200 chars, no special characters)' };
   }
   if (confidence !== undefined && confidence !== null) {
     if (typeof confidence !== 'number' || confidence < 0 || confidence > 1 || !isFinite(confidence)) {
