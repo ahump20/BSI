@@ -130,13 +130,13 @@ export default function SavantHubPage() {
   const [minPA, setMinPA] = useState(25);
   const [compareIds, setCompareIds] = useState<Set<string>>(new Set());
 
-  const { data: battingRes, loading: battingLoading } =
+  const { data: battingRes, loading: battingLoading, error: battingError, retry: retryBatting } =
     useSportData<LeaderboardResponse>('/api/savant/batting/leaderboard?limit=100');
-  const { data: pitchingRes, loading: pitchingLoading } =
+  const { data: pitchingRes, loading: pitchingLoading, error: pitchingError, retry: retryPitching } =
     useSportData<LeaderboardResponse>('/api/savant/pitching/leaderboard?limit=100');
-  const { data: parkRes, loading: parkLoading } =
+  const { data: parkRes, loading: parkLoading, error: parkError, retry: retryPark } =
     useSportData<{ data: ParkFactorRow[] }>('/api/savant/park-factors');
-  const { data: confRes, loading: confLoading } =
+  const { data: confRes, loading: confLoading, error: confError, retry: retryConf } =
     useSportData<{ data: ConferenceRow[]; total?: number }>('/api/savant/conference-strength');
   const { data: leagueCtxRes } =
     useSportData<{ context: LeagueContext }>('/api/savant/league-context');
@@ -507,6 +507,10 @@ export default function SavantHubPage() {
               {activeTab === 'batting' && (
                 battingLoading ? (
                   <LeaderboardSkeleton />
+                ) : battingError ? (
+                  <LeaderboardError error={battingError} onRetry={retryBatting} lastUpdated={battingRes?.meta?.fetched_at} />
+                ) : filteredBatting.length === 0 ? (
+                  <LeaderboardEmpty type="batting" />
                 ) : (
                   <SavantLeaderboard
                     data={filteredBatting}
@@ -524,6 +528,10 @@ export default function SavantHubPage() {
               {activeTab === 'pitching' && (
                 pitchingLoading ? (
                   <LeaderboardSkeleton />
+                ) : pitchingError ? (
+                  <LeaderboardError error={pitchingError} onRetry={retryPitching} lastUpdated={pitchingRes?.meta?.fetched_at} />
+                ) : filteredPitching.length === 0 ? (
+                  <LeaderboardEmpty type="pitching" />
                 ) : (
                   <SavantLeaderboard
                     data={filteredPitching}
@@ -541,6 +549,8 @@ export default function SavantHubPage() {
               {activeTab === 'park-factors' && (
                 parkLoading ? (
                   <LeaderboardSkeleton />
+                ) : parkError ? (
+                  <LeaderboardError error={parkError} onRetry={retryPark} />
                 ) : (
                   <ParkFactorTable
                     data={parkRes?.data ?? []}
@@ -552,6 +562,8 @@ export default function SavantHubPage() {
               {activeTab === 'conference' && (
                 confLoading ? (
                   <LeaderboardSkeleton />
+                ) : confError ? (
+                  <LeaderboardError error={confError} onRetry={retryConf} />
                 ) : (
                   <ConferenceStrengthChart
                     data={confRes?.data ?? []}
@@ -563,11 +575,11 @@ export default function SavantHubPage() {
             </ScrollReveal>
 
             {/* Data attribution */}
-            {battingRes && (
+            {(battingRes || pitchingRes) && (
               <div className="mt-10 pt-6 border-t border-[var(--border-vintage)]">
                 <div className="flex items-center justify-center gap-4 flex-wrap">
                   <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-muted/50">
-                    Source: BSI Savant
+                    Source: BSI Savant · ESPN box scores + Highlightly Pro · Recomputed every 6 hours
                   </span>
                   <span className="text-text-muted/20">&middot;</span>
                   <Link
@@ -692,6 +704,55 @@ function computeQuickPercentile(
   if (values.length <= 1) return 50;
   const below = values.filter(v => (higherIsBetter ? v < value : v > value)).length;
   return (below / (values.length - 1)) * 100;
+}
+
+// ---------------------------------------------------------------------------
+// Error state
+// ---------------------------------------------------------------------------
+
+function LeaderboardError({ error, onRetry, lastUpdated }: { error: string; onRetry: () => void; lastUpdated?: string }) {
+  return (
+    <Card padding="none" className="overflow-hidden">
+      <div className="px-5 py-12 flex flex-col items-center text-center">
+        <p className="font-display text-sm uppercase tracking-wider mb-2" style={{ color: 'var(--bsi-dust)' }}>
+          Data temporarily unavailable
+        </p>
+        <p className="font-mono text-[10px] mb-4" style={{ color: 'var(--bsi-dust)', opacity: 0.6 }}>
+          {error}
+        </p>
+        {lastUpdated && (
+          <p className="font-mono text-[10px] mb-4" style={{ color: 'var(--bsi-dust)', opacity: 0.5 }}>
+            Last updated: {new Date(lastUpdated).toLocaleString('en-US', { timeZone: 'America/Chicago', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })} CT
+          </p>
+        )}
+        <button
+          onClick={onRetry}
+          className="px-4 py-1.5 rounded-sm text-[10px] uppercase tracking-wider font-bold font-display cursor-pointer transition-all bg-burnt-orange/10 border border-burnt-orange/25 text-burnt-orange hover:bg-burnt-orange/20"
+        >
+          Retry
+        </button>
+      </div>
+    </Card>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Empty state
+// ---------------------------------------------------------------------------
+
+function LeaderboardEmpty({ type }: { type: 'batting' | 'pitching' }) {
+  return (
+    <Card padding="none" className="overflow-hidden">
+      <div className="px-5 py-12 flex flex-col items-center text-center">
+        <p className="font-display text-sm uppercase tracking-wider mb-2" style={{ color: 'var(--bsi-dust)' }}>
+          No {type} data available yet
+        </p>
+        <p className="font-mono text-[10px]" style={{ color: 'var(--bsi-dust)', opacity: 0.6 }}>
+          Stats recompute every 6 hours. Try adjusting filters or check back soon.
+        </p>
+      </div>
+    </Card>
+  );
 }
 
 // ---------------------------------------------------------------------------
