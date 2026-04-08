@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     type: 'website',
     url: 'https://blazesportsintel.com',
     siteName: 'Blaze Sports Intel',
-    images: ogImage('https://blazesportsintel.com/images/og-image.png', 'Blaze Sports Intel — Live Scores, Analytics, and Editorial Across Five Sports'),
+    images: ogImage('https://blazesportsintel.com/images/og-image.png', 'Blaze Sports Intel — Live Scores, Analytics & Editorial — College Baseball, MLB, NFL, NBA, CFB'),
   },
   twitter: {
     card: 'summary_large_image',

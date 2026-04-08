@@ -63,7 +63,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'Blaze Sports Intel | Live Scores, Analytics, and Editorial Across Five Sports',
+  title: 'Blaze Sports Intel | Live Scores, Analytics & Editorial — College Baseball, MLB, NFL, NBA, CFB',
   description:
     'Live scores, editorial, and advanced analytics across college baseball, MLB, NFL, NBA, and college football — with park-adjusted sabermetrics at the core.',
   keywords: [
@@ -85,7 +85,7 @@ export const metadata: Metadata = {
   publisher: 'Blaze Sports Intel',
   metadataBase: new URL('https://blazesportsintel.com'),
   openGraph: {
-    title: 'Blaze Sports Intel | Live Scores, Analytics, and Editorial Across Five Sports',
+    title: 'Blaze Sports Intel | Live Scores, Analytics & Editorial — College Baseball, MLB, NFL, NBA, CFB',
     description:
       'Live scores, editorial, and advanced analytics across college baseball, MLB, NFL, NBA, and college football — with park-adjusted sabermetrics at the core.',
     type: 'website',
@@ -97,7 +97,7 @@ export const metadata: Metadata = {
         url: '/images/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Blaze Sports Intel - Live Scores, Analytics, and Editorial Across Five Sports',
+        alt: 'Blaze Sports Intel — Live Scores, Analytics & Editorial — College Baseball, MLB, NFL, NBA, CFB',
       },
     ],
   },
