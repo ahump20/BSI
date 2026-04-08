@@ -8,7 +8,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { PlateDisciplineScatter, type ScatterPlayer } from '@/components/analytics/PlateDisciplineScatter';
 import { ConferenceHeatmap, type ConferenceHeatmapRow } from '@/components/analytics/ConferenceHeatmap';
 import { PowerVsContact, type PowerContactPlayer } from '@/components/analytics/PowerVsContact';
@@ -948,8 +947,8 @@ export default function SavantVisualsPage() {
                       if (teams.length < 2) return null;
                       return (
                         <CompareScatter
-                          teamA={{ name: teams[0], color: '#BF5700', batters: enrichedBatters.filter(b => b.team === teams[0]) }}
-                          teamB={{ name: teams[1], color: '#4B9CD3', batters: enrichedBatters.filter(b => b.team === teams[1]) }}
+                          teamA={{ name: teams[0], color: 'var(--bsi-primary)', batters: enrichedBatters.filter(b => b.team === teams[0]) }}
+                          teamB={{ name: teams[1], color: 'var(--heritage-columbia-blue)', batters: enrichedBatters.filter(b => b.team === teams[1]) }}
                           onPlayerClick={(id) => window.open(`/college-baseball/savant/player/${id}/`, '_blank')}
                         />
                       );
@@ -975,7 +974,6 @@ export default function SavantVisualsPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
@@ -53,7 +52,7 @@ interface TrendsResponse {
 // ─── Constants ──────────────────────────────────────────────────────────────
 
 const TEAM_ID = 'texas';
-const ACCENT = '#BF5700';
+const ACCENT = 'var(--bsi-primary)';
 
 type StatusFilter = 'all' | 'hot' | 'cold' | 'neutral';
 
@@ -335,7 +334,7 @@ export default function TexasTrendsClient() {
                   <RollingAreaChart
                     data={data.teamRolling ?? []}
                     valueKey="era"
-                    color="#4B9CD3"
+                    color="var(--heritage-columbia-blue)"
                     label="Team ERA"
                     format={(n) => n.toFixed(2)}
                     invertY
@@ -512,7 +511,6 @@ export default function TexasTrendsClient() {
           </Container>
         </Section>
       </main>
-      <Footer />
     </>
   );
 }

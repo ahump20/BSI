@@ -9,7 +9,6 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { StatusBadge } from '@/components/portal';
 
 interface PlayerApiResponse {
@@ -128,7 +127,6 @@ export function PlayerDetailClient() {
             </Container>
           </Section>
         </div>
-        <Footer />
       </>
     );
   }
@@ -153,7 +151,6 @@ export function PlayerDetailClient() {
             </Container>
           </Section>
         </div>
-        <Footer />
       </>
     );
   }
@@ -404,7 +401,6 @@ export function PlayerDetailClient() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

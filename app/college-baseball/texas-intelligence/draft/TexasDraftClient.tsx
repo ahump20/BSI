@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
@@ -34,7 +33,7 @@ interface DraftBoardResponse {
 // ─── Constants ──────────────────────────────────────────────────────────────
 
 const TEAM_ID = 'texas';
-const ACCENT = '#BF5700';
+const ACCENT = 'var(--bsi-primary)';
 
 type SortField = 'havf' | 'woba' | 'wrc_plus' | 'era' | 'fip';
 type TierFilter = 'all' | 'Top 3 Rounds' | 'Rounds 4-10' | 'Day 3' | 'Development';
@@ -326,7 +325,6 @@ export default function TexasDraftClient() {
           </Container>
         </Section>
       </main>
-      <Footer />
     </>
   );
 }

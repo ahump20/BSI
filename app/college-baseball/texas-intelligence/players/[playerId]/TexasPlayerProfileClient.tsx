@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 import { fmt2, fmt3, fmtPct } from '@/lib/utils/format';
@@ -105,7 +104,7 @@ interface PlayerProfileResponse {
 // ─── Constants ──────────────────────────────────────────────────────────────
 
 const TEAM_ID = 'texas';
-const ACCENT = '#BF5700';
+const ACCENT = 'var(--bsi-primary)';
 
 // ─── Formatting Helpers ─────────────────────────────────────────────────────
 
@@ -292,7 +291,6 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
             </Container>
           </Section>
         </main>
-        <Footer />
       </>
     );
   }
@@ -314,7 +312,6 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
             </Container>
           </Section>
         </main>
-        <Footer />
       </>
     );
   }
@@ -658,7 +655,6 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
           </Container>
         </Section>
       </main>
-      <Footer />
     </>
   );
 }

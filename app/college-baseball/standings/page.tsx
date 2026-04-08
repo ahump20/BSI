@@ -12,7 +12,6 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { FilterPill } from '@/components/ui/FilterPill';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { DataAttribution } from '@/components/ui/DataAttribution';
 import { HeroGlow } from '@/components/ui/HeroGlow';
@@ -588,7 +587,6 @@ function CollegeBaseballStandingsPageInner() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

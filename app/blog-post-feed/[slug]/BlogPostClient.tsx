@@ -8,7 +8,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { Footer } from '@/components/layout-ds/Footer';
 import { formatDateInTimezone } from '@/lib/utils/timezone';
 
 interface BlogPost {
@@ -460,7 +459,6 @@ export function BlogPostClient() {
         )}
       </div>
 
-      <Footer />
     </>
   );
 }

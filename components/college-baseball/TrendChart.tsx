@@ -71,7 +71,7 @@ function CustomTooltip({
 export function TrendChart({
   data,
   title,
-  color = '#BF5700', // token: --bsi-primary
+  color = 'var(--bsi-primary)', // token: --bsi-primary
   type = 'line',
   yAxisDomain,
   valueFormatter,

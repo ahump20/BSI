@@ -7,14 +7,13 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 import { fmt3, fmt2, fmt1, fmtPct } from '@/lib/utils/format';
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 
-const ACCENT = '#BF5700';
+const ACCENT = 'var(--bsi-primary)';
 const TEXAS_ESPN_ID = '251';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -611,7 +610,6 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
         </Section>
       </main>
 
-      <Footer />
     </>
   );
 }

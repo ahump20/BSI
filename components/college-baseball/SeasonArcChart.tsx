@@ -49,15 +49,15 @@ interface SeasonArcChartProps {
 // ---------------------------------------------------------------------------
 
 const COLORS = {
-  scoreboard: '#0A0A0A',
+  scoreboard: 'var(--surface-scoreboard)',
   grid: 'rgba(255,255,255,0.04)',
-  woba: '#BF5700',      // --bsi-primary
-  fip: '#4B9CD3',       // --heritage-columbia-blue
+  woba: 'var(--bsi-primary)',
+  fip: 'var(--heritage-columbia-blue)',
   wrcPlus: '#FDB913',   // --bsi-gold
   confBand: 'rgba(191,87,0,0.08)',
   nonConfBand: 'rgba(255,255,255,0.03)',
-  dust: '#C4B8A5',      // --bsi-dust
-  bone: '#F5F2EB',      // --bsi-bone
+  dust: 'var(--bsi-dust)',
+  bone: 'var(--bsi-bone)',
   pillActive: 'rgba(255,255,255,0.06)',
 } as const;
 
@@ -102,7 +102,7 @@ function ArcTooltip({
     <div
       className="rounded-sm px-3 py-2 shadow-lg"
       style={{
-        backgroundColor: '#161616',
+        backgroundColor: 'var(--surface-dugout)',
         border: '1px solid rgba(140,98,57,0.3)',
         fontFamily: 'var(--font-jetbrains, JetBrains Mono, monospace)',
         fontSize: '11px',

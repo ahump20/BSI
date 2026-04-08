@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
-import { Footer } from '@/components/layout-ds/Footer';
 import { ScrollReveal } from '@/components/cinematic';
 import { DataAttribution } from '@/components/ui/DataAttribution';
 
@@ -156,7 +155,6 @@ export default function DailyEditorialClient() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

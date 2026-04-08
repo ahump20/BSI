@@ -180,7 +180,7 @@ export function IntelStreamCard({
           <span
             className="w-1.5 h-1.5 rounded-full"
             style={{
-              backgroundColor: '#BF5700',
+              backgroundColor: 'var(--bsi-primary)',
               opacity: streaming ? 1 : 0.35,
               transition: 'opacity 0.4s ease',
               animation: streaming ? 'pulse 1.4s cubic-bezier(0.4,0,0.6,1) infinite' : 'none',
@@ -203,7 +203,7 @@ export function IntelStreamCard({
             <span
               className="inline-block ml-px font-mono"
               style={{
-                color: '#BF5700',
+                color: 'var(--bsi-primary)',
                 animation: 'bsiCursorBlink 0.8s step-end infinite',
               }}
             >

@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import type { ProgramHistoryData } from './types';
 
 function YouTubeEmbed({ id, title }: { id: string; title: string }) {
@@ -556,7 +555,6 @@ export function ProgramHistoryFeature({ data }: { data: ProgramHistoryData }) {
         </Section>
       </main>
 
-      <Footer />
     </>
   );
 }

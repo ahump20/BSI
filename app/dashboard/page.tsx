@@ -667,7 +667,6 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
         )}
       </AnimatePresence>
 
-      <Footer />
     </div>
   );
 }

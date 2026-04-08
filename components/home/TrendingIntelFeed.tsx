@@ -42,8 +42,8 @@ const SPORT_COLORS: Record<string, string> = {
   mlb: '#C41E3A',
   nfl: '#013369',
   nba: '#FF6B35', // token: --bsi-accent
-  ncaa: '#BF5700', // token: --bsi-primary
-  'college-baseball': '#BF5700', // token: --bsi-primary
+  ncaa: 'var(--bsi-primary)',
+  'college-baseball': 'var(--bsi-primary)',
 };
 
 export function TrendingIntelFeed() {
@@ -141,7 +141,7 @@ export function TrendingIntelFeed() {
           <p className="text-sm py-4 text-center" style={{ color: 'var(--bsi-dust)' }}>No intel available right now.</p>
         ) : (
           articles.map((article, i) => {
-            const color = SPORT_COLORS[article.sport] || '#BF5700'; // token: --bsi-primary
+            const color = SPORT_COLORS[article.sport] || 'var(--bsi-primary)';
             const timeDiff = Date.now() - new Date(article.published).getTime();
             const isRecent = timeDiff < 3_600_000; // less than 1 hour
             const inner = (

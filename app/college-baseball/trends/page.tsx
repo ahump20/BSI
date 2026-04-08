@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { TrendChart } from '@/components/college-baseball/TrendChart';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
@@ -371,7 +370,6 @@ export default function TrendsPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

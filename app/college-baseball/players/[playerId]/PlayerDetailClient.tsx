@@ -11,7 +11,6 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { DataAttribution } from '@/components/ui/DataAttribution';
 import { IntelSignup } from '@/components/home/IntelSignup';
-import { Footer } from '@/components/layout-ds/Footer';
 import { AdvancedStatsCard } from '@/components/analytics/AdvancedStatsCard';
 import { PlayerScoutingComposite } from '@/components/college-baseball/PlayerScoutingComposite';
 import { ScoutingReport } from '@/components/college-baseball/ScoutingReport';
@@ -167,7 +166,7 @@ type ProfileTab = 'season' | 'gamelog';
 // ---------------------------------------------------------------------------
 
 const NIL_TIER_COLORS: Record<string, { bg: string; text: string; label: string }> = {
-  elite:         { bg: 'bg-[#BF5700]/20', text: 'text-[#BF5700]', label: 'Elite' },
+  elite:         { bg: 'bg-bsi-primary/20', text: 'text-burnt-orange', label: 'Elite' },
   high:          { bg: 'bg-[var(--bsi-success)]/15', text: 'text-[var(--bsi-success)]', label: 'High' },
   mid:           { bg: 'bg-[var(--bsi-warning)]/15', text: 'text-[var(--bsi-warning)]', label: 'Mid' },
   emerging:      { bg: 'bg-[var(--heritage-columbia-blue)]/15', text: 'text-[var(--heritage-columbia-blue)]', label: 'Emerging' },
@@ -350,10 +349,10 @@ export default function PlayerDetailClient() {
                     return (
                       <Link
                         href="/nil-valuation"
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm ${tierInfo.bg} border border-[#BF5700]/20 hover:border-[#BF5700]/40 transition-colors`}
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm ${tierInfo.bg} border border-bsi-primary/20 hover:border-bsi-primary/40 transition-colors`}
                       >
                         <span className="text-[10px] text-text-muted uppercase tracking-widest leading-none">Est. NIL</span>
-                        <span className="text-sm font-bold text-[#BF5700] font-mono leading-none">
+                        <span className="text-sm font-bold text-burnt-orange font-mono leading-none">
                           {formatNILValue(nilPlayer.estimated_mid)}
                         </span>
                         <span className={`text-[10px] font-semibold uppercase tracking-wide leading-none ${tierInfo.text}`}>
@@ -400,7 +399,7 @@ export default function PlayerDetailClient() {
               const tierInfo = NIL_TIER_COLORS[nilPlayer.tier] || NIL_TIER_COLORS.developmental;
               return (
                 <Card padding="none" className="mb-6 overflow-hidden">
-                  <div className="px-4 py-3 bg-gradient-to-r from-[#BF5700]/15 to-transparent border-b border-border">
+                  <div className="px-4 py-3 bg-gradient-to-r from-bsi-primary/15 to-transparent border-b border-border">
                     <div className="flex items-center justify-between">
                       <h2 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide">
                         NIL Valuation
@@ -465,7 +464,7 @@ export default function PlayerDetailClient() {
               if (!showCard) return null;
               return (
                 <Card padding="none" className="mb-6 overflow-hidden">
-                  <div className="px-4 py-3 bg-gradient-to-r from-[#BF5700]/10 to-transparent border-b border-border">
+                  <div className="px-4 py-3 bg-gradient-to-r from-bsi-primary/10 to-transparent border-b border-border">
                     <h2 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide">
                       Draft &amp; Portal Context
                     </h2>
@@ -869,7 +868,6 @@ export default function PlayerDetailClient() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

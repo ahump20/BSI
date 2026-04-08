@@ -10,7 +10,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
+
 import { Skeleton, SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { TabBar, TabPanel } from '@/components/ui/TabBar';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -609,7 +609,7 @@ export default function NFLPage() {
                         { label: 'Defenders', desc: 'Sacks, INTs, PFF grade', href: '/nfl/players' },
                       ].map((cat) => (
                         <Link key={cat.label} href={cat.href} className="group block">
-                          <div className="bg-[var(--surface-dugout)] rounded-sm p-4 border border-[var(--border-vintage)] hover:border-burnt-orange transition-colors h-full">
+                          <div className="heritage-card rounded-sm p-4 h-full">
                             <h4 className="text-sm font-semibold text-text-primary group-hover:text-burnt-orange transition-colors">
                               {cat.label}
                             </h4>
@@ -638,7 +638,7 @@ export default function NFLPage() {
                           if (!topPlayer) return null;
                           const catInfo = LEADER_CATEGORY_MAP[cat.abbreviation] || { label: cat.name, unit: cat.abbreviation };
                           return (
-                            <div key={cat.abbreviation} className="bg-[var(--surface-dugout)] rounded-sm p-4 border border-[var(--border-vintage)]">
+                            <div key={cat.abbreviation} className="heritage-card rounded-sm p-4">
                               <p className="text-[10px] text-text-tertiary uppercase tracking-wider mb-2">{catInfo.label} Leader</p>
                               <div className="flex items-center gap-3">
                                 {topPlayer.headshot && (
@@ -719,7 +719,6 @@ export default function NFLPage() {
           </Container>
         </Section>
       </div>
-        <Footer />
       </>
     </div>
     </ErrorBoundary>

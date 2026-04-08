@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Footer } from '@/components/layout-ds/Footer';
 import { Card, CardContent, CardTitle } from '@/components/ui/Card';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { fetchBuild, type ShowBuildResponse } from '@/lib/mlb-the-show/client';
@@ -95,7 +94,6 @@ export function DiamondDynastyBuildClient() {
           )}
         </DataErrorBoundary>
       </ShowSurfaceFrame>
-      <Footer />
     </div>
   );
 }

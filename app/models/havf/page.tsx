@@ -8,7 +8,6 @@ import { Badge } from '@/components/ui/Badge';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { CiteWidget } from '@/components/ui/CiteWidget';
 import { JsonLd } from '@/components/JsonLd';
-import { Footer } from '@/components/layout-ds/Footer';
 import { HAVFLiveLeaderboard } from './HAVFLiveLeaderboard';
 
 // ---------------------------------------------------------------------------
@@ -559,7 +558,6 @@ and   HAV-F ∈ [0, 100]`}
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

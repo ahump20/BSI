@@ -6,13 +6,12 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { TexasNILPanel } from '@/components/college-baseball/TexasNILPanel';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 
 const TEAM_ID = 'texas';
-const ACCENT = '#BF5700';
+const ACCENT = 'var(--bsi-primary)';
 
 interface DraftLeveragePlayer {
   player_id: string;
@@ -212,7 +211,6 @@ export default function TexasNILClient() {
           </Container>
         </Section>
       </main>
-      <Footer />
     </>
   );
 }

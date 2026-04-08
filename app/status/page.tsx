@@ -6,7 +6,6 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { Footer } from '@/components/layout-ds/Footer';
 import { getReadApiUrl } from '@/lib/utils/public-api';
 
 interface EndpointStatus {
@@ -202,7 +201,6 @@ export default function StatusPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

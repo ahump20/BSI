@@ -10,7 +10,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { SportIcon } from '@/components/icons/SportIcon';
-import { Footer } from '@/components/layout-ds/Footer';
+
 import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface Player {
@@ -435,7 +435,6 @@ export default function NFLPlayersPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

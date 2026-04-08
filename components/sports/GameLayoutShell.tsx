@@ -14,7 +14,6 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { CitationFooter } from '@/components/sports';
 import type { DataMeta } from '@/lib/types/data-meta';
@@ -326,7 +325,6 @@ export default function GameLayoutShell({ config, children }: GameLayoutShellPro
         ) : null}
       </div>
 
-      <Footer />
     </GameContext.Provider>
   );
 }

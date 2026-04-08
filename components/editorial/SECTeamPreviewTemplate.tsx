@@ -6,7 +6,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { LiveStatsBadge } from '@/components/editorial/LiveStatsBadge';
 import { ArticleMeta } from '@/components/ui/ArticleMeta';
 import { teamMetadata } from '@/lib/data/team-metadata';
@@ -391,7 +390,6 @@ export function SECTeamPreviewTemplate({ data }: { data: TeamPreviewData }) {
         </Section>
       </main>
 
-      <Footer />
     </>
   );
 }

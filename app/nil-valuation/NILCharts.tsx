@@ -33,13 +33,13 @@ import {
 /* -- Shared Chart Styles ------------------------------------------------- */
 
 const CHART_COLORS = {
-  primary: '#BF5700',
+  primary: 'var(--bsi-primary)',
   primaryLight: 'rgba(191, 87, 0, 0.15)',
   secondary: '#FF6B35',
-  tertiary: '#8B4513',
+  tertiary: 'var(--bsi-texas-soil)',
   grid: 'rgba(255, 255, 255, 0.06)',
   text: 'rgba(255, 255, 255, 0.5)',
-  men: '#BF5700',
+  men: 'var(--bsi-primary)',
   women: '#3B82F6',
 } as const;
 
@@ -149,8 +149,8 @@ export function MarketGrowthChart() {
         <AreaChart data={data} margin={{ top: 10, right: 10, bottom: 0, left: 0 }}>
           <defs>
             <linearGradient id="nilMarketGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#BF5700" stopOpacity={0.3} />
-              <stop offset="100%" stopColor="#BF5700" stopOpacity={0.02} />
+              <stop offset="0%" stopColor="var(--bsi-primary)" stopOpacity={0.3} />
+              <stop offset="100%" stopColor="var(--bsi-primary)" stopOpacity={0.02} />
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_COLORS.grid} />
@@ -463,8 +463,8 @@ export function CollectiveGrowthChart() {
         <LineChart data={data} margin={{ top: 10, right: 10, bottom: 0, left: 0 }}>
           <defs>
             <linearGradient id="collectiveAreaGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#BF5700" stopOpacity={0.2} />
-              <stop offset="100%" stopColor="#BF5700" stopOpacity={0} />
+              <stop offset="0%" stopColor="var(--bsi-primary)" stopOpacity={0.2} />
+              <stop offset="100%" stopColor="var(--bsi-primary)" stopOpacity={0} />
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_COLORS.grid} />

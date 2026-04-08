@@ -8,7 +8,7 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
+
 import { Skeleton } from '@/components/ui/Skeleton';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { DataAttribution } from '@/components/ui/DataAttribution';
@@ -1008,7 +1008,6 @@ export default function NBAPlayoffPicturePage() {
         </Section>
       </DataErrorBoundary>
 
-      <Footer />
     </>
   );
 }

@@ -7,7 +7,7 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
+
 import { useSportData } from '@/lib/hooks/useSportData';
 import { useResolvedParam } from '@/lib/hooks/useResolvedParam';
 import { formatTimestamp } from '@/lib/utils/timezone';
@@ -400,7 +400,6 @@ export default function CFBPlayerDetailClient({ playerId: rawId }: CFBPlayerDeta
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

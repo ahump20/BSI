@@ -10,9 +10,10 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
+
 import { Skeleton, SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
-import { TabBar } from '@/components/ui/TabBar';
+import { TabBar, TabPanel } from '@/components/ui/TabBar';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { GameScoreCard } from '@/components/sports/GameScoreCard';
 import { SportInfoCard } from '@/components/sports/SportInfoCard';
 import { formatTimestamp } from '@/lib/utils/timezone';
@@ -288,8 +289,9 @@ export default function CFBPage() {
 
   return (
     <ErrorBoundary>
-    <>
-      <div>
+    <div className="bsi-theme-football">
+      <>
+        <div>
         <SportHero
           sport="College Football"
           leagueName="NCAA Division I FBS"
@@ -551,8 +553,7 @@ export default function CFBPage() {
 
             <DataErrorBoundary>
             {/* Rankings Tab */}
-            {activeTab === 'rankings' && (
-              <>
+            <TabPanel id="rankings" activeTab={activeTab}>
                 {loading ? (
                   <Card variant="default" padding="lg">
                     <CardHeader><Skeleton variant="text" width={200} height={24} /></CardHeader>
@@ -607,11 +608,10 @@ export default function CFBPage() {
                     </Card>
                   </ScrollReveal>
                 )}
-              </>
-            )}
+            </TabPanel>
 
             {/* Conferences Tab */}
-            {activeTab === 'conferences' && (
+            <TabPanel id="conferences" activeTab={activeTab}>
               <ScrollReveal>
                 <p className="text-text-secondary text-sm mb-6 max-w-2xl">
                   The 2025-26 FBS landscape: four Power conferences, the rebuilt Pac-12, and five Group of 5 leagues. 134 programs, 10 conferences, all tracked.
@@ -628,10 +628,10 @@ export default function CFBPage() {
                   ))}
                 </div>
               </ScrollReveal>
-            )}
+            </TabPanel>
 
             {/* Transfer Portal Tab */}
-            {activeTab === 'portal' && (
+            <TabPanel id="portal" activeTab={activeTab}>
               <Card variant="default" padding="lg">
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
@@ -692,7 +692,7 @@ export default function CFBPage() {
                   )}
                 </CardContent>
               </Card>
-            )}
+            </TabPanel>
             </DataErrorBoundary>
 
           </Container>
@@ -758,9 +758,9 @@ export default function CFBPage() {
             />
           </Container>
         </Section>
-      </div>
-      <Footer />
-    </>
+        </div>
+      </>
+    </div>
     </ErrorBoundary>
   );
 }

@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { AITeamPreview } from '@/components/college-baseball/AITeamPreview';
 import { SabermetricsPanel } from '@/components/college-baseball/SabermetricsPanel';
 import { SeasonArcChart } from '@/components/college-baseball/SeasonArcChart';
@@ -392,7 +391,6 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             </Card>
           </Container>
         </div>
-        <Footer />
       </>
     );
   }
@@ -1028,7 +1026,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                     <Card padding="lg">
                       <div className="flex items-center justify-between mb-6">
                         <h2 className="font-display text-xl font-bold text-text-primary uppercase tracking-wide">NIL Spending Power</h2>
-                        <span className="text-xs px-2 py-1 rounded-sm font-semibold" style={{ backgroundColor: 'rgba(191,87,0,0.15)', color: '#BF5700' }}>
+                        <span className="text-xs px-2 py-1 rounded-sm font-semibold" style={{ backgroundColor: 'rgba(191,87,0,0.15)', color: 'var(--bsi-primary)' }}>
                           {nilTeamData.conference} — {nilTeamData.marketTier}
                         </span>
                       </div>
@@ -1039,13 +1037,13 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                         </div>
                         <div>
                           <div className="text-xs uppercase tracking-wide text-text-muted">Avg NIL Index</div>
-                          <div className="mt-1 font-mono text-2xl font-bold" style={{ color: '#BF5700' }}>{nilTeamData.avgIndex}</div>
+                          <div className="mt-1 font-mono text-2xl font-bold" style={{ color: 'var(--bsi-primary)' }}>{nilTeamData.avgIndex}</div>
                         </div>
                         <div className="col-span-2">
                           <div className="text-xs uppercase tracking-wide text-text-muted">Top Valued Player</div>
                           <div className="mt-1 flex items-baseline gap-2">
                             <span className="text-text-primary font-semibold">{nilTeamData.topPlayer}</span>
-                            <span className="font-mono text-lg font-bold" style={{ color: '#BF5700' }}>
+                            <span className="font-mono text-lg font-bold" style={{ color: 'var(--bsi-primary)' }}>
                               ${nilTeamData.topValue >= 1000 ? `${(nilTeamData.topValue / 1000).toFixed(0)}K` : nilTeamData.topValue.toLocaleString()}
                             </span>
                           </div>
@@ -1447,7 +1445,6 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

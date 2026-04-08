@@ -4,7 +4,6 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Badge } from '@/components/ui/Badge';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { Footer } from '@/components/layout-ds/Footer';
 
 export const metadata: Metadata = {
   title: 'Partnerships & Citations | BSI',
@@ -150,7 +149,6 @@ export default function PartnershipsPage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

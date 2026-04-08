@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
-import { Footer } from '@/components/layout-ds/Footer';
 import { teamMetadata, teamNameToSlug } from '@/lib/data/team-metadata';
 
 interface TeamSaber {
@@ -240,7 +239,6 @@ export default function TeamComparePage() {
           )}
         </div>
       </Container>
-      <Footer />
     </div>
   );
 }

@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 
 // ── SVG Sport Icons ──
 
@@ -623,7 +622,6 @@ export default function CoveragePage() {
         </div>
       </section>
 
-      <Footer />
     </div>
   );
 }

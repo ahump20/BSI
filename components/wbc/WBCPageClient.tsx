@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { TabBar, TabPanel } from '@/components/ui/TabBar';
 import { Card, CardContent } from '@/components/ui/Card';
 import { WBCHero } from './WBCHero';
@@ -229,7 +228,6 @@ export function WBCPageClient() {
         </div>
       </section>
 
-      <Footer />
     </div>
   );
 }

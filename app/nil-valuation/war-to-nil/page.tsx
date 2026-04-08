@@ -6,7 +6,6 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 
 // ── Types ──
 type Sport = 'baseball' | 'football' | 'basketball';
@@ -298,7 +297,6 @@ export default function WARtoNILPage() {
         </Container>
       </Section>
 
-      <Footer />
     </div>
   );
 }

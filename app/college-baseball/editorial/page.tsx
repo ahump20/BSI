@@ -11,7 +11,6 @@ import { FilterPill } from '@/components/ui/FilterPill';
 import { HeroGlow } from '@/components/ui/HeroGlow';
 import { ScrollReveal } from '@/components/cinematic';
 import { IntelSignup } from '@/components/home/IntelSignup';
-import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { ConferenceTeamGrid } from '@/components/editorial/ConferenceTeamGrid';
 import type { TeamEntry, Conference } from '@/components/editorial/ConferenceTeamGrid';
@@ -960,7 +959,6 @@ export default function EditorialHubPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

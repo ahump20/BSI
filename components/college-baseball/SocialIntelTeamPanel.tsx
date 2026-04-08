@@ -182,7 +182,7 @@ function SignalRow({ signal }: { signal: SocialSignal }) {
           </span>
 
           {signal.player_mentioned && (
-            <span className="text-[11px] text-[#BF5700]/70">{signal.player_mentioned}</span>
+            <span className="text-[11px] text-burnt-orange/70">{signal.player_mentioned}</span>
           )}
 
           {signal.author && (
@@ -203,7 +203,7 @@ function SignalRow({ signal }: { signal: SocialSignal }) {
         href={signal.post_url}
         target="_blank"
         rel="noopener noreferrer"
-        className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#BF5700]"
+        className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-bsi-primary"
         aria-label={signal.summary ?? signal.post_text.slice(0, 80)}
       >
         {inner}
@@ -241,13 +241,13 @@ export function SocialIntelTeamPanel({ teamId }: SocialIntelTeamPanelProps) {
   if (!loading && (!data || data.signals.length === 0)) return null;
 
   return (
-    <div className="rounded-sm border border-border overflow-hidden bg-[#111111]">
+    <div className="rounded-sm border border-border overflow-hidden bg-surface-press-box">
       {/* Panel header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <div className="flex items-center gap-2">
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#BF5700] opacity-50" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#BF5700]" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-bsi-primary opacity-50" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-bsi-primary" />
           </span>
           <span className="font-['Oswald'] text-sm uppercase tracking-wider text-text-primary">
             Social Signals

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Footer } from '@/components/layout-ds/Footer';
 
 // ---------------------------------------------------------------------------
 // Types (mirrors handler output)
@@ -424,7 +423,6 @@ export default function FreshnessClient() {
           </div>
         </main>
 
-        <Footer />
       </div>
     </>
   );

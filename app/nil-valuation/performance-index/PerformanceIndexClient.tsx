@@ -236,7 +236,7 @@ export function PerformanceIndexClient() {
                         label="Performance"
                         value={result.breakdown.performance}
                         weight="40%"
-                        color="#BF5700"
+                        color="var(--bsi-primary)"
                         delay={0}
                       />
                       <BreakdownBar
@@ -344,7 +344,7 @@ function ScoreGauge({ score, tier }: { score: number; tier: string }) {
           cy="44"
           r="36"
           fill="none"
-          stroke="#BF5700"
+          stroke="var(--bsi-primary)"
           strokeWidth="5"
           strokeLinecap="round"
           strokeDasharray={circumference}

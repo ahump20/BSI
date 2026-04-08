@@ -7,7 +7,7 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
+
 import { SportIcon } from '@/components/icons/SportIcon';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { useSportData } from '@/lib/hooks/useSportData';
@@ -328,7 +328,6 @@ export default function CFBStandingsPage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

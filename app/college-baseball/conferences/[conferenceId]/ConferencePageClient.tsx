@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { DataAttribution } from '@/components/ui/DataAttribution';
 import { ConferenceBaseline } from '@/components/analytics/ConferenceBaseline';
 import { ConferencePowerStrip } from '@/components/college-baseball/ConferencePowerStrip';
@@ -1883,7 +1882,6 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
               </Container>
             </Section>
           </div>
-          <Footer />
         </>
       );
     }
@@ -2016,7 +2014,6 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
             </Container>
           </Section>
         </div>
-        <Footer />
       </>
     );
   }
@@ -2340,7 +2337,6 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

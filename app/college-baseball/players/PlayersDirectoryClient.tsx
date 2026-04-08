@@ -8,7 +8,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { DataAttribution } from '@/components/ui/DataAttribution';
-import { Footer } from '@/components/layout-ds/Footer';
 import { ScrollReveal } from '@/components/cinematic';
 import { fmt1, fmt2, fmt3 } from '@/lib/utils/format';
 
@@ -569,7 +568,6 @@ export default function PlayersDirectoryClient() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

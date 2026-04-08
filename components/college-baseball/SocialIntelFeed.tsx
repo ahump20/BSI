@@ -151,8 +151,8 @@ function SignalCard({ signal }: { signal: SocialSignal }) {
     <div
       className={`
         group relative rounded-sm border p-4 transition-all duration-200
-        bg-[#111111] border-border
-        hover:border-[#BF5700]/40 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30
+        bg-surface-press-box border-border
+        hover:border-bsi-primary/40 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30
         ${signal.post_url ? 'cursor-pointer' : ''}
       `}
     >
@@ -187,7 +187,7 @@ function SignalCard({ signal }: { signal: SocialSignal }) {
 
             {/* Team tag */}
             {signal.team_mentioned && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#BF5700]/15 text-[#BF5700] border border-[#BF5700]/25">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-bsi-primary/15 text-burnt-orange border border-bsi-primary/25">
                 {slugToDisplay(signal.team_mentioned)}
               </span>
             )}
@@ -201,7 +201,7 @@ function SignalCard({ signal }: { signal: SocialSignal }) {
 
         {/* Summary — primary display text */}
         {signal.summary ? (
-          <p className="text-sm text-text-primary leading-snug font-medium mb-1.5 group-hover:text-[#BF5700] transition-colors">
+          <p className="text-sm text-text-primary leading-snug font-medium mb-1.5 group-hover:text-burnt-orange transition-colors">
             {signal.summary}
           </p>
         ) : (
@@ -221,7 +221,7 @@ function SignalCard({ signal }: { signal: SocialSignal }) {
             {signal.player_mentioned && (
               <>
                 <span className="opacity-40">·</span>
-                <span className="text-[#BF5700]/80">{signal.player_mentioned}</span>
+                <span className="text-burnt-orange/80">{signal.player_mentioned}</span>
               </>
             )}
           </div>
@@ -243,7 +243,7 @@ function SignalCard({ signal }: { signal: SocialSignal }) {
         href={signal.post_url}
         target="_blank"
         rel="noopener noreferrer"
-        className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-[#BF5700] rounded-sm"
+        className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-bsi-primary rounded-sm"
         aria-label={signal.summary ?? signal.post_text.slice(0, 80)}
       >
         {inner}
@@ -291,9 +291,9 @@ function TabButton({
       className={`
         relative flex items-center gap-1.5 px-3.5 py-2.5 text-sm whitespace-nowrap
         border-b-2 transition-all duration-150
-        focus:outline-none focus-visible:ring-2 focus-visible:ring-[#BF5700]
+        focus:outline-none focus-visible:ring-2 focus-visible:ring-bsi-primary
         ${isActive
-          ? 'border-[#BF5700] text-text-primary font-semibold'
+          ? 'border-bsi-primary text-text-primary font-semibold'
           : 'border-transparent text-text-muted hover:text-text-secondary hover:border-border font-medium'
         }
       `}
@@ -308,7 +308,7 @@ function TabButton({
           className={`
             inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-semibold
             ${isActive
-              ? 'bg-[#BF5700] text-white'
+              ? 'bg-bsi-primary text-white'
               : 'bg-surface-light text-text-muted'
             }
           `}
@@ -360,8 +360,8 @@ export function SocialIntelFeed() {
         <div className="flex items-center gap-2.5">
           {/* Pulse indicator */}
           <span className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#BF5700] opacity-60" />
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#BF5700]" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-bsi-primary opacity-60" />
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-bsi-primary" />
           </span>
           <h2 className="font-['Oswald'] text-base uppercase tracking-wider text-text-primary">
             Social Intelligence
@@ -435,7 +435,7 @@ export function SocialIntelFeed() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="px-3 py-1.5 text-xs font-medium bg-surface border border-border rounded-sm text-text-secondary hover:text-[#BF5700] hover:border-[#BF5700]/30 transition-all"
+                  className="px-3 py-1.5 text-xs font-medium bg-surface border border-border rounded-sm text-text-secondary hover:text-burnt-orange hover:border-bsi-primary/30 transition-all"
                 >
                   {link.label}
                 </Link>

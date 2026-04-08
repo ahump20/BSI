@@ -4,7 +4,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { editorialMetadata, editorialJsonLdProps } from '@/lib/editorial-seo';
 import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
@@ -171,7 +170,6 @@ export default function Week1PreviewPage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

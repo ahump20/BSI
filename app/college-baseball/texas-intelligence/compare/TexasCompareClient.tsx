@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
@@ -57,8 +56,8 @@ type Player = (Hitter | Pitcher) & { type: 'hitter' | 'pitcher' };
 // ─── Constants ──────────────────────────────────────────────────────────────
 
 const TEAM_ID = 'texas';
-const ACCENT = '#BF5700';
-const COMPARE_COLOR = '#4B9CD3';
+const ACCENT = 'var(--bsi-primary)';
+const COMPARE_COLOR = 'var(--heritage-columbia-blue)';
 
 // ─── Radar Chart ────────────────────────────────────────────────────────────
 
@@ -415,7 +414,6 @@ export default function TexasCompareClient() {
           </Container>
         </Section>
       </main>
-      <Footer />
     </>
   );
 }

@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { SavantGlossary } from '@/components/analytics/SavantGlossary';
-import { Footer } from '@/components/layout-ds/Footer';
 
 export function GlossaryPageClient() {
   return (
@@ -67,7 +66,6 @@ export function GlossaryPageClient() {
         </section>
       </div>
 
-      <Footer />
     </>
   );
 }

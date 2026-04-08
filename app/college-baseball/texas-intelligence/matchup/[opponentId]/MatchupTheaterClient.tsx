@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 import { fmt3, fmt2, fmt1, fmtPct } from '@/lib/utils/format';
@@ -33,7 +32,7 @@ interface MatchupResponse {
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 
-const ACCENT = '#BF5700';
+const ACCENT = 'var(--bsi-primary)';
 const TEXAS_ID = 'texas';
 
 function formatName(slug: string): string {
@@ -444,7 +443,6 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
           </Container>
         </Section>
       </main>
-      <Footer />
     </>
   );
 }
@@ -462,7 +460,7 @@ function CompareRow({ stat, texas, opp, texasVal, oppVal, higher }: {
         {texas}
       </td>
       <td className="py-2.5 px-2 text-center text-text-muted text-xs uppercase tracking-wider">{stat}</td>
-      <td className="py-2.5 px-2 text-left font-mono font-semibold" style={{ color: oppWins ? '#4B9CD3' : undefined }}>
+      <td className="py-2.5 px-2 text-left font-mono font-semibold" style={{ color: oppWins ? 'var(--heritage-columbia-blue)' : undefined }}>
         {opp}
       </td>
     </tr>

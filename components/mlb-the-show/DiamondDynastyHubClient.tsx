@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { Footer } from '@/components/layout-ds/Footer';
 import { Card, CardContent, CardTitle, StatCard } from '@/components/ui/Card';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { fetchShowOverview, fetchShowWatchEvents, type ShowMarketOverviewResponse } from '@/lib/mlb-the-show/client';
@@ -254,7 +253,6 @@ export function DiamondDynastyHubClient() {
           ) : null}
         </DataErrorBoundary>
       </ShowSurfaceFrame>
-      <Footer />
     </div>
   );
 }

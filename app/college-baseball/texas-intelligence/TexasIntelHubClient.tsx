@@ -9,7 +9,6 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { AnimatedCounter } from '@/components/ui/AnimatedCounter';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { SabermetricsPanel } from '@/components/college-baseball/SabermetricsPanel';
 import { ConferencePositionCard } from '@/components/college-baseball/ConferencePositionCard';
 import { TeamVideoPanel } from '@/components/college-baseball/TeamVideoPanel';
@@ -22,7 +21,7 @@ import { FEATURE_ARTICLES } from '@/app/college-baseball/editorial/page';
 
 const TEAM_ID = 'texas';
 const ESPN_ID = '126';
-const ACCENT = '#BF5700';
+const ACCENT = 'var(--bsi-primary)';
 const STICKY_NAV_OFFSET = 400;
 const COUNTDOWN_INTERVAL_MS = 60000;
 const SWIPE_THRESHOLD = 50;
@@ -889,7 +888,6 @@ export default function TexasIntelHubClient() {
         </div>
       )}
 
-      <Footer />
     </>
   );
 }

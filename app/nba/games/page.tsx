@@ -8,10 +8,11 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
+
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { FilterPill } from '@/components/ui/FilterPill';
 import { formatTimestamp, formatScheduleDate, getDateOffset, formatGameTime } from '@/lib/utils/timezone';
 import type { DataMeta } from '@/lib/types/data-meta';
 
@@ -319,51 +320,35 @@ export default function NBAGamesPage() {
             <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
               <button
                 onClick={() => setSelectedDate(getDateOffset(-3))}
-                className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-text-tertiary hover:text-text-primary transition-colors"
+                className="p-2 text-text-tertiary hover:text-text-primary transition-colors"
                 aria-label="Previous days"
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
+                <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M15 18l-6-6 6-6" />
                 </svg>
               </button>
 
               {dateOptions.map((option) => {
                 const dateValue = getDateOffset(option.offset);
-                const isSelected = selectedDate === dateValue;
-
                 return (
-                  <button
+                  <FilterPill
                     key={option.offset}
+                    active={selectedDate === dateValue}
                     onClick={() => setSelectedDate(dateValue)}
-                    className={`px-4 py-2 min-h-[44px] rounded-sm font-semibold text-sm whitespace-nowrap transition-all ${
-                      isSelected
-                        ? 'bg-burnt-orange text-white'
-                        : 'bg-background-tertiary text-text-secondary hover:bg-surface-light hover:text-text-primary'
-                    }`}
+                    uppercase={false}
+                    className="whitespace-nowrap"
                   >
                     {option.label}
-                  </button>
+                  </FilterPill>
                 );
               })}
 
               <button
                 onClick={() => setSelectedDate(getDateOffset(3))}
-                className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-text-tertiary hover:text-text-primary transition-colors"
+                className="p-2 text-text-tertiary hover:text-text-primary transition-colors"
                 aria-label="Next days"
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
+                <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M9 18l6-6-6-6" />
                 </svg>
               </button>
@@ -372,17 +357,13 @@ export default function NBAGamesPage() {
             {/* Conference Filter */}
             <div className="flex flex-wrap gap-2 mb-8">
               {conferences.map((conf) => (
-                <button
+                <FilterPill
                   key={conf}
+                  active={selectedConference === conf}
                   onClick={() => setSelectedConference(conf)}
-                  className={`px-4 py-2 min-h-[44px] rounded-sm text-sm font-medium transition-all ${
-                    selectedConference === conf
-                      ? 'bg-burnt-orange text-white'
-                      : 'bg-background-tertiary text-text-secondary hover:text-text-primary hover:bg-slate'
-                  }`}
                 >
                   {conf === 'All' ? 'All Teams' : `${conf} Conference`}
-                </button>
+                </FilterPill>
               ))}
             </div>
 
@@ -477,7 +458,6 @@ export default function NBAGamesPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

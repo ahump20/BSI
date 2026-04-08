@@ -8,7 +8,7 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
+
 import { Skeleton, SkeletonTableRow } from '@/components/ui/Skeleton';
 import { formatTimestamp } from '@/lib/utils/timezone';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
@@ -618,7 +618,6 @@ export default function MLBStandingsPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

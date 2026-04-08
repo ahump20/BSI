@@ -5,7 +5,6 @@ import { Section } from '@/components/ui/Section';
 import { Card, StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
 export const metadata: Metadata = {
@@ -82,11 +81,11 @@ export default function Weekend6RecapPage() {
         <Section padding="sm" className="border-b border-white/10">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">
                 College Baseball
               </Link>
               <span className="text-white/40">/</span>
-              <Link href="/college-baseball/editorial" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball/editorial" className="text-white/40 hover:text-burnt-orange transition-colors">
                 Editorial
               </Link>
               <span className="text-white/40">/</span>
@@ -97,7 +96,7 @@ export default function Weekend6RecapPage() {
 
         {/* ── 1. HERO ──────────────────────────────────────── */}
         <Section padding="lg" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#BF5700]/20 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-bsi-primary/20 to-transparent pointer-events-none" />
           <Container>
             <ScrollReveal direction="up">
               <div className="max-w-3xl">
@@ -168,14 +167,14 @@ export default function Weekend6RecapPage() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6">
                 Performance of the Weekend: Tyler Fay&apos;s No-Hitter
               </h2>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={100}>
               <Card variant="default" padding="lg">
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-14 h-14 bg-[#BF5700]/20 rounded-full flex items-center justify-center text-lg font-bold text-[#BF5700]">
+                  <div className="w-14 h-14 bg-bsi-primary/20 rounded-full flex items-center justify-center text-lg font-bold text-burnt-orange">
                     RHP
                   </div>
                   <div>
@@ -189,7 +188,7 @@ export default function Weekend6RecapPage() {
                     <div className="text-xs text-white/40 uppercase tracking-wide">Complete Game</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-display text-[#BF5700]">13 K</div>
+                    <div className="text-2xl font-display text-burnt-orange">13 K</div>
                     <div className="text-xs text-white/40 uppercase tracking-wide">Strikeouts</div>
                   </div>
                   <div className="text-center">
@@ -215,7 +214,7 @@ export default function Weekend6RecapPage() {
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6">
                 The Statement Series: Texas Takes Two at Auburn
               </h2>
             </ScrollReveal>
@@ -251,7 +250,7 @@ export default function Weekend6RecapPage() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6">
                 The Earthquake: Mainieri Resigns After 22-Run Loss
               </h2>
             </ScrollReveal>
@@ -286,7 +285,7 @@ export default function Weekend6RecapPage() {
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6">
                 Around the SEC: Sweeps, Statements, and Ten Ranked Teams
               </h2>
             </ScrollReveal>
@@ -326,7 +325,7 @@ export default function Weekend6RecapPage() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6">
                 ACC Report: FSU Keeps Rolling, Wake Forest Keeps Falling
               </h2>
             </ScrollReveal>
@@ -355,7 +354,7 @@ export default function Weekend6RecapPage() {
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6">
                 The West Coast: UCLA&apos;s Machine and USC&apos;s Historic Run
               </h2>
             </ScrollReveal>
@@ -385,7 +384,7 @@ export default function Weekend6RecapPage() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6">
                 Top 25 — Post-Weekend 6
               </h2>
             </ScrollReveal>
@@ -426,7 +425,7 @@ export default function Weekend6RecapPage() {
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6">
                 Texas Report
               </h2>
             </ScrollReveal>
@@ -465,7 +464,7 @@ export default function Weekend6RecapPage() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6">
                 Weekend 7 Preview: March 27–29
               </h2>
             </ScrollReveal>
@@ -557,7 +556,7 @@ export default function Weekend6RecapPage() {
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6">
                 BSI Verdict
               </h2>
             </ScrollReveal>
@@ -600,7 +599,6 @@ export default function Weekend6RecapPage() {
         </Section>
       </main>
 
-      <Footer />
     </>
   );
 }

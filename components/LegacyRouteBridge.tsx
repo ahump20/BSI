@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { Footer } from '@/components/layout-ds/Footer';
 
 type BridgeAction = {
   href: string;
@@ -94,7 +93,6 @@ export function LegacyRouteBridge({
           ) : null}
         </div>
       </section>
-      <Footer />
     </main>
   );
 }

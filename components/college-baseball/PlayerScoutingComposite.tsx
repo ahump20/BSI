@@ -451,8 +451,8 @@ function ScoutingRadar({
           <Radar
             name="Player"
             dataKey="percentile"
-            stroke="#BF5700"
-            fill="#BF5700"
+            stroke="var(--bsi-primary)"
+            fill="var(--bsi-primary)"
             fillOpacity={0.3}
             strokeWidth={2}
             animationDuration={800}

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { Container } from '@/components/ui/Container';
-import { Footer } from '@/components/layout-ds/Footer';
+
 import { Card, CardContent, CardTitle } from '@/components/ui/Card';
 
 export const metadata: Metadata = {
@@ -59,7 +59,6 @@ export default function MLBTheShow26Page() {
           </div>
         </Container>
       </section>
-      <Footer />
     </div>
   );
 }

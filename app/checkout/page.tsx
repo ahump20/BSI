@@ -19,7 +19,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 
 // Initialize Stripe outside component to avoid recreating on re-renders
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
@@ -39,7 +38,6 @@ function LoadingState() {
           </div>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }
@@ -90,7 +88,6 @@ function ErrorState({ message }: { message: string }) {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }
@@ -197,7 +194,6 @@ function CheckoutContent() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

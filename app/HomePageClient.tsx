@@ -113,7 +113,7 @@ const SPORT_NAV = [
     href: '/mlb/',
     desc: 'Scores, standings, and player tracking across both leagues',
     flagship: false,
-    accent: '#4B9CD3',
+    accent: 'var(--heritage-columbia-blue)',
     badge: null,
   },
   {
@@ -1424,7 +1424,7 @@ export function HomePageClient() {
               ) : topPitcher ? (
                 <StandoutCard
                   label="Top Pitcher"
-                  accentColor="#4B9CD3"
+                  accentColor="var(--heritage-columbia-blue)"
                   player={{ name: topPitcher.player_name, team: topPitcher.team }}
                   statLabel="FIP"
                   statValue={fmt2(topPitcher.fip ?? 0)}

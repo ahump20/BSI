@@ -10,7 +10,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
+
 import { Skeleton, SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { TabBar, TabPanel } from '@/components/ui/TabBar';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -769,7 +769,6 @@ export default function NBAPage() {
           </Container>
         </Section>
       </div>
-        <Footer />
       </>
     </div>
     </ErrorBoundary>

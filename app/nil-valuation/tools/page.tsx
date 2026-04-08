@@ -7,7 +7,6 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 
 const tools = [
   {
@@ -196,7 +195,6 @@ export default function NILToolsPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

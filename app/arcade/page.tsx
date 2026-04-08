@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
-import { Footer } from '@/components/layout-ds/Footer';
 import { HeroGlow } from '@/components/ui/HeroGlow';
 import { FilterPill } from '@/components/ui/FilterPill';
 import { useSportData } from '@/lib/hooks/useSportData';
@@ -245,7 +244,6 @@ export default function ArcadePage() {
           </div>
         </Container>
       </Section>
-      <Footer />
     </div>
   );
 }

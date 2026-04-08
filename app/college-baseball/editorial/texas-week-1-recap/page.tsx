@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card, StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { GameRecapToolbar } from '@/components/editorial/GameRecapToolbar';
 import { AIAnalysisPanel } from '@/components/editorial/AIAnalysisPanel';
 import { NotebookLMExport } from '@/components/editorial/NotebookLMExport';
@@ -866,7 +865,6 @@ export default function TexasWeek1RecapPage() {
         </Section>
       </div>
 
-      <Footer />
 
       {/* AI Analysis Panel */}
       <AIAnalysisPanel

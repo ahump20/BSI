@@ -17,7 +17,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { trackPaywallConvert, trackTrialStart } from '@/lib/analytics/tracker';
 
 // ============================================================================
@@ -51,7 +50,6 @@ function LoadingState() {
           </div>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }
@@ -271,7 +269,6 @@ function CheckoutReturnContent() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

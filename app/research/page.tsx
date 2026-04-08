@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
-import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
 import { ogImage } from '@/lib/metadata';
 
@@ -146,7 +145,6 @@ export default function ResearchIndexPage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

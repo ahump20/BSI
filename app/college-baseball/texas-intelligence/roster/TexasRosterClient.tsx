@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
@@ -55,7 +54,7 @@ interface TeamSabermetrics {
 // ─── Constants ──────────────────────────────────────────────────────────────
 
 const TEAM_ID = 'texas';
-const ACCENT = '#BF5700';
+const ACCENT = 'var(--bsi-primary)';
 
 type SortField = 'wrc_plus' | 'woba' | 'iso' | 'kpct' | 'bbpct' | 'pa';
 type PitcherSortField = 'fip' | 'k9' | 'bb9' | 'ip';
@@ -328,7 +327,6 @@ export default function TexasRosterClient() {
           </Container>
         </Section>
       </main>
-      <Footer />
     </>
   );
 }

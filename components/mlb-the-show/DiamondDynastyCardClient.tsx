@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { Footer } from '@/components/layout-ds/Footer';
 import { Card, CardContent, CardTitle } from '@/components/ui/Card';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { fetchShowCardDetail, fetchShowCardHistory, fetchShowWatchEvents, type ShowCardDetailResponse, type ShowHistoryResponse } from '@/lib/mlb-the-show/client';
@@ -134,7 +133,6 @@ export function DiamondDynastyCardClient() {
             </CardContent>
           </Card>
         </ShowSurfaceFrame>
-        <Footer />
       </div>
     );
   }
@@ -336,7 +334,7 @@ export function DiamondDynastyCardClient() {
                                   color: '#F5F0EB',
                                 }}
                               />
-                              <Line type="monotone" dataKey="value" stroke="#BF5700" strokeWidth={2} dot={false} />
+                              <Line type="monotone" dataKey="value" stroke="var(--bsi-primary)" strokeWidth={2} dot={false} />
                             </LineChart>
                           </ResponsiveContainer>
                         </div>
@@ -428,7 +426,6 @@ export function DiamondDynastyCardClient() {
           )}
         </DataErrorBoundary>
       </ShowSurfaceFrame>
-      <Footer />
     </div>
   );
 }

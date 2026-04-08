@@ -6,7 +6,6 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { FilterPill } from '@/components/ui/FilterPill';
-import { Footer } from '@/components/layout-ds/Footer';
 import { GLOSSARY_TERMS, getGlossaryLetters, type GlossaryTerm } from '@/lib/data/glossary-terms';
 
 type CategoryFilter = 'all' | 'baseball' | 'football' | 'basketball' | 'general';
@@ -245,7 +244,6 @@ export default function GlossaryPage() {
         </Container>
       </Section>
 
-      <Footer />
     </div>
   );
 }

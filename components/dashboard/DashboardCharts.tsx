@@ -66,7 +66,7 @@ export function StandingsBarChart({ data, isLoading }: StandingsBarChartProps) {
               fontSize: 12,
             }}
           />
-          <Bar dataKey="wins" fill="#BF5700" radius={[2, 2, 0, 0]} /> {/* token: --bsi-primary */}
+          <Bar dataKey="wins" fill="var(--bsi-primary)" radius={[2, 2, 0, 0]} />
           <Bar dataKey="losses" fill="rgba(255,255,255,0.15)" radius={[2, 2, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
