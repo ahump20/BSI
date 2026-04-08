@@ -586,6 +586,7 @@ export function HomePageClient() {
   const games: ScoreGame[] = scoresRes?.games ?? scoresRes?.data ?? [];
 
   // Derived: news articles — pick top 2 per sport, max 6 total
+  // Normalize links: ESPN returns nested links.web.href, not flat link field
   const newsArticles = useMemo(() => {
     if (!Array.isArray(newsRes)) return [];
     const articles: { article: NewsArticle; sport: string }[] = [];
@@ -593,7 +594,14 @@ export function HomePageClient() {
       const sport = bucket.sport;
       const items = bucket.data?.articles ?? [];
       for (const a of items.slice(0, 2)) {
-        if (a.headline) articles.push({ article: a, sport });
+        if (a.headline) {
+          const raw = a as Record<string, unknown>;
+          const link =
+            (typeof raw.link === 'string' && raw.link) ||
+            (((raw.links as Record<string, unknown>)?.web as Record<string, unknown>)?.href as string) ||
+            undefined;
+          articles.push({ article: { ...a, link }, sport });
+        }
       }
     }
     return articles.slice(0, 6);
