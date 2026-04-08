@@ -10,6 +10,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { formatTimestamp } from '@/lib/utils/timezone';
+import { useResolvedParam } from '@/lib/hooks/useResolvedParam';
 
 interface PlayerData {
   id: string;
@@ -94,7 +95,8 @@ interface PlayerProfileClientProps {
   playerId: string;
 }
 
-export default function PlayerProfileClient({ playerId }: PlayerProfileClientProps) {
+export default function PlayerProfileClient({ playerId: rawId }: PlayerProfileClientProps) {
+  const playerId = useResolvedParam(rawId, 'players');
   const [player, setPlayer] = useState<PlayerData | null>(null);
   const [stats, setStats] = useState<SeasonStats | null>(null);
   const [loading, setLoading] = useState(true);
