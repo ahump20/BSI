@@ -333,10 +333,11 @@ export async function handleMMITrending(env: Env): Promise<Response> {
       );
     }
 
-    const today = new Date().toISOString().split('T')[0];
+    // Use CT date — games finishing at 11pm CT on April 7 should show on April 7, not April 8 UTC
+    const today = new Date().toLocaleString('en-CA', { timeZone: 'America/Chicago' }).split(',')[0];
     const { results: summaries } = await env.DB.prepare(
       `SELECT * FROM mmi_game_summary
-       WHERE game_date = ?
+       WHERE game_date >= date(?, '-1 day')
        ORDER BY mmi_volatility DESC
        LIMIT 10`,
     ).bind(today).all();
