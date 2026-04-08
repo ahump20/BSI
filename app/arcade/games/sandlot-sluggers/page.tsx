@@ -50,7 +50,7 @@ export default function SandlotSluggersPage() {
             ].map((tip) => (
               <div
                 key={tip}
-                className="rounded-sm border border-border-vintage bg-[var(--surface-dugout,#161616)]/80 px-3 py-2 text-xs leading-relaxed text-bsi-dust"
+                className="rounded-sm border border-border-vintage bg-surface-dugout/80 px-3 py-2 text-xs leading-relaxed text-bsi-dust"
               >
                 {tip}
               </div>

@@ -343,7 +343,7 @@ export default function WeeklyPulseClient() {
                         </thead>
                         <tbody>
                           {pulse.conference_snapshot.slice(0, 15).map((c, idx) => (
-                            <tr key={c.conference} className="border-b border-[var(--border-vintage)]/20 hover:bg-[var(--surface-dugout,#161616)]/50 transition-colors">
+                            <tr key={c.conference} className="border-b border-[var(--border-vintage)]/20 hover:bg-surface-dugout/50 transition-colors">
                               <td className="px-4 py-2 text-bsi-dust font-mono text-xs">{idx + 1}</td>
                               <td className="px-3 py-2">
                                 <span className="text-bsi-bone font-display font-bold text-sm">{c.conference}</span>

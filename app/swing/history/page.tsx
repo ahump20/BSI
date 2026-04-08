@@ -154,7 +154,7 @@ export default function SwingHistoryPage() {
                       </CardContent>
                     </Card>
                     {isLocked && (
-                      <div className="absolute inset-0 flex items-center justify-center rounded-sm bg-[var(--surface-scoreboard,#0A0A0A)]/60">
+                      <div className="absolute inset-0 flex items-center justify-center rounded-sm bg-surface-scoreboard/60">
                         <div className="text-center">
                           <svg viewBox="0 0 24 24" className="w-5 h-5 text-text-muted mx-auto mb-1" fill="none" stroke="currentColor" strokeWidth="1.5">
                             <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
