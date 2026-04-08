@@ -4,13 +4,13 @@ import { ogImage } from '@/lib/metadata';
 import { websiteJsonLd } from '@/lib/seo/structured-data';
 
 export const metadata: Metadata = {
-  title: 'Blaze Sports Intel | Live Scores, Analytics & Editorial — College Baseball, MLB, NFL, NBA, CFB',
+  title: 'Blaze Sports Intel | Sports Intelligence, Put Simply — College Baseball, MLB, NFL, NBA, CFB',
   description:
-    'Live scores, advanced analytics, and original editorial across college baseball, MLB, NFL, NBA, and college football. Park-adjusted sabermetrics for 330 D1 programs. Every game, every stat, no network filter.',
+    'The numbers behind what your eyes already tell you. Live scores, advanced analytics, and scouting intel across college baseball, MLB, NFL, NBA, and college football — put simply.',
   openGraph: {
-    title: 'Blaze Sports Intel | Live Scores, Analytics & Editorial — College Baseball, MLB, NFL, NBA, CFB',
+    title: 'Blaze Sports Intel | Sports Intelligence, Put Simply',
     description:
-      'Live scores, advanced analytics, and original editorial across college baseball, MLB, NFL, NBA, and college football. Park-adjusted sabermetrics for 330 D1 programs.',
+      'The numbers behind what your eyes already tell you. Live scores, advanced analytics, and scouting intel across college baseball, MLB, NFL, NBA, and college football — put simply.',
     type: 'website',
     url: 'https://blazesportsintel.com',
     siteName: 'Blaze Sports Intel',
@@ -18,9 +18,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Blaze Sports Intel | Live Scores, Analytics & Editorial — College Baseball, MLB, NFL, NBA, CFB',
+    title: 'Blaze Sports Intel | Sports Intelligence, Put Simply',
     description:
-      'Live scores, advanced analytics, and original editorial across college baseball, MLB, NFL, NBA, and college football.',
+      'The numbers behind what your eyes already tell you. Live scores, analytics, and scouting intel across college baseball, MLB, NFL, NBA, and college football.',
     images: ['https://blazesportsintel.com/images/og-image.png'],
   },
 };

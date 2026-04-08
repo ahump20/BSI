@@ -11,7 +11,7 @@
  * Heritage Design System v2.1 throughout. All data wired to live APIs.
  */
 
-import { useMemo } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSportData } from '@/lib/hooks/useSportData';
@@ -19,6 +19,7 @@ import { DataTransition } from '@/components/motion/DataTransition';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { ScrollReveal } from '@/components/cinematic';
 import { fmt3, fmt2 } from '@/lib/analytics/viz';
+import { GamePreviewModal } from '@/components/ui/GamePreviewModal';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -61,6 +62,11 @@ interface ScoreGame {
   status?: string;
   start_time?: string;
   [key: string]: unknown;
+}
+
+interface TickerGame extends ScoreGame {
+  sport: string;
+  sportShort: string;
 }
 
 interface ScoresResponse {
@@ -160,6 +166,72 @@ const SPORT_LABELS: Record<string, string> = {
   d1bb: 'College Baseball',
 };
 
+// ---------------------------------------------------------------------------
+// Ticker game normalizer — extracts team names + scores from any API shape
+// ---------------------------------------------------------------------------
+
+function normalizeTickerGame(g: ScoreGame): ScoreGame {
+  // Already has flat fields? Return as-is.
+  if (g.away_team && g.home_team) return g;
+
+  let away_team: string | undefined;
+  let home_team: string | undefined;
+  let away_score: number | string | undefined;
+  let home_score: number | string | undefined;
+  let id = g.id;
+
+  const raw = g as Record<string, unknown>;
+
+  // Shape 1: Highlightly raw — homeTeam.name, awayTeam.name, homeScore, awayScore
+  const hlHome = raw.homeTeam as Record<string, unknown> | undefined;
+  const hlAway = raw.awayTeam as Record<string, unknown> | undefined;
+  if (hlHome || hlAway) {
+    home_team = (hlHome?.displayName ?? hlHome?.name ?? hlHome?.shortName) as string | undefined;
+    away_team = (hlAway?.displayName ?? hlAway?.name ?? hlAway?.shortName) as string | undefined;
+    home_score = raw.homeScore as number | undefined;
+    away_score = raw.awayScore as number | undefined;
+    if (!id) id = String(raw.id ?? '');
+  }
+
+  // Shape 2: Transformed — teams.away.name, teams.home.name
+  const teams = raw.teams as Record<string, Record<string, unknown>> | undefined;
+  if (!away_team && teams) {
+    away_team = (teams.away?.name ?? teams.away?.displayName ?? teams.away?.abbreviation) as string | undefined;
+    home_team = (teams.home?.name ?? teams.home?.displayName ?? teams.home?.abbreviation) as string | undefined;
+    away_score = teams.away?.score as number | string | undefined;
+    home_score = teams.home?.score as number | string | undefined;
+  }
+
+  // Shape 3: MLB/NBA/NFL/CFB — home.name, away.name, home.score, away.score
+  const nestedHome = raw.home as Record<string, unknown> | undefined;
+  const nestedAway = raw.away as Record<string, unknown> | undefined;
+  if (!away_team && (nestedHome || nestedAway)) {
+    home_team = (nestedHome?.name ?? nestedHome?.displayName ?? nestedHome?.abbreviation) as string | undefined;
+    away_team = (nestedAway?.name ?? nestedAway?.displayName ?? nestedAway?.abbreviation) as string | undefined;
+    home_score = nestedHome?.score as number | string | undefined;
+    away_score = nestedAway?.score as number | string | undefined;
+  }
+
+  // Shape 4: ESPN competitions — competitors array
+  const competitions = raw.competitions as Array<Record<string, unknown>> | undefined;
+  if (!away_team && competitions?.[0]) {
+    const competitors = (competitions[0].competitors ?? []) as Array<Record<string, unknown>>;
+    const homeComp = competitors.find((c) => c.homeAway === 'home');
+    const awayComp = competitors.find((c) => c.homeAway === 'away');
+    const homeTeam = homeComp?.team as Record<string, unknown> | undefined;
+    const awayTeam = awayComp?.team as Record<string, unknown> | undefined;
+    home_team = (homeTeam?.displayName ?? homeTeam?.name ?? homeTeam?.abbreviation) as string | undefined;
+    away_team = (awayTeam?.displayName ?? awayTeam?.name ?? awayTeam?.abbreviation) as string | undefined;
+    home_score = homeComp?.score as number | string | undefined;
+    away_score = awayComp?.score as number | string | undefined;
+    if (!id) id = String(raw.id ?? '');
+  }
+
+  const finalAwayScore = away_score != null ? Number(away_score) : g.away_score;
+  const finalHomeScore = home_score != null ? Number(home_score) : g.home_score;
+  return { ...g, id, away_team, home_team, away_score: isNaN(finalAwayScore as number) ? undefined : finalAwayScore, home_score: isNaN(finalHomeScore as number) ? undefined : finalHomeScore };
+}
+
 // Sport pulse config — maps API keys to display
 const PULSE_SPORTS = [
   { key: 'college-baseball', apiPath: '/api/college-baseball/scores', label: 'College Baseball', short: 'CBB' },
@@ -173,7 +245,13 @@ const PULSE_SPORTS = [
 // Score Ticker
 // ---------------------------------------------------------------------------
 
-function ScoreTicker({ games }: { games: ScoreGame[] }) {
+function ScoreTicker({
+  games,
+  onGameClick,
+}: {
+  games: TickerGame[];
+  onGameClick?: (sport: string, gameId: string) => void;
+}) {
   if (!games.length) return null;
 
   const doubled = [...games, ...games];
@@ -187,60 +265,104 @@ function ScoreTicker({ games }: { games: ScoreGame[] }) {
       }}
       aria-label="Live scores ticker"
     >
-      <div className="ticker-track flex items-center whitespace-nowrap py-2.5">
+      <div className="ticker-track flex items-center whitespace-nowrap py-3">
         {doubled.map((g, i) => {
           const rawStatus = g.status;
           const statusStr = (typeof rawStatus === 'string' ? rawStatus : typeof rawStatus === 'object' && rawStatus !== null ? String((rawStatus as Record<string, unknown>).detailedState ?? (rawStatus as Record<string, unknown>).state ?? '') : '').toLowerCase();
           const isLive = statusStr.includes('live') ||
                          statusStr.includes('in progress') ||
                          statusStr.includes('top') ||
-                         statusStr.includes('bot');
+                         statusStr.includes('bot') ||
+                         statusStr === 'in';
+          const isFinal = statusStr.includes('final') || statusStr === 'post';
+          const displayStatus = typeof g.status === 'string' ? g.status : statusStr;
+          const canClick = !!g.id && !!onGameClick;
+
+          // Use abbreviation if available for tighter ticker display
+          const awayName = g.away_team ?? 'TBD';
+          const homeName = g.home_team ?? 'TBD';
+          const awayScore = g.away_score ?? '-';
+          const homeScore = g.home_score ?? '-';
+
+          const scoreContent = (
+            <>
+              <span
+                className="text-[10px] uppercase tracking-wider font-bold px-1.5 py-0.5 mr-1.5"
+                style={{
+                  fontFamily: 'var(--font-oswald)',
+                  color: 'var(--bsi-bone)',
+                  background: 'rgba(191,87,0,0.3)',
+                  borderRadius: '2px',
+                }}
+              >
+                {g.sportShort}
+              </span>
+              <span className="font-medium" style={{ color: 'var(--bsi-dust)' }}>{awayName}</span>
+              <span className="font-bold tabular-nums mx-0.5" style={{ color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}>{awayScore}</span>
+              <span className="mx-0.5" style={{ color: 'rgba(196,184,165,0.5)' }}>@</span>
+              <span className="font-medium" style={{ color: 'var(--bsi-dust)' }}>{homeName}</span>
+              <span className="font-bold tabular-nums mx-0.5" style={{ color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}>{homeScore}</span>
+              {isLive && (
+                <span className="inline-flex items-center gap-1 ml-1.5 px-1.5 py-0.5 rounded-sm" style={{ background: 'rgba(16,185,129,0.1)' }}>
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                  <span className="text-[9px] uppercase tracking-wider font-bold" style={{ color: '#10B981' }}>
+                    Live
+                  </span>
+                </span>
+              )}
+              {isFinal && (
+                <span className="text-[9px] uppercase tracking-wider ml-1.5 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                  Final
+                </span>
+              )}
+              {!isLive && !isFinal && displayStatus && (
+                <span className="text-[9px] uppercase tracking-wider ml-1.5" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                  {displayStatus}
+                </span>
+              )}
+            </>
+          );
+
           return (
             <span key={`${g.id ?? i}-${i}`} className="inline-flex items-center shrink-0">
               {i > 0 && (
                 <span
-                  className="mx-4 text-xs"
-                  style={{ color: 'var(--bsi-primary)', opacity: 0.75 }}
+                  className="mx-5 text-[10px]"
+                  style={{ color: 'var(--bsi-primary)', opacity: 0.6 }}
                   aria-hidden="true"
                 >
                   &#9670;
                 </span>
               )}
-              <Link
-                href={g.id ? `/college-baseball/game/${g.id}/` : '/scores/'}
-                className="inline-flex items-center gap-2 text-xs transition-colors hover:text-[var(--bsi-primary)]"
-                style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-bone)' }}
-              >
-                <span style={{ color: 'var(--bsi-dust)' }}>{g.away_team ?? 'Away'}</span>
-                <span className="font-bold tabular-nums">{g.away_score ?? '-'}</span>
-                <span style={{ color: 'rgba(196,184,165,0.7)' }}>@</span>
-                <span style={{ color: 'var(--bsi-dust)' }}>{g.home_team ?? 'Home'}</span>
-                <span className="font-bold tabular-nums">{g.home_score ?? '-'}</span>
-                {isLive && (
-                  <span className="flex items-center gap-1 ml-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                    <span className="text-[10px] uppercase tracking-wider" style={{ color: '#10B981' }}>
-                      Live
-                    </span>
-                  </span>
-                )}
-                {!isLive && g.status && (
-                  <span className="text-[10px] uppercase tracking-wider ml-1" style={{ color: 'rgba(196,184,165,0.7)' }}>
-                    {g.status}
-                  </span>
-                )}
-              </Link>
+              {canClick ? (
+                <button
+                  type="button"
+                  onClick={() => onGameClick(g.sport, g.id!)}
+                  className="inline-flex items-center gap-1.5 text-[13px] transition-colors hover:text-[var(--bsi-primary)] cursor-pointer"
+                  style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-bone)', textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
+                >
+                  {scoreContent}
+                </button>
+              ) : (
+                <Link
+                  href={`/${g.sport}/`}
+                  className="inline-flex items-center gap-1.5 text-[13px] transition-colors hover:text-[var(--bsi-primary)]"
+                  style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-bone)', textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
+                >
+                  {scoreContent}
+                </Link>
+              )}
             </span>
           );
         })}
       </div>
 
       <div
-        className="absolute left-0 top-0 bottom-0 w-12 z-10 pointer-events-none"
+        className="absolute left-0 top-0 bottom-0 w-16 z-10 pointer-events-none"
         style={{ background: 'linear-gradient(to right, var(--surface-dugout), transparent)' }}
       />
       <div
-        className="absolute right-0 top-0 bottom-0 w-12 z-10 pointer-events-none"
+        className="absolute right-0 top-0 bottom-0 w-16 z-10 pointer-events-none"
         style={{ background: 'linear-gradient(to left, var(--surface-dugout), transparent)' }}
       />
     </div>
@@ -754,6 +876,40 @@ export function HomePageClient() {
   const pitchers = pitchingRes?.data ?? [];
   const games: ScoreGame[] = scoresRes?.games ?? scoresRes?.data ?? [];
 
+  // Derived: multi-sport ticker games — interleaved round-robin, live games first
+  const tickerGames = useMemo<TickerGame[]>(() => {
+    const tag = (res: ScoresResponse | null, sport: string, short: string): TickerGame[] =>
+      (res?.games ?? res?.data ?? []).map((g) => ({ ...normalizeTickerGame(g), sport, sportShort: short }));
+
+    const buckets = [
+      tag(scoresRes, 'college-baseball', 'CBB'),
+      tag(mlbScoresRes, 'mlb', 'MLB'),
+      tag(nflScoresRes, 'nfl', 'NFL'),
+      tag(nbaScoresRes, 'nba', 'NBA'),
+      tag(cfbScoresRes, 'cfb', 'CFB'),
+    ].filter((b) => b.length > 0);
+
+    // Sort each bucket: live games first
+    const isLive = (g: TickerGame) => {
+      const raw = g.status;
+      const s = (typeof raw === 'string' ? raw : typeof raw === 'object' && raw !== null ? String((raw as Record<string, unknown>).detailedState ?? (raw as Record<string, unknown>).state ?? '') : '').toLowerCase();
+      return s.includes('live') || s.includes('in progress') || s.includes('top') || s.includes('bot');
+    };
+    for (const bucket of buckets) {
+      bucket.sort((a, b) => (isLive(b) ? 1 : 0) - (isLive(a) ? 1 : 0));
+    }
+
+    // Round-robin interleave
+    const result: TickerGame[] = [];
+    const maxLen = Math.max(...buckets.map((b) => b.length), 0);
+    for (let i = 0; i < maxLen; i++) {
+      for (const bucket of buckets) {
+        if (i < bucket.length) result.push(bucket[i]);
+      }
+    }
+    return result;
+  }, [scoresRes, mlbScoresRes, nflScoresRes, nbaScoresRes, cfbScoresRes]);
+
   // Derived: sport pulse — aggregated live/total counts per sport
   const sportPulse = useMemo<Record<string, SportPulseData>>(() => ({
     'college-baseball': countGames(scoresRes),
@@ -803,6 +959,12 @@ export function HomePageClient() {
       .sort((a, b) => (a.fip ?? 99) - (b.fip ?? 99))[0] ?? null;
   }, [pitchers]);
 
+  // Game preview modal state
+  const [previewTarget, setPreviewTarget] = useState<{ sport: string; gameId: string } | null>(null);
+  const handleGameClick = useCallback((sport: string, gameId: string) => {
+    setPreviewTarget({ sport, gameId });
+  }, []);
+
   return (
     <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard)' }}>
 
@@ -811,30 +973,30 @@ export function HomePageClient() {
       {/* Everything above the threshold answers "What is this?"            */}
       {/* ================================================================= */}
 
-      {/* HERO — Full-viewport poster. The image does atmospheric work.     */}
+      {/* HERO — Full-viewport poster with cinematic Ken Burns zoom.       */}
       <section
         className="relative overflow-hidden flex items-center"
         style={{
           background: 'var(--surface-scoreboard)',
-          minHeight: '75vh',
+          minHeight: '80vh',
         }}
       >
-        {/* Hero backdrop — opacity raised to load-bearing */}
+        {/* Hero backdrop — Ken Burns slow zoom for cinematic depth */}
         <img
           src="/images/brand/bsi-hero-backdrop.webp"
           alt=""
           aria-hidden="true"
           loading="eager"
           decoding="async"
-          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-          style={{ opacity: 0.4 }}
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none hero-ken-burns"
+          style={{ opacity: 0.35 }}
         />
 
-        {/* Atmospheric overlays */}
+        {/* Atmospheric overlays — warm glow centered on headline area */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: 'radial-gradient(ellipse 70% 80% at 50% 35%, rgba(191,87,0,0.18) 0%, transparent 70%)',
+            background: 'radial-gradient(ellipse 60% 50% at 50% 45%, rgba(191,87,0,0.12) 0%, transparent 70%)',
           }}
         />
         <div
@@ -842,48 +1004,48 @@ export function HomePageClient() {
           style={{
             background: `linear-gradient(
               to bottom,
-              rgba(10,10,10,0.2) 0%,
-              rgba(10,10,10,0.08) 35%,
-              rgba(10,10,10,0.35) 75%,
+              rgba(10,10,10,0.3) 0%,
+              rgba(10,10,10,0.05) 30%,
+              rgba(10,10,10,0.25) 65%,
               var(--surface-scoreboard) 100%
             )`,
           }}
         />
-        <div className="absolute inset-0 pointer-events-none grain-overlay" style={{ opacity: 0.25 }} />
+        <div className="absolute inset-0 pointer-events-none grain-overlay" style={{ opacity: 0.2 }} />
 
-        {/* Hero content — centered, poster-grade */}
-        <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 py-16 sm:py-20 md:py-24 text-center">
+        {/* Hero content — centered, poster-grade, cinematic stagger */}
+        <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 py-20 sm:py-24 md:py-32 text-center">
           {/* Shield logo */}
-          <div className="hero-entrance flex justify-center mb-6" style={{ animationDelay: '0ms' }}>
+          <div className="hero-entrance flex justify-center mb-8" style={{ animationDelay: '0ms' }}>
             <Image
               src="/images/brand/bsi-logo-primary.webp"
               alt="Blaze Sports Intel"
               width={160}
               height={160}
-              className="w-[80px] sm:w-[100px] md:w-[120px] h-auto drop-shadow-[0_0_60px_rgba(191,87,0,0.25)]"
+              className="w-[80px] sm:w-[100px] md:w-[120px] h-auto drop-shadow-[0_0_80px_rgba(191,87,0,0.3)]"
               priority
             />
           </div>
 
           {/* Headline — poster scale */}
-          <div className="hero-entrance" style={{ animationDelay: '100ms' }}>
+          <div className="hero-entrance" style={{ animationDelay: '200ms' }}>
             <h1
-              className="font-bold uppercase leading-[0.95] tracking-wide"
+              className="font-bold uppercase leading-[0.92] tracking-wide"
               style={{
                 fontFamily: 'var(--font-bebas)',
                 color: 'var(--bsi-bone)',
-                fontSize: 'clamp(2.5rem, 7vw, 5rem)',
+                fontSize: 'clamp(2.5rem, 8vw, 5.5rem)',
               }}
             >
               Sports Intelligence,{' '}
-              <span style={{ color: 'var(--bsi-primary)' }}>Unfiltered</span>
+              <span style={{ color: 'var(--bsi-primary)' }}>Put Simply</span>
             </h1>
           </div>
 
           {/* Tagline */}
-          <div className="hero-entrance" style={{ animationDelay: '200ms' }}>
+          <div className="hero-entrance" style={{ animationDelay: '400ms' }}>
             <p
-              className="mt-3 sm:mt-4 text-base sm:text-lg italic tracking-wide"
+              className="mt-4 sm:mt-5 text-base sm:text-lg md:text-xl italic tracking-wide"
               style={{
                 fontFamily: 'var(--font-cormorant)',
                 color: 'var(--bsi-primary)',
@@ -894,28 +1056,28 @@ export function HomePageClient() {
           </div>
 
           {/* Supporting line */}
-          <div className="hero-entrance" style={{ animationDelay: '300ms' }}>
+          <div className="hero-entrance" style={{ animationDelay: '600ms' }}>
             <p
-              className="mt-4 text-sm sm:text-base leading-relaxed max-w-xl mx-auto"
-              style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)' }}
+              className="mt-5 text-sm sm:text-base md:text-lg leading-relaxed max-w-2xl mx-auto"
+              style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)', lineHeight: 1.7 }}
             >
-              Real-time scores, park-adjusted sabermetrics, and scouting intel
+              The numbers behind what your eyes already tell you — translated
               across college baseball, MLB, NFL, NBA, and college football.
             </p>
           </div>
 
           {/* Action row — centered */}
-          <div className="hero-entrance flex flex-wrap items-center justify-center gap-3 mt-8" style={{ animationDelay: '400ms' }}>
+          <div className="hero-entrance flex flex-wrap items-center justify-center gap-4 mt-10" style={{ animationDelay: '800ms' }}>
             <Link
               href="/scores/"
-              className="btn-heritage-fill text-xs uppercase tracking-wider px-6 py-2.5"
+              className="btn-heritage-fill text-xs sm:text-sm uppercase tracking-wider px-7 py-3"
               style={{ fontFamily: 'var(--font-oswald)' }}
             >
               Live Scores
             </Link>
             <Link
               href="/college-baseball/savant/"
-              className="btn-heritage text-xs uppercase tracking-wider px-6 py-2.5"
+              className="btn-heritage text-xs sm:text-sm uppercase tracking-wider px-7 py-3"
               style={{ fontFamily: 'var(--font-oswald)' }}
             >
               BSI Savant
@@ -950,7 +1112,7 @@ export function HomePageClient() {
 
       {/* SCORE TICKER */}
       <DataErrorBoundary name="ScoreTicker" compact>
-        <ScoreTicker games={games} />
+        <ScoreTicker games={tickerGames} onGameClick={handleGameClick} />
       </DataErrorBoundary>
 
       {/* SPORT PULSE — Live game counts across all 5 sports */}
@@ -966,30 +1128,30 @@ export function HomePageClient() {
           background: 'linear-gradient(180deg, var(--surface-press-box) 0%, var(--surface-scoreboard) 100%)',
         }}
       >
-        <ScrollReveal as="div" className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-20">
+        <ScrollReveal as="div" className="max-w-3xl mx-auto px-4 sm:px-6 py-16 sm:py-20 md:py-28">
           <div
-            className="section-rule-thick mb-6"
-            style={{ width: '2.5rem' }}
+            className="section-rule-thick mb-8"
+            style={{ width: '3.5rem' }}
           />
           <h2
-            className="text-2xl sm:text-3xl md:text-4xl font-bold uppercase leading-tight"
+            className="text-2xl sm:text-3xl md:text-[2.75rem] font-bold uppercase leading-tight"
             style={{ fontFamily: 'var(--font-bebas)', color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}
           >
-            Five sports. Every game.{' '}
-            <span style={{ color: 'var(--bsi-primary)' }}>No network filter.</span>
+            Five Sports. One Language.{' '}
+            <span style={{ color: 'var(--bsi-primary)' }}>Yours.</span>
           </h2>
           <p
-            className="mt-5 text-base sm:text-lg leading-relaxed"
+            className="mt-6 text-base sm:text-lg md:text-xl leading-relaxed"
             style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)', lineHeight: 1.8 }}
           >
-            College baseball, MLB, NFL, NBA, and college football — covered with the analytical
-            depth that mainstream sports media skip. Park-adjusted sabermetrics, real-time scores,
-            and scouting context recalculated every six hours.
+            College baseball, MLB, NFL, NBA, and college football — with the analytical
+            depth that mainstream sports media skip. The numbers behind what your eyes already
+            tell you, recalculated every six hours and translated so you don&apos;t need a statistics degree.
           </p>
 
           {/* Proof points — inline, not cards */}
           <div
-            className="mt-8 pt-6 border-t flex flex-wrap gap-x-10 gap-y-4"
+            className="mt-10 pt-8 border-t flex flex-wrap gap-x-12 gap-y-6"
             style={{ borderColor: 'rgba(140,98,57,0.2)' }}
           >
             {[
@@ -997,16 +1159,16 @@ export function HomePageClient() {
               { stat: '330', label: 'D1 Programs' },
               { stat: '6hr', label: 'Recompute Cycle' },
               { stat: '1,900+', label: 'Players Tracked' },
-            ].map((p) => (
-              <div key={p.label}>
+            ].map((p, idx) => (
+              <div key={p.label} className="hero-entrance" style={{ animationDelay: `${idx * 100}ms` }}>
                 <span
-                  className="text-2xl sm:text-3xl font-bold tabular-nums"
+                  className="text-2xl sm:text-3xl md:text-4xl font-bold tabular-nums"
                   style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-primary)' }}
                 >
                   {p.stat}
                 </span>
                 <span
-                  className="block text-[10px] uppercase tracking-[0.15em] mt-1"
+                  className="block text-[10px] sm:text-[11px] uppercase tracking-[0.15em] mt-1.5"
                   style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-dust)' }}
                 >
                   {p.label}
@@ -1022,15 +1184,15 @@ export function HomePageClient() {
         className="relative"
         style={{ borderTop: '1px solid var(--border-vintage)' }}
       >
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-20">
           <ScrollReveal stagger>
             {/* Flagship sport — College Baseball gets hero treatment */}
             <Link
               href={SPORT_NAV[0].href}
-              className="group block heritage-card overflow-hidden mb-4 transition-all"
+              className="group block heritage-card overflow-hidden mb-5 transition-all duration-300 hover:border-[var(--bsi-primary)]"
               style={{ borderLeft: `3px solid ${SPORT_NAV[0].accent}` }}
             >
-              <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-5 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-5 sm:p-7">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-2">
                     <h3
@@ -1087,15 +1249,15 @@ export function HomePageClient() {
             </Link>
 
             {/* Other 4 sports — compact row */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
               {SPORT_NAV.slice(1).map((sport) => {
                 const pulseData = sportPulse[sport.key];
                 return (
                   <Link
                     key={sport.key}
                     href={sport.href}
-                    className="group block heritage-card p-4 transition-all"
-                    style={{ borderTop: `2px solid ${sport.accent}` }}
+                    className="group block heritage-card p-4 sm:p-5 transition-all duration-300"
+                    style={{ borderTop: `2px solid ${sport.accent}`, willChange: 'transform' }}
                   >
                     <div className="flex items-center justify-between mb-2">
                       <h3
@@ -1160,17 +1322,17 @@ export function HomePageClient() {
           borderBottom: '1px solid var(--border-vintage)',
         }}
       >
-        <ScrollReveal as="div" className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
-          <div className="flex items-center justify-between mb-6">
+        <ScrollReveal as="div" className="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-20">
+          <div className="flex items-center justify-between mb-8">
             <div>
               <h2
-                className="text-lg sm:text-xl md:text-2xl font-bold uppercase"
+                className="text-xl sm:text-2xl md:text-3xl font-bold uppercase"
                 style={{ fontFamily: 'var(--font-bebas)', color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}
               >
                 The BSI Savant Standard
               </h2>
               <p
-                className="text-xs mt-1"
+                className="text-xs sm:text-sm mt-1.5"
                 style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)' }}
               >
                 What analytical depth actually looks like — live from the leaderboard
@@ -1284,8 +1446,8 @@ export function HomePageClient() {
       </section>
 
       {/* Quick links — key BSI tools below the leaderboard proof */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
             { title: 'Live Scores', href: '/scores/', desc: 'All sports, real-time' },
             { title: 'Player Search', href: '/college-baseball/players/', desc: 'Find any D1 player' },
@@ -1295,16 +1457,22 @@ export function HomePageClient() {
             <Link
               key={item.href}
               href={item.href}
-              className="group heritage-card px-3 py-2.5 transition-all block"
+              className="group heritage-card px-4 py-3.5 transition-all duration-200 block hover:bg-[rgba(191,87,0,0.04)]"
             >
+              <div className="flex items-center gap-2">
+                <span
+                  className="w-1.5 h-1.5 rounded-full shrink-0 transition-colors group-hover:bg-[var(--bsi-primary)]"
+                  style={{ background: 'rgba(191,87,0,0.4)' }}
+                />
+                <p
+                  className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.1em] transition-colors group-hover:text-[var(--bsi-primary)]"
+                  style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-dust)' }}
+                >
+                  {item.title}
+                </p>
+              </div>
               <p
-                className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.1em] transition-colors group-hover:text-[var(--bsi-primary)]"
-                style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-dust)' }}
-              >
-                {item.title}
-              </p>
-              <p
-                className="text-[9px] mt-0.5"
+                className="text-[9px] sm:text-[10px] mt-1 ml-3.5"
                 style={{ fontFamily: 'var(--font-mono)', color: 'rgba(196,184,165,0.5)' }}
               >
                 {item.desc}
@@ -1361,34 +1529,40 @@ export function HomePageClient() {
       >
         <div
           className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse 60% 80% at 50% 30%, rgba(191,87,0,0.04) 0%, transparent 70%)' }}
+          style={{ background: 'radial-gradient(ellipse 70% 90% at 50% 40%, rgba(191,87,0,0.06) 0%, transparent 70%)' }}
         />
-        <ScrollReveal as="div" direction="fade" className="relative max-w-5xl mx-auto px-4 sm:px-6 py-14 sm:py-20 text-center">
+        <div className="absolute inset-0 pointer-events-none grain-overlay" style={{ opacity: 0.15 }} />
+        <ScrollReveal as="div" direction="fade" className="relative max-w-5xl mx-auto px-4 sm:px-6 py-16 sm:py-24 md:py-28 text-center">
           <h2
-            className="text-xl sm:text-2xl md:text-3xl font-bold uppercase"
+            className="text-xl sm:text-2xl md:text-[2.25rem] font-bold uppercase"
             style={{ fontFamily: 'var(--font-bebas)', color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}
           >
-            Five sports. One standard.{' '}
-            <span style={{ color: 'var(--bsi-primary)' }}>No paywall.</span>
+            The Numbers Behind What You Already Know.
           </h2>
           <p
-            className="mt-3 text-sm sm:text-base max-w-md mx-auto"
+            className="mt-2 text-sm sm:text-base uppercase tracking-[0.12em]"
+            style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary)' }}
+          >
+            No paywall.
+          </p>
+          <p
+            className="mt-4 text-sm sm:text-base max-w-lg mx-auto"
             style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)', lineHeight: 1.7 }}
           >
             Live scores, advanced analytics, and scouting intel across college baseball,
             MLB, NFL, NBA, and college football — updating now.
           </p>
-          <div className="flex items-center justify-center gap-3 mt-8">
+          <div className="flex items-center justify-center gap-4 mt-10">
             <Link
               href="/scores/"
-              className="btn-heritage-fill text-xs uppercase tracking-wider px-6 py-3"
+              className="btn-heritage-fill text-xs sm:text-sm uppercase tracking-wider px-7 py-3.5"
               style={{ fontFamily: 'var(--font-oswald)' }}
             >
               Live Scores
             </Link>
             <Link
               href="/college-baseball/savant/"
-              className="btn-heritage text-xs uppercase tracking-wider px-6 py-3"
+              className="btn-heritage text-xs sm:text-sm uppercase tracking-wider px-7 py-3.5"
               style={{ fontFamily: 'var(--font-oswald)' }}
             >
               BSI Savant
@@ -1398,10 +1572,10 @@ export function HomePageClient() {
       </section>
 
       {/* BRAND FOOTER STRIP */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
         <div
-          className="flex items-center justify-center gap-4 py-4 border-t"
-          style={{ borderColor: 'rgba(196,184,165,0.08)' }}
+          className="flex items-center justify-center gap-5 py-5 border-t"
+          style={{ borderColor: 'rgba(196,184,165,0.1)' }}
         >
           <Image
             src="/brand/blaze-roundel.png"
@@ -1426,6 +1600,15 @@ export function HomePageClient() {
           </div>
         </div>
       </section>
+
+      {/* GAME PREVIEW MODAL */}
+      {previewTarget && (
+        <GamePreviewModal
+          sport={previewTarget.sport}
+          gameId={previewTarget.gameId}
+          onClose={() => setPreviewTarget(null)}
+        />
+      )}
     </div>
   );
 }

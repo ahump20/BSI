@@ -985,9 +985,29 @@ textarea:focus-visible,
   z-index: 1;
 }
 
+/* Hero entrance — cinematic stagger animation for hero elements */
+.hero-entrance {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: hero-entrance-reveal 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+@keyframes hero-entrance-reveal {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Hero Ken Burns — slow zoom on backdrop image for cinematic depth */
+.hero-ken-burns {
+  animation: hero-ken-burns 20s ease-in-out infinite alternate;
+}
+@keyframes hero-ken-burns {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.06); }
+}
+
 /* Score ticker — CSS marquee for homepage */
 .ticker-track {
-  animation: ticker-scroll 60s linear infinite;
+  animation: ticker-scroll 45s linear infinite;
 }
 .ticker-track:hover {
   animation-play-state: paused;
