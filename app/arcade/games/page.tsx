@@ -77,7 +77,7 @@ export default function ArcadeGamesPage() {
             <a
               key={game.id}
               href={game.url}
-              className="glass-elevated rounded-sm p-6 flex flex-col justify-between group hover:border-border-strong transition-all"
+              className="bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm p-6 flex flex-col justify-between group hover:border-[var(--bsi-primary)]/40 transition-all"
             >
               <div>
                 <div className="flex items-center justify-between mb-3">

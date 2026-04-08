@@ -302,7 +302,7 @@ export function AppSidebar() {
         {/* Logo bar */}
         <div className="flex items-center gap-3 px-4 h-14 border-b border-white/[0.05]">
           <img
-            src="/images/brand/bsi-lettermark-square.png"
+            src="/images/brand/bsi-mascot-200.png"
             alt="BSI"
             width={28}
             height={28}
@@ -351,7 +351,7 @@ export function AppSidebar() {
       {/* ── Mobile hamburger ── */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="md:hidden fixed top-3 left-3 z-50 p-2 rounded-sm glass-default cursor-pointer text-text-primary"
+        className="md:hidden fixed top-3 left-3 z-50 p-2 rounded-sm bg-[var(--surface-dugout)] border border-[var(--border-vintage)] cursor-pointer text-text-primary"
         aria-label="Open navigation"
       >
         <IconMenu />

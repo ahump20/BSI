@@ -375,7 +375,8 @@
 }
 
 /* ==========================================================================
-   GLASS CARD SYSTEM — 3 tiers
+   HERITAGE SURFACE SYSTEM — 3 tiers (solid, no blur)
+   Legacy .glass-* class names retained for compatibility
    ========================================================================== */
 
 .glass-subtle {

@@ -30,17 +30,17 @@ export default function SabermetricsPlaygroundPage() {
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0.875rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
             <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}>
-              <img src="/images/brand/bsi-lettermark-square.png" alt="BSI" style={{ height: '28px' }} loading="lazy" decoding="async" />
+              <img src="/images/brand/bsi-mascot-200.png" alt="BSI" style={{ height: '28px' }} loading="lazy" decoding="async" />
             </Link>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8125rem', color: 'rgba(250,248,245,0.4)' }}>
               <Link href="/college-baseball/analytics" style={{ color: 'rgba(250,248,245,0.5)', textDecoration: 'none' }}>Analytics</Link>
               <span>/</span>
-              <span style={{ color: '#BF5700' }}>Playground</span>
+              <span style={{ color: 'var(--bsi-primary)' }}>Playground</span>
             </div>
           </div>
           <span style={{
             background: 'rgba(191,87,0,0.12)', border: '1px solid rgba(191,87,0,0.25)',
-            color: '#BF5700', padding: '3px 10px', borderRadius: '2px',
+            color: 'var(--bsi-primary)', padding: '3px 10px', borderRadius: '2px',
             fontSize: '0.65rem', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.08em',
           }}>
             INTERNAL TOOL
@@ -73,7 +73,7 @@ export default function SabermetricsPlaygroundPage() {
                   fontFamily: 'Oswald, sans-serif', fontSize: '0.875rem',
                   textTransform: 'uppercase', letterSpacing: '0.06em',
                   background: activeTab === t.id ? 'rgba(191,87,0,0.2)' : 'rgba(26,26,26,0.6)',
-                  border: activeTab === t.id ? '1px solid #BF5700' : '1px solid rgba(191,87,0,0.2)',
+                  border: activeTab === t.id ? '1px solid var(--bsi-primary)' : '1px solid rgba(191,87,0,0.2)',
                   color: activeTab === t.id ? '#FAF8F5' : 'rgba(250,248,245,0.5)',
                   transition: 'all 0.15s',
                 }}

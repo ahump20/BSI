@@ -369,7 +369,7 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
   const sportDistributionData = useMemo(() => {
     if (!healthData) return [];
     const sportColors: Record<string, string> = {
-      mlb: '#C41E3A', nfl: '#013369', nba: '#1D428A', ncaa: '#BF5700', rankings: '#D4A843',
+      mlb: '#C41E3A', nfl: '#013369', nba: '#1D428A', ncaa: 'var(--bsi-primary)', rankings: '#D4A843',
     };
     return Object.entries(healthData.providers).map(([key, provider]) => ({
       name: (SPORT_DISPLAY[key] || key).toUpperCase(),
@@ -387,7 +387,7 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
             <div className="mb-8 flex items-center justify-between flex-wrap gap-4">
               <div className="flex items-center gap-4">
                 <Image
-                  src="/images/brand/bsi-lettermark-square.png"
+                  src="/images/brand/bsi-mascot-200.png"
                   alt="Blaze Sports Intel"
                   width={48}
                   height={48}
