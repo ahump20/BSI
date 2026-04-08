@@ -350,7 +350,7 @@ export default function NFLPlayersPage() {
                 <button
                   onClick={selectedTeam === 'All' ? retryAllPlayers : retryRoster}
                   className="mt-3 px-4 py-2 text-white rounded-sm text-sm transition-colors"
-                  style={{ background: 'var(--bsi-primary)' }}
+                  className="bg-bsi-primary"
                 >
                   Try Again
                 </button>

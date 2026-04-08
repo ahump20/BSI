@@ -490,7 +490,7 @@ export default function MLBStandingsPage() {
                 <button
                   onClick={retry}
                   className="mt-4 px-4 py-2 text-white rounded-sm transition-colors"
-                  style={{ background: 'var(--bsi-primary)' }}
+                  className="bg-bsi-primary"
                 >
                   Retry
                 </button>

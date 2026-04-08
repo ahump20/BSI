@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useSportData } from '@/lib/hooks/useSportData';
+import { TeamCircle } from '@/components/sports/TeamCircle';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -17,6 +18,7 @@ import type { DataMeta } from '@/lib/types/data-meta';
 interface Team {
   name: string;
   abbreviation: string;
+  logo?: string;
   wins: number;
   losses: number;
   ties: number;
@@ -220,9 +222,7 @@ export default function NFLStandingsPage() {
                               >
                                 <td className="py-3 px-2">
                                   <div className="flex items-center gap-2">
-                                    <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-surface-dugout text-bsi-primary">
-                                      {team.abbreviation}
-                                    </span>
+                                    <TeamCircle logo={team.logo} abbreviation={team.abbreviation} size="w-8 h-8" textSize="text-xs" />
                                     <span className="font-semibold text-bsi-bone">{team.name}</span>
                                   </div>
                                 </td>
