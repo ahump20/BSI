@@ -84,6 +84,7 @@ const editorial: SitemapEntry[] = [
   { path: '/college-baseball/editorial/texas-houston-christian-recap', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/week-4-preview', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/weekend-6-recap', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/weekend-7-recap', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/weekend-8-recap', changeFrequency: 'weekly', priority: 0.8 },
   // Game features
   { path: '/college-baseball/editorial/texas-uc-davis-opener-2026', changeFrequency: 'monthly', priority: 0.7 },
