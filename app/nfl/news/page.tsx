@@ -254,7 +254,7 @@ export default function NFLNewsPage() {
                   >
                     <path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2m-4-3H9M7 16h6M7 12h10" />
                   </svg>
-                  <p style={{ color: 'var(--bsi-dust)' }}>No news in this category right now.</p>
+                  <p className="text-bsi-dust">No news in this category right now.</p>
                   <p className="text-sm mt-2" style={{ color: 'rgba(196,184,165,0.5)' }}>
                     Offseason NFL news comes in waves—free agency, draft, then the summer lull
                     before training camp. Check back.
@@ -269,8 +269,7 @@ export default function NFLNewsPage() {
                       key={item.id}
                       variant="default"
                       padding="md"
-                      className="transition-all group"
-                      style={{ borderColor: 'var(--border-vintage)' }}
+                      className="transition-all group border-border-vintage"
                       onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--bsi-primary)')}
                       onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--border-vintage)')}
                     >

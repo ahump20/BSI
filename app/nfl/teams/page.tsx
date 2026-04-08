@@ -308,8 +308,7 @@ export default function NFLTeamsPage() {
     <Card
       variant="default"
       padding="md"
-      className="h-full transition-all group"
-      style={{ borderColor: 'var(--border-vintage)' }}
+      className="h-full transition-all group border-border-vintage"
       onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--bsi-primary)')}
       onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--border-vintage)')}
     >

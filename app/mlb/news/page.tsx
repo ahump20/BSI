@@ -245,7 +245,7 @@ export default function MLBNewsPage() {
                   >
                     <path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2m-4-3H9M7 16h6M7 12h10" />
                   </svg>
-                  <p style={{ color: 'var(--bsi-dust)' }}>No news in this category right now.</p>
+                  <p className="text-bsi-dust">No news in this category right now.</p>
                   <p className="text-sm mt-2" style={{ color: 'rgba(196,184,165,0.5)' }}>
                     Offseason can be quiet—or it can explode with trades. Refresh or check back
                     later.

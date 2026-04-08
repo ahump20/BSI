@@ -745,7 +745,7 @@ function TableSkeleton() {
         className="h-10 bg-surface-press-box"
         style={{ borderBottom: '2px solid rgba(191,87,0,0.3)' }}
       />
-      <div className="border border-t-0 overflow-hidden animate-pulse" style={{ borderColor: 'var(--border-vintage)' }}>
+      <div className="border border-t-0 overflow-hidden animate-pulse border-border-vintage">
         {Array.from({ length: 8 }).map((_, i) => (
           <div
             key={i}
@@ -797,7 +797,7 @@ function LeaderboardEmpty({ title, error, onRetry }: { title: string; error?: st
           style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary-light)' }}
         >{title}</h2>
       </div>
-      <div className="border border-t-0 px-4 py-8 text-center" style={{ borderColor: 'var(--border-vintage)' }}>
+      <div className="border border-t-0 px-4 py-8 text-center border-border-vintage">
         <p className="text-xs" style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}>
           {error ? 'Data temporarily unavailable' : 'No leaderboard data available'}
         </p>
@@ -1085,7 +1085,7 @@ export function HomePageClient() {
               }}
             >
               Sports Intelligence,{' '}
-              <span style={{ color: 'var(--bsi-primary)' }}>Put Simply</span>
+              <span className="text-bsi-primary">Put Simply</span>
             </h1>
           </div>
 
@@ -1185,7 +1185,7 @@ export function HomePageClient() {
             style={{ fontFamily: 'var(--font-bebas)', color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}
           >
             Five Sports. One Language.{' '}
-            <span style={{ color: 'var(--bsi-primary)' }}>Yours.</span>
+            <span className="text-bsi-primary">Yours.</span>
           </h2>
           <p
             className="mt-6 text-base sm:text-lg md:text-xl leading-relaxed"
@@ -1464,8 +1464,7 @@ export function HomePageClient() {
             </DataErrorBoundary>
 
             <div
-              className="col-span-full my-1 border-t lg:hidden"
-              style={{ borderColor: 'var(--border-vintage)' }}
+              className="col-span-full my-1 border-t lg:hidden border-border-vintage"
             />
 
             <DataErrorBoundary name="PitchingLeaderboard" compact>

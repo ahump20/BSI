@@ -171,7 +171,7 @@ export default function AboutPage() {
               }}
             >
               The Game Between{' '}
-              <span style={{ color: 'var(--bsi-primary)' }}>the Poles</span>
+              <span className="text-bsi-primary">the Poles</span>
             </h1>
 
             <div className="flex justify-center mb-8">
@@ -269,7 +269,7 @@ export default function AboutPage() {
                     >
                       {section.heading}
                       {section.headingAccent && (
-                        <span style={{ color: 'var(--bsi-primary)' }}>
+                        <span className="text-bsi-primary">
                           {section.headingAccent}
                         </span>
                       )}
@@ -311,7 +311,7 @@ export default function AboutPage() {
                 }}
               >
                 330 D1 Programs.{' '}
-                <span style={{ color: 'var(--bsi-primary)' }}>Every Game.</span>
+                <span className="text-bsi-primary">Every Game.</span>
               </h2>
               <p
                 className="mt-4 font-serif italic text-base md:text-lg max-w-2xl mx-auto leading-relaxed text-bsi-dust"
@@ -459,7 +459,7 @@ export default function AboutPage() {
                     because nobody with a content team and a VC check was going to make
                     this for the fans I had in mind.
                   </p>
-                  <p style={{ color: 'var(--bsi-bone)' }}>
+                  <p className="text-bsi-bone">
                     A Wednesday night game between Rice and Sam Houston covered with the
                     same rigor as a Saturday showcase between Tennessee and LSU.
                     That&apos;s the standard, not the exception.

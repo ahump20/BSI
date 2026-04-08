@@ -218,7 +218,7 @@ export default function BubbleWatchPage() {
                 <span>/</span>
                 <Link href="/college-baseball/savant" className="transition-colors hover:text-[var(--bsi-bone)]">Savant</Link>
                 <span>/</span>
-                <span style={{ color: 'var(--bsi-primary)' }}>Bubble Watch</span>
+                <span className="text-bsi-primary">Bubble Watch</span>
               </nav>
             </ScrollReveal>
 
@@ -263,7 +263,7 @@ export default function BubbleWatchPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                   {/* Locks */}
                   <Card padding="none">
-                    <div className="px-5 py-4 border-b" style={{ borderColor: 'var(--border-vintage)' }}>
+                    <div className="px-5 py-4 border-b border-border-vintage">
                       <div className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full" style={{ background: 'var(--bsi-success)' }} />
                         <h2 className="text-sm uppercase tracking-wider font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-bone)' }}>
@@ -292,7 +292,7 @@ export default function BubbleWatchPage() {
 
                   {/* Bubble */}
                   <Card padding="none">
-                    <div className="px-5 py-4 border-b" style={{ borderColor: 'var(--border-vintage)' }}>
+                    <div className="px-5 py-4 border-b border-border-vintage">
                       <div className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full" style={{ background: 'var(--bsi-warning)' }} />
                         <h2 className="text-sm uppercase tracking-wider font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-bone)' }}>

@@ -353,7 +353,7 @@ export default function NFLGamesPage() {
                 </ScrollReveal>
 
                 <ScrollReveal direction="up" delay={150}>
-                  <p className="max-w-2xl" style={{ color: 'var(--bsi-dust)' }}>
+                  <p className="max-w-2xl text-bsi-dust">
                     Live scores, final results, and upcoming matchups. Real data, no network spin.
                   </p>
                 </ScrollReveal>

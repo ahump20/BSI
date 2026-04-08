@@ -412,9 +412,9 @@ function PlayInBracket({
           <div
             className="my-1.5 flex items-center gap-2 px-2 text-[10px] text-bsi-dust"
           >
-            <span className="flex-1 border-t" style={{ borderColor: 'var(--border-vintage)' }} />
+            <span className="flex-1 border-t border-border-vintage" />
             <span>vs</span>
-            <span className="flex-1 border-t" style={{ borderColor: 'var(--border-vintage)' }} />
+            <span className="flex-1 border-t border-border-vintage" />
           </div>
           <PlayInMatchup team={seed8} seed={8} />
         </div>
@@ -436,9 +436,9 @@ function PlayInBracket({
           <div
             className="my-1.5 flex items-center gap-2 px-2 text-[10px] text-bsi-dust"
           >
-            <span className="flex-1 border-t" style={{ borderColor: 'var(--border-vintage)' }} />
+            <span className="flex-1 border-t border-border-vintage" />
             <span>vs</span>
-            <span className="flex-1 border-t" style={{ borderColor: 'var(--border-vintage)' }} />
+            <span className="flex-1 border-t border-border-vintage" />
           </div>
           <PlayInMatchup team={seed10} seed={10} />
         </div>
@@ -453,7 +453,7 @@ function PlayInBracket({
           backgroundColor: 'rgba(22, 22, 22, 0.5)',
         }}
       >
-        <strong style={{ color: 'var(--bsi-bone)' }}>Game C:</strong> Loser
+        <strong className="text-bsi-bone">Game C:</strong> Loser
         of A vs Winner of B — winner earns the 8th seed.
       </div>
     </div>
@@ -582,8 +582,7 @@ function ConferencePanel({
         <>
           <div className="relative flex items-center py-1.5">
             <div
-              className="flex-1 border-t border-dashed"
-              style={{ borderColor: 'var(--border-vintage)' }}
+              className="flex-1 border-t border-dashed border-border-vintage"
             />
             <span
               className="mx-3 text-[9px] font-bold uppercase tracking-widest text-bsi-dust"
@@ -591,8 +590,7 @@ function ConferencePanel({
               Below the line
             </span>
             <div
-              className="flex-1 border-t border-dashed"
-              style={{ borderColor: 'var(--border-vintage)' }}
+              className="flex-1 border-t border-dashed border-border-vintage"
             />
           </div>
 
@@ -844,7 +842,7 @@ export default function NBAPlayoffPicturePage() {
               NBA
             </Link>
             <span aria-hidden="true">/</span>
-            <span style={{ color: 'var(--bsi-bone)' }}>Playoff Picture</span>
+            <span className="text-bsi-bone">Playoff Picture</span>
           </nav>
 
           {/* Title row */}

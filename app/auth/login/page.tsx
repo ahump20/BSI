@@ -103,7 +103,7 @@ export default function LoginPage() {
                   textShadow: '2px 2px 0px rgba(0,0,0,0.5)',
                 }}
               >
-                Welcome <span style={{ color: 'var(--bsi-primary)' }}>Back</span>
+                Welcome <span className="text-bsi-primary">Back</span>
               </h1>
               <div className="flex justify-center mb-6">
                 <div className="section-rule-thick w-12" />

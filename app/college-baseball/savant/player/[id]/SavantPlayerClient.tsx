@@ -504,7 +504,7 @@ export default function SavantPlayerClient() {
                 <span aria-hidden="true">/</span>
                 <Link href="/college-baseball/savant" className="transition-colors hover:text-[var(--bsi-bone)]">Savant</Link>
                 <span aria-hidden="true">/</span>
-                <span style={{ color: 'var(--bsi-primary)' }}>{playerName}</span>
+                <span className="text-bsi-primary">{playerName}</span>
               </nav>
 
               <ScrollReveal direction="up" delay={50}>

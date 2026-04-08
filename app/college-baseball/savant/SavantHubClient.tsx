@@ -239,7 +239,7 @@ export default function SavantHubPage() {
                   D1 Sabermetrics
                 </h1>
               </div>
-              <p className="text-[10px] font-mono" style={{ color: 'var(--bsi-dust)' }}>
+              <p className="text-[10px] font-mono text-bsi-dust">
                 {confLoading ? '...' : `${confCount} conferences`} · Updated every 6h
                 {battingRes?.meta?.fetched_at && (
                   <> · {new Date(battingRes.meta.fetched_at).toLocaleString('en-US', { timeZone: 'America/Chicago', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })} CT</>
@@ -340,7 +340,7 @@ export default function SavantHubPage() {
                       { label: 'FIP Const', value: leagueCtxRes.context.fip_constant.toFixed(2) },
                     ].map((stat) => (
                       <div key={stat.label}>
-                        <div className="font-mono text-sm font-bold" style={{ color: 'var(--bsi-bone)' }}>{stat.value}</div>
+                        <div className="font-mono text-sm font-bold text-bsi-bone">{stat.value}</div>
                         <div className="text-[9px] text-text-muted/60 uppercase tracking-wider">{stat.label}</div>
                       </div>
                     ))}
@@ -473,14 +473,13 @@ export default function SavantHubPage() {
                   border: '1px solid rgba(191,87,0,0.2)',
                 }}
               >
-                <span className="text-xs font-mono" style={{ color: 'var(--bsi-bone)' }}>
-                  <span style={{ color: 'var(--bsi-primary)' }}>{compareIds.size}</span> of 3 players selected
+                <span className="text-xs font-mono text-bsi-bone">
+                  <span className="text-bsi-primary">{compareIds.size}</span> of 3 players selected
                   {compareIds.size < 2 && ' — select at least 2 to compare'}
                 </span>
                 <button
                   onClick={() => setCompareIds(new Set())}
-                  className="text-[10px] font-mono uppercase tracking-wider transition-colors cursor-pointer"
-                  style={{ color: 'var(--bsi-primary)' }}
+                  className="text-[10px] font-mono uppercase tracking-wider transition-colors cursor-pointer text-bsi-primary"
                 >
                   Clear
                 </button>
@@ -712,7 +711,7 @@ function LeaderboardError({ error, onRetry, lastUpdated }: { error: string; onRe
   return (
     <Card padding="none" className="overflow-hidden">
       <div className="px-5 py-12 flex flex-col items-center text-center">
-        <p className="font-display text-sm uppercase tracking-wider mb-2" style={{ color: 'var(--bsi-dust)' }}>
+        <p className="font-display text-sm uppercase tracking-wider mb-2 text-bsi-dust">
           Data temporarily unavailable
         </p>
         <p className="font-mono text-[10px] mb-4" style={{ color: 'var(--bsi-dust)', opacity: 0.6 }}>
@@ -742,7 +741,7 @@ function LeaderboardEmpty({ type }: { type: 'batting' | 'pitching' }) {
   return (
     <Card padding="none" className="overflow-hidden">
       <div className="px-5 py-12 flex flex-col items-center text-center">
-        <p className="font-display text-sm uppercase tracking-wider mb-2" style={{ color: 'var(--bsi-dust)' }}>
+        <p className="font-display text-sm uppercase tracking-wider mb-2 text-bsi-dust">
           No {type} data available yet
         </p>
         <p className="font-mono text-[10px]" style={{ color: 'var(--bsi-dust)', opacity: 0.6 }}>

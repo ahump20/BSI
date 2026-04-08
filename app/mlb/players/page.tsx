@@ -367,13 +367,13 @@ export default function MLBPlayersPage() {
             {loading ? (
               <div className="text-center py-16">
                 <div className="inline-block w-10 h-10 border-4 rounded-full animate-spin mb-4" style={{ borderColor: 'rgba(191,87,0,0.3)', borderTopColor: 'var(--bsi-primary)' }} />
-                <p style={{ color: 'var(--bsi-dust)' }}>Loading players...</p>
+                <p className="text-bsi-dust">Loading players...</p>
               </div>
             ) : error ? (
               <Card padding="lg" className="text-center">
                 <div className="text-error text-4xl mb-4">!</div>
                 <h3 className="text-xl font-semibold mb-2 text-bsi-bone">Error Loading Players</h3>
-                <p style={{ color: 'var(--bsi-dust)' }}>{error}</p>
+                <p className="text-bsi-dust">{error}</p>
                 <button
                   onClick={fetchPlayers}
                   className="mt-4 px-4 py-2 text-white rounded-sm transition-colors"
@@ -386,7 +386,7 @@ export default function MLBPlayersPage() {
               <Card padding="lg" className="text-center">
                 <div className="text-4xl mb-4" style={{ color: 'rgba(196,184,165,0.5)' }}>?</div>
                 <h3 className="text-xl font-semibold mb-2 text-bsi-bone">No Players Found</h3>
-                <p style={{ color: 'var(--bsi-dust)' }}>Try adjusting your filters.</p>
+                <p className="text-bsi-dust">Try adjusting your filters.</p>
               </Card>
             ) : (
               <ScrollReveal direction="up" delay={100}>

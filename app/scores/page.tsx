@@ -698,7 +698,7 @@ function ScoresHubContent() {
             <div className="flex items-center gap-2 mb-4 text-xs" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
               <Link href="/" className="transition-colors hover:text-[var(--bsi-bone)]">Home</Link>
               <span>/</span>
-              <span style={{ color: 'var(--bsi-primary)' }}>Scores</span>
+              <span className="text-bsi-primary">Scores</span>
             </div>
 
             <ScrollReveal direction="up">

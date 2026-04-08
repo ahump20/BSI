@@ -17,14 +17,12 @@ export default function AskClient() {
             <ScrollReveal>
               <span className="heritage-stamp mb-4 inline-block">Cross-Sport Concierge</span>
               <h1
-                className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-wider mt-4"
-                style={{ color: 'var(--bsi-bone)' }}
+                className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-wider mt-4 text-bsi-bone"
               >
                 Ask BSI
               </h1>
               <p
-                className="mt-4 text-sm md:text-base max-w-xl mx-auto font-serif leading-relaxed"
-                style={{ color: 'var(--bsi-dust)' }}
+                className="mt-4 text-sm md:text-base max-w-xl mx-auto font-serif leading-relaxed text-bsi-dust"
               >
                 Scores, standings, player stats, team intel, advanced metrics — across college
                 baseball, MLB, NFL, and NBA. Ask a question and get a real answer backed by
@@ -67,8 +65,7 @@ export default function AskClient() {
                       {sport.label}
                     </p>
                     <p
-                      className="mt-1 text-[11px] leading-relaxed font-serif"
-                      style={{ color: 'var(--bsi-dust)' }}
+                      className="mt-1 text-[11px] leading-relaxed font-serif text-bsi-dust"
                     >
                       {sport.desc}
                     </p>

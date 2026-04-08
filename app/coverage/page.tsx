@@ -288,7 +288,7 @@ export default function CoveragePage() {
                     <div className="md:col-span-1">
                       <Link href={sport.href} className="group">
                         <div className="flex items-center gap-3 mb-3">
-                          <span style={{ color: 'var(--bsi-dust)' }}>
+                          <span className="text-bsi-dust">
                             {(() => { const Icon = COVERAGE_ICONS[sport.name]; return Icon ? <Icon /> : null; })()}
                           </span>
                           <div>
@@ -592,7 +592,7 @@ export default function CoveragePage() {
               }}
             >
               See Our{' '}
-              <span style={{ color: 'var(--bsi-primary)' }}>Data in Action</span>
+              <span className="text-bsi-primary">Data in Action</span>
             </h2>
             <p
               className="text-lg font-serif mb-8"

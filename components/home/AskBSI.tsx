@@ -83,7 +83,7 @@ function ResponseBody({ text, isStreaming }: { text: string; isStreaming: boolea
   const segments = parseResponse(text);
 
   return (
-    <p className="text-sm leading-relaxed font-serif" style={{ color: 'var(--bsi-bone)' }}>
+    <p className="text-sm leading-relaxed font-serif text-bsi-bone">
       {segments.map((seg, i) =>
         seg.type === 'link' ? (
           <Link

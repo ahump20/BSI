@@ -272,8 +272,7 @@ function LinescoreTable({
                 </td>
               ))}
               <td
-                className="text-center py-1 px-1.5 font-bold"
-                style={{ color: 'var(--bsi-bone)' }}
+                className="text-center py-1 px-1.5 font-bold text-bsi-bone"
               >
                 {row.total}
               </td>
@@ -445,8 +444,7 @@ export function GamePreviewModal({ sport, gameId, onClose }: GamePreviewModalPro
           </div>
           <button
             onClick={onClose}
-            className="text-lg leading-none transition-colors hover:text-bsi-primary"
-            style={{ color: 'var(--bsi-dust)' }}
+            className="text-lg leading-none transition-colors hover:text-bsi-primary text-bsi-dust"
             aria-label="Close"
           >
             &times;

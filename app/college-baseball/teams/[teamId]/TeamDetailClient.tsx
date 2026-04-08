@@ -615,7 +615,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                           {hasLiveRecord && (() => {
                             const daysSinceUpdate = Math.floor((Date.now() - new Date(featuredInsight.lastUpdated).getTime()) / 86400000);
                             return daysSinceUpdate > 5 ? (
-                              <div className="text-[10px] mt-0.5" style={{ color: 'var(--bsi-dust)' }}>
+                              <div className="text-[10px] mt-0.5 text-bsi-dust">
                                 Record has updated since this report
                               </div>
                             ) : null;
@@ -1037,13 +1037,13 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                         </div>
                         <div>
                           <div className="text-xs uppercase tracking-wide text-text-muted">Avg NIL Index</div>
-                          <div className="mt-1 font-mono text-2xl font-bold" style={{ color: 'var(--bsi-primary)' }}>{nilTeamData.avgIndex}</div>
+                          <div className="mt-1 font-mono text-2xl font-bold text-bsi-primary">{nilTeamData.avgIndex}</div>
                         </div>
                         <div className="col-span-2">
                           <div className="text-xs uppercase tracking-wide text-text-muted">Top Valued Player</div>
                           <div className="mt-1 flex items-baseline gap-2">
                             <span className="text-text-primary font-semibold">{nilTeamData.topPlayer}</span>
-                            <span className="font-mono text-lg font-bold" style={{ color: 'var(--bsi-primary)' }}>
+                            <span className="font-mono text-lg font-bold text-bsi-primary">
                               ${nilTeamData.topValue >= 1000 ? `${(nilTeamData.topValue / 1000).toFixed(0)}K` : nilTeamData.topValue.toLocaleString()}
                             </span>
                           </div>

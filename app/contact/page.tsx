@@ -41,9 +41,9 @@ export default function ContactPage() {
                   className="text-4xl md:text-5xl font-bold uppercase tracking-wider mb-4"
                   style={{ fontFamily: 'var(--font-oswald)' }}
                 >
-                  Get in <span style={{ color: 'var(--bsi-primary)' }}>Touch</span>
+                  Get in <span className="text-bsi-primary">Touch</span>
                 </h1>
-                <p style={{ color: 'var(--bsi-dust)' }}>
+                <p className="text-bsi-dust">
                   Questions about our sports coverage? Partnership opportunities? Or just want to
                   talk sports? I read every email.
                 </p>

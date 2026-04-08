@@ -92,7 +92,7 @@ function SearchLoading() {
               className="animate-spin rounded-full h-12 w-12 mx-auto mb-4"
               style={{ borderTop: '2px solid var(--bsi-primary)', borderBottom: '2px solid var(--bsi-primary)', borderLeft: '2px solid transparent', borderRight: '2px solid transparent' }}
             />
-            <p style={{ color: 'var(--bsi-dust)' }}>Loading search...</p>
+            <p className="text-bsi-dust">Loading search...</p>
           </div>
         </Section>
       </div>
@@ -241,7 +241,7 @@ function SearchContent() {
 
             {/* Results Count */}
             {!isLoading && initialQuery && (
-              <p style={{ color: 'var(--bsi-dust)' }} className="mb-6">
+              <p className="text-bsi-dust" className="mb-6">
                 Found {filteredResults.length} result{filteredResults.length !== 1 ? 's' : ''}
                 {filters.sport && ` in ${getSportLabel(filters.sport)}`}
               </p>
@@ -285,7 +285,7 @@ function SearchContent() {
                 >
                   No Results Found
                 </h2>
-                <p style={{ color: 'var(--bsi-dust)' }} className="mb-4">
+                <p className="text-bsi-dust" className="mb-4">
                   No matches for &ldquo;{initialQuery}&rdquo;
                   {filters.sport && ` in ${getSportLabel(filters.sport)}`}
                 </p>
@@ -434,8 +434,7 @@ function SearchContent() {
                             <Card
                               variant="default"
                               padding="md"
-                              className="heritage-card h-full transition-all"
-                              style={{ borderColor: 'var(--border-vintage)' }}
+                              className="heritage-card h-full transition-all border-border-vintage"
                             >
                               <div className="flex items-center gap-4">
                                 {/* Type Badge */}
