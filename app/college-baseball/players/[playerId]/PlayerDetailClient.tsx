@@ -167,10 +167,10 @@ type ProfileTab = 'season' | 'gamelog';
 
 const NIL_TIER_COLORS: Record<string, { bg: string; text: string; label: string }> = {
   elite:         { bg: 'bg-bsi-primary/20', text: 'text-burnt-orange', label: 'Elite' },
-  high:          { bg: 'bg-[var(--bsi-success)]/15', text: 'text-[var(--bsi-success)]', label: 'High' },
-  mid:           { bg: 'bg-[var(--bsi-warning)]/15', text: 'text-[var(--bsi-warning)]', label: 'Mid' },
-  emerging:      { bg: 'bg-[var(--heritage-columbia-blue)]/15', text: 'text-[var(--heritage-columbia-blue)]', label: 'Emerging' },
-  developmental: { bg: 'bg-[var(--bsi-dust)]/15', text: 'text-[var(--bsi-dust)]', label: 'Developmental' },
+  high:          { bg: 'bg-success/15', text: 'text-success', label: 'High' },
+  mid:           { bg: 'bg-warning/15', text: 'text-warning', label: 'Mid' },
+  emerging:      { bg: 'bg-heritage-columbia/15', text: 'text-heritage-columbia', label: 'Emerging' },
+  developmental: { bg: 'bg-bsi-dust/15', text: 'text-bsi-dust', label: 'Developmental' },
 };
 
 function formatNILValue(value: number): string {
@@ -328,9 +328,9 @@ export default function PlayerDetailClient() {
                   {player.portalStatus && (
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[10px] font-semibold uppercase tracking-widest leading-none border ${
                       player.portalStatus === 'committed'
-                        ? 'bg-[var(--bsi-success)]/15 border-[var(--bsi-success)]/30 text-[var(--bsi-success)]'
+                        ? 'bg-success/15 border-success/30 text-success'
                         : player.portalStatus === 'withdrawn'
-                          ? 'bg-[var(--bsi-dust)]/15 border-[var(--bsi-dust)]/30 text-[var(--bsi-dust)]'
+                          ? 'bg-bsi-dust/15 border-bsi-dust/30 text-bsi-dust'
                           : 'bg-burnt-orange/15 border-burnt-orange/30 text-burnt-orange'
                     }`}>
                       <svg className="w-3 h-3" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -481,10 +481,10 @@ export default function PlayerDetailClient() {
                     {player.portalStatus && (
                       <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-semibold uppercase tracking-wider border ${
                         player.portalStatus === 'committed'
-                          ? 'bg-[var(--bsi-success)]/15 border-[var(--bsi-success)]/30 text-[var(--bsi-success)]'
+                          ? 'bg-success/15 border-success/30 text-success'
                           : player.portalStatus === 'withdrawn'
-                            ? 'bg-[var(--bsi-dust)]/15 border-[var(--bsi-dust)]/30 text-[var(--bsi-dust)]'
-                            : 'bg-[var(--bsi-warning)]/15 border-[var(--bsi-warning)]/30 text-[var(--bsi-warning)]'
+                            ? 'bg-bsi-dust/15 border-bsi-dust/30 text-bsi-dust'
+                            : 'bg-warning/15 border-warning/30 text-warning'
                       }`}>
                         In Portal: {player.portalStatus}
                       </span>
@@ -677,8 +677,8 @@ export default function PlayerDetailClient() {
                               <tr className="border-b border-border">
                                 <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.games}</td>
                                 <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.gamesStarted}</td>
-                                <td className="py-3 px-3 text-center text-[var(--bsi-success)] font-bold">{stats.pitching.wins}</td>
-                                <td className="py-3 px-3 text-center text-[var(--bsi-error)] font-bold">{stats.pitching.losses}</td>
+                                <td className="py-3 px-3 text-center text-success font-bold">{stats.pitching.wins}</td>
+                                <td className="py-3 px-3 text-center text-error font-bold">{stats.pitching.losses}</td>
                                 <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.saves}</td>
                                 <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.inningsPitched.toFixed(1)}</td>
                                 <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.hits}</td>
@@ -724,7 +724,7 @@ export default function PlayerDetailClient() {
                                     {g.isHome ? 'vs' : '@'} {g.opponent || '—'}
                                   </td>
                                   <td className="py-2 px-2 text-center text-xs">
-                                    <span className={g.result === 'W' ? 'text-[var(--bsi-success)] font-bold' : 'text-[var(--bsi-error)] font-bold'}>
+                                    <span className={g.result === 'W' ? 'text-success font-bold' : 'text-error font-bold'}>
                                       {g.result || '—'}
                                     </span>
                                   </td>
@@ -766,7 +766,7 @@ export default function PlayerDetailClient() {
                                       {g.isHome ? 'vs' : '@'} {g.opponent || '—'}
                                     </td>
                                     <td className="py-2 px-2 text-center text-xs">
-                                      <span className={g.result === 'W' ? 'text-[var(--bsi-success)] font-bold' : 'text-[var(--bsi-error)] font-bold'}>
+                                      <span className={g.result === 'W' ? 'text-success font-bold' : 'text-error font-bold'}>
                                         {g.result || '—'}
                                       </span>
                                     </td>

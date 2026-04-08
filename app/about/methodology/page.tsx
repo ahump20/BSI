@@ -76,10 +76,10 @@ export default function MethodologyPage() {
               </h2>
               <div className="space-y-3">
                 {[
-                  { bucket: 'Excitement', color: 'text-[var(--bsi-success)]', description: 'Genuine enthusiasm around a topic — breakout player, upset win, unexpected storyline' },
-                  { bucket: 'Frustration', color: 'text-[var(--bsi-danger)]', description: 'Fan/media dissatisfaction — coverage gap, data error, poor decision by a program' },
-                  { bucket: 'Curiosity', color: 'text-[var(--heritage-columbia-blue)]', description: 'Questions being asked that nobody has answered yet — content opportunity' },
-                  { bucket: 'Skepticism', color: 'text-[var(--bsi-warning)]', description: 'Claims being challenged — fact-checking opportunity or methodology validation' },
+                  { bucket: 'Excitement', color: 'text-success', description: 'Genuine enthusiasm around a topic — breakout player, upset win, unexpected storyline' },
+                  { bucket: 'Frustration', color: 'text-error', description: 'Fan/media dissatisfaction — coverage gap, data error, poor decision by a program' },
+                  { bucket: 'Curiosity', color: 'text-heritage-columbia', description: 'Questions being asked that nobody has answered yet — content opportunity' },
+                  { bucket: 'Skepticism', color: 'text-warning', description: 'Claims being challenged — fact-checking opportunity or methodology validation' },
                   { bucket: 'Noise', color: 'text-text-muted', description: 'High volume, low signal — hot takes, rage bait, engagement farming. Filtered out.' },
                 ].map((b) => (
                   <div

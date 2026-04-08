@@ -357,8 +357,8 @@ export function SimilarityMap({ batters, pitchers, onPlayerClick, className = ''
                   onClick={() => { setPlayerType(t); setCenterId('') }}
                   className={`px-2.5 py-1 rounded-[2px] text-[10px] uppercase tracking-wider transition-all cursor-pointer ${
                     t === playerType
-                      ? 'text-[var(--bsi-bone)]'
-                      : 'text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)]'
+                      ? 'text-bsi-bone'
+                      : 'text-bsi-dust hover:text-bsi-bone'
                   }`}
                   style={{
                     fontFamily: 'var(--font-display)',

@@ -63,7 +63,7 @@ export function WatchlistButton({
       className={`inline-flex items-center gap-2 rounded-sm border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] transition-colors ${
         active
           ? 'border-burnt-orange bg-burnt-orange/15 text-burnt-orange'
-          : 'border-border-vintage bg-surface-dugout text-[var(--bsi-dust)] hover:border-burnt-orange/40'
+          : 'border-border-vintage bg-surface-dugout text-bsi-dust hover:border-burnt-orange/40'
       }`}
     >
       <span>{active ? 'Tracked' : 'Track'}</span>
@@ -78,7 +78,7 @@ export function SurfaceNav() {
         <Link
           key={link.href}
           href={link.href}
-          className="rounded-sm border border-border-vintage px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] transition-colors hover:border-burnt-orange/40 hover:text-burnt-orange"
+          className="rounded-sm border border-border-vintage px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-bsi-dust transition-colors hover:border-burnt-orange/40 hover:text-burnt-orange"
         >
           {link.label}
         </Link>
@@ -101,7 +101,7 @@ export function ShowSurfaceFrame({
     <>
       <section className="border-b border-border-vintage bg-[radial-gradient(circle_at_top,_rgba(191,87,0,0.16),_transparent_55%),linear-gradient(180deg,rgba(13,13,13,0.95),rgba(26,26,26,1))] py-12">
         <Container size="xl">
-          <div className="mb-6 flex items-center gap-3 text-sm text-[var(--bsi-dust)]">
+          <div className="mb-6 flex items-center gap-3 text-sm text-bsi-dust">
             <Link href="/mlb" className="hover:text-burnt-orange transition-colors">MLB</Link>
             <span>/</span>
             <Link href="/mlb/the-show-26" className="hover:text-burnt-orange transition-colors">The Show 26</Link>
@@ -112,10 +112,10 @@ export function ShowSurfaceFrame({
           <div className="grid gap-8 lg:grid-cols-[1.4fr_0.6fr] lg:items-end">
             <div>
               <div className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-burnt-orange">{eyebrow}</div>
-              <h1 className="font-display text-4xl font-bold uppercase tracking-display text-[var(--bsi-bone)] md:text-5xl">
+              <h1 className="font-display text-4xl font-bold uppercase tracking-display text-bsi-bone md:text-5xl">
                 {title}
               </h1>
-              <p className="mt-4 max-w-3xl text-base leading-relaxed text-[var(--bsi-dust)] md:text-lg">{description}</p>
+              <p className="mt-4 max-w-3xl text-base leading-relaxed text-bsi-dust md:text-lg">{description}</p>
               <div className="mt-6">
                 <SurfaceNav />
               </div>
@@ -131,7 +131,7 @@ export function ShowSurfaceFrame({
                 />
                 <DataAttribution lastUpdated={lastUpdated ?? ''} source={source ?? 'Blaze Sports Intel'} />
                 {compatibilityNote ? (
-                  <p className="text-sm leading-relaxed text-[var(--bsi-dust)]">{compatibilityNote}</p>
+                  <p className="text-sm leading-relaxed text-bsi-dust">{compatibilityNote}</p>
                 ) : null}
               </CardContent>
             </Card>

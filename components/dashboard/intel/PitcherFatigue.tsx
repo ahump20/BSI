@@ -276,7 +276,7 @@ function PitcherRow({ pitcher }: { pitcher: PitcherBiomechanics }) {
         <ul className="mt-2 space-y-0.5">
           {riskFactors.map((f, i) => (
             <li key={i} className="text-[10px] text-text-muted flex items-start gap-1">
-              <span className="text-[var(--bsi-warning)]/60 mt-0.5">*</span>
+              <span className="text-warning/60 mt-0.5">*</span>
               {f}
             </li>
           ))}

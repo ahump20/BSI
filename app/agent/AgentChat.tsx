@@ -93,7 +93,7 @@ function MessageBubble({ message }: { message: ChatMessage }) {
       <div
         className={`max-w-[85%] sm:max-w-[75%] px-4 py-3 rounded-sm ${
           isUser
-            ? 'bg-[var(--bsi-primary)] text-white'
+            ? 'bg-bsi-primary text-white'
             : 'heritage-card'
         }`}
       >
@@ -140,9 +140,9 @@ function StreamingIndicator() {
           BSI Agent
         </span>
         <div className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-[var(--bsi-primary)] animate-pulse" />
-          <span className="w-1.5 h-1.5 rounded-full bg-[var(--bsi-primary)] animate-pulse [animation-delay:0.2s]" />
-          <span className="w-1.5 h-1.5 rounded-full bg-[var(--bsi-primary)] animate-pulse [animation-delay:0.4s]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-bsi-primary animate-pulse" />
+          <span className="w-1.5 h-1.5 rounded-full bg-bsi-primary animate-pulse [animation-delay:0.2s]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-bsi-primary animate-pulse [animation-delay:0.4s]" />
           <span className="text-xs ml-2 text-bsi-dust">
             Analyzing...
           </span>
@@ -426,7 +426,7 @@ export function AgentChat() {
                 <button
                   key={prompt}
                   onClick={() => sendMessage(prompt)}
-                  className="text-[11px] px-3 py-2 transition-all hover:border-[var(--bsi-primary)] hover:text-[var(--bsi-bone)]"
+                  className="text-[11px] px-3 py-2 transition-all hover:border-bsi-primary hover:text-bsi-bone"
                   style={{
                     borderRadius: '2px',
                     border: '1px solid var(--border-vintage)',
@@ -461,7 +461,7 @@ export function AgentChat() {
                 style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--bsi-bone)' }}
               >
                 {streamText}
-                <span className="inline-block w-1.5 h-4 bg-[var(--bsi-primary)]/60 ml-0.5 animate-pulse" />
+                <span className="inline-block w-1.5 h-4 bg-bsi-primary/60 ml-0.5 animate-pulse" />
               </p>
             </div>
           </div>

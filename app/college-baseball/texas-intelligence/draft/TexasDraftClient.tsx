@@ -40,8 +40,8 @@ type TierFilter = 'all' | 'Top 3 Rounds' | 'Rounds 4-10' | 'Day 3' | 'Developmen
 
 const TIER_COLORS: Record<string, string> = {
   'Top 3 Rounds': 'bg-burnt-orange text-white',
-  'Rounds 4-10': 'bg-[var(--heritage-columbia-blue)] text-white',
-  'Day 3': 'bg-[var(--bsi-dust)]/20 text-[var(--bsi-dust)]',
+  'Rounds 4-10': 'bg-heritage-columbia text-white',
+  'Day 3': 'bg-bsi-dust/20 text-bsi-dust',
   'Development': 'bg-surface-light text-text-muted',
 };
 

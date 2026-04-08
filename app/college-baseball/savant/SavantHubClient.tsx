@@ -289,7 +289,7 @@ export default function SavantHubPage() {
                   return (
                     <div
                       key={spot.metricKey}
-                      className="savant-fade-in relative overflow-hidden rounded-sm bg-surface-dugout border border-border-vintage hover:border-[rgba(140,98,57,0.5)] transition-all p-4"
+                      className="savant-fade-in relative overflow-hidden rounded-sm bg-surface-dugout border border-border-vintage hover:border-heritage-bronze/50 transition-all p-4"
                       style={{ borderLeftColor: color, borderLeftWidth: '2px', animationDelay: `${index * 50}ms` }}
                     >
                       <div className="flex items-baseline justify-between mb-2">

@@ -29,12 +29,12 @@ function getTimeAgo(date: Date): string {
 function getStatusColor(
   date: Date,
   isCached: boolean
-): 'bg-[var(--bsi-primary)]' | 'bg-[var(--bsi-warning)]' | 'bg-orange-400' | 'bg-[var(--bsi-danger)]' {
+): 'bg-bsi-primary' | 'bg-warning' | 'bg-orange-400' | 'bg-error' {
   if (isCached) return 'bg-orange-400';
   const minutesAgo = getAgeMinutes(date);
 
-  if (minutesAgo < 1) return 'bg-[var(--bsi-primary)]';
-  if (minutesAgo < 5) return 'bg-[var(--bsi-warning)]';
+  if (minutesAgo < 1) return 'bg-bsi-primary';
+  if (minutesAgo < 5) return 'bg-warning';
   return 'bg-orange-400';
 }
 
@@ -55,7 +55,7 @@ export function DataFreshnessIndicator({
   // Stable defaults for SSR — defer date-dependent values to useEffect
   const [timeAgo, setTimeAgo] = useState<string>('just now');
   const [exactAge, setExactAge] = useState<string>('0s ago');
-  const [statusColor, setStatusColor] = useState<string>('bg-[var(--bsi-primary)]');
+  const [statusColor, setStatusColor] = useState<string>('bg-bsi-primary');
   const fallbackDate = useRef(new Date());
   const effectiveSource = getDataSourceLabel(normalized, source ?? 'Data');
 

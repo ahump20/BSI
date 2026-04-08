@@ -30,8 +30,8 @@ function formatValue(value: number): string {
 }
 
 function gapColor(gap: number): string {
-  if (gap >= 30) return 'text-[var(--bsi-success)]';
-  if (gap >= 15) return 'text-[var(--heritage-columbia-blue)]';
+  if (gap >= 30) return 'text-success';
+  if (gap >= 15) return 'text-heritage-columbia';
   return 'text-text-secondary';
 }
 
@@ -100,7 +100,7 @@ export default function UndervaluedPage() {
           ) : error ? (
             <Card className="max-w-lg mx-auto text-center">
               <CardContent className="p-8">
-                <p className="text-[var(--bsi-danger)] mb-4">Failed to load: {error}</p>
+                <p className="text-error mb-4">Failed to load: {error}</p>
                 <Button variant="outline" onClick={() => window.location.reload()}>Retry</Button>
               </CardContent>
             </Card>

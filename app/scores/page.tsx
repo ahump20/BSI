@@ -325,7 +325,7 @@ function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) 
                 </div>
               )}
               {intelError && (
-                <p className="text-xs text-[var(--bsi-danger)]">{intelError}</p>
+                <p className="text-xs text-error">{intelError}</p>
               )}
               {intelText && (
                 <p className="text-xs text-bsi-dust leading-relaxed whitespace-pre-wrap">{intelText}</p>
@@ -696,7 +696,7 @@ function ScoresHubContent() {
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Breadcrumb */}
             <div className="flex items-center gap-2 mb-4 text-xs" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
-              <Link href="/" className="transition-colors hover:text-[var(--bsi-bone)]">Home</Link>
+              <Link href="/" className="transition-colors hover:text-bsi-bone">Home</Link>
               <span>/</span>
               <span className="text-bsi-primary">Scores</span>
             </div>
@@ -708,8 +708,8 @@ function ScoresHubContent() {
                   <span className="heritage-stamp" style={{ padding: '1px 8px', fontSize: '9px', color: 'var(--bsi-success)', borderColor: 'rgba(16, 185, 129, 0.3)' }}>
                     <span className="inline-flex items-center gap-1.5">
                       <span className="relative flex h-1.5 w-1.5">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--bsi-primary)] opacity-75" />
-                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[var(--bsi-primary)]" />
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-bsi-primary opacity-75" />
+                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-bsi-primary" />
                       </span>
                       LIVE
                     </span>
@@ -738,7 +738,7 @@ function ScoresHubContent() {
             {hasAnyLive && (
               <ScrollReveal direction="up" delay={200}>
                 <div className="mt-4 inline-flex items-center gap-2 px-4 py-2" style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.25)' }}>
-                  <span className="w-2 h-2 bg-[var(--bsi-primary)] rounded-full animate-pulse" />
+                  <span className="w-2 h-2 bg-bsi-primary rounded-full animate-pulse" />
                   <span className="font-semibold text-sm" style={{ color: 'var(--bsi-success)' }}>
                     {totalLive} game{totalLive !== 1 ? 's' : ''} live now
                   </span>
@@ -858,7 +858,7 @@ function ScoresHubContent() {
                     {sport.name}
                     {sport.liveCount > 0 && (
                       <span className="flex items-center gap-1 ml-1">
-                        <span className="w-1.5 h-1.5 bg-[var(--bsi-primary)] rounded-full animate-pulse" />
+                        <span className="w-1.5 h-1.5 bg-bsi-primary rounded-full animate-pulse" />
                         <span style={{ color: 'var(--bsi-success)' }}>{sport.liveCount}</span>
                       </span>
                     )}

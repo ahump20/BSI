@@ -583,7 +583,7 @@ function StandoutCard({
             className="text-[10px] tabular-nums"
             style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
           >
-            {s.value} <span className="text-[var(--bsi-dust)]">{s.label}</span>
+            {s.value} <span className="text-bsi-dust">{s.label}</span>
           </span>
         ))}
       </div>
@@ -804,7 +804,7 @@ function LeaderboardEmpty({ title, error, onRetry }: { title: string; error?: st
         {onRetry && (
           <button
             onClick={onRetry}
-            className="mt-3 text-[10px] uppercase tracking-wider px-3 py-1.5 border rounded-sm transition-colors hover:bg-[rgba(191,87,0,0.08)] hover:border-[var(--bsi-primary)]"
+            className="mt-3 text-[10px] uppercase tracking-wider px-3 py-1.5 border rounded-sm transition-colors hover:bg-[rgba(191,87,0,0.08)] hover:border-bsi-primary"
             style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-primary)', borderColor: 'rgba(191,87,0,0.3)' }}
           >Retry</button>
         )}
@@ -1236,7 +1236,7 @@ export function HomePageClient() {
             {/* Flagship sport — College Baseball gets hero treatment */}
             <Link
               href={SPORT_NAV[0].href}
-              className="group block heritage-card overflow-hidden mb-5 transition-all duration-300 hover:border-[var(--bsi-primary)]"
+              className="group block heritage-card overflow-hidden mb-5 transition-all duration-300 hover:border-bsi-primary"
               style={{ borderLeft: `3px solid ${SPORT_NAV[0].accent}` }}
             >
               <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-5 sm:p-7">
@@ -1507,7 +1507,7 @@ export function HomePageClient() {
             >
               <div className="flex items-center gap-2">
                 <span
-                  className="w-1.5 h-1.5 rounded-full shrink-0 transition-colors group-hover:bg-[var(--bsi-primary)]"
+                  className="w-1.5 h-1.5 rounded-full shrink-0 transition-colors group-hover:bg-bsi-primary"
                   style={{ background: 'rgba(191,87,0,0.4)' }}
                 />
                 <p

@@ -87,8 +87,8 @@ export function WBCHero() {
           <div className="inline-flex items-center gap-2 mb-6">
             {isLive && (
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--bsi-primary)] opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--bsi-primary)]" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-bsi-primary opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-bsi-primary" />
               </span>
             )}
             <span className={`text-sm font-semibold tracking-wider uppercase ${PHASE_COLORS[phase]}`}>

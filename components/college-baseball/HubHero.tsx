@@ -132,8 +132,8 @@ export function HubHero({
           <ScrollReveal direction="up" delay={110}>
             <div className="flex items-center justify-center gap-2 mb-3">
               <span className="relative flex h-1.5 w-1.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--bsi-primary)] opacity-75" />
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[var(--bsi-primary)]" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-bsi-primary opacity-75" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-bsi-primary" />
               </span>
               <span className="text-[10px] uppercase tracking-wider" style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--bsi-dust)' }}>
                 Live &middot; {dataSource}

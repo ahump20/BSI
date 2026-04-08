@@ -30,11 +30,11 @@ interface FeedResponse {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const SIGNAL_CONFIG = {
-  injury_lineup:   { label: 'Injury',    short: 'INJ', color: '#ef4444', bg: 'bg-[var(--bsi-danger)]/10',    border: 'border-[var(--bsi-danger)]/25',    text: 'text-[var(--bsi-danger)]' },
-  transfer_portal: { label: 'Portal',    short: 'PRT', color: '#f59e0b', bg: 'bg-[var(--bsi-warning)]/10',  border: 'border-[var(--bsi-warning)]/25',  text: 'text-[var(--bsi-warning)]' },
-  recruiting:      { label: 'Recruiting',short: 'REC', color: 'var(--heritage-columbia-blue)', bg: 'bg-[var(--heritage-columbia-blue)]/10', border: 'border-[var(--heritage-columbia-blue)]/25', text: 'text-[var(--heritage-columbia-blue)]' },
-  sentiment:       { label: 'Sentiment', short: 'SNT', color: '#10b981', bg: 'bg-[var(--bsi-success)]/10',border: 'border-[var(--bsi-success)]/25',text: 'text-[var(--bsi-success)]' },
-  general:         { label: 'General',   short: 'GEN', color: 'var(--bsi-dust)', bg: 'bg-[var(--bsi-dust)]/10',   border: 'border-[var(--bsi-dust)]/25',   text: 'text-[var(--bsi-dust)]' },
+  injury_lineup:   { label: 'Injury',    short: 'INJ', color: '#ef4444', bg: 'bg-error/10',    border: 'border-error/25',    text: 'text-error' },
+  transfer_portal: { label: 'Portal',    short: 'PRT', color: '#f59e0b', bg: 'bg-warning/10',  border: 'border-warning/25',  text: 'text-warning' },
+  recruiting:      { label: 'Recruiting',short: 'REC', color: 'var(--heritage-columbia-blue)', bg: 'bg-heritage-columbia/10', border: 'border-heritage-columbia/25', text: 'text-heritage-columbia' },
+  sentiment:       { label: 'Sentiment', short: 'SNT', color: '#10b981', bg: 'bg-success/10',border: 'border-success/25',text: 'text-success' },
+  general:         { label: 'General',   short: 'GEN', color: 'var(--bsi-dust)', bg: 'bg-bsi-dust/10',   border: 'border-bsi-dust/25',   text: 'text-bsi-dust' },
 } as const;
 
 const FILTER_TABS = [
@@ -164,7 +164,7 @@ function SignalRow({ signal, index }: { signal: SocialSignal; index: number }) {
           </span>
 
           {/* Platform */}
-          <span className={`font-mono text-[10px] uppercase tracking-wider ${isReddit ? 'text-orange-400/60' : 'text-[var(--heritage-columbia-blue)]/60'}`}>
+          <span className={`font-mono text-[10px] uppercase tracking-wider ${isReddit ? 'text-orange-400/60' : 'text-heritage-columbia/60'}`}>
             {isReddit ? 'r/' : 'X'}
           </span>
 
@@ -184,7 +184,7 @@ function SignalRow({ signal, index }: { signal: SocialSignal; index: number }) {
 
           {/* Confidence pill — high only */}
           {signal.confidence >= 0.75 && (
-            <span className="px-1.5 py-px rounded-sm bg-[var(--bsi-success)]/10 border border-[var(--bsi-success)]/20 text-[var(--bsi-success)] text-[9px] font-mono uppercase tracking-wide">
+            <span className="px-1.5 py-px rounded-sm bg-success/10 border border-success/20 text-success text-[9px] font-mono uppercase tracking-wide">
               HIGH
             </span>
           )}
@@ -346,7 +346,7 @@ export function SocialIntelPageClient() {
                 <span className="font-mono text-[10px] uppercase tracking-wider text-text-muted">Reddit</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-[var(--heritage-columbia-blue)] flex-shrink-0" />
+                <span className="w-2 h-2 rounded-full bg-heritage-columbia flex-shrink-0" />
                 <span className="font-mono text-[10px] uppercase tracking-wider text-text-muted">X / Twitter</span>
               </div>
             </div>

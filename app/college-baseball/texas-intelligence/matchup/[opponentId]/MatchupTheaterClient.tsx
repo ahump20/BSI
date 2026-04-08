@@ -253,12 +253,12 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
                                       : pitcherWeak && hitterStrong ? 'opponent'
                                       : 'neutral';
                                     const cellBg =
-                                      advantage === 'texas' ? 'bg-[var(--bsi-success)]/15'
-                                      : advantage === 'opponent' ? 'bg-[var(--bsi-danger)]/15'
+                                      advantage === 'texas' ? 'bg-success/15'
+                                      : advantage === 'opponent' ? 'bg-error/15'
                                       : 'bg-surface-light/20';
                                     const cellBorder =
-                                      advantage === 'texas' ? 'border-[var(--bsi-success)]/30'
-                                      : advantage === 'opponent' ? 'border-[var(--bsi-danger)]/30'
+                                      advantage === 'texas' ? 'border-success/30'
+                                      : advantage === 'opponent' ? 'border-error/30'
                                       : 'border-border-subtle';
                                     return (
                                       <td
@@ -266,8 +266,8 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
                                         className={`py-2 px-2 text-center border ${cellBorder} ${cellBg}`}
                                       >
                                         <span className={`text-[10px] font-semibold uppercase ${
-                                          advantage === 'texas' ? 'text-[var(--bsi-success)]'
-                                          : advantage === 'opponent' ? 'text-[var(--bsi-danger)]'
+                                          advantage === 'texas' ? 'text-success'
+                                          : advantage === 'opponent' ? 'text-error'
                                           : 'text-text-muted'
                                         }`}>
                                           {advantage === 'texas' ? 'TX' : advantage === 'opponent' ? 'OPP' : '—'}
@@ -282,11 +282,11 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
                         </div>
                         <div className="flex items-center gap-4 mt-4 text-[10px] text-text-muted">
                           <span className="flex items-center gap-1.5">
-                            <span className="w-3 h-3 rounded-sm bg-[var(--bsi-success)]/15 border border-[var(--bsi-success)]/30" />
+                            <span className="w-3 h-3 rounded-sm bg-success/15 border border-success/30" />
                             Texas advantage
                           </span>
                           <span className="flex items-center gap-1.5">
-                            <span className="w-3 h-3 rounded-sm bg-[var(--bsi-danger)]/15 border border-[var(--bsi-danger)]/30" />
+                            <span className="w-3 h-3 rounded-sm bg-error/15 border border-error/30" />
                             Opponent advantage
                           </span>
                           <span className="flex items-center gap-1.5">
@@ -400,7 +400,7 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
                                     {oppScore} {oppName.split(' ').pop()}
                                   </span>
                                   <span className={`text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded-sm ${
-                                    texasWon ? 'bg-[var(--bsi-success)]/10 text-[var(--bsi-success)]' : 'bg-[var(--bsi-danger)]/10 text-[var(--bsi-danger)]'
+                                    texasWon ? 'bg-success/10 text-success' : 'bg-error/10 text-error'
                                   }`}>
                                     {texasWon ? 'W' : 'L'}
                                   </span>

@@ -97,14 +97,14 @@ export function AppTopBar() {
         {/* Search trigger — visible, clickable button */}
         <button
           onClick={openSearch}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-sm border border-white/[0.08] hover:border-[var(--bsi-primary)]/30 hover:bg-white/[0.04] transition-all cursor-pointer group"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-sm border border-white/[0.08] hover:border-bsi-primary/30 hover:bg-white/[0.04] transition-all cursor-pointer group"
           aria-label="Search (Cmd+K)"
         >
           <IconSearch />
-          <span className="hidden sm:inline text-[11px] text-[var(--bsi-dust)] group-hover:text-[var(--bsi-bone)] transition-colors">
+          <span className="hidden sm:inline text-[11px] text-bsi-dust group-hover:text-bsi-bone transition-colors">
             Search
           </span>
-          <kbd className="hidden sm:inline text-[10px] text-[var(--bsi-dust)] bg-white/[0.06] px-1.5 py-0.5 rounded-sm font-mono ml-1">
+          <kbd className="hidden sm:inline text-[10px] text-bsi-dust bg-white/[0.06] px-1.5 py-0.5 rounded-sm font-mono ml-1">
             ⌘K
           </kbd>
         </button>
@@ -112,8 +112,8 @@ export function AppTopBar() {
         <div className="w-px h-4 bg-white/[0.06]" />
 
         <span className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-[var(--bsi-success)] pulse-dot" />
-          <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--bsi-text-dim)]">
+          <span className="w-2 h-2 rounded-full bg-success pulse-dot" />
+          <span className="font-mono text-[10px] uppercase tracking-wider text-text-muted">
             Live
           </span>
         </span>

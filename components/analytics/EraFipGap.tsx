@@ -308,7 +308,7 @@ export function EraFipGap({
               <div>
                 <span className="text-[9px] text-text-muted font-mono">Gap</span>
                 <span className={`block text-xs font-mono font-bold ${
-                  tooltip.gap > 0.3 ? 'text-[var(--bsi-danger)]' : tooltip.gap < -0.3 ? 'text-[var(--bsi-success)]' : 'text-text-primary'
+                  tooltip.gap > 0.3 ? 'text-error' : tooltip.gap < -0.3 ? 'text-success' : 'text-text-primary'
                 }`}>
                   {tooltip.gap > 0 ? '+' : ''}{tooltip.gap.toFixed(2)}
                 </span>

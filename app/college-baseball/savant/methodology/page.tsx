@@ -49,11 +49,11 @@ export default function MethodologyPage() {
       <div className="max-w-4xl mx-auto px-4 py-12 sm:py-16">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-xs mb-6" style={{ fontFamily: 'var(--bsi-font-data, monospace)', color: 'var(--bsi-dust, #C4B8A5)' }}>
-          <a href="/" className="hover:underline" style={{ color: 'var(--heritage-columbia-blue, #4B9CD3)' }}>Home</a>
+          <a href="/" className="hover:underline text-heritage-columbia">Home</a>
           <span>/</span>
-          <a href="/college-baseball" className="hover:underline" style={{ color: 'var(--heritage-columbia-blue, #4B9CD3)' }}>College Baseball</a>
+          <a href="/college-baseball" className="hover:underline text-heritage-columbia">College Baseball</a>
           <span>/</span>
-          <a href="/college-baseball/savant" className="hover:underline" style={{ color: 'var(--heritage-columbia-blue, #4B9CD3)' }}>Savant</a>
+          <a href="/college-baseball/savant" className="hover:underline text-heritage-columbia">Savant</a>
           <span>/</span>
           <span style={{ color: 'var(--bsi-primary, #BF5700)' }}>Methodology</span>
         </nav>

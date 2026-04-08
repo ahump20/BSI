@@ -270,8 +270,8 @@ export function MomentumFlow({
           {excitementRating && (
             <span className={`text-[9px] uppercase tracking-wider font-display px-2 py-0.5 rounded-full ${
               excitementRating === 'instant-classic' ? 'bg-burnt-orange/10 text-burnt-orange' :
-              excitementRating === 'thriller' ? 'bg-[var(--bsi-warning)]/10 text-[var(--bsi-warning)]' :
-              excitementRating === 'competitive' ? 'bg-[var(--heritage-columbia-blue)]/10 text-[var(--heritage-columbia-blue)]' :
+              excitementRating === 'thriller' ? 'bg-warning/10 text-warning' :
+              excitementRating === 'competitive' ? 'bg-heritage-columbia/10 text-heritage-columbia' :
               'bg-surface-light text-text-muted'
             }`}>
               {excitementRating.replace('-', ' ')}

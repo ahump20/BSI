@@ -212,11 +212,11 @@ export default function BubbleWatchPage() {
             {/* Breadcrumb */}
             <ScrollReveal direction="up">
               <nav className="flex items-center gap-2 text-xs mb-6" style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--bsi-dust)' }}>
-                <Link href="/" className="transition-colors hover:text-[var(--bsi-bone)]">Home</Link>
+                <Link href="/" className="transition-colors hover:text-bsi-bone">Home</Link>
                 <span>/</span>
-                <Link href="/college-baseball" className="transition-colors hover:text-[var(--bsi-bone)]">College Baseball</Link>
+                <Link href="/college-baseball" className="transition-colors hover:text-bsi-bone">College Baseball</Link>
                 <span>/</span>
-                <Link href="/college-baseball/savant" className="transition-colors hover:text-[var(--bsi-bone)]">Savant</Link>
+                <Link href="/college-baseball/savant" className="transition-colors hover:text-bsi-bone">Savant</Link>
                 <span>/</span>
                 <span className="text-bsi-primary">Bubble Watch</span>
               </nav>

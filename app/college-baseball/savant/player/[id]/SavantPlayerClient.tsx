@@ -498,11 +498,11 @@ export default function SavantPlayerClient() {
                 style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--bsi-dust)' }}
                 aria-label="Breadcrumb"
               >
-                <Link href="/" className="transition-colors hover:text-[var(--bsi-bone)]">Home</Link>
+                <Link href="/" className="transition-colors hover:text-bsi-bone">Home</Link>
                 <span aria-hidden="true">/</span>
-                <Link href="/college-baseball" className="transition-colors hover:text-[var(--bsi-bone)]">College Baseball</Link>
+                <Link href="/college-baseball" className="transition-colors hover:text-bsi-bone">College Baseball</Link>
                 <span aria-hidden="true">/</span>
-                <Link href="/college-baseball/savant" className="transition-colors hover:text-[var(--bsi-bone)]">Savant</Link>
+                <Link href="/college-baseball/savant" className="transition-colors hover:text-bsi-bone">Savant</Link>
                 <span aria-hidden="true">/</span>
                 <span className="text-bsi-primary">{playerName}</span>
               </nav>
@@ -863,7 +863,7 @@ export default function SavantPlayerClient() {
                       </p>
                       <Link
                         href="/pricing"
-                        className="text-xs uppercase tracking-wider transition-colors hover:text-[var(--bsi-bone)]"
+                        className="text-xs uppercase tracking-wider transition-colors hover:text-bsi-bone"
                         style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-primary)' }}
                       >
                         Go Pro

@@ -457,12 +457,12 @@ export default function TexasIntelHubClient() {
               <div className="text-center py-2">
                 {liveGame ? (
                   <div className="flex flex-col items-center gap-1">
-                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-[var(--bsi-danger)]/15 mb-1">
+                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-error/15 mb-1">
                       <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--bsi-danger)] opacity-75" />
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--bsi-danger)]" />
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-error opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-error" />
                       </span>
-                      <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--bsi-danger)]">Live</span>
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-error">Live</span>
                     </span>
                     <div className="flex items-center gap-2 font-mono text-sm font-bold">
                       <span className="text-text-primary truncate max-w-[60px]">{liveGame.awayTeam.shortName}</span>

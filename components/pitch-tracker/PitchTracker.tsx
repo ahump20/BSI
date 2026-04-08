@@ -259,7 +259,7 @@ export function PitchTracker({
             <div
               className={`mt-3 px-4 py-2 rounded-sm text-center ${
                 currentAtBat.isScoring
-                  ? 'bg-[var(--bsi-success)]/20 text-[var(--bsi-success)]'
+                  ? 'bg-success/20 text-success'
                   : 'bg-charcoal text-text-secondary'
               }`}
             >

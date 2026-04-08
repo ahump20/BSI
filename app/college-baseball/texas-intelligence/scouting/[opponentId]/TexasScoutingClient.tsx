@@ -206,13 +206,13 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
                       <p className="text-text-secondary text-xs leading-relaxed">{brief.overview.slice(0, 200)}{brief.overview.length > 200 ? '...' : ''}</p>
                     </CardContent>
                   </Card>
-                  <Card variant="default" padding="md" className="border-t-2 border-[var(--heritage-columbia-blue)]">
+                  <Card variant="default" padding="md" className="border-t-2 border-heritage-columbia">
                     <CardContent>
                       <span className="heritage-stamp text-[10px] block mb-2">Key Matchup</span>
                       <p className="text-text-secondary text-xs leading-relaxed">{brief.key_matchups.slice(0, 200)}{brief.key_matchups.length > 200 ? '...' : ''}</p>
                     </CardContent>
                   </Card>
-                  <Card variant="default" padding="md" className="border-t-2 border-[var(--bsi-dust)]">
+                  <Card variant="default" padding="md" className="border-t-2 border-bsi-dust">
                     <CardContent>
                       <span className="heritage-stamp text-[10px] block mb-2">Texas Edge</span>
                       <p className="text-text-secondary text-xs leading-relaxed">{brief.game_plan.slice(0, 200)}{brief.game_plan.length > 200 ? '...' : ''}</p>

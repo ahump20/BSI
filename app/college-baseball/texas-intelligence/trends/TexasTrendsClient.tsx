@@ -58,8 +58,8 @@ type StatusFilter = 'all' | 'hot' | 'cold' | 'neutral';
 
 const STATUS_STYLES: Record<string, { bg: string; text: string; dot: string; label: string }> = {
   hot: { bg: 'bg-orange-500/10', text: 'text-orange-400', dot: 'bg-orange-500', label: 'Hot' },
-  cold: { bg: 'bg-[var(--heritage-columbia-blue)]/10', text: 'text-[var(--heritage-columbia-blue)]', dot: 'bg-[var(--heritage-columbia-blue)]', label: 'Cold' },
-  neutral: { bg: 'bg-[var(--bsi-dust)]/10', text: 'text-[var(--bsi-dust)]', dot: 'bg-[var(--bsi-dust)]', label: 'Neutral' },
+  cold: { bg: 'bg-heritage-columbia/10', text: 'text-heritage-columbia', dot: 'bg-heritage-columbia', label: 'Cold' },
+  neutral: { bg: 'bg-bsi-dust/10', text: 'text-bsi-dust', dot: 'bg-bsi-dust', label: 'Neutral' },
 };
 
 // ─── Sparkline Component ────────────────────────────────────────────────────
@@ -308,7 +308,7 @@ export default function TexasTrendsClient() {
                     <div className="text-[10px] uppercase tracking-wider text-text-muted mt-1">Hot Bats</div>
                   </div>
                   <div className="rounded-sm border border-border-subtle bg-surface-dugout p-4 text-center">
-                    <div className="font-mono text-2xl font-bold text-[var(--heritage-columbia-blue)]">{momentum.coldPlayers}</div>
+                    <div className="font-mono text-2xl font-bold text-heritage-columbia">{momentum.coldPlayers}</div>
                     <div className="text-[10px] uppercase tracking-wider text-text-muted mt-1">Cold Bats</div>
                   </div>
                 </div>
@@ -367,7 +367,7 @@ export default function TexasTrendsClient() {
                           className={`px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-sm transition-colors ${
                             statusFilter === f
                               ? f === 'hot' ? 'bg-orange-500 text-white'
-                                : f === 'cold' ? 'bg-[var(--heritage-columbia-blue)] text-white'
+                                : f === 'cold' ? 'bg-heritage-columbia text-white'
                                 : 'bg-burnt-orange text-white'
                               : 'bg-surface-light text-text-muted hover:text-text-primary'
                           }`}
@@ -466,14 +466,14 @@ export default function TexasTrendsClient() {
                   </div>
                   <div>
                     <span className="inline-flex items-center gap-1.5 mb-1">
-                      <span className="w-2 h-2 rounded-full bg-[var(--heritage-columbia-blue)]" />
+                      <span className="w-2 h-2 rounded-full bg-heritage-columbia" />
                       <span className="text-text-primary font-semibold">Cold</span>
                     </span>
                     <p>Last-5-game average is 50+ points below season average. Pressing or fatigued.</p>
                   </div>
                   <div>
                     <span className="inline-flex items-center gap-1.5 mb-1">
-                      <span className="w-2 h-2 rounded-full bg-[var(--bsi-dust)]" />
+                      <span className="w-2 h-2 rounded-full bg-bsi-dust" />
                       <span className="text-text-primary font-semibold">Neutral</span>
                     </span>
                     <p>Performing within normal range of season averages. Steady contributor.</p>

@@ -49,38 +49,38 @@ const SIGNAL_CONFIG: Record<string, {
 }> = {
   injury_lineup: {
     label: 'Injury / Lineup',
-    color: 'text-[var(--bsi-danger)]',
-    bg: 'bg-[var(--bsi-danger)]/10',
-    border: 'border-[var(--bsi-danger)]/25',
-    dot: 'bg-[var(--bsi-danger)]',
+    color: 'text-error',
+    bg: 'bg-error/10',
+    border: 'border-error/25',
+    dot: 'bg-error',
   },
   transfer_portal: {
     label: 'Transfer Portal',
-    color: 'text-[var(--bsi-warning)]',
-    bg: 'bg-[var(--bsi-warning)]/10',
-    border: 'border-[var(--bsi-warning)]/25',
-    dot: 'bg-[var(--bsi-warning)]',
+    color: 'text-warning',
+    bg: 'bg-warning/10',
+    border: 'border-warning/25',
+    dot: 'bg-warning',
   },
   recruiting: {
     label: 'Recruiting',
-    color: 'text-[var(--heritage-columbia-blue)]',
-    bg: 'bg-[var(--heritage-columbia-blue)]/10',
-    border: 'border-[var(--heritage-columbia-blue)]/25',
-    dot: 'bg-[var(--heritage-columbia-blue)]',
+    color: 'text-heritage-columbia',
+    bg: 'bg-heritage-columbia/10',
+    border: 'border-heritage-columbia/25',
+    dot: 'bg-heritage-columbia',
   },
   sentiment: {
     label: 'Sentiment',
-    color: 'text-[var(--bsi-success)]',
-    bg: 'bg-[var(--bsi-success)]/10',
-    border: 'border-[var(--bsi-success)]/25',
-    dot: 'bg-[var(--bsi-success)]',
+    color: 'text-success',
+    bg: 'bg-success/10',
+    border: 'border-success/25',
+    dot: 'bg-success',
   },
   general: {
     label: 'General',
     color: 'text-text-muted',
     bg: 'bg-surface',
     border: 'border-border',
-    dot: 'bg-[var(--bsi-dust)]',
+    dot: 'bg-bsi-dust',
   },
 };
 
@@ -99,9 +99,9 @@ const PLATFORM_CONFIG = {
   },
   twitter: {
     label: 'X / Twitter',
-    bg: 'bg-[var(--heritage-columbia-blue)]/15',
-    text: 'text-[var(--heritage-columbia-blue)]',
-    border: 'border-[var(--heritage-columbia-blue)]/25',
+    bg: 'bg-heritage-columbia/15',
+    text: 'text-heritage-columbia',
+    border: 'border-heritage-columbia/25',
     icon: (
       <svg viewBox="0 0 24 24" className="w-3 h-3 fill-current" aria-hidden>
         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
@@ -228,7 +228,7 @@ function SignalCard({ signal }: { signal: SocialSignal }) {
 
           {/* Confidence pill — only show when notable */}
           {isHighConfidence && (
-            <span className="inline-flex items-center px-1.5 py-0.5 rounded-sm text-[9px] font-semibold uppercase tracking-widest bg-[var(--bsi-success)]/10 text-[var(--bsi-success)] border border-[var(--bsi-success)]/20 flex-shrink-0">
+            <span className="inline-flex items-center px-1.5 py-0.5 rounded-sm text-[9px] font-semibold uppercase tracking-widest bg-success/10 text-success border border-success/20 flex-shrink-0">
               {confidenceLabel(confidence)}
             </span>
           )}
@@ -383,7 +383,7 @@ export function SocialIntelFeed() {
               Reddit
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--heritage-columbia-blue)]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-heritage-columbia" />
               X
             </span>
           </div>

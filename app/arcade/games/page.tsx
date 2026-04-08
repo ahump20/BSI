@@ -48,7 +48,7 @@ export default function ArcadeGamesPage() {
                       >
                         {game.icon}
                       </div>
-                      <span className="w-2 h-2 rounded-full bg-[var(--bsi-primary)]" />
+                      <span className="w-2 h-2 rounded-full bg-bsi-primary" />
                     </div>
                     <h2 className="text-lg font-display text-text-primary uppercase tracking-wide mb-2 group-hover:text-burnt-orange transition-colors">
                       {game.title}

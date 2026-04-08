@@ -371,7 +371,7 @@ export default function Weekend8RecapPage() {
           <Container>
             <ScrollReveal direction="up">
               <div className="max-w-3xl mx-auto">
-                <div className="bg-gradient-to-br from-bsi-primary/8 to-[var(--bsi-texas-soil)]/5 border border-bsi-primary/15 rounded-sm p-6 md:p-8">
+                <div className="bg-gradient-to-br from-bsi-primary/8 to-texas-soil/5 border border-bsi-primary/15 rounded-sm p-6 md:p-8">
                   <h2 className="font-display text-xl font-semibold uppercase tracking-wider text-burnt-orange mb-4">
                     BSI Verdict
                   </h2>

@@ -117,7 +117,7 @@ export default function SettingsPage() {
             </div>
             <button
               onClick={handleResetAll}
-              className="px-4 py-2 text-sm font-medium text-[var(--bsi-danger)] hover:text-[var(--bsi-danger)] hover:bg-[var(--bsi-danger)]/10 rounded-sm transition-colors"
+              className="px-4 py-2 text-sm font-medium text-error hover:text-error hover:bg-error/10 rounded-sm transition-colors"
             >
               Reset All
             </button>

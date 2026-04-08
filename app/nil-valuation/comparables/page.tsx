@@ -34,8 +34,8 @@ function formatValue(value: number): string {
 function tierColor(tier: string | undefined): string {
   switch ((tier || '').toLowerCase()) {
     case 'elite': return 'text-burnt-orange';
-    case 'high': return 'text-[var(--bsi-success)]';
-    case 'mid': return 'text-[var(--heritage-columbia-blue)]';
+    case 'high': return 'text-success';
+    case 'mid': return 'text-heritage-columbia';
     default: return 'text-text-tertiary';
   }
 }
@@ -131,7 +131,7 @@ export default function ComparablesPage() {
           ) : error ? (
             <Card className="max-w-lg mx-auto text-center">
               <CardContent className="p-8">
-                <p className="text-[var(--bsi-danger)] mb-4">Failed to load: {error}</p>
+                <p className="text-error mb-4">Failed to load: {error}</p>
                 <Button variant="outline" onClick={() => window.location.reload()}>Retry</Button>
               </CardContent>
             </Card>

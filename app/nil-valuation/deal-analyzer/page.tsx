@@ -59,11 +59,11 @@ function analyzeDeal(input: DealInput): DealResult {
   let rating: DealResult['rating'];
   let ratingLabel: string;
   let ratingColor: string;
-  if (ratio < 0.5) { rating = 'strong-underpay'; ratingLabel = 'Strong Underpay'; ratingColor = 'text-[var(--bsi-danger)]'; }
-  else if (ratio < 0.85) { rating = 'underpay'; ratingLabel = 'Below Market'; ratingColor = 'text-[var(--bsi-warning)]'; }
-  else if (ratio <= 1.2) { rating = 'fair'; ratingLabel = 'Fair Value'; ratingColor = 'text-[var(--bsi-success)]'; }
-  else if (ratio <= 1.6) { rating = 'overpay'; ratingLabel = 'Above Market'; ratingColor = 'text-[var(--bsi-warning)]'; }
-  else { rating = 'strong-overpay'; ratingLabel = 'Significant Overpay'; ratingColor = 'text-[var(--bsi-danger)]'; }
+  if (ratio < 0.5) { rating = 'strong-underpay'; ratingLabel = 'Strong Underpay'; ratingColor = 'text-error'; }
+  else if (ratio < 0.85) { rating = 'underpay'; ratingLabel = 'Below Market'; ratingColor = 'text-warning'; }
+  else if (ratio <= 1.2) { rating = 'fair'; ratingLabel = 'Fair Value'; ratingColor = 'text-success'; }
+  else if (ratio <= 1.6) { rating = 'overpay'; ratingLabel = 'Above Market'; ratingColor = 'text-warning'; }
+  else { rating = 'strong-overpay'; ratingLabel = 'Significant Overpay'; ratingColor = 'text-error'; }
 
   // Risk factors
   const riskFactors: string[] = [];
@@ -235,7 +235,7 @@ export default function DealAnalyzerPage() {
                         <ul className="space-y-2">
                           {result.riskFactors.map((rf, i) => (
                             <li key={i} className="text-sm text-text-tertiary flex gap-2">
-                              <span className="text-[var(--bsi-warning)] shrink-0">!</span>
+                              <span className="text-warning shrink-0">!</span>
                               {rf}
                             </li>
                           ))}

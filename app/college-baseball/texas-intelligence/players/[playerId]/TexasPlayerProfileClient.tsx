@@ -212,7 +212,7 @@ function RadarChart({ radar }: { radar: RadarScores }) {
             y={y}
             textAnchor="middle"
             dominantBaseline="middle"
-            className="fill-[var(--bsi-dust)] text-[9px] uppercase tracking-wider"
+            className="fill-bsi-dust text-[9px] uppercase tracking-wider"
             style={{ fontFamily: 'Oswald, sans-serif' }}
           >
             {label}

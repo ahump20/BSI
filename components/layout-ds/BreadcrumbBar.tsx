@@ -59,7 +59,7 @@ export function BreadcrumbBar() {
     >
       <ol className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.12em]" style={{ fontFamily: 'var(--font-mono)' }}>
         <li>
-          <Link href="/" className="text-[var(--bsi-text-dim)] hover:text-[var(--bsi-dust)] transition-colors">
+          <Link href="/" className="text-text-muted hover:text-bsi-dust transition-colors">
             Home
           </Link>
         </li>
@@ -70,13 +70,13 @@ export function BreadcrumbBar() {
 
           return (
             <li key={href} className="flex items-center gap-1.5">
-              <span className="text-[var(--bsi-text-dim)]">/</span>
+              <span className="text-text-muted">/</span>
               {isLast ? (
-                <span className="text-[var(--bsi-dust)]">{label}</span>
+                <span className="text-bsi-dust">{label}</span>
               ) : (
                 <Link
                   href={href}
-                  className="text-[var(--bsi-text-dim)] hover:text-[var(--bsi-dust)] transition-colors"
+                  className="text-text-muted hover:text-bsi-dust transition-colors"
                 >
                   {label}
                 </Link>

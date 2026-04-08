@@ -144,12 +144,12 @@ export function DiamondDynastyMarketplaceClient() {
               <CardTitle size="sm">Filters</CardTitle>
               <CardContent className="space-y-4 px-0 pb-0 pt-4">
                 <label className="block">
-                  <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)]">Search</span>
+                  <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-bsi-dust">Search</span>
                   <input
                     value={search}
                     onChange={(event) => setSearch(event.target.value)}
                     placeholder="Aaron Judge, Yankees, Live Series..."
-                    className="w-full rounded-sm border border-border-vintage bg-surface-dugout px-3 py-2 text-sm text-[var(--bsi-bone)] outline-none transition-colors focus:border-burnt-orange/45"
+                    className="w-full rounded-sm border border-border-vintage bg-surface-dugout px-3 py-2 text-sm text-bsi-bone outline-none transition-colors focus:border-burnt-orange/45"
                   />
                 </label>
 
@@ -170,22 +170,22 @@ export function DiamondDynastyMarketplaceClient() {
                   <Select label="Sort" value={sort} onChange={(value) => setSort(value as (typeof SORT_OPTIONS)[number]['value'])} options={SORT_OPTIONS.map((option) => option.value)} />
                 </div>
 
-                <label className="flex items-center gap-3 rounded-sm border border-border-vintage bg-surface-dugout px-3 py-3 text-sm text-[var(--bsi-bone)]">
+                <label className="flex items-center gap-3 rounded-sm border border-border-vintage bg-surface-dugout px-3 py-3 text-sm text-bsi-bone">
                   <input type="checkbox" checked={captainOnly} onChange={(event) => setCaptainOnly(event.target.checked)} />
                   Captain cards only
                 </label>
 
-                <label className="flex items-center gap-3 rounded-sm border border-border-vintage bg-surface-dugout px-3 py-3 text-sm text-[var(--bsi-bone)]">
+                <label className="flex items-center gap-3 rounded-sm border border-border-vintage bg-surface-dugout px-3 py-3 text-sm text-bsi-bone">
                   <input type="checkbox" checked={wbcOnly} onChange={(event) => setWbcOnly(event.target.checked)} />
                   WBC-tagged only
                 </label>
 
-                <p className="text-sm leading-relaxed text-[var(--bsi-dust)]">
+                <p className="text-sm leading-relaxed text-bsi-dust">
                   WBC filtering is source-bound: only cards whose official/public series, set, or acquisition metadata explicitly includes WBC or World Baseball Classic will appear.
                 </p>
 
-                <div className="rounded-sm border border-border-vintage bg-surface-dugout px-3 py-3 text-sm text-[var(--bsi-dust)]">
-                  Tracked on this page: <span className="font-semibold text-[var(--bsi-bone)]">{trackedOnPage}</span>
+                <div className="rounded-sm border border-border-vintage bg-surface-dugout px-3 py-3 text-sm text-bsi-dust">
+                  Tracked on this page: <span className="font-semibold text-bsi-bone">{trackedOnPage}</span>
                 </div>
               </CardContent>
             </Card>
@@ -200,14 +200,14 @@ export function DiamondDynastyMarketplaceClient() {
                     ))}
                   </div>
                 ) : error ? (
-                  <p className="text-sm text-[var(--bsi-dust)]">{error}</p>
+                  <p className="text-sm text-bsi-dust">{error}</p>
                 ) : !data || data.cards.length === 0 ? (
-                  <p className="text-sm text-[var(--bsi-dust)]">No cards matched the current marketplace filters.</p>
+                  <p className="text-sm text-bsi-dust">No cards matched the current marketplace filters.</p>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full min-w-[900px]">
                       <thead>
-                        <tr className="border-b border-burnt-orange/35 text-left text-xs uppercase tracking-[0.18em] text-[var(--bsi-dust)]">
+                        <tr className="border-b border-burnt-orange/35 text-left text-xs uppercase tracking-[0.18em] text-bsi-dust">
                           <th className="px-3 py-3">Card</th>
                           <th className="px-3 py-3">Team</th>
                           <th className="px-3 py-3">Series</th>
@@ -223,11 +223,11 @@ export function DiamondDynastyMarketplaceClient() {
                         {data.cards.map((card) => {
                           const active = watchlist.includes(card.id);
                           return (
-                            <tr key={card.id} className="border-b border-border-vintage text-sm text-[var(--bsi-bone)]">
+                            <tr key={card.id} className="border-b border-border-vintage text-sm text-bsi-bone">
                               <td className="px-3 py-3">
                                 <Link href={buildCardHref(card.id)} className="block hover:text-burnt-orange transition-colors">
                                   <div className="font-semibold">{card.name}</div>
-                                  <div className="text-xs uppercase tracking-[0.18em] text-[var(--bsi-dust)]">
+                                  <div className="text-xs uppercase tracking-[0.18em] text-bsi-dust">
                                     {card.rarity} • {card.setName ?? 'No set label'}
                                   </div>
                                 </Link>
@@ -258,18 +258,18 @@ export function DiamondDynastyMarketplaceClient() {
                       type="button"
                       onClick={() => setPage((current) => Math.max(current - 1, 1))}
                       disabled={page <= 1}
-                      className="rounded-sm border border-border-vintage px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] disabled:opacity-40"
+                      className="rounded-sm border border-border-vintage px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-bsi-dust disabled:opacity-40"
                     >
                       Previous
                     </button>
-                    <div className="text-xs uppercase tracking-[0.18em] text-[var(--bsi-dust)]">
+                    <div className="text-xs uppercase tracking-[0.18em] text-bsi-dust">
                       Page {data.page} of {data.totalPages}
                     </div>
                     <button
                       type="button"
                       onClick={() => setPage((current) => Math.min(current + 1, data.totalPages))}
                       disabled={page >= data.totalPages}
-                      className="rounded-sm border border-border-vintage px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] disabled:opacity-40"
+                      className="rounded-sm border border-border-vintage px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-bsi-dust disabled:opacity-40"
                     >
                       Next
                     </button>
@@ -299,11 +299,11 @@ function Select({
 }) {
   return (
     <label className="block">
-      <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)]">{label}</span>
+      <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-bsi-dust">{label}</span>
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="w-full rounded-sm border border-border-vintage bg-surface-dugout px-3 py-2 text-sm text-[var(--bsi-bone)] outline-none transition-colors focus:border-burnt-orange/45"
+        className="w-full rounded-sm border border-border-vintage bg-surface-dugout px-3 py-2 text-sm text-bsi-bone outline-none transition-colors focus:border-burnt-orange/45"
       >
         <option value="">All</option>
         {options.map((option) => (

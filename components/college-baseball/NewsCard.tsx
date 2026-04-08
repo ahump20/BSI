@@ -13,17 +13,17 @@ interface NewsCardProps {
 }
 
 const SOURCE_STYLES: Record<string, { bg: string; text: string; label: string }> = {
-  espn: { bg: 'bg-[rgba(75,156,211,0.2)] border-[rgba(75,156,211,0.4)]', text: 'text-[var(--heritage-columbia-blue)]', label: 'ESPN' },
-  highlightly: { bg: 'bg-[var(--bsi-success)]/20 border-[var(--bsi-success)]/40', text: 'text-[var(--bsi-success)]', label: 'Highlightly' },
+  espn: { bg: 'bg-[rgba(75,156,211,0.2)] border-[rgba(75,156,211,0.4)]', text: 'text-heritage-columbia', label: 'ESPN' },
+  highlightly: { bg: 'bg-success/20 border-success/40', text: 'text-success', label: 'Highlightly' },
   bsi: { bg: 'bg-burnt-orange/20 border-burnt-orange/40', text: 'text-burnt-orange', label: 'BSI' },
 };
 
 const CATEGORY_STYLES: Record<string, string> = {
-  scores: 'bg-[var(--bsi-primary)]/15 text-bsi-primary border-[var(--bsi-primary)]/30',
-  transfers: 'bg-[var(--bsi-warning)]/15 text-[var(--bsi-warning)] border-[var(--bsi-warning)]/30',
-  recruiting: 'bg-[var(--heritage-columbia-blue)]/15 text-[var(--heritage-columbia-blue)] border-[var(--heritage-columbia-blue)]/30',
-  editorial: 'bg-[var(--heritage-columbia-blue)]/15 text-[var(--heritage-columbia-blue)] border-[var(--heritage-columbia-blue)]/30',
-  analysis: 'bg-[var(--heritage-columbia-blue)]/15 text-[var(--heritage-columbia-blue)] border-[var(--heritage-columbia-blue)]/30',
+  scores: 'bg-bsi-primary/15 text-bsi-primary border-bsi-primary/30',
+  transfers: 'bg-warning/15 text-warning border-warning/30',
+  recruiting: 'bg-heritage-columbia/15 text-heritage-columbia border-heritage-columbia/30',
+  editorial: 'bg-heritage-columbia/15 text-heritage-columbia border-heritage-columbia/30',
+  analysis: 'bg-heritage-columbia/15 text-heritage-columbia border-heritage-columbia/30',
   rankings: 'bg-orange-500/15 text-orange-400 border-orange-500/30',
   general: 'bg-surface text-text-muted border-border-strong',
 };

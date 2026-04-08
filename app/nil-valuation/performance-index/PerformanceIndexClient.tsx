@@ -35,16 +35,16 @@ interface PlayerRow {
 
 const TIER_COLORS: Record<string, string> = {
   Elite: 'text-burnt-orange',
-  High: 'text-[var(--bsi-warning)]',
-  'Above Average': 'text-[var(--bsi-success)]',
+  High: 'text-warning',
+  'Above Average': 'text-success',
   Average: 'text-text-secondary',
   Developing: 'text-text-muted',
 };
 
 const TIER_BG: Record<string, string> = {
   Elite: 'bg-burnt-orange/20 border-burnt-orange/40',
-  High: 'bg-[var(--bsi-warning)]/10 border-[var(--bsi-warning)]/30',
-  'Above Average': 'bg-[var(--bsi-success)]/10 border-[var(--bsi-success)]/30',
+  High: 'bg-warning/10 border-warning/30',
+  'Above Average': 'bg-success/10 border-success/30',
   Average: 'bg-white/5 border-white/10',
   Developing: 'bg-white/5 border-white/10',
 };

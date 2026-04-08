@@ -254,7 +254,7 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
                 {stats.streak && (
                   <div className="heritage-card px-4 py-3 text-center">
                     <div className="text-[10px] font-display uppercase tracking-[0.2em] text-text-muted mb-1">Streak</div>
-                    <div className={`font-mono text-xl md:text-2xl font-bold ${stats.streak.startsWith('W') ? 'text-[var(--bsi-success)]' : 'text-[var(--bsi-danger)]'}`}>
+                    <div className={`font-mono text-xl md:text-2xl font-bold ${stats.streak.startsWith('W') ? 'text-success' : 'text-error'}`}>
                       {stats.streak}
                     </div>
                   </div>
@@ -352,8 +352,8 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
                             <span
                               className={`w-6 h-6 rounded-sm flex items-center justify-center text-xs font-bold ${
                                 g.result === 'W'
-                                  ? 'bg-[var(--bsi-success)]/15 text-[var(--bsi-success)]'
-                                  : 'bg-[var(--bsi-danger)]/15 text-[var(--bsi-danger)]'
+                                  ? 'bg-success/15 text-success'
+                                  : 'bg-error/15 text-error'
                               }`}
                             >
                               {g.result}

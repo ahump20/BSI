@@ -70,10 +70,10 @@ export function SwingReport({ analysis, chatContext, videoUrl, frames, narration
           <div
             className={`text-3xl font-bold font-display ${
               analysis.overallScore >= 80
-                ? 'text-[var(--bsi-success)]'
+                ? 'text-success'
                 : analysis.overallScore >= 50
-                  ? 'text-[var(--bsi-warning)]'
-                  : 'text-[var(--bsi-danger)]'
+                  ? 'text-warning'
+                  : 'text-error'
             }`}
           >
             {analysis.overallScore}
@@ -139,10 +139,10 @@ export function SwingReport({ analysis, chatContext, videoUrl, frames, narration
                   <div
                     className={`text-xl font-bold font-display ${
                       m.score >= 80
-                        ? 'text-[var(--bsi-success)]'
+                        ? 'text-success'
                         : m.score >= 50
-                          ? 'text-[var(--bsi-warning)]'
-                          : 'text-[var(--bsi-danger)]'
+                          ? 'text-warning'
+                          : 'text-error'
                     }`}
                   >
                     {m.value}
@@ -162,7 +162,7 @@ export function SwingReport({ analysis, chatContext, videoUrl, frames, narration
                   .slice(0, 3)
                   .map((m) => (
                     <div key={m.key} className="flex items-center gap-2 text-sm">
-                      <svg viewBox="0 0 16 16" className="w-4 h-4 text-[var(--bsi-success)] shrink-0" fill="none" stroke="currentColor" strokeWidth="2">
+                      <svg viewBox="0 0 16 16" className="w-4 h-4 text-success shrink-0" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M3 8l3 3 7-7" />
                       </svg>
                       <span className="text-bsi-dust">
@@ -177,7 +177,7 @@ export function SwingReport({ analysis, chatContext, videoUrl, frames, narration
                   .slice(0, 3)
                   .map((m) => (
                     <div key={m.key} className="flex items-center gap-2 text-sm">
-                      <svg viewBox="0 0 16 16" className="w-4 h-4 text-[var(--bsi-danger)] shrink-0" fill="none" stroke="currentColor" strokeWidth="2">
+                      <svg viewBox="0 0 16 16" className="w-4 h-4 text-error shrink-0" fill="none" stroke="currentColor" strokeWidth="2">
                         <circle cx="8" cy="8" r="6" />
                         <path d="M8 5v3M8 10.5h.01" />
                       </svg>

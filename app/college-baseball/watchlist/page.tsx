@@ -114,7 +114,7 @@ export default function WatchlistPage() {
                         </div>
                         <button
                           onClick={() => removePlayer(entry.playerId)}
-                          className="shrink-0 p-2 text-text-muted hover:text-[var(--bsi-danger)] transition-colors cursor-pointer"
+                          className="shrink-0 p-2 text-text-muted hover:text-error transition-colors cursor-pointer"
                           aria-label={`Remove ${entry.playerName} from watchlist`}
                         >
                           <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">

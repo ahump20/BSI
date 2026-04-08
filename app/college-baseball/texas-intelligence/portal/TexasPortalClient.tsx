@@ -232,8 +232,8 @@ export default function TexasPortalClient() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <div className="flex items-center gap-2 mb-3">
-                          <span className="w-2 h-2 rounded-full bg-[var(--bsi-success)]" />
-                          <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--bsi-success)]">
+                          <span className="w-2 h-2 rounded-full bg-success" />
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-success">
                             Incoming ({incoming.length})
                           </span>
                         </div>
@@ -249,8 +249,8 @@ export default function TexasPortalClient() {
                       </div>
                       <div>
                         <div className="flex items-center gap-2 mb-3">
-                          <span className="w-2 h-2 rounded-full bg-[var(--bsi-danger)]" />
-                          <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--bsi-danger)]">
+                          <span className="w-2 h-2 rounded-full bg-error" />
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-error">
                             Departing ({departing.length})
                           </span>
                         </div>
@@ -374,7 +374,7 @@ function PortalMoveRow({ move }: { move: PortalMove }) {
   return (
     <div className="flex items-center gap-3 rounded-sm border border-border-subtle bg-surface-press-box p-3">
       <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
-        move.direction === 'incoming' ? 'bg-[var(--bsi-success)]' : 'bg-[var(--bsi-danger)]'
+        move.direction === 'incoming' ? 'bg-success' : 'bg-error'
       }`} />
       <div className="flex-1 min-w-0">
         <div className="text-text-primary text-sm font-medium">{move.name}</div>
@@ -386,8 +386,8 @@ function PortalMoveRow({ move }: { move: PortalMove }) {
       </div>
       <span className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-sm ${
         move.direction === 'incoming'
-          ? 'bg-[var(--bsi-success)]/10 text-[var(--bsi-success)]'
-          : 'bg-[var(--bsi-danger)]/10 text-[var(--bsi-danger)]'
+          ? 'bg-success/10 text-success'
+          : 'bg-error/10 text-error'
       }`}>
         {move.direction}
       </span>

@@ -173,7 +173,7 @@ export function TechMaturityMap({ className = '' }: { className?: string }) {
             return (
               <span key={m} className="text-[10px] text-text-muted flex items-center gap-1">
                 <span className={`w-1.5 h-1.5 rounded-full ${
-                  m === 'production' ? 'bg-[var(--bsi-success)]' : m === 'growth' ? 'bg-[var(--bsi-warning)]' : 'bg-white/30'
+                  m === 'production' ? 'bg-success' : m === 'growth' ? 'bg-warning' : 'bg-white/30'
                 }`} />
                 {count} {maturityConfig[m].label}
               </span>

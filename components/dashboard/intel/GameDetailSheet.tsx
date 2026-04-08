@@ -51,7 +51,7 @@ export function GameDetailSheet({ game, open, onClose }: GameDetailSheetProps) {
             </span>
             {isLive && (
               <span className="inline-flex items-center gap-1 text-bsi-primary font-mono text-[10px]">
-                <span className="h-1.5 w-1.5 rounded-full bg-[var(--bsi-primary)] animate-pulse" />
+                <span className="h-1.5 w-1.5 rounded-full bg-bsi-primary animate-pulse" />
                 LIVE
               </span>
             )}
@@ -184,11 +184,11 @@ export function GameDetailSheet({ game, open, onClose }: GameDetailSheetProps) {
           </div>
           <div className="flex items-center justify-center gap-4 mt-2 font-mono text-[10px]">
             <span className="flex items-center gap-1">
-              <span className="h-2 w-2 rounded-sm bg-[var(--bsi-primary)]/80" />
+              <span className="h-2 w-2 rounded-sm bg-bsi-primary/80" />
               <span className="text-text-muted">Favors outcome</span>
             </span>
             <span className="flex items-center gap-1">
-              <span className="h-2 w-2 rounded-sm bg-[var(--bsi-danger)]/80" />
+              <span className="h-2 w-2 rounded-sm bg-error/80" />
               <span className="text-text-muted">Works against</span>
             </span>
           </div>

@@ -254,7 +254,7 @@ export function AskBSI({ embedded = false, initialQuestion }: AskBSIProps) {
               </svg>
             </div>
             <div>
-              <h3 className="font-display text-sm font-bold uppercase tracking-wide text-[var(--bsi-bone)]">
+              <h3 className="font-display text-sm font-bold uppercase tracking-wide text-bsi-bone">
                 Ask BSI
               </h3>
               <span className="heritage-stamp" style={{ padding: '1px 6px', fontSize: '8px' }}>

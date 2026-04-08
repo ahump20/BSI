@@ -57,14 +57,14 @@ export function DiamondDynastyCollectionsClient() {
             <Card padding="lg">
               <CardContent className="space-y-3 px-0 pb-0 pt-0">
                 <CardTitle size="sm">Collections Unavailable</CardTitle>
-                <p className="text-sm text-[var(--bsi-dust)]">{error}</p>
+                <p className="text-sm text-bsi-dust">{error}</p>
               </CardContent>
             </Card>
           ) : collections.length === 0 ? (
             <Card padding="lg">
               <CardContent className="space-y-3 px-0 pb-0 pt-0">
                 <CardTitle size="sm">No Collections Yet</CardTitle>
-                <p className="text-sm text-[var(--bsi-dust)]">Collection data is still being ingested. The sync worker builds collection groupings from the card catalog — check back shortly.</p>
+                <p className="text-sm text-bsi-dust">Collection data is still being ingested. The sync worker builds collection groupings from the card catalog — check back shortly.</p>
               </CardContent>
             </Card>
           ) : (
@@ -74,18 +74,18 @@ export function DiamondDynastyCollectionsClient() {
                   <CardContent className="space-y-4 px-0 pb-0 pt-0">
                     <div>
                       <div className="text-xs font-semibold uppercase tracking-[0.18em] text-burnt-orange">{collection.type}</div>
-                      <h2 className="mt-2 font-display text-2xl uppercase tracking-display text-[var(--bsi-bone)]">{collection.name}</h2>
+                      <h2 className="mt-2 font-display text-2xl uppercase tracking-display text-bsi-bone">{collection.name}</h2>
                     </div>
                     <div className="grid gap-3 md:grid-cols-2">
                       <Metric label="Cards" value={collection.cardCount.toLocaleString()} />
                       <Metric label="Low cost" value={formatStubValue(collection.lowStubCost)} />
                     </div>
-                    <p className="text-sm text-[var(--bsi-dust)]">
+                    <p className="text-sm text-bsi-dust">
                       High-end cost band: {formatStubValue(collection.highStubCost)}.
                     </p>
                     <Link
                       href={buildCollectionHref(collection.id)}
-                      className="inline-flex rounded-sm border border-border-vintage px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] transition-colors hover:border-burnt-orange/40 hover:text-burnt-orange"
+                      className="inline-flex rounded-sm border border-border-vintage px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-bsi-dust transition-colors hover:border-burnt-orange/40 hover:text-burnt-orange"
                     >
                       Open collection
                     </Link>
@@ -103,8 +103,8 @@ export function DiamondDynastyCollectionsClient() {
 function Metric({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-sm border border-border-vintage bg-surface-dugout px-4 py-3">
-      <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)]">{label}</div>
-      <div className="mt-2 text-sm font-semibold text-[var(--bsi-bone)]">{value}</div>
+      <div className="text-xs font-semibold uppercase tracking-[0.18em] text-bsi-dust">{label}</div>
+      <div className="mt-2 text-sm font-semibold text-bsi-bone">{value}</div>
     </div>
   );
 }

@@ -181,8 +181,8 @@ export function MobileMenuDrawer({
                 )}
                 {isLive && (
                   <span className="relative flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--bsi-primary)] opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[var(--bsi-primary)]" />
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-bsi-primary opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-bsi-primary" />
                   </span>
                 )}
               </span>

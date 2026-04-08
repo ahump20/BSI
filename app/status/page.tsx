@@ -43,9 +43,9 @@ function getOverallFromEndpoints(endpoints: EndpointStatus[]): 'healthy' | 'degr
 }
 
 const overallConfig = {
-  healthy: { label: 'All Systems Operational', color: 'text-bsi-primary', bg: 'bg-[var(--bsi-primary)]/10 border-[var(--bsi-primary)]/30' },
-  degraded: { label: 'Partial Degradation', color: 'text-[var(--bsi-warning)]', bg: 'bg-[var(--bsi-warning)]/10 border-[var(--bsi-warning)]/30' },
-  down: { label: 'Major Outage', color: 'text-[var(--bsi-danger)]', bg: 'bg-[var(--bsi-danger)]/10 border-[var(--bsi-danger)]/30' },
+  healthy: { label: 'All Systems Operational', color: 'text-bsi-primary', bg: 'bg-bsi-primary/10 border-bsi-primary/30' },
+  degraded: { label: 'Partial Degradation', color: 'text-warning', bg: 'bg-warning/10 border-warning/30' },
+  down: { label: 'Major Outage', color: 'text-error', bg: 'bg-error/10 border-error/30' },
 };
 
 export default function StatusPage() {
@@ -141,8 +141,8 @@ export default function StatusPage() {
                 <Card padding="lg" className={`mb-8 border ${overall?.bg}`}>
                   <div className="flex items-center gap-3">
                     <span className={`w-3 h-3 rounded-full ${
-                      data.overall === 'healthy' ? 'bg-[var(--bsi-primary)]' :
-                      data.overall === 'degraded' ? 'bg-[var(--bsi-warning)]' : 'bg-[var(--bsi-danger)]'
+                      data.overall === 'healthy' ? 'bg-bsi-primary' :
+                      data.overall === 'degraded' ? 'bg-warning' : 'bg-error'
                     }`} />
                     <span className={`text-lg font-semibold ${overall?.color}`}>
                       {overall?.label}
@@ -171,8 +171,8 @@ export default function StatusPage() {
                           {endpoint.name}
                         </span>
                         <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${
-                          healthy ? 'bg-[var(--bsi-primary)]' :
-                          slow ? 'bg-[var(--bsi-warning)]' : 'bg-[var(--bsi-danger)]'
+                          healthy ? 'bg-bsi-primary' :
+                          slow ? 'bg-warning' : 'bg-error'
                         }`} />
                       </div>
                       <div className="flex items-center justify-between text-xs text-text-tertiary">

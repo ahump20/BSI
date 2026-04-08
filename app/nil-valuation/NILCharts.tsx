@@ -140,7 +140,7 @@ export function MarketGrowthChart() {
           decimals={2}
           className="text-2xl font-mono font-bold text-burnt-orange"
         />
-        <span className="text-xs font-mono text-[var(--bsi-success)]">
+        <span className="text-xs font-mono text-success">
           +{yoyGrowth.toFixed(0)}% YoY
         </span>
       </div>
@@ -331,7 +331,7 @@ export function GenderEquityChart() {
       {/* Key insight callout */}
       <div className="flex gap-6 mb-4">
         <div>
-          <div className="text-lg font-mono font-bold text-[var(--heritage-columbia-blue)]">52%</div>
+          <div className="text-lg font-mono font-bold text-heritage-columbia">52%</div>
           <div className="text-[10px] font-mono text-text-muted">Women in Top-100</div>
         </div>
         <div>
@@ -454,7 +454,7 @@ export function CollectiveGrowthChart() {
           decimals={0}
           className="text-2xl font-mono font-bold text-burnt-orange"
         />
-        <span className="text-xs font-mono text-[var(--bsi-success)]">
+        <span className="text-xs font-mono text-success">
           +{growth}% since {data[0]?.year}
         </span>
       </div>

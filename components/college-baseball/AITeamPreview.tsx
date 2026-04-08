@@ -54,11 +54,11 @@ function toGrade(percentile: number): number {
 }
 
 function gradeColor(grade: number): string {
-  if (grade >= 70) return 'text-[var(--bsi-success)]';
-  if (grade >= 60) return 'text-[var(--heritage-columbia-blue)]';
+  if (grade >= 70) return 'text-success';
+  if (grade >= 60) return 'text-heritage-columbia';
   if (grade >= 50) return 'text-text-primary';
-  if (grade >= 40) return 'text-[var(--bsi-warning)]';
-  return 'text-[var(--bsi-danger)]';
+  if (grade >= 40) return 'text-warning';
+  return 'text-error';
 }
 
 function gradeLabel(grade: number): string {

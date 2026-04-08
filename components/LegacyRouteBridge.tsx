@@ -21,8 +21,8 @@ function BridgeLink({ href, label, primary }: BridgeAction & { primary?: boolean
       className={[
         'inline-flex items-center justify-center rounded-sm border px-5 py-3 text-sm font-semibold uppercase tracking-[0.18em] transition-colors',
         primary
-          ? 'border-[var(--bsi-primary)] bg-[var(--bsi-primary)] text-[var(--midnight)] hover:bg-transparent hover:text-[var(--bsi-bone)]'
-          : 'border-[rgba(191,87,0,0.25)] bg-transparent text-[var(--bsi-dust)] hover:border-[var(--bsi-primary)] hover:text-[var(--bsi-bone)]',
+          ? 'border-bsi-primary bg-bsi-primary text-[var(--midnight)] hover:bg-transparent hover:text-bsi-bone'
+          : 'border-[rgba(191,87,0,0.25)] bg-transparent text-bsi-dust hover:border-bsi-primary hover:text-bsi-bone',
       ].join(' ')}
     >
       {label}

@@ -289,7 +289,7 @@ export default function CompareHubPage() {
     return (
       <div className="grid grid-cols-3 items-center py-3 border-b border-border-vintage/30">
         <div className="text-right pr-4">
-          <span className={`font-mono text-sm ${aWins && !isNaN(numA) && !isNaN(numB) ? 'text-[var(--bsi-success)] font-bold' : 'text-bsi-bone'}`}>
+          <span className={`font-mono text-sm ${aWins && !isNaN(numA) && !isNaN(numB) ? 'text-success font-bold' : 'text-bsi-bone'}`}>
             {fA}
           </span>
         </div>
@@ -300,7 +300,7 @@ export default function CompareHubPage() {
           )}
         </div>
         <div className="text-left pl-4">
-          <span className={`font-mono text-sm ${bWins && !isNaN(numA) && !isNaN(numB) ? 'text-[var(--bsi-success)] font-bold' : 'text-bsi-bone'}`}>
+          <span className={`font-mono text-sm ${bWins && !isNaN(numA) && !isNaN(numB) ? 'text-success font-bold' : 'text-bsi-bone'}`}>
             {fB}
           </span>
         </div>

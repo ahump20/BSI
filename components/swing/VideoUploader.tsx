@@ -170,7 +170,7 @@ export function VideoUploader({ onVideoReady, isProcessing }: VideoUploaderProps
         <motion.div
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-2 text-[var(--bsi-danger)] text-sm px-4 py-2 rounded-sm bg-[var(--bsi-danger)]/10 border border-[var(--bsi-danger)]/20"
+          className="flex items-center gap-2 text-error text-sm px-4 py-2 rounded-sm bg-error/10 border border-error/20"
         >
           <svg viewBox="0 0 16 16" className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.5">
             <circle cx="8" cy="8" r="6.5" />
