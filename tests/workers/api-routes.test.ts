@@ -94,6 +94,7 @@ describe('Worker API route handling', () => {
 
     expect(res.status).toBe(200);
     expect(body.unavailable).toBe(true);
+    expect(body.leaders).toEqual([]);
   });
 
   it('handles /api/nba/game/:id directly', async () => {

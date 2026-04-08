@@ -49,7 +49,6 @@ function getESPNSeasonType(date?: Date): number | undefined {
   }
 }
 
-
 export async function handleMLBScores(url: URL, env: Env): Promise<Response> {
   try {
     const date = url.searchParams.get('date') || undefined;

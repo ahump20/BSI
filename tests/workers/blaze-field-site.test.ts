@@ -17,6 +17,13 @@ function createMockKV() {
       if (!val) return null;
       return type === 'json' ? JSON.parse(val) : val;
     }),
+    list: vi.fn(async (opts?: { prefix?: string }) => {
+      const prefix = opts?.prefix ?? '';
+      const keys = [...store.keys()]
+        .filter((k) => k.startsWith(prefix))
+        .map((name) => ({ name }));
+      return { keys, list_complete: true, cursor: '' };
+    }),
     _store: store,
   };
 }

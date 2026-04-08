@@ -17,7 +17,10 @@ const cache = new Map<string, Promise<unknown>>();
 let warnedAboutMissingBase = false;
 
 function cachedFetch<T>(path: string): Promise<T> {
-  if (!STATIC_PARAMS_BASE) {
+  // Absolute URLs (e.g. ESPN roster endpoints) bypass the base prefix
+  const isAbsolute = path.startsWith('http://') || path.startsWith('https://');
+
+  if (!isAbsolute && !STATIC_PARAMS_BASE) {
     if (!warnedAboutMissingBase) {
       warnedAboutMissingBase = true;
       console.warn(
@@ -27,7 +30,7 @@ function cachedFetch<T>(path: string): Promise<T> {
     return Promise.resolve(null as T);
   }
 
-  const url = `${STATIC_PARAMS_BASE}${path}`;
+  const url = isAbsolute ? path : `${STATIC_PARAMS_BASE}${path}`;
   if (!cache.has(url)) {
     cache.set(
       url,

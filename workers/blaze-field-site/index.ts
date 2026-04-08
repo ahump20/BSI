@@ -115,7 +115,7 @@ export default {
         });
       }
       const parsed = JSON.parse(latest) as Record<string, unknown>;
-      const bugReport = await collectBugReport(env);
+      const bugReport = await collectBugReport(env, latest);
       const blockingIssues = bugReport.bugs.filter(
         (bug) => bug.severity === 'high' || bug.severity === 'critical',
       ).length;
@@ -418,14 +418,17 @@ interface BugReportPayload {
   timestamp: string;
 }
 
-async function collectBugReport(env: Env): Promise<BugReportPayload> {
+async function collectBugReport(env: Env, prefetchedMonitor?: string | null): Promise<BugReportPayload> {
   const bugs: BugEntry[] = [];
   let totalEndpoints = 0;
   let healthyEndpoints = 0;
 
   // Source A: Monitor results — failures, schema drift, AND latency
+  // Accept pre-fetched data to avoid redundant KV reads when called from /api/status
   try {
-    const monitorRaw = await env.MONITOR_KV.get('summary:latest', 'text');
+    const monitorRaw = prefetchedMonitor !== undefined
+      ? prefetchedMonitor
+      : await env.MONITOR_KV.get('summary:latest', 'text');
     if (monitorRaw) {
       const summary = JSON.parse(monitorRaw) as {
         results?: Array<{
