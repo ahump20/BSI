@@ -18,19 +18,26 @@ export default function ArticleDetailScreen() {
       return;
     }
 
-    const cached = getOfflineArticle(slug);
-    setOfflineArticle(cached);
-    setSaved(isOfflineArticleSaved(slug));
+    let cancelled = false;
+    (async () => {
+      const cached = await getOfflineArticle(slug);
+      const isSaved = await isOfflineArticleSaved(slug);
+      if (!cancelled) {
+        setOfflineArticle(cached);
+        setSaved(isSaved);
+      }
+    })();
+    return () => { cancelled = true; };
   }, [slug]);
 
   const article = useMemo(() => articleQuery.data ?? offlineArticle, [articleQuery.data, offlineArticle]);
 
-  const onSaveOffline = () => {
+  const onSaveOffline = async () => {
     if (!article) {
       return;
     }
 
-    saveOfflineArticle(article);
+    await saveOfflineArticle(article);
     setSaved(true);
   };
 

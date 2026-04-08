@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import * as Notifications from 'expo-notifications';
 import { apiPost } from '@shared/api/client';
 
@@ -38,16 +38,20 @@ export async function registerPushToken(expoPushToken: string, favoriteTeams: st
 }
 
 export function usePushNotifications(onTap: NotificationTapHandler) {
+  // Use ref to avoid re-subscribing on every render when callers pass inline functions
+  const onTapRef = useRef(onTap);
+  onTapRef.current = onTap;
+
   useEffect(() => {
     const received = Notifications.addNotificationReceivedListener(() => undefined);
     const response = Notifications.addNotificationResponseReceivedListener((event) => {
       const data = event.notification.request.content.data as Record<string, unknown>;
-      onTap(data);
+      onTapRef.current(data);
     });
 
     return () => {
       received.remove();
       response.remove();
     };
-  }, [onTap]);
+  }, []);
 }

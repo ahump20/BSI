@@ -11,6 +11,8 @@ binding = "BSI_PROD_DB"
 database_name = "bsi-prod-db"
 database_id = "6921617f-5351-4df3-aeab-07425e72ec6b"
 
+# TODO: Replace placeholder IDs with real KV namespace IDs from Cloudflare dashboard
+# before first deploy. `wrangler deploy` will fail with "namespace not found" otherwise.
 [[kv_namespaces]]
 binding = "BSI_KEYS"
 id = "placeholder"
@@ -25,10 +27,10 @@ id = "placeholder"
 
 [env.production]
 name = "bsi-push-notifications"
-routes = [
-  { pattern = "blazesportsintel.com/api/push/register", zone_name = "blazesportsintel.com" },
-  { pattern = "blazesportsintel.com/api/push/send", zone_name = "blazesportsintel.com" }
-]
+# Routes intentionally omitted — the apex worker (blazesportsintel-worker-prod)
+# handles all blazesportsintel.com/* traffic. Push endpoints should be registered
+# as Hono handlers in the main worker, or proxied via service binding.
+# Adding zone routes here would conflict with the apex worker's catch-all.
 
 [[env.production.d1_databases]]
 binding = "BSI_PROD_DB"

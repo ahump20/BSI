@@ -45,7 +45,7 @@ function safeJsonParse(value: string): unknown {
 function buildHeaders(token: string | null): Record<string, string> {
   const headers: Record<string, string> = { Accept: 'application/json' };
   if (token) {
-    headers.Authorization = `Bearer ${token}`;
+    headers['X-BSI-Key'] = token;
   }
   return headers;
 }

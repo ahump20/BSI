@@ -8,7 +8,9 @@ const queryClient = new QueryClient();
 
 export default function RootLayout() {
   useEffect(() => {
-    initOfflineArticles();
+    initOfflineArticles().catch((err) =>
+      console.warn('[offline-articles] init failed:', err)
+    );
   }, []);
 
   return (
