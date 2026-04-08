@@ -358,6 +358,23 @@ interface TransformedPlayer {
     abbreviation: string;
   };
   stats: unknown[];
+  // Extended fields for rich player detail pages
+  fullName?: string;
+  firstName?: string;
+  lastName?: string;
+  primaryNumber?: string;
+  currentAge?: number;
+  active?: boolean;
+  primaryPosition?: { code?: string; name?: string; type?: string; abbreviation: string };
+  currentTeam?: { id: number | string; name: string };
+  batSide?: { code: string; description: string };
+  pitchHand?: { code: string; description: string };
+  displayBatsThrows?: string;
+  displayBirthPlace?: string;
+  displayDOB?: string;
+  displayDraft?: string;
+  debutYear?: number;
+  experience?: string;
 }
 
 interface TransformedArticle {
@@ -738,15 +755,24 @@ export function transformTeamDetail(
   };
 }
 
-/** Transform ESPN athlete into BSI player contract */
+/** Transform ESPN athlete into BSI player contract.
+ *  Outputs both the compact shape (name, jersey, position) and the rich shape
+ *  (fullName, primaryPosition, currentTeam, batSide/pitchHand, etc.) so that
+ *  both simple lists and full detail pages can render from one response. */
 export function transformAthlete(
   raw: Record<string, unknown>,
-): { player: TransformedPlayer; meta: ApiMeta } {
+): { player: TransformedPlayer; assets: { headshot: string; heroImage: string; teamLogo: string | null }; meta: ApiMeta } {
   const athlete = (raw?.athlete || raw || {}) as Record<string, unknown>;
   const position = athlete.position as Record<string, unknown> | undefined;
   const headshot = athlete.headshot as Record<string, unknown> | undefined;
   const birthPlace = athlete.birthPlace as Record<string, unknown> | undefined;
   const athleteTeam = athlete.team as Record<string, unknown> | undefined;
+  const batsThrows = (athlete.displayBatsThrows as string) || '';
+  const [batDesc, throwDesc] = batsThrows.split('/').map((s: string) => s.trim());
+
+  const headshotUrl = (headshot?.href || '') as string;
+  const teamLogos = (athleteTeam?.logos || []) as Array<Record<string, unknown>>;
+
   return {
     player: {
       id: athlete.id as string | undefined,
@@ -756,17 +782,47 @@ export function transformAthlete(
       height: (athlete.displayHeight || '') as string,
       weight: (athlete.displayWeight || athlete.weight?.toString() || '') as string,
       age: athlete.age as number | undefined,
-      birthDate: athlete.dateOfBirth as string | undefined,
-      birthPlace: birthPlace
+      birthDate: (athlete.displayDOB || athlete.dateOfBirth || '') as string | undefined,
+      birthPlace: (athlete.displayBirthPlace || (birthPlace
         ? `${birthPlace.city}, ${birthPlace.state || birthPlace.country}`
-        : '',
-      headshot: (headshot?.href || '') as string,
+        : '')) as string,
+      headshot: headshotUrl,
       team: {
         id: athleteTeam?.id as string | undefined,
-        name: (athleteTeam?.displayName || '') as string,
+        name: (athleteTeam?.displayName || athleteTeam?.location || '') as string,
         abbreviation: (athleteTeam?.abbreviation || '') as string,
       },
-      stats: (athlete.statistics || []) as unknown[],
+      stats: (athlete.statistics || athlete.statsSummary || []) as unknown[],
+      // Rich detail fields
+      fullName: (athlete.fullName || athlete.displayName || '') as string,
+      firstName: (athlete.firstName || '') as string,
+      lastName: (athlete.lastName || '') as string,
+      primaryNumber: (athlete.jersey || '') as string,
+      currentAge: athlete.age as number | undefined,
+      active: (athlete.active ?? true) as boolean,
+      primaryPosition: position ? {
+        code: (position.id || '') as string,
+        name: (position.displayName || position.name || '') as string,
+        type: (position.name || '') as string,
+        abbreviation: (position.abbreviation || '') as string,
+      } : { code: '', name: '', type: '', abbreviation: '' },
+      currentTeam: athleteTeam ? {
+        id: athleteTeam.id as number | string,
+        name: (athleteTeam.displayName || athleteTeam.location || '') as string,
+      } : undefined,
+      batSide: batDesc ? { code: batDesc[0], description: batDesc } : { code: '', description: '' },
+      pitchHand: throwDesc ? { code: throwDesc[0], description: throwDesc } : { code: '', description: '' },
+      displayBatsThrows: batsThrows,
+      displayBirthPlace: (athlete.displayBirthPlace || '') as string,
+      displayDOB: (athlete.displayDOB || '') as string,
+      displayDraft: (athlete.displayDraft || '') as string,
+      debutYear: athlete.debutYear as number | undefined,
+      experience: (athlete.displayExperience || '') as string,
+    },
+    assets: {
+      headshot: headshotUrl,
+      heroImage: headshotUrl, // ESPN doesn't provide separate hero images
+      teamLogo: teamLogos[0]?.href as string || null,
     },
     meta: { source: 'espn', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' as const },
   };
