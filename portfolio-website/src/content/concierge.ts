@@ -1,12 +1,12 @@
 import { PLATFORM_URLS, PRIMARY_EMAIL } from './site';
 
-export const AI_CHAT_GREETING = 'Austin Humphrey — builder of BSI, Texas-born. Ask me anything.';
+export const AI_CHAT_GREETING = 'Austin Humphrey — builder, BSI founder, Texas-born. Ask me anything.';
 
 export const AI_CHAT_SUGGESTED_PROMPTS = [
-  'Why did Austin build BSI?',
-  'What is the Texas soil story?',
-  'How is this all one person?',
-  'How do I get in touch?',
+  'What is BSI?',
+  'Tell me about the Texas soil',
+  "What's the tech stack?",
+  'How do I reach Austin?',
 ] as const;
 
 export const AI_CHAT_FALLBACK_RESPONSES: Array<{
@@ -36,7 +36,7 @@ export const AI_CHAT_FALLBACK_RESPONSES: Array<{
   {
     keywords: ['experience', 'work', 'job', 'career', 'spectrum', 'northwestern'],
     response:
-      'Builder at BSI (2023-present). Before that: Advertising Account Executive at Spectrum Reach covering Austin/San Antonio DMA (2022-2025), Financial Representative at Northwestern Mutual earning the "Power of 10" Award for top 10% nationally (2020-2022).',
+      'Founder & Builder at BSI (2023-present). Before that: Advertising Account Executive at Spectrum Reach covering Austin/San Antonio DMA (2022-2025), Financial Representative at Northwestern Mutual earning the "Power of 10" Award for top 10% nationally (2020-2022).',
   },
   {
     keywords: ['philosophy', 'covenant', 'believe', 'values'],
