@@ -392,7 +392,7 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
         </div>
 
         {/* Summary */}
-        <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
+        <div className="px-5 py-4 border-b border-border-vintage">
           <p
             className="text-sm leading-relaxed"
             style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--bsi-bone)' }}
@@ -465,7 +465,7 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
         </div>
 
         {/* Projection */}
-        <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
+        <div className="px-5 py-4 border-b border-border-vintage">
           <p
             className="text-[10px] uppercase tracking-wider mb-2 font-display text-bsi-primary"
           >
@@ -481,7 +481,7 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
 
         {/* Comparables */}
         {report.comparables.length > 0 && (
-          <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
+          <div className="px-5 py-4 border-b border-border-vintage">
             <p
               className="text-[10px] uppercase tracking-wider mb-2 font-display text-bsi-primary"
             >
@@ -499,7 +499,7 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
         )}
 
         {/* Full Narrative — collapsible */}
-        <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
+        <div className="px-5 py-4 border-b border-border-vintage">
           <button
             onClick={() => setExpanded(!expanded)}
             className="flex items-center gap-2 mb-2 group"

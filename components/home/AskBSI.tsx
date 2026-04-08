@@ -111,7 +111,7 @@ function ActionStrip({ links }: { links: Array<{ label: string; href: string }> 
   if (links.length === 0) return null;
 
   return (
-    <div className="mt-3 pt-3" style={{ borderTop: '1px solid var(--border-vintage)' }}>
+    <div className="mt-3 pt-3 border-t border-border-vintage">
       <p className="text-[9px] uppercase tracking-[0.15em] mb-2 text-heritage-bronze font-mono">
         Go to
       </p>
@@ -322,7 +322,7 @@ export function AskBSI({ embedded = false, initialQuestion }: AskBSIProps) {
 
           {/* Response area */}
           {(response || error) && (
-            <div className="mt-4 pt-4" style={{ borderTop: '1px solid var(--border-vintage)' }}>
+            <div className="mt-4 pt-4 border-t border-border-vintage">
               {error ? (
                 <p className="text-sm" style={{ color: 'var(--heritage-oiler-red)' }}>{error}</p>
               ) : (

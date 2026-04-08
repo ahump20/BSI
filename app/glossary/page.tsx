@@ -110,7 +110,7 @@ export default function GlossaryPage() {
 
   return (
     <div className="bg-surface-scoreboard text-bsi-bone min-h-screen">
-      <Section padding="sm" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
+      <Section padding="sm border-b border-border-vintage">
         <Container>
           <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Glossary' }]} />
         </Container>
@@ -220,7 +220,7 @@ export default function GlossaryPage() {
           )}
 
           {/* Footer links */}
-          <div className="mt-12 pt-6" style={{ borderTop: '1px solid var(--border-vintage)' }}>
+          <div className="mt-12 pt-6 border-t border-border-vintage">
             <div className="flex flex-wrap gap-x-6 gap-y-2">
               <Link href="/models" className="text-sm transition-colors text-bsi-dust/35">
                 Models & Methodology

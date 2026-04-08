@@ -202,7 +202,7 @@ export function SportHero({
 
   // Fallback: CSS glow when no R2 image is provided
   return (
-    <section className="relative overflow-hidden" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
+    <section className="relative overflow-hidden border-b border-border-vintage">
       <HeroGlow shape="70% 60%" position="50% 30%" intensity={0.08} />
       {content}
     </section>

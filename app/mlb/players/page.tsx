@@ -190,7 +190,7 @@ export default function MLBPlayersPage() {
     <>
       <div className="min-h-screen bg-surface-scoreboard text-bsi-bone">
         {/* Breadcrumb */}
-        <Section padding="sm" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
+        <Section padding="sm border-b border-border-vintage">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
@@ -522,7 +522,7 @@ export default function MLBPlayersPage() {
             )}
 
             {/* Data Source Footer */}
-            <div className="mt-8 pt-4" style={{ borderTop: '1px solid var(--border-vintage)' }}>
+            <div className="mt-8 pt-4 border-t border-border-vintage">
               <DataSourceBadge
                 source={meta?.dataSource || 'FanGraphs'}
                 timestamp={displayTimestamp(meta?.lastUpdated)}
