@@ -373,16 +373,18 @@ export async function handleCollegeBaseballGame(
           },
           teams: {
             away: {
-              name: away.name ?? 'Away',
-              abbreviation: away.shortName ?? '',
+              name: (away.displayName ?? away.name ?? 'Away') as string,
+              displayName: (away.displayName ?? away.name ?? 'Away') as string,
+              abbreviation: (away.abbreviation ?? away.shortName ?? '') as string,
               score: awayScoreNum,
               isWinner: isFinal && awayScoreNum > homeScoreNum,
               logo: away.logo,
               conference: (away.conference as Record<string, unknown>)?.name,
             },
             home: {
-              name: home.name ?? 'Home',
-              abbreviation: home.shortName ?? '',
+              name: (home.displayName ?? home.name ?? 'Home') as string,
+              displayName: (home.displayName ?? home.name ?? 'Home') as string,
+              abbreviation: (home.abbreviation ?? home.shortName ?? '') as string,
               score: homeScoreNum,
               isWinner: isFinal && homeScoreNum > awayScoreNum,
               logo: home.logo,

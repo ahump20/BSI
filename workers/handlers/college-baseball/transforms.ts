@@ -493,6 +493,7 @@ export function transformEspnGameSummary(summary: Record<string, unknown>): Reco
     teams: {
       away: {
         name: (awayTeam.displayName as string) ?? (awayTeam.name as string) ?? 'Away',
+        displayName: (awayTeam.displayName as string) ?? (awayTeam.name as string) ?? 'Away',
         abbreviation: (awayTeam.abbreviation as string) ?? '',
         score: awayScore,
         isWinner: isFinal && awayScore > homeScore,
@@ -502,6 +503,7 @@ export function transformEspnGameSummary(summary: Record<string, unknown>): Reco
       },
       home: {
         name: (homeTeam.displayName as string) ?? (homeTeam.name as string) ?? 'Home',
+        displayName: (homeTeam.displayName as string) ?? (homeTeam.name as string) ?? 'Home',
         abbreviation: (homeTeam.abbreviation as string) ?? '',
         score: homeScore,
         isWinner: isFinal && homeScore > awayScore,
