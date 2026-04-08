@@ -27,6 +27,12 @@ const SAVANT_PLAYER_PATTERN = /^\/college-baseball\/savant\/player\/[^/]+\/?$/;
 /** Matches RSC metadata for Savant player routes */
 const SAVANT_PLAYER_RSC_PATTERN = /^\/college-baseball\/savant\/player\/[^/]+\/(__next\.[^?]+)/;
 
+/** Matches pro sport player detail routes: /{sport}/players/{id}/ */
+const PLAYER_DETAIL_PATTERN = /^\/(mlb|nfl|nba|cfb)\/players\/[^/]+\/?$/;
+
+/** Matches RSC metadata for pro sport player routes */
+const PLAYER_DETAIL_RSC_PATTERN = /^\/(mlb|nfl|nba|cfb)\/players\/[^/]+\/(__next\.[^?]+)/;
+
 function buildPlaceholderPath(pathname: string): string | null {
   // Try game detail HTML page match first
   const htmlMatch = pathname.match(GAME_DETAIL_PATTERN);
@@ -70,6 +76,17 @@ function buildPlaceholderPath(pathname: string): string | null {
   if (savantRscMatch) {
     const rscFile = savantRscMatch[1];
     return `/college-baseball/savant/player/placeholder/${rscFile}`;
+  }
+
+  // Pro sport player detail — MLB, NFL, NBA, CFB
+  const playerMatch = pathname.match(PLAYER_DETAIL_PATTERN);
+  if (playerMatch) {
+    return `/${playerMatch[1]}/players/placeholder/`;
+  }
+
+  const playerRscMatch = pathname.match(PLAYER_DETAIL_RSC_PATTERN);
+  if (playerRscMatch) {
+    return `/${playerRscMatch[1]}/players/placeholder/${playerRscMatch[2]}`;
   }
 
   return null;
