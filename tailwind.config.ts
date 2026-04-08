@@ -155,11 +155,14 @@ const config: Config = {
         'heritage-cream': '#F0E6D3',
         'bsi-bone': '#F5F2EB',
         'bsi-dust': '#C4B8A5',
-        // Heritage v2.1 surface tokens (resolve from bsi-brand.css at runtime)
-        'surface-scoreboard': 'var(--surface-scoreboard)',
-        'surface-dugout': 'var(--surface-dugout)',
-        'surface-press-box': 'var(--surface-press-box)',
-        // Heritage v2.1 border tokens
+        // Heritage v2.1 surface tokens — use rgb/<alpha-value> so Tailwind opacity
+        // modifiers (e.g. bg-surface-dugout/50) produce valid semi-transparent CSS.
+        // The companion --*-rgb variables are declared in bsi-brand.css.
+        'surface-scoreboard': 'rgb(var(--surface-scoreboard-rgb) / <alpha-value>)',
+        'surface-dugout': 'rgb(var(--surface-dugout-rgb) / <alpha-value>)',
+        'surface-press-box': 'rgb(var(--surface-press-box-rgb) / <alpha-value>)',
+        // border-vintage already carries built-in rgba opacity; do not add <alpha-value>
+        // — use explicit rgba() values when a different opacity level is needed.
         'border-vintage': 'var(--border-vintage)',
       },
       fontFamily: {
