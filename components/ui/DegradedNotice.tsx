@@ -40,8 +40,8 @@ export function DegradedNotice({ meta, label, compact }: DegradedNoticeProps) {
         style={{ background: '#F59E0B' }}
       />
       <p
-        className="text-[10px] leading-tight"
-        style={{ color: '#F59E0B', fontFamily: 'var(--bsi-font-data)' }}
+        className="text-[10px] leading-tight font-mono"
+        style={{ color: '#F59E0B' }}
       >
         {label ? `${label}: ` : ''}Data may be delayed
         {timeStr ? ` — last updated ${timeStr}` : ''}

@@ -155,14 +155,14 @@ export default function TeamsPage() {
                   2026 Season
                 </span>
                 <h1
-                  className="text-3xl md:text-4xl font-bold uppercase tracking-[0.1em] mb-3"
-                  style={{ fontFamily: 'var(--font-bebas, var(--font-hero))', color: 'var(--bsi-bone)' }}
+                  className="text-3xl md:text-4xl font-bold uppercase tracking-[0.1em] mb-3 font-display"
+                  style={{ color: 'var(--bsi-bone)' }}
                 >
                   College Baseball Teams
                 </h1>
                 <p
-                  className="text-sm max-w-lg mx-auto"
-                  style={{ fontFamily: 'var(--font-cormorant, serif)', color: 'var(--bsi-dust)', fontStyle: 'italic' }}
+                  className="text-sm max-w-lg mx-auto font-serif"
+                  style={{ color: 'var(--bsi-dust)', fontStyle: 'italic' }}
                 >
                   {Object.keys(teamMetadata).length} programs across {conferences.length} conferences.
                   Every team has a profile with roster, schedule, and analytics.

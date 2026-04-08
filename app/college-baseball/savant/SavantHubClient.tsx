@@ -260,8 +260,8 @@ export default function SavantHubPage() {
                   style={{ borderTop: `2px solid ${stat.color}` }}
                 >
                   <span
-                    className="text-2xl font-bold tabular-nums"
-                    style={{ fontFamily: 'var(--font-mono)', color: stat.color }}
+                    className="text-2xl font-bold tabular-nums font-mono"
+                    style={{ color: stat.color }}
                   >
                     {stat.value.toLocaleString()}
                   </span>

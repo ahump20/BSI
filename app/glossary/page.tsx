@@ -31,8 +31,8 @@ function TermCard({ term }: { term: GlossaryTerm }) {
           {term.sport.map((s) => (
             <span
               key={s}
-              className="px-2 py-0.5 text-[10px] uppercase tracking-wider"
-              style={{ fontFamily: 'var(--font-mono)', color: 'rgba(191,87,0,0.7)' }}
+              className="px-2 py-0.5 text-[10px] uppercase tracking-wider font-mono"
+              style={{ color: 'rgba(191,87,0,0.7)' }}
             >
               {s}
             </span>
@@ -46,7 +46,7 @@ function TermCard({ term }: { term: GlossaryTerm }) {
             className="text-[10px] uppercase tracking-[0.15em] block mb-1 font-mono text-bsi-dust/35"
           >Definition</span>
           <p className="leading-relaxed text-bsi-dust/50">{term.mlbDefinition}</p>
-          <p className="text-[11px] mt-1" style={{ fontFamily: 'var(--font-mono)', color: 'rgba(196,184,165,0.25)' }}>{term.mlbSource}</p>
+          <p className="text-[11px] mt-1 font-mono" style={{ color: 'rgba(196,184,165,0.25)' }}>{term.mlbSource}</p>
         </div>
 
         <div>

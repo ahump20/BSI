@@ -42,8 +42,8 @@ function MovementBadge({ movement }: { movement: number | null }) {
   if (movement == null) {
     return (
       <span
-        className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-sm"
-        style={{ color: 'var(--bsi-dust)', background: 'rgba(196,184,165,0.1)', fontFamily: 'var(--bsi-font-data)' }}
+        className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-sm font-mono"
+        style={{ color: 'var(--bsi-dust)', background: 'rgba(196,184,165,0.1)' }}
       >
         NEW
       </span>
@@ -52,13 +52,13 @@ function MovementBadge({ movement }: { movement: number | null }) {
   if (movement === 0) return <span className="text-[10px] text-bsi-dust">—</span>;
   if (movement > 0) {
     return (
-      <span className="text-[10px] font-bold" style={{ color: 'var(--bsi-teal, #00B2A9)', fontFamily: 'var(--bsi-font-data)' }}>
+      <span className="text-[10px] font-bold font-mono" style={{ color: 'var(--bsi-teal, #00B2A9)' }}>
         ▲{movement}
       </span>
     );
   }
   return (
-    <span className="text-[10px] font-bold" style={{ color: 'var(--heritage-oiler-red, #C41E3A)', fontFamily: 'var(--bsi-font-data)' }}>
+    <span className="text-[10px] font-bold font-mono" style={{ color: 'var(--heritage-oiler-red, #C41E3A)' }}>
       ▼{Math.abs(movement)}
     </span>
   );

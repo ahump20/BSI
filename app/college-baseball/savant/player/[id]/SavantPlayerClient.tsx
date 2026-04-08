@@ -1175,8 +1175,8 @@ function GradeCard({ label, grade }: { label: string; grade: number }) {
         {label}
       </span>
       <span
-        className="text-3xl font-bold tabular-nums block leading-none"
-        style={{ color, fontFamily: 'var(--bsi-font-data)' }}
+        className="text-3xl font-bold tabular-nums block leading-none font-mono"
+        style={{ color }}
       >
         {grade}
       </span>

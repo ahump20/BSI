@@ -53,8 +53,8 @@ function StatusPill({ status }: { status: FreshnessStatus }) {
   const cfg = STATUS_CONFIG[status] || STATUS_CONFIG.missing;
   return (
     <span
-      className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.15em] rounded-sm"
-      style={{ color: cfg.color, background: cfg.bg, fontFamily: 'var(--bsi-font-data)' }}
+      className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.15em] rounded-sm font-mono"
+      style={{ color: cfg.color, background: cfg.bg }}
     >
       <span
         className="w-1.5 h-1.5 rounded-full"
@@ -95,8 +95,8 @@ function SummaryBar({ summary }: { summary: FreshnessReport['summary'] }) {
         <div>
           <span className="heritage-stamp">System Health</span>
           <p
-            className="mt-2 text-3xl font-bold"
-            style={{ fontFamily: 'var(--bsi-font-display-hero)', color: pct >= 80 ? 'var(--bsi-teal, #00B2A9)' : pct >= 50 ? '#F59E0B' : 'var(--heritage-oiler-red)' }}
+            className="mt-2 text-3xl font-bold font-display"
+            style={{ color: pct >= 80 ? 'var(--bsi-teal, #00B2A9)' : pct >= 50 ? '#F59E0B' : 'var(--heritage-oiler-red)' }}
           >
             {pct}%
           </p>
@@ -107,7 +107,7 @@ function SummaryBar({ summary }: { summary: FreshnessReport['summary'] }) {
         <div className="flex gap-3">
           {(['fresh', 'degraded', 'stale', 'missing'] as const).map((s) => (
             <div key={s} className="text-center">
-              <p className="text-lg font-bold" style={{ color: STATUS_CONFIG[s].color, fontFamily: 'var(--bsi-font-display)' }}>
+              <p className="text-lg font-bold font-display" style={{ color: STATUS_CONFIG[s].color }}>
                 {summary[s]}
               </p>
               <p className="text-[9px] uppercase tracking-[0.15em] text-bsi-dust font-mono">

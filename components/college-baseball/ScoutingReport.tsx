@@ -100,8 +100,8 @@ function GradeBar({ label, grade }: { label: string; grade: number }) {
         />
       </div>
       <span
-        className="text-xs w-8 text-right font-semibold"
-        style={{ fontFamily: 'var(--bsi-font-mono)', color }}
+        className="text-xs w-8 text-right font-semibold font-mono"
+        style={{ color }}
       >
         {grade}
       </span>
@@ -137,8 +137,8 @@ function GradesSection({ grades, isHitter }: { grades: ScoutingGrades; isHitter:
           Overall
         </span>
         <span
-          className="text-2xl font-bold"
-          style={{ fontFamily: 'var(--bsi-font-mono)', color: gradeColor(grades.overall) }}
+          className="text-2xl font-bold font-mono"
+          style={{ color: gradeColor(grades.overall) }}
         >
           {grades.overall}
         </span>
