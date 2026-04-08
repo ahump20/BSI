@@ -28,3 +28,12 @@ var/
 
 # Visual regression baselines (regenerated per environment)
 tests/visual-regression/key-pages.spec.ts-snapshots/
+
+# Playwright MCP logs
+.playwright-mcp/
+
+# Remember plugin logs
+.remember/
+
+# Claude worktrees
+.claude/worktrees/
