@@ -10,6 +10,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { formatTimestamp } from '@/lib/utils/timezone';
+import { useResolvedParam } from '@/lib/hooks/useResolvedParam';
 
 interface TeamData {
   id: string;
@@ -199,7 +200,8 @@ interface TeamDetailClientProps {
   teamId: string;
 }
 
-export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
+export default function TeamDetailClient({ teamId: rawId }: TeamDetailClientProps) {
+  const teamId = useResolvedParam(rawId, 'teams');
   const [team, setTeam] = useState<TeamData | null>(null);
   const [roster, setRoster] = useState<RosterPlayer[]>([]);
   const [schedule, setSchedule] = useState<ScheduleGame[]>([]);

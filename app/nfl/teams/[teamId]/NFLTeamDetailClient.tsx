@@ -10,6 +10,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { formatTimestamp } from '@/lib/utils/timezone';
+import { useResolvedParam } from '@/lib/hooks/useResolvedParam';
 
 // All 32 NFL teams with full data
 export const NFL_TEAMS: Record<
@@ -328,7 +329,8 @@ interface NFLTeamDetailClientProps {
   teamId: string;
 }
 
-export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps) {
+export default function NFLTeamDetailClient({ teamId: rawId }: NFLTeamDetailClientProps) {
+  const teamId = useResolvedParam(rawId, 'teams');
   const [stats, setStats] = useState<TeamStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
