@@ -292,12 +292,12 @@ export default function SavantHubPage() {
                       style={{ borderLeftColor: color, borderLeftWidth: '2px', animationDelay: `${index * 50}ms` }}
                     >
                       <div className="flex items-baseline justify-between mb-2">
-                        <span className="font-mono text-xs font-bold tracking-wide" style={{ color }}>{spot.abbr}</span>
+                        <span className="font-mono text-xs font-bold tracking-wide">{spot.abbr}</span>
                         <span className="text-[9px] font-mono text-text-muted uppercase">{spot.tab}</span>
                       </div>
                       {leader ? (
                         <div className="mb-2.5">
-                          <span className="block text-2xl font-mono font-bold tabular-nums leading-none" style={{ color }}>
+                          <span className="block text-2xl font-mono font-bold tabular-nums leading-none">
                             {spot.format(leader.value)}
                           </span>
                           <div className="mt-1.5">
@@ -387,7 +387,7 @@ export default function SavantHubPage() {
                     allLabel="All Positions"
                   />
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] font-mono uppercase tracking-wider" style={{ color: 'var(--bsi-dust, #C4B8A5)' }}>
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-bsi-dust">
                       Min {activeTab === 'pitching' ? 'IP' : 'PA'}:
                     </span>
                     <select

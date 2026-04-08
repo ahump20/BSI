@@ -123,7 +123,7 @@ function AnimatedStatValue({ value, accent }: { value: string; accent?: boolean 
   const rankMatch = value.match(/^#(\d+)$/);
   if (rankMatch) {
     return (
-      <span className="font-mono text-2xl font-bold" style={{ color }}>
+      <span className="font-mono text-2xl font-bold">
         #<AnimatedCounter end={parseInt(rankMatch[1], 10)} />
       </span>
     );
@@ -133,7 +133,7 @@ function AnimatedStatValue({ value, accent }: { value: string; accent?: boolean 
   const recordMatch = value.match(/^(\d+)-(\d+)$/);
   if (recordMatch) {
     return (
-      <span className="font-mono text-2xl font-bold" style={{ color }}>
+      <span className="font-mono text-2xl font-bold">
         <AnimatedCounter end={parseInt(recordMatch[1], 10)} />
         -
         <AnimatedCounter end={parseInt(recordMatch[2], 10)} />
@@ -143,7 +143,7 @@ function AnimatedStatValue({ value, accent }: { value: string; accent?: boolean 
 
   // Fallback: render as-is
   return (
-    <span className="font-mono text-2xl font-bold" style={{ color }}>
+    <span className="font-mono text-2xl font-bold">
       {value}
     </span>
   );

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { LiveGame } from '@/lib/hooks/useLiveScores';
+import { TeamCircle } from '@/components/sports/TeamCircle';
 
 // =============================================================================
 // Score digit animation — highlights briefly on change
@@ -188,9 +189,7 @@ export function LiveScoreCard({ game, animate = true, lastMessageAt }: LiveScore
             {/* Away Team */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-charcoal rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
-                  {game.awayTeam.shortName?.slice(0, 3).toUpperCase() || 'AWY'}
-                </div>
+                <TeamCircle logo={game.awayTeam.logo} abbreviation={game.awayTeam.shortName?.slice(0, 3).toUpperCase() || 'AWY'} size="w-8 h-8" textSize="text-xs" />
                 <div>
                   <p
                     className={`font-semibold ${
@@ -226,9 +225,7 @@ export function LiveScoreCard({ game, animate = true, lastMessageAt }: LiveScore
             {/* Home Team */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-charcoal rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
-                  {game.homeTeam.shortName?.slice(0, 3).toUpperCase() || 'HME'}
-                </div>
+                <TeamCircle logo={game.homeTeam.logo} abbreviation={game.homeTeam.shortName?.slice(0, 3).toUpperCase() || 'HME'} size="w-8 h-8" textSize="text-xs" />
                 <div>
                   <p
                     className={`font-semibold ${

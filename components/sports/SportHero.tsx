@@ -91,7 +91,7 @@ export function SportHero({
         </ScrollReveal>
 
         <ScrollReveal direction="up" delay={200}>
-          <p className="text-center max-w-2xl mx-auto mb-8 text-sm" style={{ color: 'var(--bsi-dust)' }}>
+          <p className="text-center max-w-2xl mx-auto mb-8 text-sm text-bsi-dust">
             {description}
           </p>
         </ScrollReveal>
@@ -121,10 +121,10 @@ export function SportHero({
           >
             {stats.map((stat) => (
               <div key={stat.label} className="text-center p-4">
-                <div className="font-mono text-3xl font-bold" style={{ color: 'var(--bsi-primary)' }}>
+                <div className="font-mono text-3xl font-bold text-bsi-primary">
                   {stat.value}
                 </div>
-                <div className="text-[10px] uppercase tracking-[0.12em] mt-1" style={{ color: 'var(--bsi-dust)' }}>
+                <div className="text-[10px] uppercase tracking-[0.12em] mt-1 text-bsi-dust">
                   {stat.label}
                 </div>
               </div>

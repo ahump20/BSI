@@ -369,7 +369,7 @@ export default function FreshnessClient() {
               <div className="heritage-card p-6">
                 <span className="heritage-stamp">Authentication Required</span>
                 <p className="mt-3 text-sm text-bsi-dust">
-                  Enter admin key or add <code style={{ color: 'var(--heritage-columbia-blue)' }}>?key=</code> to the URL.
+                  Enter admin key or add <code className="text-heritage-columbia">?key=</code> to the URL.
                 </p>
                 <form onSubmit={handleKeySubmit} className="mt-4 flex gap-3">
                   <input

@@ -41,7 +41,7 @@ export function MMIMiniIndicator({ value, favoredTeam, className = '' }: MMIMini
   return (
     <span
       className={`inline-flex items-center gap-1 text-[10px] font-mono tabular-nums ${className}`}
-      style={{ color }}
+     
       title={`MMI: ${value > 0 ? '+' : ''}${value.toFixed(1)}${favoredTeam ? ` (${favoredTeam})` : ''}`}
     >
       <span className="leading-none">{arrow}</span>

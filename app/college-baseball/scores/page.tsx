@@ -615,19 +615,19 @@ export default function CollegeBaseballScoresPage() {
                   <div>
                     <span
                       className="heritage-stamp text-[10px]"
-                      style={{ color: 'var(--bsi-primary, #BF5700)' }}
+                      className="text-bsi-primary"
                     >
                       BSI SAVANT
                     </span>
                     <p
                       className="font-oswald uppercase text-sm tracking-wider mt-1"
-                      style={{ color: 'var(--bsi-bone, #F5F2EB)' }}
+                      className="text-bsi-bone"
                     >
                       The box score is just the beginning
                     </p>
                     <p
                       className="font-cormorant text-xs mt-1"
-                      style={{ color: 'var(--bsi-dust, #C4B8A5)' }}
+                      className="text-bsi-dust"
                     >
                       Park-adjusted wOBA, wRC+, FIP for every D1 program — updated every 6 hours
                     </p>
@@ -638,7 +638,7 @@ export default function CollegeBaseballScoresPage() {
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
-                    style={{ color: 'var(--bsi-primary, #BF5700)' }}
+                    className="text-bsi-primary"
                   >
                     <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>

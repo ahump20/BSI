@@ -179,14 +179,12 @@ export default function ConferenceComparisonPage() {
           <div className="mb-8">
             <Link
               href="/college-baseball/savant"
-              className="font-mono text-xs uppercase tracking-widest mb-3 inline-block hover:underline"
-              style={{ color: 'var(--heritage-columbia-blue, #4B9CD3)' }}
+              className="font-mono text-xs uppercase tracking-widest mb-3 inline-block hover:underline text-heritage-columbia"
             >
               &larr; Savant Explorer
             </Link>
             <h1
-              className="font-oswald uppercase text-2xl sm:text-3xl md:text-4xl font-bold tracking-wide mb-2"
-              style={{ color: 'var(--bsi-bone, #F5F2EB)' }}
+              className="font-oswald uppercase text-2xl sm:text-3xl md:text-4xl font-bold tracking-wide mb-2 text-bsi-bone"
             >
               Conference Comparison
             </h1>
@@ -221,8 +219,7 @@ export default function ConferenceComparisonPage() {
               </select>
 
               <span
-                className="font-oswald uppercase text-sm tracking-widest"
-                style={{ color: 'var(--bsi-dust, #C4B8A5)' }}
+                className="font-oswald uppercase text-sm tracking-widest text-bsi-dust"
               >
                 vs
               </span>
@@ -264,7 +261,7 @@ export default function ConferenceComparisonPage() {
             <div
               className="heritage-card p-6 text-center bg-surface-dugout"
             >
-              <p className="font-cormorant" style={{ color: 'var(--bsi-dust, #C4B8A5)' }}>
+              <p className="font-cormorant text-bsi-dust">
                 Unable to load conference data. {error}
               </p>
             </div>
@@ -285,20 +282,17 @@ export default function ConferenceComparisonPage() {
                 style={{ borderBottom: '1px solid var(--border-vintage, rgba(140,98,57,0.3))' }}
               >
                 <span
-                  className="font-oswald uppercase text-sm tracking-wider font-bold"
-                  style={{ color: 'var(--bsi-primary, #BF5700)' }}
+                  className="font-oswald uppercase text-sm tracking-wider font-bold text-bsi-primary"
                 >
                   {leftConf}
                 </span>
                 <span
-                  className="font-mono text-[10px] uppercase tracking-widest"
-                  style={{ color: 'var(--bsi-dust, #C4B8A5)' }}
+                  className="font-mono text-[10px] uppercase tracking-widest text-bsi-dust"
                 >
                   2026 Season
                 </span>
                 <span
-                  className="font-oswald uppercase text-sm tracking-wider font-bold"
-                  style={{ color: 'var(--heritage-columbia-blue, #4B9CD3)' }}
+                  className="font-oswald uppercase text-sm tracking-wider font-bold text-heritage-columbia"
                 >
                   {rightConf}
                 </span>
@@ -316,8 +310,7 @@ export default function ConferenceComparisonPage() {
                   >
                     <div className="flex items-center justify-between mb-1">
                       <span
-                        className="font-oswald uppercase text-xs tracking-wider"
-                        style={{ color: 'var(--bsi-bone, #F5F2EB)' }}
+                        className="font-oswald uppercase text-xs tracking-wider text-bsi-bone"
                       >
                         {m.label}
                       </span>
@@ -369,7 +362,7 @@ export default function ConferenceComparisonPage() {
             <div
               className="heritage-card p-6 text-center bg-surface-dugout"
             >
-              <p className="font-cormorant" style={{ color: 'var(--bsi-dust, #C4B8A5)' }}>
+              <p className="font-cormorant text-bsi-dust">
                 Conference data not available for the selected comparison.
               </p>
             </div>

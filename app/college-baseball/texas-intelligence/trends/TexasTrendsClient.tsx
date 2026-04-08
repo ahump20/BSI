@@ -152,7 +152,7 @@ function RollingAreaChart({
     <div className="rounded-sm border border-border-subtle bg-surface-dugout p-4">
       <div className="flex items-center justify-between mb-2">
         <span className="text-[10px] uppercase tracking-wider text-text-muted">{label}</span>
-        <span className="font-mono text-sm font-bold" style={{ color }}>{format(lastVal)}</span>
+        <span className="font-mono text-sm font-bold">{format(lastVal)}</span>
       </div>
       <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto" aria-hidden="true">
         <polygon points={areaPts} fill={color} fillOpacity="0.1" />

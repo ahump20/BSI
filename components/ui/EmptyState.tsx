@@ -56,7 +56,7 @@ export function EmptyState({ type, sport: _sport, message, action, onRetry }: Em
 
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4">
-      <Icon className="w-16 h-16 mb-4" style={{ color: 'var(--bsi-dust, #C4B8A5)' }} />
+      <Icon className="w-16 h-16 mb-4 text-bsi-dust" />
       <h3
         className="text-xl md:text-2xl font-semibold mb-2 font-display text-bsi-bone"
       >
@@ -79,8 +79,7 @@ export function EmptyState({ type, sport: _sport, message, action, onRetry }: Em
       {action && (
         <Link
           href={action.href}
-          className="mt-2 text-sm font-semibold transition-colors"
-          style={{ color: 'var(--heritage-columbia-blue)' }}
+          className="mt-2 text-sm font-semibold transition-colors text-heritage-columbia"
         >
           {action.label}
         </Link>

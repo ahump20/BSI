@@ -537,15 +537,15 @@ export default function CollegeBaseballRankingsPage() {
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="heritage-stamp text-[10px]" style={{ color: 'var(--bsi-primary, #BF5700)' }}>BSI SAVANT</span>
-                    <p className="font-oswald uppercase text-sm tracking-wider mt-1" style={{ color: 'var(--bsi-bone, #F5F2EB)' }}>
+                    <span className="heritage-stamp text-[10px] text-bsi-primary">BSI SAVANT</span>
+                    <p className="font-oswald uppercase text-sm tracking-wider mt-1 text-bsi-bone">
                       Rankings only tell half the story
                     </p>
-                    <p className="font-cormorant text-xs mt-1" style={{ color: 'var(--bsi-dust, #C4B8A5)' }}>
+                    <p className="font-cormorant text-xs mt-1 text-bsi-dust">
                       Park-adjusted wOBA, wRC+, FIP — the metrics that predict who&apos;s real and who&apos;s due for regression
                     </p>
                   </div>
-                  <svg viewBox="0 0 24 24" className="w-5 h-5 opacity-40 group-hover:opacity-70 group-hover:translate-x-1 transition-all shrink-0" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: 'var(--bsi-primary, #BF5700)' }}>
+                  <svg viewBox="0 0 24 24" className="w-5 h-5 opacity-40 group-hover:opacity-70 group-hover:translate-x-1 transition-all shrink-0" fill="none" stroke="currentColor" strokeWidth="2" className="text-bsi-primary">
                     <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
                 </div>

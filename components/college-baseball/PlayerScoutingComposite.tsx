@@ -317,9 +317,9 @@ function RadarTooltipOverlay({
         </p>
         <p className="text-xs font-mono text-bsi-bone">
           {format(rawValue)}{' '}
-          <span style={{ color }}>({percentile}th)</span>
+          <span>({percentile}th)</span>
         </p>
-        <p className="text-[10px] mt-0.5" style={{ color: 'var(--bsi-dust)' }}>
+        <p className="text-[10px] mt-0.5 text-bsi-dust">
           Lg avg: {format(leagueAvg)}
         </p>
       </div>
@@ -353,7 +353,7 @@ function SparklineTooltipContent({
         border: '1px solid var(--border-vintage)',
       }}
     >
-      <p className="text-[10px]" style={{ color: 'var(--bsi-dust)' }}>
+      <p className="text-[10px] text-bsi-dust">
         {entry.payload.date}
       </p>
       <p
@@ -478,7 +478,7 @@ function Sparkline({
   if (data.length < 2) {
     return (
       <div className="flex items-center justify-center" style={{ height: SPARKLINE_HEIGHT }}>
-        <span className="text-xs" style={{ color: 'var(--bsi-dust)' }}>
+        <span className="text-xs text-bsi-dust">
           Insufficient trend data
         </span>
       </div>
@@ -634,7 +634,7 @@ export function PlayerScoutingComposite({
     return (
       <div className={`heritage-card p-6 ${className}`}>
         <div className="flex items-center justify-center py-12">
-          <p className="text-sm" style={{ color: 'var(--bsi-dust)' }}>
+          <p className="text-sm text-bsi-dust">
             No scouting data available for this player.
           </p>
         </div>
@@ -669,7 +669,7 @@ export function PlayerScoutingComposite({
               {data.player?.name ?? 'Player'} — Scouting Composite
             </h3>
             {data.player?.team && (
-              <p className="text-[11px] mt-0.5" style={{ color: 'var(--bsi-dust)' }}>
+              <p className="text-[11px] mt-0.5 text-bsi-dust">
                 {data.player.team}
                 {data.player.position ? ` / ${data.player.position}` : ''}
               </p>
@@ -719,7 +719,7 @@ export function PlayerScoutingComposite({
               ))
             ) : (
               <div className="flex items-center justify-center h-full">
-                <p className="text-xs" style={{ color: 'var(--bsi-dust)' }}>
+                <p className="text-xs text-bsi-dust">
                   No game log history available for trend analysis.
                 </p>
               </div>
@@ -757,7 +757,7 @@ export function PlayerScoutingComposite({
               </div>
             ))}
           </div>
-          <span className="text-[10px]" style={{ color: 'var(--bsi-dust)' }}>
+          <span className="text-[10px] text-bsi-dust">
             {data.meta?.source ?? 'BSI'} &middot;{' '}
             {data.meta?.fetched_at ? formatTimestamp(data.meta.fetched_at) : 'Live'}
           </span>

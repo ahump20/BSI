@@ -130,7 +130,7 @@ export function TeamPercentileCard({ data, className = '' }: Props) {
             >
               Team Percentile Card
             </h3>
-            <p className="text-[10px] font-mono mt-0.5" style={{ color: 'var(--bsi-dust)' }}>
+            <p className="text-[10px] font-mono mt-0.5 text-bsi-dust">
               Team batting averages vs all D1 teams · {teams.length} teams
             </p>
           </div>
@@ -172,7 +172,7 @@ export function TeamPercentileCard({ data, className = '' }: Props) {
             <div className="text-lg font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-bone)' }}>
               {activeTeam.team}
             </div>
-            <div className="text-[10px] font-mono" style={{ color: 'var(--bsi-dust)' }}>
+            <div className="text-[10px] font-mono text-bsi-dust">
               {activeTeam.conference} · {activeTeam.playerCount} qualifying batters
             </div>
           </div>
@@ -218,7 +218,7 @@ export function TeamPercentileCard({ data, className = '' }: Props) {
                 </div>
                 <motion.div
                   className="w-8 text-right text-xs font-mono font-bold shrink-0"
-                  style={{ color }}
+                 
                   initial={{ opacity: prefersReducedMotion ? 1 : 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.3, delay: i * 0.06 + 0.3 }}
@@ -235,7 +235,7 @@ export function TeamPercentileCard({ data, className = '' }: Props) {
           {[0, 15, 30, 50, 70, 85, 100].map((p) => (
             <div key={p} className="flex items-center gap-0.5">
               <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: getPercentileColor(p) }} />
-              <span className="text-[8px] font-mono" style={{ color: 'var(--bsi-dust)' }}>{p}</span>
+              <span className="text-[8px] font-mono text-bsi-dust">{p}</span>
             </div>
           ))}
         </div>

@@ -187,7 +187,7 @@ export function CompareScatter({ teamA, teamB, onPlayerClick, className = '' }: 
             >
               Lineup Scatter
             </h3>
-            <p className="text-[10px] font-mono mt-0.5" style={{ color: 'var(--bsi-dust)' }}>
+            <p className="text-[10px] font-mono mt-0.5 text-bsi-dust">
               K% vs BB% · Bubble size = PA · {allBatters.length} batters
             </p>
           </div>

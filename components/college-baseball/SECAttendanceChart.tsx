@@ -39,7 +39,7 @@ export function SECAttendanceChart() {
       >
         2025 Regular Season Attendance
       </h3>
-      <p className="text-xs mb-6" style={{ color: 'var(--bsi-dust)' }}>
+      <p className="text-xs mb-6 text-bsi-dust">
         9 of the top 10 national attendance spots belong to the SEC.
       </p>
 

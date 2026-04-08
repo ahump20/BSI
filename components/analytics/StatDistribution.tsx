@@ -282,7 +282,7 @@ export function StatDistribution({ data, className = '' }: Props) {
             >
               Stat Distribution
             </h3>
-            <p className="text-[10px] font-mono mt-0.5" style={{ color: 'var(--bsi-dust)' }}>
+            <p className="text-[10px] font-mono mt-0.5 text-bsi-dust">
               KDE density curve · {qualified.length} batters
               {highlightConf && ` · ${highlightConf} overlay`}
             </p>

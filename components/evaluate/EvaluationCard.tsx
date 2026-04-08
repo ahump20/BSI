@@ -41,7 +41,7 @@ function TierBadge({ tier, percentile }: { tier: string; percentile: number }) {
       <div>
         <p
           className="font-display text-sm uppercase tracking-wider font-bold"
-          style={{ color }}
+         
         >
           {tier}
         </p>
