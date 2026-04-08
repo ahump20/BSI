@@ -1,25 +1,3 @@
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
-import * as Sharing from 'expo-sharing';
-import { Image } from 'expo-image';
-import { useState } from 'react';
-import { useArticle } from '@/hooks/useArticles';
-import { getOfflineArticle, saveOfflineArticle } from '@/lib/offlineArticles';
-import { colors, fonts } from '@/constants/theme';
-
-export default function ArticleDetailScreen() {
-  const { slug } = useLocalSearchParams<{ slug: string }>();
-  const [saved, setSaved] = useState(false);
-  const query = useArticle(slug ?? '');
-  const article = query.data ?? (slug ? getOfflineArticle(slug) : null);
-=======
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
 import { Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Image } from 'expo-image';
@@ -40,19 +18,26 @@ export default function ArticleDetailScreen() {
       return;
     }
 
-    const cached = getOfflineArticle(slug);
-    setOfflineArticle(cached);
-    setSaved(isOfflineArticleSaved(slug));
+    let cancelled = false;
+    (async () => {
+      const cached = await getOfflineArticle(slug);
+      const isSaved = await isOfflineArticleSaved(slug);
+      if (!cancelled) {
+        setOfflineArticle(cached);
+        setSaved(isSaved);
+      }
+    })();
+    return () => { cancelled = true; };
   }, [slug]);
 
   const article = useMemo(() => articleQuery.data ?? offlineArticle, [articleQuery.data, offlineArticle]);
 
-  const onSaveOffline = () => {
+  const onSaveOffline = async () => {
     if (!article) {
       return;
     }
 
-    saveOfflineArticle(article);
+    await saveOfflineArticle(article);
     setSaved(true);
   };
 
@@ -63,30 +48,11 @@ export default function ArticleDetailScreen() {
       </View>
     );
   }
-<<<<<<< ours
-<<<<<<< ours
->>>>>>> theirs
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
 
   if (!article) {
     return (
       <View style={styles.container}>
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-        <Text style={styles.body}>You’re offline. This article hasn’t been saved.</Text>
-=======
         <Text style={styles.offlineMessage}>You’re offline. This article hasn’t been saved.</Text>
->>>>>>> theirs
-=======
-        <Text style={styles.offlineMessage}>You’re offline. This article hasn’t been saved.</Text>
->>>>>>> theirs
-=======
-        <Text style={styles.offlineMessage}>You’re offline. This article hasn’t been saved.</Text>
->>>>>>> theirs
       </View>
     );
   }
@@ -101,54 +67,16 @@ export default function ArticleDetailScreen() {
           accessibilityLabel="Share article"
           style={styles.button}
           onPress={() =>
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-            Sharing.shareAsync(`https://blazesportsintel.com/blog/${article.slug}`).catch(() => undefined)
-=======
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
             Share.share({
               message: `${article.title}\nhttps://blazesportsintel.com/blog/${article.slug}`,
               url: `https://blazesportsintel.com/blog/${article.slug}`
             }).catch(() => undefined)
-<<<<<<< ours
-<<<<<<< ours
->>>>>>> theirs
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
           }
         >
           <Text style={styles.buttonText}>Share</Text>
         </Pressable>
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-        <Pressable
-          accessibilityLabel="Save article for offline"
-          style={[styles.button, saved && styles.savedButton]}
-          onPress={() => {
-            saveOfflineArticle(article);
-            setSaved(true);
-          }}
-        >
-          <Text style={styles.buttonText}>Save for offline</Text>
-=======
         <Pressable accessibilityLabel="Save article for offline" style={[styles.button, saved && styles.savedButton]} onPress={onSaveOffline}>
           <Text style={styles.buttonText}>{saved ? 'Saved' : 'Save for offline'}</Text>
->>>>>>> theirs
-=======
-        <Pressable accessibilityLabel="Save article for offline" style={[styles.button, saved && styles.savedButton]} onPress={onSaveOffline}>
-          <Text style={styles.buttonText}>{saved ? 'Saved' : 'Save for offline'}</Text>
->>>>>>> theirs
-=======
-        <Pressable accessibilityLabel="Save article for offline" style={[styles.button, saved && styles.savedButton]} onPress={onSaveOffline}>
-          <Text style={styles.buttonText}>{saved ? 'Saved' : 'Save for offline'}</Text>
->>>>>>> theirs
         </Pressable>
       </View>
     </ScrollView>
@@ -161,18 +89,7 @@ const styles = StyleSheet.create({
   hero: { width: '100%', height: 220, borderRadius: 2, marginBottom: 12 },
   title: { color: colors.bone, fontFamily: fonts.oswald, letterSpacing: 1.2, marginBottom: 12 },
   body: { color: colors.bone, fontFamily: fonts.cormorant, fontSize: 20, lineHeight: 34 },
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-=======
   offlineMessage: { color: colors.dust, fontFamily: fonts.cormorant, fontSize: 20, lineHeight: 34 },
->>>>>>> theirs
-=======
-  offlineMessage: { color: colors.dust, fontFamily: fonts.cormorant, fontSize: 20, lineHeight: 34 },
->>>>>>> theirs
-=======
-  offlineMessage: { color: colors.dust, fontFamily: fonts.cormorant, fontSize: 20, lineHeight: 34 },
->>>>>>> theirs
   row: { flexDirection: 'row', gap: 8, marginTop: 16 },
   button: { backgroundColor: colors.charcoal, padding: 10, borderRadius: 2 },
   savedButton: { backgroundColor: colors.burntOrange },

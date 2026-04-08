@@ -1,18 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { apiGet } from '@shared/api/client';
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-import type { Score } from '@shared/types/scores';
-=======
 import type { Score, TeamScore } from '@shared/types/scores';
->>>>>>> theirs
-=======
-import type { Score, TeamScore } from '@shared/types/scores';
->>>>>>> theirs
-=======
-import type { Score, TeamScore } from '@shared/types/scores';
->>>>>>> theirs
 
 const endpointMap: Record<string, string> = {
   all: '/api/scores/cached',
@@ -23,26 +11,6 @@ const endpointMap: Record<string, string> = {
   nba: '/api/nba/scores'
 };
 
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-// All BSI API responses are wrapped: { data: T, meta: { source, fetched_at, ... } }
-interface ApiEnvelope {
-  data?: unknown;
-  games?: unknown;
-  [key: string]: unknown;
-}
-
-async function fetchScores(path: string): Promise<Score[]> {
-  const envelope = await apiGet<ApiEnvelope>(path);
-  // Handle both { data: [...] } and { games: [...] } shapes, plus bare arrays
-  const payload = envelope?.data ?? envelope?.games ?? envelope;
-  return Array.isArray(payload) ? (payload as Score[]) : [];
-=======
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
 function asStatus(value: unknown): Score['status'] {
   if (value === 'live' || value === 'final' || value === 'upcoming') {
     return value;
@@ -92,38 +60,15 @@ function extractScoreArray(payload: unknown): Score[] {
   }
 
   return [];
-<<<<<<< ours
-<<<<<<< ours
->>>>>>> theirs
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
 }
 
 export function useScores(sport: string) {
   return useQuery({
     queryKey: ['scores', sport],
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-    queryFn: () => fetchScores(endpointMap[sport] ?? endpointMap.all),
-=======
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
     queryFn: async () => {
       const payload = await apiGet<unknown>(endpointMap[sport] ?? endpointMap.all);
       return extractScoreArray(payload);
     },
-<<<<<<< ours
-<<<<<<< ours
->>>>>>> theirs
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
     refetchInterval: 30_000,
     staleTime: 15_000
   });

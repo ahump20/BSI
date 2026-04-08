@@ -1,17 +1,5 @@
 import { useMemo } from 'react';
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
-=======
 import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
->>>>>>> theirs
-=======
-import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
->>>>>>> theirs
-=======
-import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
->>>>>>> theirs
 import * as Haptics from 'expo-haptics';
 import { useScoresStore } from '@/stores/scoresStore';
 import { useScores } from '@/hooks/useScores';
@@ -35,26 +23,6 @@ export default function ScoresTab() {
   const query = useScores(activeSport);
 
   const sorted = useMemo(() => {
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-    const data = Array.isArray(query.data) ? query.data : [];
-    const rank: Record<string, number> = { live: 0, final: 1, upcoming: 2 };
-    return [...data].sort((a, b) => (rank[a.status] ?? 2) - (rank[b.status] ?? 2));
-  }, [query.data]);
-
-  const renderEmpty = () => {
-    if (query.isLoading) {
-      return <ActivityIndicator color={colors.burntOrange} />;
-    }
-    if (query.isError) {
-      return <Text style={styles.stateText}>Couldn’t load scores. Pull down to retry.</Text>;
-    }
-=======
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
     const data = query.data ?? [];
     const rank: Record<Score['status'], number> = { live: 0, final: 1, upcoming: 2 };
     return [...data].sort((a, b) => rank[a.status] - rank[b.status]);
@@ -100,13 +68,6 @@ export default function ScoresTab() {
       );
     }
 
-<<<<<<< ours
-<<<<<<< ours
->>>>>>> theirs
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
     return <Text style={styles.stateText}>No games right now. Check back soon.</Text>;
   };
 
@@ -123,28 +84,12 @@ export default function ScoresTab() {
       <FlatList
         data={sorted}
         keyExtractor={(item: Score) => item.gameId}
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-        renderItem={({ item }) => <ScoreCard score={item} />}
-=======
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
         renderItem={({ item, index }) => (
           <View>
             {renderHeader(index)}
             <ScoreCard score={item} />
           </View>
         )}
-<<<<<<< ours
-<<<<<<< ours
->>>>>>> theirs
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
         ListEmptyComponent={renderEmpty}
         refreshControl={<RefreshControl refreshing={query.isRefetching} onRefresh={() => query.refetch()} tintColor={colors.burntOrange} />}
       />
@@ -154,15 +99,6 @@ export default function ScoresTab() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.midnight, padding: 12 },
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-  stateText: { color: colors.dust, textAlign: 'center', marginTop: 24, fontFamily: fonts.cormorant, fontSize: 18 }
-=======
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
   sectionHeader: {
     color: colors.dust,
     fontFamily: fonts.mono,
@@ -188,11 +124,4 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     opacity: 0.6
   }
-<<<<<<< ours
-<<<<<<< ours
->>>>>>> theirs
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
 });

@@ -28,28 +28,6 @@ export default function ArticlesTab() {
         keyExtractor={(item) => item.slug}
         refreshControl={<RefreshControl refreshing={query.isRefetching} onRefresh={() => query.refetch()} tintColor={colors.burntOrange} />}
         ListEmptyComponent={
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-          <Text style={styles.empty}>
-            {query.isLoading ? 'Loading articles...' : query.isError ? 'Couldn’t load articles.' : 'No articles found.'}
-          </Text>
-        }
-        renderItem={({ item }: { item: Article }) => (
-          <Pressable
-            accessibilityLabel={`Open article ${item.title}`}
-            onPress={() => router.push(`/article/${item.slug}`)}
-            style={styles.card}
-          >
-            {item.heroImage ? <Image source={item.heroImage} style={styles.image} contentFit="cover" cachePolicy="disk" /> : null}
-            <Text style={styles.title}>{item.title.toUpperCase()}</Text>
-            <Text style={styles.meta}>{item.sport ?? 'general'} · {new Date(item.publishedAt).toLocaleDateString()}</Text>
-            <Text numberOfLines={2} style={styles.excerpt}>{item.excerpt ?? ''}</Text>
-=======
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
           query.isLoading ? (
             <View>
               {[0, 1, 2].map((value) => (
@@ -71,13 +49,6 @@ export default function ArticlesTab() {
             <Text numberOfLines={2} style={styles.excerpt}>
               {item.excerpt ?? ''}
             </Text>
-<<<<<<< ours
-<<<<<<< ours
->>>>>>> theirs
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
           </Pressable>
         )}
       />
@@ -90,17 +61,6 @@ const styles = StyleSheet.create({
   card: { backgroundColor: colors.charcoal, padding: 12, marginBottom: 8, borderRadius: 2 },
   image: { width: '100%', height: 140, borderRadius: 2, marginBottom: 8 },
   title: { color: colors.bone, fontFamily: fonts.oswald, letterSpacing: 1.2 },
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-  meta: { color: colors.dust, fontFamily: fonts.mono, marginTop: 6 },
-  excerpt: { color: colors.bone, fontFamily: fonts.cormorant, marginTop: 6, fontSize: 17 },
-  empty: { color: colors.dust, textAlign: 'center', marginTop: 24, fontFamily: fonts.cormorant, fontSize: 18 }
-=======
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
   metaRow: { marginTop: 6, flexDirection: 'row', alignItems: 'center', gap: 8 },
   sportPill: {
     color: colors.midnight,
@@ -122,11 +82,4 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     opacity: 0.6
   }
-<<<<<<< ours
-<<<<<<< ours
->>>>>>> theirs
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
 });

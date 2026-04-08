@@ -10,6 +10,9 @@ function resolvePath(sport: string, gameId: string): string {
   if (sport === 'college-baseball') return `/api/college-baseball/game/${gameId}`;
   if (sport === 'cfb') return `/api/cfb/game/${gameId}`;
   if (sport === 'nfl') return `/api/nfl/game/${gameId}`;
+  if (sport === 'mlb') return `/api/mlb/game/${gameId}`;
+  if (sport === 'nba') return `/api/nba/game/${gameId}`;
+  if (sport === 'cbb') return `/api/cbb/game/${gameId}`;
   return '/api/scores/cached';
 }
 
@@ -20,19 +23,7 @@ export default function GameDetailScreen() {
     queryFn: async () => {
       const data = await apiGet<Game | Game[]>(resolvePath(sport ?? '', id ?? ''));
       if (Array.isArray(data)) {
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-        return data.find((game) => game.id === id) ?? null;
-=======
         return data.find((game) => game.id === id || ('gameId' in game && (game as unknown as { gameId?: string }).gameId === id)) ?? null;
->>>>>>> theirs
-=======
-        return data.find((game) => game.id === id || ('gameId' in game && (game as unknown as { gameId?: string }).gameId === id)) ?? null;
->>>>>>> theirs
-=======
-        return data.find((game) => game.id === id || ('gameId' in game && (game as unknown as { gameId?: string }).gameId === id)) ?? null;
->>>>>>> theirs
       }
       return data;
     },

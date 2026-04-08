@@ -2,26 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import { apiGet } from '@shared/api/client';
 import type { Article } from '@shared/types/articles';
 
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-// Blog post feed returns { posts: Article[], total: number, page: number, limit: number }
-interface BlogFeedEnvelope {
-  posts?: unknown;
-  data?: unknown;
-  [key: string]: unknown;
-}
-
-async function fetchArticles(sport: string): Promise<Article[]> {
-  const envelope = await apiGet<BlogFeedEnvelope>('/api/blog-post-feed');
-  const payload = envelope?.posts ?? envelope?.data ?? envelope;
-  const all: Article[] = Array.isArray(payload) ? (payload as Article[]) : [];
-  return sport === 'all' ? all : all.filter((article) => article.sport === sport);
-=======
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
 function normalizeArticle(value: unknown): Article {
   const item = (value ?? {}) as Record<string, unknown>;
   return {
@@ -49,39 +29,16 @@ function extractArticles(payload: unknown): Article[] {
   }
 
   return [];
-<<<<<<< ours
-<<<<<<< ours
->>>>>>> theirs
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
 }
 
 export function useArticles(sport: string) {
   return useQuery({
     queryKey: ['articles', sport],
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-    queryFn: () => fetchArticles(sport),
-=======
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
     queryFn: async () => {
       const payload = await apiGet<unknown>('/api/blog-post-feed');
       const articles = extractArticles(payload);
       return sport === 'all' ? articles : articles.filter((article) => article.sport === sport);
     },
-<<<<<<< ours
-<<<<<<< ours
->>>>>>> theirs
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
     staleTime: 300_000
   });
 }
@@ -89,19 +46,7 @@ export function useArticles(sport: string) {
 export function useArticle(slug: string) {
   return useQuery({
     queryKey: ['article', slug],
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-    queryFn: () => apiGet<Article>(`/api/blog-post-feed/${slug}`),
-=======
     queryFn: async () => normalizeArticle(await apiGet<unknown>(`/api/blog-post-feed/${slug}`)),
->>>>>>> theirs
-=======
-    queryFn: async () => normalizeArticle(await apiGet<unknown>(`/api/blog-post-feed/${slug}`)),
->>>>>>> theirs
-=======
-    queryFn: async () => normalizeArticle(await apiGet<unknown>(`/api/blog-post-feed/${slug}`)),
->>>>>>> theirs
     staleTime: 1_800_000,
     enabled: slug.length > 0
   });
