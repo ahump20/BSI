@@ -155,6 +155,12 @@ const config: Config = {
         'heritage-cream': '#F0E6D3',
         'bsi-bone': '#F5F2EB',
         'bsi-dust': '#C4B8A5',
+        // Heritage v2.1 Surfaces — bridge CSS custom props into Tailwind utilities
+        'surface-dugout': 'var(--surface-dugout, #161616)',
+        'surface-scoreboard': 'var(--surface-scoreboard, #0A0A0A)',
+        'surface-press-box': 'var(--surface-press-box, #111111)',
+        'bsi-primary': 'var(--bsi-primary, #BF5700)',
+        'border-vintage': 'var(--border-vintage, rgba(140, 98, 57, 0.3))',
       },
       fontFamily: {
         sans: ['var(--font-oswald)', 'Oswald', 'Impact', 'Arial Black', 'sans-serif'],
