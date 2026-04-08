@@ -1060,7 +1060,7 @@ textarea:focus-visible,
   background: var(--bsi-primary);
   border: 1px solid var(--bsi-primary);
   border-radius: 1px;
-  color: var(--bsi-midnight);
+  color: #fff;
   font-family: var(--bsi-font-display);
   font-weight: 700;
   font-size: 0.85rem;
