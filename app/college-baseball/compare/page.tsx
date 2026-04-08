@@ -13,6 +13,7 @@ import { ConferenceBaseline } from '@/components/analytics/ConferenceBaseline';
 import { ArrowLeftRight, ChevronDown } from 'lucide-react';
 import { getReadApiUrl } from '@/lib/utils/public-api';
 import { fmt1, fmt2, fmt3, normalizeTeamName } from '@/lib/utils/format';
+import { teamNameToSlug } from '@/lib/data/team-metadata';
 
 /* ── Types ─────────────────────────────────────────────────────────── */
 
@@ -80,6 +81,15 @@ function matchTeam<T extends { team_name?: string; school?: string }>(
 function record(w?: number, l?: number): string {
   if (w === undefined || l === undefined) return '—';
   return `${w}-${l}`;
+}
+
+/** Derive a URL-safe slug from a team display name. */
+function toSlug(name: string): string {
+  // Try the authoritative lookup first
+  const slug = teamNameToSlug[name.toLowerCase()];
+  if (slug) return slug;
+  // Fallback: lowercase, strip non-alphanum, join with hyphens
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 }
 
 function fmtDollars(v?: number): string {
@@ -469,6 +479,17 @@ export default function CompareHubPage() {
                     </>
                   )}
                 </Card>
+
+                {/* Deep compare link */}
+                <div className="mt-6 flex justify-center">
+                  <Link
+                    href={`/college-baseball/compare/${toSlug(teamA)}/${toSlug(teamB)}/`}
+                    className="btn-heritage-fill px-6 py-2.5 text-sm inline-flex items-center gap-2"
+                  >
+                    <ArrowLeftRight className="w-4 h-4" />
+                    Full Savant Comparison
+                  </Link>
+                </div>
               </ScrollReveal>
             )}
 

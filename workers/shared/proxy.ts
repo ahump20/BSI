@@ -45,6 +45,12 @@ const TEAM_DETAIL_PATTERN = /^\/(nfl|nba|cfb)\/teams\/[^/]+\/?$/;
 /** Matches RSC metadata for team detail routes */
 const TEAM_DETAIL_RSC_PATTERN = /^\/(nfl|nba|cfb)\/teams\/[^/]+\/(__next\.[^?]+)/;
 
+/** Matches team compare routes: /college-baseball/compare/{team1}/{team2}/ */
+const COMPARE_TEAMS_PATTERN = /^\/college-baseball\/compare\/[^/]+\/[^/]+\/?$/;
+
+/** Matches RSC metadata for team compare routes */
+const COMPARE_TEAMS_RSC_PATTERN = /^\/college-baseball\/compare\/[^/]+\/[^/]+\/(__next\.[^?]+)/;
+
 function buildPlaceholderPath(pathname: string): string | null {
   // Try game detail HTML page match first
   const htmlMatch = pathname.match(GAME_DETAIL_PATTERN);
@@ -121,6 +127,18 @@ function buildPlaceholderPath(pathname: string): string | null {
   const dailyRscMatch = pathname.match(CBB_DAILY_RSC_PATTERN);
   if (dailyRscMatch) {
     return `/college-baseball/daily/2026-02-14/${dailyRscMatch[1]}`;
+  }
+
+  // Team compare — any two D1 teams
+  const compareMatch = pathname.match(COMPARE_TEAMS_PATTERN);
+  if (compareMatch) {
+    return '/college-baseball/compare/placeholder/placeholder/';
+  }
+
+  const compareRscMatch = pathname.match(COMPARE_TEAMS_RSC_PATTERN);
+  if (compareRscMatch) {
+    const rscFile = compareRscMatch[1];
+    return `/college-baseball/compare/placeholder/placeholder/${rscFile}`;
   }
 
   return null;
