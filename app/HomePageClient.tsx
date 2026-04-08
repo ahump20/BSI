@@ -143,7 +143,8 @@ const SPORT_NAV = [
 function countGames(res: ScoresResponse | null): SportPulseData {
   const g = res?.games ?? res?.data ?? [];
   const live = g.filter((game) => {
-    const s = (game.status ?? '').toLowerCase();
+    const raw = game.status;
+    const s = (typeof raw === 'string' ? raw : typeof raw === 'object' && raw !== null ? String((raw as Record<string, unknown>).detailedState ?? (raw as Record<string, unknown>).state ?? '') : '').toLowerCase();
     return s.includes('live') || s.includes('in progress') || s.includes('top') || s.includes('bot');
   }).length;
   return { live, total: g.length };
@@ -188,10 +189,12 @@ function ScoreTicker({ games }: { games: ScoreGame[] }) {
     >
       <div className="ticker-track flex items-center whitespace-nowrap py-2.5">
         {doubled.map((g, i) => {
-          const isLive = g.status?.toLowerCase().includes('live') ||
-                         g.status?.toLowerCase().includes('in progress') ||
-                         g.status?.toLowerCase().includes('top') ||
-                         g.status?.toLowerCase().includes('bot');
+          const rawStatus = g.status;
+          const statusStr = (typeof rawStatus === 'string' ? rawStatus : typeof rawStatus === 'object' && rawStatus !== null ? String((rawStatus as Record<string, unknown>).detailedState ?? (rawStatus as Record<string, unknown>).state ?? '') : '').toLowerCase();
+          const isLive = statusStr.includes('live') ||
+                         statusStr.includes('in progress') ||
+                         statusStr.includes('top') ||
+                         statusStr.includes('bot');
           return (
             <span key={`${g.id ?? i}-${i}`} className="inline-flex items-center shrink-0">
               {i > 0 && (
