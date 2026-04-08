@@ -385,16 +385,14 @@ function ScoreTicker({
                 <button
                   type="button"
                   onClick={() => onGameClick(g.sport, g.id!)}
-                  className="inline-flex items-center gap-1.5 text-[13px] transition-colors hover:text-bsi-primary cursor-pointer"
-                  style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-bone)', textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
+                  className="inline-flex items-center gap-1.5 text-[13px] transition-colors hover:text-bsi-primary cursor-pointer font-mono text-bsi-bone" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
                 >
                   {scoreContent}
                 </button>
               ) : (
                 <Link
                   href={`/${g.sport}/`}
-                  className="inline-flex items-center gap-1.5 text-[13px] transition-colors hover:text-bsi-primary"
-                  style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-bone)', textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
+                  className="inline-flex items-center gap-1.5 text-[13px] transition-colors hover:text-bsi-primary font-mono text-bsi-bone" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
                 >
                   {scoreContent}
                 </Link>
@@ -1091,8 +1089,7 @@ export function HomePageClient() {
           {/* Supporting line */}
           <div className="hero-entrance" style={{ animationDelay: '600ms' }}>
             <p
-              className="mt-5 text-sm sm:text-base md:text-lg leading-relaxed max-w-2xl mx-auto"
-              style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)', lineHeight: 1.7 }}
+              className="mt-5 text-sm sm:text-base md:text-lg leading-relaxed max-w-2xl mx-auto font-serif text-bsi-dust leading-[1.7]"
             >
               The numbers behind what your eyes already tell you — translated
               across college baseball, MLB, NFL, NBA, and college football.
@@ -1164,15 +1161,13 @@ export function HomePageClient() {
             style={{ width: '3.5rem' }}
           />
           <h2
-            className="text-2xl sm:text-3xl md:text-[2.75rem] font-bold uppercase leading-tight"
-            style={{ fontFamily: 'var(--font-bebas)', color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}
+            className="text-2xl sm:text-3xl md:text-[2.75rem] font-bold uppercase leading-tight font-display text-bsi-bone tracking-[0.02em]"
           >
             Five Sports. One Language.{' '}
             <span className="text-bsi-primary">Yours.</span>
           </h2>
           <p
-            className="mt-6 text-base sm:text-lg md:text-xl leading-relaxed"
-            style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)', lineHeight: 1.8 }}
+            className="mt-6 text-base sm:text-lg md:text-xl leading-relaxed font-serif text-bsi-dust leading-[1.8]"
           >
             College baseball, MLB, NFL, NBA, and college football — with the analytical
             depth that mainstream sports media skip. The numbers behind what your eyes already
@@ -1242,8 +1237,7 @@ export function HomePageClient() {
                     )}
                   </div>
                   <p
-                    className="text-sm leading-relaxed"
-                    style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)', lineHeight: 1.6 }}
+                    className="text-sm leading-relaxed font-serif text-bsi-dust leading-[1.6]"
                   >
                     {SPORT_NAV[0].desc}
                   </p>
@@ -1308,8 +1302,7 @@ export function HomePageClient() {
                       )}
                     </div>
                     <p
-                      className="text-[11px] leading-snug line-clamp-2"
-                      style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)', lineHeight: 1.5 }}
+                      className="text-[11px] leading-snug line-clamp-2 font-serif text-bsi-dust leading-[1.5]"
                     >
                       {sport.desc}
                     </p>
@@ -1350,8 +1343,7 @@ export function HomePageClient() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2
-                className="text-xl sm:text-2xl md:text-3xl font-bold uppercase"
-                style={{ fontFamily: 'var(--font-bebas)', color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}
+                className="text-xl sm:text-2xl md:text-3xl font-bold uppercase font-display text-bsi-bone tracking-[0.02em]"
               >
                 The BSI Savant Standard
               </h2>
@@ -1551,8 +1543,7 @@ export function HomePageClient() {
         <div className="absolute inset-0 pointer-events-none grain-overlay" style={{ opacity: 0.15 }} />
         <ScrollReveal as="div" direction="fade" className="relative max-w-5xl mx-auto px-4 sm:px-6 py-16 sm:py-24 md:py-28 text-center">
           <h2
-            className="text-xl sm:text-2xl md:text-[2.25rem] font-bold uppercase"
-            style={{ fontFamily: 'var(--font-bebas)', color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}
+            className="text-xl sm:text-2xl md:text-[2.25rem] font-bold uppercase font-display text-bsi-bone tracking-[0.02em]"
           >
             The Numbers Behind What You Already Know.
           </h2>
@@ -1562,8 +1553,7 @@ export function HomePageClient() {
             No paywall.
           </p>
           <p
-            className="mt-4 text-sm sm:text-base max-w-lg mx-auto"
-            style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)', lineHeight: 1.7 }}
+            className="mt-4 text-sm sm:text-base max-w-lg mx-auto font-serif text-bsi-dust leading-[1.7]"
           >
             Live scores, advanced analytics, and scouting intel across college baseball,
             MLB, NFL, NBA, and college football — updating now.
