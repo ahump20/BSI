@@ -102,7 +102,12 @@ interface PlayerDetailClientProps {
   playerId: string;
 }
 
-export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps) {
+export default function PlayerDetailClient({ playerId: paramId }: PlayerDetailClientProps) {
+  // Placeholder shell fallback: read real player ID from the browser URL
+  const playerId = typeof window !== 'undefined' && paramId === 'placeholder'
+    ? window.location.pathname.split('/players/')[1]?.replace(/\/$/, '') || paramId
+    : paramId;
+
   const [activeTab, setActiveTab] = useState<TabType>('overview');
 
   // User timezone for formatting

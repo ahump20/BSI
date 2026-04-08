@@ -90,7 +90,11 @@ interface CFBPlayerDetailClientProps {
   playerId: string;
 }
 
-export default function CFBPlayerDetailClient({ playerId }: CFBPlayerDetailClientProps) {
+export default function CFBPlayerDetailClient({ playerId: paramId }: CFBPlayerDetailClientProps) {
+  const playerId = typeof window !== 'undefined' && paramId === 'placeholder'
+    ? window.location.pathname.split('/players/')[1]?.replace(/\/$/, '') || paramId
+    : paramId;
+
   const { data: playerData, loading, error, retry: fetchPlayer, lastUpdated: lastUpdatedDate } = useSportData<PlayerResponse>(
     playerId ? `/api/cfb/players/${playerId}` : null,
   );

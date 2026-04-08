@@ -94,7 +94,11 @@ interface PlayerProfileClientProps {
   playerId: string;
 }
 
-export default function PlayerProfileClient({ playerId }: PlayerProfileClientProps) {
+export default function PlayerProfileClient({ playerId: paramId }: PlayerProfileClientProps) {
+  const playerId = typeof window !== 'undefined' && paramId === 'placeholder'
+    ? window.location.pathname.split('/players/')[1]?.replace(/\/$/, '') || paramId
+    : paramId;
+
   const [player, setPlayer] = useState<PlayerData | null>(null);
   const [stats, setStats] = useState<SeasonStats | null>(null);
   const [loading, setLoading] = useState(true);
