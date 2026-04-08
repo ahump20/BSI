@@ -236,7 +236,7 @@ export default function NFLPlayersPage() {
     <>
       <div className="min-h-screen bg-surface-scoreboard text-bsi-bone">
         {/* Breadcrumb */}
-        <Section padding="sm border-b border-border-vintage">
+        <Section padding="sm" className="border-b border-border-vintage">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
