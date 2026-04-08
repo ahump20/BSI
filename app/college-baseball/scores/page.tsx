@@ -103,6 +103,7 @@ function TeamRow({
 
   return (
     <div className="flex items-center gap-3">
+      <TeamCircle logo={team.logo} abbreviation={team.shortName?.slice(0, 3).toUpperCase() || fallbackAbbr} size="w-7 h-7" textSize="text-[10px]" />
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <span
