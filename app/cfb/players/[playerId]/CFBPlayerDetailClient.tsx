@@ -218,7 +218,7 @@ export default function CFBPlayerDetailClient({ playerId: rawId }: CFBPlayerDeta
                     {/* Quick Stats */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
                       <StatCard label="Height" value={player.height || 'N/A'} />
-                      <StatCard label="Weight" value={player.weight ? `${player.weight} lbs` : 'N/A'} />
+                      <StatCard label="Weight" value={player.weight ? `${String(player.weight).replace(/\s*lbs\s*/i, '')} lbs` : 'N/A'} />
                       {player.age ? (
                         <StatCard label="Age" value={player.age} />
                       ) : (
