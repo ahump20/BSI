@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { DataAttribution } from '@/components/ui/DataAttribution';
-import { Footer } from '@/components/layout-ds/Footer';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 
 // ---------------------------------------------------------------------------
@@ -514,7 +513,6 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

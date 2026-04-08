@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
-import { Footer } from '@/components/layout-ds/Footer';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/Badge';
 import { PerformanceIndexClient } from './PerformanceIndexClient';
@@ -58,7 +57,6 @@ export default function PerformanceIndexPage() {
         {/* Calculator — client component */}
         <PerformanceIndexClient />
       </div>
-      <Footer />
     </>
   );
 }

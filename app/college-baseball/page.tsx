@@ -11,7 +11,6 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { DataSourceBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { preseason2026 } from '@/lib/data/preseason-2026';
 import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
@@ -1127,7 +1126,6 @@ function CollegeBaseballPageInner() {
               </Container>
             </Section>
           </div>
-          <Footer />
         </>
       </div>
     </ErrorBoundary>

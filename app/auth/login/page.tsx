@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 
 export default function LoginPage() {
   // --- Send My Key section ---
@@ -304,7 +303,6 @@ export default function LoginPage() {
         </div>
       </section>
 
-      <Footer />
     </div>
   );
 }

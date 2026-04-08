@@ -12,6 +12,7 @@ import { BottomNavWrapper } from '@/components/layout-ds/BottomNavWrapper';
 import { Navbar } from '@/components/layout-ds/Navbar';
 import { ScrollProgress } from '@/components/ui/ScrollProgress';
 import { BreadcrumbBar } from '@/components/layout-ds/BreadcrumbBar';
+import { Footer } from '@/components/layout-ds/Footer';
 import { getMainNavItems, getAnalyticsNavItems } from '@/lib/navigation';
 
 const CommandPalette = dynamic(() => import('@/components/layout-ds/CommandPalette').then((mod) => ({ default: mod.CommandPalette })));
@@ -74,6 +75,7 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
               <main id="main-content" className="flex-1 overflow-y-auto pb-20 md:pb-0">
                 <PageTransition>{children}</PageTransition>
               </main>
+              <Footer />
             </div>
           </div>
         ) : (
@@ -91,6 +93,7 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
             <main id="main-content" className="min-h-screen pb-24 md:pb-0">
               <PageTransition>{children}</PageTransition>
             </main>
+            <Footer />
             <BottomNavWrapper />
           </>
         )}

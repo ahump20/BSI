@@ -9,7 +9,6 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { AnimatedCounter } from '@/components/ui/AnimatedCounter';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { SabermetricsPanel } from '@/components/college-baseball/SabermetricsPanel';
 import { ConferencePositionCard } from '@/components/college-baseball/ConferencePositionCard';
 import { TeamVideoPanel } from '@/components/college-baseball/TeamVideoPanel';
@@ -377,7 +376,7 @@ export default function TexasIntelHubClient() {
         </Section>
 
         {/* ── 1. Cinematic Hero ────────────────────────────────────── */}
-        <Section padding="xl" className="relative overflow-hidden bg-[var(--surface-scoreboard)] grain-overlay">
+        <Section padding="xl" className="relative overflow-hidden bg-surface-scoreboard grain-overlay">
           {/* Item 1: Parallax gradient mesh */}
           <div className="absolute inset-0 pointer-events-none" style={{
             background: `
@@ -431,7 +430,7 @@ export default function TexasIntelHubClient() {
         </Section>
 
         {/* ── 2. Live Dashboard Strip ────────────────────────────── */}
-        <Section padding="md" className="bg-[var(--surface-dugout)] border-y border-border">
+        <Section padding="md" className="bg-surface-dugout border-y border-border">
           <Container>
             <div className="flex items-center justify-between mb-3">
               {/* Item 9: Data freshness indicator */}
@@ -526,7 +525,7 @@ export default function TexasIntelHubClient() {
         </Section>
 
         {/* ── Item 5: Sticky Secondary Nav ────────────────────────── */}
-        <div className={`sticky top-0 z-30 transition-all duration-300 ${showStickyNav ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'} bg-[var(--surface-scoreboard)]/95 backdrop-blur-sm border-b border-border`}>
+        <div className={`sticky top-0 z-30 transition-all duration-300 ${showStickyNav ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'} bg-surface-scoreboard/95 backdrop-blur-sm border-b border-border`}>
           <Container>
             <nav className="flex items-center gap-1 overflow-x-auto py-2 scrollbar-hide" aria-label="Intelligence sections">
               {INTEL_NAV.map((item) => (
@@ -856,7 +855,7 @@ export default function TexasIntelHubClient() {
           aria-label="Keyboard shortcuts"
         >
           <div
-            className="bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm p-6 max-w-sm w-full mx-4 shadow-2xl"
+            className="bg-surface-dugout border border-border-vintage rounded-sm p-6 max-w-sm w-full mx-4 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
@@ -873,14 +872,14 @@ export default function TexasIntelHubClient() {
               {Object.entries(SHORTCUT_MAP).map(([key, { label }]) => (
                 <div key={key} className="flex items-center justify-between py-1.5 border-b border-border-subtle last:border-0">
                   <span className="text-text-secondary text-sm">{label}</span>
-                  <kbd className="font-mono text-xs bg-[var(--surface-press-box)] border border-border-subtle rounded-sm px-2 py-0.5 text-text-primary">
+                  <kbd className="font-mono text-xs bg-surface-press-box border border-border-subtle rounded-sm px-2 py-0.5 text-text-primary">
                     {key.toUpperCase()}
                   </kbd>
                 </div>
               ))}
               <div className="flex items-center justify-between py-1.5">
                 <span className="text-text-secondary text-sm">Toggle this panel</span>
-                <kbd className="font-mono text-xs bg-[var(--surface-press-box)] border border-border-subtle rounded-sm px-2 py-0.5 text-text-primary">
+                <kbd className="font-mono text-xs bg-surface-press-box border border-border-subtle rounded-sm px-2 py-0.5 text-text-primary">
                   ?
                 </kbd>
               </div>
@@ -889,7 +888,6 @@ export default function TexasIntelHubClient() {
         </div>
       )}
 
-      <Footer />
     </>
   );
 }

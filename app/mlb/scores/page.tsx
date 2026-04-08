@@ -9,7 +9,6 @@ import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
@@ -553,7 +552,6 @@ export default function MLBScoresPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

@@ -7,7 +7,6 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { HeroGlow } from '@/components/ui/HeroGlow';
-import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
 
 // ---------------------------------------------------------------------------
@@ -224,7 +223,6 @@ export default function ModelsHubPage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

@@ -9,7 +9,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface NBATeam {
@@ -340,7 +339,6 @@ export default function NBATeamsPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

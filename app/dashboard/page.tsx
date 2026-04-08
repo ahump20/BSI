@@ -70,7 +70,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { useUserSettings } from '@/lib/hooks';
 
 interface DashboardStats {
@@ -177,7 +176,7 @@ export default function DashboardPage() {
 
   if (authStatus === 'checking') {
     return (
-      <div className="min-h-screen pt-6 flex items-center justify-center bg-[var(--surface-scoreboard)]">
+      <div className="min-h-screen pt-6 flex items-center justify-center bg-surface-scoreboard">
         <div className="text-center">
           <div className="w-8 h-8 border-2 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin mx-auto mb-4" />
           <p className="text-bsi-dust text-sm">Verifying access...</p>
@@ -650,7 +649,7 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
               onClick={() => setConfiguratorOpen(false)}
             />
             <motion.div
-              className="fixed top-0 right-0 bottom-0 z-50 w-full max-w-md bg-[var(--surface-scoreboard)] border-l border-[var(--border-vintage)] overflow-y-auto"
+              className="fixed top-0 right-0 bottom-0 z-50 w-full max-w-md bg-surface-scoreboard border-l border-border-vintage overflow-y-auto"
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
@@ -668,7 +667,6 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
         )}
       </AnimatePresence>
 
-      <Footer />
     </div>
   );
 }

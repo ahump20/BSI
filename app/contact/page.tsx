@@ -7,7 +7,6 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -152,7 +151,6 @@ export default function ContactPage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

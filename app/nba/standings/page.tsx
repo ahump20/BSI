@@ -8,7 +8,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { DegradedDataBanner } from '@/components/ui/DegradedDataBanner';
 import { formatTimestamp } from '@/lib/utils/timezone';
 import type { DataMeta } from '@/lib/types/data-meta';
@@ -263,7 +262,6 @@ export default function NBAStandingsPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

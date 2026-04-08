@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
-import { Footer } from '@/components/layout-ds/Footer';
 import { PercentileBar } from '@/components/analytics/PercentileBar';
 import { MetricGate } from '@/components/analytics/MetricGate';
 import { PlayerScoutingComposite } from '@/components/college-baseball/PlayerScoutingComposite';
@@ -384,7 +383,6 @@ export default function SavantPlayerClient() {
             </Container>
           </Section>
         </div>
-        <Footer />
       </>
     );
   }
@@ -903,7 +901,6 @@ export default function SavantPlayerClient() {
         </section>
       </div>
 
-      <Footer />
     </>
   );
 }

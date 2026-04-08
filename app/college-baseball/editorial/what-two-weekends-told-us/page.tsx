@@ -5,7 +5,6 @@ import { StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { IntelSignup } from '@/components/home/IntelSignup';
-import { Footer } from '@/components/layout-ds/Footer';
 import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 import type { Metadata } from 'next';
@@ -392,7 +391,6 @@ export default function WhatTwoWeekendsToldUsPage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

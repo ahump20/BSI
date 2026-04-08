@@ -23,7 +23,6 @@ import { Button } from '@/components/ui/Button';
 import { FilterPill } from '@/components/ui/FilterPill';
 import { HeroGlow } from '@/components/ui/HeroGlow';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 
 // ── SVG Tool Icons ──
 
@@ -350,7 +349,6 @@ export default function AnalyticsPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

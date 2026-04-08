@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
 
 // ── Types ──
@@ -209,7 +208,6 @@ export default function MarketTrendsPage() {
         </Container>
       </Section>
 
-      <Footer />
     </div>
   );
 }

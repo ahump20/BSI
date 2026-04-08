@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { AITeamPreview } from '@/components/college-baseball/AITeamPreview';
 import { SabermetricsPanel } from '@/components/college-baseball/SabermetricsPanel';
 import { SeasonArcChart } from '@/components/college-baseball/SeasonArcChart';
@@ -392,7 +391,6 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             </Card>
           </Container>
         </div>
-        <Footer />
       </>
     );
   }
@@ -1447,7 +1445,6 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

@@ -2,7 +2,6 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
-import { Footer } from '@/components/layout-ds/Footer';
 
 export const metadata: Metadata = {
   title: 'Data Sources | Blaze Sports Intel',
@@ -370,7 +369,6 @@ export default function DataSourcesPage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

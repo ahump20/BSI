@@ -8,7 +8,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import {
   SavantLeaderboard,
   BATTING_COLUMNS,
@@ -290,7 +289,7 @@ export default function SavantHubPage() {
                   return (
                     <div
                       key={spot.metricKey}
-                      className="savant-fade-in relative overflow-hidden rounded-sm bg-[var(--surface-dugout)] border border-[var(--border-vintage)] hover:border-[rgba(140,98,57,0.5)] transition-all p-4"
+                      className="savant-fade-in relative overflow-hidden rounded-sm bg-surface-dugout border border-border-vintage hover:border-[rgba(140,98,57,0.5)] transition-all p-4"
                       style={{ borderLeftColor: color, borderLeftWidth: '2px', animationDelay: `${index * 50}ms` }}
                     >
                       <div className="flex items-baseline justify-between mb-2">
@@ -324,7 +323,7 @@ export default function SavantHubPage() {
             {/* 2026 D1 Run Environment — the baseline that makes every stat meaningful */}
             {leagueCtxRes?.context && (
               <ScrollReveal direction="up" delay={150}>
-                <div className="mb-6 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] p-4">
+                <div className="mb-6 rounded-sm border border-border-vintage bg-surface-dugout p-4">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="heritage-stamp text-[9px]">2026 D1 Run Environment</span>
                     <span className="text-[9px] text-text-muted font-mono">
@@ -576,7 +575,7 @@ export default function SavantHubPage() {
 
             {/* Data attribution */}
             {(battingRes || pitchingRes) && (
-              <div className="mt-10 pt-6 border-t border-[var(--border-vintage)]">
+              <div className="mt-10 pt-6 border-t border-border-vintage">
                 <div className="flex items-center justify-center gap-4 flex-wrap">
                   <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-muted/50">
                     Source: BSI Savant · ESPN box scores + Highlightly Pro · Recomputed every 6 hours
@@ -617,7 +616,6 @@ export default function SavantHubPage() {
         </section>
       </div>
 
-      <Footer />
     </>
   );
 }

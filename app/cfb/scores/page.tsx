@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { SportIcon } from '@/components/icons/SportIcon';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
@@ -215,7 +214,6 @@ export default function CFBScoresPage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

@@ -5,7 +5,6 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { CalendarView } from '@/components/sports/CalendarView';
 import { DataAttribution } from '@/components/ui/DataAttribution';
-import { Footer } from '@/components/layout-ds/Footer';
 
 export default function CollegeBaseballGamesPage() {
   return (
@@ -52,7 +51,6 @@ export default function CollegeBaseballGamesPage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

@@ -8,7 +8,6 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { IntelSignup } from '@/components/home/IntelSignup';
-import { Footer } from '@/components/layout-ds/Footer';
 
 // ── Filter tags ──────────────────────────────────────────────────────────
 
@@ -252,7 +251,6 @@ export default function MLBEditorialPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

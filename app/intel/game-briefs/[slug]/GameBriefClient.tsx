@@ -7,7 +7,6 @@ import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { GameBrief, type GameBriefData } from '@/components/intel/GameBrief';
 import { CiteWidget } from '@/components/ui/CiteWidget';
 import { JsonLd } from '@/components/JsonLd';
-import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
 
 // ---------------------------------------------------------------------------
@@ -140,7 +139,6 @@ export function GameBriefClient({ slug }: { slug: string }) {
             </Container>
           </Section>
         </div>
-        <Footer />
       </>
     );
   }
@@ -161,7 +159,6 @@ export function GameBriefClient({ slug }: { slug: string }) {
             </Container>
           </Section>
         </div>
-        <Footer />
       </>
     );
   }
@@ -220,7 +217,6 @@ export function GameBriefClient({ slug }: { slug: string }) {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

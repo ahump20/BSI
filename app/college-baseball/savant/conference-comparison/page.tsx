@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
-import { Footer } from '@/components/layout-ds/Footer';
 
 interface ConferenceData {
   conference: string;
@@ -380,7 +379,6 @@ export default function ConferenceComparisonPage() {
           )}
         </div>
       </Container>
-      <Footer />
     </div>
   );
 }

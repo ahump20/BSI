@@ -6,7 +6,6 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { EvaluationCard } from '@/components/evaluate/EvaluationCard';
 import { EvaluationCompare } from '@/components/evaluate/EvaluationCompare';
-import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { SPORT_LABELS } from '@/lib/evaluate/metrics';
 import type { EvaluationProfile, EvaluationSport } from '@/lib/evaluate/metrics';
@@ -111,7 +110,6 @@ export default function PlayerEvaluationClient() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

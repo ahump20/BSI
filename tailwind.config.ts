@@ -155,6 +155,12 @@ const config: Config = {
         'heritage-cream': '#F0E6D3',
         'bsi-bone': '#F5F2EB',
         'bsi-dust': '#C4B8A5',
+        // Heritage v2.1 surface tokens (resolve from bsi-brand.css at runtime)
+        'surface-scoreboard': 'var(--surface-scoreboard)',
+        'surface-dugout': 'var(--surface-dugout)',
+        'surface-press-box': 'var(--surface-press-box)',
+        // Heritage v2.1 border tokens
+        'border-vintage': 'var(--border-vintage)',
       },
       fontFamily: {
         sans: ['var(--font-oswald)', 'Oswald', 'Impact', 'Arial Black', 'sans-serif'],

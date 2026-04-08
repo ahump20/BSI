@@ -5,7 +5,6 @@ import { StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { BSIVerdict } from '@/components/editorial/BSIVerdict';
-import { Footer } from '@/components/layout-ds/Footer';
 import { RankingsTable } from '@/components/editorial/RankingsTable';
 import type { RankingEntry } from '@/components/editorial/types';
 import { editorialMetadata } from '@/lib/editorial-seo';
@@ -433,7 +432,6 @@ export default function Week1RecapPage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

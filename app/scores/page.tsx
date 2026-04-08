@@ -10,7 +10,6 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
@@ -1075,7 +1074,6 @@ function ScoresHubContent() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

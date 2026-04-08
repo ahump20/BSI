@@ -1,7 +1,6 @@
 'use client';
 
 import { useSportData } from '@/lib/hooks/useSportData';
-import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { DegradedNotice } from '@/components/ui/DegradedNotice';
 import { ScrollReveal } from '@/components/cinematic';
@@ -262,7 +261,6 @@ export default function PowerRankingsClient() {
         </div>
       </main>
 
-      <Footer />
     </div>
   );
 }

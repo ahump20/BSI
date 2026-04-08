@@ -6,7 +6,6 @@ import { Section } from '@/components/ui/Section';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
 
 // Import shared portal components
@@ -353,7 +352,6 @@ export default function CFBTransferPortalPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

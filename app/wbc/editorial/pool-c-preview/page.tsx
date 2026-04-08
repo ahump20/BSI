@@ -4,7 +4,6 @@ import { Section } from '@/components/ui/Section';
 import { StatCard } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
 
 // ── Metadata ────────────────────────────────────────────────────────
@@ -349,7 +348,6 @@ export default function PoolCPreviewPage() {
           </Container>
         </Section>
 
-        <Footer />
       </div>
     </>
   );

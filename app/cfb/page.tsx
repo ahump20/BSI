@@ -10,7 +10,6 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton, SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { TabBar } from '@/components/ui/TabBar';
 import { GameScoreCard } from '@/components/sports/GameScoreCard';
@@ -289,7 +288,7 @@ export default function CFBPage() {
   return (
     <ErrorBoundary>
     <>
-      <div>
+      <div className="bsi-theme-football">
         <SportHero
           sport="College Football"
           leagueName="NCAA Division I FBS"
@@ -584,7 +583,7 @@ export default function CFBPage() {
                             </thead>
                             <tbody>
                               {rankings.map((team) => (
-                                <tr key={team.rank} className="border-b border-border-subtle hover:bg-[var(--surface-dugout)] transition-colors">
+                                <tr key={team.rank} className="border-b border-border-subtle hover:bg-surface-dugout transition-colors">
                                   <td className="p-3 text-burnt-orange font-bold text-lg">{team.rank}</td>
                                   <td className="p-3 font-semibold text-text-primary">{team.team}</td>
                                   <td className="p-3 text-text-secondary">{team.conference}</td>
@@ -600,7 +599,7 @@ export default function CFBPage() {
                             <Button variant="primary" size="sm" onClick={retryRankings}>Retry</Button>
                           </div>
                         )}
-                        <div className="mt-4 pt-4 border-t border-[var(--border-vintage)]">
+                        <div className="mt-4 pt-4 border-t border-border-vintage">
                           <DataSourceBadge source="SportsDataIO (Derived Rankings)" timestamp={formatTimestamp(lastUpdated)} />
                         </div>
                       </CardContent>
@@ -674,7 +673,7 @@ export default function CFBPage() {
                         </thead>
                         <tbody>
                           {portalEntries.slice(0, 25).map((entry, i) => (
-                            <tr key={`${entry.name}-${i}`} className="border-b border-border-subtle hover:bg-[var(--surface-dugout)] transition-colors">
+                            <tr key={`${entry.name}-${i}`} className="border-b border-border-subtle hover:bg-surface-dugout transition-colors">
                               <td className="p-3 font-semibold text-text-primary">{entry.name}</td>
                               <td className="p-3 text-text-secondary">{entry.position}</td>
                               <td className="p-3 text-text-secondary">{entry.fromSchool}</td>
@@ -759,7 +758,6 @@ export default function CFBPage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
     </ErrorBoundary>
   );
