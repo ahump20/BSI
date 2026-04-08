@@ -56,6 +56,7 @@ import { handleTeams, handleModelHealth, handleAnalyticsEvent, handleWeeklyBrief
 import { handleContact, handleLead, handleFeedback, handleCSPReport } from './handlers/lead';
 import { handlePredictionSubmit, handlePredictionAccuracy } from './handlers/predictions';
 import { handleIntelNews, handleESPNNews } from './handlers/news';
+import { handlePodcasts } from './handlers/media';
 import { handlePortalPlayerDetail } from './handlers/college-baseball';
 import { processFinishedGames } from './handlers/college-baseball';
 import {
@@ -326,6 +327,9 @@ app.get('/api/ncaa/standings', (c) => {
   if (c.req.query('sport') === 'football') return safeESPN(() => import('./handlers/cfb').then(m => m.handleCFBStandings(c.env)), 'standings', [], c.env);
   return c.json({ error: 'Specify ?sport=football' }, 400);
 });
+
+// --- Media / Podcasts ---
+app.get('/api/media/podcasts', (c) => handlePodcasts(c.env));
 
 // --- Blog Post Feed ---
 app.get('/api/blog-post-feed', (c) =>
