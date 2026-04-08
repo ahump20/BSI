@@ -14,6 +14,7 @@ export interface LiveGameTeam {
   record: string | undefined;
   conference: string;
   ranking: number | undefined;
+  logo: string | undefined;
 }
 
 export interface LiveGame {
@@ -175,6 +176,7 @@ export function useLiveScores(
             record: rec(at),
             conference: (at?.conference as string) ?? '',
             ranking: undefined,
+            logo: (at?.logo as string) ?? undefined,
           },
           homeTeam: {
             id: Number(ht?.id ?? 0),
@@ -184,6 +186,7 @@ export function useLiveScores(
             record: rec(ht),
             conference: (ht?.conference as string) ?? '',
             ranking: undefined,
+            logo: (ht?.logo as string) ?? undefined,
           },
           startTime: (g.date as string) ?? '',
           venue: (g.venue as string) ?? '',

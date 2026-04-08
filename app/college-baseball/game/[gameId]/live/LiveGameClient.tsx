@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { useGameData } from '../layout';
 import Linescore from '@/components/college-baseball/Linescore';
+import { TeamCircle } from '@/components/sports/TeamCircle';
 import PlayByPlay from '@/components/college-baseball/PlayByPlay';
 import MatchupCard from '@/components/college-baseball/MatchupCard';
 import { Card } from '@/components/ui/Card';
@@ -40,14 +41,7 @@ function CollapsibleBoxScore({
         className="w-full px-4 py-3 flex items-center justify-between bg-background-secondary hover:bg-surface-light transition-colors"
       >
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-background-primary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange relative">
-            {team.abbreviation}
-            {team.ranking && (
-              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-burnt-orange text-white text-[9px] font-bold rounded-full flex items-center justify-center">
-                {team.ranking}
-              </span>
-            )}
-          </div>
+          <TeamCircle logo={team.logo} abbreviation={team.abbreviation} size="w-8 h-8" textSize="text-xs" ranking={team.ranking} />
           <div className="text-left">
             <p className="text-text-primary font-semibold text-sm">{team.name}</p>
             {team.record && <p className="text-text-tertiary text-xs">{team.record}</p>}
