@@ -126,8 +126,8 @@ export default function GlossaryPage() {
               Analytics Glossary
             </h1>
             <p
-              className="italic text-lg leading-relaxed"
-              style={{ fontFamily: 'var(--font-body)', color: 'var(--bsi-primary)' }}
+              className="italic text-lg leading-relaxed text-bsi-primary"
+              style={{ fontFamily: 'var(--font-body)' }}
             >
               Pro-level metrics mapped to college equivalents. What each stat measures, what
               data exists, and where the gaps are.

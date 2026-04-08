@@ -266,8 +266,8 @@ export default function SavantHubPage() {
                     {stat.value.toLocaleString()}
                   </span>
                   <span
-                    className="text-[9px] uppercase tracking-[0.15em] mt-1"
-                    style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-dust)' }}
+                    className="text-[9px] uppercase tracking-[0.15em] mt-1 text-bsi-dust"
+                    style={{ fontFamily: 'var(--font-display)' }}
                   >
                     {stat.label}
                   </span>

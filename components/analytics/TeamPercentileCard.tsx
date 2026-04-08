@@ -125,8 +125,8 @@ export function TeamPercentileCard({ data, className = '' }: Props) {
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
             <h3
-              className="text-base uppercase tracking-wider font-bold"
-              style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-bone)' }}
+              className="text-base uppercase tracking-wider font-bold text-bsi-bone"
+              style={{ fontFamily: 'var(--font-display)' }}
             >
               Team Percentile Card
             </h3>
@@ -169,7 +169,7 @@ export function TeamPercentileCard({ data, className = '' }: Props) {
             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: confColor }} />
           </div>
           <div>
-            <div className="text-lg font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-bone)' }}>
+            <div className="text-lg font-bold text-bsi-bone" style={{ fontFamily: 'var(--font-display)' }}>
               {activeTeam.team}
             </div>
             <div className="text-[10px] font-mono text-bsi-dust">
@@ -186,8 +186,8 @@ export function TeamPercentileCard({ data, className = '' }: Props) {
             return (
               <div key={s.key} className="flex items-center gap-3">
                 <div
-                  className="w-12 text-right text-[10px] uppercase tracking-wider shrink-0"
-                  style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-dust)' }}
+                  className="w-12 text-right text-[10px] uppercase tracking-wider shrink-0 text-bsi-dust"
+                  style={{ fontFamily: 'var(--font-display)' }}
                 >
                   {s.label}
                 </div>

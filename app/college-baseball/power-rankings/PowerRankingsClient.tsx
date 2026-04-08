@@ -42,8 +42,8 @@ function MovementBadge({ movement }: { movement: number | null }) {
   if (movement == null) {
     return (
       <span
-        className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-sm font-mono"
-        style={{ color: 'var(--bsi-dust)', background: 'rgba(196,184,165,0.1)' }}
+        className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-sm font-mono text-bsi-dust"
+        style={{ background: 'rgba(196,184,165,0.1)' }}
       >
         NEW
       </span>

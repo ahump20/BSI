@@ -240,8 +240,8 @@ function LinescoreTable({
               </th>
             ))}
             <th
-              className="text-center py-1 px-1.5 font-bold"
-              style={{ color: 'var(--bsi-bone)', minWidth: '28px' }}
+              className="text-center py-1 px-1.5 font-bold text-bsi-bone"
+              style={{ minWidth: '28px' }}
             >
               {isBaseball ? 'R' : 'T'}
             </th>
@@ -254,8 +254,8 @@ function LinescoreTable({
           ].map((row) => (
             <tr key={row.team} style={{ borderTop: '1px solid rgba(140,98,57,0.15)' }}>
               <td
-                className="text-left py-1 px-1.5 truncate max-w-[90px]"
-                style={{ color: 'var(--bsi-bone)', fontFamily: 'var(--font-oswald)', fontSize: '11px' }}
+                className="text-left py-1 px-1.5 truncate max-w-[90px] text-bsi-bone"
+                style={{ fontFamily: 'var(--font-oswald)', fontSize: '11px' }}
               >
                 {row.team}
               </td>

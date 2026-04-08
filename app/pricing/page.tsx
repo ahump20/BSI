@@ -521,8 +521,8 @@ function TierCard({
               <polyline points="20 6 9 17 4 12" />
             </svg>
             <span
-              className="text-sm font-serif"
-              style={{ color: 'var(--bsi-bone)', opacity: 0.9 }}
+              className="text-sm font-serif text-bsi-bone"
+              style={{ opacity: 0.9 }}
             >
               {feature}
             </span>

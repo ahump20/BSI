@@ -89,8 +89,8 @@ function ResponseBody({ text, isStreaming }: { text: string; isStreaming: boolea
           <Link
             key={i}
             href={seg.href!}
-            className="underline underline-offset-2 transition-colors font-semibold"
-            style={{ color: 'var(--heritage-columbia-blue)', textDecorationColor: 'rgba(75, 156, 211, 0.3)' }}
+            className="underline underline-offset-2 transition-colors font-semibold text-heritage-columbia"
+            style={{ textDecorationColor: 'rgba(75, 156, 211, 0.3)' }}
           >
             {seg.content}
           </Link>
@@ -120,8 +120,8 @@ function ActionStrip({ links }: { links: Array<{ label: string; href: string }> 
           <Link
             key={link.href}
             href={link.href}
-            className="inline-flex items-center gap-1.5 text-[11px] px-3 py-1.5 transition-all duration-200 font-semibold heritage-stamp"
-            style={{ color: 'var(--heritage-columbia-blue)', borderColor: 'rgba(75, 156, 211, 0.3)' }}
+            className="inline-flex items-center gap-1.5 text-[11px] px-3 py-1.5 transition-all duration-200 font-semibold heritage-stamp text-heritage-columbia"
+            style={{ borderColor: 'rgba(75, 156, 211, 0.3)' }}
           >
             <svg viewBox="0 0 16 16" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M6 3l5 5-5 5" />
@@ -336,7 +336,7 @@ export function AskBSI({ embedded = false, initialQuestion }: AskBSIProps) {
 
           {/* Usage counter — heritage stamp */}
           <div className="mt-3 flex justify-end">
-            <span className="heritage-stamp" style={{ padding: '1px 6px', fontSize: '8px', color: 'var(--bsi-dust)' }}>
+            <span className="heritage-stamp text-bsi-dust" style={{ padding: '1px 6px', fontSize: '8px' }}>
               {MAX_FREE_QUESTIONS - usageCount} / {MAX_FREE_QUESTIONS} remaining
             </span>
           </div>

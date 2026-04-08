@@ -83,8 +83,8 @@ export function SportHero({
 
         <ScrollReveal direction="up" delay={150}>
           <p
-            className="text-lg leading-relaxed text-center mb-4 font-serif"
-            style={{ color: 'var(--bsi-dust)', fontStyle: 'italic' }}
+            className="text-lg leading-relaxed text-center mb-4 font-serif text-bsi-dust"
+            style={{ fontStyle: 'italic' }}
           >
             {tagline}
           </p>

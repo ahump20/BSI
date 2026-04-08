@@ -189,8 +189,8 @@ export default function ConferenceComparisonPage() {
               Conference Comparison
             </h1>
             <p
-              className="font-cormorant text-base"
-              style={{ color: 'var(--bsi-dust, #C4B8A5)', lineHeight: 1.7 }}
+              className="font-cormorant text-base text-bsi-dust"
+              style={{ lineHeight: 1.7 }}
             >
               Side-by-side conference metrics. Strength index, hitting, pitching,
               inter-conference record.
@@ -322,8 +322,8 @@ export default function ConferenceComparisonPage() {
                       format={m.format}
                     />
                     <p
-                      className="font-cormorant text-xs mt-1"
-                      style={{ color: 'var(--bsi-dust, #C4B8A5)', opacity: 0.7 }}
+                      className="font-cormorant text-xs mt-1 text-bsi-dust"
+                      style={{ opacity: 0.7 }}
                     >
                       {m.description}
                     </p>

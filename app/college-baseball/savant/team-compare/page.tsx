@@ -145,7 +145,7 @@ export default function TeamComparePage() {
           >
             Team Comparison
           </h1>
-          <p className="font-cormorant text-base mb-8" style={{ color: 'var(--bsi-dust, #C4B8A5)', lineHeight: 1.7 }}>
+          <p className="font-cormorant text-base mb-8 text-bsi-dust" style={{ lineHeight: 1.7 }}>
             Side-by-side advanced metrics for any two D1 programs.
           </p>
 

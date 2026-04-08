@@ -182,8 +182,8 @@ export function CompareScatter({ teamA, teamB, onPlayerClick, className = '' }: 
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
             <h3
-              className="text-base uppercase tracking-wider font-bold"
-              style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-bone)' }}
+              className="text-base uppercase tracking-wider font-bold text-bsi-bone"
+              style={{ fontFamily: 'var(--font-display)' }}
             >
               Lineup Scatter
             </h3>

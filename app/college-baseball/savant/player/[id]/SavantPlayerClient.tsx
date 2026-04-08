@@ -1325,8 +1325,8 @@ function RawStatLine({
               className="pt-3 border-t border-heritage-bronze/15"
             >
               <span
-                className="heritage-stamp mb-2 block"
-                style={{ fontSize: '0.5rem', color: 'var(--bsi-primary)' }}
+                className="heritage-stamp mb-2 block text-bsi-primary"
+                style={{ fontSize: '0.5rem' }}
               >
                 Pro
               </span>

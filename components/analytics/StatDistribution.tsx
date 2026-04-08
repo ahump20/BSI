@@ -277,8 +277,8 @@ export function StatDistribution({ data, className = '' }: Props) {
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
             <h3
-              className="text-base uppercase tracking-wider font-bold"
-              style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-bone)' }}
+              className="text-base uppercase tracking-wider font-bold text-bsi-bone"
+              style={{ fontFamily: 'var(--font-display)' }}
             >
               Stat Distribution
             </h3>

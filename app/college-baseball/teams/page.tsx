@@ -161,8 +161,8 @@ export default function TeamsPage() {
                   College Baseball Teams
                 </h1>
                 <p
-                  className="text-sm max-w-lg mx-auto font-serif"
-                  style={{ color: 'var(--bsi-dust)', fontStyle: 'italic' }}
+                  className="text-sm max-w-lg mx-auto font-serif text-bsi-dust"
+                  style={{ fontStyle: 'italic' }}
                 >
                   {Object.keys(teamMetadata).length} programs across {conferences.length} conferences.
                   Every team has a profile with roster, schedule, and analytics.

@@ -394,8 +394,8 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
         {/* Summary */}
         <div className="px-5 py-4 border-b border-border-vintage">
           <p
-            className="text-sm leading-relaxed"
-            style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--bsi-bone)' }}
+            className="text-sm leading-relaxed text-bsi-bone"
+            style={{ fontFamily: 'var(--bsi-font-body)' }}
           >
             {report.summary}
           </p>
@@ -472,8 +472,8 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
             Projection
           </p>
           <p
-            className="text-sm leading-relaxed"
-            style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--bsi-bone)' }}
+            className="text-sm leading-relaxed text-bsi-bone"
+            style={{ fontFamily: 'var(--bsi-font-body)' }}
           >
             {report.projection}
           </p>
@@ -525,8 +525,8 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
               {narrativeParagraphs.map((paragraph, i) => (
                 <p
                   key={i}
-                  className="text-sm leading-relaxed"
-                  style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--bsi-bone)' }}
+                  className="text-sm leading-relaxed text-bsi-bone"
+                  style={{ fontFamily: 'var(--bsi-font-body)' }}
                 >
                   {paragraph}
                 </p>

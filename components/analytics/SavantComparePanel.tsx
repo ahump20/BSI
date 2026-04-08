@@ -175,8 +175,8 @@ export function SavantComparePanel({
                   {col.label}
                 </span>
                 {isGated && (
-                  <span className="text-[7px] font-mono uppercase px-1 py-0.5 rounded-sm"
-                    style={{ background: 'rgba(191,87,0,0.15)', color: 'var(--bsi-primary)' }}>
+                  <span className="text-[7px] font-mono uppercase px-1 py-0.5 rounded-sm text-bsi-primary"
+                    style={{ background: 'rgba(191,87,0,0.15)' }}>
                     PRO
                   </span>
                 )}

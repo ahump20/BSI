@@ -77,8 +77,8 @@ function TeamRow({ team, woba, fip, color }: {
     >
       {/* Rank badge */}
       <span
-        className="w-7 h-7 flex items-center justify-center rounded-sm text-xs font-mono font-bold shrink-0"
-        style={{ background: 'rgba(196,184,165,0.06)', color: 'var(--bsi-bone)' }}
+        className="w-7 h-7 flex items-center justify-center rounded-sm text-xs font-mono font-bold shrink-0 text-bsi-bone"
+        style={{ background: 'rgba(196,184,165,0.06)' }}
       >
         {team.rank}
       </span>
@@ -87,8 +87,8 @@ function TeamRow({ team, woba, fip, color }: {
       <div className="flex-1 min-w-0">
         <Link
           href={`/college-baseball/teams/${encodeURIComponent(team.team.toLowerCase().replace(/\s+/g, '-'))}/`}
-          className="text-sm font-medium hover:underline truncate block"
-          style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-bone)' }}
+          className="text-sm font-medium hover:underline truncate block text-bsi-bone"
+          style={{ fontFamily: 'var(--font-display)' }}
         >
           {team.team}
         </Link>
@@ -229,8 +229,8 @@ export default function BubbleWatchPage() {
                   <Badge variant="accent">POSTSEASON</Badge>
                 </div>
                 <h1
-                  className="text-3xl md:text-4xl font-bold uppercase tracking-wider"
-                  style={{ fontFamily: 'var(--font-hero)', color: 'var(--bsi-bone)' }}
+                  className="text-3xl md:text-4xl font-bold uppercase tracking-wider text-bsi-bone"
+                  style={{ fontFamily: 'var(--font-hero)' }}
                 >
                   Bubble Watch
                 </h1>
@@ -266,7 +266,7 @@ export default function BubbleWatchPage() {
                     <div className="px-5 py-4 border-b border-border-vintage">
                       <div className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full" className="bg-success" />
-                        <h2 className="text-sm uppercase tracking-wider font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-bone)' }}>
+                        <h2 className="text-sm uppercase tracking-wider font-bold text-bsi-bone" style={{ fontFamily: 'var(--font-display)' }}>
                           Tournament Locks
                         </h2>
                         <span className="ml-auto text-[10px] font-mono text-bsi-dust">
@@ -295,7 +295,7 @@ export default function BubbleWatchPage() {
                     <div className="px-5 py-4 border-b border-border-vintage">
                       <div className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full" className="bg-warning" />
-                        <h2 className="text-sm uppercase tracking-wider font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-bone)' }}>
+                        <h2 className="text-sm uppercase tracking-wider font-bold text-bsi-bone" style={{ fontFamily: 'var(--font-display)' }}>
                           Bubble Watch
                         </h2>
                         <span className="ml-auto text-[10px] font-mono text-bsi-dust">

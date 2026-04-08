@@ -1026,7 +1026,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                     <Card padding="lg">
                       <div className="flex items-center justify-between mb-6">
                         <h2 className="font-display text-xl font-bold text-text-primary uppercase tracking-wide">NIL Spending Power</h2>
-                        <span className="text-xs px-2 py-1 rounded-sm font-semibold" style={{ backgroundColor: 'rgba(191,87,0,0.15)', color: 'var(--bsi-primary)' }}>
+                        <span className="text-xs px-2 py-1 rounded-sm font-semibold text-bsi-primary" style={{ backgroundColor: 'rgba(191,87,0,0.15)' }}>
                           {nilTeamData.conference} — {nilTeamData.marketTier}
                         </span>
                       </div>

@@ -162,7 +162,7 @@ export default function NFLStandingsPage() {
               </Card>
             ) : isOffSeason ? (
               <div className="text-center py-12">
-                <p className="italic" style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--bsi-dust, #C4B8A5)' }}>
+                <p className="italic text-bsi-dust" style={{ fontFamily: 'var(--bsi-font-body)' }}>
                   Standings update during the season
                 </p>
                 <p className="text-sm mt-2 text-bsi-dust opacity-70">

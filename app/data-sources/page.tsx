@@ -154,8 +154,8 @@ export default function DataSourcesPage() {
                           {p.sports.map((s) => (
                             <span
                               key={s}
-                              className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-sm"
-                              style={{ color: 'var(--bsi-primary)', background: 'rgba(191,87,0,0.1)' }}
+                              className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-sm text-bsi-primary"
+                              style={{ background: 'rgba(191,87,0,0.1)' }}
                             >
                               {s}
                             </span>

@@ -498,7 +498,7 @@ export default function MLBStandingsPage() {
             ) : standings.length === 0 ? (
               <Card variant="default" padding="lg">
                 <div className="text-center py-8">
-                  <p className="italic" style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--bsi-dust, #C4B8A5)' }}>
+                  <p className="italic text-bsi-dust" style={{ fontFamily: 'var(--bsi-font-body)' }}>
                     Standings update once the season begins
                   </p>
                   <p className="text-sm mt-2 text-bsi-dust opacity-70">
