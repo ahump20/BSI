@@ -1,5 +1,5 @@
 import type { Env } from '../shared/types';
-import { cachedJson, kvGet, kvPut, getSDIOClient, toDateString, freshDataHeaders, cachedPayloadHeaders, ensurePayloadMeta, fetchResultHeaders, withMeta } from '../shared/helpers';
+import { cachedJson, kvGet, kvPut, getSDIOClient, toDateString, freshDataHeaders, cachedPayloadHeaders, ensurePayloadMeta, fetchResultHeaders, withMeta, logError } from '../shared/helpers';
 import { HTTP_CACHE, CACHE_TTL } from '../shared/constants';
 import {
   getScoreboard,
@@ -63,7 +63,7 @@ export async function handleNBAScores(url: URL, env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
     return cachedJson(payload, 200, HTTP_CACHE.scores, freshDataHeaders());
   } catch (err) {
-    console.error('handleNBAScores error:', err);
+    await logError(env, err instanceof Error ? err.message : String(err), 'nba:scores');
     return cachedJson({ error: 'Internal server error', status: 500 }, 500, 0);
   }
 }
@@ -93,7 +93,7 @@ export async function handleNBAStandings(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
     return cachedJson(payload, 200, HTTP_CACHE.standings, freshDataHeaders());
   } catch (err) {
-    console.error('handleNBAStandings error:', err);
+    await logError(env, err instanceof Error ? err.message : String(err), 'nba:standings');
     return cachedJson({ error: 'Failed to fetch NBA standings' }, 500, 0);
   }
 }
@@ -110,7 +110,7 @@ export async function handleNBAGame(gameId: string, env: Env): Promise<Response>
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
     return cachedJson(payload, 200, HTTP_CACHE.game, freshDataHeaders());
   } catch (err) {
-    console.error('handleNBAGame error:', err);
+    await logError(env, err instanceof Error ? err.message : String(err), 'nba:game');
     return cachedJson({ error: 'Failed to fetch NBA game' }, 500, 0);
   }
 }
@@ -127,7 +127,7 @@ export async function handleNBAPlayer(playerId: string, env: Env): Promise<Respo
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
     return cachedJson(payload, 200, HTTP_CACHE.player, freshDataHeaders());
   } catch (err) {
-    console.error('handleNBAPlayer error:', err);
+    await logError(env, err instanceof Error ? err.message : String(err), 'nba:player');
     return cachedJson({ error: 'Failed to fetch NBA player' }, 500, 0);
   }
 }
@@ -148,7 +148,7 @@ export async function handleNBATeam(teamId: string, env: Env): Promise<Response>
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
     return cachedJson(payload, 200, HTTP_CACHE.team, freshDataHeaders());
   } catch (err) {
-    console.error('handleNBATeam error:', err);
+    await logError(env, err instanceof Error ? err.message : String(err), 'nba:team');
     return cachedJson({ error: 'Failed to fetch NBA team' }, 500, 0);
   }
 }
@@ -176,7 +176,7 @@ export async function handleNBATeamsList(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
     return cachedJson(payload, 200, HTTP_CACHE.team, freshDataHeaders());
   } catch (err) {
-    console.error('handleNBATeamsList error:', err);
+    await logError(env, err instanceof Error ? err.message : String(err), 'nba:teams-list');
     return cachedJson({ error: 'Failed to fetch NBA teams' }, 500, 0);
   }
 }
@@ -204,7 +204,7 @@ export async function handleNBANews(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
     return cachedJson(payload, 200, HTTP_CACHE.news, freshDataHeaders());
   } catch (err) {
-    console.error('handleNBANews error:', err);
+    await logError(env, err instanceof Error ? err.message : String(err), 'nba:news');
     return cachedJson({ error: 'Failed to fetch NBA news' }, 500, 0);
   }
 }
@@ -273,7 +273,7 @@ export async function handleNBATeamFull(teamId: string, env: Env): Promise<Respo
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
     return cachedJson(payload, 200, HTTP_CACHE.team, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('handleNBATeamFull error:', err);
+    await logError(env, err instanceof Error ? err.message : String(err), 'nba:team-full');
     return cachedJson({ error: 'Failed to fetch NBA team details' }, 500, 0);
   }
 }
@@ -336,7 +336,7 @@ export async function handleNBALeaders(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, empty, 300); // Cache empty for 5 min
     return cachedJson(empty, 200, HTTP_CACHE.standings, freshDataHeaders('none'));
   } catch (err) {
-    console.error('handleNBALeaders error:', err);
+    await logError(env, err instanceof Error ? err.message : String(err), 'nba:leaders');
     return cachedJson(withMeta({ categories: [], offseason: false }, 'none'), 200, 0);
   }
 }

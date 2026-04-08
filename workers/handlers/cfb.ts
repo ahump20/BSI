@@ -1,5 +1,5 @@
 import type { Env } from '../shared/types';
-import { json, cachedJson, kvGet, kvPut, getSDIOClient, toDateString, freshDataHeaders, cachedDataHeaders, withMeta } from '../shared/helpers';
+import { json, cachedJson, kvGet, kvPut, getSDIOClient, toDateString, freshDataHeaders, cachedDataHeaders, withMeta, logError } from '../shared/helpers';
 import { HTTP_CACHE, CACHE_TTL } from '../shared/constants';
 import {
   getScoreboard,
@@ -38,7 +38,7 @@ export async function handleCFBTransferPortal(env: Env): Promise<Response> {
     }
     return json({ entries: [], lastUpdated: null, message: 'No portal data available yet' }, 200);
   } catch (err) {
-    console.error('[handleCFBTransferPortal]', err instanceof Error ? err.message : err);
+    await logError(env, err instanceof Error ? err.message : String(err), 'cfb:transfer-portal');
     return json({ error: 'Internal server error', code: 'INTERNAL_ERROR', status: 500 }, 500);
   }
 }
@@ -76,7 +76,7 @@ export async function handleCFBScores(url: URL, env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
     return cachedJson(payload, 200, HTTP_CACHE.scores, freshDataHeaders());
   } catch (err) {
-    console.error('[handleCFBScores]', err instanceof Error ? err.message : err);
+    await logError(env, err instanceof Error ? err.message : String(err), 'cfb:scores');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -108,7 +108,7 @@ export async function handleCFBStandings(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
     return cachedJson(payload, 200, HTTP_CACHE.standings, freshDataHeaders());
   } catch (err) {
-    console.error('[handleCFBStandings]', err instanceof Error ? err.message : err);
+    await logError(env, err instanceof Error ? err.message : String(err), 'cfb:standings');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -126,7 +126,7 @@ export async function handleCFBNews(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
     return cachedJson(payload, 200, HTTP_CACHE.news, freshDataHeaders());
   } catch (err) {
-    console.error('[handleCFBNews]', err instanceof Error ? err.message : err);
+    await logError(env, err instanceof Error ? err.message : String(err), 'cfb:news');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -168,7 +168,7 @@ export async function handleCFBArticle(slug: string, env: Env): Promise<Response
     await kvPut(env.KV, cacheKey, payload, 900);
     return cachedJson(payload, 200, HTTP_CACHE.news, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[handleCFBArticle]', err instanceof Error ? err.message : err);
+    await logError(env, err instanceof Error ? err.message : String(err), 'cfb:article');
     return json({ error: 'Internal server error', code: 'INTERNAL_ERROR', status: 500 }, 500);
   }
 }
@@ -205,7 +205,7 @@ export async function handleCFBArticlesList(url: URL, env: Env): Promise<Respons
     await kvPut(env.KV, cacheKey, payload, 300);
     return cachedJson(payload, 200, HTTP_CACHE.news, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[handleCFBArticlesList]', err instanceof Error ? err.message : err);
+    await logError(env, err instanceof Error ? err.message : String(err), 'cfb:articles-list');
     return json({ articles: [], meta: { source: 'BSI D1' } }, 200);
   }
 }
@@ -222,7 +222,7 @@ export async function handleCFBTeamsList(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
     return cachedJson(payload, 200, HTTP_CACHE.team, freshDataHeaders());
   } catch (err) {
-    console.error('[handleCFBTeamsList]', err instanceof Error ? err.message : err);
+    await logError(env, err instanceof Error ? err.message : String(err), 'cfb:teams-list');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -243,7 +243,7 @@ export async function handleCFBTeam(teamId: string, env: Env): Promise<Response>
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
     return cachedJson(payload, 200, HTTP_CACHE.team, freshDataHeaders());
   } catch (err) {
-    console.error('[handleCFBTeam]', err instanceof Error ? err.message : err);
+    await logError(env, err instanceof Error ? err.message : String(err), 'cfb:team');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -260,7 +260,7 @@ export async function handleCFBGame(gameId: string, env: Env): Promise<Response>
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
     return cachedJson(payload, 200, HTTP_CACHE.game, freshDataHeaders());
   } catch (err) {
-    console.error('[handleCFBGame]', err instanceof Error ? err.message : err);
+    await logError(env, err instanceof Error ? err.message : String(err), 'cfb:game');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -285,7 +285,7 @@ export async function handleCFBRankings(env: Env): Promise<Response> {
       clearTimeout(timer);
 
       if (!res.ok) {
-        console.error('[handleCFBRankings] ESPN returned', res.status);
+        await logError(env, `ESPN returned ${res.status}`, 'cfb:rankings');
         return json({ error: 'Rankings unavailable', status: 502 }, 502);
       }
 
@@ -333,7 +333,7 @@ export async function handleCFBRankings(env: Env): Promise<Response> {
       throw fetchErr;
     }
   } catch (err) {
-    console.error('[handleCFBRankings]', err instanceof Error ? err.message : err);
+    await logError(env, err instanceof Error ? err.message : String(err), 'cfb:rankings');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -350,7 +350,7 @@ export async function handleCFBPlayer(playerId: string, env: Env): Promise<Respo
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
     return cachedJson(payload, 200, HTTP_CACHE.player, freshDataHeaders());
   } catch (err) {
-    console.error('[handleCFBPlayer]', err instanceof Error ? err.message : err);
+    await logError(env, err instanceof Error ? err.message : String(err), 'cfb:player');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
