@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { PlaygroundMetrics } from '@/components/analytics/PlaygroundMetrics';
 import { PlaygroundApiSim } from '@/components/analytics/PlaygroundApiSim';
 import { PlaygroundERD } from '@/components/analytics/PlaygroundERD';
-import { Footer } from '@/components/layout-ds/Footer';
 
 type Tab = 'metrics' | 'api' | 'schema';
 
@@ -36,7 +35,7 @@ export default function SabermetricsPlaygroundPage() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8125rem', color: 'rgba(250,248,245,0.4)' }}>
               <Link href="/college-baseball/analytics" style={{ color: 'rgba(250,248,245,0.5)', textDecoration: 'none' }}>Analytics</Link>
               <span>/</span>
-              <span style={{ color: 'var(--bsi-primary)' }}>Playground</span>
+              <span className="text-bsi-primary">Playground</span>
             </div>
           </div>
           <span style={{

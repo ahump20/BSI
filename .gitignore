@@ -37,3 +37,4 @@ tests/visual-regression/key-pages.spec.ts-snapshots/
 
 # Claude worktrees
 .claude/worktrees/
+portfolio-website/

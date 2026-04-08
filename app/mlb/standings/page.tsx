@@ -8,7 +8,7 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
+
 import { Skeleton, SkeletonTableRow } from '@/components/ui/Skeleton';
 import { formatTimestamp } from '@/lib/utils/timezone';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
@@ -197,19 +197,19 @@ export default function MLBStandingsPage() {
       <table className="w-full min-w-[700px]" aria-label="MLB division standings">
         <thead>
           <tr style={{ borderBottom: '2px solid var(--bsi-primary)' }}>
-            <th scope="col" className="text-left p-3 font-semibold w-8" style={{ color: 'rgba(196,184,165,0.5)' }}>#</th>
+            <th scope="col" className="text-left p-3 font-semibold w-8 text-bsi-dust/50">#</th>
             <SortableHeader column="team" label="Team" className="sticky left-0 z-10" style={{ background: 'var(--surface-dugout)' } as React.CSSProperties} />
             <SortableHeader column="wins" label="W" />
             <SortableHeader column="losses" label="L" />
             <SortableHeader column="pct" label="PCT" />
             <SortableHeader column="gb" label="GB" />
-            <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>HOME</th>
-            <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>AWAY</th>
+            <th scope="col" className="text-left p-3 font-semibold text-bsi-dust/50">HOME</th>
+            <th scope="col" className="text-left p-3 font-semibold text-bsi-dust/50">AWAY</th>
             <SortableHeader column="rs" label="RS" />
             <SortableHeader column="ra" label="RA" />
             <SortableHeader column="diff" label="DIFF" />
-            <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>STRK</th>
-            <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>L10</th>
+            <th scope="col" className="text-left p-3 font-semibold text-bsi-dust/50">STRK</th>
+            <th scope="col" className="text-left p-3 font-semibold text-bsi-dust/50">L10</th>
           </tr>
         </thead>
         <tbody>
@@ -223,31 +223,30 @@ export default function MLBStandingsPage() {
                 onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--surface-press-box)'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = ''; }}
               >
-                <td className="p-3 font-bold" style={{ color: 'var(--bsi-primary)' }}>{idx + 1}</td>
-                <td className="p-3 sticky left-0 z-10" style={{ background: 'var(--surface-dugout)' }}>
+                <td className="p-3 font-bold text-bsi-primary">{idx + 1}</td>
+                <td className="p-3 sticky left-0 z-10 bg-surface-dugout">
                   <Link
                     href={`/mlb/teams/${teamSlug(team)}`}
-                    className="font-semibold transition-colors flex items-center gap-2"
-                    style={{ color: 'var(--bsi-bone)' }}
+                    className="font-semibold transition-colors flex items-center gap-2 text-bsi-bone"
                   >
                     {team.teamName}
                     {showDivision && (
-                      <span className="text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>{team.division}</span>
+                      <span className="text-xs text-bsi-dust/50">{team.division}</span>
                     )}
                   </Link>
                 </td>
-                <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>{team.wins}</td>
-                <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>{team.losses}</td>
-                <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>
+                <td className="p-3 font-mono text-bsi-dust">{team.wins}</td>
+                <td className="p-3 font-mono text-bsi-dust">{team.losses}</td>
+                <td className="p-3 font-mono text-bsi-dust">
                   {team.winPercentage.toFixed(3).replace('0.', '.')}
                 </td>
-                <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>
+                <td className="p-3 font-mono text-bsi-dust">
                   {team.gamesBack === 0 ? '-' : team.gamesBack.toFixed(1)}
                 </td>
-                <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>{team.home || '-'}</td>
-                <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>{team.away || '-'}</td>
-                <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>{team.runsScored}</td>
-                <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>{team.runsAllowed}</td>
+                <td className="p-3 font-mono text-bsi-dust">{team.home || '-'}</td>
+                <td className="p-3 font-mono text-bsi-dust">{team.away || '-'}</td>
+                <td className="p-3 font-mono text-bsi-dust">{team.runsScored}</td>
+                <td className="p-3 font-mono text-bsi-dust">{team.runsAllowed}</td>
                 <td
                   className={`p-3 font-mono font-semibold ${diff > 0 ? 'text-success' : diff < 0 ? 'text-error' : ''}`}
                   style={diff === 0 ? { color: 'var(--bsi-dust)' } : undefined}
@@ -260,7 +259,7 @@ export default function MLBStandingsPage() {
                 >
                   {team.streakCode || '-'}
                 </td>
-                <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>{team.last10 || '-'}</td>
+                <td className="p-3 font-mono text-bsi-dust">{team.last10 || '-'}</td>
               </tr>
             );
           })}
@@ -295,14 +294,14 @@ export default function MLBStandingsPage() {
         <table className="w-full min-w-[600px]" aria-label="MLB wild card standings">
           <thead>
             <tr style={{ borderBottom: '2px solid var(--bsi-primary)' }}>
-              <th scope="col" className="text-left p-3 font-semibold w-8" style={{ color: 'rgba(196,184,165,0.5)' }}>WC</th>
-              <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>Team</th>
-              <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>W</th>
-              <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>L</th>
-              <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>PCT</th>
-              <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>WCGB</th>
-              <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>STRK</th>
-              <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>L10</th>
+              <th scope="col" className="text-left p-3 font-semibold w-8 text-bsi-dust/50">WC</th>
+              <th scope="col" className="text-left p-3 font-semibold text-bsi-dust/50">Team</th>
+              <th scope="col" className="text-left p-3 font-semibold text-bsi-dust/50">W</th>
+              <th scope="col" className="text-left p-3 font-semibold text-bsi-dust/50">L</th>
+              <th scope="col" className="text-left p-3 font-semibold text-bsi-dust/50">PCT</th>
+              <th scope="col" className="text-left p-3 font-semibold text-bsi-dust/50">WCGB</th>
+              <th scope="col" className="text-left p-3 font-semibold text-bsi-dust/50">STRK</th>
+              <th scope="col" className="text-left p-3 font-semibold text-bsi-dust/50">L10</th>
             </tr>
           </thead>
           <tbody>
@@ -335,19 +334,18 @@ export default function MLBStandingsPage() {
                   <td className="p-3">
                     <Link
                       href={`/mlb/teams/${teamSlug(team)}`}
-                      className="font-semibold transition-colors flex items-center gap-2"
-                      style={{ color: 'var(--bsi-bone)' }}
+                      className="font-semibold transition-colors flex items-center gap-2 text-bsi-bone"
                     >
                       {team.teamName}
-                      <span className="text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>{team.division}</span>
+                      <span className="text-xs text-bsi-dust/50">{team.division}</span>
                     </Link>
                   </td>
-                  <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>{team.wins}</td>
-                  <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>{team.losses}</td>
-                  <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>
+                  <td className="p-3 font-mono text-bsi-dust">{team.wins}</td>
+                  <td className="p-3 font-mono text-bsi-dust">{team.losses}</td>
+                  <td className="p-3 font-mono text-bsi-dust">
                     {team.winPercentage.toFixed(3).replace('0.', '.')}
                   </td>
-                  <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>
+                  <td className="p-3 font-mono text-bsi-dust">
                     {wcGb === 0 ? '-' : wcGb.toFixed(1)}
                   </td>
                   <td
@@ -356,14 +354,14 @@ export default function MLBStandingsPage() {
                   >
                     {team.streakCode || '-'}
                   </td>
-                  <td className="p-3 font-mono" style={{ color: 'var(--bsi-dust)' }}>{team.last10 || '-'}</td>
+                  <td className="p-3 font-mono text-bsi-dust">{team.last10 || '-'}</td>
                 </tr>
               );
             })}
           </tbody>
         </table>
         {wcTeams.length > wcSpots && (
-          <div className="mt-4 text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>
+          <div className="mt-4 text-xs text-bsi-dust/50">
             Teams above the line are in Wild Card position
           </div>
         )}
@@ -373,20 +371,19 @@ export default function MLBStandingsPage() {
 
   return (
     <>
-      <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
+      <div className="min-h-screen bg-surface-scoreboard text-bsi-bone">
         {/* Breadcrumb */}
-        <Section padding="sm" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
+        <Section padding="sm border-b border-border-vintage">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/mlb"
-                className="transition-colors hover:opacity-80"
-                style={{ color: 'rgba(196,184,165,0.5)' }}
+                className="transition-colors hover:opacity-80 text-bsi-dust/50"
               >
                 MLB
               </Link>
               <span style={{ color: 'rgba(196,184,165,0.5)' }}>/</span>
-              <span className="font-medium" style={{ color: 'var(--bsi-bone)' }}>Standings</span>
+              <span className="font-medium text-bsi-bone">Standings</span>
             </nav>
           </Container>
         </Section>
@@ -404,15 +401,14 @@ export default function MLBStandingsPage() {
 
             <ScrollReveal direction="up" delay={100}>
               <h1
-                className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-gradient-blaze mb-4"
-                style={{ fontFamily: 'var(--font-oswald)' }}
+                className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-gradient-blaze mb-4 font-display"
               >
                 MLB Standings
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="max-w-2xl" style={{ color: 'var(--bsi-dust)' }}>
+              <p className="max-w-2xl text-bsi-dust">
                 Complete Major League Baseball standings with division, league, and wild card views.
                 Updated throughout the season.
               </p>
@@ -470,7 +466,7 @@ export default function MLBStandingsPage() {
                                 'STRK',
                                 'L10',
                               ].map((h) => (
-                                <th key={h} scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                                <th key={h} scope="col" className="text-left p-3 font-semibold text-bsi-dust/50">
                                   {h}
                                 </th>
                               ))}
@@ -490,7 +486,7 @@ export default function MLBStandingsPage() {
             ) : error ? (
               <Card variant="default" padding="lg" className="bg-error/10 border-error/30">
                 <p className="text-error font-semibold">Data Unavailable</p>
-                <p className="text-sm mt-1" style={{ color: 'var(--bsi-dust)' }}>{error}</p>
+                <p className="text-sm mt-1 text-bsi-dust">{error}</p>
                 <button
                   onClick={retry}
                   className="mt-4 px-4 py-2 text-white rounded-sm transition-colors"
@@ -524,8 +520,7 @@ export default function MLBStandingsPage() {
                               <CardTitle className="flex items-center gap-3">
                                 <svg
                                   viewBox="0 0 24 24"
-                                  className="w-5 h-5"
-                                  style={{ color: 'var(--bsi-primary)' }}
+                                  className="w-5 h-5 text-bsi-primary"
                                   fill="currentColor"
                                 >
                                   <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
@@ -554,8 +549,7 @@ export default function MLBStandingsPage() {
                               <CardTitle className="flex items-center gap-3">
                                 <svg
                                   viewBox="0 0 24 24"
-                                  className="w-5 h-5"
-                                  style={{ color: 'var(--bsi-primary)' }}
+                                  className="w-5 h-5 text-bsi-primary"
                                   fill="currentColor"
                                 >
                                   <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
@@ -584,8 +578,7 @@ export default function MLBStandingsPage() {
                               <CardTitle className="flex items-center gap-3">
                                 <svg
                                   viewBox="0 0 24 24"
-                                  className="w-5 h-5"
-                                  style={{ color: 'var(--bsi-primary)' }}
+                                  className="w-5 h-5 text-bsi-primary"
                                   fill="none"
                                   stroke="currentColor"
                                   strokeWidth="2"
@@ -605,7 +598,7 @@ export default function MLBStandingsPage() {
                 )}
 
                 {/* Data Source Footer */}
-                <div className="mt-6 pt-4" style={{ borderTop: '1px solid var(--border-vintage)' }}>
+                <div className="mt-6 pt-4 border-t border-border-vintage">
                   <DataSourceBadge
                     source={meta?.dataSource || 'MLB Stats API'}
                     timestamp={formatTimestamp(meta?.lastUpdated)}
@@ -618,7 +611,6 @@ export default function MLBStandingsPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

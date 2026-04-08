@@ -30,8 +30,8 @@ interface SavantComparePanelProps {
 
 // Player colors for visual differentiation in comparison
 const COMPARE_COLORS = [
-  '#BF5700', // burnt-orange
-  '#4B9CD3', // columbia-blue
+  'var(--bsi-primary)', // burnt-orange
+  'var(--heritage-columbia-blue)', // columbia-blue
   '#22D3EE', // cyan
 ];
 
@@ -100,8 +100,7 @@ export function SavantComparePanel({
       >
         <div className="flex items-center gap-3">
           <h3
-            className="text-sm uppercase tracking-wider"
-            style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+            className="text-sm uppercase tracking-wider font-display text-bsi-bone"
           >
             Player Comparison
           </h3>

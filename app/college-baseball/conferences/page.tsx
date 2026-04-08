@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { DataAttribution } from '@/components/ui/DataAttribution';
 import { Trophy, Users, TrendingUp, MapPin } from 'lucide-react';
 import { teamMetadata } from '@/lib/data/team-metadata';
@@ -513,7 +512,6 @@ export default function ConferencesHubPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

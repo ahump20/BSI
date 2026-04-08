@@ -2,6 +2,7 @@
 
 import { useGameData } from './layout';
 import { Card } from '@/components/ui/Card';
+import { TeamCircle } from '@/components/sports/TeamCircle';
 import { Badge } from '@/components/ui/Badge';
 import { BoxScoreTable } from '@/components/box-score';
 
@@ -89,9 +90,7 @@ export default function GameSummaryClient() {
           <div className="grid gap-4 md:grid-cols-2">
             {topAwayHitter && (
               <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-sm">
-                <div className="w-12 h-12 bg-background-secondary rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange">
-                  {game.teams.away.abbreviation}
-                </div>
+                <TeamCircle logo={game.teams.away.logo} abbreviation={game.teams.away.abbreviation} size="w-12 h-12" textSize="text-sm" />
                 <div>
                   <p className="font-semibold text-text-primary">{topAwayHitter.player.name}</p>
                   <p className="text-text-secondary text-sm">
@@ -103,9 +102,7 @@ export default function GameSummaryClient() {
             )}
             {topHomeHitter && (
               <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-sm">
-                <div className="w-12 h-12 bg-background-secondary rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange">
-                  {game.teams.home.abbreviation}
-                </div>
+                <TeamCircle logo={game.teams.home.logo} abbreviation={game.teams.home.abbreviation} size="w-12 h-12" textSize="text-sm" />
                 <div>
                   <p className="font-semibold text-text-primary">{topHomeHitter.player.name}</p>
                   <p className="text-text-secondary text-sm">

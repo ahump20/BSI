@@ -143,7 +143,7 @@ export function IntelStream({
       {/* Error state */}
       {status === 'error' && (
         <div className="px-4 py-3">
-          <p className="text-xs text-[var(--bsi-danger)]/70">{errorMsg}</p>
+          <p className="text-xs text-error/70">{errorMsg}</p>
         </div>
       )}
 

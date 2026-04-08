@@ -8,7 +8,6 @@ import { Card } from '@/components/ui/Card';
 import { PlayerSearch, type SearchResult } from '@/components/evaluate/PlayerSearch';
 import { EvaluationCompare } from '@/components/evaluate/EvaluationCompare';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 
 // ---------------------------------------------------------------------------
 // Component
@@ -114,7 +113,6 @@ export default function EvaluateClient() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

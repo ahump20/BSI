@@ -6,7 +6,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import {
   Trophy,
   TrendingUp,
@@ -388,7 +387,7 @@ const power25: RankedTeam[] = [
 const tierColors = {
   elite: 'border-burnt-orange/50 bg-burnt-orange/10',
   contender: 'border-gold/50 bg-gold/10',
-  sleeper: 'border-[var(--heritage-columbia-blue)]/50 bg-[var(--heritage-columbia-blue)]/10',
+  sleeper: 'border-heritage-columbia/50 bg-heritage-columbia/10',
   bubble: 'border-border-strong bg-surface-light',
 };
 
@@ -645,7 +644,7 @@ export default function Power25Page() {
           <Container>
             <ScrollReveal direction="up" delay={300}>
               <div className="flex items-center gap-3 mb-6">
-                <TrendingUp className="w-6 h-6 text-[var(--heritage-columbia-blue)]" />
+                <TrendingUp className="w-6 h-6 text-heritage-columbia" />
                 <h2 className="font-display text-2xl font-bold uppercase tracking-display text-text-primary">
                   Tier 3: Dark Horses
                 </h2>
@@ -660,7 +659,7 @@ export default function Power25Page() {
                   .map((team) => (
                     <Card key={team.rank} padding="sm" className={tierColors.sleeper}>
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="font-display text-lg font-bold text-[var(--heritage-columbia-blue)]">
+                        <span className="font-display text-lg font-bold text-heritage-columbia">
                           #{team.rank}
                         </span>
                         <span className="font-bold text-text-primary text-sm">{team.name}</span>
@@ -752,7 +751,6 @@ export default function Power25Page() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

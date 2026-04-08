@@ -68,7 +68,7 @@ function fmt(val: number | string, format: StatRow['format']): string {
 function diffColor(diff: number, lowerIsBetter: boolean): string {
   if (diff === 0) return 'text-text-secondary';
   const positive = lowerIsBetter ? diff < 0 : diff > 0;
-  return positive ? 'text-[var(--bsi-success)]' : 'text-[var(--bsi-danger)]';
+  return positive ? 'text-success' : 'text-error';
 }
 
 function buildBattingRows(p1Stats: PlayerInfo['statistics'], p2Stats: PlayerInfo['statistics'], diffs: Record<string, number>): StatRow[] {

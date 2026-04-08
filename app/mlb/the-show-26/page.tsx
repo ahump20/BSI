@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { Container } from '@/components/ui/Container';
-import { Footer } from '@/components/layout-ds/Footer';
+
 import { Card, CardContent, CardTitle } from '@/components/ui/Card';
 
 export const metadata: Metadata = {
@@ -31,13 +31,13 @@ const SURFACES = [
 export default function MLBTheShow26Page() {
   return (
     <div className="bsi-theme-baseball">
-      <section className="border-b border-[var(--border-vintage)] bg-[radial-gradient(circle_at_top,_rgba(191,87,0,0.16),_transparent_55%),linear-gradient(180deg,rgba(13,13,13,0.95),rgba(26,26,26,1))] py-16">
+      <section className="border-b border-border-vintage bg-[radial-gradient(circle_at_top,_rgba(191,87,0,0.16),_transparent_55%),linear-gradient(180deg,rgba(13,13,13,0.95),rgba(26,26,26,1))] py-16">
         <Container size="xl">
           <div className="mb-4 text-xs font-semibold uppercase tracking-[0.24em] text-burnt-orange">Standalone Launch Surface</div>
-          <h1 className="font-display text-4xl font-bold uppercase tracking-display text-[var(--bsi-bone)] md:text-5xl">
+          <h1 className="font-display text-4xl font-bold uppercase tracking-display text-bsi-bone md:text-5xl">
             MLB The Show 26 on Blaze Sports Intel
           </h1>
-          <p className="mt-4 max-w-3xl text-lg leading-relaxed text-[var(--bsi-dust)]">
+          <p className="mt-4 max-w-3xl text-lg leading-relaxed text-bsi-dust">
             This surface is built to launch standalone now and slot deeper into the Blaze Sports Intel MLB ecosystem later without a second architecture pass. Everything here is Cloudflare-first, source-aware, and honest about what official 26 public data is and is not verifiable today.
           </p>
         </Container>
@@ -51,7 +51,7 @@ export default function MLBTheShow26Page() {
                 <Card padding="lg" variant="hover" className="h-full">
                   <CardContent className="space-y-3 px-0 pb-0 pt-0">
                     <CardTitle size="sm">{surface.title}</CardTitle>
-                    <p className="text-sm leading-relaxed text-[var(--bsi-dust)]">{surface.description}</p>
+                    <p className="text-sm leading-relaxed text-bsi-dust">{surface.description}</p>
                   </CardContent>
                 </Card>
               </Link>
@@ -59,7 +59,6 @@ export default function MLBTheShow26Page() {
           </div>
         </Container>
       </section>
-      <Footer />
     </div>
   );
 }

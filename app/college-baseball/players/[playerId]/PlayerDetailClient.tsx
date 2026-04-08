@@ -11,7 +11,6 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { DataAttribution } from '@/components/ui/DataAttribution';
 import { IntelSignup } from '@/components/home/IntelSignup';
-import { Footer } from '@/components/layout-ds/Footer';
 import { AdvancedStatsCard } from '@/components/analytics/AdvancedStatsCard';
 import { PlayerScoutingComposite } from '@/components/college-baseball/PlayerScoutingComposite';
 import { ScoutingReport } from '@/components/college-baseball/ScoutingReport';
@@ -167,11 +166,11 @@ type ProfileTab = 'season' | 'gamelog';
 // ---------------------------------------------------------------------------
 
 const NIL_TIER_COLORS: Record<string, { bg: string; text: string; label: string }> = {
-  elite:         { bg: 'bg-[#BF5700]/20', text: 'text-[#BF5700]', label: 'Elite' },
-  high:          { bg: 'bg-[var(--bsi-success)]/15', text: 'text-[var(--bsi-success)]', label: 'High' },
-  mid:           { bg: 'bg-[var(--bsi-warning)]/15', text: 'text-[var(--bsi-warning)]', label: 'Mid' },
-  emerging:      { bg: 'bg-[var(--heritage-columbia-blue)]/15', text: 'text-[var(--heritage-columbia-blue)]', label: 'Emerging' },
-  developmental: { bg: 'bg-[var(--bsi-dust)]/15', text: 'text-[var(--bsi-dust)]', label: 'Developmental' },
+  elite:         { bg: 'bg-bsi-primary/20', text: 'text-burnt-orange', label: 'Elite' },
+  high:          { bg: 'bg-success/15', text: 'text-success', label: 'High' },
+  mid:           { bg: 'bg-warning/15', text: 'text-warning', label: 'Mid' },
+  emerging:      { bg: 'bg-heritage-columbia/15', text: 'text-heritage-columbia', label: 'Emerging' },
+  developmental: { bg: 'bg-bsi-dust/15', text: 'text-bsi-dust', label: 'Developmental' },
 };
 
 function formatNILValue(value: number): string {
@@ -329,9 +328,9 @@ export default function PlayerDetailClient() {
                   {player.portalStatus && (
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[10px] font-semibold uppercase tracking-widest leading-none border ${
                       player.portalStatus === 'committed'
-                        ? 'bg-[var(--bsi-success)]/15 border-[var(--bsi-success)]/30 text-[var(--bsi-success)]'
+                        ? 'bg-success/15 border-success/30 text-success'
                         : player.portalStatus === 'withdrawn'
-                          ? 'bg-[var(--bsi-dust)]/15 border-[var(--bsi-dust)]/30 text-[var(--bsi-dust)]'
+                          ? 'bg-bsi-dust/15 border-bsi-dust/30 text-bsi-dust'
                           : 'bg-burnt-orange/15 border-burnt-orange/30 text-burnt-orange'
                     }`}>
                       <svg className="w-3 h-3" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -350,10 +349,10 @@ export default function PlayerDetailClient() {
                     return (
                       <Link
                         href="/nil-valuation"
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm ${tierInfo.bg} border border-[#BF5700]/20 hover:border-[#BF5700]/40 transition-colors`}
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm ${tierInfo.bg} border border-bsi-primary/20 hover:border-bsi-primary/40 transition-colors`}
                       >
                         <span className="text-[10px] text-text-muted uppercase tracking-widest leading-none">Est. NIL</span>
-                        <span className="text-sm font-bold text-[#BF5700] font-mono leading-none">
+                        <span className="text-sm font-bold text-burnt-orange font-mono leading-none">
                           {formatNILValue(nilPlayer.estimated_mid)}
                         </span>
                         <span className={`text-[10px] font-semibold uppercase tracking-wide leading-none ${tierInfo.text}`}>
@@ -400,7 +399,7 @@ export default function PlayerDetailClient() {
               const tierInfo = NIL_TIER_COLORS[nilPlayer.tier] || NIL_TIER_COLORS.developmental;
               return (
                 <Card padding="none" className="mb-6 overflow-hidden">
-                  <div className="px-4 py-3 bg-gradient-to-r from-[#BF5700]/15 to-transparent border-b border-border">
+                  <div className="px-4 py-3 bg-gradient-to-r from-bsi-primary/15 to-transparent border-b border-border">
                     <div className="flex items-center justify-between">
                       <h2 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide">
                         NIL Valuation
@@ -465,7 +464,7 @@ export default function PlayerDetailClient() {
               if (!showCard) return null;
               return (
                 <Card padding="none" className="mb-6 overflow-hidden">
-                  <div className="px-4 py-3 bg-gradient-to-r from-[#BF5700]/10 to-transparent border-b border-border">
+                  <div className="px-4 py-3 bg-gradient-to-r from-bsi-primary/10 to-transparent border-b border-border">
                     <h2 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide">
                       Draft &amp; Portal Context
                     </h2>
@@ -482,10 +481,10 @@ export default function PlayerDetailClient() {
                     {player.portalStatus && (
                       <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-semibold uppercase tracking-wider border ${
                         player.portalStatus === 'committed'
-                          ? 'bg-[var(--bsi-success)]/15 border-[var(--bsi-success)]/30 text-[var(--bsi-success)]'
+                          ? 'bg-success/15 border-success/30 text-success'
                           : player.portalStatus === 'withdrawn'
-                            ? 'bg-[var(--bsi-dust)]/15 border-[var(--bsi-dust)]/30 text-[var(--bsi-dust)]'
-                            : 'bg-[var(--bsi-warning)]/15 border-[var(--bsi-warning)]/30 text-[var(--bsi-warning)]'
+                            ? 'bg-bsi-dust/15 border-bsi-dust/30 text-bsi-dust'
+                            : 'bg-warning/15 border-warning/30 text-warning'
                       }`}>
                         In Portal: {player.portalStatus}
                       </span>
@@ -678,8 +677,8 @@ export default function PlayerDetailClient() {
                               <tr className="border-b border-border">
                                 <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.games}</td>
                                 <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.gamesStarted}</td>
-                                <td className="py-3 px-3 text-center text-[var(--bsi-success)] font-bold">{stats.pitching.wins}</td>
-                                <td className="py-3 px-3 text-center text-[var(--bsi-error)] font-bold">{stats.pitching.losses}</td>
+                                <td className="py-3 px-3 text-center text-success font-bold">{stats.pitching.wins}</td>
+                                <td className="py-3 px-3 text-center text-error font-bold">{stats.pitching.losses}</td>
                                 <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.saves}</td>
                                 <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.inningsPitched.toFixed(1)}</td>
                                 <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.hits}</td>
@@ -725,7 +724,7 @@ export default function PlayerDetailClient() {
                                     {g.isHome ? 'vs' : '@'} {g.opponent || '—'}
                                   </td>
                                   <td className="py-2 px-2 text-center text-xs">
-                                    <span className={g.result === 'W' ? 'text-[var(--bsi-success)] font-bold' : 'text-[var(--bsi-error)] font-bold'}>
+                                    <span className={g.result === 'W' ? 'text-success font-bold' : 'text-error font-bold'}>
                                       {g.result || '—'}
                                     </span>
                                   </td>
@@ -767,7 +766,7 @@ export default function PlayerDetailClient() {
                                       {g.isHome ? 'vs' : '@'} {g.opponent || '—'}
                                     </td>
                                     <td className="py-2 px-2 text-center text-xs">
-                                      <span className={g.result === 'W' ? 'text-[var(--bsi-success)] font-bold' : 'text-[var(--bsi-error)] font-bold'}>
+                                      <span className={g.result === 'W' ? 'text-success font-bold' : 'text-error font-bold'}>
                                         {g.result || '—'}
                                       </span>
                                     </td>
@@ -869,7 +868,6 @@ export default function PlayerDetailClient() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

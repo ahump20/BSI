@@ -297,8 +297,8 @@ export function StatDistribution({ data, className = '' }: Props) {
                 aria-pressed={i === metricIdx}
                 className={`px-2.5 py-1 rounded-[2px] text-[10px] uppercase tracking-wider transition-all cursor-pointer ${
                   i === metricIdx
-                    ? 'text-[var(--bsi-bone)]'
-                    : 'text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)]'
+                    ? 'text-bsi-bone'
+                    : 'text-bsi-dust hover:text-bsi-bone'
                 }`}
                 style={{
                   fontFamily: 'var(--font-display)',
@@ -321,7 +321,7 @@ export function StatDistribution({ data, className = '' }: Props) {
       {conferences.length > 0 && (
         <div className="px-5 py-3 border-t" style={{ borderColor: 'var(--border-vintage)' }}>
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[9px] font-mono text-[var(--bsi-dust)] uppercase tracking-wider shrink-0">
+            <span className="text-[9px] font-mono text-bsi-dust uppercase tracking-wider shrink-0">
               Overlay:
             </span>
             <div className="flex flex-wrap gap-1">

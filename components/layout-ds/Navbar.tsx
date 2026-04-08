@@ -165,8 +165,8 @@ function LeaguesDropdown({ items }: { items: LeagueNavItem[] }) {
                     )}
                     {isActive && (
                       <span className="relative flex h-2 w-2" title="In season">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--bsi-primary)] opacity-75" />
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--bsi-primary)]" />
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-bsi-primary opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-bsi-primary" />
                       </span>
                     )}
                   </span>
@@ -383,7 +383,7 @@ export function Navbar({ primary, leagues, secondary, analytics = [] }: NavbarPr
                 onClick={openCommandPalette}
                 className={`hidden md:flex items-center gap-2 rounded-sm border px-3 py-1.5 text-sm transition-all ${
                   navIsOverlay
-                    ? 'border-white/10 bg-black/20 text-[rgba(245,240,235,0.78)] hover:bg-black/35 hover:text-[var(--bsi-bone)]'
+                    ? 'border-white/10 bg-black/20 text-[rgba(245,240,235,0.78)] hover:bg-black/35 hover:text-bsi-bone'
                     : 'border-border-subtle bg-surface-light text-text-muted hover:bg-surface-medium hover:text-text-secondary'
                 }`}
                 aria-label="Open search"

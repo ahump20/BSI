@@ -221,7 +221,7 @@ function positionReducer(state: NodePositions, action: PositionAction): NodePosi
 
 function tierColor(tier: TierLabel): string {
   switch (tier) {
-    case 'key':  return '#BF5700'; // burnt-orange
+    case 'key':  return 'var(--bsi-primary)'; // burnt-orange
     case 'pro':  return '#FF6B35'; // ember
     case 'free': return '#FAF8F5'; // cream
     case 'meta': return '#6b7280'; // gray
@@ -309,7 +309,7 @@ export function PlaygroundERD() {
   return (
     <div style={{ display: 'flex', gap: '1.5rem', height: '600px' }}>
       {/* SVG canvas */}
-      <div style={{ flex: 1, background: '#111', borderRadius: '2px', border: '1px solid rgba(191,87,0,0.2)', overflow: 'hidden', position: 'relative' }}>
+      <div style={{ flex: 1, background: 'var(--surface-press-box)', borderRadius: '2px', border: '1px solid rgba(191,87,0,0.2)', overflow: 'hidden', position: 'relative' }}>
         {/* Reset button */}
         <button
           onClick={() => dispatch({ type: 'reset' })}
@@ -393,7 +393,7 @@ export function PlaygroundERD() {
                   height={NODE_H}
                   rx={4}
                   fill={isSelected ? 'rgba(191,87,0,0.25)' : '#1A1A1A'}
-                  stroke={isSelected ? '#BF5700' : 'rgba(191,87,0,0.35)'}
+                  stroke={isSelected ? 'var(--bsi-primary)' : 'rgba(191,87,0,0.35)'}
                   strokeWidth={isSelected ? 2 : 1}
                 />
                 {/* Table name */}
@@ -435,7 +435,7 @@ export function PlaygroundERD() {
         {selectedTableData ? (
           <>
             <div style={{ marginBottom: '1rem' }}>
-              <div style={{ fontSize: '0.65rem', color: '#BF5700', fontFamily: 'JetBrains Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>
+              <div style={{ fontSize: '0.65rem', color: 'var(--bsi-primary)', fontFamily: 'JetBrains Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>
                 {selectedTableData.db}
               </div>
               <div style={{ fontSize: '0.875rem', fontWeight: 700, color: '#FAF8F5', fontFamily: 'JetBrains Mono, monospace' }}>

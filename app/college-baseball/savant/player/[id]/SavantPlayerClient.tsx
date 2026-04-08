@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
-import { Footer } from '@/components/layout-ds/Footer';
 import { PercentileBar } from '@/components/analytics/PercentileBar';
 import { MetricGate } from '@/components/analytics/MetricGate';
 import { PlayerScoutingComposite } from '@/components/college-baseball/PlayerScoutingComposite';
@@ -141,7 +140,7 @@ function resolveTeamLogoUrl(teamName: string): string {
 
 function resolveTeamColors(teamName: string): { primary: string; secondary: string } {
   const meta = resolveTeamMeta(teamName);
-  return meta?.colors ?? { primary: '#BF5700', secondary: '#FFFFFF' };
+  return meta?.colors ?? { primary: 'var(--bsi-primary)', secondary: '#FFFFFF' };
 }
 
 // ---------------------------------------------------------------------------
@@ -384,7 +383,6 @@ export default function SavantPlayerClient() {
             </Container>
           </Section>
         </div>
-        <Footer />
       </>
     );
   }
@@ -448,8 +446,7 @@ export default function SavantPlayerClient() {
         {/*  SCOUTING DOSSIER HERO                                           */}
         {/* ================================================================ */}
         <section
-          className="relative overflow-hidden grain-overlay"
-          style={{ background: 'var(--surface-scoreboard, #0A0A0A)' }}
+          className="relative overflow-hidden grain-overlay bg-surface-scoreboard"
         >
           {/* Team color edge accent — left vertical bar */}
           <div
@@ -497,17 +494,16 @@ export default function SavantPlayerClient() {
             <div style={{ padding: 'clamp(1.25rem, 3vw, 2rem) 0 clamp(1.5rem, 3vw, 2.5rem)' }}>
               {/* Breadcrumb */}
               <nav
-                className="flex items-center gap-2 text-xs mb-6"
-                style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--bsi-dust)' }}
+                className="flex items-center gap-2 text-xs mb-6 font-mono text-bsi-dust"
                 aria-label="Breadcrumb"
               >
-                <Link href="/" className="transition-colors hover:text-[var(--bsi-bone)]">Home</Link>
+                <Link href="/" className="transition-colors hover:text-bsi-bone">Home</Link>
                 <span aria-hidden="true">/</span>
-                <Link href="/college-baseball" className="transition-colors hover:text-[var(--bsi-bone)]">College Baseball</Link>
+                <Link href="/college-baseball" className="transition-colors hover:text-bsi-bone">College Baseball</Link>
                 <span aria-hidden="true">/</span>
-                <Link href="/college-baseball/savant" className="transition-colors hover:text-[var(--bsi-bone)]">Savant</Link>
+                <Link href="/college-baseball/savant" className="transition-colors hover:text-bsi-bone">Savant</Link>
                 <span aria-hidden="true">/</span>
-                <span style={{ color: 'var(--bsi-primary)' }}>{playerName}</span>
+                <span className="text-bsi-primary">{playerName}</span>
               </nav>
 
               <ScrollReveal direction="up" delay={50}>
@@ -593,8 +589,7 @@ export default function SavantPlayerClient() {
                           {conference && (
                             <>
                               <span
-                                className="w-1 h-1 rounded-full"
-                                style={{ background: 'var(--bsi-dust)' }}
+                                className="w-1 h-1 rounded-full bg-bsi-dust"
                                 aria-hidden="true"
                               />
                               <span
@@ -661,10 +656,9 @@ export default function SavantPlayerClient() {
                           </span>
                           {isPitcher && pitching && (
                             <>
-                              <span className="w-1 h-1 rounded-full" style={{ background: 'var(--bsi-dust)' }} aria-hidden="true" />
+                              <span className="w-1 h-1 rounded-full bg-bsi-dust" aria-hidden="true" />
                               <span
-                                className="text-xs font-mono"
-                                style={{ color: 'var(--bsi-dust)' }}
+                                className="text-xs font-mono text-bsi-dust"
                               >
                                 {pitching.w}-{pitching.l}{pitching.sv > 0 ? `, ${pitching.sv} SV` : ''} &middot; {fmt1(pitching.ip)} IP
                               </span>
@@ -751,7 +745,7 @@ export default function SavantPlayerClient() {
 
                 <div className="relative flex-1 min-w-0">
                   <span
-                    className="text-sm font-semibold block group-hover:text-[var(--bsi-primary)] transition-colors"
+                    className="text-sm font-semibold block group-hover:text-bsi-primary transition-colors"
                     style={{
                       fontFamily: 'var(--bsi-font-display)',
                       color: 'var(--bsi-bone)',
@@ -862,13 +856,12 @@ export default function SavantPlayerClient() {
                         border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))',
                       }}
                     >
-                      <p className="text-xs" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
+                      <p className="text-xs text-bsi-dust font-mono">
                         {remaining} free profile{remaining === 1 ? '' : 's'} remaining
                       </p>
                       <Link
                         href="/pricing"
-                        className="text-xs uppercase tracking-wider transition-colors hover:text-[var(--bsi-bone)]"
-                        style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-primary)' }}
+                        className="text-xs uppercase tracking-wider transition-colors hover:text-bsi-bone font-display text-bsi-primary"
                       >
                         Go Pro
                       </Link>
@@ -886,15 +879,13 @@ export default function SavantPlayerClient() {
             >
               <Link
                 href={`/college-baseball/players/${playerId}`}
-                className="text-xs uppercase tracking-widest transition-colors hover:text-[var(--bsi-primary)]"
-                style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-display)' }}
+                className="text-xs uppercase tracking-widest transition-colors hover:text-bsi-primary text-bsi-dust font-display"
               >
                 Full Player Profile &rarr;
               </Link>
               <Link
                 href="/college-baseball/savant"
-                className="text-xs uppercase tracking-widest transition-colors hover:text-[var(--bsi-primary)]"
-                style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-display)' }}
+                className="text-xs uppercase tracking-widest transition-colors hover:text-bsi-primary text-bsi-dust font-display"
               >
                 Savant Leaderboard &rarr;
               </Link>
@@ -903,7 +894,6 @@ export default function SavantPlayerClient() {
         </section>
       </div>
 
-      <Footer />
     </>
   );
 }
@@ -987,12 +977,10 @@ function PercentileSection({
       }}
     >
       <div
-        className="px-5 py-3 flex items-center justify-between border-b"
-        style={{ borderColor: 'var(--border-vintage, rgba(140,98,57,0.3))' }}
+        className="px-5 py-3 flex items-center justify-between border-b border-border-vintage"
       >
         <h2
-          className="text-sm uppercase tracking-wider"
-          style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+          className="text-sm uppercase tracking-wider font-display text-bsi-bone"
         >
           {title}
         </h2>
@@ -1122,17 +1110,15 @@ function ScoutingGrades({
       }}
     >
       <div
-        className="px-5 py-3 border-b flex items-center justify-between"
-        style={{ borderColor: 'var(--border-vintage, rgba(140,98,57,0.3))' }}
+        className="px-5 py-3 border-b flex items-center justify-between border-border-vintage"
       >
         <div>
           <h2
-            className="text-sm uppercase tracking-wider"
-            style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+            className="text-sm uppercase tracking-wider font-display text-bsi-bone"
           >
             Scouting Grades
           </h2>
-          <p className="text-[10px] mt-0.5" style={{ color: 'var(--bsi-dust)' }}>
+          <p className="text-[10px] mt-0.5 text-bsi-dust">
             20-80 scale from D1 percentile rank
           </p>
         </div>
@@ -1184,8 +1170,7 @@ function GradeCard({ label, grade }: { label: string; grade: number }) {
         style={{ background: color }}
       />
       <span
-        className="text-[10px] uppercase tracking-[0.15em] block mb-2"
-        style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-dust)' }}
+        className="text-[10px] uppercase tracking-[0.15em] block mb-2 font-display text-bsi-dust"
       >
         {label}
       </span>
@@ -1296,12 +1281,10 @@ function RawStatLine({
       }}
     >
       <div
-        className="px-5 py-3 border-b"
-        style={{ borderColor: 'var(--border-vintage, rgba(140,98,57,0.3))' }}
+        className="px-5 py-3 border-b border-border-vintage"
       >
         <h2
-          className="text-sm uppercase tracking-wider"
-          style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+          className="text-sm uppercase tracking-wider font-display text-bsi-bone"
         >
           {title}
         </h2>
@@ -1317,8 +1300,7 @@ function RawStatLine({
 
         {/* Free Advanced */}
         <div
-          className="pt-3 border-t mb-3"
-          style={{ borderColor: 'rgba(140,98,57,0.15)' }}
+          className="pt-3 border-t mb-3 border-heritage-bronze/15"
         >
           <span
             className="heritage-stamp mb-2 block"
@@ -1340,8 +1322,7 @@ function RawStatLine({
             metricName={type === 'batting' ? 'wOBA, wRC+, OPS+' : 'FIP, xFIP, ERA-'}
           >
             <div
-              className="pt-3 border-t"
-              style={{ borderColor: 'rgba(140,98,57,0.15)' }}
+              className="pt-3 border-t border-heritage-bronze/15"
             >
               <span
                 className="heritage-stamp mb-2 block"
@@ -1370,14 +1351,12 @@ function StatCell({ label, value }: { label: string; value: string }) {
   return (
     <div>
       <span
-        className="text-[10px] uppercase tracking-widest block"
-        style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-dust)' }}
+        className="text-[10px] uppercase tracking-widest block font-display text-bsi-dust"
       >
         {label}
       </span>
       <span
-        className="text-sm font-bold tabular-nums"
-        style={{ color: 'var(--bsi-bone)', fontFamily: 'var(--bsi-font-data)' }}
+        className="text-sm font-bold tabular-nums text-bsi-bone font-mono"
       >
         {value}
       </span>

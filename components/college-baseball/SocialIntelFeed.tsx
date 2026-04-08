@@ -49,38 +49,38 @@ const SIGNAL_CONFIG: Record<string, {
 }> = {
   injury_lineup: {
     label: 'Injury / Lineup',
-    color: 'text-[var(--bsi-danger)]',
-    bg: 'bg-[var(--bsi-danger)]/10',
-    border: 'border-[var(--bsi-danger)]/25',
-    dot: 'bg-[var(--bsi-danger)]',
+    color: 'text-error',
+    bg: 'bg-error/10',
+    border: 'border-error/25',
+    dot: 'bg-error',
   },
   transfer_portal: {
     label: 'Transfer Portal',
-    color: 'text-[var(--bsi-warning)]',
-    bg: 'bg-[var(--bsi-warning)]/10',
-    border: 'border-[var(--bsi-warning)]/25',
-    dot: 'bg-[var(--bsi-warning)]',
+    color: 'text-warning',
+    bg: 'bg-warning/10',
+    border: 'border-warning/25',
+    dot: 'bg-warning',
   },
   recruiting: {
     label: 'Recruiting',
-    color: 'text-[var(--heritage-columbia-blue)]',
-    bg: 'bg-[var(--heritage-columbia-blue)]/10',
-    border: 'border-[var(--heritage-columbia-blue)]/25',
-    dot: 'bg-[var(--heritage-columbia-blue)]',
+    color: 'text-heritage-columbia',
+    bg: 'bg-heritage-columbia/10',
+    border: 'border-heritage-columbia/25',
+    dot: 'bg-heritage-columbia',
   },
   sentiment: {
     label: 'Sentiment',
-    color: 'text-[var(--bsi-success)]',
-    bg: 'bg-[var(--bsi-success)]/10',
-    border: 'border-[var(--bsi-success)]/25',
-    dot: 'bg-[var(--bsi-success)]',
+    color: 'text-success',
+    bg: 'bg-success/10',
+    border: 'border-success/25',
+    dot: 'bg-success',
   },
   general: {
     label: 'General',
     color: 'text-text-muted',
     bg: 'bg-surface',
     border: 'border-border',
-    dot: 'bg-[var(--bsi-dust)]',
+    dot: 'bg-bsi-dust',
   },
 };
 
@@ -99,9 +99,9 @@ const PLATFORM_CONFIG = {
   },
   twitter: {
     label: 'X / Twitter',
-    bg: 'bg-[var(--heritage-columbia-blue)]/15',
-    text: 'text-[var(--heritage-columbia-blue)]',
-    border: 'border-[var(--heritage-columbia-blue)]/25',
+    bg: 'bg-heritage-columbia/15',
+    text: 'text-heritage-columbia',
+    border: 'border-heritage-columbia/25',
     icon: (
       <svg viewBox="0 0 24 24" className="w-3 h-3 fill-current" aria-hidden>
         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
@@ -151,8 +151,8 @@ function SignalCard({ signal }: { signal: SocialSignal }) {
     <div
       className={`
         group relative rounded-sm border p-4 transition-all duration-200
-        bg-[#111111] border-border
-        hover:border-[#BF5700]/40 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30
+        bg-surface-press-box border-border
+        hover:border-bsi-primary/40 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30
         ${signal.post_url ? 'cursor-pointer' : ''}
       `}
     >
@@ -187,7 +187,7 @@ function SignalCard({ signal }: { signal: SocialSignal }) {
 
             {/* Team tag */}
             {signal.team_mentioned && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#BF5700]/15 text-[#BF5700] border border-[#BF5700]/25">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-bsi-primary/15 text-burnt-orange border border-bsi-primary/25">
                 {slugToDisplay(signal.team_mentioned)}
               </span>
             )}
@@ -201,7 +201,7 @@ function SignalCard({ signal }: { signal: SocialSignal }) {
 
         {/* Summary — primary display text */}
         {signal.summary ? (
-          <p className="text-sm text-text-primary leading-snug font-medium mb-1.5 group-hover:text-[#BF5700] transition-colors">
+          <p className="text-sm text-text-primary leading-snug font-medium mb-1.5 group-hover:text-burnt-orange transition-colors">
             {signal.summary}
           </p>
         ) : (
@@ -221,14 +221,14 @@ function SignalCard({ signal }: { signal: SocialSignal }) {
             {signal.player_mentioned && (
               <>
                 <span className="opacity-40">·</span>
-                <span className="text-[#BF5700]/80">{signal.player_mentioned}</span>
+                <span className="text-burnt-orange/80">{signal.player_mentioned}</span>
               </>
             )}
           </div>
 
           {/* Confidence pill — only show when notable */}
           {isHighConfidence && (
-            <span className="inline-flex items-center px-1.5 py-0.5 rounded-sm text-[9px] font-semibold uppercase tracking-widest bg-[var(--bsi-success)]/10 text-[var(--bsi-success)] border border-[var(--bsi-success)]/20 flex-shrink-0">
+            <span className="inline-flex items-center px-1.5 py-0.5 rounded-sm text-[9px] font-semibold uppercase tracking-widest bg-success/10 text-success border border-success/20 flex-shrink-0">
               {confidenceLabel(confidence)}
             </span>
           )}
@@ -243,7 +243,7 @@ function SignalCard({ signal }: { signal: SocialSignal }) {
         href={signal.post_url}
         target="_blank"
         rel="noopener noreferrer"
-        className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-[#BF5700] rounded-sm"
+        className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-bsi-primary rounded-sm"
         aria-label={signal.summary ?? signal.post_text.slice(0, 80)}
       >
         {inner}
@@ -291,9 +291,9 @@ function TabButton({
       className={`
         relative flex items-center gap-1.5 px-3.5 py-2.5 text-sm whitespace-nowrap
         border-b-2 transition-all duration-150
-        focus:outline-none focus-visible:ring-2 focus-visible:ring-[#BF5700]
+        focus:outline-none focus-visible:ring-2 focus-visible:ring-bsi-primary
         ${isActive
-          ? 'border-[#BF5700] text-text-primary font-semibold'
+          ? 'border-bsi-primary text-text-primary font-semibold'
           : 'border-transparent text-text-muted hover:text-text-secondary hover:border-border font-medium'
         }
       `}
@@ -308,7 +308,7 @@ function TabButton({
           className={`
             inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-semibold
             ${isActive
-              ? 'bg-[#BF5700] text-white'
+              ? 'bg-bsi-primary text-white'
               : 'bg-surface-light text-text-muted'
             }
           `}
@@ -360,8 +360,8 @@ export function SocialIntelFeed() {
         <div className="flex items-center gap-2.5">
           {/* Pulse indicator */}
           <span className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#BF5700] opacity-60" />
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#BF5700]" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-bsi-primary opacity-60" />
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-bsi-primary" />
           </span>
           <h2 className="font-['Oswald'] text-base uppercase tracking-wider text-text-primary">
             Social Intelligence
@@ -383,7 +383,7 @@ export function SocialIntelFeed() {
               Reddit
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--heritage-columbia-blue)]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-heritage-columbia" />
               X
             </span>
           </div>
@@ -435,7 +435,7 @@ export function SocialIntelFeed() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="px-3 py-1.5 text-xs font-medium bg-surface border border-border rounded-sm text-text-secondary hover:text-[#BF5700] hover:border-[#BF5700]/30 transition-all"
+                  className="px-3 py-1.5 text-xs font-medium bg-surface border border-border rounded-sm text-text-secondary hover:text-burnt-orange hover:border-bsi-primary/30 transition-all"
                 >
                   {link.label}
                 </Link>

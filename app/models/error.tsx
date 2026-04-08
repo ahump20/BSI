@@ -1,32 +1,22 @@
 'use client';
 
-interface ErrorProps {
+import { RouteErrorFallback } from '@/components/ui/RouteErrorFallback';
+
+export default function ModelsError({
+  error,
+  reset,
+}: {
   error: Error & { digest?: string };
   reset: () => void;
-}
-
-export default function ModelsError({ error, reset }: ErrorProps) {
+}) {
   return (
-    <div className="min-h-[60vh] flex items-center justify-center px-4">
-      <div className="max-w-md w-full bg-background-secondary border border-border-strong rounded-sm p-8 text-center">
-        <div className="text-4xl mb-4">&#128202;</div>
-        <h2 className="text-xl font-bold text-text-primary mb-2">Model data unavailable</h2>
-        <p className="text-text-muted text-sm mb-6">
-          {error.message || 'Unable to load analytics model data. This may be a temporary issue.'}
-        </p>
-        <button
-          onClick={reset}
-          className="px-6 py-2.5 bg-burnt-orange hover:bg-burnt-orange/80 text-white rounded-sm font-medium transition-colors"
-        >
-          Try again
-        </button>
-        <a
-          href="/models"
-          className="block mt-3 text-sm text-burnt-orange hover:text-ember transition-colors"
-        >
-          Back to Models
-        </a>
-      </div>
-    </div>
+    <RouteErrorFallback
+      error={error}
+      reset={reset}
+      label="Model"
+      emoji="&#128202;"
+      logTag="models"
+      backHref="/models"
+    />
   );
 }

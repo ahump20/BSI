@@ -124,7 +124,7 @@ export function ConferencePositionCard({
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+              <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                 <th className="text-center py-2 px-2 w-8">#</th>
                 <th className="text-left py-2 px-2">Team</th>
                 <th className="text-center py-2 px-2">Record</th>

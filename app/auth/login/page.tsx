@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 
 export default function LoginPage() {
   // --- Send My Key section ---
@@ -81,7 +80,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen grain-overlay" style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
+    <div className="min-h-screen grain-overlay bg-surface-scoreboard text-bsi-bone">
       {/* Hero */}
       <section className="relative overflow-hidden" style={{ padding: 'clamp(3rem, 6vw, 5rem) 0' }}>
         {/* Ember glow */}
@@ -104,12 +103,12 @@ export default function LoginPage() {
                   textShadow: '2px 2px 0px rgba(0,0,0,0.5)',
                 }}
               >
-                Welcome <span style={{ color: 'var(--bsi-primary)' }}>Back</span>
+                Welcome <span className="text-bsi-primary">Back</span>
               </h1>
               <div className="flex justify-center mb-6">
                 <div className="section-rule-thick w-12" />
               </div>
-              <p className="font-serif italic text-base leading-relaxed" style={{ color: 'var(--bsi-dust)' }}>
+              <p className="font-serif italic text-base leading-relaxed text-bsi-dust">
                 Sign in with your BSI key to access pro-tier analytics, Savant leaderboards, and game intelligence.
               </p>
             </div>
@@ -119,12 +118,11 @@ export default function LoginPage() {
           <ScrollReveal direction="up" delay={80}>
             <div className="heritage-card p-6 mb-6">
               <h2
-                className="text-lg font-bold uppercase tracking-wide mb-1"
-                style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+                className="text-lg font-bold uppercase tracking-wide mb-1 font-display text-bsi-bone"
               >
                 Need Your Key?
               </h2>
-              <p className="text-sm font-serif mb-4" style={{ color: 'var(--bsi-dust)' }}>
+              <p className="text-sm font-serif mb-4 text-bsi-dust">
                 Enter your email and we&apos;ll resend your key.
               </p>
 
@@ -159,8 +157,7 @@ export default function LoginPage() {
                 <div>
                   <label
                     htmlFor="email"
-                    className="block text-sm font-medium mb-2"
-                    style={{ color: 'var(--bsi-dust)' }}
+                    className="block text-sm font-medium mb-2 text-bsi-dust"
                   >
                     Email
                   </label>
@@ -200,12 +197,11 @@ export default function LoginPage() {
           <ScrollReveal direction="up" delay={140}>
             <div className="heritage-card p-6" style={{ borderTop: '3px solid var(--bsi-primary)' }}>
               <h2
-                className="text-lg font-bold uppercase tracking-wide mb-1"
-                style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+                className="text-lg font-bold uppercase tracking-wide mb-1 font-display text-bsi-bone"
               >
                 Have Your Key?
               </h2>
-              <p className="text-sm font-serif mb-4" style={{ color: 'var(--bsi-dust)' }}>
+              <p className="text-sm font-serif mb-4 text-bsi-dust">
                 Paste your key to access the dashboard.
               </p>
 
@@ -227,8 +223,7 @@ export default function LoginPage() {
                 <div>
                   <label
                     htmlFor="api-key"
-                    className="block text-sm font-medium mb-2"
-                    style={{ color: 'var(--bsi-dust)' }}
+                    className="block text-sm font-medium mb-2 text-bsi-dust"
                   >
                     API Key
                   </label>
@@ -264,12 +259,11 @@ export default function LoginPage() {
               </form>
 
               <div className="mt-6 text-center">
-                <p className="text-sm font-serif" style={{ color: 'var(--bsi-dust)' }}>
+                <p className="text-sm font-serif text-bsi-dust">
                   Don&apos;t have an account?{' '}
                   <Link
                     href="/pricing"
-                    className="transition-colors font-semibold"
-                    style={{ color: 'var(--bsi-primary)' }}
+                    className="transition-colors font-semibold text-bsi-primary"
                   >
                     Subscribe
                   </Link>
@@ -304,7 +298,6 @@ export default function LoginPage() {
         </div>
       </section>
 
-      <Footer />
     </div>
   );
 }

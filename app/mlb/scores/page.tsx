@@ -3,16 +3,18 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useSportData } from '@/lib/hooks/useSportData';
+import { TeamCircle } from '@/components/sports/TeamCircle';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
+import { FilterPill } from '@/components/ui/FilterPill';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
+
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
-import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
 import type { DataMeta } from '@/lib/types/data-meta';
 
 /* ── ESPN competitor shape (what the API actually returns) ── */
@@ -157,38 +159,20 @@ function GameCard({ game }: { game: Game }) {
   return (
     <Link href={`/mlb/game/${gameId}`} className="block">
       <div
-        className={`rounded-sm border transition-all ${
-          isLive ? 'border-success' : ''
+        className={`bg-background-tertiary rounded-sm border transition-all hover:border-burnt-orange hover:bg-surface-light ${
+          isLive ? 'border-success' : 'border-border-subtle'
         }`}
-        style={{
-          background: 'var(--surface-dugout)',
-          borderColor: isLive ? undefined : 'var(--border-vintage)',
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = 'var(--bsi-primary)';
-          e.currentTarget.style.background = 'var(--surface-press-box)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = isLive ? '' : 'var(--border-vintage)';
-          e.currentTarget.style.background = 'var(--surface-dugout)';
-        }}
       >
         {/* Game Status Bar */}
         <div
           className={`px-4 py-2 rounded-t-sm flex items-center justify-between ${
-            isLive ? 'bg-success/20' : ''
+            isLive ? 'bg-success/20' : isFinal ? 'bg-background-secondary' : 'bg-burnt-orange/20'
           }`}
-          style={{
-            background: isLive ? undefined : isFinal ? 'var(--surface-dugout)' : 'rgba(191,87,0,0.2)',
-          }}
         >
           <span
             className={`text-xs font-semibold uppercase ${
-              isLive ? 'text-success' : ''
+              isLive ? 'text-success' : isFinal ? 'text-text-tertiary' : 'text-burnt-orange'
             }`}
-            style={{
-              color: isLive ? undefined : isFinal ? 'rgba(196,184,165,0.5)' : 'var(--bsi-primary)',
-            }}
           >
             {isLive ? (
               <span className="flex items-center gap-1.5">
@@ -200,7 +184,7 @@ function GameCard({ game }: { game: Game }) {
             )}
           </span>
           {game.venue?.name && (
-            <span className="text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>{game.venue.name}</span>
+            <span className="text-xs text-text-tertiary">{game.venue.name}</span>
           )}
         </div>
 
@@ -209,110 +193,82 @@ function GameCard({ game }: { game: Game }) {
           {/* Away Team */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div
-                className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold"
-                style={{ background: 'var(--surface-dugout)', color: 'var(--bsi-primary)' }}
-              >
-                {away?.abbreviation || '—'}
-              </div>
+              <TeamCircle logo={away?.logo} abbreviation={away?.abbreviation || '—'} size="w-8 h-8" textSize="text-xs" />
               <div>
-                <p
-                  className="font-semibold"
-                  style={{ color: isFinal && away?.isWinner ? 'var(--bsi-bone)' : 'var(--bsi-dust)' }}
-                >
-                  {away?.name || 'Unknown'}
-                </p>
+                <div className="flex items-center gap-2">
+                  <p className={`font-semibold ${isFinal && away?.isWinner ? 'text-text-primary' : 'text-text-secondary'}`}>
+                    {away?.name || 'Unknown'}
+                  </p>
+                  {isFinal && away?.isWinner && (
+                    <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-success" fill="currentColor" aria-hidden="true">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                    </svg>
+                  )}
+                </div>
                 {away?.record && (
-                  <p className="text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>{away.record}</p>
+                  <p className="text-xs text-text-tertiary">{away.record}</p>
                 )}
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              {isFinal && away?.isWinner && (
-                <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                </svg>
-              )}
-              <span
-                className="text-2xl font-bold font-mono"
-                style={{
-                  color: isScheduled
-                    ? 'rgba(196,184,165,0.5)'
-                    : isFinal && away?.isWinner
-                      ? 'var(--bsi-bone)'
-                      : 'var(--bsi-dust)',
-                }}
-              >
-                {isScheduled ? '-' : away?.score ?? '-'}
-              </span>
-            </div>
+            <span
+              className={`text-2xl font-bold font-mono ${
+                isScheduled
+                  ? 'text-text-tertiary'
+                  : isFinal && away?.isWinner
+                    ? 'text-text-primary'
+                    : 'text-text-secondary'
+              }`}
+            >
+              {isScheduled ? '-' : away?.score ?? '-'}
+            </span>
           </div>
 
           {/* Home Team */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div
-                className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold"
-                style={{ background: 'var(--surface-dugout)', color: 'var(--bsi-primary)' }}
-              >
-                {home?.abbreviation || '—'}
-              </div>
+              <TeamCircle logo={home?.logo} abbreviation={home?.abbreviation || '—'} size="w-8 h-8" textSize="text-xs" />
               <div>
-                <p
-                  className="font-semibold"
-                  style={{ color: isFinal && home?.isWinner ? 'var(--bsi-bone)' : 'var(--bsi-dust)' }}
-                >
-                  {home?.name || 'Unknown'}
-                </p>
+                <div className="flex items-center gap-2">
+                  <p className={`font-semibold ${isFinal && home?.isWinner ? 'text-text-primary' : 'text-text-secondary'}`}>
+                    {home?.name || 'Unknown'}
+                  </p>
+                  {isFinal && home?.isWinner && (
+                    <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-success" fill="currentColor" aria-hidden="true">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                    </svg>
+                  )}
+                </div>
                 {home?.record && (
-                  <p className="text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>{home.record}</p>
+                  <p className="text-xs text-text-tertiary">{home.record}</p>
                 )}
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              {isFinal && home?.isWinner && (
-                <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                </svg>
-              )}
-              <span
-                className="text-2xl font-bold font-mono"
-                style={{
-                  color: isScheduled
-                    ? 'rgba(196,184,165,0.5)'
-                    : isFinal && home?.isWinner
-                      ? 'var(--bsi-bone)'
-                      : 'var(--bsi-dust)',
-                }}
-              >
-                {isScheduled ? '-' : home?.score ?? '-'}
-              </span>
-            </div>
+            <span
+              className={`text-2xl font-bold font-mono ${
+                isScheduled
+                  ? 'text-text-tertiary'
+                  : isFinal && home?.isWinner
+                    ? 'text-text-primary'
+                    : 'text-text-secondary'
+              }`}
+            >
+              {isScheduled ? '-' : home?.score ?? '-'}
+            </span>
           </div>
         </div>
 
         {/* Game Details Footer */}
         {(isFinal || isLive) && (
-          <div
-            className="px-4 pb-3 flex items-center justify-between text-xs pt-3"
-            style={{ color: 'rgba(196,184,165,0.5)', borderTop: '1px solid var(--border-vintage)' }}
-          >
-            <span>
-              H: {away?.hits ?? 0}-{home?.hits ?? 0}
-            </span>
-            <span>
-              E: {away?.errors ?? 0}-{home?.errors ?? 0}
-            </span>
-            <span style={{ color: 'var(--bsi-primary)' }}>Box Score →</span>
+          <div className="px-4 pb-3 flex items-center justify-between text-xs text-text-tertiary pt-3 border-t border-border-subtle">
+            <span>H: {away?.hits ?? 0}-{home?.hits ?? 0}</span>
+            <span>E: {away?.errors ?? 0}-{home?.errors ?? 0}</span>
+            <span className="text-burnt-orange">Box Score</span>
           </div>
         )}
 
         {/* Probable Pitchers for Scheduled Games */}
         {isScheduled && game.probablePitchers && (
-          <div
-            className="px-4 pb-3 text-xs pt-3"
-            style={{ color: 'rgba(196,184,165,0.5)', borderTop: '1px solid var(--border-vintage)' }}
-          >
+          <div className="px-4 pb-3 text-xs text-text-tertiary pt-3 border-t border-border-subtle">
             <div className="flex justify-between">
               <span>{game.probablePitchers.away?.name || 'Not Announced'}</span>
               <span>vs</span>
@@ -352,20 +308,19 @@ export default function MLBScoresPage() {
 
   return (
     <>
-      <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
+      <div>
         {/* Breadcrumb */}
-        <Section padding="sm" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
+        <Section padding="sm" className="border-b border-border-subtle">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/mlb"
-                className="transition-colors hover:opacity-80"
-                style={{ color: 'rgba(196,184,165,0.5)' }}
+                className="text-text-tertiary hover:text-burnt-orange transition-colors"
               >
                 MLB
               </Link>
-              <span style={{ color: 'rgba(196,184,165,0.5)' }}>/</span>
-              <span className="font-medium" style={{ color: 'var(--bsi-bone)' }}>Scores</span>
+              <span className="text-text-tertiary">/</span>
+              <span className="text-text-primary font-medium">Scores</span>
             </nav>
           </Container>
         </Section>
@@ -385,10 +340,7 @@ export default function MLBScoresPage() {
                 </ScrollReveal>
 
                 <ScrollReveal direction="up" delay={100}>
-                  <h1
-                    className="text-3xl md:text-4xl font-bold uppercase tracking-display text-gradient-blaze"
-                    style={{ fontFamily: 'var(--font-oswald)' }}
-                  >
+                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-gradient-blaze">
                     MLB Scores
                   </h1>
                 </ScrollReveal>
@@ -400,64 +352,46 @@ export default function MLBScoresPage() {
         {/* Date Selector & Games */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
+            <DataErrorBoundary name="MLB Scores">
             {/* Date Selector */}
             <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
               <button
                 onClick={() => setSelectedDate(getDateOffset(-3))}
-                className="p-2 transition-colors"
-                style={{ color: 'rgba(196,184,165,0.5)' }}
+                className="p-2 text-text-tertiary hover:text-text-primary transition-colors"
                 aria-label="Previous days"
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
+                <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M15 18l-6-6 6-6" />
                 </svg>
               </button>
 
               {dateOptions.map((option) => {
                 const dateValue = getDateOffset(option.offset);
-                const isSelected = selectedDate === dateValue;
-
                 return (
-                  <button
+                  <FilterPill
                     key={option.offset}
+                    active={selectedDate === dateValue}
                     onClick={() => setSelectedDate(dateValue)}
-                    className="px-4 py-2 rounded-sm font-semibold text-sm whitespace-nowrap transition-all"
-                    style={{
-                      background: isSelected ? 'var(--bsi-primary)' : 'var(--surface-dugout)',
-                      color: isSelected ? '#fff' : 'var(--bsi-dust)',
-                    }}
+                    uppercase={false}
+                    className="whitespace-nowrap"
                   >
                     {option.label}
-                  </button>
+                  </FilterPill>
                 );
               })}
 
               <button
                 onClick={() => setSelectedDate(getDateOffset(3))}
-                className="p-2 transition-colors"
-                style={{ color: 'rgba(196,184,165,0.5)' }}
+                className="p-2 text-text-tertiary hover:text-text-primary transition-colors"
                 aria-label="Next days"
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
+                <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M9 18l6-6-6-6" />
                 </svg>
               </button>
             </div>
 
             {/* Games Grid */}
-            <DataErrorBoundary name="MLB Scores">
             {loading ? (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -467,11 +401,10 @@ export default function MLBScoresPage() {
             ) : error ? (
               <Card variant="default" padding="lg" className="bg-error/10 border-error/30">
                 <p className="text-error font-semibold">Data Unavailable</p>
-                <p className="text-sm mt-1" style={{ color: 'var(--bsi-dust)' }}>{error}</p>
+                <p className="text-text-secondary text-sm mt-1">{error}</p>
                 <button
                   onClick={() => retry()}
-                  className="mt-4 px-4 py-2 text-white rounded-sm transition-colors"
-                  style={{ background: 'var(--bsi-primary)' }}
+                  className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange/80 transition-colors"
                 >
                   Retry
                 </button>
@@ -486,7 +419,7 @@ export default function MLBScoresPage() {
                 {/* Live Games Section */}
                 {games.some((g) => g.status.isLive) && (
                   <div className="mb-8">
-                    <h2 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: 'var(--bsi-bone)' }}>
+                    <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
                       <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
                       Live Games
                     </h2>
@@ -505,7 +438,7 @@ export default function MLBScoresPage() {
                 {/* Final Games */}
                 {games.some((g) => g.status.isFinal) && (
                   <div className="mb-8">
-                    <h2 className="text-lg font-semibold mb-4" style={{ color: 'var(--bsi-bone)' }}>Final</h2>
+                    <h2 className="text-lg font-semibold text-text-primary mb-4">Final</h2>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                       {games
                         .filter((g) => g.status.isFinal)
@@ -521,7 +454,7 @@ export default function MLBScoresPage() {
                 {/* Scheduled Games */}
                 {games.some((g) => !g.status.isLive && !g.status.isFinal) && (
                   <div>
-                    <h2 className="text-lg font-semibold mb-4" style={{ color: 'var(--bsi-bone)' }}>Upcoming</h2>
+                    <h2 className="text-lg font-semibold text-text-primary mb-4">Upcoming</h2>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                       {games
                         .filter((g) => !g.status.isLive && !g.status.isFinal)
@@ -535,13 +468,13 @@ export default function MLBScoresPage() {
                 )}
 
                 {/* Data Source Footer */}
-                <div className="mt-8 pt-4 flex items-center justify-between flex-wrap gap-4" style={{ borderTop: '1px solid var(--border-vintage)' }}>
+                <div className="mt-8 pt-4 border-t border-border-subtle flex items-center justify-between flex-wrap gap-4">
                   <DataSourceBadge
                     source={meta?.dataSource || 'MLB Stats API'}
                     timestamp={formatTimestamp(meta?.lastUpdated)}
                   />
                   {hasLiveGames && (
-                    <span className="text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                    <span className="text-xs text-text-tertiary">
                       Auto-refreshing every 30 seconds
                     </span>
                   )}
@@ -553,7 +486,6 @@ export default function MLBScoresPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

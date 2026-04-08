@@ -6,7 +6,6 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { DataAttribution } from '@/components/ui/DataAttribution';
-import { Footer } from '@/components/layout-ds/Footer';
 import { PlayerCompareCard } from '@/components/college-baseball/PlayerCompareCard';
 import { useSportData } from '@/lib/hooks/useSportData';
 
@@ -338,7 +337,6 @@ export default function PlayerComparePage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

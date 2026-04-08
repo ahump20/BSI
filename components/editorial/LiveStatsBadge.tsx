@@ -45,9 +45,9 @@ export function LiveStatsBadge({ espnId }: LiveStatsBadgeProps) {
     : null;
 
   return (
-    <div className="mt-6 rounded-sm bg-[var(--surface-press-box)] border border-border-subtle p-4">
+    <div className="mt-6 rounded-sm bg-surface-press-box border border-border-subtle p-4">
       <div className="flex items-center gap-2 mb-3">
-        <div className="w-2 h-2 rounded-full bg-[var(--bsi-primary)] animate-pulse" />
+        <div className="w-2 h-2 rounded-full bg-bsi-primary animate-pulse" />
         <span className="text-[10px] uppercase tracking-wider text-text-muted font-semibold">
           Live Data
         </span>

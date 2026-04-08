@@ -113,7 +113,7 @@ const SPORT_NAV = [
     href: '/mlb/',
     desc: 'Scores, standings, and player tracking across both leagues',
     flagship: false,
-    accent: '#4B9CD3',
+    accent: 'var(--heritage-columbia-blue)',
     badge: null,
   },
   {
@@ -345,10 +345,10 @@ function ScoreTicker({
               >
                 {g.sportShort}
               </span>
-              <span className="font-medium" style={{ color: 'var(--bsi-dust)' }}>{awayName}</span>
+              <span className="font-medium text-bsi-dust">{awayName}</span>
               <span className="font-bold tabular-nums mx-0.5" style={{ color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}>{awayScore}</span>
-              <span className="mx-0.5" style={{ color: 'rgba(196,184,165,0.5)' }}>@</span>
-              <span className="font-medium" style={{ color: 'var(--bsi-dust)' }}>{homeName}</span>
+              <span className="mx-0.5 text-bsi-dust/50">@</span>
+              <span className="font-medium text-bsi-dust">{homeName}</span>
               <span className="font-bold tabular-nums mx-0.5" style={{ color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}>{homeScore}</span>
               {isLive && (
                 <span className="inline-flex items-center gap-1 ml-1.5 px-1.5 py-0.5 rounded-sm" style={{ background: 'rgba(16,185,129,0.1)' }}>
@@ -359,12 +359,12 @@ function ScoreTicker({
                 </span>
               )}
               {isFinal && (
-                <span className="text-[9px] uppercase tracking-wider ml-1.5 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                <span className="text-[9px] uppercase tracking-wider ml-1.5 font-semibold text-bsi-dust/50">
                   Final
                 </span>
               )}
               {!isLive && !isFinal && displayStatus && (
-                <span className="text-[9px] uppercase tracking-wider ml-1.5" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                <span className="text-[9px] uppercase tracking-wider ml-1.5 text-bsi-dust/50">
                   {displayStatus}
                 </span>
               )}
@@ -375,8 +375,7 @@ function ScoreTicker({
             <span key={`${g.id ?? i}-${i}`} className="inline-flex items-center shrink-0">
               {i > 0 && (
                 <span
-                  className="mx-5 text-[10px]"
-                  style={{ color: 'var(--bsi-primary)', opacity: 0.6 }}
+                  className="mx-5 text-[10px] text-bsi-primary opacity-60"
                   aria-hidden="true"
                 >
                   &#9670;
@@ -386,16 +385,14 @@ function ScoreTicker({
                 <button
                   type="button"
                   onClick={() => onGameClick(g.sport, g.id!)}
-                  className="inline-flex items-center gap-1.5 text-[13px] transition-colors hover:text-[var(--bsi-primary)] cursor-pointer"
-                  style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-bone)', textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
+                  className="inline-flex items-center gap-1.5 text-[13px] transition-colors hover:text-bsi-primary cursor-pointer font-mono text-bsi-bone" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
                 >
                   {scoreContent}
                 </button>
               ) : (
                 <Link
                   href={`/${g.sport}/`}
-                  className="inline-flex items-center gap-1.5 text-[13px] transition-colors hover:text-[var(--bsi-primary)]"
-                  style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-bone)', textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
+                  className="inline-flex items-center gap-1.5 text-[13px] transition-colors hover:text-bsi-primary font-mono text-bsi-bone" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
                 >
                   {scoreContent}
                 </Link>
@@ -459,7 +456,7 @@ function SportPulseStrip({ pulse }: { pulse: Record<string, SportPulseData> }) {
                 }}
               >
                 <span
-                  className="text-[10px] uppercase tracking-[0.12em] font-bold whitespace-nowrap transition-colors group-hover:text-[var(--bsi-primary)]"
+                  className="text-[10px] uppercase tracking-[0.12em] font-bold whitespace-nowrap transition-colors group-hover:text-bsi-primary"
                   style={{
                     fontFamily: 'var(--font-oswald)',
                     color: hasGames ? 'var(--bsi-bone)' : 'var(--bsi-dust)',
@@ -476,23 +473,20 @@ function SportPulseStrip({ pulse }: { pulse: Record<string, SportPulseData> }) {
                       <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500" />
                     </span>
                     <span
-                      className="text-[10px] font-bold tabular-nums"
-                      style={{ fontFamily: 'var(--font-mono)', color: '#10B981' }}
+                      className="text-[10px] font-bold tabular-nums font-mono text-success"
                     >
                       {live}
                     </span>
                   </span>
                 ) : hasGames ? (
                   <span
-                    className="text-[10px] tabular-nums"
-                    style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
+                    className="text-[10px] tabular-nums font-mono text-bsi-dust"
                   >
                     {total}
                   </span>
                 ) : (
                   <span
-                    className="text-[9px]"
-                    style={{ fontFamily: 'var(--font-mono)', color: 'rgba(196,184,165,0.4)' }}
+                    className="text-[9px] font-mono text-bsi-dust/40"
                   >
                     --
                   </span>
@@ -535,8 +529,7 @@ function StandoutCard({
           style={{ background: accentColor }}
         />
         <span
-          className="text-[10px] uppercase tracking-[0.15em] font-semibold"
-          style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-dust)' }}
+          className="text-[10px] uppercase tracking-[0.15em] font-semibold font-display text-bsi-dust"
         >
           {label}
         </span>
@@ -545,14 +538,12 @@ function StandoutCard({
       <div className="flex items-end justify-between gap-3">
         <div className="min-w-0">
           <p
-            className="text-base sm:text-lg font-bold truncate group-hover:text-[var(--bsi-primary)] transition-colors"
-            style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+            className="text-base sm:text-lg font-bold truncate group-hover:text-bsi-primary transition-colors font-display text-bsi-bone"
           >
             {player.name}
           </p>
           <p
-            className="text-[11px] mt-0.5"
-            style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
+            className="text-[11px] mt-0.5 font-mono text-bsi-dust"
           >
             {player.team}
           </p>
@@ -565,8 +556,7 @@ function StandoutCard({
             {statValue}
           </p>
           <p
-            className="text-[9px] uppercase tracking-wider mt-1"
-            style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
+            className="text-[9px] uppercase tracking-wider mt-1 font-mono text-bsi-dust"
           >
             {statLabel}
           </p>
@@ -580,10 +570,9 @@ function StandoutCard({
         {supportingStats.map((s) => (
           <span
             key={s.label}
-            className="text-[10px] tabular-nums"
-            style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
+            className="text-[10px] tabular-nums font-mono text-bsi-dust"
           >
-            {s.value} <span className="text-[var(--bsi-dust)]">{s.label}</span>
+            {s.value} <span className="text-bsi-dust">{s.label}</span>
           </span>
         ))}
       </div>
@@ -618,15 +607,13 @@ function LeaderboardTable({
         }}
       >
         <h2
-          className="text-xs uppercase tracking-[0.15em] font-bold"
-          style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary-light)' }}
+          className="text-xs uppercase tracking-[0.15em] font-bold font-display text-bsi-primary"
         >
           {title}
         </h2>
         <Link
           href={href}
-          className="text-[10px] uppercase tracking-wider transition-colors hover:text-[var(--bsi-primary)]"
-          style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
+          className="text-[10px] uppercase tracking-wider transition-colors hover:text-bsi-primary font-mono text-bsi-dust"
         >
           Full board &rarr;
         </Link>
@@ -636,7 +623,7 @@ function LeaderboardTable({
         className="border border-t-0 overflow-x-auto"
         style={{ borderColor: 'var(--border-vintage)', borderRadius: '0 0 2px 2px' }}
       >
-        <table className="w-full text-[11px]" style={{ fontFamily: 'var(--font-mono)' }}>
+        <table className="w-full text-[11px] font-mono">
           <thead>
             <tr style={{ background: 'rgba(17,17,17,0.5)' }}>
               <th
@@ -677,14 +664,13 @@ function LeaderboardTable({
                 onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(191,87,0,0.04)')}
                 onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
               >
-                <td className="pl-4 pr-1 py-2 tabular-nums" style={{ color: 'var(--bsi-dust)' }}>
+                <td className="pl-4 pr-1 py-2 tabular-nums text-bsi-dust">
                   {idx + 1}
                 </td>
                 <td className="px-1 py-2 max-w-[180px]">
                   <Link
                     href={row.player_id ? `/college-baseball/savant/player/${row.player_id}/` : '#'}
-                    className="transition-colors duration-100 hover:text-[var(--bsi-primary)]"
-                    style={{ color: 'var(--bsi-bone)' }}
+                    className="transition-colors duration-100 hover:text-bsi-primary text-bsi-bone"
                   >
                     {row.player_name}
                   </Link>
@@ -715,8 +701,7 @@ function LeaderboardTable({
 
       {meta && (
         <div
-          className="flex items-center justify-between px-4 py-1.5 text-[9px]"
-          style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
+          className="flex items-center justify-between px-4 py-1.5 text-[9px] font-mono text-bsi-dust"
         >
           <span>Source: {meta.source}</span>
           <span>
@@ -743,10 +728,10 @@ function TableSkeleton() {
   return (
     <div>
       <div
-        className="h-10"
-        style={{ background: 'var(--surface-press-box)', borderBottom: '2px solid rgba(191,87,0,0.3)' }}
+        className="h-10 bg-surface-press-box"
+        style={{ borderBottom: '2px solid rgba(191,87,0,0.3)' }}
       />
-      <div className="border border-t-0 overflow-hidden animate-pulse" style={{ borderColor: 'var(--border-vintage)' }}>
+      <div className="border border-t-0 overflow-hidden animate-pulse border-border-vintage">
         {Array.from({ length: 8 }).map((_, i) => (
           <div
             key={i}
@@ -790,22 +775,21 @@ function LeaderboardEmpty({ title, error, onRetry }: { title: string; error?: st
   return (
     <div>
       <div
-        className="flex items-center justify-between px-4 py-2.5"
-        style={{ background: 'var(--surface-press-box)', borderBottom: '2px solid rgba(191,87,0,0.3)' }}
+        className="flex items-center justify-between px-4 py-2.5 bg-surface-press-box"
+        style={{ borderBottom: '2px solid rgba(191,87,0,0.3)' }}
       >
         <h2
-          className="text-xs uppercase tracking-[0.15em] font-bold"
-          style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary-light)' }}
+          className="text-xs uppercase tracking-[0.15em] font-bold font-display text-bsi-primary"
         >{title}</h2>
       </div>
-      <div className="border border-t-0 px-4 py-8 text-center" style={{ borderColor: 'var(--border-vintage)' }}>
-        <p className="text-xs" style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}>
+      <div className="border border-t-0 px-4 py-8 text-center border-border-vintage">
+        <p className="text-xs font-mono text-bsi-dust">
           {error ? 'Data temporarily unavailable' : 'No leaderboard data available'}
         </p>
         {onRetry && (
           <button
             onClick={onRetry}
-            className="mt-3 text-[10px] uppercase tracking-wider px-3 py-1.5 border rounded-sm transition-colors hover:bg-[rgba(191,87,0,0.08)] hover:border-[var(--bsi-primary)]"
+            className="mt-3 text-[10px] uppercase tracking-wider px-3 py-1.5 border rounded-sm transition-colors hover:bg-[rgba(191,87,0,0.08)] hover:border-bsi-primary"
             style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-primary)', borderColor: 'rgba(191,87,0,0.3)' }}
           >Retry</button>
         )}
@@ -817,7 +801,7 @@ function LeaderboardEmpty({ title, error, onRetry }: { title: string; error?: st
 function StandoutEmpty() {
   return (
     <div className="heritage-card p-5 flex items-center justify-center" style={{ minHeight: '120px' }}>
-      <p className="text-[10px] uppercase tracking-wider" style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}>
+      <p className="text-[10px] uppercase tracking-wider font-mono text-bsi-dust">
         Updating player data...
       </p>
     </div>
@@ -885,8 +869,7 @@ function NewsCard({ article, sport }: { article: NewsArticle; sport: string }) {
       )}
       <div className="px-3 pb-3 pt-2 flex-1">
         <p
-          className="text-xs sm:text-sm font-semibold leading-snug line-clamp-2 group-hover:text-[var(--bsi-primary)] transition-colors"
-          style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+          className="text-xs sm:text-sm font-semibold leading-snug line-clamp-2 group-hover:text-bsi-primary transition-colors font-display text-bsi-bone"
         >
           {article.headline}
         </p>
@@ -1014,7 +997,7 @@ export function HomePageClient() {
   }, []);
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard)' }}>
+    <div className="min-h-screen bg-surface-scoreboard">
 
       {/* ================================================================= */}
       {/* MODE: LANDING PAGE — Selling zone. Hero + pitch + proof points.   */}
@@ -1086,7 +1069,7 @@ export function HomePageClient() {
               }}
             >
               Sports Intelligence,{' '}
-              <span style={{ color: 'var(--bsi-primary)' }}>Put Simply</span>
+              <span className="text-bsi-primary">Put Simply</span>
             </h1>
           </div>
 
@@ -1106,8 +1089,7 @@ export function HomePageClient() {
           {/* Supporting line */}
           <div className="hero-entrance" style={{ animationDelay: '600ms' }}>
             <p
-              className="mt-5 text-sm sm:text-base md:text-lg leading-relaxed max-w-2xl mx-auto"
-              style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)', lineHeight: 1.7 }}
+              className="mt-5 text-sm sm:text-base md:text-lg leading-relaxed max-w-2xl mx-auto font-serif text-bsi-dust leading-[1.7]"
             >
               The numbers behind what your eyes already tell you — translated
               across college baseball, MLB, NFL, NBA, and college football.
@@ -1118,15 +1100,13 @@ export function HomePageClient() {
           <div className="hero-entrance flex flex-wrap items-center justify-center gap-4 mt-10" style={{ animationDelay: '800ms' }}>
             <Link
               href="/scores/"
-              className="btn-heritage-fill text-xs sm:text-sm uppercase tracking-wider px-7 py-3"
-              style={{ fontFamily: 'var(--font-oswald)' }}
+              className="btn-heritage-fill text-xs sm:text-sm uppercase tracking-wider px-7 py-3 font-display"
             >
               Live Scores
             </Link>
             <Link
               href="/college-baseball/savant/"
-              className="btn-heritage text-xs sm:text-sm uppercase tracking-wider px-7 py-3"
-              style={{ fontFamily: 'var(--font-oswald)' }}
+              className="btn-heritage text-xs sm:text-sm uppercase tracking-wider px-7 py-3 font-display"
             >
               BSI Savant
             </Link>
@@ -1146,8 +1126,7 @@ export function HomePageClient() {
                 </span>
                 <DataTransition value={totalLiveCount} mode="flip">
                   <span
-                    className="text-[10px] uppercase tracking-wider font-semibold"
-                    style={{ fontFamily: 'var(--font-mono)', color: '#10B981' }}
+                    className="text-[10px] uppercase tracking-wider font-semibold font-mono text-success"
                   >
                     {totalLiveCount} live
                   </span>
@@ -1182,15 +1161,13 @@ export function HomePageClient() {
             style={{ width: '3.5rem' }}
           />
           <h2
-            className="text-2xl sm:text-3xl md:text-[2.75rem] font-bold uppercase leading-tight"
-            style={{ fontFamily: 'var(--font-bebas)', color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}
+            className="text-2xl sm:text-3xl md:text-[2.75rem] font-bold uppercase leading-tight font-display text-bsi-bone tracking-[0.02em]"
           >
             Five Sports. One Language.{' '}
-            <span style={{ color: 'var(--bsi-primary)' }}>Yours.</span>
+            <span className="text-bsi-primary">Yours.</span>
           </h2>
           <p
-            className="mt-6 text-base sm:text-lg md:text-xl leading-relaxed"
-            style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)', lineHeight: 1.8 }}
+            className="mt-6 text-base sm:text-lg md:text-xl leading-relaxed font-serif text-bsi-dust leading-[1.8]"
           >
             College baseball, MLB, NFL, NBA, and college football — with the analytical
             depth that mainstream sports media skip. The numbers behind what your eyes already
@@ -1210,14 +1187,12 @@ export function HomePageClient() {
             ].map((p, idx) => (
               <div key={p.label} className="hero-entrance" style={{ animationDelay: `${idx * 100}ms` }}>
                 <span
-                  className="text-2xl sm:text-3xl md:text-4xl font-bold tabular-nums"
-                  style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-primary)' }}
+                  className="text-2xl sm:text-3xl md:text-4xl font-bold tabular-nums font-mono text-bsi-primary"
                 >
                   {p.stat}
                 </span>
                 <span
-                  className="block text-[10px] sm:text-[11px] uppercase tracking-[0.15em] mt-1.5"
-                  style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-dust)' }}
+                  className="block text-[10px] sm:text-[11px] uppercase tracking-[0.15em] mt-1.5 font-display text-bsi-dust"
                 >
                   {p.label}
                 </span>
@@ -1237,15 +1212,14 @@ export function HomePageClient() {
             {/* Flagship sport — College Baseball gets hero treatment */}
             <Link
               href={SPORT_NAV[0].href}
-              className="group block heritage-card overflow-hidden mb-5 transition-all duration-300 hover:border-[var(--bsi-primary)]"
+              className="group block heritage-card overflow-hidden mb-5 transition-all duration-300 hover:border-bsi-primary"
               style={{ borderLeft: `3px solid ${SPORT_NAV[0].accent}` }}
             >
               <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-5 sm:p-7">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-2">
                     <h3
-                      className="text-lg sm:text-xl font-bold uppercase tracking-[0.04em] transition-colors group-hover:text-[var(--bsi-primary)]"
-                      style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                      className="text-lg sm:text-xl font-bold uppercase tracking-[0.04em] transition-colors group-hover:text-bsi-primary font-display text-bsi-bone"
                     >
                       {SPORT_NAV[0].name}
                     </h3>
@@ -1263,8 +1237,7 @@ export function HomePageClient() {
                     )}
                   </div>
                   <p
-                    className="text-sm leading-relaxed"
-                    style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)', lineHeight: 1.6 }}
+                    className="text-sm leading-relaxed font-serif text-bsi-dust leading-[1.6]"
                   >
                     {SPORT_NAV[0].desc}
                   </p>
@@ -1279,16 +1252,14 @@ export function HomePageClient() {
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
                       </span>
                       <span
-                        className="text-[10px] font-bold tabular-nums"
-                        style={{ fontFamily: 'var(--font-mono)', color: '#10B981' }}
+                        className="text-[10px] font-bold tabular-nums font-mono text-success"
                       >
                         {sportPulse['college-baseball'].live} live
                       </span>
                     </span>
                   )}
                   <span
-                    className="text-[10px] uppercase tracking-wider transition-colors group-hover:text-[var(--bsi-primary)]"
-                    style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
+                    className="text-[10px] uppercase tracking-wider transition-colors group-hover:text-bsi-primary font-mono text-bsi-dust"
                   >
                     Explore &rarr;
                   </span>
@@ -1323,8 +1294,7 @@ export function HomePageClient() {
                         <span className="flex items-center gap-1">
                           <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
                           <span
-                            className="text-[9px] font-bold tabular-nums"
-                            style={{ fontFamily: 'var(--font-mono)', color: '#10B981' }}
+                            className="text-[9px] font-bold tabular-nums font-mono text-success"
                           >
                             {pulseData.live}
                           </span>
@@ -1332,8 +1302,7 @@ export function HomePageClient() {
                       )}
                     </div>
                     <p
-                      className="text-[11px] leading-snug line-clamp-2"
-                      style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)', lineHeight: 1.5 }}
+                      className="text-[11px] leading-snug line-clamp-2 font-serif text-bsi-dust leading-[1.5]"
                     >
                       {sport.desc}
                     </p>
@@ -1374,22 +1343,19 @@ export function HomePageClient() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2
-                className="text-xl sm:text-2xl md:text-3xl font-bold uppercase"
-                style={{ fontFamily: 'var(--font-bebas)', color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}
+                className="text-xl sm:text-2xl md:text-3xl font-bold uppercase font-display text-bsi-bone tracking-[0.02em]"
               >
                 The BSI Savant Standard
               </h2>
               <p
-                className="text-xs sm:text-sm mt-1.5"
-                style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)' }}
+                className="text-xs sm:text-sm mt-1.5 font-serif text-bsi-dust"
               >
                 What analytical depth actually looks like — live from the leaderboard
               </p>
             </div>
             <Link
               href="/college-baseball/savant/"
-              className="btn-heritage text-[10px] uppercase tracking-wider px-4 py-2 shrink-0"
-              style={{ fontFamily: 'var(--font-oswald)' }}
+              className="btn-heritage text-[10px] uppercase tracking-wider px-4 py-2 shrink-0 font-display"
             >
               Full leaderboard &rarr;
             </Link>
@@ -1424,7 +1390,7 @@ export function HomePageClient() {
               ) : topPitcher ? (
                 <StandoutCard
                   label="Top Pitcher"
-                  accentColor="#4B9CD3"
+                  accentColor="var(--heritage-columbia-blue)"
                   player={{ name: topPitcher.player_name, team: topPitcher.team }}
                   statLabel="FIP"
                   statValue={fmt2(topPitcher.fip ?? 0)}
@@ -1465,8 +1431,7 @@ export function HomePageClient() {
             </DataErrorBoundary>
 
             <div
-              className="col-span-full my-1 border-t lg:hidden"
-              style={{ borderColor: 'var(--border-vintage)' }}
+              className="col-span-full my-1 border-t lg:hidden border-border-vintage"
             />
 
             <DataErrorBoundary name="PitchingLeaderboard" compact>
@@ -1509,19 +1474,17 @@ export function HomePageClient() {
             >
               <div className="flex items-center gap-2">
                 <span
-                  className="w-1.5 h-1.5 rounded-full shrink-0 transition-colors group-hover:bg-[var(--bsi-primary)]"
+                  className="w-1.5 h-1.5 rounded-full shrink-0 transition-colors group-hover:bg-bsi-primary"
                   style={{ background: 'rgba(191,87,0,0.4)' }}
                 />
                 <p
-                  className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.1em] transition-colors group-hover:text-[var(--bsi-primary)]"
-                  style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-dust)' }}
+                  className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.1em] transition-colors group-hover:text-bsi-primary font-display text-bsi-dust"
                 >
                   {item.title}
                 </p>
               </div>
               <p
-                className="text-[9px] sm:text-[10px] mt-1 ml-3.5"
-                style={{ fontFamily: 'var(--font-mono)', color: 'rgba(196,184,165,0.5)' }}
+                className="text-[9px] sm:text-[10px] mt-1 ml-3.5 font-mono text-bsi-dust/50"
               >
                 {item.desc}
               </p>
@@ -1541,15 +1504,13 @@ export function HomePageClient() {
           <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
             <div className="flex items-center justify-between mb-5">
               <h2
-                className="text-xs uppercase tracking-[0.15em] font-bold"
-                style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary-light)' }}
+                className="text-xs uppercase tracking-[0.15em] font-bold font-display text-bsi-primary"
               >
                 Across the Wire
               </h2>
               <Link
                 href="/intel/"
-                className="text-[10px] uppercase tracking-wider transition-colors hover:text-[var(--bsi-primary)]"
-                style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
+                className="text-[10px] uppercase tracking-wider transition-colors hover:text-bsi-primary font-mono text-bsi-dust"
               >
                 All intel &rarr;
               </Link>
@@ -1582,20 +1543,17 @@ export function HomePageClient() {
         <div className="absolute inset-0 pointer-events-none grain-overlay" style={{ opacity: 0.15 }} />
         <ScrollReveal as="div" direction="fade" className="relative max-w-5xl mx-auto px-4 sm:px-6 py-16 sm:py-24 md:py-28 text-center">
           <h2
-            className="text-xl sm:text-2xl md:text-[2.25rem] font-bold uppercase"
-            style={{ fontFamily: 'var(--font-bebas)', color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}
+            className="text-xl sm:text-2xl md:text-[2.25rem] font-bold uppercase font-display text-bsi-bone tracking-[0.02em]"
           >
             The Numbers Behind What You Already Know.
           </h2>
           <p
-            className="mt-2 text-sm sm:text-base uppercase tracking-[0.12em]"
-            style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary)' }}
+            className="mt-2 text-sm sm:text-base uppercase tracking-[0.12em] font-display text-bsi-primary"
           >
             No paywall.
           </p>
           <p
-            className="mt-4 text-sm sm:text-base max-w-lg mx-auto"
-            style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)', lineHeight: 1.7 }}
+            className="mt-4 text-sm sm:text-base max-w-lg mx-auto font-serif text-bsi-dust leading-[1.7]"
           >
             Live scores, advanced analytics, and scouting intel across college baseball,
             MLB, NFL, NBA, and college football — updating now.
@@ -1603,15 +1561,13 @@ export function HomePageClient() {
           <div className="flex items-center justify-center gap-4 mt-10">
             <Link
               href="/scores/"
-              className="btn-heritage-fill text-xs sm:text-sm uppercase tracking-wider px-7 py-3.5"
-              style={{ fontFamily: 'var(--font-oswald)' }}
+              className="btn-heritage-fill text-xs sm:text-sm uppercase tracking-wider px-7 py-3.5 font-display"
             >
               Live Scores
             </Link>
             <Link
               href="/college-baseball/savant/"
-              className="btn-heritage text-xs sm:text-sm uppercase tracking-wider px-7 py-3.5"
-              style={{ fontFamily: 'var(--font-oswald)' }}
+              className="btn-heritage text-xs sm:text-sm uppercase tracking-wider px-7 py-3.5 font-display"
             >
               BSI Savant
             </Link>
@@ -1634,14 +1590,12 @@ export function HomePageClient() {
           />
           <div>
             <p
-              className="text-[10px] uppercase tracking-[0.2em] font-semibold"
-              style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-dust)' }}
+              className="text-[10px] uppercase tracking-[0.2em] font-semibold font-display text-bsi-dust"
             >
               Blaze Intelligence
             </p>
             <p
-              className="text-[9px] mt-0.5"
-              style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}
+              className="text-[9px] mt-0.5 font-mono text-bsi-dust"
             >
               5 sports &middot; 330 programs &middot; recalculated every 6 hours
             </p>

@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { formatDateInTimezone } from '@/lib/utils/timezone';
 import { useResolvedParam } from '@/lib/hooks/useResolvedParam';
 import type {
@@ -100,7 +99,7 @@ function UpcomingGameCard({ game }: { game: UpcomingGame }) {
           {game.matchup_notes.travel_or_rest_if_verified.length > 0 && (
             <div className="mt-2">
               {game.matchup_notes.travel_or_rest_if_verified.map((note, i) => (
-                <div key={i} className="text-[var(--bsi-warning)]/60 text-xs italic">{note}</div>
+                <div key={i} className="text-warning/60 text-xs italic">{note}</div>
               ))}
             </div>
           )}
@@ -210,7 +209,6 @@ export function DailyClient({ date: rawDate }: { date: string }) {
             </Container>
           </Section>
         </div>
-        <Footer />
       </>
     );
   }
@@ -232,7 +230,6 @@ export function DailyClient({ date: rawDate }: { date: string }) {
             </Container>
           </Section>
         </div>
-        <Footer />
       </>
     );
   }
@@ -393,7 +390,6 @@ export function DailyClient({ date: rawDate }: { date: string }) {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

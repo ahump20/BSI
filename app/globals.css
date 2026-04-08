@@ -83,7 +83,7 @@ html {
   text-rendering: optimizeLegibility;
   scroll-behavior: smooth;
   scrollbar-width: thin;
-  scrollbar-color: #BF5700 #0d0d0d;
+  scrollbar-color: var(--bsi-primary) #0d0d0d;
 }
 
 body {
@@ -167,7 +167,7 @@ body::after {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #BF5700;
+  background: var(--bsi-primary);
   border-radius: 2px;
 }
 
@@ -551,7 +551,7 @@ textarea:focus-visible,
     inset: 0;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(135deg, #BF5700, #FF6B35, #8B4513, #BF5700);
+    background: linear-gradient(135deg, var(--bsi-primary), var(--bsi-accent), var(--bsi-texas-soil), var(--bsi-primary));
     background-size: 300% 300%;
     mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -583,7 +583,7 @@ textarea:focus-visible,
   }
 
   .text-gradient {
-    background: linear-gradient(135deg, #BF5700, #FF6B35, #BF5700);
+    background: linear-gradient(135deg, var(--bsi-primary), var(--bsi-accent), var(--bsi-primary));
     background-size: 200% 200%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -863,7 +863,7 @@ textarea:focus-visible,
    Uses dedicated value (same as press-box today) so section rhythm and
    table headers can evolve independently. */
 .surface-lifted {
-  background: #111111;
+  background: var(--surface-press-box);
 }
 .surface-deep {
   background: var(--surface-scoreboard);

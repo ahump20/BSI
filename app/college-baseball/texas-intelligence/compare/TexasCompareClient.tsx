@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
@@ -57,8 +56,8 @@ type Player = (Hitter | Pitcher) & { type: 'hitter' | 'pitcher' };
 // ─── Constants ──────────────────────────────────────────────────────────────
 
 const TEAM_ID = 'texas';
-const ACCENT = '#BF5700';
-const COMPARE_COLOR = '#4B9CD3';
+const ACCENT = 'var(--bsi-primary)';
+const COMPARE_COLOR = 'var(--heritage-columbia-blue)';
 
 // ─── Radar Chart ────────────────────────────────────────────────────────────
 
@@ -210,7 +209,7 @@ export default function TexasCompareClient() {
         </Section>
 
         {/* Hero */}
-        <Section padding="lg" className="relative overflow-hidden bg-[var(--surface-scoreboard)]">
+        <Section padding="lg" className="relative overflow-hidden bg-surface-scoreboard">
           <div className="absolute top-0 left-0 right-0 h-1" style={{ backgroundColor: ACCENT }} />
           <Container>
             <ScrollReveal direction="up">
@@ -240,7 +239,7 @@ export default function TexasCompareClient() {
                   <select
                     value={playerA}
                     onChange={(e) => setPlayerA(e.target.value)}
-                    className="w-full bg-[var(--surface-dugout)] border border-border rounded-sm px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
+                    className="w-full bg-surface-dugout border border-border rounded-sm px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
                     aria-label="Select first player"
                   >
                     <option value="">Select a player...</option>
@@ -256,7 +255,7 @@ export default function TexasCompareClient() {
                   <select
                     value={playerB}
                     onChange={(e) => setPlayerB(e.target.value)}
-                    className="w-full bg-[var(--surface-dugout)] border border-border rounded-sm px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
+                    className="w-full bg-surface-dugout border border-border rounded-sm px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
                     aria-label="Select second player"
                   >
                     <option value="">Select a player...</option>
@@ -329,7 +328,7 @@ export default function TexasCompareClient() {
                       <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                           <thead>
-                            <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                            <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                               <th className="text-right py-2 px-2" style={{ color: ACCENT }}>{selectedA.name}</th>
                               <th className="text-center py-2 px-2 w-20">Stat</th>
                               <th className="text-left py-2 px-2" style={{ color: COMPARE_COLOR }}>{selectedB.name}</th>
@@ -415,7 +414,6 @@ export default function TexasCompareClient() {
           </Container>
         </Section>
       </main>
-      <Footer />
     </>
   );
 }

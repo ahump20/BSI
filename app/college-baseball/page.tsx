@@ -11,7 +11,6 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { DataSourceBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { preseason2026 } from '@/lib/data/preseason-2026';
 import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
@@ -660,7 +659,7 @@ function CollegeBaseballPageInner() {
                                     {['#', 'Team', 'Conf', 'W', 'L', 'Conf W-L'].map((h) => (
                                       <th
                                         key={h}
-                                        className="text-left p-3 text-[var(--bsi-dust)] font-semibold text-xs uppercase tracking-wider"
+                                        className="text-left p-3 text-bsi-dust font-semibold text-xs uppercase tracking-wider"
                                       >
                                         {h}
                                       </th>
@@ -840,7 +839,7 @@ function CollegeBaseballPageInner() {
                       {filteredGames.some((g) => g.status === 'live') && (
                         <div className="mb-6">
                           <h3 className="text-sm font-semibold text-text-primary mb-3 flex items-center gap-2">
-                            <span className="w-2 h-2 bg-[var(--bsi-primary)] rounded-full animate-pulse" />
+                            <span className="w-2 h-2 bg-bsi-primary rounded-full animate-pulse" />
                             Live Games
                           </h3>
                           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
@@ -1036,8 +1035,7 @@ function CollegeBaseballPageInner() {
                     <div className="relative p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                       <div className="max-w-xl">
                         <span
-                          className="text-[10px] font-bold uppercase tracking-[0.15em] block mb-3"
-                          style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary)' }}
+                          className="text-[10px] font-bold uppercase tracking-[0.15em] block mb-3 font-display text-bsi-primary"
                         >
                           Advanced Analytics
                         </span>
@@ -1047,7 +1045,7 @@ function CollegeBaseballPageInner() {
                         >
                           BSI Savant
                         </h3>
-                        <p className="text-sm leading-relaxed" style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--bsi-dust)' }}>
+                        <p className="text-sm leading-relaxed font-serif text-bsi-dust">
                           Park-adjusted leaderboards, player profiles with scouting grades,
                           conference strength rankings, park factor analysis, and 16 interactive
                           visualization tools — all powered by live D1 data.
@@ -1127,7 +1125,6 @@ function CollegeBaseballPageInner() {
               </Container>
             </Section>
           </div>
-          <Footer />
         </>
       </div>
     </ErrorBoundary>

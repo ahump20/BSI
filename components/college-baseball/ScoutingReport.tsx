@@ -86,8 +86,7 @@ function GradeBar({ label, grade }: { label: string; grade: number }) {
   return (
     <div className="flex items-center gap-3">
       <span
-        className="text-[10px] uppercase tracking-wider w-20 shrink-0"
-        style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-dust)' }}
+        className="text-[10px] uppercase tracking-wider w-20 shrink-0 font-display text-bsi-dust"
       >
         {label}
       </span>
@@ -133,8 +132,7 @@ function GradesSection({ grades, isHitter }: { grades: ScoutingGrades; isHitter:
       {/* Overall grade — prominent */}
       <div className="flex items-center gap-3 mb-4">
         <span
-          className="text-[10px] uppercase tracking-wider"
-          style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-dust)' }}
+          className="text-[10px] uppercase tracking-wider font-display text-bsi-dust"
         >
           Overall
         </span>
@@ -175,14 +173,12 @@ function KeyStatsGrid({ stats }: { stats: Record<string, string | number> }) {
           style={{ background: 'rgba(255,255,255,0.03)' }}
         >
           <p
-            className="text-[10px] uppercase tracking-wider mb-1"
-            style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-dust)' }}
+            className="text-[10px] uppercase tracking-wider mb-1 font-display text-bsi-dust"
           >
             {label}
           </p>
           <p
-            className="text-sm font-semibold"
-            style={{ fontFamily: 'var(--bsi-font-mono)', color: 'var(--bsi-bone)' }}
+            className="text-sm font-semibold font-mono text-bsi-bone"
           >
             {value}
           </p>
@@ -204,15 +200,14 @@ function ReportTeaser({ teaser }: { teaser: { sections: string[]; cta: string } 
         style={{ borderBottom: '1px solid var(--border-vintage)' }}
       >
         <h3
-          className="text-sm uppercase tracking-wider font-bold"
-          style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+          className="text-sm uppercase tracking-wider font-bold font-display text-bsi-bone"
         >
           AI Scouting Report
         </h3>
         <span className="heritage-stamp">Pro</span>
       </div>
       <div className="p-5">
-        <p className="text-sm mb-4" style={{ color: 'var(--bsi-dust)' }}>
+        <p className="text-sm mb-4 text-bsi-dust">
           Unlock narrative scouting reports powered by AI analysis of player statistics,
           advanced metrics, and game log trends.
         </p>
@@ -223,7 +218,7 @@ function ReportTeaser({ teaser }: { teaser: { sections: string[]; cta: string } 
                 className="w-1.5 h-1.5 rounded-sm"
                 style={{ background: 'var(--bsi-primary)' }}
               />
-              <span className="text-xs" style={{ color: 'var(--bsi-dust)' }}>
+              <span className="text-xs text-bsi-dust">
                 {section}
               </span>
             </div>
@@ -282,15 +277,14 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
             style={{ borderBottom: '1px solid var(--border-vintage)' }}
           >
             <h3
-              className="text-sm uppercase tracking-wider font-bold"
-              style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+              className="text-sm uppercase tracking-wider font-bold font-display text-bsi-bone"
             >
               AI Scouting Report
             </h3>
             <span className="heritage-stamp">BSI Intelligence</span>
           </div>
           <div className="p-5 text-center">
-            <p className="text-sm mb-4" style={{ color: 'var(--bsi-dust)' }}>
+            <p className="text-sm mb-4 text-bsi-dust">
               Generate a narrative scouting report with scout grades, strengths,
               weaknesses, projection, and comparables — powered by AI analysis of this
               player&apos;s full statistical profile.
@@ -316,8 +310,7 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
           style={{ borderBottom: '1px solid var(--border-vintage)' }}
         >
           <h3
-            className="text-sm uppercase tracking-wider font-bold"
-            style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+            className="text-sm uppercase tracking-wider font-bold font-display text-bsi-bone"
           >
             AI Scouting Report
           </h3>
@@ -326,7 +319,7 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
         <div className="p-5 flex items-center justify-center py-12">
           <div className="flex flex-col items-center gap-3">
             <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'var(--bsi-primary)', borderTopColor: 'transparent' }} />
-            <p className="text-xs" style={{ color: 'var(--bsi-dust)' }}>
+            <p className="text-xs text-bsi-dust">
               Analyzing stats, sabermetrics, and game log trends...
             </p>
           </div>
@@ -344,14 +337,13 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
           style={{ borderBottom: '1px solid var(--border-vintage)' }}
         >
           <h3
-            className="text-sm uppercase tracking-wider font-bold"
-            style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+            className="text-sm uppercase tracking-wider font-bold font-display text-bsi-bone"
           >
             AI Scouting Report
           </h3>
         </div>
         <div className="p-5 text-center">
-          <p className="text-sm mb-3" style={{ color: 'var(--bsi-dust)' }}>{error}</p>
+          <p className="text-sm mb-3 text-bsi-dust">{error}</p>
           <button onClick={fetchReport} className="btn-heritage text-xs">
             Try Again
           </button>
@@ -388,12 +380,11 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
         >
           <div>
             <h3
-              className="text-sm uppercase tracking-wider font-bold"
-              style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+              className="text-sm uppercase tracking-wider font-bold font-display text-bsi-bone"
             >
               AI Scouting Report
             </h3>
-            <p className="text-[11px] mt-0.5" style={{ color: 'var(--bsi-dust)' }}>
+            <p className="text-[11px] mt-0.5 text-bsi-dust">
               {report.playerName} &middot; {report.team} &middot; {report.position}
             </p>
           </div>
@@ -401,7 +392,7 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
         </div>
 
         {/* Summary */}
-        <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
+        <div className="px-5 py-4 border-b border-border-vintage">
           <p
             className="text-sm leading-relaxed"
             style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--bsi-bone)' }}
@@ -418,8 +409,7 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
           {/* Grades */}
           <div className="p-5" style={{ borderRight: '1px solid var(--border-vintage)' }}>
             <p
-              className="text-[10px] uppercase tracking-wider mb-3"
-              style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-primary)' }}
+              className="text-[10px] uppercase tracking-wider mb-3 font-display text-bsi-primary"
             >
               Scout Grades (20-80 Scale)
             </p>
@@ -429,8 +419,7 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
           {/* Key Stats */}
           <div className="p-5">
             <p
-              className="text-[10px] uppercase tracking-wider mb-3"
-              style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-primary)' }}
+              className="text-[10px] uppercase tracking-wider mb-3 font-display text-bsi-primary"
             >
               Key Numbers
             </p>
@@ -445,8 +434,7 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
         >
           <div className="p-5" style={{ borderRight: '1px solid var(--border-vintage)' }}>
             <p
-              className="text-[10px] uppercase tracking-wider mb-2"
-              style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-primary)' }}
+              className="text-[10px] uppercase tracking-wider mb-2 font-display text-bsi-primary"
             >
               Strengths
             </p>
@@ -454,15 +442,14 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
               {report.strengths.map((s, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className="w-1.5 h-1.5 rounded-sm mt-1.5 shrink-0" style={{ background: '#27ae60' }} />
-                  <span className="text-xs leading-relaxed" style={{ color: 'var(--bsi-bone)' }}>{s}</span>
+                  <span className="text-xs leading-relaxed text-bsi-bone">{s}</span>
                 </li>
               ))}
             </ul>
           </div>
           <div className="p-5">
             <p
-              className="text-[10px] uppercase tracking-wider mb-2"
-              style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-primary)' }}
+              className="text-[10px] uppercase tracking-wider mb-2 font-display text-bsi-primary"
             >
               Weaknesses
             </p>
@@ -470,7 +457,7 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
               {report.weaknesses.map((w, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className="w-1.5 h-1.5 rounded-sm mt-1.5 shrink-0" style={{ background: '#c0392b' }} />
-                  <span className="text-xs leading-relaxed" style={{ color: 'var(--bsi-bone)' }}>{w}</span>
+                  <span className="text-xs leading-relaxed text-bsi-bone">{w}</span>
                 </li>
               ))}
             </ul>
@@ -478,10 +465,9 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
         </div>
 
         {/* Projection */}
-        <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
+        <div className="px-5 py-4 border-b border-border-vintage">
           <p
-            className="text-[10px] uppercase tracking-wider mb-2"
-            style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-primary)' }}
+            className="text-[10px] uppercase tracking-wider mb-2 font-display text-bsi-primary"
           >
             Projection
           </p>
@@ -495,10 +481,9 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
 
         {/* Comparables */}
         {report.comparables.length > 0 && (
-          <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
+          <div className="px-5 py-4 border-b border-border-vintage">
             <p
-              className="text-[10px] uppercase tracking-wider mb-2"
-              style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-primary)' }}
+              className="text-[10px] uppercase tracking-wider mb-2 font-display text-bsi-primary"
             >
               Comparables
             </p>
@@ -506,7 +491,7 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
               {report.comparables.map((comp, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className="w-1.5 h-1.5 rounded-sm mt-1.5 shrink-0" style={{ background: 'var(--heritage-columbia-blue)' }} />
-                  <span className="text-xs leading-relaxed" style={{ color: 'var(--bsi-bone)' }}>{comp}</span>
+                  <span className="text-xs leading-relaxed text-bsi-bone">{comp}</span>
                 </li>
               ))}
             </ul>
@@ -514,14 +499,13 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
         )}
 
         {/* Full Narrative — collapsible */}
-        <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
+        <div className="px-5 py-4 border-b border-border-vintage">
           <button
             onClick={() => setExpanded(!expanded)}
             className="flex items-center gap-2 mb-2 group"
           >
             <p
-              className="text-[10px] uppercase tracking-wider"
-              style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-primary)' }}
+              className="text-[10px] uppercase tracking-wider font-display text-bsi-primary"
             >
               Full Narrative Report
             </p>
@@ -553,14 +537,13 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
 
         {/* Trust footer */}
         <div
-          className="px-5 py-3 flex items-center justify-between"
-          style={{ background: 'var(--surface-press-box)' }}
+          className="px-5 py-3 flex items-center justify-between bg-surface-press-box"
         >
-          <span className="text-[10px]" style={{ color: 'var(--bsi-dust)' }}>
+          <span className="text-[10px] text-bsi-dust">
             {data?.meta?.source ?? 'BSI'} &middot; {data?.meta?.model ?? 'AI'}
             {data?.meta?.cached ? ' · Cached' : ''}
           </span>
-          <span className="text-[10px]" style={{ color: 'var(--bsi-dust)' }}>
+          <span className="text-[10px] text-bsi-dust">
             {data?.meta?.fetched_at ? formatTimestamp(data.meta.fetched_at) : ''}
           </span>
         </div>

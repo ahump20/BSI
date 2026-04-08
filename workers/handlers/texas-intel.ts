@@ -17,7 +17,7 @@
  */
 
 import type { Env } from '../shared/types';
-import { json, cachedJson, withMeta, kvGet, kvPut } from '../shared/helpers';
+import { json, cachedJson, withMeta, kvGet, kvPut, logError } from '../shared/helpers';
 
 // ─── YouTube Videos ─────────────────────────────────────────────────────────
 
@@ -80,7 +80,9 @@ export async function handleTexasIntelVideos(env: Env): Promise<Response> {
 
     return cachedJson(payload, 200, 300, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[handleTexasIntelVideos]', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleTexasIntelVideos]', msg);
+    await logError(env, msg, 'handleTexasIntelVideos');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -220,7 +222,9 @@ export async function handleTexasIntelNews(env: Env): Promise<Response> {
 
   return cachedJson(payload, 200, 120, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[handleTexasIntelNews]', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleTexasIntelNews]', msg);
+    await logError(env, msg, 'handleTexasIntelNews');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -309,7 +313,9 @@ Format as JSON: { "title": "...", "date": "${new Date().toISOString().slice(0, 1
 
     return cachedJson(payload, 200, 600, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[handleTexasIntelDigest]', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleTexasIntelDigest]', msg);
+    await logError(env, msg, 'handleTexasIntelDigest');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -596,7 +602,9 @@ export async function handleTexasPlayerProfile(env: Env, playerId: string): Prom
     await kvPut(env.KV, KV_KEY, payload, TTL);
     return cachedJson(payload, 200, 300, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[handleTexasPlayerProfile]', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleTexasPlayerProfile]', msg);
+    await logError(env, msg, 'handleTexasPlayerProfile');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -734,7 +742,9 @@ Respond ONLY with valid JSON in this exact structure:
     await kvPut(env.KV, KV_KEY, payload, TTL);
     return cachedJson(payload, 200, 600, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[handleTexasOpponentScout]', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleTexasOpponentScout]', msg);
+    await logError(env, msg, 'handleTexasOpponentScout');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -817,7 +827,9 @@ Respond with plain text only — no JSON, no markdown headers.`,
     await kvPut(env.KV, ANALYSIS_KEY, analysis, ANALYSIS_TTL);
     return cachedJson(withMeta(analysis, 'anthropic'), 200, 300, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[handleTexasGameAnalysisGenerate]', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleTexasGameAnalysisGenerate]', msg);
+    await logError(env, msg, 'handleTexasGameAnalysisGenerate');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -866,7 +878,9 @@ export async function handleTexasGameAnalyses(env: Env): Promise<Response> {
     await kvPut(env.KV, KV_KEY, payload, TTL);
     return cachedJson(payload, 200, 300, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[handleTexasGameAnalyses]', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleTexasGameAnalyses]', msg);
+    await logError(env, msg, 'handleTexasGameAnalyses');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -968,7 +982,9 @@ export async function handleTexasPitchingStaff(env: Env): Promise<Response> {
     await kvPut(env.KV, KV_KEY, payload, TTL);
     return cachedJson(payload, 200, 300, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[handleTexasPitchingStaff]', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleTexasPitchingStaff]', msg);
+    await logError(env, msg, 'handleTexasPitchingStaff');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -1178,7 +1194,9 @@ export async function handleTexasScheduleHeatMap(env: Env): Promise<Response> {
     await kvPut(env.KV, KV_KEY, payload, TTL);
     return cachedJson(payload, 200, 600, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[handleTexasScheduleHeatMap]', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleTexasScheduleHeatMap]', msg);
+    await logError(env, msg, 'handleTexasScheduleHeatMap');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -1301,7 +1319,9 @@ export async function handleTexasMatchup(env: Env, opponentId: string): Promise<
     await kvPut(env.KV, KV_KEY, payload, TTL);
     return cachedJson(payload, 200, 300, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[handleTexasMatchup]', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleTexasMatchup]', msg);
+    await logError(env, msg, 'handleTexasMatchup');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -1374,7 +1394,9 @@ export async function handleTexasDraftBoard(env: Env): Promise<Response> {
     await kvPut(env.KV, KV_KEY, payload, TTL);
     return cachedJson(payload, 200, 600, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[handleTexasDraftBoard]', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleTexasDraftBoard]', msg);
+    await logError(env, msg, 'handleTexasDraftBoard');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -1436,7 +1458,9 @@ export async function handleTexasPortalIntel(env: Env): Promise<Response> {
     await kvPut(env.KV, KV_KEY, payload, TTL);
     return cachedJson(payload, 200, 300, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[handleTexasPortalIntel]', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleTexasPortalIntel]', msg);
+    await logError(env, msg, 'handleTexasPortalIntel');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -1536,7 +1560,9 @@ export async function handleTexasTrends(env: Env): Promise<Response> {
     await kvPut(env.KV, KV_KEY, payload, TTL);
     return cachedJson(payload, 200, 300, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[handleTexasTrends]', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleTexasTrends]', msg);
+    await logError(env, msg, 'handleTexasTrends');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }

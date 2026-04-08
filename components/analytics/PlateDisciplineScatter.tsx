@@ -102,7 +102,7 @@ export function PlateDisciplineScatter({
           className="bg-[var(--svt-surface,_rgba(140,98,57,0.12))] border border-[var(--svt-border,_rgba(140,98,57,0.2))] rounded-sm px-2.5 py-1.5 text-xs text-[var(--svt-text-muted,_#C4B8A5)] font-mono appearance-none cursor-pointer hover:border-[var(--svt-accent,_#BF5700)] transition-colors focus:outline-none"
         >
           {conferences.map(c => (
-            <option key={c} value={c} className="bg-[var(--surface-press-box)] text-[#e8eaf0]">
+            <option key={c} value={c} className="bg-surface-press-box text-[#e8eaf0]">
               {c || 'All Conferences'}
             </option>
           ))}
@@ -233,12 +233,12 @@ export function PlateDisciplineScatter({
 
         {/* Quadrant labels */}
         <div className="flex justify-between px-14 -mt-2 mb-2">
-          <span className="text-[9px] font-savant-display uppercase tracking-[0.12em] text-[var(--bsi-success)]/30">Elite Eye</span>
-          <span className="text-[9px] font-savant-display uppercase tracking-[0.12em] text-[var(--bsi-warning)]/30">Aggressive Power</span>
+          <span className="text-[9px] font-savant-display uppercase tracking-[0.12em] text-success/30">Elite Eye</span>
+          <span className="text-[9px] font-savant-display uppercase tracking-[0.12em] text-warning/30">Aggressive Power</span>
         </div>
         <div className="flex justify-between px-14 -mt-1">
-          <span className="text-[9px] font-savant-display uppercase tracking-[0.12em] text-[var(--bsi-dust)]/30">Patient Contact</span>
-          <span className="text-[9px] font-savant-display uppercase tracking-[0.12em] text-[var(--bsi-danger)]/30">Free Swinger</span>
+          <span className="text-[9px] font-savant-display uppercase tracking-[0.12em] text-bsi-dust/30">Patient Contact</span>
+          <span className="text-[9px] font-savant-display uppercase tracking-[0.12em] text-error/30">Free Swinger</span>
         </div>
       </div>
 

@@ -5,7 +5,6 @@ import { Section } from '@/components/ui/Section';
 import { Card, StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
 export const metadata: Metadata = {
@@ -82,11 +81,11 @@ export default function Weekend5RecapPage() {
         <Section padding="sm" className="border-b border-white/10">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">
                 College Baseball
               </Link>
               <span className="text-white/40">/</span>
-              <Link href="/college-baseball/editorial" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball/editorial" className="text-white/40 hover:text-burnt-orange transition-colors">
                 Editorial
               </Link>
               <span className="text-white/40">/</span>
@@ -97,7 +96,7 @@ export default function Weekend5RecapPage() {
 
         {/* ── 1. HERO ──────────────────────────────────────── */}
         <Section padding="lg" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#BF5700]/20 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-bsi-primary/20 to-transparent pointer-events-none" />
           <Container>
             <ScrollReveal direction="up">
               <div className="max-w-3xl">
@@ -166,7 +165,7 @@ export default function Weekend5RecapPage() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6">
                 The Statement Series: FSU Sweeps Wake Forest
               </h2>
             </ScrollReveal>
@@ -197,7 +196,7 @@ export default function Weekend5RecapPage() {
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6">
                 SEC Opening Weekend: Walkoffs, Sweeps, and First Blood
               </h2>
             </ScrollReveal>
@@ -243,14 +242,14 @@ export default function Weekend5RecapPage() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6">
                 Performance of the Weekend
               </h2>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={100}>
               <Card variant="default" padding="lg">
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-14 h-14 bg-[#BF5700]/20 rounded-full flex items-center justify-center text-lg font-bold text-[#BF5700]">
+                  <div className="w-14 h-14 bg-bsi-primary/20 rounded-full flex items-center justify-center text-lg font-bold text-burnt-orange">
                     LHP
                   </div>
                   <div>
@@ -264,7 +263,7 @@ export default function Weekend5RecapPage() {
                     <div className="text-xs text-white/40 uppercase tracking-wide">Innings Pitched</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-display text-[#BF5700]">14 K</div>
+                    <div className="text-2xl font-display text-burnt-orange">14 K</div>
                     <div className="text-xs text-white/40 uppercase tracking-wide">Strikeouts</div>
                   </div>
                   <div className="text-center">
@@ -288,7 +287,7 @@ export default function Weekend5RecapPage() {
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6">
                 The Upset Report
               </h2>
             </ScrollReveal>
@@ -322,7 +321,7 @@ export default function Weekend5RecapPage() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6">
                 Top 25 — Post-Weekend 5
               </h2>
             </ScrollReveal>
@@ -363,7 +362,7 @@ export default function Weekend5RecapPage() {
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6">
                 Texas Report
               </h2>
             </ScrollReveal>
@@ -412,7 +411,7 @@ export default function Weekend5RecapPage() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6">
                 Tuesday Midweek: March 17 Results
               </h2>
             </ScrollReveal>
@@ -446,7 +445,7 @@ export default function Weekend5RecapPage() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6">
                 The National Picture: What Conference Play Revealed
               </h2>
             </ScrollReveal>
@@ -482,7 +481,7 @@ export default function Weekend5RecapPage() {
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6">
                 Weekend 6 Preview: March 20–22
               </h2>
             </ScrollReveal>
@@ -573,7 +572,7 @@ export default function Weekend5RecapPage() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6">
                 BSI Verdict
               </h2>
             </ScrollReveal>
@@ -616,7 +615,6 @@ export default function Weekend5RecapPage() {
         </Section>
       </main>
 
-      <Footer />
     </>
   );
 }

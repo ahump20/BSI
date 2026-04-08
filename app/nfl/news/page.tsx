@@ -7,7 +7,7 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
+
 import { Skeleton } from '@/components/ui/Skeleton';
 import { formatTimestamp, getRelativeTime } from '@/lib/utils/timezone';
 import { getReadApiUrl } from '@/lib/utils/public-api';
@@ -166,9 +166,9 @@ export default function NFLNewsPage() {
 
   return (
     <>
-      <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
+      <div className="min-h-screen bg-surface-scoreboard text-bsi-bone">
         {/* Breadcrumb */}
-        <Section padding="sm" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
+        <Section padding="sm border-b border-border-vintage">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
@@ -181,7 +181,7 @@ export default function NFLNewsPage() {
                 NFL
               </Link>
               <span style={{ color: 'rgba(196,184,165,0.5)' }}>/</span>
-              <span className="font-medium" style={{ color: 'var(--bsi-bone)' }}>News</span>
+              <span className="font-medium text-bsi-bone">News</span>
             </nav>
           </Container>
         </Section>
@@ -191,10 +191,10 @@ export default function NFLNewsPage() {
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
           <Container>
             <ScrollReveal>
-              <h1 className="text-3xl md:text-4xl font-bold uppercase tracking-wider mb-2" style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}>
+              <h1 className="text-3xl md:text-4xl font-bold uppercase tracking-wider mb-2 font-display text-bsi-bone">
                 NFL News
               </h1>
-              <p className="max-w-2xl" style={{ color: 'var(--bsi-dust)' }}>
+              <p className="max-w-2xl text-bsi-dust">
                 Trades, injuries, draft buzz, and game coverage. All 32 teams, no network spin.
               </p>
             </ScrollReveal>
@@ -239,7 +239,7 @@ export default function NFLNewsPage() {
             ) : error ? (
               <Card variant="default" padding="lg" className="bg-error/10 border-error/30">
                 <p className="text-error font-semibold">Unable to Load News</p>
-                <p className="text-sm mt-1" style={{ color: 'var(--bsi-dust)' }}>{error}</p>
+                <p className="text-sm mt-1 text-bsi-dust">{error}</p>
               </Card>
             ) : filteredNews.length === 0 ? (
               <Card variant="default" padding="lg">
@@ -254,7 +254,7 @@ export default function NFLNewsPage() {
                   >
                     <path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2m-4-3H9M7 16h6M7 12h10" />
                   </svg>
-                  <p style={{ color: 'var(--bsi-dust)' }}>No news in this category right now.</p>
+                  <p className="text-bsi-dust">No news in this category right now.</p>
                   <p className="text-sm mt-2" style={{ color: 'rgba(196,184,165,0.5)' }}>
                     Offseason NFL news comes in waves—free agency, draft, then the summer lull
                     before training camp. Check back.
@@ -269,8 +269,7 @@ export default function NFLNewsPage() {
                       key={item.id}
                       variant="default"
                       padding="md"
-                      className="transition-all group"
-                      style={{ borderColor: 'var(--border-vintage)' }}
+                      className="transition-all group border-border-vintage"
                       onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--bsi-primary)')}
                       onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--border-vintage)')}
                     >
@@ -295,10 +294,10 @@ export default function NFLNewsPage() {
                             rel="noopener noreferrer"
                             className="block"
                           >
-                            <h3 className="font-semibold text-lg transition-colors" style={{ color: 'var(--bsi-bone)' }}>
+                            <h3 className="font-semibold text-lg transition-colors text-bsi-bone">
                               {item.title}
                             </h3>
-                            <p className="text-sm mt-1 line-clamp-2" style={{ color: 'var(--bsi-dust)' }}>
+                            <p className="text-sm mt-1 line-clamp-2 text-bsi-dust">
                               {item.summary}
                             </p>
                           </a>
@@ -312,7 +311,7 @@ export default function NFLNewsPage() {
             )}
 
             {/* Data Source Footer */}
-            <div className="mt-8 pt-4" style={{ borderTop: '1px solid var(--border-vintage)' }}>
+            <div className="mt-8 pt-4 border-t border-border-vintage">
               <DataSourceBadge
                 source={sourceLabel}
                 timestamp={formatTimestamp(lastUpdated)}
@@ -322,7 +321,6 @@ export default function NFLNewsPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

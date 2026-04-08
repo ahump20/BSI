@@ -6,7 +6,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
 
 // ---------------------------------------------------------------------------
@@ -161,7 +160,6 @@ export default function GameBriefsIndexPage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

@@ -28,7 +28,7 @@ interface NILLeaderboardResponse {
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 
-const ACCENT = '#BF5700';
+const ACCENT = 'var(--bsi-primary)';
 
 function fmtDollar(n: number): string {
   if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
@@ -86,7 +86,7 @@ export function TexasNILPanel({ limit = 15 }: TexasNILPanelProps) {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+              <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                 <th className="text-left py-2 px-2">Player</th>
                 <th className="text-left py-2 px-2">Pos</th>
                 <th className="text-right py-2 px-2">NIL Index</th>

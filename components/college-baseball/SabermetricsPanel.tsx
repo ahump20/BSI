@@ -100,7 +100,7 @@ function StatBar({ label, value, leagueAvg, format, higher }: {
     <div className="space-y-1">
       <div className="flex items-center justify-between text-sm">
         <span className="text-text-secondary">{label}</span>
-        <span className={`font-mono font-semibold ${aboveAvg ? 'text-[var(--bsi-success)]' : 'text-text-primary'}`}>
+        <span className={`font-mono font-semibold ${aboveAvg ? 'text-success' : 'text-text-primary'}`}>
           {format(value)}
         </span>
       </div>

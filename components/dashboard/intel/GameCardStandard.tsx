@@ -71,8 +71,8 @@ export const GameCardStandard = memo(function GameCardStandard({ game, onClick }
         {/* Status */}
         <div className="shrink-0 text-right">
           {isLive ? (
-            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-[var(--bsi-primary)]/15 text-[var(--bsi-primary)] text-[10px]" style={{ fontFamily: 'var(--intel-mono)', borderRadius: '1px' }}>
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--bsi-primary)] animate-pulse" />
+            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-bsi-primary/15 text-bsi-primary text-[10px]" style={{ fontFamily: 'var(--intel-mono)', borderRadius: '1px' }}>
+              <span className="h-1.5 w-1.5 rounded-full bg-bsi-primary animate-pulse" />
               LIVE
             </span>
           ) : isFinal ? (

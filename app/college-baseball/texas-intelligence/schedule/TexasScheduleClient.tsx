@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 
@@ -39,7 +38,7 @@ interface Series {
 // ─── Constants ──────────────────────────────────────────────────────────────
 
 const TEAM_ID = 'texas';
-const ACCENT = '#BF5700';
+const ACCENT = 'var(--bsi-primary)';
 const ESPN_ID = '251';
 
 type ViewMode = 'all' | 'completed' | 'upcoming';
@@ -132,7 +131,7 @@ export default function TexasScheduleClient() {
         </Section>
 
         {/* Hero */}
-        <Section padding="lg" className="relative overflow-hidden bg-[var(--surface-scoreboard)]">
+        <Section padding="lg" className="relative overflow-hidden bg-surface-scoreboard">
           <div className="absolute top-0 left-0 right-0 h-1" style={{ backgroundColor: ACCENT }} />
           <Container>
             <ScrollReveal direction="up">
@@ -188,7 +187,7 @@ export default function TexasScheduleClient() {
                   </button>
                 ))}
               </div>
-              <div className="flex gap-1 bg-[var(--surface-press-box)] rounded-sm p-1">
+              <div className="flex gap-1 bg-surface-press-box rounded-sm p-1">
                 {(['games', 'series'] as const).map((l) => (
                   <button
                     key={l}
@@ -341,8 +340,8 @@ export default function TexasScheduleClient() {
                                     <span className={`text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded-sm ${
                                       isDone
                                         ? isWin
-                                          ? 'bg-[var(--bsi-success)]/10 text-[var(--bsi-success)]'
-                                          : 'bg-[var(--bsi-danger)]/10 text-[var(--bsi-danger)]'
+                                          ? 'bg-success/10 text-success'
+                                          : 'bg-error/10 text-error'
                                         : 'bg-surface-light text-text-muted'
                                     }`}>
                                       {isDone ? g.result : formatDate(g.date).split(',')[0]}
@@ -368,7 +367,6 @@ export default function TexasScheduleClient() {
           </Section>
         )}
       </main>
-      <Footer />
     </>
   );
 }

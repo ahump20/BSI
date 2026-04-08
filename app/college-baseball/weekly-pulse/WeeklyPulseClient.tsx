@@ -6,7 +6,6 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { DataAttribution } from '@/components/ui/DataAttribution';
 import { TrendingUp, TrendingDown, BarChart3, Zap } from 'lucide-react';
 import { getReadApiUrl } from '@/lib/utils/public-api';
@@ -375,7 +374,6 @@ export default function WeeklyPulseClient() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

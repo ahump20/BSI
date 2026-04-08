@@ -132,10 +132,10 @@ export function HubHero({
           <ScrollReveal direction="up" delay={110}>
             <div className="flex items-center justify-center gap-2 mb-3">
               <span className="relative flex h-1.5 w-1.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--bsi-primary)] opacity-75" />
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[var(--bsi-primary)]" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-bsi-primary opacity-75" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-bsi-primary" />
               </span>
-              <span className="text-[10px] uppercase tracking-wider" style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--bsi-dust)' }}>
+              <span className="text-[10px] uppercase tracking-wider font-mono text-bsi-dust">
                 Live &middot; {dataSource}
               </span>
             </div>
@@ -143,7 +143,7 @@ export function HubHero({
         )}
 
         <ScrollReveal direction="up" delay={120}>
-          <p className="font-serif italic text-base leading-relaxed mb-4" style={{ color: 'var(--bsi-primary)' }}>
+          <p className="font-serif italic text-base leading-relaxed mb-4 text-bsi-primary">
             Park-adjusted advanced metrics. Updated every 6 hours. Free.
           </p>
         </ScrollReveal>
@@ -160,7 +160,7 @@ export function HubHero({
               }}
             >
               <div className="relative">
-                <svg viewBox="0 0 24 24" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--bsi-dust)' }} fill="none" stroke="currentColor" strokeWidth="2">
+                <svg viewBox="0 0 24 24" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-bsi-dust" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
                 <input
@@ -180,13 +180,12 @@ export function HubHero({
                   }}
                 />
               </div>
-              <p className="mt-3 text-xs leading-relaxed" style={{ color: 'var(--bsi-dust)' }}>
+              <p className="mt-3 text-xs leading-relaxed text-bsi-dust">
                 Jump straight to a team page, player table, or editorial file instead of hunting through tabs.
               </p>
               {searchOpen && hasResults && (
                 <div
-                  className="absolute z-50 mt-1 w-full max-h-80 overflow-y-auto overflow-hidden shadow-xl"
-                  style={{ background: 'var(--surface-dugout)', border: '1px solid var(--border-vintage)' }}
+                  className="absolute z-50 mt-1 w-full max-h-80 overflow-y-auto overflow-hidden shadow-xl bg-surface-dugout border border-border-vintage"
                 >
                   {Array.from(groupedSearchResults.entries()).map(([category, items]) => (
                     <div key={category}>
@@ -200,8 +199,7 @@ export function HubHero({
                         <Link
                           key={item.href}
                           href={item.href}
-                          className="block px-3 py-2 text-sm transition-colors hover:bg-[rgba(191,87,0,0.1)]"
-                          style={{ color: 'var(--bsi-bone)' }}
+                          className="block px-3 py-2 text-sm transition-colors hover:bg-[rgba(191,87,0,0.1)] text-bsi-bone"
                         >
                           {item.name}
                         </Link>
@@ -221,10 +219,10 @@ export function HubHero({
                       background: 'rgba(10,10,10,0.44)',
                     }}
                   >
-                    <span className="font-bold text-sm tracking-wide" style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--bsi-primary)' }}>
+                    <span className="font-bold text-sm tracking-wide font-mono text-bsi-primary">
                       {metric.abbr}
                     </span>
-                    <p className="mt-2 text-xs leading-relaxed" style={{ color: 'var(--bsi-dust)' }}>
+                    <p className="mt-2 text-xs leading-relaxed text-bsi-dust">
                       {metric.label}
                     </p>
                   </div>
@@ -246,7 +244,7 @@ export function HubHero({
                     borderColor: 'rgba(140,98,57,0.24)',
                   }}
                 >
-                  <p className="text-[10px] uppercase tracking-[0.18em]" style={{ color: 'var(--bsi-dust)' }}>
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-bsi-dust">
                     {card.label}
                   </p>
                   <div
@@ -259,7 +257,7 @@ export function HubHero({
                   >
                     {card.value}
                   </div>
-                  <p className="mt-3 text-xs leading-relaxed" style={{ color: 'var(--bsi-dust)' }}>
+                  <p className="mt-3 text-xs leading-relaxed text-bsi-dust">
                     {card.detail}
                   </p>
                 </div>
@@ -298,8 +296,8 @@ export function HubHero({
               href="/college-baseball/savant/visuals/"
               className="btn-heritage inline-flex items-center gap-2 px-5 py-2.5 text-sm group"
             >
-              <span className="uppercase tracking-wider font-semibold" style={{ fontFamily: 'var(--bsi-font-display)' }}>Visualization Tools</span>
-              <span className="text-xs" style={{ color: 'var(--bsi-dust)' }}>16 interactive charts · D3 · Live data</span>
+              <span className="uppercase tracking-wider font-semibold font-display">Visualization Tools</span>
+              <span className="text-xs text-bsi-dust">16 interactive charts · D3 · Live data</span>
               <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M7 17L17 7M17 7H7M17 7v10" />
               </svg>

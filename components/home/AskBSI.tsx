@@ -83,7 +83,7 @@ function ResponseBody({ text, isStreaming }: { text: string; isStreaming: boolea
   const segments = parseResponse(text);
 
   return (
-    <p className="text-sm leading-relaxed font-serif" style={{ color: 'var(--bsi-bone)' }}>
+    <p className="text-sm leading-relaxed font-serif text-bsi-bone">
       {segments.map((seg, i) =>
         seg.type === 'link' ? (
           <Link
@@ -111,8 +111,8 @@ function ActionStrip({ links }: { links: Array<{ label: string; href: string }> 
   if (links.length === 0) return null;
 
   return (
-    <div className="mt-3 pt-3" style={{ borderTop: '1px solid var(--border-vintage)' }}>
-      <p className="text-[9px] uppercase tracking-[0.15em] mb-2" style={{ color: 'var(--heritage-bronze)', fontFamily: 'var(--bsi-font-data)' }}>
+    <div className="mt-3 pt-3 border-t border-border-vintage">
+      <p className="text-[9px] uppercase tracking-[0.15em] mb-2 text-heritage-bronze font-mono">
         Go to
       </p>
       <div className="flex flex-wrap gap-2">
@@ -254,7 +254,7 @@ export function AskBSI({ embedded = false, initialQuestion }: AskBSIProps) {
               </svg>
             </div>
             <div>
-              <h3 className="font-display text-sm font-bold uppercase tracking-wide text-[var(--bsi-bone)]">
+              <h3 className="font-display text-sm font-bold uppercase tracking-wide text-bsi-bone">
                 Ask BSI
               </h3>
               <span className="heritage-stamp" style={{ padding: '1px 6px', fontSize: '8px' }}>
@@ -322,7 +322,7 @@ export function AskBSI({ embedded = false, initialQuestion }: AskBSIProps) {
 
           {/* Response area */}
           {(response || error) && (
-            <div className="mt-4 pt-4" style={{ borderTop: '1px solid var(--border-vintage)' }}>
+            <div className="mt-4 pt-4 border-t border-border-vintage">
               {error ? (
                 <p className="text-sm" style={{ color: 'var(--heritage-oiler-red)' }}>{error}</p>
               ) : (

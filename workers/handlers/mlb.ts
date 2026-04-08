@@ -77,7 +77,9 @@ export async function handleMLBScores(url: URL, env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
     return cachedJson(payload, 200, HTTP_CACHE.scores, freshDataHeaders());
   } catch (err) {
-    await logError(env, err instanceof Error ? err.message : String(err), 'mlb:scores');
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleMLBScores]', msg);
+    await logError(env, msg, 'handleMLBScores');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -107,7 +109,9 @@ export async function handleMLBStandings(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
     return cachedJson(payload, 200, HTTP_CACHE.standings, freshDataHeaders());
   } catch (err) {
-    await logError(env, err instanceof Error ? err.message : String(err), 'mlb:standings');
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleMLBStandings]', msg);
+    await logError(env, msg, 'handleMLBStandings');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -141,7 +145,9 @@ export async function handleMLBGame(gameId: string, env: Env): Promise<Response>
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
     return cachedJson(payload, 200, HTTP_CACHE.game, freshDataHeaders());
   } catch (err) {
-    await logError(env, err instanceof Error ? err.message : String(err), 'mlb:game');
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleMLBGame]', msg);
+    await logError(env, msg, 'handleMLBGame');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -158,7 +164,9 @@ export async function handleMLBPlayer(playerId: string, env: Env): Promise<Respo
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
     return cachedJson(payload, 200, HTTP_CACHE.player, freshDataHeaders());
   } catch (err) {
-    await logError(env, err instanceof Error ? err.message : String(err), 'mlb:player');
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleMLBPlayer]', msg);
+    await logError(env, msg, 'handleMLBPlayer');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -179,7 +187,9 @@ export async function handleMLBTeam(teamId: string, env: Env): Promise<Response>
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
     return cachedJson(payload, 200, HTTP_CACHE.team, freshDataHeaders());
   } catch (err) {
-    await logError(env, err instanceof Error ? err.message : String(err), 'mlb:team');
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleMLBTeam]', msg);
+    await logError(env, msg, 'handleMLBTeam');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -207,7 +217,9 @@ export async function handleMLBTeamsList(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
     return cachedJson(payload, 200, HTTP_CACHE.team, freshDataHeaders());
   } catch (err) {
-    await logError(env, err instanceof Error ? err.message : String(err), 'mlb:teams-list');
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleMLBTeamsList]', msg);
+    await logError(env, msg, 'handleMLBTeamsList');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -267,7 +279,9 @@ export async function handleMLBStatsLeaders(url: URL, env: Env): Promise<Respons
     await kvPut(env.KV, cacheKey, empty, 300);
     return cachedJson(empty, 200, HTTP_CACHE.standings, freshDataHeaders('none'));
   } catch (err) {
-    await logError(env, err instanceof Error ? err.message : String(err), 'mlb:stats-leaders');
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleMLBStatsLeaders]', msg);
+    await logError(env, msg, 'handleMLBStatsLeaders');
     return cachedJson(withMeta({ leaders: [], category: 'batting', stat: 'avg', unavailable: true }, 'none'), 200, 0);
   }
 }
@@ -336,7 +350,9 @@ export async function handleMLBLeaderboard(category: string, url: URL, env: Env)
     await kvPut(env.KV, cacheKey, empty, 300);
     return cachedJson(empty, 200, HTTP_CACHE.standings, freshDataHeaders('none'));
   } catch (err) {
-    await logError(env, err instanceof Error ? err.message : String(err), 'mlb:leaderboard');
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleMLBLeaderboard]', msg);
+    await logError(env, msg, 'handleMLBLeaderboard');
     return cachedJson(withMeta({
       leaderboard: { category, type: 'bat', season: new Date().getFullYear(), sortBy: 'WAR' },
       data: [],
@@ -369,7 +385,9 @@ export async function handleMLBNews(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
     return cachedJson(payload, 200, HTTP_CACHE.news, freshDataHeaders());
   } catch (err) {
-    await logError(env, err instanceof Error ? err.message : String(err), 'mlb:news');
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleMLBNews]', msg);
+    await logError(env, msg, 'handleMLBNews');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -456,7 +474,9 @@ export async function handleMLBSpringScores(url: URL, env: Env): Promise<Respons
     const filtered = league ? filterByLeague(payload, league) : payload;
     return cachedJson(filtered, 200, ttl, { 'X-Cache': 'MISS' });
   } catch (err) {
-    await logError(env, err instanceof Error ? err.message : String(err), 'mlb:spring-scores');
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleMLBSpringScores]', msg);
+    await logError(env, msg, 'handleMLBSpringScores');
     return json({ games: [], error: err instanceof Error ? err.message : 'Failed to fetch spring scores' }, 502);
   }
 }
@@ -534,7 +554,9 @@ export async function handleMLBSpringStandings(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, 1800);
     return cachedJson(payload, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' });
   } catch (err) {
-    await logError(env, err instanceof Error ? err.message : String(err), 'mlb:spring-standings');
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleMLBSpringStandings]', msg);
+    await logError(env, msg, 'handleMLBSpringStandings');
     return json({ cactus: [], grapefruit: [], error: err instanceof Error ? err.message : 'Failed' }, 502);
   }
 }
@@ -592,7 +614,9 @@ export async function handleMLBSpringSchedule(url: URL, env: Env): Promise<Respo
     const filtered = teamFilter ? filterScheduleByTeam(payload, teamFilter) : payload;
     return cachedJson(filtered, 200, HTTP_CACHE.schedule, { 'X-Cache': 'MISS' });
   } catch (err) {
-    await logError(env, err instanceof Error ? err.message : String(err), 'mlb:spring-schedule');
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleMLBSpringSchedule]', msg);
+    await logError(env, msg, 'handleMLBSpringSchedule');
     return json({ schedule: [], error: err instanceof Error ? err.message : 'Failed' }, 502);
   }
 }
@@ -651,7 +675,9 @@ export async function handleMLBSpringRoster(teamKey: string, env: Env): Promise<
     await kvPut(env.KV, cacheKey, payload, 3600);
     return cachedJson(payload, 200, HTTP_CACHE.team, { 'X-Cache': 'MISS' });
   } catch (err) {
-    await logError(env, err instanceof Error ? err.message : String(err), 'mlb:spring-roster');
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleMLBSpringRoster]', msg);
+    await logError(env, msg, 'handleMLBSpringRoster');
     return json({ roster: [], error: err instanceof Error ? err.message : 'Failed' }, 502);
   }
 }
@@ -778,7 +804,9 @@ export async function handleMLBAbs(env: Env): Promise<Response> {
     ),
   );
   } catch (err) {
-    await logError(env, err instanceof Error ? err.message : String(err), 'mlb:abs');
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleMLBAbs]', msg);
+    await logError(env, msg, 'handleMLBAbs');
     return json({ error: 'Internal server error', code: 'INTERNAL_ERROR', status: 500 }, 500);
   }
 }

@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { preseason2026 } from '@/lib/data/preseason-2026';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
@@ -89,8 +88,7 @@ function TeamCard({ team }: { team: TeamEntry }) {
           />
         )}
         <span
-          className="font-medium text-[11px] text-center leading-tight"
-          style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+          className="font-medium text-[11px] text-center leading-tight font-display text-bsi-bone"
         >
           {team.name}
         </span>
@@ -184,22 +182,19 @@ export default function TeamsPage() {
               {conferences.map((conference, confIndex) => (
                 <ScrollReveal key={conference.name} direction="up" delay={confIndex * 40}>
                   <div
-                    className="rounded-sm border overflow-hidden"
-                    style={{ borderColor: 'var(--border-vintage)', background: 'var(--surface-scoreboard)' }}
+                    className="rounded-sm border overflow-hidden border-border-vintage bg-surface-scoreboard"
                   >
                     {/* Conference header — Heritage stamp pattern */}
                     <div
-                      className="flex items-center justify-between px-4 py-3"
-                      style={{ borderBottom: '1px solid var(--border-vintage)', background: 'var(--surface-press-box)' }}
+                      className="flex items-center justify-between px-4 py-3 bg-surface-press-box border-b border-border-vintage"
                     >
                       <div className="flex items-center gap-3">
                         <h2
-                          className="text-sm font-bold uppercase tracking-[0.12em]"
-                          style={{ fontFamily: 'var(--font-oswald, var(--font-display))', color: 'var(--bsi-primary)' }}
+                          className="text-sm font-bold uppercase tracking-[0.12em] font-display text-bsi-primary"
                         >
                           {conference.name}
                         </h2>
-                        <span className="text-[10px] font-mono" style={{ color: 'var(--bsi-dust)' }}>
+                        <span className="text-[10px] font-mono text-bsi-dust">
                           {conference.fullName}
                         </span>
                       </div>
@@ -232,7 +227,6 @@ export default function TeamsPage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

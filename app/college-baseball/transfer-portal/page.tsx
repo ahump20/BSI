@@ -9,7 +9,6 @@ import { Badge } from '@/components/ui/Badge';
 import { DataAttribution } from '@/components/ui/DataAttribution';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { IntelSignup } from '@/components/home/IntelSignup';
 import { useWatchlist } from '@/lib/hooks/useWatchlist';
 
@@ -200,7 +199,7 @@ export default function TransferPortalPage() {
           <Container>
             <ScrollReveal direction="up">
               <div className="text-center mb-12">
-                <span className="inline-block text-xs font-semibold uppercase tracking-[0.2em] text-burnt-orange mb-3">
+                <span className="heritage-stamp mb-3">
                   What&apos;s Coming
                 </span>
                 <h2 className="text-2xl md:text-3xl font-display font-bold text-text-primary uppercase tracking-wide">
@@ -269,8 +268,8 @@ export default function TransferPortalPage() {
                     <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-bold mb-2" style={{ color: 'var(--bsi-bone)' }}>Portal data temporarily unavailable</h3>
-                <p className="text-sm max-w-md mx-auto" style={{ color: 'var(--bsi-dust)' }}>
+                <h3 className="text-lg font-bold mb-2 text-bsi-bone">Portal data temporarily unavailable</h3>
+                <p className="text-sm max-w-md mx-auto text-bsi-dust">
                   Our transfer portal data sources are not returning entries right now. Spring portal movement is active — we are working on reconnecting the feed. Check back soon.
                 </p>
               </Card>
@@ -364,7 +363,6 @@ export default function TransferPortalPage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

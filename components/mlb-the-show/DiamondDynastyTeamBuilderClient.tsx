@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { Footer } from '@/components/layout-ds/Footer';
 import { Card, CardContent, CardTitle, StatCard } from '@/components/ui/Card';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import {
@@ -195,8 +194,8 @@ export function DiamondDynastyTeamBuilderClient() {
         <DataErrorBoundary name="team builder">
           {loading ? (
             <div className="grid gap-4 lg:grid-cols-[0.66fr_0.34fr]">
-              <div className="h-[680px] animate-pulse rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)]" />
-              <div className="h-[680px] animate-pulse rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)]" />
+              <div className="h-[680px] animate-pulse rounded-sm border border-border-vintage bg-surface-dugout" />
+              <div className="h-[680px] animate-pulse rounded-sm border border-border-vintage bg-surface-dugout" />
             </div>
           ) : reference ? (
             <div className="grid gap-4 lg:grid-cols-[0.66fr_0.34fr]">
@@ -205,11 +204,11 @@ export function DiamondDynastyTeamBuilderClient() {
                 <CardContent className="space-y-6 px-0 pb-0 pt-4">
                   <div className="grid gap-4 md:grid-cols-2">
                     <label className="block">
-                      <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)]">Build title</span>
+                      <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-bsi-dust">Build title</span>
                       <input
                         value={title}
                         onChange={(event) => setTitle(event.target.value)}
-                        className="w-full rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-2 text-sm text-[var(--bsi-bone)]"
+                        className="w-full rounded-sm border border-border-vintage bg-surface-dugout px-3 py-2 text-sm text-bsi-bone"
                       />
                     </label>
                     <div className="flex items-end">
@@ -225,7 +224,7 @@ export function DiamondDynastyTeamBuilderClient() {
                   </div>
 
                   {savedBuild ? (
-                    <div className="rounded-sm border border-burnt-orange/35 bg-burnt-orange/10 px-4 py-4 text-sm text-[var(--bsi-bone)]">
+                    <div className="rounded-sm border border-burnt-orange/35 bg-burnt-orange/10 px-4 py-4 text-sm text-bsi-bone">
                       Build saved. Open the share view at{' '}
                       <Link className="text-burnt-orange" href={buildShareHref(savedBuild.build.buildId)}>
                         {buildShareHref(savedBuild.build.buildId)}
@@ -236,7 +235,7 @@ export function DiamondDynastyTeamBuilderClient() {
                   <div className="space-y-6">
                     {groupSlots(reference.slots).map(([group, slots]) => (
                       <div key={group}>
-                        <div className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)]">{group}</div>
+                        <div className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-bsi-dust">{group}</div>
                         <div className="grid gap-3 md:grid-cols-2">
                           {slots.map((slot) => {
                             const selection = cardsBySlot[slot.key];
@@ -249,13 +248,13 @@ export function DiamondDynastyTeamBuilderClient() {
                                 className={`rounded-sm border px-4 py-4 text-left transition-colors ${
                                   active
                                     ? 'border-burnt-orange bg-burnt-orange/10'
-                                    : 'border-[var(--border-vintage)] bg-[var(--surface-dugout)]'
+                                    : 'border-border-vintage bg-surface-dugout'
                                 }`}
                               >
                                 <div className="flex items-center justify-between gap-4">
                                   <div>
-                                    <div className="text-xs uppercase tracking-[0.18em] text-[var(--bsi-dust)]">{slot.label}</div>
-                                    <div className="mt-2 text-sm font-semibold text-[var(--bsi-bone)]">
+                                    <div className="text-xs uppercase tracking-[0.18em] text-bsi-dust">{slot.label}</div>
+                                    <div className="mt-2 text-sm font-semibold text-bsi-bone">
                                       {selection ? selection.displayName : 'Open slot'}
                                     </div>
                                   </div>
@@ -268,7 +267,7 @@ export function DiamondDynastyTeamBuilderClient() {
                                       onChange={(event) => updateSelection(slot.key, {
                                         localParallelLevel: Number(event.target.value),
                                       })}
-                                      className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-scoreboard)] px-3 py-2 text-xs text-[var(--bsi-bone)]"
+                                      className="rounded-sm border border-border-vintage bg-surface-scoreboard px-3 py-2 text-xs text-bsi-bone"
                                     >
                                       {DD_PARALLEL_LEVELS.map((level) => (
                                         <option key={level} value={level}>
@@ -281,7 +280,7 @@ export function DiamondDynastyTeamBuilderClient() {
                                       onChange={(event) => updateSelection(slot.key, {
                                         localParallelModLabel: event.target.value === 'None' ? null : event.target.value,
                                       })}
-                                      className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-scoreboard)] px-3 py-2 text-xs text-[var(--bsi-bone)]"
+                                      className="rounded-sm border border-border-vintage bg-surface-scoreboard px-3 py-2 text-xs text-bsi-bone"
                                     >
                                       {DD_PARALLEL_MODS.map((option) => (
                                         <option key={option} value={option}>
@@ -291,7 +290,7 @@ export function DiamondDynastyTeamBuilderClient() {
                                     </select>
                                   </div>
                                 ) : (
-                                  <div className="mt-3 text-xs text-[var(--bsi-dust)]">
+                                  <div className="mt-3 text-xs text-bsi-dust">
                                     Accepts {slot.accepts.join(', ')}
                                   </div>
                                 )}
@@ -319,8 +318,8 @@ export function DiamondDynastyTeamBuilderClient() {
                       <StatCard label="Red Diamond" value={buildDiagnostics.redDiamondCards} helperText="Current build count of Red Diamond rarity cards." />
                     </div>
                     {captainCard ? (
-                      <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-4 text-sm text-[var(--bsi-dust)]">
-                        <div className="font-semibold text-[var(--bsi-bone)]">{captainCard.name}</div>
+                      <div className="rounded-sm border border-border-vintage bg-surface-dugout px-4 py-4 text-sm text-bsi-dust">
+                        <div className="font-semibold text-bsi-bone">{captainCard.name}</div>
                         <p className="mt-2">{captainCard.abilityDescription}</p>
                       </div>
                     ) : null}
@@ -334,16 +333,16 @@ export function DiamondDynastyTeamBuilderClient() {
                       value={search}
                       onChange={(event) => setSearch(event.target.value)}
                       placeholder="Search for cards"
-                      className="w-full rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-2 text-sm text-[var(--bsi-bone)]"
+                      className="w-full rounded-sm border border-border-vintage bg-surface-dugout px-3 py-2 text-sm text-bsi-bone"
                     />
 
                     <div className="grid gap-3 md:grid-cols-2">
                       <label className="block">
-                        <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)]">Collection</span>
+                        <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-bsi-dust">Collection</span>
                         <select
                           value={builderCollection}
                           onChange={(event) => setBuilderCollection(event.target.value)}
-                          className="w-full rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-2 text-sm text-[var(--bsi-bone)]"
+                          className="w-full rounded-sm border border-border-vintage bg-surface-dugout px-3 py-2 text-sm text-bsi-bone"
                         >
                           <option value="">All</option>
                           {reference.collections.map((collection) => (
@@ -354,11 +353,11 @@ export function DiamondDynastyTeamBuilderClient() {
                         </select>
                       </label>
                       <div className="grid gap-3">
-                        <label className="flex items-center gap-3 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-3 text-sm text-[var(--bsi-bone)]">
+                        <label className="flex items-center gap-3 rounded-sm border border-border-vintage bg-surface-dugout px-3 py-3 text-sm text-bsi-bone">
                           <input type="checkbox" checked={builderWbcOnly} onChange={(event) => setBuilderWbcOnly(event.target.checked)} />
                           WBC-tagged only
                         </label>
-                        <label className="flex items-center gap-3 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-3 text-sm text-[var(--bsi-bone)]">
+                        <label className="flex items-center gap-3 rounded-sm border border-border-vintage bg-surface-dugout px-3 py-3 text-sm text-bsi-bone">
                           <input type="checkbox" checked={builderCaptainOnly} onChange={(event) => setBuilderCaptainOnly(event.target.checked)} />
                           Captain cards only
                         </label>
@@ -368,7 +367,7 @@ export function DiamondDynastyTeamBuilderClient() {
                     {searchLoading ? (
                       <div className="space-y-3">
                         {Array.from({ length: 5 }).map((_, index) => (
-                          <div key={index} className="h-16 animate-pulse rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)]" />
+                          <div key={index} className="h-16 animate-pulse rounded-sm border border-border-vintage bg-surface-dugout" />
                         ))}
                       </div>
                     ) : results?.cards.length ? (
@@ -376,21 +375,21 @@ export function DiamondDynastyTeamBuilderClient() {
                         {results.cards.map((card) => (
                           <div
                             key={card.id}
-                            className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-4"
+                            className="rounded-sm border border-border-vintage bg-surface-dugout px-4 py-4"
                           >
                             <div className="flex items-center justify-between gap-4">
                               <div>
-                                <div className="text-sm font-semibold text-[var(--bsi-bone)]">{card.name}</div>
-                                <div className="mt-1 text-xs uppercase tracking-[0.18em] text-[var(--bsi-dust)]">
+                                <div className="text-sm font-semibold text-bsi-bone">{card.name}</div>
+                                <div className="mt-1 text-xs uppercase tracking-[0.18em] text-bsi-dust">
                                   {card.rarity} • {card.team} • {card.primaryPosition}
                                 </div>
                               </div>
                               <div className="text-right">
                                 <div className="font-mono text-lg text-burnt-orange">{card.overall}</div>
-                                <div className="text-xs text-[var(--bsi-dust)]">{formatCompactStub(card.market?.bestSellNow)}</div>
+                                <div className="text-xs text-bsi-dust">{formatCompactStub(card.market?.bestSellNow)}</div>
                               </div>
                             </div>
-                            <div className="mt-3 flex items-center justify-between text-xs text-[var(--bsi-dust)]">
+                            <div className="mt-3 flex items-center justify-between text-xs text-bsi-dust">
                               <span>Assign to {reference.slots.find((slot) => slot.key === activeSlot)?.label ?? activeSlot}</span>
                               <Link href={buildCardHref(card.id)} className="text-burnt-orange">
                                 Detail
@@ -407,7 +406,7 @@ export function DiamondDynastyTeamBuilderClient() {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-sm text-[var(--bsi-dust)]">No cards matched the current slot and search term.</p>
+                      <p className="text-sm text-bsi-dust">No cards matched the current slot and search term.</p>
                     )}
                   </CardContent>
                 </Card>
@@ -417,13 +416,12 @@ export function DiamondDynastyTeamBuilderClient() {
             <Card padding="lg">
               <CardContent className="space-y-3 px-0 pb-0 pt-0">
                 <CardTitle size="sm">Builder Unavailable</CardTitle>
-                <p className="text-sm text-[var(--bsi-dust)]">{error ?? 'Builder reference could not be loaded.'}</p>
+                <p className="text-sm text-bsi-dust">{error ?? 'Builder reference could not be loaded.'}</p>
               </CardContent>
             </Card>
           )}
         </DataErrorBoundary>
       </ShowSurfaceFrame>
-      <Footer />
     </div>
   );
 }

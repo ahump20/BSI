@@ -11,7 +11,6 @@ import { FilterPill } from '@/components/ui/FilterPill';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { HeroGlow } from '@/components/ui/HeroGlow';
@@ -593,7 +592,7 @@ export default function CollegeBaseballScoresPage() {
                       isCached={!hasLiveGames && !!rawData}
                     />
                     {meta?.degraded && (
-                      <p className="text-xs text-[var(--bsi-warning)]/60 text-center">
+                      <p className="text-xs text-warning/60 text-center">
                         Limited data — advanced stats unavailable
                       </p>
                     )}
@@ -650,7 +649,6 @@ export default function CollegeBaseballScoresPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

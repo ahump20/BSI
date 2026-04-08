@@ -8,7 +8,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import {
   SavantLeaderboard,
   BATTING_COLUMNS,
@@ -234,13 +233,12 @@ export default function SavantHubPage() {
               <div className="flex items-center gap-3">
                 <span className="heritage-stamp">Savant</span>
                 <h1
-                  className="text-lg font-bold uppercase tracking-wide"
-                  style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+                  className="text-lg font-bold uppercase tracking-wide font-display text-bsi-bone"
                 >
                   D1 Sabermetrics
                 </h1>
               </div>
-              <p className="text-[10px] font-mono" style={{ color: 'var(--bsi-dust)' }}>
+              <p className="text-[10px] font-mono text-bsi-dust">
                 {confLoading ? '...' : `${confCount} conferences`} · Updated every 6h
                 {battingRes?.meta?.fetched_at && (
                   <> · {new Date(battingRes.meta.fetched_at).toLocaleString('en-US', { timeZone: 'America/Chicago', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })} CT</>
@@ -290,7 +288,7 @@ export default function SavantHubPage() {
                   return (
                     <div
                       key={spot.metricKey}
-                      className="savant-fade-in relative overflow-hidden rounded-sm bg-[var(--surface-dugout)] border border-[var(--border-vintage)] hover:border-[rgba(140,98,57,0.5)] transition-all p-4"
+                      className="savant-fade-in relative overflow-hidden rounded-sm bg-surface-dugout border border-border-vintage hover:border-heritage-bronze/50 transition-all p-4"
                       style={{ borderLeftColor: color, borderLeftWidth: '2px', animationDelay: `${index * 50}ms` }}
                     >
                       <div className="flex items-baseline justify-between mb-2">
@@ -324,7 +322,7 @@ export default function SavantHubPage() {
             {/* 2026 D1 Run Environment — the baseline that makes every stat meaningful */}
             {leagueCtxRes?.context && (
               <ScrollReveal direction="up" delay={150}>
-                <div className="mb-6 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] p-4">
+                <div className="mb-6 rounded-sm border border-border-vintage bg-surface-dugout p-4">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="heritage-stamp text-[9px]">2026 D1 Run Environment</span>
                     <span className="text-[9px] text-text-muted font-mono">
@@ -341,7 +339,7 @@ export default function SavantHubPage() {
                       { label: 'FIP Const', value: leagueCtxRes.context.fip_constant.toFixed(2) },
                     ].map((stat) => (
                       <div key={stat.label}>
-                        <div className="font-mono text-sm font-bold" style={{ color: 'var(--bsi-bone)' }}>{stat.value}</div>
+                        <div className="font-mono text-sm font-bold text-bsi-bone">{stat.value}</div>
                         <div className="text-[9px] text-text-muted/60 uppercase tracking-wider">{stat.label}</div>
                       </div>
                     ))}
@@ -474,14 +472,13 @@ export default function SavantHubPage() {
                   border: '1px solid rgba(191,87,0,0.2)',
                 }}
               >
-                <span className="text-xs font-mono" style={{ color: 'var(--bsi-bone)' }}>
-                  <span style={{ color: 'var(--bsi-primary)' }}>{compareIds.size}</span> of 3 players selected
+                <span className="text-xs font-mono text-bsi-bone">
+                  <span className="text-bsi-primary">{compareIds.size}</span> of 3 players selected
                   {compareIds.size < 2 && ' — select at least 2 to compare'}
                 </span>
                 <button
                   onClick={() => setCompareIds(new Set())}
-                  className="text-[10px] font-mono uppercase tracking-wider transition-colors cursor-pointer"
-                  style={{ color: 'var(--bsi-primary)' }}
+                  className="text-[10px] font-mono uppercase tracking-wider transition-colors cursor-pointer text-bsi-primary"
                 >
                   Clear
                 </button>
@@ -576,7 +573,7 @@ export default function SavantHubPage() {
 
             {/* Data attribution */}
             {(battingRes || pitchingRes) && (
-              <div className="mt-10 pt-6 border-t border-[var(--border-vintage)]">
+              <div className="mt-10 pt-6 border-t border-border-vintage">
                 <div className="flex items-center justify-center gap-4 flex-wrap">
                   <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-muted/50">
                     Source: BSI Savant · ESPN box scores + Highlightly Pro · Recomputed every 6 hours
@@ -617,7 +614,6 @@ export default function SavantHubPage() {
         </section>
       </div>
 
-      <Footer />
     </>
   );
 }
@@ -714,7 +710,7 @@ function LeaderboardError({ error, onRetry, lastUpdated }: { error: string; onRe
   return (
     <Card padding="none" className="overflow-hidden">
       <div className="px-5 py-12 flex flex-col items-center text-center">
-        <p className="font-display text-sm uppercase tracking-wider mb-2" style={{ color: 'var(--bsi-dust)' }}>
+        <p className="font-display text-sm uppercase tracking-wider mb-2 text-bsi-dust">
           Data temporarily unavailable
         </p>
         <p className="font-mono text-[10px] mb-4" style={{ color: 'var(--bsi-dust)', opacity: 0.6 }}>
@@ -744,7 +740,7 @@ function LeaderboardEmpty({ type }: { type: 'batting' | 'pitching' }) {
   return (
     <Card padding="none" className="overflow-hidden">
       <div className="px-5 py-12 flex flex-col items-center text-center">
-        <p className="font-display text-sm uppercase tracking-wider mb-2" style={{ color: 'var(--bsi-dust)' }}>
+        <p className="font-display text-sm uppercase tracking-wider mb-2 text-bsi-dust">
           No {type} data available yet
         </p>
         <p className="font-mono text-[10px]" style={{ color: 'var(--bsi-dust)', opacity: 0.6 }}>

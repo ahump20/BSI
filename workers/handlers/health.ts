@@ -1,6 +1,7 @@
 import type { Env } from '../shared/types';
 import { json, getCollegeClient } from '../shared/helpers';
 import { getScoreboard } from '../../lib/api-clients/espn-api';
+import { timingSafeCompare } from '../shared/auth';
 
 const LIST_PAGE_SIZE = 1000;
 const MAX_LIST_ROUNDS = 10;
@@ -209,7 +210,7 @@ interface KVListResult {
   cursor?: string;
 }
 
-function requireAdmin(request: Request, env: Env): Response | null {
+async function requireAdmin(request: Request, env: Env): Promise<Response | null> {
   if (!env.ADMIN_KEY) {
     return json({ error: 'Admin auth secret not configured' }, 500);
   }
@@ -220,28 +221,11 @@ function requireAdmin(request: Request, env: Env): Response | null {
   const bearer = auth?.startsWith('Bearer ') ? auth.slice('Bearer '.length) : null;
   const provided = bearer || headerKey || queryKey;
 
-  if (!provided || !timingSafeEqual(provided, env.ADMIN_KEY)) {
+  if (!provided || !(await timingSafeCompare(provided, env.ADMIN_KEY))) {
     return json({ error: 'Unauthorized' }, 401);
   }
 
   return null;
-}
-
-/** Constant-time string comparison to prevent timing attacks on secret keys. */
-function timingSafeEqual(a: string, b: string): boolean {
-  if (a.length !== b.length) {
-    // Compare against b anyway to avoid leaking length info via timing
-    const dummy = new Uint8Array(b.length);
-    const bBytes = new TextEncoder().encode(b);
-    let result = a.length ^ b.length;
-    for (let i = 0; i < b.length; i++) result |= dummy[i] ^ bBytes[i];
-    return result === 0;
-  }
-  const aBytes = new TextEncoder().encode(a);
-  const bBytes = new TextEncoder().encode(b);
-  let result = 0;
-  for (let i = 0; i < aBytes.length; i++) result |= aBytes[i] ^ bBytes[i];
-  return result === 0;
 }
 
 async function paginateKVList(
@@ -300,7 +284,7 @@ async function paginateR2List(
 
 export async function handleSemanticHealth(request: Request, env: Env): Promise<Response> {
   try {
-    const authError = requireAdmin(request, env);
+    const authError = await requireAdmin(request, env);
     if (authError) return authError;
 
     const kvResult = await paginateKVList(env.KV);

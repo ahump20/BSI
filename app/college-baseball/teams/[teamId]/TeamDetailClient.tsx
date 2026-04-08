@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { AITeamPreview } from '@/components/college-baseball/AITeamPreview';
 import { SabermetricsPanel } from '@/components/college-baseball/SabermetricsPanel';
 import { SeasonArcChart } from '@/components/college-baseball/SeasonArcChart';
@@ -392,7 +391,6 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             </Card>
           </Container>
         </div>
-        <Footer />
       </>
     );
   }
@@ -617,7 +615,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                           {hasLiveRecord && (() => {
                             const daysSinceUpdate = Math.floor((Date.now() - new Date(featuredInsight.lastUpdated).getTime()) / 86400000);
                             return daysSinceUpdate > 5 ? (
-                              <div className="text-[10px] mt-0.5" style={{ color: 'var(--bsi-dust)' }}>
+                              <div className="text-[10px] mt-0.5 text-bsi-dust">
                                 Record has updated since this report
                               </div>
                             ) : null;
@@ -704,11 +702,11 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                           </div>
                         </div>
                         <div>
-                          <h3 className="text-xs uppercase tracking-wider font-semibold mb-2 text-[var(--bsi-warning)]">Pressure Points</h3>
+                          <h3 className="text-xs uppercase tracking-wider font-semibold mb-2 text-warning">Pressure Points</h3>
                           <div className="space-y-1">
                             {featuredInsight.pressurePoints.map((p, i) => (
                               <div key={i} className="text-text-tertiary text-sm flex gap-2">
-                                <span className="text-[var(--bsi-warning)] shrink-0">&bull;</span>{p}
+                                <span className="text-warning shrink-0">&bull;</span>{p}
                               </div>
                             ))}
                           </div>
@@ -1028,7 +1026,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                     <Card padding="lg">
                       <div className="flex items-center justify-between mb-6">
                         <h2 className="font-display text-xl font-bold text-text-primary uppercase tracking-wide">NIL Spending Power</h2>
-                        <span className="text-xs px-2 py-1 rounded-sm font-semibold" style={{ backgroundColor: 'rgba(191,87,0,0.15)', color: '#BF5700' }}>
+                        <span className="text-xs px-2 py-1 rounded-sm font-semibold" style={{ backgroundColor: 'rgba(191,87,0,0.15)', color: 'var(--bsi-primary)' }}>
                           {nilTeamData.conference} — {nilTeamData.marketTier}
                         </span>
                       </div>
@@ -1039,13 +1037,13 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                         </div>
                         <div>
                           <div className="text-xs uppercase tracking-wide text-text-muted">Avg NIL Index</div>
-                          <div className="mt-1 font-mono text-2xl font-bold" style={{ color: '#BF5700' }}>{nilTeamData.avgIndex}</div>
+                          <div className="mt-1 font-mono text-2xl font-bold text-bsi-primary">{nilTeamData.avgIndex}</div>
                         </div>
                         <div className="col-span-2">
                           <div className="text-xs uppercase tracking-wide text-text-muted">Top Valued Player</div>
                           <div className="mt-1 flex items-baseline gap-2">
                             <span className="text-text-primary font-semibold">{nilTeamData.topPlayer}</span>
-                            <span className="font-mono text-lg font-bold" style={{ color: '#BF5700' }}>
+                            <span className="font-mono text-lg font-bold text-bsi-primary">
                               ${nilTeamData.topValue >= 1000 ? `${(nilTeamData.topValue / 1000).toFixed(0)}K` : nilTeamData.topValue.toLocaleString()}
                             </span>
                           </div>
@@ -1095,7 +1093,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   const teamPlayers = nilLeaderboardData.data.filter(p => p.team === meta?.name);
                   const totalValue = teamPlayers.reduce((sum, p) => sum + p.estimated_mid, 0);
                   const formatNIL = (v: number) => v >= 1_000_000 ? `$${(v / 1_000_000).toFixed(1)}M` : v >= 1_000 ? `$${Math.round(v / 1_000)}K` : `$${v}`;
-                  const tierColors: Record<string, string> = { elite: 'text-burnt-orange', high: 'text-[var(--bsi-success)]', mid: 'text-[var(--heritage-columbia-blue)]', emerging: 'text-[var(--bsi-warning)]' };
+                  const tierColors: Record<string, string> = { elite: 'text-burnt-orange', high: 'text-success', mid: 'text-heritage-columbia', emerging: 'text-warning' };
                   return (
                     <ScrollReveal direction="up" className="mt-6">
                       <Card padding="none" className="overflow-hidden">
@@ -1438,7 +1436,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                 {statsUnavailable && !liveStats && (
                   <>
                     <span>|</span>
-                    <span className="text-[var(--bsi-warning)]/60 text-xs">Live stats temporarily unavailable</span>
+                    <span className="text-warning/60 text-xs">Live stats temporarily unavailable</span>
                   </>
                 )}
               </div>
@@ -1447,7 +1445,6 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

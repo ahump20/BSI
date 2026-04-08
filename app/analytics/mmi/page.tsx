@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { MMIGauge } from '@/components/analytics/MMIGauge';
 import { MMIMiniIndicator } from '@/components/analytics/MMIMiniIndicator';
 import { useSportData } from '@/lib/hooks/useSportData';
@@ -148,7 +147,7 @@ export default function MMITrendingPage() {
                 </h2>
                 <p className="text-text-secondary text-sm mb-6 max-w-3xl">
                   The Momentum Magnitude Index combines four weighted signals into a single
-                  value on a scale from <span className="font-mono text-[var(--heritage-columbia-blue)]">-100</span> (full
+                  value on a scale from <span className="font-mono text-heritage-columbia">-100</span> (full
                   away momentum) to <span className="font-mono text-burnt-orange">+100</span> (full
                   home momentum). Zero is neutral.
                 </p>
@@ -303,7 +302,6 @@ export default function MMITrendingPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

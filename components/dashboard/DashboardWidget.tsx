@@ -27,7 +27,7 @@ export function DashboardWidget({
       layout
       layoutId={layoutId}
       className={`
-        border border-[var(--border-vintage)] bg-[var(--surface-dugout)] rounded-sm
+        border border-border-vintage bg-surface-dugout rounded-sm
         ${className}
       `.trim()}
       initial={{ opacity: 0, y: 12 }}

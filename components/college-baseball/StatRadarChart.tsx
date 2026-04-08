@@ -46,8 +46,8 @@ export function StatRadarChart({ player1Name, player2Name, data }: StatRadarChar
         <Radar
           name={player1Name}
           dataKey="player1"
-          stroke="#BF5700" // token: --bsi-primary
-          fill="#BF5700" // token: --bsi-primary
+          stroke="var(--bsi-primary)"
+          fill="var(--bsi-primary)"
           fillOpacity={0.3}
         />
         <Radar

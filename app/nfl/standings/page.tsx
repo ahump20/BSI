@@ -8,7 +8,7 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
+
 import { DegradedDataBanner } from '@/components/ui/DegradedDataBanner';
 import { formatTimestamp } from '@/lib/utils/timezone';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
@@ -55,22 +55,21 @@ export default function NFLStandingsPage() {
 
   return (
     <>
-      <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
+      <div className="min-h-screen bg-surface-scoreboard text-bsi-bone">
         {/* Breadcrumb */}
-        <Section padding="sm" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
+        <Section padding="sm border-b border-border-vintage">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/nfl"
-                className="transition-colors"
-                style={{ color: 'rgba(196,184,165,0.5)' }}
+                className="transition-colors text-bsi-dust/50"
                 onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--bsi-primary)')}
                 onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(196,184,165,0.5)')}
               >
                 NFL
               </Link>
               <span style={{ color: 'rgba(196,184,165,0.5)' }}>/</span>
-              <span className="font-medium" style={{ color: 'var(--bsi-bone)' }}>Standings</span>
+              <span className="font-medium text-bsi-bone">Standings</span>
             </nav>
           </Container>
         </Section>
@@ -87,13 +86,13 @@ export default function NFLStandingsPage() {
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="text-3xl md:text-4xl font-bold uppercase tracking-wider" style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}>
+              <h1 className="text-3xl md:text-4xl font-bold uppercase tracking-wider font-display text-bsi-bone">
                 NFL Standings
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="mt-2" style={{ color: 'var(--bsi-dust)' }}>
+              <p className="mt-2 text-bsi-dust">
                 Complete AFC and NFC standings with playoff positioning
               </p>
             </ScrollReveal>
@@ -129,9 +128,9 @@ export default function NFLStandingsPage() {
 
             <DataErrorBoundary name="NFL Standings">
             {isOffSeason && (
-              <Card variant="default" padding="md" className="mb-6" style={{ background: 'var(--surface-press-box)', borderColor: 'var(--border-vintage)' }}>
-                <p className="font-semibold" style={{ color: 'var(--bsi-bone)' }}>Off-Season</p>
-                <p className="text-sm mt-1" style={{ color: 'var(--bsi-dust)' }}>
+              <Card variant="default" padding="md" className="mb-6 bg-surface-press-box border-border-vintage">
+                <p className="font-semibold text-bsi-bone">Off-Season</p>
+                <p className="text-sm mt-1 text-bsi-dust">
                   The 2025-26 NFL season has concluded. Final standings will display when live data is available from our API. The 2026 season kicks off in September.
                 </p>
               </Card>
@@ -142,10 +141,10 @@ export default function NFLStandingsPage() {
                 {[1, 2, 3, 4].map((i) => (
                   <Card key={i} variant="default" padding="lg">
                     <div className="animate-pulse">
-                      <div className="h-6 rounded-sm w-32 mb-4" style={{ background: 'var(--surface-dugout)' }}></div>
+                      <div className="h-6 rounded-sm w-32 mb-4 bg-surface-dugout"></div>
                       <div className="space-y-2">
                         {[1, 2, 3, 4].map((j) => (
-                          <div key={j} className="h-10 rounded-sm" style={{ background: 'var(--surface-dugout)' }}></div>
+                          <div key={j} className="h-10 rounded-sm bg-surface-dugout"></div>
                         ))}
                       </div>
                     </div>
@@ -155,7 +154,7 @@ export default function NFLStandingsPage() {
             ) : error ? (
               <Card variant="default" padding="lg">
                 <div className="text-center py-12">
-                  <p className="mb-4" style={{ color: 'var(--bsi-dust)' }}>Standings could not be loaded right now.</p>
+                  <p className="mb-4 text-bsi-dust">Standings could not be loaded right now.</p>
                   <button onClick={retry} className="btn-heritage text-sm">Try Again</button>
                 </div>
               </Card>
@@ -173,7 +172,7 @@ export default function NFLStandingsPage() {
                 {currentConference?.divisions.map((division, index) => (
                   <ScrollReveal key={division.name} direction="up" delay={index * 100}>
                     <Card variant="default" padding="lg">
-                      <h3 className="text-lg font-bold mb-4" style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary)' }}>
+                      <h3 className="text-lg font-bold mb-4 font-display text-bsi-primary">
                         {division.name}
                       </h3>
 
@@ -181,31 +180,31 @@ export default function NFLStandingsPage() {
                         <table className="w-full text-sm">
                           <thead>
                             <tr style={{ borderBottom: '1px solid var(--border-vintage)' }}>
-                              <th className="text-left py-2 px-2 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                              <th className="text-left py-2 px-2 font-semibold text-bsi-dust/50">
                                 Team
                               </th>
-                              <th className="text-center py-2 px-2 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                              <th className="text-center py-2 px-2 font-semibold text-bsi-dust/50">
                                 W
                               </th>
-                              <th className="text-center py-2 px-2 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                              <th className="text-center py-2 px-2 font-semibold text-bsi-dust/50">
                                 L
                               </th>
-                              <th className="text-center py-2 px-2 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                              <th className="text-center py-2 px-2 font-semibold text-bsi-dust/50">
                                 T
                               </th>
-                              <th className="text-center py-2 px-2 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                              <th className="text-center py-2 px-2 font-semibold text-bsi-dust/50">
                                 PCT
                               </th>
-                              <th className="text-center py-2 px-2 font-semibold hidden md:table-cell" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                              <th className="text-center py-2 px-2 font-semibold hidden md:table-cell text-bsi-dust/50">
                                 PF
                               </th>
-                              <th className="text-center py-2 px-2 font-semibold hidden md:table-cell" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                              <th className="text-center py-2 px-2 font-semibold hidden md:table-cell text-bsi-dust/50">
                                 PA
                               </th>
-                              <th className="text-center py-2 px-2 font-semibold hidden md:table-cell" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                              <th className="text-center py-2 px-2 font-semibold hidden md:table-cell text-bsi-dust/50">
                                 DIFF
                               </th>
-                              <th className="text-center py-2 px-2 font-semibold hidden lg:table-cell" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                              <th className="text-center py-2 px-2 font-semibold hidden lg:table-cell text-bsi-dust/50">
                                 STRK
                               </th>
                             </tr>
@@ -221,28 +220,28 @@ export default function NFLStandingsPage() {
                               >
                                 <td className="py-3 px-2">
                                   <div className="flex items-center gap-2">
-                                    <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: 'var(--surface-dugout)', color: 'var(--bsi-primary)' }}>
+                                    <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-surface-dugout text-bsi-primary">
                                       {team.abbreviation}
                                     </span>
-                                    <span className="font-semibold" style={{ color: 'var(--bsi-bone)' }}>{team.name}</span>
+                                    <span className="font-semibold text-bsi-bone">{team.name}</span>
                                   </div>
                                 </td>
-                                <td className="text-center py-3 px-2 font-mono" style={{ color: 'var(--bsi-bone)' }}>
+                                <td className="text-center py-3 px-2 font-mono text-bsi-bone">
                                   {team.wins}
                                 </td>
-                                <td className="text-center py-3 px-2 font-mono" style={{ color: 'var(--bsi-bone)' }}>
+                                <td className="text-center py-3 px-2 font-mono text-bsi-bone">
                                   {team.losses}
                                 </td>
-                                <td className="text-center py-3 px-2 font-mono" style={{ color: 'var(--bsi-bone)' }}>
+                                <td className="text-center py-3 px-2 font-mono text-bsi-bone">
                                   {team.ties}
                                 </td>
-                                <td className="text-center py-3 px-2 font-mono" style={{ color: 'var(--bsi-bone)' }}>
+                                <td className="text-center py-3 px-2 font-mono text-bsi-bone">
                                   {team.pct.toFixed(3)}
                                 </td>
-                                <td className="text-center py-3 px-2 font-mono hidden md:table-cell" style={{ color: 'var(--bsi-dust)' }}>
+                                <td className="text-center py-3 px-2 font-mono hidden md:table-cell text-bsi-dust">
                                   {team.pf}
                                 </td>
-                                <td className="text-center py-3 px-2 font-mono hidden md:table-cell" style={{ color: 'var(--bsi-dust)' }}>
+                                <td className="text-center py-3 px-2 font-mono hidden md:table-cell text-bsi-dust">
                                   {team.pa}
                                 </td>
                                 <td
@@ -252,7 +251,7 @@ export default function NFLStandingsPage() {
                                   {team.diff > 0 ? '+' : ''}
                                   {team.diff}
                                 </td>
-                                <td className="text-center py-3 px-2 hidden lg:table-cell" style={{ color: 'var(--bsi-dust)' }}>
+                                <td className="text-center py-3 px-2 hidden lg:table-cell text-bsi-dust">
                                   {team.streak}
                                 </td>
                               </tr>
@@ -267,7 +266,7 @@ export default function NFLStandingsPage() {
             )}
 
             {/* Data Source Footer */}
-            <div className="mt-8 pt-4" style={{ borderTop: '1px solid var(--border-vintage)' }}>
+            <div className="mt-8 pt-4 border-t border-border-vintage">
               <DataSourceBadge source="ESPN NFL API" timestamp={formatTimestamp()} />
             </div>
             </DataErrorBoundary>
@@ -275,7 +274,6 @@ export default function NFLStandingsPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

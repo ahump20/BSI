@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
@@ -53,14 +52,14 @@ interface TrendsResponse {
 // ─── Constants ──────────────────────────────────────────────────────────────
 
 const TEAM_ID = 'texas';
-const ACCENT = '#BF5700';
+const ACCENT = 'var(--bsi-primary)';
 
 type StatusFilter = 'all' | 'hot' | 'cold' | 'neutral';
 
 const STATUS_STYLES: Record<string, { bg: string; text: string; dot: string; label: string }> = {
   hot: { bg: 'bg-orange-500/10', text: 'text-orange-400', dot: 'bg-orange-500', label: 'Hot' },
-  cold: { bg: 'bg-[var(--heritage-columbia-blue)]/10', text: 'text-[var(--heritage-columbia-blue)]', dot: 'bg-[var(--heritage-columbia-blue)]', label: 'Cold' },
-  neutral: { bg: 'bg-[var(--bsi-dust)]/10', text: 'text-[var(--bsi-dust)]', dot: 'bg-[var(--bsi-dust)]', label: 'Neutral' },
+  cold: { bg: 'bg-heritage-columbia/10', text: 'text-heritage-columbia', dot: 'bg-heritage-columbia', label: 'Cold' },
+  neutral: { bg: 'bg-bsi-dust/10', text: 'text-bsi-dust', dot: 'bg-bsi-dust', label: 'Neutral' },
 };
 
 // ─── Sparkline Component ────────────────────────────────────────────────────
@@ -118,7 +117,7 @@ function RollingAreaChart({
 }) {
   if (data.length < 2) {
     return (
-      <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
+      <div className="rounded-sm border border-border-subtle bg-surface-dugout p-4 text-center">
         <p className="text-text-muted text-xs">{label} data will appear as the season progresses.</p>
       </div>
     );
@@ -150,7 +149,7 @@ function RollingAreaChart({
   const lastVal = values[values.length - 1];
 
   return (
-    <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4">
+    <div className="rounded-sm border border-border-subtle bg-surface-dugout p-4">
       <div className="flex items-center justify-between mb-2">
         <span className="text-[10px] uppercase tracking-wider text-text-muted">{label}</span>
         <span className="font-mono text-sm font-bold" style={{ color }}>{format(lastVal)}</span>
@@ -181,7 +180,7 @@ function RollingAreaChart({
 function RunDiffBarChart({ data }: { data: TeamRollingPoint[] }) {
   if (data.length < 2) {
     return (
-      <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
+      <div className="rounded-sm border border-border-subtle bg-surface-dugout p-4 text-center">
         <p className="text-text-muted text-xs">Run differential data will appear as the season progresses.</p>
       </div>
     );
@@ -199,7 +198,7 @@ function RunDiffBarChart({ data }: { data: TeamRollingPoint[] }) {
   const lastVal = values[values.length - 1];
 
   return (
-    <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4">
+    <div className="rounded-sm border border-border-subtle bg-surface-dugout p-4">
       <div className="flex items-center justify-between mb-2">
         <span className="text-[10px] uppercase tracking-wider text-text-muted">Run Differential</span>
         <span
@@ -264,7 +263,7 @@ export default function TexasTrendsClient() {
         </Section>
 
         {/* Hero */}
-        <Section padding="lg" className="relative overflow-hidden bg-[var(--surface-scoreboard)]">
+        <Section padding="lg" className="relative overflow-hidden bg-surface-scoreboard">
           <div className="absolute top-0 left-0 right-0 h-1" style={{ backgroundColor: ACCENT }} />
           <Container>
             <ScrollReveal direction="up">
@@ -291,7 +290,7 @@ export default function TexasTrendsClient() {
             <Container>
               <ScrollReveal direction="up">
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
+                  <div className="rounded-sm border border-border-subtle bg-surface-dugout p-4 text-center">
                     <div
                       className="font-mono text-2xl font-bold"
                       style={{
@@ -304,12 +303,12 @@ export default function TexasTrendsClient() {
                     </div>
                     <div className="text-[10px] uppercase tracking-wider text-text-muted mt-1">Run Diff (L5)</div>
                   </div>
-                  <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
+                  <div className="rounded-sm border border-border-subtle bg-surface-dugout p-4 text-center">
                     <div className="font-mono text-2xl font-bold text-orange-400">{momentum.hotPlayers}</div>
                     <div className="text-[10px] uppercase tracking-wider text-text-muted mt-1">Hot Bats</div>
                   </div>
-                  <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
-                    <div className="font-mono text-2xl font-bold text-[var(--heritage-columbia-blue)]">{momentum.coldPlayers}</div>
+                  <div className="rounded-sm border border-border-subtle bg-surface-dugout p-4 text-center">
+                    <div className="font-mono text-2xl font-bold text-heritage-columbia">{momentum.coldPlayers}</div>
                     <div className="text-[10px] uppercase tracking-wider text-text-muted mt-1">Cold Bats</div>
                   </div>
                 </div>
@@ -335,7 +334,7 @@ export default function TexasTrendsClient() {
                   <RollingAreaChart
                     data={data.teamRolling ?? []}
                     valueKey="era"
-                    color="#4B9CD3"
+                    color="var(--heritage-columbia-blue)"
                     label="Team ERA"
                     format={(n) => n.toFixed(2)}
                     invertY
@@ -368,7 +367,7 @@ export default function TexasTrendsClient() {
                           className={`px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-sm transition-colors ${
                             statusFilter === f
                               ? f === 'hot' ? 'bg-orange-500 text-white'
-                                : f === 'cold' ? 'bg-[var(--heritage-columbia-blue)] text-white'
+                                : f === 'cold' ? 'bg-heritage-columbia text-white'
                                 : 'bg-burnt-orange text-white'
                               : 'bg-surface-light text-text-muted hover:text-text-primary'
                           }`}
@@ -394,7 +393,7 @@ export default function TexasTrendsClient() {
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                             <th className="text-left py-2 px-2">Player</th>
                             <th className="text-left py-2 px-2">Pos</th>
                             <th className="text-center py-2 px-2">Status</th>
@@ -455,7 +454,7 @@ export default function TexasTrendsClient() {
         <Section padding="md" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <div className="rounded-sm bg-[var(--surface-dugout)] border border-border-subtle p-4">
+              <div className="rounded-sm bg-surface-dugout border border-border-subtle p-4">
                 <span className="heritage-stamp text-[10px] block mb-2">How This Works</span>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-text-secondary">
                   <div>
@@ -467,14 +466,14 @@ export default function TexasTrendsClient() {
                   </div>
                   <div>
                     <span className="inline-flex items-center gap-1.5 mb-1">
-                      <span className="w-2 h-2 rounded-full bg-[var(--heritage-columbia-blue)]" />
+                      <span className="w-2 h-2 rounded-full bg-heritage-columbia" />
                       <span className="text-text-primary font-semibold">Cold</span>
                     </span>
                     <p>Last-5-game average is 50+ points below season average. Pressing or fatigued.</p>
                   </div>
                   <div>
                     <span className="inline-flex items-center gap-1.5 mb-1">
-                      <span className="w-2 h-2 rounded-full bg-[var(--bsi-dust)]" />
+                      <span className="w-2 h-2 rounded-full bg-bsi-dust" />
                       <span className="text-text-primary font-semibold">Neutral</span>
                     </span>
                     <p>Performing within normal range of season averages. Steady contributor.</p>
@@ -512,7 +511,6 @@ export default function TexasTrendsClient() {
           </Container>
         </Section>
       </main>
-      <Footer />
     </>
   );
 }

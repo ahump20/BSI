@@ -8,7 +8,7 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
+
 import { Skeleton } from '@/components/ui/Skeleton';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { DataAttribution } from '@/components/ui/DataAttribution';
@@ -229,8 +229,7 @@ function TeamRow({
         />
       ) : (
         <div
-          className="h-5 w-5 shrink-0 rounded-sm sm:h-6 sm:w-6"
-          style={{ backgroundColor: 'var(--surface-press-box)' }}
+          className="h-5 w-5 shrink-0 rounded-sm sm:h-6 sm:w-6 bg-surface-press-box"
         />
       )}
 
@@ -251,16 +250,14 @@ function TeamRow({
 
       {/* Record */}
       <span
-        className="shrink-0 font-mono text-[11px] tabular-nums sm:text-xs"
-        style={{ color: 'var(--bsi-dust)' }}
+        className="shrink-0 font-mono text-[11px] tabular-nums sm:text-xs text-bsi-dust"
       >
         {team.wins}-{team.losses}
       </span>
 
       {/* Win % — hidden on mobile */}
       <span
-        className="hidden w-11 shrink-0 text-right font-mono text-[11px] tabular-nums md:inline"
-        style={{ color: 'var(--bsi-dust)' }}
+        className="hidden w-11 shrink-0 text-right font-mono text-[11px] tabular-nums md:inline text-bsi-dust"
       >
         {team.winPercentage > 0
           ? team.winPercentage.toFixed(3).replace('0.', '.')
@@ -269,24 +266,21 @@ function TeamRow({
 
       {/* Games back from #1 */}
       <span
-        className="w-8 shrink-0 text-right font-mono text-[11px] tabular-nums sm:w-9"
-        style={{ color: 'var(--bsi-dust)' }}
+        className="w-8 shrink-0 text-right font-mono text-[11px] tabular-nums sm:w-9 text-bsi-dust"
       >
         {gamesBack1 === 0 ? '--' : gamesBack1.toString()}
       </span>
 
       {/* Games remaining */}
       <span
-        className="hidden w-6 shrink-0 text-right font-mono text-[11px] tabular-nums md:inline"
-        style={{ color: 'var(--bsi-dust)' }}
+        className="hidden w-6 shrink-0 text-right font-mono text-[11px] tabular-nums md:inline text-bsi-dust"
       >
         {remaining}
       </span>
 
       {/* Last 10 — hidden on mobile */}
       <span
-        className="hidden w-10 shrink-0 text-right font-mono text-[11px] tabular-nums lg:inline"
-        style={{ color: 'var(--bsi-dust)' }}
+        className="hidden w-10 shrink-0 text-right font-mono text-[11px] tabular-nums lg:inline text-bsi-dust"
       >
         {team.last10 || '--'}
       </span>
@@ -393,8 +387,7 @@ function PlayInBracket({
           Play-In Tournament
         </span>
         <span
-          className="text-[10px] uppercase tracking-wider"
-          style={{ color: 'var(--bsi-dust)' }}
+          className="text-[10px] uppercase tracking-wider text-bsi-dust"
         >
           {conference}
         </span>
@@ -411,19 +404,17 @@ function PlayInBracket({
           }}
         >
           <div
-            className="mb-2 text-[9px] font-bold uppercase tracking-widest"
-            style={{ color: 'var(--bsi-dust)' }}
+            className="mb-2 text-[9px] font-bold uppercase tracking-widest text-bsi-dust"
           >
             Game A — Winner gets 7 seed
           </div>
           <PlayInMatchup team={seed7} seed={7} />
           <div
-            className="my-1.5 flex items-center gap-2 px-2 text-[10px]"
-            style={{ color: 'var(--bsi-dust)' }}
+            className="my-1.5 flex items-center gap-2 px-2 text-[10px] text-bsi-dust"
           >
-            <span className="flex-1 border-t" style={{ borderColor: 'var(--border-vintage)' }} />
+            <span className="flex-1 border-t border-border-vintage" />
             <span>vs</span>
-            <span className="flex-1 border-t" style={{ borderColor: 'var(--border-vintage)' }} />
+            <span className="flex-1 border-t border-border-vintage" />
           </div>
           <PlayInMatchup team={seed8} seed={8} />
         </div>
@@ -437,19 +428,17 @@ function PlayInBracket({
           }}
         >
           <div
-            className="mb-2 text-[9px] font-bold uppercase tracking-widest"
-            style={{ color: 'var(--bsi-dust)' }}
+            className="mb-2 text-[9px] font-bold uppercase tracking-widest text-bsi-dust"
           >
             Game B — Loser eliminated
           </div>
           <PlayInMatchup team={seed9} seed={9} />
           <div
-            className="my-1.5 flex items-center gap-2 px-2 text-[10px]"
-            style={{ color: 'var(--bsi-dust)' }}
+            className="my-1.5 flex items-center gap-2 px-2 text-[10px] text-bsi-dust"
           >
-            <span className="flex-1 border-t" style={{ borderColor: 'var(--border-vintage)' }} />
+            <span className="flex-1 border-t border-border-vintage" />
             <span>vs</span>
-            <span className="flex-1 border-t" style={{ borderColor: 'var(--border-vintage)' }} />
+            <span className="flex-1 border-t border-border-vintage" />
           </div>
           <PlayInMatchup team={seed10} seed={10} />
         </div>
@@ -464,7 +453,7 @@ function PlayInBracket({
           backgroundColor: 'rgba(22, 22, 22, 0.5)',
         }}
       >
-        <strong style={{ color: 'var(--bsi-bone)' }}>Game C:</strong> Loser
+        <strong className="text-bsi-bone">Game C:</strong> Loser
         of A vs Winner of B — winner earns the 8th seed.
       </div>
     </div>
@@ -475,8 +464,7 @@ function PlayInMatchup({ team, seed }: { team: NBAStandingsTeam; seed: number })
   return (
     <div className="flex items-center gap-2 px-1">
       <span
-        className="w-4 font-mono text-[10px] font-bold"
-        style={{ color: 'var(--heritage-columbia-blue)' }}
+        className="w-4 font-mono text-[10px] font-bold text-heritage-columbia"
       >
         {seed}
       </span>
@@ -490,17 +478,15 @@ function PlayInMatchup({ team, seed }: { team: NBAStandingsTeam; seed: number })
           unoptimized
         />
       ) : (
-        <div className="h-4 w-4 rounded-sm" style={{ backgroundColor: 'var(--surface-press-box)' }} />
+        <div className="h-4 w-4 rounded-sm bg-surface-press-box" />
       )}
       <span
-        className="flex-1 truncate text-xs"
-        style={{ color: 'var(--bsi-bone)' }}
+        className="flex-1 truncate text-xs text-bsi-bone"
       >
         {team.teamName}
       </span>
       <span
-        className="font-mono text-[10px] tabular-nums"
-        style={{ color: 'var(--bsi-dust)' }}
+        className="font-mono text-[10px] tabular-nums text-bsi-dust"
       >
         {team.wins}-{team.losses}
       </span>
@@ -539,14 +525,12 @@ function ConferencePanel({
         }}
       >
         <h2
-          className="font-heading text-lg uppercase tracking-wider sm:text-xl"
-          style={{ color: 'var(--bsi-bone)' }}
+          className="font-heading text-lg uppercase tracking-wider sm:text-xl text-bsi-bone"
         >
           {title}
         </h2>
         <span
-          className="text-[10px] uppercase tracking-widest"
-          style={{ color: 'var(--bsi-dust)' }}
+          className="text-[10px] uppercase tracking-widest text-bsi-dust"
         >
           {sorted.length} teams
         </span>
@@ -598,18 +582,15 @@ function ConferencePanel({
         <>
           <div className="relative flex items-center py-1.5">
             <div
-              className="flex-1 border-t border-dashed"
-              style={{ borderColor: 'var(--border-vintage)' }}
+              className="flex-1 border-t border-dashed border-border-vintage"
             />
             <span
-              className="mx-3 text-[9px] font-bold uppercase tracking-widest"
-              style={{ color: 'var(--bsi-dust)' }}
+              className="mx-3 text-[9px] font-bold uppercase tracking-widest text-bsi-dust"
             >
               Below the line
             </span>
             <div
-              className="flex-1 border-t border-dashed"
-              style={{ borderColor: 'var(--border-vintage)' }}
+              className="flex-1 border-t border-dashed border-border-vintage"
             />
           </div>
 
@@ -676,18 +657,16 @@ function SeasonContext({ eastern, western }: { eastern: NBAStandingsTeam[]; west
         }}
       >
         <div
-          className="text-[9px] font-bold uppercase tracking-widest"
-          style={{ color: 'var(--bsi-dust)' }}
+          className="text-[9px] font-bold uppercase tracking-widest text-bsi-dust"
         >
           Season Progress
         </div>
         <div
-          className="mt-0.5 font-mono text-lg font-bold tabular-nums"
-          style={{ color: 'var(--bsi-bone)' }}
+          className="mt-0.5 font-mono text-lg font-bold tabular-nums text-bsi-bone"
         >
           {seasonPct}%
         </div>
-        <div className="mt-1 h-1 overflow-hidden rounded-full" style={{ backgroundColor: 'var(--surface-press-box)' }}>
+        <div className="mt-1 h-1 overflow-hidden rounded-full bg-surface-press-box">
           <div
             className="h-full rounded-full transition-all duration-700"
             style={{
@@ -706,20 +685,17 @@ function SeasonContext({ eastern, western }: { eastern: NBAStandingsTeam[]; west
         }}
       >
         <div
-          className="text-[9px] font-bold uppercase tracking-widest"
-          style={{ color: 'var(--bsi-dust)' }}
+          className="text-[9px] font-bold uppercase tracking-widest text-bsi-dust"
         >
           Best Record
         </div>
         <div
-          className="mt-0.5 truncate font-body text-sm font-semibold"
-          style={{ color: 'var(--bsi-primary)' }}
+          className="mt-0.5 truncate font-body text-sm font-semibold text-bsi-primary"
         >
           {bestTeam?.teamName}
         </div>
         <div
-          className="font-mono text-xs tabular-nums"
-          style={{ color: 'var(--bsi-dust)' }}
+          className="font-mono text-xs tabular-nums text-bsi-dust"
         >
           {bestTeam?.wins}-{bestTeam?.losses}
         </div>
@@ -733,8 +709,7 @@ function SeasonContext({ eastern, western }: { eastern: NBAStandingsTeam[]; west
         }}
       >
         <div
-          className="text-[9px] font-bold uppercase tracking-widest"
-          style={{ color: 'var(--bsi-dust)' }}
+          className="text-[9px] font-bold uppercase tracking-widest text-bsi-dust"
         >
           East #1
         </div>
@@ -752,15 +727,13 @@ function SeasonContext({ eastern, western }: { eastern: NBAStandingsTeam[]; west
             />
           )}
           <span
-            className="truncate font-body text-sm"
-            style={{ color: 'var(--bsi-bone)' }}
+            className="truncate font-body text-sm text-bsi-bone"
           >
             {eastTop?.abbreviation || eastTop?.teamName}
           </span>
         </div>
         <div
-          className="font-mono text-xs tabular-nums"
-          style={{ color: 'var(--bsi-dust)' }}
+          className="font-mono text-xs tabular-nums text-bsi-dust"
         >
           {eastTop?.wins}-{eastTop?.losses}
         </div>
@@ -774,8 +747,7 @@ function SeasonContext({ eastern, western }: { eastern: NBAStandingsTeam[]; west
         }}
       >
         <div
-          className="text-[9px] font-bold uppercase tracking-widest"
-          style={{ color: 'var(--bsi-dust)' }}
+          className="text-[9px] font-bold uppercase tracking-widest text-bsi-dust"
         >
           West #1
         </div>
@@ -793,15 +765,13 @@ function SeasonContext({ eastern, western }: { eastern: NBAStandingsTeam[]; west
             />
           )}
           <span
-            className="truncate font-body text-sm"
-            style={{ color: 'var(--bsi-bone)' }}
+            className="truncate font-body text-sm text-bsi-bone"
           >
             {westTop?.abbreviation || westTop?.teamName}
           </span>
         </div>
         <div
-          className="font-mono text-xs tabular-nums"
-          style={{ color: 'var(--bsi-dust)' }}
+          className="font-mono text-xs tabular-nums text-bsi-dust"
         >
           {westTop?.wins}-{westTop?.losses}
         </div>
@@ -861,19 +831,18 @@ export default function NBAPlayoffPicturePage() {
         <Container>
           {/* Breadcrumb */}
           <nav
-            className="mb-3 flex items-center gap-1.5 text-xs sm:mb-4"
-            style={{ color: 'var(--bsi-dust)' }}
+            className="mb-3 flex items-center gap-1.5 text-xs sm:mb-4 text-bsi-dust"
             aria-label="Breadcrumb"
           >
-            <Link href="/" className="transition-colors hover:underline" style={{ color: 'var(--bsi-dust)' }}>
+            <Link href="/" className="transition-colors hover:underline text-bsi-dust">
               Home
             </Link>
             <span aria-hidden="true">/</span>
-            <Link href="/nba" className="transition-colors hover:underline" style={{ color: 'var(--bsi-dust)' }}>
+            <Link href="/nba" className="transition-colors hover:underline text-bsi-dust">
               NBA
             </Link>
             <span aria-hidden="true">/</span>
-            <span style={{ color: 'var(--bsi-bone)' }}>Playoff Picture</span>
+            <span className="text-bsi-bone">Playoff Picture</span>
           </nav>
 
           {/* Title row */}
@@ -888,14 +857,12 @@ export default function NBAPlayoffPicturePage() {
                 </Badge>
               </div>
               <h1
-                className="font-heading text-3xl uppercase tracking-tight sm:text-4xl md:text-5xl"
-                style={{ color: 'var(--bsi-bone)' }}
+                className="font-heading text-3xl uppercase tracking-tight sm:text-4xl md:text-5xl text-bsi-bone"
               >
                 Playoff Picture
               </h1>
               <p
-                className="mt-1 max-w-lg text-xs leading-relaxed sm:text-sm"
-                style={{ color: 'var(--bsi-dust)' }}
+                className="mt-1 max-w-lg text-xs leading-relaxed sm:text-sm text-bsi-dust"
               >
                 Seeds 1-6 qualify directly. Seeds 7-10 enter the Play-In
                 Tournament. Regular season ends April 13.
@@ -929,8 +896,7 @@ export default function NBAPlayoffPicturePage() {
                 className="heritage-card flex flex-col items-center justify-center p-8 text-center"
               >
                 <p
-                  className="text-sm"
-                  style={{ color: 'var(--bsi-dust)' }}
+                  className="text-sm text-bsi-dust"
                 >
                   Unable to load standings data.
                 </p>
@@ -965,7 +931,7 @@ export default function NBAPlayoffPicturePage() {
                   color: 'var(--bsi-dust)',
                 }}
               >
-                <span className="font-bold uppercase tracking-widest" style={{ color: 'var(--bsi-bone)' }}>
+                <span className="font-bold uppercase tracking-widest text-bsi-bone">
                   Legend
                 </span>
                 <span className="flex items-center gap-1.5">
@@ -1008,7 +974,6 @@ export default function NBAPlayoffPicturePage() {
         </Section>
       </DataErrorBoundary>
 
-      <Footer />
     </>
   );
 }

@@ -83,6 +83,24 @@ export async function provisionKey(
 }
 
 /**
+ * Constant-time string comparison using Web Crypto.
+ * Prevents timing attacks on secret comparisons (admin keys, HMAC signatures).
+ * On length mismatch, compares against self to keep timing constant.
+ */
+export async function timingSafeCompare(a: string, b: string): Promise<boolean> {
+  const encoder = new TextEncoder();
+  const aBytes = encoder.encode(a);
+  const bBytes = encoder.encode(b);
+  if (aBytes.byteLength !== bBytes.byteLength) {
+    // Compare against self to maintain constant time even on length mismatch
+    const dummy = encoder.encode(a);
+    await crypto.subtle.timingSafeEqual(dummy, aBytes);
+    return false;
+  }
+  return crypto.subtle.timingSafeEqual(aBytes, bBytes);
+}
+
+/**
  * Send the API key to the subscriber via Resend.
  * No-ops if RESEND_API_KEY is not set.
  */

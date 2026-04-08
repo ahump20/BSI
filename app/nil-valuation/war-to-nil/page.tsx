@@ -6,7 +6,6 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 
 // ── Types ──
 type Sport = 'baseball' | 'football' | 'basketball';
@@ -276,7 +275,7 @@ export default function WARtoNILPage() {
 
           {/* ── Methodology ── */}
           <div className="heritage-card mt-10 relative overflow-hidden">
-            <div className="px-4 py-2.5 border-b border-border-vintage" style={{ background: 'var(--surface-press-box)' }}>
+            <div className="px-4 py-2.5 border-b border-border-vintage bg-surface-press-box">
               <span className="text-xs font-display uppercase tracking-widest text-text-muted">Methodology</span>
             </div>
             <div className="p-5">
@@ -298,7 +297,6 @@ export default function WARtoNILPage() {
         </Container>
       </Section>
 
-      <Footer />
     </div>
   );
 }

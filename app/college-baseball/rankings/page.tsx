@@ -9,7 +9,6 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { FilterPill } from '@/components/ui/FilterPill';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { HeroGlow } from '@/components/ui/HeroGlow';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
@@ -300,42 +299,42 @@ export default function CollegeBaseballRankingsPage() {
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
-                        <tr className="bg-[var(--surface-press-box)] border-b border-[var(--border-vintage)]">
-                          <th className="text-left py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider w-16">
+                        <tr className="bg-surface-press-box border-b border-border-vintage">
+                          <th className="text-left py-4 px-4 text-xs font-semibold text-bsi-dust uppercase tracking-wider w-16">
                             Rank
                           </th>
-                          <th className="text-left py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider">
+                          <th className="text-left py-4 px-4 text-xs font-semibold text-bsi-dust uppercase tracking-wider">
                             Team
                           </th>
                           {hasConference && (
-                            <th className="text-left py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden md:table-cell">
+                            <th className="text-left py-4 px-4 text-xs font-semibold text-bsi-dust uppercase tracking-wider hidden md:table-cell">
                               Conference
                             </th>
                           )}
-                          <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider">
+                          <th className="text-center py-4 px-4 text-xs font-semibold text-bsi-dust uppercase tracking-wider">
                             Record
                           </th>
                           {selectedPoll === 'rpi' && (
-                            <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden lg:table-cell">
+                            <th className="text-center py-4 px-4 text-xs font-semibold text-bsi-dust uppercase tracking-wider hidden lg:table-cell">
                               SOS
                             </th>
                           )}
                           {hasPoints && (
-                            <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden lg:table-cell">
+                            <th className="text-center py-4 px-4 text-xs font-semibold text-bsi-dust uppercase tracking-wider hidden lg:table-cell">
                               Points
                             </th>
                           )}
                           {hasFirstPlace && (
-                            <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden lg:table-cell">
+                            <th className="text-center py-4 px-4 text-xs font-semibold text-bsi-dust uppercase tracking-wider hidden lg:table-cell">
                               #1 Votes
                             </th>
                           )}
                           {hasStreak && (
-                            <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden md:table-cell">
+                            <th className="text-center py-4 px-4 text-xs font-semibold text-bsi-dust uppercase tracking-wider hidden md:table-cell">
                               Streak
                             </th>
                           )}
-                          <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider w-24">
+                          <th className="text-center py-4 px-4 text-xs font-semibold text-bsi-dust uppercase tracking-wider w-24">
                             Change
                           </th>
                         </tr>
@@ -449,8 +448,8 @@ export default function CollegeBaseballRankingsPage() {
                   </div>
 
                   {/* Legend */}
-                  <div className="px-4 py-3 bg-[var(--surface-press-box)] border-t border-[var(--border-vintage)]">
-                    <div className="flex flex-wrap items-center gap-4 text-xs text-[var(--bsi-dust)]">
+                  <div className="px-4 py-3 bg-surface-press-box border-t border-border-vintage">
+                    <div className="flex flex-wrap items-center gap-4 text-xs text-bsi-dust">
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 bg-burnt-orange/20 rounded-sm" />
                         <span>Top 10 Teams</span>
@@ -534,8 +533,7 @@ export default function CollegeBaseballRankingsPage() {
             <div className="mt-10">
               <Link
                 href="/college-baseball/savant"
-                className="block p-4 transition-colors group"
-                style={{ background: 'var(--surface-dugout, #161616)', border: '1px solid var(--border-vintage, rgba(140,98,57,0.3))' }}
+                className="block p-4 transition-colors group bg-surface-dugout border border-border-vintage"
               >
                 <div className="flex items-center justify-between">
                   <div>
@@ -555,7 +553,7 @@ export default function CollegeBaseballRankingsPage() {
             </div>
 
             {/* Data Attribution */}
-            <div className="mt-6 pt-4 border-t border-[var(--border-vintage)] flex justify-center">
+            <div className="mt-6 pt-4 border-t border-border-vintage flex justify-center">
               <DataAttribution
                 source="D1Baseball"
                 lastUpdated={rankings?.lastUpdated}
@@ -566,7 +564,6 @@ export default function CollegeBaseballRankingsPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

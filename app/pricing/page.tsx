@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { PRICING_TIERS, type PricingTier } from '@/lib/data/pricing-tiers';
 import { trackPaywallHit } from '@/lib/analytics/tracker';
 
@@ -99,8 +98,7 @@ export default function PricingPage() {
 
   return (
     <div
-      className="min-h-screen grain-overlay"
-      style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}
+      className="min-h-screen grain-overlay bg-surface-scoreboard text-bsi-bone"
     >
       {/* ================================================================
           HERO — R2 stadium atmosphere behind conversion copy
@@ -176,8 +174,7 @@ export default function PricingPage() {
             </h1>
 
             <p
-              className="font-serif italic text-lg leading-relaxed max-w-xl mx-auto"
-              style={{ color: 'var(--bsi-dust)' }}
+              className="font-serif italic text-lg leading-relaxed max-w-xl mx-auto text-bsi-dust"
             >
               Park-adjusted sabermetrics, live scores, and 330 D1 programs
               — all free. Pro unlocks exports, unlimited comparisons, and
@@ -259,8 +256,7 @@ export default function PricingPage() {
                     {point.label}
                   </span>
                   <p
-                    className="text-xs leading-relaxed font-serif"
-                    style={{ color: 'var(--bsi-dust)' }}
+                    className="text-xs leading-relaxed font-serif text-bsi-dust"
                   >
                     {point.detail}
                   </p>
@@ -339,8 +335,7 @@ export default function PricingPage() {
                   }}
                 >
                   <p
-                    className="text-sm leading-relaxed font-serif pb-4"
-                    style={{ color: 'var(--bsi-dust)' }}
+                    className="text-sm leading-relaxed font-serif pb-4 text-bsi-dust"
                   >
                     {item.a}
                   </p>
@@ -372,14 +367,12 @@ export default function PricingPage() {
               className="mx-auto mb-4 opacity-75 object-contain"
             />
             <p
-              className="text-xs font-mono uppercase tracking-[0.15em] mb-1"
-              style={{ color: 'var(--bsi-dust)' }}
+              className="text-xs font-mono uppercase tracking-[0.15em] mb-1 text-bsi-dust"
             >
               Blaze Intelligence &middot; blazesportsintel.com
             </p>
             <p
-              className="text-[11px] font-serif italic tracking-wide"
-              style={{ color: 'var(--bsi-primary)', opacity: 0.7 }}
+              className="text-[11px] font-serif italic tracking-wide text-bsi-primary opacity-70"
             >
               Born to Blaze the Path Beaten Less
             </p>
@@ -407,8 +400,7 @@ export default function PricingPage() {
                 </svg>
               </a>
               <p
-                className="text-xs font-serif italic mt-2"
-                style={{ color: 'var(--bsi-dust)' }}
+                className="text-xs font-serif italic mt-2 text-bsi-dust"
               >
                 Questions? I read every email.
               </p>
@@ -417,7 +409,6 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <Footer />
     </div>
   );
 }
@@ -486,8 +477,7 @@ function TierCard({
               ${tier.price}
             </span>
             <span
-              className="text-sm"
-              style={{ color: 'var(--bsi-dust)' }}
+              className="text-sm text-bsi-dust"
             >
               /{tier.period}
             </span>
@@ -509,8 +499,7 @@ function TierCard({
 
       {/* Description */}
       <p
-        className="text-sm leading-relaxed font-serif mb-6"
-        style={{ color: 'var(--bsi-dust)' }}
+        className="text-sm leading-relaxed font-serif mb-6 text-bsi-dust"
       >
         {tier.description}
       </p>

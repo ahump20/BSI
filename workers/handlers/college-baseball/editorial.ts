@@ -3,7 +3,7 @@
  */
 
 import type { Env, EnhancedArticle, HighlightlyMatch } from './shared';
-import { json, cachedJson, kvGet, kvPut, dataHeaders, cachedPayloadHeaders, getCollegeClient, getHighlightlyClient, HTTP_CACHE, CACHE_TTL, categorizeArticle, titleSimilarity, CATEGORY_KEYWORDS } from './shared';
+import { json, cachedJson, kvGet, kvPut, dataHeaders, cachedPayloadHeaders, getCollegeClient, getHighlightlyClient, logError, HTTP_CACHE, CACHE_TTL, categorizeArticle, titleSimilarity, CATEGORY_KEYWORDS } from './shared';
 
 export async function handleCollegeBaseballTrending(env: Env): Promise<Response> {
   try {
@@ -47,7 +47,9 @@ export async function handleCollegeBaseballTrending(env: Env): Promise<Response>
 
     return cachedJson(payload, 200, HTTP_CACHE.trending, { ...dataHeaders(result.timestamp), 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[handleCollegeBaseballTrending]', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleCollegeBaseballTrending]', msg);
+    await logError(env, msg, 'handleCollegeBaseballTrending');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -90,7 +92,9 @@ export async function handleCollegeBaseballDaily(url: URL, env: Env): Promise<Re
       meta: { source: 'bsi-college-baseball-daily', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
     }, 404);
   } catch (err) {
-    console.error('[handleCollegeBaseballDaily]', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleCollegeBaseballDaily]', msg);
+    await logError(env, msg, 'handleCollegeBaseballDaily');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -162,7 +166,9 @@ export async function handleCollegeBaseballNews(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, 300); // 5 min cache
     return cachedJson(payload, 200, HTTP_CACHE.news, { ...dataHeaders(new Date().toISOString(), 'espn'), 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[handleCollegeBaseballNews]', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleCollegeBaseballNews]', msg);
+    await logError(env, msg, 'handleCollegeBaseballNews');
     return json({ articles: [], meta: { source: 'espn', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' } }, 502);
   }
 }
@@ -250,7 +256,9 @@ export async function handleCollegeBaseballNewsEnhanced(env: Env): Promise<Respo
 
   return cachedJson(payload, 200, HTTP_CACHE.news);
   } catch (err) {
-    console.error('[handleCollegeBaseballNewsEnhanced]', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleCollegeBaseballNewsEnhanced]', msg);
+    await logError(env, msg, 'handleCollegeBaseballNewsEnhanced');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -324,7 +332,9 @@ export async function handleCollegeBaseballTransferPortal(env: Env): Promise<Res
     await kvPut(env.KV, cacheKey, payload, 300);
     return cachedJson(payload, 200, HTTP_CACHE.trending, dataHeaders(now, 'social-intel'));
   } catch (err) {
-    console.error('[handleCollegeBaseballTransferPortal]', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleCollegeBaseballTransferPortal]', msg);
+    await logError(env, msg, 'handleCollegeBaseballTransferPortal');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -405,7 +415,9 @@ export async function handlePortalPlayerDetail(
       meta: { source: 'portal-sync', fetched_at: data.lastUpdated ?? now, timezone: 'America/Chicago' },
     }, 200);
   } catch (err) {
-    console.error('[handlePortalPlayerDetail]', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handlePortalPlayerDetail]', msg);
+    await logError(env, msg, 'handlePortalPlayerDetail');
     return json({
       player: null,
       meta: { source: 'error', fetched_at: now, timezone: 'America/Chicago' },
@@ -469,7 +481,9 @@ export async function handleCollegeBaseballEditorialList(env: Env): Promise<Resp
       ...dataHeaders(now, 'bsi-d1'), 'X-Cache': 'MISS',
     });
   } catch (err) {
-    console.error('[handleCollegeBaseballEditorialList]', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleCollegeBaseballEditorialList]', msg);
+    await logError(env, msg, 'handleCollegeBaseballEditorialList');
     return json({
       editorials: [],
       meta: { source: 'bsi-d1', fetched_at: now, timezone: 'America/Chicago' },

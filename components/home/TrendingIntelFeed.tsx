@@ -42,8 +42,8 @@ const SPORT_COLORS: Record<string, string> = {
   mlb: '#C41E3A',
   nfl: '#013369',
   nba: '#FF6B35', // token: --bsi-accent
-  ncaa: '#BF5700', // token: --bsi-primary
-  'college-baseball': '#BF5700', // token: --bsi-primary
+  ncaa: 'var(--bsi-primary)',
+  'college-baseball': 'var(--bsi-primary)',
 };
 
 export function TrendingIntelFeed() {
@@ -110,15 +110,13 @@ export function TrendingIntelFeed() {
     <div className="heritage-card p-6 h-full flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <h3
-          className="font-display text-lg uppercase tracking-wide"
-          style={{ color: 'var(--bsi-bone)' }}
+          className="font-display text-lg uppercase tracking-wide text-bsi-bone"
         >
           Trending Intel
         </h3>
         <Link
           href="/intel"
-          className="text-xs font-semibold uppercase tracking-wider flex items-center gap-1 transition-colors"
-          style={{ color: 'var(--heritage-columbia-blue)' }}
+          className="text-xs font-semibold uppercase tracking-wider flex items-center gap-1 transition-colors text-heritage-columbia"
         >
           All Intel
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -131,17 +129,17 @@ export function TrendingIntelFeed() {
         {loading ? (
           Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="space-y-1.5 animate-pulse">
-              <div className="h-3 rounded-sm w-16" style={{ backgroundColor: 'var(--surface-press-box)' }} />
-              <div className="h-4 rounded-sm w-full" style={{ backgroundColor: 'var(--surface-press-box)' }} />
+              <div className="h-3 rounded-sm w-16 bg-surface-press-box" />
+              <div className="h-4 rounded-sm w-full bg-surface-press-box" />
             </div>
           ))
         ) : error ? (
-          <p className="text-sm py-4 text-center" style={{ color: 'var(--bsi-dust)' }}>Intel feed temporarily unavailable.</p>
+          <p className="text-sm py-4 text-center text-bsi-dust">Intel feed temporarily unavailable.</p>
         ) : articles.length === 0 ? (
-          <p className="text-sm py-4 text-center" style={{ color: 'var(--bsi-dust)' }}>No intel available right now.</p>
+          <p className="text-sm py-4 text-center text-bsi-dust">No intel available right now.</p>
         ) : (
           articles.map((article, i) => {
-            const color = SPORT_COLORS[article.sport] || '#BF5700'; // token: --bsi-primary
+            const color = SPORT_COLORS[article.sport] || 'var(--bsi-primary)';
             const timeDiff = Date.now() - new Date(article.published).getTime();
             const isRecent = timeDiff < 3_600_000; // less than 1 hour
             const inner = (
@@ -168,15 +166,13 @@ export function TrendingIntelFeed() {
                   </span>
                 </div>
                 <p
-                  className="text-sm leading-snug line-clamp-1 transition-colors"
-                  style={{ color: 'var(--bsi-bone)' }}
+                  className="text-sm leading-snug line-clamp-1 transition-colors text-bsi-bone"
                 >
                   {article.headline}
                 </p>
                 {article.description && (
                   <p
-                    className="text-xs mt-0.5 line-clamp-1 hidden lg:block"
-                    style={{ color: 'var(--bsi-dust)' }}
+                    className="text-xs mt-0.5 line-clamp-1 hidden lg:block text-bsi-dust"
                   >
                     {article.description}
                   </p>
@@ -197,7 +193,7 @@ export function TrendingIntelFeed() {
       </div>
 
       {!loading && articles.length > 0 && lastFetched && (
-        <p className="text-[10px] mt-2" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
+        <p className="text-[10px] mt-2 text-bsi-dust font-mono">
           Source: ESPN News · Updated {lastFetched.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })} CT
         </p>
       )}

@@ -2,7 +2,6 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
-import { Footer } from '@/components/layout-ds/Footer';
 
 export const metadata: Metadata = {
   title: 'Data Sources | Blaze Sports Intel',
@@ -110,18 +109,17 @@ const SEASONAL_CAVEATS = [
 export default function DataSourcesPage() {
   return (
     <>
-      <div style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
+      <div className="bg-surface-scoreboard text-bsi-bone">
         <Section padding="lg" className="pt-6 relative overflow-hidden">
           <Container>
             <div className="max-w-4xl mx-auto relative">
               <span className="heritage-stamp block mb-4">Transparency</span>
               <h1
-                className="text-3xl md:text-4xl font-bold uppercase tracking-wider mb-3"
-                style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                className="text-3xl md:text-4xl font-bold uppercase tracking-wider mb-3 font-display text-bsi-bone"
               >
                 Data Sources
               </h1>
-              <p className="font-serif italic text-lg leading-relaxed mb-12 max-w-2xl" style={{ color: 'var(--bsi-primary)' }}>
+              <p className="font-serif italic text-lg leading-relaxed mb-12 max-w-2xl text-bsi-primary">
                 Every feed on BSI includes timestamps and source attribution. This page documents
                 exactly where the data comes from, how often it refreshes, and what to expect
                 during edge-case windows like Spring Training and early-season coverage.
@@ -130,8 +128,7 @@ export default function DataSourcesPage() {
               {/* Providers */}
               <section className="mb-16">
                 <h2
-                  className="text-xl font-semibold uppercase tracking-wide mb-6"
-                  style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                  className="text-xl font-semibold uppercase tracking-wide mb-6 font-display text-bsi-bone"
                 >
                   Providers
                 </h2>
@@ -139,8 +136,7 @@ export default function DataSourcesPage() {
                   {PROVIDERS.map((p) => (
                     <div
                       key={p.name}
-                      className="rounded-sm p-5 sm:p-6"
-                      style={{ background: 'var(--surface-press-box)', border: '1px solid var(--border-vintage)' }}
+                      className="rounded-sm p-5 sm:p-6 bg-surface-press-box border border-border-vintage"
                     >
                       <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
                         <div>
@@ -148,8 +144,7 @@ export default function DataSourcesPage() {
                             href={p.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="font-semibold transition-colors hover:text-[var(--bsi-primary)]"
-                            style={{ color: 'var(--bsi-bone)' }}
+                            className="font-semibold transition-colors hover:text-bsi-primary text-bsi-bone"
                           >
                             {p.name}
                           </a>
@@ -170,12 +165,12 @@ export default function DataSourcesPage() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                         <div>
                           <span className="text-xs uppercase tracking-wider" style={{ color: 'rgba(196,184,165,0.35)' }}>Refresh</span>
-                          <p className="mt-0.5" style={{ color: 'var(--bsi-dust)' }}>{p.refresh}</p>
+                          <p className="mt-0.5 text-bsi-dust">{p.refresh}</p>
                         </div>
                         {p.notes && (
                           <div>
                             <span className="text-xs uppercase tracking-wider" style={{ color: 'rgba(196,184,165,0.35)' }}>Notes</span>
-                            <p className="mt-0.5" style={{ color: 'var(--bsi-dust)' }}>{p.notes}</p>
+                            <p className="mt-0.5 text-bsi-dust">{p.notes}</p>
                           </div>
                         )}
                       </div>
@@ -187,8 +182,7 @@ export default function DataSourcesPage() {
               {/* Internal Systems */}
               <section className="mb-16">
                 <h2
-                  className="text-xl font-semibold uppercase tracking-wide mb-6"
-                  style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                  className="text-xl font-semibold uppercase tracking-wide mb-6 font-display text-bsi-bone"
                 >
                   Internal Systems
                 </h2>
@@ -196,13 +190,11 @@ export default function DataSourcesPage() {
                   {INTERNAL_SYSTEMS.map((p) => (
                     <div
                       key={p.name}
-                      className="rounded-sm p-5 sm:p-6"
-                      style={{ background: 'var(--surface-press-box)', border: '1px solid var(--border-vintage)' }}
+                      className="rounded-sm p-5 sm:p-6 bg-surface-press-box border border-border-vintage"
                     >
                       <div className="flex flex-wrap items-center gap-3 mb-3">
                         <h3
-                          className="text-lg font-bold"
-                          style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                          className="text-lg font-bold font-display text-bsi-bone"
                         >
                           {p.name}
                         </h3>
@@ -216,11 +208,11 @@ export default function DataSourcesPage() {
                           </span>
                         ))}
                       </div>
-                      <p className="text-sm mb-3" style={{ color: 'var(--bsi-dust)' }}>{p.role}</p>
+                      <p className="text-sm mb-3 text-bsi-dust">{p.role}</p>
                       <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs" style={{ color: 'rgba(196,184,165,0.35)' }}>
                         <div>
                           <span className="uppercase tracking-wider">Refresh</span>
-                          <p className="mt-0.5" style={{ color: 'var(--bsi-dust)' }}>{p.refresh}</p>
+                          <p className="mt-0.5 text-bsi-dust">{p.refresh}</p>
                         </div>
                       </div>
                     </div>
@@ -231,27 +223,25 @@ export default function DataSourcesPage() {
               {/* Storage Layers */}
               <section className="mb-16">
                 <h2
-                  className="text-xl font-semibold uppercase tracking-wide mb-6"
-                  style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                  className="text-xl font-semibold uppercase tracking-wide mb-6 font-display text-bsi-bone"
                 >
                   Storage Layers
                 </h2>
-                <div className="rounded-sm overflow-hidden" style={{ background: 'var(--surface-press-box)', border: '1px solid var(--border-vintage)' }}>
+                <div className="rounded-sm overflow-hidden bg-surface-press-box border border-border-vintage">
                   <div
                     className="grid grid-cols-[1fr_2fr_2fr] gap-px text-xs uppercase tracking-wider font-medium"
                     style={{ color: 'rgba(196,184,165,0.35)', background: 'var(--surface-press-box)' }}
                   >
-                    <div className="p-3 sm:p-4" style={{ background: 'var(--surface-scoreboard)' }}>Layer</div>
-                    <div className="p-3 sm:p-4" style={{ background: 'var(--surface-scoreboard)' }}>Purpose</div>
-                    <div className="p-3 sm:p-4" style={{ background: 'var(--surface-scoreboard)' }}>TTL / Lifecycle</div>
+                    <div className="p-3 sm:p-4 bg-surface-scoreboard">Layer</div>
+                    <div className="p-3 sm:p-4 bg-surface-scoreboard">Purpose</div>
+                    <div className="p-3 sm:p-4 bg-surface-scoreboard">TTL / Lifecycle</div>
                   </div>
                   {STORAGE_TIERS.map((t) => (
                     <div
                       key={t.layer}
-                      className="grid grid-cols-[1fr_2fr_2fr] gap-px text-sm"
-                      style={{ background: 'var(--surface-press-box)' }}
+                      className="grid grid-cols-[1fr_2fr_2fr] gap-px text-sm bg-surface-press-box"
                     >
-                      <div className="p-3 sm:p-4 font-medium" style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>{t.layer}</div>
+                      <div className="p-3 sm:p-4 font-medium bg-surface-scoreboard text-bsi-bone">{t.layer}</div>
                       <div className="p-3 sm:p-4" style={{ background: 'var(--surface-scoreboard)', color: 'rgba(196,184,165,0.5)' }}>{t.purpose}</div>
                       <div className="p-3 sm:p-4" style={{ background: 'var(--surface-scoreboard)', color: 'rgba(196,184,165,0.35)' }}>{t.ttls}</div>
                     </div>
@@ -262,8 +252,7 @@ export default function DataSourcesPage() {
               {/* Seasonal Caveats */}
               <section className="mb-16">
                 <h2
-                  className="text-xl font-semibold uppercase tracking-wide mb-6"
-                  style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                  className="text-xl font-semibold uppercase tracking-wide mb-6 font-display text-bsi-bone"
                 >
                   Seasonal Caveats
                 </h2>
@@ -271,12 +260,10 @@ export default function DataSourcesPage() {
                   {SEASONAL_CAVEATS.map((c) => (
                     <div
                       key={c.sport}
-                      className="flex gap-4 items-start rounded-sm p-4 sm:p-5"
-                      style={{ background: 'var(--surface-press-box)', border: '1px solid var(--border-vintage)' }}
+                      className="flex gap-4 items-start rounded-sm p-4 sm:p-5 bg-surface-press-box border border-border-vintage"
                     >
                       <span
-                        className="text-[10px] font-bold uppercase tracking-wider mt-0.5 shrink-0 w-20"
-                        style={{ color: 'var(--bsi-primary)' }}
+                        className="text-[10px] font-bold uppercase tracking-wider mt-0.5 shrink-0 w-20 text-bsi-primary"
                       >
                         {c.sport}
                       </span>
@@ -289,12 +276,10 @@ export default function DataSourcesPage() {
               {/* Philosophy */}
               <section className="mb-16">
                 <div
-                  className="rounded-sm p-6 sm:p-8"
-                  style={{ background: 'var(--surface-press-box)', border: '1px solid var(--border-vintage)' }}
+                  className="rounded-sm p-6 sm:p-8 bg-surface-press-box border border-border-vintage"
                 >
                   <h2
-                    className="text-xl font-semibold uppercase tracking-wide mb-4"
-                    style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                    className="text-xl font-semibold uppercase tracking-wide mb-4 font-display text-bsi-bone"
                   >
                     How It Works
                   </h2>
@@ -308,21 +293,17 @@ export default function DataSourcesPage() {
                     <p>
                       Every API response carries a{' '}
                       <code
-                        className="px-1.5 py-0.5 rounded-sm text-xs"
-                        style={{ color: 'var(--bsi-dust)', background: 'var(--surface-dugout)' }}
+                        className="px-1.5 py-0.5 rounded-sm text-xs text-bsi-dust bg-surface-dugout"
                       >meta</code>{' '}
                       object with{' '}
                       <code
-                        className="px-1.5 py-0.5 rounded-sm text-xs"
-                        style={{ color: 'var(--bsi-dust)', background: 'var(--surface-dugout)' }}
+                        className="px-1.5 py-0.5 rounded-sm text-xs text-bsi-dust bg-surface-dugout"
                       >source</code>,{' '}
                       <code
-                        className="px-1.5 py-0.5 rounded-sm text-xs"
-                        style={{ color: 'var(--bsi-dust)', background: 'var(--surface-dugout)' }}
+                        className="px-1.5 py-0.5 rounded-sm text-xs text-bsi-dust bg-surface-dugout"
                       >fetched_at</code>, and{' '}
                       <code
-                        className="px-1.5 py-0.5 rounded-sm text-xs"
-                        style={{ color: 'var(--bsi-dust)', background: 'var(--surface-dugout)' }}
+                        className="px-1.5 py-0.5 rounded-sm text-xs text-bsi-dust bg-surface-dugout"
                       >timezone</code>.
                       The UI always shows when data was last updated and where it came from.
                     </p>
@@ -345,8 +326,7 @@ export default function DataSourcesPage() {
                   see the expanded{' '}
                   <Link
                     href="/models/data-quality"
-                    className="font-semibold transition-colors"
-                    style={{ color: 'var(--bsi-primary)' }}
+                    className="font-semibold transition-colors text-bsi-primary"
                   >
                     Data Quality &amp; Sources
                   </Link>{' '}
@@ -370,7 +350,6 @@ export default function DataSourcesPage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

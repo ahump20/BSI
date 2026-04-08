@@ -82,7 +82,7 @@ export function MobileBottomNav({ onMorePress }: { onMorePress?: () => void }) {
   return (
     <nav
       aria-label="Mobile navigation"
-      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--surface-scoreboard)] border-t border-[var(--border-vintage)] shadow-[0_-4px_24px_rgba(0,0,0,0.4)]"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface-scoreboard border-t border-border-vintage shadow-[0_-4px_24px_rgba(0,0,0,0.4)]"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
       <div className="flex items-stretch">
@@ -96,14 +96,14 @@ export function MobileBottomNav({ onMorePress }: { onMorePress?: () => void }) {
               aria-current={active ? 'page' : undefined}
               className={`relative flex flex-col items-center justify-center gap-1 flex-1 min-h-[48px] py-2.5 px-1 transition-colors ${
                 active
-                  ? 'text-[#BF5700]'
+                  ? 'text-burnt-orange'
                   : 'text-[rgba(245,240,235,0.35)] hover:text-[rgba(245,240,235,0.65)]'
               }`}
             >
               {/* Active indicator bar */}
               <span
                 className={`absolute top-0 left-1/2 -translate-x-1/2 h-[2px] w-8 rounded-b-full transition-opacity ${
-                  active ? 'bg-[#BF5700] opacity-100' : 'opacity-0'
+                  active ? 'bg-bsi-primary opacity-100' : 'opacity-0'
                 }`}
                 aria-hidden="true"
               />
@@ -111,7 +111,7 @@ export function MobileBottomNav({ onMorePress }: { onMorePress?: () => void }) {
                 <Icon />
                 {active && (
                   <span
-                    className="absolute inset-0 rounded-full blur-sm bg-[#BF5700]/20"
+                    className="absolute inset-0 rounded-full blur-sm bg-bsi-primary/20"
                     aria-hidden="true"
                   />
                 )}

@@ -7,14 +7,13 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 import { fmt3, fmt2, fmt1, fmtPct } from '@/lib/utils/format';
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 
-const ACCENT = '#BF5700';
+const ACCENT = 'var(--bsi-primary)';
 const TEXAS_ESPN_ID = '251';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -161,7 +160,7 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
         </Section>
 
         {/* ── Hero ────────────────────────────────────────────────── */}
-        <Section padding="lg" className="relative overflow-hidden bg-[var(--surface-scoreboard)]">
+        <Section padding="lg" className="relative overflow-hidden bg-surface-scoreboard">
           <div className="absolute top-0 left-0 right-0 h-1" style={{ backgroundColor: ACCENT }} />
           <Container>
             <ScrollReveal direction="up">
@@ -197,7 +196,7 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
 
         {/* ── Quick Brief (3-point summary) ─────────────────────── */}
         {!loading && brief && (
-          <Section padding="md" className="bg-[var(--surface-dugout)] border-y border-border">
+          <Section padding="md" className="bg-surface-dugout border-y border-border">
             <Container>
               <ScrollReveal direction="up">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -207,13 +206,13 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
                       <p className="text-text-secondary text-xs leading-relaxed">{brief.overview.slice(0, 200)}{brief.overview.length > 200 ? '...' : ''}</p>
                     </CardContent>
                   </Card>
-                  <Card variant="default" padding="md" className="border-t-2 border-[var(--heritage-columbia-blue)]">
+                  <Card variant="default" padding="md" className="border-t-2 border-heritage-columbia">
                     <CardContent>
                       <span className="heritage-stamp text-[10px] block mb-2">Key Matchup</span>
                       <p className="text-text-secondary text-xs leading-relaxed">{brief.key_matchups.slice(0, 200)}{brief.key_matchups.length > 200 ? '...' : ''}</p>
                     </CardContent>
                   </Card>
-                  <Card variant="default" padding="md" className="border-t-2 border-[var(--bsi-dust)]">
+                  <Card variant="default" padding="md" className="border-t-2 border-bsi-dust">
                     <CardContent>
                       <span className="heritage-stamp text-[10px] block mb-2">Texas Edge</span>
                       <p className="text-text-secondary text-xs leading-relaxed">{brief.game_plan.slice(0, 200)}{brief.game_plan.length > 200 ? '...' : ''}</p>
@@ -284,7 +283,7 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
                         <div className="overflow-x-auto">
                           <table className="w-full text-sm">
                             <thead>
-                              <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                              <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                                 <th className="text-left py-2 px-2">Name</th>
                                 <th className="text-left py-2 px-2">Pos</th>
                                 <th className="text-right py-2 px-2">PA</th>
@@ -336,7 +335,7 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
                         <div className="overflow-x-auto">
                           <table className="w-full text-sm">
                             <thead>
-                              <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                              <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                                 <th className="text-left py-2 px-2">Name</th>
                                 <th className="text-left py-2 px-2">Pos</th>
                                 <th className="text-right py-2 px-2">IP</th>
@@ -393,7 +392,7 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
                           <div className="overflow-x-auto">
                             <table className="w-full text-sm">
                               <thead>
-                                <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                                <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                                   <th className="text-left py-2 px-2">Stat</th>
                                   <th className="text-right py-2 px-2" style={{ color: ACCENT }}>Texas</th>
                                   <th className="text-right py-2 px-2">{opponent.name.split(' ').pop()}</th>
@@ -473,7 +472,7 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
                           <div className="overflow-x-auto">
                             <table className="w-full text-sm">
                               <thead>
-                                <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                                <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                                   <th className="text-left py-2 px-2">Stat</th>
                                   <th className="text-right py-2 px-2" style={{ color: ACCENT }}>Texas</th>
                                   <th className="text-right py-2 px-2">{opponent.name.split(' ').pop()}</th>
@@ -611,7 +610,6 @@ export default function TexasScoutingClient({ opponentId }: { opponentId: string
         </Section>
       </main>
 
-      <Footer />
     </>
   );
 }

@@ -1,7 +1,6 @@
 'use client';
 
 import { useSportData } from '@/lib/hooks/useSportData';
-import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { DegradedNotice } from '@/components/ui/DegradedNotice';
 import { ScrollReveal } from '@/components/cinematic';
@@ -50,7 +49,7 @@ function MovementBadge({ movement }: { movement: number | null }) {
       </span>
     );
   }
-  if (movement === 0) return <span className="text-[10px]" style={{ color: 'var(--bsi-dust)' }}>—</span>;
+  if (movement === 0) return <span className="text-[10px] text-bsi-dust">—</span>;
   if (movement > 0) {
     return (
       <span className="text-[10px] font-bold" style={{ color: 'var(--bsi-teal, #00B2A9)', fontFamily: 'var(--bsi-font-data)' }}>
@@ -121,8 +120,7 @@ function MetricCell({ label, value, highlight }: { label: string; value: string;
         {value}
       </p>
       <p
-        className="text-[8px] uppercase tracking-[0.15em] mt-0.5"
-        style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}
+        className="text-[8px] uppercase tracking-[0.15em] mt-0.5 text-bsi-dust font-mono"
       >
         {label}
       </p>
@@ -140,24 +138,23 @@ export default function PowerRankingsClient() {
   );
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard)' }}>
+    <div className="min-h-screen bg-surface-scoreboard">
       {/* Hero */}
       <section className="pt-8 pb-4 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <ScrollReveal>
             <span className="heritage-stamp mb-3 inline-block">College Baseball</span>
             <h1
-              className="font-display text-3xl sm:text-4xl md:text-5xl font-bold uppercase tracking-wider mt-2"
-              style={{ color: 'var(--bsi-bone)' }}
+              className="font-display text-3xl sm:text-4xl md:text-5xl font-bold uppercase tracking-wider mt-2 text-bsi-bone"
             >
               BSI Power Rankings
             </h1>
-            <p className="mt-2 text-sm font-serif leading-relaxed max-w-xl" style={{ color: 'var(--bsi-dust)' }}>
+            <p className="mt-2 text-sm font-serif leading-relaxed max-w-xl text-bsi-dust">
               Computed from BSI Savant sabermetrics — wRC+, FIP, and conference strength of schedule.
               Not borrowed. Earned.
             </p>
             {meta?.lastUpdated && (
-              <p className="mt-2 text-[10px]" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
+              <p className="mt-2 text-[10px] text-bsi-dust font-mono">
                 Last computed: {formatTimestamp(meta.lastUpdated)}
               </p>
             )}
@@ -190,10 +187,10 @@ export default function PowerRankingsClient() {
 
           {data && data.rankings.length === 0 && (
             <div className="heritage-card p-8 text-center">
-              <p className="text-sm font-semibold" style={{ color: 'var(--bsi-bone)' }}>
+              <p className="text-sm font-semibold text-bsi-bone">
                 Rankings not yet available
               </p>
-              <p className="mt-1 text-xs" style={{ color: 'var(--bsi-dust)' }}>
+              <p className="mt-1 text-xs text-bsi-dust">
                 Savant data needs at least one compute cycle. Check back soon.
               </p>
             </div>
@@ -203,9 +200,9 @@ export default function PowerRankingsClient() {
             <>
               {/* Rankings table */}
               <div className="heritage-card overflow-hidden">
-                <div className="px-5 py-3 flex items-center justify-between" style={{ background: 'var(--surface-press-box)' }}>
+                <div className="px-5 py-3 flex items-center justify-between bg-surface-press-box">
                   <span className="heritage-stamp">Top {Math.min(data.rankings.length, 50)}</span>
-                  <span className="text-[9px] uppercase tracking-[0.12em]" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
+                  <span className="text-[9px] uppercase tracking-[0.12em] text-bsi-dust font-mono">
                     {data.season} Season
                   </span>
                 </div>
@@ -220,7 +217,7 @@ export default function PowerRankingsClient() {
                       <MovementBadge movement={team.movement} />
 
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-sm truncate" style={{ color: 'var(--bsi-bone)' }}>
+                        <p className="font-semibold text-sm truncate text-bsi-bone">
                           {team.team}
                         </p>
                         <ConferenceBadge conference={team.conference} />
@@ -236,12 +233,11 @@ export default function PowerRankingsClient() {
                       {/* Composite score */}
                       <div className="text-right">
                         <p
-                          className="text-lg font-bold"
-                          style={{ color: 'var(--bsi-primary)', fontFamily: 'var(--bsi-font-display)' }}
+                          className="text-lg font-bold text-bsi-primary font-display"
                         >
                           {team.score.toFixed(1)}
                         </p>
-                        <p className="text-[8px] uppercase tracking-[0.15em]" style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-data)' }}>
+                        <p className="text-[8px] uppercase tracking-[0.15em] text-bsi-dust font-mono">
                           BSI Score
                         </p>
                       </div>
@@ -253,7 +249,7 @@ export default function PowerRankingsClient() {
               {/* Methodology */}
               <div className="mt-6 heritage-card p-4">
                 <span className="heritage-stamp text-[9px]">Methodology</span>
-                <p className="mt-2 text-xs leading-relaxed font-serif" style={{ color: 'var(--bsi-dust)' }}>
+                <p className="mt-2 text-xs leading-relaxed font-serif text-bsi-dust">
                   {data.methodology}
                 </p>
               </div>
@@ -262,7 +258,6 @@ export default function PowerRankingsClient() {
         </div>
       </main>
 
-      <Footer />
     </div>
   );
 }

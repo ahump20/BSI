@@ -10,7 +10,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
+
 import { Skeleton, SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { TabBar, TabPanel } from '@/components/ui/TabBar';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -308,7 +308,7 @@ export default function NFLPage() {
                             {category.leaders.slice(0, 5).map((player, idx) => (
                               <div
                                 key={`${player.name}-${idx}`}
-                                className="flex items-center gap-3 py-2 border-b border-[var(--border-vintage)] last:border-0 group hover:bg-[var(--surface-dugout)] transition-colors rounded-sm px-1 -mx-1"
+                                className="flex items-center gap-3 py-2 border-b border-border-vintage last:border-0 group hover:bg-surface-dugout transition-colors rounded-sm px-1 -mx-1"
                               >
                                 <span className={`w-7 h-7 flex items-center justify-center rounded-full text-xs font-bold shrink-0 ${
                                   idx === 0 ? 'bg-burnt-orange text-white' : 'bg-burnt-orange/15 text-burnt-orange'
@@ -455,7 +455,7 @@ export default function NFLPage() {
                             </thead>
                             <tbody>
                               {standingsByDivision[division].map((team, idx) => (
-                                <tr key={team.teamName} className="border-b border-border-subtle hover:bg-[var(--surface-dugout)] transition-colors">
+                                <tr key={team.teamName} className="border-b border-border-subtle hover:bg-surface-dugout transition-colors">
                                   <td className="p-3 text-burnt-orange font-bold">{idx + 1}</td>
                                   <td className="p-3 font-semibold text-text-primary">{team.teamName}</td>
                                   <td className="p-3 text-text-secondary">{team.wins}</td>
@@ -544,11 +544,11 @@ export default function NFLPage() {
                                 return (
                                   <Link key={team.teamName} href={`/nfl/teams/${team.teamName.toLowerCase().replace(/\s+/g, '-')}`} className="block group">
                                     <div className={`flex items-center justify-between py-2 px-3 rounded-sm transition-colors ${
-                                      isLeader ? 'bg-burnt-orange/10 border border-burnt-orange/20' : 'hover:bg-[var(--surface-dugout)]'
+                                      isLeader ? 'bg-burnt-orange/10 border border-burnt-orange/20' : 'hover:bg-surface-dugout'
                                     }`}>
                                       <div className="flex items-center gap-3 min-w-0">
                                         <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] font-bold ${
-                                          isLeader ? 'bg-burnt-orange text-white' : 'bg-[var(--surface-dugout)] text-bsi-dust'
+                                          isLeader ? 'bg-burnt-orange text-white' : 'bg-surface-dugout text-bsi-dust'
                                         }`}>
                                           {idx + 1}
                                         </span>
@@ -609,7 +609,7 @@ export default function NFLPage() {
                         { label: 'Defenders', desc: 'Sacks, INTs, PFF grade', href: '/nfl/players' },
                       ].map((cat) => (
                         <Link key={cat.label} href={cat.href} className="group block">
-                          <div className="bg-[var(--surface-dugout)] rounded-sm p-4 border border-[var(--border-vintage)] hover:border-burnt-orange transition-colors h-full">
+                          <div className="heritage-card rounded-sm p-4 h-full">
                             <h4 className="text-sm font-semibold text-text-primary group-hover:text-burnt-orange transition-colors">
                               {cat.label}
                             </h4>
@@ -638,7 +638,7 @@ export default function NFLPage() {
                           if (!topPlayer) return null;
                           const catInfo = LEADER_CATEGORY_MAP[cat.abbreviation] || { label: cat.name, unit: cat.abbreviation };
                           return (
-                            <div key={cat.abbreviation} className="bg-[var(--surface-dugout)] rounded-sm p-4 border border-[var(--border-vintage)]">
+                            <div key={cat.abbreviation} className="heritage-card rounded-sm p-4">
                               <p className="text-[10px] text-text-tertiary uppercase tracking-wider mb-2">{catInfo.label} Leader</p>
                               <div className="flex items-center gap-3">
                                 {topPlayer.headshot && (
@@ -719,7 +719,6 @@ export default function NFLPage() {
           </Container>
         </Section>
       </div>
-        <Footer />
       </>
     </div>
     </ErrorBoundary>

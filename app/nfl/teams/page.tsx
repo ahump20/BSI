@@ -6,7 +6,7 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
+
 
 interface Team {
   id: string;
@@ -308,17 +308,16 @@ export default function NFLTeamsPage() {
     <Card
       variant="default"
       padding="md"
-      className="h-full transition-all group"
-      style={{ borderColor: 'var(--border-vintage)' }}
+      className="h-full transition-all group border-border-vintage"
       onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--bsi-primary)')}
       onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--border-vintage)')}
     >
       <div className="flex items-center gap-4">
-        <div className="w-16 h-16 rounded-sm flex items-center justify-center text-xl font-bold transition-colors" style={{ background: 'var(--surface-dugout)', color: 'var(--bsi-primary)' }}>
+        <div className="w-16 h-16 rounded-sm flex items-center justify-center text-xl font-bold transition-colors  bg-surface-dugout text-bsi-primary">
           {team.abbreviation}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-semibold transition-colors truncate" style={{ color: 'var(--bsi-bone)' }}>
+          <p className="font-semibold transition-colors truncate text-bsi-bone">
             {team.city} {team.name}
           </p>
           <p className="text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>
@@ -331,9 +330,9 @@ export default function NFLTeamsPage() {
 
   return (
     <>
-      <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
+      <div className="min-h-screen bg-surface-scoreboard text-bsi-bone">
         {/* Breadcrumb */}
-        <Section padding="sm" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
+        <Section padding="sm border-b border-border-vintage">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
@@ -346,7 +345,7 @@ export default function NFLTeamsPage() {
                 NFL
               </Link>
               <span style={{ color: 'rgba(196,184,165,0.5)' }}>/</span>
-              <span className="font-medium" style={{ color: 'var(--bsi-bone)' }}>Teams</span>
+              <span className="font-medium text-bsi-bone">Teams</span>
             </nav>
           </Container>
         </Section>
@@ -362,13 +361,13 @@ export default function NFLTeamsPage() {
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-wider mb-4" style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-wider mb-4 font-display text-bsi-bone">
                 NFL Teams
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="max-w-2xl" style={{ color: 'var(--bsi-dust)' }}>
+              <p className="max-w-2xl text-bsi-dust">
                 All 32 NFL teams across 8 divisions. Titans, Cowboys, Chiefs—every franchise, no
                 network filter.
               </p>
@@ -385,11 +384,10 @@ export default function NFLTeamsPage() {
 
               return (
                 <div key={division} className="mb-8">
-                  <h2 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: 'var(--bsi-bone)' }}>
+                  <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-bsi-bone">
                     <svg
                       viewBox="0 0 24 24"
-                      className="w-5 h-5"
-                      style={{ color: 'var(--bsi-primary)' }}
+                      className="w-5 h-5 text-bsi-primary"
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="1.5"
@@ -413,7 +411,6 @@ export default function NFLTeamsPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

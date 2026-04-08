@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 
 /* ─────────────────────────────────────────────
    Photo-driven origin story — Heritage v2.1
@@ -78,8 +77,7 @@ const originSections: StorySection[] = [
 export default function AboutPage() {
   return (
     <div
-      className="min-h-screen grain-overlay"
-      style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}
+      className="min-h-screen grain-overlay bg-surface-scoreboard text-bsi-bone"
     >
       {/* ═══════════ HERO ═══════════ */}
       <section
@@ -173,7 +171,7 @@ export default function AboutPage() {
               }}
             >
               The Game Between{' '}
-              <span style={{ color: 'var(--bsi-primary)' }}>the Poles</span>
+              <span className="text-bsi-primary">the Poles</span>
             </h1>
 
             <div className="flex justify-center mb-8">
@@ -184,8 +182,7 @@ export default function AboutPage() {
             </div>
 
             <p
-              className="font-serif italic text-lg md:text-xl leading-relaxed max-w-2xl mx-auto"
-              style={{ color: 'var(--bsi-dust)' }}
+              className="font-serif italic text-lg md:text-xl leading-relaxed max-w-2xl mx-auto text-bsi-dust"
             >
               Major platforms paint a black-and-white picture &mdash; LeBron vs.
               MJ, Yankees or Dodgers, Cowboys or nothing. BSI exists to leave that
@@ -272,14 +269,13 @@ export default function AboutPage() {
                     >
                       {section.heading}
                       {section.headingAccent && (
-                        <span style={{ color: 'var(--bsi-primary)' }}>
+                        <span className="text-bsi-primary">
                           {section.headingAccent}
                         </span>
                       )}
                     </h2>
                     <div
-                      className="space-y-4 leading-[1.8] font-serif"
-                      style={{ color: 'var(--bsi-dust)' }}
+                      className="space-y-4 leading-[1.8] font-serif text-bsi-dust"
                     >
                       {section.paragraphs.map((p, j) => (
                         <p key={j}>{p}</p>
@@ -315,11 +311,10 @@ export default function AboutPage() {
                 }}
               >
                 330 D1 Programs.{' '}
-                <span style={{ color: 'var(--bsi-primary)' }}>Every Game.</span>
+                <span className="text-bsi-primary">Every Game.</span>
               </h2>
               <p
-                className="mt-4 font-serif italic text-base md:text-lg max-w-2xl mx-auto leading-relaxed"
-                style={{ color: 'var(--bsi-dust)' }}
+                className="mt-4 font-serif italic text-base md:text-lg max-w-2xl mx-auto leading-relaxed text-bsi-dust"
               >
                 Park-adjusted sabermetrics. Every conference, every Tuesday night
                 mid-major matchup that nobody else covers. The same analytical depth
@@ -370,8 +365,7 @@ export default function AboutPage() {
                     {card.label}
                   </p>
                   <p
-                    className="text-sm leading-relaxed font-serif"
-                    style={{ color: 'var(--bsi-dust)' }}
+                    className="text-sm leading-relaxed font-serif text-bsi-dust"
                   >
                     {card.desc}
                   </p>
@@ -438,8 +432,7 @@ export default function AboutPage() {
                 </h2>
 
                 <div
-                  className="space-y-4 leading-[1.75] font-serif"
-                  style={{ color: 'var(--bsi-dust)' }}
+                  className="space-y-4 leading-[1.75] font-serif text-bsi-dust"
                 >
                   <p>
                     The coverage I wanted didn&apos;t exist. Not because the audience
@@ -466,7 +459,7 @@ export default function AboutPage() {
                     because nobody with a content team and a VC check was going to make
                     this for the fans I had in mind.
                   </p>
-                  <p style={{ color: 'var(--bsi-bone)' }}>
+                  <p className="text-bsi-bone">
                     A Wednesday night game between Rice and Sam Houston covered with the
                     same rigor as a Saturday showcase between Tennessee and LSU.
                     That&apos;s the standard, not the exception.
@@ -484,8 +477,7 @@ export default function AboutPage() {
                   </a>
                   <a
                     href="mailto:Austin@blazesportsintel.com"
-                    className="text-sm font-serif transition-colors duration-200"
-                    style={{ color: 'var(--heritage-columbia-blue)' }}
+                    className="text-sm font-serif transition-colors duration-200 text-heritage-columbia"
                   >
                     Austin@blazesportsintel.com
                   </a>
@@ -519,8 +511,7 @@ export default function AboutPage() {
             </div>
 
             <p
-              className="font-serif italic text-sm tracking-wide mb-10"
-              style={{ color: 'var(--bsi-primary)', opacity: 0.85 }}
+              className="font-serif italic text-sm tracking-wide mb-10 text-bsi-primary opacity-85"
             >
               Born to Blaze the Path Beaten Less
             </p>
@@ -546,7 +537,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <Footer />
     </div>
   );
 }

@@ -9,7 +9,6 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 
 // ── Types ──
 type PositionType = 'skill' | 'power' | 'speed';
@@ -321,7 +320,6 @@ export default function BrandMatchPage() {
         </Container>
       </Section>
 
-      <Footer />
     </div>
   );
 }

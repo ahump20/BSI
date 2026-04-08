@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 import { fmt2, fmt3, fmtPct } from '@/lib/utils/format';
@@ -105,7 +104,7 @@ interface PlayerProfileResponse {
 // ─── Constants ──────────────────────────────────────────────────────────────
 
 const TEAM_ID = 'texas';
-const ACCENT = '#BF5700';
+const ACCENT = 'var(--bsi-primary)';
 
 // ─── Formatting Helpers ─────────────────────────────────────────────────────
 
@@ -213,8 +212,7 @@ function RadarChart({ radar }: { radar: RadarScores }) {
             y={y}
             textAnchor="middle"
             dominantBaseline="middle"
-            className="fill-[var(--bsi-dust)] text-[9px] uppercase tracking-wider"
-            style={{ fontFamily: 'Oswald, sans-serif' }}
+            className="fill-bsi-dust text-[9px] uppercase tracking-wider font-display"
           >
             {label}
           </text>
@@ -238,8 +236,8 @@ function HavfBar({ label, description, value }: { label: string; description: st
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between text-xs">
-        <span className="font-semibold text-text-primary uppercase tracking-wider" style={{ fontFamily: 'Oswald, sans-serif' }}>
-          {label} <span className="text-text-muted font-normal normal-case" style={{ fontFamily: 'Cormorant Garamond, serif' }}>{description}</span>
+        <span className="font-semibold text-text-primary uppercase tracking-wider font-display">
+          {label} <span className="text-text-muted font-normal normal-case font-serif">{description}</span>
         </span>
         <span className="font-mono text-text-secondary">{value}</span>
       </div>
@@ -278,7 +276,7 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
     return (
       <>
         <main id="main-content">
-          <Section padding="lg" className="bg-[var(--surface-scoreboard)]">
+          <Section padding="lg" className="bg-surface-scoreboard">
             <Container>
               <div className="space-y-6 animate-pulse">
                 <div className="h-8 w-48 bg-surface-light rounded-sm" />
@@ -292,7 +290,6 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
             </Container>
           </Section>
         </main>
-        <Footer />
       </>
     );
   }
@@ -302,7 +299,7 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
     return (
       <>
         <main id="main-content">
-          <Section padding="lg" className="bg-[var(--surface-scoreboard)]">
+          <Section padding="lg" className="bg-surface-scoreboard">
             <Container>
               <div className="text-center py-16">
                 <h1 className="font-display text-2xl text-text-primary mb-4">Player Not Found</h1>
@@ -314,7 +311,6 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
             </Container>
           </Section>
         </main>
-        <Footer />
       </>
     );
   }
@@ -340,7 +336,7 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
         </Section>
 
         {/* Hero */}
-        <Section padding="lg" className="relative overflow-hidden bg-[var(--surface-scoreboard)]">
+        <Section padding="lg" className="relative overflow-hidden bg-surface-scoreboard">
           <div className="absolute top-0 left-0 right-0 h-1" style={{ backgroundColor: ACCENT }} />
           <Container>
             <ScrollReveal direction="up">
@@ -417,7 +413,7 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
                     {RADAR_KEYS.map((key, i) => (
                       <div key={key}>
                         <div className="font-mono text-sm text-text-primary">{radar[key]}</div>
-                        <div className="text-[10px] text-text-muted uppercase tracking-wider" style={{ fontFamily: 'Oswald, sans-serif' }}>{RADAR_LABELS[i]}</div>
+                        <div className="text-[10px] text-text-muted uppercase tracking-wider font-display">{RADAR_LABELS[i]}</div>
                       </div>
                     ))}
                   </div>
@@ -440,7 +436,7 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                             <th className="text-left py-2 px-2">W</th>
                             <th className="text-left py-2 px-2">L</th>
                             <th className="text-left py-2 px-2">SV</th>
@@ -475,7 +471,7 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                             <th className="text-right py-2 px-2">PA</th>
                             <th className="text-right py-2 px-2">AVG</th>
                             <th className="text-right py-2 px-2">OBP</th>
@@ -535,7 +531,7 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                             <th className="text-left py-2 px-2">Date</th>
                             <th className="text-left py-2 px-2">Opp</th>
                             <th className="text-left py-2 px-2">Result</th>
@@ -658,7 +654,6 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
           </Container>
         </Section>
       </main>
-      <Footer />
     </>
   );
 }
@@ -668,7 +663,7 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
 function QuickStat({ label, value }: { label: string; value: string }) {
   return (
     <div className="heritage-card p-4 text-center">
-      <div className="text-[10px] text-text-muted uppercase tracking-wider mb-1" style={{ fontFamily: 'Oswald, sans-serif' }}>
+      <div className="text-[10px] text-text-muted uppercase tracking-wider mb-1 font-display">
         {label}
       </div>
       <div className="text-2xl font-bold font-mono text-text-primary">{value}</div>

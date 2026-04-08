@@ -17,7 +17,6 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { SearchBar } from '@/components/layout-ds/SearchBar';
 import { FilterPill } from '@/components/ui/FilterPill';
 
@@ -64,11 +63,11 @@ const SPORT_LABELS: Record<string, string> = {
 
 const SPORT_COLORS: Record<string, string> = {
   mlb: 'bg-[var(--heritage-oiler-red)]',
-  nfl: 'bg-[var(--heritage-columbia-blue)]',
+  nfl: 'bg-heritage-columbia',
   nba: 'bg-orange-600',
-  college_baseball: 'bg-[var(--bsi-warning)]',
-  cfb: 'bg-[var(--bsi-primary)]',
-  cbb: 'bg-[var(--heritage-columbia-blue)]',
+  college_baseball: 'bg-warning',
+  cfb: 'bg-bsi-primary',
+  cbb: 'bg-heritage-columbia',
 };
 
 function getSportLabel(sport: string): string {
@@ -76,7 +75,7 @@ function getSportLabel(sport: string): string {
 }
 
 function getSportColor(sport: string): string {
-  return SPORT_COLORS[sport.toLowerCase()] || 'bg-[var(--surface-dugout)]';
+  return SPORT_COLORS[sport.toLowerCase()] || 'bg-surface-dugout';
 }
 
 // ============================================================================
@@ -86,18 +85,17 @@ function getSportColor(sport: string): string {
 function SearchLoading() {
   return (
     <>
-      <div style={{ minHeight: '100vh', background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
+      <div className="min-h-screen bg-surface-scoreboard text-bsi-bone">
         <Section padding="lg" className="pt-6 min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div
               className="animate-spin rounded-full h-12 w-12 mx-auto mb-4"
               style={{ borderTop: '2px solid var(--bsi-primary)', borderBottom: '2px solid var(--bsi-primary)', borderLeft: '2px solid transparent', borderRight: '2px solid transparent' }}
             />
-            <p style={{ color: 'var(--bsi-dust)' }}>Loading search...</p>
+            <p className="text-bsi-dust">Loading search...</p>
           </div>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }
@@ -191,9 +189,9 @@ function SearchContent() {
 
   return (
     <>
-      <div style={{ minHeight: '100vh', background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
+      <div className="min-h-screen bg-surface-scoreboard text-bsi-bone">
         {/* Hero Header */}
-        <Section padding="md" className="relative overflow-hidden" style={{ background: 'var(--surface-scoreboard)' }}>
+        <Section padding="md" className="relative overflow-hidden bg-surface-scoreboard">
           <Container>
             <ScrollReveal direction="up">
               <span className="heritage-stamp block mb-4">Search</span>
@@ -201,8 +199,7 @@ function SearchContent() {
 
             <ScrollReveal direction="up" delay={100}>
               <h1
-                className="text-3xl md:text-4xl font-bold uppercase tracking-wide mb-6"
-                style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                className="text-3xl md:text-4xl font-bold uppercase tracking-wide mb-6 font-display text-bsi-bone"
               >
                 {initialQuery ? `Results for "${initialQuery}"` : 'Cross-Sport Search'}
               </h1>
@@ -243,7 +240,7 @@ function SearchContent() {
 
             {/* Results Count */}
             {!isLoading && initialQuery && (
-              <p style={{ color: 'var(--bsi-dust)' }} className="mb-6">
+              <p className="text-bsi-dust mb-6">
                 Found {filteredResults.length} result{filteredResults.length !== 1 ? 's' : ''}
                 {filters.sport && ` in ${getSportLabel(filters.sport)}`}
               </p>
@@ -276,43 +273,39 @@ function SearchContent() {
             {!isLoading && !error && initialQuery && filteredResults.length === 0 && (
               <Card variant="default" padding="lg" className="heritage-card text-center">
                 <div className="mb-4 flex justify-center">
-                  <svg viewBox="0 0 24 24" fill="none" className="w-14 h-14" style={{ color: 'rgba(196,184,165,0.35)' }} stroke="currentColor" strokeWidth={1.5}>
+                  <svg viewBox="0 0 24 24" fill="none" className="w-14 h-14 text-bsi-dust/35" stroke="currentColor" strokeWidth={1.5}>
                     <circle cx="11" cy="11" r="8" />
                     <path d="M21 21l-4.35-4.35" />
                   </svg>
                 </div>
                 <h2
-                  className="text-xl font-semibold mb-2"
-                  style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                  className="text-xl font-semibold mb-2 font-display text-bsi-bone"
                 >
                   No Results Found
                 </h2>
-                <p style={{ color: 'var(--bsi-dust)' }} className="mb-4">
+                <p className="text-bsi-dust mb-4">
                   No matches for &ldquo;{initialQuery}&rdquo;
                   {filters.sport && ` in ${getSportLabel(filters.sport)}`}
                 </p>
-                <p className="text-sm mb-6" style={{ color: 'rgba(196,184,165,0.5)' }}>
-                  Try <Link href="/" className="font-medium transition-colors" style={{ color: 'var(--bsi-primary)' }}>Ask BSI</Link> on the homepage — it understands natural language questions like &ldquo;{initialQuery}&rdquo;.
+                <p className="text-sm mb-6 text-bsi-dust/50">
+                  Try <Link href="/" className="font-medium transition-colors text-bsi-primary">Ask BSI</Link> on the homepage — it understands natural language questions like &ldquo;{initialQuery}&rdquo;.
                 </p>
                 <div className="flex flex-wrap justify-center gap-3">
                   <Link
                     href="/college-baseball/teams"
-                    className="px-4 py-2 rounded-sm transition-colors"
-                    style={{ background: 'var(--surface-dugout)', color: 'var(--bsi-bone)' }}
+                    className="px-4 py-2 rounded-sm transition-colors bg-surface-dugout text-bsi-bone"
                   >
                     Browse NCAA Baseball
                   </Link>
                   <Link
                     href="/mlb/teams"
-                    className="px-4 py-2 rounded-sm transition-colors"
-                    style={{ background: 'var(--surface-dugout)', color: 'var(--bsi-bone)' }}
+                    className="px-4 py-2 rounded-sm transition-colors bg-surface-dugout text-bsi-bone"
                   >
                     Browse MLB Teams
                   </Link>
                   <Link
                     href="/nfl/teams"
-                    className="px-4 py-2 rounded-sm transition-colors"
-                    style={{ background: 'var(--surface-dugout)', color: 'var(--bsi-bone)' }}
+                    className="px-4 py-2 rounded-sm transition-colors bg-surface-dugout text-bsi-bone"
                   >
                     Browse NFL Teams
                   </Link>
@@ -326,8 +319,7 @@ function SearchContent() {
                 {/* Popular Searches */}
                 <div>
                   <h2
-                    className="text-lg font-bold uppercase tracking-wide mb-4"
-                    style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                    className="text-lg font-bold uppercase tracking-wide mb-4 font-display text-bsi-bone"
                   >
                     Popular Searches
                   </h2>
@@ -360,25 +352,23 @@ function SearchContent() {
                       className="w-12 h-12 rounded-sm flex items-center justify-center shrink-0"
                       style={{ background: 'rgba(191,87,0,0.1)' }}
                     >
-                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" style={{ color: 'var(--bsi-primary)' }} stroke="currentColor" strokeWidth={1.5}>
+                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-bsi-primary" stroke="currentColor" strokeWidth={1.5}>
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" />
                         <path d="M12 16v-4M12 8h.01" />
                       </svg>
                     </div>
                     <div>
                       <h3
-                        className="text-base font-bold uppercase tracking-wide mb-1"
-                        style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                        className="text-base font-bold uppercase tracking-wide mb-1 font-display text-bsi-bone"
                       >
                         Try Ask BSI
                       </h3>
-                      <p className="text-sm mb-3" style={{ color: 'var(--bsi-dust)' }}>
+                      <p className="text-sm mb-3 text-bsi-dust">
                         Ask questions in plain English — &ldquo;Is Texas a CWS contender?&rdquo; or &ldquo;Who leads D1 in wOBA?&rdquo; — and get answers with links to the right page.
                       </p>
                       <Link
                         href="/"
-                        className="text-sm font-semibold transition-colors"
-                        style={{ color: 'var(--bsi-primary)' }}
+                        className="text-sm font-semibold transition-colors text-bsi-primary"
                       >
                         Ask BSI on the homepage &rarr;
                       </Link>
@@ -389,8 +379,7 @@ function SearchContent() {
                 {/* Browse by Sport */}
                 <div>
                   <h2
-                    className="text-lg font-bold uppercase tracking-wide mb-4"
-                    style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                    className="text-lg font-bold uppercase tracking-wide mb-4 font-display text-bsi-bone"
                   >
                     Browse by Sport
                   </h2>
@@ -405,11 +394,10 @@ function SearchContent() {
                       <Link
                         key={sport.href}
                         href={sport.href}
-                        className="p-4 rounded-sm transition-colors"
-                        style={{ background: 'var(--surface-dugout)' }}
+                        className="p-4 rounded-sm transition-colors bg-surface-dugout"
                       >
-                        <p className="font-medium" style={{ color: 'var(--bsi-bone)' }}>{sport.label}</p>
-                        <p className="text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>{sport.sub}</p>
+                        <p className="font-medium text-bsi-bone">{sport.label}</p>
+                        <p className="text-xs text-bsi-dust/50">{sport.sub}</p>
                       </Link>
                     ))}
                   </div>
@@ -423,15 +411,14 @@ function SearchContent() {
                 {Object.entries(resultsBySport).map(([sport, items]) => (
                   <div key={sport}>
                     <h2
-                      className="text-lg font-semibold mb-4 flex items-center gap-2"
-                      style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                      className="text-lg font-semibold mb-4 flex items-center gap-2 font-display text-bsi-bone"
                     >
                       <span
                         className={`w-3 h-3 rounded-full ${getSportColor(sport)}`}
                         aria-hidden="true"
                       />
                       {getSportLabel(sport)}
-                      <span className="font-normal" style={{ color: 'rgba(196,184,165,0.5)' }}>({items.length})</span>
+                      <span className="font-normal text-bsi-dust/50">({items.length})</span>
                     </h2>
 
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -441,8 +428,7 @@ function SearchContent() {
                             <Card
                               variant="default"
                               padding="md"
-                              className="heritage-card h-full transition-all"
-                              style={{ borderColor: 'var(--border-vintage)' }}
+                              className="heritage-card h-full transition-all border-border-vintage"
                             >
                               <div className="flex items-center gap-4">
                                 {/* Type Badge */}
@@ -456,12 +442,11 @@ function SearchContent() {
                                 {/* Info */}
                                 <div className="flex-1 min-w-0">
                                   <p
-                                    className="font-semibold transition-colors truncate group-hover:text-[var(--bsi-primary)]"
-                                    style={{ color: 'var(--bsi-bone)' }}
+                                    className="font-semibold transition-colors truncate group-hover:text-bsi-primary text-bsi-bone"
                                   >
                                     {item.name}
                                   </p>
-                                  <p className="text-xs truncate capitalize" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                                  <p className="text-xs truncate capitalize text-bsi-dust/50">
                                     {item.type} {item.sport ? `· ${item.sport}` : ''}
                                   </p>
                                 </div>
@@ -469,8 +454,7 @@ function SearchContent() {
                                 {/* Arrow */}
                                 <svg
                                   viewBox="0 0 24 24"
-                                  className="w-5 h-5 shrink-0 transition-colors group-hover:text-[var(--bsi-primary)]"
-                                  style={{ color: 'rgba(196,184,165,0.5)' }}
+                                  className="w-5 h-5 shrink-0 transition-colors group-hover:text-bsi-primary text-bsi-dust/50"
                                   fill="none"
                                   stroke="currentColor"
                                   strokeWidth="2"
@@ -491,7 +475,6 @@ function SearchContent() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

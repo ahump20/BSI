@@ -6,7 +6,6 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 
@@ -39,7 +38,7 @@ interface DigestResponse {
 // ─── Constants ──────────────────────────────────────────────────────────────
 
 const TEAM_ID = 'texas';
-const ACCENT = '#BF5700';
+const ACCENT = 'var(--bsi-primary)';
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
@@ -73,7 +72,7 @@ export default function TexasDigestClient() {
         </Section>
 
         {/* Hero */}
-        <Section padding="lg" className="relative overflow-hidden bg-[var(--surface-scoreboard)]">
+        <Section padding="lg" className="relative overflow-hidden bg-surface-scoreboard">
           <div className="absolute top-0 left-0 right-0 h-1" style={{ backgroundColor: ACCENT }} />
           <Container>
             <ScrollReveal direction="up">
@@ -121,7 +120,7 @@ export default function TexasDigestClient() {
         {!loading && data && (
           <>
             {/* Dashboard Strip */}
-            <Section padding="md" className="bg-[var(--surface-dugout)] border-y border-border">
+            <Section padding="md" className="bg-surface-dugout border-y border-border">
               <Container>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="text-center py-2">
@@ -265,7 +264,6 @@ export default function TexasDigestClient() {
           </Container>
         </Section>
       </main>
-      <Footer />
     </>
   );
 }

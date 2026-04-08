@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
-import { Footer } from '@/components/layout-ds/Footer';
 import { teamMetadata, teamNameToSlug } from '@/lib/data/team-metadata';
 
 interface TeamSaber {
@@ -77,7 +76,7 @@ function CompareRow({
         {leftVal != null ? format(leftVal) : '—'}
       </span>
       <div className="flex-1 text-center">
-        <span className="font-oswald uppercase text-[11px] tracking-wider" style={{ color: 'var(--bsi-dust)' }}>
+        <span className="font-oswald uppercase text-[11px] tracking-wider text-bsi-dust">
           {label}
         </span>
       </div>
@@ -127,11 +126,11 @@ export default function TeamComparePage() {
   const rightName = teamMetadata[rightSlug]?.shortName ?? rightSlug;
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard, #0A0A0A)' }}>
+    <div className="min-h-screen bg-surface-scoreboard">
       <Container>
         <div className="py-10 sm:py-14 max-w-3xl mx-auto">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-xs mb-6" style={{ fontFamily: 'var(--bsi-font-data, monospace)', color: 'var(--bsi-dust, #C4B8A5)' }}>
+          <nav className="flex items-center gap-2 text-xs mb-6 font-mono text-bsi-dust">
             <Link href="/" className="hover:underline" style={{ color: 'var(--heritage-columbia-blue, #4B9CD3)' }}>Home</Link>
             <span>/</span>
             <Link href="/college-baseball" className="hover:underline" style={{ color: 'var(--heritage-columbia-blue, #4B9CD3)' }}>College Baseball</Link>
@@ -168,7 +167,7 @@ export default function TeamComparePage() {
                 <option key={s} value={s}>{teamMetadata[s]?.shortName ?? s}</option>
               ))}
             </select>
-            <span className="font-oswald uppercase text-sm tracking-widest" style={{ color: 'var(--bsi-dust)' }}>vs</span>
+            <span className="font-oswald uppercase text-sm tracking-widest text-bsi-dust">vs</span>
             <select
               value={rightSlug}
               onChange={(e) => setRightSlug(e.target.value)}
@@ -190,7 +189,7 @@ export default function TeamComparePage() {
           {loading ? (
             <div className="space-y-3">
               {[...Array(8)].map((_, i) => (
-                <div key={i} className="h-10 bsi-shimmer" style={{ background: 'var(--surface-dugout, #161616)' }} />
+                <div key={i} className="h-10 bsi-shimmer bg-surface-dugout" />
               ))}
             </div>
           ) : (
@@ -204,7 +203,7 @@ export default function TeamComparePage() {
               {/* Header */}
               <div className="flex items-center justify-between px-4 py-3" style={{ borderBottom: '1px solid var(--border-vintage, rgba(140,98,57,0.3))' }}>
                 <span className="font-oswald uppercase text-sm font-bold" style={{ color: 'var(--bsi-primary, #BF5700)' }}>{leftName}</span>
-                <span className="font-mono text-[10px] uppercase tracking-widest" style={{ color: 'var(--bsi-dust)' }}>Batting</span>
+                <span className="font-mono text-[10px] uppercase tracking-widest text-bsi-dust">Batting</span>
                 <span className="font-oswald uppercase text-sm font-bold" style={{ color: 'var(--heritage-columbia-blue, #4B9CD3)' }}>{rightName}</span>
               </div>
 
@@ -222,7 +221,7 @@ export default function TeamComparePage() {
               {/* Pitching header */}
               <div className="flex items-center justify-between px-4 py-3" style={{ borderTop: '2px solid var(--border-vintage, rgba(140,98,57,0.3))', borderBottom: '1px solid var(--border-vintage, rgba(140,98,57,0.3))' }}>
                 <span className="font-oswald uppercase text-sm font-bold" style={{ color: 'var(--bsi-primary, #BF5700)' }}>{leftName}</span>
-                <span className="font-mono text-[10px] uppercase tracking-widest" style={{ color: 'var(--bsi-dust)' }}>Pitching</span>
+                <span className="font-mono text-[10px] uppercase tracking-widest text-bsi-dust">Pitching</span>
                 <span className="font-oswald uppercase text-sm font-bold" style={{ color: 'var(--heritage-columbia-blue, #4B9CD3)' }}>{rightName}</span>
               </div>
 
@@ -240,7 +239,6 @@ export default function TeamComparePage() {
           )}
         </div>
       </Container>
-      <Footer />
     </div>
   );
 }

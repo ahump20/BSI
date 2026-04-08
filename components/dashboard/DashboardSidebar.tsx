@@ -82,7 +82,7 @@ export function DashboardSidebar({
 
   return (
     <motion.aside
-      className="hidden lg:flex flex-col bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm h-fit sticky top-28 overflow-hidden"
+      className="hidden lg:flex flex-col bg-surface-dugout border border-border-vintage rounded-sm h-fit sticky top-28 overflow-hidden"
       animate={{ width: collapsed ? 64 : 240 }}
       transition={{ type: 'spring', damping: 25, stiffness: 300 }}
     >

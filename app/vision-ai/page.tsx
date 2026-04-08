@@ -18,7 +18,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { TechMaturityMap } from '@/components/vision-ai/TechMaturityMap';
 import { SonyEmpireTimeline } from '@/components/vision-ai/SonyEmpireTimeline';
 import { CollegeSportsGap } from '@/components/vision-ai/CollegeSportsGap';
@@ -673,10 +672,10 @@ export default function VisionAIPage() {
             </ScrollReveal>
 
             <ScrollReveal delay={150}>
-              <div className="mt-6 bg-[var(--bsi-warning)]/5 border border-[var(--bsi-warning)]/15 rounded-sm p-4">
+              <div className="mt-6 bg-warning/5 border border-warning/15 rounded-sm p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="w-1 h-4 bg-[var(--bsi-warning)] rounded-full" />
-                  <span className="text-[var(--bsi-warning)] text-xs font-semibold uppercase tracking-wider">Legal Note</span>
+                  <span className="w-1 h-4 bg-warning rounded-full" />
+                  <span className="text-warning text-xs font-semibold uppercase tracking-wider">Legal Note</span>
                 </div>
                 <p className="text-text-secondary text-sm leading-relaxed">
                   Processing broadcast video without league authorization likely violates copyright and
@@ -752,7 +751,6 @@ export default function VisionAIPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

@@ -8,7 +8,6 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
 
 // ── Types ──
@@ -39,24 +38,24 @@ const QUADRANTS: QuadrantInfo[] = [
     title: 'Premier Assets',
     subtitle: 'High NIL + High Draft',
     description: 'Top-tier talent with both market value and pro potential. These players command premium deals and have clear paths to the next level.',
-    color: 'text-[var(--bsi-success)]',
-    borderColor: 'border-l-[var(--bsi-success)]',
+    color: 'text-success',
+    borderColor: 'border-l-success',
   },
   {
     key: 'low-nil-high-draft',
     title: 'Hidden Gems',
     subtitle: 'Low NIL + High Draft',
     description: 'Elite on-field producers whose NIL value hasn\'t caught up to their talent. The market inefficiency window is closing.',
-    color: 'text-[var(--heritage-columbia-blue)]',
-    borderColor: 'border-l-[var(--heritage-columbia-blue)]',
+    color: 'text-heritage-columbia',
+    borderColor: 'border-l-heritage-columbia',
   },
   {
     key: 'high-nil-low-draft',
     title: 'Marketing Stars',
     subtitle: 'High NIL + Low Draft',
     description: 'Strong brand value driven by market and exposure rather than draft-caliber performance. Value comes from influence, not pro projection.',
-    color: 'text-[var(--bsi-warning)]',
-    borderColor: 'border-l-[var(--bsi-warning)]',
+    color: 'text-warning',
+    borderColor: 'border-l-warning',
   },
   {
     key: 'low-nil-low-draft',
@@ -206,7 +205,6 @@ export default function DraftLeveragePage() {
         </Container>
       </Section>
 
-      <Footer />
     </div>
   );
 }

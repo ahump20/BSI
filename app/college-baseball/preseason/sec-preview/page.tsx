@@ -6,7 +6,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { Trophy, Users, TrendingUp, Star, Calendar, ArrowRight } from 'lucide-react';
 
 interface SECTeam {
@@ -506,7 +505,6 @@ export default function SECPreviewPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

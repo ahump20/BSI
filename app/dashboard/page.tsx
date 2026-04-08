@@ -177,7 +177,7 @@ export default function DashboardPage() {
 
   if (authStatus === 'checking') {
     return (
-      <div className="min-h-screen pt-6 flex items-center justify-center bg-[var(--surface-scoreboard)]">
+      <div className="min-h-screen pt-6 flex items-center justify-center bg-surface-scoreboard">
         <div className="text-center">
           <div className="w-8 h-8 border-2 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin mx-auto mb-4" />
           <p className="text-bsi-dust text-sm">Verifying access...</p>
@@ -650,7 +650,7 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
               onClick={() => setConfiguratorOpen(false)}
             />
             <motion.div
-              className="fixed top-0 right-0 bottom-0 z-50 w-full max-w-md bg-[var(--surface-scoreboard)] border-l border-[var(--border-vintage)] overflow-y-auto"
+              className="fixed top-0 right-0 bottom-0 z-50 w-full max-w-md bg-surface-scoreboard border-l border-border-vintage overflow-y-auto"
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
@@ -668,7 +668,6 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
         )}
       </AnimatePresence>
 
-      <Footer />
     </div>
   );
 }
@@ -791,7 +790,7 @@ function ArcadeQuickLinkCard() {
       href="/arcade"
       className="block p-4 heritage-card hover:border-[var(--border-active)] transition-all group"
     >
-      <svg viewBox="0 0 24 24" className="w-7 h-7 mb-2 opacity-60 group-hover:opacity-100 transition-opacity text-[var(--bsi-gold,#D4A843)]" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <svg viewBox="0 0 24 24" className="w-7 h-7 mb-2 opacity-60 group-hover:opacity-100 transition-opacity text-gold" fill="none" stroke="currentColor" strokeWidth="1.5">
         <rect x="2" y="6" width="20" height="12" rx="2" />
         <circle cx="9" cy="12" r="2" />
         <path d="M15 10v4M13 12h4" />

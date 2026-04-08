@@ -8,7 +8,6 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { HeroGlow } from '@/components/ui/HeroGlow';
-import { Footer } from '@/components/layout-ds/Footer';
 import { ScrollReveal } from '@/components/cinematic';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { NILDashboardClient } from './NILDashboardClient';
@@ -37,9 +36,9 @@ function formatValue(value: number): string {
 function tierBadge(tier: string): { text: string; color: string } {
   switch (tier) {
     case 'elite': return { text: 'Elite', color: 'text-burnt-orange' };
-    case 'high': return { text: 'High', color: 'text-[var(--bsi-success)]' };
-    case 'mid': return { text: 'Mid', color: 'text-[var(--heritage-columbia-blue)]' };
-    case 'emerging': return { text: 'Emerging', color: 'text-[var(--bsi-warning)]' };
+    case 'high': return { text: 'High', color: 'text-success' };
+    case 'mid': return { text: 'Mid', color: 'text-heritage-columbia' };
+    case 'emerging': return { text: 'Emerging', color: 'text-warning' };
     default: return { text: 'Dev', color: 'text-text-muted' };
   }
 }
@@ -233,15 +232,15 @@ export default function NILValuationPage() {
                 <div className="space-y-4">
                   {undervalued.length > 0 ? undervalued.map((p, i) => (
                     <ScrollReveal key={p.player_id} delay={250 + i * 80}>
-                      <Card className="border-l-4 border-l-[var(--bsi-success)] hover:border-l-burnt-orange transition-colors">
+                      <Card className="border-l-4 border-l-success hover:border-l-burnt-orange transition-colors">
                         <CardContent className="p-4">
                           <div className="flex items-start justify-between mb-2">
                             <div>
-                              <span className="text-xs font-bold text-[var(--bsi-success)]">#{i + 1} Value Gap</span>
+                              <span className="text-xs font-bold text-success">#{i + 1} Value Gap</span>
                               <h3 className="font-semibold text-text-primary">{p.player_name}</h3>
                               <p className="text-xs text-text-muted">{p.team} · {p.conference}</p>
                             </div>
-                            <span className="text-lg font-bold text-[var(--bsi-success)]">+{p.gap.toFixed(1)}</span>
+                            <span className="text-lg font-bold text-success">+{p.gap.toFixed(1)}</span>
                           </div>
                           <div className="flex justify-between text-xs mt-3 pt-2 border-t border-border/50">
                             <span className="text-text-muted">Est. Value</span>
@@ -252,7 +251,7 @@ export default function NILValuationPage() {
                     </ScrollReveal>
                   )) : (
                     <ScrollReveal delay={250}>
-                      <Card className="border-l-4 border-l-[var(--bsi-success)]">
+                      <Card className="border-l-4 border-l-success">
                         <CardContent className="p-6 text-center">
                           <p className="text-sm text-text-muted">Undervalued spotlight appears with Pro access.</p>
                           <Link href="/pricing" className="block mt-3">
@@ -427,7 +426,6 @@ export default function NILValuationPage() {
         </Container>
       </Section>
       </div>
-      <Footer />
     </>
   );
 }

@@ -93,9 +93,9 @@ const DANGER_STYLES = {
     accent: 'bg-ember/10',
   },
   high: {
-    border: 'border-[var(--bsi-warning)]/30',
-    badge: 'text-[var(--bsi-warning)] bg-[var(--bsi-warning)]/10 border-[var(--bsi-warning)]/20',
-    accent: 'bg-[var(--bsi-warning)]/5',
+    border: 'border-warning/30',
+    badge: 'text-warning bg-warning/10 border-warning/20',
+    accent: 'bg-warning/5',
   },
   'medium-high': {
     border: 'border-burnt-orange/25',

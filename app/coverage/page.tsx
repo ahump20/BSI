@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 
 // ── SVG Sport Icons ──
 
@@ -171,8 +170,7 @@ const dataSources = [
 export default function CoveragePage() {
   return (
     <div
-      className="min-h-screen grain-overlay"
-      style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}
+      className="min-h-screen grain-overlay bg-surface-scoreboard text-bsi-bone"
     >
       {/* ================================================================
           HERO
@@ -196,8 +194,7 @@ export default function CoveragePage() {
               Complete Coverage Where It Matters
             </h1>
             <p
-              className="font-serif italic text-lg leading-relaxed mb-8 max-w-2xl mx-auto"
-              style={{ color: 'var(--bsi-primary)' }}
+              className="font-serif italic text-lg leading-relaxed mb-8 max-w-2xl mx-auto text-bsi-primary"
             >
               Real-time data from official sources. MLB, NFL, NBA, and the most comprehensive college baseball coverage anywhere.
             </p>
@@ -237,8 +234,7 @@ export default function CoveragePage() {
                     {stat.value}
                   </div>
                   <p
-                    className="mt-1 text-sm"
-                    style={{ color: 'rgba(196,184,165,0.5)' }}
+                    className="mt-1 text-sm text-bsi-dust/50"
                   >
                     {stat.label}
                   </p>
@@ -271,8 +267,7 @@ export default function CoveragePage() {
                 Sports Coverage
               </h2>
               <p
-                className="max-w-2xl mx-auto text-sm"
-                style={{ color: 'rgba(196,184,165,0.5)' }}
+                className="max-w-2xl mx-auto text-sm text-bsi-dust/50"
               >
                 Comprehensive coverage across professional and college sports.
               </p>
@@ -291,13 +286,12 @@ export default function CoveragePage() {
                     <div className="md:col-span-1">
                       <Link href={sport.href} className="group">
                         <div className="flex items-center gap-3 mb-3">
-                          <span style={{ color: 'var(--bsi-dust)' }}>
+                          <span className="text-bsi-dust">
                             {(() => { const Icon = COVERAGE_ICONS[sport.name]; return Icon ? <Icon /> : null; })()}
                           </span>
                           <div>
                             <h3
-                              className="text-xl font-semibold transition-colors"
-                              style={{ color: 'var(--bsi-bone)' }}
+                              className="text-xl font-semibold transition-colors text-bsi-bone"
                               onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--bsi-primary)')}
                               onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--bsi-bone)')}
                             >
@@ -315,8 +309,7 @@ export default function CoveragePage() {
                           </div>
                         </div>
                         <p
-                          className="text-sm"
-                          style={{ color: 'rgba(196,184,165,0.5)' }}
+                          className="text-sm text-bsi-dust/50"
                         >
                           {sport.teams}
                         </p>
@@ -338,8 +331,7 @@ export default function CoveragePage() {
                         {sport.features.map((feature) => (
                           <li
                             key={feature}
-                            className="flex items-center gap-2 text-sm"
-                            style={{ color: 'var(--bsi-dust)' }}
+                            className="flex items-center gap-2 text-sm text-bsi-dust"
                           >
                             <span style={{ color: '#22C55E' }}>&#10003;</span>
                             {feature}
@@ -386,8 +378,7 @@ export default function CoveragePage() {
                           Updates
                         </h4>
                         <p
-                          className="text-sm"
-                          style={{ color: 'var(--bsi-primary)' }}
+                          className="text-sm text-bsi-primary"
                         >
                           {sport.updateFrequency}
                         </p>
@@ -427,8 +418,7 @@ export default function CoveragePage() {
                 Our Data Sources
               </h2>
               <p
-                className="max-w-2xl mx-auto text-sm"
-                style={{ color: 'rgba(196,184,165,0.5)' }}
+                className="max-w-2xl mx-auto text-sm text-bsi-dust/50"
               >
                 We pull from official APIs and trusted sources. Every stat is verified and timestamped.
               </p>
@@ -460,14 +450,12 @@ export default function CoveragePage() {
                     </span>
                   </div>
                   <h3
-                    className="text-lg font-semibold mb-2"
-                    style={{ color: 'var(--bsi-bone)' }}
+                    className="text-lg font-semibold mb-2 text-bsi-bone"
                   >
                     {source.name}
                   </h3>
                   <p
-                    className="text-sm font-serif"
-                    style={{ color: 'rgba(196,184,165,0.5)' }}
+                    className="text-sm font-serif text-bsi-dust/50"
                   >
                     {source.description}
                   </p>
@@ -508,68 +496,60 @@ export default function CoveragePage() {
             >
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
-                  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0" style={{ color: 'var(--bsi-primary)' }} stroke="currentColor" strokeWidth={1.5}><rect x="3" y="3" width="7" height="18" rx="1" /><rect x="14" y="8" width="7" height="13" rx="1" /><path d="M6 7v10M17.5 12v5" /></svg>
+                  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-bsi-primary" stroke="currentColor" strokeWidth={1.5}><rect x="3" y="3" width="7" height="18" rx="1" /><rect x="14" y="8" width="7" height="13" rx="1" /><path d="M6 7v10M17.5 12v5" /></svg>
                   <div>
                     <h3
-                      className="text-lg font-semibold mb-2"
-                      style={{ color: 'var(--bsi-bone)' }}
+                      className="text-lg font-semibold mb-2 text-bsi-bone"
                     >
                       Cross-Referenced Data
                     </h3>
                     <p
-                      className="text-sm font-serif"
-                      style={{ color: 'rgba(196,184,165,0.5)' }}
+                      className="text-sm font-serif text-bsi-dust/50"
                     >
                       Every critical statistic is cross-referenced against 3+ sources before publication. We do not guess.
                     </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
-                  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0" style={{ color: 'var(--bsi-primary)' }} stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg>
+                  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-bsi-primary" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg>
                   <div>
                     <h3
-                      className="text-lg font-semibold mb-2"
-                      style={{ color: 'var(--bsi-bone)' }}
+                      className="text-lg font-semibold mb-2 text-bsi-bone"
                     >
                       America/Chicago Timestamps
                     </h3>
                     <p
-                      className="text-sm font-serif"
-                      style={{ color: 'rgba(196,184,165,0.5)' }}
+                      className="text-sm font-serif text-bsi-dust/50"
                     >
                       All data points include precise timestamps. You always know exactly when information was captured.
                     </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
-                  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0" style={{ color: 'var(--bsi-primary)' }} stroke="currentColor" strokeWidth={1.5}><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" /></svg>
+                  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-bsi-primary" stroke="currentColor" strokeWidth={1.5}><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" /></svg>
                   <div>
                     <h3
-                      className="text-lg font-semibold mb-2"
-                      style={{ color: 'var(--bsi-bone)' }}
+                      className="text-lg font-semibold mb-2 text-bsi-bone"
                     >
                       Source Citations
                     </h3>
                     <p
-                      className="text-sm font-serif"
-                      style={{ color: 'rgba(196,184,165,0.5)' }}
+                      className="text-sm font-serif text-bsi-dust/50"
                     >
                       Every stat includes its source. Full transparency on where our data comes from.
                     </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
-                  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0" style={{ color: 'var(--bsi-primary)' }} stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M4.93 4.93l14.14 14.14" /></svg>
+                  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-bsi-primary" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M4.93 4.93l14.14 14.14" /></svg>
                   <div>
                     <h3
-                      className="text-lg font-semibold mb-2"
-                      style={{ color: 'var(--bsi-bone)' }}
+                      className="text-lg font-semibold mb-2 text-bsi-bone"
                     >
                       Zero Placeholders
                     </h3>
                     <p
-                      className="text-sm font-serif"
-                      style={{ color: 'rgba(196,184,165,0.5)' }}
+                      className="text-sm font-serif text-bsi-dust/50"
                     >
                       Real numbers or we do not ship it. No estimates, no placeholder data, no made-up statistics.
                     </p>
@@ -603,11 +583,10 @@ export default function CoveragePage() {
               }}
             >
               See Our{' '}
-              <span style={{ color: 'var(--bsi-primary)' }}>Data in Action</span>
+              <span className="text-bsi-primary">Data in Action</span>
             </h2>
             <p
-              className="text-lg font-serif mb-8"
-              style={{ color: 'rgba(196,184,165,0.5)' }}
+              className="text-lg font-serif mb-8 text-bsi-dust/50"
             >
               Start your 14-day free trial and explore the most comprehensive sports data platform built for fans.
             </p>
@@ -623,7 +602,6 @@ export default function CoveragePage() {
         </div>
       </section>
 
-      <Footer />
     </div>
   );
 }

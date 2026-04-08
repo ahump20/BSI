@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { Footer } from '@/components/layout-ds/Footer';
 import { Card, CardContent, CardTitle, StatCard } from '@/components/ui/Card';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { fetchShowCollectionDetail, type ShowCollectionDetailResponse } from '@/lib/mlb-the-show/client';
@@ -74,13 +73,12 @@ export function DiamondDynastyCollectionDetailClient() {
         >
           <Card padding="lg">
             <CardContent className="space-y-3 px-0 pb-0 pt-0">
-              <p className="text-sm text-[var(--bsi-dust)]">
+              <p className="text-sm text-bsi-dust">
                 Start from the <Link href="/mlb/the-show-26/diamond-dynasty/collections" className="text-burnt-orange">collections board</Link>.
               </p>
             </CardContent>
           </Card>
         </ShowSurfaceFrame>
-        <Footer />
       </div>
     );
   }
@@ -99,14 +97,14 @@ export function DiamondDynastyCollectionDetailClient() {
         <DataErrorBoundary name="collection detail">
           {loading ? (
             <div className="space-y-4">
-              <div className="h-40 animate-pulse rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)]" />
-              <div className="h-96 animate-pulse rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)]" />
+              <div className="h-40 animate-pulse rounded-sm border border-border-vintage bg-surface-dugout" />
+              <div className="h-96 animate-pulse rounded-sm border border-border-vintage bg-surface-dugout" />
             </div>
           ) : error || !detail ? (
             <Card padding="lg">
               <CardContent className="space-y-3 px-0 pb-0 pt-0">
                 <CardTitle size="sm">Collection Unavailable</CardTitle>
-                <p className="text-sm text-[var(--bsi-dust)]">{error ?? 'This collection could not be loaded.'}</p>
+                <p className="text-sm text-bsi-dust">{error ?? 'This collection could not be loaded.'}</p>
               </CardContent>
             </Card>
           ) : (
@@ -128,12 +126,12 @@ export function DiamondDynastyCollectionDetailClient() {
                 <CardTitle size="sm">Collection Card Board</CardTitle>
                 <CardContent className="px-0 pb-0 pt-4">
                   {detail.detail.cards.length === 0 ? (
-                    <p className="text-sm text-[var(--bsi-dust)]">No cards are stored for this collection yet.</p>
+                    <p className="text-sm text-bsi-dust">No cards are stored for this collection yet.</p>
                   ) : (
                     <div className="overflow-x-auto">
                       <table className="w-full min-w-[920px]">
                         <thead>
-                          <tr className="border-b border-burnt-orange/35 text-left text-xs uppercase tracking-[0.18em] text-[var(--bsi-dust)]">
+                          <tr className="border-b border-burnt-orange/35 text-left text-xs uppercase tracking-[0.18em] text-bsi-dust">
                             <th className="px-3 py-3">Card</th>
                             <th className="px-3 py-3">Team</th>
                             <th className="px-3 py-3">Series</th>
@@ -148,11 +146,11 @@ export function DiamondDynastyCollectionDetailClient() {
                           {detail.detail.cards.map((card) => {
                             const active = watchlist.includes(card.id);
                             return (
-                              <tr key={card.id} className="border-b border-[var(--border-vintage)] text-sm text-[var(--bsi-bone)]">
+                              <tr key={card.id} className="border-b border-border-vintage text-sm text-bsi-bone">
                                 <td className="px-3 py-3">
                                   <Link href={buildCardHref(card.id)} className="block transition-colors hover:text-burnt-orange">
                                     <div className="font-semibold">{card.name}</div>
-                                    <div className="text-xs uppercase tracking-[0.18em] text-[var(--bsi-dust)]">
+                                    <div className="text-xs uppercase tracking-[0.18em] text-bsi-dust">
                                       {card.rarity} • {card.setName ?? 'No set label'}
                                     </div>
                                   </Link>
@@ -179,15 +177,14 @@ export function DiamondDynastyCollectionDetailClient() {
           )}
         </DataErrorBoundary>
       </ShowSurfaceFrame>
-      <Footer />
     </div>
   );
 }
 
 function InfoChip({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-4">
-      <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)]">{label}</div>
+    <div className="rounded-sm border border-border-vintage bg-surface-dugout px-4 py-4">
+      <div className="text-xs font-semibold uppercase tracking-[0.18em] text-bsi-dust">{label}</div>
       <div className="mt-2 font-mono text-2xl text-burnt-orange">{value.toLocaleString()}</div>
     </div>
   );

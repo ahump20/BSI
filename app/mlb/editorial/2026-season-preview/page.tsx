@@ -4,7 +4,7 @@ import { Section } from '@/components/ui/Section';
 import { StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
+
 import type { Metadata } from 'next';
 import { ogImage } from '@/lib/metadata';
 
@@ -773,7 +773,6 @@ export default function MLBSeasonPreview2026() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

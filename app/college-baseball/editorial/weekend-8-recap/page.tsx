@@ -5,7 +5,6 @@ import { Section } from '@/components/ui/Section';
 import { StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
 export const metadata: Metadata = {
@@ -82,11 +81,11 @@ export default function Weekend8RecapPage() {
         <Section padding="sm" className="border-b border-white/10">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">
                 College Baseball
               </Link>
               <span className="text-white/40">/</span>
-              <Link href="/college-baseball/editorial" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball/editorial" className="text-white/40 hover:text-burnt-orange transition-colors">
                 Editorial
               </Link>
               <span className="text-white/40">/</span>
@@ -97,7 +96,7 @@ export default function Weekend8RecapPage() {
 
         {/* -- 1. HERO ------------------------------------------------- */}
         <Section padding="lg" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#BF5700]/20 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-bsi-primary/20 to-transparent pointer-events-none" />
           <Container>
             <ScrollReveal direction="up">
               <div className="max-w-3xl">
@@ -173,7 +172,7 @@ export default function Weekend8RecapPage() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6 pb-3 border-b border-[#BF5700]/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-3 border-b border-bsi-primary/15">
                 UCLA&apos;s Machine: 30 Wins, Zero Drama
               </h2>
             </ScrollReveal>
@@ -205,7 +204,7 @@ export default function Weekend8RecapPage() {
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6 pb-3 border-b border-[#BF5700]/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-3 border-b border-bsi-primary/15">
                 LSU&apos;s Twelfth-Inning Explosion
               </h2>
             </ScrollReveal>
@@ -237,7 +236,7 @@ export default function Weekend8RecapPage() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6 pb-3 border-b border-[#BF5700]/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-3 border-b border-bsi-primary/15">
                 The Best Bat in College Baseball
               </h2>
             </ScrollReveal>
@@ -270,7 +269,7 @@ export default function Weekend8RecapPage() {
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6 pb-3 border-b border-[#BF5700]/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-3 border-b border-bsi-primary/15">
                 D1Baseball Top 25 &mdash; Week 8
               </h2>
             </ScrollReveal>
@@ -305,7 +304,7 @@ export default function Weekend8RecapPage() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6 pb-3 border-b border-[#BF5700]/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-3 border-b border-bsi-primary/15">
                 Conference Power at the Midpoint
               </h2>
             </ScrollReveal>
@@ -338,7 +337,7 @@ export default function Weekend8RecapPage() {
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6 pb-3 border-b border-[#BF5700]/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-3 border-b border-bsi-primary/15">
                 Arms That Are Separating
               </h2>
             </ScrollReveal>
@@ -372,8 +371,8 @@ export default function Weekend8RecapPage() {
           <Container>
             <ScrollReveal direction="up">
               <div className="max-w-3xl mx-auto">
-                <div className="bg-gradient-to-br from-[#BF5700]/8 to-[#8B4513]/5 border border-[#BF5700]/15 rounded-sm p-6 md:p-8">
-                  <h2 className="font-display text-xl font-semibold uppercase tracking-wider text-[#BF5700] mb-4">
+                <div className="bg-gradient-to-br from-bsi-primary/8 to-texas-soil/5 border border-bsi-primary/15 rounded-sm p-6 md:p-8">
+                  <h2 className="font-display text-xl font-semibold uppercase tracking-wider text-burnt-orange mb-4">
                     BSI Verdict
                   </h2>
                   <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-4">
@@ -408,13 +407,13 @@ export default function Weekend8RecapPage() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <DataSourceBadge source="D1Baseball, ESPN, BSI Savant" className="text-xs" />
               <div className="flex gap-4 text-sm">
-                <Link href="/college-baseball/editorial" className="text-white/50 hover:text-[#BF5700] transition-colors">
+                <Link href="/college-baseball/editorial" className="text-white/50 hover:text-burnt-orange transition-colors">
                   All Editorials
                 </Link>
-                <Link href="/college-baseball/savant" className="text-white/50 hover:text-[#BF5700] transition-colors">
+                <Link href="/college-baseball/savant" className="text-white/50 hover:text-burnt-orange transition-colors">
                   BSI Savant
                 </Link>
-                <Link href="/college-baseball/standings" className="text-white/50 hover:text-[#BF5700] transition-colors">
+                <Link href="/college-baseball/standings" className="text-white/50 hover:text-burnt-orange transition-colors">
                   Standings
                 </Link>
               </div>
@@ -422,7 +421,6 @@ export default function Weekend8RecapPage() {
           </Container>
         </Section>
       </main>
-      <Footer />
     </>
   );
 }

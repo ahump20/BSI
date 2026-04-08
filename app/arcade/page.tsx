@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
-import { Footer } from '@/components/layout-ds/Footer';
 import { HeroGlow } from '@/components/ui/HeroGlow';
 import { FilterPill } from '@/components/ui/FilterPill';
 import { useSportData } from '@/lib/hooks/useSportData';
@@ -127,7 +126,7 @@ export default function ArcadePage() {
                       </h3>
                       <p className="text-sm text-text-tertiary leading-relaxed">{game.description}</p>
                       <div className="mt-4 flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-[var(--bsi-primary)]" />
+                        <span className="w-2 h-2 rounded-full bg-bsi-primary" />
                         <span className="text-xs text-success">Live</span>
                         <span className="text-xs text-text-muted ml-auto">External</span>
                       </div>
@@ -154,7 +153,7 @@ export default function ArcadePage() {
                     </h3>
                     <p className="text-sm text-text-tertiary leading-relaxed">{game.description}</p>
                     <div className="mt-4 flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-[var(--bsi-primary)]" />
+                      <span className="w-2 h-2 rounded-full bg-bsi-primary" />
                       <span className="text-xs text-success">Live</span>
                     </div>
                   </Card>
@@ -245,7 +244,6 @@ export default function ArcadePage() {
           </div>
         </Container>
       </Section>
-      <Footer />
     </div>
   );
 }

@@ -2,7 +2,6 @@ import { Metadata } from 'next';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy | Blaze Sports Intel',
@@ -209,7 +208,6 @@ export default function PrivacyPage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

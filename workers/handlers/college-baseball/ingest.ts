@@ -4,6 +4,7 @@
  */
 
 import type { Env } from './shared';
+import { timingSafeCompare } from '../../shared/auth';
 import { DateTime } from 'luxon';
 import { json, cachedJson, kvGet, kvPut, dataHeaders, getHighlightlyClient, HTTP_CACHE, CACHE_TTL, getScoreboard, getGameSummary, parseInningsToThirds, teamMetadata, metaByEspnId, getLogoUrl } from './shared';
 import { parseEspnBattingLine, parseEspnPitchingLine } from '../../../lib/api-clients/espn-college-baseball';
@@ -660,7 +661,7 @@ export async function handleHighlightlySync(
 ): Promise<Response> {
   const key = url.searchParams.get('key');
   const adminKey = (env as Env & { ADMIN_KEY?: string }).ADMIN_KEY;
-  if (!adminKey || key !== adminKey) {
+  if (!adminKey || !key || !(await timingSafeCompare(key, adminKey))) {
     return json({ error: 'Unauthorized' }, 401);
   }
 
@@ -931,7 +932,7 @@ export async function handleCBBBulkSync(
   // Auth gate
   const key = url.searchParams.get('key');
   const adminKey = (env as Env & { ADMIN_KEY?: string }).ADMIN_KEY;
-  if (!adminKey || key !== adminKey) {
+  if (!adminKey || !key || !(await timingSafeCompare(key, adminKey))) {
     return json({ error: 'Unauthorized' }, 401);
   }
 
@@ -1019,7 +1020,7 @@ export async function handleGameLogBackfill(
 ): Promise<Response> {
   const key = url.searchParams.get('key');
   const adminKey = (env as Env & { ADMIN_KEY?: string }).ADMIN_KEY;
-  if (!adminKey || key !== adminKey) {
+  if (!adminKey || !key || !(await timingSafeCompare(key, adminKey))) {
     return json({ error: 'Unauthorized' }, 401);
   }
 

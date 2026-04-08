@@ -21,6 +21,7 @@
  */
 
 import type { Env } from '../../shared/types';
+import { logError } from '../../shared/helpers';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -86,7 +87,9 @@ export async function handleV1Seasons(
     const { results } = await env.DB.prepare(query).bind(...params).all();
     return Response.json({ data: results, meta: meta('canonical_season') });
   } catch (err) {
-    console.error(err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleV1Seasons]', msg);
+    await logError(env, msg, 'handleV1Seasons');
     return Response.json({ error: 'Internal server error', status: 500 }, { status: 500 });
   }
 }
@@ -113,7 +116,9 @@ export async function handleV1Teams(
     const { results } = await env.DB.prepare(query).bind(...params).all();
     return Response.json({ ...paginate(results, page, perPage), meta: meta('canonical_team') });
   } catch (err) {
-    console.error(err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleV1Teams]', msg);
+    await logError(env, msg, 'handleV1Teams');
     return Response.json({ error: 'Internal server error', status: 500 }, { status: 500 });
   }
 }
@@ -130,7 +135,9 @@ export async function handleV1Team(
     if (!row) return Response.json({ error: 'Team not found', team_id: teamId }, { status: 404 });
     return Response.json({ ...row, meta: meta('canonical_team') });
   } catch (err) {
-    console.error(err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleV1Team]', msg);
+    await logError(env, msg, 'handleV1Team');
     return Response.json({ error: 'Internal server error', status: 500 }, { status: 500 });
   }
 }
@@ -173,7 +180,9 @@ export async function handleV1Players(
     const stripped = results.map((r: Record<string, unknown>) => stripPlayerPII(r));
     return Response.json({ ...paginate(stripped, page, perPage), meta: meta('canonical_player') });
   } catch (err) {
-    console.error(err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleV1Players]', msg);
+    await logError(env, msg, 'handleV1Players');
     return Response.json({ error: 'Internal server error', status: 500 }, { status: 500 });
   }
 }
@@ -190,7 +199,9 @@ export async function handleV1Player(
     if (!row) return Response.json({ error: 'Player not found', player_id: playerId }, { status: 404 });
     return Response.json({ ...stripPlayerPII(row), meta: meta('canonical_player') });
   } catch (err) {
-    console.error(err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleV1Player]', msg);
+    await logError(env, msg, 'handleV1Player');
     return Response.json({ error: 'Internal server error', status: 500 }, { status: 500 });
   }
 }
@@ -223,7 +234,9 @@ export async function handleV1Games(
     const { results } = await env.DB.prepare(query).bind(...params).all();
     return Response.json({ ...paginate(results, page, perPage), meta: meta('canonical_game') });
   } catch (err) {
-    console.error(err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleV1Games]', msg);
+    await logError(env, msg, 'handleV1Games');
     return Response.json({ error: 'Internal server error', status: 500 }, { status: 500 });
   }
 }
@@ -240,7 +253,9 @@ export async function handleV1Game(
     if (!row) return Response.json({ error: 'Game not found', game_id: gameId }, { status: 404 });
     return Response.json({ ...row, meta: meta('canonical_game') });
   } catch (err) {
-    console.error(err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleV1Game]', msg);
+    await logError(env, msg, 'handleV1Game');
     return Response.json({ error: 'Internal server error', status: 500 }, { status: 500 });
   }
 }
@@ -286,7 +301,9 @@ export async function handleV1Boxscore(
       meta: meta('box_team_game'),
     });
   } catch (err) {
-    console.error(err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleV1Boxscore]', msg);
+    await logError(env, msg, 'handleV1Boxscore');
     return Response.json({ error: 'Internal server error', status: 500 }, { status: 500 });
   }
 }
@@ -321,7 +338,9 @@ export async function handleV1PBP(
       meta: meta('pbp_event'),
     });
   } catch (err) {
-    console.error(err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleV1PBP]', msg);
+    await logError(env, msg, 'handleV1PBP');
     return Response.json({ error: 'Internal server error', status: 500 }, { status: 500 });
   }
 }
@@ -363,7 +382,9 @@ export async function handleV1MetricsPlayers(
       meta: meta('metrics_player_season'),
     });
   } catch (err) {
-    console.error(err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleV1MetricsPlayers]', msg);
+    await logError(env, msg, 'handleV1MetricsPlayers');
     return Response.json({ error: 'Internal server error', status: 500 }, { status: 500 });
   }
 }
@@ -402,7 +423,9 @@ export async function handleV1MetricsTeams(
       meta: meta('metrics_player_season'),
     });
   } catch (err) {
-    console.error(err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleV1MetricsTeams]', msg);
+    await logError(env, msg, 'handleV1MetricsTeams');
     return Response.json({ error: 'Internal server error', status: 500 }, { status: 500 });
   }
 }
@@ -484,7 +507,9 @@ export async function handleV1PlayerSplits(
       meta: meta('plate_appearance'),
     });
   } catch (err) {
-    console.error(err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleV1PlayerSplits]', msg);
+    await logError(env, msg, 'handleV1PlayerSplits');
     return Response.json({ error: 'Internal server error', status: 500 }, { status: 500 });
   }
 }
@@ -514,7 +539,9 @@ export async function handleV1Provenance(
       meta: meta('provenance_field'),
     });
   } catch (err) {
-    console.error(err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleV1Provenance]', msg);
+    await logError(env, msg, 'handleV1Provenance');
     return Response.json({ error: 'Internal server error', status: 500 }, { status: 500 });
   }
 }

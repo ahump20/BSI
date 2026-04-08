@@ -72,8 +72,7 @@ function CardContent({ game, showHitsErrors }: { game: GameScoreCardGame; showHi
           </div>
         ) : game.isFinal ? (
           <div
-            className="font-semibold text-xs uppercase tracking-wider"
-            style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-dust, #C4B8A5)' }}
+            className="font-semibold text-xs uppercase tracking-wider font-display text-bsi-dust"
           >
             Final
           </div>

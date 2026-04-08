@@ -242,8 +242,7 @@ export function ConferencePowerStrip({
       <div className={`${className}`}>
         <div className="heritage-stamp mb-4">Conference Power</div>
         <div
-          className="rounded-sm p-4"
-          style={{ background: 'var(--surface-scoreboard)' }}
+          className="rounded-sm p-4 bg-surface-scoreboard"
         >
           {/* Desktop skeleton */}
           <div className="hidden md:flex gap-1">
@@ -474,16 +473,14 @@ export function ConferencePowerStrip({
         </span>
         {fetchedAt && (
           <span
-            className="text-[10px]"
-            style={{ fontFamily: 'var(--font-mono)' }}
+            className="text-[10px] font-mono"
           >
             Updated {formatRelativeTime(fetchedAt)} CT
           </span>
         )}
         {!fetchedAt && lastUpdated && (
           <span
-            className="text-[10px]"
-            style={{ fontFamily: 'var(--font-mono)' }}
+            className="text-[10px] font-mono"
           >
             Updated {formatRelativeTime(lastUpdated.toISOString())} CT
           </span>

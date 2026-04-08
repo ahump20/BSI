@@ -8,7 +8,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -173,7 +172,7 @@ export default function SabermetricsPage() {
                 <div className="flex items-center gap-3 mb-3">
                   <Badge variant="accent" size="sm">SABERMETRICS</Badge>
                   {liveCount > 0 && (
-                    <Badge variant="default" size="sm" className="bg-[var(--bsi-danger)]/10 text-[var(--bsi-danger)] border-[var(--bsi-danger)]/20">
+                    <Badge variant="default" size="sm" className="bg-error/10 text-error border-error/20">
                       {liveCount} LIVE
                     </Badge>
                   )}
@@ -243,7 +242,6 @@ export default function SabermetricsPage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }
@@ -292,7 +290,7 @@ function ScoreboardTab({
       <div className="lg:col-span-1 space-y-4">
         {live.length > 0 && (
           <div>
-            <p className="text-[10px] font-display uppercase tracking-widest text-[var(--bsi-danger)] mb-2">Live</p>
+            <p className="text-[10px] font-display uppercase tracking-widest text-error mb-2">Live</p>
             <div className="space-y-1">
               {live.map(g => <GameCard key={g.id} game={g} selected={selectedId === g.id} onClick={() => setSelectedId(g.id)} />)}
             </div>
@@ -352,7 +350,7 @@ function GameCard({ game, selected, onClick }: { game: ESPNGame; selected: boole
       <div className="flex items-center justify-between mb-1.5">
         <span className="text-[10px] font-mono text-text-muted">
           {isLive ? (
-            <span className="text-[var(--bsi-danger)] font-semibold">● {game.status.type.shortDetail}</span>
+            <span className="text-error font-semibold">● {game.status.type.shortDetail}</span>
           ) : isFinal ? (
             'Final'
           ) : (
@@ -391,7 +389,7 @@ function GameDetail({ game }: { game: ESPNGame }) {
       {/* Status */}
       <div className="flex items-center gap-3">
         {isLive ? (
-          <Badge variant="default" size="sm" className="bg-[var(--bsi-danger)]/10 text-[var(--bsi-danger)] border-[var(--bsi-danger)]/20">
+          <Badge variant="default" size="sm" className="bg-error/10 text-error border-error/20">
             ● LIVE — {game.status.type.shortDetail}
           </Badge>
         ) : game.status?.type?.completed ? (

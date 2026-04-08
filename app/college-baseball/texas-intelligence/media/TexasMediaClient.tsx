@@ -7,12 +7,11 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { TeamVideoPanel } from '@/components/college-baseball/TeamVideoPanel';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 
 const TEAM_ID = 'texas';
-const ACCENT = '#BF5700';
+const ACCENT = 'var(--bsi-primary)';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -67,7 +66,7 @@ export default function TexasMediaClient() {
         </Section>
 
         {/* Hero */}
-        <Section padding="lg" className="relative overflow-hidden bg-[var(--surface-scoreboard)]">
+        <Section padding="lg" className="relative overflow-hidden bg-surface-scoreboard">
           <div className="absolute top-0 left-0 right-0 h-1" style={{ backgroundColor: ACCENT }} />
           <Container>
             <ScrollReveal direction="up">
@@ -209,7 +208,6 @@ export default function TexasMediaClient() {
           </Container>
         </Section>
       </main>
-      <Footer />
     </>
   );
 }

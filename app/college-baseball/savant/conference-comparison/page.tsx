@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
-import { Footer } from '@/components/layout-ds/Footer';
 
 interface ConferenceData {
   conference: string;
@@ -101,7 +100,7 @@ function CompareBar({
       >
         {format(leftVal)}
       </span>
-      <div className="flex-1 h-2 flex overflow-hidden" style={{ background: 'var(--surface-press-box, #111)' }}>
+      <div className="flex-1 h-2 flex overflow-hidden bg-surface-press-box">
         <div
           className="h-full transition-all duration-500"
           style={{
@@ -173,7 +172,7 @@ export default function ConferenceComparisonPage() {
   );
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard, #0A0A0A)' }}>
+    <div className="min-h-screen bg-surface-scoreboard">
       <Container>
         <div className="py-10 sm:py-14 max-w-3xl mx-auto">
           {/* Header */}
@@ -254,8 +253,7 @@ export default function ConferenceComparisonPage() {
               {[...Array(6)].map((_, i) => (
                 <div
                   key={i}
-                  className="h-12 bsi-shimmer"
-                  style={{ background: 'var(--surface-dugout, #161616)' }}
+                  className="h-12 bsi-shimmer bg-surface-dugout"
                 />
               ))}
             </div>
@@ -264,8 +262,7 @@ export default function ConferenceComparisonPage() {
           {/* Error */}
           {error && (
             <div
-              className="heritage-card p-6 text-center"
-              style={{ background: 'var(--surface-dugout, #161616)' }}
+              className="heritage-card p-6 text-center bg-surface-dugout"
             >
               <p className="font-cormorant" style={{ color: 'var(--bsi-dust, #C4B8A5)' }}>
                 Unable to load conference data. {error}
@@ -370,8 +367,7 @@ export default function ConferenceComparisonPage() {
           {/* No data for selection */}
           {!loading && !error && (!leftData || !rightData) && (
             <div
-              className="heritage-card p-6 text-center"
-              style={{ background: 'var(--surface-dugout, #161616)' }}
+              className="heritage-card p-6 text-center bg-surface-dugout"
             >
               <p className="font-cormorant" style={{ color: 'var(--bsi-dust, #C4B8A5)' }}>
                 Conference data not available for the selected comparison.
@@ -380,7 +376,6 @@ export default function ConferenceComparisonPage() {
           )}
         </div>
       </Container>
-      <Footer />
     </div>
   );
 }

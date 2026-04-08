@@ -70,7 +70,7 @@ export { FreshnessBadge } from './FreshnessBadge';
 export function LiveBadge({ className = '' }: { className?: string }) {
   return (
     <Badge variant="success" className={className}>
-      <span className="w-2 h-2 bg-[var(--bsi-primary)] rounded-full animate-pulse mr-1.5" />
+      <span className="w-2 h-2 bg-bsi-primary rounded-full animate-pulse mr-1.5" />
       LIVE
     </Badge>
   );

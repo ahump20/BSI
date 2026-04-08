@@ -15,7 +15,7 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
+
 import { useUserSettings } from '@/lib/hooks';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { MLB_TEAMS, DIVISION_ORDER, type MLBTeamInfo } from '@/lib/utils/mlb-teams';
@@ -121,9 +121,9 @@ export default function MLBTeamsPage() {
 
   return (
     <>
-      <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
+      <div className="min-h-screen bg-surface-scoreboard text-bsi-bone">
         {/* Breadcrumb */}
-        <Section padding="sm" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
+        <Section padding="sm border-b border-border-vintage">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
@@ -134,7 +134,7 @@ export default function MLBTeamsPage() {
                 MLB
               </Link>
               <span style={{ color: 'rgba(196,184,165,0.5)' }}>/</span>
-              <span className="font-medium" style={{ color: 'var(--bsi-bone)' }}>Teams</span>
+              <span className="font-medium text-bsi-bone">Teams</span>
             </nav>
           </Container>
         </Section>
@@ -152,15 +152,14 @@ export default function MLBTeamsPage() {
 
             <ScrollReveal direction="up" delay={100}>
               <h1
-                className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-gradient-blaze mb-4"
-                style={{ fontFamily: 'var(--font-oswald)' }}
+                className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-gradient-blaze mb-4 font-display"
               >
                 MLB Teams
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="max-w-2xl" style={{ color: 'var(--bsi-dust)' }}>
+              <p className="max-w-2xl text-bsi-dust">
                 Browse all 30 Major League Baseball teams. View rosters, schedules, statistics, and
                 depth charts.
               </p>
@@ -230,11 +229,10 @@ export default function MLBTeamsPage() {
 
                 return (
                   <div key={division} className="mb-8">
-                    <h2 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: 'var(--bsi-bone)' }}>
+                    <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-bsi-bone">
                       <svg
                         viewBox="0 0 24 24"
-                        className="w-5 h-5"
-                        style={{ color: 'var(--bsi-primary)' }}
+                        className="w-5 h-5 text-bsi-primary"
                         fill="currentColor"
                       >
                         <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
@@ -264,7 +262,7 @@ export default function MLBTeamsPage() {
                   <circle cx="11" cy="11" r="8" />
                   <path d="M21 21l-4.35-4.35" />
                 </svg>
-                <p className="text-lg mb-2" style={{ color: 'var(--bsi-dust)' }}>No teams found</p>
+                <p className="text-lg mb-2 text-bsi-dust">No teams found</p>
                 <p className="text-sm" style={{ color: 'rgba(196,184,165,0.5)' }}>
                   Try a different search term or clear your filters.
                 </p>
@@ -273,8 +271,7 @@ export default function MLBTeamsPage() {
                     setSearchQuery('');
                     setSelectedLeague('all');
                   }}
-                  className="mt-4 px-4 py-2 text-sm transition-colors"
-                  style={{ color: 'var(--bsi-primary)' }}
+                  className="mt-4 px-4 py-2 text-sm transition-colors text-bsi-primary"
                 >
                   Clear filters
                 </button>
@@ -282,7 +279,7 @@ export default function MLBTeamsPage() {
             )}
 
             {/* Data Source Footer */}
-            <div className="mt-8 pt-4" style={{ borderTop: '1px solid var(--border-vintage)' }}>
+            <div className="mt-8 pt-4 border-t border-border-vintage">
               <DataSourceBadge
                 source={meta?.dataSource || 'MLB Stats API'}
                 timestamp={displayTimestamp(meta?.lastUpdated)}
@@ -292,7 +289,6 @@ export default function MLBTeamsPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }
@@ -331,7 +327,7 @@ function TeamCard({ team }: { team: TeamWithRecord }) {
           </div>
 
           <div className="flex-1 min-w-0">
-            <p className="font-semibold transition-colors truncate" style={{ color: 'var(--bsi-bone)' }}>
+            <p className="font-semibold transition-colors truncate text-bsi-bone">
               {team.city} {team.name}
             </p>
             <p className="text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>
@@ -339,7 +335,7 @@ function TeamCard({ team }: { team: TeamWithRecord }) {
               {team.venue && <span className="ml-1" style={{ color: 'rgba(196,184,165,0.35)' }}>&middot; {team.venue}</span>}
             </p>
             {team.wins !== undefined && (
-              <p className="text-sm mt-1 font-mono" style={{ color: 'var(--bsi-dust)' }}>
+              <p className="text-sm mt-1 font-mono text-bsi-dust">
                 {team.wins}-{team.losses}
               </p>
             )}

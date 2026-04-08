@@ -6,7 +6,6 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { FilterPill } from '@/components/ui/FilterPill';
-import { Footer } from '@/components/layout-ds/Footer';
 import { GLOSSARY_TERMS, getGlossaryLetters, type GlossaryTerm } from '@/lib/data/glossary-terms';
 
 type CategoryFilter = 'all' | 'baseball' | 'football' | 'basketball' | 'general';
@@ -24,8 +23,7 @@ function TermCard({ term }: { term: GlossaryTerm }) {
     <div className="border-l-2 pl-5 sm:pl-6 py-4" style={{ borderColor: 'rgba(191,87,0,0.15)' }}>
       <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
         <h3
-          className="text-lg font-bold uppercase tracking-wide"
-          style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+          className="text-lg font-bold uppercase tracking-wide font-display text-bsi-bone"
         >
           {term.term}
         </h3>
@@ -45,35 +43,31 @@ function TermCard({ term }: { term: GlossaryTerm }) {
       <div className="space-y-4 text-sm">
         <div>
           <span
-            className="text-[10px] uppercase tracking-[0.15em] block mb-1"
-            style={{ fontFamily: 'var(--font-mono)', color: 'rgba(196,184,165,0.35)' }}
+            className="text-[10px] uppercase tracking-[0.15em] block mb-1 font-mono text-bsi-dust/35"
           >Definition</span>
-          <p className="leading-relaxed" style={{ color: 'rgba(196,184,165,0.5)' }}>{term.mlbDefinition}</p>
+          <p className="leading-relaxed text-bsi-dust/50">{term.mlbDefinition}</p>
           <p className="text-[11px] mt-1" style={{ fontFamily: 'var(--font-mono)', color: 'rgba(196,184,165,0.25)' }}>{term.mlbSource}</p>
         </div>
 
         <div>
           <span
-            className="text-[10px] uppercase tracking-[0.15em] block mb-1"
-            style={{ fontFamily: 'var(--font-mono)', color: 'rgba(196,184,165,0.35)' }}
+            className="text-[10px] uppercase tracking-[0.15em] block mb-1 font-mono text-bsi-dust/35"
           >NCAA Equivalent</span>
-          <p className="leading-relaxed" style={{ color: 'rgba(196,184,165,0.5)' }}>{term.ncaaEquivalent}</p>
+          <p className="leading-relaxed text-bsi-dust/50">{term.ncaaEquivalent}</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <span
-              className="text-[10px] uppercase tracking-[0.15em] block mb-1"
-              style={{ fontFamily: 'var(--font-mono)', color: 'rgba(196,184,165,0.35)' }}
+              className="text-[10px] uppercase tracking-[0.15em] block mb-1 font-mono text-bsi-dust/35"
             >Available Data</span>
-            <p className="leading-relaxed text-xs" style={{ color: 'rgba(196,184,165,0.35)' }}>{term.availableData}</p>
+            <p className="leading-relaxed text-xs text-bsi-dust/35">{term.availableData}</p>
           </div>
           <div>
             <span
-              className="text-[10px] uppercase tracking-[0.15em] block mb-1"
-              style={{ fontFamily: 'var(--font-mono)', color: 'rgba(196,184,165,0.35)' }}
+              className="text-[10px] uppercase tracking-[0.15em] block mb-1 font-mono text-bsi-dust/35"
             >Limitations</span>
-            <p className="leading-relaxed text-xs" style={{ color: 'rgba(196,184,165,0.35)' }}>{term.limitations}</p>
+            <p className="leading-relaxed text-xs text-bsi-dust/35">{term.limitations}</p>
           </div>
         </div>
 
@@ -81,8 +75,7 @@ function TermCard({ term }: { term: GlossaryTerm }) {
           <div className="pt-2" style={{ borderTop: '1px solid rgba(140,98,57,0.1)' }}>
             <Link
               href={term.bsiLink}
-              className="text-xs transition-colors"
-              style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-primary)' }}
+              className="text-xs transition-colors font-mono text-bsi-primary"
             >
               {term.bsiLinkLabel || 'Related BSI Model'} →
             </Link>
@@ -116,8 +109,8 @@ export default function GlossaryPage() {
   const sortedLetters = Array.from(grouped.keys()).sort();
 
   return (
-    <div style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)', minHeight: '100vh' }}>
-      <Section padding="sm" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
+    <div className="bg-surface-scoreboard text-bsi-bone min-h-screen">
+      <Section padding="sm border-b border-border-vintage">
         <Container>
           <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Glossary' }]} />
         </Container>
@@ -128,8 +121,7 @@ export default function GlossaryPage() {
           <div className="max-w-3xl mb-8 relative">
             <span className="heritage-stamp block mb-4">Reference</span>
             <h1
-              className="text-3xl md:text-4xl font-bold uppercase tracking-wide mb-3"
-              style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+              className="text-3xl md:text-4xl font-bold uppercase tracking-wide mb-3 font-display text-bsi-bone"
             >
               Analytics Glossary
             </h1>
@@ -217,11 +209,10 @@ export default function GlossaryPage() {
 
           {filtered.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-sm" style={{ color: 'rgba(196,184,165,0.35)' }}>No terms match your search.</p>
+              <p className="text-sm text-bsi-dust/35">No terms match your search.</p>
               <button
                 onClick={() => { setSearch(''); setCategory('all'); }}
-                className="mt-4 text-sm font-semibold transition-colors"
-                style={{ color: 'var(--bsi-primary)' }}
+                className="mt-4 text-sm font-semibold transition-colors text-bsi-primary"
               >
                 Clear filters
               </button>
@@ -229,15 +220,15 @@ export default function GlossaryPage() {
           )}
 
           {/* Footer links */}
-          <div className="mt-12 pt-6" style={{ borderTop: '1px solid var(--border-vintage)' }}>
+          <div className="mt-12 pt-6 border-t border-border-vintage">
             <div className="flex flex-wrap gap-x-6 gap-y-2">
-              <Link href="/models" className="text-sm transition-colors" style={{ color: 'rgba(196,184,165,0.35)' }}>
+              <Link href="/models" className="text-sm transition-colors text-bsi-dust/35">
                 Models & Methodology
               </Link>
-              <Link href="/models/data-quality" className="text-sm transition-colors" style={{ color: 'rgba(196,184,165,0.35)' }}>
+              <Link href="/models/data-quality" className="text-sm transition-colors text-bsi-dust/35">
                 Data Quality
               </Link>
-              <Link href="/college-baseball/savant" className="text-sm transition-colors" style={{ color: 'rgba(196,184,165,0.35)' }}>
+              <Link href="/college-baseball/savant" className="text-sm transition-colors text-bsi-dust/35">
                 BSI Savant
               </Link>
             </div>
@@ -245,7 +236,6 @@ export default function GlossaryPage() {
         </Container>
       </Section>
 
-      <Footer />
     </div>
   );
 }

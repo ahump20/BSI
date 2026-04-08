@@ -58,8 +58,7 @@ export function SportHero({
       <Container center>
         <ScrollReveal direction="up">
           <span
-            className="block mb-4 text-center text-[10px] font-bold uppercase tracking-[0.15em]"
-            style={{ fontFamily: 'var(--font-oswald, var(--font-display))', color: 'var(--bsi-primary)' }}
+            className="block mb-4 text-center text-[10px] font-bold uppercase tracking-[0.15em] font-display text-bsi-primary"
           >
             {leagueName}
           </span>
@@ -203,7 +202,7 @@ export function SportHero({
 
   // Fallback: CSS glow when no R2 image is provided
   return (
-    <section className="relative overflow-hidden" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
+    <section className="relative overflow-hidden border-b border-border-vintage">
       <HeroGlow shape="70% 60%" position="50% 30%" intensity={0.08} />
       {content}
     </section>

@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { Footer } from '@/components/layout-ds/Footer';
 import { Card, CardContent, CardTitle, StatCard } from '@/components/ui/Card';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { fetchShowOverview, fetchShowWatchEvents, type ShowMarketOverviewResponse } from '@/lib/mlb-the-show/client';
@@ -104,14 +103,14 @@ export function DiamondDynastyHubClient() {
           {loading ? (
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               {Array.from({ length: 4 }).map((_, index) => (
-                <div key={index} className="h-32 animate-pulse rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)]" />
+                <div key={index} className="h-32 animate-pulse rounded-sm border border-border-vintage bg-surface-dugout" />
               ))}
             </div>
           ) : error ? (
             <Card padding="lg">
               <CardContent className="space-y-3">
                 <CardTitle size="sm">Hub Unavailable</CardTitle>
-                <p className="text-sm text-[var(--bsi-dust)]">{error}</p>
+                <p className="text-sm text-bsi-dust">{error}</p>
               </CardContent>
             </Card>
           ) : data ? (
@@ -138,17 +137,17 @@ export function DiamondDynastyHubClient() {
                       <Link
                         key={card.id}
                         href={buildCardHref(card.id)}
-                        className="flex items-center justify-between rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3 transition-colors hover:border-burnt-orange/35"
+                        className="flex items-center justify-between rounded-sm border border-border-vintage bg-surface-dugout px-4 py-3 transition-colors hover:border-burnt-orange/35"
                       >
                         <div>
-                          <div className="text-sm font-semibold text-[var(--bsi-bone)]">{card.name}</div>
-                          <div className="text-xs uppercase tracking-[0.18em] text-[var(--bsi-dust)]">
+                          <div className="text-sm font-semibold text-bsi-bone">{card.name}</div>
+                          <div className="text-xs uppercase tracking-[0.18em] text-bsi-dust">
                             {card.rarity} • {card.team} • {card.primaryPosition}
                           </div>
                         </div>
                         <div className="text-right">
                           <div className="font-mono text-lg text-burnt-orange">{formatCompactStub(card.market?.bestSellNow)}</div>
-                          <div className="text-xs text-[var(--bsi-dust)]">{card.market?.spread !== null ? `Spread ${card.market?.spread?.toLocaleString()}` : 'Spread N/A'}</div>
+                          <div className="text-xs text-bsi-dust">{card.market?.spread !== null ? `Spread ${card.market?.spread?.toLocaleString()}` : 'Spread N/A'}</div>
                         </div>
                       </Link>
                     ))}
@@ -161,18 +160,18 @@ export function DiamondDynastyHubClient() {
                     {data.captains.slice(0, 6).map((captain) => (
                       <div
                         key={captain.id}
-                        className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3"
+                        className="rounded-sm border border-border-vintage bg-surface-dugout px-4 py-3"
                       >
                         <div className="flex items-center justify-between gap-4">
                           <div>
-                            <div className="text-sm font-semibold text-[var(--bsi-bone)]">{captain.name}</div>
-                            <div className="text-xs uppercase tracking-[0.18em] text-[var(--bsi-dust)]">
+                            <div className="text-sm font-semibold text-bsi-bone">{captain.name}</div>
+                            <div className="text-xs uppercase tracking-[0.18em] text-bsi-dust">
                               {captain.team} • {captain.position}
                             </div>
                           </div>
                           <div className="font-mono text-lg text-burnt-orange">{captain.overall}</div>
                         </div>
-                        <p className="mt-2 text-sm text-[var(--bsi-dust)]">{captain.abilityDescription}</p>
+                        <p className="mt-2 text-sm text-bsi-dust">{captain.abilityDescription}</p>
                       </div>
                     ))}
                   </CardContent>
@@ -187,15 +186,15 @@ export function DiamondDynastyHubClient() {
                       <Link
                         key={collection.id}
                         href={buildCollectionHref(collection.id)}
-                        className="flex items-center justify-between rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3 transition-colors hover:border-burnt-orange/35"
+                        className="flex items-center justify-between rounded-sm border border-border-vintage bg-surface-dugout px-4 py-3 transition-colors hover:border-burnt-orange/35"
                       >
                         <div>
-                          <div className="text-sm font-semibold text-[var(--bsi-bone)]">{collection.name}</div>
-                          <div className="text-xs uppercase tracking-[0.18em] text-[var(--bsi-dust)]">
+                          <div className="text-sm font-semibold text-bsi-bone">{collection.name}</div>
+                          <div className="text-xs uppercase tracking-[0.18em] text-bsi-dust">
                             {collection.type} • {collection.cardCount} cards
                           </div>
                         </div>
-                        <div className="text-right text-xs text-[var(--bsi-dust)]">
+                        <div className="text-right text-xs text-bsi-dust">
                           <div>{formatStubValue(collection.lowStubCost)}</div>
                           <div>{formatStubValue(collection.highStubCost)}</div>
                         </div>
@@ -214,14 +213,14 @@ export function DiamondDynastyHubClient() {
                         <Link
                           key={event.eventId}
                           href={buildCardHref(event.cardId)}
-                          className="block rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3 transition-colors hover:border-burnt-orange/35"
+                          className="block rounded-sm border border-border-vintage bg-surface-dugout px-4 py-3 transition-colors hover:border-burnt-orange/35"
                         >
                           <div className="flex items-center justify-between gap-4">
                             <div>
-                              <div className="text-sm font-semibold text-[var(--bsi-bone)]">{event.cardName}</div>
+                              <div className="text-sm font-semibold text-bsi-bone">{event.cardName}</div>
                               <div className="text-xs uppercase tracking-[0.18em] text-burnt-orange">{event.eventLabel}</div>
                             </div>
-                            <div className="text-right text-xs text-[var(--bsi-dust)]">
+                            <div className="text-right text-xs text-bsi-dust">
                               <div>{event.deltaValue !== null ? `${event.deltaValue > 0 ? '+' : ''}${event.deltaValue.toLocaleString()} stubs` : 'N/A'}</div>
                               <div>{new Date(event.triggeredAt).toLocaleDateString()}</div>
                             </div>
@@ -229,7 +228,7 @@ export function DiamondDynastyHubClient() {
                         </Link>
                       ))
                     ) : (
-                      <p className="text-sm text-[var(--bsi-dust)]">No watch-event triggers have been recorded yet.</p>
+                      <p className="text-sm text-bsi-dust">No watch-event triggers have been recorded yet.</p>
                     )}
                   </CardContent>
                 </Card>
@@ -241,10 +240,10 @@ export function DiamondDynastyHubClient() {
                       <Link
                         key={feature.href}
                         href={feature.href}
-                        className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-4 transition-colors hover:border-burnt-orange/35"
+                        className="rounded-sm border border-border-vintage bg-surface-dugout px-4 py-4 transition-colors hover:border-burnt-orange/35"
                       >
-                        <div className="text-sm font-semibold text-[var(--bsi-bone)]">{feature.title}</div>
-                        <p className="mt-2 text-sm leading-relaxed text-[var(--bsi-dust)]">{feature.description}</p>
+                        <div className="text-sm font-semibold text-bsi-bone">{feature.title}</div>
+                        <p className="mt-2 text-sm leading-relaxed text-bsi-dust">{feature.description}</p>
                       </Link>
                     ))}
                   </CardContent>
@@ -254,7 +253,6 @@ export function DiamondDynastyHubClient() {
           ) : null}
         </DataErrorBoundary>
       </ShowSurfaceFrame>
-      <Footer />
     </div>
   );
 }

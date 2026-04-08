@@ -1,5 +1,5 @@
 import type { Env } from '../shared/types';
-import { cachedJson, kvGet, kvPut, getSDIOClient, toDateString, freshDataHeaders, cachedPayloadHeaders, ensurePayloadMeta, fetchResultHeaders, withMeta, logError } from '../shared/helpers';
+import { errorJson, cachedJson, kvGet, kvPut, getSDIOClient, toDateString, freshDataHeaders, cachedPayloadHeaders, ensurePayloadMeta, fetchResultHeaders, withMeta, logError } from '../shared/helpers';
 import { HTTP_CACHE, CACHE_TTL } from '../shared/constants';
 import {
   getScoreboard,
@@ -63,8 +63,10 @@ export async function handleNBAScores(url: URL, env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
     return cachedJson(payload, 200, HTTP_CACHE.scores, freshDataHeaders());
   } catch (err) {
-    await logError(env, err instanceof Error ? err.message : String(err), 'nba:scores');
-    return cachedJson({ error: 'Internal server error', status: 500 }, 500, 0);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('handleNBAScores error:', msg);
+    await logError(env, msg, 'handleNBAScores');
+    return errorJson('Internal server error');
   }
 }
 
@@ -93,8 +95,10 @@ export async function handleNBAStandings(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
     return cachedJson(payload, 200, HTTP_CACHE.standings, freshDataHeaders());
   } catch (err) {
-    await logError(env, err instanceof Error ? err.message : String(err), 'nba:standings');
-    return cachedJson({ error: 'Failed to fetch NBA standings' }, 500, 0);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('handleNBAStandings error:', msg);
+    await logError(env, msg, 'handleNBAStandings');
+    return errorJson('Failed to fetch NBA standings');
   }
 }
 
@@ -110,8 +114,10 @@ export async function handleNBAGame(gameId: string, env: Env): Promise<Response>
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
     return cachedJson(payload, 200, HTTP_CACHE.game, freshDataHeaders());
   } catch (err) {
-    await logError(env, err instanceof Error ? err.message : String(err), 'nba:game');
-    return cachedJson({ error: 'Failed to fetch NBA game' }, 500, 0);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('handleNBAGame error:', msg);
+    await logError(env, msg, 'handleNBAGame');
+    return errorJson('Failed to fetch NBA game');
   }
 }
 
@@ -127,8 +133,10 @@ export async function handleNBAPlayer(playerId: string, env: Env): Promise<Respo
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
     return cachedJson(payload, 200, HTTP_CACHE.player, freshDataHeaders());
   } catch (err) {
-    await logError(env, err instanceof Error ? err.message : String(err), 'nba:player');
-    return cachedJson({ error: 'Failed to fetch NBA player' }, 500, 0);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('handleNBAPlayer error:', msg);
+    await logError(env, msg, 'handleNBAPlayer');
+    return errorJson('Failed to fetch NBA player');
   }
 }
 
@@ -148,8 +156,10 @@ export async function handleNBATeam(teamId: string, env: Env): Promise<Response>
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
     return cachedJson(payload, 200, HTTP_CACHE.team, freshDataHeaders());
   } catch (err) {
-    await logError(env, err instanceof Error ? err.message : String(err), 'nba:team');
-    return cachedJson({ error: 'Failed to fetch NBA team' }, 500, 0);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('handleNBATeam error:', msg);
+    await logError(env, msg, 'handleNBATeam');
+    return errorJson('Failed to fetch NBA team');
   }
 }
 
@@ -176,8 +186,10 @@ export async function handleNBATeamsList(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
     return cachedJson(payload, 200, HTTP_CACHE.team, freshDataHeaders());
   } catch (err) {
-    await logError(env, err instanceof Error ? err.message : String(err), 'nba:teams-list');
-    return cachedJson({ error: 'Failed to fetch NBA teams' }, 500, 0);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('handleNBATeamsList error:', msg);
+    await logError(env, msg, 'handleNBATeamsList');
+    return errorJson('Failed to fetch NBA teams');
   }
 }
 
@@ -204,8 +216,10 @@ export async function handleNBANews(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
     return cachedJson(payload, 200, HTTP_CACHE.news, freshDataHeaders());
   } catch (err) {
-    await logError(env, err instanceof Error ? err.message : String(err), 'nba:news');
-    return cachedJson({ error: 'Failed to fetch NBA news' }, 500, 0);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('handleNBANews error:', msg);
+    await logError(env, msg, 'handleNBANews');
+    return errorJson('Failed to fetch NBA news');
   }
 }
 
@@ -273,8 +287,10 @@ export async function handleNBATeamFull(teamId: string, env: Env): Promise<Respo
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
     return cachedJson(payload, 200, HTTP_CACHE.team, { 'X-Cache': 'MISS' });
   } catch (err) {
-    await logError(env, err instanceof Error ? err.message : String(err), 'nba:team-full');
-    return cachedJson({ error: 'Failed to fetch NBA team details' }, 500, 0);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('handleNBATeamFull error:', msg);
+    await logError(env, msg, 'handleNBATeamFull');
+    return errorJson('Failed to fetch NBA team details');
   }
 }
 
@@ -336,7 +352,9 @@ export async function handleNBALeaders(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, empty, 300); // Cache empty for 5 min
     return cachedJson(empty, 200, HTTP_CACHE.standings, freshDataHeaders('none'));
   } catch (err) {
-    await logError(env, err instanceof Error ? err.message : String(err), 'nba:leaders');
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('handleNBALeaders error:', msg);
+    await logError(env, msg, 'handleNBALeaders');
     return cachedJson(withMeta({ categories: [], offseason: false }, 'none'), 200, 0);
   }
 }

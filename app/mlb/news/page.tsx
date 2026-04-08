@@ -7,7 +7,7 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
+
 import { Skeleton } from '@/components/ui/Skeleton';
 import { formatTimestamp, getRelativeTime } from '@/lib/utils/timezone';
 import { getReadApiUrl } from '@/lib/utils/public-api';
@@ -156,9 +156,9 @@ export default function MLBNewsPage() {
 
   return (
     <>
-      <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
+      <div className="min-h-screen bg-surface-scoreboard text-bsi-bone">
         {/* Breadcrumb */}
-        <Section padding="sm" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
+        <Section padding="sm border-b border-border-vintage">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
@@ -169,7 +169,7 @@ export default function MLBNewsPage() {
                 MLB
               </Link>
               <span style={{ color: 'rgba(196,184,165,0.5)' }}>/</span>
-              <span className="font-medium" style={{ color: 'var(--bsi-bone)' }}>News</span>
+              <span className="font-medium text-bsi-bone">News</span>
             </nav>
           </Container>
         </Section>
@@ -180,12 +180,11 @@ export default function MLBNewsPage() {
           <Container>
             <ScrollReveal>
               <h1
-                className="text-3xl md:text-4xl font-bold uppercase tracking-display text-gradient-blaze mb-2"
-                style={{ fontFamily: 'var(--font-oswald)' }}
+                className="text-3xl md:text-4xl font-bold uppercase tracking-display text-gradient-blaze mb-2 font-display"
               >
                 MLB News
               </h1>
-              <p className="max-w-2xl" style={{ color: 'var(--bsi-dust)' }}>
+              <p className="max-w-2xl text-bsi-dust">
                 Trades, injuries, game recaps, and analysis—without the hot takes. Just the news
                 that matters.
               </p>
@@ -230,7 +229,7 @@ export default function MLBNewsPage() {
             ) : error ? (
               <Card variant="default" padding="lg" className="bg-error/10 border-error/30">
                 <p className="text-error font-semibold">Unable to Load News</p>
-                <p className="text-sm mt-1" style={{ color: 'var(--bsi-dust)' }}>{error}</p>
+                <p className="text-sm mt-1 text-bsi-dust">{error}</p>
               </Card>
             ) : filteredNews.length === 0 ? (
               <Card variant="default" padding="lg">
@@ -245,7 +244,7 @@ export default function MLBNewsPage() {
                   >
                     <path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2m-4-3H9M7 16h6M7 12h10" />
                   </svg>
-                  <p style={{ color: 'var(--bsi-dust)' }}>No news in this category right now.</p>
+                  <p className="text-bsi-dust">No news in this category right now.</p>
                   <p className="text-sm mt-2" style={{ color: 'rgba(196,184,165,0.5)' }}>
                     Offseason can be quiet—or it can explode with trades. Refresh or check back
                     later.
@@ -283,10 +282,10 @@ export default function MLBNewsPage() {
                             rel="noopener noreferrer"
                             className="block"
                           >
-                            <h3 className="font-semibold text-lg transition-colors" style={{ color: 'var(--bsi-bone)' }}>
+                            <h3 className="font-semibold text-lg transition-colors text-bsi-bone">
                               {item.title}
                             </h3>
-                            <p className="text-sm mt-1 line-clamp-2" style={{ color: 'var(--bsi-dust)' }}>
+                            <p className="text-sm mt-1 line-clamp-2 text-bsi-dust">
                               {item.summary}
                             </p>
                           </a>
@@ -300,7 +299,7 @@ export default function MLBNewsPage() {
             )}
 
             {/* Data Source Footer */}
-            <div className="mt-8 pt-4" style={{ borderTop: '1px solid var(--border-vintage)' }}>
+            <div className="mt-8 pt-4 border-t border-border-vintage">
               <DataSourceBadge
                 source={sourceLabel}
                 timestamp={formatTimestamp(lastUpdated)}
@@ -310,7 +309,6 @@ export default function MLBNewsPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

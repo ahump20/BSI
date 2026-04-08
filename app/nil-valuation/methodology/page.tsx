@@ -6,7 +6,6 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 
 export default function NILMethodologyPage() {
   return (
@@ -284,7 +283,6 @@ export default function NILMethodologyPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

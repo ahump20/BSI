@@ -37,7 +37,7 @@ const AXIS_LABELS: Record<string, string> = {
 function getCompositeColor(score: number): string {
   // Hex retained — consumed by Recharts stroke/fill (token: --bsi-accent, --bsi-primary)
   if (score >= 80) return '#FF6B35'; // token: --bsi-accent
-  if (score >= 60) return '#BF5700'; // token: --bsi-primary
+  if (score >= 60) return 'var(--bsi-primary)'; // token: --bsi-primary
   if (score >= 40) return 'rgba(255,255,255,0.7)';
   return 'rgba(255,255,255,0.4)';
 }

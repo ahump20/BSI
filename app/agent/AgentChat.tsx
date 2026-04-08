@@ -93,14 +93,13 @@ function MessageBubble({ message }: { message: ChatMessage }) {
       <div
         className={`max-w-[85%] sm:max-w-[75%] px-4 py-3 rounded-sm ${
           isUser
-            ? 'bg-[var(--bsi-primary)] text-white'
+            ? 'bg-bsi-primary text-white'
             : 'heritage-card'
         }`}
       >
         {!isUser && (
           <span
-            className="text-[9px] uppercase tracking-[0.15em] block mb-1"
-            style={{ color: 'var(--bsi-primary)', fontFamily: 'var(--bsi-font-display)' }}
+            className="text-[9px] uppercase tracking-[0.15em] block mb-1 text-bsi-primary font-display"
           >
             BSI Agent
           </span>
@@ -115,8 +114,7 @@ function MessageBubble({ message }: { message: ChatMessage }) {
           {message.content}
         </p>
         <span
-          className="text-[9px] block mt-1 opacity-50"
-          style={{ fontFamily: 'var(--bsi-font-mono)' }}
+          className="text-[9px] block mt-1 opacity-50 font-mono"
         >
           {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </span>
@@ -134,16 +132,15 @@ function StreamingIndicator() {
     <div className="flex justify-start mb-4">
       <div className="heritage-card px-4 py-3 max-w-[85%]">
         <span
-          className="text-[9px] uppercase tracking-[0.15em] block mb-2"
-          style={{ color: 'var(--bsi-primary)', fontFamily: 'var(--bsi-font-display)' }}
+          className="text-[9px] uppercase tracking-[0.15em] block mb-2 text-bsi-primary font-display"
         >
           BSI Agent
         </span>
         <div className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-[var(--bsi-primary)] animate-pulse" />
-          <span className="w-1.5 h-1.5 rounded-full bg-[var(--bsi-primary)] animate-pulse [animation-delay:0.2s]" />
-          <span className="w-1.5 h-1.5 rounded-full bg-[var(--bsi-primary)] animate-pulse [animation-delay:0.4s]" />
-          <span className="text-xs ml-2" style={{ color: 'var(--bsi-dust)' }}>
+          <span className="w-1.5 h-1.5 rounded-full bg-bsi-primary animate-pulse" />
+          <span className="w-1.5 h-1.5 rounded-full bg-bsi-primary animate-pulse [animation-delay:0.2s]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-bsi-primary animate-pulse [animation-delay:0.4s]" />
+          <span className="text-xs ml-2 text-bsi-dust">
             Analyzing...
           </span>
         </div>
@@ -319,8 +316,7 @@ export function AgentChat() {
 
   return (
     <div
-      className="flex flex-col h-[calc(100vh-56px)]"
-      style={{ background: 'var(--surface-scoreboard)' }}
+      className="flex flex-col h-[calc(100vh-56px)] bg-surface-scoreboard"
     >
       {/* Header */}
       <div
@@ -349,12 +345,11 @@ export function AgentChat() {
           </div>
           <div>
             <h1
-              className="text-sm font-bold uppercase tracking-wide"
-              style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+              className="text-sm font-bold uppercase tracking-wide font-display text-bsi-bone"
             >
               BSI Baseball Agent
             </h1>
-            <p className="text-[10px]" style={{ color: 'var(--bsi-dust)' }}>
+            <p className="text-[10px] text-bsi-dust">
               College baseball intelligence, backed by live data
             </p>
           </div>
@@ -408,8 +403,7 @@ export function AgentChat() {
               </svg>
             </div>
             <h2
-              className="text-lg font-bold uppercase tracking-wide mb-2"
-              style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--bsi-bone)' }}
+              className="text-lg font-bold uppercase tracking-wide mb-2 font-display text-bsi-bone"
             >
               Ask Anything About College Baseball
             </h2>
@@ -427,7 +421,7 @@ export function AgentChat() {
                 <button
                   key={prompt}
                   onClick={() => sendMessage(prompt)}
-                  className="text-[11px] px-3 py-2 transition-all hover:border-[var(--bsi-primary)] hover:text-[var(--bsi-bone)]"
+                  className="text-[11px] px-3 py-2 transition-all hover:border-bsi-primary hover:text-bsi-bone"
                   style={{
                     borderRadius: '2px',
                     border: '1px solid var(--border-vintage)',
@@ -452,8 +446,7 @@ export function AgentChat() {
           <div className="flex justify-start mb-4">
             <div className="heritage-card px-4 py-3 max-w-[85%] sm:max-w-[75%]">
               <span
-                className="text-[9px] uppercase tracking-[0.15em] block mb-1"
-                style={{ color: 'var(--bsi-primary)', fontFamily: 'var(--bsi-font-display)' }}
+                className="text-[9px] uppercase tracking-[0.15em] block mb-1 text-bsi-primary font-display"
               >
                 BSI Agent
               </span>
@@ -462,7 +455,7 @@ export function AgentChat() {
                 style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--bsi-bone)' }}
               >
                 {streamText}
-                <span className="inline-block w-1.5 h-4 bg-[var(--bsi-primary)]/60 ml-0.5 animate-pulse" />
+                <span className="inline-block w-1.5 h-4 bg-bsi-primary/60 ml-0.5 animate-pulse" />
               </p>
             </div>
           </div>
@@ -535,8 +528,7 @@ export function AgentChat() {
           </button>
         </form>
         <p
-          className="text-center text-[9px] mt-2"
-          style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-mono)' }}
+          className="text-center text-[9px] mt-2 text-bsi-dust font-mono"
         >
           Powered by BSI data pipeline &middot; Responses may take a moment during tool calls
         </p>

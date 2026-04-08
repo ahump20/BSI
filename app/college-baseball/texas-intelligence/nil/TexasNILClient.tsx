@@ -6,13 +6,12 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { TexasNILPanel } from '@/components/college-baseball/TexasNILPanel';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 
 const TEAM_ID = 'texas';
-const ACCENT = '#BF5700';
+const ACCENT = 'var(--bsi-primary)';
 
 interface DraftLeveragePlayer {
   player_id: string;
@@ -54,7 +53,7 @@ export default function TexasNILClient() {
         </Section>
 
         {/* Hero */}
-        <Section padding="lg" className="relative overflow-hidden bg-[var(--surface-scoreboard)]">
+        <Section padding="lg" className="relative overflow-hidden bg-surface-scoreboard">
           <div className="absolute top-0 left-0 right-0 h-1" style={{ backgroundColor: ACCENT }} />
           <Container>
             <ScrollReveal direction="up">
@@ -98,10 +97,10 @@ export default function TexasNILClient() {
                   <CardContent>
                     <div className="grid grid-cols-2 gap-px bg-border-subtle rounded-sm overflow-hidden">
                       {[
-                        { label: 'Elite + Paid', desc: 'High performance, high NIL', bg: 'bg-[var(--bsi-success)]/5', check: (p: DraftLeveragePlayer) => p.nil_index >= 60 && p.draft_round_projection <= 5 },
+                        { label: 'Elite + Paid', desc: 'High performance, high NIL', bg: 'bg-success/5', check: (p: DraftLeveragePlayer) => p.nil_index >= 60 && p.draft_round_projection <= 5 },
                         { label: 'Undervalued', desc: 'High performance, low NIL', bg: 'bg-burnt-orange/5', check: (p: DraftLeveragePlayer) => p.nil_index >= 60 && p.draft_round_projection > 5 },
-                        { label: 'Overvalued', desc: 'Low performance, high NIL', bg: 'bg-[var(--bsi-danger)]/5', check: (p: DraftLeveragePlayer) => p.nil_index < 60 && p.draft_round_projection <= 5 },
-                        { label: 'Development', desc: 'Building both', bg: 'bg-[var(--surface-dugout)]', check: (p: DraftLeveragePlayer) => p.nil_index < 60 && p.draft_round_projection > 5 },
+                        { label: 'Overvalued', desc: 'Low performance, high NIL', bg: 'bg-error/5', check: (p: DraftLeveragePlayer) => p.nil_index < 60 && p.draft_round_projection <= 5 },
+                        { label: 'Development', desc: 'Building both', bg: 'bg-surface-dugout', check: (p: DraftLeveragePlayer) => p.nil_index < 60 && p.draft_round_projection > 5 },
                       ].map((q) => (
                         <div key={q.label} className={`${q.bg} p-4`}>
                           <div className="text-text-primary text-sm font-medium">{q.label}</div>
@@ -151,7 +150,7 @@ export default function TexasNILClient() {
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                             <th className="text-left py-2 px-2">Player</th>
                             <th className="text-right py-2 px-2">NIL Index</th>
                             <th className="text-right py-2 px-2">Draft Proj.</th>
@@ -212,7 +211,6 @@ export default function TexasNILClient() {
           </Container>
         </Section>
       </main>
-      <Footer />
     </>
   );
 }

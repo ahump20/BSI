@@ -8,7 +8,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { HAVFLeaderboard } from '@/components/analytics/HAVFLeaderboard';
 import { HAVFRadar } from '@/components/analytics/HAVFRadar';
 
@@ -245,7 +244,6 @@ export default function CollegeBaseballAnalyticsPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

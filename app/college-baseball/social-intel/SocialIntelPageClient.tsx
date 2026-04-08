@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
-import { Footer } from '@/components/layout-ds/Footer';
 import { BSI_TIMEZONE } from '@/lib/utils/timezone';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -31,11 +30,11 @@ interface FeedResponse {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const SIGNAL_CONFIG = {
-  injury_lineup:   { label: 'Injury',    short: 'INJ', color: '#ef4444', bg: 'bg-[var(--bsi-danger)]/10',    border: 'border-[var(--bsi-danger)]/25',    text: 'text-[var(--bsi-danger)]' },
-  transfer_portal: { label: 'Portal',    short: 'PRT', color: '#f59e0b', bg: 'bg-[var(--bsi-warning)]/10',  border: 'border-[var(--bsi-warning)]/25',  text: 'text-[var(--bsi-warning)]' },
-  recruiting:      { label: 'Recruiting',short: 'REC', color: '#4B9CD3', bg: 'bg-[var(--heritage-columbia-blue)]/10', border: 'border-[var(--heritage-columbia-blue)]/25', text: 'text-[var(--heritage-columbia-blue)]' },
-  sentiment:       { label: 'Sentiment', short: 'SNT', color: '#10b981', bg: 'bg-[var(--bsi-success)]/10',border: 'border-[var(--bsi-success)]/25',text: 'text-[var(--bsi-success)]' },
-  general:         { label: 'General',   short: 'GEN', color: '#C4B8A5', bg: 'bg-[var(--bsi-dust)]/10',   border: 'border-[var(--bsi-dust)]/25',   text: 'text-[var(--bsi-dust)]' },
+  injury_lineup:   { label: 'Injury',    short: 'INJ', color: '#ef4444', bg: 'bg-error/10',    border: 'border-error/25',    text: 'text-error' },
+  transfer_portal: { label: 'Portal',    short: 'PRT', color: '#f59e0b', bg: 'bg-warning/10',  border: 'border-warning/25',  text: 'text-warning' },
+  recruiting:      { label: 'Recruiting',short: 'REC', color: 'var(--heritage-columbia-blue)', bg: 'bg-heritage-columbia/10', border: 'border-heritage-columbia/25', text: 'text-heritage-columbia' },
+  sentiment:       { label: 'Sentiment', short: 'SNT', color: '#10b981', bg: 'bg-success/10',border: 'border-success/25',text: 'text-success' },
+  general:         { label: 'General',   short: 'GEN', color: 'var(--bsi-dust)', bg: 'bg-bsi-dust/10',   border: 'border-bsi-dust/25',   text: 'text-bsi-dust' },
 } as const;
 
 const FILTER_TABS = [
@@ -165,13 +164,13 @@ function SignalRow({ signal, index }: { signal: SocialSignal; index: number }) {
           </span>
 
           {/* Platform */}
-          <span className={`font-mono text-[10px] uppercase tracking-wider ${isReddit ? 'text-orange-400/60' : 'text-[var(--heritage-columbia-blue)]/60'}`}>
+          <span className={`font-mono text-[10px] uppercase tracking-wider ${isReddit ? 'text-orange-400/60' : 'text-heritage-columbia/60'}`}>
             {isReddit ? 'r/' : 'X'}
           </span>
 
           {/* Team */}
           {signal.team_mentioned && (
-            <span className="text-[11px] text-[#BF5700]/70 font-medium truncate max-w-[12ch]">
+            <span className="text-[11px] text-burnt-orange/70 font-medium truncate max-w-[12ch]">
               {signal.team_mentioned}
             </span>
           )}
@@ -185,7 +184,7 @@ function SignalRow({ signal, index }: { signal: SocialSignal; index: number }) {
 
           {/* Confidence pill — high only */}
           {signal.confidence >= 0.75 && (
-            <span className="px-1.5 py-px rounded-sm bg-[var(--bsi-success)]/10 border border-[var(--bsi-success)]/20 text-[var(--bsi-success)] text-[9px] font-mono uppercase tracking-wide">
+            <span className="px-1.5 py-px rounded-sm bg-success/10 border border-success/20 text-success text-[9px] font-mono uppercase tracking-wide">
               HIGH
             </span>
           )}
@@ -205,7 +204,7 @@ function SignalRow({ signal, index }: { signal: SocialSignal; index: number }) {
         href={signal.post_url}
         target="_blank"
         rel="noopener noreferrer"
-        className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#BF5700]"
+        className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-bsi-primary"
         aria-label={signal.summary ?? signal.post_text.slice(0, 80)}
       >
         {inner}
@@ -278,7 +277,7 @@ export function SocialIntelPageClient() {
   return (
     <div className="min-h-screen bg-[#0D0D0D] text-text-primary">
       {/* Back nav */}
-      <div className="border-b border-border/50 bg-[#111111]">
+      <div className="border-b border-border/50 bg-surface-press-box">
         <Container>
           <div className="flex items-center gap-3 py-3">
             <Link
@@ -296,7 +295,7 @@ export function SocialIntelPageClient() {
       </div>
 
       {/* Header */}
-      <div className="border-b border-border bg-[#111111]">
+      <div className="border-b border-border bg-surface-press-box">
         <Container>
           <div className="py-8 md:py-10">
             <div className="flex items-start justify-between gap-4 mb-6">
@@ -304,10 +303,10 @@ export function SocialIntelPageClient() {
                 <div className="flex items-center gap-2.5 mb-3">
                   {/* Live pulse */}
                   <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#BF5700] opacity-60" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#BF5700]" />
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-bsi-primary opacity-60" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-bsi-primary" />
                   </span>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#BF5700]/70">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-burnt-orange/70">
                     Live · Updated every 30 min
                   </span>
                 </div>
@@ -347,7 +346,7 @@ export function SocialIntelPageClient() {
                 <span className="font-mono text-[10px] uppercase tracking-wider text-text-muted">Reddit</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-[var(--heritage-columbia-blue)] flex-shrink-0" />
+                <span className="w-2 h-2 rounded-full bg-heritage-columbia flex-shrink-0" />
                 <span className="font-mono text-[10px] uppercase tracking-wider text-text-muted">X / Twitter</span>
               </div>
             </div>
@@ -370,7 +369,7 @@ export function SocialIntelPageClient() {
                     flex items-center gap-1.5 px-4 py-3 font-mono text-[11px] uppercase tracking-wider whitespace-nowrap
                     border-b-2 transition-colors duration-150
                     ${isActive
-                      ? 'border-[#BF5700] text-[#BF5700]'
+                      ? 'border-bsi-primary text-burnt-orange'
                       : 'border-transparent text-text-muted hover:text-text-secondary'}
                   `}
                 >
@@ -378,7 +377,7 @@ export function SocialIntelPageClient() {
                   {count > 0 && (
                     <span className={`
                       px-1.5 py-0.5 rounded-sm text-[9px] tabular-nums font-mono
-                      ${isActive ? 'bg-[#BF5700]/15 text-[#BF5700]' : 'bg-surface text-text-muted'}
+                      ${isActive ? 'bg-bsi-primary/15 text-burnt-orange' : 'bg-surface text-text-muted'}
                     `}>
                       {count}
                     </span>
@@ -394,7 +393,7 @@ export function SocialIntelPageClient() {
       <Container>
         <div className="py-6">
           {loading ? (
-            <div className="rounded-sm border border-border overflow-hidden bg-[#111111]">
+            <div className="rounded-sm border border-border overflow-hidden bg-surface-press-box">
               <Skeleton />
             </div>
           ) : filtered.length === 0 ? (
@@ -409,7 +408,7 @@ export function SocialIntelPageClient() {
               </p>
             </div>
           ) : (
-            <div className="rounded-sm border border-border overflow-hidden bg-[#111111]">
+            <div className="rounded-sm border border-border overflow-hidden bg-surface-press-box">
               {/* Feed header */}
               <div className="flex items-center justify-between px-5 py-3 border-b border-border bg-[#0D0D0D]/60">
                 <span className="font-mono text-[10px] uppercase tracking-wider text-text-muted">
@@ -438,7 +437,6 @@ export function SocialIntelPageClient() {
         </div>
       </Container>
 
-      <Footer />
     </div>
   );
 }

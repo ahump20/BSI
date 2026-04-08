@@ -14,18 +14,31 @@ export function json(data: unknown, status = 200, extra: Record<string, string> 
   });
 }
 
-export function errorJson(message: string, status = 500): Response {
-  return json({ error: true, message, status }, status);
-}
-
 /**
- * Standardized error response with machine-readable error codes.
- * All Worker error responses follow the same shape: { error, code, status }
+ * Standardized error response contract.
+ * All Worker error responses follow the same shape: { error, code?, status }
+ *
+ * Usage:
+ *   errorJson('Not found', 404, 'NOT_FOUND')
+ *   errorJson('Internal server error')            // defaults to 500, no code
  */
 export type ErrorCode = 'NOT_FOUND' | 'BAD_REQUEST' | 'RATE_LIMITED' | 'INTERNAL_ERROR' | 'UPSTREAM_ERROR' | 'UNAUTHORIZED' | 'FORBIDDEN';
 
+export interface ErrorResponseBody {
+  error: string;
+  code?: ErrorCode;
+  status: number;
+}
+
+export function errorJson(message: string, status = 500, code?: ErrorCode): Response {
+  const body: ErrorResponseBody = { error: message, status };
+  if (code) body.code = code;
+  return json(body, status);
+}
+
+/** Alias for errorJson with required code — preserves existing call-sites. */
 export function apiError(message: string, code: ErrorCode, status: number): Response {
-  return json({ error: message, code, status }, status);
+  return errorJson(message, status, code);
 }
 
 export function cachedJson(data: unknown, status: number, maxAge: number, extra: Record<string, string> = {}): Response {

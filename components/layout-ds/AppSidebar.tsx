@@ -232,7 +232,7 @@ export function AppSidebar() {
           {/* Section label */}
           {!collapsed && (
             <span
-              className="block px-3 pt-3 pb-1.5 text-[9px] uppercase tracking-[0.15em] font-mono text-[var(--bsi-text-dim)]"
+              className="block px-3 pt-3 pb-1.5 text-[9px] uppercase tracking-[0.15em] font-mono text-text-muted"
             >
               {group.label}
             </span>
@@ -253,8 +253,8 @@ export function AppSidebar() {
                 onClick={closeMobile}
                 className={`flex items-center gap-3 px-3 py-2 rounded-sm text-sm transition-all duration-200 relative ${
                   active
-                    ? 'text-[var(--bsi-primary-light)]'
-                    : 'text-[var(--bsi-text-muted)] hover:text-[var(--bsi-text)] hover:bg-white/[0.06]'
+                    ? 'text-burnt-orange-400'
+                    : 'text-text-muted hover:text-text-primary hover:bg-white/[0.06]'
                 }`}
                 {...extraProps}
               >
@@ -267,7 +267,7 @@ export function AppSidebar() {
                     />
                     <motion.div
                       layoutId="sidebar-bar"
-                      className="absolute left-0 top-1 bottom-1 w-[2px] rounded-full bg-[var(--bsi-primary)]"
+                      className="absolute left-0 top-1 bottom-1 w-[2px] rounded-full bg-bsi-primary"
                       transition={{ type: 'spring', stiffness: 400, damping: 35 }}
                     />
                   </>
@@ -295,7 +295,7 @@ export function AppSidebar() {
     <>
       {/* ── Desktop sidebar ── */}
       <aside
-        className={`hidden md:flex flex-col border-r border-[var(--border-vintage)] transition-all duration-300 relative shrink-0 bg-[var(--surface-scoreboard)] shadow-[inset_-1px_0_0_rgba(140,98,57,0.08)] ${
+        className={`hidden md:flex flex-col border-r border-border-vintage transition-all duration-300 relative shrink-0 bg-surface-scoreboard shadow-[inset_-1px_0_0_rgba(140,98,57,0.08)] ${
           collapsed ? 'w-16' : 'w-56'
         }`}
       >
@@ -317,7 +317,7 @@ export function AppSidebar() {
                 BSI
               </span>
               <span
-                className="text-[9px] uppercase tracking-[0.2em] text-[var(--bsi-text-dim)]"
+                className="text-[9px] uppercase tracking-[0.2em] text-text-muted"
               >
                 Sports Intel
               </span>
@@ -325,7 +325,7 @@ export function AppSidebar() {
           )}
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="ml-auto text-xs cursor-pointer transition-colors text-[var(--bsi-text-dim)]"
+            className="ml-auto text-xs cursor-pointer transition-colors text-text-muted"
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             <span aria-hidden="true">{collapsed ? '▸' : '◂'}</span>
@@ -340,7 +340,7 @@ export function AppSidebar() {
           <div className="px-4 py-3 border-t border-white/[0.05]">
             <a
               href="https://blazesportsintel.com"
-              className="text-[9px] hover:text-[var(--bsi-text-muted)] transition-colors uppercase tracking-[0.15em] font-mono text-[var(--bsi-text-dim)]"
+              className="text-[9px] hover:text-text-muted transition-colors uppercase tracking-[0.15em] font-mono text-text-muted"
             >
               blazesportsintel.com
             </a>
@@ -351,7 +351,7 @@ export function AppSidebar() {
       {/* ── Mobile hamburger ── */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="md:hidden fixed top-3 left-3 z-50 p-2 rounded-sm bg-[var(--surface-dugout)] border border-[var(--border-vintage)] cursor-pointer text-text-primary"
+        className="md:hidden fixed top-3 left-3 z-50 p-2 rounded-sm bg-surface-dugout border border-border-vintage cursor-pointer text-text-primary"
         aria-label="Open navigation"
       >
         <IconMenu />
@@ -387,7 +387,7 @@ export function AppSidebar() {
                 </span>
                 <button
                   onClick={closeMobile}
-                  className="cursor-pointer p-1 text-[var(--bsi-text-dim)]"
+                  className="cursor-pointer p-1 text-text-muted"
                   aria-label="Close navigation"
                 >
                   <IconX />
