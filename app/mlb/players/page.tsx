@@ -195,8 +195,7 @@ export default function MLBPlayersPage() {
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/mlb"
-                className="transition-colors hover:opacity-80"
-                style={{ color: 'rgba(196,184,165,0.5)' }}
+                className="transition-colors hover:opacity-80 text-bsi-dust/50"
               >
                 MLB
               </Link>
@@ -219,8 +218,7 @@ export default function MLBPlayersPage() {
 
             <ScrollReveal direction="up" delay={100}>
               <h1
-                className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-gradient-blaze mb-4"
-                style={{ fontFamily: 'var(--font-oswald)' }}
+                className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-gradient-blaze mb-4 font-display"
               >
                 MLB Players
               </h1>
@@ -355,7 +353,7 @@ export default function MLBPlayersPage() {
             {/* Results Count */}
             {pagination && !loading && (
               <ScrollReveal direction="up" delay={75}>
-                <p className="text-sm mb-4" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                <p className="text-sm mb-4 text-bsi-dust/50">
                   Showing {players.length} of {pagination.totalResults} players
                   {pagination.totalPages > 1 &&
                     ` (Page ${pagination.page} of ${pagination.totalPages})`}
@@ -384,7 +382,7 @@ export default function MLBPlayersPage() {
               </Card>
             ) : players.length === 0 ? (
               <Card padding="lg" className="text-center">
-                <div className="text-4xl mb-4" style={{ color: 'rgba(196,184,165,0.5)' }}>?</div>
+                <div className="text-4xl mb-4 text-bsi-dust/50">?</div>
                 <h3 className="text-xl font-semibold mb-2 text-bsi-bone">No Players Found</h3>
                 <p className="text-bsi-dust">Try adjusting your filters.</p>
               </Card>
@@ -429,7 +427,7 @@ export default function MLBPlayersPage() {
                           onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--surface-press-box)'; }}
                           onMouseLeave={(e) => { e.currentTarget.style.background = ''; }}
                         >
-                          <td className="py-3 px-4 text-sm" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                          <td className="py-3 px-4 text-sm text-bsi-dust/50">
                             {(page - 1) * 50 + index + 1}
                           </td>
                           <td className="py-3 px-4">

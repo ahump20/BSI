@@ -372,8 +372,7 @@ export default function PricingPage() {
               Blaze Intelligence &middot; blazesportsintel.com
             </p>
             <p
-              className="text-[11px] font-serif italic tracking-wide"
-              style={{ color: 'var(--bsi-primary)', opacity: 0.7 }}
+              className="text-[11px] font-serif italic tracking-wide text-bsi-primary opacity-70"
             >
               Born to Blaze the Path Beaten Less
             </p>

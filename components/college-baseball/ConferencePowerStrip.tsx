@@ -473,16 +473,14 @@ export function ConferencePowerStrip({
         </span>
         {fetchedAt && (
           <span
-            className="text-[10px]"
-            style={{ fontFamily: 'var(--font-mono)' }}
+            className="text-[10px] font-mono"
           >
             Updated {formatRelativeTime(fetchedAt)} CT
           </span>
         )}
         {!fetchedAt && lastUpdated && (
           <span
-            className="text-[10px]"
-            style={{ fontFamily: 'var(--font-mono)' }}
+            className="text-[10px] font-mono"
           >
             Updated {formatRelativeTime(lastUpdated.toISOString())} CT
           </span>

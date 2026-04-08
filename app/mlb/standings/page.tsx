@@ -197,19 +197,19 @@ export default function MLBStandingsPage() {
       <table className="w-full min-w-[700px]" aria-label="MLB division standings">
         <thead>
           <tr style={{ borderBottom: '2px solid var(--bsi-primary)' }}>
-            <th scope="col" className="text-left p-3 font-semibold w-8" style={{ color: 'rgba(196,184,165,0.5)' }}>#</th>
+            <th scope="col" className="text-left p-3 font-semibold w-8 text-bsi-dust/50">#</th>
             <SortableHeader column="team" label="Team" className="sticky left-0 z-10" style={{ background: 'var(--surface-dugout)' } as React.CSSProperties} />
             <SortableHeader column="wins" label="W" />
             <SortableHeader column="losses" label="L" />
             <SortableHeader column="pct" label="PCT" />
             <SortableHeader column="gb" label="GB" />
-            <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>HOME</th>
-            <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>AWAY</th>
+            <th scope="col" className="text-left p-3 font-semibold text-bsi-dust/50">HOME</th>
+            <th scope="col" className="text-left p-3 font-semibold text-bsi-dust/50">AWAY</th>
             <SortableHeader column="rs" label="RS" />
             <SortableHeader column="ra" label="RA" />
             <SortableHeader column="diff" label="DIFF" />
-            <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>STRK</th>
-            <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>L10</th>
+            <th scope="col" className="text-left p-3 font-semibold text-bsi-dust/50">STRK</th>
+            <th scope="col" className="text-left p-3 font-semibold text-bsi-dust/50">L10</th>
           </tr>
         </thead>
         <tbody>
@@ -231,7 +231,7 @@ export default function MLBStandingsPage() {
                   >
                     {team.teamName}
                     {showDivision && (
-                      <span className="text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>{team.division}</span>
+                      <span className="text-xs text-bsi-dust/50">{team.division}</span>
                     )}
                   </Link>
                 </td>
@@ -294,14 +294,14 @@ export default function MLBStandingsPage() {
         <table className="w-full min-w-[600px]" aria-label="MLB wild card standings">
           <thead>
             <tr style={{ borderBottom: '2px solid var(--bsi-primary)' }}>
-              <th scope="col" className="text-left p-3 font-semibold w-8" style={{ color: 'rgba(196,184,165,0.5)' }}>WC</th>
-              <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>Team</th>
-              <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>W</th>
-              <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>L</th>
-              <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>PCT</th>
-              <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>WCGB</th>
-              <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>STRK</th>
-              <th scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>L10</th>
+              <th scope="col" className="text-left p-3 font-semibold w-8 text-bsi-dust/50">WC</th>
+              <th scope="col" className="text-left p-3 font-semibold text-bsi-dust/50">Team</th>
+              <th scope="col" className="text-left p-3 font-semibold text-bsi-dust/50">W</th>
+              <th scope="col" className="text-left p-3 font-semibold text-bsi-dust/50">L</th>
+              <th scope="col" className="text-left p-3 font-semibold text-bsi-dust/50">PCT</th>
+              <th scope="col" className="text-left p-3 font-semibold text-bsi-dust/50">WCGB</th>
+              <th scope="col" className="text-left p-3 font-semibold text-bsi-dust/50">STRK</th>
+              <th scope="col" className="text-left p-3 font-semibold text-bsi-dust/50">L10</th>
             </tr>
           </thead>
           <tbody>
@@ -337,7 +337,7 @@ export default function MLBStandingsPage() {
                       className="font-semibold transition-colors flex items-center gap-2 text-bsi-bone"
                     >
                       {team.teamName}
-                      <span className="text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>{team.division}</span>
+                      <span className="text-xs text-bsi-dust/50">{team.division}</span>
                     </Link>
                   </td>
                   <td className="p-3 font-mono text-bsi-dust">{team.wins}</td>
@@ -361,7 +361,7 @@ export default function MLBStandingsPage() {
           </tbody>
         </table>
         {wcTeams.length > wcSpots && (
-          <div className="mt-4 text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>
+          <div className="mt-4 text-xs text-bsi-dust/50">
             Teams above the line are in Wild Card position
           </div>
         )}
@@ -378,8 +378,7 @@ export default function MLBStandingsPage() {
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/mlb"
-                className="transition-colors hover:opacity-80"
-                style={{ color: 'rgba(196,184,165,0.5)' }}
+                className="transition-colors hover:opacity-80 text-bsi-dust/50"
               >
                 MLB
               </Link>
@@ -402,8 +401,7 @@ export default function MLBStandingsPage() {
 
             <ScrollReveal direction="up" delay={100}>
               <h1
-                className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-gradient-blaze mb-4"
-                style={{ fontFamily: 'var(--font-oswald)' }}
+                className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-gradient-blaze mb-4 font-display"
               >
                 MLB Standings
               </h1>
@@ -468,7 +466,7 @@ export default function MLBStandingsPage() {
                                 'STRK',
                                 'L10',
                               ].map((h) => (
-                                <th key={h} scope="col" className="text-left p-3 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                                <th key={h} scope="col" className="text-left p-3 font-semibold text-bsi-dust/50">
                                   {h}
                                 </th>
                               ))}

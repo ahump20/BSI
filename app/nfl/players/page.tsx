@@ -160,13 +160,13 @@ function PlayerCard({ player }: { player: Player }) {
                   unoptimized
                 />
               )}
-              <span className="text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>{player.team?.name}</span>
+              <span className="text-xs text-bsi-dust/50">{player.team?.name}</span>
             </div>
           </div>
 
           <div className="text-right hidden sm:block">
             <p className="text-sm text-bsi-dust">{player.height}</p>
-            <p className="text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>{player.weight} lbs</p>
+            <p className="text-xs text-bsi-dust/50">{player.weight} lbs</p>
           </div>
         </div>
       </Card>
@@ -241,8 +241,7 @@ export default function NFLPlayersPage() {
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/nfl"
-                className="transition-colors"
-                style={{ color: 'rgba(196,184,165,0.5)' }}
+                className="transition-colors text-bsi-dust/50"
                 onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--bsi-primary)')}
                 onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(196,184,165,0.5)')}
               >
@@ -295,8 +294,7 @@ export default function NFLPlayersPage() {
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2"
-                    style={{ color: 'rgba(196,184,165,0.5)' }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-bsi-dust/50"
                   >
                     ✕
                   </button>
@@ -361,7 +359,7 @@ export default function NFLPlayersPage() {
 
             {/* Results count */}
             {!loading && !error && (
-              <p className="text-sm mb-4" style={{ color: 'rgba(196,184,165,0.5)' }}>
+              <p className="text-sm mb-4 text-bsi-dust/50">
                 {filteredPlayers.length} player{filteredPlayers.length !== 1 ? 's' : ''} found
               </p>
             )}
@@ -381,7 +379,7 @@ export default function NFLPlayersPage() {
                       ? 'No players match your filters'
                       : 'No players found'}
                   </p>
-                  <p className="text-sm mt-2" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                  <p className="text-sm mt-2 text-bsi-dust/50">
                     Try adjusting your search or filters
                   </p>
                 </div>

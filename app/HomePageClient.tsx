@@ -347,7 +347,7 @@ function ScoreTicker({
               </span>
               <span className="font-medium text-bsi-dust">{awayName}</span>
               <span className="font-bold tabular-nums mx-0.5" style={{ color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}>{awayScore}</span>
-              <span className="mx-0.5" style={{ color: 'rgba(196,184,165,0.5)' }}>@</span>
+              <span className="mx-0.5 text-bsi-dust/50">@</span>
               <span className="font-medium text-bsi-dust">{homeName}</span>
               <span className="font-bold tabular-nums mx-0.5" style={{ color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}>{homeScore}</span>
               {isLive && (
@@ -359,12 +359,12 @@ function ScoreTicker({
                 </span>
               )}
               {isFinal && (
-                <span className="text-[9px] uppercase tracking-wider ml-1.5 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                <span className="text-[9px] uppercase tracking-wider ml-1.5 font-semibold text-bsi-dust/50">
                   Final
                 </span>
               )}
               {!isLive && !isFinal && displayStatus && (
-                <span className="text-[9px] uppercase tracking-wider ml-1.5" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                <span className="text-[9px] uppercase tracking-wider ml-1.5 text-bsi-dust/50">
                   {displayStatus}
                 </span>
               )}
@@ -375,8 +375,7 @@ function ScoreTicker({
             <span key={`${g.id ?? i}-${i}`} className="inline-flex items-center shrink-0">
               {i > 0 && (
                 <span
-                  className="mx-5 text-[10px]"
-                  style={{ color: 'var(--bsi-primary)', opacity: 0.6 }}
+                  className="mx-5 text-[10px] text-bsi-primary opacity-60"
                   aria-hidden="true"
                 >
                   &#9670;
@@ -476,8 +475,7 @@ function SportPulseStrip({ pulse }: { pulse: Record<string, SportPulseData> }) {
                       <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500" />
                     </span>
                     <span
-                      className="text-[10px] font-bold tabular-nums"
-                      style={{ fontFamily: 'var(--font-mono)', color: '#10B981' }}
+                      className="text-[10px] font-bold tabular-nums font-mono text-success"
                     >
                       {live}
                     </span>
@@ -491,8 +489,7 @@ function SportPulseStrip({ pulse }: { pulse: Record<string, SportPulseData> }) {
                   </span>
                 ) : (
                   <span
-                    className="text-[9px]"
-                    style={{ fontFamily: 'var(--font-mono)', color: 'rgba(196,184,165,0.4)' }}
+                    className="text-[9px] font-mono text-bsi-dust/40"
                   >
                     --
                   </span>
@@ -636,7 +633,7 @@ function LeaderboardTable({
         className="border border-t-0 overflow-x-auto"
         style={{ borderColor: 'var(--border-vintage)', borderRadius: '0 0 2px 2px' }}
       >
-        <table className="w-full text-[11px]" style={{ fontFamily: 'var(--font-mono)' }}>
+        <table className="w-full text-[11px] font-mono">
           <thead>
             <tr style={{ background: 'rgba(17,17,17,0.5)' }}>
               <th
@@ -1117,15 +1114,13 @@ export function HomePageClient() {
           <div className="hero-entrance flex flex-wrap items-center justify-center gap-4 mt-10" style={{ animationDelay: '800ms' }}>
             <Link
               href="/scores/"
-              className="btn-heritage-fill text-xs sm:text-sm uppercase tracking-wider px-7 py-3"
-              style={{ fontFamily: 'var(--font-oswald)' }}
+              className="btn-heritage-fill text-xs sm:text-sm uppercase tracking-wider px-7 py-3 font-display"
             >
               Live Scores
             </Link>
             <Link
               href="/college-baseball/savant/"
-              className="btn-heritage text-xs sm:text-sm uppercase tracking-wider px-7 py-3"
-              style={{ fontFamily: 'var(--font-oswald)' }}
+              className="btn-heritage text-xs sm:text-sm uppercase tracking-wider px-7 py-3 font-display"
             >
               BSI Savant
             </Link>
@@ -1145,8 +1140,7 @@ export function HomePageClient() {
                 </span>
                 <DataTransition value={totalLiveCount} mode="flip">
                   <span
-                    className="text-[10px] uppercase tracking-wider font-semibold"
-                    style={{ fontFamily: 'var(--font-mono)', color: '#10B981' }}
+                    className="text-[10px] uppercase tracking-wider font-semibold font-mono text-success"
                   >
                     {totalLiveCount} live
                   </span>
@@ -1278,8 +1272,7 @@ export function HomePageClient() {
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
                       </span>
                       <span
-                        className="text-[10px] font-bold tabular-nums"
-                        style={{ fontFamily: 'var(--font-mono)', color: '#10B981' }}
+                        className="text-[10px] font-bold tabular-nums font-mono text-success"
                       >
                         {sportPulse['college-baseball'].live} live
                       </span>
@@ -1322,8 +1315,7 @@ export function HomePageClient() {
                         <span className="flex items-center gap-1">
                           <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
                           <span
-                            className="text-[9px] font-bold tabular-nums"
-                            style={{ fontFamily: 'var(--font-mono)', color: '#10B981' }}
+                            className="text-[9px] font-bold tabular-nums font-mono text-success"
                           >
                             {pulseData.live}
                           </span>
@@ -1387,8 +1379,7 @@ export function HomePageClient() {
             </div>
             <Link
               href="/college-baseball/savant/"
-              className="btn-heritage text-[10px] uppercase tracking-wider px-4 py-2 shrink-0"
-              style={{ fontFamily: 'var(--font-oswald)' }}
+              className="btn-heritage text-[10px] uppercase tracking-wider px-4 py-2 shrink-0 font-display"
             >
               Full leaderboard &rarr;
             </Link>
@@ -1518,8 +1509,7 @@ export function HomePageClient() {
                 </p>
               </div>
               <p
-                className="text-[9px] sm:text-[10px] mt-1 ml-3.5"
-                style={{ fontFamily: 'var(--font-mono)', color: 'rgba(196,184,165,0.5)' }}
+                className="text-[9px] sm:text-[10px] mt-1 ml-3.5 font-mono text-bsi-dust/50"
               >
                 {item.desc}
               </p>
@@ -1601,15 +1591,13 @@ export function HomePageClient() {
           <div className="flex items-center justify-center gap-4 mt-10">
             <Link
               href="/scores/"
-              className="btn-heritage-fill text-xs sm:text-sm uppercase tracking-wider px-7 py-3.5"
-              style={{ fontFamily: 'var(--font-oswald)' }}
+              className="btn-heritage-fill text-xs sm:text-sm uppercase tracking-wider px-7 py-3.5 font-display"
             >
               Live Scores
             </Link>
             <Link
               href="/college-baseball/savant/"
-              className="btn-heritage text-xs sm:text-sm uppercase tracking-wider px-7 py-3.5"
-              style={{ fontFamily: 'var(--font-oswald)' }}
+              className="btn-heritage text-xs sm:text-sm uppercase tracking-wider px-7 py-3.5 font-display"
             >
               BSI Savant
             </Link>

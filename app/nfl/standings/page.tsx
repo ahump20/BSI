@@ -62,8 +62,7 @@ export default function NFLStandingsPage() {
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/nfl"
-                className="transition-colors"
-                style={{ color: 'rgba(196,184,165,0.5)' }}
+                className="transition-colors text-bsi-dust/50"
                 onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--bsi-primary)')}
                 onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(196,184,165,0.5)')}
               >
@@ -181,31 +180,31 @@ export default function NFLStandingsPage() {
                         <table className="w-full text-sm">
                           <thead>
                             <tr style={{ borderBottom: '1px solid var(--border-vintage)' }}>
-                              <th className="text-left py-2 px-2 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                              <th className="text-left py-2 px-2 font-semibold text-bsi-dust/50">
                                 Team
                               </th>
-                              <th className="text-center py-2 px-2 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                              <th className="text-center py-2 px-2 font-semibold text-bsi-dust/50">
                                 W
                               </th>
-                              <th className="text-center py-2 px-2 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                              <th className="text-center py-2 px-2 font-semibold text-bsi-dust/50">
                                 L
                               </th>
-                              <th className="text-center py-2 px-2 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                              <th className="text-center py-2 px-2 font-semibold text-bsi-dust/50">
                                 T
                               </th>
-                              <th className="text-center py-2 px-2 font-semibold" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                              <th className="text-center py-2 px-2 font-semibold text-bsi-dust/50">
                                 PCT
                               </th>
-                              <th className="text-center py-2 px-2 font-semibold hidden md:table-cell" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                              <th className="text-center py-2 px-2 font-semibold hidden md:table-cell text-bsi-dust/50">
                                 PF
                               </th>
-                              <th className="text-center py-2 px-2 font-semibold hidden md:table-cell" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                              <th className="text-center py-2 px-2 font-semibold hidden md:table-cell text-bsi-dust/50">
                                 PA
                               </th>
-                              <th className="text-center py-2 px-2 font-semibold hidden md:table-cell" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                              <th className="text-center py-2 px-2 font-semibold hidden md:table-cell text-bsi-dust/50">
                                 DIFF
                               </th>
-                              <th className="text-center py-2 px-2 font-semibold hidden lg:table-cell" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                              <th className="text-center py-2 px-2 font-semibold hidden lg:table-cell text-bsi-dust/50">
                                 STRK
                               </th>
                             </tr>

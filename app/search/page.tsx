@@ -274,7 +274,7 @@ function SearchContent() {
             {!isLoading && !error && initialQuery && filteredResults.length === 0 && (
               <Card variant="default" padding="lg" className="heritage-card text-center">
                 <div className="mb-4 flex justify-center">
-                  <svg viewBox="0 0 24 24" fill="none" className="w-14 h-14" style={{ color: 'rgba(196,184,165,0.35)' }} stroke="currentColor" strokeWidth={1.5}>
+                  <svg viewBox="0 0 24 24" fill="none" className="w-14 h-14 text-bsi-dust/35" stroke="currentColor" strokeWidth={1.5}>
                     <circle cx="11" cy="11" r="8" />
                     <path d="M21 21l-4.35-4.35" />
                   </svg>
@@ -289,7 +289,7 @@ function SearchContent() {
                   No matches for &ldquo;{initialQuery}&rdquo;
                   {filters.sport && ` in ${getSportLabel(filters.sport)}`}
                 </p>
-                <p className="text-sm mb-6" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                <p className="text-sm mb-6 text-bsi-dust/50">
                   Try <Link href="/" className="font-medium transition-colors text-bsi-primary">Ask BSI</Link> on the homepage — it understands natural language questions like &ldquo;{initialQuery}&rdquo;.
                 </p>
                 <div className="flex flex-wrap justify-center gap-3">
@@ -402,7 +402,7 @@ function SearchContent() {
                         className="p-4 rounded-sm transition-colors bg-surface-dugout"
                       >
                         <p className="font-medium text-bsi-bone">{sport.label}</p>
-                        <p className="text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>{sport.sub}</p>
+                        <p className="text-xs text-bsi-dust/50">{sport.sub}</p>
                       </Link>
                     ))}
                   </div>
@@ -424,7 +424,7 @@ function SearchContent() {
                         aria-hidden="true"
                       />
                       {getSportLabel(sport)}
-                      <span className="font-normal" style={{ color: 'rgba(196,184,165,0.5)' }}>({items.length})</span>
+                      <span className="font-normal text-bsi-dust/50">({items.length})</span>
                     </h2>
 
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -452,7 +452,7 @@ function SearchContent() {
                                   >
                                     {item.name}
                                   </p>
-                                  <p className="text-xs truncate capitalize" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                                  <p className="text-xs truncate capitalize text-bsi-dust/50">
                                     {item.type} {item.sport ? `· ${item.sport}` : ''}
                                   </p>
                                 </div>
@@ -460,8 +460,7 @@ function SearchContent() {
                                 {/* Arrow */}
                                 <svg
                                   viewBox="0 0 24 24"
-                                  className="w-5 h-5 shrink-0 transition-colors group-hover:text-bsi-primary"
-                                  style={{ color: 'rgba(196,184,165,0.5)' }}
+                                  className="w-5 h-5 shrink-0 transition-colors group-hover:text-bsi-primary text-bsi-dust/50"
                                   fill="none"
                                   stroke="currentColor"
                                   strokeWidth="2"

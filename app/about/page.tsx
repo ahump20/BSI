@@ -511,8 +511,7 @@ export default function AboutPage() {
             </div>
 
             <p
-              className="font-serif italic text-sm tracking-wide mb-10"
-              style={{ color: 'var(--bsi-primary)', opacity: 0.85 }}
+              className="font-serif italic text-sm tracking-wide mb-10 text-bsi-primary opacity-85"
             >
               Born to Blaze the Path Beaten Less
             </p>

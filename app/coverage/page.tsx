@@ -234,8 +234,7 @@ export default function CoveragePage() {
                     {stat.value}
                   </div>
                   <p
-                    className="mt-1 text-sm"
-                    style={{ color: 'rgba(196,184,165,0.5)' }}
+                    className="mt-1 text-sm text-bsi-dust/50"
                   >
                     {stat.label}
                   </p>
@@ -268,8 +267,7 @@ export default function CoveragePage() {
                 Sports Coverage
               </h2>
               <p
-                className="max-w-2xl mx-auto text-sm"
-                style={{ color: 'rgba(196,184,165,0.5)' }}
+                className="max-w-2xl mx-auto text-sm text-bsi-dust/50"
               >
                 Comprehensive coverage across professional and college sports.
               </p>
@@ -311,8 +309,7 @@ export default function CoveragePage() {
                           </div>
                         </div>
                         <p
-                          className="text-sm"
-                          style={{ color: 'rgba(196,184,165,0.5)' }}
+                          className="text-sm text-bsi-dust/50"
                         >
                           {sport.teams}
                         </p>
@@ -421,8 +418,7 @@ export default function CoveragePage() {
                 Our Data Sources
               </h2>
               <p
-                className="max-w-2xl mx-auto text-sm"
-                style={{ color: 'rgba(196,184,165,0.5)' }}
+                className="max-w-2xl mx-auto text-sm text-bsi-dust/50"
               >
                 We pull from official APIs and trusted sources. Every stat is verified and timestamped.
               </p>
@@ -459,8 +455,7 @@ export default function CoveragePage() {
                     {source.name}
                   </h3>
                   <p
-                    className="text-sm font-serif"
-                    style={{ color: 'rgba(196,184,165,0.5)' }}
+                    className="text-sm font-serif text-bsi-dust/50"
                   >
                     {source.description}
                   </p>
@@ -509,8 +504,7 @@ export default function CoveragePage() {
                       Cross-Referenced Data
                     </h3>
                     <p
-                      className="text-sm font-serif"
-                      style={{ color: 'rgba(196,184,165,0.5)' }}
+                      className="text-sm font-serif text-bsi-dust/50"
                     >
                       Every critical statistic is cross-referenced against 3+ sources before publication. We do not guess.
                     </p>
@@ -525,8 +519,7 @@ export default function CoveragePage() {
                       America/Chicago Timestamps
                     </h3>
                     <p
-                      className="text-sm font-serif"
-                      style={{ color: 'rgba(196,184,165,0.5)' }}
+                      className="text-sm font-serif text-bsi-dust/50"
                     >
                       All data points include precise timestamps. You always know exactly when information was captured.
                     </p>
@@ -541,8 +534,7 @@ export default function CoveragePage() {
                       Source Citations
                     </h3>
                     <p
-                      className="text-sm font-serif"
-                      style={{ color: 'rgba(196,184,165,0.5)' }}
+                      className="text-sm font-serif text-bsi-dust/50"
                     >
                       Every stat includes its source. Full transparency on where our data comes from.
                     </p>
@@ -557,8 +549,7 @@ export default function CoveragePage() {
                       Zero Placeholders
                     </h3>
                     <p
-                      className="text-sm font-serif"
-                      style={{ color: 'rgba(196,184,165,0.5)' }}
+                      className="text-sm font-serif text-bsi-dust/50"
                     >
                       Real numbers or we do not ship it. No estimates, no placeholder data, no made-up statistics.
                     </p>
@@ -595,8 +586,7 @@ export default function CoveragePage() {
               <span className="text-bsi-primary">Data in Action</span>
             </h2>
             <p
-              className="text-lg font-serif mb-8"
-              style={{ color: 'rgba(196,184,165,0.5)' }}
+              className="text-lg font-serif mb-8 text-bsi-dust/50"
             >
               Start your 14-day free trial and explore the most comprehensive sports data platform built for fans.
             </p>

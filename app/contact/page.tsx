@@ -38,8 +38,7 @@ export default function ContactPage() {
             <ScrollReveal direction="up">
               <div className="max-w-2xl mx-auto text-center mb-12">
                 <h1
-                  className="text-4xl md:text-5xl font-bold uppercase tracking-wider mb-4"
-                  style={{ fontFamily: 'var(--font-oswald)' }}
+                  className="text-4xl md:text-5xl font-bold uppercase tracking-wider mb-4 font-display"
                 >
                   Get in <span className="text-bsi-primary">Touch</span>
                 </h1>
@@ -130,7 +129,7 @@ export default function ContactPage() {
             </ScrollReveal>
             <ScrollReveal direction="up" delay={200}>
               <div className="max-w-xl mx-auto mt-12 text-center">
-                <p className="text-sm mb-4" style={{ color: 'rgba(196,184,165,0.5)' }}>Or reach out directly:</p>
+                <p className="text-sm mb-4 text-bsi-dust/50">Or reach out directly:</p>
                 <a
                   href="mailto:Austin@blazesportsintel.com"
                   className="font-semibold transition-colors text-bsi-primary"
@@ -138,7 +137,7 @@ export default function ContactPage() {
                   Austin@blazesportsintel.com
                 </a>
                 <p className="mt-2 text-bsi-dust">(210) 275-5538</p>
-                <p className="text-sm mt-8" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                <p className="text-sm mt-8 text-bsi-dust/50">
                   Blaze Intelligence LLC - Boerne, Texas
                 </p>
               </div>

@@ -44,35 +44,31 @@ function TermCard({ term }: { term: GlossaryTerm }) {
       <div className="space-y-4 text-sm">
         <div>
           <span
-            className="text-[10px] uppercase tracking-[0.15em] block mb-1"
-            style={{ fontFamily: 'var(--font-mono)', color: 'rgba(196,184,165,0.35)' }}
+            className="text-[10px] uppercase tracking-[0.15em] block mb-1 font-mono text-bsi-dust/35"
           >Definition</span>
-          <p className="leading-relaxed" style={{ color: 'rgba(196,184,165,0.5)' }}>{term.mlbDefinition}</p>
+          <p className="leading-relaxed text-bsi-dust/50">{term.mlbDefinition}</p>
           <p className="text-[11px] mt-1" style={{ fontFamily: 'var(--font-mono)', color: 'rgba(196,184,165,0.25)' }}>{term.mlbSource}</p>
         </div>
 
         <div>
           <span
-            className="text-[10px] uppercase tracking-[0.15em] block mb-1"
-            style={{ fontFamily: 'var(--font-mono)', color: 'rgba(196,184,165,0.35)' }}
+            className="text-[10px] uppercase tracking-[0.15em] block mb-1 font-mono text-bsi-dust/35"
           >NCAA Equivalent</span>
-          <p className="leading-relaxed" style={{ color: 'rgba(196,184,165,0.5)' }}>{term.ncaaEquivalent}</p>
+          <p className="leading-relaxed text-bsi-dust/50">{term.ncaaEquivalent}</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <span
-              className="text-[10px] uppercase tracking-[0.15em] block mb-1"
-              style={{ fontFamily: 'var(--font-mono)', color: 'rgba(196,184,165,0.35)' }}
+              className="text-[10px] uppercase tracking-[0.15em] block mb-1 font-mono text-bsi-dust/35"
             >Available Data</span>
-            <p className="leading-relaxed text-xs" style={{ color: 'rgba(196,184,165,0.35)' }}>{term.availableData}</p>
+            <p className="leading-relaxed text-xs text-bsi-dust/35">{term.availableData}</p>
           </div>
           <div>
             <span
-              className="text-[10px] uppercase tracking-[0.15em] block mb-1"
-              style={{ fontFamily: 'var(--font-mono)', color: 'rgba(196,184,165,0.35)' }}
+              className="text-[10px] uppercase tracking-[0.15em] block mb-1 font-mono text-bsi-dust/35"
             >Limitations</span>
-            <p className="leading-relaxed text-xs" style={{ color: 'rgba(196,184,165,0.35)' }}>{term.limitations}</p>
+            <p className="leading-relaxed text-xs text-bsi-dust/35">{term.limitations}</p>
           </div>
         </div>
 
@@ -216,7 +212,7 @@ export default function GlossaryPage() {
 
           {filtered.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-sm" style={{ color: 'rgba(196,184,165,0.35)' }}>No terms match your search.</p>
+              <p className="text-sm text-bsi-dust/35">No terms match your search.</p>
               <button
                 onClick={() => { setSearch(''); setCategory('all'); }}
                 className="mt-4 text-sm font-semibold transition-colors text-bsi-primary"
@@ -229,13 +225,13 @@ export default function GlossaryPage() {
           {/* Footer links */}
           <div className="mt-12 pt-6" style={{ borderTop: '1px solid var(--border-vintage)' }}>
             <div className="flex flex-wrap gap-x-6 gap-y-2">
-              <Link href="/models" className="text-sm transition-colors" style={{ color: 'rgba(196,184,165,0.35)' }}>
+              <Link href="/models" className="text-sm transition-colors text-bsi-dust/35">
                 Models & Methodology
               </Link>
-              <Link href="/models/data-quality" className="text-sm transition-colors" style={{ color: 'rgba(196,184,165,0.35)' }}>
+              <Link href="/models/data-quality" className="text-sm transition-colors text-bsi-dust/35">
                 Data Quality
               </Link>
-              <Link href="/college-baseball/savant" className="text-sm transition-colors" style={{ color: 'rgba(196,184,165,0.35)' }}>
+              <Link href="/college-baseball/savant" className="text-sm transition-colors text-bsi-dust/35">
                 BSI Savant
               </Link>
             </div>

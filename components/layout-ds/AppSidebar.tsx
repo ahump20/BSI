@@ -254,7 +254,7 @@ export function AppSidebar() {
                 className={`flex items-center gap-3 px-3 py-2 rounded-sm text-sm transition-all duration-200 relative ${
                   active
                     ? 'text-burnt-orange-400'
-                    : 'text-text-muted hover:text-[var(--bsi-text)] hover:bg-white/[0.06]'
+                    : 'text-text-muted hover:text-text-primary hover:bg-white/[0.06]'
                 }`}
                 {...extraProps}
               >
