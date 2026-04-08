@@ -28,10 +28,10 @@ const paddingClasses: Record<string, string> = {
 };
 
 const variantClasses: Record<string, string> = {
-  default: 'bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm',
+  default: 'bg-surface-dugout border border-border-vintage rounded-sm',
   hover:
-    'bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm hover:-translate-y-1 hover:border-[rgba(140,98,57,0.5)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.3)] transition-all duration-300',
-  elevated: 'bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm shadow-lg',
+    'bg-surface-dugout border border-border-vintage rounded-sm hover:-translate-y-1 hover:border-heritage-bronze/50 hover:shadow-[0_8px_30px_rgba(0,0,0,0.3)] transition-all duration-300',
+  elevated: 'bg-surface-press-box border border-border-vintage rounded-sm shadow-lg',
 };
 
 export function Card({
