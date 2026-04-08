@@ -18,7 +18,7 @@
   --color-texas-soil: var(--bsi-texas-soil);
   --color-ember: var(--bsi-accent);
   --color-flame: #e85d04;
-  --color-surface: var(--glass-default-bg);
+  --color-surface: var(--surface-dugout);
   --color-graphite: var(--bsi-surface-overlay);
   --color-charcoal: var(--bsi-charcoal);
 
@@ -30,8 +30,8 @@
 
   /* Borders (aliased) */
   --color-border-subtle: var(--bsi-border);
-  --color-border-default: var(--glass-default-border);
-  --color-border-strong: var(--glass-elevated-border);
+  --color-border-default: var(--border-vintage);
+  --color-border-strong: var(--border-vintage);
   --color-border-accent: var(--bsi-border-hover);
 
   /* Status (aliased) */
@@ -61,9 +61,9 @@
   --bsi-bg-elevated: #2d2d2d;
 
   /* Surface interaction states */
-  --bsi-surface-base: var(--glass-default-bg);
-  --bsi-surface-hover: var(--glass-default-border);
-  --bsi-surface-active: var(--glass-elevated-bg);
+  --bsi-surface-base: var(--surface-dugout);
+  --bsi-surface-hover: var(--border-vintage);
+  --bsi-surface-active: var(--surface-press-box);
 
   /* Typography (Next.js font vars + fallbacks) */
   --font-sans: var(--font-oswald), 'Oswald', Impact, sans-serif;
@@ -985,9 +985,29 @@ textarea:focus-visible,
   z-index: 1;
 }
 
+/* Hero entrance — cinematic stagger animation for hero elements */
+.hero-entrance {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: hero-entrance-reveal 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+@keyframes hero-entrance-reveal {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Hero Ken Burns — slow zoom on backdrop image for cinematic depth */
+.hero-ken-burns {
+  animation: hero-ken-burns 20s ease-in-out infinite alternate;
+}
+@keyframes hero-ken-burns {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.06); }
+}
+
 /* Score ticker — CSS marquee for homepage */
 .ticker-track {
-  animation: ticker-scroll 60s linear infinite;
+  animation: ticker-scroll 45s linear infinite;
 }
 .ticker-track:hover {
   animation-play-state: paused;
@@ -1060,7 +1080,7 @@ textarea:focus-visible,
   background: var(--bsi-primary);
   border: 1px solid var(--bsi-primary);
   border-radius: 1px;
-  color: var(--bsi-midnight);
+  color: #fff;
   font-family: var(--bsi-font-display);
   font-weight: 700;
   font-size: 0.85rem;

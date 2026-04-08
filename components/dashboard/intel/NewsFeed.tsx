@@ -72,12 +72,15 @@ export function NewsFeed({ articles, isLoading, sport = 'all' }: NewsFeedProps) 
                 }}
               >
                 {a.image ? (
-                  <img
-                    src={a.image}
-                    alt={a.headline}
-                    className="h-28 w-full object-cover"
-                    loading="lazy"
-                  />
+                  <div className="relative h-28 w-full" style={{ background: 'linear-gradient(135deg, rgba(191,87,0,0.12) 0%, var(--surface-dugout) 100%)' }}>
+                    <img
+                      src={a.image}
+                      alt={a.headline}
+                      className="h-28 w-full object-cover"
+                      loading="lazy"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    />
+                  </div>
                 ) : (
                   <div className="h-28 w-full" style={{ background: 'var(--intel-bg-elevated)' }} />
                 )}

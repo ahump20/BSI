@@ -23,7 +23,7 @@ const IN_SEASON =
 test.describe('CBB Hub', () => {
   test('loads and renders visible modules', async ({ page }) => {
     await page.goto(`${BASE}/college-baseball`);
-    await expect(page.locator('h1')).toBeVisible();
+    await expect(page.locator('#main-content h1, main h1').first()).toBeVisible();
     await expect(page.locator('main')).toBeVisible();
     // Check for no uncaught hydration errors
     const errors: string[] = [];
@@ -46,7 +46,7 @@ test.describe('CBB Hub', () => {
 test.describe('CBB Rankings — data integrity', () => {
   test('default poll tab (D1Baseball) renders ranked teams', async ({ page }) => {
     await page.goto(`${BASE}/college-baseball/rankings`);
-    await expect(page.locator('h1').first()).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('#main-content h1, main h1').first().first()).toBeVisible({ timeout: 15000 });
 
     // D1Baseball tab is default — should show teams (table with rows)
     // Wait for data to hydrate — either a table row or the "no rankings" message
@@ -98,7 +98,7 @@ test.describe('CBB Standings — data integrity', () => {
 test.describe('CBB Teams — list', () => {
   test('renders more than 10 team entries', async ({ page }) => {
     await page.goto(`${BASE}/college-baseball/teams`);
-    await expect(page.locator('h1')).toBeVisible();
+    await expect(page.locator('#main-content h1, main h1').first()).toBeVisible();
 
     // Team cards are Link > Card elements with hrefs to /college-baseball/teams/:slug
     const teamLinks = page.locator('a[href*="/college-baseball/teams/"]');
@@ -157,7 +157,7 @@ test.describe('CBB Team Detail — SEC & Power programs', () => {
     for (const team of teams) {
       try {
         await page.goto(`${BASE}/college-baseball/teams/${team}`, { timeout: 15000 });
-        const h1 = page.locator('h1');
+        const h1 = page.locator('#main-content h1, main h1').first();
         const visible = await h1.isVisible().catch(() => false);
         if (!visible) continue;
 
@@ -186,7 +186,7 @@ test.describe('Mobile — no content clipping', () => {
 
   test('hub loads without clipped primary modules', async ({ page }) => {
     await page.goto(`${BASE}/college-baseball`, { waitUntil: 'networkidle' });
-    await expect(page.locator('h1').first()).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('#main-content h1, main h1').first().first()).toBeVisible({ timeout: 15000 });
     await expect(page.locator('main')).toBeVisible();
     // No horizontal overflow
     const bodyWidth = await page.evaluate(() => document.body.scrollWidth);

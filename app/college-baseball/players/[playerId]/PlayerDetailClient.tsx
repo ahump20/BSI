@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import { useResolvedParam } from '@/lib/hooks/useResolvedParam';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
@@ -185,7 +186,7 @@ function formatNILValue(value: number): string {
 
 export default function PlayerDetailClient() {
   const params = useParams();
-  const playerId = params.playerId as string;
+  const playerId = useResolvedParam(params.playerId as string, 'players');
   const [data, setData] = useState<PlayerData | null>(null);
   const [havf, setHavf] = useState<HAVFData | null>(null);
   const [savant, setSavant] = useState<SavantData | null>(null);

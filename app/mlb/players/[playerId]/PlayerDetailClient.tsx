@@ -20,6 +20,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { useUserSettings } from '@/lib/hooks';
 import { useSportData } from '@/lib/hooks/useSportData';
+import { useResolvedParam } from '@/lib/hooks/useResolvedParam';
 import type { DataMeta } from '@/lib/types/data-meta';
 
 interface PlayerInfo {
@@ -102,7 +103,8 @@ interface PlayerDetailClientProps {
   playerId: string;
 }
 
-export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps) {
+export default function PlayerDetailClient({ playerId: rawId }: PlayerDetailClientProps) {
+  const playerId = useResolvedParam(rawId, 'players');
   const [activeTab, setActiveTab] = useState<TabType>('overview');
 
   // User timezone for formatting
@@ -135,6 +137,11 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
   const assets = rawData?.assets ?? null;
   const stats = rawData?.stats ?? null;
   const meta = rawData?.meta ?? null;
+
+  // Update page title with player name once data loads
+  if (typeof document !== 'undefined' && player?.fullName) {
+    document.title = `${player.fullName} | MLB Players | Blaze Sports Intel`;
+  }
 
   const tabs: { id: TabType; label: string }[] = [
     { id: 'overview', label: 'Overview' },

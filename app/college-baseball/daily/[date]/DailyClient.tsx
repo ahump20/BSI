@@ -9,6 +9,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { formatDateInTimezone } from '@/lib/utils/timezone';
+import { useResolvedParam } from '@/lib/hooks/useResolvedParam';
 import type {
   DailyBundle,
   UpcomingGame,
@@ -180,7 +181,8 @@ function ResultCard({ result }: { result: PriorNightResult }) {
 // Main page component
 // ---------------------------------------------------------------------------
 
-export function DailyClient({ date }: { date: string }) {
+export function DailyClient({ date: rawDate }: { date: string }) {
+  const date = useResolvedParam(rawDate, 'daily');
   const [data, setData] = useState<DailyBundle | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);

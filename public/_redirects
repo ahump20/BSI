@@ -28,6 +28,20 @@ https://www.blazesportsintel.com/* https://blazesportsintel.com/:splat 301
 
 # Legacy .html page redirects (301 permanent)
 /pricing.html /pricing 301
+/sources-methods.html /data-sources 301
+/sec-intelligence-dashboard.html /college-baseball 301
+/index.html / 301
+
+# Broken redirect targets
+/features /college-baseball 301
+/features/ /college-baseball/ 301
+/for-coaches /pricing 301
+/for-coaches/ /pricing/ 301
+/draft-guide /college-baseball 301
+/draft-guide/ /college-baseball/ 301
+/cookies /privacy 301
+/cookies/ /privacy/ 301
+/legal/accessibility /about 301
 /analytics.html /analytics 301
 /dashboard.html /dashboard 301
 /about.html /about 301

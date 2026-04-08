@@ -51,12 +51,16 @@ export function NewsCard({
       <div className="bg-background-secondary border border-border rounded-[2px] overflow-hidden hover:border-burnt-orange/40 hover:-translate-y-0.5 transition-all duration-200">
         {/* Image header (optional) */}
         {imageUrl && (
-          <div className="relative h-40 overflow-hidden bg-surface-light">
+          <div
+            className="relative h-40 overflow-hidden"
+            style={{ background: 'linear-gradient(135deg, rgba(107,142,35,0.15) 0%, var(--surface-dugout) 100%)' }}
+          >
             <img
               src={imageUrl}
               alt={title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               loading="lazy"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
             />
           </div>
         )}
