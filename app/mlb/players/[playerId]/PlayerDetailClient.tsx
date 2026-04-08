@@ -138,6 +138,11 @@ export default function PlayerDetailClient({ playerId: rawId }: PlayerDetailClie
   const stats = rawData?.stats ?? null;
   const meta = rawData?.meta ?? null;
 
+  // Update page title with player name once data loads
+  if (typeof document !== 'undefined' && player?.fullName) {
+    document.title = `${player.fullName} | MLB Players | Blaze Sports Intel`;
+  }
+
   const tabs: { id: TabType; label: string }[] = [
     { id: 'overview', label: 'Overview' },
     { id: 'splits', label: 'Splits' },

@@ -119,6 +119,9 @@ export default function PlayerProfileClient({ playerId: rawId }: PlayerProfileCl
       setPlayer(data.player);
       setStats(data.seasonStats);
       setLastUpdated(formatTimestamp());
+      if (data.player?.name) {
+        document.title = `${data.player.name} | NBA Players | Blaze Sports Intel`;
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load player');
     } finally {
