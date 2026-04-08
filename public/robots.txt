@@ -27,6 +27,7 @@ Disallow: /coverage/
 Disallow: /blog-post-feed/
 Disallow: /arcade/wc3-dashboard/
 Disallow: /status/
+Disallow: /mlb/abs/
 
 # Allow AI crawlers for AI Search visibility
 User-agent: GPTBot
