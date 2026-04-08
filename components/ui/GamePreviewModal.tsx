@@ -70,11 +70,27 @@ function extractTeams(game: GameData, sport: string): { away: string; home: stri
       home: home?.team?.displayName ?? home?.team?.name ?? 'Home',
     };
   }
-  // Highlightly / transformed shape
+  // ESPN teams array: teams[].team.displayName, teams[].homeAway
+  if (Array.isArray(game.teams)) {
+    const away = game.teams.find((t: any) => t.homeAway === 'away');
+    const home = game.teams.find((t: any) => t.homeAway === 'home');
+    return {
+      away: away?.team?.displayName ?? away?.team?.shortDisplayName ?? away?.team?.abbreviation ?? 'Away',
+      home: home?.team?.displayName ?? home?.team?.shortDisplayName ?? home?.team?.abbreviation ?? 'Home',
+    };
+  }
+  // Transformed teams object — prefer displayName over name (name = mascot in Highlightly)
   if (game.teams) {
     return {
-      away: game.teams.away?.name ?? game.teams.away?.displayName ?? 'Away',
-      home: game.teams.home?.name ?? game.teams.home?.displayName ?? 'Home',
+      away: game.teams.away?.displayName ?? game.teams.away?.name ?? 'Away',
+      home: game.teams.home?.displayName ?? game.teams.home?.name ?? 'Home',
+    };
+  }
+  // Highlightly top-level — prefer displayName (school name) over name (mascot)
+  if (game.awayTeam || game.homeTeam) {
+    return {
+      away: game.awayTeam?.displayName ?? game.awayTeam?.name ?? 'Away',
+      home: game.homeTeam?.displayName ?? game.homeTeam?.name ?? 'Home',
     };
   }
   // Flat shape
