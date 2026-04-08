@@ -351,7 +351,7 @@ export function AppSidebar() {
       {/* ── Mobile hamburger ── */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="md:hidden fixed top-3 left-3 z-50 p-2 rounded-sm glass-default cursor-pointer text-text-primary"
+        className="md:hidden fixed top-3 left-3 z-50 p-2 rounded-sm bg-[var(--surface-dugout)] border border-[var(--border-vintage)] cursor-pointer text-text-primary"
         aria-label="Open navigation"
       >
         <IconMenu />

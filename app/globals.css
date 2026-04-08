@@ -18,7 +18,7 @@
   --color-texas-soil: var(--bsi-texas-soil);
   --color-ember: var(--bsi-accent);
   --color-flame: #e85d04;
-  --color-surface: var(--glass-default-bg);
+  --color-surface: var(--surface-dugout);
   --color-graphite: var(--bsi-surface-overlay);
   --color-charcoal: var(--bsi-charcoal);
 
@@ -30,8 +30,8 @@
 
   /* Borders (aliased) */
   --color-border-subtle: var(--bsi-border);
-  --color-border-default: var(--glass-default-border);
-  --color-border-strong: var(--glass-elevated-border);
+  --color-border-default: var(--border-vintage);
+  --color-border-strong: var(--border-vintage);
   --color-border-accent: var(--bsi-border-hover);
 
   /* Status (aliased) */
@@ -61,9 +61,9 @@
   --bsi-bg-elevated: #2d2d2d;
 
   /* Surface interaction states */
-  --bsi-surface-base: var(--glass-default-bg);
-  --bsi-surface-hover: var(--glass-default-border);
-  --bsi-surface-active: var(--glass-elevated-bg);
+  --bsi-surface-base: var(--surface-dugout);
+  --bsi-surface-hover: var(--border-vintage);
+  --bsi-surface-active: var(--surface-press-box);
 
   /* Typography (Next.js font vars + fallbacks) */
   --font-sans: var(--font-oswald), 'Oswald', Impact, sans-serif;

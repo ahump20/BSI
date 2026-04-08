@@ -37,7 +37,7 @@ export class DataLoader {
     this.errorContainer.innerHTML = `
       <div class="error-icon">⚠️</div>
       <div class="error-message">${message}</div>
-      ${retry ? '<button class="error-retry glass-button">Retry</button>' : ''}
+      ${retry ? '<button class="error-retry btn-heritage">Retry</button>' : ''}
     `;
 
     if (retry) {

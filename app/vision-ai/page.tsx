@@ -351,7 +351,7 @@ export default function VisionAIPage() {
                   { label: 'Metrics / Pitch', value: '225+' },
                   { label: 'Concussion Reduction', value: '17%' },
                 ].map((kpi) => (
-                  <Card key={kpi.label} variant="default" padding="md" className="text-center backdrop-blur-sm">
+                  <Card key={kpi.label} variant="default" padding="md" className="text-center">
                     <p className="text-2xl md:text-3xl font-bold font-mono text-burnt-orange">{kpi.value}</p>
                     <p className="text-[10px] text-text-tertiary uppercase tracking-wider mt-1">{kpi.label}</p>
                   </Card>
