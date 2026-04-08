@@ -26,8 +26,8 @@ function validatePrediction(body: unknown): { valid: true; data: PredictionPaylo
   if (typeof sport !== 'string' || !VALID_SPORTS.has(sport)) {
     return { valid: false, error: `sport must be one of: ${[...VALID_SPORTS].join(', ')}` };
   }
-  if (typeof predictedWinner !== 'string' || predictedWinner.length === 0 || predictedWinner.length > MAX_STRING_LENGTH || /[<>"'`;]/.test(predictedWinner)) {
-    return { valid: false, error: 'predictedWinner must be a non-empty string (max 200 chars, no special characters)' };
+  if (typeof predictedWinner !== 'string' || predictedWinner.length === 0 || predictedWinner.length > MAX_STRING_LENGTH || !/^[a-zA-Z0-9 .&'()-]+$/.test(predictedWinner)) {
+    return { valid: false, error: 'predictedWinner must be a non-empty string with only letters, numbers, spaces, periods, ampersands, apostrophes, hyphens, and parentheses (max 200 chars)' };
   }
   if (confidence !== undefined && confidence !== null) {
     if (typeof confidence !== 'number' || confidence < 0 || confidence > 1 || !isFinite(confidence)) {
