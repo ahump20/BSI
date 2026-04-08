@@ -12,7 +12,6 @@ import { DashboardConfigurator, useDashboardPrefs } from '@/components/dashboard
 import { TeamBrowser } from '@/components/dashboard/TeamBrowser';
 import { MyTeamsPanel } from '@/components/dashboard/MyTeamsPanel';
 
-
 const StandingsBarChart = dynamic(
   () => import('@/components/dashboard/DashboardCharts').then((mod) => mod.StandingsBarChart),
   { ssr: false, loading: () => <ChartLoadingPlaceholder /> }
