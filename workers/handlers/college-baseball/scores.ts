@@ -3,8 +3,73 @@
  */
 
 import type { Env } from './shared';
-import { json, cachedJson, kvGet, kvPut, dataHeaders, cachedPayloadHeaders, withMeta, getCollegeClient, getHighlightlyClient, archiveRawResponse, HTTP_CACHE, CACHE_TTL, lookupConference, getScoreboard, getGameSummary, getLogoUrl, metaByEspnId } from './shared';
+import { json, cachedJson, kvGet, kvPut, dataHeaders, cachedPayloadHeaders, withMeta, getCollegeClient, getHighlightlyClient, archiveRawResponse, HTTP_CACHE, CACHE_TTL, lookupConference, getScoreboard, getGameSummary, getLogoUrl, metaByEspnId, teamMetadata } from './shared';
 import { transformHighlightlyGame, transformEspnGameSummary } from './transforms';
+
+// ---------------------------------------------------------------------------
+// Game ID mapping — matches Highlightly 7-digit IDs to ESPN 9-digit event IDs
+// ---------------------------------------------------------------------------
+
+/** Build a display-name → ESPN team ID lookup from teamMetadata. */
+const nameToEspnTeamId: Record<string, string> = {};
+for (const [, meta] of Object.entries(teamMetadata)) {
+  nameToEspnTeamId[meta.name.toLowerCase()] = meta.espnId;
+  nameToEspnTeamId[meta.shortName.toLowerCase()] = meta.espnId;
+}
+
+/**
+ * Match Highlightly games to ESPN events by team identity + date.
+ * Returns a map of Highlightly match ID → ESPN event ID.
+ */
+function buildGameIdMapping(
+  espnEvents: unknown[],
+  hlMatches: unknown[],
+): Record<string, string> {
+  const mapping: Record<string, string> = {};
+  const usedEspnIds = new Set<string>();
+
+  for (const hlRaw of hlMatches as Record<string, unknown>[]) {
+    const hlId = String(hlRaw.id ?? '');
+    if (!hlId) continue;
+
+    const hlHome = ((hlRaw.homeTeam as Record<string, unknown>)?.displayName as string ?? '').toLowerCase();
+    const hlAway = ((hlRaw.awayTeam as Record<string, unknown>)?.displayName as string ?? '').toLowerCase();
+    if (!hlHome || !hlAway) continue;
+
+    // Resolve Highlightly team names to ESPN team IDs via metadata
+    const hlHomeEspnId = nameToEspnTeamId[hlHome];
+    const hlAwayEspnId = nameToEspnTeamId[hlAway];
+    if (!hlHomeEspnId || !hlAwayEspnId) continue;
+
+    // Find matching ESPN event
+    for (const espnRaw of espnEvents as Record<string, unknown>[]) {
+      const espnEventId = String(espnRaw.id ?? '');
+      if (!espnEventId || usedEspnIds.has(espnEventId)) continue;
+
+      const competitions = (espnRaw.competitions ?? []) as Record<string, unknown>[];
+      if (competitions.length === 0) continue;
+      const competitors = (competitions[0].competitors ?? []) as Record<string, unknown>[];
+      if (competitors.length < 2) continue;
+
+      let espnHomeId = '';
+      let espnAwayId = '';
+      for (const comp of competitors) {
+        const team = comp.team as Record<string, unknown>;
+        const teamId = String(team?.id ?? '');
+        if (comp.homeAway === 'home') espnHomeId = teamId;
+        else espnAwayId = teamId;
+      }
+
+      if (espnHomeId === hlHomeEspnId && espnAwayId === hlAwayEspnId) {
+        mapping[hlId] = espnEventId;
+        usedEspnIds.add(espnEventId);
+        break;
+      }
+    }
+  }
+
+  return mapping;
+}
 
 export async function handleCollegeBaseballScores(
   url: URL,
@@ -95,6 +160,16 @@ export async function handleCollegeBaseballScores(
 
   // Both available: serve Highlightly (richer) with full source attribution
   if (hlData && espnData) {
+    // Build game ID mapping (Highlightly ID → ESPN event ID) for game detail fallback
+    const hlMatches = ((hlData as Record<string, unknown>).data ?? []) as unknown[];
+    const espnEvents = espnData.data as unknown[];
+    const gameIdMap = buildGameIdMapping(espnEvents, hlMatches);
+    const mapCount = Object.keys(gameIdMap).length;
+    if (mapCount > 0) {
+      ctx?.waitUntil(kvPut(env.KV, `game-map:${date}`, gameIdMap, 86400));
+      console.info(`[game-map] stored ${mapCount} ID mappings for ${date}`);
+    }
+
     const payload = withMeta(hlData as Record<string, unknown>, 'highlightly+espn', {
       fetchedAt: now,
       sources,
@@ -216,10 +291,30 @@ export async function handleCollegeBaseballGame(
     }
   }
 
-  // ESPN game summary fallback (needs ESPN event ID — may not match Highlightly IDs)
+  // ESPN game summary fallback — resolve ESPN event ID from game mapping
+  // Highlightly IDs (7-digit) don't match ESPN event IDs (9-digit), so we
+  // look up the mapping built during score ingestion first.
+  let mappedEspnId: number | null = null;
+  try {
+    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' }).format(new Date());
+    const yesterday = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' }).format(
+      new Date(Date.now() - 86400000)
+    );
+    for (const d of [today, yesterday]) {
+      const mapData = await kvGet<Record<string, string>>(env.KV, `game-map:${d}`);
+      if (mapData?.[gameId]) {
+        mappedEspnId = parseInt(mapData[gameId], 10);
+        console.info(`[game-map] resolved HL ${gameId} → ESPN ${mappedEspnId} from ${d}`);
+        break;
+      }
+    }
+  } catch (err) {
+    console.warn('[game-map] lookup failed:', err instanceof Error ? err.message : err);
+  }
+
   try {
     const client = getCollegeClient();
-    const espnId = resolveNumericId(gameId);
+    const espnId = mappedEspnId ?? resolveNumericId(gameId);
     const matchResult = await client.getMatch(isNaN(espnId) ? parseInt(gameId, 10) : espnId);
 
     if (matchResult.success && matchResult.data) {
@@ -278,16 +373,18 @@ export async function handleCollegeBaseballGame(
           },
           teams: {
             away: {
-              name: away.name ?? 'Away',
-              abbreviation: away.shortName ?? '',
+              name: (away.displayName ?? away.name ?? 'Away') as string,
+              displayName: (away.displayName ?? away.name ?? 'Away') as string,
+              abbreviation: (away.abbreviation ?? away.shortName ?? '') as string,
               score: awayScoreNum,
               isWinner: isFinal && awayScoreNum > homeScoreNum,
               logo: away.logo,
               conference: (away.conference as Record<string, unknown>)?.name,
             },
             home: {
-              name: home.name ?? 'Home',
-              abbreviation: home.shortName ?? '',
+              name: (home.displayName ?? home.name ?? 'Home') as string,
+              displayName: (home.displayName ?? home.name ?? 'Home') as string,
+              abbreviation: (home.abbreviation ?? home.shortName ?? '') as string,
               score: homeScoreNum,
               isWinner: isFinal && homeScoreNum > awayScoreNum,
               logo: home.logo,

@@ -1,99 +1,111 @@
 import { motion } from 'framer-motion';
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import { EASE_OUT_EXPO } from '../utils/animations';
-import { HERO_CONTENT, SITE_TAGLINE } from '../content/site';
-
-function ScrollIndicator() {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 1.8, duration: 0.8 }}
-      className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
-    >
-      <span className="font-mono text-[0.55rem] uppercase tracking-[0.3em] text-bone/30">
-        Scroll
-      </span>
-      <motion.div
-        animate={{ y: [0, 6, 0] }}
-        transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-        className="h-8 w-[1px] bg-gradient-to-b from-burnt-orange/50 to-transparent"
-      />
-    </motion.div>
-  );
-}
+import { SITE_TAGLINE } from '../content/site';
 
 export default function Hero() {
+  const reduced = usePrefersReducedMotion();
+
+  const fadeUp = (delay: number) =>
+    reduced
+      ? {}
+      : {
+          initial: { opacity: 0, y: 20 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.65, delay, ease: EASE_OUT_EXPO },
+        };
+
   return (
     <section
       id="hero"
-      aria-labelledby="hero-heading"
-      className="relative overflow-hidden bg-midnight"
+      className="relative min-h-screen flex flex-col justify-center sm:justify-end overflow-hidden"
     >
-      {/* Photo backdrop — silhouette lighting lets vignette do the heavy lifting */}
-      <picture>
-        <source
-          srcSet="/assets/optimized/last-game-silhouette-640w.webp 640w, /assets/optimized/last-game-silhouette-1024w.webp 1024w"
-          sizes="100vw"
-          type="image/webp"
-        />
-        <img
-          src="/assets/last-game-silhouette.jpg"
-          alt=""
-          aria-hidden="true"
-          className="hero-bg-photo"
-        />
-      </picture>
+      {/* Background photograph */}
+      <img
+        src="/assets/optimized/football-uniform-1920w.webp"
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 w-full h-full object-cover object-top"
+        loading="eager"
+        fetchPriority="high"
+      />
 
-      {/* Gradient overlay — heavy at bottom where text lives, transparent at top for atmosphere */}
-      <div className="hero-photo-overlay" />
+      {/* Dark gradient overlay for text readability — lighter on mobile where content is centered */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.3) 25%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.7) 70%, rgba(13,13,13,0.92) 88%, rgba(13,13,13,1) 100%)',
+        }}
+      />
 
-      {/* Grain texture */}
-      <div className="absolute inset-0 pointer-events-none hero-grain" />
+      {/* Film grain */}
+      <div className="grain-overlay" />
 
-      <div className="relative z-10 mx-auto flex min-h-[90svh] max-w-5xl flex-col justify-end px-6 pb-20 pt-28 md:min-h-[85svh] md:px-12 md:pb-24 md:pt-36 lg:px-16 lg:pb-28">
-        {/* Thesis — the anchor */}
-        <motion.p
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: EASE_OUT_EXPO }}
-          className="max-w-2xl font-serif text-xl leading-relaxed text-bone/90 md:text-2xl md:leading-relaxed [text-shadow:0_2px_12px_rgba(0,0,0,0.6)]"
-        >
-          {HERO_CONTENT.thesis}
-        </motion.p>
+      {/* Content — pinned to bottom of viewport */}
+      <div className="relative z-10 px-6 sm:px-10 lg:px-16 pb-12 sm:pb-16 lg:pb-20">
+        <div className="max-w-6xl mx-auto">
+          {/* Name */}
+          <motion.div {...fadeUp(0)}>
+            <h1>
+              <span
+                className="hero-first-name block font-sans font-bold uppercase leading-none"
+                style={{
+                  color: 'var(--color-text)',
+                  textShadow: '0 2px 30px rgba(0,0,0,0.7)',
+                }}
+              >
+                Austin
+              </span>
+              <span
+                className="hero-last-name block font-sans font-bold uppercase leading-none -mt-2 sm:-mt-3"
+                style={{
+                  color: 'var(--color-text)',
+                  textShadow: '0 2px 40px rgba(0,0,0,0.8)',
+                }}
+              >
+                Humphrey
+              </span>
+            </h1>
+          </motion.div>
 
-        {/* Name — arrives after the thesis */}
-        <motion.h1
-          id="hero-heading"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.65, delay: 0.25, ease: EASE_OUT_EXPO }}
-          className="mt-10 font-sans font-bold uppercase leading-[0.88] tracking-[0.06em] text-bone md:mt-12 [text-shadow:0_4px_20px_rgba(0,0,0,0.5)]"
-        >
-          <span className="block hero-first-name">Austin</span>
-          <span className="mt-1 block hero-last-name text-burnt-orange">Humphrey</span>
-        </motion.h1>
+          {/* Thesis */}
+          <motion.p
+            className="max-w-2xl font-serif text-[clamp(1rem,2.5vw,1.35rem)] leading-relaxed italic mt-6"
+            style={{ color: 'var(--color-text-muted)', textShadow: '0 1px 12px rgba(0,0,0,0.6)' }}
+            {...fadeUp(0.15)}
+          >
+            Builder of Blaze Sports Intel — six-league analytics platform built solo on Cloudflare.
+            330 college baseball programs with park-adjusted sabermetrics. All of it live. All of it one person.
+          </motion.p>
 
-        {/* Tagline + CTA */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.5, ease: EASE_OUT_EXPO }}
-          className="mt-8 flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-8"
-        >
-          <a href={HERO_CONTENT.cta.href} className="btn-primary">
-            {HERO_CONTENT.cta.label}
-          </a>
-          <p className="font-mono text-[0.7rem] uppercase tracking-[0.25em] text-burnt-orange/80 [text-shadow:0_1px_6px_rgba(0,0,0,0.4)]">
+          {/* Tagline */}
+          <motion.p
+            className="font-display text-[12px] italic tracking-wide mt-8"
+            style={{ color: 'rgba(191,87,0,0.5)' }}
+            {...fadeUp(0.3)}
+          >
             {SITE_TAGLINE}
-          </p>
-        </motion.div>
+          </motion.p>
+
+          {/* Scroll indicator */}
+          <motion.div
+            className="mt-10"
+            {...fadeUp(0.5)}
+          >
+            <span
+              className="inline-block font-mono text-[9px] tracking-[0.3em] uppercase"
+              style={{ color: 'rgba(245,240,235,0.25)' }}
+            >
+              Scroll
+            </span>
+            <div
+              className="w-px h-8 mt-2"
+              style={{ background: 'linear-gradient(to bottom, rgba(191,87,0,0.4), transparent)' }}
+            />
+          </motion.div>
+        </div>
       </div>
-
-      {/* Scroll indicator — appears after entrance animations settle */}
-      <ScrollIndicator />
-
-      {/* Bottom edge — subtle burnt-orange glow line */}
-      <div className="absolute bottom-0 left-0 right-0 h-px accent-line-narrow" />
     </section>
   );
 }

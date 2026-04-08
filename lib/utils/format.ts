@@ -17,6 +17,31 @@ export const fmtPct = (n: number | null | undefined): string =>
 export const fmtInt = (n: number | null | undefined): string =>
   n == null ? '—' : Math.round(n).toString();
 
+/**
+ * Strip trailing "lbs" from weight strings so callers can re-append consistently.
+ * ESPN returns weight as "225 lbs" but some templates also append " lbs", causing "225 lbs lbs".
+ * Handles: "225 lbs", "225lbs", "225", 225 (number), null/undefined.
+ */
+export const normalizeWeight = (w: string | number | null | undefined): string => {
+  if (w == null) return '';
+  return String(w).replace(/\s*lbs\.?\s*$/i, '').trim();
+};
+
+/**
+ * Normalize height — handles both "6'2\"" format and raw inches (e.g. 74 → "6'2\"").
+ * Returns the string as-is if already formatted, or converts integer inches to feet-inches.
+ */
+export const normalizeHeight = (h: string | number | null | undefined): string => {
+  if (h == null || h === '') return '';
+  const s = String(h).trim();
+  if (s.includes("'") || s.includes('"') || s.includes('-')) return s;
+  const inches = parseInt(s, 10);
+  if (isNaN(inches) || inches < 48 || inches > 96) return s;
+  const feet = Math.floor(inches / 12);
+  const remainder = inches % 12;
+  return `${feet}'${remainder}"`;
+};
+
 /** Normalize a team name for fuzzy matching — lowercase, alphanumeric only */
 export const normalizeTeamName = (s: string): string =>
   s.toLowerCase().replace(/[^a-z0-9]/g, '');

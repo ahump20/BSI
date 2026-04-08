@@ -10,6 +10,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { formatTimestamp } from '@/lib/utils/timezone';
+import { useResolvedParam } from '@/lib/hooks/useResolvedParam';
 
 interface PlayerData {
   id: string;
@@ -94,7 +95,8 @@ interface PlayerProfileClientProps {
   playerId: string;
 }
 
-export default function PlayerProfileClient({ playerId }: PlayerProfileClientProps) {
+export default function PlayerProfileClient({ playerId: rawId }: PlayerProfileClientProps) {
+  const playerId = useResolvedParam(rawId, 'players');
   const [player, setPlayer] = useState<PlayerData | null>(null);
   const [stats, setStats] = useState<SeasonStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -117,6 +119,9 @@ export default function PlayerProfileClient({ playerId }: PlayerProfileClientPro
       setPlayer(data.player);
       setStats(data.seasonStats);
       setLastUpdated(formatTimestamp());
+      if (data.player?.name) {
+        document.title = `${data.player.name} | NBA Players | Blaze Sports Intel`;
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load player');
     } finally {
@@ -241,7 +246,7 @@ export default function PlayerProfileClient({ playerId }: PlayerProfileClientPro
                     {/* Quick Stats */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
                       <StatCard label="Height" value={player.height || 'N/A'} />
-                      <StatCard label="Weight" value={player.weight ? `${player.weight} lbs` : 'N/A'} />
+                      <StatCard label="Weight" value={player.weight ? `${String(player.weight).replace(/\s*lbs\s*/i, '')} lbs` : 'N/A'} />
                       <StatCard label="Age" value={player.age || 'N/A'} />
                       <StatCard label="Experience" value={player.experience || 'Rookie'} />
                     </div>

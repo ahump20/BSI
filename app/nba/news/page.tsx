@@ -67,7 +67,10 @@ function NewsCard({ item }: { item: NewsItem }) {
       >
         <div className="flex gap-4">
           {item.image && (
-            <div className="relative w-24 h-24 flex-shrink-0 rounded-sm overflow-hidden hidden sm:block">
+            <div
+              className="relative w-24 h-24 flex-shrink-0 rounded-sm overflow-hidden hidden sm:block"
+              style={{ background: 'linear-gradient(135deg, rgba(191,87,0,0.12) 0%, var(--surface-dugout) 100%)' }}
+            >
               <Image
                 src={item.image}
                 alt=""
@@ -75,6 +78,7 @@ function NewsCard({ item }: { item: NewsItem }) {
                 className="object-cover group-hover:scale-105 transition-transform duration-300"
                 sizes="96px"
                 unoptimized
+                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
               />
             </div>
           )}
@@ -223,7 +227,10 @@ export default function NBANewsPage() {
                       >
                         <div className="flex flex-col md:flex-row gap-6">
                           {news[0].image && (
-                            <div className="relative w-full md:w-64 h-48 md:h-40 flex-shrink-0 rounded-sm overflow-hidden">
+                            <div
+                              className="relative w-full md:w-64 h-48 md:h-40 flex-shrink-0 rounded-sm overflow-hidden"
+                              style={{ background: 'linear-gradient(135deg, rgba(191,87,0,0.12) 0%, var(--surface-dugout) 100%)' }}
+                            >
                               <Image
                                 src={news[0].image}
                                 alt=""
@@ -231,6 +238,7 @@ export default function NBANewsPage() {
                                 className="object-cover group-hover:scale-105 transition-transform duration-500"
                                 sizes="(max-width: 768px) 100vw, 256px"
                                 unoptimized
+                                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                               />
                               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                             </div>

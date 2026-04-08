@@ -393,6 +393,11 @@ export default function SavantPlayerClient() {
   const playerName = batting?.player_name ?? pitching?.player_name ?? '';
   const team = batting?.team ?? pitching?.team ?? '';
   const conference = batting?.conference ?? pitching?.conference ?? '';
+
+  // Update page title with real player name
+  if (typeof document !== 'undefined' && playerName) {
+    document.title = `${playerName} | BSI Savant | Blaze Sports Intel`;
+  }
   const position = batting?.position ?? pitching?.position ?? '';
   const classYear = batting?.class_year ?? pitching?.class_year ?? '';
   const season = batting?.season ?? pitching?.season ?? 2026;

@@ -88,7 +88,7 @@ const SEASONAL_CAVEATS = [
   {
     sport: 'MLB',
     caveat:
-      'Spring Training (Feb 15 – Mar 25): limited SportsDataIO coverage; some games unavailable until first pitch. Finalization delays of 5–10 minutes are expected.',
+      'Regular season (late Mar – Oct): SportsDataIO coverage is active. Finalization delays of 5–10 minutes are expected after the final out.',
   },
   {
     sport: 'College Baseball',

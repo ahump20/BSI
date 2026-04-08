@@ -23,22 +23,50 @@ import { useSportData } from '@/lib/hooks/useSportData';
 import { getTeamBySlug } from '@/lib/utils/mlb-teams';
 import type { DataMeta } from '@/lib/types/data-meta';
 
+interface RawPlayer {
+  id?: string;
+  fullName?: string;
+  name?: string;
+  primaryNumber?: string;
+  jersey?: string;
+  primaryPosition?: { abbreviation: string };
+  position?: string;
+  batSide?: { code: string };
+  pitchHand?: { code: string };
+  currentAge?: number;
+  age?: number;
+  height?: string;
+  weight?: number | string;
+  headshot?: string;
+}
+
 interface Player {
   id: string;
   fullName: string;
-  primaryNumber?: string;
-  primaryPosition: {
-    abbreviation: string;
+  primaryNumber: string;
+  primaryPosition: { abbreviation: string };
+  batSide: { code: string };
+  pitchHand: { code: string };
+  currentAge: number | undefined;
+  height: string;
+  weight: string;
+  headshot?: string;
+}
+
+/** Normalize player from either ESPN or SportsDataIO format */
+function normalizePlayer(raw: RawPlayer): Player {
+  return {
+    id: (raw.id || '') as string,
+    fullName: raw.fullName || raw.name || '',
+    primaryNumber: raw.primaryNumber || raw.jersey || '',
+    primaryPosition: raw.primaryPosition || { abbreviation: raw.position || '' },
+    batSide: raw.batSide || { code: '' },
+    pitchHand: raw.pitchHand || { code: '' },
+    currentAge: raw.currentAge ?? raw.age,
+    height: raw.height || '',
+    weight: typeof raw.weight === 'number' ? `${raw.weight}` : (raw.weight || '').replace(/\s*lbs\s*/i, ''),
+    headshot: raw.headshot,
   };
-  batSide: {
-    code: string;
-  };
-  pitchHand?: {
-    code: string;
-  };
-  currentAge?: number;
-  height?: string;
-  weight?: number;
 }
 
 interface TeamData {
@@ -109,7 +137,10 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
     teamId ? `/api/mlb/teams/${apiSlug}` : null
   );
 
-  const roster = useMemo(() => rawData?.roster?.roster ?? [], [rawData]);
+  const roster: Player[] = useMemo(() => {
+    const raw = rawData?.roster?.roster ?? rawData?.roster ?? [];
+    return (Array.isArray(raw) ? raw : []).map((p: RawPlayer) => normalizePlayer(p));
+  }, [rawData]);
   const quickStats = rawData?.quickStats ?? null;
   const meta = rawData?.meta ?? null;
 

@@ -27,6 +27,30 @@ const SAVANT_PLAYER_PATTERN = /^\/college-baseball\/savant\/player\/[^/]+\/?$/;
 /** Matches RSC metadata for Savant player routes */
 const SAVANT_PLAYER_RSC_PATTERN = /^\/college-baseball\/savant\/player\/[^/]+\/(__next\.[^?]+)/;
 
+/** Matches player detail routes across all sports: /{sport}/players/{id}/ */
+const PLAYER_DETAIL_PATTERN = /^\/(mlb|nfl|nba|cfb|college-baseball)\/players\/[^/]+\/?$/;
+
+/** Matches RSC metadata for player routes */
+const PLAYER_DETAIL_RSC_PATTERN = /^\/(mlb|nfl|nba|cfb|college-baseball)\/players\/[^/]+\/(__next\.[^?]+)/;
+
+/** Matches college baseball daily schedule: /college-baseball/daily/{date}/ */
+const CBB_DAILY_PATTERN = /^\/college-baseball\/daily\/[^/]+\/?$/;
+
+/** Matches RSC for daily schedule */
+const CBB_DAILY_RSC_PATTERN = /^\/college-baseball\/daily\/[^/]+\/(__next\.[^?]+)/;
+
+/** Matches pro sport team detail routes: /{sport}/teams/{id}/ */
+const TEAM_DETAIL_PATTERN = /^\/(nfl|nba|cfb)\/teams\/[^/]+\/?$/;
+
+/** Matches RSC metadata for team detail routes */
+const TEAM_DETAIL_RSC_PATTERN = /^\/(nfl|nba|cfb)\/teams\/[^/]+\/(__next\.[^?]+)/;
+
+/** Matches team compare routes: /college-baseball/compare/{team1}/{team2}/ */
+const COMPARE_TEAMS_PATTERN = /^\/college-baseball\/compare\/[^/]+\/[^/]+\/?$/;
+
+/** Matches RSC metadata for team compare routes */
+const COMPARE_TEAMS_RSC_PATTERN = /^\/college-baseball\/compare\/[^/]+\/[^/]+\/(__next\.[^?]+)/;
+
 function buildPlaceholderPath(pathname: string): string | null {
   // Try game detail HTML page match first
   const htmlMatch = pathname.match(GAME_DETAIL_PATTERN);
@@ -70,6 +94,51 @@ function buildPlaceholderPath(pathname: string): string | null {
   if (savantRscMatch) {
     const rscFile = savantRscMatch[1];
     return `/college-baseball/savant/player/placeholder/${rscFile}`;
+  }
+
+  // Pro sport player detail — MLB, NFL, NBA, CFB
+  const playerMatch = pathname.match(PLAYER_DETAIL_PATTERN);
+  if (playerMatch) {
+    return `/${playerMatch[1]}/players/placeholder/`;
+  }
+
+  const playerRscMatch = pathname.match(PLAYER_DETAIL_RSC_PATTERN);
+  if (playerRscMatch) {
+    return `/${playerRscMatch[1]}/players/placeholder/${playerRscMatch[2]}`;
+  }
+
+  // Pro sport team detail — NFL, NBA, CFB (MLB uses name slugs pre-generated)
+  const teamMatch = pathname.match(TEAM_DETAIL_PATTERN);
+  if (teamMatch) {
+    return `/${teamMatch[1]}/teams/placeholder/`;
+  }
+
+  const teamRscMatch = pathname.match(TEAM_DETAIL_RSC_PATTERN);
+  if (teamRscMatch) {
+    return `/${teamRscMatch[1]}/teams/placeholder/${teamRscMatch[2]}`;
+  }
+
+  // College baseball daily schedule
+  const dailyMatch = pathname.match(CBB_DAILY_PATTERN);
+  if (dailyMatch) {
+    return '/college-baseball/daily/2026-02-14/';
+  }
+
+  const dailyRscMatch = pathname.match(CBB_DAILY_RSC_PATTERN);
+  if (dailyRscMatch) {
+    return `/college-baseball/daily/2026-02-14/${dailyRscMatch[1]}`;
+  }
+
+  // Team compare — any two D1 teams
+  const compareMatch = pathname.match(COMPARE_TEAMS_PATTERN);
+  if (compareMatch) {
+    return '/college-baseball/compare/placeholder/placeholder/';
+  }
+
+  const compareRscMatch = pathname.match(COMPARE_TEAMS_RSC_PATTERN);
+  if (compareRscMatch) {
+    const rscFile = compareRscMatch[1];
+    return `/college-baseball/compare/placeholder/placeholder/${rscFile}`;
   }
 
   return null;

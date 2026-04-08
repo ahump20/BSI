@@ -25,13 +25,26 @@ function todayCST(): string {
   return new Date().toLocaleString('en-CA', { timeZone: 'America/Chicago' }).split(',')[0];
 }
 
-/** Build cumulative inning scores from a Highlightly innings array. */
-function buildCumulativeInnings(innings: HighlightlyInning[]): InningScore[] {
+/** Build per-inning scores from a Highlightly innings array. */
+function buildInningScores(innings: HighlightlyInning[]): InningScore[] {
   return innings.map((inn) => ({
     inning: inn.inning,
     homeRuns: inn.homeRuns,
     awayRuns: inn.awayRuns,
   }));
+}
+
+/** Compute running total scores at each inning from per-inning data. */
+function buildRunningTotals(innings: InningScore[]): Map<number, { home: number; away: number }> {
+  const totals = new Map<number, { home: number; away: number }>();
+  let home = 0;
+  let away = 0;
+  for (const inn of innings) {
+    home += inn.homeRuns;
+    away += inn.awayRuns;
+    totals.set(inn.inning, { home, away });
+  }
+  return totals;
 }
 
 /** Derive recent completed innings relative to the current inning. */
@@ -40,14 +53,35 @@ function deriveRecentInnings(innings: InningScore[], currentInning: number): Inn
 }
 
 /** Convert a Highlightly play to an MMIInput. */
-function playToMMIInput(gameId: string, play: HighlightlyPlay, innings: InningScore[]): MMIInput {
+function playToMMIInput(
+  gameId: string,
+  play: HighlightlyPlay,
+  innings: InningScore[],
+  runningTotals: Map<number, { home: number; away: number }>,
+): MMIInput {
+  // Use play scores if available, otherwise derive from inning running totals
+  let homeScore = play.homeScore;
+  let awayScore = play.awayScore;
+  if (homeScore === 0 && awayScore === 0 && play.inning > 1) {
+    // Likely missing play-level scores — use running totals from inning data
+    const prevInning = runningTotals.get(play.inning - 1);
+    const curInning = runningTotals.get(play.inning);
+    if (play.half === 'top' && prevInning) {
+      homeScore = prevInning.home;
+      awayScore = prevInning.away;
+    } else if (curInning) {
+      homeScore = curInning.home;
+      awayScore = curInning.away;
+    }
+  }
+
   return {
     gameId,
     inning: play.inning,
     inningHalf: play.half,
     outs: play.outs,
-    homeScore: play.homeScore,
-    awayScore: play.awayScore,
+    homeScore,
+    awayScore,
     runnersOn: [
       play.bases?.first ?? false,
       play.bases?.second ?? false,
@@ -127,13 +161,14 @@ export async function computeAndStoreMMI(env: Env): Promise<{ processed: number;
       }
 
       const box = boxResult.data;
-      const innings = buildCumulativeInnings(box.linescores || []);
+      const innings = buildInningScores(box.linescores || []);
+      const runningTotals = buildRunningTotals(innings);
       let snapshots: MMISnapshot[];
 
       if (box.plays && box.plays.length > 0) {
         // Source A: play-by-play (max granularity)
         snapshots = box.plays.map((play: HighlightlyPlay) =>
-          computeMMI(playToMMIInput(gameId, play, innings)),
+          computeMMI(playToMMIInput(gameId, play, innings, runningTotals)),
         );
       } else if (innings.length > 0) {
         // Source B: per-inning linescore (fallback)

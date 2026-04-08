@@ -211,6 +211,12 @@ export default function GameLayoutShell({ config, children }: GameLayoutShellPro
 
   const matchupLabel = game ? config.getMatchupLabel(game) : null;
 
+  // Update page title with matchup once data loads
+  if (typeof document !== 'undefined' && matchupLabel) {
+    const sportLabel = config.sportSlug === 'college-baseball' ? 'College Baseball' : config.sportSlug.toUpperCase();
+    document.title = `${matchupLabel} | ${sportLabel} | Blaze Sports Intel`;
+  }
+
   return (
     <GameContext.Provider value={{ game, loading, error, meta, refresh: fetchGame }}>
       <div>

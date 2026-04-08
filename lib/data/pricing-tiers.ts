@@ -27,7 +27,7 @@ export const PRICING_TIERS: PricingTier[] = [
     name: 'Free',
     price: 0,
     period: '',
-    description: 'Everything ESPN gives you, but faster and mobile-first. No signup required.',
+    description: 'Live scores, standings, and park-adjusted analytics across five sports. No signup required.',
     audience: 'Casual fans',
     features: [
       'Live college baseball scores',

@@ -9,6 +9,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
+import { useResolvedParam } from '@/lib/hooks/useResolvedParam';
 import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface PlayerData {
@@ -90,9 +91,10 @@ interface CFBPlayerDetailClientProps {
   playerId: string;
 }
 
-export default function CFBPlayerDetailClient({ playerId }: CFBPlayerDetailClientProps) {
+export default function CFBPlayerDetailClient({ playerId: rawId }: CFBPlayerDetailClientProps) {
+  const playerId = useResolvedParam(rawId, 'players');
   const { data: playerData, loading, error, retry: fetchPlayer, lastUpdated: lastUpdatedDate } = useSportData<PlayerResponse>(
-    playerId ? `/api/cfb/players/${playerId}` : null,
+    playerId && playerId !== 'placeholder' ? `/api/cfb/players/${playerId}` : null,
   );
 
   const player = playerData?.player || null;
@@ -216,7 +218,7 @@ export default function CFBPlayerDetailClient({ playerId }: CFBPlayerDetailClien
                     {/* Quick Stats */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
                       <StatCard label="Height" value={player.height || 'N/A'} />
-                      <StatCard label="Weight" value={player.weight ? `${player.weight} lbs` : 'N/A'} />
+                      <StatCard label="Weight" value={player.weight ? `${String(player.weight).replace(/\s*lbs\s*/i, '')} lbs` : 'N/A'} />
                       {player.age ? (
                         <StatCard label="Age" value={player.age} />
                       ) : (

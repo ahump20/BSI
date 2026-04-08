@@ -17,6 +17,7 @@ interface BaseballTeamSide {
   record?: string;
   conference?: string;
   ranking?: number;
+  logo?: string;
 }
 
 export interface BaseballGameData {
@@ -93,10 +94,22 @@ export function BaseballScoreboard({
       <div className="flex items-center justify-center gap-8 md:gap-16 py-6">
         {/* Away Team */}
         <div className="text-center">
-          <div className="w-16 h-16 bg-background-secondary rounded-full flex items-center justify-center text-xl font-bold text-burnt-orange mx-auto mb-2 relative">
-            {away.abbreviation}
+          <div className="w-16 h-16 bg-background-secondary rounded-full flex items-center justify-center text-xl font-bold text-burnt-orange mx-auto mb-2 relative overflow-hidden">
+            {away.logo ? (
+              <img
+                src={away.logo}
+                alt={away.abbreviation}
+                className="w-full h-full object-contain p-1.5"
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).style.display = 'none';
+                  const fallback = (e.currentTarget as HTMLImageElement).nextElementSibling as HTMLElement | null;
+                  if (fallback) fallback.classList.remove('hidden');
+                }}
+              />
+            ) : null}
+            <span className={away.logo ? 'hidden' : ''}>{away.abbreviation}</span>
             {showRankings && away.ranking && (
-              <span className="absolute -top-1 -right-1 w-6 h-6 bg-burnt-orange text-white text-xs font-bold rounded-full flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 w-6 h-6 bg-burnt-orange text-white text-xs font-bold rounded-full flex items-center justify-center z-10">
                 {away.ranking}
               </span>
             )}
@@ -133,10 +146,22 @@ export function BaseballScoreboard({
 
         {/* Home Team */}
         <div className="text-center">
-          <div className="w-16 h-16 bg-background-secondary rounded-full flex items-center justify-center text-xl font-bold text-burnt-orange mx-auto mb-2 relative">
-            {home.abbreviation}
+          <div className="w-16 h-16 bg-background-secondary rounded-full flex items-center justify-center text-xl font-bold text-burnt-orange mx-auto mb-2 relative overflow-hidden">
+            {home.logo ? (
+              <img
+                src={home.logo}
+                alt={home.abbreviation}
+                className="w-full h-full object-contain p-1.5"
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).style.display = 'none';
+                  const fallback = (e.currentTarget as HTMLImageElement).nextElementSibling as HTMLElement | null;
+                  if (fallback) fallback.classList.remove('hidden');
+                }}
+              />
+            ) : null}
+            <span className={home.logo ? 'hidden' : ''}>{home.abbreviation}</span>
             {showRankings && home.ranking && (
-              <span className="absolute -top-1 -right-1 w-6 h-6 bg-burnt-orange text-white text-xs font-bold rounded-full flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 w-6 h-6 bg-burnt-orange text-white text-xs font-bold rounded-full flex items-center justify-center z-10">
                 {home.ranking}
               </span>
             )}

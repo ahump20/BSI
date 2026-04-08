@@ -10,6 +10,8 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { formatTimestamp } from '@/lib/utils/timezone';
+import { useResolvedParam } from '@/lib/hooks/useResolvedParam';
+import { normalizeWeight, normalizeHeight } from '@/lib/utils/format';
 
 interface TeamData {
   id: string;
@@ -76,6 +78,20 @@ interface TeamResponse {
 }
 
 
+/** Normalize a player object from ESPN data — handles both flat and nested formats */
+function normalizePlayer(raw: Record<string, unknown>): RosterPlayer {
+  const athlete = (raw.athlete || raw) as Record<string, unknown>;
+  const pos = athlete.position as Record<string, unknown> | undefined;
+  return {
+    id: String(athlete.id || raw.id || ''),
+    name: String(athlete.displayName || athlete.fullName || raw.name || raw.displayName || ''),
+    jersey: String(athlete.jersey || raw.jersey || ''),
+    position: String(pos?.abbreviation || athlete.position || raw.position || ''),
+    height: String(athlete.displayHeight || raw.height || ''),
+    weight: String(athlete.displayWeight || raw.weight || ''),
+  };
+}
+
 function formatGameDate(dateString: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString('en-US', {
@@ -138,8 +154,8 @@ function RosterCard({ player, teamColor }: { player: RosterPlayer; teamColor: st
             <p className="text-text-secondary text-sm">{player.position}</p>
           </div>
           <div className="text-right hidden sm:block">
-            <p className="text-text-secondary text-sm">{player.height}</p>
-            <p className="text-text-tertiary text-xs">{player.weight} lbs</p>
+            <p className="text-text-secondary text-sm">{normalizeHeight(player.height)}</p>
+            <p className="text-text-tertiary text-xs">{normalizeWeight(player.weight)} lbs</p>
           </div>
         </div>
       </Card>
@@ -199,7 +215,8 @@ interface TeamDetailClientProps {
   teamId: string;
 }
 
-export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
+export default function TeamDetailClient({ teamId: rawId }: TeamDetailClientProps) {
+  const teamId = useResolvedParam(rawId, 'teams');
   const [team, setTeam] = useState<TeamData | null>(null);
   const [roster, setRoster] = useState<RosterPlayer[]>([]);
   const [schedule, setSchedule] = useState<ScheduleGame[]>([]);
@@ -220,9 +237,10 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
         throw new Error(`Failed to fetch team: ${res.status}`);
       }
 
-      const data: TeamResponse = await res.json();
+      const data = await res.json() as TeamResponse;
       setTeam(data.team);
-      setRoster(data.roster || []);
+      const rawRoster = (data.roster || []) as unknown as Record<string, unknown>[];
+      setRoster(rawRoster.map(normalizePlayer));
       setSchedule(data.schedule || []);
       setLastUpdated(formatTimestamp());
     } catch (err) {

@@ -99,6 +99,19 @@ cbb.get('/backfill-game-log', (c) => handleGameLogBackfill(new URL(c.req.url), c
 
 // --- Teams ---
 cbb.get('/teams/all', (c) => handleCollegeBaseballTeamsAll(c.env));
+cbb.get('/teams/compare/:team1/:team2', async (c) => {
+  const [t1, t2] = [c.req.param('team1'), c.req.param('team2')];
+  const [r1, r2] = await Promise.all([
+    handleCBBTeamSabermetrics(t1, c.env),
+    handleCBBTeamSabermetrics(t2, c.env),
+  ]);
+  const [d1, d2] = await Promise.all([r1.json(), r2.json()]);
+  return c.json({
+    team1: { slug: t1, ...(d1 as Record<string, unknown>) },
+    team2: { slug: t2, ...(d2 as Record<string, unknown>) },
+    meta: { source: 'bsi-savant-compare', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
+  });
+});
 cbb.get('/teams/:teamId/schedule', (c) => handleCollegeBaseballTeamSchedule(c.req.param('teamId'), c.env));
 cbb.get('/teams/:teamId/sabermetrics', (c) => handleCBBTeamSabermetrics(c.req.param('teamId'), c.env));
 cbb.get('/teams/:teamId/sos', (c) => handleCBBTeamSOS(c.req.param('teamId'), c.env));
