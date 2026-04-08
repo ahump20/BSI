@@ -1,0 +1,9 @@
+{
+  "name": "game-studio",
+  "description": "Claude-native port of the OpenAI-curated game-studio bundle for browser-game planning, Phaser and Three.js execution, asset pipelines, UI direction, and playtesting.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Austin Humphrey",
+    "email": "Austin@BlazeSportsIntel.com"
+  }
+}

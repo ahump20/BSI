@@ -48,7 +48,7 @@ export function PitchingCommandScatter({
           <h3 className="font-savant-display text-base uppercase tracking-wider text-[var(--svt-text,_#F5F0EB)]">
             Pitching Command
           </h3>
-          <p className="text-[10px] font-mono text-[var(--svt-text-muted,_#A89F95)] mt-0.5">
+          <p className="text-[10px] font-mono text-[var(--svt-text-muted,_#C4B8A5)] mt-0.5">
             K/9 vs BB/9 · Bubble size inversely proportional to FIP
           </p>
         </div>
@@ -96,7 +96,7 @@ export function PitchingCommandScatter({
                 if (!payload?.length) return null;
                 const p = payload[0].payload as PitchingCommandPlayer;
                 return (
-                  <div className="bg-[var(--svt-surface,_#12151c)] border border-[var(--svt-border,_#242a38)] rounded-sm px-3 py-2 shadow-xl">
+                  <div className="bg-[var(--svt-surface,_var(--surface-press-box))] border border-[var(--svt-border,_var(--border-vintage))] rounded-sm px-3 py-2 shadow-xl">
                     <div className="text-sm text-[var(--svt-text,_#e8eaf0)] font-medium">{p.player_name}</div>
                     <div className="text-[10px] text-[var(--svt-text-muted,_#8890a4)]">{p.team} · {p.conference}</div>
                     <div className="flex gap-3 mt-1.5">

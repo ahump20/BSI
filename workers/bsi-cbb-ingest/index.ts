@@ -168,6 +168,62 @@ async function ingestRankings(env: Env): Promise<{ source: string; error?: strin
 // Ingest: Trending (derived from today's scores)
 // ---------------------------------------------------------------------------
 
+/** Extract game status state, handling both Highlightly and ESPN shapes. */
+function getGameState(g: Record<string, unknown>): string {
+  // Highlightly: g.status.type is a string ('inprogress', 'finished')
+  const status = g.status as Record<string, unknown> | undefined;
+  if (status) {
+    const sType = status.type;
+    if (typeof sType === 'string') return sType.toLowerCase();
+    // ESPN: g.status.type is an object { state: 'in' | 'post' | 'pre' }
+    if (sType && typeof sType === 'object') {
+      const state = (sType as Record<string, unknown>).state;
+      if (state === 'in') return 'inprogress';
+      if (state === 'post') return 'finished';
+      return String(state ?? '');
+    }
+  }
+  // ESPN fallback: check competitions[0].status
+  const comps = (g.competitions as unknown[]) ?? [];
+  if (comps.length > 0) {
+    const comp = comps[0] as Record<string, unknown>;
+    const cStatus = comp.status as Record<string, unknown> | undefined;
+    const cType = cStatus?.type as Record<string, unknown> | undefined;
+    if (cType?.state === 'in') return 'inprogress';
+    if (cType?.state === 'post') return 'finished';
+  }
+  return '';
+}
+
+/** Extract team names and scores, handling both Highlightly and ESPN shapes. */
+function extractTeams(g: Record<string, unknown>): { homeTeam: string; awayTeam: string; homeScore: number; awayScore: number } {
+  // Highlightly: flat g.homeTeam.name, g.awayTeam.name, g.homeScore, g.awayScore
+  const hlHome = (g.homeTeam as Record<string, unknown>)?.name;
+  if (typeof hlHome === 'string') {
+    return {
+      homeTeam: hlHome,
+      awayTeam: ((g.awayTeam as Record<string, unknown>)?.name as string) ?? '',
+      homeScore: Number(g.homeScore ?? 0),
+      awayScore: Number(g.awayScore ?? 0),
+    };
+  }
+  // ESPN: competitions[0].competitors[0/1]
+  const comps = (g.competitions as unknown[]) ?? [];
+  if (comps.length > 0) {
+    const comp = comps[0] as Record<string, unknown>;
+    const competitors = (comp.competitors as unknown[]) ?? [];
+    const home = (competitors.find((c) => (c as Record<string, unknown>).homeAway === 'home') ?? competitors[0]) as Record<string, unknown> | undefined;
+    const away = (competitors.find((c) => (c as Record<string, unknown>).homeAway === 'away') ?? competitors[1]) as Record<string, unknown> | undefined;
+    return {
+      homeTeam: ((home?.team as Record<string, unknown>)?.shortDisplayName as string) ?? '',
+      awayTeam: ((away?.team as Record<string, unknown>)?.shortDisplayName as string) ?? '',
+      homeScore: Number(home?.score ?? 0),
+      awayScore: Number(away?.score ?? 0),
+    };
+  }
+  return { homeTeam: '', awayTeam: '', homeScore: 0, awayScore: 0 };
+}
+
 async function ingestTrending(env: Env): Promise<void> {
   const raw = await env.KV.get('cb:scores:today', 'text');
   if (!raw) return;
@@ -176,22 +232,22 @@ async function ingestTrending(env: Env): Promise<void> {
     const scores = JSON.parse(raw) as Record<string, unknown>;
     const games = (scores.data ?? []) as Record<string, unknown>[];
 
-    // Simple trending: closest games + highest scoring
+    // Simple trending: in-progress + recently-finished games
     const trending = games
       .filter((g) => {
-        const status = g.status as Record<string, unknown> | undefined;
-        const type = (status?.type as string) ?? '';
-        return type === 'inprogress' || type === 'finished';
+        const state = getGameState(g);
+        return state === 'inprogress' || state === 'finished';
       })
       .slice(0, 10)
-      .map((g) => ({
-        id: g.id,
-        homeTeam: ((g.homeTeam as Record<string, unknown>)?.name as string) ?? '',
-        awayTeam: ((g.awayTeam as Record<string, unknown>)?.name as string) ?? '',
-        homeScore: Number(g.homeScore ?? 0),
-        awayScore: Number(g.awayScore ?? 0),
-        status: g.status,
-      }));
+      .map((g) => {
+        const teams = extractTeams(g);
+        return {
+          id: g.id,
+          ...teams,
+          status: g.status,
+        };
+      })
+      .filter((g) => g.homeTeam && g.awayTeam);
 
     if (trending.length > 0) {
       await env.KV.put('cb:trending', JSON.stringify({

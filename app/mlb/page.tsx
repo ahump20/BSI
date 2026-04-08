@@ -18,8 +18,10 @@ import { SportInfoCard } from '@/components/sports/SportInfoCard';
 import { formatTimestamp } from '@/lib/utils/timezone';
 import { getSeasonPhase } from '@/lib/season';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { DegradedNotice } from '@/components/ui/DegradedNotice';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useSportData } from '@/lib/hooks/useSportData';
+import { normalizeDataMeta } from '@/lib/utils/data-meta';
 import type { DataMeta } from '@/lib/types/data-meta';
 
 const mlbFeatures = [
@@ -112,6 +114,7 @@ interface Team {
   streakCode: string;
 }
 
+/** Normalized game shape used by the Schedule tab. */
 interface Game {
   id: number;
   date: string;
@@ -144,13 +147,95 @@ interface Game {
   venue: { name: string };
 }
 
+/** ESPN competitor entry (raw API shape). */
+interface ESPNCompetitor {
+  team?: { displayName?: string; shortDisplayName?: string; abbreviation?: string };
+  score?: string;
+  homeAway?: 'home' | 'away';
+  winner?: boolean;
+}
+
+/** Raw game from the scores API (teams may be array or object). */
+interface RawGame {
+  id?: number | string;
+  gamePk?: number;
+  date?: string;
+  status?: {
+    type?: { state?: string; detail?: string; shortDetail?: string; description?: string; completed?: boolean };
+    period?: number;
+  };
+  teams?: ESPNCompetitor[] | Game['teams'];
+  venue?: { name?: string; fullName?: string } | string;
+}
+
+/** Normalize a raw API game into the shape the Schedule tab expects. */
+function normalizeGame(raw: RawGame): Game {
+  const statusRaw = raw.status ?? {};
+  const stateType = statusRaw.type ?? {};
+  const stateStr = (stateType.state ?? '').toLowerCase();
+  const isLive = stateStr === 'in';
+  const isFinal = stateStr === 'post' || !!stateType.completed;
+
+  let inning: number | undefined;
+  let inningState: string | undefined;
+  if (isLive && stateType.shortDetail) {
+    const match = stateType.shortDetail.match(/(Top|Bot|Mid)\s+(\d+)/i);
+    if (match) {
+      inningState = match[1] === 'Bot' ? 'Bottom' : match[1] === 'Mid' ? 'Middle' : 'Top';
+      inning = parseInt(match[2], 10);
+    }
+  }
+
+  const emptyTeam = { name: '', abbreviation: '', score: 0, isWinner: false, hits: 0, errors: 0 };
+  let away = { ...emptyTeam };
+  let home = { ...emptyTeam };
+
+  if (Array.isArray(raw.teams)) {
+    for (const c of raw.teams as ESPNCompetitor[]) {
+      const side = {
+        name: c.team?.displayName ?? c.team?.shortDisplayName ?? '',
+        abbreviation: c.team?.abbreviation ?? '',
+        score: parseInt(String(c.score ?? '0'), 10),
+        isWinner: !!c.winner,
+        hits: 0,
+        errors: 0,
+      };
+      if (c.homeAway === 'away') away = side;
+      else home = side;
+    }
+  } else if (raw.teams && typeof raw.teams === 'object') {
+    const t = raw.teams as Game['teams'];
+    if (t.away) away = { ...emptyTeam, ...t.away };
+    if (t.home) home = { ...emptyTeam, ...t.home };
+  }
+
+  const venueName = typeof raw.venue === 'string'
+    ? raw.venue
+    : raw.venue?.fullName ?? raw.venue?.name ?? '';
+
+  return {
+    id: Number(raw.gamePk ?? raw.id ?? 0),
+    date: raw.date ?? '',
+    status: {
+      state: stateStr,
+      detailedState: stateType.detail ?? stateType.description ?? (isFinal ? 'Final' : isLive ? 'In Progress' : 'Scheduled'),
+      inning,
+      inningState,
+      isLive,
+      isFinal,
+    },
+    teams: { away, home },
+    venue: { name: venueName },
+  };
+}
+
 type TabType = 'standings' | 'teams' | 'players' | 'schedule';
 
 const MLB_HERO_STATS = [
   { value: '30', label: 'MLB Teams' },
   { value: '162', label: 'Games/Season' },
   { value: 'Live', label: 'Real-Time Scores' },
-  { value: 'Statcast', label: 'Advanced Data' },
+  { value: 'Statcast', label: 'STATCAST ANALYTICS' },
 ];
 
 const STATCAST_BULLETS = [
@@ -180,14 +265,14 @@ export default function MLBPage() {
     loading: scheduleLoading,
     error: scheduleError,
     retry: retrySchedule,
-  } = useSportData<{ games?: Game[]; live?: boolean; meta?: DataMeta }>('/api/mlb/scores', {
+  } = useSportData<{ games?: RawGame[]; live?: boolean; meta?: DataMeta }>('/api/mlb/scores', {
     skip: activeTab !== 'schedule',
     refreshInterval: 30000,
     refreshWhen: liveGamesDetected,
   });
 
   const standings = useMemo(() => standingsData?.standings ?? [], [standingsData]);
-  const schedule = useMemo(() => scheduleData?.games ?? [], [scheduleData]);
+  const schedule = useMemo(() => (scheduleData?.games ?? []).map(normalizeGame), [scheduleData]);
   const hasLiveGames = useMemo(() => scheduleData?.live || schedule.some((g) => g.status.isLive), [scheduleData, schedule]);
 
   // Derive loading/error/meta based on active tab
@@ -231,10 +316,12 @@ export default function MLBPage() {
           leagueName="Major League Baseball"
           tagline="Cardinals. Rangers. Astros. Every game, every stat, no network filter."
           description="Live scores, division standings, and Statcast analytics for all 30 teams—pulled straight from MLB's official API. No third-party garbage. No guesswork."
+          icon={"\u25C7"}
           dataSource="SportsDataIO"
           primaryCta={{ label: 'View Live Scores', href: '/mlb/scores' }}
           secondaryCta={{ label: 'Division Standings', href: '/mlb/standings' }}
           stats={MLB_HERO_STATS}
+          heroBg={{ bucket: 'images', imagePath: 'hero-mlb.webp', opacity: 0.18 }}
         />
 
         {/* Spring Training Banner — visible during preseason */}
@@ -274,68 +361,12 @@ export default function MLBPage() {
           </Section>
         )}
 
-        {/* Features Section */}
-        <Section padding="lg" background="charcoal" borderTop>
-          <Container>
-            <ScrollReveal>
-              <div className="text-center mb-12">
-                <span className="kicker">All 30 Teams</span>
-                <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display mt-2">
-                  The Data You <span className="text-gradient-blaze">Actually Need</span>
-                </h2>
-                <p className="text-text-secondary mt-4 max-w-2xl mx-auto">
-                  Scores, standings, Statcast. Straight from MLB—no middleman.
-                </p>
-              </div>
-            </ScrollReveal>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-              {mlbFeatures.map((feature, index) => (
-                <ScrollReveal key={feature.title} delay={index * 100}>
-                  <Link href={feature.href} className="block group">
-                    <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
-                      <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
-
-                      <div className="w-12 h-12 mb-5 bg-burnt-orange/15 rounded-sm flex items-center justify-center">
-                        {feature.icon}
-                      </div>
-
-                      <h3 className="text-lg font-semibold text-text-primary mb-3">{feature.title}</h3>
-                      <p className="text-text-tertiary text-sm leading-relaxed mb-4">
-                        {feature.description}
-                      </p>
-
-                      <div className="flex items-center justify-between pt-4 border-t border-border-subtle">
-                        {feature.isLive ? (
-                          <FreshnessBadge isLive fetchedAt={meta?.lastUpdated} />
-                        ) : (
-                          <Badge variant={feature.badgeVariant}>{feature.badge}</Badge>
-                        )}
-                        <span className="text-burnt-orange text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
-                          View
-                          <svg
-                            viewBox="0 0 24 24"
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          >
-                            <path d="M5 12h14M12 5l7 7-7 7" />
-                          </svg>
-                        </span>
-                      </div>
-                    </Card>
-                  </Link>
-                </ScrollReveal>
-              ))}
-            </div>
-          </Container>
-        </Section>
-
-        {/* Tabs and Content */}
+        {/* Tabs and Content — data first, directory links below */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <TabBar tabs={tabs} active={activeTab} onChange={(id) => setActiveTab(id as TabType)} size="sm" />
+
+            {meta && <DegradedNotice meta={normalizeDataMeta(meta)} />}
 
             {/* Standings Tab */}
             <TabPanel id="standings" activeTab={activeTab}>
@@ -640,6 +671,20 @@ export default function MLBPage() {
               )}
               </DataErrorBoundary>
             </TabPanel>
+          </Container>
+        </Section>
+
+        {/* Quick Links */}
+        <Section padding="md" background="charcoal" borderTop>
+          <Container>
+            <div className="flex flex-wrap gap-3">
+              {mlbFeatures.map((feature) => (
+                <Link key={feature.title} href={feature.href} className="group inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-[var(--surface-dugout)] border border-[var(--border-vintage)] hover:border-burnt-orange transition-colors">
+                  <span className="text-text-primary text-sm font-medium group-hover:text-burnt-orange transition-colors">{feature.title}</span>
+                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-burnt-orange opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                </Link>
+              ))}
+            </div>
           </Container>
         </Section>
 

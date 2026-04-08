@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import {
   AI_CHAT_FALLBACK_RESPONSES,
   AI_CHAT_GREETING,
@@ -13,6 +14,7 @@ interface Message {
 }
 
 let msgId = 0;
+const MAX_DISPLAYED_MESSAGES = 24;
 
 function sanitizeAssistantText(text: string): string {
   return text
@@ -40,6 +42,7 @@ function shouldUseFallbackConcierge() {
 }
 
 export default function AIChatWidget() {
+  const prefersReducedMotion = usePrefersReducedMotion();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -166,7 +169,8 @@ export default function AIChatWidget() {
             },
           ]);
         }
-      } catch {
+      } catch (err) {
+        console.warn('[AIChatWidget] API failed, using fallback', err);
         const fallback = getFallbackResponse(trimmed);
         setMessages((prev) => [
           ...prev,
@@ -188,12 +192,12 @@ export default function AIChatWidget() {
           if (!open) window.posthog?.capture('chat_opened');
           setOpen(!open);
         }}
-        className={`fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-full border px-3 py-2.5 backdrop-blur-md transition-all duration-300 cursor-pointer group ${
+        className={`fixed bottom-4 right-4 z-50 flex items-center justify-center gap-2 rounded-full border p-3 backdrop-blur-md transition-all duration-300 cursor-pointer group sm:bottom-5 sm:right-5 sm:px-3 sm:py-2.5 ${
           open
             ? 'border-burnt-orange/40 bg-burnt-orange text-white shadow-lg shadow-burnt-orange/20'
             : 'border-bone/10 bg-charcoal/80 text-bone/85 hover:border-burnt-orange/30 hover:text-burnt-orange fab-idle-glow'
         }`}
-        aria-label={open ? 'Close concierge' : 'Open concierge'}
+        aria-label={open ? 'Close Austin concierge' : 'Austin concierge'}
       >
         {open ? (
           <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
@@ -214,7 +218,7 @@ export default function AIChatWidget() {
             />
           </svg>
         )}
-        <span className="font-mono text-[0.62rem] uppercase tracking-[0.22em]">
+        <span className="hidden font-mono text-[0.62rem] uppercase tracking-[0.22em] sm:inline">
           {open ? 'Close' : '// Austin'}
         </span>
       </button>
@@ -227,10 +231,10 @@ export default function AIChatWidget() {
             role="dialog"
             aria-modal="true"
             aria-label="Austin concierge"
-            initial={{ opacity: 0, y: 24, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 24, scale: 0.96 }}
-            transition={{ duration: 0.25, ease: [0.19, 1, 0.22, 1] }}
+            initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.96 }}
+            animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
+            exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.96 }}
+            transition={{ duration: prefersReducedMotion ? 0.1 : 0.25, ease: [0.19, 1, 0.22, 1] }}
             className="fixed z-50 flex flex-col overflow-hidden border border-bone/10 bg-charcoal shadow-[0_20px_60px_rgba(0,0,0,0.5)] chat-panel-border
               inset-x-0 bottom-0 w-full rounded-t-sm max-h-[70vh]
               sm:inset-auto sm:bottom-20 sm:right-5 sm:w-[min(24rem,calc(100vw-2.5rem))] sm:max-h-[28rem] sm:rounded-sm"
@@ -252,7 +256,7 @@ export default function AIChatWidget() {
               aria-live="polite"
               aria-atomic="false"
             >
-              {messages.map((msg) => (
+              {messages.slice(-MAX_DISPLAYED_MESSAGES).map((msg) => (
                 <div
                   key={msg.id}
                   className={`text-sm leading-relaxed ${
@@ -320,8 +324,25 @@ export default function AIChatWidget() {
               <div ref={bottomRef} />
             </div>
 
-            {/* Input */}
+            {/* Input + controls */}
             <div className="p-3 border-t border-bone/5">
+              {/* Clear conversation — only visible after user has sent messages */}
+              {hasUserMessage && !loading && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMessages([{ id: ++msgId, role: 'assistant', text: AI_CHAT_GREETING }]);
+                    setInput('');
+                    setStreamingText('');
+                  }}
+                  className="mb-2 flex items-center gap-1 font-mono text-[0.55rem] uppercase tracking-[0.2em] text-warm-gray/40 transition-colors duration-200 hover:text-burnt-orange/70"
+                >
+                  <svg className="h-2.5 w-2.5" viewBox="0 0 12 12" fill="none">
+                    <path d="M1 1L11 11M11 1L1 11" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+                  </svg>
+                  Clear
+                </button>
+              )}
               <div className="flex gap-2">
                 <input
                   type="text"

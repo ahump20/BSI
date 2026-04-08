@@ -12,6 +12,7 @@ import { GameRecapToolbar } from '@/components/editorial/GameRecapToolbar';
 import { AIAnalysisPanel } from '@/components/editorial/AIAnalysisPanel';
 import { NotebookLMExport } from '@/components/editorial/NotebookLMExport';
 import { BSIVerdict } from '@/components/editorial/BSIVerdict';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
 /* ────────────────────────────────────────────
    Types
@@ -239,6 +240,13 @@ export default function TexasWeek3RecapPage() {
 
   return (
     <>
+      <ArticleJsonLd
+        headline="Texas Week 3 Recap: Swept, Celebrated, Still Perfect"
+        description="Texas went 3-0 at the BRUCE BOLT College Classic — beating No. 9 Coastal Carolina, Baylor, and Ohio State to move to 11-0. The only undefeated Top 25 team."
+        datePublished="2026-03-03"
+        url="/college-baseball/editorial/texas-week-3-recap"
+        sport="College Baseball"
+      />
       <div>
         {/* ── Breadcrumb ── */}
         <Section padding="sm" className="border-b border-border">

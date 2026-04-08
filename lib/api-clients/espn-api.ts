@@ -22,6 +22,7 @@ const SPORT_PATHS: Record<ESPNSport, string> = {
 
 const BASE = 'https://site.api.espn.com/apis/site/v2/sports';
 const BASE_V2 = 'https://site.api.espn.com/apis/v2/sports';
+const BASE_COMMON_V3 = 'https://site.api.espn.com/apis/common/v3/sports';
 
 interface FetchOptions {
   timeout?: number;
@@ -140,7 +141,20 @@ export async function getAthlete(
   athleteId: string,
 ): Promise<unknown> {
   const sportPath = SPORT_PATHS[sport];
-  return espnFetch(`${sportPath}/athletes/${athleteId}`);
+  // Athletes use /apis/common/v3/ — the site/v2 path 404s for all sports
+  const url = `${BASE_COMMON_V3}/${sportPath}/athletes/${athleteId}`;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 10000);
+  try {
+    const res = await fetch(url, {
+      headers: { Accept: 'application/json' },
+      signal: controller.signal,
+    });
+    if (!res.ok) throw new Error(`ESPN athlete ${res.status}: ${res.statusText}`);
+    return (await res.json()) as unknown;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 // ---------------------------------------------------------------------------

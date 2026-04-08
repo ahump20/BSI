@@ -7,6 +7,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 import type { Metadata } from 'next';
 
 import { ogImage } from '@/lib/metadata';
@@ -104,6 +105,13 @@ function gradeColor(grade: number): string {
 export default function FloraDraftProfilePage() {
   return (
     <>
+      <ArticleJsonLd
+        headline="Jackson Flora 2026 MLB Draft Profile | UCSB RHP"
+        description="Jackson Flora draft profile — UCSB right-hander, No. 14 on MLB Pipeline. 100 mph fastball, elite sweeper, new curveball and changeup. Scouting report and draft analysis."
+        datePublished="2026-02-25"
+        url="/college-baseball/editorial/jackson-flora-2026-draft-profile"
+        sport="College Baseball"
+      />
       <div className="pt-6 bg-midnight">
         {/* ── Hero ── */}
         <Section padding="lg">

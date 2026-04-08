@@ -55,7 +55,11 @@ export function BottomNavWrapper() {
     };
   }, [moreOpen, closeMore]);
 
+  // Defer active state to avoid hydration mismatch on placeholder-shell pages
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const isActive = (href: string) => {
+    if (!mounted) return false;
     if (href === '/') return pathname === '/';
     return pathname.startsWith(href);
   };

@@ -1,7 +1,25 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { METRIC_DEFINITIONS } from '@/lib/data/metric-definitions';
+
+const LEADERBOARD_LINKS: Record<string, string> = {
+  'AVG': '/college-baseball/savant',
+  'OBP': '/college-baseball/savant',
+  'SLG': '/college-baseball/savant',
+  'OPS': '/college-baseball/savant',
+  'wOBA': '/college-baseball/savant',
+  'wRC+': '/college-baseball/savant',
+  'OPS+': '/college-baseball/savant',
+  'ISO': '/college-baseball/savant',
+  'ERA': '/college-baseball/savant',
+  'FIP': '/college-baseball/savant',
+  'xFIP': '/college-baseball/savant',
+  'ERA-': '/college-baseball/savant',
+  'CSI': '/college-baseball/savant/conference-index',
+  'PF': '/college-baseball/savant/park-factors',
+};
 
 // ---------------------------------------------------------------------------
 // Glossary categories
@@ -23,7 +41,7 @@ interface GlossaryCategory {
 const GLOSSARY_CATEGORIES: GlossaryCategory[] = [
   {
     label: 'Batting',
-    entries: ['wOBA', 'wRC+', 'ISO', 'OPS', 'OPS+', 'BABIP', 'K%', 'BB%'].map(key => {
+    entries: ['AVG', 'OBP', 'SLG', 'OPS', 'wOBA', 'wRC+', 'OPS+', 'ISO', 'BABIP', 'K%', 'BB%'].map(key => {
       const def = METRIC_DEFINITIONS[key];
       return def
         ? { key, abbr: def.abbr, name: def.name, description: def.description, context: def.context }
@@ -32,7 +50,7 @@ const GLOSSARY_CATEGORIES: GlossaryCategory[] = [
   },
   {
     label: 'Pitching',
-    entries: ['FIP', 'ERA-', 'xFIP', 'K/9', 'BB/9', 'HR/9', 'K/BB', 'LOB%'].map(key => {
+    entries: ['ERA', 'WHIP', 'FIP', 'xFIP', 'ERA-', 'K/9', 'BB/9', 'HR/9', 'K/BB', 'LOB%'].map(key => {
       const def = METRIC_DEFINITIONS[key];
       return def
         ? { key, abbr: def.abbr, name: def.name, description: def.description, context: def.context }
@@ -88,7 +106,7 @@ export function SavantGlossary({ className = '' }: { className?: string }) {
             <h2 className="font-savant-display text-sm uppercase tracking-widest text-[var(--svt-accent,_#BF5700)] font-bold">
               {category.label}
             </h2>
-            <div className="flex-1 h-px bg-[var(--svt-border,_rgba(255,255,255,0.06))]" />
+            <div className="flex-1 h-px bg-[var(--svt-border,_rgba(140,98,57,0.15))]" />
           </div>
 
           {/* Entries */}
@@ -106,8 +124,8 @@ export function SavantGlossary({ className = '' }: { className?: string }) {
                     onClick={() => setOpenKey(isOpen ? null : entry.key)}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-sm transition-all ${
                       isOpen
-                        ? 'bg-[var(--svt-surface,_rgba(255,255,255,0.04))] border border-[var(--svt-accent,_#BF5700)]/20'
-                        : 'bg-[var(--svt-card,_rgba(26,26,26,0.6))] border border-[var(--svt-border,_rgba(255,255,255,0.04))] hover:border-[var(--svt-accent,_#BF5700)]/30'
+                        ? 'bg-[var(--svt-surface,_rgba(140,98,57,0.12))] border border-[var(--svt-accent,_#BF5700)]/20'
+                        : 'bg-[var(--svt-card,_var(--surface-dugout))] border border-[var(--svt-border,_rgba(140,98,57,0.12))] hover:border-[var(--svt-accent,_#BF5700)]/30'
                     }`}
                   >
                     {/* Abbreviation badge */}
@@ -142,6 +160,14 @@ export function SavantGlossary({ className = '' }: { className?: string }) {
                         <p className="mt-2 text-[11px] font-mono text-[var(--svt-text-dim,_#737373)]">
                           {entry.context}
                         </p>
+                      )}
+                      {LEADERBOARD_LINKS[entry.key] && (
+                        <Link
+                          href={LEADERBOARD_LINKS[entry.key]}
+                          className="inline-block mt-2 text-[11px] text-[var(--svt-accent,_#BF5700)] hover:underline"
+                        >
+                          View on leaderboard &rarr;
+                        </Link>
                       )}
                     </div>
                   )}

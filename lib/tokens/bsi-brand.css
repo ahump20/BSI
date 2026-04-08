@@ -24,16 +24,16 @@
   --bsi-primary-800: #5e2900;
   --bsi-primary-900: #3f1c00;
 
-  /* ---- Surfaces (portfolio depth) ---- */
-  --bsi-midnight: #0D0D0D;
-  --bsi-charcoal: #1A1A1A;
-  --bsi-surface: #0D0D0D;
-  --bsi-surface-raised: #1A1A1A;
-  --bsi-surface-overlay: #242424;
-  --bsi-text: #F5F0EB;
-  --bsi-text-muted: #A89F95;
-  --bsi-text-dim: rgba(245, 240, 235, 0.52);
-  /* bumped from 0.22 → 0.52 for WCAG AA normal text (5.1:1 on #0D0D0D) */
+  /* ---- Heritage Surfaces (v2.1 — solid, no blur) ---- */
+  --bsi-midnight: #0A0A0A;
+  --bsi-charcoal: #161616;
+  --bsi-surface: #0A0A0A;
+  --bsi-surface-raised: #161616;
+  --bsi-surface-overlay: #111111;
+  --bsi-text: #F5F2EB;
+  --bsi-text-muted: #C4B8A5;
+  --bsi-text-dim: rgba(196, 184, 165, 0.65);
+  /* Heritage warm text hierarchy — bone/dust/dim */
 
   /* ---- Brand Accents ---- */
   --bsi-texas-soil: #8B4513;
@@ -45,12 +45,14 @@
   --bsi-success: #10B981;
   --bsi-info: #3B82F6;
 
-  /* ---- Typography ---- */
+  /* ---- Typography (Heritage v2.1) ---- */
+  --bsi-font-hero: 'Bebas Neue', 'Oswald', system-ui, sans-serif;
   --bsi-font-display: 'Oswald', system-ui, sans-serif;
   --bsi-font-body: 'Cormorant Garamond', 'Georgia', serif;
-  --bsi-font-mono: 'IBM Plex Mono', 'JetBrains Mono', 'Fira Code', monospace;
+  --bsi-font-mono: 'JetBrains Mono', 'IBM Plex Mono', 'Fira Code', monospace;
 
   /* Aliases used by Labs and globals */
+  --font-hero: var(--bsi-font-hero);
   --font-display: var(--bsi-font-display);
   --font-body: var(--bsi-font-body);
   --font-mono: var(--bsi-font-mono);
@@ -84,22 +86,22 @@
   --bsi-ease-out: cubic-bezier(0, 0, 0.2, 1);
   --bsi-ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
-  /* ---- Glass System — Labs opacity values ---- */
-  --glass-subtle-blur: 8px;
-  --glass-subtle-bg: rgba(255, 255, 255, 0.025);
-  --glass-subtle-border: rgba(255, 255, 255, 0.04);
+  /* ---- Heritage Solid Surfaces (replaces glass system — 0 blur) ---- */
+  --glass-subtle-blur: 0px;
+  --glass-subtle-bg: var(--surface-scoreboard);
+  --glass-subtle-border: var(--border-vintage);
 
-  --glass-default-blur: 16px;
-  --glass-default-bg: rgba(255, 255, 255, 0.04);
-  --glass-default-border: rgba(255, 255, 255, 0.06);
+  --glass-default-blur: 0px;
+  --glass-default-bg: var(--surface-dugout);
+  --glass-default-border: var(--border-vintage);
 
-  --glass-elevated-blur: 24px;
-  --glass-elevated-bg: rgba(255, 255, 255, 0.06);
-  --glass-elevated-border: rgba(255, 255, 255, 0.10);
+  --glass-elevated-blur: 0px;
+  --glass-elevated-bg: var(--surface-press-box);
+  --glass-elevated-border: var(--border-vintage);
 
-  /* ---- Borders (portfolio values) ---- */
-  --bsi-border: rgba(245, 240, 235, 0.04);
-  --bsi-border-hover: rgba(191, 87, 0, 0.3);
+  /* ---- Borders (Heritage warm tones) ---- */
+  --bsi-border: var(--border-vintage);
+  --bsi-border-hover: rgba(191, 87, 0, 0.5);
 
   /* ---- Glow (from Labs) ---- */
   --glow-primary: 0 0 30px rgba(191, 87, 0, 0.2);
@@ -113,14 +115,13 @@
   --bsi-glow-md: 0 0 40px rgba(191, 87, 0, 0.4), 0 0 60px rgba(191, 87, 0, 0.2);
   --bsi-glow-lg: 0 0 60px rgba(204, 102, 0, 0.5), 0 0 100px rgba(191, 87, 0, 0.3);
 
-  /* ---- Savant Percentile Scale (from Labs) ---- */
-  --savant-elite: #c0392b;
-  --savant-great: #e74c3c;
-  --savant-above: #d4775c;
-  --savant-avg: #aaaaaa;
-  --savant-below: #5b9bd5;
-  --savant-poor: #2980b9;
-  --savant-very-poor: #1a5276;
+  /* ---- Savant Percentile Scale (Labs v2 — brighter, 6-tier) ---- */
+  --savant-elite: #ef4444;
+  --savant-great: #f97316;
+  --savant-above: #eab308;
+  --savant-avg: #8890a4;
+  --savant-below: #3b82f6;
+  --savant-poor: #6366f1;
 
   /* ---- Heritage Vintage System ---- */
   --bsi-bone: #F5F2EB;
@@ -149,10 +150,10 @@
   --a11y-focus-ring: 2px solid var(--bsi-primary);
   --a11y-min-target: 44px;
 
-  /* ---- Chart System ---- */
-  --chart-grid: rgba(255, 255, 255, 0.04);
-  --chart-axis-text: var(--bsi-text-dim);
-  --chart-label: var(--bsi-text-muted);
+  /* ---- Chart System (Heritage warm tones) ---- */
+  --chart-grid: rgba(140, 98, 57, 0.12);
+  --chart-axis-text: var(--bsi-dust);
+  --chart-label: var(--bsi-dust);
 
   /* ---- Radar Bands ---- */
   --radar-band-50: rgba(170, 170, 170, 0.08);
@@ -160,19 +161,19 @@
   --radar-band-90: rgba(231, 76, 60, 0.08);
   --radar-band-99: rgba(192, 57, 43, 0.08);
 
-  /* ---- Atmospheric ---- */
-  --grid-line-color: rgba(255, 255, 255, 0.02);
-  --grid-line-strong: rgba(255, 255, 255, 0.04);
+  /* ---- Atmospheric (Heritage warm tones) ---- */
+  --grid-line-color: rgba(140, 98, 57, 0.04);
+  --grid-line-strong: rgba(140, 98, 57, 0.08);
   --scan-line-color: rgba(191, 87, 0, 0.06);
 
-  /* ---- Glass Aliases (Labs compat) ---- */
-  --glass-bg: var(--glass-default-bg);
-  --glass-border: var(--glass-default-border);
-  --glass-bg-elevated: var(--glass-elevated-bg);
-  --glass-border-elevated: var(--glass-elevated-border);
-  --glass-bg-top: rgba(255, 255, 255, 0.08);
-  --glass-border-top: rgba(255, 255, 255, 0.16);
-  --glass-blur: 20px;
+  /* ---- Glass Aliases → Heritage Solid (backward compat) ---- */
+  --glass-bg: var(--surface-dugout);
+  --glass-border: var(--border-vintage);
+  --glass-bg-elevated: var(--surface-press-box);
+  --glass-border-elevated: var(--border-vintage);
+  --glass-bg-top: var(--surface-press-box);
+  --glass-border-top: var(--border-vintage);
+  --glass-blur: 0px;
 
   /* ---- Heritage Borders (v2.1) ---- */
   --border-primary: #BF5700;
@@ -268,32 +269,23 @@
    ========================================================================== */
 
 .savant-theme {
-  --svt-bg: #0a0c10;
-  --svt-surface: #12151c;
-  --svt-card: #181c26;
-  --svt-border: #242a38;
-  --svt-accent: #e85d26;
+  /* Heritage-aligned warm surfaces (matches Labs) */
+  --svt-bg: var(--surface-scoreboard);
+  --svt-surface: var(--surface-press-box);
+  --svt-card: var(--surface-dugout);
+  --svt-border: var(--border-vintage);
+  --svt-accent: var(--bsi-primary);
   --svt-accent-hot: #ff7a3d;
   --svt-accent-ember: #ff4500;
-  --svt-text: #e8eaf0;
-  --svt-text-muted: #8890a4;
-  --svt-text-dim: #555d73;
+  --svt-text: var(--bsi-bone);
+  --svt-text-muted: var(--bsi-dust);
+  --svt-text-dim: rgba(196, 184, 165, 0.5);
   --svt-blue: #3b82f6;
   --svt-cyan: #22d3ee;
   --svt-green: #22c55e;
   --svt-yellow: #eab308;
   --svt-red: #ef4444;
   --svt-purple: #a855f7;
-}
-
-/* Savant percentile scale (updated 6-tier) */
-.savant-theme {
-  --savant-elite: #ef4444;
-  --savant-great: #f97316;
-  --savant-above: #eab308;
-  --savant-avg: #8890a4;
-  --savant-below: #3b82f6;
-  --savant-poor: #6366f1;
 }
 
 /* Savant card surface */

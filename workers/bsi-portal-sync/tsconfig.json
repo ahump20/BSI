@@ -1,4 +1,0 @@
-{
-  "extends": "../tsconfig.worker.json",
-  "include": ["*.ts", "env.d.ts", "env.secrets.d.ts", "../shared/cbb-constants.ts", "../shared/cbb-fetch.ts"]
-}

@@ -9,6 +9,22 @@ BSI covers what mainstream sports media overlook — athletes, programs, and mar
 **Repos:** `github.com/ahump20/BSI` (site + workers) · `github.com/Blaze-sports-Intel/blazecraft` (system health UI)
 **Production:** `blazesportsintel.com` (Pages + Workers) · `blazecraft.app` (Pages) · `arcade.blazesportsintel.com` · `labs.blazesportsintel.com`
 
+## Reporting Standard
+
+Global instructions (`~/.claude/global-claude-instructions.md`) govern how you communicate. In BSI context, these BSI-specific examples apply:
+
+**After deploying a site change:**
+- WRONG: "Deployed blazesportsintel-worker-prod with updated Hono handlers. Build passed with zero TypeScript errors. Wrangler output confirmed routes registered."
+- RIGHT: "The change is live. Visitors at blazesportsintel.com/scores now see the full scoreboard with real game data. NBA in-season games are populating."
+
+**After fixing a data issue:**
+- WRONG: "Fixed null pointer in getPlayerStats() where player.season_stats was undefined. Added optional chaining and fallback."
+- RIGHT: "Player pages were breaking when a data source returned nothing. Now they show a clean empty state instead of crashing. Tested with a player who had missing stats — works."
+
+**After running analytics:**
+- WRONG: "bsi-savant-compute cron executed successfully. 247 rows written to cbb_batting_advanced. D1 query confirmed fresh wOBA values."
+- RIGHT: "Advanced stats just recalculated. The Savant leaderboard shows fresh numbers for 247 batters. Recomputes automatically every 6 hours."
+
 ## Architecture
 
 GitHub holds the source. Cloudflare runs the product. No AWS, no Vercel, no external databases. This constraint forces simplicity and keeps the platform debuggable by one person. Verify deployed state via `wrangler` or Cloudflare MCP tools.

@@ -155,7 +155,8 @@ export function normalizeGames(sport: string, data: Record<string, unknown>): Ga
  * Sort priority: live games > ranked matchups > final > scheduled > postponed.
  * Within each tier, higher-ranked matchups sort first (lower rank number = better).
  */
-export function sortGames(games: GameScore[]): GameScore[] {
+export function sortGames(games: GameScore[] | null | undefined): GameScore[] {
+  if (!Array.isArray(games)) return [];
   return [...games].sort((a, b) => {
     // Tier: live (0) > ranked final (1) > ranked scheduled (2) > unranked final (3) > unranked scheduled (4) > postponed (5)
     const tier = (g: GameScore) => {

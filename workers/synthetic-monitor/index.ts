@@ -48,6 +48,25 @@ const TIMEOUT_MS = 10_000;
 const RESULT_TTL = 7 * 24 * 60 * 60; // 7 days
 const SIG_TTL = 30 * 24 * 60 * 60; // 30 days for baseline signatures
 const SIG_PREV_TTL = 7 * 24 * 60 * 60; // 7 days for previous signatures
+const SELF_HEAL_COOLDOWN_TTL = 30 * 60; // 30 minutes between re-trigger attempts
+const SELF_HEAL_ESCALATION_TTL = 2 * 60 * 60; // 2 hours — covers multiple monitor cycles
+
+// ---------------------------------------------------------------------------
+// Fetch with timeout
+// ---------------------------------------------------------------------------
+
+async function fetchWithTimeout(
+  url: string,
+  init: RequestInit = {},
+): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  try {
+    return await fetch(url, { ...init, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Structural signature generator
@@ -102,16 +121,11 @@ async function checkEndpoint(
   const slug = ep.name.toLowerCase().replace(/\s+/g, '-');
 
   try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
-
-    const res = await fetch(ep.url, {
+    const res = await fetchWithTimeout(ep.url, {
       method: 'GET',
       headers: { 'User-Agent': 'BSI-Synthetic-Monitor/2.0' },
-      signal: controller.signal,
     });
 
-    clearTimeout(timer);
     const latencyMs = Date.now() - start;
 
     const result: CheckResult = {
@@ -208,6 +222,185 @@ async function sendAlert(env: Env, message: string): Promise<void> {
 }
 
 // ---------------------------------------------------------------------------
+// D1 Freshness Check & Self-Heal
+// ---------------------------------------------------------------------------
+
+interface D1TableFreshness {
+  name: string;
+  table: string;
+  rows: number;
+  lastComputed: string | null;
+  ageHours: number | null;
+  status: string;
+}
+
+interface FreshnessResponse {
+  d1Tables: D1TableFreshness[];
+  [key: string]: unknown;
+}
+
+const TABLE_WORKER_MAP: Record<string, string> = {
+  cbb_batting_advanced: 'bsi-cbb-analytics',
+  cbb_pitching_advanced: 'bsi-cbb-analytics',
+  cbb_conference_strength: 'bsi-cbb-analytics',
+  cbb_park_factors: 'bsi-cbb-analytics',
+  cbb_league_context: 'bsi-cbb-analytics',
+};
+
+const WORKER_RUN_URLS: Record<string, string> = {
+  'bsi-cbb-analytics': 'https://bsi-cbb-analytics.ahump20.workers.dev/run',
+  'bsi-savant-compute': 'https://bsi-savant-compute.ahump20.workers.dev/run',
+};
+
+interface SelfHealResult {
+  worker: string;
+  triggered: boolean;
+  reason: string;
+  staleTables: string[];
+}
+
+async function checkD1Freshness(env: Env): Promise<FreshnessResponse | null> {
+  if (!env.ADMIN_KEY) {
+    console.error('[monitor] ADMIN_KEY not set — skipping D1 freshness check');
+    return null;
+  }
+
+  try {
+    const res = await fetchWithTimeout('https://blazesportsintel.com/api/admin/freshness', {
+      method: 'GET',
+      headers: {
+        'User-Agent': 'BSI-Synthetic-Monitor/2.0',
+        'X-Admin-Key': env.ADMIN_KEY,
+      },
+    });
+
+    if (!res.ok) {
+      console.error(`[monitor] Freshness API returned ${res.status}`);
+      return null;
+    }
+
+    return await res.json() as FreshnessResponse;
+  } catch (err) {
+    console.error('[monitor] Freshness fetch failed:', err instanceof Error ? err.message : err);
+    return null;
+  }
+}
+
+async function healWorker(
+  env: Env,
+  worker: string,
+  tables: string[],
+): Promise<SelfHealResult> {
+  const cooldownKey = `self-heal:${worker}:last-trigger`;
+  const previousTriggerKey = `self-heal:${worker}:previous-trigger`;
+
+  // Check cooldown — don't re-trigger within 30 minutes
+  const lastTrigger = await env.MONITOR_KV.get(cooldownKey, 'text');
+  if (lastTrigger) {
+    return {
+      worker,
+      triggered: false,
+      reason: `Cooldown active (last trigger: ${lastTrigger})`,
+      staleTables: tables,
+    };
+  }
+
+  // Already triggered once and tables are still stale — escalate
+  const previousTrigger = await env.MONITOR_KV.get(previousTriggerKey, 'text');
+  if (previousTrigger) {
+    await sendAlert(
+      env,
+      `[BSI Monitor] D1 tables still stale after self-heal trigger\n\nWorker: ${worker}\nStale tables: ${tables.join(', ')}\nPrevious trigger: ${previousTrigger}\n\nManual investigation needed.`,
+    );
+
+    // Clear so we don't spam alerts every cycle
+    await env.MONITOR_KV.delete(previousTriggerKey);
+
+    return {
+      worker,
+      triggered: false,
+      reason: 'Still stale after previous trigger — escalating to email alert',
+      staleTables: tables,
+    };
+  }
+
+  const runUrl = WORKER_RUN_URLS[worker];
+  if (!runUrl) {
+    return {
+      worker,
+      triggered: false,
+      reason: 'No /run URL configured',
+      staleTables: tables,
+    };
+  }
+
+  try {
+    const res = await fetchWithTimeout(runUrl, {
+      method: 'POST',
+      headers: { 'User-Agent': 'BSI-Synthetic-Monitor/2.0' },
+    });
+
+    const triggerTime = new Date().toISOString();
+
+    await Promise.all([
+      env.MONITOR_KV.put(cooldownKey, triggerTime, {
+        expirationTtl: SELF_HEAL_COOLDOWN_TTL,
+      }),
+      env.MONITOR_KV.put(previousTriggerKey, triggerTime, {
+        expirationTtl: SELF_HEAL_ESCALATION_TTL,
+      }),
+    ]);
+
+    return {
+      worker,
+      triggered: true,
+      reason: `Triggered /run → HTTP ${res.status}`,
+      staleTables: tables,
+    };
+  } catch (err) {
+    return {
+      worker,
+      triggered: false,
+      reason: `Trigger failed: ${err instanceof Error ? err.message : 'unknown'}`,
+      staleTables: tables,
+    };
+  }
+}
+
+async function selfHealStaleTables(
+  env: Env,
+  freshness: FreshnessResponse,
+): Promise<SelfHealResult[]> {
+  const staleTables = freshness.d1Tables.filter((t) => t.status === 'stale');
+  if (staleTables.length === 0) return [];
+
+  // Group stale tables by responsible worker
+  const workerTables = new Map<string, string[]>();
+  for (const table of staleTables) {
+    const worker = TABLE_WORKER_MAP[table.table];
+    if (!worker) continue;
+    const existing = workerTables.get(worker) || [];
+    existing.push(table.table);
+    workerTables.set(worker, existing);
+  }
+
+  // Also trigger bsi-savant-compute if any sabermetric tables are stale
+  // (it covers the same tables on a 6h cycle)
+  if (workerTables.has('bsi-cbb-analytics')) {
+    const cbbTables = workerTables.get('bsi-cbb-analytics')!;
+    if (!workerTables.has('bsi-savant-compute')) {
+      workerTables.set('bsi-savant-compute', [...cbbTables]);
+    }
+  }
+
+  const results = await Promise.all(
+    Array.from(workerTables, ([worker, tables]) => healWorker(env, worker, tables)),
+  );
+
+  return results;
+}
+
+// ---------------------------------------------------------------------------
 // Worker export
 // ---------------------------------------------------------------------------
 
@@ -281,6 +474,40 @@ export default {
         `[BSI Monitor] Schema drift detected on ${drifted.length} endpoint(s):\n${driftNames}`,
       );
     }
+
+    // -----------------------------------------------------------------------
+    // D1 Freshness Check & Self-Heal (non-blocking)
+    // -----------------------------------------------------------------------
+    ctx.waitUntil(
+      (async () => {
+        const freshness = await checkD1Freshness(env);
+        if (!freshness) return;
+
+        const healResults = await selfHealStaleTables(env, freshness);
+
+        // Store freshness + heal results for observability
+        await env.MONITOR_KV.put(
+          'freshness:latest',
+          JSON.stringify({
+            checkedAt: timestamp,
+            d1Tables: freshness.d1Tables,
+            selfHeal: healResults,
+          }),
+          { expirationTtl: RESULT_TTL },
+        );
+
+        // Log triggered heals
+        for (const heal of healResults) {
+          if (heal.triggered) {
+            console.log(
+              `[monitor] Self-heal triggered: ${heal.worker} for tables [${heal.staleTables.join(', ')}] → ${heal.reason}`,
+            );
+          }
+        }
+      })().catch((err) => {
+        console.error('[monitor] D1 freshness check failed:', err instanceof Error ? err.message : err);
+      }),
+    );
   },
 
   /** Manual trigger via HTTP for testing */

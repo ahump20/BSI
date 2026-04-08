@@ -25,3 +25,6 @@ var/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Visual regression baselines (regenerated per environment)
+tests/visual-regression/key-pages.spec.ts-snapshots/

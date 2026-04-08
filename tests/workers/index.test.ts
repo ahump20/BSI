@@ -27,7 +27,6 @@ function createMockEnv(overrides: Record<string, unknown> = {}) {
     DB: createMockD1(),
     KV: createMockKV(),
     CACHE: {} as any,
-    PORTAL_POLLER: {} as any,
     ASSETS_BUCKET: {} as any,
     ENVIRONMENT: 'test',
     API_VERSION: '1.0.0-test',

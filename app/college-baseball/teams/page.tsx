@@ -1,15 +1,16 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { preseason2026 } from '@/lib/data/preseason-2026';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
+import {
+  COLLEGE_BASEBALL_CONFERENCES,
+  normalizeCollegeBaseballConference,
+} from '@/lib/data/collegeBaseballConferences';
 import { AllTeamsSearch } from './AllTeamsSearch';
 
 export const metadata: Metadata = {
@@ -27,140 +28,81 @@ interface TeamEntry {
   slug: string;
 }
 
-const conferences: { name: string; fullName: string; teams: TeamEntry[] }[] = [
-  {
-    name: 'SEC',
-    fullName: 'Southeastern Conference',
-    teams: [
-      { name: 'Texas', slug: 'texas' },
-      { name: 'Texas A&M', slug: 'texas-am' },
-      { name: 'LSU', slug: 'lsu' },
-      { name: 'Florida', slug: 'florida' },
-      { name: 'Tennessee', slug: 'tennessee' },
-      { name: 'Arkansas', slug: 'arkansas' },
-      { name: 'Vanderbilt', slug: 'vanderbilt' },
-      { name: 'Ole Miss', slug: 'ole-miss' },
-      { name: 'Georgia', slug: 'georgia' },
-      { name: 'Auburn', slug: 'auburn' },
-      { name: 'Alabama', slug: 'alabama' },
-      { name: 'Mississippi State', slug: 'mississippi-state' },
-      { name: 'South Carolina', slug: 'south-carolina' },
-      { name: 'Kentucky', slug: 'kentucky' },
-      { name: 'Missouri', slug: 'missouri' },
-      { name: 'Oklahoma', slug: 'oklahoma' },
-    ],
-  },
-  {
-    name: 'ACC',
-    fullName: 'Atlantic Coast Conference',
-    teams: [
-      { name: 'Wake Forest', slug: 'wake-forest' },
-      { name: 'Virginia', slug: 'virginia' },
-      { name: 'Clemson', slug: 'clemson' },
-      { name: 'North Carolina', slug: 'north-carolina' },
-      { name: 'NC State', slug: 'nc-state' },
-      { name: 'Duke', slug: 'duke' },
-      { name: 'Louisville', slug: 'louisville' },
-      { name: 'Miami', slug: 'miami' },
-      { name: 'Florida State', slug: 'florida-state' },
-      { name: 'Stanford', slug: 'stanford' },
-      { name: 'Cal', slug: 'california' },
-      { name: 'Virginia Tech', slug: 'virginia-tech' },
-      { name: 'Georgia Tech', slug: 'georgia-tech' },
-      { name: 'Notre Dame', slug: 'notre-dame' },
-      { name: 'Pittsburgh', slug: 'pittsburgh' },
-      { name: 'Boston College', slug: 'boston-college' },
-      { name: 'Syracuse', slug: 'syracuse' },
-      { name: 'SMU', slug: 'smu' },
-    ],
-  },
-  {
-    name: 'Big 12',
-    fullName: 'Big 12 Conference',
-    teams: [
-      { name: 'TCU', slug: 'tcu' },
-      { name: 'Texas Tech', slug: 'texas-tech' },
-      { name: 'Oklahoma State', slug: 'oklahoma-state' },
-      { name: 'Baylor', slug: 'baylor' },
-      { name: 'West Virginia', slug: 'west-virginia' },
-      { name: 'Kansas State', slug: 'kansas-state' },
-      { name: 'Arizona', slug: 'arizona' },
-      { name: 'Arizona State', slug: 'arizona-state' },
-      { name: 'Kansas', slug: 'kansas' },
-      { name: 'BYU', slug: 'byu' },
-      { name: 'UCF', slug: 'ucf' },
-      { name: 'Houston', slug: 'houston' },
-      { name: 'Cincinnati', slug: 'cincinnati' },
-      { name: 'Colorado', slug: 'colorado' },
-      { name: 'Utah', slug: 'utah' },
-      { name: 'Iowa State', slug: 'iowa-state' },
-    ],
-  },
-  {
-    name: 'Big Ten',
-    fullName: 'Big Ten Conference',
-    teams: [
-      { name: 'UCLA', slug: 'ucla' },
-      { name: 'USC', slug: 'usc' },
-      { name: 'Indiana', slug: 'indiana' },
-      { name: 'Maryland', slug: 'maryland' },
-      { name: 'Michigan', slug: 'michigan' },
-      { name: 'Ohio State', slug: 'ohio-state' },
-      { name: 'Penn State', slug: 'penn-state' },
-      { name: 'Rutgers', slug: 'rutgers' },
-      { name: 'Nebraska', slug: 'nebraska' },
-      { name: 'Minnesota', slug: 'minnesota' },
-      { name: 'Iowa', slug: 'iowa' },
-      { name: 'Illinois', slug: 'illinois' },
-      { name: 'Northwestern', slug: 'northwestern' },
-      { name: 'Purdue', slug: 'purdue' },
-      { name: 'Michigan State', slug: 'michigan-state' },
-      { name: 'Wisconsin', slug: 'wisconsin' },
-      { name: 'Oregon', slug: 'oregon' },
-      { name: 'Washington', slug: 'washington' },
-    ],
-  },
-  {
-    name: 'Pac-12',
-    fullName: 'Pac-12 Conference',
-    teams: [
-      { name: 'Oregon State', slug: 'oregon-state' },
-      { name: 'Washington State', slug: 'washington-state' },
-      { name: 'San Diego State', slug: 'san-diego-state' },
-      { name: 'Fresno State', slug: 'fresno-state' },
-    ],
-  },
-];
+/**
+ * Derive conference groups from the canonical teamMetadata registry.
+ * Conference order comes from COLLEGE_BASEBALL_CONFERENCES (Power 5 first).
+ * Adding a team to teamMetadata automatically adds it to this page.
+ */
+const conferences: { name: string; fullName: string; teams: TeamEntry[] }[] = (() => {
+  const teamsByConf = new Map<string, TeamEntry[]>();
+
+  for (const [slug, meta] of Object.entries(teamMetadata)) {
+    const confId = normalizeCollegeBaseballConference(meta.conference);
+    if (!confId) continue;
+    if (!teamsByConf.has(confId)) teamsByConf.set(confId, []);
+    teamsByConf.get(confId)!.push({ name: meta.shortName, slug });
+  }
+
+  // Sort teams alphabetically within each conference
+  for (const teams of teamsByConf.values()) {
+    teams.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  // Build in COLLEGE_BASEBALL_CONFERENCES order (Power 5 first, then alphabetical)
+  return COLLEGE_BASEBALL_CONFERENCES
+    .filter((conf) => teamsByConf.has(conf.id))
+    .map((conf) => ({
+      name: conf.shortName,
+      fullName: conf.displayName,
+      teams: teamsByConf.get(conf.id)!,
+    }));
+})();
 
 function TeamCard({ team }: { team: TeamEntry }) {
   const meta = teamMetadata[team.slug];
   const preseason = preseason2026[team.slug];
   const logoUrl = meta ? getLogoUrl(meta.espnId, meta.logoId) : null;
+  const teamColor = meta?.colors?.primary ?? 'var(--bsi-primary)';
 
   return (
-    <Link href={`/college-baseball/teams/${team.slug}`} className="block">
-      <Card
-        padding="md"
-        variant="hover"
-        className="text-center transition-all hover:border-burnt-orange"
-      >
-        <div className="flex flex-col items-center gap-2">
-          {logoUrl && (
-            <Image
-              src={logoUrl}
-              alt=""
-              width={32}
-              height={32}
-              className="object-contain"
-              unoptimized
-            />
-          )}
-          <span className="text-text-primary font-medium text-sm">{team.name}</span>
-          {preseason && (
-            <Badge variant="primary" size="sm">#{preseason.rank}</Badge>
-          )}
-        </div>
-      </Card>
+    <Link
+      href={`/college-baseball/teams/${team.slug}`}
+      className="group block rounded-sm border transition-all duration-200 overflow-hidden"
+      style={{
+        borderColor: 'var(--border-vintage)',
+        background: 'var(--surface-dugout)',
+      }}
+    >
+      {/* Team color accent strip */}
+      <div className="h-[3px] transition-opacity duration-200 opacity-40 group-hover:opacity-100" style={{ background: teamColor }} />
+
+      <div className="flex flex-col items-center gap-2 px-2 py-3">
+        {logoUrl && (
+          <img
+            src={logoUrl}
+            alt={`${team.name} logo`}
+            width={56}
+            height={56}
+            className="object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)] transition-transform duration-200 group-hover:scale-110"
+            loading="lazy"
+            decoding="async"
+          />
+        )}
+        <span
+          className="font-medium text-[11px] text-center leading-tight"
+          style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+        >
+          {team.name}
+        </span>
+        {preseason && (
+          <span
+            className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-sm"
+            style={{ background: `${teamColor}22`, color: teamColor, border: `1px solid ${teamColor}33` }}
+          >
+            #{preseason.rank}
+          </span>
+        )}
+      </div>
     </Link>
   );
 }
@@ -169,8 +111,30 @@ export default function TeamsPage() {
   return (
     <>
       <div>
-        <Section padding="lg" className="pt-6">
-          <Container>
+        {/* ── Hero band with R2 stadium atmosphere ── */}
+        <section
+          className="relative overflow-hidden"
+          style={{ borderBottom: '1px solid var(--border-vintage)' }}
+        >
+          {/* R2 stadium background */}
+          <img
+            src="/api/assets/images/blaze-stadium-hero.png"
+            alt=""
+            aria-hidden="true"
+            loading="eager"
+            decoding="async"
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+            style={{ opacity: 0.15 }}
+          />
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: `linear-gradient(to bottom, rgba(10,10,10,0.6) 0%, rgba(10,10,10,0.4) 50%, var(--surface-scoreboard) 100%)`,
+            }}
+          />
+          <div className="absolute inset-0 pointer-events-none grain-overlay" style={{ opacity: 0.3 }} />
+
+          <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-6 pb-8">
             <Breadcrumb
               className="mb-4"
               items={[
@@ -180,34 +144,75 @@ export default function TeamsPage() {
               ]}
             />
             <ScrollReveal direction="up">
-              <div className="text-center mb-12">
-                <Badge variant="primary" className="mb-4">
-                  2026 Preseason
-                </Badge>
-                <h1 className="font-display text-4xl md:text-5xl font-bold uppercase tracking-display mb-4">
-                  College Baseball <span className="text-gradient-blaze">Teams</span>
+              <div className="text-center">
+                <span
+                  className="inline-block text-[10px] font-bold uppercase tracking-[0.15em] px-2 py-1 rounded-sm mb-4"
+                  style={{
+                    fontFamily: 'var(--font-oswald, var(--font-display))',
+                    color: 'var(--bsi-primary)',
+                    background: 'rgba(191,87,0,0.1)',
+                    border: '1px solid rgba(191,87,0,0.2)',
+                  }}
+                >
+                  2026 Season
+                </span>
+                <h1
+                  className="text-3xl md:text-4xl font-bold uppercase tracking-[0.1em] mb-3"
+                  style={{ fontFamily: 'var(--font-bebas, var(--font-hero))', color: 'var(--bsi-bone)' }}
+                >
+                  College Baseball Teams
                 </h1>
-                <p className="text-text-secondary max-w-2xl mx-auto">
-                  Browse teams by conference. Ranked teams include preseason scouting intel,
-                  key players, and editorial previews.
+                <p
+                  className="text-sm max-w-lg mx-auto"
+                  style={{ fontFamily: 'var(--font-cormorant, serif)', color: 'var(--bsi-dust)', fontStyle: 'italic' }}
+                >
+                  {Object.keys(teamMetadata).length} programs across {conferences.length} conferences.
+                  Every team has a profile with roster, schedule, and analytics.
                 </p>
               </div>
             </ScrollReveal>
+          </div>
+        </section>
 
+        {/* ── Teams directory ── */}
+        <Section padding="lg">
+          <Container>
             {/* Client-side searchable team browser */}
             <AllTeamsSearch />
 
-            <div className="space-y-12">
+            <div className="space-y-10">
               {conferences.map((conference, confIndex) => (
-                <ScrollReveal key={conference.name} direction="up" delay={confIndex * 50}>
-                  <div>
-                    <div className="flex items-center gap-4 mb-6">
-                      <h2 className="font-display text-2xl font-bold text-burnt-orange">
-                        {conference.name}
-                      </h2>
-                      <span className="text-text-tertiary text-sm">{conference.fullName}</span>
+                <ScrollReveal key={conference.name} direction="up" delay={confIndex * 40}>
+                  <div
+                    className="rounded-sm border overflow-hidden"
+                    style={{ borderColor: 'var(--border-vintage)', background: 'var(--surface-scoreboard)' }}
+                  >
+                    {/* Conference header — Heritage stamp pattern */}
+                    <div
+                      className="flex items-center justify-between px-4 py-3"
+                      style={{ borderBottom: '1px solid var(--border-vintage)', background: 'var(--surface-press-box)' }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <h2
+                          className="text-sm font-bold uppercase tracking-[0.12em]"
+                          style={{ fontFamily: 'var(--font-oswald, var(--font-display))', color: 'var(--bsi-primary)' }}
+                        >
+                          {conference.name}
+                        </h2>
+                        <span className="text-[10px] font-mono" style={{ color: 'var(--bsi-dust)' }}>
+                          {conference.fullName}
+                        </span>
+                      </div>
+                      <span
+                        className="text-[9px] font-mono tabular-nums"
+                        style={{ color: 'rgba(196,184,165,0.5)' }}
+                      >
+                        {conference.teams.length} teams
+                      </span>
                     </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+
+                    {/* Team grid */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 p-4">
                       {conference.teams.map((team) => (
                         <TeamCard key={team.slug} team={team} />
                       ))}
@@ -220,7 +225,7 @@ export default function TeamsPage() {
             <ScrollReveal direction="up" delay={300}>
               <div className="mt-16 text-center">
                 <p className="text-text-tertiary text-sm">
-                  All Power 4, Pac-12, and featured mid-major team profiles are live. Coverage expanding through the 2026 season.
+                  {Object.keys(teamMetadata).length} D1 programs across {conferences.length} conferences. Every team in the registry gets a profile page.
                 </p>
               </div>
             </ScrollReveal>

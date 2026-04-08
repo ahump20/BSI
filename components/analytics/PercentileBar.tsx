@@ -47,12 +47,12 @@ export function PercentileBar({
   return (
     <div className={`flex items-center gap-3 ${className}`}>
       {/* Metric label — left side */}
-      <span className="text-[11px] text-[var(--svt-text-muted,_#A89F95)] font-mono w-16 text-right shrink-0 uppercase tracking-wide">
+      <span className="text-[11px] text-[var(--svt-text-muted,_#C4B8A5)] font-mono w-16 text-right shrink-0 uppercase tracking-wide">
         {label}
       </span>
 
       {/* Bar track */}
-      <div className="flex-1 h-[10px] rounded-full bg-[var(--svt-border,_rgba(255,255,255,0.04))] overflow-hidden relative">
+      <div className="flex-1 h-[10px] rounded-full bg-[var(--svt-border,_rgba(140,98,57,0.12))] overflow-hidden relative">
         <div
           className="h-full rounded-full transition-all duration-700 ease-out relative"
           style={{ width: `${Math.max(3, pct)}%`, backgroundColor: color }}

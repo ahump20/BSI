@@ -269,9 +269,9 @@ export default function TransferPortalPage() {
                     <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-bold text-text-primary mb-2">Portal tracker loading</h3>
-                <p className="text-text-tertiary text-sm max-w-md mx-auto">
-                  The real-time portal feed is being connected. Sign up above to get notified the moment it goes live.
+                <h3 className="text-lg font-bold mb-2" style={{ color: 'var(--bsi-bone)' }}>Portal data temporarily unavailable</h3>
+                <p className="text-sm max-w-md mx-auto" style={{ color: 'var(--bsi-dust)' }}>
+                  Our transfer portal data sources are not returning entries right now. Spring portal movement is active — we are working on reconnecting the feed. Check back soon.
                 </p>
               </Card>
             ) : (

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 
 // ─── Example prompts — cover routing, stats, teams, and multi-sport ──────────
@@ -136,12 +136,18 @@ function ActionStrip({ links }: { links: Array<{ label: string; href: string }> 
 
 // ─── Main component ──────────────────────────────────────────────────────────
 
-export function AskBSI() {
+interface AskBSIProps {
+  embedded?: boolean;
+  initialQuestion?: string;
+}
+
+export function AskBSI({ embedded = false, initialQuestion }: AskBSIProps) {
   const [question, setQuestion] = useState('');
   const [response, setResponse] = useState('');
   const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState('');
   const abortRef = useRef<AbortController | null>(null);
+  const initialFired = useRef(false);
   const usageCount = typeof window !== 'undefined' ? getAskCount() : 0;
 
   const askQuestion = useCallback(async (q: string) => {
@@ -217,6 +223,15 @@ export function AskBSI() {
     }
   }, [streaming]);
 
+  // Auto-submit if an initial question was passed (e.g. from homepage redirect)
+  useEffect(() => {
+    if (initialQuestion && !initialFired.current) {
+      initialFired.current = true;
+      setQuestion(initialQuestion);
+      askQuestion(initialQuestion);
+    }
+  }, [initialQuestion, askQuestion]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     askQuestion(question);
@@ -224,10 +239,12 @@ export function AskBSI() {
 
   const responseLinks = response ? extractLinks(response) : [];
 
-  return (
-    <section className="py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        <div className="heritage-card p-5 sm:p-6" style={{ borderLeftWidth: '2px', borderLeftColor: 'var(--heritage-bronze)' }}>
+  const panel = (
+    <div
+      data-home-ask={embedded ? 'embedded' : 'standalone'}
+      className={`heritage-card p-5 sm:p-6 ${embedded ? 'h-full' : ''}`}
+      style={{ borderLeftWidth: '2px', borderLeftColor: 'var(--heritage-bronze)' }}
+    >
           {/* Header */}
           <div className="flex items-center gap-3 mb-4">
             <div className="w-8 h-8 flex items-center justify-center shrink-0" style={{ border: '1px solid var(--border-vintage)', borderRadius: '2px', background: 'rgba(191, 87, 0, 0.08)' }}>
@@ -323,8 +340,14 @@ export function AskBSI() {
               {MAX_FREE_QUESTIONS - usageCount} / {MAX_FREE_QUESTIONS} remaining
             </span>
           </div>
-        </div>
-      </div>
+    </div>
+  );
+
+  if (embedded) return panel;
+
+  return (
+    <section className="py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">{panel}</div>
     </section>
   );
 }

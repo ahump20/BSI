@@ -6,10 +6,9 @@ Personal portfolio site for Austin Humphrey. Deployed to Cloudflare Pages at `au
 
 - **React 18** + **TypeScript** + **Vite 5**
 - **Tailwind CSS 3** (utility-first, dark-only palette)
-- **Framer Motion** (nav animations, hero entrance, chat widget, mobile menu)
-- **@heroicons/react** (icons)
+- **Framer Motion** (scroll-triggered animations, hero entrance, chat widget, mobile menu)
 
-No R3F, Three.js, GSAP, Lenis, or react-hot-toast. Bundle: ~297KB JS (95KB gzipped).
+No R3F, Three.js, GSAP, Lenis, or react-hot-toast. Bundle: ~231KB JS (72KB gzipped).
 
 ## Commands
 
@@ -17,7 +16,7 @@ No R3F, Three.js, GSAP, Lenis, or react-hot-toast. Bundle: ~297KB JS (95KB gzipp
 npm run dev          # Vite dev server (localhost:5173)
 npm run build        # tsc + vite build → dist/
 npm run preview      # Serve production build locally
-npm run deploy       # Build + wrangler pages deploy dist
+npm run deploy       # sync-stats + build + wrangler pages deploy dist
 ```
 
 ## Architecture
@@ -25,24 +24,33 @@ npm run deploy       # Build + wrangler pages deploy dist
 ```
 src/
   main.tsx                    # Entry point — StrictMode + App
-  App.tsx                     # Root — section layout + inline footer
-  index.css                   # Tailwind layers, dark-only CSS vars, film grain, reveal animations
+  App.tsx                     # Root layout: ErrorBoundary → Nav → sections → Footer → chat widget
+  index.css                   # Tailwind layers, dark-only CSS vars, film grain, component styles
+  content/
+    site.ts                   # All site content — hero, nav, work, proof, origin, contact, footer
+    concierge.ts              # AI chat widget content — greeting, fallback responses, suggested prompts
   components/
-    Navigation.tsx            # Transparent → glass-on-scroll nav, IntersectionObserver active tracking
-    Hero.tsx                  # 2D canvas particle system + radial blur overlays + italic tagline
-    About.tsx                 # Origin story — 2-col narrative + sticky sidebar facts
-    Experience.tsx            # Left-border timeline with burnt-orange dot markers
-    Education.tsx             # 3-card grid (Full Sail, McCombs, UT Austin)
-    BSIShowcase.tsx           # 2-col description + stats/league rows + tech stack tags
-    AIFeatures.tsx            # 4 gradient-top-border cards
-    Podcast.tsx               # Centered CTA box with NotebookLM link
-    Philosophy.tsx            # Centered Austin covenant quote
-    Contact.tsx               # Centered link grid (email, LinkedIn, BSI, GitHub, X)
-    AIChatWidget.tsx          # Fixed bottom-right FAB with keyword-based local responses
-    ErrorBoundary.tsx         # Safety net for async component issues
+    Navigation.tsx            # Glass-on-scroll nav, IntersectionObserver active tracking, layoutId indicator
+    Hero.tsx                  # Photo-backed hero with thesis → name → tagline entrance sequence + scroll indicator
+    Work.tsx                  # BSI flagship showcase (animated stat counters, browser-chrome screenshot, capabilities, supporting projects)
+    Proof.tsx                 # Editorial pull-quotes + speaking reel video with poster frame
+    Origin.tsx                # Documentary photo narrative (8 chapters, photo grids, quick facts sidebar)
+    Contact.tsx               # Contact links + form with Turnstile, honeypot, inline validation
+    Footer.tsx                # Link groups, credentials, tagline, copyright
+    PlatformStatus.tsx        # Live BSI health indicator (polls /api/platform-health every 60s)
+    AIChatWidget.tsx          # Lazy-loaded FAB with Claude Haiku streaming + local fallback
+    ErrorBoundary.tsx         # React error boundary with PostHog reporting
   hooks/
-    usePrefersReducedMotion.ts  # Accessibility — disables canvas particles when reduced motion
-  utils/                      # (empty — animation utilities removed)
+    usePlatformHealth.ts      # Shared singleton health poller (useSyncExternalStore)
+    usePrefersReducedMotion.ts  # Accessibility — respects reduced motion preference
+  utils/
+    animations.ts             # Framer Motion variants (stagger, fadeIn, scaleIn), SCROLL_VIEWPORT config
+    analytics.ts              # PostHog analytics helpers
+functions/
+  api/
+    chat.ts                   # Pages Function — Claude Haiku streaming SSE for portfolio Q&A
+    contact.ts                # Pages Function — contact form → Resend email delivery
+    platform-health.ts        # Pages Function — same-origin proxy for BSI health endpoint
 ```
 
 ## Design System
@@ -51,40 +59,56 @@ src/
 
 | Token | Hex | Usage |
 |-------|-----|-------|
-| `midnight` | `#0D0D0D` | Primary background (`--color-bg`) |
-| `charcoal` | `#1A1A1A` | Secondary background (`--color-bg-secondary`) |
-| `bone` | `#F5F0EB` | Primary text (`--color-text`) |
-| `warm-gray` | `#A89F95` | Muted text (`--color-text-muted`) |
-| `burnt-orange` | `#BF5700` | Primary accent (`--color-accent`) |
+| `midnight` | `#0D0D0D` | Primary background |
+| `charcoal` | `#1A1A1A` | Secondary background |
+| `bone` | `#F5F0EB` | Primary text |
+| `warm-gray` | `#A89F95` | Muted text |
+| `burnt-orange` | `#BF5700` | Primary accent |
 | `texas-soil` | `#8B4513` | Secondary accent |
 | `ember` | `#FF6B35` | Gradient accent |
-| `sand` | `#F4EEE7` | Legacy alias for bone |
 
-No light mode. No `data-theme` attribute. No ThemeToggle.
+No light mode. No `data-theme` attribute.
 
 ### Fonts
 
 | Role | Family | Usage |
 |------|--------|-------|
-| Headings | Oswald (uppercase, 600 weight) | `font-sans` |
+| Headings | Oswald (uppercase, 600) | `font-sans` |
 | Body | Cormorant Garamond | `font-serif` |
-| Section labels / Code | JetBrains Mono | `font-mono` |
+| Labels / Code | JetBrains Mono | `font-mono` |
+| Editorial leads | Libre Baskerville | `font-display` |
 
 ### Design Patterns
 
-- **Section labels**: `// The Origin` — JetBrains Mono, 0.65rem, tracking 0.35em, burnt-orange
+- **Section labels**: JetBrains Mono, 0.65rem, tracking 0.35em, burnt-orange
 - **Section titles**: Oswald 600, `clamp(2rem, 4vw, 3rem)`, uppercase
 - **Cards**: `rgba(26,26,26,0.6)` bg, `rgba(245,240,235,0.04)` border, hover lifts
-- **Timeline**: left 1px gradient line, 9px burnt-orange dots with glow shadow
 - **Buttons**: `btn-primary` (filled) + `btn-outline` (border), Oswald 500, 0.75rem
-- **Film grain**: SVG `feTurbulence` on `body::after`, opacity 0.4, pointer-events: none
+- **Film grain**: SVG `feTurbulence` overlay, subtle opacity
+- **Photo breaks**: full-bleed cinematic images between sections
+- **Screenshot frame**: browser-chrome treatment on product screenshots
 
 ### Animation
 
-- Framer Motion for nav `layoutId`, hero entrance, `AnimatePresence` (mobile menu, chat widget)
-- IntersectionObserver + CSS `.reveal` / `.reveal.visible` for scroll-triggered section reveals
-- Easing: `ease-out-expo` → `cubic-bezier(0.19, 1, 0.22, 1)`
-- Canvas particle hero respects `prefers-reduced-motion` via `usePrefersReducedMotion` hook
+- Framer Motion `whileInView` for scroll-triggered section reveals
+- `staggerContainer` + `staggerItem` for cascading child entrances
+- `SCROLL_VIEWPORT = { once: true, margin: '-60px 0px' }` for all sections
+- Nav `layoutId` for active indicator spring animation
+- Mobile menu staggered item entrances
+- Easing: `EASE_OUT_EXPO` → `cubic-bezier(0.19, 1, 0.22, 1)`
+- Hero Ken Burns zoom on background photo (25s, CSS animation)
+- Animated stat counters (count up on scroll-into-view)
+- Respects `prefers-reduced-motion` globally
+
+## Pages Functions
+
+Three Cloudflare Pages Functions power server-side features:
+
+| Function | Purpose | Secrets Required |
+|----------|---------|-----------------|
+| `/api/chat` | Claude Haiku streaming SSE for portfolio Q&A | `ANTHROPIC_API_KEY` |
+| `/api/contact` | Form submission → email via Resend | `RESEND_API_KEY`, `TURNSTILE_SECRET_KEY` (optional) |
+| `/api/platform-health` | Same-origin proxy for BSI health check | None |
 
 ## Deployment
 
@@ -101,15 +125,17 @@ No light mode. No `data-theme` attribute. No ThemeToggle.
 - Constants: SCREAMING_SNAKE
 - Commits: `type(scope): description`
 
-## Performance
+## SEO
 
-- Bundle: 297KB JS (95KB gzipped) — down from 900KB+ with R3F
-- Zero WebGL — 2D canvas only, no SecurityError risk
-- Scroll animations: CSS transitions on compositor thread (no React re-renders)
-- Canvas particles: 80 particles, `requestAnimationFrame`, disabled on reduced-motion
+- Full Open Graph + Twitter Card (summary_large_image) meta tags
+- JSON-LD structured data (Person schema with education, occupation, sameAs)
+- Canonical URL, sitemap.xml, robots.txt
+- Hero image preloaded for LCP optimization
+- Self-hosted fonts preloaded (Oswald, Cormorant)
 
 ## Gotchas
 
-- Repo lives on iCloud Drive — git operations can hang. Use `--no-verify` if hooks stall. Remove stale `.git/index.lock` if git hangs.
+- Repo lives on iCloud Drive — git operations can hang. Use `--no-verify` if hooks stall.
 - `tsconfig.json` has `noUnusedLocals` and `noUnusedParameters` — clean up imports.
-- `ErrorBoundary.tsx` is retained but not currently imported — available as safety net.
+- The `_redirects` file sends all routes to `index.html` (SPA fallback).
+- Contact form requires `RESEND_API_KEY` secret set on the Pages project.

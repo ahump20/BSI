@@ -12,6 +12,7 @@ import { GameRecapToolbar } from '@/components/editorial/GameRecapToolbar';
 import { AIAnalysisPanel } from '@/components/editorial/AIAnalysisPanel';
 import { NotebookLMExport } from '@/components/editorial/NotebookLMExport';
 import { BSIVerdict } from '@/components/editorial/BSIVerdict';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
 /* ────────────────────────────────────────────
    Types
@@ -261,6 +262,13 @@ export default function TexasWeek1RecapPage() {
 
   return (
     <>
+      <ArticleJsonLd
+        headline="Texas Week 1 Recap: 27 Runs, Volantis Dominates"
+        description="Texas swept UC Davis 27-7 to open the 2026 season. Dylan Volantis earned SEC Freshman Pitcher of the Week. Full box scores and analysis."
+        datePublished="2026-02-16"
+        url="/college-baseball/editorial/texas-week-1-recap"
+        sport="College Baseball"
+      />
       <div>
         {/* ── Breadcrumb ── */}
         <Section padding="sm" className="border-b border-border">

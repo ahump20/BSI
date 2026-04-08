@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: 'Texas Midweek Recap: Houston Christian & USC Watch | Blaze Sports Intel',
   description:
     'Texas stays unbeaten through their midweek slate. USC and Texas remain the only undefeated Top 25 teams in the country. Full recap with box scores and analysis.',
+  alternates: { canonical: '/college-baseball/editorial/texas-houston-christian-recap' },
   openGraph: {
     title: 'Texas Midweek Recap | Blaze Sports Intel',
     description:

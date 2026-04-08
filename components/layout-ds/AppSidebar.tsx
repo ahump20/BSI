@@ -295,18 +295,20 @@ export function AppSidebar() {
     <>
       {/* ── Desktop sidebar ── */}
       <aside
-        className={`hidden md:flex flex-col border-r border-white/[0.05] transition-all duration-300 relative shrink-0 bg-midnight shadow-[inset_-1px_0_0_rgba(255,255,255,0.03)] ${
+        className={`hidden md:flex flex-col border-r border-[var(--border-vintage)] transition-all duration-300 relative shrink-0 bg-[var(--surface-scoreboard)] shadow-[inset_-1px_0_0_rgba(140,98,57,0.08)] ${
           collapsed ? 'w-16' : 'w-56'
         }`}
       >
         {/* Logo bar */}
         <div className="flex items-center gap-3 px-4 h-14 border-b border-white/[0.05]">
-          <span
-            className="text-xl font-bold font-display text-burnt-orange"
-            style={{ textShadow: '0 0 20px rgba(191, 87, 0, 0.3)' }}
-          >
-            B
-          </span>
+          <img
+            src="/images/brand/bsi-lettermark-square.png"
+            alt="BSI"
+            width={28}
+            height={28}
+            className="rounded-sm"
+            style={{ filter: 'drop-shadow(0 0 12px rgba(191, 87, 0, 0.3))' }}
+          />
           {!collapsed && (
             <div className="flex flex-col">
               <span

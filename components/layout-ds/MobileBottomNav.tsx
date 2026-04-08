@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { getBottomNav, type NavIconKey } from '@/lib/navigation';
@@ -67,8 +68,13 @@ const ICON_MAP: Record<NavIconKey, () => React.JSX.Element> = {
 export function MobileBottomNav({ onMorePress }: { onMorePress?: () => void }) {
   const pathname = usePathname();
   const navItems = getBottomNav();
+  // Defer active state to avoid hydration mismatch on placeholder-shell pages
+  // where the server-rendered pathname differs from the client URL.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   const isActive = (href: string) => {
+    if (!mounted) return false; // Match server render: no active state
     if (href === '/') return pathname === '/';
     return pathname.startsWith(href);
   };
@@ -76,7 +82,7 @@ export function MobileBottomNav({ onMorePress }: { onMorePress?: () => void }) {
   return (
     <nav
       aria-label="Mobile navigation"
-      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0D0D0D] border-t border-white/[0.06] shadow-[0_-4px_24px_rgba(0,0,0,0.4)]"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--surface-scoreboard)] border-t border-[var(--border-vintage)] shadow-[0_-4px_24px_rgba(0,0,0,0.4)]"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
       <div className="flex items-stretch">

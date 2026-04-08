@@ -7,12 +7,10 @@
  * Displays challenge data, success rates by role, umpire accuracy comparisons,
  * and the ABS strike zone model.
  *
- * Data model is ready for live API integration via Sportradar or MLB Stats API.
- * Currently renders structured data from the 2025 spring training pilot and
- * early 2026 regular-season aggregates.
+ * Data fetched live from /api/mlb/abs (Sportradar pitch events in D1).
  */
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -49,22 +47,7 @@ interface UmpireAccuracy {
   source: string;
 }
 
-// ─── Structured Data (Spring Training 2025 + Early 2026 Aggregates) ─────────
-
-const CHALLENGE_BY_ROLE: ChallengeStats[] = [
-  { role: 'catcher', challenges: 1842, overturned: 1022, successRate: 55.5 },
-  { role: 'hitter', challenges: 1536, overturned: 768, successRate: 50.0 },
-  { role: 'pitcher', challenges: 924, overturned: 379, successRate: 41.0 },
-];
-
-const RECENT_GAMES: GameChallengeLog[] = [
-  { gameId: '1', date: '2026-04-01', away: 'NYY', home: 'HOU', totalChallenges: 5, overturned: 3, avgChallengeTime: 16.2 },
-  { gameId: '2', date: '2026-04-01', away: 'LAD', home: 'CHC', totalChallenges: 3, overturned: 1, avgChallengeTime: 17.8 },
-  { gameId: '3', date: '2026-04-01', away: 'ATL', home: 'PHI', totalChallenges: 6, overturned: 4, avgChallengeTime: 15.5 },
-  { gameId: '4', date: '2026-03-31', away: 'BOS', home: 'BAL', totalChallenges: 4, overturned: 2, avgChallengeTime: 17.1 },
-  { gameId: '5', date: '2026-03-31', away: 'SF', home: 'SD', totalChallenges: 2, overturned: 1, avgChallengeTime: 16.9 },
-  { gameId: '6', date: '2026-03-31', away: 'SEA', home: 'TEX', totalChallenges: 5, overturned: 2, avgChallengeTime: 18.3 },
-];
+// ─── Static reference data (not game data — factual history) ────────────────
 
 const UMPIRE_ACCURACY: UmpireAccuracy[] = [
   { label: 'Human umpire (pre-ABS avg)', accuracy: 94.0, totalCalls: 28500, source: 'UmpScorecards 2025' },
@@ -88,19 +71,36 @@ type ViewMode = 'overview' | 'challenges' | 'accuracy' | 'timeline';
 
 export default function ABSTrackerPage() {
   const [view, setView] = useState<ViewMode>('overview');
+  const [challengeByRole, setChallengeByRole] = useState<ChallengeStats[]>([]);
+  const [recentGames, setRecentGames] = useState<GameChallengeLog[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/mlb/abs')
+      .then((r) => r.ok ? r.json() : Promise.reject(r.status))
+      .then((data: Record<string, unknown>) => {
+        const roles = (data.challengesByRole ?? []) as ChallengeStats[];
+        const games = (data.recentGames ?? []) as GameChallengeLog[];
+        setChallengeByRole(roles);
+        setRecentGames(games);
+      })
+      .catch(() => { /* empty state — no data yet */ })
+      .finally(() => setLoading(false));
+  }, []);
 
   const totals = useMemo(() => {
-    const challenges = CHALLENGE_BY_ROLE.reduce((sum, r) => sum + r.challenges, 0);
-    const overturned = CHALLENGE_BY_ROLE.reduce((sum, r) => sum + r.overturned, 0);
-    const gamesTracked = RECENT_GAMES.length;
+    if (challengeByRole.length === 0) return null;
+    const challenges = challengeByRole.reduce((sum, r) => sum + r.challenges, 0);
+    const overturned = challengeByRole.reduce((sum, r) => sum + r.overturned, 0);
+    const gamesTracked = Math.max(recentGames.length, 1);
     const avgPerGame = (
-      RECENT_GAMES.reduce((sum, g) => sum + g.totalChallenges, 0) / gamesTracked
+      recentGames.reduce((sum, g) => sum + g.totalChallenges, 0) / gamesTracked
     ).toFixed(1);
     const avgTime = (
-      RECENT_GAMES.reduce((sum, g) => sum + g.avgChallengeTime, 0) / gamesTracked
+      recentGames.reduce((sum, g) => sum + g.avgChallengeTime, 0) / gamesTracked
     ).toFixed(1);
-    return { challenges, overturned, successRate: ((overturned / challenges) * 100).toFixed(1), avgPerGame, avgTime };
-  }, []);
+    return { challenges, overturned, successRate: challenges > 0 ? ((overturned / challenges) * 100).toFixed(1) : '0', avgPerGame, avgTime };
+  }, [challengeByRole, recentGames]);
 
   return (
     <>
@@ -146,20 +146,26 @@ export default function ABSTrackerPage() {
 
             {/* KPI Strip */}
             <ScrollReveal direction="up" delay={200}>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-8">
-                {[
-                  { label: 'Total Challenges', value: totals.challenges.toLocaleString() },
-                  { label: 'Overturned', value: totals.overturned.toLocaleString() },
-                  { label: 'Success Rate', value: `${totals.successRate}%` },
-                  { label: 'Avg / Game', value: totals.avgPerGame },
-                  { label: 'Avg Time', value: `${totals.avgTime}s` },
-                ].map((kpi) => (
-                  <Card key={kpi.label} variant="default" padding="md" className="text-center">
-                    <p className="text-2xl md:text-3xl font-bold font-mono text-burnt-orange">{kpi.value}</p>
-                    <p className="text-xs text-text-tertiary uppercase tracking-wider mt-1">{kpi.label}</p>
-                  </Card>
-                ))}
-              </div>
+              {loading ? (
+                <div className="text-center py-8 text-text-tertiary">Loading challenge data...</div>
+              ) : totals ? (
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-8">
+                  {[
+                    { label: 'Total Challenges', value: totals.challenges.toLocaleString() },
+                    { label: 'Overturned', value: totals.overturned.toLocaleString() },
+                    { label: 'Success Rate', value: `${totals.successRate}%` },
+                    { label: 'Avg / Game', value: totals.avgPerGame },
+                    { label: 'Avg Time', value: `${totals.avgTime}s` },
+                  ].map((kpi) => (
+                    <Card key={kpi.label} variant="default" padding="md" className="text-center">
+                      <p className="text-2xl md:text-3xl font-bold font-mono text-burnt-orange">{kpi.value}</p>
+                      <p className="text-xs text-text-tertiary uppercase tracking-wider mt-1">{kpi.label}</p>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-text-tertiary">Challenge data will appear once games are tracked via Sportradar.</div>
+              )}
             </ScrollReveal>
           </Container>
         </Section>
@@ -214,7 +220,7 @@ export default function ABSTrackerPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          {RECENT_GAMES.map((game) => (
+                          {recentGames.map((game) => (
                             <tr key={game.gameId} className="border-b border-border-subtle hover:bg-background-secondary/50 transition-colors">
                               <td className="py-3 px-4 text-text-secondary text-sm">{game.date}</td>
                               <td className="py-3 px-4 text-text-primary font-semibold text-sm">{game.away} @ {game.home}</td>
@@ -291,7 +297,7 @@ export default function ABSTrackerPage() {
             {view === 'challenges' && (
               <ScrollReveal>
                 <div className="grid gap-6 md:grid-cols-3">
-                  {CHALLENGE_BY_ROLE.map((role) => (
+                  {challengeByRole.map((role) => (
                     <Card key={role.role} variant="default" padding="lg">
                       <div className="text-center mb-4">
                         <Badge variant={role.role === 'catcher' ? 'primary' : role.role === 'hitter' ? 'info' : 'warning'}>

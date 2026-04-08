@@ -12,6 +12,7 @@ import { GameRecapToolbar } from '@/components/editorial/GameRecapToolbar';
 import { AIAnalysisPanel } from '@/components/editorial/AIAnalysisPanel';
 import { NotebookLMExport } from '@/components/editorial/NotebookLMExport';
 import { BSIVerdict } from '@/components/editorial/BSIVerdict';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 
 /* ────────────────────────────────────────────
    Types
@@ -178,6 +179,13 @@ export default function TexasUCDavisOpener2026Page() {
 
   return (
     <>
+      <ArticleJsonLd
+        headline="Texas 12, UC Davis 2: 2026 Season Opener Recap"
+        description="Dylan Volantis opened his first career Friday start with 5 shutout innings. Texas scored in six of seven frames to take the 2026 opener 12-2 over UC Davis at UFCU Disch-Falk Field."
+        datePublished="2026-02-13"
+        url="/college-baseball/editorial/texas-uc-davis-opener-2026"
+        sport="College Baseball"
+      />
       <div>
         {/* ── Breadcrumb ── */}
         <Section padding="sm" className="border-b border-border">

@@ -314,19 +314,22 @@ export default function NFLGamesPage() {
 
   return (
     <>
-      <div>
+      <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-subtle">
+        <Section padding="sm" style={{ borderBottom: '1px solid var(--border-vintage)' }}>
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/nfl"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                className="transition-colors"
+                style={{ color: 'rgba(196,184,165,0.5)' }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--bsi-primary)')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(196,184,165,0.5)')}
               >
                 NFL
               </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-text-primary font-medium">Games</span>
+              <span style={{ color: 'rgba(196,184,165,0.5)' }}>/</span>
+              <span className="font-medium" style={{ color: 'var(--bsi-bone)' }}>Games</span>
             </nav>
           </Container>
         </Section>
@@ -346,13 +349,13 @@ export default function NFLGamesPage() {
                 </ScrollReveal>
 
                 <ScrollReveal direction="up" delay={100}>
-                  <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-gradient-blaze mb-4">
+                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-wider mb-4" style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}>
                     NFL Scores
                   </h1>
                 </ScrollReveal>
 
                 <ScrollReveal direction="up" delay={150}>
-                  <p className="text-text-secondary max-w-2xl">
+                  <p className="max-w-2xl" style={{ color: 'var(--bsi-dust)' }}>
                     Live scores, final results, and upcoming matchups. Real data, no network spin.
                   </p>
                 </ScrollReveal>
@@ -369,7 +372,8 @@ export default function NFLGamesPage() {
             <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
               <button
                 onClick={() => setSelectedDate(getDateOffset(-3))}
-                className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-text-tertiary hover:text-text-primary transition-colors"
+                className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center transition-colors"
+                style={{ color: 'rgba(196,184,165,0.5)' }}
                 aria-label="Previous days"
               >
                 <svg
@@ -391,11 +395,12 @@ export default function NFLGamesPage() {
                   <button
                     key={option.offset}
                     onClick={() => setSelectedDate(dateValue)}
-                    className={`px-4 py-2 min-h-[44px] rounded-sm font-semibold text-sm whitespace-nowrap transition-all ${
+                    className="px-4 py-2 min-h-[44px] rounded-sm font-semibold text-sm whitespace-nowrap transition-all"
+                    style={
                       isSelected
-                        ? 'bg-burnt-orange text-white'
-                        : 'bg-background-tertiary text-text-secondary hover:bg-surface-light hover:text-text-primary'
-                    }`}
+                        ? { background: 'var(--bsi-primary)', color: '#fff' }
+                        : { background: 'var(--surface-dugout)', color: 'var(--bsi-dust)' }
+                    }
                   >
                     {option.label}
                   </button>
@@ -404,7 +409,8 @@ export default function NFLGamesPage() {
 
               <button
                 onClick={() => setSelectedDate(getDateOffset(3))}
-                className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-text-tertiary hover:text-text-primary transition-colors"
+                className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center transition-colors"
+                style={{ color: 'rgba(196,184,165,0.5)' }}
                 aria-label="Next days"
               >
                 <svg
@@ -429,10 +435,11 @@ export default function NFLGamesPage() {
             ) : error ? (
               <Card variant="default" padding="lg" className="bg-error/10 border-error/30">
                 <p className="text-error font-semibold">Data Unavailable</p>
-                <p className="text-text-secondary text-sm mt-1">{error}</p>
+                <p className="text-sm mt-1" style={{ color: 'var(--bsi-dust)' }}>{error}</p>
                 <button
                   onClick={retry}
-                  className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange/80 transition-colors"
+                  className="mt-4 px-4 py-2 text-white rounded-sm transition-colors"
+                  style={{ background: 'var(--bsi-primary)' }}
                 >
                   Retry
                 </button>
@@ -449,7 +456,7 @@ export default function NFLGamesPage() {
                 {/* Live Games */}
                 {live.length > 0 && (
                   <div className="mb-8">
-                    <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+                    <h2 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: 'var(--bsi-bone)' }}>
                       <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
                       Live Games
                     </h2>
@@ -466,7 +473,7 @@ export default function NFLGamesPage() {
                 {/* Final Games */}
                 {final.length > 0 && (
                   <div className="mb-8">
-                    <h2 className="text-lg font-semibold text-text-primary mb-4">Final</h2>
+                    <h2 className="text-lg font-semibold mb-4" style={{ color: 'var(--bsi-bone)' }}>Final</h2>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                       {final.map((game) => (
                         <ScrollReveal key={game.id || game.name}>
@@ -480,7 +487,7 @@ export default function NFLGamesPage() {
                 {/* Scheduled Games */}
                 {scheduled.length > 0 && (
                   <div>
-                    <h2 className="text-lg font-semibold text-text-primary mb-4">Upcoming</h2>
+                    <h2 className="text-lg font-semibold mb-4" style={{ color: 'var(--bsi-bone)' }}>Upcoming</h2>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                       {scheduled.map((game) => (
                         <ScrollReveal key={game.id || game.name}>
@@ -492,13 +499,13 @@ export default function NFLGamesPage() {
                 )}
 
                 {/* Data Source Footer */}
-                <div className="mt-8 pt-4 border-t border-border-subtle flex items-center justify-between flex-wrap gap-4">
+                <div className="mt-8 pt-4 flex items-center justify-between flex-wrap gap-4" style={{ borderTop: '1px solid var(--border-vintage)' }}>
                   <DataSourceBadge
                     source={meta?.source || 'BSI NFL API'}
                     timestamp={formatTimestamp(meta?.fetched_at)}
                   />
                   {hasLiveGames && (
-                    <span className="text-xs text-text-tertiary">
+                    <span className="text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>
                       Auto-refreshing every 30 seconds
                     </span>
                   )}

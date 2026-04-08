@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Link from 'next/link';
 import { MetricTooltip, METRIC_DEFS } from './MetricTooltip';
 import { getPercentileColor } from './PercentileBar';
 import { withAlpha } from '@/lib/utils/color';
@@ -31,7 +32,15 @@ interface SavantLeaderboardProps {
   title: string;
   isPro?: boolean;
   initialRows?: number;
+  /** Column key to sort by on first render (e.g. 'woba', 'fip') */
+  defaultSortKey?: string;
   onPlayerClick?: (playerId: string) => void;
+  /** Compare mode: set of selected player IDs */
+  compareSelected?: Set<string>;
+  /** Callback when compare checkbox is toggled */
+  onCompareToggle?: (playerId: string) => void;
+  /** Max players that can be compared */
+  maxCompare?: number;
   className?: string;
 }
 
@@ -64,26 +73,30 @@ function getThresholdBg(key: string, val: number): string | undefined {
 // ---------------------------------------------------------------------------
 
 export const BATTING_COLUMNS: ColumnDef[] = [
-  { key: 'avg', label: 'AVG', format: fmt3, higherIsBetter: true },
-  { key: 'obp', label: 'OBP', format: fmt3, higherIsBetter: true },
-  { key: 'slg', label: 'SLG', format: fmt3, higherIsBetter: true },
-  { key: 'k_pct', label: 'K%', format: fmtPct, higherIsBetter: false },
-  { key: 'bb_pct', label: 'BB%', format: fmtPct, higherIsBetter: true },
+  { key: 'avg', label: 'AVG', metricKey: 'AVG', format: fmt3, higherIsBetter: true },
+  { key: 'obp', label: 'OBP', metricKey: 'OBP', format: fmt3, higherIsBetter: true },
+  { key: 'slg', label: 'SLG', metricKey: 'SLG', format: fmt3, higherIsBetter: true },
+  { key: 'k_pct', label: 'K%', metricKey: 'K%', format: fmtPct, higherIsBetter: false },
+  { key: 'bb_pct', label: 'BB%', metricKey: 'BB%', format: fmtPct, higherIsBetter: true },
   { key: 'iso', label: 'ISO', metricKey: 'ISO', format: fmt3, higherIsBetter: true },
   { key: 'babip', label: 'BABIP', metricKey: 'BABIP', format: fmt3, hideMobile: true },
-  { key: 'woba', label: 'wOBA', metricKey: 'wOBA', format: fmt3, pro: true, higherIsBetter: true },
-  { key: 'wrc_plus', label: 'wRC+', metricKey: 'wRC+', format: fmtInt, pro: true, hideMobile: true, higherIsBetter: true },
-  { key: 'ops_plus', label: 'OPS+', metricKey: 'OPS+', format: fmtInt, pro: true, hideMobile: true, higherIsBetter: true },
+  { key: 'woba', label: 'wOBA', metricKey: 'wOBA', format: fmt3, higherIsBetter: true },
+  { key: 'wrc_plus', label: 'wRC+', metricKey: 'wRC+', format: fmtInt, hideMobile: true, higherIsBetter: true },
+  { key: 'ops_plus', label: 'OPS+', metricKey: 'OPS+', format: fmtInt, hideMobile: true, higherIsBetter: true },
+  { key: 'e_ba', label: 'xBA', metricKey: 'xBA', format: fmt3, hideMobile: true, higherIsBetter: true },
+  { key: 'e_slg', label: 'xSLG', metricKey: 'xSLG', format: fmt3, hideMobile: true, higherIsBetter: true },
+  { key: 'e_woba', label: 'xwOBA', metricKey: 'xwOBA', format: fmt3, hideMobile: true, higherIsBetter: true },
 ];
 
 export const PITCHING_COLUMNS: ColumnDef[] = [
-  { key: 'era', label: 'ERA', format: fmt2, higherIsBetter: false },
-  { key: 'whip', label: 'WHIP', format: fmt2, higherIsBetter: false },
-  { key: 'k_9', label: 'K/9', format: fmt1, higherIsBetter: true },
-  { key: 'bb_9', label: 'BB/9', format: fmt1, higherIsBetter: false },
-  { key: 'hr_9', label: 'HR/9', format: fmt1, higherIsBetter: false, hideMobile: true },
-  { key: 'fip', label: 'FIP', metricKey: 'FIP', format: fmt2, higherIsBetter: false, pro: true },
-  { key: 'era_minus', label: 'ERA-', metricKey: 'ERA-', format: fmtInt, higherIsBetter: false, pro: true, hideMobile: true },
+  { key: 'era', label: 'ERA', metricKey: 'ERA', format: fmt2, higherIsBetter: false },
+  { key: 'whip', label: 'WHIP', metricKey: 'WHIP', format: fmt2, higherIsBetter: false },
+  { key: 'k_9', label: 'K/9', metricKey: 'K/9', format: fmt1, higherIsBetter: true },
+  { key: 'bb_9', label: 'BB/9', metricKey: 'BB/9', format: fmt1, higherIsBetter: false },
+  { key: 'hr_9', label: 'HR/9', metricKey: 'HR/9', format: fmt1, higherIsBetter: false, hideMobile: true },
+  { key: 'fip', label: 'FIP', metricKey: 'FIP', format: fmt2, higherIsBetter: false },
+  { key: 'x_fip', label: 'xFIP', metricKey: 'xFIP', format: fmt2, higherIsBetter: false, hideMobile: true },
+  { key: 'era_minus', label: 'ERA-', metricKey: 'ERA-', format: fmtInt, higherIsBetter: false, hideMobile: true },
   { key: 'k_bb', label: 'K/BB', metricKey: 'K/BB', format: fmt2, pro: true, hideMobile: true, higherIsBetter: true },
   { key: 'lob_pct', label: 'LOB%', metricKey: 'LOB%', format: fmtPct, pro: true, hideMobile: true, higherIsBetter: true },
 ];
@@ -136,17 +149,20 @@ export function SavantLeaderboard({
   columns,
   title,
   isPro = false,
-  initialRows = 25,
+  initialRows = 50,
+  defaultSortKey,
   onPlayerClick,
+  compareSelected,
+  onCompareToggle,
+  maxCompare = 3,
   className = '',
 }: SavantLeaderboardProps) {
-  const [sortKey, setSortKey] = useState(columns[0]?.key || '');
+  const [sortKey, setSortKey] = useState(defaultSortKey || columns[0]?.key || '');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
   const [showAll, setShowAll] = useState(false);
 
-  // Free-tier row cap — pro users see initialRows, free users see 10
-  const FREE_ROW_LIMIT = 10;
-  const effectiveRows = isPro ? initialRows : FREE_ROW_LIMIT;
+  // Core metrics are free — show full leaderboard on all tiers
+  const effectiveRows = initialRows;
 
   // Compute percentiles from FULL dataset (before sort/slice)
   const percentiles = useMemo(() => computePercentiles(data, columns), [data, columns]);
@@ -182,10 +198,19 @@ export function SavantLeaderboard({
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto max-h-[80vh] overflow-y-auto">
         <table className="w-full text-sm">
-          <thead>
+          <thead className="sticky top-0 z-10" style={{ backgroundColor: 'var(--surface-press-box, #111111)' }}>
             <tr className="border-b border-border-subtle" style={{ borderTop: '2px solid var(--svt-accent, #BF5700)' }}>
+              {onCompareToggle && (
+                <th className="pl-3 pr-0 py-3 w-8">
+                  <span className="text-[10px] font-display uppercase tracking-widest text-text-muted" title="Compare players">
+                    <svg viewBox="0 0 16 16" className="w-3.5 h-3.5 text-text-muted" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <path d="M4 8h8M8 4v8" />
+                    </svg>
+                  </span>
+                </th>
+              )}
               <th className="pl-5 pr-2 py-3 text-left">
                 <span className="text-[10px] font-display uppercase tracking-widest text-text-muted">#</span>
               </th>
@@ -232,14 +257,43 @@ export function SavantLeaderboard({
             {sortedWithIndex.map(({ row, originalIndex }, i) => {
               const rank = i + 1;
               const playerId = row.player_id as string;
+              const isCompareSelected = compareSelected?.has(playerId) ?? false;
+              const canAddMore = !compareSelected || compareSelected.size < maxCompare;
               return (
                 <tr
                   key={playerId || i}
                   onClick={() => playerId && onPlayerClick?.(playerId)}
                   className={`border-b border-border-subtle transition-colors hover:bg-surface-light/50 ${i % 2 === 1 ? 'bg-[rgba(255,255,255,0.01)]' : ''} ${
                     onPlayerClick ? 'cursor-pointer' : ''
-                  }`}
+                  } ${isCompareSelected ? '!bg-[rgba(191,87,0,0.06)]' : ''}`}
                 >
+                  {onCompareToggle && (
+                    <td className="pl-3 pr-0 py-2.5 w-8">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (playerId && (isCompareSelected || canAddMore)) {
+                            onCompareToggle(playerId);
+                          }
+                        }}
+                        disabled={!isCompareSelected && !canAddMore}
+                        className={`w-4 h-4 rounded-sm border transition-colors flex items-center justify-center cursor-pointer ${
+                          isCompareSelected
+                            ? 'bg-burnt-orange border-burnt-orange'
+                            : canAddMore
+                              ? 'border-border-subtle hover:border-burnt-orange/50'
+                              : 'border-border-subtle opacity-30 cursor-not-allowed'
+                        }`}
+                        aria-label={isCompareSelected ? `Remove ${row.player_name} from comparison` : `Add ${row.player_name} to comparison`}
+                      >
+                        {isCompareSelected && (
+                          <svg viewBox="0 0 16 16" className="w-2.5 h-2.5 text-white" fill="currentColor">
+                            <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 0 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0z"/>
+                          </svg>
+                        )}
+                      </button>
+                    </td>
+                  )}
                   <td className="pl-5 pr-2 py-2.5">
                     <span className={`text-xs font-mono tabular-nums ${
                       rank <= 3 ? 'text-burnt-orange font-bold' : 'text-text-muted'
@@ -249,9 +303,19 @@ export function SavantLeaderboard({
                   </td>
                   <td className="px-2 py-2.5">
                     <div>
-                      <span className="text-text-primary font-medium text-sm">
-                        {row.player_name as string}
-                      </span>
+                      {playerId ? (
+                        <Link
+                          href={`/college-baseball/savant/player/${playerId}`}
+                          className="text-text-primary font-medium text-sm hover:text-burnt-orange transition-colors"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {row.player_name as string}
+                        </Link>
+                      ) : (
+                        <span className="text-text-primary font-medium text-sm">
+                          {row.player_name as string}
+                        </span>
+                      )}
                       {row.position && (row.position as string) !== 'UN' && (
                         <span className="ml-1.5 text-[10px] text-text-muted uppercase">
                           {row.position as string}
@@ -326,7 +390,7 @@ export function SavantLeaderboard({
             <tbody>
               <tr>
                 <td
-                  colSpan={columns.length + 3}
+                  colSpan={columns.length + 3 + (onCompareToggle ? 1 : 0)}
                   className="px-0 py-0"
                 >
                   <div className="relative overflow-hidden my-1">
@@ -355,29 +419,15 @@ export function SavantLeaderboard({
         </table>
       </div>
 
-      {/* Footer */}
+      {/* Footer — show all button */}
       {!showAll && data.length > effectiveRows && (
         <div className="px-5 py-4 border-t border-border-subtle">
-          {isPro ? (
-            <button
-              onClick={() => setShowAll(true)}
-              className="w-full text-center text-xs text-burnt-orange hover:text-ember font-medium transition-colors"
-            >
-              Show all {data.length} players
-            </button>
-          ) : (
-            <div className="flex items-center justify-center gap-4">
-              <span className="text-[10px] font-mono text-text-muted tabular-nums">
-                Showing 10 of {data.length}
-              </span>
-              <a
-                href="/pricing"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-burnt-orange/10 text-burnt-orange text-[11px] font-mono uppercase tracking-wider hover:bg-burnt-orange/20 transition-colors"
-              >
-                Upgrade to Pro
-              </a>
-            </div>
-          )}
+          <button
+            onClick={() => setShowAll(true)}
+            className="w-full text-center text-xs text-burnt-orange hover:text-ember font-medium transition-colors"
+          >
+            Show all {data.length} players
+          </button>
         </div>
       )}
     </div>

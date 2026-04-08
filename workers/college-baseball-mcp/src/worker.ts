@@ -485,14 +485,17 @@ async function kvCached<T>(
 /** Proxy fetch to BSI's main worker via service binding (or HTTP fallback) */
 async function bsiFetch(path: string, env: Env): Promise<unknown> {
   const url = `https://blazesportsintel.com${path}`;
+  const headers: Record<string, string> = { 'User-Agent': 'BSI-MCP/3.0' };
+  // Authenticate for pro-tier savant access (leaderboards, player profiles)
+  const proKey = (env as unknown as Record<string, unknown>).SAVANT_PRO_KEY as string | undefined;
+  if (proKey) headers['X-BSI-Key'] = proKey;
+
   let res: Response;
 
   if (env.BSI_WORKER) {
-    res = await env.BSI_WORKER.fetch(
-      new Request(url, { headers: { 'User-Agent': 'BSI-MCP/3.0' } })
-    );
+    res = await env.BSI_WORKER.fetch(new Request(url, { headers }));
   } else {
-    res = await fetch(url, { headers: { 'User-Agent': 'BSI-MCP/3.0' } });
+    res = await fetch(url, { headers });
   }
 
   if (!res.ok) {
@@ -718,7 +721,8 @@ async function handleStandings(
     // Try Highlightly first — richer stats (RS, RA, DIFF, STRK, GB)
     if (env.HIGHLIGHTLY_API_KEY) {
       try {
-        const hlData = (await hlFetch('/standings?abbreviation=NCAA', env)) as
+        const currentSeason = new Date().getFullYear();
+        const hlData = (await hlFetch(`/standings?league=NCAA&season=${currentSeason}`, env)) as
           | { data: Array<Record<string, unknown>> }
           | Record<string, unknown>;
 
@@ -733,6 +737,16 @@ async function handleStandings(
         }
 
         if (teams.length > 0) {
+          // Freshness guard: if any team has 50+ games, this is stale end-of-season data
+          const maxGP = Math.max(0, ...teams.map((t) => {
+            const sts = (t.stats as Array<Record<string, unknown>>) ?? [];
+            const gp = sts.find((s) => s.abbreviation === 'GP');
+            return parseInt((gp?.displayValue as string) ?? '0', 10) || 0;
+          }));
+          if (maxGP > 50) {
+            throw new Error('Highlightly standings stale — previous season data');
+          }
+
           // Build ID → displayName map for conference resolution
           let teamMap: Record<string, string> = {};
           try {

@@ -52,9 +52,9 @@ export function Footer() {
             <h4 className={sectionTitle} style={{ color: 'var(--heritage-bronze)' }}>Start Here</h4>
             <ul className="space-y-2">
               <li><Link href="/scores" className={footerLink}>Live Scores</Link></li>
-              <li><Link href="/college-baseball" className={footerLink}>College Baseball</Link></li>
               <li><Link href="/college-baseball/savant" className={footerLink}>BSI Savant</Link></li>
               <li><Link href="/college-baseball/editorial" className={footerLink}>Editorial</Link></li>
+              <li><Link href="/ask" className={footerLink}>Ask BSI</Link></li>
               <li><Link href="/intel" className={footerLink}>Intelligence</Link></li>
             </ul>
           </div>
@@ -62,32 +62,17 @@ export function Footer() {
             <h4 className={sectionTitle} style={{ color: 'var(--heritage-bronze)' }}>Sports</h4>
             <ul className="space-y-2">
               <li><Link href="/college-baseball" className={footerLink}>College Baseball</Link></li>
-              <li><Link href="/mlb" className={footerLink}>MLB</Link></li>
-              <li><Link href="/nfl" className={footerLink}>NFL</Link></li>
-              <li><Link href="/nba" className={footerLink}>NBA</Link></li>
-              <li><Link href="/cfb" className={footerLink}>College Football</Link></li>
             </ul>
           </div>
           <div>
             <h4 className={sectionTitle} style={{ color: 'var(--heritage-bronze)' }}>Tools</h4>
             <ul className="space-y-2">
-              <li><Link href="/college-baseball/transfer-portal" className={footerLink}>Transfer Portal</Link></li>
-              <li><Link href="/nil-valuation" className={footerLink}>NIL Valuation</Link></li>
               <li><Link href="/college-baseball/savant/glossary" className={footerLink}>Glossary</Link></li>
               <li><Link href="/pricing" className={footerLink}>Pricing</Link></li>
             </ul>
           </div>
           <div>
-            <h4 className={sectionTitle} style={{ color: 'var(--heritage-bronze)' }}>Ecosystem</h4>
-            <ul className="space-y-2">
-              <li><a href="https://labs.blazesportsintel.com" target="_blank" rel="noopener noreferrer" className={footerLink}>BSI Labs <span className="text-[9px] opacity-40">↗</span></a></li>
-              <li><a href="https://arcade.blazesportsintel.com" target="_blank" rel="noopener noreferrer" className={footerLink}>Arcade <span className="text-[9px] opacity-40">↗</span></a></li>
-              <li><a href="https://blazecraft.app" target="_blank" rel="noopener noreferrer" className={footerLink}>BlazeCraft <span className="text-[9px] opacity-40">↗</span></a></li>
-              <li><a href="https://austinhumphrey.com" target="_blank" rel="noopener noreferrer" className={footerLink}>Austin Humphrey <span className="text-[9px] opacity-40">↗</span></a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className={sectionTitle} style={{ color: 'var(--heritage-bronze)' }}>Company</h4>
+            <h4 className={sectionTitle} style={{ color: 'var(--heritage-bronze)' }}>About</h4>
             <ul className="space-y-2">
               <li><Link href="/about" className={footerLink}>About</Link></li>
               <li><Link href="/about/methodology" className={footerLink}>Methodology</Link></li>
@@ -108,7 +93,7 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3" style={{ borderTop: '1px solid var(--border-vintage)' }}>
           <p className="text-[10px] font-mono uppercase tracking-wider" style={{ color: 'var(--bsi-dust)' }}>
-            &copy; {currentYear} Blaze Intelligence LLC
+            &copy; {currentYear} Blaze Sports Intel
           </p>
           <p className="text-[10px] font-mono uppercase tracking-wider" style={{ color: 'var(--bsi-dust)' }}>
             Built on Cloudflare &middot; Austin, TX

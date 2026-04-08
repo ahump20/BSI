@@ -103,9 +103,13 @@ export function useSportData<T>(
     [url, skip, timeout]
   );
 
-  // Initial fetch
+  // Initial fetch — reset stale state when URL/options change
   useEffect(() => {
     hasFetchedRef.current = false;
+    setData(null);
+    setMeta(null);
+    setError(null);
+    setLastUpdated(null);
     fetchData();
     return () => abortRef.current?.abort();
   }, [fetchData]);

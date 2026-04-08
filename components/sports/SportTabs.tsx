@@ -42,7 +42,7 @@ export function SportTabs({ defaultSport = 'mlb', onSportChange }: SportTabsProp
               : 'text-text-muted hover:text-text-primary hover:bg-surface-light'
           }`}
         >
-          <Image src={sport.icon} alt="" width={18} height={18} className="opacity-80" />
+          <Image src={sport.icon} alt="" width={18} height={18} className="opacity-80" aria-hidden="true" />
           {sport.label}
         </button>
       ))}

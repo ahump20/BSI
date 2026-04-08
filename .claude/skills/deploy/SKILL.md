@@ -64,6 +64,30 @@ npm run <script-name>
 
 Report the output. If deployment succeeds, show the URL. If it fails, show the error and suggest fixes.
 
+## Post-Deploy Verification
+
+After a successful Pages deploy (`production`, `preview`, `hybrid`, `pages`):
+
+### 1. Health checks (existing)
+```bash
+npm run health
+```
+
+### 2. Visual regression (if baselines exist)
+```bash
+BASE_URL=https://blazesportsintel.com npm run test:visual
+```
+- Compares key pages against screenshot baselines
+- If tests fail: report which pages regressed and the diff percentage
+- If no baselines exist yet: skip (run `npm run test:visual:update` to generate)
+
+### 3. Computer use visual sign-off (optional)
+If running in an interactive session with the `computer-use` MCP server enabled:
+- Open Safari and navigate to the top 5 pages on the live URL
+- Screenshot each and evaluate for Heritage v2.1 compliance and data integrity
+- Report findings inline — do NOT auto-revert
+- Skip this step in non-interactive contexts
+
 ## Argument Parsing
 
 - No argument or `production` -> `npm run deploy:production`

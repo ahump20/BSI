@@ -4,16 +4,16 @@ import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: 'College Baseball Players | Blaze Sports Intel',
-  description: 'NCAA Division I baseball player directory with stats, positions, and team affiliations across all D1 programs.',
+  description: 'Search 1,900+ NCAA Division I baseball players with advanced sabermetrics — wOBA, wRC+, FIP, ERA-, percentile rankings. Filter by conference, position, class year.',
   alternates: { canonical: '/college-baseball/players' },
   openGraph: {
     title: 'College Baseball Players | Blaze Sports Intel',
-    description: 'D1 college baseball player stats and profiles.',
+    description: 'Search 1,900+ D1 players with advanced sabermetrics — wOBA, wRC+, FIP, ERA-.',
    images: ogImage('/images/og-college-baseball.png') },
   twitter: {
     card: 'summary_large_image',
     title: 'College Baseball Players | Blaze Sports Intel',
-    description: 'D1 college baseball player stats and profiles.',
+    description: 'Search 1,900+ D1 players with advanced sabermetrics — wOBA, wRC+, FIP, ERA-.',
     images: ['/images/og-college-baseball.png'],
   },
 };

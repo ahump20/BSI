@@ -7,6 +7,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 import type { Metadata } from 'next';
 
 import { ogImage } from '@/lib/metadata';
@@ -111,6 +112,13 @@ const FRESHMAN_STATS = {
 export default function VolantisDraftProfilePage() {
   return (
     <>
+      <ArticleJsonLd
+        headline="Dylan Volantis 2026 Draft Profile | Texas LHP"
+        description="Dylan Volantis draft profile — Texas sophomore LHP, 2025 SEC Freshman of the Year. 14 IP, 0 ER, 17 K through two starts in 2026. Closer-to-starter conversion analysis, statistical breakdown, and scouting report."
+        datePublished="2026-02-25"
+        url="/college-baseball/editorial/dylan-volantis-2026-draft-profile"
+        sport="College Baseball"
+      />
       <div className="pt-6 bg-midnight">
         {/* ── Hero ── */}
         <Section padding="lg">

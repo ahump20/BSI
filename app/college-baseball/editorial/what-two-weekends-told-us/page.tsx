@@ -7,6 +7,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
 import { BSIVerdict } from '@/components/editorial/BSIVerdict';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 import type { Metadata } from 'next';
 
 import { ogImage } from '@/lib/metadata';
@@ -88,6 +89,13 @@ const UNDEFEATED: UndefeatedTeam[] = [
 export default function WhatTwoWeekendsToldUsPage() {
   return (
     <>
+      <ArticleJsonLd
+        headline="What Two Weekends of College Baseball Actually Told Us"
+        description="An analytical breakdown of what the first 14 games of the 2026 college baseball season actually revealed — and what was noise. Transfer portal impact, pitching arms race, the undefeated problem, and which early-season data predicts Omaha."
+        datePublished="2026-02-25"
+        url="/college-baseball/editorial/what-two-weekends-told-us"
+        sport="College Baseball"
+      />
       <div className="pt-6 bg-midnight">
         {/* ── Hero ── */}
         <Section padding="lg">

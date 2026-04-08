@@ -15,10 +15,13 @@ import { metadata as layoutMetadata } from '@/app/layout';
 import { websiteJsonLd } from '@/lib/seo/structured-data';
 
 describe('homepage metadata', () => {
-  it('positions the homepage as a multi-sport product', () => {
-    expect(homeMetadata.title).toBe('Blaze Sports Intel | Live Scores, Analytics, and Editorial Across Five Sports');
-    expect(homeMetadata.description).toContain('college football');
-    expect(homeMetadata.description).not.toContain('Free park-adjusted sabermetrics for D1 college baseball');
+  it('positions the homepage as multi-sport with college baseball lead', () => {
+    expect(homeMetadata.title).toContain('Blaze Sports Intel');
+    expect(homeMetadata.title).toContain('College Baseball');
+    expect(homeMetadata.description).toContain('college baseball');
+    expect(homeMetadata.description).toContain('sabermetrics');
+    expect(homeMetadata.description).toContain('NFL');
+    expect(homeMetadata.description).toContain('NBA');
   });
 
   it('keeps site-wide metadata aligned with the homepage positioning', () => {

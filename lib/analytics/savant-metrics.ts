@@ -70,6 +70,7 @@ export interface LeagueContext {
   wobaScale: number;
   fipConstant: number;
   hrFBRate?: number;  // League HR/FB rate (for xFIP)
+  hr9?: number;       // League HR/9 (for xFIP approximation when FB data unavailable)
 }
 
 // ---------------------------------------------------------------------------
@@ -222,6 +223,25 @@ export function calculateXFIP(
   if (ip <= 0 || fb <= 0) return 0;
   const expectedHR = fb * leagueHRFBRate;
   return safe((13 * expectedHR + 3 * (bb + hbp) - 2 * so) / ip + fipConstant);
+}
+
+/**
+ * xFIP (estimated) — Expected FIP without fly ball tracking.
+ * Replaces individual HR with expected HR based on league HR/9 rate.
+ * Used when batted-ball data (fly balls) is not available from the data source.
+ * Approximation: expectedHR = (IP / 9) * leagueHR9.
+ */
+export function calculateXFIPFromHR9(
+  leagueHR9: number,
+  bb: number,
+  hbp: number,
+  so: number,
+  ip: number,
+  fipConstant: number,
+): number {
+  if (ip <= 0) return 0;
+  const expectedHR = (ip / 9) * leagueHR9;
+  return Math.max(0, safe((13 * expectedHR + 3 * (bb + hbp) - 2 * so) / ip + fipConstant));
 }
 
 /**

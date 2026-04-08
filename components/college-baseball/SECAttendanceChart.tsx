@@ -80,7 +80,7 @@ export function SECAttendanceChart() {
         ))}
       </div>
 
-      <div className="mt-6 pt-4 flex items-center justify-between text-[9px] uppercase tracking-widest" style={{ borderTop: '1px solid rgba(140,98,57,0.15)', color: 'var(--bsi-dust)', opacity: 0.6 }}>
+      <div className="mt-6 pt-4 flex items-center justify-between text-[9px] uppercase tracking-widest" style={{ borderTop: '1px solid rgba(140,98,57,0.15)', color: 'var(--bsi-dust)', opacity: 0.75 }}>
         <span>Source: NCAA, 2025 Regular Season</span>
         <span>Total attendance figures</span>
       </div>

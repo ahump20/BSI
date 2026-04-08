@@ -10,6 +10,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 export const metadata: Metadata = {
   title: 'Methodology | BSI',
   description: 'How BSI monitors sports conversation, validates claims, and prioritizes content across platforms.',
+  alternates: { canonical: '/about/methodology' },
 };
 
 export default function MethodologyPage() {

@@ -184,7 +184,7 @@ export function TrendingIntelFeed() {
               </div>
             );
 
-            const stableKey = article.url || article.headline || String(i);
+            const stableKey = `${article.url || article.headline || 'item'}-${i}`;
             return article.url ? (
               <a key={stableKey} href={article.url} target="_blank" rel="noopener noreferrer">
                 {inner}

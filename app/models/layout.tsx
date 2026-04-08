@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
 import { JsonLd } from '@/components/JsonLd';
+import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
   title: {
@@ -8,7 +9,20 @@ export const metadata: Metadata = {
     default: 'Models & Methodology | Blaze Sports Intel',
   },
   description:
-    'How BSI builds its analytics models — win probability, Monte Carlo simulations, data quality methodology. Every assumption documented, every input sourced.',
+    'Methodology, win probability, and model-health documentation for Blaze Sports Intel.',
+  alternates: { canonical: '/models' },
+  openGraph: {
+    title: 'Models | Blaze Sports Intel',
+    description:
+      'Methodology, win probability, and model-health documentation for Blaze Sports Intel.',
+    images: ogImage(),
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Models | Blaze Sports Intel',
+    description:
+      'Methodology, win probability, and model-health documentation for Blaze Sports Intel.',
+  },
 };
 
 export default function ModelsLayout({ children }: { children: ReactNode }) {

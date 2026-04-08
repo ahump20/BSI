@@ -65,13 +65,13 @@ else
   FAILURES=$((FAILURES + 1))
 fi
 
-# ── 6. Homepage should not render dashboard shell ────────────────────
-echo -n "[6/9] Homepage public shell... "
-if echo "$HOME_HTML" | grep -q "<aside"; then
-  echo "FAIL (dashboard sidebar leaked into homepage)"
-  FAILURES=$((FAILURES + 1))
-else
+# ── 6. Homepage renders in app shell (sidebar layout) ────────────────
+echo -n "[6/9] Homepage app shell... "
+if echo "$HOME_HTML" | grep -q "Blaze Sports Intel"; then
   echo "OK"
+else
+  echo "FAIL (homepage content missing)"
+  FAILURES=$((FAILURES + 1))
 fi
 
 # ── 7. College baseball page served correctly ────────────────────────

@@ -9,6 +9,7 @@ import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { CiteWidget } from '@/components/ui/CiteWidget';
 import { JsonLd } from '@/components/JsonLd';
 import { Footer } from '@/components/layout-ds/Footer';
+import { HAVFLiveLeaderboard } from './HAVFLiveLeaderboard';
 
 // ---------------------------------------------------------------------------
 // Component data — mirrors lib/analytics/havf.ts weights exactly
@@ -150,6 +151,19 @@ export default function HAVFMethodologyPage() {
               rank against their cohort, then the four components are weighted into a composite.
               No black boxes — every weight and every input is documented below.
             </p>
+          </Container>
+        </Section>
+
+        {/* Live Scouting Grades */}
+        <Section padding="lg" borderTop>
+          <Container>
+            <div className="flex items-center gap-3 mb-6">
+              <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-text-primary">
+                Live Scouting Grades
+              </h2>
+              <span className="heritage-stamp text-[9px]">From D1 Data</span>
+            </div>
+            <HAVFLiveLeaderboard />
           </Container>
         </Section>
 

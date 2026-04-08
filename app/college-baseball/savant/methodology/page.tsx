@@ -4,12 +4,12 @@ import { ogImage } from '@/lib/metadata';
 export const metadata: Metadata = {
   title: 'Methodology | College Baseball Savant | BSI',
   description:
-    'How BSI computes park-adjusted college baseball sabermetrics — wOBA linear weights, wRC+ normalization, FIP constants, park factor regression, and conference strength indexing for every D1 programs.',
+    'How BSI computes park-adjusted college baseball sabermetrics — wOBA linear weights, wRC+ normalization, FIP constants, park factor regression, and conference strength indexing for every D1 program.',
   alternates: { canonical: '/college-baseball/savant/methodology' },
   openGraph: {
     title: 'Methodology | College Baseball Savant',
     description:
-      'How BSI computes wOBA, wRC+, FIP, park factors, and conference strength for every D1 programs.',
+      'How BSI computes wOBA, wRC+, FIP, park factors, and conference strength for every D1 program.',
     images: ogImage('/images/og-college-baseball.png'),
   },
 };
@@ -19,7 +19,7 @@ const jsonLd = {
   '@type': 'TechArticle',
   headline: 'BSI Savant Methodology — Park-Adjusted College Baseball Sabermetrics',
   description:
-    'How BSI computes wOBA, wRC+, FIP, ERA-, park factors, and conference strength for every D1 programs using Tango-methodology linear weights.',
+    'How BSI computes wOBA, wRC+, FIP, ERA-, park factors, and conference strength for every D1 program using Tango-methodology linear weights.',
   author: {
     '@type': 'Person',
     name: 'Austin Humphrey',

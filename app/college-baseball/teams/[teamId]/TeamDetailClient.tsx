@@ -340,7 +340,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
     const shortName = meta.shortName.toLowerCase();
     const teamPlayers = nilLeaderboardData.data.filter(p => {
       const pTeam = p.team.toLowerCase();
-      return pTeam === teamName || pTeam === shortName || teamName.includes(pTeam) || pTeam.includes(shortName);
+      return pTeam === teamName || pTeam === shortName;
     });
     if (teamPlayers.length === 0) return null;
     const avgIndex = teamPlayers.reduce((sum, p) => sum + p.index_score, 0) / teamPlayers.length;

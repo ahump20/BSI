@@ -137,6 +137,21 @@ export const GHOST_REDIRECTS: Record<string, string> = {
   '/college-baseball.html': '/college-baseball',
   '/college-baseball/rankings.html': '/college-baseball/rankings',
   '/college-baseball/players.html': '/college-baseball/players',
+  '/features': '/',
+  '/features/': '/',
+  '/sources-methods.html': '/data-sources',
+  '/sec-intelligence-dashboard.html': '/intel',
+  '/index.html': '/',
+  '/legal/accessibility': '/about',
+  '/legal/accessibility/': '/about',
+  '/college-football': '/cfb',
+  '/college-football/': '/cfb',
+  '/for-coaches': '/pricing',
+  '/for-coaches/': '/pricing',
+  '/draft-guide': '/college-baseball/editorial',
+  '/draft-guide/': '/college-baseball/editorial',
+  '/cookies': '/privacy',
+  '/cookies/': '/privacy',
 };
 
 export const MCP_SERVER_INFO = {

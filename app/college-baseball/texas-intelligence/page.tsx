@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: 'Texas Longhorns Baseball Intelligence Hub | BSI',
   description:
     'Live sabermetrics, SEC positioning, film room, social signals, NIL intelligence, and program history for Texas Longhorns baseball — all in one place.',
+  alternates: { canonical: '/college-baseball/texas-intelligence' },
   openGraph: {
     title: 'Texas Longhorns Baseball Intelligence Hub',
     description:

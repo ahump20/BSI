@@ -5,8 +5,9 @@
  *
  * Full search results page with filtering by sport and entity type.
  * Displays teams, players, and games across all covered sports.
+ * Heritage Design System v2.1
  *
- * Last Updated: 2026-02-27
+ * Last Updated: 2026-03-28
  */
 
 import { Suspense, useState, useEffect } from 'react';
@@ -18,7 +19,6 @@ import { Card } from '@/components/ui/Card';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SearchBar } from '@/components/layout-ds/SearchBar';
-import { HeroGlow } from '@/components/ui/HeroGlow';
 import { FilterPill } from '@/components/ui/FilterPill';
 
 // ============================================================================
@@ -76,7 +76,7 @@ function getSportLabel(sport: string): string {
 }
 
 function getSportColor(sport: string): string {
-  return SPORT_COLORS[sport.toLowerCase()] || 'bg-background-tertiary';
+  return SPORT_COLORS[sport.toLowerCase()] || 'bg-[var(--surface-dugout)]';
 }
 
 // ============================================================================
@@ -86,11 +86,14 @@ function getSportColor(sport: string): string {
 function SearchLoading() {
   return (
     <>
-      <div>
+      <div style={{ minHeight: '100vh', background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
         <Section padding="lg" className="pt-6 min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-burnt-orange mx-auto mb-4" />
-            <p className="text-text-secondary">Loading search...</p>
+            <div
+              className="animate-spin rounded-full h-12 w-12 mx-auto mb-4"
+              style={{ borderTop: '2px solid var(--bsi-primary)', borderBottom: '2px solid var(--bsi-primary)', borderLeft: '2px solid transparent', borderRight: '2px solid transparent' }}
+            />
+            <p style={{ color: 'var(--bsi-dust)' }}>Loading search...</p>
           </div>
         </Section>
       </div>
@@ -188,18 +191,19 @@ function SearchContent() {
 
   return (
     <>
-      <div>
-        {/* Header */}
-        <Section padding="md" className="relative overflow-hidden">
-          <HeroGlow />
-
+      <div style={{ minHeight: '100vh', background: 'var(--surface-scoreboard)', color: 'var(--bsi-bone)' }}>
+        {/* Hero Header */}
+        <Section padding="md" className="relative overflow-hidden" style={{ background: 'var(--surface-scoreboard)' }}>
           <Container>
             <ScrollReveal direction="up">
-              <span className="section-label block mb-4">Search</span>
+              <span className="heritage-stamp block mb-4">Search</span>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-text-primary mb-6">
+              <h1
+                className="text-3xl md:text-4xl font-bold uppercase tracking-wide mb-6"
+                style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+              >
                 {initialQuery ? `Results for "${initialQuery}"` : 'Cross-Sport Search'}
               </h1>
             </ScrollReveal>
@@ -239,7 +243,7 @@ function SearchContent() {
 
             {/* Results Count */}
             {!isLoading && initialQuery && (
-              <p className="text-text-secondary mb-6">
+              <p style={{ color: 'var(--bsi-dust)' }} className="mb-6">
                 Found {filteredResults.length} result{filteredResults.length !== 1 ? 's' : ''}
                 {filters.sport && ` in ${getSportLabel(filters.sport)}`}
               </p>
@@ -248,17 +252,20 @@ function SearchContent() {
             {/* Loading State */}
             {isLoading && (
               <div className="flex items-center justify-center py-16">
-                <div className="animate-spin w-8 h-8 border-2 border-burnt-orange border-t-transparent rounded-full" />
+                <div
+                  className="animate-spin w-8 h-8 rounded-full"
+                  style={{ border: '2px solid var(--bsi-primary)', borderTopColor: 'transparent' }}
+                />
               </div>
             )}
 
             {/* Error State */}
             {error && (
-              <Card variant="default" padding="lg" className="text-center">
-                <p className="text-[var(--bsi-danger)] mb-4">{error}</p>
+              <Card variant="default" padding="lg" className="heritage-card text-center">
+                <p className="mb-4" style={{ color: 'var(--bsi-danger)' }}>{error}</p>
                 <button
                   onClick={() => window.location.reload()}
-                  className="px-4 py-2 bg-burnt-orange text-white rounded-sm hover:bg-burnt-orange-dark transition-colors"
+                  className="btn-heritage-fill px-4 py-2 rounded-sm transition-colors"
                 >
                   Try Again
                 </button>
@@ -267,32 +274,45 @@ function SearchContent() {
 
             {/* No Results */}
             {!isLoading && !error && initialQuery && filteredResults.length === 0 && (
-              <Card variant="default" padding="lg" className="text-center">
-                <div className="mb-4 flex justify-center"><svg viewBox="0 0 24 24" fill="none" className="w-14 h-14 text-text-muted" stroke="currentColor" strokeWidth={1.5}><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></svg></div>
-                <h2 className="text-xl font-semibold text-text-primary mb-2">No Results Found</h2>
-                <p className="text-text-secondary mb-4">
+              <Card variant="default" padding="lg" className="heritage-card text-center">
+                <div className="mb-4 flex justify-center">
+                  <svg viewBox="0 0 24 24" fill="none" className="w-14 h-14" style={{ color: 'rgba(196,184,165,0.35)' }} stroke="currentColor" strokeWidth={1.5}>
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="M21 21l-4.35-4.35" />
+                  </svg>
+                </div>
+                <h2
+                  className="text-xl font-semibold mb-2"
+                  style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                >
+                  No Results Found
+                </h2>
+                <p style={{ color: 'var(--bsi-dust)' }} className="mb-4">
                   No matches for &ldquo;{initialQuery}&rdquo;
                   {filters.sport && ` in ${getSportLabel(filters.sport)}`}
                 </p>
-                <p className="text-sm text-text-tertiary mb-6">
-                  Try <Link href="/" className="text-burnt-orange hover:text-ember transition-colors font-medium">Ask BSI</Link> on the homepage — it understands natural language questions like &ldquo;{initialQuery}&rdquo;.
+                <p className="text-sm mb-6" style={{ color: 'rgba(196,184,165,0.5)' }}>
+                  Try <Link href="/" className="font-medium transition-colors" style={{ color: 'var(--bsi-primary)' }}>Ask BSI</Link> on the homepage — it understands natural language questions like &ldquo;{initialQuery}&rdquo;.
                 </p>
                 <div className="flex flex-wrap justify-center gap-3">
                   <Link
                     href="/college-baseball/teams"
-                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-sm hover:bg-surface-light transition-colors"
+                    className="px-4 py-2 rounded-sm transition-colors"
+                    style={{ background: 'var(--surface-dugout)', color: 'var(--bsi-bone)' }}
                   >
                     Browse NCAA Baseball
                   </Link>
                   <Link
                     href="/mlb/teams"
-                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-sm hover:bg-surface-light transition-colors"
+                    className="px-4 py-2 rounded-sm transition-colors"
+                    style={{ background: 'var(--surface-dugout)', color: 'var(--bsi-bone)' }}
                   >
                     Browse MLB Teams
                   </Link>
                   <Link
                     href="/nfl/teams"
-                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-sm hover:bg-surface-light transition-colors"
+                    className="px-4 py-2 rounded-sm transition-colors"
+                    style={{ background: 'var(--surface-dugout)', color: 'var(--bsi-bone)' }}
                   >
                     Browse NFL Teams
                   </Link>
@@ -305,7 +325,10 @@ function SearchContent() {
               <div className="space-y-8">
                 {/* Popular Searches */}
                 <div>
-                  <h2 className="font-display text-lg font-bold uppercase tracking-wide text-text-primary mb-4">
+                  <h2
+                    className="text-lg font-bold uppercase tracking-wide mb-4"
+                    style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                  >
                     Popular Searches
                   </h2>
                   <div className="flex flex-wrap gap-2">
@@ -317,7 +340,12 @@ function SearchContent() {
                       <Link
                         key={term}
                         href={`/search?q=${encodeURIComponent(term)}`}
-                        className="px-3 py-1.5 text-sm bg-surface-light border border-border-subtle rounded-sm text-text-secondary hover:text-burnt-orange hover:border-burnt-orange/30 transition-colors"
+                        className="px-3 py-1.5 text-sm rounded-sm transition-colors"
+                        style={{
+                          background: 'var(--surface-press-box)',
+                          border: '1px solid var(--border-vintage)',
+                          color: 'var(--bsi-dust)',
+                        }}
                       >
                         {term}
                       </Link>
@@ -326,24 +354,31 @@ function SearchContent() {
                 </div>
 
                 {/* Ask BSI Callout */}
-                <Card variant="default" padding="lg" className="border-burnt-orange/20">
+                <Card variant="default" padding="lg" className="heritage-card" style={{ borderColor: 'rgba(191,87,0,0.2)' }}>
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-sm bg-burnt-orange/10 flex items-center justify-center shrink-0">
-                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-burnt-orange" stroke="currentColor" strokeWidth={1.5}>
+                    <div
+                      className="w-12 h-12 rounded-sm flex items-center justify-center shrink-0"
+                      style={{ background: 'rgba(191,87,0,0.1)' }}
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" style={{ color: 'var(--bsi-primary)' }} stroke="currentColor" strokeWidth={1.5}>
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" />
                         <path d="M12 16v-4M12 8h.01" />
                       </svg>
                     </div>
                     <div>
-                      <h3 className="font-display text-base font-bold uppercase tracking-wide text-text-primary mb-1">
+                      <h3
+                        className="text-base font-bold uppercase tracking-wide mb-1"
+                        style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                      >
                         Try Ask BSI
                       </h3>
-                      <p className="text-sm text-text-secondary mb-3">
+                      <p className="text-sm mb-3" style={{ color: 'var(--bsi-dust)' }}>
                         Ask questions in plain English — &ldquo;Is Texas a CWS contender?&rdquo; or &ldquo;Who leads D1 in wOBA?&rdquo; — and get answers with links to the right page.
                       </p>
                       <Link
                         href="/"
-                        className="text-sm text-burnt-orange font-semibold hover:text-ember transition-colors"
+                        className="text-sm font-semibold transition-colors"
+                        style={{ color: 'var(--bsi-primary)' }}
                       >
                         Ask BSI on the homepage &rarr;
                       </Link>
@@ -353,7 +388,10 @@ function SearchContent() {
 
                 {/* Browse by Sport */}
                 <div>
-                  <h2 className="font-display text-lg font-bold uppercase tracking-wide text-text-primary mb-4">
+                  <h2
+                    className="text-lg font-bold uppercase tracking-wide mb-4"
+                    style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                  >
                     Browse by Sport
                   </h2>
                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 max-w-3xl">
@@ -367,10 +405,11 @@ function SearchContent() {
                       <Link
                         key={sport.href}
                         href={sport.href}
-                        className="p-4 bg-background-tertiary rounded-sm hover:bg-surface-light transition-colors"
+                        className="p-4 rounded-sm transition-colors"
+                        style={{ background: 'var(--surface-dugout)' }}
                       >
-                        <p className="font-medium text-text-primary">{sport.label}</p>
-                        <p className="text-xs text-text-tertiary">{sport.sub}</p>
+                        <p className="font-medium" style={{ color: 'var(--bsi-bone)' }}>{sport.label}</p>
+                        <p className="text-xs" style={{ color: 'rgba(196,184,165,0.5)' }}>{sport.sub}</p>
                       </Link>
                     ))}
                   </div>
@@ -383,13 +422,16 @@ function SearchContent() {
               <div className="space-y-8">
                 {Object.entries(resultsBySport).map(([sport, items]) => (
                   <div key={sport}>
-                    <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+                    <h2
+                      className="text-lg font-semibold mb-4 flex items-center gap-2"
+                      style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-bone)' }}
+                    >
                       <span
                         className={`w-3 h-3 rounded-full ${getSportColor(sport)}`}
                         aria-hidden="true"
                       />
                       {getSportLabel(sport)}
-                      <span className="text-text-tertiary font-normal">({items.length})</span>
+                      <span className="font-normal" style={{ color: 'rgba(196,184,165,0.5)' }}>({items.length})</span>
                     </h2>
 
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -399,22 +441,27 @@ function SearchContent() {
                             <Card
                               variant="default"
                               padding="md"
-                              className="h-full transition-all group-hover:border-burnt-orange"
+                              className="heritage-card h-full transition-all"
+                              style={{ borderColor: 'var(--border-vintage)' }}
                             >
                               <div className="flex items-center gap-4">
                                 {/* Type Badge */}
                                 <div
-                                  className={`w-12 h-12 rounded-sm flex items-center justify-center text-white font-bold text-sm ${getSportColor(sport)} group-hover:scale-105 transition-transform`}
+                                  className={`w-12 h-12 rounded-sm flex items-center justify-center font-bold text-sm ${getSportColor(sport)} group-hover:scale-105 transition-transform`}
+                                  style={{ color: 'var(--bsi-bone)' }}
                                 >
                                   {item.name.substring(0, 2).toUpperCase()}
                                 </div>
 
                                 {/* Info */}
                                 <div className="flex-1 min-w-0">
-                                  <p className="font-semibold text-text-primary group-hover:text-burnt-orange transition-colors truncate">
+                                  <p
+                                    className="font-semibold transition-colors truncate group-hover:text-[var(--bsi-primary)]"
+                                    style={{ color: 'var(--bsi-bone)' }}
+                                  >
                                     {item.name}
                                   </p>
-                                  <p className="text-xs text-text-tertiary truncate capitalize">
+                                  <p className="text-xs truncate capitalize" style={{ color: 'rgba(196,184,165,0.5)' }}>
                                     {item.type} {item.sport ? `· ${item.sport}` : ''}
                                   </p>
                                 </div>
@@ -422,7 +469,8 @@ function SearchContent() {
                                 {/* Arrow */}
                                 <svg
                                   viewBox="0 0 24 24"
-                                  className="w-5 h-5 text-text-tertiary group-hover:text-burnt-orange transition-colors shrink-0"
+                                  className="w-5 h-5 shrink-0 transition-colors group-hover:text-[var(--bsi-primary)]"
+                                  style={{ color: 'rgba(196,184,165,0.5)' }}
                                   fill="none"
                                   stroke="currentColor"
                                   strokeWidth="2"

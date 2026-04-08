@@ -158,6 +158,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* next/font/google self-hosts fonts at build time — no runtime Google Fonts connection needed */}
         <link rel="preconnect" href="https://customer-mpdvoybjqct2pzls.cloudflarestream.com" />
         <link rel="dns-prefetch" href="https://a.espncdn.com" />
+        <link rel="dns-prefetch" href="https://site.api.espn.com" />
+        <link rel="preload" as="image" href="/images/brand/bsi-lettermark-square.png" />
         {/* Static JSON-LD for SEO — hardcoded content, no user input */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdContent }} />
         <BreadcrumbJsonLd />

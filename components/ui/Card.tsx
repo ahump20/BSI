@@ -6,6 +6,10 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
   variant?: 'default' | 'hover' | 'elevated';
   padding?: 'none' | 'sm' | 'md' | 'lg';
+  /** Team/accent color for left-border highlight */
+  accentColor?: string;
+  /** Enable warm glow effect on hover (uses accentColor or bsi-primary) */
+  glow?: boolean;
   className?: string;
 }
 
@@ -24,28 +28,39 @@ const paddingClasses: Record<string, string> = {
 };
 
 const variantClasses: Record<string, string> = {
-  default: 'bg-[var(--surface-dugout,_#161616)] border border-[var(--border-vintage,_rgba(140,98,57,0.3))] rounded-sm',
+  default: 'bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm',
   hover:
-    'bg-[var(--surface-dugout,_#161616)] border border-[var(--border-vintage,_rgba(140,98,57,0.3))] rounded-sm hover:-translate-y-1 hover:border-burnt-orange/30 hover:shadow-[0_8px_30px_rgba(0,0,0,0.3)] transition-all duration-300',
-  elevated: 'bg-[var(--surface-press-box,_#111111)] border border-[var(--border-vintage,_rgba(140,98,57,0.3))] rounded-sm shadow-lg',
+    'bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm hover:-translate-y-1 hover:border-[rgba(140,98,57,0.5)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.3)] transition-all duration-300',
+  elevated: 'bg-[var(--surface-press-box)] border border-[var(--border-vintage)] rounded-sm shadow-lg',
 };
 
 export function Card({
   children,
   variant = 'default',
   padding = 'none',
+  accentColor,
+  glow = false,
   className = '',
   onClick,
   role,
   tabIndex,
   onKeyDown,
+  style,
   ...props
 }: CardProps) {
   const interactive = typeof onClick === 'function';
+  const glowColor = accentColor ?? 'var(--bsi-primary)';
 
   return (
     <div
       className={`${variantClasses[variant]} ${paddingClasses[padding]} ${interactive ? 'cursor-pointer' : ''} ${className}`}
+      style={{
+        borderLeft: accentColor ? `3px solid ${accentColor}` : undefined,
+        boxShadow: glow
+          ? `0 0 20px color-mix(in srgb, ${glowColor} 15%, transparent)`
+          : undefined,
+        ...style,
+      }}
       onClick={onClick}
       role={role ?? (interactive ? 'button' : undefined)}
       tabIndex={tabIndex ?? (interactive ? 0 : undefined)}

@@ -15,6 +15,7 @@ import { HeroGlow } from '@/components/ui/HeroGlow';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { teamMetadata } from '@/lib/data/team-metadata';
 import { DataAttribution } from '@/components/ui/DataAttribution';
+import { DegradedDataBanner } from '@/components/ui/DegradedDataBanner';
 import { formatTimestamp } from '@/lib/utils/timezone';
 
 /** Map a full team name (e.g. "Texas Longhorns") to its teamMetadata slug (e.g. "texas"). */
@@ -91,7 +92,27 @@ interface RankingsApiResponse {
     dataSource: string;
     lastUpdated: string;
     sport: string;
+    degraded?: boolean;
   };
+}
+
+/** Look up a team's conference from teamMetadata by matching name. */
+function lookupConference(teamName: string): string {
+  const lower = teamName.toLowerCase();
+  for (const meta of Object.values(teamMetadata)) {
+    if (meta.name.toLowerCase() === lower || meta.shortName.toLowerCase() === lower) {
+      return meta.conference;
+    }
+  }
+  // Fallback: try matching just the school name (first word(s) before mascot)
+  const words = teamName.split(' ');
+  if (words.length > 1) {
+    const school = words.slice(0, -1).join(' ').toLowerCase();
+    for (const meta of Object.values(teamMetadata)) {
+      if (meta.shortName.toLowerCase() === school) return meta.conference;
+    }
+  }
+  return '';
 }
 
 // Transform rankings API response to our internal format.
@@ -114,10 +135,10 @@ function transformESPNRankings(data: RankingsApiResponse): RankingPoll | null {
         rank: entry.rank as number,
         previousRank: (entry.prev_rank as number) ?? undefined,
         team: (entry.team as string) || 'Unknown',
-        conference: '',
+        conference: lookupConference((entry.team as string) || ''),
         record: (entry.record as string) || '',
-        points: (entry.points as number) ?? 0,
-        firstPlace: (entry.firstPlaceVotes as number) ?? 0,
+        points: (entry.points as number) || undefined,
+        firstPlace: (entry.firstPlaceVotes as number) || undefined,
       })),
     };
   }
@@ -130,17 +151,20 @@ function transformESPNRankings(data: RankingsApiResponse): RankingPoll | null {
     id: 'espn',
     name: poll.name || 'ESPN Top 25',
     lastUpdated: data.meta?.lastUpdated || new Date().toISOString(),
-    teams: poll.ranks.map((entry) => ({
-      rank: entry.current,
-      previousRank: entry.previous,
-      team: entry.team?.location
+    teams: poll.ranks.map((entry) => {
+      const teamName = entry.team?.location
         ? `${entry.team.location} ${entry.team.name}`
-        : entry.team?.nickname || entry.team?.name || 'Unknown',
-      conference: '',
-      record: entry.recordSummary || '',
-      points: entry.points,
-      firstPlace: entry.firstPlaceVotes,
-    })),
+        : entry.team?.nickname || entry.team?.name || 'Unknown';
+      return {
+        rank: entry.current,
+        previousRank: entry.previous,
+        team: teamName,
+        conference: lookupConference(teamName),
+        record: entry.recordSummary || '',
+        points: entry.points || undefined,
+        firstPlace: entry.firstPlaceVotes || undefined,
+      };
+    }),
   };
 }
 
@@ -151,6 +175,12 @@ export default function CollegeBaseballRankingsPage() {
     '/api/college-baseball/rankings'
   );
   const rankings = rawData ? transformESPNRankings(rawData) : null;
+
+  // Determine which optional columns have real data
+  const hasPoints = rankings?.teams.some((t) => t.points != null && t.points > 0) ?? false;
+  const hasFirstPlace = rankings?.teams.some((t) => t.firstPlace != null && t.firstPlace > 0) ?? false;
+  const hasStreak = rankings?.teams.some((t) => t.streak && t.streak !== '-') ?? false;
+  const hasConference = rankings?.teams.some((t) => t.conference && t.conference.length > 0) ?? false;
 
   const getRankChange = (current: number, previous?: number) => {
     if (!previous || current === previous) return null;
@@ -228,6 +258,8 @@ export default function CollegeBaseballRankingsPage() {
               </Card>
             </ScrollReveal>
 
+            <DegradedDataBanner degraded={!!rawData?.meta?.degraded} source={rawData?.meta?.dataSource} />
+
             {/* Rankings Table */}
             <DataErrorBoundary name="Rankings">
             {loading ? (
@@ -268,40 +300,42 @@ export default function CollegeBaseballRankingsPage() {
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
-                        <tr className="bg-background-secondary border-b border-border-subtle">
-                          <th className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider w-16">
+                        <tr className="bg-[var(--surface-press-box)] border-b border-[var(--border-vintage)]">
+                          <th className="text-left py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider w-16">
                             Rank
                           </th>
-                          <th className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+                          <th className="text-left py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider">
                             Team
                           </th>
-                          <th className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden md:table-cell">
-                            Conference
-                          </th>
-                          <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+                          {hasConference && (
+                            <th className="text-left py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden md:table-cell">
+                              Conference
+                            </th>
+                          )}
+                          <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider">
                             Record
                           </th>
                           {selectedPoll === 'rpi' && (
-                            <>
-                              <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden lg:table-cell">
-                                SOS
-                              </th>
-                            </>
+                            <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden lg:table-cell">
+                              SOS
+                            </th>
                           )}
-                          {(selectedPoll === 'd1baseball' || selectedPoll === 'coaches') && (
-                            <>
-                              <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden lg:table-cell">
-                                Points
-                              </th>
-                              <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden lg:table-cell">
-                                #1 Votes
-                              </th>
-                            </>
+                          {hasPoints && (
+                            <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden lg:table-cell">
+                              Points
+                            </th>
                           )}
-                          <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden md:table-cell">
-                            Streak
-                          </th>
-                          <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider w-24">
+                          {hasFirstPlace && (
+                            <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden lg:table-cell">
+                              #1 Votes
+                            </th>
+                          )}
+                          {hasStreak && (
+                            <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider hidden md:table-cell">
+                              Streak
+                            </th>
+                          )}
+                          <th className="text-center py-4 px-4 text-xs font-semibold text-[var(--bsi-dust)] uppercase tracking-wider w-24">
                             Change
                           </th>
                         </tr>
@@ -335,34 +369,36 @@ export default function CollegeBaseballRankingsPage() {
                                   {team.team}
                                 </Link>
                               </td>
-                              <td className="py-4 px-4 text-text-secondary hidden md:table-cell">
-                                {team.conference}
-                              </td>
+                              {hasConference && (
+                                <td className="py-4 px-4 text-text-secondary hidden md:table-cell">
+                                  {team.conference}
+                                </td>
+                              )}
                               <td className="py-4 px-4 text-center">
                                 <span className="text-text-primary font-mono">{team.record}</span>
                               </td>
                               {selectedPoll === 'rpi' && (
-                                <>
-                                  <td className="py-4 px-4 text-center text-text-secondary font-mono hidden lg:table-cell">
-                                    {team.sos ?? '-'}
-                                  </td>
-                                </>
+                                <td className="py-4 px-4 text-center text-text-secondary font-mono hidden lg:table-cell">
+                                  {team.sos ?? '-'}
+                                </td>
                               )}
-                              {(selectedPoll === 'd1baseball' || selectedPoll === 'coaches') && (
-                                <>
-                                  <td className="py-4 px-4 text-center text-text-secondary font-mono hidden lg:table-cell">
-                                    {team.points ?? '-'}
-                                  </td>
-                                  <td className="py-4 px-4 text-center text-text-secondary hidden lg:table-cell">
-                                    {team.firstPlace ? `(${team.firstPlace})` : '-'}
-                                  </td>
-                                </>
+                              {hasPoints && (
+                                <td className="py-4 px-4 text-center text-text-secondary font-mono hidden lg:table-cell">
+                                  {team.points ?? '-'}
+                                </td>
                               )}
-                              <td
-                                className={`py-4 px-4 text-center font-semibold hidden md:table-cell ${getStreakClass(team.streak)}`}
-                              >
-                                {team.streak ?? '-'}
-                              </td>
+                              {hasFirstPlace && (
+                                <td className="py-4 px-4 text-center text-text-secondary hidden lg:table-cell">
+                                  {team.firstPlace ? `(${team.firstPlace})` : '-'}
+                                </td>
+                              )}
+                              {hasStreak && (
+                                <td
+                                  className={`py-4 px-4 text-center font-semibold hidden md:table-cell ${getStreakClass(team.streak)}`}
+                                >
+                                  {team.streak ?? '-'}
+                                </td>
+                              )}
                               <td className="py-4 px-4 text-center">
                                 {change ? (
                                   <span
@@ -413,8 +449,8 @@ export default function CollegeBaseballRankingsPage() {
                   </div>
 
                   {/* Legend */}
-                  <div className="px-4 py-3 bg-background-secondary border-t border-border-subtle">
-                    <div className="flex flex-wrap items-center gap-4 text-xs text-text-tertiary">
+                  <div className="px-4 py-3 bg-[var(--surface-press-box)] border-t border-[var(--border-vintage)]">
+                    <div className="flex flex-wrap items-center gap-4 text-xs text-[var(--bsi-dust)]">
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 bg-burnt-orange/20 rounded-sm" />
                         <span>Top 10 Teams</span>
@@ -433,27 +469,66 @@ export default function CollegeBaseballRankingsPage() {
               </ScrollReveal>
             )}
 
-            {/* Also Receiving Votes / Dropped Out */}
-            {rankings && rankings.teams.length > 0 && (
-              <ScrollReveal direction="up" delay={250}>
-                <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Card padding="md">
-                    <h3 className="font-display text-lg font-bold text-text-primary mb-4">
-                      Also Receiving Votes
-                    </h3>
-                    <p className="text-text-secondary text-sm">
-                      Teams receiving votes outside the Top 25 — updated weekly with each new poll.
-                    </p>
-                  </Card>
-                  <Card padding="md">
-                    <h3 className="font-display text-lg font-bold text-text-primary mb-4">Dropped Out</h3>
-                    <p className="text-text-secondary text-sm">
-                      Teams that dropped from the Top 25 this week — tracked across every poll release.
-                    </p>
-                  </Card>
-                </div>
-              </ScrollReveal>
-            )}
+            {/* Dropped Out — shows teams that fell from the Top 25 based on rank movement */}
+            {rankings && rankings.teams.length > 0 && (() => {
+              const droppedOut = rankings.teams.filter(
+                (t) => t.previousRank !== undefined && t.previousRank <= 25 && t.rank > 25
+              );
+              const alsoReceiving = rankings.teams.filter(
+                (t) => t.rank > 25 && (t.points ?? 0) > 0
+              );
+              if (droppedOut.length === 0 && alsoReceiving.length === 0) return null;
+              return (
+                <ScrollReveal direction="up" delay={250}>
+                  <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {alsoReceiving.length > 0 && (
+                      <Card padding="md">
+                        <h3 className="font-display text-lg font-bold text-text-primary mb-4">
+                          Also Receiving Votes
+                        </h3>
+                        <div className="space-y-2">
+                          {alsoReceiving.map((t) => (
+                            <div key={t.team} className="flex items-center justify-between text-sm">
+                              <Link
+                                href={`/college-baseball/teams/${teamSlug(t.team)}`}
+                                className="text-text-primary hover:text-burnt-orange transition-colors font-medium"
+                              >
+                                {t.team}
+                              </Link>
+                              <span className="text-text-secondary font-mono text-xs">
+                                {t.points} pts
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </Card>
+                    )}
+                    {droppedOut.length > 0 && (
+                      <Card padding="md">
+                        <h3 className="font-display text-lg font-bold text-text-primary mb-4">
+                          Dropped Out
+                        </h3>
+                        <div className="space-y-2">
+                          {droppedOut.map((t) => (
+                            <div key={t.team} className="flex items-center justify-between text-sm">
+                              <Link
+                                href={`/college-baseball/teams/${teamSlug(t.team)}`}
+                                className="text-text-primary hover:text-burnt-orange transition-colors font-medium"
+                              >
+                                {t.team}
+                              </Link>
+                              <span className="text-error text-xs">
+                                was #{t.previousRank}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </Card>
+                    )}
+                  </div>
+                </ScrollReveal>
+              );
+            })()}
 
             {/* Savant Cross-Link */}
             <div className="mt-10">
@@ -480,7 +555,7 @@ export default function CollegeBaseballRankingsPage() {
             </div>
 
             {/* Data Attribution */}
-            <div className="mt-6 pt-4 border-t border-white/[0.06] flex justify-center">
+            <div className="mt-6 pt-4 border-t border-[var(--border-vintage)] flex justify-center">
               <DataAttribution
                 source="D1Baseball"
                 lastUpdated={rankings?.lastUpdated}

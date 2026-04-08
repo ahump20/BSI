@@ -1,0 +1,9 @@
+{
+  "name": "build-ios-apps",
+  "description": "Claude-native port of the OpenAI-curated build-ios-apps bundle for SwiftUI UI work, refactors, performance audits, and simulator-guided debugging.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Austin Humphrey",
+    "email": "Austin@BlazeSportsIntel.com"
+  }
+}

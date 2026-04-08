@@ -16,8 +16,8 @@ preview_id = "abf84a80fa024f43bc62daf786955e2b"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "bsi-prod-db"
-database_id = "6921617f-5351-4df3-aeab-07425e72ec6b"
+database_name = "bsi-show-dd-db"
+database_id = "a0b187a0-3e47-4ad8-92b1-eedb363f5d0e"
 
 [[r2_buckets]]
 binding = "DATA_LAKE"

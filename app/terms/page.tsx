@@ -7,6 +7,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 export const metadata: Metadata = {
   title: 'Terms of Service | Blaze Sports Intel',
   description: 'Terms of Service for Blaze Sports Intel platform.',
+  alternates: { canonical: '/terms' },
 };
 
 export default function TermsPage() {

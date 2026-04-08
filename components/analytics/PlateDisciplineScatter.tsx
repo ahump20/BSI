@@ -91,7 +91,7 @@ export function PlateDisciplineScatter({
           <h3 className="font-savant-display text-base uppercase tracking-wider text-[var(--svt-text,_#F5F0EB)]">
             Plate Discipline
           </h3>
-          <p className="text-[10px] font-mono text-[var(--svt-text-muted,_#A89F95)] mt-0.5">
+          <p className="text-[10px] font-mono text-[var(--svt-text-muted,_#C4B8A5)] mt-0.5">
             K% vs BB% · Bubble size = plate appearances
           </p>
         </div>
@@ -99,10 +99,10 @@ export function PlateDisciplineScatter({
           aria-label="Filter by conference"
           value={selectedConf}
           onChange={(e) => setSelectedConf(e.target.value)}
-          className="bg-[var(--svt-surface,_rgba(255,255,255,0.04))] border border-[var(--svt-border,_rgba(255,255,255,0.1))] rounded-sm px-2.5 py-1.5 text-xs text-[var(--svt-text-muted,_#A89F95)] font-mono appearance-none cursor-pointer hover:border-[var(--svt-accent,_#BF5700)] transition-colors focus:outline-none"
+          className="bg-[var(--svt-surface,_rgba(140,98,57,0.12))] border border-[var(--svt-border,_rgba(140,98,57,0.2))] rounded-sm px-2.5 py-1.5 text-xs text-[var(--svt-text-muted,_#C4B8A5)] font-mono appearance-none cursor-pointer hover:border-[var(--svt-accent,_#BF5700)] transition-colors focus:outline-none"
         >
           {conferences.map(c => (
-            <option key={c} value={c} className="bg-[#12151c] text-[#e8eaf0]">
+            <option key={c} value={c} className="bg-[var(--surface-press-box)] text-[#e8eaf0]">
               {c || 'All Conferences'}
             </option>
           ))}
@@ -187,7 +187,7 @@ export function PlateDisciplineScatter({
                 if (!payload?.length) return null;
                 const p = payload[0].payload as ScatterPlayer;
                 return (
-                  <div className="bg-[var(--svt-surface,_#12151c)] border border-[var(--svt-border,_#242a38)] rounded-sm px-3 py-2 shadow-xl">
+                  <div className="bg-[var(--svt-surface,_var(--surface-press-box))] border border-[var(--svt-border,_var(--border-vintage))] rounded-sm px-3 py-2 shadow-xl">
                     <div className="text-sm text-[var(--svt-text,_#e8eaf0)] font-medium">{p.player_name}</div>
                     <div className="text-[10px] text-[var(--svt-text-muted,_#8890a4)]">{p.team} · {p.conference}</div>
                     <div className="flex gap-3 mt-1.5">
@@ -253,7 +253,7 @@ export function PlateDisciplineScatter({
             }`}
           >
             <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: getConfColor(conf) }} />
-            <span className="text-[9px] font-mono text-[var(--svt-text-muted,_#A89F95)]">{conf}</span>
+            <span className="text-[9px] font-mono text-[var(--svt-text-muted,_#C4B8A5)]">{conf}</span>
           </button>
         ))}
       </div>

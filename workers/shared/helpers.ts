@@ -269,25 +269,6 @@ interface MetaOptions {
   degraded?: boolean;
 }
 
-export function cvApiResponse<T>(
-  data: T,
-  source: string,
-  cacheHit: boolean,
-  opts: MetaOptions = {},
-): object {
-  return {
-    data,
-    meta: buildMeta(source, {
-      sources: opts.sources,
-      degraded: opts.degraded,
-      extra: {
-        cache_hit: cacheHit,
-        ...(opts.ttlSeconds !== undefined ? { ttl_seconds: opts.ttlSeconds } : {}),
-        ...(opts.sport ? { sport: opts.sport } : {}),
-      },
-    }),
-  };
-}
 
 export async function archiveRawResponse(
   bucket: R2Bucket | undefined,

@@ -190,9 +190,9 @@ function SignalRow({ signal, index }: { signal: SocialSignal; index: number }) {
             </span>
           )}
 
-          {/* Time */}
-          <span className="ml-auto font-mono text-[10px] text-text-muted opacity-40 tabular-nums">
-            {formatTimestamp(signal.posted_at)} CT
+          {/* Time — show relative age so visitors see staleness */}
+          <span className="ml-auto font-mono text-[10px] text-text-muted opacity-40 tabular-nums" title={`${formatTimestamp(signal.posted_at)} CT`}>
+            {relativeTime(signal.posted_at)}
           </span>
         </div>
       </div>
