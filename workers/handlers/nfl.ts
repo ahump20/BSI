@@ -1,5 +1,5 @@
 import type { Env } from '../shared/types';
-import { cachedJson, kvGet, kvPut, getSDIOClient, toDateString, freshDataHeaders, cachedPayloadHeaders, ensurePayloadMeta, fetchResultHeaders, withMeta } from '../shared/helpers';
+import { errorJson, cachedJson, kvGet, kvPut, getSDIOClient, toDateString, freshDataHeaders, cachedPayloadHeaders, ensurePayloadMeta, fetchResultHeaders, withMeta, logError } from '../shared/helpers';
 import { HTTP_CACHE, CACHE_TTL } from '../shared/constants';
 import {
   getScoreboard,
@@ -62,8 +62,10 @@ export async function handleNFLScores(url: URL, env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
     return cachedJson(payload, 200, HTTP_CACHE.scores, freshDataHeaders());
   } catch (err) {
-    console.error(err);
-    return cachedJson({ error: 'Internal server error', status: 500 }, 500, 0);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleNFLScores]', msg);
+    await logError(env, msg, 'handleNFLScores');
+    return errorJson('Internal server error');
   }
 }
 
@@ -92,8 +94,10 @@ export async function handleNFLStandings(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
     return cachedJson(payload, 200, HTTP_CACHE.standings, freshDataHeaders());
   } catch (err) {
-    console.error(err);
-    return cachedJson({ error: 'Internal server error', status: 500 }, 500, 0);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleNFLStandings]', msg);
+    await logError(env, msg, 'handleNFLStandings');
+    return errorJson('Internal server error');
   }
 }
 
@@ -109,8 +113,10 @@ export async function handleNFLGame(gameId: string, env: Env): Promise<Response>
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
     return cachedJson(payload, 200, HTTP_CACHE.game, freshDataHeaders());
   } catch (err) {
-    console.error(err);
-    return cachedJson({ error: 'Internal server error', status: 500 }, 500, 0);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleNFLGame]', msg);
+    await logError(env, msg, 'handleNFLGame');
+    return errorJson('Internal server error');
   }
 }
 
@@ -126,8 +132,10 @@ export async function handleNFLPlayer(playerId: string, env: Env): Promise<Respo
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
     return cachedJson(payload, 200, HTTP_CACHE.player, freshDataHeaders());
   } catch (err) {
-    console.error(err);
-    return cachedJson({ error: 'Internal server error', status: 500 }, 500, 0);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleNFLPlayer]', msg);
+    await logError(env, msg, 'handleNFLPlayer');
+    return errorJson('Internal server error');
   }
 }
 
@@ -147,8 +155,10 @@ export async function handleNFLTeam(teamId: string, env: Env): Promise<Response>
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
     return cachedJson(payload, 200, HTTP_CACHE.team, freshDataHeaders());
   } catch (err) {
-    console.error(err);
-    return cachedJson({ error: 'Internal server error', status: 500 }, 500, 0);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleNFLTeam]', msg);
+    await logError(env, msg, 'handleNFLTeam');
+    return errorJson('Internal server error');
   }
 }
 
@@ -175,8 +185,10 @@ export async function handleNFLTeamsList(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
     return cachedJson(payload, 200, HTTP_CACHE.team, freshDataHeaders());
   } catch (err) {
-    console.error(err);
-    return cachedJson({ error: 'Internal server error', status: 500 }, 500, 0);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleNFLTeamsList]', msg);
+    await logError(env, msg, 'handleNFLTeamsList');
+    return errorJson('Internal server error');
   }
 }
 
@@ -203,8 +215,10 @@ export async function handleNFLNews(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
     return cachedJson(payload, 200, HTTP_CACHE.news, freshDataHeaders());
   } catch (err) {
-    console.error(err);
-    return cachedJson({ error: 'Internal server error', status: 500 }, 500, 0);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleNFLNews]', msg);
+    await logError(env, msg, 'handleNFLNews');
+    return errorJson('Internal server error');
   }
 }
 
@@ -278,8 +292,10 @@ export async function handleNFLPlayers(url: URL, env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
     return cachedJson(payload, 200, HTTP_CACHE.player, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error(err);
-    return cachedJson({ error: 'Internal server error', status: 500 }, 500, 0);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleNFLPlayers]', msg);
+    await logError(env, msg, 'handleNFLPlayers');
+    return errorJson('Internal server error');
   }
 }
 
@@ -345,7 +361,9 @@ export async function handleNFLLeaders(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, empty, 300); // Cache empty for 5 min
     return cachedJson(empty, 200, HTTP_CACHE.standings, freshDataHeaders('none'));
   } catch (err) {
-    console.error('handleNFLLeaders error:', err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('handleNFLLeaders error:', msg);
+    await logError(env, msg, 'handleNFLLeaders');
     return cachedJson(withMeta({ categories: [], offseason: true }, 'none'), 200, 0);
   }
 }

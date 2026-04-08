@@ -1,6 +1,7 @@
 import type { Env } from '../shared/types';
 import { json, getCollegeClient } from '../shared/helpers';
 import { getScoreboard } from '../../lib/api-clients/espn-api';
+import { timingSafeCompare } from '../shared/auth';
 
 const LIST_PAGE_SIZE = 1000;
 const MAX_LIST_ROUNDS = 10;
@@ -209,7 +210,7 @@ interface KVListResult {
   cursor?: string;
 }
 
-function requireAdmin(request: Request, env: Env): Response | null {
+async function requireAdmin(request: Request, env: Env): Promise<Response | null> {
   if (!env.ADMIN_KEY) {
     return json({ error: 'Admin auth secret not configured' }, 500);
   }
@@ -220,7 +221,7 @@ function requireAdmin(request: Request, env: Env): Response | null {
   const bearer = auth?.startsWith('Bearer ') ? auth.slice('Bearer '.length) : null;
   const provided = bearer || headerKey || queryKey;
 
-  if (!provided || provided !== env.ADMIN_KEY) {
+  if (!provided || !(await timingSafeCompare(provided, env.ADMIN_KEY))) {
     return json({ error: 'Unauthorized' }, 401);
   }
 
@@ -283,7 +284,7 @@ async function paginateR2List(
 
 export async function handleSemanticHealth(request: Request, env: Env): Promise<Response> {
   try {
-    const authError = requireAdmin(request, env);
+    const authError = await requireAdmin(request, env);
     if (authError) return authError;
 
     const kvResult = await paginateKVList(env.KV);

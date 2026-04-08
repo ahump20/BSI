@@ -19,7 +19,7 @@ import { corsOrigin, corsHeaders } from './shared/cors';
 import { securityMiddleware } from './shared/security';
 import { checkInMemoryRateLimit, checkPostRateLimit, maybeCleanupRateLimit } from './shared/rate-limit';
 import { proxyToPages } from './shared/proxy';
-import { requireApiKey } from './shared/auth';
+import { requireApiKey, timingSafeCompare } from './shared/auth';
 import { handleScoutingReport } from './handlers/scouting';
 import { handleAssetRequest } from './handlers/assets';
 
@@ -228,7 +228,7 @@ app.get('/api/status', (c) => handleStatus(c.env));
 app.use('/api/admin/*', async (c, next) => {
   const key = c.env.ADMIN_KEY;
   const provided = c.req.header('X-Admin-Key') ?? c.req.query('key');
-  if (!key || provided !== key) return c.json({ error: 'Unauthorized' }, 401);
+  if (!key || !provided || !(await timingSafeCompare(provided, key))) return c.json({ error: 'Unauthorized' }, 401);
   await next();
 });
 

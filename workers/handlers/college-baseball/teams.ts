@@ -3,7 +3,7 @@
  */
 
 import type { Env, HighlightlyTeamDetail, HighlightlyPlayer } from './shared';
-import { json, cachedJson, kvGet, kvPut, dataHeaders, getCollegeClient, getHighlightlyClient, archiveRawResponse, HTTP_CACHE, CACHE_TTL, teamMetadata, metaByEspnId, getLogoUrl, enrichTeamWithD1Stats, transformTeamSchedule, computeTrendSummary } from './shared';
+import { json, cachedJson, kvGet, kvPut, dataHeaders, getCollegeClient, getHighlightlyClient, archiveRawResponse, logError, HTTP_CACHE, CACHE_TTL, teamMetadata, metaByEspnId, getLogoUrl, enrichTeamWithD1Stats, transformTeamSchedule, computeTrendSummary } from './shared';
 import { transformHighlightlyTeam, transformCollegeBaseballTeamDetail } from './transforms';
 
 export async function handleCollegeBaseballTeam(
@@ -127,7 +127,9 @@ export async function handleCollegeBaseballTeam(
     { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' },
   );
   } catch (err) {
-    console.error('[handleCollegeBaseballTeam]', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleCollegeBaseballTeam]', msg);
+    await logError(env, msg, 'handleCollegeBaseballTeam');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -163,7 +165,9 @@ export async function handleCollegeBaseballTeamSchedule(
 
     return json({ schedule: [], meta: { source: 'error', fetched_at: now, timezone: 'America/Chicago' } }, 502);
   } catch (err) {
-    console.error('[handleCollegeBaseballTeamSchedule]', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleCollegeBaseballTeamSchedule]', msg);
+    await logError(env, msg, 'handleCollegeBaseballTeamSchedule');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -338,7 +342,9 @@ export async function handleCollegeBaseballTeamsAll(
   await kvPut(env.KV, cacheKey, payload, 3600);
   return cachedJson(payload, 200, HTTP_CACHE.team, { ...dataHeaders(now, sources.join('+') || 'metadata'), 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error('[handleCollegeBaseballTeamsAll]', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleCollegeBaseballTeamsAll]', msg);
+    await logError(env, msg, 'handleCollegeBaseballTeamsAll');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }

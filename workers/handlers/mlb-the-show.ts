@@ -1,5 +1,5 @@
 import type { Env } from '../shared/types';
-import { cachedJson, json, kvGet, kvPut } from '../shared/helpers';
+import { cachedJson, json, kvGet, kvPut, logError } from '../shared/helpers';
 import {
   fetchShowCard,
   fetchShowListingsPage,
@@ -185,7 +185,9 @@ export async function handleShowSourceStatus(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.status);
     return cachedJson(payload, 200, SHOW_CACHE_TTL.status, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error(err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleShowSourceStatus]', msg);
+    await logError(env, msg, 'handleShowSourceStatus');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -221,7 +223,9 @@ export async function handleShowMarketOverview(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.overview);
     return cachedJson(payload, 200, SHOW_CACHE_TTL.overview, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error(err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleShowMarketOverview]', msg);
+    await logError(env, msg, 'handleShowMarketOverview');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -339,7 +343,9 @@ export async function handleShowCards(url: URL, env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.cards);
     return cachedJson(payload, 200, SHOW_CACHE_TTL.cards, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error(err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleShowCards]', msg);
+    await logError(env, msg, 'handleShowCards');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -387,7 +393,9 @@ export async function handleShowCardDetail(cardId: string, env: Env): Promise<Re
     await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.card);
     return cachedJson(payload, 200, SHOW_CACHE_TTL.card, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error(err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleShowCardDetail]', msg);
+    await logError(env, msg, 'handleShowCardDetail');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -421,7 +429,9 @@ export async function handleShowCardHistory(cardId: string, url: URL, env: Env):
     await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.history);
     return cachedJson(payload, 200, SHOW_CACHE_TTL.history, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error(err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleShowCardHistory]', msg);
+    await logError(env, msg, 'handleShowCardHistory');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -443,7 +453,9 @@ export async function handleShowCollections(env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.collections);
     return cachedJson(payload, 200, SHOW_CACHE_TTL.collections, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error(err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleShowCollections]', msg);
+    await logError(env, msg, 'handleShowCollections');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -471,7 +483,9 @@ export async function handleShowCollectionDetail(collectionId: string, url: URL,
     await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.collectionDetail);
     return cachedJson(payload, 200, SHOW_CACHE_TTL.collectionDetail, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error(err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleShowCollectionDetail]', msg);
+    await logError(env, msg, 'handleShowCollectionDetail');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -495,7 +509,9 @@ export async function handleShowWatchEvents(url: URL, env: Env): Promise<Respons
     await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.watchEvents);
     return cachedJson(payload, 200, SHOW_CACHE_TTL.watchEvents, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error(err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleShowWatchEvents]', msg);
+    await logError(env, msg, 'handleShowWatchEvents');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -520,7 +536,9 @@ export async function handleShowTeamBuilderReference(env: Env): Promise<Response
     await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.builder);
     return cachedJson(payload, 200, SHOW_CACHE_TTL.builder, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error(err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleShowTeamBuilderReference]', msg);
+    await logError(env, msg, 'handleShowTeamBuilderReference');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -551,7 +569,9 @@ export async function handleShowBuildCreate(req: Request, env: Env): Promise<Res
     await saveBuild(env, build);
     return json({ build, meta: { source: 'BSI D1', fetched_at: now, timezone: 'America/Chicago' } }, 201);
   } catch (err) {
-    console.error(err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleShowBuildCreate]', msg);
+    await logError(env, msg, 'handleShowBuildCreate');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -578,7 +598,9 @@ export async function handleShowBuildGet(buildId: string, env: Env): Promise<Res
     await kvPut(env.KV, cacheKey, payload, SHOW_CACHE_TTL.build);
     return cachedJson(payload, 200, SHOW_CACHE_TTL.build, { 'X-Cache': 'MISS' });
   } catch (err) {
-    console.error(err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleShowBuildGet]', msg);
+    await logError(env, msg, 'handleShowBuildGet');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }
@@ -589,7 +611,9 @@ export async function handleShowRebuildCollections(env: Env): Promise<Response> 
     const status = await resolveSourceStatus(env);
     return json({ ok: true, meta: showMeta(status, 'BSI D1') });
   } catch (err) {
-    console.error(err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleShowRebuildCollections]', msg);
+    await logError(env, msg, 'handleShowRebuildCollections');
     return json({ error: 'Internal server error', status: 500 }, 500);
   }
 }

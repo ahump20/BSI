@@ -3,7 +3,7 @@
  */
 
 import type { Env } from './shared';
-import { json, cachedJson, kvGet, kvPut, dataHeaders, cachedPayloadHeaders, withMeta, getCollegeClient, getHighlightlyClient, archiveRawResponse, HTTP_CACHE, CACHE_TTL, lookupConference, getScoreboard, getGameSummary, getLogoUrl, metaByEspnId, teamMetadata } from './shared';
+import { json, errorJson, cachedJson, kvGet, kvPut, dataHeaders, cachedPayloadHeaders, withMeta, getCollegeClient, getHighlightlyClient, archiveRawResponse, logError, HTTP_CACHE, CACHE_TTL, lookupConference, getScoreboard, getGameSummary, getLogoUrl, metaByEspnId, teamMetadata } from './shared';
 import { transformHighlightlyGame, transformEspnGameSummary } from './transforms';
 
 // ---------------------------------------------------------------------------
@@ -236,8 +236,10 @@ export async function handleCollegeBaseballScores(
     );
   }
   } catch (err) {
-    console.error('[handleCollegeBaseballScores]', err instanceof Error ? err.message : err);
-    return json({ error: 'Internal server error', status: 500 }, 500);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleCollegeBaseballScores]', msg);
+    await logError(env, msg, 'handleCollegeBaseballScores');
+    return errorJson('Internal server error');
   }
 }
 
@@ -414,8 +416,10 @@ export async function handleCollegeBaseballGame(
     502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' }
   );
   } catch (err) {
-    console.error('[handleCollegeBaseballGame]', err instanceof Error ? err.message : err);
-    return json({ error: 'Internal server error', status: 500 }, 500);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleCollegeBaseballGame]', msg);
+    await logError(env, msg, 'handleCollegeBaseballGame');
+    return errorJson('Internal server error');
   }
 }
 
@@ -530,7 +534,9 @@ export async function handleCollegeBaseballSchedule(
     ...dataHeaders(result.timestamp), 'X-Cache': 'MISS',
   });
   } catch (err) {
-    console.error('[handleCollegeBaseballSchedule]', err instanceof Error ? err.message : err);
-    return json({ error: 'Internal server error', status: 500 }, 500);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[handleCollegeBaseballSchedule]', msg);
+    await logError(env, msg, 'handleCollegeBaseballSchedule');
+    return errorJson('Internal server error');
   }
 }

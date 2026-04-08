@@ -5,21 +5,94 @@
 import type { Env, PredictionPayload } from '../shared/types';
 import { cachedJson, json, kvGet, kvPut } from '../shared/helpers';
 
+const VALID_SPORTS = ['college-baseball', 'mlb', 'nfl', 'nba', 'cfb'] as const;
+const GAME_ID_PATTERN = /^[a-zA-Z0-9-]+$/;
+
+function validatePrediction(body: unknown): { valid: true; data: PredictionPayload } | { valid: false; error: string } {
+  if (!body || typeof body !== 'object') {
+    return { valid: false, error: 'Request body must be a JSON object' };
+  }
+
+  const { gameId, sport, predictedWinner, confidence, spread, overUnder } = body as Record<string, unknown>;
+
+  if (typeof gameId !== 'string' || gameId.length === 0) {
+    return { valid: false, error: 'gameId is required and must be a string' };
+  }
+  if (gameId.length > 50) {
+    return { valid: false, error: 'gameId must be 50 characters or fewer' };
+  }
+  if (!GAME_ID_PATTERN.test(gameId)) {
+    return { valid: false, error: 'gameId must contain only letters, numbers, and hyphens' };
+  }
+
+  if (typeof sport !== 'string' || sport.length === 0) {
+    return { valid: false, error: 'sport is required and must be a string' };
+  }
+  if (!(VALID_SPORTS as readonly string[]).includes(sport)) {
+    return { valid: false, error: `sport must be one of: ${VALID_SPORTS.join(', ')}` };
+  }
+
+  if (typeof predictedWinner !== 'string' || predictedWinner.length === 0) {
+    return { valid: false, error: 'predictedWinner is required and must be a string' };
+  }
+  if (predictedWinner.length > 100) {
+    return { valid: false, error: 'predictedWinner must be 100 characters or fewer' };
+  }
+
+  if (confidence !== undefined && confidence !== null) {
+    if (typeof confidence !== 'number' || !Number.isFinite(confidence)) {
+      return { valid: false, error: 'confidence must be a number' };
+    }
+    if (confidence < 0 || confidence > 100) {
+      return { valid: false, error: 'confidence must be between 0 and 100' };
+    }
+  }
+
+  if (spread !== undefined && spread !== null) {
+    if (typeof spread !== 'number' || !Number.isFinite(spread)) {
+      return { valid: false, error: 'spread must be a number' };
+    }
+    if (spread < -100 || spread > 100) {
+      return { valid: false, error: 'spread must be between -100 and 100' };
+    }
+  }
+
+  if (overUnder !== undefined && overUnder !== null) {
+    if (typeof overUnder !== 'number' || !Number.isFinite(overUnder)) {
+      return { valid: false, error: 'overUnder must be a number' };
+    }
+  }
+
+  return {
+    valid: true,
+    data: {
+      gameId,
+      sport: sport as string,
+      predictedWinner: predictedWinner as string,
+      confidence: typeof confidence === 'number' ? confidence : 0,
+      spread: typeof spread === 'number' ? spread : undefined,
+      overUnder: typeof overUnder === 'number' ? overUnder : undefined,
+    },
+  };
+}
+
 export async function handlePredictionSubmit(request: Request, env: Env): Promise<Response> {
   try {
-    const body = await request.json() as PredictionPayload;
-    const { gameId, sport, predictedWinner, confidence, spread, overUnder } = body;
+    const body = await request.json();
+    const result = validatePrediction(body);
 
-    if (!gameId || !sport || !predictedWinner) {
-      return json({ error: 'Missing required fields: gameId, sport, predictedWinner' }, 400);
+    if (!result.valid) {
+      return json({ error: result.error }, 400);
     }
+
+    const { gameId, sport, predictedWinner, confidence, spread, overUnder } = result.data;
 
     await env.DB
       .prepare(
         `INSERT INTO predictions (game_id, sport, predicted_winner, confidence, spread, over_under, created_at)
          VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`
       )
-      .bind(gameId, sport, predictedWinner, confidence || 0, spread || null, overUnder || null)
+      .bind(gameId, sport, predictedWinner, confidence, spread ?? null, overUnder ?? null)
       .run();
 
     return json({ success: true, gameId });

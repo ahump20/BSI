@@ -11,6 +11,7 @@
 
 import type { Env } from '../shared/types';
 import { json } from '../shared/helpers';
+import { timingSafeCompare } from '../shared/auth';
 import { DateTime } from 'luxon';
 
 // ---------------------------------------------------------------------------
@@ -255,7 +256,7 @@ export async function handleFreshness(request: Request, env: Env): Promise<Respo
     const queryKey = new URL(request.url).searchParams.get('key');
     const bearer = auth?.startsWith('Bearer ') ? auth.slice('Bearer '.length) : null;
     const provided = bearer || headerKey || queryKey;
-    if (!provided || provided !== env.ADMIN_KEY) {
+    if (!provided || !(await timingSafeCompare(provided, env.ADMIN_KEY))) {
       return json({ error: 'Unauthorized' }, 401);
     }
   }
