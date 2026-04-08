@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { Footer } from '@/components/layout-ds/Footer';
 import { Card, CardContent, CardTitle, StatCard } from '@/components/ui/Card';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { fetchShowCards, fetchShowCollections, type ShowCardsResponse } from '@/lib/mlb-the-show/client';
@@ -150,7 +149,7 @@ export function DiamondDynastyMarketplaceClient() {
                     value={search}
                     onChange={(event) => setSearch(event.target.value)}
                     placeholder="Aaron Judge, Yankees, Live Series..."
-                    className="w-full rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-2 text-sm text-[var(--bsi-bone)] outline-none transition-colors focus:border-burnt-orange/45"
+                    className="w-full rounded-sm border border-border-vintage bg-surface-dugout px-3 py-2 text-sm text-[var(--bsi-bone)] outline-none transition-colors focus:border-burnt-orange/45"
                   />
                 </label>
 
@@ -171,12 +170,12 @@ export function DiamondDynastyMarketplaceClient() {
                   <Select label="Sort" value={sort} onChange={(value) => setSort(value as (typeof SORT_OPTIONS)[number]['value'])} options={SORT_OPTIONS.map((option) => option.value)} />
                 </div>
 
-                <label className="flex items-center gap-3 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-3 text-sm text-[var(--bsi-bone)]">
+                <label className="flex items-center gap-3 rounded-sm border border-border-vintage bg-surface-dugout px-3 py-3 text-sm text-[var(--bsi-bone)]">
                   <input type="checkbox" checked={captainOnly} onChange={(event) => setCaptainOnly(event.target.checked)} />
                   Captain cards only
                 </label>
 
-                <label className="flex items-center gap-3 rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-3 text-sm text-[var(--bsi-bone)]">
+                <label className="flex items-center gap-3 rounded-sm border border-border-vintage bg-surface-dugout px-3 py-3 text-sm text-[var(--bsi-bone)]">
                   <input type="checkbox" checked={wbcOnly} onChange={(event) => setWbcOnly(event.target.checked)} />
                   WBC-tagged only
                 </label>
@@ -185,7 +184,7 @@ export function DiamondDynastyMarketplaceClient() {
                   WBC filtering is source-bound: only cards whose official/public series, set, or acquisition metadata explicitly includes WBC or World Baseball Classic will appear.
                 </p>
 
-                <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-3 text-sm text-[var(--bsi-dust)]">
+                <div className="rounded-sm border border-border-vintage bg-surface-dugout px-3 py-3 text-sm text-[var(--bsi-dust)]">
                   Tracked on this page: <span className="font-semibold text-[var(--bsi-bone)]">{trackedOnPage}</span>
                 </div>
               </CardContent>
@@ -197,7 +196,7 @@ export function DiamondDynastyMarketplaceClient() {
                 {loading ? (
                   <div className="space-y-3">
                     {Array.from({ length: 8 }).map((_, index) => (
-                      <div key={index} className="h-16 animate-pulse rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)]" />
+                      <div key={index} className="h-16 animate-pulse rounded-sm border border-border-vintage bg-surface-dugout" />
                     ))}
                   </div>
                 ) : error ? (
@@ -224,7 +223,7 @@ export function DiamondDynastyMarketplaceClient() {
                         {data.cards.map((card) => {
                           const active = watchlist.includes(card.id);
                           return (
-                            <tr key={card.id} className="border-b border-[var(--border-vintage)] text-sm text-[var(--bsi-bone)]">
+                            <tr key={card.id} className="border-b border-border-vintage text-sm text-[var(--bsi-bone)]">
                               <td className="px-3 py-3">
                                 <Link href={buildCardHref(card.id)} className="block hover:text-burnt-orange transition-colors">
                                   <div className="font-semibold">{card.name}</div>
@@ -254,12 +253,12 @@ export function DiamondDynastyMarketplaceClient() {
                   </div>
                 )}
                 {!loading && data && data.totalPages > 1 ? (
-                  <div className="mt-4 flex items-center justify-between gap-4 border-t border-[var(--border-vintage)] pt-4">
+                  <div className="mt-4 flex items-center justify-between gap-4 border-t border-border-vintage pt-4">
                     <button
                       type="button"
                       onClick={() => setPage((current) => Math.max(current - 1, 1))}
                       disabled={page <= 1}
-                      className="rounded-sm border border-[var(--border-vintage)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] disabled:opacity-40"
+                      className="rounded-sm border border-border-vintage px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] disabled:opacity-40"
                     >
                       Previous
                     </button>
@@ -270,7 +269,7 @@ export function DiamondDynastyMarketplaceClient() {
                       type="button"
                       onClick={() => setPage((current) => Math.min(current + 1, data.totalPages))}
                       disabled={page >= data.totalPages}
-                      className="rounded-sm border border-[var(--border-vintage)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] disabled:opacity-40"
+                      className="rounded-sm border border-border-vintage px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] disabled:opacity-40"
                     >
                       Next
                     </button>
@@ -281,7 +280,6 @@ export function DiamondDynastyMarketplaceClient() {
           </section>
         </DataErrorBoundary>
       </ShowSurfaceFrame>
-      <Footer />
     </div>
   );
 }
@@ -305,7 +303,7 @@ function Select({
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="w-full rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-2 text-sm text-[var(--bsi-bone)] outline-none transition-colors focus:border-burnt-orange/45"
+        className="w-full rounded-sm border border-border-vintage bg-surface-dugout px-3 py-2 text-sm text-[var(--bsi-bone)] outline-none transition-colors focus:border-burnt-orange/45"
       >
         <option value="">All</option>
         {options.map((option) => (

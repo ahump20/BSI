@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { Footer } from '@/components/layout-ds/Footer';
 import { Card, CardContent, CardTitle } from '@/components/ui/Card';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { fetchShowCardDetail, fetchShowCardHistory, fetchShowWatchEvents, type ShowCardDetailResponse, type ShowHistoryResponse } from '@/lib/mlb-the-show/client';
@@ -134,7 +133,6 @@ export function DiamondDynastyCardClient() {
             </CardContent>
           </Card>
         </ShowSurfaceFrame>
-        <Footer />
       </div>
     );
   }
@@ -157,8 +155,8 @@ export function DiamondDynastyCardClient() {
         <DataErrorBoundary name="card detail">
           {loading ? (
             <div className="space-y-4">
-              <div className="h-40 animate-pulse rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)]" />
-              <div className="h-80 animate-pulse rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)]" />
+              <div className="h-40 animate-pulse rounded-sm border border-border-vintage bg-surface-dugout" />
+              <div className="h-80 animate-pulse rounded-sm border border-border-vintage bg-surface-dugout" />
             </div>
           ) : error || !detail ? (
             <Card padding="lg">
@@ -172,7 +170,7 @@ export function DiamondDynastyCardClient() {
               <section className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
                 <Card padding="lg">
                   <CardContent className="grid gap-6 px-0 pb-0 pt-0 md:grid-cols-[160px_1fr]">
-                    <div className="overflow-hidden rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)]">
+                    <div className="overflow-hidden rounded-sm border border-border-vintage bg-surface-dugout">
                       {detail.detail.card.imageUrl ? (
                         <img
                           src={detail.detail.card.imageUrl}
@@ -218,7 +216,7 @@ export function DiamondDynastyCardClient() {
                         />
                         <Link
                           href={`/mlb/the-show-26/diamond-dynasty/team-builder?card=${encodeURIComponent(detail.detail.card.id)}`}
-                          className="rounded-sm border border-[var(--border-vintage)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] transition-colors hover:border-burnt-orange/40 hover:text-burnt-orange"
+                          className="rounded-sm border border-border-vintage px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)] transition-colors hover:border-burnt-orange/40 hover:text-burnt-orange"
                         >
                           Add to build
                         </Link>
@@ -239,7 +237,7 @@ export function DiamondDynastyCardClient() {
                       <select
                         value={parallelLevel}
                         onChange={(event) => setParallelLevel(Number(event.target.value) as (typeof DD_PARALLEL_LEVELS)[number])}
-                        className="w-full rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-2 text-sm text-[var(--bsi-bone)]"
+                        className="w-full rounded-sm border border-border-vintage bg-surface-dugout px-3 py-2 text-sm text-[var(--bsi-bone)]"
                       >
                         {DD_PARALLEL_LEVELS.map((level) => (
                           <option key={level} value={level}>
@@ -254,7 +252,7 @@ export function DiamondDynastyCardClient() {
                       <select
                         value={parallelMod}
                         onChange={(event) => setParallelMod(event.target.value as (typeof DD_PARALLEL_MODS)[number])}
-                        className="w-full rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-3 py-2 text-sm text-[var(--bsi-bone)]"
+                        className="w-full rounded-sm border border-border-vintage bg-surface-dugout px-3 py-2 text-sm text-[var(--bsi-bone)]"
                       >
                         {DD_PARALLEL_MODS.map((option) => (
                           <option key={option} value={option}>
@@ -264,7 +262,7 @@ export function DiamondDynastyCardClient() {
                       </select>
                     </label>
 
-                    <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-4 text-sm text-[var(--bsi-dust)]">
+                    <div className="rounded-sm border border-border-vintage bg-surface-dugout px-4 py-4 text-sm text-[var(--bsi-dust)]">
                       Local build state: P{parallelLevel} • {parallelMod}
                     </div>
                   </CardContent>
@@ -284,7 +282,7 @@ export function DiamondDynastyCardClient() {
                           className={`rounded-sm border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${
                             range === option
                               ? 'border-burnt-orange bg-burnt-orange/15 text-burnt-orange'
-                              : 'border-[var(--border-vintage)] text-[var(--bsi-dust)]'
+                              : 'border-border-vintage text-[var(--bsi-dust)]'
                           }`}
                         >
                           {option}
@@ -302,7 +300,7 @@ export function DiamondDynastyCardClient() {
                           className={`rounded-sm border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${
                             metric === option.value
                               ? 'border-burnt-orange bg-burnt-orange/15 text-burnt-orange'
-                              : 'border-[var(--border-vintage)] text-[var(--bsi-dust)]'
+                              : 'border-border-vintage text-[var(--bsi-dust)]'
                           }`}
                         >
                           {option.label}
@@ -311,7 +309,7 @@ export function DiamondDynastyCardClient() {
                     </div>
 
                     {historyLoading ? (
-                      <div className="h-72 animate-pulse rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)]" />
+                      <div className="h-72 animate-pulse rounded-sm border border-border-vintage bg-surface-dugout" />
                     ) : chartData.length === 0 ? (
                       <p className="text-sm text-[var(--bsi-dust)]">No history points are available for this card yet.</p>
                     ) : (
@@ -353,7 +351,7 @@ export function DiamondDynastyCardClient() {
                       <div className="flex flex-wrap gap-2">
                         {detail.detail.acquisitionPaths.length ? (
                           detail.detail.acquisitionPaths.map((path) => (
-                            <span key={path.label} className="rounded-sm border border-[var(--border-vintage)] px-3 py-1 text-xs text-[var(--bsi-bone)]">
+                            <span key={path.label} className="rounded-sm border border-border-vintage px-3 py-1 text-xs text-[var(--bsi-bone)]">
                               {path.label}
                             </span>
                           ))
@@ -368,7 +366,7 @@ export function DiamondDynastyCardClient() {
                       <div className="space-y-2">
                         {detail.detail.collections.length ? (
                           detail.detail.collections.map((collection) => (
-                            <div key={collection.id} className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3">
+                            <div key={collection.id} className="rounded-sm border border-border-vintage bg-surface-dugout px-4 py-3">
                               <Link href={buildCollectionHref(collection.id)} className="text-sm font-semibold text-[var(--bsi-bone)] transition-colors hover:text-burnt-orange">
                                 {collection.name}
                               </Link>
@@ -386,7 +384,7 @@ export function DiamondDynastyCardClient() {
                     {detail.detail.captain ? (
                       <div>
                         <div className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)]">Captain ability</div>
-                        <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-4">
+                        <div className="rounded-sm border border-border-vintage bg-surface-dugout px-4 py-4">
                           <div className="text-sm font-semibold text-[var(--bsi-bone)]">{detail.detail.captain.abilityName}</div>
                           <p className="mt-2 text-sm text-[var(--bsi-dust)]">{detail.detail.captain.abilityDescription}</p>
                         </div>
@@ -398,7 +396,7 @@ export function DiamondDynastyCardClient() {
                       <div className="space-y-2">
                         {events.length ? (
                           events.map((event) => (
-                            <div key={event.eventId} className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3">
+                            <div key={event.eventId} className="rounded-sm border border-border-vintage bg-surface-dugout px-4 py-3">
                               <div className="text-sm font-semibold text-[var(--bsi-bone)]">{event.eventLabel}</div>
                               <div className="mt-1 text-xs uppercase tracking-[0.18em] text-[var(--bsi-dust)]">
                                 {event.deltaValue !== null ? `${event.deltaValue > 0 ? '+' : ''}${event.deltaValue.toLocaleString()} stubs` : 'N/A'} • {new Date(event.triggeredAt).toLocaleString()}
@@ -428,14 +426,13 @@ export function DiamondDynastyCardClient() {
           )}
         </DataErrorBoundary>
       </ShowSurfaceFrame>
-      <Footer />
     </div>
   );
 }
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-4">
+    <div className="rounded-sm border border-border-vintage bg-surface-dugout px-4 py-4">
       <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)]">{label}</div>
       <div className="mt-2 font-mono text-2xl text-burnt-orange">{value}</div>
     </div>

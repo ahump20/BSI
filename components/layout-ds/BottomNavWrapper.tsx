@@ -100,7 +100,7 @@ export function BottomNavWrapper() {
                 </span>
                 <button
                   onClick={closeMore}
-                  className="p-2 hover:bg-[var(--surface-dugout)] rounded-sm transition-colors"
+                  className="p-2 hover:bg-surface-dugout rounded-sm transition-colors"
                   aria-label="Close panel"
                 >
                   <IconX />
@@ -123,7 +123,7 @@ export function BottomNavWrapper() {
                         const classes = `flex flex-col items-center gap-1.5 py-3 px-2 rounded-sm transition-colors ${
                           active
                             ? 'bg-[var(--bsi-primary)]/15 text-[var(--bsi-primary)]'
-                            : 'text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-[var(--surface-dugout)]'
+                            : 'text-[var(--bsi-dust)] hover:text-[var(--bsi-bone)] hover:bg-surface-dugout'
                         }`;
 
                         if (item.external) {

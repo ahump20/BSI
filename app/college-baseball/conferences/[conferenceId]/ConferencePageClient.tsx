@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { DataAttribution } from '@/components/ui/DataAttribution';
 import { ConferenceBaseline } from '@/components/analytics/ConferenceBaseline';
 import { ConferencePowerStrip } from '@/components/college-baseball/ConferencePowerStrip';
@@ -1883,7 +1882,6 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
               </Container>
             </Section>
           </div>
-          <Footer />
         </>
       );
     }
@@ -2016,7 +2014,6 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
             </Container>
           </Section>
         </div>
-        <Footer />
       </>
     );
   }
@@ -2101,7 +2098,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                       const totalGames = (team.overall_wins || 0) + (team.overall_losses || 0);
                       const winPct = totalGames > 0 ? ((team.overall_wins || 0) / totalGames).toFixed(3) : '—';
                       return (
-                        <div key={team.team_name} className="flex items-center justify-between py-2 border-b border-border-vintage/20 last:border-0">
+                        <div key={team.team_name} className="flex items-center justify-between py-2 border-b border-[rgba(140,98,57,0.2)] last:border-0">
                           <div className="flex items-center gap-3">
                             <span className="text-burnt-orange font-display font-bold text-sm w-6 text-right">{idx + 1}</span>
                             <span className="text-bsi-bone font-medium">{team.team_name}</span>
@@ -2129,7 +2126,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                   </div>
                   <div className="space-y-3">
                     {topPerformers.map((player) => (
-                      <div key={player.player_name} className="flex items-center justify-between py-2 border-b border-border-vintage/20 last:border-0">
+                      <div key={player.player_name} className="flex items-center justify-between py-2 border-b border-[rgba(140,98,57,0.2)] last:border-0">
                         <div>
                           <span className="text-bsi-bone font-medium">{player.player_name}</span>
                           <span className="text-bsi-dust text-xs ml-2">{player.team_name}</span>
@@ -2170,7 +2167,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                   </div>
                   <div className="space-y-2">
                     {portalEntries.slice(0, 8).map((entry, idx) => (
-                      <div key={idx} className="flex items-center justify-between py-2 border-b border-border-vintage/20 last:border-0 text-sm">
+                      <div key={idx} className="flex items-center justify-between py-2 border-b border-[rgba(140,98,57,0.2)] last:border-0 text-sm">
                         <div>
                           <span className="text-bsi-bone">{entry.playerName || entry.player_name}</span>
                           {entry.position && <span className="text-bsi-dust text-xs ml-2">{entry.position}</span>}
@@ -2340,7 +2337,6 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

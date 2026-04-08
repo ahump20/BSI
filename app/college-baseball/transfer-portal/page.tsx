@@ -9,7 +9,6 @@ import { Badge } from '@/components/ui/Badge';
 import { DataAttribution } from '@/components/ui/DataAttribution';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { IntelSignup } from '@/components/home/IntelSignup';
 import { useWatchlist } from '@/lib/hooks/useWatchlist';
 
@@ -364,7 +363,6 @@ export default function TransferPortalPage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

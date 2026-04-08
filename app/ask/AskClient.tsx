@@ -3,7 +3,6 @@
 import { useSearchParams } from 'next/navigation';
 import { AskBSI } from '@/components/home/AskBSI';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 
 export default function AskClient() {
   const searchParams = useSearchParams();
@@ -80,7 +79,6 @@ export default function AskClient() {
           </div>
         </section>
 
-        <Footer />
       </div>
     </>
   );

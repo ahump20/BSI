@@ -5,7 +5,6 @@ import { Section } from '@/components/ui/Section';
 import { Badge } from '@/components/ui/Badge';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { CiteWidget } from '@/components/ui/CiteWidget';
-import { Footer } from '@/components/layout-ds/Footer';
 
 export const metadata: Metadata = {
   title: 'Methodology | BSI',
@@ -154,7 +153,6 @@ export default function MethodologyPage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

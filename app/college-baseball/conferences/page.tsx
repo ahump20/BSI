@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { DataAttribution } from '@/components/ui/DataAttribution';
 import { Trophy, Users, TrendingUp, MapPin } from 'lucide-react';
 import { teamMetadata } from '@/lib/data/team-metadata';
@@ -324,7 +323,7 @@ export default function ConferencesHubPage() {
                         const totalGames = (a?.totalWins || 0) + (a?.totalLosses || 0);
                         const winPct = totalGames > 0 ? (a?.totalWins || 0) / totalGames : undefined;
                         return (
-                          <tr key={conf.id} className="border-b border-border-vintage/20 hover:bg-surface-dugout/50 transition-colors">
+                          <tr key={conf.id} className="border-b border-[rgba(140,98,57,0.2)] hover:bg-surface-dugout/50 transition-colors">
                             <td className="px-4 py-3">
                               <Link href={`/college-baseball/conferences/${conf.id}`} className="text-bsi-bone hover:text-burnt-orange transition-colors font-display font-bold">
                                 {conf.name}
@@ -513,7 +512,6 @@ export default function ConferencesHubPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

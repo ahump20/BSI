@@ -6,7 +6,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { Star, TrendingUp, Calendar, Users, ChevronRight } from 'lucide-react';
 
 const featuredStories = [
@@ -216,7 +215,6 @@ export default function PreseasonHubPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

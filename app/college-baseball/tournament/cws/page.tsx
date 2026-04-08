@@ -5,7 +5,6 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Badge } from '@/components/ui/Badge';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
 import type { RankingsResponse } from '@/lib/types/rankings';
 
@@ -148,7 +147,6 @@ export default function CWSPage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

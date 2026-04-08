@@ -10,7 +10,6 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
@@ -276,7 +275,7 @@ function MiniScoreCard({ game, sport }: { game: FeaturedGame; sport?: string }) 
             {game.away.score ?? '-'}
           </span>
         </div>
-        <div className="flex items-start justify-between gap-3 border-t border-border-vintage/60 pt-2.5">
+        <div className="flex items-start justify-between gap-3 border-t border-[rgba(140,98,57,0.6)] pt-2.5">
           <div className="flex min-w-0 items-start gap-2.5">
             {game.home.logo ? (
               <img src={game.home.logo} alt={`${game.home.name || game.home.abbreviation} logo`} className="w-4 h-4 object-contain" loading="lazy" />
@@ -1002,7 +1001,7 @@ function ScoresHubContent() {
                             )}
                           </div>
                           <p className="text-bsi-dust text-xs leading-relaxed">{sport.description}</p>
-                          <div className="mt-4 flex items-center justify-between border-t border-border-vintage/60 pt-3 text-[11px] uppercase tracking-[0.12em]">
+                          <div className="mt-4 flex items-center justify-between border-t border-[rgba(140,98,57,0.6)] pt-3 text-[11px] uppercase tracking-[0.12em]">
                             <span className="text-bsi-dust/70">
                               {sport.todayCount > 0 ? `${sport.todayCount} ${sport.todayCount === 1 ? 'game' : 'games'} on deck` : sport.season}
                             </span>
@@ -1075,7 +1074,6 @@ function ScoresHubContent() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

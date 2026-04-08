@@ -18,7 +18,6 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { StrikeZoneModel } from '@/components/mlb/StrikeZoneModel';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -494,7 +493,6 @@ export default function ABSTrackerPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

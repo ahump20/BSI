@@ -16,7 +16,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { useUserSettings } from '@/lib/hooks';
 import { useSportData } from '@/lib/hooks/useSportData';
 // Team lookup utilities available if needed: getTeamById, MLBTeamInfo
@@ -537,7 +536,6 @@ export default function MLBPlayersPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

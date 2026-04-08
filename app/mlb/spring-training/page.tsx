@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { TabBar, TabPanel } from '@/components/ui/TabBar';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -281,7 +280,6 @@ export default function SpringTrainingPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

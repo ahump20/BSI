@@ -12,7 +12,6 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { FilterPill } from '@/components/ui/FilterPill';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { DataAttribution } from '@/components/ui/DataAttribution';
 import { HeroGlow } from '@/components/ui/HeroGlow';
@@ -417,7 +416,7 @@ function CollegeBaseballStandingsPageInner() {
                         aria-label="College baseball standings by conference"
                       >
                         <thead>
-                          <tr className="bg-[var(--surface-press-box)] border-b border-[var(--border-vintage)]">
+                          <tr className="bg-surface-press-box border-b border-border-vintage">
                             <SortableTh
                               label="#"
                               sortKey="rank"
@@ -564,7 +563,7 @@ function CollegeBaseballStandingsPageInner() {
                     </div>
 
                     {/* Legend */}
-                    <div className="px-4 py-3 bg-[var(--surface-press-box)] border-t border-[var(--border-vintage)]">
+                    <div className="px-4 py-3 bg-surface-press-box border-t border-border-vintage">
                       <div className="flex items-center gap-4 text-xs text-[var(--bsi-dust)]">
                         <div className="flex items-center gap-2">
                           <div className="w-3 h-3 bg-success/20 rounded-sm" />
@@ -577,7 +576,7 @@ function CollegeBaseballStandingsPageInner() {
               )}
 
               {/* Data Attribution */}
-              <div className="mt-8 pt-4 border-t border-[var(--border-vintage)] flex justify-center">
+              <div className="mt-8 pt-4 border-t border-border-vintage flex justify-center">
                 <DataAttribution
                   source={meta?.source || (meta?.sources ? meta.sources.join(' + ') : 'ESPN')}
                   lastUpdated={lastUpdated || undefined}
@@ -588,7 +587,6 @@ function CollegeBaseballStandingsPageInner() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

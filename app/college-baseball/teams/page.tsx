@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { preseason2026 } from '@/lib/data/preseason-2026';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
@@ -232,7 +231,6 @@ export default function TeamsPage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { Footer } from '@/components/layout-ds/Footer';
 import { Card, CardContent, CardTitle, StatCard } from '@/components/ui/Card';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { fetchShowOverview, fetchShowWatchEvents, type ShowMarketOverviewResponse } from '@/lib/mlb-the-show/client';
@@ -104,7 +103,7 @@ export function DiamondDynastyHubClient() {
           {loading ? (
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               {Array.from({ length: 4 }).map((_, index) => (
-                <div key={index} className="h-32 animate-pulse rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)]" />
+                <div key={index} className="h-32 animate-pulse rounded-sm border border-border-vintage bg-surface-dugout" />
               ))}
             </div>
           ) : error ? (
@@ -138,7 +137,7 @@ export function DiamondDynastyHubClient() {
                       <Link
                         key={card.id}
                         href={buildCardHref(card.id)}
-                        className="flex items-center justify-between rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3 transition-colors hover:border-burnt-orange/35"
+                        className="flex items-center justify-between rounded-sm border border-border-vintage bg-surface-dugout px-4 py-3 transition-colors hover:border-burnt-orange/35"
                       >
                         <div>
                           <div className="text-sm font-semibold text-[var(--bsi-bone)]">{card.name}</div>
@@ -161,7 +160,7 @@ export function DiamondDynastyHubClient() {
                     {data.captains.slice(0, 6).map((captain) => (
                       <div
                         key={captain.id}
-                        className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3"
+                        className="rounded-sm border border-border-vintage bg-surface-dugout px-4 py-3"
                       >
                         <div className="flex items-center justify-between gap-4">
                           <div>
@@ -187,7 +186,7 @@ export function DiamondDynastyHubClient() {
                       <Link
                         key={collection.id}
                         href={buildCollectionHref(collection.id)}
-                        className="flex items-center justify-between rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3 transition-colors hover:border-burnt-orange/35"
+                        className="flex items-center justify-between rounded-sm border border-border-vintage bg-surface-dugout px-4 py-3 transition-colors hover:border-burnt-orange/35"
                       >
                         <div>
                           <div className="text-sm font-semibold text-[var(--bsi-bone)]">{collection.name}</div>
@@ -214,7 +213,7 @@ export function DiamondDynastyHubClient() {
                         <Link
                           key={event.eventId}
                           href={buildCardHref(event.cardId)}
-                          className="block rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-3 transition-colors hover:border-burnt-orange/35"
+                          className="block rounded-sm border border-border-vintage bg-surface-dugout px-4 py-3 transition-colors hover:border-burnt-orange/35"
                         >
                           <div className="flex items-center justify-between gap-4">
                             <div>
@@ -241,7 +240,7 @@ export function DiamondDynastyHubClient() {
                       <Link
                         key={feature.href}
                         href={feature.href}
-                        className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-4 transition-colors hover:border-burnt-orange/35"
+                        className="rounded-sm border border-border-vintage bg-surface-dugout px-4 py-4 transition-colors hover:border-burnt-orange/35"
                       >
                         <div className="text-sm font-semibold text-[var(--bsi-bone)]">{feature.title}</div>
                         <p className="mt-2 text-sm leading-relaxed text-[var(--bsi-dust)]">{feature.description}</p>
@@ -254,7 +253,6 @@ export function DiamondDynastyHubClient() {
           ) : null}
         </DataErrorBoundary>
       </ShowSurfaceFrame>
-      <Footer />
     </div>
   );
 }

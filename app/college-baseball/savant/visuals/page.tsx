@@ -8,7 +8,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { PlateDisciplineScatter, type ScatterPlayer } from '@/components/analytics/PlateDisciplineScatter';
 import { ConferenceHeatmap, type ConferenceHeatmapRow } from '@/components/analytics/ConferenceHeatmap';
 import { PowerVsContact, type PowerContactPlayer } from '@/components/analytics/PowerVsContact';
@@ -975,7 +974,6 @@ export default function SavantVisualsPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

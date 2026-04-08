@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Footer } from '@/components/layout-ds/Footer';
 import { Card, CardContent, CardTitle } from '@/components/ui/Card';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { fetchBuild, type ShowBuildResponse } from '@/lib/mlb-the-show/client';
@@ -57,7 +56,7 @@ export function DiamondDynastyBuildClient() {
               </CardContent>
             </Card>
           ) : loading ? (
-            <div className="h-80 animate-pulse rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)]" />
+            <div className="h-80 animate-pulse rounded-sm border border-border-vintage bg-surface-dugout" />
           ) : error || !data ? (
             <Card padding="lg">
               <CardContent className="space-y-3 px-0 pb-0 pt-0">
@@ -78,7 +77,7 @@ export function DiamondDynastyBuildClient() {
                 <CardTitle size="sm">Slot Assignments</CardTitle>
                 <CardContent className="grid gap-3 px-0 pb-0 pt-4 md:grid-cols-2">
                   {data.build.cards.map((card) => (
-                    <div key={`${card.slotId}:${card.cardId}`} className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-4">
+                    <div key={`${card.slotId}:${card.cardId}`} className="rounded-sm border border-border-vintage bg-surface-dugout px-4 py-4">
                       <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)]">{card.slotId}</div>
                       <div className="mt-2 text-sm font-semibold text-[var(--bsi-bone)]">{card.displayName}</div>
                       <div className="mt-1 text-xs uppercase tracking-[0.18em] text-[var(--bsi-dust)]">
@@ -95,14 +94,13 @@ export function DiamondDynastyBuildClient() {
           )}
         </DataErrorBoundary>
       </ShowSurfaceFrame>
-      <Footer />
     </div>
   );
 }
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-sm border border-[var(--border-vintage)] bg-[var(--surface-dugout)] px-4 py-4">
+    <div className="rounded-sm border border-border-vintage bg-surface-dugout px-4 py-4">
       <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--bsi-dust)]">{label}</div>
       <div className="mt-2 text-sm font-semibold text-[var(--bsi-bone)]">{value}</div>
     </div>

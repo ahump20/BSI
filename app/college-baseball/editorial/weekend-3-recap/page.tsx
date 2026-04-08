@@ -5,7 +5,6 @@ import { StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { BSIVerdict } from '@/components/editorial/BSIVerdict';
-import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
 
 import { ogImage } from '@/lib/metadata';
@@ -442,7 +441,6 @@ export default function Weekend3RecapPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

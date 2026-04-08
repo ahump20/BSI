@@ -102,7 +102,7 @@ export function PlateDisciplineScatter({
           className="bg-[var(--svt-surface,_rgba(140,98,57,0.12))] border border-[var(--svt-border,_rgba(140,98,57,0.2))] rounded-sm px-2.5 py-1.5 text-xs text-[var(--svt-text-muted,_#C4B8A5)] font-mono appearance-none cursor-pointer hover:border-[var(--svt-accent,_#BF5700)] transition-colors focus:outline-none"
         >
           {conferences.map(c => (
-            <option key={c} value={c} className="bg-[var(--surface-press-box)] text-[#e8eaf0]">
+            <option key={c} value={c} className="bg-surface-press-box text-[#e8eaf0]">
               {c || 'All Conferences'}
             </option>
           ))}

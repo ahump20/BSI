@@ -8,7 +8,6 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { HeroGlow } from '@/components/ui/HeroGlow';
-import { Footer } from '@/components/layout-ds/Footer';
 import { ScrollReveal } from '@/components/cinematic';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { NILDashboardClient } from './NILDashboardClient';
@@ -427,7 +426,6 @@ export default function NILValuationPage() {
         </Container>
       </Section>
       </div>
-      <Footer />
     </>
   );
 }

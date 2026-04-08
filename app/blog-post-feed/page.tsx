@@ -9,7 +9,6 @@ import { Badge } from '@/components/ui/Badge';
 import { FilterPill } from '@/components/ui/FilterPill';
 import { HeroGlow } from '@/components/ui/HeroGlow';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { formatDateInTimezone } from '@/lib/utils/timezone';
 
 interface BlogPost {
@@ -327,7 +326,6 @@ export default function BlogPostFeedPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

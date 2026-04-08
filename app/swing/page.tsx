@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Button } from '@/components/ui/Button';
-import { Footer } from '@/components/layout-ds/Footer';
 import { ScrollReveal } from '@/components/cinematic';
 
 const FEATURES = [
@@ -290,7 +289,6 @@ export default function SwingLandingPage() {
         </Container>
       </Section>
 
-      <Footer />
     </div>
   );
 }

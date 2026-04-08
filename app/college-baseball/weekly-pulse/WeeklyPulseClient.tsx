@@ -6,7 +6,6 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { DataAttribution } from '@/components/ui/DataAttribution';
 import { TrendingUp, TrendingDown, BarChart3, Zap } from 'lucide-react';
 import { getReadApiUrl } from '@/lib/utils/public-api';
@@ -146,7 +145,7 @@ export default function WeeklyPulseClient() {
                     {pulse.top_hitters.map((h, idx) => (
                       <div
                         key={h.player_id}
-                        className="flex items-center gap-3 px-4 py-3 bg-surface-dugout rounded border border-border-vintage/20 hover:border-burnt-orange/30 transition-colors"
+                        className="flex items-center gap-3 px-4 py-3 bg-surface-dugout rounded border border-[rgba(140,98,57,0.2)] hover:border-burnt-orange/30 transition-colors"
                       >
                         <span className="text-burnt-orange font-mono font-bold text-sm w-6 text-right">
                           {idx + 1}
@@ -179,7 +178,7 @@ export default function WeeklyPulseClient() {
                     {pulse.top_pitchers.map((p, idx) => (
                       <div
                         key={p.player_id}
-                        className="flex items-center gap-3 px-4 py-3 bg-surface-dugout rounded border border-border-vintage/20 hover:border-burnt-orange/30 transition-colors"
+                        className="flex items-center gap-3 px-4 py-3 bg-surface-dugout rounded border border-[rgba(140,98,57,0.2)] hover:border-burnt-orange/30 transition-colors"
                       >
                         <span className="text-burnt-orange font-mono font-bold text-sm w-6 text-right">
                           {idx + 1}
@@ -344,7 +343,7 @@ export default function WeeklyPulseClient() {
                         </thead>
                         <tbody>
                           {pulse.conference_snapshot.slice(0, 15).map((c, idx) => (
-                            <tr key={c.conference} className="border-b border-border-vintage/20 hover:bg-surface-dugout/50 transition-colors">
+                            <tr key={c.conference} className="border-b border-[rgba(140,98,57,0.2)] hover:bg-surface-dugout/50 transition-colors">
                               <td className="px-4 py-2 text-bsi-dust font-mono text-xs">{idx + 1}</td>
                               <td className="px-3 py-2">
                                 <span className="text-bsi-bone font-display font-bold text-sm">{c.conference}</span>
@@ -375,7 +374,6 @@ export default function WeeklyPulseClient() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

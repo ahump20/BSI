@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { Footer } from '@/components/layout-ds/Footer';
 
 const POOL_DATA = {
   a: {
@@ -199,7 +198,6 @@ export default async function PoolPage({ params }: { params: Promise<{ pool: str
         </div>
       </section>
 
-      <Footer />
     </div>
   );
 }

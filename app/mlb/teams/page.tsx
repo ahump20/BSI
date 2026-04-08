@@ -15,7 +15,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { useUserSettings } from '@/lib/hooks';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { MLB_TEAMS, DIVISION_ORDER, type MLBTeamInfo } from '@/lib/utils/mlb-teams';
@@ -292,7 +291,6 @@ export default function MLBTeamsPage() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

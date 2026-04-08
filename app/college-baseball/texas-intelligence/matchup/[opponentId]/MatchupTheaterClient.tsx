@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 import { fmt3, fmt2, fmt1, fmtPct } from '@/lib/utils/format';
@@ -79,7 +78,7 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
         </Section>
 
         {/* Hero — Split Matchup Header */}
-        <Section padding="lg" className="relative overflow-hidden bg-[var(--surface-scoreboard)]">
+        <Section padding="lg" className="relative overflow-hidden bg-surface-scoreboard">
           <div className="absolute top-0 left-0 right-0 h-1" style={{ backgroundColor: ACCENT }} />
           <Container>
             <ScrollReveal direction="up">
@@ -139,7 +138,7 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
                         <div className="overflow-x-auto">
                           <table className="w-full text-sm">
                             <thead>
-                              <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                              <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                                 <th className="text-right py-2 px-2" style={{ color: ACCENT }}>Texas</th>
                                 <th className="text-center py-2 px-2 w-20">Stat</th>
                                 <th className="text-left py-2 px-2">{oppName.split(' ').pop()}</th>
@@ -175,7 +174,7 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
                         <div className="overflow-x-auto">
                           <table className="w-full text-sm">
                             <thead>
-                              <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                              <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                                 <th className="text-right py-2 px-2" style={{ color: ACCENT }}>Texas</th>
                                 <th className="text-center py-2 px-2 w-20">Stat</th>
                                 <th className="text-left py-2 px-2">{oppName.split(' ').pop()}</th>
@@ -217,13 +216,13 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
                           <table className="text-xs">
                             <thead>
                               <tr>
-                                <th className="py-2 px-2 text-left text-text-muted uppercase tracking-wider bg-[var(--surface-press-box)] min-w-[100px]">
+                                <th className="py-2 px-2 text-left text-text-muted uppercase tracking-wider bg-surface-press-box min-w-[100px]">
                                   Pitcher
                                 </th>
                                 {opp.topHitters.map((h, hi) => (
                                   <th
                                     key={`${h.player_name}-${hi}`}
-                                    className="py-2 px-2 text-center text-text-muted uppercase tracking-wider bg-[var(--surface-press-box)] min-w-[80px]"
+                                    className="py-2 px-2 text-center text-text-muted uppercase tracking-wider bg-surface-press-box min-w-[80px]"
                                   >
                                     <div className="truncate max-w-[80px]" title={h.player_name}>
                                       {h.player_name.split(' ').pop()}
@@ -390,7 +389,7 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
                             const oppScore = g.texasIsHome ? g.awayScore : g.homeScore;
                             const texasWon = texasScore > oppScore;
                             return (
-                              <div key={`${g.date}-${i}`} className="flex items-center justify-between rounded-sm bg-[var(--surface-press-box)] p-3">
+                              <div key={`${g.date}-${i}`} className="flex items-center justify-between rounded-sm bg-surface-press-box p-3">
                                 <div className="text-text-muted text-xs">{g.date}</div>
                                 <div className="flex items-center gap-3">
                                   <span className={`font-mono text-sm font-bold ${texasWon ? 'text-text-primary' : 'text-text-muted'}`}>
@@ -444,7 +443,6 @@ export default function MatchupTheaterClient({ opponentId }: { opponentId: strin
           </Container>
         </Section>
       </main>
-      <Footer />
     </>
   );
 }

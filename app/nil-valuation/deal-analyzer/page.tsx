@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 
 // ── Types ──
 interface DealInput {
@@ -258,7 +257,6 @@ export default function DealAnalyzerPage() {
         </Container>
       </Section>
 
-      <Footer />
     </div>
   );
 }

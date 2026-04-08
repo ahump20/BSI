@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { PRICING_TIERS, type PricingTier } from '@/lib/data/pricing-tiers';
 import { trackPaywallHit } from '@/lib/analytics/tracker';
 
@@ -417,7 +416,6 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <Footer />
     </div>
   );
 }

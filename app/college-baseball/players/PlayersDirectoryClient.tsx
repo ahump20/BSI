@@ -8,7 +8,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { DataAttribution } from '@/components/ui/DataAttribution';
-import { Footer } from '@/components/layout-ds/Footer';
 import { ScrollReveal } from '@/components/cinematic';
 import { fmt1, fmt2, fmt3 } from '@/lib/utils/format';
 
@@ -326,7 +325,7 @@ export default function PlayersDirectoryClient() {
             </ScrollReveal>
 
             {/* Tabs */}
-            <div className="flex gap-0 mb-4 border-b border-[var(--border-vintage)]">
+            <div className="flex gap-0 mb-4 border-b border-border-vintage">
               <button
                 onClick={() => handleTabChange('batting')}
                 className={`px-6 py-2.5 text-sm font-display uppercase tracking-wider transition-colors border-b-2 -mb-px ${
@@ -354,7 +353,7 @@ export default function PlayersDirectoryClient() {
               {/* Mobile toggle */}
               <button
                 onClick={() => setFiltersOpen(!filtersOpen)}
-                className="sm:hidden w-full flex items-center justify-between px-4 py-2 bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm text-sm text-[var(--bsi-dust)]"
+                className="sm:hidden w-full flex items-center justify-between px-4 py-2 bg-surface-dugout border border-border-vintage rounded-sm text-sm text-[var(--bsi-dust)]"
               >
                 <span>Filters {hasActiveFilters ? '(active)' : ''}</span>
                 <span>{filtersOpen ? '\u25B2' : '\u25BC'}</span>
@@ -370,7 +369,7 @@ export default function PlayersDirectoryClient() {
                       onChange={(e) => setSearchInput(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleSearchSubmit()}
                       placeholder="Search by name or team..."
-                      className="flex-1 px-3 py-2 bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm text-[var(--bsi-bone)] placeholder:text-[var(--bsi-text-dim)] text-sm focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
+                      className="flex-1 px-3 py-2 bg-surface-dugout border border-border-vintage rounded-sm text-[var(--bsi-bone)] placeholder:text-[var(--bsi-text-dim)] text-sm focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
                       aria-label="Search players"
                     />
                     <button
@@ -385,7 +384,7 @@ export default function PlayersDirectoryClient() {
                   <select
                     value={conference}
                     onChange={(e) => { setConference(e.target.value); setPage(1); }}
-                    className="px-3 py-2 bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm text-[var(--bsi-bone)] text-sm focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
+                    className="px-3 py-2 bg-surface-dugout border border-border-vintage rounded-sm text-[var(--bsi-bone)] text-sm focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
                     aria-label="Filter by conference"
                   >
                     <option value="">All Conferences</option>
@@ -398,7 +397,7 @@ export default function PlayersDirectoryClient() {
                   <select
                     value={position}
                     onChange={(e) => { setPosition(e.target.value); setPage(1); }}
-                    className="px-3 py-2 bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm text-[var(--bsi-bone)] text-sm focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
+                    className="px-3 py-2 bg-surface-dugout border border-border-vintage rounded-sm text-[var(--bsi-bone)] text-sm focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
                     aria-label="Filter by position"
                   >
                     {(tab === 'pitching' ? pitchingPositionOptions : positionOptions).map((p) => (
@@ -410,7 +409,7 @@ export default function PlayersDirectoryClient() {
                   <select
                     value={classYear}
                     onChange={(e) => { setClassYear(e.target.value); setPage(1); }}
-                    className="px-3 py-2 bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm text-[var(--bsi-bone)] text-sm focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
+                    className="px-3 py-2 bg-surface-dugout border border-border-vintage rounded-sm text-[var(--bsi-bone)] text-sm focus:outline-none focus:border-[var(--bsi-primary)] transition-colors"
                     aria-label="Filter by class year"
                   >
                     {classOptions.map((y) => (
@@ -452,7 +451,7 @@ export default function PlayersDirectoryClient() {
               <div className="overflow-x-auto -mx-4 sm:mx-0">
                 <table className="stat-table w-full text-sm">
                   <thead>
-                    <tr className="bg-[var(--surface-press-box)] border-b-2 border-[var(--bsi-primary)]">
+                    <tr className="bg-surface-press-box border-b-2 border-[var(--bsi-primary)]">
                       <th className="px-2 py-2 text-center text-[9px] uppercase tracking-[0.15em] text-[var(--bsi-dust)] font-normal w-8">
                         #
                       </th>
@@ -540,7 +539,7 @@ export default function PlayersDirectoryClient() {
                   <button
                     onClick={() => setPage(Math.max(1, page - 1))}
                     disabled={page <= 1}
-                    className="px-3 py-1 bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm text-[var(--bsi-bone)] disabled:opacity-30 disabled:cursor-not-allowed hover:border-[var(--bsi-primary)] transition-colors"
+                    className="px-3 py-1 bg-surface-dugout border border-border-vintage rounded-sm text-[var(--bsi-bone)] disabled:opacity-30 disabled:cursor-not-allowed hover:border-[var(--bsi-primary)] transition-colors"
                   >
                     Prev
                   </button>
@@ -550,7 +549,7 @@ export default function PlayersDirectoryClient() {
                   <button
                     onClick={() => setPage(Math.min(data.totalPages, page + 1))}
                     disabled={page >= data.totalPages}
-                    className="px-3 py-1 bg-[var(--surface-dugout)] border border-[var(--border-vintage)] rounded-sm text-[var(--bsi-bone)] disabled:opacity-30 disabled:cursor-not-allowed hover:border-[var(--bsi-primary)] transition-colors"
+                    className="px-3 py-1 bg-surface-dugout border border-border-vintage rounded-sm text-[var(--bsi-bone)] disabled:opacity-30 disabled:cursor-not-allowed hover:border-[var(--bsi-primary)] transition-colors"
                   >
                     Next
                   </button>
@@ -569,7 +568,6 @@ export default function PlayersDirectoryClient() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

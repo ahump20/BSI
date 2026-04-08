@@ -135,6 +135,10 @@
   --surface-dugout: #161616;
   --surface-scoreboard: #0A0A0A;
   --border-vintage: rgba(140, 98, 57, 0.3);
+  /* RGB channel companions for Tailwind opacity modifier support (e.g. bg-surface-dugout/50) */
+  --surface-press-box-rgb: 17 17 17;
+  --surface-dugout-rgb: 22 22 22;
+  --surface-scoreboard-rgb: 10 10 10;
   --border-active: rgba(191, 87, 0, 0.6);
 
   /* Heritage font aliases (Next.js font vars populated in layout.tsx) */

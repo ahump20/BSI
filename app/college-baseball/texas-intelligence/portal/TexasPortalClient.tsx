@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
@@ -99,7 +98,7 @@ export default function TexasPortalClient() {
         </Section>
 
         {/* Hero */}
-        <Section padding="lg" className="relative overflow-hidden bg-[var(--surface-scoreboard)]">
+        <Section padding="lg" className="relative overflow-hidden bg-surface-scoreboard">
           <div className="absolute top-0 left-0 right-0 h-1" style={{ backgroundColor: ACCENT }} />
           <Container>
             <ScrollReveal direction="up">
@@ -126,17 +125,17 @@ export default function TexasPortalClient() {
             <Container>
               <ScrollReveal direction="up">
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
+                  <div className="rounded-sm border border-border-subtle bg-surface-dugout p-4 text-center">
                     <div className="font-mono text-2xl font-bold text-text-primary">{data.rosterCount}</div>
                     <div className="text-[10px] uppercase tracking-wider text-text-muted mt-1">Active Roster</div>
                   </div>
-                  <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
+                  <div className="rounded-sm border border-border-subtle bg-surface-dugout p-4 text-center">
                     <div className="font-mono text-2xl font-bold" style={{ color: incoming.length > 0 ? 'var(--bsi-success)' : undefined }}>
                       {incoming.length}
                     </div>
                     <div className="text-[10px] uppercase tracking-wider text-text-muted mt-1">Incoming</div>
                   </div>
-                  <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-4 text-center">
+                  <div className="rounded-sm border border-border-subtle bg-surface-dugout p-4 text-center">
                     <div className="font-mono text-2xl font-bold" style={{ color: departing.length > 0 ? '#ef4444' : undefined }}>
                       {departing.length}
                     </div>
@@ -154,7 +153,7 @@ export default function TexasPortalClient() {
             <ScrollReveal direction="up">
               {/* Net Talent Indicator */}
               {!loading && !error && (incoming.length > 0 || departing.length > 0) && (
-                <div className="rounded-sm border border-border-subtle bg-[var(--surface-dugout)] p-3 mb-4 flex items-center justify-center gap-3">
+                <div className="rounded-sm border border-border-subtle bg-surface-dugout p-3 mb-4 flex items-center justify-center gap-3">
                   <span className="text-[10px] uppercase tracking-wider text-text-muted">Net Talent</span>
                   <span
                     className="font-mono text-lg font-bold"
@@ -301,7 +300,7 @@ export default function TexasPortalClient() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                      <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                         <th className="text-left py-2 px-2 w-8">#</th>
                         <th className="text-left py-2 px-2">Player</th>
                         <th className="text-left py-2 px-2">Pos</th>
@@ -365,7 +364,6 @@ export default function TexasPortalClient() {
           </Container>
         </Section>
       </main>
-      <Footer />
     </>
   );
 }
@@ -374,7 +372,7 @@ export default function TexasPortalClient() {
 
 function PortalMoveRow({ move }: { move: PortalMove }) {
   return (
-    <div className="flex items-center gap-3 rounded-sm border border-border-subtle bg-[var(--surface-press-box)] p-3">
+    <div className="flex items-center gap-3 rounded-sm border border-border-subtle bg-surface-press-box p-3">
       <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
         move.direction === 'incoming' ? 'bg-[var(--bsi-success)]' : 'bg-[var(--bsi-danger)]'
       }`} />

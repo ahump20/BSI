@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 import { fmt2, fmt3, fmtPct } from '@/lib/utils/format';
@@ -278,7 +277,7 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
     return (
       <>
         <main id="main-content">
-          <Section padding="lg" className="bg-[var(--surface-scoreboard)]">
+          <Section padding="lg" className="bg-surface-scoreboard">
             <Container>
               <div className="space-y-6 animate-pulse">
                 <div className="h-8 w-48 bg-surface-light rounded-sm" />
@@ -292,7 +291,6 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
             </Container>
           </Section>
         </main>
-        <Footer />
       </>
     );
   }
@@ -302,7 +300,7 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
     return (
       <>
         <main id="main-content">
-          <Section padding="lg" className="bg-[var(--surface-scoreboard)]">
+          <Section padding="lg" className="bg-surface-scoreboard">
             <Container>
               <div className="text-center py-16">
                 <h1 className="font-display text-2xl text-text-primary mb-4">Player Not Found</h1>
@@ -314,7 +312,6 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
             </Container>
           </Section>
         </main>
-        <Footer />
       </>
     );
   }
@@ -340,7 +337,7 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
         </Section>
 
         {/* Hero */}
-        <Section padding="lg" className="relative overflow-hidden bg-[var(--surface-scoreboard)]">
+        <Section padding="lg" className="relative overflow-hidden bg-surface-scoreboard">
           <div className="absolute top-0 left-0 right-0 h-1" style={{ backgroundColor: ACCENT }} />
           <Container>
             <ScrollReveal direction="up">
@@ -440,7 +437,7 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                             <th className="text-left py-2 px-2">W</th>
                             <th className="text-left py-2 px-2">L</th>
                             <th className="text-left py-2 px-2">SV</th>
@@ -475,7 +472,7 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                             <th className="text-right py-2 px-2">PA</th>
                             <th className="text-right py-2 px-2">AVG</th>
                             <th className="text-right py-2 px-2">OBP</th>
@@ -535,7 +532,7 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-[var(--surface-press-box)]">
+                          <tr className="text-text-muted text-xs uppercase tracking-wider bg-surface-press-box">
                             <th className="text-left py-2 px-2">Date</th>
                             <th className="text-left py-2 px-2">Opp</th>
                             <th className="text-left py-2 px-2">Result</th>
@@ -658,7 +655,6 @@ export default function TexasPlayerProfileClient({ playerId }: { playerId: strin
           </Container>
         </Section>
       </main>
-      <Footer />
     </>
   );
 }

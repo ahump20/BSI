@@ -11,7 +11,6 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { DataAttribution } from '@/components/ui/DataAttribution';
 import { IntelSignup } from '@/components/home/IntelSignup';
-import { Footer } from '@/components/layout-ds/Footer';
 import { AdvancedStatsCard } from '@/components/analytics/AdvancedStatsCard';
 import { PlayerScoutingComposite } from '@/components/college-baseball/PlayerScoutingComposite';
 import { ScoutingReport } from '@/components/college-baseball/ScoutingReport';
@@ -869,7 +868,6 @@ export default function PlayerDetailClient() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

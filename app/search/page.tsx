@@ -17,7 +17,6 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 import { SearchBar } from '@/components/layout-ds/SearchBar';
 import { FilterPill } from '@/components/ui/FilterPill';
 
@@ -76,7 +75,7 @@ function getSportLabel(sport: string): string {
 }
 
 function getSportColor(sport: string): string {
-  return SPORT_COLORS[sport.toLowerCase()] || 'bg-[var(--surface-dugout)]';
+  return SPORT_COLORS[sport.toLowerCase()] || 'bg-surface-dugout';
 }
 
 // ============================================================================
@@ -97,7 +96,6 @@ function SearchLoading() {
           </div>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }
@@ -491,7 +489,6 @@ function SearchContent() {
         </Section>
       </div>
 
-      <Footer />
     </>
   );
 }

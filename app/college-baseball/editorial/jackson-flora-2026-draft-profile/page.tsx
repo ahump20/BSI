@@ -6,7 +6,6 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { BSIVerdict } from '@/components/editorial/BSIVerdict';
 import { IntelSignup } from '@/components/home/IntelSignup';
-import { Footer } from '@/components/layout-ds/Footer';
 import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 import type { Metadata } from 'next';
 
@@ -328,7 +327,6 @@ export default function FloraDraftProfilePage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

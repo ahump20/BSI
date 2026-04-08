@@ -6,7 +6,6 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { Footer } from '@/components/layout-ds/Footer';
 import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 import type { TeamMeta } from '@/lib/data/team-metadata';
@@ -159,7 +158,6 @@ export default function ComparePageClient() {
             </Container>
           </Section>
         </div>
-        <Footer />
       </>
     );
   }
@@ -189,7 +187,6 @@ export default function ComparePageClient() {
             </Container>
           </Section>
         </div>
-        <Footer />
       </>
     );
   }
@@ -202,7 +199,7 @@ export default function ComparePageClient() {
     <>
       <div>
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-border-vintage/30">
+        <Section padding="sm" className="border-b border-[rgba(140,98,57,0.3)]">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
@@ -342,7 +339,6 @@ export default function ComparePageClient() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

@@ -5,7 +5,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { Footer } from '@/components/layout-ds/Footer';
 import { preseason2026, getTierLabel } from '@/lib/data/preseason-2026';
 import type { PreseasonTeamData } from '@/lib/data/preseason-2026';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
@@ -660,7 +659,6 @@ export default function TournamentHubPage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

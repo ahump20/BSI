@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
-import { Footer } from '@/components/layout-ds/Footer';
 import { BSI_TIMEZONE } from '@/lib/utils/timezone';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -438,7 +437,6 @@ export function SocialIntelPageClient() {
         </div>
       </Container>
 
-      <Footer />
     </div>
   );
 }

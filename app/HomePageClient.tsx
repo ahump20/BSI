@@ -746,7 +746,7 @@ function TableSkeleton() {
         className="h-10"
         style={{ background: 'var(--surface-press-box)', borderBottom: '2px solid rgba(191,87,0,0.3)' }}
       />
-      <div className="border border-t-0 overflow-hidden animate-pulse" style={{ borderColor: 'var(--border-vintage)' }}>
+      <div className="border border-t-0 overflow-hidden animate-pulse border-border-vintage">
         {Array.from({ length: 8 }).map((_, i) => (
           <div
             key={i}
@@ -798,7 +798,7 @@ function LeaderboardEmpty({ title, error, onRetry }: { title: string; error?: st
           style={{ fontFamily: 'var(--font-oswald)', color: 'var(--bsi-primary-light)' }}
         >{title}</h2>
       </div>
-      <div className="border border-t-0 px-4 py-8 text-center" style={{ borderColor: 'var(--border-vintage)' }}>
+      <div className="border border-t-0 px-4 py-8 text-center border-border-vintage">
         <p className="text-xs" style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-dust)' }}>
           {error ? 'Data temporarily unavailable' : 'No leaderboard data available'}
         </p>
@@ -1014,7 +1014,7 @@ export function HomePageClient() {
   }, []);
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--surface-scoreboard)' }}>
+    <div className="min-h-screen bg-surface-scoreboard">
 
       {/* ================================================================= */}
       {/* MODE: LANDING PAGE — Selling zone. Hero + pitch + proof points.   */}

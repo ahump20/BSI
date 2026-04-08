@@ -7,7 +7,6 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Footer } from '@/components/layout-ds/Footer';
 import { SPORT_MODELS, type SwingSport } from '@/lib/swing/sport-models';
 import { getHistoryLimit, FREE_HISTORY_LIMIT } from '@/lib/swing/usage-gate';
 
@@ -185,7 +184,6 @@ export default function SwingHistoryPage() {
           )}
         </Container>
       </Section>
-      <Footer />
     </div>
   );
 }

@@ -6,7 +6,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
-import { Footer } from '@/components/layout-ds/Footer';
 
 export default function SignupPage() {
   return (
@@ -53,7 +52,6 @@ export default function SignupPage() {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }

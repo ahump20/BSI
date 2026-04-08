@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { DataAttribution } from '@/components/ui/DataAttribution';
-import { Footer } from '@/components/layout-ds/Footer';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 
 // ---------------------------------------------------------------------------
@@ -346,7 +345,7 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
                 {/* Recent Results */}
                 {recentResults.length > 0 && (
                   <Panel title="Recent Results">
-                    <div className="divide-y divide-border-vintage/40">
+                    <div className="divide-y divide-[rgba(140,98,57,0.4)]">
                       {recentResults.map(g => (
                         <div key={g.id} className="flex items-center justify-between px-4 py-2.5">
                           <div className="flex items-center gap-3">
@@ -380,7 +379,7 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
                 {/* Upcoming */}
                 {upcoming.length > 0 && (
                   <Panel title="Upcoming">
-                    <div className="divide-y divide-border-vintage/40">
+                    <div className="divide-y divide-[rgba(140,98,57,0.4)]">
                       {upcoming.map(g => (
                         <div key={g.id} className="flex items-center justify-between px-4 py-2.5">
                           <span className="text-sm text-text-primary">
@@ -514,7 +513,6 @@ export default function TeamReadoutClient({ teamId }: TeamReadoutClientProps) {
           </Container>
         </Section>
       </div>
-      <Footer />
     </>
   );
 }
