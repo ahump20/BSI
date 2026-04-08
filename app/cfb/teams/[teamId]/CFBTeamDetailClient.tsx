@@ -10,6 +10,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
+import { useResolvedParam } from '@/lib/hooks/useResolvedParam';
 import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface TeamData {
@@ -85,7 +86,8 @@ interface CFBTeamDetailClientProps {
   teamId: string;
 }
 
-export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps) {
+export default function CFBTeamDetailClient({ teamId: rawId }: CFBTeamDetailClientProps) {
+  const teamId = useResolvedParam(rawId, 'teams');
   const [positionFilter, setPositionFilter] = useState<string>('All');
 
   const { data: teamData, loading, error, retry: fetchTeam, lastUpdated: lastUpdatedDate } = useSportData<TeamDetailResponse>(

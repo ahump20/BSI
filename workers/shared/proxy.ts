@@ -33,6 +33,12 @@ const PLAYER_DETAIL_PATTERN = /^\/(mlb|nfl|nba|cfb)\/players\/[^/]+\/?$/;
 /** Matches RSC metadata for pro sport player routes */
 const PLAYER_DETAIL_RSC_PATTERN = /^\/(mlb|nfl|nba|cfb)\/players\/[^/]+\/(__next\.[^?]+)/;
 
+/** Matches pro sport team detail routes: /{sport}/teams/{id}/ */
+const TEAM_DETAIL_PATTERN = /^\/(nfl|nba|cfb)\/teams\/[^/]+\/?$/;
+
+/** Matches RSC metadata for team detail routes */
+const TEAM_DETAIL_RSC_PATTERN = /^\/(nfl|nba|cfb)\/teams\/[^/]+\/(__next\.[^?]+)/;
+
 function buildPlaceholderPath(pathname: string): string | null {
   // Try game detail HTML page match first
   const htmlMatch = pathname.match(GAME_DETAIL_PATTERN);
@@ -87,6 +93,17 @@ function buildPlaceholderPath(pathname: string): string | null {
   const playerRscMatch = pathname.match(PLAYER_DETAIL_RSC_PATTERN);
   if (playerRscMatch) {
     return `/${playerRscMatch[1]}/players/placeholder/${playerRscMatch[2]}`;
+  }
+
+  // Pro sport team detail — NFL, NBA, CFB (MLB uses name slugs pre-generated)
+  const teamMatch = pathname.match(TEAM_DETAIL_PATTERN);
+  if (teamMatch) {
+    return `/${teamMatch[1]}/teams/placeholder/`;
+  }
+
+  const teamRscMatch = pathname.match(TEAM_DETAIL_RSC_PATTERN);
+  if (teamRscMatch) {
+    return `/${teamRscMatch[1]}/teams/placeholder/${teamRscMatch[2]}`;
   }
 
   return null;
