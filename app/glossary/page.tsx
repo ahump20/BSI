@@ -110,7 +110,7 @@ export default function GlossaryPage() {
 
   return (
     <div className="bg-surface-scoreboard text-bsi-bone min-h-screen">
-      <Section padding="sm border-b border-border-vintage">
+      <Section padding="sm" className="border-b border-border-vintage">
         <Container>
           <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Glossary' }]} />
         </Container>
