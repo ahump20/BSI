@@ -29,14 +29,30 @@ import {
 } from '../shared/helpers';
 import { HTTP_CACHE, CACHE_TTL } from '../shared/constants';
 import { handleMLBStandings } from './mlb';
+import { MLB_TEAMS } from '../../lib/utils/mlb-teams';
 
 const CACHE_KEY = 'mlb:power-rankings:v1';
+// Snapshot key for week-over-week delta tracking. Power rankings handler
+// reads this, computes delta against current ranking, then rotates it.
+const SNAPSHOT_KEY = 'mlb:power-rankings:snapshot:prev';
+const SNAPSHOT_MIN_AGE_MS = 24 * 60 * 60 * 1000; // 1 day minimum between snapshots
 const SEASON = 2026;
 
 // Composite weights — sum to 1.0
 const W_ACTUAL_WPCT = 0.5;
 const W_PYTHAG = 0.3;
 const W_RUN_DIFF = 0.2;
+
+// Partial run-data guard — warn when a team with meaningful games played has
+// zero runs on one side of the ledger, which indicates upstream data gaps
+// rather than genuine shutout streaks.
+const PYTHAG_WARN_MIN_GAMES = 5;
+
+// Map from ESPN abbreviation (what the standings API returns) → canonical
+// slug used for team detail URLs. Built once at module load.
+const ABBR_TO_SLUG: Record<string, string> = Object.fromEntries(
+  MLB_TEAMS.map((t) => [t.abbreviation, t.slug]),
+);
 
 interface StandingsTeam {
   teamName: string;
@@ -62,6 +78,7 @@ interface PowerRanking {
   team: string;
   abbreviation: string;
   id: string;
+  slug: string | null;
   logo: string;
   league: string;
   division: string;
@@ -76,17 +93,51 @@ interface PowerRanking {
   compositeScore: number;
   streak: string;
   last10: string;
+  // Week-over-week movement. Positive = moved up, negative = moved down,
+  // null = new to the rankings (or first snapshot).
+  delta: number | null;
+  prevRank: number | null;
+}
+
+interface RankSnapshot {
+  capturedAt: string;
+  ranks: Record<string, number>; // abbreviation → rank at capture time
 }
 
 /**
  * Pythagorean expected win percentage (Bill James, then refined by Davenport).
  * Using exponent 1.83 which is the standard for MLB.
  * Formula: RS^1.83 / (RS^1.83 + RA^1.83)
+ *
+ * @param gp Games played — used for partial-data guard. Zero rs or ra after
+ *           multiple games played likely indicates upstream data gaps, not
+ *           a genuine shutout streak, so we emit a warn for operators.
  */
-function pythagoreanWinPct(rs: number, ra: number): number {
-  if (rs <= 0 && ra <= 0) return 0.5;
-  if (rs <= 0) return 0;
-  if (ra <= 0) return 1;
+function pythagoreanWinPct(rs: number, ra: number, gp: number = 0, teamName: string = ''): number {
+  if (rs <= 0 && ra <= 0) {
+    if (gp >= PYTHAG_WARN_MIN_GAMES) {
+      console.warn(
+        `[mlb-power] ${teamName || 'team'}: rs=0 and ra=0 after ${gp} games — likely missing run data. Defaulting pythag=0.5.`,
+      );
+    }
+    return 0.5;
+  }
+  if (rs <= 0) {
+    if (gp >= PYTHAG_WARN_MIN_GAMES) {
+      console.warn(
+        `[mlb-power] ${teamName || 'team'}: rs=0 after ${gp} games — likely missing runsScored data. Returning pythag=0.`,
+      );
+    }
+    return 0;
+  }
+  if (ra <= 0) {
+    if (gp >= PYTHAG_WARN_MIN_GAMES) {
+      console.warn(
+        `[mlb-power] ${teamName || 'team'}: ra=0 after ${gp} games — likely missing runsAllowed data. Returning pythag=1.`,
+      );
+    }
+    return 1;
+  }
   const exp = 1.83;
   const rsExp = Math.pow(rs, exp);
   const raExp = Math.pow(ra, exp);
@@ -154,15 +205,20 @@ export async function handleMLBPowerRankings(env: Env): Promise<Response> {
     // Filter out teams with no games played (early-season spring rollover)
     const withGames = teams.filter((t) => (t.wins + t.losses) > 0);
 
+    // Load the previous rank snapshot for week-over-week delta computation.
+    // Null on first run or if the previous snapshot is missing.
+    const prevSnapshot = await kvGet<RankSnapshot>(env.KV, SNAPSHOT_KEY);
+    const prevRanks = prevSnapshot?.ranks ?? {};
+
     // Compute composite for each team
-    const scored = withGames.map((t): Omit<PowerRanking, 'rank'> => {
+    const scored = withGames.map((t): Omit<PowerRanking, 'rank' | 'delta' | 'prevRank'> => {
       const gp = t.wins + t.losses;
       const winPct = gp > 0 ? t.wins / gp : 0;
       const rs = t.runsScored ?? 0;
       const ra = t.runsAllowed ?? 0;
       const runDiff = rs - ra;
       const rdpg = gp > 0 ? runDiff / gp : 0;
-      const pythag = pythagoreanWinPct(rs, ra);
+      const pythag = pythagoreanWinPct(rs, ra, gp, t.teamName);
       const rdpgNormalized = normalizeRunDiffPerGame(rdpg);
       const composite = computeComposite(winPct, pythag, rdpgNormalized);
 
@@ -170,6 +226,7 @@ export async function handleMLBPowerRankings(env: Env): Promise<Response> {
         team: t.teamName,
         abbreviation: t.abbreviation,
         id: t.id,
+        slug: ABBR_TO_SLUG[t.abbreviation] ?? null,
         logo: t.logo,
         league: t.league,
         division: t.division,
@@ -190,8 +247,29 @@ export async function handleMLBPowerRankings(env: Env): Promise<Response> {
     // Sort descending by composite score
     scored.sort((a, b) => b.compositeScore - a.compositeScore);
 
-    // Assign ranks
-    const ranked: PowerRanking[] = scored.map((t, i) => ({ rank: i + 1, ...t }));
+    // Assign ranks + compute delta against previous snapshot.
+    // delta = prevRank - currentRank (positive means climbed, negative means dropped).
+    const ranked: PowerRanking[] = scored.map((t, i) => {
+      const rank = i + 1;
+      const prevRank = prevRanks[t.abbreviation] ?? null;
+      const delta = prevRank != null ? prevRank - rank : null;
+      return { rank, delta, prevRank, ...t };
+    });
+
+    // Rotate the snapshot if the previous one is old enough (>= 1 day).
+    // This gives delta a meaningful "week-over-week" cadence without requiring
+    // a separate cron — the handler self-rotates on its own read cycle.
+    const shouldRotate =
+      !prevSnapshot ||
+      Date.now() - new Date(prevSnapshot.capturedAt).getTime() >= SNAPSHOT_MIN_AGE_MS;
+    if (shouldRotate && ranked.length > 0) {
+      const nextSnapshot: RankSnapshot = {
+        capturedAt: now,
+        ranks: Object.fromEntries(ranked.map((r) => [r.abbreviation, r.rank])),
+      };
+      // Snapshot TTL = 14 days (ample for weekly delta tracking)
+      await kvPut(env.KV, SNAPSHOT_KEY, nextSnapshot, 14 * 24 * 60 * 60);
+    }
 
     const payload = withMeta(
       {
@@ -201,6 +279,7 @@ export async function handleMLBPowerRankings(env: Env): Promise<Response> {
         methodology:
           '50% actual win percentage + 30% pythagorean expectation (exp 1.83) + 20% normalized run differential per game',
         totalTeams: ranked.length,
+        snapshotCapturedAt: prevSnapshot?.capturedAt ?? null,
       },
       'mlb-power',
       { fetchedAt: now, sources: ['mlb-standings'] },

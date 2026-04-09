@@ -21,6 +21,8 @@ interface PowerRanking {
   team: string;
   abbreviation: string;
   id: string;
+  /** Canonical team slug from the backend (null if mapping is unknown). */
+  slug: string | null;
   logo: string;
   league: 'AL' | 'NL' | string;
   division: string;
@@ -35,6 +37,9 @@ interface PowerRanking {
   compositeScore: number;
   streak: string;
   last10: string;
+  /** Rank change since last snapshot. Positive = climbed, negative = dropped. */
+  delta: number | null;
+  prevRank: number | null;
 }
 
 interface PowerRankingsResponse {
@@ -44,6 +49,7 @@ interface PowerRankingsResponse {
   methodology?: string;
   totalTeams?: number;
   emptyReason?: string;
+  snapshotCapturedAt?: string | null;
   meta?: DataMeta;
 }
 
@@ -73,6 +79,50 @@ function streakColor(streak: string): string {
   if (streak.startsWith('W')) return 'var(--heritage-columbia-blue)';
   if (streak.startsWith('L')) return '#ef4444';
   return 'var(--bsi-dust)';
+}
+
+/**
+ * Rank-change badge — shows ▲3 / ▼1 / — since last snapshot, or NEW if this
+ * is a team's first appearance (no prior rank recorded).
+ */
+function DeltaBadge({ delta, prevRank }: { delta: number | null; prevRank: number | null }) {
+  if (delta == null || prevRank == null) {
+    return (
+      <span
+        className="font-mono text-[9px] font-bold uppercase tracking-widest text-bsi-dust"
+        title="New to rankings"
+      >
+        NEW
+      </span>
+    );
+  }
+  if (delta === 0) {
+    return (
+      <span className="font-mono text-[11px] text-bsi-dust" title="Unchanged">
+        —
+      </span>
+    );
+  }
+  if (delta > 0) {
+    return (
+      <span
+        className="font-mono text-[11px] font-bold tabular-nums text-heritage-columbia"
+        style={{ color: 'var(--heritage-columbia-blue)' }}
+        title={`Climbed ${delta} from #${prevRank}`}
+      >
+        ▲{delta}
+      </span>
+    );
+  }
+  return (
+    <span
+      className="font-mono text-[11px] font-bold tabular-nums"
+      style={{ color: '#ef4444' }}
+      title={`Dropped ${Math.abs(delta)} from #${prevRank}`}
+    >
+      ▼{Math.abs(delta)}
+    </span>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -177,7 +227,7 @@ function TeamRow({ team }: { team: PowerRanking }) {
             ? 'rgba(22, 22, 22, 0.6)'
             : 'var(--surface-dugout)',
         gridTemplateColumns:
-          '2rem minmax(140px,1fr) 3rem 3.5rem 3.5rem 4rem minmax(120px,1fr)',
+          '2rem 2.5rem minmax(140px,1fr) 3rem 3.5rem 3.5rem 4rem minmax(120px,1fr)',
       }}
     >
       {/* Rank */}
@@ -189,6 +239,11 @@ function TeamRow({ team }: { team: PowerRanking }) {
         }}
       >
         {team.rank}
+      </div>
+
+      {/* Delta — week-over-week movement */}
+      <div className="text-center">
+        <DeltaBadge delta={team.delta} prevRank={team.prevRank} />
       </div>
 
       {/* Team name + logo */}
@@ -205,12 +260,25 @@ function TeamRow({ team }: { team: PowerRanking }) {
         ) : (
           <div className="h-5 w-5 shrink-0 rounded-sm bg-surface-press-box sm:h-6 sm:w-6" />
         )}
-        <span className="min-w-0 truncate text-xs font-medium sm:text-sm text-bsi-bone">
-          {team.team}
-          <span className="ml-2 hidden shrink-0 text-[9px] font-mono uppercase text-bsi-dust sm:inline">
-            {team.division}
+        {team.slug ? (
+          <Link
+            href={`/mlb/teams/${team.slug}/`}
+            prefetch={false}
+            className="min-w-0 truncate text-xs font-medium hover:underline sm:text-sm text-bsi-bone"
+          >
+            {team.team}
+            <span className="ml-2 hidden shrink-0 text-[9px] font-mono uppercase text-bsi-dust sm:inline">
+              {team.division}
+            </span>
+          </Link>
+        ) : (
+          <span className="min-w-0 truncate text-xs font-medium sm:text-sm text-bsi-bone">
+            {team.team}
+            <span className="ml-2 hidden shrink-0 text-[9px] font-mono uppercase text-bsi-dust sm:inline">
+              {team.division}
+            </span>
           </span>
-        </span>
+        )}
       </div>
 
       {/* W-L */}
@@ -261,10 +329,13 @@ function ColumnHeader() {
         backgroundColor: 'var(--surface-press-box)',
         color: 'var(--bsi-dust)',
         gridTemplateColumns:
-          '2rem minmax(140px,1fr) 3rem 3.5rem 3.5rem 4rem minmax(120px,1fr)',
+          '2rem 2.5rem minmax(140px,1fr) 3rem 3.5rem 3.5rem 4rem minmax(120px,1fr)',
       }}
     >
       <span className="text-center">#</span>
+      <span className="text-center" title="Rank change since last snapshot">
+        Δ
+      </span>
       <span>Team</span>
       <span className="text-right">W-L</span>
       <span className="hidden text-right md:block">Pct</span>
@@ -286,7 +357,23 @@ function ColumnHeader() {
 // Methodology Card
 // ---------------------------------------------------------------------------
 
-function MethodologyCard({ methodology }: { methodology?: string }) {
+function MethodologyCard({
+  methodology,
+  snapshotCapturedAt,
+}: {
+  methodology?: string;
+  snapshotCapturedAt?: string | null;
+}) {
+  // Compute rolling snapshot age in days — drives the "Δ measured against X days ago" hint.
+  const snapshotAge = useMemo(() => {
+    if (!snapshotCapturedAt) return null;
+    const ms = Date.now() - new Date(snapshotCapturedAt).getTime();
+    const days = Math.max(0, Math.round(ms / (24 * 60 * 60 * 1000)));
+    if (days === 0) return 'today';
+    if (days === 1) return '1 day ago';
+    return `${days} days ago`;
+  }, [snapshotCapturedAt]);
+
   return (
     <div
       className="rounded-sm border-l-2 px-4 py-3"
@@ -307,6 +394,13 @@ function MethodologyCard({ methodology }: { methodology?: string }) {
         dramatically on a single weekend. The ranking will stabilize as the
         season progresses.
       </p>
+      {snapshotAge && (
+        <p className="mt-2 font-body text-[10px] leading-relaxed text-bsi-dust">
+          <span className="font-mono uppercase tracking-wider text-bsi-bone">Δ</span>{' '}
+          column shows rank change since the last snapshot captured{' '}
+          <span className="text-bsi-bone">{snapshotAge}</span>.
+        </p>
+      )}
     </div>
   );
 }
@@ -530,7 +624,10 @@ export default function PowerRankingsClient() {
         <Container>
           {!loading && rankings.length >= 5 && (
             <div className="mb-4 grid gap-4 sm:mb-5 lg:grid-cols-[1fr_2fr]">
-              <MethodologyCard methodology={data?.methodology} />
+              <MethodologyCard
+                methodology={data?.methodology}
+                snapshotCapturedAt={data?.snapshotCapturedAt ?? null}
+              />
               <Headlines rankings={rankings} />
             </div>
           )}
