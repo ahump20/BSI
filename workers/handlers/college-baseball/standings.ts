@@ -205,14 +205,17 @@ export async function handleCollegeBaseballStandings(
         const lpct = stat('leagueWinPercent');
         if (lpct > 0) {
           leagueWinPct = lpct;
-          // By early April (Week 8-9), ~70% of scheduled games are conference games.
-          // Use a tighter estimator: for teams ≥ 25 games played, use round(gp * 0.7).
-          // For fewer games, fall back to the earlier 0.55 ratio.
+          // Conference games played estimate: ~55% of total games are conference.
+          // This holds across mid-late season for most D1 programs.
+          // Cap at total games played and cap conf wins/losses at overall wins/losses
+          // so we never produce impossible numbers (e.g. 22-0 conf when overall is 15-17).
           const gp = stat('gamesPlayed') || (wins + losses);
-          const confRatio = gp >= 25 ? 0.7 : 0.55;
-          const estimatedConfGames = Math.min(Math.round(gp * confRatio), 30);
-          confWins = Math.round(lpct * estimatedConfGames);
-          confLosses = estimatedConfGames - confWins;
+          const estimatedConfGames = Math.min(Math.round(gp * 0.55), 30, gp);
+          const rawConfWins = Math.round(lpct * estimatedConfGames);
+          const rawConfLosses = estimatedConfGames - rawConfWins;
+          // Clamp so the estimate is arithmetically consistent with overall record.
+          confWins = Math.min(rawConfWins, wins);
+          confLosses = Math.min(rawConfLosses, losses);
           confEstimated = true;
         }
       }
