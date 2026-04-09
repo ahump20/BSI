@@ -33,7 +33,7 @@ interface TeamStanding {
     shortName: string;
     logo?: string;
   };
-  conferenceRecord: { wins: number; losses: number; pct?: number };
+  conferenceRecord: { wins: number | null; losses: number | null; pct?: number; estimated?: boolean };
   overallRecord: { wins: number; losses: number };
   winPct: number;
   rpi?: number;
@@ -149,10 +149,12 @@ function CollegeBaseballStandingsPageInner() {
   const currentConf = selectedConferenceMeta;
   const hasConferencePlay = standings.some(
     (s) =>
-      s.conferenceRecord?.wins > 0 ||
-      s.conferenceRecord?.losses > 0 ||
+      (s.conferenceRecord?.wins ?? 0) > 0 ||
+      (s.conferenceRecord?.losses ?? 0) > 0 ||
       (s.conferenceRecord?.pct ?? 0) > 0,
   );
+  // Any team flagged as LPCT-estimated? Drives the estimation disclosure in the table.
+  const anyEstimated = standings.some((s) => s.conferenceRecord?.estimated === true);
 
   // Sortable column state
   type SortKey = 'rank' | 'confWins' | 'overallWins' | 'winPct' | 'diff';
@@ -504,13 +506,22 @@ function CollegeBaseballStandingsPageInner() {
                               {hasConferencePlay && (
                                 <td className="py-3 px-4 text-center">
                                   <span className="text-text-primary">
-                                    {standing.conferenceRecord?.wins > 0 ||
-                                    standing.conferenceRecord?.losses > 0
-                                      ? `${standing.conferenceRecord.wins}-${standing.conferenceRecord.losses}`
-                                      : standing.conferenceRecord?.pct != null &&
-                                          standing.conferenceRecord.pct > 0
-                                        ? `${(standing.conferenceRecord.pct * 100).toFixed(0)}%`
-                                        : '—'}
+                                    {(() => {
+                                      const cr = standing.conferenceRecord;
+                                      const w = cr?.wins;
+                                      const l = cr?.losses;
+                                      const pct = cr?.pct;
+                                      // Real W-L available (Highlightly enriched or ESPN direct)
+                                      if (typeof w === 'number' && typeof l === 'number' && (w > 0 || l > 0)) {
+                                        return `${w}-${l}`;
+                                      }
+                                      // Percentage-only mode (LPCT-derived estimate, no fabricated integers)
+                                      if (pct != null && pct > 0) {
+                                        const pctStr = pct.toFixed(3).replace(/^0/, '');
+                                        return cr?.estimated ? `${pctStr}*` : `${pctStr}`;
+                                      }
+                                      return '—';
+                                    })()}
                                   </span>
                                 </td>
                               )}
@@ -564,11 +575,17 @@ function CollegeBaseballStandingsPageInner() {
 
                     {/* Legend */}
                     <div className="px-4 py-3 bg-surface-press-box border-t border-border-vintage">
-                      <div className="flex items-center gap-4 text-xs text-bsi-dust">
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-bsi-dust">
                         <div className="flex items-center gap-2">
                           <div className="w-3 h-3 bg-success/20 rounded-sm" />
                           <span>NCAA Tournament Projection</span>
                         </div>
+                        {anyEstimated && (
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-mono text-burnt-orange">*</span>
+                            <span>Conference percentage derived from ESPN win% (no raw W-L available). The percentage is real; the underlying breakdown is not published.</span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </Card>

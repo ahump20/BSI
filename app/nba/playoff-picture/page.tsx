@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSportData } from '@/lib/hooks/useSportData';
@@ -822,7 +822,15 @@ function daysBetween(fromMs: number, toMs: number): number {
 }
 
 function PostseasonCountdown() {
-  const nowMs = useMemo(() => Date.now(), []);
+  // Tick every 60 seconds so a tab kept open across midnight re-computes
+  // the day count and transitions into the HAPPENING NOW / COMPLETE states
+  // without requiring a page reload.
+  const [nowMs, setNowMs] = useState(() => Date.now());
+  useEffect(() => {
+    const interval = setInterval(() => setNowMs(Date.now()), 60_000);
+    return () => clearInterval(interval);
+  }, []);
+
   const daysToPlayIn = daysBetween(nowMs, PLAY_IN_START);
   const daysToPlayoffs = daysBetween(nowMs, PLAYOFFS_START);
 
