@@ -48,11 +48,21 @@ const W_RUN_DIFF = 0.2;
 // rather than genuine shutout streaks.
 const PYTHAG_WARN_MIN_GAMES = 5;
 
-// Map from ESPN abbreviation (what the standings API returns) → canonical
-// slug used for team detail URLs. Built once at module load.
-const ABBR_TO_SLUG: Record<string, string> = Object.fromEntries(
-  MLB_TEAMS.map((t) => [t.abbreviation, t.slug]),
-);
+// Map from abbreviation → canonical slug used for team detail URLs.
+// Built once at module load from the local MLB_TEAMS table, then extended
+// with aliases for ESPN-specific abbreviation drift (e.g. ESPN uses CHW for
+// White Sox while the local table uses CWS; ESPN uses ATH for Athletics
+// while local uses OAK).
+const ESPN_ABBR_ALIASES: Record<string, string> = {
+  CHW: 'white-sox', // ESPN → White Sox
+  CWS: 'white-sox', // Local
+  ATH: 'athletics', // ESPN → Oakland Athletics
+  OAK: 'athletics', // Local
+};
+const ABBR_TO_SLUG: Record<string, string> = {
+  ...Object.fromEntries(MLB_TEAMS.map((t) => [t.abbreviation, t.slug])),
+  ...ESPN_ABBR_ALIASES,
+};
 
 interface StandingsTeam {
   teamName: string;
