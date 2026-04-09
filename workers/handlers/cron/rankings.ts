@@ -6,9 +6,40 @@
  */
 
 import type { Env } from '../../shared/types';
-import { kvPut, getHighlightlyClient, getCollegeClient, logError } from '../../shared/helpers';
+import { kvGet, kvPut, getHighlightlyClient, getCollegeClient, logError } from '../../shared/helpers';
 import { CACHE_TTL } from '../../shared/constants';
 import { flattenESPNPolls } from '../college-baseball/standings';
+
+/**
+ * Weekly rotation of the current rankings snapshot into the "previous" slot so
+ * the rankings handler can return trend (week-over-week movement) data. Without
+ * this, `cb:rankings:prev` stays empty forever and the rankings table renders
+ * every team with a null trend (no up/down arrows), which looks like a bug to
+ * visitors who expect poll movement indicators.
+ *
+ * Runs inside the cron path since the cron is what keeps the rankings cache warm.
+ * Rotation only fires if 7+ days have passed since the last rotation — this gives
+ * poll-style weekly movement rather than 6h movement.
+ */
+async function rotateWeeklyIfDue(env: Env): Promise<void> {
+  const prevRotateKey = 'cb:rankings:prev:rotated_at';
+  const prevKey = 'cb:rankings:prev';
+  const currentKey = 'cb:rankings:v2';
+  const weekSeconds = 7 * 24 * 60 * 60;
+
+  const lastRotate = await env.KV.get(prevRotateKey);
+  const lastRotateMs = lastRotate ? Date.parse(lastRotate) : 0;
+  const weekAgoMs = Date.now() - weekSeconds * 1000;
+
+  if (lastRotateMs >= weekAgoMs) return;
+
+  const currentSnapshot = await kvGet<unknown>(env.KV, currentKey);
+  if (!currentSnapshot) return;
+
+  // Archive current → prev (14 day TTL so it survives missed cron windows)
+  await kvPut(env.KV, prevKey, currentSnapshot, 14 * 24 * 60 * 60);
+  await env.KV.put(prevRotateKey, new Date().toISOString(), { expirationTtl: 14 * 24 * 60 * 60 });
+}
 
 /**
  * Cache college baseball rankings in KV.
@@ -19,6 +50,10 @@ export async function cacheRankings(env: Env): Promise<boolean> {
   const now = new Date().toISOString();
 
   try {
+    // Archive last week's rankings into the prev slot before we overwrite current.
+    // This is what lets the UI show week-over-week movement arrows.
+    await rotateWeeklyIfDue(env);
+
     // Try Highlightly first
     const hlClient = getHighlightlyClient(env);
     if (hlClient) {

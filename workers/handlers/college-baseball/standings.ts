@@ -474,7 +474,10 @@ export async function handleCollegeBaseballRankings(env: Env): Promise<Response>
       extra: { sport: 'college-baseball' },
     });
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.rankings);
-    return cachedJson({ ...payload, previousRankings: null }, 200, HTTP_CACHE.rankings, {
+    // rotatePrevious() just moved the old snapshot into prevKey — read it back so
+    // the response includes week-over-week movement instead of null.
+    const prevAfterRotate = await kvGet<unknown>(env.KV, prevKey);
+    return cachedJson({ ...payload, previousRankings: prevAfterRotate || null }, 200, HTTP_CACHE.rankings, {
       ...dataHeaders(now, source), 'X-Cache': 'MISS',
     });
   }
@@ -497,7 +500,8 @@ export async function handleCollegeBaseballRankings(env: Env): Promise<Response>
     if (result.success) {
       await kvPut(env.KV, cacheKey, payload, CACHE_TTL.rankings);
     }
-    return cachedJson({ ...payload, previousRankings: null }, result.success ? 200 : 502, HTTP_CACHE.rankings, {
+    const prevAfterRotateNcaa = await kvGet<unknown>(env.KV, prevKey);
+    return cachedJson({ ...payload, previousRankings: prevAfterRotateNcaa || null }, result.success ? 200 : 502, HTTP_CACHE.rankings, {
       ...dataHeaders(result.timestamp, 'ncaa'), 'X-Cache': 'MISS',
     });
   } catch {
