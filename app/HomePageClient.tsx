@@ -346,10 +346,10 @@ function ScoreTicker({
                 {g.sportShort}
               </span>
               <span className="font-medium text-bsi-dust">{awayName}</span>
-              <span className="font-bold tabular-nums mx-0.5" style={{ color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}>{awayScore}</span>
+              <span className="font-bold tabular-nums mx-0.5 text-bsi-bone" style={{ letterSpacing: '0.02em' }}>{awayScore}</span>
               <span className="mx-0.5 text-bsi-dust/50">@</span>
               <span className="font-medium text-bsi-dust">{homeName}</span>
-              <span className="font-bold tabular-nums mx-0.5" style={{ color: 'var(--bsi-bone)', letterSpacing: '0.02em' }}>{homeScore}</span>
+              <span className="font-bold tabular-nums mx-0.5 text-bsi-bone" style={{ letterSpacing: '0.02em' }}>{homeScore}</span>
               {isLive && (
                 <span className="inline-flex items-center gap-1 ml-1.5 px-1.5 py-0.5 rounded-sm" style={{ background: 'rgba(16,185,129,0.1)' }}>
                   <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
@@ -550,8 +550,8 @@ function StandoutCard({
         </div>
         <div className="text-right shrink-0">
           <p
-            className="text-3xl sm:text-[36px] font-bold tabular-nums leading-none"
-            style={{ fontFamily: 'var(--font-mono)', color: accentColor }}
+            className="text-3xl sm:text-[36px] font-bold tabular-nums leading-none font-mono"
+            style={{ color: accentColor }}
           >
             {statValue}
           </p>
@@ -620,21 +620,21 @@ function LeaderboardTable({
       </div>
 
       <div
-        className="border border-t-0 overflow-x-auto"
-        style={{ borderColor: 'var(--border-vintage)', borderRadius: '0 0 2px 2px' }}
+        className="border border-t-0 overflow-x-auto border-border-vintage"
+        style={{ borderRadius: '0 0 2px 2px' }}
       >
         <table className="w-full text-[11px] font-mono">
           <thead>
             <tr style={{ background: 'rgba(17,17,17,0.5)' }}>
               <th
-                className="text-left pl-4 pr-1 py-2 font-semibold"
-                style={{ color: 'var(--bsi-dust)', fontSize: '9px', fontFamily: 'var(--font-oswald)' }}
+                className="text-left pl-4 pr-1 py-2 font-semibold font-display text-bsi-dust"
+                style={{ fontSize: '9px' }}
               >
                 #
               </th>
               <th
-                className="text-left px-1 py-2 font-semibold"
-                style={{ color: 'var(--bsi-dust)', fontSize: '9px', fontFamily: 'var(--font-oswald)' }}
+                className="text-left px-1 py-2 font-semibold font-display text-bsi-dust"
+                style={{ fontSize: '9px' }}
               >
                 PLAYER
               </th>
@@ -789,8 +789,8 @@ function LeaderboardEmpty({ title, error, onRetry }: { title: string; error?: st
         {onRetry && (
           <button
             onClick={onRetry}
-            className="mt-3 text-[10px] uppercase tracking-wider px-3 py-1.5 border rounded-sm transition-colors hover:bg-[rgba(191,87,0,0.08)] hover:border-bsi-primary"
-            style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-primary)', borderColor: 'rgba(191,87,0,0.3)' }}
+            className="mt-3 text-[10px] uppercase tracking-wider px-3 py-1.5 border rounded-sm transition-colors hover:bg-[rgba(191,87,0,0.08)] hover:border-bsi-primary font-mono text-bsi-primary"
+            style={{ borderColor: 'rgba(191,87,0,0.3)' }}
           >Retry</button>
         )}
       </div>

@@ -115,7 +115,7 @@ export default function SwingAnalysisClient() {
         message: 'Generating AI analysis...',
       });
 
-      const swingId = `swing_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+      const swingId = `swing_${Date.now()}_${crypto.randomUUID().slice(0, 8)}`;
       const ctx = createChatContext(result, swingId);
       setChatContext(ctx);
 
@@ -315,7 +315,7 @@ export default function SwingAnalysisClient() {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="mt-4 p-4 rounded-sm bg-[var(--bsi-danger)]/10 border border-[var(--bsi-danger)]/20 text-[var(--bsi-danger)] text-sm"
+                  className="mt-4 p-4 rounded-sm bg-error/10 border border-error/20 text-error text-sm"
                 >
                   {error}
                 </motion.div>

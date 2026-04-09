@@ -18,6 +18,7 @@ import { toDataMeta } from '@/lib/utils/data-meta';
 import { formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
 import type { DataMeta } from '@/lib/types/data-meta';
 import { IntelStreamCard } from '@/components/intel/IntelStreamCard';
+import { TeamCircle } from '@/components/sports/TeamCircle';
 import {
   COLLEGE_BASEBALL_CONFERENCES,
   normalizeCollegeBaseballConference,
@@ -30,6 +31,7 @@ interface Team {
   conference: string;
   score: number | null;
   record: { wins: number; losses: number };
+  logo?: string;
 }
 
 interface Game {
@@ -101,6 +103,7 @@ function TeamRow({
 
   return (
     <div className="flex items-center gap-3">
+      <TeamCircle logo={team.logo} abbreviation={team.shortName?.slice(0, 3).toUpperCase() || fallbackAbbr} size="w-7 h-7" textSize="text-[10px]" />
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <span

@@ -72,8 +72,8 @@ export function LegacyRouteBridge({
             {title}
           </h1>
           <p
-            className="max-w-2xl text-base leading-8 md:text-lg"
-            style={{ color: 'var(--bsi-dust)', fontFamily: 'var(--bsi-font-body)' }}
+            className="max-w-2xl text-base leading-8 md:text-lg text-bsi-dust"
+            style={{ fontFamily: 'var(--bsi-font-body)' }}
           >
             {description}
           </p>

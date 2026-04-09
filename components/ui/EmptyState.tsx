@@ -63,8 +63,8 @@ export function EmptyState({ type, sport: _sport, message, action, onRetry }: Em
         {config.title}
       </h3>
       <p
-        className="text-center max-w-sm mb-6 italic"
-        style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--bsi-dust, #C4B8A5)' }}
+        className="text-center max-w-sm mb-6 italic text-bsi-dust"
+        style={{ fontFamily: 'var(--bsi-font-body)' }}
       >
         {message || config.message}
       </p>

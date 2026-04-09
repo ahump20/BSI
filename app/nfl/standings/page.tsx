@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useSportData } from '@/lib/hooks/useSportData';
+import { TeamCircle } from '@/components/sports/TeamCircle';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -17,6 +18,7 @@ import type { DataMeta } from '@/lib/types/data-meta';
 interface Team {
   name: string;
   abbreviation: string;
+  logo?: string;
   wins: number;
   losses: number;
   ties: number;
@@ -160,7 +162,7 @@ export default function NFLStandingsPage() {
               </Card>
             ) : isOffSeason ? (
               <div className="text-center py-12">
-                <p className="italic" style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--bsi-dust, #C4B8A5)' }}>
+                <p className="italic text-bsi-dust" style={{ fontFamily: 'var(--bsi-font-body)' }}>
                   Standings update during the season
                 </p>
                 <p className="text-sm mt-2 text-bsi-dust opacity-70">
@@ -220,9 +222,7 @@ export default function NFLStandingsPage() {
                               >
                                 <td className="py-3 px-2">
                                   <div className="flex items-center gap-2">
-                                    <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-surface-dugout text-bsi-primary">
-                                      {team.abbreviation}
-                                    </span>
+                                    <TeamCircle logo={team.logo} abbreviation={team.abbreviation} size="w-8 h-8" textSize="text-xs" />
                                     <span className="font-semibold text-bsi-bone">{team.name}</span>
                                   </div>
                                 </td>

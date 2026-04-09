@@ -9,7 +9,7 @@ export function GlossaryPageClient() {
       <div className="savant-ambient min-h-screen">
         <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-xs mb-8" style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--svt-text-muted)' }}>
+          <nav className="flex items-center gap-2 text-xs mb-8 font-mono" style={{ color: 'var(--svt-text-muted)' }}>
             <Link href="/" className="transition-colors hover:text-[var(--svt-text)]">Home</Link>
             <span>/</span>
             <Link href="/college-baseball" className="transition-colors hover:text-[var(--svt-text)]">College Baseball</Link>

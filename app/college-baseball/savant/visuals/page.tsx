@@ -570,7 +570,7 @@ export default function SavantVisualsPage() {
           <Container size="wide">
             {/* Breadcrumb */}
             <ScrollReveal direction="up">
-              <nav className="flex items-center gap-2 text-xs mb-6" style={{ fontFamily: 'var(--bsi-font-data)', color: 'var(--svt-text-muted)' }}>
+              <nav className="flex items-center gap-2 text-xs mb-6 font-mono" style={{ color: 'var(--svt-text-muted)' }}>
                 <Link href="/" className="transition-colors hover:text-[var(--svt-text)]">Home</Link>
                 <span>/</span>
                 <Link href="/college-baseball" className="transition-colors hover:text-[var(--svt-text)]">College Baseball</Link>

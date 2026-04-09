@@ -494,8 +494,8 @@ function Sparkline({
           {label}
         </span>
         <span
-          className="text-[11px] font-semibold"
-          style={{ fontFamily: 'var(--bsi-font-mono)', color }}
+          className="text-[11px] font-semibold font-mono"
+          style={{ color }}
         >
           {format(data[data.length - 1].value)}
         </span>

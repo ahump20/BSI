@@ -79,6 +79,7 @@
     "scan:secrets:staged": "node scripts/secretlint-staged.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.86.1",
     "@mediapipe/tasks-vision": "^0.10.32",
     "@stripe/react-stripe-js": "^3.10.0",
     "@stripe/stripe-js": "^5.10.0",

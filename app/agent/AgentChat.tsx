@@ -408,8 +408,8 @@ export function AgentChat() {
               Ask Anything About College Baseball
             </h2>
             <p
-              className="text-sm mb-6 max-w-md"
-              style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--bsi-dust)' }}
+              className="text-sm mb-6 max-w-md text-bsi-dust"
+              style={{ fontFamily: 'var(--bsi-font-body)' }}
             >
               Live scores, conference standings, national rankings, team sabermetrics,
               player comps — all from BSI&apos;s real-time data pipeline.
@@ -451,8 +451,8 @@ export function AgentChat() {
                 BSI Agent
               </span>
               <p
-                className="text-sm leading-relaxed whitespace-pre-wrap"
-                style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--bsi-bone)' }}
+                className="text-sm leading-relaxed whitespace-pre-wrap text-bsi-bone"
+                style={{ fontFamily: 'var(--bsi-font-body)' }}
               >
                 {streamText}
                 <span className="inline-block w-1.5 h-4 bg-bsi-primary/60 ml-0.5 animate-pulse" />

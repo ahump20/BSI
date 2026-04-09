@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useSportData } from '@/lib/hooks/useSportData';
+import { TeamCircle } from '@/components/sports/TeamCircle';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -16,6 +17,7 @@ import type { DataMeta } from '@/lib/types/data-meta';
 interface Team {
   name: string;
   abbreviation: string;
+  logo?: string;
   wins: number;
   losses: number;
   pct: number;
@@ -131,7 +133,7 @@ export default function NBAStandingsPage() {
               </Card>
             ) : !dataFresh ? (
               <div className="text-center py-12">
-                <p className="italic" style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--bsi-dust, #C4B8A5)' }}>
+                <p className="italic text-bsi-dust" style={{ fontFamily: 'var(--bsi-font-body)' }}>
                   Standings update during the season
                 </p>
               </div>
@@ -193,9 +195,7 @@ export default function NBAStandingsPage() {
                               <td className="py-3 px-2 text-text-tertiary">{index + 1}</td>
                               <td className="py-3 px-2">
                                 <div className="flex items-center gap-2">
-                                  <span className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
-                                    {team.abbreviation}
-                                  </span>
+                                  <TeamCircle logo={team.logo} abbreviation={team.abbreviation} size="w-8 h-8" textSize="text-xs" />
                                   <span className="font-semibold text-text-primary">{team.name}</span>
                                   {isPlayoffSpot && (
                                     <Badge variant="success" className="text-xs hidden sm:inline">

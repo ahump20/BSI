@@ -13,6 +13,7 @@ import { SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { FilterPill } from '@/components/ui/FilterPill';
+import { OffSeasonBanner, detectSeasonState } from '@/components/ui/OffSeasonBanner';
 import { formatTimestamp, formatScheduleDate, getDateOffset, formatGameTime } from '@/lib/utils/timezone';
 import type { DataMeta } from '@/lib/types/data-meta';
 
@@ -313,6 +314,21 @@ export default function NFLGamesPage() {
 
   const { live, final, scheduled } = categorizeGames(games);
 
+  // Detect off-season state so visitors on /nfl/scores in April don't see a lone
+  // stale Super Bowl result with no context and conclude the page is broken.
+  const seasonState = useMemo(
+    () =>
+      detectSeasonState(
+        games.map((g) => ({
+          date: g.date,
+          isCompleted: g.status.type.completed,
+          isLive: g.status.type.state === 'in',
+          isScheduled: g.status.type.state === 'pre',
+        })),
+      ),
+    [games],
+  );
+
   return (
     <>
       <div>
@@ -431,6 +447,13 @@ export default function NFLGamesPage() {
               />
             ) : (
               <>
+                <OffSeasonBanner
+                  state={seasonState.state}
+                  referenceDate={seasonState.referenceDate}
+                  sportLabel="NFL"
+                  seasonTimingHint="The 2026 regular season kicks off in September."
+                />
+
                 {/* Live Games */}
                 {live.length > 0 && (
                   <div className="mb-8">

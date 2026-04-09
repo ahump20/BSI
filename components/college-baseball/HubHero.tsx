@@ -190,8 +190,8 @@ export function HubHero({
                   {Array.from(groupedSearchResults.entries()).map(([category, items]) => (
                     <div key={category}>
                       <div
-                        className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest"
-                        style={{ color: 'var(--bsi-dust)', background: 'var(--surface-press-box)', fontFamily: 'var(--bsi-font-data)' }}
+                        className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest font-mono text-bsi-dust"
+                        style={{ background: 'var(--surface-press-box)' }}
                       >
                         {category}
                       </div>

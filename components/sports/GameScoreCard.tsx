@@ -66,7 +66,7 @@ function CardContent({ game, showHitsErrors }: { game: GameScoreCardGame; showHi
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: 'var(--heritage-teal, #00B2A9)' }} />
               <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: 'var(--heritage-teal, #00B2A9)' }} />
             </span>
-            <span className="font-semibold text-sm uppercase" style={{ fontFamily: 'var(--bsi-font-display)', color: 'var(--heritage-teal, #00B2A9)' }}>
+            <span className="font-semibold text-sm uppercase font-display" style={{ color: 'var(--heritage-teal, #00B2A9)' }}>
               {game.detail || 'Live'}
             </span>
           </div>

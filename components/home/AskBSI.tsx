@@ -89,8 +89,8 @@ function ResponseBody({ text, isStreaming }: { text: string; isStreaming: boolea
           <Link
             key={i}
             href={seg.href!}
-            className="underline underline-offset-2 transition-colors font-semibold"
-            style={{ color: 'var(--heritage-columbia-blue)', textDecorationColor: 'rgba(75, 156, 211, 0.3)' }}
+            className="underline underline-offset-2 transition-colors font-semibold text-heritage-columbia"
+            style={{ textDecorationColor: 'rgba(75, 156, 211, 0.3)' }}
           >
             {seg.content}
           </Link>
@@ -120,8 +120,8 @@ function ActionStrip({ links }: { links: Array<{ label: string; href: string }> 
           <Link
             key={link.href}
             href={link.href}
-            className="inline-flex items-center gap-1.5 text-[11px] px-3 py-1.5 transition-all duration-200 font-semibold heritage-stamp"
-            style={{ color: 'var(--heritage-columbia-blue)', borderColor: 'rgba(75, 156, 211, 0.3)' }}
+            className="inline-flex items-center gap-1.5 text-[11px] px-3 py-1.5 transition-all duration-200 font-semibold heritage-stamp text-heritage-columbia"
+            style={{ borderColor: 'rgba(75, 156, 211, 0.3)' }}
           >
             <svg viewBox="0 0 16 16" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M6 3l5 5-5 5" />
@@ -247,7 +247,7 @@ export function AskBSI({ embedded = false, initialQuestion }: AskBSIProps) {
     >
           {/* Header */}
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 flex items-center justify-center shrink-0" style={{ border: '1px solid var(--border-vintage)', borderRadius: '2px', background: 'rgba(191, 87, 0, 0.08)' }}>
+            <div className="w-8 h-8 flex items-center justify-center shrink-0 border border-border-vintage" style={{ borderRadius: '2px', background: 'rgba(191, 87, 0, 0.08)' }}>
               <svg viewBox="0 0 24 24" className="w-4 h-4 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
                 <path d="M18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" />
@@ -336,7 +336,7 @@ export function AskBSI({ embedded = false, initialQuestion }: AskBSIProps) {
 
           {/* Usage counter — heritage stamp */}
           <div className="mt-3 flex justify-end">
-            <span className="heritage-stamp" style={{ padding: '1px 6px', fontSize: '8px', color: 'var(--bsi-dust)' }}>
+            <span className="heritage-stamp text-bsi-dust" style={{ padding: '1px 6px', fontSize: '8px' }}>
               {MAX_FREE_QUESTIONS - usageCount} / {MAX_FREE_QUESTIONS} remaining
             </span>
           </div>

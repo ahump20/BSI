@@ -290,8 +290,8 @@ export function ScoutingRadar({ data, onPlayerClick, controlledPlayerId, onPlaye
         {player && (
           <div className="mt-3 flex items-baseline gap-2 flex-wrap">
             <span
-              className="text-lg font-bold cursor-pointer hover:underline"
-              style={{ fontFamily: 'var(--font-display)', color: 'var(--bsi-primary)' }}
+              className="text-lg font-bold cursor-pointer hover:underline text-bsi-primary"
+              style={{ fontFamily: 'var(--font-display)' }}
               onClick={() => onPlayerClick?.(player.player_id)}
             >
               {player.player_name}

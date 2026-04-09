@@ -82,6 +82,7 @@ const VALUE_PROPS = [
 
 export default function TransferPortalPage() {
   const [entries, setEntries] = useState<PortalEntry[]>([]);
+  const [emptyReason, setEmptyReason] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const perPage = 25;
@@ -107,12 +108,13 @@ export default function TransferPortalPage() {
         }
 
         if (portalRes.ok) {
-          const data = await portalRes.json() as { entries?: PortalEntry[] };
+          const data = await portalRes.json() as { entries?: PortalEntry[]; emptyReason?: string };
           const fetched = (data.entries || []).map(e => ({
             ...e,
             nilValue: nilMap[e.playerName.toLowerCase()],
           }));
           setEntries(fetched);
+          setEmptyReason(data.emptyReason ?? null);
           if (fetched.length > 0 && !interval) {
             interval = setInterval(fetchPortalEntries, 30000);
           }
@@ -268,9 +270,9 @@ export default function TransferPortalPage() {
                     <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-bold mb-2 text-bsi-bone">Portal data temporarily unavailable</h3>
+                <h3 className="text-lg font-bold mb-2 text-bsi-bone">No verified transfer activity</h3>
                 <p className="text-sm max-w-md mx-auto text-bsi-dust">
-                  Our transfer portal data sources are not returning entries right now. Spring portal movement is active — we are working on reconnecting the feed. Check back soon.
+                  {emptyReason ?? 'No verified transfer portal entries in the last 30 days. We filter for confirmed player names and source schools — unverified mentions are excluded.'}
                 </p>
               </Card>
             ) : (

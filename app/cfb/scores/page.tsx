@@ -12,6 +12,7 @@ import { ScrollReveal } from '@/components/cinematic';
 
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { OffSeasonBanner, detectSeasonState } from '@/components/ui/OffSeasonBanner';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
 
@@ -181,6 +182,21 @@ export default function CFBScoresPage() {
     [games],
   );
 
+  // Detect off-season state so visitors hitting /cfb/scores in April don't see
+  // 88 August preseason futures with no context and assume the data is stale.
+  const seasonState = useMemo(
+    () =>
+      detectSeasonState(
+        games.map((g) => ({
+          date: g.date,
+          isCompleted: !!g.status?.type?.completed,
+          isLive: !g.status?.type?.completed && !!(g.status?.period && g.status.period > 0),
+          isScheduled: !g.status?.type?.completed && !(g.status?.period && g.status.period > 0),
+        })),
+      ),
+    [games],
+  );
+
   const dateOptions = [
     { offset: -2, label: formatDate(getDateOffset(-2)) },
     { offset: -1, label: 'Yesterday' },
@@ -287,6 +303,13 @@ export default function CFBScoresPage() {
                 />
               ) : (
                 <>
+                  <OffSeasonBanner
+                    state={seasonState.state}
+                    referenceDate={seasonState.referenceDate}
+                    sportLabel="College Football"
+                    seasonTimingHint="Kickoff for the 2026 season is late August."
+                  />
+
                   {/* Live Games */}
                   {liveGames.length > 0 && (
                     <div className="mb-8">

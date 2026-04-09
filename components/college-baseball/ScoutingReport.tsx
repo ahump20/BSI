@@ -100,8 +100,8 @@ function GradeBar({ label, grade }: { label: string; grade: number }) {
         />
       </div>
       <span
-        className="text-xs w-8 text-right font-semibold"
-        style={{ fontFamily: 'var(--bsi-font-mono)', color }}
+        className="text-xs w-8 text-right font-semibold font-mono"
+        style={{ color }}
       >
         {grade}
       </span>
@@ -137,8 +137,8 @@ function GradesSection({ grades, isHitter }: { grades: ScoutingGrades; isHitter:
           Overall
         </span>
         <span
-          className="text-2xl font-bold"
-          style={{ fontFamily: 'var(--bsi-font-mono)', color: gradeColor(grades.overall) }}
+          className="text-2xl font-bold font-mono"
+          style={{ color: gradeColor(grades.overall) }}
         >
           {grades.overall}
         </span>
@@ -394,8 +394,8 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
         {/* Summary */}
         <div className="px-5 py-4 border-b border-border-vintage">
           <p
-            className="text-sm leading-relaxed"
-            style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--bsi-bone)' }}
+            className="text-sm leading-relaxed text-bsi-bone"
+            style={{ fontFamily: 'var(--bsi-font-body)' }}
           >
             {report.summary}
           </p>
@@ -472,8 +472,8 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
             Projection
           </p>
           <p
-            className="text-sm leading-relaxed"
-            style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--bsi-bone)' }}
+            className="text-sm leading-relaxed text-bsi-bone"
+            style={{ fontFamily: 'var(--bsi-font-body)' }}
           >
             {report.projection}
           </p>
@@ -525,8 +525,8 @@ export function ScoutingReport({ playerId, className = '' }: ScoutingReportProps
               {narrativeParagraphs.map((paragraph, i) => (
                 <p
                   key={i}
-                  className="text-sm leading-relaxed"
-                  style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--bsi-bone)' }}
+                  className="text-sm leading-relaxed text-bsi-bone"
+                  style={{ fontFamily: 'var(--bsi-font-body)' }}
                 >
                   {paragraph}
                 </p>

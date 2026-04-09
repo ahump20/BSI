@@ -277,6 +277,11 @@ export async function handleCollegeBaseballTransferPortal(env: Env): Promise<Res
     // Query D1 for social intel signals classified as transfer_portal.
     // The bsi-social-intel worker ingests Reddit + Twitter, classifies with Claude,
     // and writes transfer_portal signals with player/team associations.
+    //
+    // Quality gate: require high confidence AND a real player name AND a from-school.
+    // Reddit keyword matching produces many false positives (game recaps, well-wishes)
+    // that get classified as transfer_portal with low confidence. Filter them out at
+    // the query level so the UI only sees verified movement.
     const result = await env.DB.prepare(`
       SELECT
         post_id AS id,
@@ -290,7 +295,12 @@ export async function handleCollegeBaseballTransferPortal(env: Env): Promise<Res
         author
       FROM cbb_social_signals
       WHERE signal_type = 'transfer_portal'
-        AND confidence >= 0.5
+        AND confidence >= 0.75
+        AND player_mentioned IS NOT NULL
+        AND TRIM(player_mentioned) != ''
+        AND player_mentioned NOT LIKE '%Unknown%'
+        AND team_mentioned IS NOT NULL
+        AND TRIM(team_mentioned) != ''
       ORDER BY posted_at DESC
       LIMIT 200
     `).all<{
@@ -307,7 +317,7 @@ export async function handleCollegeBaseballTransferPortal(env: Env): Promise<Res
 
     const entries = (result.results ?? []).map((r) => ({
       id: r.id,
-      playerName: r.playerName ?? r.summary?.split(/\s+/).slice(0, 3).join(' ') ?? 'Unknown',
+      playerName: r.playerName ?? '',
       position: '',
       fromSchool: r.fromSchool ?? '',
       toSchool: undefined,
@@ -325,6 +335,9 @@ export async function handleCollegeBaseballTransferPortal(env: Env): Promise<Res
       entries,
       totalEntries: entries.length,
       lastUpdated: entries[0]?.enteredDate ?? now,
+      emptyReason: entries.length === 0
+        ? 'No verified transfer portal activity in the last 30 days. Entries are filtered for high confidence and verified player names.'
+        : undefined,
       meta: { source: 'social-intel', fetched_at: now, timezone: 'America/Chicago' as const },
     };
 

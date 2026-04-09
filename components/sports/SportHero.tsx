@@ -66,8 +66,8 @@ export function SportHero({
 
         <ScrollReveal direction="up" delay={100}>
           <h1
-            className="text-3xl md:text-4xl lg:text-5xl font-bold text-center uppercase tracking-[0.1em] mb-4"
-            style={{ fontFamily: 'var(--font-bebas, var(--font-hero))', color: 'var(--bsi-bone)' }}
+            className="text-3xl md:text-4xl lg:text-5xl font-bold text-center uppercase tracking-[0.1em] mb-4 font-display"
+            style={{ color: 'var(--bsi-bone)' }}
           >
             {icon && <span className="opacity-60 mr-2 text-[0.75em]">{icon}</span>}
             {sport} Intelligence
@@ -83,8 +83,8 @@ export function SportHero({
 
         <ScrollReveal direction="up" delay={150}>
           <p
-            className="text-lg leading-relaxed text-center mb-4"
-            style={{ fontFamily: 'var(--font-cormorant, serif)', color: 'var(--bsi-dust)', fontStyle: 'italic' }}
+            className="text-lg leading-relaxed text-center mb-4 font-serif text-bsi-dust"
+            style={{ fontStyle: 'italic' }}
           >
             {tagline}
           </p>
