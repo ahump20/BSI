@@ -10,20 +10,7 @@ import { Skeleton } from '@/components/ui/Skeleton';
 import { DataAttribution } from '@/components/ui/DataAttribution';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { ScrollReveal } from '@/components/cinematic';
-import { MLB_TEAMS } from '@/lib/utils/mlb-teams';
 import type { DataMeta } from '@/lib/types/data-meta';
-
-// Map from standings API abbreviation (ESPN) → canonical team slug used for
-// the team detail URL at /mlb/teams/{slug}/. The standings payload returns
-// ESPN numeric IDs that don't match our local MLB_TEAMS ID column, so we
-// look up by abbreviation instead. Falls back to null if unknown.
-const ABBR_TO_SLUG: Record<string, string> = Object.fromEntries(
-  MLB_TEAMS.map((t) => [t.abbreviation, t.slug]),
-);
-
-function teamSlugFor(abbreviation: string): string | null {
-  return ABBR_TO_SLUG[abbreviation] ?? null;
-}
 
 // ---------------------------------------------------------------------------
 // Types
@@ -218,33 +205,12 @@ function TeamRow({ team }: { team: PowerRanking }) {
         ) : (
           <div className="h-5 w-5 shrink-0 rounded-sm bg-surface-press-box sm:h-6 sm:w-6" />
         )}
-        {(() => {
-          const slug = teamSlugFor(team.abbreviation);
-          const label = (
-            <>
-              {team.team}
-              <span className="ml-2 hidden shrink-0 text-[9px] font-mono uppercase text-bsi-dust sm:inline">
-                {team.division}
-              </span>
-            </>
-          );
-          if (slug) {
-            return (
-              <Link
-                href={`/mlb/teams/${slug}/`}
-                prefetch={false}
-                className="min-w-0 truncate text-xs font-medium hover:underline sm:text-sm text-bsi-bone"
-              >
-                {label}
-              </Link>
-            );
-          }
-          return (
-            <span className="min-w-0 truncate text-xs font-medium sm:text-sm text-bsi-bone">
-              {label}
-            </span>
-          );
-        })()}
+        <span className="min-w-0 truncate text-xs font-medium sm:text-sm text-bsi-bone">
+          {team.team}
+          <span className="ml-2 hidden shrink-0 text-[9px] font-mono uppercase text-bsi-dust sm:inline">
+            {team.division}
+          </span>
+        </span>
       </div>
 
       {/* W-L */}
