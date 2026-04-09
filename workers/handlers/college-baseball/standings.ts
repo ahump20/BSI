@@ -193,20 +193,27 @@ export async function handleCollegeBaseballStandings(
       // Highlightly /standings returns 400. As a fallback, use LPCT to derive approximate
       // conference record. College baseball teams play ~30 conference games per season.
       // LPCT alone lets us sort correctly even when the raw W-L are estimated.
+      // We track `estimated: true` so the client can show the breakdown honestly.
       let leagueWinPct = 0;
+      let confEstimated = false;
       const confTotal = confWins + confLosses;
       if (confTotal > 0) {
         leagueWinPct = confWins / confTotal;
       } else {
-        // Derive from LPCT — ESPN provides leagueWinPercent for conference win rate
+        // Derive from LPCT — ESPN provides leagueWinPercent for conference win rate.
+        // The percentage is real; the W-L breakdown is estimated.
         const lpct = stat('leagueWinPercent');
         if (lpct > 0) {
           leagueWinPct = lpct;
-          // Estimate conference games: ~30 per season, proportional to games played
+          // By early April (Week 8-9), ~70% of scheduled games are conference games.
+          // Use a tighter estimator: for teams ≥ 25 games played, use round(gp * 0.7).
+          // For fewer games, fall back to the earlier 0.55 ratio.
           const gp = stat('gamesPlayed') || (wins + losses);
-          const estimatedConfGames = Math.min(Math.round(gp * 0.55), 30); // ~55% of games are conference
+          const confRatio = gp >= 25 ? 0.7 : 0.55;
+          const estimatedConfGames = Math.min(Math.round(gp * confRatio), 30);
           confWins = Math.round(lpct * estimatedConfGames);
           confLosses = estimatedConfGames - confWins;
+          confEstimated = true;
         }
       }
 
@@ -222,7 +229,12 @@ export async function handleCollegeBaseballStandings(
           shortName: meta?.shortName ?? (team.abbreviation as string) ?? '',
           logo,
         },
-        conferenceRecord: { wins: confWins, losses: confLosses, pct: leagueWinPct },
+        conferenceRecord: {
+          wins: confWins,
+          losses: confLosses,
+          pct: leagueWinPct,
+          estimated: confEstimated,
+        },
         overallRecord: { wins, losses },
         winPct,
         streak: String(statsList.find((s) => s.name === 'streak')?.displayValue ?? ''),
@@ -264,6 +276,7 @@ export async function handleCollegeBaseballStandings(
           s.conferenceRecord.losses = hl.confLosses;
           const ct = hl.confWins + hl.confLosses;
           s.conferenceRecord.pct = ct > 0 ? hl.confWins / ct : 0;
+          s.conferenceRecord.estimated = false; // Real data from Highlightly
           if (hl.streak && !s.streak) s.streak = hl.streak;
         }
       }
@@ -277,7 +290,14 @@ export async function handleCollegeBaseballStandings(
     });
     standings.forEach((s, i) => { s.rank = i + 1; });
 
-    if (!hlOk) degraded = true;
+    // Degraded means: conference W-L breakdowns are estimated (not real).
+    // If Highlightly enriched EVERY team, degraded=false. If any team still
+    // has estimated=true after enrichment, degraded=true.
+    const estimatedCount = standings.filter((s) => s.conferenceRecord.estimated).length;
+    degraded = estimatedCount > 0;
+    const estimationNote = degraded
+      ? `Conference win-loss breakdowns for ${estimatedCount} team${estimatedCount === 1 ? '' : 's'} are estimated from ESPN win percentage. Percentages and rankings are accurate.`
+      : undefined;
 
     const payload = withMeta({
       success: true,
@@ -288,7 +308,11 @@ export async function handleCollegeBaseballStandings(
       fetchedAt: espnTimestamp,
       sources,
       degraded,
-      extra: { sport: 'college-baseball' },
+      extra: {
+        sport: 'college-baseball',
+        ...(estimationNote ? { estimationNote } : {}),
+        estimatedCount,
+      },
     });
 
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);

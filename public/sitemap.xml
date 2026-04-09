@@ -343,6 +343,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://blazesportsintel.com/college-baseball/editorial/weekend-9-preview/</loc>
+    <lastmod>2026-04-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://blazesportsintel.com/college-baseball/editorial/what-two-weekends-told-us/</loc>
     <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
@@ -686,6 +692,12 @@
   </url>
   <url>
     <loc>https://blazesportsintel.com/mlb/players/</loc>
+    <lastmod>2026-04-09</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://blazesportsintel.com/mlb/power-rankings/</loc>
     <lastmod>2026-04-09</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
