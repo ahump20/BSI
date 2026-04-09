@@ -1,7 +1,7 @@
 # BSI Dream Queue
 
 **Generated:** 2026-04-09T12:42:00Z
-**Sports in season:** College Baseball (peak — Weekend 9 conference play starts tomorrow), MLB (early regular season, 15 games today), NBA (final regular-season days, play-in April 15), CFB (deep offseason), NFL (offseason — Draft April 24)
+**Sports in season:** College Baseball (peak — Weekend 9 conference play starts tomorrow), MLB (early regular season, 15 games today), NBA (final regular-season days, play-in April 15), CFB (deep offseason), NFL (offseason — Draft April 24–26)
 **Signal summary:** Yesterday's #1 and #2 — degraded college baseball standings and an empty transfer portal — are both still broken a day later, neither fix landed. New today: the standalone college baseball scores feed has stopped returning a freshness envelope entirely (no source, no timestamp, no timezone), so every score card on the site is missing its "last updated" stamp at the worst possible moment. CFB scores is also serving 88 future August games as if they were scheduled, turning the offseason scoreboard into a confusing fall calendar.
 
 ---
