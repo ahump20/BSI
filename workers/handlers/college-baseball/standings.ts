@@ -190,33 +190,26 @@ export async function handleCollegeBaseballStandings(
       }
 
       // ESPN college baseball doesn't return conference W-L, only leagueWinPercent (LPCT).
-      // Highlightly /standings returns 400. As a fallback, use LPCT to derive approximate
-      // conference record. College baseball teams play ~30 conference games per season.
-      // LPCT alone lets us sort correctly even when the raw W-L are estimated.
-      // We track `estimated: true` so the client can show the breakdown honestly.
+      // Highlightly /standings returns 400. When we only have LPCT, the percentage is
+      // real but any individual W-L breakdown would be fabricated — and visitors will
+      // quote fabricated integers as fact. So when estimated, we surface null wins/losses
+      // and let the frontend render the percentage only.
       let leagueWinPct = 0;
       let confEstimated = false;
+      let confWinsFinal: number | null = confWins;
+      let confLossesFinal: number | null = confLosses;
       const confTotal = confWins + confLosses;
       if (confTotal > 0) {
         leagueWinPct = confWins / confTotal;
       } else {
-        // Derive from LPCT — ESPN provides leagueWinPercent for conference win rate.
-        // The percentage is real; the W-L breakdown is estimated.
+        // Derive percentage from LPCT — ESPN provides leagueWinPercent directly.
+        // We do NOT fabricate individual W-L integers; null signals "percentage only".
         const lpct = stat('leagueWinPercent');
         if (lpct > 0) {
           leagueWinPct = lpct;
-          // Conference games played estimate: ~55% of total games are conference.
-          // This holds across mid-late season for most D1 programs.
-          // Cap at total games played and cap conf wins/losses at overall wins/losses
-          // so we never produce impossible numbers (e.g. 22-0 conf when overall is 15-17).
-          const gp = stat('gamesPlayed') || (wins + losses);
-          const estimatedConfGames = Math.min(Math.round(gp * 0.55), 30, gp);
-          const rawConfWins = Math.round(lpct * estimatedConfGames);
-          const rawConfLosses = estimatedConfGames - rawConfWins;
-          // Clamp so the estimate is arithmetically consistent with overall record.
-          confWins = Math.min(rawConfWins, wins);
-          confLosses = Math.min(rawConfLosses, losses);
           confEstimated = true;
+          confWinsFinal = null;
+          confLossesFinal = null;
         }
       }
 
@@ -233,8 +226,8 @@ export async function handleCollegeBaseballStandings(
           logo,
         },
         conferenceRecord: {
-          wins: confWins,
-          losses: confLosses,
+          wins: confWinsFinal,
+          losses: confLossesFinal,
           pct: leagueWinPct,
           estimated: confEstimated,
         },
@@ -279,7 +272,7 @@ export async function handleCollegeBaseballStandings(
           s.conferenceRecord.losses = hl.confLosses;
           const ct = hl.confWins + hl.confLosses;
           s.conferenceRecord.pct = ct > 0 ? hl.confWins / ct : 0;
-          s.conferenceRecord.estimated = false; // Real data from Highlightly
+          s.conferenceRecord.estimated = false; // Real Highlightly data replaces any LPCT-only estimate
           if (hl.streak && !s.streak) s.streak = hl.streak;
         }
       }

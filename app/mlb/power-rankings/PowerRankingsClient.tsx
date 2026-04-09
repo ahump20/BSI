@@ -79,6 +79,87 @@ function streakColor(streak: string): string {
 // Team Row
 // ---------------------------------------------------------------------------
 
+/**
+ * Luck dash — tiny horizontal gauge showing actual win% vs pythagorean.
+ * Above the zero line (burnt-orange) = outrunning run diff (due for regression).
+ * Below the zero line (columbia blue) = unlucky (positive regression coming).
+ * Magnitude is capped at ±0.15 for visual range.
+ */
+function LuckDash({ actual, pythag }: { actual: number; pythag: number }) {
+  const delta = actual - pythag;
+  const CAP = 0.15;
+  const clamped = Math.max(-CAP, Math.min(CAP, delta));
+  // Map clamped delta to [-50%, +50%] offset from center (0%)
+  const offsetPct = (clamped / CAP) * 50;
+  const color =
+    delta > 0.02
+      ? 'var(--bsi-primary)'
+      : delta < -0.02
+        ? 'var(--heritage-columbia-blue)'
+        : 'var(--bsi-dust)';
+  const label = `Luck ${delta > 0 ? '+' : ''}${(delta * 1000).toFixed(0)} — ${
+    delta > 0.02 ? 'outrunning run diff' : delta < -0.02 ? 'unlucky' : 'neutral'
+  }`;
+
+  return (
+    <div
+      className="relative h-4 w-full"
+      title={label}
+      aria-label={label}
+    >
+      {/* Zero line */}
+      <div
+        className="absolute left-1/2 top-1/2 h-3 w-px -translate-x-1/2 -translate-y-1/2"
+        style={{ backgroundColor: 'var(--border-vintage)' }}
+      />
+      {/* Dash */}
+      <div
+        className="absolute top-1/2 h-0.5 w-2 -translate-y-1/2 transition-all duration-500"
+        style={{
+          left: `calc(50% + ${offsetPct}%)`,
+          transform: `translate(-50%, -50%)`,
+          backgroundColor: color,
+        }}
+      />
+    </div>
+  );
+}
+
+/**
+ * Power bar — horizontal fill proportional to composite ÷ 100.
+ * The number floats at the fill tip. Bar IS the viz — row order
+ * and magnitude read simultaneously.
+ */
+function PowerBar({ score }: { score: number }) {
+  const widthPct = Math.max(0, Math.min(100, score));
+  const color = compositeColor(score);
+  return (
+    <div
+      className="relative h-5 w-full overflow-hidden rounded-sm"
+      style={{ backgroundColor: 'var(--surface-press-box)' }}
+    >
+      <div
+        className="absolute left-0 top-0 h-full transition-all duration-700"
+        style={{
+          width: `${widthPct}%`,
+          backgroundColor: color,
+          opacity: 0.35,
+        }}
+      />
+      <div
+        className="absolute left-0 top-0 flex h-full w-full items-center justify-end px-2"
+      >
+        <span
+          className="font-mono text-[11px] font-bold tabular-nums sm:text-xs"
+          style={{ color }}
+        >
+          {score.toFixed(1)}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function TeamRow({ team }: { team: PowerRanking }) {
   const isTop5 = team.rank <= 5;
   const isBottom5 = team.rank >= 26;
@@ -96,7 +177,7 @@ function TeamRow({ team }: { team: PowerRanking }) {
             ? 'rgba(22, 22, 22, 0.6)'
             : 'var(--surface-dugout)',
         gridTemplateColumns:
-          '2rem minmax(140px,1fr) 3rem 3.5rem 3.5rem 3.5rem 3rem',
+          '2rem minmax(140px,1fr) 3rem 3.5rem 3.5rem 4rem minmax(120px,1fr)',
       }}
     >
       {/* Rank */}
@@ -160,19 +241,13 @@ function TeamRow({ team }: { team: PowerRanking }) {
         {runDiffText}
       </div>
 
-      {/* Pythagorean */}
-      <div className="hidden text-right font-mono text-[11px] tabular-nums lg:block text-bsi-dust">
-        {formatPct(team.pythagoreanWinPct)}
+      {/* Luck dash — replaces the redundant pythag column */}
+      <div className="hidden px-1 lg:block">
+        <LuckDash actual={team.winPct} pythag={team.pythagoreanWinPct} />
       </div>
 
-      {/* Composite Score — the star column */}
-      <div
-        className="text-right font-mono text-sm font-bold tabular-nums sm:text-base"
-        style={{ color: compositeColor(team.compositeScore) }}
-        title={`Composite: ${team.compositeScore.toFixed(1)} — 50% W%, 30% Pythag, 20% Run Diff/G`}
-      >
-        {team.compositeScore.toFixed(1)}
-      </div>
+      {/* Power bar — the viz anchor */}
+      <PowerBar score={team.compositeScore} />
     </div>
   );
 }
@@ -189,7 +264,7 @@ function ColumnHeader() {
         backgroundColor: 'var(--surface-press-box)',
         color: 'var(--bsi-dust)',
         gridTemplateColumns:
-          '2rem minmax(140px,1fr) 3rem 3.5rem 3.5rem 3.5rem 3rem',
+          '2rem minmax(140px,1fr) 3rem 3.5rem 3.5rem 4rem minmax(120px,1fr)',
       }}
     >
       <span className="text-center">#</span>
@@ -197,9 +272,14 @@ function ColumnHeader() {
       <span className="text-right">W-L</span>
       <span className="hidden text-right md:block">Pct</span>
       <span className="text-right">Diff</span>
-      <span className="hidden text-right lg:block">Pythag</span>
-      <span className="text-right" title="Composite power index">
-        PWR
+      <span
+        className="hidden text-center lg:block"
+        title="Actual win% minus pythagorean — above line means outrunning run diff"
+      >
+        Luck
+      </span>
+      <span className="text-right" title="Composite power index, 50/30/20 weights">
+        Power
       </span>
     </div>
   );

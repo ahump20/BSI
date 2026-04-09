@@ -12,13 +12,15 @@ import { ScrollReveal } from '@/components/cinematic';
 import { IntelSignup } from '@/components/home/IntelSignup';
 import { useWatchlist } from '@/lib/hooks/useWatchlist';
 
+type PortalStatus = 'entered' | 'committed' | 'withdrawn' | 'reported';
+
 interface PortalEntry {
   id: string;
   playerName: string;
   position: string;
   fromSchool: string;
   toSchool?: string;
-  status: 'entered' | 'committed' | 'withdrawn';
+  status: PortalStatus;
   enteredDate: string;
   classification?: string;
   nilValue?: number;
