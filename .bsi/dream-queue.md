@@ -1,55 +1,55 @@
 # BSI Dream Queue
 
-**Generated:** 2026-04-09T11:10:00Z
-**Sports in season:** College Baseball (peak — Week 8-9 conference play, Weekend 9 starts tomorrow April 10), MLB (early regular season, 15 games today), NBA (final regular-season days, play-in April 15–16, playoffs April 18)
-**Signal summary:** College baseball standings are still returning degraded conference W-L data — wrong numbers going into Weekend 9, the exact moment they shape the regional hosting bubble. The transfer portal dropped from 2 broken "Unknown" entries (yesterday) to 0 entries today — it got worse overnight. NBA play-in races are extremely tight in both conferences with 6 days to go; the page exists but has no play-in context yet.
+**Generated:** 2026-04-09T13:30:00Z
+**Sports in season:** College Baseball (peak — Weekend 9 conference play starts April 10), MLB (early regular season, 15 games today), NBA (final regular-season week, Play-In April 15–16, Playoffs April 18)
+**Signal summary:** Two broken things this cycle. College baseball standings are still serving estimated conference records the day before Weekend 9 — the morning commit only clamped the numbers, the underlying source gap remains. New discovery: the college football scoreboard is serving 88 games from next season's August opener during offseason, which means the homepage live-scores widget is showing North Carolina at TCU on "8/29 — TBD" as if it were happening now. Meanwhile NBA play-in is six days out and Weekend 9 college baseball starts in eighteen hours.
 
 ---
 
 ## Priority Queue
 
-### 1. Fix College Baseball Conference Standings
-**What:** Visitors to the standings page see accurate conference win-loss records for all 138 programs — the real numbers that determine who hosts a regional and who is on the bubble.
-**Why now:** The standings endpoint has been flagged `degraded: true` since at least yesterday, which means conference records are being estimated from ESPN win-percentage data rather than actual game results. Weekend 9 conference games start tomorrow (April 10) — standings shape who hosts regionals. Wrong numbers actively mislead anyone using this site to follow the D1 race at its most consequential stretch.
+### 1. Fix College Baseball Conference Standings Before Weekend 9
+**What:** Visitors to the standings page see real conference win-loss records for all 138 Division I programs — the numbers that actually decide regional hosts and the bubble — not estimates derived from win percentage.
+**Why now:** Still flagged degraded today, second day in a row. This morning's clamp fix only capped the estimated numbers so they can't exceed overall records — it did not replace the estimation with real conference results. Weekend 9 first pitch is tomorrow evening. Every conference game played Friday through Sunday will shift the host picture, and BSI is currently publishing wrong inputs to that conversation.
 **Scope:** 1 session
-**Verification:** `curl https://blazesportsintel.com/api/college-baseball/standings` returns `degraded: false` and conference records match known results (e.g. UCLA 18-0 in Big West conference play, matching the live standings page on ESPN).
-**First step:** Read the standings handler and trace the Highlightly enrichment step to find exactly where `degraded: true` is being set — check the Highlightly response body and determine whether data is missing upstream or the merge logic is failing.
+**Verification:** The standings page no longer shows the "estimated" or "degraded" disclaimer, and the top of the SEC, ACC, and Big 12 match what a visitor can cross-check against ESPN's conference standings for the same morning.
+**First step:** Trace where the standings endpoint decides conference records are unavailable and surface the actual upstream response — is the source returning conference W-L at all, or is it being dropped in transform? If upstream truly lacks it, switch to computing conference W-L from the schedule and box scores BSI already has.
 
 ---
 
-### 2. Restore the Transfer Portal
-**What:** The transfer portal page shows real player movement — names, positions, and schools — instead of a completely empty table during peak spring transfer season.
-**Why now:** The endpoint returned 0 entries today, down from 2 broken "Unknown" entries yesterday. It has gotten worse, not better. Spring portal season is active right now. Any visitor who clicks through to the portal page sees a blank table with no explanation.
+### 2. Stop the Homepage From Showing Next-Season College Football Games
+**What:** Visitors to the homepage and the overview scoreboard during college football offseason see an honest "Next game: August 29" state — not a list of 88 scheduled preseason openers labeled as today's activity.
+**Why now:** The college football scoreboard is currently serving 88 cached games, all dated between August 29 and September 7, 2026 — the Week 0 and Week 1 openers of next season. The homepage overview pulls this feed and treats it as live. During offseason the correct count is zero games today, with a clear pointer to when the sport resumes. This is a silent data-integrity bug on the most-viewed surface.
 **Scope:** 1 session
-**Verification:** `curl https://blazesportsintel.com/api/college-baseball/transfer-portal` returns at least one entry with a real player name and school, or the page renders a clean "no verified transfers yet" empty state with an explanation — not a silent empty table.
-**First step:** Read the transfer portal handler and check what the underlying data source is returning right now — determine whether the source is empty, the fetch is failing silently, or the parse logic is dropping all entries.
+**Verification:** The overview scoreboard shows zero college football games for today's date; the college football section on the homepage shows an offseason state that names the next scheduled game and its date. The API response for today no longer contains games dated months in the future.
+**First step:** Confirm the stale payload is coming from the cache warmer writing a full schedule into the "today" slot during offseason, then change the warmer so offseason dates write either an empty set or a compact "next game" marker instead of the full forward schedule.
 
 ---
 
-### 3. NBA Play-In Urgency Layer
-**What:** The playoff picture page shows seeds 7–10 in both conferences grouped under a clear "Play-In Zone" label with games remaining and how close each team is to locking or losing a spot.
-**Why now:** The NBA play-in starts April 15 (6 days). Both conferences have extremely tight races right now: Eastern 7–10 spans just 3 games (Orlando 44-36 to Miami 41-38); Western 7–10 spans 7 games (Phoenix 44-36 to Golden State 37-42). Traffic to NBA pages will spike sharply on April 15 and the page currently has no play-in context.
+### 3. Restore the College Baseball Transfer Portal
+**What:** The transfer portal page shows real player movement with names, positions, and destination schools — or, if the upstream source has nothing today, a clean explanation of why the list is empty and when it last had entries.
+**Why now:** The endpoint has been returning zero entries for two days in a row and still returns zero today. Spring portal activity is real in the outside world; an empty BSI page during peak spring transfer season looks broken. The response does now carry an `emptyReason` field, which is progress — the next step is making that reason visible on the page instead of a silent blank table.
 **Scope:** 1 session
-**Verification:** At `blazesportsintel.com/nba/playoff-picture`, seeds 7–10 in both conferences are visually grouped under a "Play-In Zone" section showing each team's record, current seed, and games remaining.
-**First step:** Read `app/nba/playoff-picture/page.tsx` to see what data is already fetched, then check whether the NBA standings API returns `gamesRemaining` or if it needs to be derived from the schedule endpoint.
+**Verification:** The transfer portal page either renders at least one real player entry, or renders a clearly-labeled empty state that surfaces the reason from the API response and the timestamp of the most recent entry BSI has ever stored for this source.
+**First step:** Read the current empty-reason string the API is returning and decide whether the source is truly empty, silently rate-limited, or being parsed into nothing — then wire whichever answer applies into the page copy so visitors stop seeing a blank grid.
 
 ---
 
-### 4. College Baseball Weekend 9 Top 25 Spotlight
-**What:** An editorial piece surfaces the must-watch matchups for this weekend — specifically the Top 25 clashes that will reshuffle the rankings and clarify the regional bubble before Friday's first pitch.
-**Why now:** Weekend 9 conference games start tomorrow (April 10). Tonight's schedule already shows Georgia Tech (#3) hosting Florida State (#5), and Texas (#2) is in Big 12 play. The editorial cadence has been live with back-to-back Weekend 7 and 8 recaps; skipping this weekend while those matchups are on the board breaks the only content pipeline firing consistently at peak season.
+### 4. Weekend 9 Top 25 Spotlight (College Baseball Editorial)
+**What:** A Weekend 9 preview lives in the college baseball editorial feed with the must-watch Top 25 matchups — real teams, real records, real rankings — going into Friday first pitch.
+**Why now:** Weekend 9 starts tomorrow. Tonight's schedule already has Georgia Tech hosting Florida State and the Top 25 is packed with ranked-on-ranked conference series across the weekend. BSI has a live editorial cadence with Weekend 7 and Weekend 8 recaps already published; skipping Weekend 9 breaks the only content cadence firing consistently at peak season and lets the competitor narrative fill the vacuum.
 **Scope:** 1 session
-**Verification:** At `blazesportsintel.com/college-baseball/editorial`, a Weekend 9 entry is visible with at least three named matchups tied to real rankings and records from the current Top 25.
-**First step:** Fetch `/api/college-baseball/scores` and `/api/college-baseball/rankings` to identify which of this weekend's games involve Top 25 teams on both sides, then build the editorial entry from real data.
+**Verification:** The college baseball editorial index shows a new Weekend 9 entry with at least three named matchups, each tied to real current rankings and records, dated today or tomorrow.
+**First step:** Pull the current Top 25 and this weekend's conference schedule, identify every ranked-on-ranked matchup and every bubble series with regional implications, and draft the spotlight from those real inputs.
 
 ---
 
-### 5. Verify Team Logos on Tonight's Live Game Cards
-**What:** Visitors watching tonight's 7 college baseball games see team logos rendering correctly on score cards — not broken images or fallback initials — confirming the TeamCircle integration holds up under live in-game conditions.
-**Why now:** The TeamCircle component shipped in the last 3 commits but has only been exercised against scheduled/static data. Tonight's 7 games go live starting at 7:30 PM EDT — the first real in-game test at scale. A broken logo on every active score card during prime viewing hours undermines all the design work just shipped.
-**Scope:** 1 session (verify and patch if needed — could be quick)
-**Verification:** Open `blazesportsintel.com/college-baseball/scores` after 7:30 PM CT tonight and confirm team logos appear on active game cards; check browser console for any image 404s on Highlightly logo URLs.
-**First step:** Audit the TeamCircle component's error/fallback logic to confirm it handles a missing or failed logo URL gracefully (shows initials, not a broken image icon), then spot-check a Highlightly logo URL from tonight's game data to confirm it resolves publicly.
+### 5. NBA Play-In Zone on the Playoff Picture
+**What:** The NBA playoff picture page visibly groups seeds 7 through 10 in both conferences under a labeled "Play-In" section so visitors can see at a glance who is fighting to make the tournament and how tight the race is.
+**Why now:** The NBA Play-In Tournament starts April 15 — six days out. Both conferences have extremely compressed 7–10 seed races right now. Traffic to NBA pages will spike the moment brackets are set, and the playoff picture page currently treats every seed equally, burying the actual story. Shipping this before the field is locked is what makes it useful; shipping it after is wallpaper.
+**Scope:** 1 session
+**Verification:** The playoff picture page in both Eastern and Western sections shows a distinct "Play-In" band covering seeds 7 through 10, each row showing the team's record and their current seed.
+**First step:** Confirm whether the standings response already carries the games-behind numbers needed to reason about play-in tightness, and if not, compute those from the standings data already on the page before drawing the new visual grouping.
 
 ---
 
@@ -58,30 +58,34 @@
 ### Production Health
 | Endpoint | Status | Notes |
 |---|---|---|
-| `/api/health` | OK | Hybrid-worker mode, v1.0.0 |
-| `/api/college-baseball/scores` | OK | 7 games today, all scheduled for tonight |
-| `/api/college-baseball/standings` | **DEGRADED** | 138 teams present, `degraded: true` — conference W-L estimated |
-| `/api/college-baseball/transfer-portal` | **BROKEN** | 0 entries (was 2 broken "Unknown" entries yesterday) |
-| `/api/college-baseball/rankings` | OK | Top 25 present, UCLA #1 at 29-2 |
-| `/api/college-baseball/news` | OK | 6 articles |
-| `/api/mlb/scores` | OK | 15 games |
+| `/api/health` | OK | hybrid-worker mode, v1.0.0, 200 |
+| `/api/college-baseball/scores` | OK | 6 real games today via Highlightly (response uses `data` key, not `games`) |
+| `/api/college-baseball/standings` | **DEGRADED** | 138 teams, 135 with estimated conference W-L, `degraded: true` — clamp fix this morning did not restore real data |
+| `/api/college-baseball/rankings` | DEGRADED-flagged | Top 25 present with prior rankings, but meta carries `degraded: true` — investigate if tied to same source gap |
+| `/api/college-baseball/news` | OK | 6 articles from ESPN |
+| `/api/college-baseball/transfer-portal` | **BROKEN** | 0 entries (day 2), `emptyReason` field now present but not surfaced to UI |
+| `/api/mlb/scores` | OK | 15 games from ESPN |
 | `/api/mlb/standings` | OK | 30 teams |
-| `/api/nba/scores` | OK | 7 games |
-| `/api/nba/standings` | OK | 30 teams across 2 conferences |
-| `/api/savant/batting/leaderboard` | OK | 25 batters |
-| `/api/scores/overview` | OK | All 5 sports present |
+| `/api/nba/scores` | OK | 7 games (final regular-season week) |
+| `/api/nba/standings` | OK | 30 teams grouped by 2 conferences |
+| `/api/cfb/scores` | **BROKEN (new)** | 88 games returned, all dated August 29 – September 7, 2026 (next season openers), served from cache |
+| `/api/nfl/scores` | OK (offseason) | 1 game present, likely draft/spring event |
+| `/api/savant/batting/leaderboard` | OK | 25 batters, cache hit |
+| `/api/savant/pitching/leaderboard` | OK | 25 pitchers, fresh compute |
+| `/api/scores/overview` | DEGRADED | Pulls the broken CFB payload into the all-sport rollup; 6/15/7/1/88 across college-baseball/mlb/nba/nfl/cfb |
 
 ### Recent Ships (last 20 commits)
-Nearly all 20 recent commits are design and logo work: Heritage token migration (finalizing v2.1 compliance), TeamCircle component shipped and wired into scores/standings/live game cards, security hardening. No new feature endpoints or pages shipped this cycle. The design system migration is wrapping up — the codebase is visually clean and ready for feature work.
+Two threads dominate the last twenty commits. First, final cleanup of the Heritage v2.1 design migration — nine commits moving the last inline styles, colors, borders, fonts and background properties into Tailwind classes across the homepage and scores pages. Second, the team-logo rollout — the TeamCircle component was built and wired into scores cards, standings, and live-game surfaces across college baseball. Two commits shipped yesterday's dream queue outputs (standings clamp, dream queue regeneration). The design system migration is now effectively complete; feature work can resume without fighting the token system.
 
 ### Traffic Patterns
-Cloudflare analytics unavailable (MCP tools not accessible in this session).
+Cloudflare analytics unavailable in this session. No observability MCP tools accessible from the current environment.
 
 ### Sports Calendar
-| Sport | Status | Key Dates |
+| Sport | Status | Key dates from today |
 |---|---|---|
-| College Baseball | **Peak — Week 8-9 conference play** | Weekend 9 starts April 10; CWS mid-June |
-| MLB | Early regular season | Full slate running |
-| NBA | Final regular-season stretch | Play-in April 15–16; Playoffs April 18 |
-| CFB | Deep offseason | Spring games complete |
-| NFL | Offseason | Draft April 24–26 (15 days out — watch next cycle) |
+| College Baseball | **Peak — Week 9** | Weekend 9 first pitch tomorrow (April 10); CWS mid-June |
+| MLB | Early regular season | Full slate daily |
+| NBA | Final regular-season week | Play-In April 15–16 (6 days); Round 1 April 18 |
+| NFL | Offseason | Draft April 24–26 (15 days — next cycle's concern) |
+| CFB | Deep offseason | Next games August 29 (142 days away) — and the scoreboard needs to know that |
+| NCAA Basketball | Offseason | Final Four ended April 6 |
