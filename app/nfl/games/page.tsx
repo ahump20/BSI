@@ -316,6 +316,9 @@ export default function NFLGamesPage() {
 
   // Detect off-season state so visitors on /nfl/scores in April don't see a lone
   // stale Super Bowl result with no context and conclude the page is broken.
+  // `sport: 'nfl'` enables calendar fallback for the case where the API returns
+  // an empty games array during the true offseason — without it, an empty list
+  // is ambiguous and detection returns 'in-season' by default.
   const seasonState = useMemo(
     () =>
       detectSeasonState(
@@ -325,6 +328,7 @@ export default function NFLGamesPage() {
           isLive: g.status.type.state === 'in',
           isScheduled: g.status.type.state === 'pre',
         })),
+        { sport: 'nfl' },
       ),
     [games],
   );
@@ -438,6 +442,16 @@ export default function NFLGamesPage() {
                   Retry
                 </button>
               </Card>
+            ) : seasonState.state !== 'in-season' ? (
+              // Off-season branch — fires BEFORE the empty-state check, otherwise
+              // an empty games array during the offseason would route to the
+              // generic "NO GAMES FOUND" card and the banner would never render.
+              <OffSeasonBanner
+                state={seasonState.state}
+                referenceDate={seasonState.referenceDate}
+                sportLabel="NFL"
+                seasonTimingHint="The 2026 regular season kicks off in September."
+              />
             ) : games.length === 0 ? (
               <EmptyState
                 type="no-games"
@@ -447,13 +461,6 @@ export default function NFLGamesPage() {
               />
             ) : (
               <>
-                <OffSeasonBanner
-                  state={seasonState.state}
-                  referenceDate={seasonState.referenceDate}
-                  sportLabel="NFL"
-                  seasonTimingHint="The 2026 regular season kicks off in September."
-                />
-
                 {/* Live Games */}
                 {live.length > 0 && (
                   <div className="mb-8">

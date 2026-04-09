@@ -183,7 +183,10 @@ export default function CFBScoresPage() {
   );
 
   // Detect off-season state so visitors hitting /cfb/scores in April don't see
-  // 88 August preseason futures with no context and assume the data is stale.
+  // an empty scoreboard with no context and assume the data is stale.
+  // `sport: 'cfb'` enables calendar fallback — without it, an empty games
+  // array during the true offseason is ambiguous and detection returns
+  // 'in-season' by default.
   const seasonState = useMemo(
     () =>
       detectSeasonState(
@@ -193,6 +196,7 @@ export default function CFBScoresPage() {
           isLive: !g.status?.type?.completed && !!(g.status?.period && g.status.period > 0),
           isScheduled: !g.status?.type?.completed && !(g.status?.period && g.status.period > 0),
         })),
+        { sport: 'cfb' },
       ),
     [games],
   );
@@ -294,6 +298,17 @@ export default function CFBScoresPage() {
                     Retry
                   </button>
                 </Card>
+              ) : seasonState.state !== 'in-season' ? (
+                // Off-season branch — fires BEFORE the empty-state check,
+                // otherwise an empty games array during the offseason would
+                // route to the generic "NO GAMES FOUND" card and the banner
+                // would never render.
+                <OffSeasonBanner
+                  state={seasonState.state}
+                  referenceDate={seasonState.referenceDate}
+                  sportLabel="College Football"
+                  seasonTimingHint="Kickoff for the 2026 season is late August."
+                />
               ) : games.length === 0 ? (
                 <EmptyState
                   type="no-games"
@@ -303,13 +318,6 @@ export default function CFBScoresPage() {
                 />
               ) : (
                 <>
-                  <OffSeasonBanner
-                    state={seasonState.state}
-                    referenceDate={seasonState.referenceDate}
-                    sportLabel="College Football"
-                    seasonTimingHint="Kickoff for the 2026 season is late August."
-                  />
-
                   {/* Live Games */}
                   {liveGames.length > 0 && (
                     <div className="mb-8">

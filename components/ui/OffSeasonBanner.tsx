@@ -2,21 +2,30 @@
 
 /**
  * OffSeasonBanner — contextual notice shown on sport scoreboard pages when the
- * data we're rendering is all well in the past or all well in the future.
+ * data we're rendering is all well in the past, all well in the future, or
+ * simply empty during a known off-season window.
  *
  * Motivation: if a visitor hits /nfl/scores in April, we don't want them to see
  * a single Super Bowl result from February with zero context and conclude the
- * page is broken. Same for CFB in April showing August preseason futures.
+ * page is broken. Same for CFB in April with an empty scoreboard.
  *
- * Detection logic:
- * - `pastOnly`  → all visible games are final and the newest is > staleThresholdDays old
- * - `futureOnly` → all visible games are scheduled and the soonest is > staleThresholdDays away
+ * Detection resolves in this order:
+ * - `live`     → any live game → in-season
+ * - `in-season`→ scheduled game within futureThresholdDays → in-season
+ * - `futureOnly` → all scheduled games are far in the future
+ * - `pastOnly`  → all visible games are final and newest is > staleThresholdDays old
+ * - `pastOnly`  → games array is empty AND current date is outside the sport's
+ *                 calendar window (calendar fallback — this is what fires on
+ *                 /nfl/scores in April when the API returns zero games)
  * - otherwise → renders nothing
  */
 
 import { Card } from '@/components/ui/Card';
 
 export type SeasonState = 'in-season' | 'past-only' | 'future-only';
+
+/** Sport league identifiers that OffSeasonBanner knows calendar windows for. */
+export type SportKey = 'nfl' | 'cfb' | 'mlb' | 'nba' | 'cbb';
 
 interface GameLike {
   date: string | undefined;
@@ -25,11 +34,31 @@ interface GameLike {
   isScheduled: boolean;
 }
 
+/**
+ * Season windows by sport — months (1-12) when the league is considered in
+ * season. Values wrap across the calendar year (e.g., NFL runs Aug→Feb).
+ *
+ * These windows intentionally include preseason/playoffs so "in-season" stays
+ * loose — users expect scores on /nfl/scores in early September even before
+ * Week 1, and in February during the Super Bowl run.
+ */
+const SEASON_WINDOWS: Record<SportKey, number[]> = {
+  nfl: [8, 9, 10, 11, 12, 1, 2],
+  cfb: [8, 9, 10, 11, 12, 1],
+  mlb: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+  nba: [10, 11, 12, 1, 2, 3, 4, 5, 6],
+  cbb: [2, 3, 4, 5, 6],
+};
+
 interface DetectOptions {
   /** Days into the past before a "final only" page is considered offseason. */
   staleThresholdDays?: number;
   /** Days into the future before a "scheduled only" page is considered preseason. */
   futureThresholdDays?: number;
+  /** Sport identifier for calendar-based fallback when games list is empty. */
+  sport?: SportKey;
+  /** Override "now" — for testing. */
+  now?: Date;
 }
 
 /**
@@ -41,7 +70,8 @@ export function detectSeasonState(
 ): { state: SeasonState; referenceDate: Date | null } {
   const stale = (opts.staleThresholdDays ?? 14) * 24 * 60 * 60 * 1000;
   const future = (opts.futureThresholdDays ?? 14) * 24 * 60 * 60 * 1000;
-  const now = Date.now();
+  const nowDate = opts.now ?? new Date();
+  const now = nowDate.getTime();
 
   const live = games.filter((g) => g.isLive);
   const scheduled = games.filter((g) => g.isScheduled && !g.isCompleted && !g.isLive);
@@ -73,6 +103,21 @@ export function detectSeasonState(
     );
     if (Number.isFinite(newestMs) && now - newestMs > stale) {
       return { state: 'past-only', referenceDate: new Date(newestMs) };
+    }
+  }
+
+  // Calendar fallback — games array gave us nothing useful.
+  // Without this, a truly empty scoreboard during offseason would report
+  // in-season and the banner would never render, which is exactly the bug
+  // the agent audit caught.
+  if (opts.sport) {
+    const months = SEASON_WINDOWS[opts.sport];
+    const currentMonth = nowDate.getMonth() + 1; // 1-12
+    if (months && !months.includes(currentMonth)) {
+      // No real reference date — games array was empty. Return past-only
+      // with null referenceDate and let the banner render using
+      // seasonTimingHint copy only.
+      return { state: 'past-only', referenceDate: null };
     }
   }
 
@@ -112,13 +157,23 @@ export function OffSeasonBanner({
   sportLabel,
   seasonTimingHint,
 }: OffSeasonBannerProps) {
-  if (state === 'in-season' || !referenceDate) return null;
+  // Render for any offseason state, even if referenceDate is null (calendar
+  // fallback case). Previously we returned early when referenceDate was null,
+  // which is why the empty-scoreboard offseason case showed nothing.
+  if (state === 'in-season') return null;
 
   const isPast = state === 'past-only';
   const headline = `${sportLabel} is in the offseason`;
-  const detail = isPast
-    ? `The most recent result showing here is from ${formatDaysAgo(referenceDate)}. ${seasonTimingHint ?? 'Check back when the season resumes.'}`
-    : `The soonest game on the schedule is ${formatDaysFromNow(referenceDate)}. ${seasonTimingHint ?? 'Live scores will populate once the season begins.'}`;
+
+  let detail: string;
+  if (!referenceDate) {
+    // Calendar fallback — the caller should supply seasonTimingHint for real copy.
+    detail = seasonTimingHint ?? 'Live scores will populate once the season begins.';
+  } else if (isPast) {
+    detail = `The most recent result showing here is from ${formatDaysAgo(referenceDate)}. ${seasonTimingHint ?? 'Check back when the season resumes.'}`;
+  } else {
+    detail = `The soonest game on the schedule is ${formatDaysFromNow(referenceDate)}. ${seasonTimingHint ?? 'Live scores will populate once the season begins.'}`;
+  }
 
   return (
     <Card
