@@ -407,7 +407,11 @@ function CollegeBaseballPageInner() {
               hasResults={allSearchResults.length > 0}
               lastUpdated={lastUpdated}
               dataSource={dataSource}
-              coverageCount={Object.keys(teamMetadata).length}
+              // 330 D1 programs via Highlightly — matches site-wide claim on home, pricing,
+              // savant, and methodology pages. Previously used teamMetadata.length (244) which
+              // represents local profile coverage, not total tracking, and created a visible
+              // contradiction with other pages.
+              coverageCount={330}
               conferenceCount={conferenceList.length - 1}
               rankingsCount={rankings.length}
             />

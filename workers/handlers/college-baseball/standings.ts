@@ -193,20 +193,30 @@ export async function handleCollegeBaseballStandings(
       // Highlightly /standings returns 400. As a fallback, use LPCT to derive approximate
       // conference record. College baseball teams play ~30 conference games per season.
       // LPCT alone lets us sort correctly even when the raw W-L are estimated.
+      // We track `estimated: true` so the client can show the breakdown honestly.
       let leagueWinPct = 0;
+      let confEstimated = false;
       const confTotal = confWins + confLosses;
       if (confTotal > 0) {
         leagueWinPct = confWins / confTotal;
       } else {
-        // Derive from LPCT — ESPN provides leagueWinPercent for conference win rate
+        // Derive from LPCT — ESPN provides leagueWinPercent for conference win rate.
+        // The percentage is real; the W-L breakdown is estimated.
         const lpct = stat('leagueWinPercent');
         if (lpct > 0) {
           leagueWinPct = lpct;
-          // Estimate conference games: ~30 per season, proportional to games played
+          // Conference games played estimate: ~55% of total games are conference.
+          // This holds across mid-late season for most D1 programs.
+          // Cap at total games played and cap conf wins/losses at overall wins/losses
+          // so we never produce impossible numbers (e.g. 22-0 conf when overall is 15-17).
           const gp = stat('gamesPlayed') || (wins + losses);
-          const estimatedConfGames = Math.min(Math.round(gp * 0.55), 30); // ~55% of games are conference
-          confWins = Math.round(lpct * estimatedConfGames);
-          confLosses = estimatedConfGames - confWins;
+          const estimatedConfGames = Math.min(Math.round(gp * 0.55), 30, gp);
+          const rawConfWins = Math.round(lpct * estimatedConfGames);
+          const rawConfLosses = estimatedConfGames - rawConfWins;
+          // Clamp so the estimate is arithmetically consistent with overall record.
+          confWins = Math.min(rawConfWins, wins);
+          confLosses = Math.min(rawConfLosses, losses);
+          confEstimated = true;
         }
       }
 
@@ -222,7 +232,12 @@ export async function handleCollegeBaseballStandings(
           shortName: meta?.shortName ?? (team.abbreviation as string) ?? '',
           logo,
         },
-        conferenceRecord: { wins: confWins, losses: confLosses, pct: leagueWinPct },
+        conferenceRecord: {
+          wins: confWins,
+          losses: confLosses,
+          pct: leagueWinPct,
+          estimated: confEstimated,
+        },
         overallRecord: { wins, losses },
         winPct,
         streak: String(statsList.find((s) => s.name === 'streak')?.displayValue ?? ''),
@@ -264,6 +279,7 @@ export async function handleCollegeBaseballStandings(
           s.conferenceRecord.losses = hl.confLosses;
           const ct = hl.confWins + hl.confLosses;
           s.conferenceRecord.pct = ct > 0 ? hl.confWins / ct : 0;
+          s.conferenceRecord.estimated = false; // Real data from Highlightly
           if (hl.streak && !s.streak) s.streak = hl.streak;
         }
       }
@@ -277,7 +293,14 @@ export async function handleCollegeBaseballStandings(
     });
     standings.forEach((s, i) => { s.rank = i + 1; });
 
-    if (!hlOk) degraded = true;
+    // Degraded means: conference W-L breakdowns are estimated (not real).
+    // If Highlightly enriched EVERY team, degraded=false. If any team still
+    // has estimated=true after enrichment, degraded=true.
+    const estimatedCount = standings.filter((s) => s.conferenceRecord.estimated).length;
+    degraded = estimatedCount > 0;
+    const estimationNote = degraded
+      ? `Conference win-loss breakdowns for ${estimatedCount} team${estimatedCount === 1 ? '' : 's'} are estimated from ESPN win percentage. Percentages and rankings are accurate.`
+      : undefined;
 
     const payload = withMeta({
       success: true,
@@ -288,7 +311,11 @@ export async function handleCollegeBaseballStandings(
       fetchedAt: espnTimestamp,
       sources,
       degraded,
-      extra: { sport: 'college-baseball' },
+      extra: {
+        sport: 'college-baseball',
+        ...(estimationNote ? { estimationNote } : {}),
+        estimatedCount,
+      },
     });
 
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
@@ -447,7 +474,10 @@ export async function handleCollegeBaseballRankings(env: Env): Promise<Response>
       extra: { sport: 'college-baseball' },
     });
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.rankings);
-    return cachedJson({ ...payload, previousRankings: null }, 200, HTTP_CACHE.rankings, {
+    // rotatePrevious() just moved the old snapshot into prevKey — read it back so
+    // the response includes week-over-week movement instead of null.
+    const prevAfterRotate = await kvGet<unknown>(env.KV, prevKey);
+    return cachedJson({ ...payload, previousRankings: prevAfterRotate || null }, 200, HTTP_CACHE.rankings, {
       ...dataHeaders(now, source), 'X-Cache': 'MISS',
     });
   }
@@ -470,7 +500,8 @@ export async function handleCollegeBaseballRankings(env: Env): Promise<Response>
     if (result.success) {
       await kvPut(env.KV, cacheKey, payload, CACHE_TTL.rankings);
     }
-    return cachedJson({ ...payload, previousRankings: null }, result.success ? 200 : 502, HTTP_CACHE.rankings, {
+    const prevAfterRotateNcaa = await kvGet<unknown>(env.KV, prevKey);
+    return cachedJson({ ...payload, previousRankings: prevAfterRotateNcaa || null }, result.success ? 200 : 502, HTTP_CACHE.rankings, {
       ...dataHeaders(result.timestamp, 'ncaa'), 'X-Cache': 'MISS',
     });
   } catch {

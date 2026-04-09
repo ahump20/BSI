@@ -219,6 +219,28 @@ When asked for something "novel" or "creative," check what's already been produc
 - For bugs: write a reproducing test first, then fix, then prove with passing test.
 - Wire to real endpoints. Always. No exceptions.
 
+### Data Surface State Protocol
+Every data surface must explicitly handle four states: loading, error, empty, populated. Implementation is not complete if any state renders as undefined, blank space, or a generic spinner with no context.
+- **Loading:** skeleton or source-tagged placeholder
+- **Error:** what failed and whether it's transient
+- **Empty:** why there's no data ("No games scheduled today" vs. "Couldn't load schedule")
+- **Populated:** data plus `source` and `fetched_at` from response `meta`
+
+### Phase Separation
+Audit and planning tasks do not edit code unless explicitly told to edit. Do not mix phases.
+- If the ask is "audit this," output the audit and stop.
+- If the ask is "audit and fix," keep the outputs separated — audit first, then edits.
+- Do not deploy from dirty state. If `git status` shows uncommitted work, commit first or explicitly justify skipping and verify by SHA after deploy.
+
+### Anti-Freshness-Fabrication Protocol
+Never hardcode "live", "updated just now", "today", "current", or any freshness claim in UI strings. Freshness comes from response metadata (`meta.fetched_at`, computed age) or not at all.
+- If the API didn't return a timestamp, don't invent one
+- If the UI needs "last updated" copy, compute it from real metadata
+- No `const lastUpdated = "5 minutes ago"` anywhere
+
+### Contradiction Surfacing
+If repo docs, live product copy, Worker responses, and memory files conflict about how something works, surface the contradiction instead of silently picking one. Example: if `CLAUDE.md` says Highlightly is primary but the score handler calls ESPN first, state the mismatch and ask which is canonical.
+
 ## API Route Patterns
 
 Production worker serves 40+ routes. Key patterns:

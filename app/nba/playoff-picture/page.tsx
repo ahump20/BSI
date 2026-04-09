@@ -806,6 +806,127 @@ function PlayoffPictureSkeleton() {
 }
 
 // ---------------------------------------------------------------------------
+// Countdown — days until play-in and playoffs
+// ---------------------------------------------------------------------------
+
+// NBA 2025-26 postseason dates (official). Computed from the client's current time
+// in the local timezone — no hardcoded "today" or "X days" strings.
+// Play-In Tournament: April 15-16, 2026
+// First Round: April 18, 2026
+const PLAY_IN_START = new Date('2026-04-15T00:00:00-05:00').getTime();
+const PLAYOFFS_START = new Date('2026-04-18T00:00:00-05:00').getTime();
+
+function daysBetween(fromMs: number, toMs: number): number {
+  const ONE_DAY = 86_400_000;
+  return Math.max(0, Math.ceil((toMs - fromMs) / ONE_DAY));
+}
+
+function PostseasonCountdown() {
+  const nowMs = useMemo(() => Date.now(), []);
+  const daysToPlayIn = daysBetween(nowMs, PLAY_IN_START);
+  const daysToPlayoffs = daysBetween(nowMs, PLAYOFFS_START);
+
+  const playInActive = nowMs >= PLAY_IN_START && nowMs < PLAYOFFS_START;
+  const playoffsActive = nowMs >= PLAYOFFS_START;
+
+  return (
+    <div
+      className="mt-4 flex flex-col gap-3 rounded-sm border-l-2 px-4 py-3 sm:mt-5 sm:flex-row sm:items-center sm:justify-between"
+      style={{
+        borderLeftColor: 'var(--bsi-primary)',
+        backgroundColor: 'var(--surface-dugout)',
+      }}
+      role="region"
+      aria-label="Postseason countdown"
+    >
+      <div className="flex items-center gap-4 sm:gap-6">
+        {/* Play-In countdown */}
+        <div>
+          <div
+            className="text-[9px] font-bold uppercase tracking-widest text-bsi-dust"
+          >
+            Play-In Tournament
+          </div>
+          <div className="mt-0.5 flex items-baseline gap-1.5">
+            {playInActive ? (
+              <span
+                className="font-heading text-xl sm:text-2xl text-bsi-primary"
+              >
+                HAPPENING NOW
+              </span>
+            ) : playoffsActive ? (
+              <span
+                className="font-heading text-base text-bsi-dust sm:text-lg"
+              >
+                COMPLETE
+              </span>
+            ) : (
+              <>
+                <span
+                  className="font-mono text-2xl font-bold tabular-nums sm:text-3xl text-bsi-bone"
+                >
+                  {daysToPlayIn}
+                </span>
+                <span
+                  className="text-[10px] font-semibold uppercase tracking-wider text-bsi-dust"
+                >
+                  {daysToPlayIn === 1 ? 'day' : 'days'} left
+                </span>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div
+          className="hidden h-8 w-px sm:block"
+          style={{ backgroundColor: 'var(--border-vintage)' }}
+        />
+
+        {/* Playoffs countdown */}
+        <div>
+          <div
+            className="text-[9px] font-bold uppercase tracking-widest text-bsi-dust"
+          >
+            First Round
+          </div>
+          <div className="mt-0.5 flex items-baseline gap-1.5">
+            {playoffsActive ? (
+              <span
+                className="font-heading text-xl sm:text-2xl text-bsi-primary"
+              >
+                HAPPENING NOW
+              </span>
+            ) : (
+              <>
+                <span
+                  className="font-mono text-2xl font-bold tabular-nums sm:text-3xl text-bsi-bone"
+                >
+                  {daysToPlayoffs}
+                </span>
+                <span
+                  className="text-[10px] font-semibold uppercase tracking-wider text-bsi-dust"
+                >
+                  {daysToPlayoffs === 1 ? 'day' : 'days'} left
+                </span>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Explanation copy */}
+      <p
+        className="text-[10px] leading-relaxed text-bsi-dust sm:max-w-xs sm:text-right sm:text-[11px]"
+      >
+        Seeds 7-10 fight through the Play-In Tournament for the final two
+        playoff berths in each conference.
+      </p>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Page
 // ---------------------------------------------------------------------------
 
@@ -875,6 +996,9 @@ export default function NBAPlayoffPicturePage() {
               />
             </div>
           </div>
+
+          {/* Postseason countdown — always visible, gives temporal urgency */}
+          <PostseasonCountdown />
 
           {/* Season context bar */}
           {!loading && eastern.length > 0 && (

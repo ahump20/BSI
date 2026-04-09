@@ -22,6 +22,7 @@ import {
   handleMLBSpringRoster,
   handleMLBAbs,
 } from '../handlers/mlb';
+import { handleMLBPowerRankings } from '../handlers/mlb-power-rankings';
 import {
   handleShowSourceStatus,
   handleShowMarketOverview,
@@ -41,6 +42,7 @@ const mlb = new Hono<{ Bindings: Env }>();
 // --- Core ---
 mlb.get('/scores', (c) => safeESPN(() => handleMLBScores(new URL(c.req.url), c.env), 'games', [], c.env));
 mlb.get('/standings', (c) => safeESPN(() => handleMLBStandings(c.env), 'standings', [], c.env));
+mlb.get('/power-rankings', (c) => safeESPN(() => handleMLBPowerRankings(c.env), 'rankings', [], c.env));
 mlb.get('/news', (c) => safeESPN(() => handleMLBNews(c.env), 'articles', [], c.env));
 mlb.get('/stats', (c) => safeESPN(() => handleMLBStatsLeaders(new URL(c.req.url), c.env), 'leaders', [], c.env));
 mlb.get('/stats/leaders', (c) => safeESPN(() => handleMLBStatsLeaders(new URL(c.req.url), c.env), 'leaders', [], c.env));
