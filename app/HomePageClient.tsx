@@ -145,15 +145,42 @@ const SPORT_NAV = [
   },
 ] as const;
 
-// Helper: count live/total games from a scores response
-function countGames(res: ScoresResponse | null): SportPulseData {
-  const g = res?.games ?? res?.data ?? [];
-  const live = g.filter((game) => {
-    const raw = game.status;
-    const s = (typeof raw === 'string' ? raw : typeof raw === 'object' && raw !== null ? String((raw as Record<string, unknown>).detailedState ?? (raw as Record<string, unknown>).state ?? '') : '').toLowerCase();
-    return s.includes('live') || s.includes('in progress') || s.includes('top') || s.includes('bot');
-  }).length;
-  return { live, total: g.length };
+// Ticker recency window — games outside ±N days are filtered out so offseason
+// schedule dumps (e.g. CFB fall slate surfaced in April) don't pollute the ticker.
+const TICKER_RECENCY_DAYS = 2;
+const TICKER_RECENCY_MS = TICKER_RECENCY_DAYS * 24 * 60 * 60 * 1000;
+
+// Date field names vary across API shapes. Order matches most-common-first.
+const GAME_DATE_FIELDS = ['date', 'start_time', 'scheduled', 'startDate'] as const;
+
+function isRecentOrUpcoming(game: ScoreGame, now: number): boolean {
+  let dateStr: string | undefined;
+  for (const key of GAME_DATE_FIELDS) {
+    const v = game[key];
+    if (typeof v === 'string') { dateStr = v; break; }
+  }
+  if (!dateStr) return true; // Keep games without dates — conservative default.
+  const gameTime = new Date(dateStr).getTime();
+  if (!Number.isFinite(gameTime)) return true;
+  return gameTime >= now - TICKER_RECENCY_MS && gameTime <= now + TICKER_RECENCY_MS;
+}
+
+// Normalize the polymorphic `status` field into a lowercase string.
+function normalizeStatusStr(game: ScoreGame): string {
+  const raw = game.status;
+  if (typeof raw === 'string') return raw.toLowerCase();
+  if (typeof raw === 'object' && raw !== null) {
+    const obj = raw as Record<string, unknown>;
+    return String(obj.detailedState ?? obj.state ?? '').toLowerCase();
+  }
+  return '';
+}
+
+const LIVE_STATUS_TOKENS = ['live', 'in progress', 'top ', 'bot '] as const;
+
+function isGameLive(game: ScoreGame): boolean {
+  const s = normalizeStatusStr(game);
+  return LIVE_STATUS_TOKENS.some((t) => s.includes(t));
 }
 
 // Sport labels for news
@@ -436,7 +463,7 @@ function SportPulseStrip({ pulse }: { pulse: Record<string, SportPulseData> }) {
           className="flex items-center overflow-x-auto no-scrollbar"
           style={{ gap: 0 }}
           role="status"
-          aria-label="Live game counts across sports"
+          aria-label="Today's live and upcoming game counts across sports"
         >
           {PULSE_SPORTS.map((sport, idx) => {
             const data = pulse[sport.key];
@@ -907,10 +934,22 @@ export function HomePageClient() {
   const pitchers = pitchingRes?.data ?? [];
   const games: ScoreGame[] = scoresRes?.games ?? scoresRes?.data ?? [];
 
-  // Derived: multi-sport ticker games — interleaved round-robin, live games first
-  const tickerGames = useMemo<TickerGame[]>(() => {
-    const tag = (res: ScoresResponse | null, sport: string, short: string): TickerGame[] =>
-      (res?.games ?? res?.data ?? []).map((g) => ({ ...normalizeTickerGame(g), sport, sportShort: short }));
+  // Derived: multi-sport ticker games + pulse counts in a single pass.
+  // Each sport's games are filtered to ±2 days so offseason schedule dumps
+  // (e.g. CFB fall slate fetched in April) never enter the ticker or pulse strip.
+  const { tickerGames, sportPulse } = useMemo<{
+    tickerGames: TickerGame[];
+    sportPulse: Record<string, SportPulseData>;
+  }>(() => {
+    const now = Date.now();
+    const pulse: Record<string, SportPulseData> = {};
+
+    const tag = (res: ScoresResponse | null, sport: string, short: string): TickerGame[] => {
+      const recent = (res?.games ?? res?.data ?? []).filter((g) => isRecentOrUpcoming(g, now));
+      const live = recent.filter(isGameLive).length;
+      pulse[sport] = { live, total: recent.length };
+      return recent.map((g) => ({ ...normalizeTickerGame(g), sport, sportShort: short }));
+    };
 
     const buckets = [
       tag(scoresRes, 'college-baseball', 'CBB'),
@@ -921,13 +960,8 @@ export function HomePageClient() {
     ].filter((b) => b.length > 0);
 
     // Sort each bucket: live games first
-    const isLive = (g: TickerGame) => {
-      const raw = g.status;
-      const s = (typeof raw === 'string' ? raw : typeof raw === 'object' && raw !== null ? String((raw as Record<string, unknown>).detailedState ?? (raw as Record<string, unknown>).state ?? '') : '').toLowerCase();
-      return s.includes('live') || s.includes('in progress') || s.includes('top') || s.includes('bot');
-    };
     for (const bucket of buckets) {
-      bucket.sort((a, b) => (isLive(b) ? 1 : 0) - (isLive(a) ? 1 : 0));
+      bucket.sort((a, b) => (isGameLive(b) ? 1 : 0) - (isGameLive(a) ? 1 : 0));
     }
 
     // Round-robin interleave
@@ -938,17 +972,8 @@ export function HomePageClient() {
         if (i < bucket.length) result.push(bucket[i]);
       }
     }
-    return result;
+    return { tickerGames: result, sportPulse: pulse };
   }, [scoresRes, mlbScoresRes, nflScoresRes, nbaScoresRes, cfbScoresRes]);
-
-  // Derived: sport pulse — aggregated live/total counts per sport
-  const sportPulse = useMemo<Record<string, SportPulseData>>(() => ({
-    'college-baseball': countGames(scoresRes),
-    mlb: countGames(mlbScoresRes),
-    nfl: countGames(nflScoresRes),
-    nba: countGames(nbaScoresRes),
-    cfb: countGames(cfbScoresRes),
-  }), [scoresRes, mlbScoresRes, nflScoresRes, nbaScoresRes, cfbScoresRes]);
 
   // Derived: total live count across all sports (for hero badge)
   const totalLiveCount = useMemo(() => {

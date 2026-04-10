@@ -316,11 +316,10 @@ export function SavantLeaderboard({
                           {row.player_name as string}
                         </span>
                       )}
-                      {row.position && (row.position as string) !== 'UN' && (
-                        <span className="ml-1.5 text-[10px] text-text-muted uppercase">
-                          {row.position as string}
-                        </span>
-                      )}
+                      {/* Position intentionally NOT rendered inline — only some data sources
+                          (e.g. Texas-prefixed players) carry the position field, which caused
+                          those rows to visually misalign against ESPN-sourced rows. Position
+                          data still lives on the row for the filter dropdown in SavantHubClient. */}
                     </div>
                   </td>
                   <td className="px-2 py-2.5 hidden sm:table-cell">

@@ -128,7 +128,7 @@ export async function handleCreateEmbeddedCheckout(
   // Build form-encoded body for Stripe API (no SDK needed in Workers runtime)
   const params = new URLSearchParams({
     'mode': 'subscription',
-    'ui_mode': 'embedded',
+    'ui_mode': 'embedded_page',
     'line_items[0][price]': priceId,
     'line_items[0][quantity]': '1',
     'return_url': RETURN_URL,
