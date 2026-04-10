@@ -10,6 +10,11 @@ main = "index.ts"
 compatibility_date = "2025-12-01"
 compatibility_flags = ["nodejs_compat"]
 
+# Enable the *.workers.dev preview subdomain so the synthetic monitor's
+# self-heal path can POST to https://bsi-cbb-analytics.ahump20.workers.dev/run
+# when it detects stale D1 tables. Without this flag, the URL NXDOMAINs.
+workers_dev = true
+
 [observability]
 enabled = true
 

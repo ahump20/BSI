@@ -247,9 +247,15 @@ const TABLE_WORKER_MAP: Record<string, string> = {
   cbb_league_context: 'bsi-cbb-analytics',
 };
 
+// NOTE: The workers.dev subdomain is the account's dispatcher subdomain, not
+// the GitHub handle. Confirmed via `wrangler deploy` output: the satellite
+// workers live at `*.humphrey-austin20.workers.dev`, not `*.ahump20.workers.dev`.
+// Both satellites also need `workers_dev = true` in their wrangler.toml for
+// these URLs to resolve. If self-heal starts 530ing again, check both the
+// subdomain and the workers_dev flag before debugging the worker code itself.
 const WORKER_RUN_URLS: Record<string, string> = {
-  'bsi-cbb-analytics': 'https://bsi-cbb-analytics.ahump20.workers.dev/run',
-  'bsi-savant-compute': 'https://bsi-savant-compute.ahump20.workers.dev/run',
+  'bsi-cbb-analytics': 'https://bsi-cbb-analytics.humphrey-austin20.workers.dev/run',
+  'bsi-savant-compute': 'https://bsi-savant-compute.humphrey-austin20.workers.dev/run',
 };
 
 interface SelfHealResult {

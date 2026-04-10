@@ -341,11 +341,15 @@ export async function handleScheduled(env: Env): Promise<void> {
     const lastHealCheck = await kvGet<string>(env.KV, healGateKey);
     const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
     if (!lastHealCheck || lastHealCheck < fiveMinAgo) {
+      // Thresholds mirror workers/bsi-cbb-analytics schedule() gate:
+      // batting/pitching run every 6h; park_factors + conference_strength
+      // only run on Sunday UTC (weekly). A 192h (8-day) buffer covers a
+      // missed Sunday run without false alerts.
       const tables = [
-        { name: 'cbb_batting_advanced', threshold: 7 },   // 6h cron + 1h buffer
+        { name: 'cbb_batting_advanced', threshold: 7 },
         { name: 'cbb_pitching_advanced', threshold: 7 },
-        { name: 'cbb_conference_strength', threshold: 25 }, // daily cron + 1h buffer
-        { name: 'cbb_park_factors', threshold: 170 },       // weekly (Sunday)
+        { name: 'cbb_conference_strength', threshold: 192 },
+        { name: 'cbb_park_factors', threshold: 192 },
       ];
 
       const staleAlerts: string[] = [];

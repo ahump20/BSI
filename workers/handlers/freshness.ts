@@ -99,17 +99,19 @@ const OFF_SEASON_THRESHOLD = 7 * 24 * 60; // 168h = 10080 min
 /**
  * D1 sabermetric staleness thresholds, per table.
  *
- * These mirror the table-aware thresholds in workers/handlers/cron/index.ts
- * (the in-cron healing monitor). Each value is "stale after N hours since
- * last computed_at". park_factors recomputes weekly (Sunday in CT) so its
- * threshold is 8 days; conference_strength is daily; the rest are 6h-cron
- * with a 1h jitter buffer.
+ * These mirror the actual schedule in workers/bsi-cbb-analytics/index.ts:
+ * - batting_advanced, pitching_advanced, league_context: every 6h UTC
+ * - park_factors + conference_strength: Sunday UTC only (weekly)
+ *
+ * The `runAnalytics(env, isSunday)` call at scheduled() line 716 gates the
+ * weekly computations behind `getUTCDay() === 0`. A bigger buffer than 7d
+ * gives us a safety margin for missed Sunday runs.
  */
 const D1_STALE_HOURS_BY_TABLE: Record<string, number> = {
   cbb_batting_advanced:    7,    // 6h cron + 1h buffer
   cbb_pitching_advanced:   7,
   cbb_league_context:      7,
-  cbb_conference_strength: 25,   // daily cron + 1h buffer
+  cbb_conference_strength: 192,  // 8 days = weekly Sunday + 1 day buffer
   cbb_park_factors:        192,  // 8 days = weekly Sunday + 1 day buffer
 };
 const D1_STALE_HOURS_DEFAULT = 24;
@@ -195,38 +197,49 @@ interface KVCheck {
   category: DataSource['category'];
   sport: string;
   source: string;
+  /**
+   * When true, this key is only written on user demand (no cron warms it).
+   * A missing key on an on-demand endpoint is neutral — it means nobody's
+   * hit it recently, not that the cron failed. These surface to the
+   * dashboard but don't trigger alerts.
+   */
+  onDemand?: boolean;
 }
 
 function getTodayKey(): string {
-  // Must match the YYYY-MM-DD format used by score handlers and the cbb-ingest Worker.
-  // Handlers use: new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' }).format()
-  // Ingest uses: new Date().toISOString().split('T')[0]
+  // Must match the YYYY-MM-DD format used by:
+  //   - score handlers (demand-loaded): `new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' })`
+  //   - cbb-ingest worker:             `new Date().toISOString().split('T')[0]`
+  //   - main cron scoresCacheKey:      `new Date().toLocaleString('en-CA', { timeZone: 'America/Chicago' }).split(',')[0]`
   return now().toFormat('yyyy-MM-dd');
 }
 
 function getKVChecks(): KVCheck[] {
   const today = getTodayKey();
   return [
-    // Scores — CB uses YYYY-MM-DD date key; other sports use literal 'today'
-    { name: 'College Baseball Scores', key: `cb:scores:${today}`, category: 'scores', sport: 'College Baseball', source: 'ESPN' },
-    { name: 'MLB Scores', key: 'mlb:scores:today:stauto', category: 'scores', sport: 'MLB', source: 'ESPN' },
-    { name: 'NBA Scores', key: 'nba:scores:today', category: 'scores', sport: 'NBA', source: 'ESPN' },
-    { name: 'NFL Scores', key: 'nfl:scores:today', category: 'scores', sport: 'NFL', source: 'ESPN' },
-    { name: 'CFB Scores', key: 'cfb:scores:today', category: 'scores', sport: 'CFB', source: 'ESPN' },
-    // Standings (static keys)
-    { name: 'CB Standings (SEC)', key: 'cb:standings:v3:SEC', category: 'standings', sport: 'College Baseball', source: 'ESPN' },
-    { name: 'CB Standings (ACC)', key: 'cb:standings:v3:ACC', category: 'standings', sport: 'College Baseball', source: 'ESPN' },
-    { name: 'CB Standings (Big 12)', key: 'cb:standings:v3:Big 12', category: 'standings', sport: 'College Baseball', source: 'ESPN' },
-    { name: 'MLB Standings', key: 'mlb:standings', category: 'standings', sport: 'MLB', source: 'ESPN' },
-    { name: 'NBA Standings', key: 'nba:standings', category: 'standings', sport: 'NBA', source: 'ESPN' },
-    { name: 'NFL Standings', key: 'nfl:standings', category: 'standings', sport: 'NFL', source: 'ESPN' },
-    { name: 'CFB Standings', key: 'cfb:standings', category: 'standings', sport: 'CFB', source: 'ESPN' },
-    // Rankings
+    // Scores — cron-warmed keys (main worker cron writes `scores:cached:${sport}:${date}`)
+    // CB is special: ingest worker writes `cb:scores:${date}`.
+    { name: 'College Baseball Scores', key: `cb:scores:${today}`,       category: 'scores', sport: 'College Baseball', source: 'ESPN' },
+    { name: 'MLB Scores',              key: `scores:cached:mlb:${today}`, category: 'scores', sport: 'MLB',              source: 'ESPN' },
+    { name: 'NBA Scores',              key: `scores:cached:nba:${today}`, category: 'scores', sport: 'NBA',              source: 'ESPN' },
+    { name: 'NFL Scores',              key: `scores:cached:nfl:${today}`, category: 'scores', sport: 'NFL',              source: 'ESPN' },
+    { name: 'CFB Scores',              key: `scores:cached:ncaa:${today}`, category: 'scores', sport: 'CFB',             source: 'ESPN' },
+    // Standings — SEC is the primary health indicator (highest traffic). Other conferences
+    // are demand-loaded so a missing key just means nobody hit that endpoint today.
+    { name: 'CB Standings (SEC)', key: 'cb:standings:v3:SEC',    category: 'standings', sport: 'College Baseball', source: 'ESPN' },
+    { name: 'CB Standings (ACC)', key: 'cb:standings:v3:ACC',    category: 'standings', sport: 'College Baseball', source: 'ESPN', onDemand: true },
+    { name: 'CB Standings (Big 12)', key: 'cb:standings:v3:Big 12', category: 'standings', sport: 'College Baseball', source: 'ESPN', onDemand: true },
+    // Pro league standings are also demand-loaded (no cron warming).
+    { name: 'MLB Standings', key: 'mlb:standings', category: 'standings', sport: 'MLB', source: 'ESPN', onDemand: true },
+    { name: 'NBA Standings', key: 'nba:standings', category: 'standings', sport: 'NBA', source: 'ESPN', onDemand: true },
+    { name: 'NFL Standings', key: 'nfl:standings', category: 'standings', sport: 'NFL', source: 'ESPN', onDemand: true },
+    { name: 'CFB Standings', key: 'cfb:standings', category: 'standings', sport: 'CFB', source: 'ESPN', onDemand: true },
+    // Rankings — cron-warmed by cacheRankings() in cron/rankings.ts
     { name: 'College Baseball Rankings', key: 'cb:rankings:v2', category: 'rankings', sport: 'College Baseball', source: 'ESPN' },
-    { name: 'CFB Rankings', key: 'cfb:rankings', category: 'rankings', sport: 'CFB', source: 'ESPN' },
-    // Editorial
-    { name: 'Trending Intel', key: 'cb:trending', category: 'editorial', sport: 'College Baseball', source: 'BSI' },
-    { name: 'Editorial List', key: 'cb:editorial:list', category: 'editorial', sport: 'College Baseball', source: 'BSI D1' },
+    { name: 'CFB Rankings',              key: 'cfb:rankings',   category: 'rankings', sport: 'CFB',              source: 'ESPN', onDemand: true },
+    // Editorial — demand-loaded; trending and list only exist after handler invocation.
+    { name: 'Trending Intel', key: 'cb:trending',      category: 'editorial', sport: 'College Baseball', source: 'BSI',    onDemand: true },
+    { name: 'Editorial List', key: 'cb:editorial:list', category: 'editorial', sport: 'College Baseball', source: 'BSI D1', onDemand: true },
   ];
 }
 
@@ -234,26 +247,45 @@ async function checkKVSource(kv: KVNamespace, check: KVCheck): Promise<DataSourc
   try {
     const raw = await kv.get(check.key, 'text');
     if (!raw) {
-      // For sports in their offseason, a missing key isn't an emergency.
+      // Off-season sports and on-demand endpoints both get a neutral status
+      // instead of 'missing'. For off-season, the sport isn't playing. For
+      // on-demand, no user has hit the endpoint yet today — that's expected.
       const key = sportToKey(check.sport);
       const isOff = key ? getSeasonPhase(key).phase === 'offseason' : false;
+      const isNeutral = isOff || check.onDemand === true;
+      let note: string;
+      if (isOff) note = `Sport in offseason — KV key absent is expected`;
+      else if (check.onDemand) note = `On-demand endpoint — key only exists after handler invocation`;
+      else note = `KV key "${check.key}" not found`;
       return {
         name: check.name, category: check.category, sport: check.sport,
-        status: isOff ? 'off-season' : 'missing',
+        status: isNeutral ? 'off-season' : 'missing',
         fetchedAt: null, ageMinutes: null, itemCount: null,
         source: check.source,
-        note: isOff ? `Sport in offseason — KV key absent is expected` : `KV key "${check.key}" not found`,
+        note,
       };
     }
 
     const data = JSON.parse(raw);
     const meta = data.meta || {};
-    const fetchedAt = meta.fetched_at || meta.fetchedAt || data.lastUpdated || null;
+    // Timestamp can be stored under any of these keys depending on writer:
+    //  - cron score cache: meta.cachedAt
+    //  - API handlers: meta.fetched_at / meta.fetchedAt
+    //  - legacy: data.lastUpdated
+    const fetchedAt = meta.fetched_at || meta.fetchedAt || meta.cachedAt || data.lastUpdated || null;
     const degraded = !!meta.degraded || !!data.degraded;
 
-    // Count items in the response — support multiple data shapes
+    // Count items in the response — support multiple data shapes.
+    // The cron cache wraps responses as `{ data: { games: [...] }, meta: {...} }`
+    // while handlers often return `{ data: [...], meta: {...} }` directly.
+    const inner = data.data;
+    const innerObj = inner && typeof inner === 'object' && !Array.isArray(inner) ? inner : null;
     let itemCount: number | null = null;
     if (Array.isArray(data.data)) itemCount = data.data.length;
+    else if (innerObj && Array.isArray(innerObj.games)) itemCount = innerObj.games.length;
+    else if (innerObj && Array.isArray(innerObj.data)) itemCount = innerObj.data.length;
+    else if (innerObj && Array.isArray(innerObj.teams)) itemCount = innerObj.teams.length;
+    else if (innerObj && Array.isArray(innerObj.standings)) itemCount = innerObj.standings.length;
     else if (Array.isArray(data.games)) itemCount = data.games.length;
     else if (Array.isArray(data.teams)) itemCount = data.teams.length;
     else if (Array.isArray(data.rankings)) itemCount = data.rankings.length;
@@ -276,7 +308,8 @@ async function checkKVSource(kv: KVNamespace, check: KVCheck): Promise<DataSourc
     } else {
       const key = sportToKey(check.sport);
       const isOff = key ? getSeasonPhase(key).phase === 'offseason' : false;
-      status = isOff ? 'off-season' : 'missing';
+      const isNeutral = isOff || check.onDemand === true;
+      status = isNeutral ? 'off-season' : 'missing';
     }
 
     return {
@@ -446,13 +479,16 @@ async function checkUpstreams(env: Env): Promise<UpstreamCheck[]> {
   );
 
   // SportsDataIO — only when key is configured.
-  // Probe /v3/mlb/scores/json/Stadiums which is in the lowest paid tier.
-  // The probe doesn't care about the body — only that the key is recognized.
+  // Probe /v3/mlb/scores/json/GamesByDate/{today} which is the exact endpoint
+  // the cron's fetchMLBScores() uses via SDIOClient.getMLBScores(). The BSI
+  // SDIO key is scoped to live scores, NOT teams/stadiums/players — probing
+  // a different endpoint returns 403 even when the key is valid.
   if (env.SPORTS_DATA_IO_API_KEY) {
+    const todayISO = now().toFormat('yyyy-MM-dd');
     checks.push(
       pingUpstream(
         'SportsDataIO',
-        'https://api.sportsdata.io/v3/mlb/scores/json/Stadiums',
+        `https://api.sportsdata.io/v3/mlb/scores/json/GamesByDate/${todayISO}`,
         {
           headers: {
             'Ocp-Apim-Subscription-Key': env.SPORTS_DATA_IO_API_KEY,
