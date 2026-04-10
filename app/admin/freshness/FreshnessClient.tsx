@@ -46,6 +46,18 @@ interface CronWorkerStatus {
   detail?: string;
 }
 
+interface ErrorCluster {
+  fingerprint: string;
+  worker: string;
+  kind: string;
+  message: string;
+  count: number;
+  firstSeen: string;
+  lastSeen: string;
+  sample: string;
+  ageMinutes: number | null;
+}
+
 interface FreshnessReport {
   timestamp: string;
   summary: { fresh: number; stale: number; degraded: number; missing: number; total: number };
@@ -53,6 +65,7 @@ interface FreshnessReport {
   d1Tables: D1TableCheck[];
   upstream?: UpstreamCheck[];
   cronHealth?: { workers: Record<string, CronWorkerStatus>; checkedAt: string | null };
+  errorClusters?: { total: number; active: ErrorCluster[] };
   dailyAudit?: { ranAt: string | null; summary: { fresh: number; stale: number; degraded: number; missing: number; total: number } | null };
 }
 
@@ -434,6 +447,97 @@ function CronSection({ cronHealth }: { cronHealth: NonNullable<FreshnessReport['
 }
 
 // ---------------------------------------------------------------------------
+// Error Clusters Section
+// ---------------------------------------------------------------------------
+
+function errorSeverityColor(ageMinutes: number | null, count: number): string {
+  // Recent high-volume clusters are red; recent low-volume are orange;
+  // old clusters are yellow; very old are dust-colored.
+  if (ageMinutes != null && ageMinutes < 15 && count >= 5) return 'var(--heritage-oiler-red, #C41E3A)';
+  if (ageMinutes != null && ageMinutes < 60) return '#F59E0B';
+  if (ageMinutes != null && ageMinutes < 360) return 'var(--heritage-bronze, #8C6239)';
+  return 'var(--bsi-dust)';
+}
+
+function ErrorClustersSection({ errorClusters }: { errorClusters: NonNullable<FreshnessReport['errorClusters']> }) {
+  if (errorClusters.total === 0) {
+    return (
+      <div className="heritage-card overflow-hidden">
+        <div className="px-5 py-3 bg-surface-press-box">
+          <span className="heritage-stamp">Error Clusters</span>
+        </div>
+        <div className="px-5 py-6 text-sm text-bsi-dust">
+          No active error clusters in the last 24 hours.
+          <span
+            className="ml-2 font-mono text-[10px] uppercase tracking-[0.1em]"
+            style={{ color: 'var(--bsi-teal, #00B2A9)' }}
+          >
+            &#10003; clean
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="heritage-card overflow-hidden">
+      <div className="px-5 py-3 bg-surface-press-box flex items-center justify-between">
+        <span className="heritage-stamp">Error Clusters</span>
+        <span className="text-[10px] uppercase tracking-[0.15em] font-mono text-bsi-dust">
+          {errorClusters.total} active &middot; last 24h
+        </span>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr style={{ borderBottom: '1px solid var(--border-vintage)' }}>
+              {['Worker', 'Kind', 'Count', 'Last Seen', 'Sample'].map((h) => (
+                <th
+                  key={h}
+                  className="px-4 py-2.5 text-left text-[10px] uppercase tracking-[0.15em] font-semibold text-bsi-dust font-mono"
+                >
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {errorClusters.active.map((c) => {
+              const color = errorSeverityColor(c.ageMinutes, c.count);
+              return (
+                <tr
+                  key={c.fingerprint}
+                  className="transition-colors hover:bg-[rgba(255,255,255,0.02)]"
+                  style={{ borderBottom: '1px solid rgba(140,98,57,0.12)' }}
+                >
+                  <td className="px-4 py-2.5 font-semibold text-bsi-bone">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full mr-2" style={{ background: color }} />
+                    {c.worker}
+                  </td>
+                  <td className="px-4 py-2.5 text-xs text-bsi-dust font-mono">{c.kind}</td>
+                  <td
+                    className="px-4 py-2.5 font-mono text-xs font-bold tabular-nums"
+                    style={{ color }}
+                  >
+                    {c.count.toLocaleString()}
+                  </td>
+                  <td className="px-4 py-2.5 font-mono text-xs text-bsi-dust">
+                    {formatAge(c.ageMinutes)}
+                  </td>
+                  <td className="px-4 py-2.5 text-xs text-bsi-dust max-w-md truncate" title={c.sample}>
+                    {c.sample}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Daily Audit Stamp
 // ---------------------------------------------------------------------------
 
@@ -649,6 +753,7 @@ export default function FreshnessClient() {
                 )}
                 {report.cronHealth && <CronSection cronHealth={report.cronHealth} />}
                 <D1TableSection tables={report.d1Tables} />
+                {report.errorClusters && <ErrorClustersSection errorClusters={report.errorClusters} />}
               </>
             )}
           </div>

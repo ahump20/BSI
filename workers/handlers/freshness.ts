@@ -76,6 +76,23 @@ export interface CronWorkerStatus {
   detail?: string;
 }
 
+/**
+ * An error cluster from the `bsi-error-tracker` tail worker. Mirrors the
+ * ErrorCluster interface in workers/error-tracker/index.ts:32-41.
+ */
+export interface ErrorCluster {
+  fingerprint: string;
+  worker: string;
+  kind: string;
+  message: string;
+  count: number;
+  firstSeen: string;
+  lastSeen: string;
+  sample: string;
+  /** Minutes since last seen — computed at audit time. */
+  ageMinutes: number | null;
+}
+
 export interface FreshnessReport {
   timestamp: string;
   timezone: 'America/Chicago';
@@ -84,6 +101,7 @@ export interface FreshnessReport {
   d1Tables: D1TableCheck[];
   upstream?: UpstreamCheck[];
   cronHealth?: { workers: Record<string, CronWorkerStatus>; checkedAt: string | null };
+  errorClusters?: { total: number; active: ErrorCluster[] };
   dailyAudit?: { ranAt: string | null; summary: FreshnessReport['summary'] | null };
   meta: { source: string; fetched_at: string; timezone: 'America/Chicago' };
 }
@@ -233,10 +251,11 @@ function getKVChecks(): KVCheck[] {
     // use THAT instead of racing KV.
     //
     // CB Scores is different: the cbb-ingest worker writes `cb:scores:${date}`
-    // with a longer TTL during active games, so it's stable enough to check
-    // directly. And CFB isn't in the main cron's fetcher set at all —
-    // demand-loaded only.
-    { name: 'College Baseball Scores', key: `cb:scores:${today}`, category: 'scores', sport: 'College Baseball', source: 'ESPN' },
+    // via `processFinishedGames` in the main cron, but only on days with active
+    // games — there's nothing to write on an off-day (Thursday often is). So
+    // CB Scores is marked `onDemand: true`: the key exists when games happen
+    // and is legitimately absent when they don't.
+    { name: 'College Baseball Scores', key: `cb:scores:${today}`, category: 'scores', sport: 'College Baseball', source: 'ESPN', onDemand: true },
     // Standings — SEC is the primary health indicator (highest traffic). Other conferences
     // are demand-loaded so a missing key just means nobody hit that endpoint today.
     { name: 'CB Standings (SEC)', key: 'cb:standings:v3:SEC',    category: 'standings', sport: 'College Baseball', source: 'ESPN' },
@@ -606,6 +625,67 @@ async function checkCronHealth(env: Env): Promise<FreshnessReport['cronHealth']>
 }
 
 // ---------------------------------------------------------------------------
+// Error clusters (read from the bsi-error-tracker tail worker's KV)
+// ---------------------------------------------------------------------------
+
+/**
+ * Read active error clusters from the error-tracker's `ERROR_LOG` KV.
+ *
+ * The tail worker at workers/error-tracker/index.ts fingerprints errors
+ * and stores rolling cluster summaries under `err-cluster:${fp}` with a
+ * 24h TTL. The list of active fingerprints lives at `err-clusters:index`.
+ *
+ * This function reads the index, fetches each cluster in parallel, computes
+ * an age in minutes, and returns the N most-recent. Capped at 20 to keep
+ * the audit payload bounded.
+ */
+async function checkErrorClusters(env: Env): Promise<FreshnessReport['errorClusters']> {
+  const kv = env.ERROR_LOG ?? env.KV;
+  if (!kv) return { total: 0, active: [] };
+
+  try {
+    const indexRaw = await kv.get('err-clusters:index', 'text');
+    if (!indexRaw) return { total: 0, active: [] };
+
+    const fingerprints: string[] = JSON.parse(indexRaw);
+    if (!Array.isArray(fingerprints) || fingerprints.length === 0) {
+      return { total: 0, active: [] };
+    }
+
+    // Fetch each cluster in parallel. Skip any that have already been
+    // evicted from KV (24h TTL) — index lags the actual cluster keys.
+    const clusters = await Promise.all(
+      fingerprints.map(async (fp): Promise<ErrorCluster | null> => {
+        try {
+          const raw = await kv.get(`err-cluster:${fp}`, 'text');
+          if (!raw) return null;
+          const cluster = JSON.parse(raw) as Omit<ErrorCluster, 'ageMinutes'>;
+          const ageMin = cluster.lastSeen ? ageMinutes(cluster.lastSeen) : null;
+          return { ...cluster, ageMinutes: ageMin };
+        } catch {
+          return null;
+        }
+      }),
+    );
+
+    const active = clusters
+      .filter((c): c is ErrorCluster => c !== null)
+      .sort((a, b) => {
+        // Most-recent first; within the same minute, highest-count first.
+        const aAge = a.ageMinutes ?? Infinity;
+        const bAge = b.ageMinutes ?? Infinity;
+        if (aAge !== bAge) return aAge - bAge;
+        return b.count - a.count;
+      })
+      .slice(0, 20);
+
+    return { total: active.length, active };
+  } catch {
+    return { total: 0, active: [] };
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Daily audit snapshot (written by the daily-gated cron block in cron/index.ts)
 // ---------------------------------------------------------------------------
 
@@ -627,16 +707,17 @@ async function readDailyAudit(env: Env): Promise<FreshnessReport['dailyAudit']> 
 export async function buildFreshnessReport(env: Env, deep: boolean): Promise<FreshnessReport> {
   const checks = getKVChecks();
 
-  // Always-on checks: KV + D1 + cron health + daily-audit snapshot
+  // Always-on checks: KV + D1 + cron health + error clusters + daily-audit snapshot
   // Deep-only:        upstream API pings
   const baseChecks = await Promise.all([
     Promise.all(checks.map((c) => checkKVSource(env.KV, c))),
     Promise.all(D1_TABLES.map((t) => checkD1Table(env.DB, t))),
     checkCronHealth(env),
+    checkErrorClusters(env),
     readDailyAudit(env),
   ]);
 
-  const [kvResults, d1Results, cronHealth, dailyAudit] = baseChecks;
+  const [kvResults, d1Results, cronHealth, errorClusters, dailyAudit] = baseChecks;
 
   let upstream: UpstreamCheck[] | undefined;
   if (deep) {
@@ -679,6 +760,7 @@ export async function buildFreshnessReport(env: Env, deep: boolean): Promise<Fre
     d1Tables: d1Results,
     upstream,
     cronHealth,
+    errorClusters,
     dailyAudit,
     meta: {
       source: 'bsi-freshness-dashboard',

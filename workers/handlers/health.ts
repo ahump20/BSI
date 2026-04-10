@@ -85,31 +85,111 @@ export async function handleAdminHealth(env: Env): Promise<Response> {
 }
 
 /**
- * Public system status — reads synthetic monitor results from MONITOR_KV.
+ * Public system status — merges synthetic monitor results with the daily
+ * freshness audit for a more accurate picture. Serves:
+ *   - the public /status page
+ *   - the footer HealthDot on every page
+ *   - any external status consumers
+ *
  * GET /api/status
+ *
+ * Why two sources: the synthetic monitor is a 5-minute endpoint-pinger that
+ * captures one snapshot per run; a single network blip can flip `allHealthy`
+ * to false and display "Major Outage" even though the product is fine. The
+ * freshness audit runs once per day on a KV-gated cron and represents the
+ * state of actual data pipelines + upstream APIs + satellite cron workers.
+ *
+ * The merged `overall` status only degrades the product when BOTH signals
+ * agree (or when the freshness audit itself reports stale/missing data).
+ * This eliminates the "Major Outage on a clean deploy" false positive.
  */
 export async function handleStatus(env: Env): Promise<Response> {
-  if (!env.MONITOR_KV) {
+  const timestamp = new Date().toISOString();
+
+  if (!env.MONITOR_KV && !env.KV) {
     return json({
       status: 'unknown',
-      message: 'Monitor KV not configured',
-      timestamp: new Date().toISOString(),
+      message: 'No monitoring infrastructure configured',
+      timestamp,
     });
   }
 
   try {
-    const raw = await env.MONITOR_KV.get('summary:latest', 'text');
-    if (!raw) {
-      return json({
-        status: 'unknown',
-        message: 'No monitor data available yet',
-        timestamp: new Date().toISOString(),
-      });
+    // Read both snapshots in parallel.
+    const [syntheticRaw, freshnessRaw] = await Promise.all([
+      env.MONITOR_KV ? env.MONITOR_KV.get('summary:latest', 'text') : Promise.resolve(null),
+      env.KV.get('freshness:daily:latest', 'text'),
+    ]);
+
+    let synthetic: {
+      timestamp?: string;
+      results?: Array<{ name?: string; ok?: boolean; status?: number | string; latencyMs?: number }>;
+      allHealthy?: boolean;
+      driftDetected?: boolean;
+    } | null = null;
+    if (syntheticRaw) {
+      try { synthetic = JSON.parse(syntheticRaw); } catch { /* malformed — ignore */ }
     }
 
-    const summary = JSON.parse(raw);
+    interface FreshnessSnapshot {
+      ranAt: string;
+      summary: { fresh: number; stale: number; degraded: number; missing: number; total: number };
+      liveEndpoints: Array<{ status: string }>;
+      d1Tables: Array<{ status: string }>;
+      upstream?: Array<{ provider: string; status: string; optional?: boolean }>;
+      cronHealth?: { workers: Record<string, { status: string }> };
+    }
 
-    // Enrich with data pipeline freshness
+    let freshness: FreshnessSnapshot | null = null;
+    if (freshnessRaw) {
+      try { freshness = JSON.parse(freshnessRaw); } catch { /* malformed — ignore */ }
+    }
+
+    // --- Compute overall status from both signals ---
+    //
+    // Synthetic monitor signal: `syntheticHealthy` true when allHealthy true
+    // or when no results have failed. If synthetic has no data yet, this is
+    // null (unknown), not false.
+    let syntheticHealthy: boolean | null = null;
+    if (synthetic) {
+      if (typeof synthetic.allHealthy === 'boolean') {
+        syntheticHealthy = synthetic.allHealthy;
+      } else if (Array.isArray(synthetic.results)) {
+        syntheticHealthy = synthetic.results.every((r) => r.ok === true);
+      }
+    }
+
+    // Freshness signal: true when 0 stale and 0 missing (optional upstreams
+    // already excluded from summary counts in freshness.ts). Null when no
+    // audit has run yet.
+    let freshnessHealthy: boolean | null = null;
+    if (freshness && freshness.summary) {
+      freshnessHealthy =
+        (freshness.summary.stale || 0) === 0 &&
+        (freshness.summary.missing || 0) === 0;
+    }
+
+    // Merged overall: prefer freshness audit (authoritative) when both
+    // signals exist and disagree. A single synthetic monitor hiccup no
+    // longer shows red if the freshness audit says everything is clean.
+    let overall: 'healthy' | 'degraded' | 'down' | 'unknown';
+    if (freshnessHealthy === true && syntheticHealthy !== false) {
+      overall = 'healthy';
+    } else if (freshnessHealthy === false) {
+      // Freshness says something is actually broken — trust it and surface.
+      overall = (freshness!.summary.missing > 0) ? 'down' : 'degraded';
+    } else if (syntheticHealthy === true) {
+      // No freshness data yet, synthetic says healthy.
+      overall = 'healthy';
+    } else if (syntheticHealthy === false) {
+      // Only synthetic says degraded, freshness is unknown. Don't claim
+      // 'down' on a single synthetic blip — use 'degraded' as the floor.
+      overall = 'degraded';
+    } else {
+      overall = 'unknown';
+    }
+
+    // --- Enrich with data pipeline freshness (legacy D1 fields) ---
     const pipelines: Record<string, unknown> = {};
     if (env.DB) {
       try {
@@ -126,16 +206,44 @@ export async function handleStatus(env: Env): Promise<Response> {
       } catch { /* table may not exist */ }
     }
 
+    // --- Public freshness summary (sanitized — no per-key details) ---
+    const publicFreshness = freshness ? {
+      ranAt: freshness.ranAt,
+      summary: freshness.summary,
+      upstream: (freshness.upstream || [])
+        .filter((u) => !u.optional)
+        .map((u) => ({ provider: u.provider, status: u.status })),
+      cronWorkers: freshness.cronHealth
+        ? Object.entries(freshness.cronHealth.workers).map(([name, w]) => ({ name, status: w.status }))
+        : [],
+    } : null;
+
     return json({
-      ...summary,
+      overall,
+      timestamp,
+      // Legacy fields from synthetic monitor for backward compat with the
+      // existing status page + HealthDot parsing.
+      allHealthy: syntheticHealthy,
+      results: synthetic?.results || [],
+      driftDetected: synthetic?.driftDetected || false,
+      // New fields — powered by the daily freshness audit.
+      freshness: publicFreshness,
       pipelines,
-      meta: { source: 'bsi-synthetic-monitor', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
+      meta: {
+        source: 'bsi-status-merged',
+        fetched_at: timestamp,
+        timezone: 'America/Chicago',
+        sources: {
+          synthetic: synthetic?.timestamp || null,
+          freshness: freshness?.ranAt || null,
+        },
+      },
     });
   } catch (err) {
     return json({
       status: 'error',
-      error: err instanceof Error ? err.message : 'Failed to read monitor data',
-      timestamp: new Date().toISOString(),
+      error: err instanceof Error ? err.message : 'Failed to read status data',
+      timestamp,
     }, 500);
   }
 }

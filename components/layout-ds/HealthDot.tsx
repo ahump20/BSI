@@ -13,6 +13,13 @@ interface StatusResult {
 }
 
 interface StatusApiRaw {
+  /**
+   * New (2026-04-10): merged status from /api/status. When this field is
+   * present, trust it — it's already reconciled the synthetic monitor
+   * signal with the daily freshness audit snapshot and eliminated the
+   * single-blip false positive that used to flip this dot red.
+   */
+  overall?: HealthLevel;
   allHealthy?: boolean;
   results?: StatusResult[];
   endpoints?: StatusResult[];
@@ -52,7 +59,15 @@ export function HealthDot() {
         if (!mounted) return;
         const raw = data as StatusApiRaw;
 
-        // Fast path: synthetic monitor provides allHealthy boolean
+        // Best path: merged overall from handleStatus (reconciles synthetic
+        // monitor with daily freshness audit). Eliminates the 'down' false
+        // positive from a single transient synthetic blip.
+        if (raw.overall && raw.overall !== 'unknown') {
+          setHealth(raw.overall);
+          return;
+        }
+
+        // Fast path: legacy synthetic monitor allHealthy boolean
         if (typeof raw.allHealthy === 'boolean') {
           setHealth(raw.allHealthy ? 'healthy' : 'degraded');
           return;
