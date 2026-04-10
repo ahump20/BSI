@@ -384,6 +384,67 @@ export async function handleScheduled(env: Env): Promise<void> {
     // Non-critical — don't break the cron for healing checks
     console.error('[cron:healing]', err instanceof Error ? err.message : err);
   }
+
+  // Daily deep freshness audit (gated to once per day in CT).
+  // Pings upstream APIs (Highlightly, ESPN, SportsDataIO), aggregates the
+  // full freshness report, and writes it to KV so the dashboard, alerts,
+  // and the daily Claude Code remote trigger can all read a consistent view.
+  try {
+    const auditGateKey = 'cron:freshness-audit:last';
+    const lastAudit = await kvGet<string>(env.KV, auditGateKey);
+    if (!lastAudit || lastAudit.slice(0, 10) !== date) {
+      const { buildFreshnessReport } = await import('../freshness');
+      const report = await buildFreshnessReport(env, /* deep */ true);
+
+      // Persist the daily snapshot — 48h TTL gives us coverage if a day's gate fails.
+      const snapshot = {
+        ranAt: now,
+        summary: report.summary,
+        liveEndpoints: report.liveEndpoints,
+        d1Tables: report.d1Tables,
+        upstream: report.upstream,
+        cronHealth: report.cronHealth,
+      };
+      await kvPut(env.KV, 'freshness:daily:latest', snapshot, 48 * 60 * 60);
+      await kvPut(env.KV, auditGateKey, now, 36 * 60 * 60);
+
+      // If anything is broken, drop a structured alert into KV for the
+      // synthetic monitor to escalate via Resend. We only treat 'stale' and
+      // 'missing' as alertable — 'degraded' and 'off-season' are noise.
+      const broken: string[] = [];
+      for (const e of report.liveEndpoints) {
+        if (e.status === 'stale' || e.status === 'missing') {
+          broken.push(`${e.name} (${e.sport}): ${e.status.toUpperCase()}`);
+        }
+      }
+      for (const t of report.d1Tables) {
+        if (t.status === 'stale' || t.status === 'missing') {
+          broken.push(`D1 ${t.name}: ${t.status.toUpperCase()}`);
+        }
+      }
+      for (const u of report.upstream || []) {
+        if (u.status === 'down') {
+          broken.push(`UPSTREAM ${u.provider}: DOWN${u.error ? ` (${u.error})` : ''}`);
+        }
+      }
+
+      if (broken.length > 0) {
+        await kvPut(env.KV, 'freshness:daily:alerts', {
+          ranAt: now,
+          count: broken.length,
+          items: broken,
+        }, 48 * 60 * 60);
+        console.warn(`[cron:freshness-audit] ${broken.length} broken: ${broken.join(' | ')}`);
+      } else {
+        // Clear any prior alert key so the dashboard knows we're clean.
+        await env.KV.delete('freshness:daily:alerts');
+        console.info(`[cron:freshness-audit] All ${report.summary.total} sources clean`);
+      }
+    }
+  } catch (err) {
+    // Non-critical — daily audit failing should never break the minute cron.
+    console.error('[cron:freshness-audit]', err instanceof Error ? err.message : err);
+  }
 }
 
 /**

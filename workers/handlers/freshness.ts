@@ -3,24 +3,35 @@
  *
  * GET /api/admin/freshness — Returns structured freshness data for all
  * BSI data pipelines: live scores (KV), standings (KV), sabermetrics (D1).
- * Each source gets a status: FRESH / STALE / DEGRADED / MISSING.
+ * Each source gets a status: FRESH / STALE / DEGRADED / MISSING / OFF-SEASON.
  *
- * This replaces the manual freshness audit Austin did on 2026-03-24.
- * The system now watches itself.
+ * GET /api/admin/freshness?deep=true — Same plus an upstream API ping
+ * (Highlightly Pro + ESPN) so the report can prove the source is alive
+ * even when the cached data is recent.
+ *
+ * Response shape additions (2026-04-09):
+ *  - upstream:      [{ provider, status, latencyMs, error?, checkedAt }]
+ *  - cronHealth:    { workers: { name → { status, lastRunAt, ageMinutes } } }
+ *  - dailyAudit:    { ranAt, summary } if a daily audit has run
+ *
+ * The check is sport- and season-aware: sports in offseason relax to a
+ * 1-week threshold, in-season sports use Austin's spec
+ * (scores 6h, standings 24h, rankings 48h).
  */
 
 import type { Env } from '../shared/types';
 import { json } from '../shared/helpers';
 import { timingSafeCompare } from '../shared/auth';
 import { DateTime } from 'luxon';
+import { getSeasonPhase, type SportKey } from '../../lib/season';
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
-type FreshnessStatus = 'fresh' | 'stale' | 'degraded' | 'missing' | 'off-season';
+export type FreshnessStatus = 'fresh' | 'stale' | 'degraded' | 'missing' | 'off-season';
 
-interface DataSource {
+export interface DataSource {
   name: string;
   category: 'scores' | 'standings' | 'rankings' | 'sabermetrics' | 'editorial';
   sport: string;
@@ -33,38 +44,87 @@ interface DataSource {
   note?: string;
 }
 
-interface D1TableCheck {
+export interface D1TableCheck {
   name: string;
   table: string;
   rows: number;
   lastComputed: string | null;
   ageHours: number | null;
   status: FreshnessStatus;
+  note?: string;
 }
 
-interface FreshnessReport {
+export interface UpstreamCheck {
+  provider: string;
+  status: 'ok' | 'slow' | 'down' | 'unconfigured';
+  latencyMs: number | null;
+  checkedAt: string;
+  error?: string;
+}
+
+export interface CronWorkerStatus {
+  status: 'ok' | 'silent' | 'degraded';
+  lastRunAt: string | null;
+  ageMinutes: number | null;
+  detail?: string;
+}
+
+export interface FreshnessReport {
   timestamp: string;
   timezone: 'America/Chicago';
   summary: { fresh: number; stale: number; degraded: number; missing: number; total: number };
   liveEndpoints: DataSource[];
   d1Tables: D1TableCheck[];
+  upstream?: UpstreamCheck[];
+  cronHealth?: { workers: Record<string, CronWorkerStatus>; checkedAt: string | null };
+  dailyAudit?: { ranAt: string | null; summary: FreshnessReport['summary'] | null };
   meta: { source: string; fetched_at: string; timezone: 'America/Chicago' };
 }
 
 // ---------------------------------------------------------------------------
-// Thresholds
+// Thresholds (Austin's spec, 2026-04-09)
 // ---------------------------------------------------------------------------
 
-/** Minutes before a data source is considered stale */
-const STALE_THRESHOLDS: Record<string, number> = {
-  scores: 5,         // live scores: stale after 5 min
-  standings: 120,    // standings: stale after 2 hours
-  rankings: 360,     // rankings: stale after 6 hours
-  editorial: 1440,   // editorial: stale after 24 hours
+/** Minutes before an in-season data source is considered stale. */
+const STALE_THRESHOLDS_IN_SEASON: Record<string, number> = {
+  scores:    360,    // 6 hours
+  standings: 1440,   // 24 hours
+  rankings:  2880,   // 48 hours
+  editorial: 1440,   // 24 hours
 };
 
-/** Hours before a D1 table is considered stale */
-const D1_STALE_HOURS = 24;
+/** Off-season relaxation: 1 week is acceptable for everything except editorial. */
+const OFF_SEASON_THRESHOLD = 7 * 24 * 60; // 168h = 10080 min
+
+/**
+ * D1 sabermetric staleness thresholds, per table.
+ *
+ * These mirror the table-aware thresholds in workers/handlers/cron/index.ts
+ * (the in-cron healing monitor). Each value is "stale after N hours since
+ * last computed_at". park_factors recomputes weekly (Sunday in CT) so its
+ * threshold is 8 days; conference_strength is daily; the rest are 6h-cron
+ * with a 1h jitter buffer.
+ */
+const D1_STALE_HOURS_BY_TABLE: Record<string, number> = {
+  cbb_batting_advanced:    7,    // 6h cron + 1h buffer
+  cbb_pitching_advanced:   7,
+  cbb_league_context:      7,
+  cbb_conference_strength: 25,   // daily cron + 1h buffer
+  cbb_park_factors:        192,  // 8 days = weekly Sunday + 1 day buffer
+};
+const D1_STALE_HOURS_DEFAULT = 24;
+
+/**
+ * D1 tables that are intentionally orphaned (KV is the active path).
+ * Per the platform manager memory: cbb_* sabermetric tables stopped writing
+ * in January but the KV cache continues to serve fresh data. Mark these as
+ * 'off-season' instead of 'stale' so they don't trip alerts.
+ */
+const D1_ORPHANED_TABLES = new Set<string>([
+  // Intentionally empty for now — leave the door open to mark specific tables
+  // orphaned if/when the platform decision is finalized. Adding a table here
+  // suppresses its 'stale' alert without hiding it from the dashboard.
+]);
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -84,10 +144,45 @@ function ageHours(fetchedAt: string): number {
   return Math.round(now().diff(fetched, 'hours').hours * 10) / 10;
 }
 
-function classifyStatus(ageMin: number, category: string, degraded: boolean): FreshnessStatus {
+/** Map a sport label string back to a SportKey for season lookup. */
+function sportToKey(sport: string): SportKey | null {
+  const s = sport.toLowerCase();
+  if (s.includes('college baseball') || s === 'ncaa') return 'ncaa';
+  if (s === 'mlb') return 'mlb';
+  if (s === 'nfl') return 'nfl';
+  if (s === 'nba') return 'nba';
+  if (s === 'cfb') return 'cfb';
+  return null;
+}
+
+/** Threshold lookup that accounts for sport season state. */
+function getThreshold(category: string, sport: string): { thresholdMinutes: number; offSeason: boolean } {
+  const key = sportToKey(sport);
+  if (key) {
+    const phase = getSeasonPhase(key).phase;
+    if (phase === 'offseason') {
+      return { thresholdMinutes: OFF_SEASON_THRESHOLD, offSeason: true };
+    }
+  }
+  return {
+    thresholdMinutes: STALE_THRESHOLDS_IN_SEASON[category] ?? 1440,
+    offSeason: false,
+  };
+}
+
+function classifyStatus(
+  ageMin: number,
+  category: string,
+  sport: string,
+  degraded: boolean,
+): FreshnessStatus {
   if (degraded) return 'degraded';
-  const threshold = STALE_THRESHOLDS[category] || 120;
-  return ageMin <= threshold ? 'fresh' : 'stale';
+  const { thresholdMinutes, offSeason } = getThreshold(category, sport);
+  if (ageMin <= thresholdMinutes) return 'fresh';
+  // If we're past the in-season threshold but the sport is in its offseason,
+  // surface the source as 'off-season' rather than 'stale' so alerts only
+  // fire on actively-broken sports.
+  return offSeason ? 'off-season' : 'stale';
 }
 
 // ---------------------------------------------------------------------------
@@ -139,10 +234,15 @@ async function checkKVSource(kv: KVNamespace, check: KVCheck): Promise<DataSourc
   try {
     const raw = await kv.get(check.key, 'text');
     if (!raw) {
+      // For sports in their offseason, a missing key isn't an emergency.
+      const key = sportToKey(check.sport);
+      const isOff = key ? getSeasonPhase(key).phase === 'offseason' : false;
       return {
         name: check.name, category: check.category, sport: check.sport,
-        status: 'missing', fetchedAt: null, ageMinutes: null, itemCount: null,
-        source: check.source, note: `KV key "${check.key}" not found`,
+        status: isOff ? 'off-season' : 'missing',
+        fetchedAt: null, ageMinutes: null, itemCount: null,
+        source: check.source,
+        note: isOff ? `Sport in offseason — KV key absent is expected` : `KV key "${check.key}" not found`,
       };
     }
 
@@ -169,12 +269,14 @@ async function checkKVSource(kv: KVNamespace, check: KVCheck): Promise<DataSourc
     // without a meta wrapper), classify as 'fresh' — the data is real and current.
     let status: FreshnessStatus;
     if (fetchedAt) {
-      status = classifyStatus(age!, check.category, degraded);
+      status = classifyStatus(age!, check.category, check.sport, degraded);
     } else if (itemCount !== null && itemCount > 0) {
       // Data exists but no timestamp — treat as fresh (cron-refreshed data)
       status = 'fresh';
     } else {
-      status = 'missing';
+      const key = sportToKey(check.sport);
+      const isOff = key ? getSeasonPhase(key).phase === 'offseason' : false;
+      status = isOff ? 'off-season' : 'missing';
     }
 
     return {
@@ -230,13 +332,25 @@ async function checkD1Table(
       // Column may not exist — non-fatal
     }
 
-    const status: FreshnessStatus =
-      rows === 0 ? 'missing' :
-      age !== null && age > D1_STALE_HOURS ? 'stale' :
-      'fresh';
+    // Orphan suppression: if a table is in the orphan set, surface as
+    // off-season with a note instead of stale.
+    const orphaned = D1_ORPHANED_TABLES.has(def.table);
+    const tableThreshold = D1_STALE_HOURS_BY_TABLE[def.table] ?? D1_STALE_HOURS_DEFAULT;
 
-    return { name: def.name, table: def.table, rows, lastComputed, ageHours: age, status };
-  } catch (err) {
+    let status: FreshnessStatus;
+    if (rows === 0) {
+      status = orphaned ? 'off-season' : 'missing';
+    } else if (age !== null && age > tableThreshold) {
+      status = orphaned ? 'off-season' : 'stale';
+    } else {
+      status = 'fresh';
+    }
+
+    return {
+      name: def.name, table: def.table, rows, lastComputed, ageHours: age, status,
+      note: orphaned ? 'D1 path orphaned — KV is canonical' : undefined,
+    };
+  } catch {
     return {
       name: def.name, table: def.table, rows: 0,
       lastComputed: null, ageHours: null, status: 'missing',
@@ -245,35 +359,254 @@ async function checkD1Table(
 }
 
 // ---------------------------------------------------------------------------
-// Main Handler
+// Upstream API checks (only when ?deep=true)
 // ---------------------------------------------------------------------------
 
-export async function handleFreshness(request: Request, env: Env): Promise<Response> {
-  // Admin auth — matches requireAdmin pattern in health.ts
-  if (env.ADMIN_KEY) {
-    const auth = request.headers.get('Authorization');
-    const headerKey = request.headers.get('X-Admin-Key');
-    const queryKey = new URL(request.url).searchParams.get('key');
-    const bearer = auth?.startsWith('Bearer ') ? auth.slice('Bearer '.length) : null;
-    const provided = bearer || headerKey || queryKey;
-    if (!provided || !(await timingSafeCompare(provided, env.ADMIN_KEY))) {
-      return json({ error: 'Unauthorized' }, 401);
+const UPSTREAM_TIMEOUT_MS = 6000;
+const UPSTREAM_SLOW_MS = 2000;
+
+async function pingUpstream(
+  provider: string,
+  url: string,
+  init: RequestInit = {},
+): Promise<UpstreamCheck> {
+  const startMs = Date.now();
+  const checkedAt = new Date().toISOString();
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), UPSTREAM_TIMEOUT_MS);
+    const res = await fetch(url, { ...init, signal: controller.signal });
+    clearTimeout(timer);
+    const latencyMs = Date.now() - startMs;
+    if (!res.ok) {
+      return {
+        provider,
+        status: 'down',
+        latencyMs,
+        checkedAt,
+        error: `HTTP ${res.status}`,
+      };
+    }
+    return {
+      provider,
+      status: latencyMs > UPSTREAM_SLOW_MS ? 'slow' : 'ok',
+      latencyMs,
+      checkedAt,
+    };
+  } catch (err) {
+    return {
+      provider,
+      status: 'down',
+      latencyMs: Date.now() - startMs,
+      checkedAt,
+      error: err instanceof Error ? err.message : 'Unknown error',
+    };
+  }
+}
+
+async function checkUpstreams(env: Env): Promise<UpstreamCheck[]> {
+  const checks: Promise<UpstreamCheck>[] = [];
+
+  // Highlightly Pro (RapidAPI) — only when key is configured.
+  // Probe /teams?league=NCAA which is the canonical league listing endpoint
+  // used by lib/api-clients/highlightly-api.ts:387.
+  if (env.RAPIDAPI_KEY) {
+    checks.push(
+      pingUpstream(
+        'Highlightly Pro',
+        'https://mlb-college-baseball-api.p.rapidapi.com/teams?league=NCAA',
+        {
+          headers: {
+            'x-rapidapi-key': env.RAPIDAPI_KEY,
+            'x-rapidapi-host': 'mlb-college-baseball-api.p.rapidapi.com',
+            'User-Agent': 'BSI-Freshness-Check/1.0',
+          },
+        },
+      ),
+    );
+  } else {
+    checks.push(
+      Promise.resolve({
+        provider: 'Highlightly Pro',
+        status: 'unconfigured',
+        latencyMs: null,
+        checkedAt: new Date().toISOString(),
+        error: 'RAPIDAPI_KEY not set',
+      } as UpstreamCheck),
+    );
+  }
+
+  // ESPN — free, always check
+  checks.push(
+    pingUpstream(
+      'ESPN College Baseball',
+      'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard',
+      { headers: { 'User-Agent': 'BSI-Freshness-Check/1.0' } },
+    ),
+  );
+
+  // SportsDataIO — only when key is configured.
+  // Probe /v3/mlb/scores/json/Stadiums which is in the lowest paid tier.
+  // The probe doesn't care about the body — only that the key is recognized.
+  if (env.SPORTS_DATA_IO_API_KEY) {
+    checks.push(
+      pingUpstream(
+        'SportsDataIO',
+        'https://api.sportsdata.io/v3/mlb/scores/json/Stadiums',
+        {
+          headers: {
+            'Ocp-Apim-Subscription-Key': env.SPORTS_DATA_IO_API_KEY,
+            'User-Agent': 'BSI-Freshness-Check/1.0',
+          },
+        },
+      ),
+    );
+  }
+
+  return Promise.all(checks);
+}
+
+// ---------------------------------------------------------------------------
+// Cron worker health (read from KV — written by handleScheduled)
+// ---------------------------------------------------------------------------
+
+interface ProviderHealthBlob {
+  providers: Record<string, { status: string; lastSuccessAt?: string; lastCheckAt: string }>;
+  checkedAt: string;
+  activeSports: string[];
+}
+
+interface HealingStatusBlob {
+  checkedAt: string;
+  stale: string[];
+  healthy: boolean;
+}
+
+async function checkCronHealth(env: Env): Promise<FreshnessReport['cronHealth']> {
+  const workers: Record<string, CronWorkerStatus> = {};
+  let checkedAt: string | null = null;
+
+  // 1) Main worker per-sport health (written by handleScheduled every minute)
+  try {
+    const raw = await env.KV.get('health:providers:latest', 'text');
+    if (raw) {
+      const blob = JSON.parse(raw) as ProviderHealthBlob;
+      checkedAt = blob.checkedAt ?? null;
+      for (const [sport, p] of Object.entries(blob.providers || {})) {
+        const ts = p.lastSuccessAt || p.lastCheckAt;
+        const age = ts ? ageMinutes(ts) : null;
+        // Main cron runs every minute — silent if last success > 10 min ago.
+        let status: CronWorkerStatus['status'];
+        if (p.status !== 'ok') status = 'degraded';
+        else if (age !== null && age > 10) status = 'silent';
+        else status = 'ok';
+        workers[`main-cron:${sport}`] = {
+          status,
+          lastRunAt: ts,
+          ageMinutes: age,
+          detail: p.status,
+        };
+      }
+    }
+  } catch {
+    /* non-fatal */
+  }
+
+  // 2) D1 healing status (written by handleScheduled, derived from sabermetric tables)
+  try {
+    const raw = await env.KV.get('healing:d1:status', 'text');
+    if (raw) {
+      const blob = JSON.parse(raw) as HealingStatusBlob;
+      const age = blob.checkedAt ? ageMinutes(blob.checkedAt) : null;
+      workers['d1-healing-monitor'] = {
+        status: blob.healthy ? 'ok' : 'degraded',
+        lastRunAt: blob.checkedAt ?? null,
+        ageMinutes: age,
+        detail: blob.healthy ? 'All sabermetric tables fresh' : `Stale: ${blob.stale.join(', ')}`,
+      };
+    }
+  } catch {
+    /* non-fatal */
+  }
+
+  // 3) Synthetic monitor — read summary:latest from MONITOR_KV if bound
+  if (env.MONITOR_KV) {
+    try {
+      const raw = await env.MONITOR_KV.get('summary:latest', 'text');
+      if (raw) {
+        const blob = JSON.parse(raw) as { timestamp: string; allHealthy: boolean };
+        const age = blob.timestamp ? ageMinutes(blob.timestamp) : null;
+        // Synthetic monitor cron is */5 — silent if > 15 min.
+        const status: CronWorkerStatus['status'] =
+          age !== null && age > 15 ? 'silent' :
+          blob.allHealthy ? 'ok' : 'degraded';
+        workers['bsi-synthetic-monitor'] = {
+          status,
+          lastRunAt: blob.timestamp,
+          ageMinutes: age,
+          detail: blob.allHealthy ? 'All endpoints healthy' : 'One or more endpoints failing',
+        };
+      }
+    } catch {
+      /* non-fatal */
     }
   }
 
+  return { workers, checkedAt };
+}
+
+// ---------------------------------------------------------------------------
+// Daily audit snapshot (written by the daily-gated cron block in cron/index.ts)
+// ---------------------------------------------------------------------------
+
+async function readDailyAudit(env: Env): Promise<FreshnessReport['dailyAudit']> {
+  try {
+    const raw = await env.KV.get('freshness:daily:latest', 'text');
+    if (!raw) return { ranAt: null, summary: null };
+    const blob = JSON.parse(raw) as { ranAt: string; summary: FreshnessReport['summary'] };
+    return { ranAt: blob.ranAt, summary: blob.summary };
+  } catch {
+    return { ranAt: null, summary: null };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Core builder (callable from outside the HTTP handler — used by daily cron)
+// ---------------------------------------------------------------------------
+
+export async function buildFreshnessReport(env: Env, deep: boolean): Promise<FreshnessReport> {
   const checks = getKVChecks();
 
-  // Run all checks in parallel
-  const [kvResults, d1Results] = await Promise.all([
+  // Always-on checks: KV + D1 + cron health + daily-audit snapshot
+  // Deep-only:        upstream API pings
+  const baseChecks = await Promise.all([
     Promise.all(checks.map((c) => checkKVSource(env.KV, c))),
     Promise.all(D1_TABLES.map((t) => checkD1Table(env.DB, t))),
+    checkCronHealth(env),
+    readDailyAudit(env),
   ]);
 
-  // Combine all statuses for summary
-  const allStatuses = [
+  const [kvResults, d1Results, cronHealth, dailyAudit] = baseChecks;
+
+  let upstream: UpstreamCheck[] | undefined;
+  if (deep) {
+    upstream = await checkUpstreams(env);
+  }
+
+  // Combine all statuses for summary (KV + D1 + upstream)
+  // Note: 'off-season' is not counted as fresh OR stale — it's neutral.
+  const allStatuses: FreshnessStatus[] = [
     ...kvResults.map((r) => r.status),
     ...d1Results.map((r) => r.status),
   ];
+
+  // Upstream contributes to the count too (if any are 'down', the report is broken)
+  if (upstream) {
+    for (const u of upstream) {
+      if (u.status === 'down') allStatuses.push('missing');
+      else if (u.status === 'slow') allStatuses.push('degraded');
+    }
+  }
 
   const summary = {
     fresh: allStatuses.filter((s) => s === 'fresh').length,
@@ -283,18 +616,45 @@ export async function handleFreshness(request: Request, env: Env): Promise<Respo
     total: allStatuses.length,
   };
 
-  const report: FreshnessReport = {
+  const isoNow = new Date().toISOString();
+  return {
     timestamp: now().toISO()!,
     timezone: 'America/Chicago',
     summary,
     liveEndpoints: kvResults,
     d1Tables: d1Results,
+    upstream,
+    cronHealth,
+    dailyAudit,
     meta: {
       source: 'bsi-freshness-dashboard',
-      fetched_at: new Date().toISOString(),
+      fetched_at: isoNow,
       timezone: 'America/Chicago',
     },
   };
+}
 
+// ---------------------------------------------------------------------------
+// HTTP Handler
+// ---------------------------------------------------------------------------
+
+export async function handleFreshness(request: Request, env: Env): Promise<Response> {
+  // Admin auth — matches requireAdmin pattern in health.ts
+  if (env.ADMIN_KEY) {
+    const auth = request.headers.get('Authorization');
+    const headerKey = request.headers.get('X-Admin-Key');
+    const url = new URL(request.url);
+    const queryKey = url.searchParams.get('key');
+    const bearer = auth?.startsWith('Bearer ') ? auth.slice('Bearer '.length) : null;
+    const provided = bearer || headerKey || queryKey;
+    if (!provided || !(await timingSafeCompare(provided, env.ADMIN_KEY))) {
+      return json({ error: 'Unauthorized' }, 401);
+    }
+  }
+
+  const url = new URL(request.url);
+  const deep = url.searchParams.get('deep') === 'true';
+
+  const report = await buildFreshnessReport(env, deep);
   return json(report);
 }
