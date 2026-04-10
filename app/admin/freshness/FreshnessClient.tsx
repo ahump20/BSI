@@ -36,6 +36,7 @@ interface UpstreamCheck {
   latencyMs: number | null;
   checkedAt: string;
   error?: string;
+  optional?: boolean;
 }
 
 interface CronWorkerStatus {
@@ -323,13 +324,25 @@ function UpstreamSection({ upstream }: { upstream: UpstreamCheck[] }) {
                 className="transition-colors hover:bg-[rgba(255,255,255,0.02)]"
                 style={{ borderBottom: '1px solid rgba(140,98,57,0.12)' }}
               >
-                <td className="px-4 py-2.5 font-semibold text-bsi-bone">{u.provider}</td>
+                <td className="px-4 py-2.5 font-semibold text-bsi-bone">
+                  {u.provider}
+                  {u.optional && (
+                    <span className="ml-2 text-[9px] uppercase tracking-[0.12em] text-bsi-dust font-mono">
+                      (optional)
+                    </span>
+                  )}
+                </td>
                 <td className="px-4 py-2.5"><UpstreamPill status={u.status} /></td>
                 <td className="px-4 py-2.5 font-mono text-xs text-bsi-dust">
                   {u.latencyMs != null ? `${u.latencyMs}ms` : '—'}
                 </td>
                 <td className="px-4 py-2.5 text-xs text-bsi-dust">
                   {u.error || (u.status === 'ok' ? 'Responding normally' : '—')}
+                  {u.optional && u.status === 'down' && (
+                    <span className="block text-[10px] text-bsi-dust italic">
+                      Has ESPN fallback &mdash; product still working
+                    </span>
+                  )}
                 </td>
               </tr>
             ))}

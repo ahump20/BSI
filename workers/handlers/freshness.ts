@@ -60,6 +60,13 @@ export interface UpstreamCheck {
   latencyMs: number | null;
   checkedAt: string;
   error?: string;
+  /**
+   * When true, this upstream is a secondary source with a known-working
+   * fallback (e.g. SportsDataIO → ESPN). A `down` status surfaces to the
+   * dashboard for visibility but doesn't get counted in the alertable
+   * summary — the product keeps working via fallback.
+   */
+  optional?: boolean;
 }
 
 export interface CronWorkerStatus {
@@ -217,13 +224,19 @@ function getTodayKey(): string {
 function getKVChecks(): KVCheck[] {
   const today = getTodayKey();
   return [
-    // Scores — cron-warmed keys (main worker cron writes `scores:cached:${sport}:${date}`)
-    // CB is special: ingest worker writes `cb:scores:${date}`.
-    { name: 'College Baseball Scores', key: `cb:scores:${today}`,       category: 'scores', sport: 'College Baseball', source: 'ESPN' },
-    { name: 'MLB Scores',              key: `scores:cached:mlb:${today}`, category: 'scores', sport: 'MLB',              source: 'ESPN' },
-    { name: 'NBA Scores',              key: `scores:cached:nba:${today}`, category: 'scores', sport: 'NBA',              source: 'ESPN' },
-    { name: 'NFL Scores',              key: `scores:cached:nfl:${today}`, category: 'scores', sport: 'NFL',              source: 'ESPN' },
-    { name: 'CFB Scores',              key: `scores:cached:ncaa:${today}`, category: 'scores', sport: 'CFB',             source: 'ESPN' },
+    // Scores — only CB is checked via KV directly. The MLB/NBA/NCAA-baseball
+    // cron-warmed keys (`scores:cached:${sport}:${date}`) have a 120s TTL and
+    // the 1-minute cron rewrites them each cycle — that's a short-enough
+    // window that KV's eventual consistency sometimes returns empty even when
+    // the write succeeded. cronHealth below (read from `health:providers:latest`)
+    // is the authoritative source for whether those crons are running, so we
+    // use THAT instead of racing KV.
+    //
+    // CB Scores is different: the cbb-ingest worker writes `cb:scores:${date}`
+    // with a longer TTL during active games, so it's stable enough to check
+    // directly. And CFB isn't in the main cron's fetcher set at all —
+    // demand-loaded only.
+    { name: 'College Baseball Scores', key: `cb:scores:${today}`, category: 'scores', sport: 'College Baseball', source: 'ESPN' },
     // Standings — SEC is the primary health indicator (highest traffic). Other conferences
     // are demand-loaded so a missing key just means nobody hit that endpoint today.
     { name: 'CB Standings (SEC)', key: 'cb:standings:v3:SEC',    category: 'standings', sport: 'College Baseball', source: 'ESPN' },
@@ -478,11 +491,12 @@ async function checkUpstreams(env: Env): Promise<UpstreamCheck[]> {
     ),
   );
 
-  // SportsDataIO — only when key is configured.
+  // SportsDataIO — secondary source with ESPN fallback at the handler level.
   // Probe /v3/mlb/scores/json/GamesByDate/{today} which is the exact endpoint
-  // the cron's fetchMLBScores() uses via SDIOClient.getMLBScores(). The BSI
-  // SDIO key is scoped to live scores, NOT teams/stadiums/players — probing
-  // a different endpoint returns 403 even when the key is valid.
+  // the cron's fetchMLBScores() uses via SDIOClient.getMLBScores(). If this
+  // returns 403, the key's scope has drifted and needs refresh — but the
+  // product keeps working via ESPN. Marked `optional: true` so a down status
+  // surfaces to the dashboard for visibility but doesn't trigger alerts.
   if (env.SPORTS_DATA_IO_API_KEY) {
     const todayISO = now().toFormat('yyyy-MM-dd');
     checks.push(
@@ -495,7 +509,7 @@ async function checkUpstreams(env: Env): Promise<UpstreamCheck[]> {
             'User-Agent': 'BSI-Freshness-Check/1.0',
           },
         },
-      ),
+      ).then((r) => ({ ...r, optional: true })),
     );
   }
 
@@ -636,9 +650,13 @@ export async function buildFreshnessReport(env: Env, deep: boolean): Promise<Fre
     ...d1Results.map((r) => r.status),
   ];
 
-  // Upstream contributes to the count too (if any are 'down', the report is broken)
+  // Upstream contributes to the alertable count only for non-optional
+  // sources. Optional sources (SportsDataIO, etc.) have fallbacks and don't
+  // break the product when down — they surface to the dashboard as a
+  // visibility signal but aren't counted in stale/missing.
   if (upstream) {
     for (const u of upstream) {
+      if (u.optional) continue;
       if (u.status === 'down') allStatuses.push('missing');
       else if (u.status === 'slow') allStatuses.push('degraded');
     }
