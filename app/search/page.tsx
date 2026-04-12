@@ -433,8 +433,7 @@ function SearchContent() {
                               <div className="flex items-center gap-4">
                                 {/* Type Badge */}
                                 <div
-                                  className={`w-12 h-12 rounded-sm flex items-center justify-center font-bold text-sm ${getSportColor(sport)} group-hover:scale-105 transition-transform`}
-                                  className="text-bsi-bone"
+                                  className={`w-12 h-12 rounded-sm flex items-center justify-center font-bold text-sm text-bsi-bone ${getSportColor(sport)} group-hover:scale-105 transition-transform`}
                                 >
                                   {item.name.substring(0, 2).toUpperCase()}
                                 </div>

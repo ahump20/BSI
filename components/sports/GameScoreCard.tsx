@@ -78,10 +78,7 @@ function CardContent({ game, showHitsErrors }: { game: GameScoreCardGame; showHi
             Final
           </div>
         ) : (
-          <div
-            className="font-semibold text-sm"
-            className="text-bsi-primary"
-          >
+          <div className="font-semibold text-sm text-bsi-primary">
             {game.status}
           </div>
         )}

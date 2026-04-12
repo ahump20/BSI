@@ -54,10 +54,7 @@ export function LegacyRouteBridge({
             borderColor: 'rgba(191, 87, 0, 0.18)',
           }}
         >
-          <p
-            className="mb-4 text-xs font-semibold uppercase tracking-[0.24em]"
-            className="text-bsi-primary"
-          >
+          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.24em] text-bsi-primary">
             {eyebrow}
           </p>
           <h1
@@ -84,10 +81,7 @@ export function LegacyRouteBridge({
           </div>
 
           {note ? (
-            <p
-              className="mt-6 text-sm uppercase tracking-[0.12em]"
-              className="text-bsi-dust"
-            >
+            <p className="mt-6 text-sm uppercase tracking-[0.12em] text-bsi-dust">
               {note}
             </p>
           ) : null}

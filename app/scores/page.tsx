@@ -1049,7 +1049,7 @@ function ScoresHubContent() {
                         Park-adjusted wOBA, wRC+, FIP, and conference strength for every D1 program
                       </p>
                     </div>
-                    <svg viewBox="0 0 24 24" className="w-5 h-5 opacity-40 group-hover:opacity-70 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" strokeWidth="2" className="text-bsi-primary">
+                    <svg viewBox="0 0 24 24" className="w-5 h-5 opacity-40 group-hover:opacity-70 group-hover:translate-x-1 transition-all text-bsi-primary" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M5 12h14M12 5l7 7-7 7" />
                     </svg>
                   </div>

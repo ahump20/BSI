@@ -374,8 +374,7 @@ export default function MLBPlayersPage() {
                 <p className="text-bsi-dust">{error}</p>
                 <button
                   onClick={fetchPlayers}
-                  className="mt-4 px-4 py-2 text-white rounded-sm transition-colors"
-                  className="bg-bsi-primary"
+                  className="mt-4 px-4 py-2 text-white rounded-sm transition-colors bg-bsi-primary"
                 >
                   Retry
                 </button>

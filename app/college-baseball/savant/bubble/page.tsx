@@ -265,7 +265,7 @@ export default function BubbleWatchPage() {
                   <Card padding="none">
                     <div className="px-5 py-4 border-b border-border-vintage">
                       <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full" className="bg-success" />
+                        <span className="w-2 h-2 rounded-full bg-success" />
                         <h2 className="text-sm uppercase tracking-wider font-bold text-bsi-bone" style={{ fontFamily: 'var(--font-display)' }}>
                           Tournament Locks
                         </h2>
@@ -294,7 +294,7 @@ export default function BubbleWatchPage() {
                   <Card padding="none">
                     <div className="px-5 py-4 border-b border-border-vintage">
                       <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full" className="bg-warning" />
+                        <span className="w-2 h-2 rounded-full bg-warning" />
                         <h2 className="text-sm uppercase tracking-wider font-bold text-bsi-bone" style={{ fontFamily: 'var(--font-display)' }}>
                           Bubble Watch
                         </h2>
