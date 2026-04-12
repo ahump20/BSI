@@ -301,12 +301,6 @@ export default function CFBPage() {
           primaryCta={{ label: 'Live Scores', href: '/cfb/scores' }}
           secondaryCta={{ label: 'Transfer Portal', href: '/cfb/transfer-portal' }}
           heroBg={{ bucket: 'images', imagePath: 'hero-cfb.webp', opacity: 0.18 }}
-          stats={[
-            { value: '134', label: 'FBS Teams' },
-            { value: '10', label: 'Conferences' },
-            { value: '12', label: 'Playoff Teams' },
-            { value: 'SP+', label: 'Advanced Data' },
-          ]}
         />
 
         {/* Recent Scores Preview */}

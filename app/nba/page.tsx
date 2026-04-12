@@ -53,13 +53,6 @@ interface LeaderCategory {
 
 type TabType = 'standings' | 'scores' | 'teams' | 'players';
 
-const NBA_HERO_STATS = [
-  { value: '30', label: 'NBA Teams' },
-  { value: '82', label: 'Games/Season' },
-  { value: 'Live', label: 'Real-Time Scores' },
-  { value: 'PER', label: 'PLAYER EFFICIENCY' },
-];
-
 const COURT_VISION_BULLETS = [
   { bold: 'Hawk-Eye: 12 cameras', text: 'per arena tracking 29 skeletal keypoints per player in real-time' },
   { bold: 'Second Spectrum', text: '(Genius Sports) provides the analytics layer — play-type classification, matchup data, shot quality' },
@@ -335,7 +328,6 @@ export default function NBAPage() {
           dataSource="SportsDataIO"
           primaryCta={{ label: 'Playoff Picture', href: '/nba/playoff-picture' }}
           secondaryCta={{ label: 'Live Scores', href: '/nba/games' }}
-          stats={NBA_HERO_STATS}
           heroBg={{ bucket: 'images', imagePath: 'hero-nba.webp', opacity: 0.16 }}
         />
 

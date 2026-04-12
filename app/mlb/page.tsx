@@ -231,13 +231,6 @@ function normalizeGame(raw: RawGame): Game {
 
 type TabType = 'standings' | 'teams' | 'players' | 'schedule';
 
-const MLB_HERO_STATS = [
-  { value: '30', label: 'MLB Teams' },
-  { value: '162', label: 'Games/Season' },
-  { value: 'Live', label: 'Real-Time Scores' },
-  { value: 'Statcast', label: 'STATCAST ANALYTICS' },
-];
-
 const STATCAST_BULLETS = [
   { bold: '12 Hawk-Eye cameras', text: 'per ballpark track ball trajectory, bat path, and 18 skeletal keypoints at 30fps' },
   { bold: '225+ metrics per pitch', text: '— Statcast generates ~7TB of tracking data per game' },
@@ -320,7 +313,6 @@ export default function MLBPage() {
           dataSource="SportsDataIO"
           primaryCta={{ label: 'View Live Scores', href: '/mlb/scores' }}
           secondaryCta={{ label: 'Division Standings', href: '/mlb/standings' }}
-          stats={MLB_HERO_STATS}
           heroBg={{ bucket: 'images', imagePath: 'hero-mlb.webp', opacity: 0.18 }}
         />
 

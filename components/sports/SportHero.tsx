@@ -34,7 +34,8 @@ interface SportHeroProps {
   refreshInterval?: number;
   primaryCta: { label: string; href: string };
   secondaryCta: { label: string; href: string };
-  stats: Array<{ value: string; label: string }>;
+  /** @deprecated — no longer rendered. Kept for backward compatibility with older call sites. */
+  stats?: Array<{ value: string; label: string }>;
   /** Optional R2 background image for Heritage atmosphere. Falls back to HeroGlow. */
   heroBg?: { bucket: 'brand' | 'images'; imagePath: string; opacity?: number };
 }
@@ -50,7 +51,6 @@ export function SportHero({
   refreshInterval = 30,
   primaryCta,
   secondaryCta,
-  stats: _stats,
   heroBg,
 }: SportHeroProps) {
   const content = (

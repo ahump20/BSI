@@ -418,7 +418,7 @@ export default function CollegeBaseballScoresPage() {
 
                 <ScrollReveal direction="up" delay={150}>
                   <p className="text-burnt-orange font-serif italic text-lg mt-2">
-                    Every D1 program. Updated every 30 seconds during live games.
+                    The Tuesday night game covered with the same eye as the Saturday showcase.
                   </p>
                 </ScrollReveal>
               </div>
@@ -645,7 +645,7 @@ export default function CollegeBaseballScoresPage() {
                       The box score is just the beginning
                     </p>
                     <p className="font-cormorant text-xs mt-1 text-bsi-dust">
-                      Park-adjusted wOBA, wRC+, FIP for every D1 program — updated every 6 hours
+                      Park-adjusted wOBA, wRC+, FIP. The depth scouts use, built for the rest of us.
                     </p>
                   </div>
                   <svg

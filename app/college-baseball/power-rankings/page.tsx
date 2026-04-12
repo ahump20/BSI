@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'BSI Power Rankings | College Baseball | Blaze Sports Intel',
     description:
-      'BSI computes its own power rankings from proprietary sabermetric data. Updated when the analytics engine recomputes.',
+      'Rankings built from the numbers, not the narrative. Weekly power rankings driven by wRC+, FIP, and strength of schedule — not borrowed, earned.',
     images: ogImage('/images/og-college-baseball.png', 'BSI Power Rankings — College Baseball'),
   },
   twitter: {

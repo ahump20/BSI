@@ -3,21 +3,21 @@ import type { Metadata } from 'next';
 import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
-  title: 'College Baseball Savant | Free Park-Adjusted Sabermetrics | BSI',
+  title: 'College Baseball Savant | The Public Baseball Savant for College | BSI',
   description:
-    'Free park-adjusted sabermetrics for every D1 college baseball program. wOBA, wRC+, FIP, park factors, conference strength index — updated every 6 hours. The only public Baseball Savant equivalent for college baseball.',
+    'The depth scouts and front offices use, free and public. Park-adjusted wOBA, wRC+, FIP, park factors, and conference strength index for every D1 program — built because the audience deserved it and nobody else was going to.',
   alternates: { canonical: '/college-baseball/savant' },
   openGraph: {
-    title: 'College Baseball Savant | Free Park-Adjusted Sabermetrics',
+    title: 'College Baseball Savant | The Public Baseball Savant for College',
     description:
-      'Free park-adjusted wOBA, wRC+, FIP, park factors, and conference strength for every D1 program. Updated every 6 hours.',
+      'Park-adjusted wOBA, wRC+, FIP, park factors, and conference strength for every D1 program. Built for the fans nobody built for.',
     images: ogImage('/images/og-college-baseball.png'),
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'College Baseball Savant | Free Park-Adjusted Sabermetrics',
+    title: 'College Baseball Savant | The Public Baseball Savant for College',
     description:
-      'Free park-adjusted wOBA, wRC+, FIP, park factors, and conference strength for every D1 program. Updated every 6 hours.',
+      'Park-adjusted wOBA, wRC+, FIP, park factors, and conference strength for every D1 program. Built for the fans nobody built for.',
     images: ['/images/og-college-baseball.png'],
   },
 };

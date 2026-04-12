@@ -184,13 +184,6 @@ const analyticsTools = [
   },
 ];
 
-const quickStats = [
-  { label: 'Sports Covered', value: '5', sublabel: 'MLB · NFL · NBA · CFB · D1 Baseball' },
-  { label: 'Metrics Tracked', value: '920+', sublabel: 'College baseball players' },
-  { label: 'Analytics Refresh', value: '6 hrs', sublabel: 'Automated recompute cycle' },
-  { label: 'Live Score Updates', value: '30 sec', sublabel: 'During active games' },
-];
-
 export default function AnalyticsPage() {
   const [selectedSport, setSelectedSport] = useState<'all' | 'mlb' | 'nfl' | 'ncaa'>('all');
 
@@ -232,28 +225,17 @@ export default function AnalyticsPage() {
 
             <ScrollReveal direction="up" delay={100}>
               <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-text-primary mb-3">
-                Data-Driven Intelligence
+                The Tools Scouts Use,{' '}
+                <span className="text-burnt-orange">Open to Everyone.</span>
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="text-burnt-orange font-serif italic text-lg leading-relaxed mb-10 max-w-2xl">
-                Professional-grade analytics tools for fans who want more than just scores. Win
-                probability, projections, historical analysis, and predictive models.
+              <p className="text-burnt-orange font-serif italic text-lg leading-relaxed mb-6 max-w-2xl">
+                Win probability, projections, historical analysis, predictive models &mdash;
+                the same depth front offices work with, available to the fan who wants to
+                understand the game at the level the people inside it do.
               </p>
-            </ScrollReveal>
-
-            {/* Quick Stats */}
-            <ScrollReveal direction="up" delay={200}>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {quickStats.map((stat) => (
-                  <div key={stat.label} className="bg-surface-light border border-border-subtle rounded-sm p-5 text-center">
-                    <p className="text-2xl md:text-3xl font-mono font-bold text-burnt-orange">{stat.value}</p>
-                    <p className="text-sm text-text-primary font-medium mt-1">{stat.label}</p>
-                    <p className="text-xs text-text-muted mt-0.5">{stat.sublabel}</p>
-                  </div>
-                ))}
-              </div>
             </ScrollReveal>
             </div>
           </Container>

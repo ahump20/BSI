@@ -57,13 +57,6 @@ interface LeaderCategory {
 
 type TabType = 'standings' | 'scores' | 'teams' | 'players';
 
-const NFL_HERO_STATS = [
-  { value: '32', label: 'NFL Teams' },
-  { value: '18', label: 'Week Season' },
-  { value: 'Live', label: 'Real-Time Scores' },
-  { value: 'EPA', label: 'EPA/PLAY METRICS' },
-];
-
 const TRACKING_BULLETS = [
   { bold: 'Next Gen Stats', text: 'uses Zebra UWB RFID tags (not camera CV) — 10Hz positional data for every player' },
   { bold: 'NFL Digital Athlete:', text: '38 cameras, 5K video, enabling 83x faster helmet impact detection' },
@@ -253,7 +246,6 @@ export default function NFLPage() {
           dataSource="SportsDataIO"
           primaryCta={{ label: 'View Standings', href: '/nfl/standings' }}
           secondaryCta={{ label: 'Game Scores', href: '/nfl/games' }}
-          stats={NFL_HERO_STATS}
           heroBg={{ bucket: 'images', imagePath: 'hero-nfl.webp', opacity: 0.18 }}
         />
 
