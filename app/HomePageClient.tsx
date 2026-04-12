@@ -1093,8 +1093,8 @@ export function HomePageClient() {
                 fontSize: 'clamp(2.5rem, 8vw, 5.5rem)',
               }}
             >
-              Sports Intelligence,{' '}
-              <span className="text-bsi-primary">Put Simply</span>
+              Every Athlete Deserves{' '}
+              <span className="text-bsi-primary">to Be Seen</span>
             </h1>
           </div>
 
@@ -1116,8 +1116,9 @@ export function HomePageClient() {
             <p
               className="mt-5 text-sm sm:text-base md:text-lg leading-relaxed max-w-2xl mx-auto font-serif text-bsi-dust leading-[1.7]"
             >
-              The numbers behind what your eyes already tell you — translated
-              across college baseball, MLB, NFL, NBA, and college football.
+              The analytical depth that front offices use — built for the
+              mid-major kid, the Tuesday night game, and every fan mainstream
+              media decided wasn&apos;t worth the investment.
             </p>
           </div>
 
@@ -1188,15 +1189,16 @@ export function HomePageClient() {
           <h2
             className="text-2xl sm:text-3xl md:text-[2.75rem] font-bold uppercase leading-tight font-display text-bsi-bone tracking-[0.02em]"
           >
-            Five Sports. One Language.{' '}
-            <span className="text-bsi-primary">Yours.</span>
+            Five Sports. Every Game{' '}
+            <span className="text-bsi-primary">That Matters to Someone.</span>
           </h2>
           <p
             className="mt-6 text-base sm:text-lg md:text-xl leading-relaxed font-serif text-bsi-dust leading-[1.8]"
           >
-            College baseball, MLB, NFL, NBA, and college football — with the analytical
-            depth that mainstream sports media skip. The numbers behind what your eyes already
-            tell you, recalculated every six hours and translated so you don&apos;t need a statistics degree.
+            A Wednesday night game between Rice and Sam Houston covered with the same rigor as
+            a Saturday showcase between Tennessee and LSU. College baseball, MLB, NFL, NBA, and
+            college football — advanced analytics recalculated every six hours, translated so
+            the depth is accessible, not exclusive.
           </p>
 
           {/* Proof points — inline, not cards */}
@@ -1570,18 +1572,18 @@ export function HomePageClient() {
           <h2
             className="text-xl sm:text-2xl md:text-[2.25rem] font-bold uppercase font-display text-bsi-bone tracking-[0.02em]"
           >
-            The Numbers Behind What You Already Know.
+            Built for the Fans Nobody Built For.
           </h2>
           <p
             className="mt-2 text-sm sm:text-base uppercase tracking-[0.12em] font-display text-bsi-primary"
           >
-            No paywall.
+            Free. Always.
           </p>
           <p
             className="mt-4 text-sm sm:text-base max-w-lg mx-auto font-serif text-bsi-dust leading-[1.7]"
           >
-            Live scores, advanced analytics, and scouting intel across college baseball,
-            MLB, NFL, NBA, and college football — updating now.
+            Live scores, advanced analytics, and scouting intel across five sports.
+            The coverage you deserved and never got — open now.
           </p>
           <div className="flex items-center justify-center gap-4 mt-10">
             <Link
@@ -1622,7 +1624,7 @@ export function HomePageClient() {
             <p
               className="text-[9px] mt-0.5 font-mono text-bsi-dust"
             >
-              5 sports &middot; 330 programs &middot; recalculated every 6 hours
+              5 sports &middot; every game &middot; every athlete
             </p>
           </div>
         </div>

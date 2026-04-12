@@ -19,13 +19,12 @@ describe('homepage metadata', () => {
     expect(homeMetadata.title).toContain('Blaze Sports Intel');
     expect(homeMetadata.title).toContain('College Baseball');
     expect(homeMetadata.description).toContain('college baseball');
-    expect(homeMetadata.description).toContain('sabermetrics');
     expect(homeMetadata.description).toContain('NFL');
     expect(homeMetadata.description).toContain('NBA');
   });
 
   it('keeps site-wide metadata aligned with the homepage positioning', () => {
-    expect(layoutMetadata.title).toBe('Blaze Sports Intel | Live Scores, Analytics, and Editorial Across Five Sports');
+    expect(layoutMetadata.title).toBe('Blaze Sports Intel | Analytics and Editorial for Every Athlete, Every Game');
     expect(layoutMetadata.description).toContain('college football');
   });
 

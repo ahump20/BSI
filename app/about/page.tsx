@@ -170,8 +170,8 @@ export default function AboutPage() {
                 textShadow: '2px 2px 0px rgba(0,0,0,0.5)',
               }}
             >
-              The Game Between{' '}
-              <span className="text-bsi-primary">the Poles</span>
+              The Coverage Gap{' '}
+              <span className="text-bsi-primary">Isn&apos;t an Accident</span>
             </h1>
 
             <div className="flex justify-center mb-8">
@@ -184,11 +184,11 @@ export default function AboutPage() {
             <p
               className="font-serif italic text-lg md:text-xl leading-relaxed max-w-2xl mx-auto text-bsi-dust"
             >
-              Major platforms paint a black-and-white picture &mdash; LeBron vs.
-              MJ, Yankees or Dodgers, Cowboys or nothing. BSI exists to leave that
-              binary behind. The real game lives in between: college baseball on a
-              Tuesday night, a mid-major pitcher nobody scouted, a conference race
-              no broadcast window will touch.
+              Every platform with the resources decided the audience wasn&apos;t worth the investment.
+              A mid-major kid working a two-seam fastball he taught himself off YouTube. A conference
+              race no broadcast window will touch. A Tuesday night game between programs that
+              mainstream media calls &lsquo;small market.&rsquo; They were wrong about the audience. BSI was
+              built to prove it.
             </p>
           </ScrollReveal>
 
@@ -311,14 +311,15 @@ export default function AboutPage() {
                 }}
               >
                 330 D1 Programs.{' '}
-                <span className="text-bsi-primary">Every Game.</span>
+                <span className="text-bsi-primary">Every Athlete.</span>
               </h2>
               <p
                 className="mt-4 font-serif italic text-base md:text-lg max-w-2xl mx-auto leading-relaxed text-bsi-dust"
               >
-                Park-adjusted sabermetrics. Every conference, every Tuesday night
-                mid-major matchup that nobody else covers. The same analytical depth
-                that scouts and front offices use &mdash; open to every fan.
+                The same analytical depth that scouts and front offices use — built
+                for every fan, not just the ones watching prime-time broadcasts.
+                Park-adjusted sabermetrics across every conference, because a kid at
+                a mid-major deserves the same data as anyone at an SEC program.
               </p>
             </div>
 
@@ -463,6 +464,9 @@ export default function AboutPage() {
                     A Wednesday night game between Rice and Sam Houston covered with the
                     same rigor as a Saturday showcase between Tennessee and LSU.
                     That&apos;s the standard, not the exception.
+                  </p>
+                  <p className="mt-4 text-bsi-bone italic">
+                    The numbers matter because the people in them matter.
                   </p>
                 </div>
 

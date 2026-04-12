@@ -198,7 +198,7 @@ export function websiteJsonLd() {
     alternateName: 'BSI',
     url: BASE_URL,
     description:
-      'Live scores, editorial, and advanced analytics across college baseball, MLB, NFL, NBA, and college football — with park-adjusted sabermetrics at the core.',
+      'Live scores, advanced analytics, and independent editorial across college baseball, MLB, NFL, NBA, and college football — built for the athletes and fans that bigger platforms overlook.',
     publisher: publisherJsonLd(),
     potentialAction: {
       '@type': 'SearchAction',

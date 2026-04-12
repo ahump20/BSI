@@ -63,9 +63,9 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'Blaze Sports Intel | Live Scores, Analytics & Editorial — College Baseball, MLB, NFL, NBA, CFB',
+  title: 'Blaze Sports Intel | Analytics and Editorial for Every Athlete, Every Game',
   description:
-    'Live scores, editorial, and advanced analytics across college baseball, MLB, NFL, NBA, and college football — with park-adjusted sabermetrics at the core.',
+    'Live scores, advanced analytics, and independent editorial across college baseball, MLB, NFL, NBA, and college football — built for the athletes and fans that bigger platforms overlook.',
   keywords: [
     'college baseball',
     'college baseball analytics',
@@ -85,9 +85,9 @@ export const metadata: Metadata = {
   publisher: 'Blaze Sports Intel',
   metadataBase: new URL('https://blazesportsintel.com'),
   openGraph: {
-    title: 'Blaze Sports Intel | Live Scores, Analytics & Editorial — College Baseball, MLB, NFL, NBA, CFB',
+    title: 'Blaze Sports Intel | Analytics and Editorial for Every Athlete, Every Game',
     description:
-      'Live scores, editorial, and advanced analytics across college baseball, MLB, NFL, NBA, and college football — with park-adjusted sabermetrics at the core.',
+      'Live scores, advanced analytics, and independent editorial across college baseball, MLB, NFL, NBA, and college football — built for the athletes and fans that bigger platforms overlook.',
     type: 'website',
     locale: 'en_US',
     url: 'https://blazesportsintel.com',
@@ -104,7 +104,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Blaze Sports Intel',
-    description: 'Live scores, editorial, and advanced analytics across college baseball, MLB, NFL, NBA, and college football.',
+    description: 'Live scores, advanced analytics, and independent editorial across college baseball, MLB, NFL, NBA, and college football — built for the athletes and fans that bigger platforms overlook.',
     images: ['/images/og-image.png'],
   },
   alternates: { canonical: '/' },

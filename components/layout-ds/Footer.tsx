@@ -26,7 +26,7 @@ export function Footer() {
               Born to Blaze the Path Beaten Less
             </p>
             <p className="text-xs leading-relaxed font-serif italic text-bsi-dust">
-              Park-adjusted sabermetrics, live scores, and original editorial across five sports.
+              Advanced analytics and independent editorial for the athletes, programs, and fans that mainstream media overlook.
             </p>
           </div>
           <div className="flex items-center gap-4">

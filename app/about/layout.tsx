@@ -6,18 +6,18 @@ import { ogImage } from '@/lib/metadata';
 export const metadata: Metadata = {
   title: 'About | Blaze Sports Intel',
   description:
-    'Founded by Austin Humphrey. Live scores, advanced sabermetrics, and independent editorial for college baseball, MLB, NFL, NBA, and college football. One platform. Every game.',
+    'Founded by Austin Humphrey. Advanced analytics and independent editorial for the athletes, programs, and fans that mainstream media overlook.',
   openGraph: {
     title: 'About Blaze Sports Intel',
     description:
-      'Live scores, advanced sabermetrics, and independent editorial across five sports. Built by one person for the fans mainstream media forgot.',
+      'Advanced analytics and independent editorial for the athletes and fans that mainstream media overlook. Built by one person to close the coverage gap.',
     images: ogImage(),
   },
   twitter: {
     card: 'summary_large_image',
     title: 'About Blaze Sports Intel',
     description:
-      'Live scores, advanced sabermetrics, and independent editorial across five sports. Built by one person for the fans mainstream media forgot.',
+      'Advanced analytics and independent editorial for the athletes and fans that mainstream media overlook. Built by one person to close the coverage gap.',
   },
   alternates: {
     canonical: '/about',
@@ -32,11 +32,11 @@ export default function AboutLayout({ children }: { children: ReactNode }) {
         '@context': 'https://schema.org',
         '@type': 'Person',
         name: 'Austin Humphrey',
-        jobTitle: 'Sports Intelligence Architect',
+        jobTitle: 'Builder',
         worksFor: { '@type': 'Organization', name: 'Blaze Sports Intel' },
         url: 'https://blazesportsintel.com/about',
         description:
-          'Founder of Blaze Sports Intel. UT Austin graduate. Covers college baseball, MLB, NFL, NBA, and college football with advanced sabermetrics and independent editorial.',
+          'Builder of Blaze Sports Intel. UT Austin graduate. Advanced analytics and independent editorial across college baseball, MLB, NFL, NBA, and college football.',
         alumniOf: [
           { '@type': 'CollegeOrUniversity', name: 'University of Texas at Austin' },
           { '@type': 'CollegeOrUniversity', name: 'Full Sail University' },
@@ -65,7 +65,7 @@ export default function AboutLayout({ children }: { children: ReactNode }) {
           name: 'Austin Humphrey',
         },
         description:
-          'Independent sports analytics platform covering college baseball, MLB, NFL, NBA, and college football with live scores, advanced sabermetrics, and original editorial.',
+          'Independent sports analytics platform. Live scores, advanced analytics, and editorial across college baseball, MLB, NFL, NBA, and college football — built for the athletes and fans that bigger platforms overlook.',
         areaServed: 'United States',
         sameAs: [
           'https://austinhumphrey.com',
