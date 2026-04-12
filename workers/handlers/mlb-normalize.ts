@@ -37,13 +37,13 @@ function num(v: unknown, fallback = 0): number {
 // ── ESPN Boxscore Normalization ─────────────────────────────────────────────
 
 interface BattingStat {
-  player: { id: string; name: string; position: string };
+  player: { id: string; name: string; position: string; headshot?: string };
   ab: number; r: number; h: number; rbi: number;
   bb: number; so: number; avg: string;
 }
 
 interface PitchingStat {
-  player: { id: string; name: string };
+  player: { id: string; name: string; headshot?: string };
   decision?: string;
   ip: string; h: number; r: number; er: number;
   bb: number; so: number; pitches?: number;
@@ -95,37 +95,75 @@ function parseEspnBoxscorePlayers(
 
     for (const statGroup of statistics) {
       const groupName = str(statGroup.name).toLowerCase();
+      const groupType = str(statGroup.type).toLowerCase();
       const keys = asArr(statGroup.keys).map((k) => str(k).toLowerCase());
       const athletes = asArr(statGroup.athletes);
+      // ESPN's MLB summary returns stat groups with `name: null` but
+      // `type: 'batting' | 'pitching'`. Some endpoints also emit keys-only.
+      const isBatting = groupName === 'batting' || groupType === 'batting'
+        || ((groupName === '' && groupType === '') && (keys.includes('ab') || keys.includes('atbats')));
+      const isPitching = groupName === 'pitching' || groupType === 'pitching'
+        || ((groupName === '' && groupType === '') && (keys.includes('ip') || keys.includes('fullinnings.partinnings')));
 
-      if (groupName === 'batting') {
+      // Resolve a column index by trying multiple key names — ESPN uses
+      // short codes for college baseball ('ab', 'r', 'h') and long codes
+      // for MLB ('atBats', 'runs', 'hits'). Same parser handles both.
+      const idxOf = (...candidates: string[]) => {
+        for (const c of candidates) {
+          const i = keys.indexOf(c.toLowerCase());
+          if (i >= 0) return i;
+        }
+        return -1;
+      };
+
+      if (isBatting) {
+        const iAB = idxOf('ab', 'atbats');
+        const iR = idxOf('r', 'runs');
+        const iH = idxOf('h', 'hits');
+        const iRBI = idxOf('rbi', 'rbis');
+        const iBB = idxOf('bb', 'walks');
+        const iSO = idxOf('so', 'k', 'strikeouts');
+        const iAVG = idxOf('avg', 'battingavg', 'average');
+
         for (const entry of athletes) {
           const athlete = asRec(entry.athlete);
           const stats = asArr(entry.stats);
-          const idx = (key: string) => keys.indexOf(key);
+          const headshot = str(asRec(athlete.headshot).href);
+          const positionAbbr = str(asRec(athlete.position).abbreviation);
 
           result[side].batting.push({
             player: {
               id: str(athlete.id),
               name: str(athlete.displayName),
-              position: str(asRec(athlete.position).abbreviation),
+              position: positionAbbr,
+              headshot: headshot || undefined,
             },
-            ab: num(stats[idx('ab')]),
-            r: num(stats[idx('r')]),
-            h: num(stats[idx('h')]),
-            rbi: num(stats[idx('rbi')]),
-            bb: num(stats[idx('bb')]),
-            so: num(stats[idx('so')] ?? stats[idx('k')]),
-            avg: str(stats[idx('avg')] as unknown, '.000'),
+            ab: iAB >= 0 ? num(stats[iAB]) : 0,
+            r: iR >= 0 ? num(stats[iR]) : 0,
+            h: iH >= 0 ? num(stats[iH]) : 0,
+            rbi: iRBI >= 0 ? num(stats[iRBI]) : 0,
+            bb: iBB >= 0 ? num(stats[iBB]) : 0,
+            so: iSO >= 0 ? num(stats[iSO]) : 0,
+            avg: iAVG >= 0 ? str(stats[iAVG] as unknown, '.000') : '.000',
           });
         }
       }
 
-      if (groupName === 'pitching') {
+      if (isPitching) {
+        const iIP = idxOf('ip', 'fullinnings.partinnings', 'inningspitched');
+        const iH = idxOf('h', 'hits');
+        const iR = idxOf('r', 'runs');
+        const iER = idxOf('er', 'earnedruns');
+        const iBB = idxOf('bb', 'walks');
+        const iSO = idxOf('so', 'k', 'strikeouts');
+        const iPC = idxOf('pc', 'pitches');
+        const iST = idxOf('st', 'strikes', 'pitches-strikes');
+        const iERA = idxOf('era');
+
         for (const entry of athletes) {
           const athlete = asRec(entry.athlete);
           const stats = asArr(entry.stats);
-          const idx = (key: string) => keys.indexOf(key);
+          const headshot = str(asRec(athlete.headshot).href);
 
           // Extract decision from note field: "W (5-2)", "L (3-4)", "S (15)"
           const note = str(entry.note);
@@ -138,17 +176,18 @@ function parseEspnBoxscorePlayers(
             player: {
               id: str(athlete.id),
               name: str(athlete.displayName),
+              headshot: headshot || undefined,
             },
             decision,
-            ip: str(stats[idx('ip')] as unknown, '0.0'),
-            h: num(stats[idx('h')]),
-            r: num(stats[idx('r')]),
-            er: num(stats[idx('er')]),
-            bb: num(stats[idx('bb')]),
-            so: num(stats[idx('so')] ?? stats[idx('k')]),
-            pitches: num(stats[idx('pc')] ?? stats[idx('pitches')]) || undefined,
-            strikes: num(stats[idx('st')] ?? stats[idx('strikes')]) || undefined,
-            era: str(stats[idx('era')] as unknown, '0.00'),
+            ip: iIP >= 0 ? str(stats[iIP] as unknown, '0.0') : '0.0',
+            h: iH >= 0 ? num(stats[iH]) : 0,
+            r: iR >= 0 ? num(stats[iR]) : 0,
+            er: iER >= 0 ? num(stats[iER]) : 0,
+            bb: iBB >= 0 ? num(stats[iBB]) : 0,
+            so: iSO >= 0 ? num(stats[iSO]) : 0,
+            pitches: iPC >= 0 ? num(stats[iPC]) || undefined : undefined,
+            strikes: iST >= 0 ? num(stats[iST]) || undefined : undefined,
+            era: iERA >= 0 ? str(stats[iERA] as unknown, '0.00') : '0.00',
           });
         }
       }
@@ -251,6 +290,13 @@ export function normalizeMLBGamePayload(payload: Rec): Rec {
   );
 
   // ── Teams ──
+  const awayLogo = str(
+    asArr(awayTeamRaw.logos)[0]?.href ?? awayTeamRaw.logo,
+  ) || undefined;
+  const homeLogo = str(
+    asArr(homeTeamRaw.logos)[0]?.href ?? homeTeamRaw.logo,
+  ) || undefined;
+
   const teams = {
     away: {
       name: str(awayTeamRaw.displayName ?? awayTeamRaw.name, 'Away'),
@@ -258,6 +304,7 @@ export function normalizeMLBGamePayload(payload: Rec): Rec {
       score: awayScore,
       isWinner: isFinal && awayScore > homeScore,
       record: str(awayTeamRaw.record),
+      logo: awayLogo,
     },
     home: {
       name: str(homeTeamRaw.displayName ?? homeTeamRaw.name, 'Home'),
@@ -265,6 +312,7 @@ export function normalizeMLBGamePayload(payload: Rec): Rec {
       score: homeScore,
       isWinner: isFinal && homeScore > awayScore,
       record: str(homeTeamRaw.record),
+      logo: homeLogo,
     },
   };
 
@@ -272,23 +320,45 @@ export function normalizeMLBGamePayload(payload: Rec): Rec {
   let linescore: Rec | undefined;
 
   // ESPN-style: competitors[].linescores[]
-  const homeLinescores = asArr(homeComp.linescores);
-  const awayLinescores = asArr(awayComp.linescores);
-  if (homeLinescores.length > 0 || awayLinescores.length > 0) {
+  const homeLinescoresRaw = asArr(homeComp.linescores);
+  const awayLinescoresRaw = asArr(awayComp.linescores);
+  // ESPN often returns placeholder entries with value=null. Drop those so
+  // we don't render a wall of phantom inning-zeros for completed games.
+  const hasRealValue = (arr: Rec[]) =>
+    arr.some((x) => x != null && (x.value != null || x.runs != null));
+  const homeLinescores = hasRealValue(homeLinescoresRaw) ? homeLinescoresRaw : [];
+  const awayLinescores = hasRealValue(awayLinescoresRaw) ? awayLinescoresRaw : [];
+
+  // Competitor-level totals (ESPN returns these on the competitor itself)
+  const competitorAwayHits = awayComp.hits != null ? num(awayComp.hits) : null;
+  const competitorAwayErrors = awayComp.errors != null ? num(awayComp.errors) : null;
+  const competitorHomeHits = homeComp.hits != null ? num(homeComp.hits) : null;
+  const competitorHomeErrors = homeComp.errors != null ? num(homeComp.errors) : null;
+
+  if (homeLinescores.length > 0 || awayLinescores.length > 0
+      || competitorAwayHits != null || competitorHomeHits != null
+      || awayScore > 0 || homeScore > 0) {
     const maxInnings = Math.max(homeLinescores.length, awayLinescores.length);
     const innings: Array<{ away: number; home: number }> = [];
-    const awayTotals = { runs: 0, hits: 0, errors: 0 };
-    const homeTotals = { runs: 0, hits: 0, errors: 0 };
 
     for (let i = 0; i < maxInnings; i++) {
       const awayInning = num(awayLinescores[i]?.value ?? awayLinescores[i]?.runs);
       const homeInning = num(homeLinescores[i]?.value ?? homeLinescores[i]?.runs);
       innings.push({ away: awayInning, home: homeInning });
-      awayTotals.runs += awayInning;
-      homeTotals.runs += homeInning;
     }
 
-    // Team-level stats from boxscore.teams[]
+    const awayTotals = {
+      runs: awayScore,
+      hits: competitorAwayHits ?? 0,
+      errors: competitorAwayErrors ?? 0,
+    };
+    const homeTotals = {
+      runs: homeScore,
+      hits: competitorHomeHits ?? 0,
+      errors: competitorHomeErrors ?? 0,
+    };
+
+    // Team-level stats from boxscore.teams[] — supplemental override when present
     const boxscoreTeams = asArr(asRec(rawGame.boxscore).teams);
     for (const bt of boxscoreTeams) {
       const side = bt.homeAway === 'home' ? 'home' : 'away';
@@ -296,20 +366,12 @@ export function normalizeMLBGamePayload(payload: Rec): Rec {
       for (const s of teamStats) {
         const name = str(s.name).toLowerCase();
         const val = num(s.displayValue ?? s.value);
-        if (side === 'home') {
-          if (name === 'hits') homeTotals.hits = val;
-          if (name === 'errors') homeTotals.errors = val;
-          if (name === 'runs') homeTotals.runs = val;
-        } else {
-          if (name === 'hits') awayTotals.hits = val;
-          if (name === 'errors') awayTotals.errors = val;
-          if (name === 'runs') awayTotals.runs = val;
-        }
+        const totals = side === 'home' ? homeTotals : awayTotals;
+        if (name === 'hits' && totals.hits === 0) totals.hits = val;
+        if (name === 'errors' && totals.errors === 0) totals.errors = val;
+        if (name === 'runs' && totals.runs === 0) totals.runs = val;
       }
     }
-
-    if (awayTotals.runs === 0 && awayScore > 0) awayTotals.runs = awayScore;
-    if (homeTotals.runs === 0 && homeScore > 0) homeTotals.runs = homeScore;
 
     linescore = { innings, totals: { away: awayTotals, home: homeTotals } };
   }
