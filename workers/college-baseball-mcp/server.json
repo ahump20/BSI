@@ -1,5 +1,5 @@
 {
-  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "com.blazesportsintel/college-baseball",
   "description": "Live NCAA DI college baseball scores, standings, schedules, rankings, and sabermetrics.",
   "status": "active",
