@@ -2019,6 +2019,547 @@ function pathSegments(pathname: string): string[] {
   return pathname.split('/').filter(Boolean);
 }
 
+// ─── Storefront (landing page, OpenAPI, docs) ───────────────────────────────
+
+/** OpenAPI 3.1 spec generated from the MCP tool registry + REST routes. */
+function buildOpenApiSpec(): Record<string, unknown> {
+  const toolSchemas: Record<string, unknown> = {};
+  for (const tool of MCP_TOOLS) {
+    toolSchemas[tool.name] = {
+      type: 'object',
+      description: tool.description,
+      ...tool.inputSchema,
+    };
+  }
+
+  return {
+    openapi: '3.1.0',
+    info: {
+      title: 'Blaze Sports Intel — College Baseball Sabermetrics',
+      version: '3.0.0',
+      description:
+        'Live scores, standings, rankings, schedules, and advanced sabermetric analytics (wOBA, wRC+, FIP, ERA-, BABIP, ISO) for all 330 NCAA Division I college baseball teams. Data sourced from Highlightly, ESPN, and BSI Savant; computed by a 6-hour cron. Responses include a `meta` block with source attribution and fetch timestamp. Every response carries an `X-Request-Id` header for tracing.',
+      contact: {
+        name: 'Blaze Sports Intel',
+        url: 'https://blazesportsintel.com',
+      },
+      license: {
+        name: 'Usage subject to BSI terms',
+        url: 'https://blazesportsintel.com/terms',
+      },
+    },
+    servers: [
+      { url: 'https://sabermetrics.blazesportsintel.com', description: 'Production' },
+    ],
+    tags: [
+      { name: 'MCP', description: 'Model Context Protocol (JSON-RPC 2.0) endpoint for AI clients' },
+      { name: 'Scores', description: 'Live scores and game results' },
+      { name: 'Standings', description: 'Conference and national standings' },
+      { name: 'Teams', description: 'Per-team sabermetrics and schedules' },
+      { name: 'Players', description: 'Player search and stats' },
+      { name: 'Analytics', description: 'Sabermetric leaderboards and indices' },
+    ],
+    paths: {
+      '/health': {
+        get: {
+          tags: ['MCP'],
+          summary: 'Liveness check',
+          responses: {
+            '200': {
+              description: 'Service is healthy',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      status: { type: 'string', example: 'ok' },
+                      service: { type: 'string' },
+                      version: { type: 'string' },
+                      timestamp: { type: 'string', format: 'date-time' },
+                      endpoints: { type: 'integer' },
+                      highlightly: { type: 'boolean' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      '/mcp': {
+        post: {
+          tags: ['MCP'],
+          summary: 'JSON-RPC 2.0 MCP endpoint',
+          description:
+            'AI clients (Claude Desktop, Cursor, Cline, custom agents) call this endpoint with the MCP protocol. Supports `initialize`, `tools/list`, `tools/call`, `resources/list`, `prompts/list`. See https://modelcontextprotocol.io for the protocol spec.',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['jsonrpc', 'id', 'method'],
+                  properties: {
+                    jsonrpc: { type: 'string', enum: ['2.0'] },
+                    id: { oneOf: [{ type: 'string' }, { type: 'integer' }, { type: 'null' }] },
+                    method: { type: 'string', enum: ['initialize', 'tools/list', 'tools/call'] },
+                    params: { type: 'object' },
+                  },
+                },
+                examples: {
+                  initialize: {
+                    value: {
+                      jsonrpc: '2.0',
+                      id: 1,
+                      method: 'initialize',
+                      params: {
+                        protocolVersion: '2024-11-05',
+                        capabilities: {},
+                        clientInfo: { name: 'claude-desktop', version: '1.0' },
+                      },
+                    },
+                  },
+                  listTools: {
+                    value: { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} },
+                  },
+                  callStandings: {
+                    value: {
+                      jsonrpc: '2.0',
+                      id: 3,
+                      method: 'tools/call',
+                      params: {
+                        name: 'bsi_get_standings',
+                        arguments: { conference: 'SEC' },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': { description: 'JSON-RPC response (success or error)' },
+            '429': { description: 'Rate limited (30 req/min per token)' },
+            '400': { description: 'Invalid JSON-RPC request' },
+          },
+        },
+      },
+      '/v1/scoreboard': {
+        get: {
+          tags: ['Scores'],
+          summary: 'Live scores and final game results',
+          parameters: [
+            { name: 'date', in: 'query', schema: { type: 'string', example: '2026-04-12' } },
+            {
+              name: 'conference',
+              in: 'query',
+              schema: { type: 'string', example: 'SEC' },
+            },
+          ],
+          responses: { '200': { description: 'Scoreboard with games[] and meta' } },
+        },
+      },
+      '/v1/standings': {
+        get: {
+          tags: ['Standings'],
+          summary: 'Conference standings',
+          parameters: [
+            {
+              name: 'conference',
+              in: 'query',
+              schema: { type: 'string', example: 'SEC' },
+            },
+          ],
+          responses: { '200': { description: 'Standings grouped by conference' } },
+        },
+      },
+      '/v1/rankings': {
+        get: {
+          tags: ['Standings'],
+          summary: 'National Top 25',
+          responses: { '200': { description: 'Top 25 rankings with movement' } },
+        },
+      },
+      '/v1/players': {
+        get: {
+          tags: ['Players'],
+          summary: 'Player search and stats',
+          parameters: [
+            { name: 'name', in: 'query', required: true, schema: { type: 'string' } },
+            { name: 'team', in: 'query', schema: { type: 'string' } },
+          ],
+          responses: { '200': { description: 'Player object or null' } },
+        },
+      },
+      '/v1/teams/{team}/stats': {
+        get: {
+          tags: ['Teams'],
+          summary: 'Team sabermetrics',
+          parameters: [
+            { name: 'team', in: 'path', required: true, schema: { type: 'string', example: 'texas' } },
+          ],
+          responses: {
+            '200': {
+              description:
+                'wOBA, wRC+, FIP, ERA-, BABIP, ISO, top_hitters, top_pitchers',
+            },
+          },
+        },
+      },
+      '/v1/teams/{team}/schedule': {
+        get: {
+          tags: ['Teams'],
+          summary: 'Team schedule',
+          parameters: [
+            { name: 'team', in: 'path', required: true, schema: { type: 'string' } },
+          ],
+          responses: { '200': { description: 'Past and upcoming games' } },
+        },
+      },
+      '/v1/leaderboard': {
+        get: {
+          tags: ['Analytics'],
+          summary: 'Sabermetric leaderboard',
+          parameters: [
+            { name: 'metric', in: 'query', schema: { type: 'string', enum: ['woba', 'wrc_plus', 'ops_plus', 'fip', 'era_minus', 'babip', 'iso'] } },
+            { name: 'type', in: 'query', schema: { type: 'string', enum: ['batting', 'pitching'] } },
+            { name: 'limit', in: 'query', schema: { type: 'integer', maximum: 50, default: 20 } },
+            { name: 'conference', in: 'query', schema: { type: 'string' } },
+          ],
+          responses: { '200': { description: 'Ranked leaders' } },
+        },
+      },
+      '/v1/power-index': {
+        get: {
+          tags: ['Analytics'],
+          summary: 'Conference Power Index',
+          responses: { '200': { description: 'Conferences ranked by SOS-adjusted win%' } },
+        },
+      },
+      '/v1/matches/{id}': {
+        get: {
+          tags: ['Scores'],
+          summary: 'Match detail with venue, weather, predictions',
+          parameters: [
+            { name: 'id', in: 'path', required: true, schema: { type: 'string' } },
+          ],
+          responses: { '200': { description: 'Full match detail' } },
+        },
+      },
+    },
+    components: {
+      schemas: {
+        Meta: {
+          type: 'object',
+          properties: {
+            source: { type: 'string', example: 'highlightly' },
+            fetched_at: { type: 'string', format: 'date-time' },
+            timezone: { type: 'string', example: 'America/Chicago' },
+          },
+        },
+        McpTool: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            description: { type: 'string' },
+            inputSchema: { type: 'object' },
+            annotations: {
+              type: 'object',
+              properties: {
+                readOnlyHint: { type: 'boolean' },
+                destructiveHint: { type: 'boolean' },
+                idempotentHint: { type: 'boolean' },
+                openWorldHint: { type: 'boolean' },
+              },
+            },
+          },
+        },
+      },
+    },
+    'x-mcp-tools': toolSchemas,
+  };
+}
+
+/** Landing HTML served at GET /. Heritage v2.1 aesthetic, zero JS. */
+function renderLandingHtml(): string {
+  const toolRows = MCP_TOOLS.map(
+    (t) => `
+    <tr>
+      <td class="tool-name">${t.name}</td>
+      <td class="tool-desc">${escapeHtml(t.description)}</td>
+    </tr>`
+  ).join('');
+
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Blaze Sports Intel — College Baseball MCP</title>
+  <meta name="description" content="Live scores, standings, rankings, and advanced sabermetric analytics for all 330 NCAA Division I college baseball teams. MCP server + REST API.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bsi-primary: #BF5700;
+      --bsi-accent: #FF6B35;
+      --bsi-gold: #FDB913;
+      --bsi-midnight: #0A0A0A;
+      --bsi-surface-raised: #161616;
+      --bsi-text: #F5F2EB;
+      --bsi-text-muted: #C4B8A5;
+      --bsi-text-dim: rgba(196, 184, 165, 0.65);
+      --font-hero: 'Bebas Neue', sans-serif;
+      --font-display: 'Oswald', sans-serif;
+      --font-body: 'Cormorant Garamond', Georgia, serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bsi-midnight);
+      color: var(--bsi-text);
+      font-family: var(--font-body);
+      font-size: 1.0625rem;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    main { max-width: 900px; margin: 0 auto; padding: 4rem 1.5rem 6rem; }
+    .eyebrow {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bsi-primary);
+      margin-bottom: 1rem;
+    }
+    h1 {
+      font-family: var(--font-hero);
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      line-height: 1;
+      letter-spacing: 0.02em;
+      margin-bottom: 1rem;
+    }
+    .lede {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: clamp(1.125rem, 2vw, 1.375rem);
+      color: var(--bsi-text-muted);
+      max-width: 42rem;
+      margin-bottom: 2.5rem;
+    }
+    h2 {
+      font-family: var(--font-display);
+      font-size: 1.125rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--bsi-text);
+      margin: 3rem 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(255, 107, 53, 0.2);
+    }
+    p { margin-bottom: 1rem; color: var(--bsi-text-muted); }
+    code, pre {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      color: var(--bsi-gold);
+    }
+    pre {
+      background: var(--bsi-surface-raised);
+      border-radius: 2px;
+      padding: 1rem 1.25rem;
+      margin: 1rem 0 1.5rem;
+      overflow-x: auto;
+      border-left: 2px solid var(--bsi-primary);
+      color: var(--bsi-text);
+      line-height: 1.55;
+    }
+    pre code { color: inherit; font-size: inherit; }
+    .endpoint {
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      color: var(--bsi-text);
+      background: var(--bsi-surface-raised);
+      padding: 0.125rem 0.375rem;
+      border-radius: 2px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.625rem 0.75rem;
+      border-bottom: 1px solid rgba(196, 184, 165, 0.1);
+      vertical-align: top;
+    }
+    th {
+      font-family: var(--font-display);
+      font-size: 0.6875rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--bsi-text-muted);
+    }
+    .tool-name { color: var(--bsi-accent); white-space: nowrap; padding-right: 1.25rem; }
+    .tool-desc { color: var(--bsi-text-muted); font-family: var(--font-body); font-size: 0.9375rem; }
+    a {
+      color: var(--bsi-accent);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 120ms;
+    }
+    a:hover { border-bottom-color: var(--bsi-accent); }
+    .nav {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .footer {
+      margin-top: 6rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(196, 184, 165, 0.1);
+      font-size: 0.8125rem;
+      color: var(--bsi-text-dim);
+    }
+    .tagline {
+      font-family: var(--font-body);
+      font-style: italic;
+      color: var(--bsi-text-muted);
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow">Blaze Sports Intel · MCP Server v3.0.0</div>
+    <h1>College Baseball Intelligence, Wired For AI.</h1>
+    <p class="lede">
+      Nine read-only tools covering all 330 NCAA Division I college baseball programs —
+      live scores, standings, rankings, schedules, and advanced sabermetrics computed
+      on a 6-hour cron. One endpoint for AI clients, the same data via REST for everyone else.
+    </p>
+
+    <div class="nav">
+      <a href="/docs">Interactive API Docs →</a>
+      <a href="/openapi.json">OpenAPI 3.1 Spec</a>
+      <a href="/health">Health</a>
+      <a href="https://blazesportsintel.com">blazesportsintel.com</a>
+    </div>
+
+    <h2>Connect from Claude Desktop</h2>
+    <p>Add this to <code>~/Library/Application Support/Claude/claude_desktop_config.json</code>:</p>
+<pre><code>{
+  "mcpServers": {
+    "blaze-sports-intel": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://sabermetrics.blazesportsintel.com/mcp"]
+    }
+  }
+}</code></pre>
+    <p>Restart Claude Desktop. The nine tools will appear in the tools picker.</p>
+
+    <h2>Probe from the command line</h2>
+<pre><code>curl -sX POST https://sabermetrics.blazesportsintel.com/mcp \\
+  -H "Content-Type: application/json" \\
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' \\
+  | jq '.result.tools | map(.name)'</code></pre>
+
+    <h2>Tools</h2>
+    <table>
+      <thead><tr><th>Name</th><th>Description</th></tr></thead>
+      <tbody>${toolRows}
+      </tbody>
+    </table>
+
+    <h2>REST API</h2>
+    <p>If you'd rather consume plain JSON, each MCP tool has a REST mirror:</p>
+    <table>
+      <tbody>
+        <tr><td class="tool-name">GET /v1/scoreboard</td><td class="tool-desc">Live scores — optional <code>?date</code>, <code>?conference</code></td></tr>
+        <tr><td class="tool-name">GET /v1/standings</td><td class="tool-desc">Conference standings — <code>?conference</code></td></tr>
+        <tr><td class="tool-name">GET /v1/rankings</td><td class="tool-desc">National Top 25</td></tr>
+        <tr><td class="tool-name">GET /v1/players</td><td class="tool-desc">Player search — <code>?name</code>, <code>?team</code></td></tr>
+        <tr><td class="tool-name">GET /v1/teams/:team/stats</td><td class="tool-desc">Team sabermetrics</td></tr>
+        <tr><td class="tool-name">GET /v1/teams/:team/schedule</td><td class="tool-desc">Team schedule</td></tr>
+        <tr><td class="tool-name">GET /v1/leaderboard</td><td class="tool-desc">Sabermetric leaders — <code>?metric</code>, <code>?type</code>, <code>?limit</code>, <code>?conference</code></td></tr>
+        <tr><td class="tool-name">GET /v1/power-index</td><td class="tool-desc">Conference Power Index</td></tr>
+        <tr><td class="tool-name">GET /v1/matches/:id</td><td class="tool-desc">Match detail — venue, weather, predictions</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Data sources</h2>
+    <p>
+      Primary: <strong>Highlightly</strong> via RapidAPI — all 330 D1 programs, live scores, venue, predictions.
+      Analytics layer: <strong>BSI Savant</strong> — wOBA, wRC+, FIP, ERA- computed from D1 ingestion every 6 hours.
+      Fallback: <strong>ESPN Site API</strong> for rankings and schedules. Every response carries a
+      <code>meta</code> block with source attribution and fetch timestamp, plus an <code>X-Request-Id</code> header.
+    </p>
+
+    <h2>Limits</h2>
+    <p>
+      30 requests per minute per bearer token or IP. Read-only — all tools are idempotent and open-world.
+      Cache TTLs: scoreboard 60s, standings 5min, team sabermetrics 6hr.
+    </p>
+
+    <div class="footer">
+      <div>Blaze Sports Intel — Born to Blaze the Path Beaten Less</div>
+      <div class="tagline">
+        Coverage for the athletes, programs, and markets outside the East/West Coast spotlight.
+      </div>
+    </div>
+  </main>
+</body>
+</html>`;
+}
+
+/** Escape user-derived strings for HTML embedding. */
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/** Interactive docs page — loads Stoplight Elements against the OpenAPI spec. */
+function renderDocsHtml(): string {
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>BSI MCP — API Documentation</title>
+  <link rel="stylesheet" href="https://unpkg.com/@stoplight/elements/styles.min.css">
+  <style>
+    body { margin: 0; background: #0A0A0A; }
+    elements-api { --color-canvas: #0A0A0A; --color-canvas-100: #161616; }
+  </style>
+</head>
+<body>
+  <elements-api
+    apiDescriptionUrl="/openapi.json"
+    router="hash"
+    layout="sidebar"
+    tryItCredentialsPolicy="omit"
+    hideSchemas="false"
+  ></elements-api>
+  <script src="https://unpkg.com/@stoplight/elements/web-components.min.js"></script>
+</body>
+</html>`;
+}
+
 // ─── Main Handler ────────────────────────────────────────────────────────────
 
 export default {
@@ -2260,32 +2801,35 @@ export default {
       return errorResponse(`Unknown endpoint: ${pathname}`, 404);
     }
 
-    // ─── Root ──────────────────────────────────────────────────────────
-    if (pathname === '/') {
-      return jsonResponse({
-        service: 'BSI College Baseball Sabermetrics MCP',
-        version: '3.0.0',
-        dataSources: {
-          primary: 'Highlightly (330 D1 teams)',
-          fallback: 'ESPN + BSI Savant',
+    // ─── OpenAPI 3.1 spec ──────────────────────────────────────────────
+    if (pathname === '/openapi.json') {
+      return jsonResponse(buildOpenApiSpec(), 200, requestId);
+    }
+
+    // ─── Interactive docs (Stoplight Elements) ─────────────────────────
+    if (pathname === '/docs' || pathname === '/docs/') {
+      return new Response(renderDocsHtml(), {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+          'X-Request-Id': requestId,
+          'Cache-Control': 'public, max-age=300',
         },
-        endpoints: {
-          health: 'GET /health',
-          mcp: 'POST /mcp (JSON-RPC 2.0)',
-          scoreboard: 'GET /v1/scoreboard?date=&conference=',
-          standings: 'GET /v1/standings?conference=',
-          rankings: 'GET /v1/rankings',
-          players: 'GET /v1/players?name=&team=',
-          teamStats: 'GET /v1/teams/:team/stats',
-          teamSchedule: 'GET /v1/teams/:team/schedule',
-          leaderboard: 'GET /v1/leaderboard?metric=&type=&limit=&conference=',
-          powerIndex: 'GET /v1/power-index',
-          matchDetail: 'GET /v1/matches/:id',
-        },
-        docs: 'https://blazesportsintel.com',
       });
     }
 
-    return errorResponse('Not found', 404);
+    // ─── Root (landing page) ───────────────────────────────────────────
+    if (pathname === '/') {
+      return new Response(renderLandingHtml(), {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+          'X-Request-Id': requestId,
+          'Cache-Control': 'public, max-age=300',
+        },
+      });
+    }
+
+    return errorResponse('Not found', 404, requestId);
   },
 };
