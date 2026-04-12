@@ -15,6 +15,17 @@ export interface Env {
   RESEND_API_KEY?: string;
 }
 
+function constantTimeBytesEqual(aBytes: Uint8Array, bBytes: Uint8Array): boolean {
+  const maxLength = Math.max(aBytes.byteLength, bBytes.byteLength);
+  let diff = aBytes.byteLength ^ bBytes.byteLength;
+
+  for (let index = 0; index < maxLength; index += 1) {
+    diff |= (aBytes[index] ?? 0) ^ (bBytes[index] ?? 0);
+  }
+
+  return diff === 0;
+}
+
 type AuthContext = Context<{
   Bindings: Env;
   Variables: {
@@ -91,13 +102,19 @@ export async function timingSafeCompare(a: string, b: string): Promise<boolean> 
   const encoder = new TextEncoder();
   const aBytes = encoder.encode(a);
   const bBytes = encoder.encode(b);
-  if (aBytes.byteLength !== bBytes.byteLength) {
-    // Compare against self to maintain constant time even on length mismatch
-    const dummy = encoder.encode(a);
-    await crypto.subtle.timingSafeEqual(dummy, aBytes);
-    return false;
+  const subtle = crypto?.subtle as SubtleCrypto & {
+    timingSafeEqual?: (left: BufferSource, right: BufferSource) => boolean | Promise<boolean>;
+  };
+
+  if (
+    subtle &&
+    typeof subtle.timingSafeEqual === 'function' &&
+    aBytes.byteLength === bBytes.byteLength
+  ) {
+    return await subtle.timingSafeEqual(aBytes, bBytes);
   }
-  return crypto.subtle.timingSafeEqual(aBytes, bBytes);
+
+  return constantTimeBytesEqual(aBytes, bBytes);
 }
 
 /**
