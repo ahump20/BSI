@@ -97,6 +97,27 @@ interface GameData {
     away?: { batting?: BattingLine[]; pitching?: PitchingLine[] };
     home?: { batting?: BattingLine[]; pitching?: PitchingLine[] };
   };
+  // ESPN's `leaders[]` — used for football and basketball where per-player
+  // stat tables would be too dense for the drawer's quick-glance pattern.
+  leaders?: Array<{
+    team?: { id?: string; abbreviation?: string; displayName?: string; logo?: string; logos?: Array<{ href?: string }> };
+    leaders?: Array<{
+      name?: string;
+      displayName?: string;
+      leaders?: Array<{
+        displayValue?: string;
+        athlete?: {
+          id?: string;
+          displayName?: string;
+          shortName?: string;
+          headshot?: { href?: string } | string;
+          position?: { abbreviation?: string };
+        };
+        mainStat?: { value?: string | number; label?: string };
+        summary?: string;
+      }>;
+    }>;
+  }>;
 }
 
 interface BoxScoreDrawerProps {
@@ -337,20 +358,122 @@ function DrawerContent({
     (game.linescore?.innings?.length ?? 0) > 0 ||
     Number(game.linescore?.totals?.away?.runs ?? 0) > 0 ||
     Number(game.linescore?.totals?.home?.runs ?? 0) > 0;
-  const isPregame = !game.status?.isLive && !game.status?.isFinal && !hasBatting && !hasLineScore;
+  const hasAnyScore =
+    Number(game.teams?.away?.score ?? 0) > 0 ||
+    Number(game.teams?.home?.score ?? 0) > 0;
+  // Pregame is only true when there's truly nothing to show — no scores, no
+  // line score, no batting. A completed game ESPN mislabels as SCHEDULED
+  // (offseason archive games) still has scores, so it falls through to the
+  // populated path with leaders/key performers shown.
+  const isPregame = !game.status?.isLive && !game.status?.isFinal && !hasBatting && !hasLineScore && !hasAnyScore;
+
+  const hasBaseballBox = (game.boxscore?.away?.batting?.length ?? 0) > 0
+    || (game.boxscore?.home?.batting?.length ?? 0) > 0;
+  const hasLeaders = (game.leaders?.length ?? 0) > 0
+    && game.leaders!.some((tl) => (tl.leaders?.length ?? 0) > 0);
 
   return (
     <div className="space-y-6">
       <MatchupHeader game={game} />
       {isPregame && <DrawerPregame game={game} />}
       {!isPregame && game.linescore && <LineScoreBlock linescore={game.linescore} game={game} />}
-      {!isPregame && game.boxscore?.away?.batting && game.boxscore.away.batting.length > 0 && (
+      {!isPregame && hasBaseballBox && game.boxscore?.away?.batting && game.boxscore.away.batting.length > 0 && (
         <TeamBoxBlock team="away" game={game} />
       )}
-      {!isPregame && game.boxscore?.home?.batting && game.boxscore.home.batting.length > 0 && (
+      {!isPregame && hasBaseballBox && game.boxscore?.home?.batting && game.boxscore.home.batting.length > 0 && (
         <TeamBoxBlock team="home" game={game} />
       )}
+      {!isPregame && !hasBaseballBox && hasLeaders && <LeadersBlock game={game} />}
       <DrawerFooter sportSlug={sportSlug} gameId={gameId} sourceLabel={sourceLabel} />
+    </div>
+  );
+}
+
+function LeadersBlock({ game }: { game: GameData }) {
+  const teamLeaders = game.leaders ?? [];
+  // Pair team leader entries with the matchup teams via abbreviation match.
+  const teamFor = (abbr?: string) => {
+    if (!abbr) return null;
+    const a = abbr.toLowerCase();
+    if (game.teams?.away?.abbreviation?.toLowerCase() === a) return 'away' as const;
+    if (game.teams?.home?.abbreviation?.toLowerCase() === a) return 'home' as const;
+    return null;
+  };
+
+  return (
+    <div>
+      <h3 className="font-display text-xs uppercase tracking-widest text-text-tertiary mb-3">
+        Key Performers
+      </h3>
+      <div className="space-y-5">
+        {teamLeaders.map((tl, i) => {
+          const teamMeta = teamFor(tl.team?.abbreviation) === 'away' ? game.teams?.away
+            : teamFor(tl.team?.abbreviation) === 'home' ? game.teams?.home
+            : null;
+          const label = teamMeta?.displayName ?? teamMeta?.name ?? tl.team?.displayName ?? tl.team?.abbreviation ?? `Team ${i + 1}`;
+          const abbr = teamMeta?.abbreviation ?? tl.team?.abbreviation ?? label.slice(0, 3).toUpperCase();
+          const teamLogo = teamMeta?.logo ?? (tl.team?.logos?.[0]?.href ?? tl.team?.logo);
+          const cats = (tl.leaders ?? []).filter((c) => (c.leaders?.length ?? 0) > 0).slice(0, 5);
+          if (cats.length === 0) return null;
+
+          return (
+            <div key={`${tl.team?.id ?? i}`} className="border border-border-subtle rounded-sm overflow-hidden">
+              <div className="flex items-center gap-2 bg-background-tertiary px-3 py-2">
+                <TeamCircle
+                  logo={teamLogo}
+                  abbreviation={abbr}
+                  size="w-6 h-6"
+                  textSize="text-[9px]"
+                />
+                <span className="font-display text-xs uppercase tracking-widest text-text-secondary">
+                  {label}
+                </span>
+              </div>
+              <div className="divide-y divide-border-subtle">
+                {cats.map((cat, ci) => {
+                  const top = cat.leaders![0];
+                  const athlete = top.athlete;
+                  if (!athlete) return null;
+                  const headshotUrl = typeof athlete.headshot === 'object'
+                    ? athlete.headshot?.href
+                    : athlete.headshot;
+                  return (
+                    <div key={ci} className="flex items-center gap-3 px-3 py-2.5">
+                      <PlayerAvatar headshot={headshotUrl} name={athlete.displayName ?? athlete.shortName ?? '—'} />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] font-display uppercase tracking-widest text-text-tertiary">
+                          {cat.displayName ?? cat.name}
+                        </p>
+                        <p className="text-sm text-text-primary truncate">
+                          {athlete.displayName ?? athlete.shortName ?? '—'}
+                          {athlete.position?.abbreviation && (
+                            <span className="ml-1.5 text-text-tertiary text-[11px]">
+                              {athlete.position.abbreviation}
+                            </span>
+                          )}
+                        </p>
+                        {top.summary && (
+                          <p className="text-[11px] text-text-tertiary mt-0.5 truncate">{top.summary}</p>
+                        )}
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="font-mono tabular-nums font-bold text-text-primary text-base">
+                          {top.mainStat?.value ?? top.displayValue ?? '—'}
+                        </p>
+                        {top.mainStat?.label && (
+                          <p className="text-[10px] font-display uppercase tracking-widest text-text-tertiary">
+                            {top.mainStat.label}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
