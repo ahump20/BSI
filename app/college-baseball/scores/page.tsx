@@ -17,6 +17,8 @@ import { HeroGlow } from '@/components/ui/HeroGlow';
 import { toDataMeta } from '@/lib/utils/data-meta';
 import { formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
 import type { DataMeta } from '@/lib/types/data-meta';
+import { BoxScoreDrawer } from '@/components/sports/BoxScoreDrawer';
+import { useBoxScoreHash } from '@/lib/hooks/useBoxScoreHash';
 import { IntelStreamCard } from '@/components/intel/IntelStreamCard';
 import { TeamCircle } from '@/components/sports/TeamCircle';
 import {
@@ -134,7 +136,13 @@ function TeamRow({
   );
 }
 
-function GameCard({ game }: { game: Game }) {
+function GameCard({
+  game,
+  onOpenDrawer,
+}: {
+  game: Game;
+  onOpenDrawer: (gameId: string) => void;
+}) {
   const isLive = game.status === 'live';
   const isFinal = game.status === 'final';
   const isScheduled = game.status === 'scheduled';
@@ -147,8 +155,20 @@ function GameCard({ game }: { game: Game }) {
       ? `/college-baseball/game/${game.id}/box-score`
       : `/college-baseball/game/${game.id}`;
 
+  // Preview drawer is only meaningful for live and final games. Scheduled games
+  // have no box score yet — let them navigate to the pregame page.
+  const canPreview = isLive || isFinal;
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!canPreview) return;
+    // Preserve cmd/ctrl/middle-click open-in-new-tab semantics.
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+    e.preventDefault();
+    onOpenDrawer(game.id);
+  };
+
   return (
-    <Link href={gameHref} className="block">
+    <Link href={gameHref} className="block" onClick={handleClick}>
       <div
         className={`bg-background-tertiary rounded-sm border transition-all hover:border-burnt-orange hover:bg-surface-light ${
           isLive ? 'border-success' : 'border-border-subtle'
@@ -217,9 +237,10 @@ interface GameSectionProps {
   label: string;
   showPulse?: boolean;
   className?: string;
+  onOpenDrawer: (gameId: string) => void;
 }
 
-function GameSection({ games, status, label, showPulse, className }: GameSectionProps) {
+function GameSection({ games, status, label, showPulse, className, onOpenDrawer }: GameSectionProps) {
   const filtered = games.filter((g) => g.status === status);
   if (filtered.length === 0) return null;
 
@@ -232,7 +253,7 @@ function GameSection({ games, status, label, showPulse, className }: GameSection
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {filtered.map((game) => (
           <ScrollReveal key={game.id}>
-            <GameCard game={game} />
+            <GameCard game={game} onOpenDrawer={onOpenDrawer} />
           </ScrollReveal>
         ))}
       </div>
@@ -246,6 +267,7 @@ export default function CollegeBaseballScoresPage() {
   const [selectedConference, setSelectedConference] = useState('All');
   const [liveGamesDetected, setLiveGamesDetected] = useState(false);
   const [isYesterdayFallback, setIsYesterdayFallback] = useState(false);
+  const { openGameId, openGame, closeGame } = useBoxScoreHash();
 
   // Hydration-safe: only compute date-dependent values on the client
   useEffect(() => {
@@ -544,7 +566,7 @@ export default function CollegeBaseballScoresPage() {
                           .filter((g) => g.status === 'live')
                           .map((game) => (
                             <ScrollReveal key={game.id}>
-                              <GameCard game={game} />
+                              <GameCard game={game} onOpenDrawer={openGame} />
                             </ScrollReveal>
                           ))}
                       </div>
@@ -560,7 +582,7 @@ export default function CollegeBaseballScoresPage() {
                           .filter((g) => g.status === 'final')
                           .map((game) => (
                             <ScrollReveal key={game.id}>
-                              <GameCard game={game} />
+                              <GameCard game={game} onOpenDrawer={openGame} />
                             </ScrollReveal>
                           ))}
                       </div>
@@ -577,7 +599,7 @@ export default function CollegeBaseballScoresPage() {
                           .map((game) => (
                             <div key={game.id}>
                               <ScrollReveal>
-                                <GameCard game={game} />
+                                <GameCard game={game} onOpenDrawer={openGame} />
                               </ScrollReveal>
                               <GameIntelTrigger game={game} />
                             </div>
@@ -616,32 +638,22 @@ export default function CollegeBaseballScoresPage() {
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <span
-                      className="heritage-stamp text-[10px]"
-                      className="text-bsi-primary"
-                    >
+                    <span className="heritage-stamp text-[10px] text-bsi-primary">
                       BSI SAVANT
                     </span>
-                    <p
-                      className="font-oswald uppercase text-sm tracking-wider mt-1"
-                      className="text-bsi-bone"
-                    >
+                    <p className="font-oswald uppercase text-sm tracking-wider mt-1 text-bsi-bone">
                       The box score is just the beginning
                     </p>
-                    <p
-                      className="font-cormorant text-xs mt-1"
-                      className="text-bsi-dust"
-                    >
+                    <p className="font-cormorant text-xs mt-1 text-bsi-dust">
                       Park-adjusted wOBA, wRC+, FIP for every D1 program — updated every 6 hours
                     </p>
                   </div>
                   <svg
                     viewBox="0 0 24 24"
-                    className="w-5 h-5 opacity-40 group-hover:opacity-70 group-hover:translate-x-1 transition-all shrink-0"
+                    className="w-5 h-5 opacity-40 group-hover:opacity-70 group-hover:translate-x-1 transition-all shrink-0 text-bsi-primary"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
-                    className="text-bsi-primary"
                   >
                     <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
@@ -652,6 +664,14 @@ export default function CollegeBaseballScoresPage() {
         </Section>
       </div>
 
+      {/* Same-page box score drawer — opens on click, closes on ESC or backdrop */}
+      <BoxScoreDrawer
+        gameId={openGameId}
+        apiPrefix="/api/college-baseball"
+        sportSlug="college-baseball"
+        onClose={closeGame}
+        sourceLabel="NCAA / D1Baseball"
+      />
     </>
   );
 }

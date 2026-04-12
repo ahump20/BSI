@@ -4,6 +4,10 @@
  * TeamCircle — renders a team logo in a circle with abbreviation fallback.
  * Use everywhere a team badge/circle appears (scoreboards, scores lists,
  * box scores, standings, team stats, recaps).
+ *
+ * Image load failures are logged to the browser console with the attempted
+ * URL and team abbreviation so 404s, CORS blocks, and hotlink rejections are
+ * visible in dev/QA rather than silently falling back to text.
  */
 
 interface TeamCircleProps {
@@ -38,7 +42,16 @@ export function TeamCircle({
           src={logo}
           alt={abbreviation}
           className="w-full h-full object-contain p-1.5"
+          loading="lazy"
           onError={(e) => {
+            // Record the miss so logo-load failures are visible in console/DevTools.
+            // Without this, every 404/CORS/hotlink failure is swallowed by the
+            // abbreviation fallback and we never find out something's broken.
+            // eslint-disable-next-line no-console
+            console.warn('[TeamCircle] logo failed to load', {
+              url: logo,
+              abbreviation,
+            });
             (e.currentTarget as HTMLImageElement).style.display = 'none';
             const fallback = (e.currentTarget as HTMLImageElement).nextElementSibling as HTMLElement | null;
             if (fallback) fallback.classList.remove('hidden');

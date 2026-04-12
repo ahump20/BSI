@@ -34,6 +34,8 @@ interface ESPNEvent {
         abbreviation?: string;
         name?: string;
         shortDisplayName?: string;
+        logo?: string;
+        logos?: Array<{ href?: string }>;
       };
       records?: Array<{ summary?: string }>;
       curatedRank?: { current?: number };
@@ -56,6 +58,7 @@ interface TransformedGame {
     conference: string;
     score: number | null;
     record: { wins: number; losses: number };
+    logo?: string;
   };
   awayTeam: {
     id: string;
@@ -64,6 +67,7 @@ interface TransformedGame {
     conference: string;
     score: number | null;
     record: { wins: number; losses: number };
+    logo?: string;
   };
   venue: string;
 }
@@ -84,6 +88,84 @@ type ScoresResponse = {
 
 function isTransformedGame(item: unknown): item is TransformedGame {
   return typeof item === 'object' && item !== null && 'homeTeam' in item && 'awayTeam' in item && 'status' in item && typeof (item as TransformedGame).status === 'string';
+}
+
+/** Highlightly match shape — returned by /api/college-baseball/scores */
+interface HighlightlyMatch {
+  id?: number | string;
+  date?: string;
+  league?: string;
+  homeTeam?: { id?: number | string; displayName?: string; name?: string; abbreviation?: string; logo?: string };
+  awayTeam?: { id?: number | string; displayName?: string; name?: string; abbreviation?: string; logo?: string };
+  state?: {
+    score?: { current?: string };
+    description?: string;
+    report?: string;
+    inning?: number;
+  };
+  status?: { description?: string; type?: string };
+  round?: string;
+}
+
+function isHighlightlyMatch(item: unknown): item is HighlightlyMatch {
+  if (typeof item !== 'object' || item === null) return false;
+  const obj = item as Record<string, unknown>;
+  return 'state' in obj && 'homeTeam' in obj && 'awayTeam' in obj
+    && typeof obj.homeTeam === 'object' && obj.homeTeam !== null
+    && 'displayName' in (obj.homeTeam as Record<string, unknown>);
+}
+
+function transformHighlightlyToLiveGame(match: HighlightlyMatch): LiveGame | null {
+  if (!match.homeTeam || !match.awayTeam) return null;
+
+  const report = match.state?.report?.toLowerCase() ?? '';
+  const description = (match.state?.description ?? match.status?.description ?? '').toLowerCase();
+  let status: LiveGame['status'] = 'pre';
+  if (/final|finished/.test(report) || /final|finished/.test(description)) status = 'post';
+  else if (/live|progress|top|bottom|middle|end/.test(description)) status = 'in';
+
+  const current = match.state?.score?.current ?? '';
+  const parts = current.split(/\s*-\s*/);
+  const awayScore = parts[0] != null ? (parseInt(parts[0], 10) || 0) : 0;
+  const homeScore = parts[1] != null ? (parseInt(parts[1], 10) || 0) : 0;
+
+  let inning: number | undefined;
+  if (typeof match.state?.inning === 'number') inning = match.state.inning;
+  else {
+    const m = description.match(/\d+/);
+    if (m) inning = parseInt(m[0], 10);
+  }
+
+  return {
+    id: String(match.id ?? ''),
+    status,
+    detailedState: match.state?.description ?? match.state?.report ?? match.status?.description ?? '',
+    inning: status === 'in' ? inning : undefined,
+    inningHalf: undefined,
+    outs: undefined,
+    awayTeam: {
+      id: typeof match.awayTeam.id === 'number' ? match.awayTeam.id : parseInt(String(match.awayTeam.id ?? '0'), 10) || 0,
+      name: match.awayTeam.displayName ?? match.awayTeam.name ?? '',
+      shortName: match.awayTeam.abbreviation ?? match.awayTeam.displayName ?? '',
+      score: awayScore,
+      record: undefined,
+      conference: '',
+      ranking: undefined,
+      logo: match.awayTeam.logo,
+    },
+    homeTeam: {
+      id: typeof match.homeTeam.id === 'number' ? match.homeTeam.id : parseInt(String(match.homeTeam.id ?? '0'), 10) || 0,
+      name: match.homeTeam.displayName ?? match.homeTeam.name ?? '',
+      shortName: match.homeTeam.abbreviation ?? match.homeTeam.displayName ?? '',
+      score: homeScore,
+      record: undefined,
+      conference: '',
+      ranking: undefined,
+      logo: match.homeTeam.logo,
+    },
+    startTime: match.date ?? '',
+    venue: '',
+  };
 }
 
 function transformESPNEventToLiveGame(event: ESPNEvent): LiveGame | null {
@@ -111,6 +193,7 @@ function transformESPNEventToLiveGame(event: ESPNEvent): LiveGame | null {
     record: side.records?.[0]?.summary || undefined,
     conference: '',
     ranking: side.curatedRank?.current && side.curatedRank.current <= 25 ? side.curatedRank.current : undefined,
+    logo: side.team?.logos?.[0]?.href || side.team?.logo || undefined,
   });
 
   return {
@@ -151,6 +234,7 @@ function transformTransformedGameToLiveGame(game: TransformedGame): LiveGame {
       record: game.awayTeam.record ? `${game.awayTeam.record.wins}-${game.awayTeam.record.losses}` : undefined,
       conference: game.awayTeam.conference,
       ranking: undefined,
+      logo: game.awayTeam.logo,
     },
     homeTeam: {
       id: parseInt(game.homeTeam.id, 10) || 0,
@@ -160,6 +244,7 @@ function transformTransformedGameToLiveGame(game: TransformedGame): LiveGame {
       record: game.homeTeam.record ? `${game.homeTeam.record.wins}-${game.homeTeam.record.losses}` : undefined,
       conference: game.homeTeam.conference,
       ranking: undefined,
+      logo: game.homeTeam.logo,
     },
     startTime: game.date,
     venue: game.venue,
@@ -185,9 +270,14 @@ export function LiveScoreStrip() {
     const raw = data?.data || data?.games || [];
     if (!raw.length) return [];
 
-    // Detect whether the response contains already-transformed games or raw ESPN events
-    if (isTransformedGame(raw[0])) {
+    const first = raw[0];
+    if (isTransformedGame(first)) {
       return (raw as TransformedGame[]).map(transformTransformedGameToLiveGame);
+    }
+    if (isHighlightlyMatch(first)) {
+      return (raw as HighlightlyMatch[])
+        .map(transformHighlightlyToLiveGame)
+        .filter((g): g is LiveGame => g !== null);
     }
     return (raw as ESPNEvent[])
       .map(transformESPNEventToLiveGame)
@@ -221,8 +311,14 @@ export function LiveScoreStrip() {
   const yesterdayGames = useMemo<LiveGame[]>(() => {
     const raw = yesterdayData?.data || yesterdayData?.games || [];
     if (!raw.length) return [];
-    if (isTransformedGame(raw[0])) {
+    const first = raw[0];
+    if (isTransformedGame(first)) {
       return (raw as TransformedGame[]).map(transformTransformedGameToLiveGame);
+    }
+    if (isHighlightlyMatch(first)) {
+      return (raw as HighlightlyMatch[])
+        .map(transformHighlightlyToLiveGame)
+        .filter((g): g is LiveGame => g !== null);
     }
     return (raw as ESPNEvent[])
       .map(transformESPNEventToLiveGame)

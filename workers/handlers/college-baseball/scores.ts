@@ -497,6 +497,7 @@ export async function handleCollegeBaseballSchedule(
         conference: (homeTeam.conference as string) || lookupConference((homeTeam.name || '') as string),
         score: gameStatus !== 'scheduled' ? (e.homeScore ?? null) : null,
         record: (homeTeam.record as { wins: number; losses: number }) ?? { wins: 0, losses: 0 },
+        logo: (homeTeam.logo as string) || ((homeTeam.logos as Array<Record<string, unknown>>)?.[0]?.href as string) || undefined,
       },
       awayTeam: {
         id: String(awayTeam.id || ''),
@@ -505,6 +506,7 @@ export async function handleCollegeBaseballSchedule(
         conference: (awayTeam.conference as string) || lookupConference((awayTeam.name || '') as string),
         score: gameStatus !== 'scheduled' ? (e.awayScore ?? null) : null,
         record: (awayTeam.record as { wins: number; losses: number }) ?? { wins: 0, losses: 0 },
+        logo: (awayTeam.logo as string) || ((awayTeam.logos as Array<Record<string, unknown>>)?.[0]?.href as string) || undefined,
       },
       venue: venue ? (venue.fullName || venue.name || '') as string : '',
       situation: (status.detail as string) || '',

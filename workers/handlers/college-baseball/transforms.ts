@@ -359,21 +359,25 @@ export function transformHighlightlyGame(
     teams: {
       away: {
         name: match.awayTeam?.name ?? 'Away',
+        displayName: match.awayTeam?.displayName ?? match.awayTeam?.name ?? 'Away',
         abbreviation: match.awayTeam?.shortName ?? '',
         score: match.awayScore ?? 0,
         isWinner: isFinal && (match.awayScore ?? 0) > (match.homeScore ?? 0),
         record: formatRecord(match.awayTeam?.record),
         conference: match.awayTeam?.conference?.name,
         ranking: match.awayTeam?.ranking,
+        logo: match.awayTeam?.logo ?? undefined,
       },
       home: {
         name: match.homeTeam?.name ?? 'Home',
+        displayName: match.homeTeam?.displayName ?? match.homeTeam?.name ?? 'Home',
         abbreviation: match.homeTeam?.shortName ?? '',
         score: match.homeScore ?? 0,
         isWinner: isFinal && (match.homeScore ?? 0) > (match.awayScore ?? 0),
         record: formatRecord(match.homeTeam?.record),
         conference: match.homeTeam?.conference?.name,
         ranking: match.homeTeam?.ranking,
+        logo: match.homeTeam?.logo ?? undefined,
       },
     },
     venue: match.venue
@@ -381,20 +385,23 @@ export function transformHighlightlyGame(
       : { name: 'TBD' },
   };
 
-  // Linescore from box or match innings
-  const innings = box?.linescores ?? match.innings ?? [];
-  if (innings.length > 0) {
-    game.linescore = {
-      innings: innings.map((inn) => ({
-        away: 'awayRuns' in inn ? inn.awayRuns : 0,
-        home: 'homeRuns' in inn ? inn.homeRuns : 0,
-      })),
-      totals: {
-        away: { runs: match.awayScore ?? 0, hits: box?.away?.hits ?? 0, errors: box?.away?.errors ?? 0 },
-        home: { runs: match.homeScore ?? 0, hits: box?.home?.hits ?? 0, errors: box?.home?.errors ?? 0 },
-      },
-    };
-  }
+  // Linescore — always emit totals (with hits/errors) even when per-inning is absent.
+  // Hits fall back to batting-row sums when the box-level team total is missing.
+  const inningsRaw = box?.linescores ?? match.innings ?? [];
+  const sumHits = (arr?: Array<{ hits?: number }>) =>
+    Array.isArray(arr) ? arr.reduce((s, b) => s + (Number(b?.hits) || 0), 0) : 0;
+  const awayBoxHits = box?.away?.hits ?? (sumHits(box?.away?.batting) || undefined);
+  const homeBoxHits = box?.home?.hits ?? (sumHits(box?.home?.batting) || undefined);
+  game.linescore = {
+    innings: inningsRaw.map((inn) => ({
+      away: 'awayRuns' in inn ? inn.awayRuns : 0,
+      home: 'homeRuns' in inn ? inn.homeRuns : 0,
+    })),
+    totals: {
+      away: { runs: match.awayScore ?? 0, hits: awayBoxHits ?? 0, errors: box?.away?.errors ?? 0 },
+      home: { runs: match.homeScore ?? 0, hits: homeBoxHits ?? 0, errors: box?.home?.errors ?? 0 },
+    },
+  };
 
   // Box score batting/pitching lines
   if (box) {
@@ -476,8 +483,21 @@ export function transformEspnGameSummary(summary: Record<string, unknown>): Reco
   const isFinal = state === 'post';
   const isLive = state === 'in';
 
-  const homeLinescores = (homeSide?.linescores as Array<Record<string, unknown>>) ?? [];
-  const awayLinescores = (awaySide?.linescores as Array<Record<string, unknown>>) ?? [];
+  const homeLinescoresRaw = (homeSide?.linescores as Array<Record<string, unknown>>) ?? [];
+  const awayLinescoresRaw = (awaySide?.linescores as Array<Record<string, unknown>>) ?? [];
+  // ESPN sometimes returns placeholder entries with value=null before innings are played.
+  // Drop those so we don't render phantom "0" innings in the line score.
+  const hasRealValue = (arr: Array<Record<string, unknown>>) =>
+    arr.some((x) => x != null && x.value != null && !Number.isNaN(Number(x.value)));
+  const homeLinescores = hasRealValue(homeLinescoresRaw) ? homeLinescoresRaw : [];
+  const awayLinescores = hasRealValue(awayLinescoresRaw) ? awayLinescoresRaw : [];
+
+  // Competitor-level hits/errors — ESPN returns these at the competitor level,
+  // not in the boxscore stats block. Authoritative totals.
+  const homeHits = homeSide?.hits != null ? Number(homeSide.hits) : null;
+  const homeErrors = homeSide?.errors != null ? Number(homeSide.errors) : null;
+  const awayHits = awaySide?.hits != null ? Number(awaySide.hits) : null;
+  const awayErrors = awaySide?.errors != null ? Number(awaySide.errors) : null;
 
   const game: Record<string, unknown> = {
     id: String(header?.id ?? comp.id ?? ''),
@@ -500,6 +520,9 @@ export function transformEspnGameSummary(summary: Record<string, unknown>): Reco
         record: (awaySide?.record as Array<Record<string, unknown>>)?.[0]?.summary as string | undefined,
         conference: undefined,
         ranking: awaySide?.rank != null ? Number(awaySide.rank) : undefined,
+        logo: ((awayTeam.logos as Array<Record<string, unknown>>)?.[0]?.href as string)
+          ?? (awayTeam.logo as string)
+          ?? undefined,
       },
       home: {
         name: (homeTeam.displayName as string) ?? (homeTeam.name as string) ?? 'Home',
@@ -510,6 +533,9 @@ export function transformEspnGameSummary(summary: Record<string, unknown>): Reco
         record: (homeSide?.record as Array<Record<string, unknown>>)?.[0]?.summary as string | undefined,
         conference: undefined,
         ranking: homeSide?.rank != null ? Number(homeSide.rank) : undefined,
+        logo: ((homeTeam.logos as Array<Record<string, unknown>>)?.[0]?.href as string)
+          ?? (homeTeam.logo as string)
+          ?? undefined,
       },
     },
     venue: { name: 'TBD' },
@@ -523,20 +549,25 @@ export function transformEspnGameSummary(summary: Record<string, unknown>): Reco
     game.venue = { name: venue.fullName ?? venue.shortName ?? 'TBD', city: addr?.city, state: addr?.state };
   }
 
-  // Linescore from competitor linescores
+  // Always emit linescore totals (hits/errors) even when per-inning data is unavailable.
+  // Batting-sum back-fill happens after boxscore parse below.
+  const innings: Array<{ away: number; home: number }> = [];
   if (homeLinescores.length > 0 || awayLinescores.length > 0) {
     const count = Math.max(homeLinescores.length, awayLinescores.length);
-    game.linescore = {
-      innings: Array.from({ length: count }, (_, i) => ({
+    for (let i = 0; i < count; i++) {
+      innings.push({
         away: Number(awayLinescores[i]?.value ?? 0),
         home: Number(homeLinescores[i]?.value ?? 0),
-      })),
-      totals: {
-        away: { runs: awayScore, hits: 0, errors: 0 },
-        home: { runs: homeScore, hits: 0, errors: 0 },
-      },
-    };
+      });
+    }
   }
+  game.linescore = {
+    innings,
+    totals: {
+      away: { runs: awayScore, hits: awayHits ?? 0, errors: awayErrors ?? 0 },
+      home: { runs: homeScore, hits: homeHits ?? 0, errors: homeErrors ?? 0 },
+    },
+  };
 
   // Box score from ESPN summary format — centralized label-based parser
   const espnBox = summary.boxscore as Record<string, unknown> | undefined;
@@ -550,12 +581,21 @@ export function transformEspnGameSummary(summary: Record<string, unknown>): Reco
       const parsed = parseBoxScoreTeam(teamBox);
       return {
         batting: parsed.batting.map((b) => ({
-          player: { id: b.playerId, name: b.name, position: b.position },
+          player: {
+            id: b.playerId,
+            name: b.name,
+            position: b.position,
+            headshot: (b as unknown as { headshot?: string }).headshot || undefined,
+          },
           ab: b.ab, r: b.r, h: b.h, rbi: b.rbi,
           bb: b.bb, so: b.k, avg: b.avg > 0 ? b.avg.toFixed(3) : '.000',
         })),
         pitching: parsed.pitching.map((p) => ({
-          player: { id: p.playerId, name: p.name },
+          player: {
+            id: p.playerId,
+            name: p.name,
+            headshot: (p as unknown as { headshot?: string }).headshot || undefined,
+          },
           ip: p.ipDisplay, h: p.h, r: p.r,
           er: p.er, bb: p.bb, so: p.k,
           era: p.era > 0 ? p.era.toFixed(2) : '0.00',
@@ -563,10 +603,25 @@ export function transformEspnGameSummary(summary: Record<string, unknown>): Reco
       };
     };
 
+    const awayBoxOut = mapTeamBox(awayBox);
+    const homeBoxOut = mapTeamBox(homeBox);
     game.boxscore = {
-      away: mapTeamBox(awayBox),
-      home: mapTeamBox(homeBox),
+      away: awayBoxOut,
+      home: homeBoxOut,
     };
+
+    // Back-fill linescore hits from batting when ESPN's competitor-level hits are missing.
+    const linescore = game.linescore as { totals?: { away: { hits: number; errors: number }; home: { hits: number; errors: number } } } | undefined;
+    if (linescore?.totals) {
+      if (awayHits == null) {
+        const sum = awayBoxOut.batting.reduce((s: number, b: Record<string, unknown>) => s + (Number(b.h) || 0), 0);
+        if (sum > 0) linescore.totals.away.hits = sum;
+      }
+      if (homeHits == null) {
+        const sum = homeBoxOut.batting.reduce((s: number, b: Record<string, unknown>) => s + (Number(b.h) || 0), 0);
+        if (sum > 0) linescore.totals.home.hits = sum;
+      }
+    }
   }
 
   // Plays
