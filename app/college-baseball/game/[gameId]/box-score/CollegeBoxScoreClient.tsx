@@ -1,307 +1,64 @@
 'use client';
 
 import { useGameData } from '../layout';
-import { Card, CardHeader, CardTitle } from '@/components/ui/Card';
-import { TeamCircle } from '@/components/sports/TeamCircle';
-import { Badge } from '@/components/ui/Badge';
+import {
+  BoxScoreTable,
+  BoxScoreShell,
+  BoxScoreEmptyState,
+} from '@/components/box-score';
+import { adaptBaseballBoxscore } from '@/lib/box-score/adapt-baseball';
 
 /**
  * College Baseball Box Score Page
  *
- * Full batting and pitching lines for both teams.
+ * Shares the exact shell + table composition used by MLB. Year and ranking
+ * pass through to the player cell via the permissive BattingLine.player
+ * extensions. Both pages draw from the same adapter so they never drift.
  */
 export default function CollegeBoxScoreClient() {
   const { game, loading, error } = useGameData();
 
   if (loading || error || !game) {
-    return null; // Layout handles loading/error states
+    return null;
   }
 
-  const { boxscore } = game;
+  const adapted = adaptBaseballBoxscore(game.boxscore as Record<string, unknown> | undefined);
 
-  // No box score available
-  if (!boxscore) {
-    return (
-      <Card variant="default" padding="lg">
-        <div className="text-center py-8">
-          <svg
-            viewBox="0 0 24 24"
-            className="w-16 h-16 text-text-tertiary mx-auto mb-4"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-          >
-            <rect x="3" y="3" width="18" height="18" rx="2" />
-            <line x1="3" y1="9" x2="21" y2="9" />
-            <line x1="9" y1="21" x2="9" y2="9" />
-          </svg>
-          <p className="text-text-secondary">Box score not available yet.</p>
-          <p className="text-text-tertiary text-sm mt-2">
-            Once the first pitch flies, every at-bat and every pitch gets tracked here. The full
-            picture, no ESPN filter.
-          </p>
-        </div>
-      </Card>
-    );
+  if (!adapted) {
+    return <BoxScoreEmptyState />;
   }
 
   return (
-    <div className="space-y-8">
-      {/* Away Team */}
-      <div>
-        <div className="flex items-center gap-3 mb-4">
-          <TeamCircle logo={game.teams.away.logo} abbreviation={game.teams.away.abbreviation} size="w-10 h-10" textSize="text-sm" ranking={game.teams.away.ranking} />
-          <div>
-            <h3 className="font-semibold text-text-primary">{game.teams.away.name}</h3>
-            <p className="text-text-tertiary text-sm">{game.teams.away.record}</p>
-          </div>
-        </div>
-
-        {/* Away Batting */}
-        <Card variant="default" padding="none" className="mb-4 overflow-hidden">
-          <CardHeader className="bg-background-tertiary">
-            <CardTitle size="sm">Batting</CardTitle>
-          </CardHeader>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm" aria-label={`${game.teams.away.abbreviation || 'Away'} batting statistics`}>
-              <thead>
-                <tr className="border-b border-border-subtle bg-background-secondary text-text-tertiary">
-                  <th scope="col" className="text-left p-3 font-medium">Player</th>
-                  <th scope="col" className="text-center p-3 font-medium w-12">AB</th>
-                  <th scope="col" className="text-center p-3 font-medium w-12">R</th>
-                  <th scope="col" className="text-center p-3 font-medium w-12">H</th>
-                  <th scope="col" className="text-center p-3 font-medium w-12">RBI</th>
-                  <th scope="col" className="text-center p-3 font-medium w-12">BB</th>
-                  <th scope="col" className="text-center p-3 font-medium w-12">SO</th>
-                  <th scope="col" className="text-center p-3 font-medium w-16">AVG</th>
-                </tr>
-              </thead>
-              <tbody>
-                {boxscore.away.batting.map((batter, idx) => (
-                  <tr
-                    key={idx}
-                    className="border-b border-border-subtle hover:bg-surface-light transition-colors"
-                  >
-                    <td className="p-3">
-                      <div className="flex items-center gap-2">
-                        <span className="text-text-tertiary text-xs w-6">
-                          {batter.player.position}
-                        </span>
-                        <span className="text-text-primary font-medium">{batter.player.name}</span>
-                        {batter.player.year && (
-                          <span className="text-text-tertiary text-xs">({batter.player.year})</span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{batter.ab}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{batter.r}</td>
-                    <td className="text-center p-3 font-mono text-text-primary font-semibold">
-                      {batter.h}
-                    </td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{batter.rbi}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{batter.bb}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{batter.so}</td>
-                    <td className="text-center p-3 font-mono text-text-tertiary">{batter.avg}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
-
-        {/* Away Pitching */}
-        <Card variant="default" padding="none" className="overflow-hidden">
-          <CardHeader className="bg-background-tertiary">
-            <CardTitle size="sm">Pitching</CardTitle>
-          </CardHeader>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm" aria-label={`${game.teams.away.abbreviation || 'Away'} pitching statistics`}>
-              <thead>
-                <tr className="border-b border-border-subtle bg-background-secondary text-text-tertiary">
-                  <th scope="col" className="text-left p-3 font-medium">Pitcher</th>
-                  <th scope="col" className="text-center p-3 font-medium w-14">IP</th>
-                  <th scope="col" className="text-center p-3 font-medium w-12">H</th>
-                  <th scope="col" className="text-center p-3 font-medium w-12">R</th>
-                  <th scope="col" className="text-center p-3 font-medium w-12">ER</th>
-                  <th scope="col" className="text-center p-3 font-medium w-12">BB</th>
-                  <th scope="col" className="text-center p-3 font-medium w-12">K</th>
-                  <th scope="col" className="text-center p-3 font-medium w-16">ERA</th>
-                </tr>
-              </thead>
-              <tbody>
-                {boxscore.away.pitching.map((pitcher, idx) => (
-                  <tr
-                    key={idx}
-                    className="border-b border-border-subtle hover:bg-surface-light transition-colors"
-                  >
-                    <td className="p-3">
-                      <div className="flex items-center gap-2">
-                        <span className="text-text-primary font-medium">{pitcher.player.name}</span>
-                        {pitcher.player.year && (
-                          <span className="text-text-tertiary text-xs">
-                            ({pitcher.player.year})
-                          </span>
-                        )}
-                        {pitcher.decision && (
-                          <Badge
-                            variant={
-                              pitcher.decision === 'W'
-                                ? 'success'
-                                : pitcher.decision === 'L'
-                                  ? 'error'
-                                  : 'secondary'
-                            }
-                            size="sm"
-                          >
-                            {pitcher.decision}
-                          </Badge>
-                        )}
-                      </div>
-                    </td>
-                    <td className="text-center p-3 font-mono text-text-primary font-semibold">
-                      {pitcher.ip}
-                    </td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{pitcher.h}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{pitcher.r}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{pitcher.er}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{pitcher.bb}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{pitcher.so}</td>
-                    <td className="text-center p-3 font-mono text-text-tertiary">{pitcher.era}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
-      </div>
-
-      {/* Home Team */}
-      <div>
-        <div className="flex items-center gap-3 mb-4">
-          <TeamCircle logo={game.teams.home.logo} abbreviation={game.teams.home.abbreviation} size="w-10 h-10" textSize="text-sm" ranking={game.teams.home.ranking} />
-          <div>
-            <h3 className="font-semibold text-text-primary">{game.teams.home.name}</h3>
-            <p className="text-text-tertiary text-sm">{game.teams.home.record}</p>
-          </div>
-        </div>
-
-        {/* Home Batting */}
-        <Card variant="default" padding="none" className="mb-4 overflow-hidden">
-          <CardHeader className="bg-background-tertiary">
-            <CardTitle size="sm">Batting</CardTitle>
-          </CardHeader>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm" aria-label={`${game.teams.home.abbreviation || 'Home'} batting statistics`}>
-              <thead>
-                <tr className="border-b border-border-subtle bg-background-secondary text-text-tertiary">
-                  <th scope="col" className="text-left p-3 font-medium">Player</th>
-                  <th scope="col" className="text-center p-3 font-medium w-12">AB</th>
-                  <th scope="col" className="text-center p-3 font-medium w-12">R</th>
-                  <th scope="col" className="text-center p-3 font-medium w-12">H</th>
-                  <th scope="col" className="text-center p-3 font-medium w-12">RBI</th>
-                  <th scope="col" className="text-center p-3 font-medium w-12">BB</th>
-                  <th scope="col" className="text-center p-3 font-medium w-12">SO</th>
-                  <th scope="col" className="text-center p-3 font-medium w-16">AVG</th>
-                </tr>
-              </thead>
-              <tbody>
-                {boxscore.home.batting.map((batter, idx) => (
-                  <tr
-                    key={idx}
-                    className="border-b border-border-subtle hover:bg-surface-light transition-colors"
-                  >
-                    <td className="p-3">
-                      <div className="flex items-center gap-2">
-                        <span className="text-text-tertiary text-xs w-6">
-                          {batter.player.position}
-                        </span>
-                        <span className="text-text-primary font-medium">{batter.player.name}</span>
-                        {batter.player.year && (
-                          <span className="text-text-tertiary text-xs">({batter.player.year})</span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{batter.ab}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{batter.r}</td>
-                    <td className="text-center p-3 font-mono text-text-primary font-semibold">
-                      {batter.h}
-                    </td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{batter.rbi}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{batter.bb}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{batter.so}</td>
-                    <td className="text-center p-3 font-mono text-text-tertiary">{batter.avg}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
-
-        {/* Home Pitching */}
-        <Card variant="default" padding="none" className="overflow-hidden">
-          <CardHeader className="bg-background-tertiary">
-            <CardTitle size="sm">Pitching</CardTitle>
-          </CardHeader>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm" aria-label={`${game.teams.home.abbreviation || 'Home'} pitching statistics`}>
-              <thead>
-                <tr className="border-b border-border-subtle bg-background-secondary text-text-tertiary">
-                  <th scope="col" className="text-left p-3 font-medium">Pitcher</th>
-                  <th scope="col" className="text-center p-3 font-medium w-14">IP</th>
-                  <th scope="col" className="text-center p-3 font-medium w-12">H</th>
-                  <th scope="col" className="text-center p-3 font-medium w-12">R</th>
-                  <th scope="col" className="text-center p-3 font-medium w-12">ER</th>
-                  <th scope="col" className="text-center p-3 font-medium w-12">BB</th>
-                  <th scope="col" className="text-center p-3 font-medium w-12">K</th>
-                  <th scope="col" className="text-center p-3 font-medium w-16">ERA</th>
-                </tr>
-              </thead>
-              <tbody>
-                {boxscore.home.pitching.map((pitcher, idx) => (
-                  <tr
-                    key={idx}
-                    className="border-b border-border-subtle hover:bg-surface-light transition-colors"
-                  >
-                    <td className="p-3">
-                      <div className="flex items-center gap-2">
-                        <span className="text-text-primary font-medium">{pitcher.player.name}</span>
-                        {pitcher.player.year && (
-                          <span className="text-text-tertiary text-xs">
-                            ({pitcher.player.year})
-                          </span>
-                        )}
-                        {pitcher.decision && (
-                          <Badge
-                            variant={
-                              pitcher.decision === 'W'
-                                ? 'success'
-                                : pitcher.decision === 'L'
-                                  ? 'error'
-                                  : 'secondary'
-                            }
-                            size="sm"
-                          >
-                            {pitcher.decision}
-                          </Badge>
-                        )}
-                      </div>
-                    </td>
-                    <td className="text-center p-3 font-mono text-text-primary font-semibold">
-                      {pitcher.ip}
-                    </td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{pitcher.h}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{pitcher.r}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{pitcher.er}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{pitcher.bb}</td>
-                    <td className="text-center p-3 font-mono text-text-secondary">{pitcher.so}</td>
-                    <td className="text-center p-3 font-mono text-text-tertiary">{pitcher.era}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
-      </div>
-    </div>
+    <BoxScoreShell
+      title="Box Score"
+      showTeamToggle
+      awayAbbreviation={game.teams.away.abbreviation}
+      homeAbbreviation={game.teams.home.abbreviation}
+    >
+      {({ teamFilter }) => (
+        <BoxScoreTable
+          boxscore={adapted}
+          awayTeam={{
+            name: game.teams.away.name,
+            abbreviation: game.teams.away.abbreviation,
+            score: game.teams.away.score,
+            isWinner: game.teams.away.isWinner,
+            logo: game.teams.away.logo,
+          }}
+          homeTeam={{
+            name: game.teams.home.name,
+            abbreviation: game.teams.home.abbreviation,
+            score: game.teams.home.score,
+            isWinner: game.teams.home.isWinner,
+            logo: game.teams.home.logo,
+          }}
+          variant="full"
+          showLinescore={false}
+          showLeaders
+          sortable
+          teamFilter={teamFilter}
+        />
+      )}
+    </BoxScoreShell>
   );
 }
