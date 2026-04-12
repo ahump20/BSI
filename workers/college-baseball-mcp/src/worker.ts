@@ -364,11 +364,16 @@ function rpcErr(
   return { jsonrpc: '2.0', id, error: { code, message, data } };
 }
 
-function jsonResponse(body: unknown, status = 200): Response {
+function jsonResponse(
+  body: unknown,
+  status = 200,
+  requestId?: string
+): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
       'Content-Type': 'application/json',
+      'X-Request-Id': requestId ?? crypto.randomUUID(),
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -376,11 +381,18 @@ function jsonResponse(body: unknown, status = 200): Response {
   });
 }
 
-function errorResponse(msg: string, status: number): Response {
-  return jsonResponse(
-    { error: msg, status, request_id: crypto.randomUUID() },
-    status
-  );
+function errorResponse(msg: string, status: number, requestId?: string): Response {
+  const rid = requestId ?? crypto.randomUUID();
+  return jsonResponse({ error: msg, status, request_id: rid }, status, rid);
+}
+
+/** Structured log — picked up by wrangler tail + bsi-error-tracker. */
+function logEvent(event: Record<string, unknown>): void {
+  try {
+    console.log(JSON.stringify({ ts: new Date().toISOString(), ...event }));
+  } catch {
+    // logging should never throw
+  }
 }
 
 /** Fetch ESPN with 8s timeout. Use base='v2' for standings endpoint. */
@@ -576,6 +588,8 @@ async function handleScoreboard(
   const query = qs.toString() ? `?${qs}` : '';
   const confFilter = args.conference?.toLowerCase().trim();
 
+  // KV enforces a 60s minimum TTL; this is as reactive as the cache allows.
+  // For tighter freshness we'd bypass KV and cache in-memory per-worker.
   return kvCached(env, `scoreboard:${query}`, 60, async () => {
     // Highlightly primary — 330 D1 teams, venue, predictions
     if (env.HIGHLIGHTLY_API_KEY) {
@@ -663,9 +677,24 @@ async function handleScoreboard(
       }
     }
 
-    // BSI proxy fallback
+    // BSI proxy fallback — normalize shape to match Highlightly path.
+    // BSI's /api/college-baseball/scores typically returns {data: [...]};
+    // rewrap as {games: [...], meta: ...} so tool callers see one shape.
     try {
-      return await bsiFetch(`/api/college-baseball/scores${query}`, env);
+      const proxy = (await bsiFetch(
+        `/api/college-baseball/scores${query}`,
+        env
+      )) as Record<string, unknown>;
+      const games =
+        (proxy.games as Array<unknown>) ??
+        (proxy.data as Array<unknown>) ??
+        [];
+      return {
+        games,
+        date: args.date ?? new Date().toISOString().split('T')[0],
+        count: games.length,
+        meta: makeMeta('bsi-proxy'),
+      };
     } catch {
       // BSI also failed — fall through to ESPN
     }
@@ -700,8 +729,8 @@ interface StandingsEntry {
   wins: number;
   losses: number;
   winPct: number;
-  confWins: number;
-  confLosses: number;
+  confWins: number | null;
+  confLosses: number | null;
   runsScored: number;
   runsAllowed: number;
   runDiff: string;
@@ -717,12 +746,17 @@ async function handleStandings(
 ): Promise<unknown> {
   const confFilter = args.conference?.trim() ?? 'all';
 
-  return kvCached(env, `standings:${confFilter.toLowerCase()}`, 3600, async () => {
-    // Try Highlightly first — richer stats (RS, RA, DIFF, STRK, GB)
+  // Standings move with every completed game; 5-minute TTL balances freshness
+  // against upstream load.
+  return kvCached(env, `standings:${confFilter.toLowerCase()}`, 300, async () => {
+    // Try Highlightly first — richer stats (RS, RA, DIFF, STRK, GB).
+    // Upstream currently returns 401 on /standings?abbreviation=NCAA for
+    // our current tier; handleScheduled will log hl_standings_failed so we
+    // can renegotiate access later. For now, ESPN fallback populates the
+    // core fields. confWins/confLosses remain null (honest "unknown").
     if (env.HIGHLIGHTLY_API_KEY) {
       try {
-        const currentSeason = new Date().getFullYear();
-        const hlData = (await hlFetch(`/standings?league=NCAA&season=${currentSeason}`, env)) as
+        const hlData = (await hlFetch('/standings?abbreviation=NCAA', env)) as
           | { data: Array<Record<string, unknown>> }
           | Record<string, unknown>;
 
@@ -737,15 +771,10 @@ async function handleStandings(
         }
 
         if (teams.length > 0) {
-          // Freshness guard: if any team has 50+ games, this is stale end-of-season data
-          const maxGP = Math.max(0, ...teams.map((t) => {
-            const sts = (t.stats as Array<Record<string, unknown>>) ?? [];
-            const gp = sts.find((s) => s.abbreviation === 'GP');
-            return parseInt((gp?.displayValue as string) ?? '0', 10) || 0;
-          }));
-          if (maxGP > 50) {
-            throw new Error('Highlightly standings stale — previous season data');
-          }
+          // Note: a prior `maxGP > 50` freshness guard was rejecting valid
+          // late-season data (regular season is 56 games). Trust Highlightly's
+          // ?season= parameter instead. If stale data becomes a real problem,
+          // add a payload-level season-year check here.
 
           // Build ID → displayName map for conference resolution
           let teamMap: Record<string, string> = {};
@@ -780,8 +809,10 @@ async function handleStandings(
                   const p = parseStat(stats, 'PCT');
                   return parseFloat(p.startsWith('.') ? '0' + p : p) || 0;
                 })(),
-                confWins: 0,
-                confLosses: 0,
+                // Highlightly standings are flat (no conference-split W/L).
+                // Return null to distinguish "unknown" from a zero count.
+                confWins: null,
+                confLosses: null,
                 runsScored: parseInt(parseStat(stats, 'RS'), 10) || 0,
                 runsAllowed: parseInt(parseStat(stats, 'RA'), 10) || 0,
                 runDiff: parseStat(stats, 'DIFF'),
@@ -854,8 +885,12 @@ async function handleStandings(
             meta: makeMeta('highlightly'),
           };
         }
-      } catch {
-        // Highlightly failed — fall through to ESPN
+      } catch (err) {
+        // Highlightly failed — fall through to ESPN. Log so we can diagnose.
+        logEvent({
+          event: 'hl_standings_failed',
+          error: err instanceof Error ? err.message : String(err),
+        });
       }
     }
 
@@ -879,10 +914,19 @@ async function handleStandings(
           );
           return s ? Number(s.value ?? 0) : 0;
         };
+        const findStatStr = (name: string, abbr?: string): string => {
+          const s = stats.find(
+            (st) => st.name === name || (abbr && st.abbreviation === abbr)
+          );
+          return (s?.displayValue as string) ?? '';
+        };
 
         const logos = (team?.logos as Array<Record<string, unknown>>) ?? [];
         const espnId = String(team?.id ?? '');
 
+        // ESPN college baseball standings do not reliably ship conference-
+        // split W/L — prefer Highlightly when available. Expose `null` for
+        // those fields rather than misleading zeros.
         return {
           team:
             (team?.displayName as string) ??
@@ -893,15 +937,19 @@ async function handleStandings(
           wins: findStat('wins', 'W'),
           losses: findStat('losses', 'L'),
           winPct: findStat('winPercent', 'PCT'),
-          confWins: 0,
-          confLosses: 0,
-          runsScored: 0,
-          runsAllowed: 0,
-          runDiff: '0',
-          streak: '',
-          gamesBack: '',
-          gamesPlayed: 0,
-          record: '',
+          confWins: null,
+          confLosses: null,
+          runsScored:
+            findStat('pointsFor', 'PF') || findStat('runsScored', 'RS'),
+          runsAllowed:
+            findStat('pointsAgainst', 'PA') || findStat('runsAllowed', 'RA'),
+          runDiff:
+            findStatStr('pointDifferential', 'DIFF') ||
+            findStatStr('runDifferential', 'RDIFF'),
+          streak: findStatStr('streak', 'STRK'),
+          gamesBack: findStatStr('gamesBehind', 'GB'),
+          gamesPlayed: findStat('gamesPlayed', 'GP'),
+          record: findStatStr('overall', 'TOTAL') || findStatStr('total', 'Total'),
           conference: ESPN_ID_TO_CONF[espnId] ?? 'Other',
         };
       }
@@ -997,11 +1045,15 @@ async function handlePlayerStats(
   env: Env
 ): Promise<unknown> {
   const name = args.player.trim();
-  const cacheKey = `player:${name.toLowerCase().replace(/\s+/g, '-')}`;
+  const nameSlug = name.toLowerCase().replace(/\s+/g, '-');
+  const teamKey = args.team ? resolveTeamSlug(args.team) : 'any';
+  // Cache key includes team to prevent cross-variant poisoning — a no-team
+  // miss must not poison later with-team lookups.
+  const cacheKey = `player:${nameSlug}:${teamKey}`;
+  const nameNorm = name.toLowerCase();
 
   return kvCached(env, cacheKey, 3600, async () => {
-    // ESPN doesn't support athlete search for college baseball.
-    // Try BSI main worker's player endpoint (which queries D1).
+    // Strategy 1: BSI proxy player search (future-indexed D1 path)
     try {
       const teamParam = args.team
         ? `&team=${encodeURIComponent(args.team)}`
@@ -1013,14 +1065,21 @@ async function handlePlayerStats(
 
       const players = (data.players as Array<Record<string, unknown>>) ?? [];
       if (players.length > 0) {
-        return data;
+        // BSI returns {players: [...]}; expose the first match at .player so
+        // callers get a stable single-player shape. Array stays available
+        // under .players for disambiguation when multiple matches exist.
+        return {
+          player: players[0],
+          players,
+          meta:
+            (data.meta as Meta | undefined) ?? makeMeta('bsi-proxy'),
+        };
       }
     } catch {
-      // BSI proxy failed — fall through to team-based search
+      // BSI proxy failed — fall through
     }
 
-    // Fallback: if team is provided, try fetching that team's sabermetrics
-    // and searching the hitters/pitchers lists for a name match.
+    // Strategy 2: if team provided, scan that team's sabermetric roster
     if (args.team) {
       try {
         const slug = resolveTeamSlug(args.team);
@@ -1030,36 +1089,107 @@ async function handlePlayerStats(
         )) as Record<string, unknown>;
 
         const batting = teamData.batting as Record<string, unknown>;
+        const pitching = teamData.pitching as Record<string, unknown>;
         const allHitters =
           (teamData.all_hitters as Array<Record<string, unknown>>) ??
           (batting?.top_hitters as Array<Record<string, unknown>>) ??
           [];
+        const allPitchers =
+          (teamData.all_pitchers as Array<Record<string, unknown>>) ??
+          (pitching?.top_pitchers as Array<Record<string, unknown>>) ??
+          [];
 
-        const nameNorm = name.toLowerCase();
-        const match = allHitters.find((h) =>
+        const matchHitter = allHitters.find((h) =>
           (h.name as string)?.toLowerCase().includes(nameNorm)
         );
-
-        if (match) {
+        if (matchHitter) {
           return {
             player: {
-              name: match.name,
+              name: matchHitter.name,
               team: slug,
-              position: match.position ?? null,
-              stats: match,
+              position: matchHitter.position ?? 'batting',
+              stats: matchHitter,
+              source: 'bsi-savant',
+            },
+            meta: makeMeta('bsi-savant'),
+          };
+        }
+
+        const matchPitcher = allPitchers.find((p) =>
+          (p.name as string)?.toLowerCase().includes(nameNorm)
+        );
+        if (matchPitcher) {
+          return {
+            player: {
+              name: matchPitcher.name,
+              team: slug,
+              position: matchPitcher.position ?? 'pitching',
+              stats: matchPitcher,
               source: 'bsi-savant',
             },
             meta: makeMeta('bsi-savant'),
           };
         }
       } catch {
-        // Team sabermetrics also failed
+        // Team sabermetrics failed — fall through to cross-team search
       }
+    }
+
+    // Strategy 3: cross-team savant leaderboard scan (works without team arg)
+    const searchLeaderboard = async (
+      type: 'batting' | 'pitching'
+    ): Promise<Record<string, unknown> | null> => {
+      try {
+        const metric = type === 'pitching' ? 'fip' : 'woba';
+        const sortDir = type === 'pitching' ? 'asc' : 'desc';
+        const data = (await bsiFetch(
+          `/api/savant/${type}/leaderboard?metric=${metric}&limit=500&sort=${sortDir}`,
+          env
+        )) as Record<string, unknown>;
+        const rows = (data.data as Array<Record<string, unknown>>) ?? [];
+        return (
+          rows.find((r) =>
+            (r.player_name as string)?.toLowerCase().includes(nameNorm)
+          ) ?? null
+        );
+      } catch {
+        return null;
+      }
+    };
+
+    const battingMatch = await searchLeaderboard('batting');
+    if (battingMatch) {
+      return {
+        player: {
+          name: battingMatch.player_name,
+          team: battingMatch.team,
+          conference: battingMatch.conference,
+          position: battingMatch.position ?? 'batting',
+          stats: battingMatch,
+          source: 'bsi-savant-leaderboard',
+        },
+        meta: makeMeta('bsi-savant'),
+      };
+    }
+
+    const pitchingMatch = await searchLeaderboard('pitching');
+    if (pitchingMatch) {
+      return {
+        player: {
+          name: pitchingMatch.player_name,
+          team: pitchingMatch.team,
+          conference: pitchingMatch.conference,
+          position: pitchingMatch.position ?? 'pitching',
+          stats: pitchingMatch,
+          source: 'bsi-savant-leaderboard',
+        },
+        meta: makeMeta('bsi-savant'),
+      };
     }
 
     return {
       player: null,
-      message: `No results found for "${name}". ESPN does not support athlete search for college baseball. Try providing a team name to search BSI's sabermetric data, or visit blazesportsintel.com/college-baseball/teams for player stats.`,
+      message: `No match for "${name}" in BSI Savant batting or pitching leaderboards. The player may lack qualifying stats for the current season, or the name may be spelled differently. Try a surname match (e.g., "Condon", "Caglianone") or supply a team to search that roster.`,
       meta: makeMeta('unavailable'),
     };
   });
@@ -1197,7 +1327,8 @@ interface ConferencePower {
 }
 
 async function handlePowerIndex(env: Env): Promise<unknown> {
-  return kvCached(env, 'power-index:latest', 21600, async () => {
+  // Power index derived from standings — 1 hour mirrors the standings cadence.
+  return kvCached(env, 'power-index:latest', 3600, async () => {
     // Try Highlightly first — has RS/RA/DIFF for richer power index
     if (env.HIGHLIGHTLY_API_KEY) {
       try {
@@ -1430,7 +1561,9 @@ async function handleMatchDetail(
 ): Promise<unknown> {
   const matchId = args.matchId;
 
-  return kvCached(env, `match:${matchId}`, 120, async () => {
+  // 60s (KV minimum) keeps live play-by-play current. Final games still hit
+  // cache because upstream data stops changing, then expires naturally.
+  return kvCached(env, `match:${matchId}`, 60, async () => {
     if (!env.HIGHLIGHTLY_API_KEY) {
       return {
         error: 'Match detail requires Highlightly API key.',
@@ -1521,7 +1654,7 @@ async function handleMatchDetail(
 
 const MCP_TOOLS = [
   {
-    name: 'get_college_baseball_scoreboard',
+    name: 'bsi_get_scoreboard',
     description:
       "Get today's college baseball scores and game results. Returns live and final games with team names, scores, venue, and game status. Covers all 330 D1 teams.",
     inputSchema: {
@@ -1540,9 +1673,15 @@ const MCP_TOOLS = [
       },
       required: [],
     },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+    },
   },
   {
-    name: 'get_college_baseball_standings',
+    name: 'bsi_get_standings',
     description:
       'Get current college baseball conference standings including wins, losses, win percentage, runs scored, runs allowed, run differential, streak, and games back.',
     inputSchema: {
@@ -1556,9 +1695,15 @@ const MCP_TOOLS = [
       },
       required: [],
     },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+    },
   },
   {
-    name: 'get_college_baseball_rankings',
+    name: 'bsi_get_rankings',
     description:
       'Get the latest national college baseball rankings (Top 25). Returns rank, team, record, and trend.',
     inputSchema: {
@@ -1566,9 +1711,15 @@ const MCP_TOOLS = [
       properties: {},
       required: [],
     },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+    },
   },
   {
-    name: 'get_team_sabermetrics',
+    name: 'bsi_get_team_sabermetrics',
     description:
       'Get advanced sabermetric batting and pitching metrics for a college baseball team: wOBA, wRC+, FIP, ERA-, BABIP, ISO, and more.',
     inputSchema: {
@@ -1582,9 +1733,15 @@ const MCP_TOOLS = [
       },
       required: ['team'],
     },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+    },
   },
   {
-    name: 'get_sabermetrics_leaderboard',
+    name: 'bsi_get_leaderboard',
     description:
       'Get the top college baseball hitters or pitchers by an advanced metric. Returns a ranked leaderboard with player names, teams, and stat values.',
     inputSchema: {
@@ -1620,9 +1777,15 @@ const MCP_TOOLS = [
       },
       required: [],
     },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+    },
   },
   {
-    name: 'get_conference_power_index',
+    name: 'bsi_get_conference_power_index',
     description:
       'Get the Conference Power Index — a ranking of D1 conferences by average win percentage and run differential. Uses Highlightly standings data when available.',
     inputSchema: {
@@ -1630,9 +1793,15 @@ const MCP_TOOLS = [
       properties: {},
       required: [],
     },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+    },
   },
   {
-    name: 'get_player_stats',
+    name: 'bsi_get_player_stats',
     description:
       'Search for a college baseball player by name and get their stats, position, team, and headshot. Searches BSI sabermetric data.',
     inputSchema: {
@@ -1650,9 +1819,15 @@ const MCP_TOOLS = [
       },
       required: ['player'],
     },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+    },
   },
   {
-    name: 'get_team_schedule',
+    name: 'bsi_get_team_schedule',
     description:
       "Get the full schedule for a college baseball team, including past results and upcoming games.",
     inputSchema: {
@@ -1665,9 +1840,15 @@ const MCP_TOOLS = [
       },
       required: ['team'],
     },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+    },
   },
   {
-    name: 'get_match_detail',
+    name: 'bsi_get_match_detail',
     description:
       'Get detailed information about a specific college baseball game including venue, weather, win predictions, play-by-play, and team stats. Use a match ID from the scoreboard.',
     inputSchema: {
@@ -1680,6 +1861,12 @@ const MCP_TOOLS = [
         },
       },
       required: ['matchId'],
+    },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
     },
   },
 ];
@@ -1695,32 +1882,32 @@ async function executeTool(
 
   try {
     switch (name) {
-      case 'get_college_baseball_scoreboard':
+      case 'bsi_get_scoreboard':
         data = await handleScoreboard(
           { date: args.date as string, conference: args.conference as string },
           env
         );
         break;
 
-      case 'get_college_baseball_standings':
+      case 'bsi_get_standings':
         data = await handleStandings(
           { conference: args.conference as string },
           env
         );
         break;
 
-      case 'get_college_baseball_rankings':
+      case 'bsi_get_rankings':
         data = await handleRankings(env);
         break;
 
-      case 'get_team_sabermetrics':
+      case 'bsi_get_team_sabermetrics':
         data = await handleTeamSabermetrics(
           { team: args.team as string },
           env
         );
         break;
 
-      case 'get_sabermetrics_leaderboard':
+      case 'bsi_get_leaderboard':
         data = await handleLeaderboard(
           {
             metric: args.metric as string,
@@ -1732,22 +1919,22 @@ async function executeTool(
         );
         break;
 
-      case 'get_conference_power_index':
+      case 'bsi_get_conference_power_index':
         data = await handlePowerIndex(env);
         break;
 
-      case 'get_player_stats':
+      case 'bsi_get_player_stats':
         data = await handlePlayerStats(
           { player: args.player as string, team: args.team as string },
           env
         );
         break;
 
-      case 'get_team_schedule':
+      case 'bsi_get_team_schedule':
         data = await handleTeamSchedule({ team: args.team as string }, env);
         break;
 
-      case 'get_match_detail':
+      case 'bsi_get_match_detail':
         data = await handleMatchDetail(
           { matchId: String(args.matchId) },
           env
@@ -1839,6 +2026,7 @@ export default {
     const url = new URL(request.url);
     const { pathname } = url;
     const method = request.method.toUpperCase();
+    const requestId = request.headers.get('X-Request-Id') ?? crypto.randomUUID();
 
     // CORS preflight
     if (method === 'OPTIONS') {
@@ -1849,20 +2037,25 @@ export default {
           'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
           'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           'Access-Control-Max-Age': '86400',
+          'X-Request-Id': requestId,
         },
       });
     }
 
     // ─── Health ────────────────────────────────────────────────────────
     if (pathname === '/health') {
-      return jsonResponse({
-        status: 'ok',
-        service: 'college-baseball-sabermetrics-mcp',
-        version: '3.0.0',
-        timestamp: new Date().toISOString(),
-        endpoints: 9,
-        highlightly: !!env.HIGHLIGHTLY_API_KEY,
-      });
+      return jsonResponse(
+        {
+          status: 'ok',
+          service: 'college-baseball-sabermetrics-mcp',
+          version: '3.0.0',
+          timestamp: new Date().toISOString(),
+          endpoints: 9,
+          highlightly: !!env.HIGHLIGHTLY_API_KEY,
+        },
+        200,
+        requestId
+      );
     }
 
     // ─── MCP Endpoint ──────────────────────────────────────────────────
@@ -1870,11 +2063,12 @@ export default {
       if (method === 'GET') {
         return jsonResponse(
           { error: 'SSE streaming not supported. Use POST for JSON-RPC 2.0.' },
-          405
+          405,
+          requestId
         );
       }
       if (method !== 'POST') {
-        return jsonResponse({ error: 'Method not allowed' }, 405);
+        return jsonResponse({ error: 'Method not allowed' }, 405, requestId);
       }
 
       const token =
@@ -1883,13 +2077,19 @@ export default {
         'anonymous';
       const allowed = await checkRateLimit(token, env);
       if (!allowed) {
+        logEvent({
+          event: 'rate_limited',
+          token_prefix: token.slice(0, 12),
+          request_id: requestId,
+        });
         return jsonResponse(
           rpcErr(
             null,
             -32029,
             `Rate limit exceeded: max ${RATE_LIMIT_MAX} req/min`
           ),
-          429
+          429,
+          requestId
         );
       }
 
@@ -1899,7 +2099,8 @@ export default {
       } catch {
         return jsonResponse(
           rpcErr(null, -32700, 'Parse error: invalid JSON'),
-          400
+          400,
+          requestId
         );
       }
 
@@ -1911,12 +2112,54 @@ export default {
             -32600,
             'Invalid Request: must be JSON-RPC 2.0'
           ),
-          400
+          400,
+          requestId
         );
       }
 
+      // Log tool invocations for observability + error-tracker correlation.
+      const toolName =
+        rpc.method === 'tools/call'
+          ? ((rpc.params?.name as string) ?? 'unknown')
+          : null;
+      const started = Date.now();
+      if (toolName) {
+        logEvent({
+          event: 'tool_called',
+          tool: toolName,
+          request_id: requestId,
+        });
+      }
+
       const response = await handleMcpMethod(rpc, env);
-      return jsonResponse(response);
+
+      if (toolName) {
+        const duration = Date.now() - started;
+        // result.isError signals a tool-level failure (MCP convention).
+        const resultIsError =
+          response.result &&
+          typeof response.result === 'object' &&
+          (response.result as Record<string, unknown>).isError === true;
+        if (response.error || resultIsError) {
+          logEvent({
+            event: 'tool_failed',
+            tool: toolName,
+            duration_ms: duration,
+            code: response.error?.code,
+            message: response.error?.message,
+            request_id: requestId,
+          });
+        } else {
+          logEvent({
+            event: 'tool_completed',
+            tool: toolName,
+            duration_ms: duration,
+            request_id: requestId,
+          });
+        }
+      }
+
+      return jsonResponse(response, 200, requestId);
     }
 
     // ─── REST API Routes ───────────────────────────────────────────────

@@ -87,42 +87,42 @@ const PAGE_TABS: { key: PageTab; label: string }[] = [
 
 const MCP_TOOLS = [
   {
-    name: 'get_college_baseball_scoreboard',
+    name: 'bsi_get_scoreboard',
     description: "Today's college baseball scores and game results — live and final.",
     params: ['date (YYYY-MM-DD, optional)', 'conference (optional)'],
   },
   {
-    name: 'get_college_baseball_standings',
+    name: 'bsi_get_standings',
     description: 'Current conference standings — wins, losses, conference record, run differential.',
     params: ['conference (required)'],
   },
   {
-    name: 'get_college_baseball_rankings',
+    name: 'bsi_get_rankings',
     description: 'D1Baseball national Top 25 — rank, team, conference, record, movement.',
     params: ['week (optional)'],
   },
   {
-    name: 'get_team_sabermetrics',
+    name: 'bsi_get_team_sabermetrics',
     description: 'Advanced metrics for a team — wOBA, wRC+, FIP, ERA-, BABIP, ISO.',
     params: ['team (name or slug, required)'],
   },
   {
-    name: 'get_sabermetrics_leaderboard',
+    name: 'bsi_get_leaderboard',
     description: 'Top hitters or pitchers by advanced metric — ranked leaderboard.',
     params: ['metric (woba|wrc_plus|fip|era_minus|...)', 'type (batting|pitching)', 'limit', 'conference'],
   },
   {
-    name: 'get_conference_power_index',
+    name: 'bsi_get_conference_power_index',
     description: 'BSI Conference Power Index — composite SOS-adjusted conference rankings.',
     params: [],
   },
   {
-    name: 'get_player_stats',
+    name: 'bsi_get_player_stats',
     description: 'Batting and pitching stats for a specific player — traditional + advanced.',
     params: ['player (name, required)', 'team (optional)'],
   },
   {
-    name: 'get_team_schedule',
+    name: 'bsi_get_team_schedule',
     description: 'Full schedule for a team — past results and upcoming games.',
     params: ['team (name or slug, required)'],
   },
@@ -914,7 +914,7 @@ function ApiExplorerTab() {
   const scoreboardCurl = `curl -X POST https://sabermetrics.blazesportsintel.com/mcp \\
   -H "Content-Type: application/json" \\
   -H "Authorization: Bearer <YOUR_KEY>" \\
-  -d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"get_college_baseball_scoreboard","arguments":{}}}'`;
+  -d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"bsi_get_scoreboard","arguments":{}}}'`;
 
   return (
     <div className="space-y-6">
