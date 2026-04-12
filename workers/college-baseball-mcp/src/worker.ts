@@ -2267,7 +2267,7 @@ async function handleMcpMethod(
         capabilities: { tools: { listChanged: false } },
         serverInfo: {
           name: 'college-baseball-sabermetrics',
-          version: '3.0.0',
+          version: '3.1.0',
         },
         instructions:
           'BSI College Baseball MCP — provides live scores, standings, national rankings, match detail with venue and predictions, and advanced sabermetric analytics (wOBA, wRC+, FIP, ERA-) for D1 college baseball. Data sourced from Highlightly (330 teams), ESPN, and BSI Savant. Updated every 30–60 seconds during live games.',
@@ -2330,7 +2330,7 @@ function buildOpenApiSpec(): Record<string, unknown> {
     openapi: '3.1.0',
     info: {
       title: 'Blaze Sports Intel — College Baseball Sabermetrics',
-      version: '3.0.0',
+      version: '3.1.0',
       description:
         'Live scores, standings, rankings, schedules, and advanced sabermetric analytics (wOBA, wRC+, FIP, ERA-, BABIP, ISO) for all 330 NCAA Division I college baseball teams. Data sourced from Highlightly, ESPN, and BSI Savant; computed by a 6-hour cron. Responses include a `meta` block with source attribution and fetch timestamp. Every response carries an `X-Request-Id` header for tracing.',
       contact: {
@@ -2736,7 +2736,7 @@ function renderLandingHtml(): string {
 </head>
 <body>
   <main>
-    <div class="eyebrow">Blaze Sports Intel · MCP Server v3.0.0</div>
+    <div class="eyebrow">Blaze Sports Intel · MCP Server v3.1.0</div>
     <h1>College Baseball Intelligence, Wired For AI.</h1>
     <p class="lede">
       Nine read-only tools covering all 330 NCAA Division I college baseball programs —
@@ -2838,7 +2838,7 @@ function buildServerCard(): Record<string, unknown> {
     displayName: 'Blaze Sports Intel — College Baseball',
     description:
       'Live scores, standings, rankings, schedules, and advanced sabermetric analytics (wOBA, wRC+, FIP, ERA-, BABIP, ISO) for all 330 NCAA Division I college baseball teams.',
-    version: '3.0.0',
+    version: '3.1.0',
     protocolVersion: '2024-11-05',
     transport: 'streamable-http',
     endpoint: 'https://sabermetrics.blazesportsintel.com/mcp',
@@ -2924,7 +2924,7 @@ export default {
         {
           status: 'ok',
           service: 'college-baseball-sabermetrics-mcp',
-          version: '3.0.0',
+          version: '3.1.0',
           timestamp: new Date().toISOString(),
           endpoints: 9,
           highlightly: !!env.HIGHLIGHTLY_API_KEY,
