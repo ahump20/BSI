@@ -3,7 +3,7 @@
  */
 
 import type { Env } from './shared';
-import { json, cachedJson, kvGet, kvPut, dataHeaders, cachedPayloadHeaders, withMeta, getCollegeClient, getHighlightlyClient, archiveRawResponse, HTTP_CACHE, CACHE_TTL, teamMetadata, metaByEspnId, getLogoUrl, lookupConference, buildLeaderCategories } from './shared';
+import { json, cachedJson, kvGet, kvPut, dataHeaders, cachedPayloadHeaders, withMeta, getCollegeClient, getHighlightlyClient, archiveRawResponse, HTTP_CACHE, CACHE_TTL, teamMetadata, teamNameToSlug, metaByEspnId, getLogoUrl, lookupConference, buildLeaderCategories } from './shared';
 
 /**
  * Normalize a conference slug (from URL params like "america-east") to the
@@ -385,6 +385,16 @@ export function flattenESPNPolls(polls: unknown[]): unknown[] {
     const teamName = team?.location
       ? `${team.location} ${team.name}`
       : (team?.nickname as string) || (team?.name as string) || 'Unknown';
+    // Resolve to the canonical static-route slug (e.g. "ucla", "georgia-tech")
+    // by looking up the display name in our metadata. Fall back to ESPN id
+    // lookup, then to a kebab of the display name as last resort. The kebab
+    // fallback is deliberately not used as primary: it produces "ucla-bruins"
+    // which doesn't match the team-route's static params and 404s.
+    const espnId = team?.id ? String(team.id) : null;
+    const espnIdSlug = espnId ? metaByEspnId[espnId]?.slug : undefined;
+    const nameSlug = teamNameToSlug[teamName.toLowerCase()];
+    const fallbackSlug = teamName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const slug = nameSlug || espnIdSlug || fallbackSlug;
     return {
       rank: entry.current,
       prev_rank: entry.previous,
@@ -392,8 +402,8 @@ export function flattenESPNPolls(polls: unknown[]): unknown[] {
       record: entry.recordSummary || '',
       points: entry.points,
       firstPlaceVotes: entry.firstPlaceVotes,
-      espnId: team?.id || null,
-      slug: teamName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+      espnId,
+      slug,
     };
   });
 }

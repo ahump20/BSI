@@ -16,7 +16,7 @@ import type {
   HighlightlyPlayerStats,
   HighlightlyBoxScore,
 } from '../../../lib/api-clients/highlightly-api';
-import { teamMetadata, getLogoUrl } from '../../../lib/data/team-metadata';
+import { teamMetadata, teamNameToSlug, getLogoUrl } from '../../../lib/data/team-metadata';
 import { getLeaders, getScoreboard, getGameSummary } from '../../../lib/api-clients/espn-api';
 import {
   parseEspnBattingLine,
@@ -51,7 +51,7 @@ export type { Env };
 export type { HighlightlyMatch, HighlightlyTeamDetail, HighlightlyPlayer, HighlightlyPlayerStats, HighlightlyBoxScore };
 export { json, errorJson, cachedJson, kvGet, kvPut, dataHeaders, cachedPayloadHeaders, buildMeta, withMeta, getCollegeClient, getHighlightlyClient, archiveRawResponse, logError, safeFetch };
 export { HTTP_CACHE, CACHE_TTL };
-export { teamMetadata, getLogoUrl };
+export { teamMetadata, teamNameToSlug, getLogoUrl };
 export { getLeaders, getScoreboard, getGameSummary };
 export {
   parseEspnBattingLine,
