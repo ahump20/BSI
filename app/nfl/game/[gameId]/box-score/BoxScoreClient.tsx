@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { useGameData } from '../layout';
-import { BoxScoreEmptyState } from '@/components/box-score';
+import { BoxScoreEmptyState, BoxScoreShell } from '@/components/box-score';
 import { EspnTeamStatsTable } from '@/components/sports/EspnTeamStatsTable';
 import { EspnPlayerStatsTable } from '@/components/sports/EspnPlayerStatsTable';
 import type { EspnBoxscore } from '@/components/sports/espn-boxscore-types';
@@ -37,23 +37,34 @@ export default function BoxScoreClient() {
   }
 
   if (!game || !boxscore || (!teamStats && !playerStats)) {
-    return <BoxScoreEmptyState message="Box score data not available yet" />;
+    return (
+      <BoxScoreEmptyState
+        subtitle="Awaiting Kickoff"
+        message="Box score data not available yet"
+        hint="Every snap, every completion, every yard — the full line posts here once the ball is in play."
+      />
+    );
   }
 
   const homeTeam = game.competitors?.find((c) => c.homeAway === 'home');
   const awayTeam = game.competitors?.find((c) => c.homeAway === 'away');
+  const subtitle = `${awayTeam?.team?.abbreviation || 'Away'} at ${homeTeam?.team?.abbreviation || 'Home'}`;
 
   return (
-    <div className="space-y-6">
-      {teamStats && (
-        <EspnTeamStatsTable
-          away={teamStats.away}
-          home={teamStats.home}
-          awayLabel={awayTeam?.team?.abbreviation || 'Away'}
-          homeLabel={homeTeam?.team?.abbreviation || 'Home'}
-        />
+    <BoxScoreShell title="Box Score" subtitle={subtitle}>
+      {() => (
+        <div className="space-y-6">
+          {teamStats && (
+            <EspnTeamStatsTable
+              away={teamStats.away}
+              home={teamStats.home}
+              awayLabel={awayTeam?.team?.abbreviation || 'Away'}
+              homeLabel={homeTeam?.team?.abbreviation || 'Home'}
+            />
+          )}
+          {playerStats && <EspnPlayerStatsTable playerStats={playerStats} mode="flat" />}
+        </div>
       )}
-      {playerStats && <EspnPlayerStatsTable playerStats={playerStats} mode="flat" />}
-    </div>
+    </BoxScoreShell>
   );
 }
