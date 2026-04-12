@@ -16,6 +16,8 @@ import { FilterPill } from '@/components/ui/FilterPill';
 import { OffSeasonBanner, detectSeasonState } from '@/components/ui/OffSeasonBanner';
 import { formatTimestamp, formatScheduleDate, getDateOffset, formatGameTime } from '@/lib/utils/timezone';
 import type { DataMeta } from '@/lib/types/data-meta';
+import { BoxScoreDrawer } from '@/components/sports/BoxScoreDrawer';
+import { useBoxScoreHash } from '@/lib/hooks/useBoxScoreHash';
 
 /* ------------------------------------------------------------------ */
 /*  BSI Scoreboard Types (matches Worker /api/nfl/scores response)    */
@@ -97,6 +99,7 @@ function FootballIcon({ className }: { className?: string }) {
 export default function NFLGamesPage() {
   const [selectedDate, setSelectedDate] = useState<string>(getDateOffset(0));
   const [liveGamesDetected, setLiveGamesDetected] = useState(false);
+  const { openGameId, openGame, closeGame } = useBoxScoreHash();
 
   const { data: scoresData, loading, error, retry } =
     useSportData<ScoreboardResponse>(`/api/nfl/scores?date=${selectedDate}`, {
@@ -301,9 +304,16 @@ export default function NFLGamesPage() {
       </div>
     );
 
+    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+      if (!game.id) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+      e.preventDefault();
+      openGame(String(game.id));
+    };
+
     if (game.id) {
       return (
-        <Link href={`/nfl/game/${game.id}`} className="block">
+        <Link href={`/nfl/game/${game.id}`} className="block" onClick={handleClick}>
           {cardInner}
         </Link>
       );
@@ -525,6 +535,14 @@ export default function NFLGamesPage() {
         </Section>
       </div>
 
+      {/* Same-page box score drawer — opens on click, closes on ESC or backdrop */}
+      <BoxScoreDrawer
+        gameId={openGameId}
+        apiPrefix="/api/nfl"
+        sportSlug="nfl"
+        onClose={closeGame}
+        sourceLabel="ESPN / SportsDataIO"
+      />
     </>
   );
 }

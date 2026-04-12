@@ -15,6 +15,8 @@ import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { OffSeasonBanner, detectSeasonState } from '@/components/ui/OffSeasonBanner';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
+import { BoxScoreDrawer } from '@/components/sports/BoxScoreDrawer';
+import { useBoxScoreHash } from '@/lib/hooks/useBoxScoreHash';
 
 interface ESPNGame {
   id: string;
@@ -46,7 +48,7 @@ interface ESPNGame {
 const formatDate = formatScheduleDate;
 
 
-function GameCard({ game }: { game: ESPNGame }) {
+function GameCard({ game, onOpenDrawer }: { game: ESPNGame; onOpenDrawer: (gameId: string) => void }) {
   const home = game.teams.find((t) => t.homeAway === 'home');
   const away = game.teams.find((t) => t.homeAway === 'away');
   const isCompleted = game.status?.type?.completed;
@@ -57,8 +59,14 @@ function GameCard({ game }: { game: ESPNGame }) {
     ? `Q${game.status.period} ${game.status.displayClock || ''}`
     : game.status?.type?.description || 'Scheduled';
 
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+    e.preventDefault();
+    onOpenDrawer(String(game.id));
+  };
+
   return (
-    <Link href={`/cfb/game/${game.id}`} className="block">
+    <Link href={`/cfb/game/${game.id}`} className="block" onClick={handleClick}>
       <div
         className={`bg-background-tertiary rounded-sm border transition-all hover:border-burnt-orange hover:bg-surface-light ${
           isLive ? 'border-success' : 'border-border-subtle'
@@ -153,6 +161,7 @@ function GameCard({ game }: { game: ESPNGame }) {
 export default function CFBScoresPage() {
   const [selectedDate, setSelectedDate] = useState(getDateOffset(0));
   const [liveGamesDetected, setLiveGamesDetected] = useState(false);
+  const { openGameId, openGame, closeGame } = useBoxScoreHash();
 
   const { data: scoresData, loading, error, retry, lastUpdated: lastUpdatedDate } = useSportData<{
     games?: ESPNGame[];
@@ -328,7 +337,7 @@ export default function CFBScoresPage() {
                       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                         {liveGames.map((game) => (
                           <ScrollReveal key={game.id}>
-                            <GameCard game={game} />
+                            <GameCard game={game} onOpenDrawer={openGame} />
                           </ScrollReveal>
                         ))}
                       </div>
@@ -342,7 +351,7 @@ export default function CFBScoresPage() {
                       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                         {finalGames.map((game) => (
                           <ScrollReveal key={game.id}>
-                            <GameCard game={game} />
+                            <GameCard game={game} onOpenDrawer={openGame} />
                           </ScrollReveal>
                         ))}
                       </div>
@@ -356,7 +365,7 @@ export default function CFBScoresPage() {
                       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                         {scheduledGames.map((game) => (
                           <ScrollReveal key={game.id}>
-                            <GameCard game={game} />
+                            <GameCard game={game} onOpenDrawer={openGame} />
                           </ScrollReveal>
                         ))}
                       </div>
@@ -376,6 +385,15 @@ export default function CFBScoresPage() {
           </Container>
         </Section>
       </div>
+
+      {/* Same-page box score drawer — opens on click, closes on ESC or backdrop */}
+      <BoxScoreDrawer
+        gameId={openGameId}
+        apiPrefix="/api/cfb"
+        sportSlug="cfb"
+        onClose={closeGame}
+        sourceLabel="ESPN / SportsDataIO"
+      />
     </>
   );
 }

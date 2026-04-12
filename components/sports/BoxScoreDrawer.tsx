@@ -113,6 +113,60 @@ interface BoxScoreDrawerProps {
 }
 
 // ---------------------------------------------------------------------------
+// Normalization — every sport's /api/{sport}/game/{id} returns a slightly
+// different shape. Baseball uses `teams: { away, home }`, ESPN-backed sports
+// (CFB, NFL, NBA) use `competitors: [{ homeAway, team, score, ... }]`.
+// Normalize to the baseball-style `teams` shape so the drawer's renderers
+// only have one schema to work with.
+// ---------------------------------------------------------------------------
+
+interface EspnCompetitor {
+  homeAway?: string;
+  score?: number | string;
+  winner?: boolean;
+  team?: {
+    abbreviation?: string;
+    displayName?: string;
+    location?: string;
+    name?: string;
+    nickname?: string;
+    logos?: Array<{ href?: string }>;
+    logo?: string;
+  };
+  records?: Array<{ summary?: string; type?: string }>;
+}
+
+function normalizeGame(raw: GameData & { competitors?: EspnCompetitor[] }): GameData {
+  // Already in baseball shape — pass through unchanged.
+  if (raw.teams?.away || raw.teams?.home) return raw;
+
+  const competitors = raw.competitors;
+  if (!competitors || competitors.length === 0) return raw;
+
+  const buildTeam = (c?: EspnCompetitor) => {
+    if (!c) return undefined;
+    const t = c.team || {};
+    const displayName = t.displayName ?? (t.location && t.name ? `${t.location} ${t.name}` : t.name);
+    const score = typeof c.score === 'string' ? Number(c.score) : c.score;
+    const overallRecord = c.records?.find((r) => r.type === 'total' || r.type === 'overall');
+    return {
+      name: displayName,
+      displayName,
+      abbreviation: t.abbreviation,
+      score: typeof score === 'number' && !Number.isNaN(score) ? score : undefined,
+      isWinner: !!c.winner,
+      record: overallRecord?.summary ?? c.records?.[0]?.summary,
+      logo: t.logos?.[0]?.href ?? t.logo,
+    };
+  };
+
+  const away = buildTeam(competitors.find((c) => c.homeAway === 'away'));
+  const home = buildTeam(competitors.find((c) => c.homeAway === 'home'));
+
+  return { ...raw, teams: { away, home } };
+}
+
+// ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
@@ -144,12 +198,14 @@ export function BoxScoreDrawer({
         const res = await fetch(`${apiPrefix}/game/${encodeURIComponent(gameId)}`, { signal: controller.signal });
         if (!res.ok) throw new Error(`${res.status}`);
         const data = (await res.json()) as { game?: GameData };
-        const resolved = data.game ?? (data as GameData);
+        const raw = data.game ?? (data as GameData);
         // Guard against `200 OK` responses that degrade to `game: null`.
-        if (!resolved || (!resolved.teams && !resolved.status && !resolved.boxscore)) {
+        // Scheduled games legitimately have no boxscore — keep this guard
+        // permissive so the drawer can render a pregame preview for them.
+        if (!raw || (!raw.teams && !raw.status && !(raw as Record<string, unknown>).competitors)) {
           throw new Error('Game data unavailable');
         }
-        setGame(resolved);
+        setGame(normalizeGame(raw));
       } catch (err) {
         if ((err as Error).name !== 'AbortError') {
           setError('Could not load game data');
@@ -270,17 +326,54 @@ function DrawerContent({
   gameId: string | null;
   sourceLabel: string;
 }) {
+  // A pregame state shows when the game hasn't started OR when the box score
+  // hasn't been populated yet. In both cases we don't want a wall of
+  // "no data" — we want a clean preview of the matchup, status, and a deep
+  // link for visitors who want the full pregame page.
+  const hasBatting =
+    (game.boxscore?.away?.batting?.length ?? 0) > 0 ||
+    (game.boxscore?.home?.batting?.length ?? 0) > 0;
+  const hasLineScore =
+    (game.linescore?.innings?.length ?? 0) > 0 ||
+    Number(game.linescore?.totals?.away?.runs ?? 0) > 0 ||
+    Number(game.linescore?.totals?.home?.runs ?? 0) > 0;
+  const isPregame = !game.status?.isLive && !game.status?.isFinal && !hasBatting && !hasLineScore;
+
   return (
     <div className="space-y-6">
       <MatchupHeader game={game} />
-      {game.linescore && <LineScoreBlock linescore={game.linescore} game={game} />}
-      {game.boxscore?.away?.batting && game.boxscore.away.batting.length > 0 && (
+      {isPregame && <DrawerPregame game={game} />}
+      {!isPregame && game.linescore && <LineScoreBlock linescore={game.linescore} game={game} />}
+      {!isPregame && game.boxscore?.away?.batting && game.boxscore.away.batting.length > 0 && (
         <TeamBoxBlock team="away" game={game} />
       )}
-      {game.boxscore?.home?.batting && game.boxscore.home.batting.length > 0 && (
+      {!isPregame && game.boxscore?.home?.batting && game.boxscore.home.batting.length > 0 && (
         <TeamBoxBlock team="home" game={game} />
       )}
       <DrawerFooter sportSlug={sportSlug} gameId={gameId} sourceLabel={sourceLabel} />
+    </div>
+  );
+}
+
+function DrawerPregame({ game }: { game: GameData }) {
+  const status = game.status?.detailedState || 'Scheduled';
+  const venue = game.venue?.name && game.venue.name !== 'TBD' ? game.venue.name : null;
+  const venueLine = venue
+    ? game.venue?.city && game.venue?.state
+      ? `${venue} · ${game.venue.city}, ${game.venue.state}`
+      : venue
+    : null;
+
+  return (
+    <div className="border border-border-subtle rounded-sm bg-background-tertiary p-6 text-center">
+      <p className="text-[10px] font-display uppercase tracking-widest text-burnt-orange mb-3">
+        Pregame
+      </p>
+      <p className="text-text-primary font-display text-base mb-1">{status}</p>
+      {venueLine && <p className="text-text-tertiary text-sm">{venueLine}</p>}
+      <p className="text-text-tertiary text-xs mt-4 italic">
+        Box score posts here once the game starts.
+      </p>
     </div>
   );
 }

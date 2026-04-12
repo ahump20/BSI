@@ -16,6 +16,8 @@ import { SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
 import type { DataMeta } from '@/lib/types/data-meta';
+import { BoxScoreDrawer } from '@/components/sports/BoxScoreDrawer';
+import { useBoxScoreHash } from '@/lib/hooks/useBoxScoreHash';
 
 /* ── ESPN competitor shape (what the API actually returns) ── */
 interface ESPNCompetitor {
@@ -147,17 +149,23 @@ function normalizeGame(raw: RawGame): Game {
 
 const formatDate = formatScheduleDate;
 
-function GameCard({ game }: { game: Game }) {
+function GameCard({ game, onOpenDrawer }: { game: Game; onOpenDrawer: (gameId: string) => void }) {
   const isLive = game.status?.isLive;
   const isFinal = game.status?.isFinal;
   const isScheduled = !isLive && !isFinal;
-  const gameId = game.gamePk || game.id;
+  const gameId = String(game.gamePk || game.id);
 
   const away = game.teams?.away;
   const home = game.teams?.home;
 
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+    e.preventDefault();
+    onOpenDrawer(gameId);
+  };
+
   return (
-    <Link href={`/mlb/game/${gameId}`} className="block">
+    <Link href={`/mlb/game/${gameId}`} className="block" onClick={handleClick}>
       <div
         className={`bg-background-tertiary rounded-sm border transition-all hover:border-burnt-orange hover:bg-surface-light ${
           isLive ? 'border-success' : 'border-border-subtle'
@@ -284,6 +292,7 @@ function GameCard({ game }: { game: Game }) {
 export default function MLBScoresPage() {
   const [selectedDate, setSelectedDate] = useState<string>(getDateOffset(0));
   const [liveGamesDetected, setLiveGamesDetected] = useState(false);
+  const { openGameId, openGame, closeGame } = useBoxScoreHash();
 
   const { data: rawData, loading, error, retry } = useSportData<{ games?: RawGame[]; live?: boolean; meta?: DataMeta }>(
     `/api/mlb/scores?date=${selectedDate}`,
@@ -428,7 +437,7 @@ export default function MLBScoresPage() {
                         .filter((g) => g.status.isLive)
                         .map((game) => (
                           <ScrollReveal key={game.id}>
-                            <GameCard game={game} />
+                            <GameCard game={game} onOpenDrawer={openGame} />
                           </ScrollReveal>
                         ))}
                     </div>
@@ -444,7 +453,7 @@ export default function MLBScoresPage() {
                         .filter((g) => g.status.isFinal)
                         .map((game) => (
                           <ScrollReveal key={game.id}>
-                            <GameCard game={game} />
+                            <GameCard game={game} onOpenDrawer={openGame} />
                           </ScrollReveal>
                         ))}
                     </div>
@@ -460,7 +469,7 @@ export default function MLBScoresPage() {
                         .filter((g) => !g.status.isLive && !g.status.isFinal)
                         .map((game) => (
                           <ScrollReveal key={game.id}>
-                            <GameCard game={game} />
+                            <GameCard game={game} onOpenDrawer={openGame} />
                           </ScrollReveal>
                         ))}
                     </div>
@@ -486,6 +495,14 @@ export default function MLBScoresPage() {
         </Section>
       </div>
 
+      {/* Same-page box score drawer — opens on click, closes on ESC or backdrop */}
+      <BoxScoreDrawer
+        gameId={openGameId}
+        apiPrefix="/api/mlb"
+        sportSlug="mlb"
+        onClose={closeGame}
+        sourceLabel="MLB Stats API"
+      />
     </>
   );
 }

@@ -15,6 +15,8 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { FilterPill } from '@/components/ui/FilterPill';
 import { formatTimestamp, formatScheduleDate, getDateOffset, formatGameTime } from '@/lib/utils/timezone';
 import type { DataMeta } from '@/lib/types/data-meta';
+import { BoxScoreDrawer } from '@/components/sports/BoxScoreDrawer';
+import { useBoxScoreHash } from '@/lib/hooks/useBoxScoreHash';
 
 interface NBATeam {
   id: string;
@@ -71,6 +73,7 @@ export default function NBAGamesPage() {
   const [selectedDate, setSelectedDate] = useState<string>(getDateOffset(0));
   const [selectedConference, setSelectedConference] = useState('All');
   const [liveGamesDetected, setLiveGamesDetected] = useState(false);
+  const { openGameId, openGame, closeGame } = useBoxScoreHash();
 
   const { data: scoresData, loading, error, retry } =
     useSportData<ScoreboardResponse>(`/api/nba/scoreboard?date=${selectedDate}`, {
@@ -122,8 +125,15 @@ export default function NBAGamesPage() {
       return team.team.logos?.[0]?.href || team.team.logo || null;
     };
 
+    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+      if (!game.id) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+      e.preventDefault();
+      openGame(String(game.id));
+    };
+
     return (
-      <Link href={`/nba/game/${game.id}`} className="block">
+      <Link href={`/nba/game/${game.id}`} className="block" onClick={handleClick}>
         <div
           className={`bg-background-tertiary rounded-sm border transition-all hover:border-burnt-orange hover:bg-surface-light ${
             isLive ? 'border-success' : 'border-border-subtle'
@@ -458,6 +468,14 @@ export default function NBAGamesPage() {
         </Section>
       </div>
 
+      {/* Same-page box score drawer — opens on click, closes on ESC or backdrop */}
+      <BoxScoreDrawer
+        gameId={openGameId}
+        apiPrefix="/api/nba"
+        sportSlug="nba"
+        onClose={closeGame}
+        sourceLabel="ESPN NBA API"
+      />
     </>
   );
 }
