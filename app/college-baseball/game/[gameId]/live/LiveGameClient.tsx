@@ -20,7 +20,7 @@ function CollapsibleBoxScore({
   pitching,
 }: {
   label: string;
-  team: { abbreviation: string; name: string; ranking?: number; record?: string };
+  team: { abbreviation: string; name: string; logo?: string; ranking?: number; record?: string };
   batting: Array<{
     player: { id: string; name: string; position: string; year?: string };
     ab: number; r: number; h: number; rbi: number; bb: number; so: number; avg: string;
