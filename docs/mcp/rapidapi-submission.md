@@ -22,7 +22,7 @@ Tracks everything needed to complete the Blaze Sports Intel hub listing at
 
 Coverage for all **330 NCAA Division I** college baseball programs — live scores, standings, rankings, schedules, and advanced sabermetric analytics computed on a 6-hour cron.
 
-## What's included (9 endpoints)
+## What's included (11 OpenAPI paths: 9 core data endpoints + `/health` + `/mcp`)
 
 - **Live scoreboard** — Today's games with venue, inning, score, hits, errors. Filter by conference or date.
 - **Conference standings** — Wins, losses, run differential, streak, full record. Covers SEC, ACC, Big 12, Big Ten, and every mid-major.
@@ -75,6 +75,8 @@ Endpoints to surface on the listing page (all under the base URL `https://saberm
 - `GET /v1/leaderboard`
 - `GET /v1/power-index`
 - `GET /v1/matches/{id}`
+
+RapidAPI should import **11 paths total** from the live OpenAPI spec.
 
 ## Pre-submission verification
 

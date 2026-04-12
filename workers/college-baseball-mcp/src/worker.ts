@@ -325,6 +325,7 @@ interface Meta {
   source: string;
   fetched_at: string;
   timezone: string;
+  degraded?: boolean;
 }
 
 interface JsonRpcRequest {
@@ -343,11 +344,12 @@ interface JsonRpcResponse {
 
 // ─── Utility Functions ───────────────────────────────────────────────────────
 
-function makeMeta(source: string): Meta {
+function makeMeta(source: string, extra: Partial<Meta> = {}): Meta {
   return {
     source,
     fetched_at: new Date().toISOString(),
     timezone: 'America/Chicago',
+    ...extra,
   };
 }
 
@@ -515,6 +517,352 @@ async function bsiFetch(path: string, env: Env): Promise<unknown> {
   }
 
   return await res.json();
+}
+
+function chicagoDate(offsetDays = 0): string {
+  const date = new Date(Date.now() + offsetDays * 86400000);
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' }).format(date);
+}
+
+function espnDateParam(value: unknown): string | null {
+  if (typeof value !== 'string' || !value) return null;
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return null;
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' })
+    .format(parsed)
+    .replace(/-/g, '');
+}
+
+function normalizeTeamToken(value: unknown): string {
+  if (typeof value !== 'string') return '';
+  return value
+    .toLowerCase()
+    .replace(/&/g, ' ')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function buildTeamAliases(team: Record<string, unknown> | undefined): Set<string> {
+  const aliases = new Set<string>();
+  if (!team) return aliases;
+
+  for (const raw of [
+    team.displayName,
+    team.name,
+    team.shortName,
+    team.abbreviation,
+    team.location,
+  ]) {
+    const normalized = normalizeTeamToken(raw);
+    if (!normalized) continue;
+    aliases.add(normalized);
+
+    const parts = normalized.split(' ');
+    if (parts.length > 1) {
+      aliases.add(parts.slice(0, -1).join(' '));
+    }
+  }
+
+  return aliases;
+}
+
+function teamAliasesMatch(a: Set<string>, b: Set<string>): boolean {
+  for (const alias of a) {
+    if (b.has(alias)) return true;
+  }
+  return false;
+}
+
+function parseCurrentScore(current: unknown): { awayScore: number | null; homeScore: number | null } {
+  if (typeof current !== 'string') {
+    return { awayScore: null, homeScore: null };
+  }
+
+  const parts = current.split(' - ');
+  if (parts.length !== 2) {
+    return { awayScore: null, homeScore: null };
+  }
+
+  const awayScore = Number.parseInt(parts[0].trim(), 10);
+  const homeScore = Number.parseInt(parts[1].trim(), 10);
+
+  return {
+    awayScore: Number.isNaN(awayScore) ? null : awayScore,
+    homeScore: Number.isNaN(homeScore) ? null : homeScore,
+  };
+}
+
+function buildHighlightlyMatchDetail(
+  match: Record<string, unknown>,
+  source: string,
+  degraded = false
+): Record<string, unknown> {
+  const homeTeam = (match.homeTeam as Record<string, unknown>) ?? {};
+  const awayTeam = (match.awayTeam as Record<string, unknown>) ?? {};
+  const state = (match.state as Record<string, unknown>) ?? {};
+  const score = (state.score as Record<string, unknown>) ?? {};
+  const venue = match.venue as Record<string, unknown> | undefined;
+  const forecast = match.forecast as Record<string, unknown> | undefined;
+  const predictions = (match.predictions as Record<string, unknown>) ?? {};
+  const prematch = (predictions.prematch as Array<Record<string, unknown>>) ?? [];
+  const live = (predictions.live as Array<Record<string, unknown>>) ?? [];
+  const plays = (match.plays as Array<Record<string, unknown>>) ?? [];
+  const stats = (match.stats as Array<Record<string, unknown>>) ?? [];
+
+  return {
+    id: match.id,
+    date: match.date,
+    season: match.season,
+    round: match.round,
+    status: (state.description as string) ?? 'Unknown',
+    statusDetail: (state.report as string) ?? '',
+    currentScore: (score.current as string) ?? '',
+    home: {
+      id: homeTeam.id,
+      name: (homeTeam.displayName as string) ?? '',
+      abbreviation: (homeTeam.abbreviation as string) ?? '',
+      logo: (homeTeam.logo as string) ?? '',
+      score: score.home ?? null,
+    },
+    away: {
+      id: awayTeam.id,
+      name: (awayTeam.displayName as string) ?? '',
+      abbreviation: (awayTeam.abbreviation as string) ?? '',
+      logo: (awayTeam.logo as string) ?? '',
+      score: score.away ?? null,
+    },
+    venue: venue
+      ? {
+          name: (venue.name as string) ?? '',
+          city: (venue.city as string) ?? '',
+          state: (venue.state as string) ?? '',
+        }
+      : null,
+    weather: degraded
+      ? null
+      : forecast
+        ? {
+            status: forecast.status,
+            temperature: forecast.temperature,
+          }
+        : null,
+    predictions: degraded
+      ? { prematch: [], live: [] }
+      : {
+          prematch: prematch.map((p) => ({
+            description: p.description,
+            probabilities: p.probabilities,
+            generatedAt: p.generatedAt,
+          })),
+          live: live.map((p) => ({
+            description: p.description,
+            probabilities: p.probabilities,
+            generatedAt: p.generatedAt,
+          })),
+        },
+    plays: degraded ? [] : plays.slice(0, 50),
+    teamStats: degraded ? [] : stats,
+    meta: makeMeta(source, degraded ? { degraded: true } : {}),
+  };
+}
+
+async function findHighlightlyScoreboardMatch(
+  matchId: string,
+  env: Env
+): Promise<Record<string, unknown> | null> {
+  for (const date of [chicagoDate(0), chicagoDate(-1), chicagoDate(1), chicagoDate(-2), chicagoDate(2)]) {
+    if (env.HIGHLIGHTLY_API_KEY) {
+      try {
+        const data = (await hlFetch(`/matches?league=NCAA&date=${date}`, env)) as
+          | { data: Array<Record<string, unknown>> }
+          | Array<Record<string, unknown>>;
+
+        const matches = Array.isArray(data) ? data : data.data ?? [];
+        const match = matches.find((candidate) => {
+          const candidateId = candidate.id ?? candidate.matchId;
+          return String(candidateId ?? '') === matchId;
+        });
+
+        if (match) return match;
+      } catch {
+        // Fall through to the BSI proxy scores cache.
+      }
+    }
+
+    try {
+      const proxy = (await bsiFetch(`/api/college-baseball/scores?date=${date}`, env)) as Record<string, unknown>;
+      const matches =
+        (proxy.data as Array<Record<string, unknown>>) ??
+        (proxy.games as Array<Record<string, unknown>>) ??
+        [];
+
+      const match = matches.find((candidate) => {
+        const candidateId = candidate.id ?? candidate.matchId;
+        return String(candidateId ?? '') === matchId;
+      });
+
+      if (match) return match;
+    } catch {
+      // Keep searching adjacent dates.
+    }
+  }
+
+  return null;
+}
+
+function resolveEspnEventId(
+  hlMatch: Record<string, unknown>,
+  events: Array<Record<string, unknown>>
+): string | null {
+  const homeAliases = buildTeamAliases((hlMatch.homeTeam as Record<string, unknown>) ?? undefined);
+  const awayAliases = buildTeamAliases((hlMatch.awayTeam as Record<string, unknown>) ?? undefined);
+
+  for (const event of events) {
+    const competitions = (event.competitions as Array<Record<string, unknown>>) ?? [];
+    const competition = competitions[0];
+    if (!competition) continue;
+
+    const competitors = (competition.competitors as Array<Record<string, unknown>>) ?? [];
+    const espnHome = competitors.find((c) => c.homeAway === 'home');
+    const espnAway = competitors.find((c) => c.homeAway === 'away');
+    if (!espnHome || !espnAway) continue;
+
+    const espnHomeAliases = buildTeamAliases((espnHome.team as Record<string, unknown>) ?? undefined);
+    const espnAwayAliases = buildTeamAliases((espnAway.team as Record<string, unknown>) ?? undefined);
+
+    if (
+      teamAliasesMatch(homeAliases, espnHomeAliases) &&
+      teamAliasesMatch(awayAliases, espnAwayAliases)
+    ) {
+      return String(event.id ?? competition.id ?? '');
+    }
+  }
+
+  return null;
+}
+
+async function resolveEspnMatchSummary(
+  hlMatch: Record<string, unknown>
+): Promise<Record<string, unknown> | null> {
+  const dateParam = espnDateParam(hlMatch.date) ?? chicagoDate(0).replace(/-/g, '');
+  const scoreboard = (await espnFetch(`/scoreboard?dates=${dateParam}`)) as Record<string, unknown>;
+  const events = (scoreboard.events as Array<Record<string, unknown>>) ?? [];
+  const eventId = resolveEspnEventId(hlMatch, events);
+  if (!eventId) return null;
+
+  return (await espnFetch(`/summary?event=${eventId}`)) as Record<string, unknown>;
+}
+
+function buildEspnFallbackDetail(
+  summary: Record<string, unknown>,
+  hlMatch: Record<string, unknown>
+): Record<string, unknown> {
+  const header = (summary.header as Record<string, unknown>) ?? {};
+  const competitions = (header.competitions as Array<Record<string, unknown>>) ?? [];
+  const competition = competitions[0] ?? {};
+  const competitors = (competition.competitors as Array<Record<string, unknown>>) ?? [];
+  const homeComp = competitors.find((c) => c.homeAway === 'home') ?? {};
+  const awayComp = competitors.find((c) => c.homeAway === 'away') ?? {};
+  const homeTeam = (homeComp.team as Record<string, unknown>) ?? {};
+  const awayTeam = (awayComp.team as Record<string, unknown>) ?? {};
+  const status = (competition.status as Record<string, unknown>) ?? {};
+  const statusType = (status.type as Record<string, unknown>) ?? {};
+  const fallbackVenue = (hlMatch.venue as Record<string, unknown>) ?? {};
+  const gameInfo = (summary.gameInfo as Record<string, unknown>) ?? {};
+  const espnVenue = (competition.venue as Record<string, unknown>) ?? (gameInfo.venue as Record<string, unknown>) ?? {};
+
+  const homeScore = Number.parseInt(String(homeComp.score ?? ''), 10);
+  const awayScore = Number.parseInt(String(awayComp.score ?? ''), 10);
+  const fallbackScore = parseCurrentScore(((
+    ((hlMatch.state as Record<string, unknown>) ?? {}).score as Record<string, unknown>
+  )?.current));
+
+  const resolvedHomeScore = Number.isNaN(homeScore) ? fallbackScore.homeScore : homeScore;
+  const resolvedAwayScore = Number.isNaN(awayScore) ? fallbackScore.awayScore : awayScore;
+
+  return {
+    id: header.id ?? competition.id ?? hlMatch.id,
+    date: competition.date ?? hlMatch.date ?? '',
+    season:
+      hlMatch.season ??
+      (typeof competition.date === 'string' ? competition.date.slice(0, 4) : null),
+    round: hlMatch.round ?? '',
+    status:
+      (statusType.description as string) ??
+      (statusType.detail as string) ??
+      (statusType.shortDetail as string) ??
+      (((hlMatch.state as Record<string, unknown>) ?? {}).description as string) ??
+      'Unknown',
+    statusDetail:
+      (statusType.detail as string) ??
+      (statusType.shortDetail as string) ??
+      (((hlMatch.state as Record<string, unknown>) ?? {}).report as string) ??
+      '',
+    currentScore:
+      resolvedAwayScore !== null && resolvedHomeScore !== null
+        ? `${resolvedAwayScore} - ${resolvedHomeScore}`
+        : ((((hlMatch.state as Record<string, unknown>) ?? {}).score as Record<string, unknown>)?.current as string) ?? '',
+    home: {
+      id: homeTeam.id ?? ((hlMatch.homeTeam as Record<string, unknown>) ?? {}).id,
+      name:
+        (homeTeam.displayName as string) ??
+        (homeTeam.name as string) ??
+        (((hlMatch.homeTeam as Record<string, unknown>) ?? {}).displayName as string) ??
+        '',
+      abbreviation:
+        (homeTeam.abbreviation as string) ??
+        (((hlMatch.homeTeam as Record<string, unknown>) ?? {}).abbreviation as string) ??
+        '',
+      logo:
+        (((homeTeam.logos as Array<Record<string, unknown>>) ?? [])[0]?.href as string) ??
+        (homeTeam.logo as string) ??
+        (((hlMatch.homeTeam as Record<string, unknown>) ?? {}).logo as string) ??
+        '',
+      score: resolvedHomeScore,
+    },
+    away: {
+      id: awayTeam.id ?? ((hlMatch.awayTeam as Record<string, unknown>) ?? {}).id,
+      name:
+        (awayTeam.displayName as string) ??
+        (awayTeam.name as string) ??
+        (((hlMatch.awayTeam as Record<string, unknown>) ?? {}).displayName as string) ??
+        '',
+      abbreviation:
+        (awayTeam.abbreviation as string) ??
+        (((hlMatch.awayTeam as Record<string, unknown>) ?? {}).abbreviation as string) ??
+        '',
+      logo:
+        (((awayTeam.logos as Array<Record<string, unknown>>) ?? [])[0]?.href as string) ??
+        (awayTeam.logo as string) ??
+        (((hlMatch.awayTeam as Record<string, unknown>) ?? {}).logo as string) ??
+        '',
+      score: resolvedAwayScore,
+    },
+    venue: Object.keys(espnVenue).length > 0 || Object.keys(fallbackVenue).length > 0
+      ? {
+          name:
+            (espnVenue.fullName as string) ??
+            (espnVenue.displayName as string) ??
+            (espnVenue.name as string) ??
+            (fallbackVenue.name as string) ??
+            '',
+          city:
+            (((espnVenue.address as Record<string, unknown>) ?? {}).city as string) ??
+            (fallbackVenue.city as string) ??
+            '',
+          state:
+            (((espnVenue.address as Record<string, unknown>) ?? {}).state as string) ??
+            (fallbackVenue.state as string) ??
+            '',
+        }
+      : null,
+    weather: null,
+    predictions: { prematch: [], live: [] },
+    plays: [],
+    teamStats: [],
+    meta: makeMeta('espn-fallback', { degraded: true }),
+  };
 }
 
 /**
@@ -1564,89 +1912,36 @@ async function handleMatchDetail(
   // 60s (KV minimum) keeps live play-by-play current. Final games still hit
   // cache because upstream data stops changing, then expires naturally.
   return kvCached(env, `match:${matchId}`, 60, async () => {
-    if (!env.HIGHLIGHTLY_API_KEY) {
-      return {
-        error: 'Match detail requires Highlightly API key.',
-        meta: makeMeta('unavailable'),
-      };
+    if (env.HIGHLIGHTLY_API_KEY) {
+      try {
+        const data = (await hlFetch(`/matches/${matchId}`, env)) as
+          | Array<Record<string, unknown>>
+          | Record<string, unknown>;
+
+        const match = Array.isArray(data) ? data[0] : data;
+        if (match) {
+          return buildHighlightlyMatchDetail(match, 'highlightly');
+        }
+      } catch {
+        // Degrade below through the same scoreboard + ESPN path used in the main worker.
+      }
     }
 
-    const data = (await hlFetch(`/matches/${matchId}`, env)) as
-      | Array<Record<string, unknown>>
-      | Record<string, unknown>;
+    const scoreboardMatch = await findHighlightlyScoreboardMatch(matchId, env);
+    if (scoreboardMatch) {
+      try {
+        const espnSummary = await resolveEspnMatchSummary(scoreboardMatch);
+        if (espnSummary) {
+          return buildEspnFallbackDetail(espnSummary, scoreboardMatch);
+        }
+      } catch {
+        // Fall through to the cached-score-style partial response.
+      }
 
-    // Highlightly returns an array with one element for single match
-    const match = Array.isArray(data) ? data[0] : data;
-    if (!match) {
-      return {
-        error: `Match ${matchId} not found.`,
-        meta: makeMeta('highlightly'),
-      };
+      return buildHighlightlyMatchDetail(scoreboardMatch, 'scores-cache', true);
     }
 
-    const homeTeam = match.homeTeam as Record<string, unknown>;
-    const awayTeam = match.awayTeam as Record<string, unknown>;
-    const state = match.state as Record<string, unknown>;
-    const score = state?.score as Record<string, unknown>;
-    const venue = match.venue as Record<string, unknown>;
-    const forecast = match.forecast as Record<string, unknown>;
-    const predictions = match.predictions as Record<string, unknown>;
-    const prematch = (predictions?.prematch as Array<Record<string, unknown>>) ?? [];
-    const live = (predictions?.live as Array<Record<string, unknown>>) ?? [];
-    const plays = (match.plays as Array<Record<string, unknown>>) ?? [];
-    const stats = (match.stats as Array<Record<string, unknown>>) ?? [];
-
-    return {
-      id: match.id,
-      date: match.date,
-      season: match.season,
-      round: match.round,
-      status: (state?.description as string) ?? 'Unknown',
-      statusDetail: (state?.report as string) ?? '',
-      currentScore: (score?.current as string) ?? '',
-      home: {
-        id: homeTeam?.id,
-        name: (homeTeam?.displayName as string) ?? '',
-        abbreviation: (homeTeam?.abbreviation as string) ?? '',
-        logo: (homeTeam?.logo as string) ?? '',
-        score: score?.home,
-      },
-      away: {
-        id: awayTeam?.id,
-        name: (awayTeam?.displayName as string) ?? '',
-        abbreviation: (awayTeam?.abbreviation as string) ?? '',
-        logo: (awayTeam?.logo as string) ?? '',
-        score: score?.away,
-      },
-      venue: venue
-        ? {
-            name: (venue.name as string) ?? '',
-            city: (venue.city as string) ?? '',
-            state: (venue.state as string) ?? '',
-          }
-        : null,
-      weather: forecast
-        ? {
-            status: forecast.status,
-            temperature: forecast.temperature,
-          }
-        : null,
-      predictions: {
-        prematch: prematch.map((p) => ({
-          description: p.description,
-          probabilities: p.probabilities,
-          generatedAt: p.generatedAt,
-        })),
-        live: live.map((p) => ({
-          description: p.description,
-          probabilities: p.probabilities,
-          generatedAt: p.generatedAt,
-        })),
-      },
-      plays: plays.slice(0, 50), // Cap at 50 plays to keep response reasonable
-      teamStats: stats,
-      meta: makeMeta('highlightly'),
-    };
+    throw new Error(`Match ${matchId} not found after Highlightly and ESPN fallback.`);
   });
 }
 
@@ -2026,9 +2321,8 @@ function buildOpenApiSpec(): Record<string, unknown> {
   const toolSchemas: Record<string, unknown> = {};
   for (const tool of MCP_TOOLS) {
     toolSchemas[tool.name] = {
-      type: 'object',
-      description: tool.description,
       ...tool.inputSchema,
+      description: tool.description,
     };
   }
 

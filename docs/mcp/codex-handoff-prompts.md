@@ -147,7 +147,7 @@ Your job (browser automation — open the RapidAPI studio URL):
 5. In the "Definitions" or "Endpoints" tab, import the OpenAPI spec directly from:
    https://sabermetrics.blazesportsintel.com/openapi.json
 
-   RapidAPI will auto-populate endpoint definitions. Verify all 10 endpoints from the submission doc are present (health, mcp, scoreboard, standings, rankings, players, teamStats, teamSchedule, leaderboard, powerIndex, matchDetail).
+   RapidAPI will auto-populate endpoint definitions. Verify all 11 OpenAPI paths from the submission doc are present (health, mcp, scoreboard, standings, rankings, players, teamStats, teamSchedule, leaderboard, powerIndex, matchDetail).
 
 6. Under pricing, set the free tier with the listed rate limits (30 req/min). Do not enable any paid tiers.
 
@@ -162,7 +162,7 @@ Your job (browser automation — open the RapidAPI studio URL):
 
 10. Report back:
     - The public RapidAPI listing URL (likely https://rapidapi.com/blazesportsintel/api/blaze-sports-intel or similar)
-    - Confirmation that all 10 endpoints imported correctly from the OpenAPI spec
+    - Confirmation that all 11 OpenAPI paths imported correctly from the OpenAPI spec
     - Any RapidAPI review or moderation step required before it goes fully public
 
 Do not modify any code.

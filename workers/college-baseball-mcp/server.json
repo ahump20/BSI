@@ -1,9 +1,9 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
   "name": "com.blazesportsintel/college-baseball",
-  "description": "Live scores, standings, rankings, schedules, and advanced sabermetric analytics (wOBA, wRC+, FIP, ERA-, BABIP, ISO) for all 330 NCAA Division I college baseball teams. Data sourced from Highlightly, ESPN, and BSI Savant (6-hour compute cron). Responses include a meta block with source attribution and fetch timestamp.",
+  "description": "Live NCAA DI college baseball scores, standings, schedules, rankings, and sabermetrics.",
   "status": "active",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "repository": {
     "url": "https://github.com/ahump20/BSI",
     "source": "github",
