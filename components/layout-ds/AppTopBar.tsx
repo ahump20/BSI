@@ -92,7 +92,7 @@ export function AppTopBar() {
         </h1>
       </div>
 
-      {/* Right: search button + live indicator */}
+      {/* Right: search button */}
       <div className="flex items-center gap-3">
         {/* Search trigger — visible, clickable button */}
         <button
@@ -108,15 +108,6 @@ export function AppTopBar() {
             ⌘K
           </kbd>
         </button>
-
-        <div className="w-px h-4 bg-white/[0.06]" />
-
-        <span className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-success pulse-dot" />
-          <span className="font-mono text-[10px] uppercase tracking-wider text-text-muted">
-            Live
-          </span>
-        </span>
       </div>
     </header>
   );
