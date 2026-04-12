@@ -2533,6 +2533,47 @@ function escapeHtml(s: string): string {
     .replace(/'/g, '&#39;');
 }
 
+/**
+ * Smithery / MCP-directory server card.
+ * Served at /.well-known/mcp/server-card.json so automated scrapers can pull
+ * canonical metadata if the auto-scan fails or if they prefer a manifest.
+ */
+function buildServerCard(): Record<string, unknown> {
+  return {
+    name: 'blaze-sports-intel',
+    displayName: 'Blaze Sports Intel — College Baseball',
+    description:
+      'Live scores, standings, rankings, schedules, and advanced sabermetric analytics (wOBA, wRC+, FIP, ERA-, BABIP, ISO) for all 330 NCAA Division I college baseball teams.',
+    version: '3.0.0',
+    protocolVersion: '2024-11-05',
+    transport: 'streamable-http',
+    endpoint: 'https://sabermetrics.blazesportsintel.com/mcp',
+    homepage: 'https://blazesportsintel.com/mcp',
+    documentation: 'https://sabermetrics.blazesportsintel.com/docs',
+    repository: 'https://github.com/ahump20/BSI',
+    license: 'Usage subject to BSI terms — see https://blazesportsintel.com/terms',
+    publisher: {
+      name: 'Blaze Sports Intel',
+      url: 'https://blazesportsintel.com',
+    },
+    tags: [
+      'baseball',
+      'ncaa',
+      'college-sports',
+      'sabermetrics',
+      'sports-analytics',
+      'live-scores',
+    ],
+    tools: MCP_TOOLS.map((t) => ({
+      name: t.name,
+      description: t.description,
+      inputSchema: t.inputSchema,
+      annotations: t.annotations,
+    })),
+    auth: { type: 'none', rateLimit: '30 requests/minute per IP or bearer token' },
+  };
+}
+
 /** Interactive docs page — loads Stoplight Elements against the OpenAPI spec. */
 function renderDocsHtml(): string {
   return `<!doctype html>
@@ -2804,6 +2845,14 @@ export default {
     // ─── OpenAPI 3.1 spec ──────────────────────────────────────────────
     if (pathname === '/openapi.json') {
       return jsonResponse(buildOpenApiSpec(), 200, requestId);
+    }
+
+    // ─── MCP server card (Smithery + MCP Registry auto-discovery) ──────
+    if (
+      pathname === '/.well-known/mcp/server-card.json' ||
+      pathname === '/.well-known/mcp-server-card.json'
+    ) {
+      return jsonResponse(buildServerCard(), 200, requestId);
     }
 
     // ─── Interactive docs (Stoplight Elements) ─────────────────────────
