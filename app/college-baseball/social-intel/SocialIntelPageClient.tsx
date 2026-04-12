@@ -301,13 +301,8 @@ export function SocialIntelPageClient() {
             <div className="flex items-start justify-between gap-4 mb-6">
               <div>
                 <div className="flex items-center gap-2.5 mb-3">
-                  {/* Live pulse */}
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-bsi-primary opacity-60" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-bsi-primary" />
-                  </span>
                   <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-burnt-orange/70">
-                    Live · Updated every 30 min
+                    Updated continuously
                   </span>
                 </div>
                 <h1 className="font-['Oswald'] text-3xl md:text-4xl uppercase tracking-wide text-text-primary leading-none">

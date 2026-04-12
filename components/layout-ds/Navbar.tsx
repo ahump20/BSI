@@ -26,8 +26,8 @@ export interface NavbarProps {
 // ---------------------------------------------------------------------------
 
 const FALLBACK_TICKER = [
-  'College Baseball scores updated live every 30 seconds',
-  'Real-time analytics powered by official data sources',
+  'Every athlete deserves to be seen. BSI covers the ones the networks skip.',
+  'The coverage gap is structural. We built this to close it.',
 ];
 
 interface IntelArticle { headline?: string; description?: string }
@@ -164,9 +164,8 @@ function LeaguesDropdown({ items }: { items: LeagueNavItem[] }) {
                       </span>
                     )}
                     {isActive && (
-                      <span className="relative flex h-2 w-2" title="In season">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-bsi-primary opacity-75" />
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-bsi-primary" />
+                      <span className="text-[9px] uppercase tracking-wider font-mono text-bsi-primary">
+                        In season
                       </span>
                     )}
                   </span>

@@ -247,8 +247,8 @@ export default function NFLPage() {
         <SportHero
           sport="NFL"
           leagueName="National Football League"
-          tagline="Titans. Cowboys. Chiefs. Every game, every stat, no network filter."
-          description="Live scores, conference standings, and analytics for all 32 teams."
+          tagline="The gap between the teams on TV every week and the rest of the league is a choice someone made."
+          description="Thirty-two teams built their fanbases in thirty-two cities. The ones who don't get the prime-time window still have fans who show up. We cover the whole league."
           icon={"\uD83C\uDFC8"}
           dataSource="SportsDataIO"
           primaryCta={{ label: 'View Standings', href: '/nfl/standings' }}

@@ -27,7 +27,7 @@ export const PRICING_TIERS: PricingTier[] = [
     name: 'Free',
     price: 0,
     period: '',
-    description: 'Live scores, standings, and park-adjusted analytics across five sports. No signup required.',
+    description: 'Live scores, standings, and the analytics depth that used to be locked behind paywalls. No signup. Just open the site.',
     audience: 'Casual fans',
     features: [
       'Live college baseball scores',
@@ -48,7 +48,7 @@ export const PRICING_TIERS: PricingTier[] = [
     name: 'Pro',
     price: 12,
     period: 'month',
-    description: 'Park-adjusted sabermetrics, conference strength, player comparison, and transfer portal tracking. The analytics depth D1Baseball charges $140/year for.',
+    description: 'Everything free users see, plus exports, unlimited player comparisons, and transfer portal tracking. The depth serious fans, analysts, and coaches actually need.',
     audience: 'Serious fans, analysts, college coaches',
     features: [
       'Everything in Free',

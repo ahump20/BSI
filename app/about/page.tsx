@@ -300,7 +300,7 @@ export default function AboutPage() {
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(191,87,0,0.15)] to-transparent" />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
-            <div className="text-center mb-12">
+            <div className="text-center mb-8">
               <span className="heritage-stamp mb-4">The Platform</span>
               <h2
                 className="mt-4 font-bold uppercase tracking-wide"
@@ -310,68 +310,19 @@ export default function AboutPage() {
                   color: 'var(--bsi-bone)',
                 }}
               >
-                330 D1 Programs.{' '}
-                <span className="text-bsi-primary">Every Athlete.</span>
+                Built for the Fans{' '}
+                <span className="text-bsi-primary">Nobody Built For.</span>
               </h2>
-              <p
-                className="mt-4 font-serif italic text-base md:text-lg max-w-2xl mx-auto leading-relaxed text-bsi-dust"
-              >
-                The same analytical depth that scouts and front offices use — built
-                for every fan, not just the ones watching prime-time broadcasts.
-                Park-adjusted sabermetrics across every conference, because a kid at
-                a mid-major deserves the same data as anyone at an SEC program.
-              </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-5">
-              {[
-                {
-                  metric: 'wOBA / wRC+ / FIP',
-                  label: 'Advanced Sabermetrics',
-                  desc: 'Park-adjusted, conference-weighted advanced metrics recomputed every 6 hours. Not retrosheet approximations \u2014 live formulas running against real box scores.',
-                },
-                {
-                  metric: '40+ API Routes',
-                  label: 'Live Data Engine',
-                  desc: 'Scores, standings, rankings, team profiles, player analytics, and AI-powered scouting reports. Every response tagged with source and timestamp.',
-                },
-                {
-                  metric: '5 Sports, 1 Builder',
-                  label: 'Original Coverage',
-                  desc: 'College baseball, MLB, NFL, NBA, and college football. Every pipeline, every article, every line of code built end to end by one person.',
-                },
-              ].map((card) => (
-                <div
-                  key={card.metric}
-                  className="heritage-card p-6 transition-all duration-300 hover:-translate-y-1"
-                  style={{ borderTop: '2px solid var(--bsi-primary)' }}
-                >
-                  <div
-                    className="font-bold text-xl mb-1"
-                    style={{
-                      fontFamily: 'var(--font-mono, monospace)',
-                      color: 'var(--bsi-primary)',
-                      letterSpacing: '0.02em',
-                    }}
-                  >
-                    {card.metric}
-                  </div>
-                  <p
-                    className="text-xs uppercase tracking-[0.15em] mb-3 font-medium"
-                    style={{
-                      fontFamily: 'var(--bsi-font-display)',
-                      color: 'var(--bsi-dust)',
-                    }}
-                  >
-                    {card.label}
-                  </p>
-                  <p
-                    className="text-sm leading-relaxed font-serif text-bsi-dust"
-                  >
-                    {card.desc}
-                  </p>
-                </div>
-              ))}
+            <div className="max-w-2xl mx-auto">
+              <p className="text-base md:text-lg leading-[1.8] font-serif text-bsi-dust text-center">
+                The same analytical depth that scouts and front offices use &mdash;
+                built for the fan in Wichita watching a Shocker mid-week game, the
+                dad in Boerne tracking his kid&apos;s conference, the analyst in
+                Memphis who knows the numbers but couldn&apos;t find them anywhere.
+                Five sports. Every game that matters to someone. Free to start.
+              </p>
             </div>
           </ScrollReveal>
         </div>

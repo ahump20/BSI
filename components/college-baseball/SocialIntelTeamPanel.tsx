@@ -245,10 +245,6 @@ export function SocialIntelTeamPanel({ teamId }: SocialIntelTeamPanelProps) {
       {/* Panel header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <div className="flex items-center gap-2">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-bsi-primary opacity-50" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-bsi-primary" />
-          </span>
           <span className="font-['Oswald'] text-sm uppercase tracking-wider text-text-primary">
             Social Signals
           </span>

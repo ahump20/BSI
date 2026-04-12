@@ -157,10 +157,11 @@ function FreshnessIndicator({ timestamp }: { timestamp?: string }) {
   const label = ageMin < 1 ? 'Just now' : ageMin < 60 ? `${Math.round(ageMin)}m ago` : `${Math.round(ageMin / 60)}h ago`;
   return (
     <div className="flex items-center gap-1.5 text-[10px] text-text-muted" suppressHydrationWarning>
-      <span className="relative flex h-2 w-2">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: color }} />
-        <span className="relative inline-flex rounded-full h-2 w-2" style={{ backgroundColor: color }} />
-      </span>
+      <span
+        className="inline-flex rounded-full h-1.5 w-1.5"
+        style={{ backgroundColor: color }}
+        aria-hidden="true"
+      />
       <span suppressHydrationWarning>{label}</span>
     </div>
   );
@@ -457,12 +458,8 @@ export default function TexasIntelHubClient() {
               <div className="text-center py-2">
                 {liveGame ? (
                   <div className="flex flex-col items-center gap-1">
-                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-error/15 mb-1">
-                      <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-error opacity-75" />
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-error" />
-                      </span>
-                      <span className="text-[10px] font-semibold uppercase tracking-wider text-error">Live</span>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-sm bg-error/15 mb-1">
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-error">In Progress</span>
                     </span>
                     <div className="flex items-center gap-2 font-mono text-sm font-bold">
                       <span className="text-text-primary truncate max-w-[60px]">{liveGame.awayTeam.shortName}</span>

@@ -31,33 +31,6 @@ const FAQ_ITEMS = [
 ];
 
 // ---------------------------------------------------------------------------
-// Proof points
-// ---------------------------------------------------------------------------
-
-const PROOF_POINTS = [
-  {
-    stat: '330',
-    label: 'D1 programs',
-    detail: 'Every Division I college baseball program, every conference.',
-  },
-  {
-    stat: '6hr',
-    label: 'recompute cycle',
-    detail: 'Advanced metrics recalculated four times daily, not once.',
-  },
-  {
-    stat: '100%',
-    label: 'park-adjusted',
-    detail: 'Every stat accounts for ballpark context. Nobody else does this publicly.',
-  },
-  {
-    stat: '30s',
-    label: 'score refresh',
-    detail: 'Live scores polled every 30 seconds during active games.',
-  },
-];
-
-// ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
@@ -176,9 +149,9 @@ export default function PricingPage() {
             <p
               className="font-serif italic text-lg leading-relaxed max-w-xl mx-auto text-bsi-dust"
             >
-              Park-adjusted sabermetrics, live scores, and 330 D1 programs
-              — all free. Pro unlocks exports, unlimited comparisons, and
-              portal tracking.
+              Live scores and advanced analytics, free for every fan. Pro
+              unlocks exports, unlimited comparisons, and transfer portal
+              tracking for the ones who go deeper.
             </p>
           </ScrollReveal>
         </div>
@@ -205,7 +178,7 @@ export default function PricingPage() {
       </section>
 
       {/* ================================================================
-          PROOF POINTS — "Built for the analytics-forward fan"
+          PURPOSE — "Built for the fans nobody built for"
           ================================================================ */}
       <section
         className="relative"
@@ -215,55 +188,27 @@ export default function PricingPage() {
         }}
       >
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(191,87,0,0.15)] to-transparent" />
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <ScrollReveal direction="up">
-            <span className="heritage-stamp mb-3">The Numbers</span>
+            <span className="heritage-stamp mb-3">Why This Exists</span>
             <h2
-              className="mt-3 font-bold uppercase tracking-wide mb-10"
+              className="mt-3 font-bold uppercase tracking-wide mb-6"
               style={{
                 fontFamily: 'var(--bsi-font-display)',
                 fontSize: 'clamp(1.75rem, 4vw, 2.5rem)',
                 color: 'var(--bsi-bone)',
               }}
             >
-              Built for the analytics-forward fan
+              Built for the fans{' '}
+              <span className="text-bsi-primary">nobody built for.</span>
             </h2>
+            <p className="text-base md:text-lg leading-[1.8] font-serif text-bsi-dust">
+              The coverage gap isn&apos;t an accident. Every platform with the
+              resources to close it decided the audience wasn&apos;t worth the
+              investment. BSI exists to prove they were wrong &mdash; one game,
+              one athlete, one program at a time.
+            </p>
           </ScrollReveal>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {PROOF_POINTS.map((point, i) => (
-              <ScrollReveal key={point.label} direction="up" delay={i * 80}>
-                <div
-                  className="heritage-card p-5 text-center h-full"
-                  style={{ borderTop: '2px solid var(--border-vintage)' }}
-                >
-                  <span
-                    className="block text-3xl font-bold tracking-tight mb-1"
-                    style={{
-                      fontFamily: 'var(--bsi-font-display-hero)',
-                      color: 'var(--bsi-primary)',
-                    }}
-                  >
-                    {point.stat}
-                  </span>
-                  <span
-                    className="block text-[10px] uppercase tracking-[0.15em] mb-2"
-                    style={{
-                      fontFamily: 'var(--bsi-font-display)',
-                      color: 'var(--bsi-bone)',
-                    }}
-                  >
-                    {point.label}
-                  </span>
-                  <p
-                    className="text-xs leading-relaxed font-serif text-bsi-dust"
-                  >
-                    {point.detail}
-                  </p>
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
         </div>
       </section>
 

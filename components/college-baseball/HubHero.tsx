@@ -24,30 +24,12 @@ export function HubHero({
   onSearchOpen,
   groupedSearchResults,
   hasResults,
-  lastUpdated,
-  dataSource,
-  coverageCount,
-  conferenceCount,
-  rankingsCount,
+  lastUpdated: _lastUpdated,
+  dataSource: _dataSource,
+  coverageCount: _coverageCount,
+  conferenceCount: _conferenceCount,
+  rankingsCount: _rankingsCount,
 }: HubHeroProps) {
-  const proofCards = [
-    {
-      label: 'Programs Tracked',
-      value: `${coverageCount}+`,
-      detail: 'Every D1 roster lives inside the same board.',
-    },
-    {
-      label: 'Conference Reach',
-      value: `${conferenceCount}`,
-      detail: 'From the SEC to the one-bid race nobody else is watching.',
-    },
-    {
-      label: 'Top Board',
-      value: `${rankingsCount}`,
-      detail: 'Rankings, schedule, standings, and player search in one lane.',
-    },
-  ];
-
   const metricCards = [
     { abbr: 'wOBA', label: 'Hitting quality, park-adjusted' },
     { abbr: 'wRC+', label: 'Runs above average, scaled to 100' },
@@ -127,32 +109,17 @@ export function HubHero({
           </div>
         </ScrollReveal>
 
-        {/* Data freshness */}
-        {lastUpdated && (
-          <ScrollReveal direction="up" delay={110}>
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-bsi-primary opacity-75" />
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-bsi-primary" />
-              </span>
-              <span className="text-[10px] uppercase tracking-wider font-mono text-bsi-dust">
-                Live &middot; {dataSource}
-              </span>
-            </div>
-          </ScrollReveal>
-        )}
-
         <ScrollReveal direction="up" delay={120}>
-          <p className="font-serif italic text-base leading-relaxed mb-4 text-bsi-primary">
-            Park-adjusted advanced metrics. Updated every 6 hours. Free.
+          <p className="font-serif italic text-base md:text-lg leading-relaxed mb-4 max-w-2xl mx-auto text-bsi-primary">
+            The kid at Oral Roberts throws as hard as the kid at Vanderbilt. We cover them the same.
           </p>
         </ScrollReveal>
 
-        <div className="mt-8 grid gap-4 md:grid-cols-[minmax(0,1.35fr)_minmax(0,0.9fr)] md:items-start">
+        <div className="mt-8">
           {/* Hub Search + metric language */}
           <ScrollReveal direction="up" delay={200}>
             <div
-              className="relative rounded-sm border p-4 text-left"
+              className="relative rounded-sm border p-4 text-left max-w-3xl mx-auto"
               style={{
                 background:
                   'linear-gradient(180deg, rgba(191,87,0,0.08) 0%, rgba(20,20,20,0.94) 100%)',
@@ -228,40 +195,6 @@ export function HubHero({
                   </div>
                 ))}
               </div>
-            </div>
-          </ScrollReveal>
-
-          {/* Proof cards */}
-          <ScrollReveal direction="up" delay={240}>
-            <div className="grid gap-3 sm:grid-cols-3 md:grid-cols-1">
-              {proofCards.map((card) => (
-                <div
-                  key={card.label}
-                  className="rounded-sm border px-4 py-4 text-left"
-                  style={{
-                    background:
-                      'linear-gradient(180deg, rgba(191,87,0,0.1) 0%, rgba(16,16,16,0.92) 100%)',
-                    borderColor: 'rgba(140,98,57,0.24)',
-                  }}
-                >
-                  <p className="text-[10px] uppercase tracking-[0.18em] text-bsi-dust">
-                    {card.label}
-                  </p>
-                  <div
-                    className="mt-3 font-bold uppercase leading-none"
-                    style={{
-                      fontFamily: 'var(--bsi-font-display-hero)',
-                      fontSize: 'clamp(1.8rem, 4vw, 2.5rem)',
-                      color: 'var(--bsi-bone)',
-                    }}
-                  >
-                    {card.value}
-                  </div>
-                  <p className="mt-3 text-xs leading-relaxed text-bsi-dust">
-                    {card.detail}
-                  </p>
-                </div>
-              ))}
             </div>
           </ScrollReveal>
         </div>

@@ -358,11 +358,6 @@ export function SocialIntelFeed() {
       {/* Header */}
       <div className="flex items-center justify-between px-5 pt-5 pb-0">
         <div className="flex items-center gap-2.5">
-          {/* Pulse indicator */}
-          <span className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-bsi-primary opacity-60" />
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-bsi-primary" />
-          </span>
           <h2 className="font-['Oswald'] text-base uppercase tracking-wider text-text-primary">
             Social Intelligence
           </h2>

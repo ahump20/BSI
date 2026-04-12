@@ -314,8 +314,8 @@ export default function MLBPage() {
         <SportHero
           sport="MLB"
           leagueName="Major League Baseball"
-          tagline="Cardinals. Rangers. Astros. Every game, every stat, no network filter."
-          description="Live scores, division standings, and Statcast analytics for all 30 teams—pulled straight from MLB's official API. No third-party garbage. No guesswork."
+          tagline="Thirty franchises. Hundreds of cities. None of them a footnote."
+          description="The Cardinals fanbase in St. Louis doesn't need a national broadcast to tell them what matters. Neither does the one in San Diego, or Memphis, or anywhere else a team plays to a packed house that someone else calls small market."
           icon={"\u25C7"}
           dataSource="SportsDataIO"
           primaryCta={{ label: 'View Live Scores', href: '/mlb/scores' }}

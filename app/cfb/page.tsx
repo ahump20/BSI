@@ -295,8 +295,8 @@ export default function CFBPage() {
         <SportHero
           sport="College Football"
           leagueName="NCAA Division I FBS"
-          tagline="Longhorns. SEC. Big Ten. Every conference, every rivalry, covered right."
-          description="Conference standings, AP Top 25 rankings, transfer portal tracking, and advanced analytics for all 134 FBS programs. From Week 0 through the National Championship."
+          tagline="A Wednesday night game between Rice and Sam Houston covered with the same rigor as Saturday in Tuscaloosa."
+          description="College football's national narrative runs through about twelve programs. The other 122 have fans, rivalries, and players worth knowing — they just don't have coverage to match."
           dataSource="SportsDataIO"
           primaryCta={{ label: 'Live Scores', href: '/cfb/scores' }}
           secondaryCta={{ label: 'Transfer Portal', href: '/cfb/transfer-portal' }}

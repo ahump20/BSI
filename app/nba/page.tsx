@@ -329,8 +329,8 @@ export default function NBAPage() {
         <SportHero
           sport="NBA"
           leagueName="National Basketball Association"
-          tagline="Grizzlies. Mavericks. Thunder. Every game, every stat, no network filter."
-          description="Live scores, conference standings, and analytics for all 30 teams."
+          tagline="Memphis has been building something real since before anyone was watching. They still are."
+          description="The Grizzlies, the Thunder, the Timberwolves — franchises that went years without a national spotlight and built their identities anyway. The league is deeper than the broadcast schedule suggests."
           icon={"\uD83C\uDFC0"}
           dataSource="SportsDataIO"
           primaryCta={{ label: 'Playoff Picture', href: '/nba/playoff-picture' }}

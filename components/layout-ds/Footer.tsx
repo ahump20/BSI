@@ -26,7 +26,7 @@ export function Footer() {
               Born to Blaze the Path Beaten Less
             </p>
             <p className="text-xs leading-relaxed font-serif italic text-bsi-dust">
-              Advanced analytics and independent editorial for the athletes, programs, and fans that mainstream media overlook.
+              The coverage gap isn&apos;t an accident. BSI exists to close it &mdash; one game, one athlete, one program at a time.
             </p>
           </div>
           <div className="flex items-center gap-4">

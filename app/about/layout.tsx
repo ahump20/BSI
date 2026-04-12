@@ -6,18 +6,18 @@ import { ogImage } from '@/lib/metadata';
 export const metadata: Metadata = {
   title: 'About | Blaze Sports Intel',
   description:
-    'Founded by Austin Humphrey. Advanced analytics and independent editorial for the athletes, programs, and fans that mainstream media overlook.',
+    'The coverage gap in sports media isn\u2019t an accident. BSI exists to close it \u2014 built by Austin Humphrey for the athletes, programs, and fans that bigger platforms overlook.',
   openGraph: {
     title: 'About Blaze Sports Intel',
     description:
-      'Advanced analytics and independent editorial for the athletes and fans that mainstream media overlook. Built by one person to close the coverage gap.',
+      'The coverage gap isn\u2019t an accident. BSI exists to close it \u2014 one game, one athlete, one program at a time.',
     images: ogImage(),
   },
   twitter: {
     card: 'summary_large_image',
     title: 'About Blaze Sports Intel',
     description:
-      'Advanced analytics and independent editorial for the athletes and fans that mainstream media overlook. Built by one person to close the coverage gap.',
+      'The coverage gap isn\u2019t an accident. BSI exists to close it \u2014 one game, one athlete, one program at a time.',
   },
   alternates: {
     canonical: '/about',
@@ -65,7 +65,7 @@ export default function AboutLayout({ children }: { children: ReactNode }) {
           name: 'Austin Humphrey',
         },
         description:
-          'Independent sports analytics platform. Live scores, advanced analytics, and editorial across college baseball, MLB, NFL, NBA, and college football — built for the athletes and fans that bigger platforms overlook.',
+          'The coverage gap in sports media isn\u2019t an accident. BSI exists to close it \u2014 live scores, advanced analytics, and editorial across college baseball, MLB, NFL, NBA, and college football for every athlete, program, and fan bigger platforms overlook.',
         areaServed: 'United States',
         sameAs: [
           'https://austinhumphrey.com',

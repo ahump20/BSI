@@ -44,11 +44,7 @@ export function RefreshIndicator({
 
   return (
     <div className={`flex items-center gap-2 text-xs text-text-muted ${className}`}>
-      <span className="relative flex h-2 w-2">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-bsi-primary opacity-75" />
-        <span className="relative inline-flex rounded-full h-2 w-2 bg-bsi-primary" />
-      </span>
-      <span>Live &middot; refreshing in {secondsLeft}s</span>
+      <span>Refreshing in {secondsLeft}s</span>
       <div className="w-12 h-1 bg-surface rounded-full overflow-hidden">
         <div
           className="h-full bg-bsi-primary/50 rounded-full transition-all duration-1000 ease-linear"

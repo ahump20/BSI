@@ -62,12 +62,13 @@ function CardContent({ game, showHitsErrors }: { game: GameScoreCardGame; showHi
       <div className="ml-6 text-right min-w-[100px]">
         {game.isLive ? (
           <div className="flex items-center justify-end gap-1.5">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: 'var(--heritage-teal, #00B2A9)' }} />
-              <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: 'var(--heritage-teal, #00B2A9)' }} />
-            </span>
+            <span
+              className="inline-flex rounded-full h-1.5 w-1.5"
+              style={{ background: 'var(--heritage-teal, #00B2A9)' }}
+              aria-hidden="true"
+            />
             <span className="font-semibold text-sm uppercase font-display" style={{ color: 'var(--heritage-teal, #00B2A9)' }}>
-              {game.detail || 'Live'}
+              {game.detail || 'In Progress'}
             </span>
           </div>
         ) : game.isFinal ? (

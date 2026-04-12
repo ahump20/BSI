@@ -706,13 +706,7 @@ function ScoresHubContent() {
                 <span className="heritage-stamp">All Sports</span>
                 {hasAnyLive && (
                   <span className="heritage-stamp" style={{ padding: '1px 8px', fontSize: '9px', color: 'var(--bsi-success)', borderColor: 'rgba(16, 185, 129, 0.3)' }}>
-                    <span className="inline-flex items-center gap-1.5">
-                      <span className="relative flex h-1.5 w-1.5">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-bsi-primary opacity-75" />
-                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-bsi-primary" />
-                      </span>
-                      LIVE
-                    </span>
+                    Games in progress
                   </span>
                 )}
               </div>

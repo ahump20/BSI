@@ -102,16 +102,16 @@ const SPORT_NAV = [
     key: 'college-baseball',
     name: 'College Baseball',
     href: '/college-baseball/',
-    desc: 'Savant leaderboards, scouting grades, and advanced stats for 330 D1 programs',
+    desc: 'The sport most platforms treat as a box score footnote. BSI covers it like it\u2019s the main event \u2014 because for a lot of fans, it is.',
     flagship: true,
     accent: 'var(--bsi-primary)',
-    badge: 'Deepest Analytics',
+    badge: null,
   },
   {
     key: 'mlb',
     name: 'MLB',
     href: '/mlb/',
-    desc: 'Scores, standings, and player tracking across both leagues',
+    desc: 'Every team, both leagues. The analytics scouts use, built for the fans who\u2019ve been there since before the team was relevant.',
     flagship: false,
     accent: 'var(--heritage-columbia-blue)',
     badge: null,
@@ -120,7 +120,7 @@ const SPORT_NAV = [
     key: 'nfl',
     name: 'NFL',
     href: '/nfl/',
-    desc: 'Game scores, player stats, and weekly matchups',
+    desc: 'The whole season. Not just the marquee matchups \u2014 the games that decide playoff races in November.',
     flagship: false,
     accent: '#10B981',
     badge: null,
@@ -129,7 +129,7 @@ const SPORT_NAV = [
     key: 'nba',
     name: 'NBA',
     href: '/nba/',
-    desc: 'Live scores, standings, and player performance',
+    desc: 'The full league, not just the coastal franchises. Teams that built real identities in markets the national conversation keeps overlooking.',
     flagship: false,
     accent: '#F59E0B',
     badge: null,
@@ -138,7 +138,7 @@ const SPORT_NAV = [
     key: 'cfb',
     name: 'College Football',
     href: '/cfb/',
-    desc: 'Rankings, scores, and conference breakdowns',
+    desc: 'Every conference, not just the ones fighting for a playoff spot. The rivalries that don\u2019t need a broadcast crew to matter.',
     flagship: false,
     accent: '#8B5CF6',
     badge: null,
@@ -379,7 +379,7 @@ function ScoreTicker({
               <span className="font-bold tabular-nums mx-0.5 text-bsi-bone" style={{ letterSpacing: '0.02em' }}>{homeScore}</span>
               {isLive && (
                 <span className="inline-flex items-center gap-1 ml-1.5 px-1.5 py-0.5 rounded-sm" style={{ background: 'rgba(16,185,129,0.1)' }}>
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500" aria-hidden="true" />
                   <span className="text-[9px] uppercase tracking-wider font-bold" style={{ color: '#10B981' }}>
                     Live
                   </span>
@@ -494,16 +494,10 @@ function SportPulseStrip({ pulse }: { pulse: Record<string, SportPulseData> }) {
                 </span>
 
                 {live > 0 ? (
-                  <span className="inline-flex items-center gap-1">
-                    <span className="relative flex h-1.5 w-1.5">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500" />
-                    </span>
-                    <span
-                      className="text-[10px] font-bold tabular-nums font-mono text-success"
-                    >
-                      {live}
-                    </span>
+                  <span
+                    className="text-[10px] font-bold tabular-nums font-mono text-bsi-primary"
+                  >
+                    {live} in progress
                   </span>
                 ) : hasGames ? (
                   <span
@@ -1137,27 +1131,15 @@ export function HomePageClient() {
               BSI Savant
             </Link>
 
-            {/* Live badge */}
+            {/* Live game count — plain, no decoration */}
             {totalLiveCount > 0 && (
-              <span
-                className="inline-flex items-center gap-2 px-3 py-2 rounded-sm border"
-                style={{
-                  borderColor: 'rgba(16,185,129,0.3)',
-                  background: 'rgba(16,185,129,0.06)',
-                }}
-              >
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+              <DataTransition value={totalLiveCount} mode="flip">
+                <span
+                  className="text-[11px] uppercase tracking-[0.15em] font-mono text-bsi-dust"
+                >
+                  {totalLiveCount} {totalLiveCount === 1 ? 'game' : 'games'} in progress
                 </span>
-                <DataTransition value={totalLiveCount} mode="flip">
-                  <span
-                    className="text-[10px] uppercase tracking-wider font-semibold font-mono text-success"
-                  >
-                    {totalLiveCount} live
-                  </span>
-                </DataTransition>
-              </span>
+              </DataTransition>
             )}
           </div>
         </div>
@@ -1196,36 +1178,10 @@ export function HomePageClient() {
             className="mt-6 text-base sm:text-lg md:text-xl leading-relaxed font-serif text-bsi-dust leading-[1.8]"
           >
             A Wednesday night game between Rice and Sam Houston covered with the same rigor as
-            a Saturday showcase between Tennessee and LSU. College baseball, MLB, NFL, NBA, and
-            college football — advanced analytics recalculated every six hours, translated so
-            the depth is accessible, not exclusive.
+            a Saturday showcase between Tennessee and LSU. College baseball, MLB, NFL, NBA,
+            and college football — the depth scouts and front offices use, translated so
+            it&apos;s accessible, not exclusive.
           </p>
-
-          {/* Proof points — inline, not cards */}
-          <div
-            className="mt-10 pt-8 border-t flex flex-wrap gap-x-12 gap-y-6"
-            style={{ borderColor: 'rgba(140,98,57,0.2)' }}
-          >
-            {[
-              { stat: '5', label: 'Sports Covered' },
-              { stat: '330', label: 'D1 Programs' },
-              { stat: '6hr', label: 'Recompute Cycle' },
-              { stat: '1,900+', label: 'Players Tracked' },
-            ].map((p, idx) => (
-              <div key={p.label} className="hero-entrance" style={{ animationDelay: `${idx * 100}ms` }}>
-                <span
-                  className="text-2xl sm:text-3xl md:text-4xl font-bold tabular-nums font-mono text-bsi-primary"
-                >
-                  {p.stat}
-                </span>
-                <span
-                  className="block text-[10px] sm:text-[11px] uppercase tracking-[0.15em] mt-1.5 font-display text-bsi-dust"
-                >
-                  {p.label}
-                </span>
-              </div>
-            ))}
-          </div>
         </ScrollReveal>
       </section>
 
@@ -1273,16 +1229,10 @@ export function HomePageClient() {
                 {/* Live indicator for flagship */}
                 <div className="flex items-center gap-4 shrink-0">
                   {sportPulse['college-baseball']?.live > 0 && (
-                    <span className="inline-flex items-center gap-1.5">
-                      <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
-                      </span>
-                      <span
-                        className="text-[10px] font-bold tabular-nums font-mono text-success"
-                      >
-                        {sportPulse['college-baseball'].live} live
-                      </span>
+                    <span
+                      className="text-[10px] font-bold tabular-nums font-mono text-bsi-primary"
+                    >
+                      {sportPulse['college-baseball'].live} in progress
                     </span>
                   )}
                   <span
@@ -1319,7 +1269,7 @@ export function HomePageClient() {
                       </h3>
                       {pulseData?.live > 0 && (
                         <span className="flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-green-500" aria-hidden="true" />
                           <span
                             className="text-[9px] font-bold tabular-nums font-mono text-success"
                           >
@@ -1619,12 +1569,12 @@ export function HomePageClient() {
             <p
               className="text-[10px] uppercase tracking-[0.2em] font-semibold font-display text-bsi-dust"
             >
-              Blaze Intelligence
+              Blaze Sports Intel
             </p>
             <p
-              className="text-[9px] mt-0.5 font-mono text-bsi-dust"
+              className="text-[9px] mt-0.5 font-serif italic text-bsi-primary opacity-80"
             >
-              5 sports &middot; every game &middot; every athlete
+              Born to Blaze the Path Beaten Less
             </p>
           </div>
         </div>

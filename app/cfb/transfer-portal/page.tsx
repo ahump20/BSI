@@ -141,11 +141,8 @@ function StatCard({
   return (
     <div className="relative p-4 md:p-6 rounded-sm bg-gradient-to-br from-charcoal-800/80 to-charcoal-900/80 border border-border-subtle">
       {isLive && (
-        <div className="absolute top-3 right-3">
-          <span className="flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
-          </span>
+        <div className="absolute top-3 right-3 text-[9px] font-mono uppercase tracking-wider text-success/80">
+          Active
         </div>
       )}
       <p className="text-xs md:text-sm font-medium text-text-tertiary uppercase tracking-wide mb-1">

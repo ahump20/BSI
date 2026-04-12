@@ -50,7 +50,7 @@ export function SportHero({
   refreshInterval = 30,
   primaryCta,
   secondaryCta,
-  stats,
+  stats: _stats,
   heroBg,
 }: SportHeroProps) {
   const content = (
@@ -74,16 +74,9 @@ export function SportHero({
           </h1>
         </ScrollReveal>
 
-        <ScrollReveal direction="up" delay={120}>
-          <DataFreshnessIndicator
-            source={dataSource}
-            refreshInterval={refreshInterval}
-          />
-        </ScrollReveal>
-
         <ScrollReveal direction="up" delay={150}>
           <p
-            className="text-lg leading-relaxed text-center mb-4 font-serif text-bsi-dust"
+            className="text-lg md:text-xl leading-relaxed text-center mb-4 font-serif text-bsi-primary max-w-3xl mx-auto"
             style={{ fontStyle: 'italic' }}
           >
             {tagline}
@@ -91,13 +84,20 @@ export function SportHero({
         </ScrollReveal>
 
         <ScrollReveal direction="up" delay={200}>
-          <p className="text-center max-w-2xl mx-auto mb-8 text-sm text-bsi-dust">
+          <p className="text-center max-w-2xl mx-auto mb-6 text-sm md:text-base text-bsi-dust leading-[1.7]">
             {description}
           </p>
         </ScrollReveal>
 
+        <ScrollReveal direction="up" delay={220}>
+          <DataFreshnessIndicator
+            source={dataSource}
+            refreshInterval={refreshInterval}
+          />
+        </ScrollReveal>
+
         <ScrollReveal direction="up" delay={250}>
-          <div className="flex flex-wrap gap-4 justify-center">
+          <div className="mt-6 flex flex-wrap gap-4 justify-center">
             <Link href={primaryCta.href}>
               <Button variant="primary" size="lg">
                 {primaryCta.label}
@@ -108,27 +108,6 @@ export function SportHero({
                 {secondaryCta.label}
               </Button>
             </Link>
-          </div>
-        </ScrollReveal>
-
-        <ScrollReveal direction="up" delay={300}>
-          <div
-            className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 p-6 rounded-sm"
-            style={{
-              background: 'var(--surface-dugout)',
-              border: '1px solid var(--border-vintage)',
-            }}
-          >
-            {stats.map((stat) => (
-              <div key={stat.label} className="text-center p-4">
-                <div className="font-mono text-3xl font-bold text-bsi-primary">
-                  {stat.value}
-                </div>
-                <div className="text-[10px] uppercase tracking-[0.12em] mt-1 text-bsi-dust">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
           </div>
         </ScrollReveal>
       </Container>

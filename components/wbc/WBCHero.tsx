@@ -73,8 +73,6 @@ export function WBCHero() {
     return () => clearInterval(timer);
   }, []);
 
-  const isLive = phase === 'pool' || phase === 'knockout' || phase === 'final';
-
   return (
     <section className="relative overflow-hidden bg-midnight pt-16 pb-12 px-4 sm:px-6 lg:px-8">
       {/* Background gradient */}
@@ -85,12 +83,6 @@ export function WBCHero() {
         <div className="text-center">
           {/* Phase badge */}
           <div className="inline-flex items-center gap-2 mb-6">
-            {isLive && (
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-bsi-primary opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-bsi-primary" />
-              </span>
-            )}
             <span className={`text-sm font-semibold tracking-wider uppercase ${PHASE_COLORS[phase]}`}>
               {PHASE_LABELS[phase]}
             </span>

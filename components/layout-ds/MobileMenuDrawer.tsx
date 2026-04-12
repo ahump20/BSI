@@ -180,9 +180,8 @@ export function MobileMenuDrawer({
                   <span className="text-[10px] text-text-muted">{item.phaseLabel}</span>
                 )}
                 {isLive && (
-                  <span className="relative flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-bsi-primary opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-bsi-primary" />
+                  <span className="text-[9px] uppercase tracking-wider font-mono text-bsi-primary">
+                    In season
                   </span>
                 )}
               </span>
