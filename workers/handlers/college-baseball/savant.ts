@@ -269,7 +269,7 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
     const wHR = lgCtxTeam?.w_hr ?? 2.01;
 
     // Qualified hitters — include OBP/SLG for derivation when 2B/3B/HBP unavailable
-    const hitters = await env.DB.prepare(`
+    const rawHitters = await env.DB.prepare(`
       SELECT espn_id, name, position, at_bats, hits, doubles, triples, home_runs,
              walks_bat, strikeouts_bat, hit_by_pitch, sacrifice_flies, games_bat,
              on_base_pct, slugging_pct
@@ -278,14 +278,50 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
       ORDER BY at_bats DESC
     `).bind(SEASON, resolvedId).all<Record<string, unknown>>();
 
-    // Qualified pitchers for this team
-    const pitchers = await env.DB.prepare(`
+    // Qualified pitchers for this team.
+    // Threshold lowered from 45 thirds (15 IP) → 24 thirds (8 IP). The old
+    // cutoff only surfaced established starters and produced visibly thin
+    // top_pitchers lists for programs using deeper rotations or early-season
+    // matchups. 8 IP is a college reliever minimum that still filters out
+    // one-appearance samples.
+    const rawPitchers = await env.DB.prepare(`
       SELECT espn_id, name, position, innings_pitched_thirds, strikeouts_pitch,
              walks_pitch, home_runs_allowed, earned_runs, hits_allowed, games_pitch
       FROM player_season_stats
-      WHERE sport = 'college-baseball' AND season = ? AND team_id = ? AND innings_pitched_thirds >= 45
+      WHERE sport = 'college-baseball' AND season = ? AND team_id = ? AND innings_pitched_thirds >= 24
       ORDER BY innings_pitched_thirds DESC
     `).bind(SEASON, resolvedId).all<Record<string, unknown>>();
+
+    // Dedup players by case-insensitive name (player_season_stats sometimes
+    // carries the same athlete twice under different espn_ids when multiple
+    // ingestion sources — Highlightly, ESPN, NCAA — disagree on the canonical
+    // ID). Keep the row with the larger sample (at_bats / innings_pitched).
+    const dedup = (
+      rows: Array<Record<string, unknown>>,
+      sampleField: string
+    ): Array<Record<string, unknown>> => {
+      const picked = new Map<string, Record<string, unknown>>();
+      for (const row of rows) {
+        const rawName = row.name;
+        if (typeof rawName !== 'string') continue;
+        const key = rawName.toLowerCase().trim();
+        if (!key) continue;
+        const sample = Number(row[sampleField] ?? 0);
+        const existing = picked.get(key);
+        const existingSample = existing
+          ? Number(existing[sampleField] ?? 0)
+          : -1;
+        if (!existing || sample > existingSample) {
+          picked.set(key, row);
+        }
+      }
+      return Array.from(picked.values()).sort(
+        (a, b) => Number(b[sampleField] ?? 0) - Number(a[sampleField] ?? 0)
+      );
+    };
+
+    const hitters = { results: dedup(rawHitters.results, 'at_bats') };
+    const pitchers = { results: dedup(rawPitchers.results, 'innings_pitched_thirds') };
 
     // Compute per-hitter sabermetrics.
     // ESPN college baseball box scores lack 2B/3B/HBP/SF labels.

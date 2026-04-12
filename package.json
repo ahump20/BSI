@@ -34,6 +34,8 @@
     "test:a11y": "playwright test --config=playwright.config.ts",
     "test:a11y:ui": "playwright test --config=playwright.config.ts --ui",
     "test:a11y:report": "playwright show-report",
+    "stress:mcp": "npx tsx scripts/stress-test-mcp.ts",
+    "mcp:probe": "bash scripts/mcp-probe.sh 2>/dev/null || curl -sX POST https://sabermetrics.blazesportsintel.com/mcp -H 'Content-Type: application/json' -d '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/list\",\"params\":{}}' | jq '.result.tools | map(.name)'",
     "typecheck": "tsc --noEmit",
     "typecheck:strict": "tsc --project tsconfig.strict.json",
     "deploy:show-dd-sync": "wrangler deploy --config workers/bsi-show-dd-sync/wrangler.toml",
