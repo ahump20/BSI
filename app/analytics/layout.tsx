@@ -2,15 +2,15 @@ import type { Metadata } from 'next';
 import { ogImage } from '@/lib/metadata';
 
 export const metadata: Metadata = {
-  title: 'Analytics Hub | Blaze Sports Intel',
+  title: 'Analytics | Blaze Sports Intel',
   description:
-    'Professional sports analytics tools including win probability, Pythagorean expectations, player comparisons, and predictive models for MLB, NFL, and NCAA.',
+    'The tools scouts and front offices use, open to every fan \u2014 win probability, Pythagorean expectations, player comparisons, and predictive models for MLB, NFL, and NCAA.',
   alternates: {
     canonical: '/analytics',
   },
   openGraph: {
-    title: 'Analytics Hub | Blaze Sports Intel',
-    description: 'Professional sports analytics tools for MLB, NFL, and NCAA.',
+    title: 'Analytics | Blaze Sports Intel',
+    description: 'The tools scouts use, open to everyone \u2014 MLB, NFL, and NCAA analytics.',
     images: ogImage(),
   },
 };
