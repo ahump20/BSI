@@ -202,7 +202,10 @@ app.onError(async (err, c) => {
 // =============================================================================
 
 // --- MCP Protocol ---
-app.all('/mcp', (c) => handleMcpRequest(c.req.raw, c.env));
+// POST-only so browser GET /mcp falls through to the Pages static route
+// at app/mcp/page.tsx (the human-facing landing / connection guide).
+// OPTIONS preflight is handled by the global CORS middleware above.
+app.post('/mcp', (c) => handleMcpRequest(c.req.raw, c.env));
 
 // --- Auth ---
 app.post('/api/auth/login', (c) => handleLogin(c.req.raw, c.env));
