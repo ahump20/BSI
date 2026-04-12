@@ -1,14 +1,13 @@
 /**
  * Shared ESPN player stats table — renders multi-group stat tables for any sport.
  *
- * Used by CFB, NBA, and NFL BoxScoreClient components. Each sport passes its own
- * playerStats data and configuration:
+ * Heritage-styled. Used by CFB, NBA, and NFL BoxScoreClient components:
  * - CFB: split mode with benchLabel="Reserves"
  * - NBA: split mode with benchLabel="Bench"
- * - NFL: flat mode (active players only, no starters/bench split)
+ * - NFL: flat mode (active players only)
  */
 
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { useState } from 'react';
 import type { BoxscorePlayerAthlete, BoxscorePlayerGroup } from './espn-boxscore-types';
 
 interface EspnPlayerStatsTableProps {
@@ -17,12 +16,31 @@ interface EspnPlayerStatsTableProps {
   mode?: 'split' | 'flat';
   /** Label for the bench section in split mode. Default: "Bench" */
   benchLabel?: string;
+  /** Allow clickable column headers to sort rows within each section. Default: true. */
+  sortable?: boolean;
 }
 
-function PlayerRow({ player }: { player: BoxscorePlayerAthlete }) {
+type SortDir = 'asc' | 'desc' | null;
+interface SortState {
+  group: string;
+  colIndex: number;
+  dir: SortDir;
+}
+
+function PlayerRow({
+  player,
+  isStarter,
+}: {
+  player: BoxscorePlayerAthlete;
+  isStarter?: boolean;
+}) {
   return (
-    <tr className="border-b border-border-subtle last:border-0 hover:bg-surface-light">
-      <td className="p-2 text-text-primary font-medium whitespace-nowrap sticky left-0 bg-inherit">
+    <tr className="border-b border-border-subtle last:border-0 odd:bg-black/10 hover:bg-surface-press-box/60">
+      <td
+        className={`p-2 text-text-primary font-medium whitespace-nowrap sticky left-0 bg-surface-dugout z-10 ${
+          isStarter ? 'border-l-2 border-bsi-primary/60' : ''
+        }`}
+      >
         <span>{player.athlete?.shortName || player.athlete?.displayName || '-'}</span>
         {player.athlete?.position?.abbreviation && (
           <span className="text-text-tertiary text-xs ml-1.5">
@@ -31,7 +49,7 @@ function PlayerRow({ player }: { player: BoxscorePlayerAthlete }) {
         )}
       </td>
       {(player.stats || []).map((val, sIdx) => (
-        <td key={sIdx} className="p-2 text-center font-mono text-text-secondary text-xs">
+        <td key={sIdx} className="p-2 text-center font-mono text-text-secondary text-xs tabular-nums">
           {val}
         </td>
       ))}
@@ -39,26 +57,112 @@ function PlayerRow({ player }: { player: BoxscorePlayerAthlete }) {
   );
 }
 
-function SectionHeader({ label, colSpan, muted }: { label: string; colSpan: number; muted?: boolean }) {
+function SectionHeader({
+  label,
+  colSpan,
+  muted,
+}: {
+  label: string;
+  colSpan: number;
+  muted?: boolean;
+}) {
   return (
     <tr>
       <td
         colSpan={colSpan}
-        className={`px-2 py-1 text-xs font-semibold uppercase tracking-wide bg-background-tertiary ${
-          muted ? 'text-text-tertiary' : 'text-burnt-orange'
-        }`}
+        className="px-2 py-1.5 surface-lifted border-y border-border-vintage"
       >
-        {label}
+        <span
+          className={`heritage-stamp ${muted ? 'opacity-60' : ''}`}
+          style={muted ? { color: 'var(--text-tertiary)', borderColor: 'var(--border-vintage)' } : undefined}
+        >
+          {label}
+        </span>
       </td>
     </tr>
   );
+}
+
+function SortableHeader({
+  label,
+  group,
+  colIndex,
+  sort,
+  onSort,
+  sortable,
+}: {
+  label: string;
+  group: string;
+  colIndex: number;
+  sort: SortState | null;
+  onSort: (next: SortState | null) => void;
+  sortable: boolean;
+}) {
+  const active = sort?.group === group && sort?.colIndex === colIndex;
+  const dir = active ? sort?.dir : null;
+  const ariaSort: 'ascending' | 'descending' | 'none' =
+    dir === 'asc' ? 'ascending' : dir === 'desc' ? 'descending' : 'none';
+
+  if (!sortable) {
+    return (
+      <th className="text-center p-2 text-text-tertiary text-xs uppercase">{label}</th>
+    );
+  }
+
+  const onClick = () => {
+    if (!active || dir === null) onSort({ group, colIndex, dir: 'desc' });
+    else if (dir === 'desc') onSort({ group, colIndex, dir: 'asc' });
+    else onSort(null);
+  };
+
+  return (
+    <th className="text-center p-2 text-xs uppercase" aria-sort={ariaSort}>
+      <button
+        type="button"
+        onClick={onClick}
+        className={`inline-flex items-center gap-1 font-display tracking-wider transition-colors ${
+          active ? 'text-bsi-primary-light' : 'text-text-tertiary hover:text-text-primary'
+        }`}
+      >
+        {label}
+        {active && dir && (
+          <span aria-hidden="true" className="text-[0.6rem]">
+            {dir === 'asc' ? '\u25B2' : '\u25BC'}
+          </span>
+        )}
+      </button>
+    </th>
+  );
+}
+
+function sortAthletes(
+  athletes: BoxscorePlayerAthlete[],
+  group: string,
+  sort: SortState | null,
+): BoxscorePlayerAthlete[] {
+  if (!sort || sort.group !== group || !sort.dir) return athletes;
+  const copy = [...athletes];
+  copy.sort((a, b) => {
+    const av = a.stats?.[sort.colIndex] ?? '';
+    const bv = b.stats?.[sort.colIndex] ?? '';
+    const an = parseFloat(av);
+    const bn = parseFloat(bv);
+    if (!Number.isNaN(an) && !Number.isNaN(bn)) {
+      return sort.dir === 'asc' ? an - bn : bn - an;
+    }
+    return sort.dir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+  });
+  return copy;
 }
 
 export function EspnPlayerStatsTable({
   playerStats,
   mode = 'split',
   benchLabel = 'Bench',
+  sortable = true,
 }: EspnPlayerStatsTableProps) {
+  const [sort, setSort] = useState<SortState | null>(null);
+
   return (
     <>
       {playerStats.map((teamGroup, tIdx) => {
@@ -68,19 +172,31 @@ export function EspnPlayerStatsTable({
 
         if (statGroups.length === 0) {
           return (
-            <Card key={tIdx} variant="default" padding="md">
-              <CardHeader><CardTitle>{teamName}</CardTitle></CardHeader>
-              <CardContent>
-                <p className="text-text-tertiary text-sm py-4">No player statistics available</p>
-              </CardContent>
-            </Card>
+            <section
+              key={tIdx}
+              className="heritage-card corner-marks relative overflow-hidden"
+            >
+              <header className="surface-lifted border-b border-border-vintage px-4 md:px-6 py-3 flex items-center gap-3">
+                <span className="heritage-stamp">{teamAbbr}</span>
+                <span className="text-text-tertiary text-xs">{teamName}</span>
+              </header>
+              <div className="px-4 py-6">
+                <p className="text-text-tertiary text-sm">No player statistics available</p>
+              </div>
+            </section>
           );
         }
 
         return (
-          <Card key={tIdx} variant="default" padding="md">
-            <CardHeader><CardTitle>{teamName}</CardTitle></CardHeader>
-            <CardContent>
+          <section
+            key={tIdx}
+            className="heritage-card corner-marks relative overflow-hidden"
+          >
+            <header className="surface-lifted border-b border-border-vintage px-4 md:px-6 py-3 flex items-center gap-3">
+              <span className="heritage-stamp">{teamAbbr}</span>
+              <span className="text-text-tertiary text-xs">{teamName}</span>
+            </header>
+            <div className="px-3 md:px-5 py-4">
               <div className="space-y-6">
                 {statGroups.map((statGroup, gIdx) => {
                   if (!statGroup) return null;
@@ -88,30 +204,42 @@ export function EspnPlayerStatsTable({
                   const athletes = statGroup.athletes || [];
                   const groupName = statGroup.name || statGroup.type || '';
                   const colSpan = headers.length + 1;
+                  const groupKey = `team-${tIdx}-group-${gIdx}`;
 
                   if (mode === 'flat') {
                     const activePlayers = athletes.filter((a) => !a.didNotPlay);
                     if (activePlayers.length === 0) return null;
+                    const sorted = sortAthletes(activePlayers, groupKey, sort);
 
                     return (
                       <div key={gIdx}>
                         {groupName && (
-                          <div className="px-2 py-1.5 mb-2 text-xs text-burnt-orange font-semibold uppercase tracking-wide bg-background-tertiary rounded-sm">
-                            {groupName}
+                          <div className="mb-2">
+                            <span className="heritage-stamp">{groupName}</span>
                           </div>
                         )}
                         <div className="overflow-x-auto">
                           <table className="w-full text-sm">
                             <thead>
-                              <tr className="border-b border-border-subtle">
-                                <th className="text-left p-2 text-text-tertiary sticky left-0 bg-inherit">Player</th>
+                              <tr className="surface-lifted border-b border-border-vintage">
+                                <th className="text-left p-2 text-text-tertiary text-xs uppercase sticky left-0 bg-surface-press-box z-10">
+                                  Player
+                                </th>
                                 {headers.map((h, hIdx) => (
-                                  <th key={hIdx} className="text-center p-2 text-text-tertiary text-xs uppercase">{h}</th>
+                                  <SortableHeader
+                                    key={hIdx}
+                                    label={h}
+                                    group={groupKey}
+                                    colIndex={hIdx}
+                                    sort={sort}
+                                    onSort={setSort}
+                                    sortable={sortable}
+                                  />
                                 ))}
                               </tr>
                             </thead>
                             <tbody>
-                              {activePlayers.map((player, pIdx) => (
+                              {sorted.map((player, pIdx) => (
                                 <PlayerRow key={pIdx} player={player} />
                               ))}
                             </tbody>
@@ -126,23 +254,35 @@ export function EspnPlayerStatsTable({
                   const bench = athletes.filter((a) => !a.athlete?.starter && !a.didNotPlay);
                   const dnp = athletes.filter((a) => a.didNotPlay);
 
-                  // Critical fix: don't return null when DNP has entries — show the DNP section
                   if (starters.length + bench.length + dnp.length === 0) return null;
+
+                  const sortedStarters = sortAthletes(starters, `${groupKey}-starters`, sort);
+                  const sortedBench = sortAthletes(bench, `${groupKey}-bench`, sort);
 
                   return (
                     <div key={gIdx}>
                       {groupName && (
-                        <div className="px-2 py-1.5 mb-2 text-xs text-burnt-orange font-semibold uppercase tracking-wide bg-background-tertiary rounded-sm">
-                          {groupName}
+                        <div className="mb-2">
+                          <span className="heritage-stamp">{groupName}</span>
                         </div>
                       )}
                       <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                           <thead>
-                            <tr className="border-b border-border-subtle">
-                              <th className="text-left p-2 text-text-tertiary sticky left-0 bg-inherit">Player</th>
+                            <tr className="surface-lifted border-b border-border-vintage">
+                              <th className="text-left p-2 text-text-tertiary text-xs uppercase sticky left-0 bg-surface-press-box z-10">
+                                Player
+                              </th>
                               {headers.map((h, hIdx) => (
-                                <th key={hIdx} className="text-center p-2 text-text-tertiary text-xs uppercase">{h}</th>
+                                <SortableHeader
+                                  key={hIdx}
+                                  label={h}
+                                  group={groupKey}
+                                  colIndex={hIdx}
+                                  sort={sort}
+                                  onSort={setSort}
+                                  sortable={sortable}
+                                />
                               ))}
                             </tr>
                           </thead>
@@ -150,24 +290,36 @@ export function EspnPlayerStatsTable({
                             {starters.length > 0 && (
                               <>
                                 <SectionHeader label="Starters" colSpan={colSpan} />
-                                {starters.map((p, i) => <PlayerRow key={i} player={p} />)}
+                                {sortedStarters.map((p, i) => (
+                                  <PlayerRow key={i} player={p} isStarter />
+                                ))}
                               </>
                             )}
                             {bench.length > 0 && (
                               <>
                                 <SectionHeader label={benchLabel} colSpan={colSpan} />
-                                {bench.map((p, i) => <PlayerRow key={i} player={p} />)}
+                                {sortedBench.map((p, i) => (
+                                  <PlayerRow key={i} player={p} />
+                                ))}
                               </>
                             )}
                             {dnp.length > 0 && (
                               <>
                                 <SectionHeader label="Did Not Play" colSpan={colSpan} muted />
                                 {dnp.map((player, dIdx) => (
-                                  <tr key={dIdx} className="border-b border-border-subtle last:border-0">
-                                    <td className="p-2 text-text-tertiary whitespace-nowrap">
-                                      {player.athlete?.shortName || player.athlete?.displayName || '-'}
+                                  <tr
+                                    key={dIdx}
+                                    className="border-b border-border-subtle last:border-0"
+                                  >
+                                    <td className="p-2 text-text-tertiary whitespace-nowrap sticky left-0 bg-surface-dugout z-10">
+                                      {player.athlete?.shortName ||
+                                        player.athlete?.displayName ||
+                                        '-'}
                                     </td>
-                                    <td colSpan={headers.length} className="p-2 text-text-tertiary text-xs italic">
+                                    <td
+                                      colSpan={headers.length}
+                                      className="p-2 text-text-tertiary text-xs italic"
+                                    >
                                       {player.reason || 'DNP'}
                                     </td>
                                   </tr>
@@ -181,8 +333,8 @@ export function EspnPlayerStatsTable({
                   );
                 })}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </section>
         );
       })}
     </>

@@ -13,5 +13,9 @@ export {
   type Linescore,
   type BoxScoreData,
   type TeamInfo,
+  type BoxScoreTeamFilter,
 } from './BoxScoreTable';
 
+export { BoxScoreShell, type TeamFilter } from './BoxScoreShell';
+export { BoxScoreEmptyState } from './BoxScoreEmptyState';
+export { LeaderStrip } from './LeaderStrip';
