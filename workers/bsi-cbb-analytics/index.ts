@@ -484,13 +484,13 @@ async function computeBatting(db: D1Database, kv: KVNamespace, league: LeagueCon
     await db.batch(batch.slice(i, i + 100));
   }
 
-  // Cache hot leaderboard in KV
+  // Cache hot leaderboard in KV — min PA guards thin-sample extremes (e.g. 502 wRC+ on 42 PA)
   const top50 = await db.prepare(`
     SELECT player_id, player_name, team, conference, position,
            avg, obp, slg, ops, k_pct, bb_pct, iso, babip,
-           woba, wrc_plus, ops_plus
+           woba, wrc_plus, ops_plus, pa
     FROM cbb_batting_advanced
-    WHERE season = ?
+    WHERE season = ? AND pa >= ${MIN_PA_LEADERBOARD}
     ORDER BY woba DESC
     LIMIT 50
   `).bind(SEASON).all();
@@ -577,12 +577,15 @@ async function computePitching(db: D1Database, kv: KVNamespace, league: LeagueCo
     await db.batch(batch.slice(i, i + 100));
   }
 
-  // Cache hot leaderboard in KV
+  // Cache hot leaderboard in KV — min 9 IP guards tiny-sample outliers (= MIN_IP_THIRDS_PITCHING / 5)
+  // 27 thirds ≈ 9 IP: low enough to surface relievers, high enough to exclude 2-batter appearances.
+  const MIN_IP_THIRDS_LEADERBOARD = Math.round(MIN_IP_THIRDS_PITCHING * 0.6); // = 27 thirds (9 IP)
   const top50 = await db.prepare(`
     SELECT player_id, player_name, team, conference, position,
-           era, whip, k_9, bb_9, hr_9, fip, era_minus, k_bb, lob_pct
+           era, whip, k_9, bb_9, hr_9, fip, era_minus, k_bb, lob_pct,
+           ip, g
     FROM cbb_pitching_advanced
-    WHERE season = ?
+    WHERE season = ? AND ip >= ${MIN_IP_THIRDS_LEADERBOARD / 3}
     ORDER BY fip ASC
     LIMIT 50
   `).bind(SEASON).all();

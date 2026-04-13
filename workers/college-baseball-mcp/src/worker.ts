@@ -1137,7 +1137,13 @@ async function handleStandings(
             stats: Array<Record<string, unknown>>,
             abbr: string
           ): string => {
-            const s = stats.find((st) => st.abbreviation === abbr);
+            // Highlightly uses 'abbreviation' for most stats but 'name' for some
+            // (e.g. 'runsScored'/'runsAllowed' instead of abbreviation 'RS'/'RA').
+            let s = stats.find((st) => st.abbreviation === abbr);
+            if (!s) {
+              if (abbr === 'RS') s = stats.find((st) => st.name === 'runsScored' || st.name === 'pointsFor' || st.name === 'runs');
+              else if (abbr === 'RA') s = stats.find((st) => st.name === 'runsAllowed' || st.name === 'pointsAgainst');
+            }
             return (s?.displayValue as string) ?? '0';
           };
 
@@ -1703,7 +1709,13 @@ async function handlePowerIndex(env: Env): Promise<unknown> {
             stats: Array<Record<string, unknown>>,
             abbr: string
           ): string => {
-            const s = stats.find((st) => st.abbreviation === abbr);
+            // Highlightly uses 'abbreviation' for most stats but 'name' for some
+            // (e.g. 'runsScored'/'runsAllowed' instead of abbreviation 'RS'/'RA').
+            let s = stats.find((st) => st.abbreviation === abbr);
+            if (!s) {
+              if (abbr === 'RS') s = stats.find((st) => st.name === 'runsScored' || st.name === 'pointsFor' || st.name === 'runs');
+              else if (abbr === 'RA') s = stats.find((st) => st.name === 'runsAllowed' || st.name === 'pointsAgainst');
+            }
             return (s?.displayValue as string) ?? '0';
           };
 
