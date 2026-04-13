@@ -1,0 +1,40 @@
+{
+  "name": "universal-skills",
+  "version": "0.1.0",
+  "description": "Search and install skills from both Claude Code and OpenAI Codex ecosystems. Unofficial bridge — not affiliated with Anthropic or OpenAI.",
+  "author": {
+    "name": "Blaze Sports Intel",
+    "url": "https://blazesportsintel.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "marketplace",
+    "mcp",
+    "claude",
+    "codex",
+    "bridge",
+    "cross-ecosystem"
+  ],
+  "interface": {
+    "type": "mcp",
+    "transport": "stdio",
+    "command": "npx",
+    "args": ["-y", "@blazesportsintel/universal-skills-mcp"]
+  },
+  "apps": {
+    "claude-code": {
+      "supported": true,
+      "install": "claude mcp add universal-skills -- npx -y @blazesportsintel/universal-skills-mcp"
+    },
+    "codex": {
+      "supported": true,
+      "install": "codex install universal-skills"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ahump20/BSI",
+    "directory": "packages/universal-skills-marketplace"
+  }
+}

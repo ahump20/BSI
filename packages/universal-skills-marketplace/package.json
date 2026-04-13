@@ -1,0 +1,29 @@
+{
+  "name": "@blazesportsintel/universal-skills-marketplace",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Universal Skills Marketplace — Context7-pattern MCP server bridging Claude Code and OpenAI Codex skill catalogs. Unofficial, independent, community project.",
+  "workspaces": [
+    "packages/schema",
+    "packages/mcp-server"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "build:schema": "npm run build -w packages/schema",
+    "build:mcp": "npm run build -w packages/mcp-server",
+    "test": "npm run test --workspaces",
+    "test:unit": "npm run test -w packages/mcp-server",
+    "typecheck": "npm run typecheck --workspaces",
+    "deploy:api": "wrangler deploy --config workers/universal-skills-api/wrangler.toml",
+    "deploy:indexer": "wrangler deploy --config workers/universal-skills-indexer/wrangler.toml",
+    "deploy:bridge": "wrangler deploy --config workers/universal-skills-bridge/wrangler.toml",
+    "deploy:all": "npm run deploy:api && npm run deploy:bridge && npm run deploy:indexer",
+    "dev:api": "wrangler dev --config workers/universal-skills-api/wrangler.toml --local",
+    "dev:indexer": "wrangler dev --config workers/universal-skills-indexer/wrangler.toml --test-scheduled --local",
+    "dev:bridge": "wrangler dev --config workers/universal-skills-bridge/wrangler.toml --local",
+    "db:migrate": "wrangler d1 execute universal-skills --local --file=schema/d1-schema.sql",
+    "db:migrate:production": "wrangler d1 execute universal-skills --file=schema/d1-schema.sql"
+  },
+  "author": "Blaze Sports Intel <dev@blazesportsintel.com>",
+  "license": "MIT"
+}
