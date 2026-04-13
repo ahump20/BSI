@@ -19,6 +19,13 @@
  */
 
 import {
+  MIN_AB_BATTING as SHARED_MIN_AB,
+  MIN_IP_THIRDS_PITCHING as SHARED_MIN_IP,
+  MIN_PA_LEADERBOARD as SHARED_MIN_PA,
+  D1_TRIPLE_RATE_OF_XB as SHARED_D1_TRIPLE_RATE,
+} from '../shared/cbb-constants';
+
+import {
   calculateWOBA,
   calculateWRCPlus,
   calculateOPSPlus,
@@ -101,24 +108,28 @@ interface PlayerPitchingRow {
 // ---------------------------------------------------------------------------
 
 const SEASON = 2026;
-const MIN_AB_BATTING = 20;       // Minimum AB to qualify for batting
-const MIN_IP_THIRDS_PITCHING = 45; // Minimum IP thirds (15 IP) for pitching
-const MIN_PA_LEADERBOARD = 50;   // Minimum PA for leaderboard inclusion (guards extreme thin-sample values)
+const MIN_AB_BATTING = SHARED_MIN_AB;
+const MIN_IP_THIRDS_PITCHING = SHARED_MIN_IP;
+const MIN_PA_LEADERBOARD = SHARED_MIN_PA;
 const WOBA_WEIGHTS = MLB_WOBA_WEIGHTS;
 
-// D1 historical extra-base hit ratio: triples ≈ 12% of (2B + 3B) hit count.
-// Translates to n3 = 0.12/(1+0.12) * xb ≈ xb * 0.107 where xb = 2B + 2*3B total bases.
-// College triples rate is roughly 2–3× MLB due to larger venues and faster runners.
-// Source: NCAA D1 team stats aggregates (2022–2025 regular seasons).
-const D1_TRIPLE_RATE_OF_XB = 0.107;
+// Re-export shared constant under original name used throughout this file.
+const D1_TRIPLE_RATE_OF_XB = SHARED_D1_TRIPLE_RATE;
 
 // Power conferences in college baseball (2025-26 landscape post-realignment)
 const POWER_CONFERENCES = new Set(['SEC', 'ACC', 'Big 12', 'Big Ten']);
 
 /**
- * ESPN team_id → conference mapping (244 D1 teams).
+ * ESPN team_id → conference mapping — 244-entry fallback.
  * Generated from lib/data/team-metadata.ts — 2025-26 realignment.
- * Workers can't import from lib/, so this lives as a hardcoded const.
+ *
+ * This is the FALLBACK only. At runtime, buildConferenceMap() merges this with
+ * rows from cbb_team_conferences (D1) so operators can add or override teams
+ * without a redeploy. To expand coverage beyond these 244 teams, INSERT rows
+ * into cbb_team_conferences (see migration 061).
+ *
+ * Workers can't import lib/data/team-metadata.ts at compile time due to bundle
+ * size (~32KB for that file alone), so this hardcoded copy exists as a guard.
  */
 const TEAM_CONFERENCE_MAP: Record<string, string> = {
   '126': 'SEC', '123': 'SEC', '75': 'SEC', '85': 'SEC', '58': 'SEC',
@@ -197,6 +208,33 @@ const KV_TTL = {
   leaderboard: 3600,    // 1 hour
   leagueContext: 7200,  // 2 hours
 };
+
+// ---------------------------------------------------------------------------
+// D1-backed conference map — supplements / overrides the hardcoded fallback
+// ---------------------------------------------------------------------------
+
+/**
+ * Build the effective team_id → conference map by merging:
+ *   1. The hardcoded TEAM_CONFERENCE_MAP (244 teams, always available)
+ *   2. Rows from cbb_team_conferences D1 table (0 = all-seasons entries)
+ *
+ * D1 rows win on conflict, so per-season overrides work without a redeploy.
+ * Run migration 061 + seed additional teams to expand beyond the 244 hardcoded.
+ */
+async function buildConferenceMap(db: D1Database): Promise<Record<string, string>> {
+  const effective = { ...TEAM_CONFERENCE_MAP };
+  try {
+    const { results } = await db.prepare(
+      'SELECT team_id, conference FROM cbb_team_conferences WHERE season = 0 OR season = ?'
+    ).bind(SEASON).all<{ team_id: string; conference: string }>();
+    for (const row of results) {
+      effective[row.team_id] = row.conference;
+    }
+  } catch {
+    // Table may not exist yet (pre-migration). Fall back to hardcoded map only.
+  }
+  return effective;
+}
 
 // ---------------------------------------------------------------------------
 // League context computation
@@ -323,7 +361,7 @@ function defaultLeagueContext(): LeagueContext {
 // Batting advanced computation + D1 write
 // ---------------------------------------------------------------------------
 
-async function computeBatting(db: D1Database, kv: KVNamespace, league: LeagueContext): Promise<number> {
+async function computeBatting(db: D1Database, kv: KVNamespace, league: LeagueContext, confMap: Record<string, string>): Promise<number> {
   const { results: hitters } = await db.prepare(`
     SELECT espn_id, name, team, team_id, position, at_bats, hits, doubles, triples,
            home_runs, walks_bat, strikeouts_bat, hit_by_pitch, sacrifice_flies,
@@ -429,7 +467,7 @@ async function computeBatting(db: D1Database, kv: KVNamespace, league: LeagueCon
     const eWOBA = calculateEWOBA(eBA, eSLG, bbPct);
 
     // Enrich conference from team_id lookup — player_season_stats has no conference column
-    const conference = TEAM_CONFERENCE_MAP[p.team_id] ?? p.conference ?? null;
+    const conference = confMap[p.team_id] ?? p.conference ?? null;
 
     batch.push(upsert.bind(
       p.espn_id, p.name, p.team, p.team_id, conference, SEASON, position,
@@ -470,7 +508,7 @@ async function computeBatting(db: D1Database, kv: KVNamespace, league: LeagueCon
 // Pitching advanced computation + D1 write
 // ---------------------------------------------------------------------------
 
-async function computePitching(db: D1Database, kv: KVNamespace, league: LeagueContext): Promise<number> {
+async function computePitching(db: D1Database, kv: KVNamespace, league: LeagueContext, confMap: Record<string, string>): Promise<number> {
   const { results: pitchers } = await db.prepare(`
     SELECT espn_id, name, team, team_id, position, innings_pitched_thirds,
            strikeouts_pitch, walks_pitch, home_runs_allowed, earned_runs,
@@ -523,7 +561,7 @@ async function computePitching(db: D1Database, kv: KVNamespace, league: LeagueCo
     const babip = calculateBABIP(h, hr, bfEst, so, 0);
 
     // Enrich conference from team_id lookup
-    const conference = TEAM_CONFERENCE_MAP[p.team_id] ?? p.conference ?? null;
+    const conference = confMap[p.team_id] ?? p.conference ?? null;
 
     batch.push(upsert.bind(
       p.espn_id, p.name, p.team, p.team_id, conference, SEASON, p.position,
@@ -562,7 +600,7 @@ async function computePitching(db: D1Database, kv: KVNamespace, league: LeagueCo
 // Park factors (weekly)
 // ---------------------------------------------------------------------------
 
-async function computeParkFactors(db: D1Database): Promise<number> {
+async function computeParkFactors(db: D1Database, confMap: Record<string, string>): Promise<number> {
   const now = new Date().toISOString();
   const MIN_HOME_GAMES = 20;
 
@@ -626,7 +664,7 @@ async function computeParkFactors(db: D1Database): Promise<number> {
     }
 
     batch.push(upsert.bind(
-      t.team, t.team_id, null, TEAM_CONFERENCE_MAP[t.team_id] ?? null, SEASON,
+      t.team, t.team_id, null, confMap[t.team_id] ?? null, SEASON,
       r3(factor), sampleGames, note, now,
     ));
   }
@@ -642,7 +680,7 @@ async function computeParkFactors(db: D1Database): Promise<number> {
 // Conference strength (weekly)
 // ---------------------------------------------------------------------------
 
-async function computeConferenceStrength(db: D1Database): Promise<number> {
+async function computeConferenceStrength(db: D1Database, confMap: Record<string, string>): Promise<number> {
   const now = new Date().toISOString();
 
   // Aggregate per-conference batting and pitching stats
@@ -685,8 +723,8 @@ async function computeConferenceStrength(db: D1Database): Promise<number> {
   const confLosses: Record<string, number> = {};
 
   for (const g of crossConfGames) {
-    const homeConf = TEAM_CONFERENCE_MAP[g.home_team_id];
-    const awayConf = TEAM_CONFERENCE_MAP[g.away_team_id];
+    const homeConf = confMap[g.home_team_id];
+    const awayConf = confMap[g.away_team_id];
     if (!homeConf || !awayConf || homeConf === awayConf) continue;
 
     // Initialize counters
@@ -774,6 +812,9 @@ async function runAnalytics(env: Env, includeWeekly: boolean) {
   const results: Record<string, unknown> = {};
 
   try {
+    // 0. Build effective conference map (hardcoded fallback + D1 overrides)
+    const confMap = await buildConferenceMap(env.DB);
+
     // 1. Compute league context
     const { context: league, sampleBatting, samplePitching } = await computeLeagueContext(env.DB);
     await env.KV.put(
@@ -800,15 +841,15 @@ async function runAnalytics(env: Env, includeWeekly: boolean) {
     results.leagueSamples = { batting: sampleBatting, pitching: samplePitching };
 
     // 2. Compute per-player batting advanced
-    results.battingCount = await computeBatting(env.DB, env.KV, league);
+    results.battingCount = await computeBatting(env.DB, env.KV, league, confMap);
 
     // 3. Compute per-player pitching advanced
-    results.pitchingCount = await computePitching(env.DB, env.KV, league);
+    results.pitchingCount = await computePitching(env.DB, env.KV, league, confMap);
 
     // 4. Weekly: park factors + conference strength
     if (includeWeekly) {
-      results.parkFactorsCount = await computeParkFactors(env.DB);
-      results.conferenceCount = await computeConferenceStrength(env.DB);
+      results.parkFactorsCount = await computeParkFactors(env.DB, confMap);
+      results.conferenceCount = await computeConferenceStrength(env.DB, confMap);
     }
 
     results.durationMs = Date.now() - start;

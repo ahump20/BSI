@@ -7,11 +7,7 @@
 
 import type { Env } from './shared';
 import { json, cachedJson, kvGet, kvPut, dataHeaders, HTTP_CACHE, CACHE_TTL, SEASON, teamMetadata, metaByEspnId, getLogoUrl } from './shared';
-
-// D1 historical extra-base hit ratio: triples ≈ 12% of (2B+3B) hit count.
-// n3 = 0.12/(1+0.12) * xb ≈ xb * 0.107 where xb = 2B + 2*3B bases.
-// Must match the constant in bsi-cbb-analytics/index.ts (used by cron writer).
-const D1_TRIPLE_RATE_OF_XB = 0.107;
+import { D1_TRIPLE_RATE_OF_XB, MIN_AB_BATTING, MIN_IP_THIRDS_PITCHING, MIN_PA_LEADERBOARD } from '../../shared/cbb-constants';
 
 /**
  * League-wide sabermetric baselines for 2026 college baseball.
@@ -39,7 +35,7 @@ export async function handleCBBLeagueSabermetrics(env: Env): Promise<Response> {
         SUM(runs) as total_r,
         COUNT(*) as qualified_hitters
       FROM player_season_stats
-      WHERE sport = 'college-baseball' AND season = ? AND at_bats >= 20
+      WHERE sport = 'college-baseball' AND season = ? AND at_bats >= ${MIN_AB_BATTING}
     `).bind(SEASON).first<Record<string, number>>();
 
     // When 2B/3B/HBP are mostly 0 (ESPN doesn't provide these in box scores),
@@ -51,7 +47,7 @@ export async function handleCBBLeagueSabermetrics(env: Env): Promise<Response> {
       const players = await env.DB.prepare(`
         SELECT at_bats, hits, home_runs, walks_bat, on_base_pct, slugging_pct
         FROM player_season_stats
-        WHERE sport = 'college-baseball' AND season = ? AND at_bats >= 20
+        WHERE sport = 'college-baseball' AND season = ? AND at_bats >= ${MIN_AB_BATTING}
           AND on_base_pct > 0 AND slugging_pct > 0
       `).bind(SEASON).all<{ at_bats: number; hits: number; home_runs: number; walks_bat: number; on_base_pct: number; slugging_pct: number }>();
 
@@ -103,7 +99,7 @@ export async function handleCBBLeagueSabermetrics(env: Env): Promise<Response> {
         SUM(earned_runs) as total_er,
         COUNT(*) as qualified_pitchers
       FROM player_season_stats
-      WHERE sport = 'college-baseball' AND season = ? AND innings_pitched_thirds >= 45
+      WHERE sport = 'college-baseball' AND season = ? AND innings_pitched_thirds >= ${MIN_IP_THIRDS_PITCHING}
     `).bind(SEASON).first<Record<string, number>>();
 
     if (!batting || !pitching) {
@@ -279,7 +275,7 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
              walks_bat, strikeouts_bat, hit_by_pitch, sacrifice_flies, games_bat,
              on_base_pct, slugging_pct
       FROM player_season_stats
-      WHERE sport = 'college-baseball' AND season = ? AND team_id = ? AND at_bats >= 20
+      WHERE sport = 'college-baseball' AND season = ? AND team_id = ? AND at_bats >= ${MIN_AB_BATTING}
       ORDER BY at_bats DESC
     `).bind(SEASON, resolvedId).all<Record<string, unknown>>();
 
@@ -401,7 +397,8 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
         : 100;
 
       // sample_confidence: how stable the advanced metrics are given PA sample
-      const sampleConfidence = pa >= 200 ? 'high' : pa >= 100 ? 'medium' : pa >= 50 ? 'low' : 'very_low';
+      // Thresholds mirror MIN_PA_LEADERBOARD (50) as the low-confidence floor.
+      const sampleConfidence = pa >= 200 ? 'high' : pa >= 100 ? 'medium' : pa >= MIN_PA_LEADERBOARD ? 'low' : 'very_low';
 
       return {
         espn_id: h.espn_id,
