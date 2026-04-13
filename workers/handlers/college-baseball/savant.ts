@@ -8,6 +8,11 @@
 import type { Env } from './shared';
 import { json, cachedJson, kvGet, kvPut, dataHeaders, HTTP_CACHE, CACHE_TTL, SEASON, teamMetadata, metaByEspnId, getLogoUrl } from './shared';
 
+// D1 historical extra-base hit ratio: triples ≈ 12% of (2B+3B) hit count.
+// n3 = 0.12/(1+0.12) * xb ≈ xb * 0.107 where xb = 2B + 2*3B bases.
+// Must match the constant in bsi-cbb-analytics/index.ts (used by cron writer).
+const D1_TRIPLE_RATE_OF_XB = 0.107;
+
 /**
  * League-wide sabermetric baselines for 2026 college baseball.
  * GET /api/college-baseball/sabermetrics
@@ -63,7 +68,7 @@ export async function handleCBBLeagueSabermetrics(env: Env): Promise<Response> {
         if (slg > 0 && ab > 0 && h > hr) {
           const tb = Math.round(slg * ab);
           const xb = Math.max(0, tb - h - 3 * hr);
-          const est3B = Math.max(0, Math.round(xb * 0.05));
+          const est3B = Math.max(0, Math.round(xb * D1_TRIPLE_RATE_OF_XB));
           derived3B += est3B;
           derived2B += Math.max(0, xb - 2 * est3B);
         }
@@ -343,13 +348,16 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
       const obpStored = Number(h.on_base_pct || 0);
       const slgStored = Number(h.slugging_pct || 0);
 
-      // Derive 2B/3B from SLG when direct data is missing
-      if (d === 0 && t === 0 && slgStored > 0 && ab > 0 && hits > hr) {
+      // Derive 2B/3B from SLG when direct data is missing.
+      // ESPN box scores don't report 2B/3B/HBP/SF — these are approximated from
+      // university-reported season OBP/SLG. data_quality reflects this.
+      const directSplits = d > 0 || t > 0;
+      if (!directSplits && slgStored > 0 && ab > 0 && hits > hr) {
         const tb = Math.round(slgStored * ab);
         // TB = H + 2B + 2*3B + 3*HR → 2B + 2*3B = TB - H - 3*HR
         const xb = Math.max(0, tb - hits - 3 * hr);
-        // Triples are ~5% of extra-base hits in college — approximate
-        t = Math.max(0, Math.round(xb * 0.05));
+        // D1 historical ratio: triples ≈ 12% of (2B+3B) hit count
+        t = Math.max(0, Math.round(xb * D1_TRIPLE_RATE_OF_XB));
         d = Math.max(0, xb - 2 * t);
       }
 
@@ -392,6 +400,9 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
         ? ((woba - lgWoba) / wobaScale + lgRunsPerPA) / lgRunsPerPA * 100
         : 100;
 
+      // sample_confidence: how stable the advanced metrics are given PA sample
+      const sampleConfidence = pa >= 200 ? 'high' : pa >= 100 ? 'medium' : pa >= 50 ? 'low' : 'very_low';
+
       return {
         espn_id: h.espn_id,
         name: h.name,
@@ -405,6 +416,8 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
         bbpct: Math.round(bbpct * 1000) / 1000,
         woba: Math.round(woba * 1000) / 1000,
         wrc_plus: Math.round(wrcPlus),
+        sample_confidence: sampleConfidence,
+        data_quality: directSplits ? 'direct' : 'espn-derived',
       };
     });
 
@@ -1053,7 +1066,7 @@ export async function handleCBBSeasonArc(espnId: string, url: URL, env: Env): Pr
       if (d === 0 && t === 0 && h.slugging_pct > 0 && h.at_bats > 0 && h.hits > h.home_runs) {
         const tb = Math.round(h.slugging_pct * h.at_bats);
         const xb = Math.max(0, tb - h.hits - 3 * h.home_runs);
-        t = Math.max(0, Math.round(xb * 0.05));
+        t = Math.max(0, Math.round(xb * D1_TRIPLE_RATE_OF_XB));
         d = Math.max(0, xb - 2 * t);
       }
       teamD += d;

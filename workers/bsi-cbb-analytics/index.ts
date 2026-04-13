@@ -73,6 +73,7 @@ interface PlayerBattingRow {
   slugging_pct: number;
   stolen_bases?: number;
   caught_stealing?: number;
+  innings_pitched_thirds?: number; // For pitcher position inference when position = 'UN'
 }
 
 interface PlayerPitchingRow {
@@ -102,7 +103,14 @@ interface PlayerPitchingRow {
 const SEASON = 2026;
 const MIN_AB_BATTING = 20;       // Minimum AB to qualify for batting
 const MIN_IP_THIRDS_PITCHING = 45; // Minimum IP thirds (15 IP) for pitching
+const MIN_PA_LEADERBOARD = 50;   // Minimum PA for leaderboard inclusion (guards extreme thin-sample values)
 const WOBA_WEIGHTS = MLB_WOBA_WEIGHTS;
+
+// D1 historical extra-base hit ratio: triples ≈ 12% of (2B + 3B) hit count.
+// Translates to n3 = 0.12/(1+0.12) * xb ≈ xb * 0.107 where xb = 2B + 2*3B total bases.
+// College triples rate is roughly 2–3× MLB due to larger venues and faster runners.
+// Source: NCAA D1 team stats aggregates (2022–2025 regular seasons).
+const D1_TRIPLE_RATE_OF_XB = 0.107;
 
 // Power conferences in college baseball (2025-26 landscape post-realignment)
 const POWER_CONFERENCES = new Set(['SEC', 'ACC', 'Big 12', 'Big Ten']);
@@ -319,7 +327,8 @@ async function computeBatting(db: D1Database, kv: KVNamespace, league: LeagueCon
   const { results: hitters } = await db.prepare(`
     SELECT espn_id, name, team, team_id, position, at_bats, hits, doubles, triples,
            home_runs, walks_bat, strikeouts_bat, hit_by_pitch, sacrifice_flies,
-           runs, games_bat, on_base_pct, slugging_pct, stolen_bases, caught_stealing
+           runs, games_bat, on_base_pct, slugging_pct, stolen_bases, caught_stealing,
+           innings_pitched_thirds
     FROM player_season_stats
     WHERE sport = 'college-baseball' AND season = ? AND at_bats >= ?
     ORDER BY at_bats DESC
@@ -347,13 +356,55 @@ async function computeBatting(db: D1Database, kv: KVNamespace, league: LeagueCon
   for (const p of hitters) {
     const ab = p.at_bats;
     const h = p.hits;
-    const doubles = p.doubles || 0;
-    const triples = p.triples || 0;
     const hr = p.home_runs || 0;
     const bb = p.walks_bat || 0;
     const so = p.strikeouts_bat || 0;
-    const hbp = p.hit_by_pitch || 0;
-    const sf = p.sacrifice_flies || 0;
+
+    // Derive 2B/3B from stored SLG when ESPN box scores didn't provide them directly.
+    // ESPN college baseball box scores lack 2B/3B/HBP/SF — those columns are 0 for
+    // most ESPN-sourced players. The on-demand savant.ts handler has always done this
+    // derivation; now the cron does it too so cbb_batting_advanced stays consistent
+    // with the team sabermetrics API responses.
+    let doubles = p.doubles || 0;
+    let triples = p.triples || 0;
+    let hbp = p.hit_by_pitch || 0;
+    let sf = p.sacrifice_flies || 0;
+
+    if (doubles === 0 && triples === 0 && p.slugging_pct > 0 && ab > 0 && h > hr) {
+      // xb = 2B + 2*3B (total extra bases from non-HR hits above singles)
+      const tb = Math.round(p.slugging_pct * ab);
+      const xb = Math.max(0, tb - h - 3 * hr);
+      // D1 historical ratio: triples ≈ 12% of (2B+3B) hit count
+      // → n3 = 0.12/(1+0.12)*xb ≈ xb * D1_TRIPLE_RATE_OF_XB
+      triples = Math.max(0, Math.round(xb * D1_TRIPLE_RATE_OF_XB));
+      doubles = Math.max(0, xb - 2 * triples);
+    }
+
+    if (hbp === 0 && p.on_base_pct > 0 && p.on_base_pct < 1 && ab > 0) {
+      // OBP = (H + BB + HBP) / (AB + BB + HBP + SF); assume SF ≈ 0 first pass
+      const estHbp = Math.round((p.on_base_pct * (ab + bb) - h - bb) / (1 - p.on_base_pct));
+      if (estHbp > 0) {
+        hbp = estHbp;
+      } else if (estHbp < 0) {
+        // Negative estimate → player likely has sacrifice flies absorbing the residual
+        for (let trySf = 1; trySf <= 3; trySf++) {
+          const adj = Math.round((p.on_base_pct * (ab + bb + trySf) - h - bb) / (1 - p.on_base_pct));
+          if (adj >= 0) { hbp = adj; sf = trySf; break; }
+        }
+      }
+    }
+
+    // Infer position for pitchers when ESPN box score data didn't provide it.
+    // Players with meaningful IP and no AB are almost certainly pitchers.
+    // Two-way players (significant AB AND IP) keep their stored position.
+    let position = p.position;
+    if (position === 'UN' || !position) {
+      if (typeof p.innings_pitched_thirds === 'number' && p.innings_pitched_thirds >= 9 && ab < 10) {
+        // ≥3 IP and fewer than 10 AB → classify as pitcher
+        position = 'P';
+      }
+    }
+
     const pa = ab + bb + hbp + sf;
 
     const line: BattingLine = { pa, ab, h, doubles, triples, hr, bb, hbp, so, sf };
@@ -381,7 +432,7 @@ async function computeBatting(db: D1Database, kv: KVNamespace, league: LeagueCon
     const conference = TEAM_CONFERENCE_MAP[p.team_id] ?? p.conference ?? null;
 
     batch.push(upsert.bind(
-      p.espn_id, p.name, p.team, p.team_id, conference, SEASON, p.position,
+      p.espn_id, p.name, p.team, p.team_id, conference, SEASON, position,
       p.games_bat || 0, ab, pa, p.runs || 0, h, doubles, triples, hr, bb, so,
       p.stolen_bases ?? 0, p.caught_stealing ?? 0,
       r3(avg), r3(obp), r3(slg), r3(ops), r3(kPct), r3(bbPct), r3(iso), r3(babip),
